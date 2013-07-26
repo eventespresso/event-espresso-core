@@ -225,6 +225,10 @@ class EE_Calendar {
 		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
 		$atts = shortcode_atts( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month' ), $atts );
+		
+		$atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
+		$atts['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $atts['show_expired'];
+
 		// loop thru atts and add to js options
 		foreach ( $atts as $att_name => $att_value ) {
 			if ( ! empty( $att_value )) {

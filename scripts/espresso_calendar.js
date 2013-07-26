@@ -88,7 +88,9 @@ jQuery(document).ready(function($) {
 					action: 'get_calendar_events',
 					noheader : 'true',
 					start_date: Math.round(start.getTime() / 1000),
-					end_date: Math.round(end.getTime() / 1000)
+					end_date: Math.round(end.getTime() / 1000),
+					show_expired: eeCAL.show_expired,
+					event_category_id: eeCAL.event_category_id
 				},
 				success: function( response ) {
 //					console.log( 'success' );
