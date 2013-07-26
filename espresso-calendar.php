@@ -46,12 +46,35 @@
  */
 class EE_Calendar {
 
+   /**
+     * 	EE_Calendar Object
+     * 	@var EE_Calendar $_instance
+	 * 	@access 	private 	
+     */
+	private static $_instance = NULL;
+
 	/**
 	 * 	@var 	array	$_calendar_options
 	 *  @access 	private
 	 */
 	private $_calendar_options = array();
 
+
+
+
+
+	/**
+	 *@singleton method used to instantiate class object
+	 *@access public
+	 *@return EE_Calendar instance
+	 */	
+	public static function instance() {
+		// check if class object is instantiated
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
 
 
 
@@ -109,21 +132,39 @@ class EE_Calendar {
 
 
 	/**
+	 * 	get_calendar_options
+	 *
+	 *  @access 	public
+	 *  @param 	boolean	$widget - whether being called by widget or not
+	 *  @return 	void
+	 */
+	private function _get_calendar_options() {
+		if ( empty( $this->_calendar_options ) || ! is_array( $this->_calendar_options )) {
+			$this->_calendar_options = get_option( 'espresso_calendar_settings', array() );
+		}
+		return $this->_calendar_options;
+	}
+	
+
+
+	/**
 	 * 	calendar_init - initialize
 	 *
 	 *  @access 	public
+	 *  @param 	boolean	$widget - whether being called by widget or not
 	 *  @return 	void
 	 */
-	public function calendar_init() {
+	public function calendar_init( $widget = FALSE ) {
 		// get the current post
 		global $post;
-		if ( isset( $post->post_content )) {			
+		if ( isset( $post->post_content ) || $widget ) {
 			 // check the post content for the short code
-			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE ) {		// get calendar options
-				$this->_calendar_options = get_option('espresso_calendar_settings');
+			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE || $widget ) {
+				// get calendar options
+				$this->_calendar_options = $this->_get_calendar_options();
 				add_action('wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
 			}
-		}	
+		}
 	}
 	
 
@@ -135,7 +176,7 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function calendar_scripts() {
-
+		$this->_calendar_options = $this->_get_calendar_options();
 		//Load tooltips styles
 		if ( isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE ) {
 			// load jQuery qtip script from CDN with local fallback
@@ -146,7 +187,6 @@ class EE_Calendar {
 			$qtip_js_url = $test_url !== FALSE ? $qtip_js_url : ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.min.js';
 			// use CDN URL or local fallback ?
 			$qtip_css_url = $test_url !== FALSE ? 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css' : ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/jquery.qtip.min.css';
-
 			// register jQuery qtip
 			wp_register_style( 'qtip', $qtip_css_url ); 
 			wp_enqueue_style('qtip');
@@ -155,17 +195,18 @@ class EE_Calendar {
 		}
 		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
 		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "css/calendar.css")) {
-			wp_register_style('calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css'); //This is the url to the css file if available
+			//This is the url to the css file if available
+			wp_register_style('calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css'); 
 		} else {
-			wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/calendar.css'); //calendar core style
+			//calendar core style
+			wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/calendar.css'); 
 		}
 		wp_enqueue_style('calendar');
 		//core calendar script
 		wp_register_script( 'fullcalendar-min-js', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.2', TRUE ); 
 		// finally load our stuff
 		wp_register_script( 'espresso_calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), ESPRESSO_CALENDAR_VERSION, TRUE ); 
-		wp_enqueue_script('espresso_calendar');		
-
+		wp_enqueue_script('espresso_calendar');	
 	}
 
 
@@ -183,13 +224,14 @@ class EE_Calendar {
 	public function espresso_calendar( $atts ) {
 		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
-		$atts = shortcode_atts( array( 'event_category_id' => '', 'show_expired' => false, 'cal_view' => 'month' ), $atts );
+		$atts = shortcode_atts( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month' ), $atts );
 		// loop thru atts and add to js options
 		foreach ( $atts as $att_name => $att_value ) {
 			if ( ! empty( $att_value )) {
 				$ee_calendar_js_options[$att_name] = $att_value;
 			}
-		}	
+		}
+		$this->_calendar_options = $this->_get_calendar_options();
 		// loop thru calendar_options and add to js options
 		foreach ( $this->_calendar_options as $opt_name => $opt_value ) {
 			$ee_calendar_js_options[$opt_name] = is_array( $opt_value ) ? stripslashes_deep( $opt_value ) : stripslashes( $opt_value );
@@ -250,7 +292,7 @@ class EE_Calendar {
 		// Output admin-ajax.php URL with same protocol as current page
 		$ee_calendar_js_options['ajax_url'] = admin_url('admin-ajax.php', $protocol);
 		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
-	
+
 		return '
 		<div id="ee-calendar-ajax-loader-dv">
 			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif">			
@@ -266,29 +308,24 @@ class EE_Calendar {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function get_calendar_events( $show_expired ) {
+	public function get_calendar_events() {
 		
-		global $wpdb, $org_options, $event_category_id, $events, $eventsArray;
+		global $wpdb, $org_options;
 		remove_shortcode('LISTATTENDEES');
 		
-		$this->_calendar_options = get_option('espresso_calendar_settings');
+		$this->_calendar_options = $this->_get_calendar_options();
 		
+		$today = date( 'Y-m-d' );
 		$month = date('m' );
 		$year = date('Y' );
 		$start_date = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d', absint( $_REQUEST['start_date'] )) : date('Y-m-d', mktime( 0, 0, 0, $month, 1, $year ));
 		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d', absint( $_REQUEST['end_date'] )) : date('Y-m-t', mktime( 0, 0, 0, $month, 1, $year ));
-//		echo '<h4>$start_date : ' . $start_date . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'false';
-		
-//		$throttle = '';
-//		if (isset($this->_calendar_options['throttle']['enable']) && $this->_calendar_options['throttle']['enable'] == true) {
-//			if ($this->_calendar_options['throttle']['amount'] > 1)
-//				$throttle = 'LIMIT ' . $this->_calendar_options['throttle']['amount'];
-//		}
+		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';
+//		echo '<h4>$show_expired : ' . $show_expired . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		
 		// set boolean for categories 
 		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
-		$event_category_id = ! empty( $event_category_id ) ? $event_category_id : FALSE;
+		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : FALSE;
 		$type = $event_category_id ? 'cat' : 'all';
 		//Build the SQL to run
 		$SQL = "SELECT e.*, ese.start_time, ese.end_time ";
@@ -301,16 +338,14 @@ class EE_Calendar {
 		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id " : '';
 		
 		$SQL .= "WHERE e.is_active != 'N' ";
-		$SQL .= " AND e.event_status != 'D' "; //Deleted
-		$SQL .= " AND e.event_status != 'S' "; //Secondary/Waitlist
-		$SQL .= " AND e.event_status != 'P' "; //Pending
-		$SQL .= " AND e.event_status != 'X' ";
-		$SQL .= " AND e.event_status != 'R' "; //Draft
+		$SQL .= " AND e.event_status NOT IN ( 'D', 'S', 'P', 'X', 'R' ) "; //Deleted, Secondary/Waitlist, Pending, X?,  Draft
+		$SQL .= $event_category_id ?  " AND c.category_identifier = '$event_category_id' " : '';
 		
-		$SQL .= " AND ( e.start_date >= %s AND e.start_date <= %s ) OR e.event_status != 'O' ";		
+//		$SQL .= " AND (( e.start_date >= %s AND e.start_date <= %s ) OR e.event_status != 'O' ) ";		
+		$SQL .= " AND ( e.start_date >= %s AND e.start_date <= %s ) ";		
 		
 		if ($show_expired == "false") {
-			$SQL .= " AND ( e.registration_start <= '$end_date' AND e.registration_end <= '$end_date' ) ";
+			$SQL .= " AND ( e.start_date >= '$today' AND e.registration_end >= '$today' ) ";
 		}
 
 		$SQL .= " GROUP BY e.id ORDER BY e.start_date ASC "; // . $throttle;
@@ -449,7 +484,9 @@ class EE_Calendar {
 				$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
 				$path_to_thumbnail = $dirname . $filename . $thumbnail_size . '.' . $ext;
 				// check if file exists
-				$test_url = @fopen( $path_to_thumbnail, 'r' );				
+				if ( ! $test_url = @fopen( $path_to_thumbnail, 'r' )) {
+					$path_to_thumbnail = $event_meta['event_thumbnail_url'];
+				}				
 				if ( $test_url !== FALSE ) { 
 					$events[ $cntr ]['event_img_thumb'] = '<span class="thumb-wrap"><img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" /></span>';
 //					$events[ $cntr ]['title'] .= '<span class="thumb-wrap"><img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" /></span>';
@@ -570,6 +607,6 @@ class EE_Calendar {
 	public function __destruct() { return FALSE; }		
 
 }
-new EE_Calendar();
+EE_Calendar::instance();
 // End of file espresso-calendar.php
 // Location: /espresso-calendar/espresso-calendar.php
