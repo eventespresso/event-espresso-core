@@ -33,12 +33,9 @@ function espresso_calendar_load_pue_update() {
 
 //Install the plugin
 function espresso_calendar_install() {
-	$check_settings = get_option('espresso_calendar_settings');
-	if (!empty($check_settings))
-		return; //Keeps fom overwriting the settings
-	$espresso_calendar = array(
 	
-			'calendar_pages' => "0",
+	$calendar_default_settings = array(
+	
 			'espresso_page_post' => "R",
 			
 			'header_left' => 'prev , today',
@@ -68,7 +65,7 @@ function espresso_calendar_install() {
 			'enable_cat_classes' => false,
 			'time_format' => get_option('time_format'),
 			'show_time' => true,
-//			'throttle' => array('enable' => true, 'amount' => 100),
+
 			'disable_categories' => false,
 			'show_attendee_limit' => false,
 			
@@ -81,7 +78,12 @@ function espresso_calendar_install() {
 			'columnFormat_day' => 'dddd M/d',
 			
 	);
-	update_option('espresso_calendar_settings', $espresso_calendar);
+	// get saved settings
+	$calendar_settings = get_option( 'espresso_calendar_settings', array() );
+	// override defaults
+	$calendar_settings = array_merge( $calendar_default_settings, $calendar_settings );
+	// resave
+	update_option('espresso_calendar_settings', $calendar_settings);
 }
 
 
@@ -180,8 +182,7 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['tooltip_style'] = $_POST['tooltip_style'];
 		
 		$espresso_calendar['show_time'] = $_POST['show_time'];
-//		$espresso_calendar['throttle']['enable'] = $_POST['throttle_enable'];
-//		$espresso_calendar['throttle']['amount'] = $_POST['throttle_amount'];
+
 		$espresso_calendar['disable_categories'] = $_POST['disable_categories'];
 		$espresso_calendar['show_attendee_limit'] = $_POST['show_attendee_limit'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
@@ -197,8 +198,6 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['columnFormat_month'] = $_POST['columnFormat_month'];
 		$espresso_calendar['columnFormat_week'] = $_POST['columnFormat_week'];
 		$espresso_calendar['columnFormat_day'] = $_POST['columnFormat_day'];
-
-		$espresso_calendar['calendar_pages'] = $_POST['calendar_pages'] == '' ? 0 : $_POST['calendar_pages'];
 
 		update_option('espresso_calendar_settings', $espresso_calendar);
 		add_action('admin_notices', 'espresso_calendar_updated');
@@ -369,7 +368,7 @@ echo '<span class="example"> ' . date_i18n($espresso_calendar['time_format']) . 
 <?php _e('Will make the entire calendar (including header) a pixel height.', 'event_espresso'); ?>
 										</span></td>
 								</tr>
-								<tr>
+<!--								<tr>
 									<th> <label for="calendar_pages">
 <?php _e('Page(s) Displaying the Calendar', 'event_espresso'); ?>
 										</label>
@@ -379,7 +378,7 @@ echo '<span class="example"> ' . date_i18n($espresso_calendar['time_format']) . 
 										<span class="description">
 <?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma separated list of page id\'s. If left to the default of 0, the calendar stylesheet will load on every page of the site. You can find Page ID\'s by going to the WordPress menu Pages > All Pages, and hovering your mouse over the Page title, at the bottom of your browser a small box will appear with some code in it. Where it says post= then a number (post=4), that number is the Page ID. You can improve site performance and reduce conflicts by specifying which page/s have calendars on them.', 'event_espresso'); ?>
 										</span></td>
-								</tr>
+								</tr>-->
 								<tr>
 									<th> <label for="calendar_page_post">
 <?php _e('Link to Post or Registration Page', 'event_espresso'); ?>
