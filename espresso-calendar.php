@@ -60,7 +60,7 @@ class EE_Calendar {
 	private $_calendar_options = array();
 
 
-
+	private $timer = NULL;
 
 
 	/**
@@ -87,6 +87,9 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function __construct() {
+		
+		$this->timer = new Elapse_time();
+
 		// calendar_version
 		define( 'ESPRESSO_CALENDAR_VERSION', $this->calendar_version());
 		// define the plugin directory path and URL
@@ -301,6 +304,8 @@ class EE_Calendar {
 	 */
 	public function get_calendar_events() {
 		
+//	$this->timer->start();
+		
 		global $wpdb, $org_options;
 		remove_shortcode('LISTATTENDEES');
 		// get calendar options
@@ -340,9 +345,13 @@ class EE_Calendar {
 		}
 
 		$SQL .= " GROUP BY e.id ORDER BY e.start_date ASC "; // . $throttle;
-
 		// grab event data with event IDs as the array keys
 		$events_data = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), OBJECT_K );
+		
+//	$this->timer->stop();
+//	echo $this->timer->get_elapse( __LINE__ );
+//	$this->timer->start();
+
 //		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h3>$events_data</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
@@ -354,13 +363,14 @@ class EE_Calendar {
 			$SQL .= " FROM " . EVENTS_CATEGORY_REL_TABLE . ' r ';
 			$SQL .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 			$SQL .= " WHERE event_id IN ( '" . implode("', '", $EVT_IDs) . "' )";
-			$categories = $wpdb->get_results($wpdb->prepare($SQL, ''));
+			$categories = $wpdb->get_results( $wpdb->prepare( $SQL, NULL ));
+			//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			$event_categories = array();
 			foreach ($categories as $category) {
 				$event_categories[$category->event_id][] = $category;
 			}
 		}
-		
+
 		 $enable_cat_classes = isset( $this->_calendar_options['enable_cat_classes'] ) && $this->_calendar_options['enable_cat_classes'] ? TRUE : FALSE;
 		 $show_attendee_limit = isset( $this->_calendar_options['show_attendee_limit'] ) && $this->_calendar_options['show_attendee_limit'] ? TRUE : FALSE;
 		 $show_time = isset( $this->_calendar_options['show_time'] ) && $this->_calendar_options['show_time'] ? TRUE : FALSE;
@@ -372,14 +382,22 @@ class EE_Calendar {
 			$tooltip_at = isset( $this->_calendar_options['tooltips_pos']['at_1'] ) && ! empty( $this->_calendar_options['tooltips_pos']['at_1'] ) ? $this->_calendar_options['tooltips_pos']['at_1'] : 'top';
 			$tooltip_at .= isset( $this->_calendar_options['tooltips_pos']['at_2'] ) && ! empty( $this->_calendar_options['tooltips_pos']['at_2']) ? ' ' . $this->_calendar_options['tooltips_pos']['at_2'] : ' center';
 		}
+		$enable_calendar_thumbs = isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ? TRUE : FALSE;
 		
-		$thumbnail_size_w = get_option( 'thumbnail_size_w' );
-		$thumbnail_size_h = get_option( 'thumbnail_size_h' );
+		if ( $enable_calendar_thumbs ) {
+			$thumbnail_size_w = get_option( 'thumbnail_size_w' );
+			$thumbnail_size_h = get_option( 'thumbnail_size_h' );
+			$upload_dir = wp_upload_dir();
+		}
 
+//	$this->timer->stop();
+//	echo $this->timer->get_elapse( __LINE__ );
 		
 		$events = array();
 		$cntr = 0;
 		foreach ( $events_data as $event ) {
+
+//	$this->timer->start();
 			//Reset category colors
 			$events[ $cntr ]['color'] = '';
 			$events[ $cntr ]['textColor'] = '';
@@ -448,6 +466,10 @@ class EE_Calendar {
 				$events[ $cntr ]['className'] = '';
 			}
 			
+//	$this->timer->stop();
+//	echo $this->timer->get_elapse( __LINE__ );
+//	$this->timer->start();
+
 			$startTime = ! empty($event->start_time) ? '<span class="event-start-time">' . event_date_display($event->start_time, $this->_calendar_options['time_format']) . '</span>' : FALSE;
 			$endTime = ! empty($event->end_time) ? '<span class="event-end-time">' . event_date_display($event->end_time, $this->_calendar_options['time_format']) . '</span>' : FALSE;
 
@@ -462,7 +484,8 @@ class EE_Calendar {
 			$events[ $cntr ]['event_time_no_tags'] = wp_strip_all_tags( $events[ $cntr ]['event_time'] );
 
 			// Add thumb to eventArray
-			if ( isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] && isset( $event_meta['event_thumbnail_url'] )) {
+			if ( $enable_calendar_thumbs && isset( $event_meta['event_thumbnail_url'] ) && ! empty( $event_meta['event_thumbnail_url'] )) {
+				
 				// get pathinfo
 				$pathinfo = pathinfo( $event_meta['event_thumbnail_url'] );
 				// get dirname
@@ -473,17 +496,32 @@ class EE_Calendar {
 				$ext = $pathinfo['extension'];
 				// generate thumbnail size string ie: -150x150
 				$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
+				// check that thumbnail dimesions are not already included in filename
+				$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
 				$path_to_thumbnail = $dirname . $filename . $thumbnail_size . '.' . $ext;
+				
+//				echo '<h4>event_thumbnail_url : ' . $event_meta['event_thumbnail_url'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//				echo '<h4>$thumbnail_size : ' . $thumbnail_size . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//				echo '<h4>$path_to_thumbnail : ' . $path_to_thumbnail . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+				
 				// check if file exists
-				if ( ! $test_url = @fopen( $path_to_thumbnail, 'r' )) {
-					$path_to_thumbnail = $event_meta['event_thumbnail_url'];
-				}				
-				if ( $test_url !== FALSE ) { 
+				if ( $pathinfo['dirname'] == $upload_dir['baseurl'] ) {
+					// since the above is true we know the file is in the uploads so we can use file_exists() to verify it
+					if ( ! file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . $thumbnail_size . '.' . $ext )) {
+						// hmmm...  the scaled thumbnail doesn't exist, so better check that the original is still there, or set path to FALSE
+						$path_to_thumbnail = file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext ) ? $event_meta['event_thumbnail_url'] : FALSE;
+					}			
+				}
+				
+				if ( $path_to_thumbnail ) { 
 					$events[ $cntr ]['event_img_thumb'] = '<span class="thumb-wrap"><img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" /></span>';
-//					$events[ $cntr ]['title'] .= '<span class="thumb-wrap"><img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" /></span>';
 					$events[ $cntr ]['className'] .= ' event-has-thumb';
 				}
 			}
+
+
+
+
 
 			//Custom fields:
 			//These can be used to perform special functions in your display.
@@ -508,6 +546,10 @@ class EE_Calendar {
 				}
 			}
 
+//	$this->timer->stop();
+//	echo $this->timer->get_elapse( __LINE__ );
+//	$this->timer->start();
+
 			if ( $show_tooltips ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 				$events[ $cntr ]['description'] = espresso_format_content( $event->event_desc );
@@ -531,6 +573,7 @@ class EE_Calendar {
 					$attendee_limit = $reg_limit >= 999999 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $num_completed . ' / ' . $reg_limit;
 					$events[ $cntr ]['tooltip'] .= ' <p class="attendee_limit_qtip">' . $attendee_limit . '</p>';
 				}
+
 				//add link
 				$regButtonText = $event->display_reg_form == 'Y' ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
 				// reg open
@@ -557,6 +600,9 @@ class EE_Calendar {
 			// If set to true, events will be shown as all day events
 			$events[ $cntr ]['allDay'] = FALSE;
 			$cntr++;
+			
+//	$this->timer->stop();
+//	echo $this->timer->get_elapse( __LINE__ );
 
 		}
 //		echo '<h3>$events</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
@@ -565,6 +611,7 @@ class EE_Calendar {
 		die();
 
 	}
+
 
 
 
@@ -601,5 +648,26 @@ class EE_Calendar {
 
 }
 EE_Calendar::instance();
+
+
+
+
+// http://uniapple.net/blog/?p=274
+class Elapse_time {
+	private $_start = 0;
+	private $_stop = 0;
+	private $_elpase = 0;
+
+	public function start(){
+		$this->_start = array_sum(explode(' ',microtime()));
+	}
+	public function stop(){
+		$this->_stop = array_sum(explode(' ',microtime()));
+	}
+	public function get_elapse( $line_nmbr ){
+		$this->_elpase = $this->_stop - $this->_start;
+		return sprintf( 'L# %d) elpased time : %.3f<br/>', $line_nmbr, $this->_elpase );
+	}
+}
 // End of file espresso-calendar.php
 // Location: /espresso-calendar/espresso-calendar.php
