@@ -31,10 +31,8 @@ class Espresso_Calendar_Widget extends WP_Widget {
 	public function espresso_calendar_widget() {
 		/* Widget settings. */
 		$widget_options = array('classname' => 'espresso_calendar_widget', 'description' => 'Displays the Espresso Calendar in a widget.');
-
 		/* Widget control settings. */
 		$control_options = array('width' => 300, 'height' => 350, 'id_base' => 'espresso-calendar-widget');
-
 		/* Create the widget. */
 		$this->WP_Widget('espresso-calendar-widget', 'Event Espresso Calendar Widget', $widget_options, $control_options);
 	}
@@ -42,50 +40,49 @@ class Espresso_Calendar_Widget extends WP_Widget {
 
 
 	public function widget($args, $instance) {
-		global $wpdb, $org_options, $espresso_calendar, $load_espresso_calendar_scripts, $event_category_id, $events;
+
 		extract($args);
 
 		/* User-selected settings. */
 		$title = apply_filters('widget_title', $instance['title']);
-		$widget_show_expired = $instance['show_expired'];
-		$category_id = $instance['category_id'];
-		$calendar_page = $instance['calendar_page'];
-		$load_espresso_calendar_scripts = true;
 
-
-		if (!is_page($calendar_page)) { // if we aren't on the calendar page, we can output the calendar in the sidebar safely
-			// Before widget (defined by themes).
-			echo $before_widget;
-			// Title of widget (before and after defined by themes).
-			if ($title)
-				echo $before_title . $title . $after_title;
-
-			//Start the output of the calendar
-			if (!file_exists(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget-js.php')) {
-				echo 'An error occurred. The file espresso-calendar-widget-js.php could not be found.';
-			} else {
-				if (function_exists('espresso_calendar_do_stuff')) {
-					if (isset($category_id)) {
-						$event_category_id = $category_id;
-					}
-					if (!$widget_show_expired) {
-						$dont_show_expired = "if( event.expired ) {
-							element.css('display','none');
-							}";
-					} else {
-						$dont_show_expired = null;
-					}
-					do_action('action_hook_espresso_calendar_do_stuff');
-					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget-js.php');
-					//var_dump($events);
-					echo $espresso_calendar_widget;
-				} else {
-					echo 'sorry, I couldn\'t figure out the action you wanted me to run';
+		// get the current post
+		global $post;
+		if ( isset( $post->post_content )) {
+			 // check the post content for the short code
+			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') === FALSE ) {
+				// Before widget (defined by themes).
+				echo $before_widget;
+				// Title of widget (before and after defined by themes).
+				if ( $title ) {
+					echo $before_title . $title . $after_title;
 				}
-			}
+				
+				$attributes = array( 
+					'event_category_id' => $instance['category_id'], 
+					'show_expired' => $instance['show_expired'], 
+					'cal_view' => 'month',
+					'widget' => TRUE,
+					'header_left' => 'prev',
+					'header_center' => 'title',
+					'header_right' =>'next',
+					'titleFormat_month' => 'MMM yyyy'
+				);
 
-			// After widget (defined by themes).
-			echo $after_widget;
+				// get calendar options
+				$calendar_options = get_option( 'espresso_calendar_settings', array() );
+				if ( isset( $calendar_options['show_tooltips'] ) && $calendar_options['show_tooltips'] ? TRUE : FALSE ) {
+					wp_enqueue_style('qtip');
+					wp_enqueue_script('jquery-qtip-min');
+				}
+				wp_enqueue_style('calendar');
+				wp_enqueue_script('espresso_calendar');	
+
+				echo EE_Calendar::instance()->espresso_calendar( $attributes );
+
+				// After widget (defined by themes).
+				echo $after_widget;
+			}
 		}
 	}
 
