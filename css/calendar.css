@@ -584,6 +584,10 @@ table.fc-border-separate {
 /* Espresso Events custom styles
 -------------------------------------------------------------------------*/
 
+#espresso_calendar {
+	position: relative !important;
+}
+
 /* calendar thumbnail rules */
 /* if thumbnails are set to display for an event
 class name '.event-has-thumb' is added to top level parent event */
@@ -594,6 +598,9 @@ class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar .fc-header-title h2 {
 	margin:0; font-size: 2.5em; font-weight: bold; line-height: 1em;
 }
+#espresso_calendar.calendar_widget .fc-header-title h2 {
+	font-size: 2em; 
+}
 
 #espresso_calendar table.fc-header, 
 #espresso_calendar table.fc-border-separate, .fc-header th, .fc-header td { border: none; }
@@ -602,29 +609,29 @@ class name '.event-has-thumb' is added to top level parent event */
 	padding:.5em 0; background:#606267; color: #fff; font-weight: bold;
 }
 
-#espresso_calendar .fc-button,
-#espresso_calendar .fc-state-default { 
+#espresso_calendar.calendar_fullsize .fc-button,
+#espresso_calendar.calendar_fullsize .fc-state-default { 
 	height:2em; padding:.6em 1.2em; background:#EEEEE6;  border:none; border-radius: 0px; box-shadow:none; 
 	color:#606267; font-size:1em; line-height:2em; font-weight: bold; text-shadow:.5px .5px 0px #fff; opacity: 1;
 }
 
-#espresso_calendar .fc-button-prev, 
-#espresso_calendar .fc-button-next { 
+#espresso_calendar.calendar_fullsize .fc-button-prev, 
+#espresso_calendar.calendar_fullsize .fc-button-next { 
 	height:1.6em; padding:0 .6em; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
 	font-size:2em; line-height:1.5em; color:#777A80; text-shadow:.5px .5px 0px #fff;
 }
-#espresso_calendar .fc-button-prev,
-#espresso_calendar .fc-button-month {  border-top-left-radius: 1px; border-bottom-left-radius: 1px; }
-#espresso_calendar .fc-button-next,
-#espresso_calendar .fc-button-today  {  border-top-right-radius: 1px; border-bottom-right-radius: 1px; }
-#espresso_calendar .fc-header-space { display: inline-block; width:1px; height:2em; padding:.6em 0; background:#fff; }
-#espresso_calendar .fc-header-space + .fc-button { border-left:none;  }
-#espresso_calendar .fc-text-arrow { color:#777A80; text-shadow:.5px .5px 0px #fff; }
-#espresso_calendar .fc-other-month {  background:#fcfcfc; }
-#espresso_calendar .fc-state-highlight {  background:#FEFEDF; }
-#espresso_calendar .fc-day-number { font-size: 1.2em; line-height:1.2em; }
+#espresso_calendar.calendar_fullsize .fc-button-prev,
+#espresso_calendar.calendar_fullsize .fc-button-month {  border-top-left-radius: 1px; border-bottom-left-radius: 1px; }
+#espresso_calendar.calendar_fullsize .fc-button-next,
+#espresso_calendar.calendar_fullsize .fc-button-today  {  border-top-right-radius: 1px; border-bottom-right-radius: 1px; }
+#espresso_calendar.calendar_fullsize .fc-header-space { display: inline-block; width:1px; height:2em; padding:.6em 0; background:#fff; }
+#espresso_calendar.calendar_fullsize .fc-header-space + .fc-button { border-left:none;  }
+#espresso_calendar.calendar_fullsize .fc-text-arrow { color:#777A80; text-shadow:.5px .5px 0px #fff; }
+#espresso_calendar.calendar_fullsize .fc-other-month {  background:#fcfcfc; }
+#espresso_calendar.calendar_fullsize .fc-state-highlight {  background:#FEFEDF; }
+#espresso_calendar.calendar_fullsize .fc-day-number { font-size: 1.2em; line-height:1.2em; }
 
-#espresso_calendar .fc-view-agendaDay .fc-agenda-body td div {min-height:50px;}
+#espresso_calendar.calendar_fullsize .fc-view-agendaDay .fc-agenda-body td div {min-height:50px;}
 
 
 #espresso_calendar .fc-state-active,
@@ -640,6 +647,8 @@ class name '.event-has-thumb' is added to top level parent event */
 	padding:5px; background-color:#007BAE; border: none; 
 	border-radius:0; font-size:1em; line-height:1.1em; 
 }
+#espresso_calendar.calendar_widget .fc-event { padding:0px; }
+
 #espresso_calendar .fc-event a { letter-spacing:-.5px; }
 #espresso_calendar .fc-event a:hover { text-shadow: none; }
 #espresso_calendar .fc-event.expired { background:#EEEEE6 !important; color:#999 !important; }
@@ -753,6 +762,7 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 
 
 #ee-calendar-ajax-loader-img {
-	position:absolute; left:50%; margin:-16px 0 0 -33px;
+	position:absolute; top:-16px; left:50%; margin:0 0 0 -33px;
+	box-shadow: none !important;
 }
 
