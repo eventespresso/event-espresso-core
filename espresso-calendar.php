@@ -95,8 +95,8 @@ class EE_Calendar {
 		
 		if ( is_admin() ) {
 			
-			require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin_classic.php' );
-			register_activation_hook(  ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin_classic.php', 'espresso_calendar_install' );
+			require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
+			register_activation_hook(  __FILE__ , 'espresso_calendar_install' );
 			add_filter( 'plugin_action_links', 'espresso_calendar_plugin_actions', 10, 2 );
 			add_action( 'action_hook_espresso_calendar_update_api', 'espresso_calendar_load_pue_update' );
 			add_action( 'action_hook_espresso_featured_image_add_to_meta_box', 'espresso_calendar_add_to_featured_image_meta_box' );			
@@ -108,7 +108,7 @@ class EE_Calendar {
 			
 		} else {
 
-			add_action( 'wp', array( $this, 'calendar_init' ));
+			add_action('wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
 			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
 			
 		}
@@ -135,7 +135,6 @@ class EE_Calendar {
 	 * 	get_calendar_options
 	 *
 	 *  @access 	public
-	 *  @param 	boolean	$widget - whether being called by widget or not
 	 *  @return 	void
 	 */
 	private function _get_calendar_options() {
@@ -144,29 +143,7 @@ class EE_Calendar {
 		}
 		return $this->_calendar_options;
 	}
-	
 
-
-	/**
-	 * 	calendar_init - initialize
-	 *
-	 *  @access 	public
-	 *  @param 	boolean	$widget - whether being called by widget or not
-	 *  @return 	void
-	 */
-	public function calendar_init( $widget = FALSE ) {
-		// get the current post
-		global $post;
-		if ( isset( $post->post_content ) || $widget ) {
-			 // check the post content for the short code
-			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE || $widget ) {
-				// get calendar options
-				$this->_calendar_options = $this->_get_calendar_options();
-				add_action('wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
-			}
-		}
-	}
-	
 
 
 	/**
@@ -176,9 +153,11 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function calendar_scripts() {
+		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
 		//Load tooltips styles
-		if ( isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE ) {
+		$show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
+		if ( $show_tooltips ) {
 			// load jQuery qtip script from CDN with local fallback
 			$qtip_js_url = 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.js'; 
 			// is the URL accessible ?
@@ -189,9 +168,7 @@ class EE_Calendar {
 			$qtip_css_url = $test_url !== FALSE ? 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css' : ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/jquery.qtip.min.css';
 			// register jQuery qtip
 			wp_register_style( 'qtip', $qtip_css_url ); 
-			wp_enqueue_style('qtip');
 			wp_register_script( 'jquery-qtip-min', $qtip_js_url, array('jquery'), '2.1.1', TRUE);			
-			wp_enqueue_script('jquery-qtip-min');
 		}
 		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
 		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "css/calendar.css")) {
@@ -201,12 +178,23 @@ class EE_Calendar {
 			//calendar core style
 			wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/calendar.css'); 
 		}
-		wp_enqueue_style('calendar');
 		//core calendar script
 		wp_register_script( 'fullcalendar-min-js', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.2', TRUE ); 
-		// finally load our stuff
 		wp_register_script( 'espresso_calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), ESPRESSO_CALENDAR_VERSION, TRUE ); 
-		wp_enqueue_script('espresso_calendar');	
+
+		// get the current post
+		global $post;
+		if ( isset( $post->post_content )) {
+			 // check the post content for the short code
+			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE ) {
+				if ( $show_tooltips ) {
+					wp_enqueue_style('qtip');
+					wp_enqueue_script('jquery-qtip-min');
+				}
+				wp_enqueue_style('calendar');
+				wp_enqueue_script('espresso_calendar');	
+			}
+		}
 	}
 
 
@@ -222,24 +210,22 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function espresso_calendar( $atts ) {
+		// get calendar options
+		$this->_calendar_options = $this->_get_calendar_options();
+		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE ), $this->_calendar_options );
+		// make sure $atts is an array
 		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
-		$atts = shortcode_atts( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month' ), $atts );
-		
+		$atts = shortcode_atts( $defaults, $atts );
+		// grab some request vars
 		$atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
 		$atts['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $atts['show_expired'];
-
 		// loop thru atts and add to js options
 		foreach ( $atts as $att_name => $att_value ) {
 			if ( ! empty( $att_value )) {
-				$ee_calendar_js_options[$att_name] = $att_value;
+				$ee_calendar_js_options[$att_name] = is_array( $att_value ) ? stripslashes_deep( $att_value ) : stripslashes( $att_value );
 			}
 		}
-		$this->_calendar_options = $this->_get_calendar_options();
-		// loop thru calendar_options and add to js options
-		foreach ( $this->_calendar_options as $opt_name => $opt_value ) {
-			$ee_calendar_js_options[$opt_name] = is_array( $opt_value ) ? stripslashes_deep( $opt_value ) : stripslashes( $opt_value );
-		}	
 		// i18n some strings
 		$ee_calendar_js_options['monthNames'] = array( 
 			__('January', 'event_espresso'),
@@ -296,12 +282,13 @@ class EE_Calendar {
 		// Output admin-ajax.php URL with same protocol as current page
 		$ee_calendar_js_options['ajax_url'] = admin_url('admin-ajax.php', $protocol);
 		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
+		
+		$calendar_class = $atts['widget'] ? 'calendar_widget' : 'calendar_fullsize';
 
 		return '
-		<div id="ee-calendar-ajax-loader-dv">
-			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif">			
-		</div>
-		<div id="espresso_calendar"></div>';
+	<div id="espresso_calendar" class="'. $calendar_class . '">
+		<div id="ee-calendar-ajax-loader-dv"><img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif"></div>
+	</div>'; // CALENDAR GOES HERE
 	}
 
 
@@ -316,7 +303,7 @@ class EE_Calendar {
 		
 		global $wpdb, $org_options;
 		remove_shortcode('LISTATTENDEES');
-		
+		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
 		
 		$today = date( 'Y-m-d' );
@@ -528,6 +515,8 @@ class EE_Calendar {
 				if ( isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
 					$events[ $cntr ]['description'] = array_shift( explode( '<!--more-->', $events[ $cntr ]['description'] ));
 				}
+				// and just in case it's still too long, or somebody forgot to use the more tag...
+				$events[ $cntr ]['description'] = wp_trim_words( $events[ $cntr ]['description'], 50 );
 				// tooltip wrapper
 				$events[ $cntr ]['tooltip'] = '<div class="qtip_info">';
 				// show time ?
