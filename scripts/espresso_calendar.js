@@ -14,7 +14,7 @@ jQuery(document).ready(function($) {
 			right: eeCAL.header_right,
 		},
 		// Enables/disables use of jQuery UI theming.
-		//theme: eeCAL.theme,
+		theme: eeCAL.theme,
 		// The day that each week begins.
 		firstDay: eeCAL.firstDay,
 		// Whether to include Saturday/Sunday columns in any of the calendar views.
@@ -110,11 +110,11 @@ jQuery(document).ready(function($) {
 //			console.log( JSON.stringify( event.title, null, 4 ));
 //			console.log( JSON.stringify( element, null, 4 ));
 
-			if( event.event_img_thumb ){
+			if( event.event_img_thumb && ! eeCAL.widget ){
 				element.find('.fc-event-title').after( event.event_img_thumb );
 			}
 			
-			if( event.event_time ){
+			if( event.event_time && ! eeCAL.widget ){
 				element.find('.fc-event-title').after( event.event_time );
 			}
 
