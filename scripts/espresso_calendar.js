@@ -107,7 +107,7 @@ jQuery(document).ready(function($) {
 		// Triggered while an event is being rendered.
 		eventRender: function( event, element ) {
 			
-//			console.log( JSON.stringify( event.title, null, 4 ));
+//			console.log( JSON.stringify( 'event: ' + event.title, null, 4 ));
 //			console.log( JSON.stringify( element, null, 4 ));
 
 			if( event.event_img_thumb && ! eeCAL.widget ){
@@ -116,6 +116,16 @@ jQuery(document).ready(function($) {
 			
 			if( event.event_time && ! eeCAL.widget ){
 				element.find('.fc-event-title').after( event.event_time );
+			}
+
+			// because Chrome and Safari don't seem to render the images until they're actually being displayed...
+			// the element will have a zero height for images will borks any dimensional calculations that occur for event positioning, resizing, etc
+			var thumb_height = element.find('.ee-event-thumb').height();
+//			console.log( JSON.stringify( 'thumb_height: ' + thumb_height, null, 4 ));			
+			// so if the event is SUPPOSED to have an image, but the thumbnail height is ZERO!!! (events without thumbnails will have a thumb_height height of NULL)
+			if ( thumb_height == 0 ) {
+				// add 150 to the event height to compensate for the thumbnail
+				element.height( element.height() + 150 );
 			}
 
 			if ( eeCAL.show_tooltips ) {						
@@ -147,18 +157,6 @@ jQuery(document).ready(function($) {
 				element.attr( 'title', event.title + " - Event Times: " + event.event_time_no_tags );				
 			}
 			
-			// because Chrome and Safari don't seem to render the images until they're actually being displayed...
-			// the element will have a zero height for images will borks any dimensional calculations that occur for event positioning, resizing, etc
-			var thumb_height = element.find('.ee-event-thumb').height();
-			// so if the event is SUPPOSED to have an image, but the thumbnail height is ZERO!!! (events without thumbnails will have a thumb_height height of NULL)
-			if ( thumb_height == 0 ) {
-				// add 150 to the event height to compensate for the thumbnail
-				thumb_height = thumb_height +150;
-				// add set the element to the new height
-				element.height( thumb_height );
-			}
-
-
 		},
 		// Triggered after an event has been placed on the calendar in its final position.
 		eventAfterRender : function( event, element, view ) {
