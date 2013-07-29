@@ -639,15 +639,15 @@ class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar .fc-state-hover .fc-text-arrow { color:#2F3334 !important; }
 #espresso_calendar .fc-state-disabled { color:#999; display: none; }
 
-#espresso_calendar td { padding: 3px 0; }
+#espresso_calendar td { padding: 0; }
 #espresso_calendar .fc-grid .fc-day-number { padding:0 .5em; }
 	
 	
 #espresso_calendar .fc-event {
-	padding:5px; background-color:#007BAE; border: none; 
+	padding:5px; margin:0 1.5px 3px; background-color:#007BAE; border: none; 
 	border-radius:0; font-size:1em; line-height:1.1em; 
 }
-#espresso_calendar.calendar_widget .fc-event { padding:0px; }
+#espresso_calendar.calendar_widget .fc-event { padding:0px; margin:0 0 2px; }
 
 #espresso_calendar .fc-event a { letter-spacing:-.5px; }
 #espresso_calendar .fc-event a:hover { text-shadow: none; }
