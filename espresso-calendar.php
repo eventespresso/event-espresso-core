@@ -458,6 +458,10 @@ class EE_Calendar {
 			//important! time must be in iso8601 format 2010-05-10T08:30!!
 			$events[ $cntr ]['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
 			$events[ $cntr ]['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
+			
+			$start = strtotime( $event->start_date . ' ' . $event->start_time );
+			$end = strtotime( $event->end_date . ' ' . $event->end_time );
+			$events[ $cntr ]['event_days'] = max( ceil(( $end - $start ) / ( 60*60*24 )), 1 );
 
 			$expired = $events[ $cntr ]['end'] < date('Y-m-d') && $event->event_status != 'O' ? TRUE : FALSE;
 			if ( $expired ) {
@@ -500,6 +504,9 @@ class EE_Calendar {
 				$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
 				$path_to_thumbnail = $dirname . $filename . $thumbnail_size . '.' . $ext;
 				
+				$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
+				$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
+				
 //				echo '<h4>event_thumbnail_url : ' . $event_meta['event_thumbnail_url'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //				echo '<h4>$thumbnail_size : ' . $thumbnail_size . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //				echo '<h4>$path_to_thumbnail : ' . $path_to_thumbnail . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -514,7 +521,10 @@ class EE_Calendar {
 				}
 				
 				if ( $path_to_thumbnail ) { 
-					$events[ $cntr ]['event_img_thumb'] = '<span class="thumb-wrap"><img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" /></span>';
+					$events[ $cntr ]['event_img_thumb'] = '
+					<span class="thumb-wrap">
+						<img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" />
+					</span>';
 					$events[ $cntr ]['className'] .= ' event-has-thumb';
 				}
 			}
