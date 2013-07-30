@@ -3,6 +3,15 @@ jQuery(document).ready(function($) {
 	if ( eeCAL.weekends == undefined || eeCAL.weekends == '' ) {
 		eeCAL.weekends = false;
 	}
+	
+	var calendar_width = $('#espresso_calendar').width();
+	if ( eeCAL.weekends ) {
+		var day_width = calendar_width / 7;
+	} else {
+		var day_width = calendar_width / 5;
+	}
+	// padding and margin between event and day cell (this could be calculated via js)
+	var day_padding = 16;
 
 	$('#espresso_calendar').fullCalendar({
 		
@@ -93,14 +102,9 @@ jQuery(document).ready(function($) {
 					event_category_id: eeCAL.event_category_id
 				},
 				success: function( response ) {
-//					console.log( 'success' );
-//					console.log( JSON.stringify( response, null, 4 ));
 					callback( response );
 				},
 				error: function(response) {
-//					console.log( 'error' );
-//					console.log( JSON.stringify( response, null, 4 ));
-					//callback(response);
 				},
 			});
 		},
@@ -109,26 +113,55 @@ jQuery(document).ready(function($) {
 			
 //			console.log( JSON.stringify( 'event: ' + event.title, null, 4 ));
 //			console.log( JSON.stringify( element, null, 4 ));
-
+			// calculate the width for this event based on number of days x one day event width - 
+			var event_width = ( day_width * event.event_days ) - day_padding;
+			// set element to correct width
+			element.width( event_width );
+			// find the event title object
+			var event_title = element.find('.fc-event-title');
+			// get original height of element
+			var original_height = element.height();
+			// if there's an image, then add it
 			if( event.event_img_thumb && ! eeCAL.widget ){
-				element.find('.fc-event-title').after( event.event_img_thumb );
+				event_title.after( event.event_img_thumb );
+			}
+			// and get height of element after image is added
+			var height_with_img = element.height();
+			// if there's event times set, then add them
+			if( event.event_time && ! eeCAL.widget ){
+				event_title.after( event.event_time );
+			}
+			// and get height of element after times are added
+			var height_with_all = element.height();			
+			// again, check for image ( has to happen a second time after times get added )
+			if( event.event_img_thumb && ! eeCAL.widget ){
+				// and actually find it
+				var thumb = element.find('img');
+				// calculate it's height'
+				var thumb_height = thumb.height();
+				// so if the event actually has an image ( events without thumbnails will have a thumb_height of NULL )
+				if ( thumb_height != null ) {
+					// calculate base height for event, which basically just subtracts the original ( but often incorrect ) image height
+					var base_evt_height = original_height + ( height_with_all - height_with_img );
+					// multi day events
+					if ( event.event_days > 1 ) {
+						// can usually display the full thumbnail size becuz of their width
+						var img_height = parseInt( event.thumbnail_size_h );
+						// but in case thumbnail is still wider than multiday table cell
+						if ( parseInt( event.thumbnail_size_h ) > event_width ) {
+							// use that as the height
+							img_height = event_width - day_padding;
+						}
+					} else {
+						// for single day events
+						var img_height = parseInt( day_width - day_padding );
+					}
+					// set the element height to our newly calculated value
+					element.height( base_evt_height + img_height );
+				}
 			}
 			
-			if( event.event_time && ! eeCAL.widget ){
-				element.find('.fc-event-title').after( event.event_time );
-			}
-
-			// because Chrome and Safari don't seem to render the images until they're actually being displayed...
-			// the element will have a zero height for images will borks any dimensional calculations that occur for event positioning, resizing, etc
-			var thumb_height = element.find('.ee-event-thumb').height();
-//			console.log( JSON.stringify( 'thumb_height: ' + thumb_height, null, 4 ));			
-			// so if the event is SUPPOSED to have an image, but the thumbnail height is ZERO!!! (events without thumbnails will have a thumb_height height of NULL)
-			if ( thumb_height == 0 ) {
-				// add 150 to the event height to compensate for the thumbnail
-				element.height( element.height() + 150 );
-			}
-
-			if ( eeCAL.show_tooltips ) {						
+			if ( eeCAL.show_tooltips ) {				
 				element.qtip({
 					content: {
 						text: event.description + event.tooltip,
@@ -161,6 +194,9 @@ jQuery(document).ready(function($) {
 		// Triggered after an event has been placed on the calendar in its final position.
 		eventAfterRender : function( event, element, view ) {
 		},
+		// Triggered after all events have finished rendering.
+		eventAfterAllRender : function( view ) {
+		},
 		// Triggered when event fetching starts/stops.
 		loading: function( bool ) {
 			if ( bool ) $('#ee-calendar-ajax-loader-img').show();
@@ -173,6 +209,7 @@ jQuery(document).ready(function($) {
  		$(this).removeClass('ui-icon');
  		$(this).removeClass('ui-icon-close');
  	});	
+
 
 
 });
