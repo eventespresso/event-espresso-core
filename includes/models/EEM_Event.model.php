@@ -652,7 +652,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		}
 
 		//otherwise carry on as normal
-		parent::add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query);
+		return parent::add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query);
 	}
 
 
