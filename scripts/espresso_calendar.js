@@ -102,6 +102,20 @@ jQuery(document).ready(function($) {
 					event_category_id: eeCAL.event_category_id
 				},
 				success: function( response ) {
+					// because FullCalendar won't wait for images to load fully before positioning events in the table grid...
+					// loop through response data
+					$.each( response, function( index, element ){
+						// look for event thumbnail
+						var thumb = $(element.event_img_thumb).find('img');
+						// attempt to load image
+						$( thumb ).load( function() {
+							// copy image into container so that the browser is forced to d/l image
+							$('#espresso_calendar_images').append(thumb);
+							// then hide it immediately ( also remove the id attribute so as not to conflict with image used in the actual calendar )
+							$( thumb ).hide().attr( 'id', '' );
+						});								
+					});
+					// send event data to calendar for display
 					callback( response );
 				},
 				error: function(response) {
