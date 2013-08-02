@@ -55,9 +55,14 @@ function espresso_calendar_install() {
 			'weekends' => true,
 			'espresso_calendar_height' => '',
 			'enable_calendar_thumbs' => false,
+			
 			'show_tooltips' => true,
-			'tooltips_pos' => array('my_1' => "bottom", 'my_2' => "center", 'at_1' => "center", 'at_2' => "center"),
+			'tooltips_pos_my_1' => 'bottom',
+			'tooltips_pos_my_2' => 'center',
+			'tooltips_pos_at_1' => 'center',
+			'tooltips_pos_at_2' => 'center',
 			'tooltip_style' => 'qtip-light',
+			
 			'espresso_use_pickers' => false,
 			'ee_event_background' => '007BAE',
 			'ee_event_text_color' => 'FFFFFF',
@@ -198,10 +203,10 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
 		$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
 		$espresso_calendar['show_tooltips'] = $_POST['show_tooltips'];
-		$espresso_calendar['tooltips_pos']['my_1'] = $_POST['tooltips_pos_my_1'];
-		$espresso_calendar['tooltips_pos']['my_2'] = $_POST['tooltips_pos_my_2'];
-		$espresso_calendar['tooltips_pos']['at_1'] = $_POST['tooltips_pos_at_1'];
-		$espresso_calendar['tooltips_pos']['at_2'] = $_POST['tooltips_pos_at_2'];
+		$espresso_calendar['tooltips_pos_my_1'] = isset( $_POST['tooltips_pos_my_1'] ) ? $_POST['tooltips_pos_my_1'] : 'bottom';
+		$espresso_calendar['tooltips_pos_my_2'] = isset( $_POST['tooltips_pos_my_2'] ) ? $_POST['tooltips_pos_my_2'] : 'center';
+		$espresso_calendar['tooltips_pos_at_1'] = isset( $_POST['tooltips_pos_at_1'] ) ? $_POST['tooltips_pos_at_1'] : 'center';
+		$espresso_calendar['tooltips_pos_at_2'] = isset( $_POST['tooltips_pos_at_2'] ) ? $_POST['tooltips_pos_at_2'] : 'center';
 		$espresso_calendar['tooltip_style'] = $_POST['tooltip_style'];
 		
 		$espresso_calendar['show_time'] = $_POST['show_time'];
@@ -210,8 +215,8 @@ function espresso_calendar_config_mnu() {
 		$espresso_calendar['show_attendee_limit'] = $_POST['show_attendee_limit'];
 		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
 		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
-		$espresso_calendar['ee_event_background'] = (!empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : '007BAE';
-		$espresso_calendar['ee_event_text_color'] = (!empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : 'FFFFFF';
+		$espresso_calendar['ee_event_background'] = ( ! empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : '007BAE';
+		$espresso_calendar['ee_event_text_color'] = ( ! empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : 'FFFFFF';
 		$espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
 
 		$espresso_calendar['titleFormat_month'] = $_POST['titleFormat_month'];
@@ -567,11 +572,11 @@ espresso_calendar_updated();
 									</th>
 									<td>
 										<?php _e('Place Tooltip ', 'event_espresso'); ?>
-										<?php echo select_input('tooltips_pos_my_1', $values_1, !empty($espresso_calendar['tooltips_pos']['my_1']) ? $espresso_calendar['tooltips_pos']['my_1'] : 'bottom', 'id="tooltips_pos_my_1"'); ?>
-										<?php echo select_input('tooltips_pos_my_2', $values_2, !empty($espresso_calendar['tooltips_pos']['my_2']) ? $espresso_calendar['tooltips_pos']['my_2'] : 'center', 'id="tooltips_pos_my_2"'); ?>
+										<?php echo select_input('tooltips_pos_my_1', $values_1, !empty($espresso_calendar['tooltips_pos_my_1']) ? $espresso_calendar['tooltips_pos_my_1'] : 'bottom', 'id="tooltips_pos_my_1"'); ?>
+										<?php echo select_input('tooltips_pos_my_2', $values_2, !empty($espresso_calendar['tooltips_pos_my_2']) ? $espresso_calendar['tooltips_pos_my_2'] : 'center', 'id="tooltips_pos_my_2"'); ?>
 										<?php _e('at the Event\'s  ', 'event_espresso'); ?>
-										<?php echo select_input('tooltips_pos_at_1', $values_1, !empty($espresso_calendar['tooltips_pos']['at_1']) ? $espresso_calendar['tooltips_pos']['at_1'] : 'center', 'id="tooltips_pos_at_1"'); ?>
-										<?php echo select_input('tooltips_pos_at_2', $values_2, !empty($espresso_calendar['tooltips_pos']['at_2']) ? $espresso_calendar['tooltips_pos']['at_2'] : 'center', 'id="tooltips_pos_at_2"'); ?><br />
+										<?php echo select_input('tooltips_pos_at_1', $values_1, !empty($espresso_calendar['tooltips_pos_at_1']) ? $espresso_calendar['tooltips_pos_at_1'] : 'center', 'id="tooltips_pos_at_1"'); ?>
+										<?php echo select_input('tooltips_pos_at_2', $values_2, !empty($espresso_calendar['tooltips_pos_at_2']) ? $espresso_calendar['tooltips_pos_at_2'] : 'center', 'id="tooltips_pos_at_2"'); ?><br />
 										<span class="description">
 											<?php _e('Default: "Bottom Center" and "Center Center"', 'event_espresso'); ?>
 										</span>
