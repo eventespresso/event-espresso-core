@@ -221,11 +221,13 @@ final class EE_Registry {
 	 *	loads object creating classes - must be singletons
 	 * 
 	 *	@param string $class_name - simple class name ie: attendee
+	 *	@param array  $arguments - an array of arguments to pass to the class
+	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@return instantiated class object
 	 */
-	public function load_class ( $class_name, $arguments = array() ) {
+	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE ) {
 		// retreive instantiated class
-		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments );
+		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db );
 	}
 
 
@@ -287,11 +289,13 @@ final class EE_Registry {
 	 *	@param string $class_name - $class name
 	 *	@param string $type - file type - core? class? helper? model?
 	 *	@param boolean $arguments - an array of arguments to pass to the class upon instantiation 
+	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@return instantiated class object
 	 */	
-	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array() ) {
+	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE ) {
 		// make sure $class name prefix is uppercase
 		$class_name = strtoupper( trim( $class_prefix )) . trim( $class_name );
+
 		// check if class has already been loaded, and return it if it has been
 		if ( $class_name == 'EE_Request_Handler' && ! is_null( $this->REQ )) {
 			return $this->REQ;
@@ -300,6 +304,7 @@ final class EE_Registry {
 		} else if ( isset ( $this->LIB[ $class_name ] )) {
 			return $this->LIB[ $class_name ];
 		}
+		
 		// assume all paths lead nowhere
 		$path = FALSE;
 		// make sure $file_paths is an array
@@ -360,8 +365,15 @@ final class EE_Registry {
 			// instantiate the class and add to the LIB array for tracking
 			if ( $reflector->isInstantiable() ) {
 				$class_obj =  $reflector->newInstance( $arguments );
+			//EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
+			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
+			  $class_obj =  call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
+
+			} else if ( method_exists( $class_name, 'new_instance' ) ) {
+				$class_obj =  call_user_func_array( array( $class_name, 'new_instance' ), $arguments );
+
 			} else if ( method_exists( $class_name, 'instance' )) {
-				$class_obj =  call_user_func( array( $class_name, 'instance' ), $arguments );
+				$class_obj =  call_user_func_array( array( $class_name, 'instance' ), $arguments );
 			}
 			 
 		} catch ( EE_Error $e ) {
