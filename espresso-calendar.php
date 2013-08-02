@@ -290,8 +290,11 @@ class EE_Calendar {
 
 		return '
 	<div id="espresso_calendar" class="'. $calendar_class . '">
-		<div id="ee-calendar-ajax-loader-dv"><img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif"></div>
-	</div>'; // CALENDAR GOES HERE
+		<div id="ee-calendar-ajax-loader-dv">
+			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif">
+		</div>
+	</div>
+	<div id="espresso_calendar_images" ></div>'; 
 	}
 
 
@@ -523,7 +526,7 @@ class EE_Calendar {
 				if ( $path_to_thumbnail ) { 
 					$events[ $cntr ]['event_img_thumb'] = '
 					<span class="thumb-wrap">
-						<img class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" />
+						<img id="ee-event-thumb-' . $event->id . '" class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" />
 					</span>';
 					$events[ $cntr ]['className'] .= ' event-has-thumb';
 				}
