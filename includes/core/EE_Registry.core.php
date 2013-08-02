@@ -386,7 +386,7 @@ final class EE_Registry {
 				$this->REQ = $class_obj;
 			} else if ( property_exists( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
-			} else {
+			} else if ( !$from_db ) {
 				$this->LIB[ $class_name ] = $class_obj;
 			}
 			return $class_obj;
