@@ -75,7 +75,8 @@ class Espresso_Calendar_Widget extends WP_Widget {
 					wp_enqueue_style('qtip');
 					wp_enqueue_script('jquery-qtip-min');
 				}
-				wp_enqueue_style('calendar');
+				wp_enqueue_style('fullcalendar');
+				wp_enqueue_style('espresso_calendar');
 				wp_enqueue_script('espresso_calendar');	
 
 				echo EE_Calendar::instance()->espresso_calendar( $attributes );

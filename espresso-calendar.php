@@ -111,9 +111,9 @@ class EE_Calendar {
 			
 		} else {
 
-			add_action('wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
+			add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
 			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
-			
+
 		}
 
 		add_action( 'widgets_init', array( $this, 'widget_init' ));
@@ -217,6 +217,10 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function espresso_calendar( $atts ) {
+		
+		if ( ! function_exists( 'espresso_version' )) {
+			return '';
+		}		
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
 		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE ), $this->_calendar_options );
@@ -285,7 +289,7 @@ class EE_Calendar {
 			);
 			
 		global $org_options;
-		$ee_calendar_js_options['theme'] = ! empty($org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
+		$ee_calendar_js_options['theme'] = ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
 
 		// Get current page protocol
 		$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
@@ -302,6 +306,7 @@ class EE_Calendar {
 		</div>
 	</div>
 	<div id="espresso_calendar_images" ></div>'; 
+	
 	}
 
 
@@ -649,16 +654,9 @@ class EE_Calendar {
 	public function __destruct() { return FALSE; }		
 
 }
+EE_Calendar::instance();
 
-	
 
-
-function espresso_calendar_init() {
-	if( function_exists( 'espresso_version' )) {
-		EE_Calendar::instance();
-	}
-}
-add_action( 'init', 'espresso_calendar_init' );
 
 
 
