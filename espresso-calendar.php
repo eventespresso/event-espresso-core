@@ -88,7 +88,7 @@ class EE_Calendar {
 	 */
 	public function __construct() {
 		
-		$this->timer = new Elapse_time();
+//		$this->timer = new Elapse_time();
 
 		// calendar_version
 		define( 'ESPRESSO_CALENDAR_VERSION', $this->calendar_version());
@@ -173,13 +173,16 @@ class EE_Calendar {
 			wp_register_style( 'qtip', $qtip_css_url ); 
 			wp_register_script( 'jquery-qtip-min', $qtip_js_url, array('jquery'), '2.1.1', TRUE);			
 		}
+		
+		// load base calendar style
+		wp_register_style('fullcalendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/fullcalendar.css'); 
 		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
 		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "css/calendar.css")) {
 			//This is the url to the css file if available
-			wp_register_style('calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css'); 
+			wp_register_style('espresso_calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css'); 
 		} else {
-			//calendar core style
-			wp_register_style('calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/calendar.css'); 
+			// EE calendar style
+			wp_register_style('espresso_calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/calendar.css'); 
 		}
 		//core calendar script
 		wp_register_script( 'fullcalendar-min-js', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.2', TRUE ); 
@@ -194,7 +197,8 @@ class EE_Calendar {
 					wp_enqueue_style('qtip');
 					wp_enqueue_script('jquery-qtip-min');
 				}
-				wp_enqueue_style('calendar');
+				wp_enqueue_style('fullcalendar');
+				wp_enqueue_style('espresso_calendar');
 				wp_enqueue_script('espresso_calendar');	
 			}
 		}
@@ -279,6 +283,9 @@ class EE_Calendar {
 				__('Fri', 'event_espresso'),
 				__('Sat', 'event_espresso')
 			);
+			
+		global $org_options;
+		$ee_calendar_js_options['theme'] = ! empty($org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
 
 		// Get current page protocol
 		$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
@@ -380,10 +387,10 @@ class EE_Calendar {
 		 $show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
 		if ( $show_tooltips ) {
 			 $tooltip_style = isset( $this->_calendar_options['tooltip_style'] ) && $this->_calendar_options['tooltip_style'] ? $this->_calendar_options['tooltip_style'] : 'qtip-light';
-			$tooltip_my = isset( $this->_calendar_options['tooltips_pos']['my_1'] ) && ! empty( $this->_calendar_options['tooltips_pos']['my_1'] ) ? $this->_calendar_options['tooltips_pos']['my_1'] : 'bottom';
-			$tooltip_my .= isset( $this->_calendar_options['tooltips_pos']['my_2'] ) && ! empty( $this->_calendar_options['tooltips_pos']['my_2'] ) ? ' ' . $this->_calendar_options['tooltips_pos']['my_2'] : ' center';
-			$tooltip_at = isset( $this->_calendar_options['tooltips_pos']['at_1'] ) && ! empty( $this->_calendar_options['tooltips_pos']['at_1'] ) ? $this->_calendar_options['tooltips_pos']['at_1'] : 'top';
-			$tooltip_at .= isset( $this->_calendar_options['tooltips_pos']['at_2'] ) && ! empty( $this->_calendar_options['tooltips_pos']['at_2']) ? ' ' . $this->_calendar_options['tooltips_pos']['at_2'] : ' center';
+			$tooltip_my = isset( $this->_calendar_options['tooltips_pos_my_1'] ) && ! empty( $this->_calendar_options['tooltips_pos_my_1'] ) ? $this->_calendar_options['tooltips_pos_my_1'] : 'bottom';
+			$tooltip_my .= isset( $this->_calendar_options['tooltips_pos_my_2'] ) && ! empty( $this->_calendar_options['tooltips_pos_my_2'] ) ? ' ' . $this->_calendar_options['tooltips_pos_my_2'] : ' center';
+			$tooltip_at = isset( $this->_calendar_options['tooltips_pos_at_1'] ) && ! empty( $this->_calendar_options['tooltips_pos_at_1'] ) ? $this->_calendar_options['tooltips_pos_at_1'] : 'top';
+			$tooltip_at .= isset( $this->_calendar_options['tooltips_pos_at_2'] ) && ! empty( $this->_calendar_options['tooltips_pos_at_2']) ? ' ' . $this->_calendar_options['tooltips_pos_at_2'] : ' center';
 		}
 		$enable_calendar_thumbs = isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ? TRUE : FALSE;
 		
@@ -401,13 +408,10 @@ class EE_Calendar {
 		foreach ( $events_data as $event ) {
 
 //	$this->timer->start();
+
 			//Reset category colors
 			$events[ $cntr ]['color'] = '';
 			$events[ $cntr ]['textColor'] = '';
-			
-			global $this_event_id;
-			
-			$this_event_id = $event->id;
 
 			//Get details about the category of the event
 			if ($use_categories) {
@@ -429,32 +433,15 @@ class EE_Calendar {
 				}
 			}
 
-			$event_meta = unserialize($event->event_meta);
-			$this->_calendar_options['espresso_page_post'] = isset( $this->_calendar_options['espresso_page_post'] ) ? $this->_calendar_options['espresso_page_post'] : 'R';
-
-			if (function_exists('espresso_version')) {
-				switch ($this->_calendar_options['espresso_page_post']) {
-
-					case 'P':
-//						$registration_url = get_home_url() . '/?p=' . $event->post_id;
-						$registration_url = get_permalink( $event->id );
-						break;
-					case 'R':
-					default:
-						$registration_url = add_query_arg( 'ee', $event->id, get_permalink( $org_options['event_page_id'] ));
-						break;
-				}
-			}
-			// Build calendar array from $event data
 			//Gets the URL of the event and links the event to the registration form.
+			$this->_calendar_options['espresso_page_post'] = isset( $this->_calendar_options['espresso_page_post'] ) ? $this->_calendar_options['espresso_page_post'] : 'R';
+			$registration_url = $this->_calendar_options['espresso_page_post'] == 'P' ? get_permalink( $event->id ) : add_query_arg( 'ee', $event->id, get_permalink( $org_options['event_page_id'] ));
 			$events[ $cntr ]['url'] = $event->externalURL != '' ? htmlspecialchars_decode($event->externalURL) : $registration_url;
 
 			//Id of the event
 			$events[ $cntr ]['id'] = $event->id;
-
 			//Get the title of the event
-			$ee_event_title = htmlspecialchars_decode(stripslashes($event->event_name ), ENT_QUOTES);
-			$events[ $cntr ]['title'] = $ee_event_title;
+			$events[ $cntr ]['title'] = htmlspecialchars_decode(stripslashes($event->event_name ), ENT_QUOTES);
 
 
 			//Get the start and end times for each event
@@ -489,6 +476,8 @@ class EE_Calendar {
 			}
 			
 			$events[ $cntr ]['event_time_no_tags'] = wp_strip_all_tags( $events[ $cntr ]['event_time'] );
+
+			$event_meta = unserialize($event->event_meta);
 
 			// Add thumb to eventArray
 			if ( $enable_calendar_thumbs && isset( $event_meta['event_thumbnail_url'] ) && ! empty( $event_meta['event_thumbnail_url'] )) {
@@ -660,13 +649,22 @@ class EE_Calendar {
 	public function __destruct() { return FALSE; }		
 
 }
-EE_Calendar::instance();
+
+	
+
+
+function espresso_calendar_init() {
+	if( function_exists( 'espresso_version' )) {
+		EE_Calendar::instance();
+	}
+}
+add_action( 'init', 'espresso_calendar_init' );
 
 
 
 
 // http://uniapple.net/blog/?p=274
-class Elapse_time {
+/*class Elapse_time {
 	private $_start = 0;
 	private $_stop = 0;
 	private $_elpase = 0;
@@ -681,6 +679,6 @@ class Elapse_time {
 		$this->_elpase = $this->_stop - $this->_start;
 		return sprintf( 'L# %d) elpased time : %.3f<br/>', $line_nmbr, $this->_elpase );
 	}
-}
+}*/
 // End of file espresso-calendar.php
 // Location: /espresso-calendar/espresso-calendar.php
