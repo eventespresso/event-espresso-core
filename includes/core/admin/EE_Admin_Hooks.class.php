@@ -127,7 +127,15 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * 		 	'footer' => TRUE //defaults to true (styles don't use this parameter)
 	 * 	 	),
 	 * 	'enqueues' => array( //this time each key corresponds to the script ref followed by an array of page routes the script gets enqueued on.
-	 * 		'script_ref' => array('route_one', 'route_two');
+	 * 		'script_ref' => array('route_one', 'route_two')
+	 * 	),
+	 * 	'localize' => array( //this allows you to set a localize object.  Indicate which script the object is being attached to and then include an array indexed by the name of the object and the array of key/value pairs for the object.
+	 * 		'scrip_ref' => array(
+	 * 			'NAME_OF_JS_OBJECT' => array(
+	 * 				'translate_ref' => __('localized_string', 'event_espresso'),
+	 * 				'some_data' => 5
+	 * 			)
+	 * 		)
 	 * 	)
 	 * )
 	 * @var array
@@ -305,6 +313,11 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 				if ( in_array($this->_current_route, $routes ) ) {
 					$this->_scripts_styles['registers'][$ref]['type'] == 'js' ? wp_enqueue_script($ref) : wp_enqueue_style($ref);
+					//if we have a localization for the script let's do that too.
+					if ( isset( $this->_scripts_styles['localize'][$ref] ) ) {
+						$object_name = key($this->_scripts_styles['localize'][$ref]);
+						wp_localize_script($ref, $object_name , $this->_scripts_styles['localize'][$ref][$object_name] );
+					}
 				}
 			}
 		}
