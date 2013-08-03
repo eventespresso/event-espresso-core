@@ -1001,15 +1001,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 			$show_no_event_price_msg = TRUE;
 		}
-		
+		$price_types = array();
 
 		foreach ($PRT->get_all() as $type) {
 			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 			if ( $type->is_global() ) {
 				$global_price_types[ $type->ID() ] = $type;
-			} else {
+			} else { 
 				$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			}						
+			}
 		}
 		
 		$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
@@ -1022,31 +1022,33 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['event'] = $row_args['event'] = $this->_cpt_model_obj;
 		$template_args['price_rows'] = array();
 		$row_template = apply_filters('FHEE_events_pricing_meta_box_row_template', EVENTS_TEMPLATE_PATH . 'edit_event_price_metabox_content_row.template.php');
+		$row = 1;
+		$price_ids = array();
 
 		if ( !empty( $all_prices ) ) :
 			
 			foreach ( $all_prices as $price_type => $prices ) :
 				foreach ( $prices as $price ) :
+					if ( $price->ID() !== 0 )
+						$price_ids[] = $price->ID();
 					if ( !$price->deleted() ) :
 						$row_args['disabled'] = ! $price->is_active() ? ' disabled="disabled"' : ''; 
 						$row_args['disabled_class'] = ! $price->is_active() ? ' input-disabled' : '';
-						$row_args['inactive'] = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE;
-						$row_args['is_percent'] = $price->ID() ? $price->type_obj()->is_percent() : FALSE;
-						if ( $price->use_dates() ){
-							$today = time();
-							if ( $today < $price->start() ){
-								$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
-							} elseif ( $today > $price->start() && $today < $price->end() ) {
-								$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
-							} else {
-								$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
-								$row_args['disabled'] = ' disabled="disabled"'; 
-								$row_args['disabled_class'] = ' input-disabled'; 
-								$row_args['inactive'] = '<span class="inactive-price">'.__('This Event Price option has expired - edit advanced settings to reactivate', 'event_espresso').'</span>';
-							}
+						$row_args['inactive'] = ! $price->is_active() ? '<span class="inactive-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE;
+						$row_args['is_percent'] = $price->type_obj() ? $price->type_obj()->is_percent() : FALSE;
+						
+						$today = time();
+						if ( $today < $price->start() ){
+							$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
+						} elseif ( $today > $price->start() && $today < $price->end() ) {
+							$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
 						} else {
-							$price_date_status = '';
+							$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
+							$row_args['disabled'] = ' disabled="disabled"'; 
+							$row_args['disabled_class'] = ' input-disabled'; 
+							$row_args['inactive'] = '<span class="inactive-price">'.__('This Event Price option has expired - edit advanced settings to reactivate', 'event_espresso').'</span>';
 						}
+						
 						$price_type = $price->type_obj();
 						$row_args['type_label'] = $price_type->name() . ' ' . $price_date_status;
 						$row_args['price'] = $price;
@@ -1055,29 +1057,33 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]';
 						$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID-'.$price->ID().'" style="width:auto;"', 'edit-ticket-price-input' );
 						$row_args['price_type'] = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE;
-						$row_args['price_amount'] = $price_type->is_percent() ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 );
 
 						$row_args['counter'] = count($prices);
+						$row_args['row'] = $row;
+						$row_args['EVT_ID'] = $this->_cpt_model_obj->ID();
 						$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
 					endif;
+					$row++;
 				endforeach;
 			endforeach;
-			else :
-				$row_args['type_label'] = __('New Event Price', 'event_espresso');
-				$row_args['price'] = $PRC->create_default_object();
-				$row_args['disabled_class'] = '';
-				$row_args['disabled'] = '';
-				$row_args['is_percent'] = FALSE;
-				$row_args['inactive'] = FALSE;
-				$row_args['price_amount'] = '';
-				$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
-			endif;
-			$price_types = empty( $all_prices ) ? array(  array( 'id' => 2, 'text' => __('Event Price', 'event_espresso'), 'order' => 0 )) : $price_types;
-			$template_args['new_ticket_price_selector'] = EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' );
-			$template_args['price_types'] = $price_types;
+		else :
+			$row_args['row'] = $row;
+			$row_args['type_label'] = __('New Event Price', 'event_espresso');
+			$row_args['price'] = $PRC->create_default_object();
+			$row_args['disabled_class'] = '';
+			$row_args['disabled'] = '';
+			$row_args['is_percent'] = FALSE;
+			$row_args['inactive'] = FALSE;
+			$row_args['price_amount'] = '';
+			$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
+		endif;
+		$price_types = empty( $all_prices ) ? array(  array( 'id' => 2, 'text' => __('Event Price', 'event_espresso'), 'order' => 0 )) : $price_types;
+		$template_args['new_ticket_price_selector'] = EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' );
+		$template_args['price_types'] = $price_types;
+		$template_args['price_ids'] = implode(',', $price_ids );
 
-			$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'event_price_metabox_content.template.php' );
-			espresso_display_template($main_template, $template_args);
+		$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'event_price_metabox_content.template.php' );
+		espresso_display_template($main_template, $template_args);
 	}
 
 

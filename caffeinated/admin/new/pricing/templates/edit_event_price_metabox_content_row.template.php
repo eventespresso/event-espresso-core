@@ -1,6 +1,7 @@
 <tr>
 	<td colspan="6">
-		<div id="event-price-<?php echo $price->ID(); ?>" class="event-price-dv">
+		<div id="event-price-<?php echo $row; ?>" class="event-price-dv">
+			<input type="hidden" id="quick-edit-ticket-price-id-<?php echo $row; ?>" name="quick-edit-ticket-price[<?php echo $row; ?>][PRC_ID]" value="<?php echo $price->ID(); ?>" />
 			<table class="ticket-price-quick-edit-tbl" width="100%">
 				<tr>
 				
@@ -12,26 +13,22 @@
 					<td class="order-column ticket-price-quick-edit-column"> 
 						<?php //echo $PRT->type[$price->type()]->order(); ?>
 						<div class="small-screen-table-label"><?php echo __('Order', 'event_espresso') ?></div>
-						<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" value="<?php echo $price->order(); ?>"<?php echo $disabled; ?>/>							
-					</td> <?php //echo $PRT->type[$price->type()]->order(); ?>
+						<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_order-<?php echo $row; ?>" name="quick_edit_ticket_price[<?php echo $row; ?>][PRC_order]" value="<?php echo $price->order(); ?>"<?php echo $disabled; ?>/>							
+					</td>
 					
 					<td class="name-column ticket-price-quick-edit-column"> 
-						<?php //echo $price->name(); ?>
 						<div class="small-screen-table-label"><?php echo __('Name', 'event_espresso') ?></div>
-						<input class="edit-ticket-price-input quick-edit regular-text<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_name-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>" <?php echo $disabled; ?>/>
+						<input class="edit-ticket-price-input quick-edit regular-text<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_name-<?php echo $row; ?>" name="quick_edit_ticket_price[<?php echo $row; ?>][PRC_name]" value="<?php echo $price->name(); ?>" <?php echo $disabled; ?>/>
 					</td> 
 					
 					<td class="amount-column ticket-price-quick-edit-column"> 
 						<div class="small-screen-table-label"><?php echo __('Amount', 'event_espresso') ?></div>
 						<span class="cur-sign jst-rght"><?php echo  $price->type_obj()->is_percent() ?  '' : $org_options['currency_symbol']; ?></span>
 
-						<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_amount-<?php echo $price->ID(); ?>" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
+						<input class="edit-ticket-price-input quick-edit small-text jst-rght<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_amount-<?php echo $row; ?>" name="quick_edit_ticket_price[<?php echo $row; ?>][PRC_amount]" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
 						<span class="percent-sign jst-left"><?php echo $price->type_obj()->is_percent() ? '%' : ''; ?></span>
 					</td> 
 					
-					<!--<td class="percent-column ticket-price-quick-edit-column"> 
-						<?php echo $price->type_obj()->is_percent() ? '%' : ''; ?>
-					</td> -->
 					
 					<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS
 					<td class="tckts-left-column" style="width:7.5%; height:2.5em; text-align:right;"> 
@@ -46,10 +43,10 @@
 							<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/tickets-1-16x16.png" width="16" height="16" alt="<?php _e('tickets left', 'event_espresso'); ?>"/>
 						</a>
 						 */ ?>
-						<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>"  title="Edit Advanced Settings for this Event Price">
+						<a class='edit-event-price-lnk evt-prc-btn' rel="<?php echo $row; ?>"  title="Edit Advanced Settings for this Event Price">
 							<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/settings-16x16.png" width="16" height="16" alt="<?php _e('edit', 'event_espresso'); ?>"/>
 						</a>
-						<a class='delete-event-price-lnk evt-prc-btn' rel="<?php echo $price->ID(); ?>" title="Delete this Event Price" >
+						<a class='delete-event-price-lnk evt-prc-btn' rel="<?php echo $row; ?>" title="Delete this Event Price" >
 							<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/trash-16x16.png" width="16" height="16" alt="<?php _e('trash', 'event_espresso'); ?>"/>
 						</a>
 					</td>
@@ -59,7 +56,7 @@
 						<div class="small-screen-table-label"><?php echo __('Description', 'event_espresso') ?></div>		
 						<?php //echo $price->desc(); ?>
 						<!--<input class="edit-ticket-price-input quick-edit widefat" type="text" id="quick-edit-ticket-price[<?php echo $price->ID(); ?>][PRC_desc]" name="quick_edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]" value="<?php echo $price->desc(); ?>" style="width:100%;"/>-->
-						<p class="description"><?php echo $inactive ? $inactive : implode( ' ', array_slice( explode( ' ', stripslashes( $price->desc() )), 0, 20 )); ?></p>
+						<p class="description"><?php echo $inactive ? $inactive : stripslashes( $price->desc() ); ?></p>
 					</td> 
 					
 
@@ -71,7 +68,7 @@
 
 <tr>
 	<td colspan="6">					
-		<div id="edit-event-price-<?php echo $price->ID(); ?>" class="event-price-settings-dv">
+		<div id="edit-event-price-<?php echo $row; ?>" class="event-price-settings-dv" style="display:none">
 		
 			<h4><?php _e('Edit : ', 'event_espresso'); ?><?php echo $price->name(); ?></h4>
 			<?php //echo printr( $price, '$price' ); ?>
@@ -83,20 +80,20 @@
 						<td>
 							<?php echo $edit_ticket_price_select; ?>
 							<p class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></p>
-							<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_ID]" type="hidden" value="<?php echo $price->ID(); ?>"/>
-							<input name="edit_ticket_price[<?php echo $price->ID()?>][EVT_ID]" type="hidden" value="<?php echo $event->ID(); ?>"/>
-							<input name="edit_ticket_price[<?php echo $price->ID()?>][PRT_is_global]" type="hidden" value="<?php echo $price_type?>"/>
-							<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_overrides]" type="hidden" value="<?php echo $price->overrides()?>"/>
-							<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_deleted]" id="edit-ticket-price-PRC_deleted-<?php echo $price->ID(); ?>" type="hidden" value="<?php echo $price->deleted()?>"/>										
-							<input name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_order]" id="edit-ticket-price-PRC_order-<?php echo $price->ID(); ?>" type="hidden"  value="<?php echo $price->type_obj()->order(); ?>"/>										
-							<input name="edit_ticket_price[<?php echo $price->ID()?>][use_quick_edit]" type="hidden" value="1"/>										
+							<input name="edit_ticket_price[<?php echo $row; ?>][PRC_ID]" type="hidden" value="<?php echo $price->ID(); ; ?>"/>
+							<input name="edit_ticket_price[<?php echo $row; ?>][EVT_ID]" type="hidden" value="<?php echo $EVT_ID; ?>"/>
+							<input name="edit_ticket_price[<?php echo $row; ?>][PRT_is_global]" type="hidden" value="<?php echo $price_type?>"/>
+							<input name="edit_ticket_price[<?php echo $row; ?>][PRC_overrides]" type="hidden" value="<?php echo $price->overrides()?>"/>
+							<input name="edit_ticket_price[<?php echo $row; ?>][PRC_deleted]" id="edit-ticket-price-PRC_deleted-<?php echo $row; ; ?>" type="hidden" value="<?php echo $price->deleted()?>"/>										
+							<input name="edit_ticket_price[<?php echo $row; ?>][PRC_order]" id="edit-ticket-price-PRC_order-<?php echo $row; ?>" type="hidden"  value="<?php echo $price->type_obj()->order(); ?>"/>										
+							<input name="edit_ticket_price[<?php echo $row; ?>][use_quick_edit]" type="hidden" value="1"/>										
 						</td>
 					</tr>
 					
 					<tr valign="top">
 						<th><label for="edit-ticket-price-PRC_name"><?php _e('Name', 'event_espresso'); ?></label></th>
 						<td>
-							<input class="edit-ticket-price-input regular-text" type="text" id="edit-ticket-price-PRC_name-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_name]" value="<?php echo $price->name(); ?>"/>
+							<input class="edit-ticket-price-input regular-text" type="text" id="edit-ticket-price-PRC_name-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_name]" value="<?php echo $price->name(); ?>"/>
 							<p class="description">&nbsp;&nbsp;<?php _e('The name that site visitors will see for this Price.', 'event_espresso'); ?></p>
 						</td>
 					</tr>
@@ -104,7 +101,7 @@
 					<tr valign="top">
 						<th><label for="edit-ticket-price-PRC_desc"><?php _e('Description', 'event_espresso'); ?></label></th>
 						<td>
-							<textarea class="edit-ticket-price-input widefat" id="edit-ticket-price-PRC_desc-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_desc]"><?php echo stripslashes( $price->desc() ); ?></textarea><br/>
+							<textarea class="edit-ticket-price-input widefat" id="edit-ticket-price-PRC_desc-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_desc]"><?php echo stripslashes( $price->desc() ); ?></textarea><br/>
 							<p class="description"><?php _e('A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.', 'event_espresso'); ?></p>
 						</td>							
 					</tr>
@@ -112,7 +109,7 @@
 					<tr valign="top">
 						<th><label for="edit-ticket-price-PRC_amount"><?php _e('Amount', 'event_espresso'); ?></label></th>
 						<td>
-							<input class="edit-ticket-price-input small-text" type="text" id="edit-ticket-price-PRC_amount-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_amount]" style="text-align:right;" value="<?php echo $price_amount; ?>"/>
+							<input class="edit-ticket-price-input small-text" type="text" id="edit-ticket-price-PRC_amount-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_amount]" style="text-align:right;" value="<?php echo $price_amount; ?>"/>
 							<p class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></p>
 						</td>
 					</tr>
@@ -138,12 +135,12 @@
 					<tr valign="top">
 						<th>
 							<div class="edit-ticket-price-dates">
-								<label for="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label>
+								<label for="edit_ticket_price[<?php echo $row; ?>][PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label>
 							</div>
 						</th>
 						<td>
 							<div class="edit-ticket-price-dates">
-								<input id="edit-ticket-price-PRC_start_date-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_start_date]" type="text" class="datepicker edit-ticket-price-input" value="<?php echo $price->start_date(); ?>" />
+								<input id="edit-ticket-price-PRC_start_date-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_start_date]" type="text" class="datepicker edit-ticket-price-input" value="<?php echo $price->start_date(); ?>" />
 								<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed.' ), 'event_espresso'); ?></p>
 							</div>
 						</td>
@@ -152,12 +149,12 @@
 					<tr valign="top">
 						<th>
 							<div class="edit-ticket-price-dates">
-							<label for="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_end_date]"><?php _e('End Date', 'event_espresso'); ?></label>
+							<label for="edit_ticket_price[<?php echo $row; ?>][PRC_end_date]"><?php _e('End Date', 'event_espresso'); ?></label>
 							</div>
 						</th>
 						<td>
 							<div class="edit-ticket-price-dates">
-							<input id="edit-ticket-price-PRC_end_date-<?php echo $price->ID(); ?>" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_end_date]" type="text" class="datepicker edit-ticket-price-input" value="<?php echo $price->end_date(); ?>" />
+							<input id="edit-ticket-price-PRC_end_date-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_end_date]" type="text" class="datepicker edit-ticket-price-input" value="<?php echo $price->end_date(); ?>" />
 							<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed.' ), 'event_espresso'); ?></p>
 							</div>
 						</td>
@@ -167,23 +164,23 @@
 						<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
 						<td>
 							<label class="edit-ticket-price-radio-lbl">
-								<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="1" style="margin-right:5px;" <?php echo $price->is_active() ? 'checked="checked"' : '' ?> />
+								<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $row; ?>][PRC_is_active]" value="1" style="margin-right:5px;" <?php echo $price->is_active() ? 'checked="checked"' : '' ?> />
 								<?php _e('Yes', 'event_espresso');?>
 							</label>
 							<label class="edit-ticket-price-radio-lbl">
-								<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $price->ID(); ?>][PRC_is_active]" value="0" style="margin-right:5px;" <?php echo ! $price->is_active() ? 'checked="checked"' : '' ?> />
+								<input class="edit-ticket-price-input" type="radio" name="edit_ticket_price[<?php echo $row; ?>][PRC_is_active]" value="0" style="margin-right:5px;" <?php echo ! $price->is_active() ? 'checked="checked"' : '' ?> />
 								<?php _e('No', 'event_espresso');?>
 							</label>
 							<p class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></p>
 						</td>
 					</tr>
 					<?php else : ?>
-							<input name="edit_ticket_price[<?php echo $price->ID()?>][PRC_is_active]" type="hidden" value="1"/>										
+							<input name="edit_ticket_price[<?php echo $row?>][PRC_is_active]" type="hidden" value="1"/>										
 					<?php endif; ?>
 					<tr valign="top">
 						<th></th>
 						<td>
-							<br/><a class="cancel-event-price-btn button-secondary" rel="<?php echo $price->ID(); ?>" ><?php _e('close', 'event_espresso'); ?></a>
+							<br/><a class="cancel-event-price-btn button-secondary" rel="<?php echo $row; ?>" ><?php _e('close', 'event_espresso'); ?></a>
 						</td>
 					</tr>
 				</tbody>

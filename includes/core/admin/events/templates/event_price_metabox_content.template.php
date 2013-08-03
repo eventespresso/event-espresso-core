@@ -31,6 +31,4 @@
 			
 <br class="clear"/><br/>
 
-<input id="edited-ticket-price-IDs" name="edited_ticket_price_IDs" type="hidden" value="" />
-
-<input  type="hidden" id="price-count-inp" name="price_count" value="<?php echo count($price_rows) - 1; ?>"/>
+<input id="price-IDs" name="price-IDs" type="hidden" value="<?php echo $price_ids; ?>" />
