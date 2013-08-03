@@ -254,7 +254,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	public function get_all_event_prices_for_admin( $EVT_ID = FALSE ) {
 		//if there is no evt_id, get prices with no event ID, are global, are not a tax, and are active
 		//return taht list
-		$global_prices =	$this->get_all_default_prices();
+		$global_prices = $this->get_all_default_prices();
 		
 		if ( ! $EVT_ID ) {
 			
@@ -287,7 +287,8 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		
 		$event_prices = $this->get_all(array(
 			array(
-				'EVT_ID'=>$EVT_ID
+				'EVT_ID'=>$EVT_ID,
+				'PRC_deleted' => 0
 				),
 			'order_by'=> array('PRC_order' => 'ASC')
 		));
