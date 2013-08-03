@@ -89,12 +89,12 @@ class EE_Price extends EE_Base_Class{
 
 
 	/**
-	*	Number of tickets left or spaces available at this Price Level
+	*	This is the tickets that have been sold at this price.
 	*
 	*	@access	protected
 	*	@var int
 	*/
-	protected $_PRC_tckts_left = NULL; 				
+	protected $_PRC_tckts_sold = 0; 				
 
 
 
