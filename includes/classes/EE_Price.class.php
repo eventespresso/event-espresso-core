@@ -518,6 +518,11 @@ class EE_Price extends EE_Base_Class{
 	}
 
 
+	public function parent() {
+		return $this->get('PRC_parent');
+	}
+
+
 
 }
 
