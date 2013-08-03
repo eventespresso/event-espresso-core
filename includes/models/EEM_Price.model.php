@@ -249,14 +249,16 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		retreive all prices for an event plus default global prices, but not taxes
 	 *
 	 * 		@access		public
+	 * 		@param int     $EVT_ID          the id of the event.  If not included then we assume that this is a new EVENT.
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_event_prices_for_admin( $EVT_ID = FALSE ) {
-		//if there is no evt_id, get prices with no event ID, are global, are not a tax, and are active
-		//return taht list
-		$global_prices = $this->get_all_default_prices();
-		
+
 		if ( ! $EVT_ID ) {
+
+			//if there is no evt_id, get prices with no event ID, are global, are not a tax, and are active
+			//return taht list
+			$global_prices = $this->get_all_default_prices();
 			
 //			$this->_select_all_prices_where(
 //					array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
@@ -278,13 +280,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		}
 
 		
-//		$globals = $this->_select_all_prices_where(
-//				array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE, 'prc.PRC_deleted'=>FALSE ), 
-//				array( 'PRC_start_date' ), 
-//				array( 'DESC' ),
-//				array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=', 'prc.PRC_deleted'=>'=' )
-//		);
-		
 		$event_prices = $this->get_all(array(
 			array(
 				'EVT_ID'=>$EVT_ID,
@@ -293,30 +288,12 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'order_by'=> array('PRC_order' => 'ASC')
 		));
 		
-		
-		//$this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID, 'prc.PRC_deleted'=>FALSE ), array('PRC_start_date'), array('DESC'));
-//		echo printr( $event_prices, '$event_prices' ); 
-//		echo printr( $globals, '$globals' ); 
-
-		$overrides = array();
-		foreach ($event_prices as $event_price) {
-			if ($override = $event_price->overrides()) {
-				$overrides[] = $override;
-			}
-		}
-		foreach ($overrides as $override) {
-			if (array_key_exists($override, $global_prices)) {
-				unset( $global_prices[$override] );
-			}
-		}
-		$prices = array_merge( $event_prices, $global_prices);
-		//echo printr( $prices, 'prices');
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		
 		//uasort( $prices, array( $this, '_sort_event_prices_by_type' ));
 		
-		if ( ! empty( $prices )) {
-			foreach ( $prices as $price ) {
+		if ( ! empty( $event_prices )) {
+			foreach ( $event_prices as $price ) {
 				$array_of_price_objects[ $price->type() ][] = $price;
 			}
 			return $array_of_price_objects;
