@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
 //	$('.display-ticket-manager').on('click', function(){
 //		var page = $('html').scrollTop();
 //		var tk_mng_tp = $('#event-datetimes-dv').offset();
-//		tk_mng_tp = Math.round( tk_mng_tp.top )-page;  
+//		tk_mng_tp = Math.round( tk_mng_tp.top )-page;
 //		if ( tk_mng_tp > 0 ){
 //			tk_mng_tp = 0;
 //		}
@@ -16,8 +16,6 @@ jQuery(document).ready(function($) {
 //	$('html').click(function(){
 //		$('#ticket-manager-dv').css({ top : 0, opacity : 0 });
 //	});
-
-	$('.event-price-settings-dv').addClass('hidden');
 	
 	$(".datepicker" ).datepicker({
 		changeMonth: true,
@@ -202,168 +200,7 @@ jQuery(document).ready(function($) {
 
 	
 	
-	$('#hide-add-new-ticket-price').click(function() {
-		var inputs_to_cancel = $(this).attr("rel"); 
-		var control = $(this);
-		// hide the target's div container - use slideToggle or addClass
-		$('#'+inputs_to_cancel+'-dv').slideToggle( 500, function() {
-			// hide the control element
-			control.addClass('hidden');  
-			// display the control element that toggles display of this element
-			$('#display-'+inputs_to_cancel).removeClass('hidden');  
-			$( '.' + inputs_to_cancel + '-input' ).each(function() {
-				if ( $(this).is(':radio') ) {
-					$(this).prop( 'checked', false );
-				} else {
-					$(this).val('');
-				}				
-			});			
-		}); 		
-	});	
-
-				
-				
-	$('.edit-event-price-lnk').click(function() {
-		// get target element ID from "this" (the control element's) "rel" attribute 
-		$( '.event-price-settings-dv' ).each( function() {
-			if ( $(this).is(':visible')){
-				var evt_prc_row = $(this).attr( 'id' );
-				$( '#'+evt_prc_row ).slideToggle( 500 );  
-				evt_prc_row = evt_prc_row.replace('edit-', '');
-				$( '#'+evt_prc_row ).slideToggle( 250 );  
-			}
-		});
-		
-		var PRC_ID = $(this).attr("rel"); 
-		$( '#event-price-'+PRC_ID ).slideToggle( 250 );  
-		// display the target's div container - use slideToggle or removeClass
-		$( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
-		toggle_edit_ticket_price_dates();
-		return false;
-	});
-
-
-	$('.edit-ticket-price-input').change(function() {
-		
-		//var edited_input = $(this);
-		// determine PRC_ID
-		var PRC_ID = $(this).closest('.event-price-dv').attr('id');
-		if ( PRC_ID == undefined ) {
-			var PRC_ID = $(this).closest('.event-price-settings-dv').attr('id');
-			PRC_ID = PRC_ID.replace('edit-', '');
-		}
-		PRC_ID = PRC_ID.replace('event-price-', '');
-		var edit_price_input_ID = $(this).attr('id');
-		var copy_values = true;
-
-		if( $(this).hasClass('quick-edit')) {
-			edit_price_input_ID = '#' + edit_price_input_ID.replace('quick-', '');
-		} else {
-			edit_price_input_ID = '#quick-' + edit_price_input_ID;
-			var orderInp = '#quick-edit-ticket-price-PRC_order-'+PRC_ID;
-			var nameInp = '#quick-edit-ticket-price-PRC_name-'+PRC_ID;
-			var amntInp = '#quick-edit-ticket-price-PRC_amount-'+PRC_ID;
-
-			if ( edit_price_input_ID !== orderInp && edit_price_input_ID !== nameInp && edit_price_input_ID !== amntInp ) {
-				copy_values = false;
-			}  
-		}
-
-		if ( copy_values ) {
-			var new_val = $(this).val();
-			$(edit_price_input_ID).val( new_val );
-		}
-		add_price_ID_to_list_of_edited_prices( PRC_ID );
-	
-	});
-	
-	
-	function add_price_ID_to_list_of_edited_prices( PRC_ID ) {
-		// add PRD_ID to list of edited prices
-		var edited_ticket_price_IDs = $('#edited-ticket-price-IDs').val();
-		if ( edited_ticket_price_IDs == undefined ) {
-			edited_ticket_price_IDs = '';
-		}
-		edited_ticket_price_IDs = edited_ticket_price_IDs + PRC_ID + ',';
-		$('#edited-ticket-price-IDs').val( edited_ticket_price_IDs );		
-	}
-	
-//	function escape_square_brackets( value ) {
-//		value = value.replace(/[[]/g,'\\\[');
-//		value = value.replace(/]/g,'\\\]'); 
-//		return value; 
-//	}
-
-	
-	$('.cancel-event-price-btn').click(function() {
-		// get target element ID from "this" (the control element's) "rel" attribute
-		var PRC_ID = $(this).attr("rel"); 
-		$( '#event-price-'+PRC_ID ).slideToggle( 250 );  
-		// display the target's div container - use slideToggle or removeClass
-		$( '#edit-event-price-'+PRC_ID ).slideToggle( 500 ); 
-		return false;
-	});
-
-	
-	$('.delete-event-price-lnk').click(function() {
-		// get target element ID from "this" (the control element's) "rel" attribute
-		var PRC_ID = $(this).attr("rel"); 
-		$( '#event-price-'+PRC_ID ).slideToggle( 250, function(){
-			$( '#event-price-'+PRC_ID ).delay(100).closest('tr').css( 'display', 'none' ); 
-			$( '#edit-event-price-'+PRC_ID ).delay(100).closest('tr').css( 'display', 'none' ); 
-		}); 
-		add_price_ID_to_list_of_edited_prices( PRC_ID );
-		// generate target name for hidden "deleted" input
-//		var price_to_delete = escape_square_brackets( 'edit_ticket_price['+PRC_ID+'][PRC_deleted]' );
-		// set delete to true
-//		$( '[name="'+price_to_delete+'"]' ).val(1); 
-		$( '#edit-ticket-price-PRC_deleted-'+PRC_ID ).val(1); 
-		return false;
-	});
-
-	function toggle_edit_ticket_price_dates() {
-		$( '.edit-ticket-price-use-dates-yes' ).each(function() {
-			if ( $(this).prop( 'checked' ) ) {
-				//alert( $(this).attr('name') + ' = YES' );
-				$(this).trigger('click');
-			}			
-		});		
-	
-		$( '.edit-ticket-price-use-dates-no' ).each(function() {
-			if ( $(this).prop( 'checked' ) ) {
-				//alert( $(this).attr('name') + ' = NO' );
-				$(this).trigger('click');
-			}			
-		});	
-	}	
-
-	$('.edit-ticket-price-use-dates-yes').bind('click', function() {
-		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().find('.edit-ticket-price-dates').slideDown().parent().animate({ 'padding-top' : '10', 'padding-bottom' : '10' }, 250);
-		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().next().find('.edit-ticket-price-dates').slideDown().parent().animate({ 'padding-top' : '10', 'padding-bottom' : '10' }, 250);
-	});
-
-	$('.edit-ticket-price-use-dates-no').bind('click', function() {
-		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().find('.edit-ticket-price-dates').slideUp().parent().animate({ 'padding-top' : '0', 'padding-bottom' : '0' }, 250);
-		$(this).parents('.edit-ticket-price-use-dates-tbl-row').next().next().find('.edit-ticket-price-dates').slideUp().parent().animate({ 'padding-top' : '0', 'padding-bottom' : '0' }, 250);
-	});
-
-
-	$('#display-add-new-ticket-price').on( 'click', function(){
-		$('#edit_event_save_prices_btn').slideUp(500);
-		$('#event-price-XXXXXX').slideUp(500);
-		$('#new-ticket-price-PRC_name').addClass('required');
-		$('#quick-edit-ticket-price-PRC_order-XXXXXX').val('');
-		$('#quick-edit-ticket-price-PRC_name-XXXXXX').val('');
-		$('#quick-edit-ticket-price-PRC_amount-XXXXXX').val('');
-	});
-
-	$('#hide-add-new-ticket-price').on( 'click', function(){
-		$('#edit_event_save_prices_btn').delay(450).fadeIn(50);
-		$('#event-price-XXXXXX').delay(450).fadeIn(50);
-		$('#new-ticket-price-PRC_name').removeClass('required');
-	});
-	
-	//@todo: why was this validation being called on document ready?? from mike. 
+	//@todo: why was this validation being called on document ready?? from mike.
 	//although it works fine in 4.0-BETA, but not in FET-2476-integration
 	//$('#update_event_event_form').validate();
 
