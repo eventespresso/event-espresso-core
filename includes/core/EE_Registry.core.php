@@ -223,11 +223,12 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: attendee
 	 *	@param array  $arguments - an array of arguments to pass to the class
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
+	 *	@param bool   $cache      if you dont' want the class to be stored in the internal cache (non-persistent) then set this to FALSE (ie. when instantiating model objects from client in a loop)
 	 *	@return instantiated class object
 	 */
-	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE ) {
+	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE ) {
 		// retreive instantiated class
-		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db );
+		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache );
 	}
 
 
@@ -292,7 +293,7 @@ final class EE_Registry {
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@return instantiated class object
 	 */	
-	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE ) {
+	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE ) {
 		// make sure $class name prefix is uppercase
 		$class_name = strtoupper( trim( $class_prefix )) . trim( $class_name );
 
@@ -386,7 +387,7 @@ final class EE_Registry {
 				$this->REQ = $class_obj;
 			} else if ( property_exists( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
-			} else if ( !$from_db ) {
+			} else if ( !$from_db && $cache  ) {
 				$this->LIB[ $class_name ] = $class_obj;
 			}
 			return $class_obj;
