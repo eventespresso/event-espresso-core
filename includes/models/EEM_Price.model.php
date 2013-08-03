@@ -407,6 +407,59 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_order'=>'ASC',
 				'PRC_ID'=>'ASC');
 	}
+
+
+
+	/**
+	 * This is injecting into the parent update() method to do a check first to see if the price being updated is ALREADY in use (i.e. has tickets sold).  If it does, then we're going to just make sure we insert a NEW price instead with all the same details (and we'll mark the given price as "archived") and of course we'll return what normally gets returned from an update so that any add_relation_to() run after the update will attach to the right object.
+	 *
+	 * So to summarize:
+	 * - if tickets have been sold for this price
+	 * - and we have a change in amount
+	 * - or we have a change in price type
+	 * ...then we create a new price and mark the incoming one as trashed.
+	 *
+	 * Another thing we have to check for is IF the reg_limit is changed, then we need to make sure its NOT set less than the tickets sold.  It can be EQUAL to or greater than but not less than. If reg limit is not correct then let's set an EE_Error msg and return false.
+	 *
+	 * @see parent method for param details.
+	 */
+	public function update($fields_n_values, $query_params){
+		//let's get the PRC_ID if present.
+		$PRC_ID = isset( $query_params[0] ) && isset( $query_params[0]['PRC_ID'] ) ? $query_params[0]['PRC_ID'] : NULL;		
+
+		//get EXISTING prc in db for checks
+		if ( !empty( $PRC_ID ) ) {
+			$existing_prc = $this->get_one_by_ID( $PRC_ID );
+
+
+			//first we need to detect if there are any changes from the incoming price... IF there are then we go to the next step... otherwise we just leave things as is and pass off to parent.
+			$changed = FALSE;
+			foreach ( $fields_n_values as $field => $value ) {
+				if ( $value != $existing_prc->get($field) )
+					$changed = TRUE;
+			}
+
+			//nothings changed so just return
+			if ( !$changed ) 
+				return $existing_prc;
+
+			//if tickets sold then we create a new price NOT update an existing one.  The existing one becomes archived.
+			if ( $existing_prc->get('PRC_tckts_sold') > 0 ) {
+				$existing_prc->set('PRC_deleted', 1 );
+				$existing_prc->save();
+				//create new price, but make sure that we 'reset' any necessary columns/fields.
+				$fields_n_values['PRC_tckts_sold'] = 0;
+				$new_id = $this->insert($fields_n_values);
+
+				//since update usually returns the object let's make sure we do that.
+				return ( $this->get_one_by_ID( $new_id ) );
+			}
+			
+		}
+
+		//nothing needs handling so let's just run regular update
+		parent::update( $fields_n_values, $query_params );
+	}
 }
 
 // End of file EEM_Price.model.php
