@@ -640,7 +640,7 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		if ( $relationName == 'Price' ) {
 			//let's get the PRC object for the given ID to make sure that we aren't dealing with a default
-			$prc_chk = $this->get_related_model_obj($relation_name)->ensure_is_obj($other_model_id_or_obj);
+			$prc_chk = $this->get_related_model_obj($relationName)->ensure_is_obj($other_model_id_or_obj);
 			//if EVT_ID = 0, then this is a default
 			if ( $prc_chk->get('EVT_ID') == 0 ) {
 				//let's set the prc_id as 0 so we force an insert on the add_relation_to carried out by relation
