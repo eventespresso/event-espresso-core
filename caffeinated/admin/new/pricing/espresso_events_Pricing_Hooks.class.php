@@ -173,8 +173,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		}
 
 
-		$select_name = 'edit_ticket_price['. $price_obj->ID() .'][PRT_ID]';
-		$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price_obj->type(), 'id="edit-ticket-price-type-ID-'.$price_obj->ID().'" style="width:auto;"', 'edit-ticket-price-input' );
+		$select_name = 'edit_ticket_price['. $this->_req_data['rownum'] .'][PRT_ID]';
+		$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price_obj->type(), 'id="edit-ticket-price-type-ID-'.$this->_req_data['rownum'].'" style="width:auto;"', 'edit-ticket-price-input' );
 		$row_args['price_type'] = isset( $global_price_types[$price_obj->type()] ) ? $global_price_types[$price_obj->type()]->is_global() : FALSE;
 		$row_args['counter'] = count( $existing_prices ) + 1; //added one because we popped off a price earlier remember?
 
