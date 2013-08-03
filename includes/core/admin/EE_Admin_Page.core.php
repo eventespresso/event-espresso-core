@@ -2413,6 +2413,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * This just allows for setting the $_template_args property if it needs to be set outside the object
+	 * @param array $data array that will be assigned to template args.
+	 */
+	public function set_template_args( $data ) {
+		$this->_template_args = (array) $data;
+	}
+
+
+
 
 	/**
 	 * This makes available the WP transient system for temporarily moving data between routes
