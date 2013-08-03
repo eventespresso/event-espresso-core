@@ -7,18 +7,19 @@
 					<td class="type-column ticket-price-quick-edit-column"> 
 						<div class="small-screen-table-label"><?php echo __('Type', 'event_espresso') ?></div>
 						<span><?php echo $type_label; ?></span>
+						<input id="edit-ticket-price-id-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_ID]" type="hidden" value="<?php echo $price->ID(); ; ?>"/>
+						<input id="edit-ticket-price-event-id-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][EVT_ID]" type="hidden" value="<?php echo $EVT_ID; ?>"/> 
 					</td> 
 
 					<td class="name-column ticket-price-quick-edit-column"> 
 						<div class="small-screen-table-label"><?php echo __('Name', 'event_espresso') ?></div>
-						<input class="edit-ticket-price-input quick-edit regular-text required<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_name-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_name]" value="<?php echo $price->name(); ?>" <?php echo $disabled; ?>/>
-						<input type="hidden" id="quick-edit-ticket-price-id-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_ID]" value="<?php echo $price->ID(); ?>" />
+						<input class="edit-ticket-price-input quick-edit regular-text required<?php echo $disabled_class;?>" type="text" id="edit-ticket-price-PRC_name-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_name]" value="<?php echo $price->name(); ?>" <?php echo $disabled; ?>/>
 					</td> 
 					
 					<td class="amount-column ticket-price-quick-edit-column"> 
 						<div class="small-screen-table-label"><?php echo __('Amount', 'event_espresso') ?></div>
 						<span class="cur-sign jst-rght"><?php echo  $is_percent ?  '' : $org_options['currency_symbol']; ?></span>
-						<input class="edit-ticket-price-input quick-edit small-text jst-rght required<?php echo $disabled_class;?>" type="text" id="quick-edit-ticket-price-PRC_amount-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_amount]" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
+						<input class="edit-ticket-price-input quick-edit small-text jst-rght required<?php echo $disabled_class;?>" type="text" id="edit-ticket-price-PRC_amount-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_amount]" value="<?php echo $price_amount; ?>"<?php echo $disabled; ?>/>
 						<span class="percent-sign jst-left"><?php echo $is_percent ? '%' : ''; ?></span>
 					</td> 
 													

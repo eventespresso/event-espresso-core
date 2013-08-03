@@ -80,8 +80,8 @@
 						<td>
 							<?php echo $edit_ticket_price_select; ?>
 							<p class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></p>
-							<input name="edit_ticket_price[<?php echo $row; ?>][PRC_ID]" type="hidden" value="<?php echo $price->ID(); ; ?>"/>
-							<input name="edit_ticket_price[<?php echo $row; ?>][EVT_ID]" type="hidden" value="<?php echo $EVT_ID; ?>"/>
+							<input id="edit-ticket-price-id-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][PRC_ID]" type="hidden" value="<?php echo $price->ID(); ; ?>"/>
+							<input id="edit-ticket-price-event-id-<?php echo $row; ?>" name="edit_ticket_price[<?php echo $row; ?>][EVT_ID]" type="hidden" value="<?php echo $EVT_ID; ?>"/>
 							<input name="edit_ticket_price[<?php echo $row; ?>][PRT_is_global]" type="hidden" value="<?php echo $price_type?>"/>
 							<input name="edit_ticket_price[<?php echo $row; ?>][PRC_overrides]" type="hidden" value="<?php echo $price->overrides()?>"/>
 							<input name="edit_ticket_price[<?php echo $row; ?>][PRC_deleted]" id="edit-ticket-price-PRC_deleted-<?php echo $row; ; ?>" type="hidden" value="<?php echo $price->deleted()?>"/>										
