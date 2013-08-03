@@ -812,125 +812,60 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$success = TRUE;
 
 		$data['price_count'] = 1;
-		$ticket_prices_to_save = array();
-		$quick_edit_ticket_price = isset($data['quick_edit_ticket_price']) ? $data['quick_edit_ticket_price'] : array();
-//			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
-		if ( isset( $quick_edit_ticket_price['XXXXXX'] )) {
-			$new_quick_price = $quick_edit_ticket_price['XXXXXX'];
-			if ( isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
-				$ticket_prices_to_save[] = array(
-					'PRT_ID' => 2,
-					'PRT_is_global' => FALSE,
-					'PRC_overrides' => 0,
-					'PRC_deleted' => FALSE,
-					'PRC_order' => isset( $new_quick_price['PRC_order'] ) && $new_quick_price['PRC_order'] ? $new_quick_price['PRC_order'] : 0,
-					'PRC_name' => $new_quick_price['PRC_name'] ? $new_quick_price['PRC_name'] : NULL,
-					'PRC_desc' => NULL,
-					'PRC_amount' => $new_quick_price['PRC_amount'] ? $new_quick_price['PRC_amount'] : 0,
-					'PRC_use_dates' => FALSE,
-					'PRC_start_date' => NULL,
-					'PRC_end_date' => NULL,
-					'PRC_is_active' => TRUE			
-				);
+		$saved_prices = array();
+		$old_prices = isset( $data['price-IDs'] ) ? maybe_unserialize($data['price-IDs']) : array();
+		$edited_prices = isset($data['edit_ticket_price']) ? $data['edit_ticket_price'] : array();
+
+
+		if ( empty( $edited_prices ) )
+			return FALSE; //get out because theres something that went wrong (probably an error prevented display of the price form);
+
+
+		//let's loop through all prices and set things up.
+		foreach ( $edited_prices as $row => $price_data ) {
+			$PRC = $this->EE->load_class('Price', array( array(
+				'PRC_ID' => $price_data['PRC_ID'],
+				'PRT_ID' => isset( $price_data['PRT_ID'] ) ? $price_data['PRT_ID'] : 2,
+				'PRC_order' => isset( $price_data['PRC_order'] ) && $price_data['PRC_order'] ? $price_data['PRC_order'] : 0,
+				'PRC_name' => $price_data['PRC_name'] ? $price_data['PRC_name'] : NULL,
+				'PRC_desc' => isset($price_data['PRC_desc']) ? $price_data['PRC_desc'] : '',
+				'PRC_amount' => $price_data['PRC_amount'] ? $price_data['PRC_amount'] : 0,
+				'PRC_start_date' => isset($price_data['start_date']) ? $price_data['start_date'] : current_time('mysql'),
+				'PRC_end_date' => isset($price_data['end_date'] ) ? $price_data['end_date'] : current_time('mysql'),
+				'PRC_reg_limit' => isset($price_data['PRC_reg_limit']) ? $price_data['PRC_reg_limit'] : NULL,
+				'PRC_is_active' => TRUE,
+				'PRC_display_order' => $row
+				), $timezone ) );
+
+			//now we have to determine if this price is a default price (or new price).  If it is then we MUST insert.
+			if ( $PRC->ID() === 0 ) {
+				$PRC->set( 'PRC_ID', NULL );
 			}
+
+			//now we just have to add to the event (*note that EEM_Price model already takes care of handling NOT saving the price if the price has already been used however, in that case the price object that is returned is going to be different than the one that was saved so we need to make sure we don't accidentally remove it again!  This also means that we need to keep the old price attached to the evt (even though it might not be displayed ) ).
+			$saved_PRC = $evtobj->_add_relation_to( $PRC, 'Price' );
+
+			if ( ( $price_data['PRC_ID'] > 0 && $price_data['PRC_ID'] != $saved_PRC->ID() ) ) {
+				//make sure we keep old price attached to event (even though it won't be displayed because it's deleted)
+				$saved_prices[] = $price_data['PRC_ID'];
+			}
+
+			$saved_prices[] = $saved_PRC->ID();		
+
+		}
+
+		//now remove any prices that got deleted (note we don't actually hard delete but instead just archive the price).
+		$prices_to_delete = array_diff( $old_prices, $saved_prices );
+		foreach ( $prices_to_delete as $price ) {
+			$id = absint( $price );
+			$price_to_archive = $this->EE->load_model('Price')->get_one_by_ID( $id );
+			//let's modify this to be archived
+			$price_to_archive->set( 'PRC_deleted', 1 );
+			$price_to_archive->save();
 		}
 		
-		// grab list of edited ticket prices
-		if ($edited_ticket_price_IDs = isset($data['edited_ticket_price_IDs']) ? $data['edited_ticket_price_IDs'] : FALSE) {
-			// remove last comma
-			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
-			// create array of edited ticket prices
-			$edited_ticket_price_IDs = explode(',', $edited_ticket_price_IDs);
-			// flipper once
-			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
-			// flipper twice - hey!?!?! where did all the duplicate entries go???
-			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
-//				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
-			// grab existing ticket price data
-			if ($edited_ticket_prices = isset($data['edit_ticket_price']) ? $data['edit_ticket_price'] : FALSE) {
-//					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
-				// cycle thru list                    
-				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
-//						echo printr( $edited_ticket_price, '$edited_ticket_price' );	
-					// add edited ticket prices to list of ticket prices to save
-					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
-//							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
-						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
-							$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[$PRC_ID] );
-//								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
-						}
-						$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
-					}
-				}
-			}
-		}
-		
-//			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
 
-		// add new tickets if any
-		if ($new_ticket_price = isset($data['new_ticket_price']) ? $data['new_ticket_price'] : array('PRC_name' => NULL)) {
-			if ( ! empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
-				$ticket_prices_to_save[0] = $new_ticket_price;
-			} else if ( empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
-				$msg = __( 'Event prices require an amount before they can be saved. Please make sure you enter an amount for the new event price before attempting to save it.', 'event_espresso' );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
-			} else if ( ! empty( $new_ticket_price['PRC_amount'] ) && empty( $new_ticket_price['PRC_name'] )) {
-				$msg = __( 'Event prices require a name before they can be saved. Please make sure you enter a name for the new event price before attempting to save it.', 'event_espresso' );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
-			}
-
-		}
-//		printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		// and now we actually save the ticket prices
-		if (!empty($ticket_prices_to_save)) {
-
-			//echo printr( $new_ticket_price, '$new_ticket_price' );
-			require_once( EE_CLASSES . 'EE_Price.class.php');
-
-			global $current_user;
-			get_currentuserinfo();
-
-			foreach ($ticket_prices_to_save as $PRC_ID => $ticket_price) {
-
-
-				//determine whether this price overrides an existing global or not
-				$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
-//echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-				// or whether it was already overriding a global from before
-				$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
-//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-				$PRC = EE_Price::new_instance( array(
-						'PRC_ID' => $PRC_ID,
-						'PRT_ID' => $ticket_price['PRT_ID'],
-						'PRC_amount' => preg_replace( '/[^0-9,.]/', '', $ticket_price['PRC_amount'] ),
-						'PRC_name' => $ticket_price['PRC_name'],
-						'PRC_desc' => $ticket_price['PRC_desc'],
-						'PRC_reg_limit' => isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
-						'PRC_use_dates' => $ticket_price['PRC_use_dates'] ? TRUE : FALSE,
-						'PRC_start_date' => $ticket_price['PRC_start_date'],
-						'PRC_end_date' => $ticket_price['PRC_end_date'],
-						'PRC_is_active' => $ticket_price['PRC_is_active'] ? TRUE : FALSE,
-						'PRC_overrides' => $overrides,
-						'PRC_order' => $ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
-						'PRC_deleted' => $ticket_price['PRC_deleted']
-					), 
-					$timezone );
-				
-				if ( $PRC->deleted()) {
-					$data['price_count']--;
-				} else {
-					$data['price_count']++;
-				}
-
-				$works = $evtobj->_add_relation_to( $PRC, 'Price' );
-				$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
-
-			}
-		}
-
-		if ( isset( $data['price_count'] ) && absint( $data['price_count'] ) < 1 ) {
+		if ( count( $saved_prices ) < 1 ) {
 			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
 			$espresso_no_ticket_prices[ $evtobj->get('EVT_ID') ] = $evtobj->get('EVT_name');
 			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
