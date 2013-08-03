@@ -1999,6 +1999,21 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * Simply a wrapper for the protected method so we can call this outside the class (ONLY when doing ajax)	
+	 * @return json_obj|EE_Error
+	 */
+	public function return_json() {
+		if ( defined('DOING_AJAX') && DOING_AJAX )
+			$this->_return_json();
+
+		else {
+			throw new EE_Error( sprintf( __('The public %s method can only be called when DOING_AJAX = TRUE', 'event_espresso'), __FUNCTION__ ) );
+		}
+	}
+
+
+
 
 	/**
 	 * This provides a way for child hook classes to send along themselves by reference so methods/properties within them can be accessed by EE_Admin_child pages. This is assigned to the $_hook_obj property.
