@@ -793,6 +793,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$venue = $event->get_first_related('Venue');
 			$this->_template_args['data']['items']['venue-id'] = $venue->ID();
 		}
+
+		$prices = $event->get_many_related('Price');
+
+		$price_ids = array();
+		foreach ( $prices as $price ) {
+			$price_ids[] = $price->ID();
+			$order = $price->get('PRC_display_order');
+			$this->_template_args['data']['items']['quick-edit-ticket-price-id-' . $order] = $price->ID();
+			$this->_template_args['data']['items']['edit-ticket-price-id-' . $order] = $price->ID();
+			$this->_template_args['data']['items']['edit-ticket-price-event-id-' . $order] = $event->ID();
+		}
+		$this->_template_args['data']['items']['price-IDs'] = implode(',', $price_ids);
 	}
 
 
@@ -813,18 +825,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$data['price_count'] = 1;
 		$saved_prices = array();
-		$old_prices = isset( $data['price-IDs'] ) ? maybe_unserialize($data['price-IDs']) : array();
+		$old_prices = isset( $data['price-IDs'] ) ? explode(',',$data['price-IDs']) : array();
 		$edited_prices = isset($data['edit_ticket_price']) ? $data['edit_ticket_price'] : array();
 
 
 		if ( empty( $edited_prices ) )
 			return FALSE; //get out because theres something that went wrong (probably an error prevented display of the price form);
 
-
 		//let's loop through all prices and set things up.
 		foreach ( $edited_prices as $row => $price_data ) {
 			$PRC = $this->EE->load_class('Price', array( array(
-				'PRC_ID' => $price_data['PRC_ID'],
+				'PRC_ID' => $price_data['PRC_ID'] === 0 ? NULL : $price_data['PRC_ID'],
 				'PRT_ID' => isset( $price_data['PRT_ID'] ) ? $price_data['PRT_ID'] : 2,
 				'PRC_order' => isset( $price_data['PRC_order'] ) && $price_data['PRC_order'] ? $price_data['PRC_order'] : 0,
 				'PRC_name' => $price_data['PRC_name'] ? $price_data['PRC_name'] : NULL,
@@ -835,10 +846,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'PRC_reg_limit' => isset($price_data['PRC_reg_limit']) ? $price_data['PRC_reg_limit'] : NULL,
 				'PRC_is_active' => TRUE,
 				'PRC_display_order' => $row
-				), $timezone ) );
+				), $timezone ), FALSE, FALSE );
 
 			//now we have to determine if this price is a default price (or new price).  If it is then we MUST insert.
-			if ( $PRC->ID() === 0 ) {
+			if ( $price_data['EVT_ID'] === 0 && $PRC->ID() > 0 ) {
+				//unset the PRC_ID from the $old_prices array
+				unset($old_prices[$price_data['PRC_ID']] );
 				$PRC->set( 'PRC_ID', NULL );
 			}
 
@@ -850,9 +863,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$saved_prices[] = $price_data['PRC_ID'];
 			}
 
-			$saved_prices[] = $saved_PRC->ID();		
+			$saved_prices[] = $saved_PRC->ID();	
 
 		}
+
 
 		//now remove any prices that got deleted (note we don't actually hard delete but instead just archive the price).
 		$prices_to_delete = array_diff( $old_prices, $saved_prices );
@@ -981,7 +995,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		global $org_options;
 
 		$timezone = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->timezone_string() : NULL; 
-		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
+		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : FALSE;
 
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
@@ -1060,7 +1074,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 						$row_args['counter'] = count($prices);
 						$row_args['row'] = $row;
-						$row_args['EVT_ID'] = $this->_cpt_model_obj->ID();
+						$row_args['EVT_ID'] = $price->get('EVT_ID');
 						$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
 					endif;
 					$row++;
