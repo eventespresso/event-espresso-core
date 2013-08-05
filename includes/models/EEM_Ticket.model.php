@@ -51,6 +51,7 @@ class EEM_Ticket extends EEM_Base {
 				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_reg_limit'=>new EE_Integer_Field('TKT_reg_limit', __('Registration LImit for this ticket','event_espresso'), true, 0),
+				'TKT_sold'=>new EE_Integer_Field('TKT_sold', __('Tickets Sold', 'event_espresso'), true, 0),
 				'TKT_tax'=>new EE_Boolean_Field('TKT_tax', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed', 'event_espresso'), false, 0),
 				'TKT_parent' => new EE_Integer_Field('TKT_parent', __('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'), true, 0 )
