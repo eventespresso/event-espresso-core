@@ -50,7 +50,7 @@ class EEM_Ticket_Template extends EEM_Base {
 				'TTM_ID'=>new EE_Primary_Key_Int_Field('TTM_ID', __('Ticket Template ID','event_espresso'), false, 0),
 				'TKT_ID'=> new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'TTM_name'=>new EE_Plain_Text_Field('TTM_name', __('The name of the ticket template','event_espresso'), false, '' ),
-				'TTM_description'=>new EE_Plain_Text_Field('TTM_description', __('The description for the ticket template','event_espresso'), false, '' ),
+				'TTM_description'=>new EE_Plain_Text_Field('TTM_description', __('The description for the ticket template','event_espresso'), true, '' ),
 				'TTM_file'=>new EE_Plain_Text_Field('TTM_file', __('The file name for the actual tempalte file saved on disk','event_espresso'), false, '' ),
 			));
 		$this->_model_relations = array(
