@@ -589,7 +589,7 @@ class EEH_Activation {
 					  CNT_is_EU tinyint(1) DEFAULT '0',
 					  CNT_active tinyint(1) DEFAULT '0',
 					  PRIMARY KEY  (CNT_ISO)";
-		EEH_Activation::create_table($table_name, $sql );
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB' );
 
 
 
@@ -608,7 +608,7 @@ class EEH_Activation {
 		
 		
 		
-		EEH_Activation::create_table($table_name, $sql );
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB' );
 		$table_name = 'esp_event_meta';
 		$sql = "
 			EVTM_ID INT NOT NULL AUTO_INCREMENT,
@@ -699,6 +699,22 @@ class EEH_Activation {
 
 
 
+		$table_name = "esp_ticket";  
+		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+					  TTM_ID int(10) unsigned NOT NULL,
+					  EVT_ID int(10) unsigned NOT NULL,
+					  TKT_reg_limit mediumint(8) unsigned DEFAULT NULL,
+					  TKT_sold mediumint(8) unsigned DEFAULT NULL,
+					  TKT_start_date datetime NOT NULL default '0000-00-00 00:00:00',
+					  TKT_end_date datetime NOT NULL default '0000-00-00 00:00:00',
+					  TKT_tax tinyint(1) unsigned NOT NULL DEFAULT '0',
+					  TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
+					  TKT_parent int(10) unsigned DEFAULT 0,
+					  PRIMARY KEY  (TKT_ID)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
+
+
+
 		$table_name = "esp_price";  
 		$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  PRT_ID tinyint(3) unsigned NOT NULL,
@@ -717,7 +733,7 @@ class EEH_Activation {
 					  PRC_display_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  PRC_parent int(10) unsigned DEFAULT 0,
 					  PRIMARY KEY  (PRC_ID)";
-		EEH_Activation::create_table($table_name, $sql);
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -732,7 +748,7 @@ class EEH_Activation {
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 				  PRIMARY KEY  (PRT_ID)";
-		EEH_Activation::create_table($table_name, $sql);
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
 
 		
@@ -828,7 +844,7 @@ class EEH_Activation {
 					  STA_name varchar(100) COLLATE utf8_bin NOT NULL,
 					  STA_active tinyint(1) DEFAULT '1',
 					  PRIMARY KEY  (STA_ID)";
-		EEH_Activation::create_table($table_name, $sql );
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB' );
 
 
 
@@ -841,7 +857,7 @@ class EEH_Activation {
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,
 					  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 					  KEY STS_type (STS_type)";
-		EEH_Activation::create_table($table_name, $sql );
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB' );
 
 
 
@@ -872,7 +888,7 @@ class EEH_Activation {
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,
 					  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 					  KEY STS_type (STS_type)";
-		EEH_Activation::create_table($table_name, $sql );
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB' );
 
 
 
