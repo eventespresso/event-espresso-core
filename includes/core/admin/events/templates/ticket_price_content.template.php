@@ -8,7 +8,6 @@
 	</p>
 </div>
 <?php endif; ?>
-
 <table id="event_editor_pricing" width="100%" >
 	<thead>
 		<tr>
