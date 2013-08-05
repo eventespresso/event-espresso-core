@@ -715,6 +715,18 @@ class EEH_Activation {
 
 
 
+
+
+		$table_name = "esp_ticket_model";  
+		$sql = "TTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+					  TTM_name varchar(45) NOT NULL,
+					  TTM_description text,
+					  TTM_file varchar(45) NOT NULL DEFAULT ''
+					  PRIMARY KEY  (TTM_ID)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
+
+
+
 		$table_name = "esp_price";  
 		$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  PRT_ID tinyint(3) unsigned NOT NULL,
