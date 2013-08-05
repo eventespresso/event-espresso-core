@@ -30,16 +30,16 @@ class name '.event-has-thumb' is added to top level parent event */
 	padding:.5em 0; background:#606267; color: #fff; font-weight: bold;
 }
 
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button,
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-state-default { 
-	display: inline-block; height:45px; padding:.6em 1.2em; padding:0 1.2em; background:#EEEEE6;  border:none; border-radius: 0px; box-shadow:none; 
-	color:#606267; font-size:1em; line-height:45px; font-weight: bold; text-shadow:.5px .5px 0px #fff; opacity: 1;
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button { 
+	height:15px; padding: 15px 0.6em; background:#EEEEE6; box-sizing: content-box !important; -moz-box-sizing: content-box !important; 
+	border:none; border-radius: 0px; box-shadow:none; 
+	color:#606267; font-size:15px; line-height:15px; font-weight: bold; text-shadow:.5px .5px 0px #fff; opacity: 1; word-wrap: normal;
 }
 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev, 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next { 
-	height:45px; padding:0 .6em; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-	font-size:2em; line-height:1.4em; color:#777A80; text-shadow:.5px .5px 0px #fff;
+	height:25px; padding: 10px 0.6em; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+	font-size:25px; line-height:20px; color:#777A80; text-shadow:.5px .5px 0px #fff;
 }
 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev,
@@ -48,8 +48,8 @@ class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-today  {  border-top-right-radius: 1px; border-bottom-right-radius: 1px; }
 #espresso_calendar:not(.ui-widget) .fc-button .fc-icon-wrap  { float: none; top: auto; }
 #espresso_calendar:not(.ui-widget) .fc-button .fc-icon-wrap .ui-icon  { float: none; top: auto; margin:14.5px auto 0; }
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-header-space { display: inline-block; width:1px; height:2em; padding:.6em 0; background:#fff; }
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-header-space + .fc-button { border-left:none;  }
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-header-space { display: inline-block; width:1px; height:45px; padding:0; background:#fff; }
+/*#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-header-space + .fc-button { border-left:none;  }*/
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-text-arrow { color:#777A80; text-shadow:.5px .5px 0px #fff; }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-other-month {  background:#fcfcfc; }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-state-highlight {  background:#FEFEDF; }
