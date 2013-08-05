@@ -82,16 +82,6 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
-	/**
-	 * How many of this ticket have been sold
-	 * @var INT
-	 */
-	protected $_TKT_sold;
-
-
-
-
-
 
 	/**
 	 * The display order for this ticket (also used for autosaves etc)
