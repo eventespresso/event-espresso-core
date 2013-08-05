@@ -15,4 +15,8 @@
  */
 get_header();
 include( 'archive-event_list.template.php' );
+// if you are copying this file into your theme folder in order to edit it, 
+// then replace the above line of code with something like:
+// get_template_part( 'archive', 'event_list.template' );
+// but be sure to also copy the archive-event_list.template.php over to your themes folder as well
 get_footer(); 	
