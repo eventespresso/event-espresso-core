@@ -142,8 +142,10 @@ final class EE_Front_Controller {
 	 *	@return void
 	 */
 	public function get_request() {
+		do_action( 'AHEE__Front_Controller__get_request__before_Request_Handler_loaded' );
 		$this->EE->load_helper( 'URL' );	
 		$this->EE->load_core( 'Request_Handler' );	
+		do_action( 'AHEE__Front_Controller__get_request__after_Request_Handler_loaded' );
 	}
 
 
