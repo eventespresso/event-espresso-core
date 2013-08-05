@@ -320,18 +320,6 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		Set availalbe spaces
-	* 
-	*		set remaining number of spaces left for this datetime slot
-	* 
-	* 		@access		public		
-	*		@param		int		$tckts_left 
-	*/	
-	public function set_tckts_left( $tckts_left ) {
-		$this->set('DTT_tckts_left', absint( $tckts_left ) );
-	}
-
 
 
 
@@ -698,19 +686,6 @@ class EE_Datetime extends EE_Base_Class{
 		return $this->_DTT_reg_limit;
 	}
 
-
-
-
-
-	/**
-	*		get the available spaces left for this datetime slot
-	* 
-	* 		@access		public		
-	*		@return 		mixed		int on success, FALSE on fail
-	*/	
-	public function tckts_left() {
-		return $this->_DTT_tckts_left;
-	}
 
 
 
