@@ -72,25 +72,16 @@ class EE_Registration extends EE_Base_Class {
 	
 	
     /**
-    *	Datetime ID
+    *	Datetime Ticket ID
 	* 
-    *	foreign key from Datetime table
-	* 
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_ID = NULL;	
-	
-	
-    /**
-    *	Price ID
-	* 
-    *	foreign key from Price table
+    *	foreign key from Datetime_Ticket table
 	* 
 	*	@access	protected
     *	@var int	
     */
-	protected $_PRC_ID = NULL;	
+	protected $_DTK_ID = NULL;	
+	
+	
 	
 	
     /**
@@ -232,19 +223,13 @@ class EE_Registration extends EE_Base_Class {
 	
 	
 	/**
-	 * Datetime of the Event this registratino is for
+	 * Datetime_Ticket object of the Event this registration is for
 	 * @access protected
 	 * @var EE_Datetime
 	 */
-	protected $_Datetime = NULL;
+	protected $_Datetime_Ticket = NULL;
 	
-	
-	/**
-	 * Price of the Event this registration paid
-	 * @access protected
-	 * @var EE_Price
-	 */
-	protected $_Price = NULL;
+
 	
 	
 	/**
@@ -440,16 +425,6 @@ class EE_Registration extends EE_Base_Class {
 	}
 
 
-
-	/**
-	*		Set Price ID
-	* 
-	* 		@access		public		
-	*		@param		float		$PRC_ID 		Price ID
-	*/	
-	public function set_price_id( $PRC_ID = FALSE ) {		
-		$this->set('PRC_ID',$PRC_ID);
-	}
 
 
 
@@ -760,25 +735,6 @@ class EE_Registration extends EE_Base_Class {
 	}
 
 
-	/**
-	*		get Price ID
-	* 		@access		public
-	*/	
-	public function price_ID() {
-		return $this->get('PRC_ID');
-	}
-
-
-
-	/**
-	 * get price object for this registration
-	 *
-	 * @access public
-	 * @return EE_Price
-	 */
-	public function price_obj() {
-		return $this->get_first_related('Price');
-	}
 
 
 
