@@ -156,6 +156,9 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function calendar_scripts() {
+		if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
+			return;
+		}
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
 		//Load tooltips styles
@@ -218,9 +221,9 @@ class EE_Calendar {
 	 */
 	public function espresso_calendar( $atts ) {
 		
-		if ( ! function_exists( 'espresso_version' )) {
+		if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 			return '';
-		}		
+		}
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
 		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE ), $this->_calendar_options );
