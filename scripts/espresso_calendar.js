@@ -28,6 +28,8 @@ jQuery(document).ready(function($) {
 		firstDay: eeCAL.firstDay,
 		// Whether to include Saturday/Sunday columns in any of the calendar views.
 		weekends: eeCAL.weekends,
+		// Determines the number of weeks displayed in a month view. Also determines each week's height.
+		weekMode: eeCAL.weekMode,
 		// Will make the entire calendar (including header) a pixel height.
 		height: eeCAL.espresso_calendar_height,
 		aspectRatio: 1.618,

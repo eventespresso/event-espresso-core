@@ -53,6 +53,7 @@ function espresso_calendar_install() {
 
 			'firstDay' => '0',
 			'weekends' => true,
+			'weekMode' => 'liquid', // 'fixed', 'liquid', 'variable'
 			'espresso_calendar_height' => '',
 			'enable_calendar_thumbs' => false,
 			
@@ -200,6 +201,7 @@ function espresso_calendar_config_mnu() {
 		
 		$espresso_calendar['firstDay'] = absint( $_POST['firstDay'] );
 		$espresso_calendar['weekends'] = absint( $_POST['weekends'] );
+		$espresso_calendar['weekMode'] = sanitize_text_field( $_POST['weekMode'] ); 
 		$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
 		$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
 		$espresso_calendar['show_tooltips'] = $_POST['show_tooltips'];
@@ -406,6 +408,7 @@ espresso_calendar_updated();
 										</span>
 									</td>
 								</tr>
+								
 								<tr>
 									<th>
 										<label for="weekends">
@@ -419,6 +422,7 @@ espresso_calendar_updated();
 										</span>
 									</td>
 								</tr>
+								
 							</tbody>
 						</table>
 						<h4>
@@ -426,6 +430,28 @@ espresso_calendar_updated();
 						</h4>
 						<table class="form-table">
 							<tbody>
+								<?php
+								$week_modes = array(
+									array('id'  => 'fixed','text'=> __('fixed: displays 6 weeks, fixed height', 'event_espresso')),
+									array('id'  => 'liquid','text'=> __('liquid: displays 4-6 weeks, fixed height', 'event_espresso')),
+									array('id'  => 'variable','text'=> __('variable: displays 4-6 weeks, variable height', 'event_espresso'))
+								);
+								$espresso_calendar['weekMode'] = isset( $espresso_calendar['weekMode'] ) ? $espresso_calendar['weekMode'] : 'liquid';
+								?>
+								<tr>
+									<th>
+										<label for="weekMode">
+											<?php _e('Week Mode', 'event_espresso');  // 'fixed', 'liquid', 'variable'?>
+										</label>
+									</th>
+									<td>
+										<?php echo select_input('weekMode', $week_modes, $espresso_calendar['weekMode'], 'id="weekMode"'); ?><br />
+										<span class="description">
+											<?php _e('Determines the number of weeks displayed in a month view. Also determines each week\'s height.<br/>"fixed" - The calendar will always be 6 weeks tall. The height will always be the same, as determined by the calendar height setting or the aspect ratio.<br/>"liquid" - The calendar will have either 4, 5, or 6 weeks, depending on the month. The height of the weeks will stretch to fill the available height, as determined by the calendar height setting or the aspect ratio.<br/>"variable" - The calendar will have either 4, 5, or 6 weeks, depending on the month. Each week will have the same constant height, meaning the calendar\'s height will change month-to-month.', 'event_espresso'); ?>
+										</span>
+									</td>
+								</tr>
+								
 								<tr>
 									<th>
 										<label for="espresso_calendar_height">
