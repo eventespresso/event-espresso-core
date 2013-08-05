@@ -715,6 +715,17 @@ class EEH_Activation {
 
 
 
+		$table_name = "esp_datetime_ticket";  
+		$sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+					  DTT_ID int(10) unsigned NOT NULL,
+					  TKT_ID int(10) unsigned NOT NULL,
+					  DTK_sold mediumint(8) unsigned DEFAULT NULL,
+					  PRIMARY KEY  (DTK_ID)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
+
+
+
+
 
 		$table_name = "esp_ticket_model";  
 		$sql = "TTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
