@@ -709,6 +709,7 @@ class EEH_Activation {
 					  TKT_tax tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  TKT_parent int(10) unsigned DEFAULT 0,
+					  TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (TKT_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 

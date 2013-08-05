@@ -53,6 +53,7 @@ class EEM_Ticket extends EEM_Base {
 				'TKT_reg_limit'=>new EE_Integer_Field('TKT_reg_limit', __('Registration LImit for this ticket','event_espresso'), true, 0),
 				'TKT_tax'=>new EE_Boolean_Field('TKT_tax', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed', 'event_espresso'), false, 0),
+				'TKT_deleted' => new EE_Trashed_Flag_Field('TKT_deleted', __('Flag indicating if this has been archived or not', 'event_espresso'), false, false),
 				'TKT_parent' => new EE_Integer_Field('TKT_parent', __('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'), true, 0 )
 			));
 		$this->_model_relations = array(

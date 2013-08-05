@@ -103,6 +103,19 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
+
+	/**
+	 * Whether this ticket is deleted or not
+	 * @var bool
+	 */
+	protected $_TKT_deleted;
+
+
+
+
+
+
+
 	/** Related Object Caches **/
 
 
