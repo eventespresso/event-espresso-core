@@ -76,14 +76,9 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'Price'=> array(
 				'PRC_ID'=>new EE_Primary_Key_Int_Field('PRC_ID', 'Price ID', false, 0),
 				'PRT_ID'=>new EE_Foreign_Key_Int_Field('PRT_ID', 'Price type Id', false, 1, 'Price_Type'),
-				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', 'Event ID', false, 0, 'Event'),
 				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
 				'PRC_desc'=>new EE_Simple_HTML_Field('PRC_desc', 'Price Description', false, ''),
-				'PRC_reg_limit'=>new EE_Integer_Field('PRC_reg_limit', 'Limit to how many tickets can be sold at this price', true, 999999),
-				'PRC_tckts_sold'=>new EE_Integer_Field('PRC_tckts_sold', 'Tickets sold at this price', true, 0),
-				'PRC_start_date'=>new EE_Datetime_Field('PRC_start_date', 'If using dates, when this price becomes available', true, NULL, $timezone ),
-				'PRC_end_date'=>new EE_Datetime_Field('PRC_end_date', 'If using dates, when this price is no longer available', true, NULL, $timezone ),
 				'PRC_is_active'=>new EE_Boolean_Field('PRC_is_active', 'Flag indicating whether price is active', false, true),
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
@@ -93,9 +88,8 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			)
 		);
 		$this->_model_relations = array(
-			'Event'=>new EE_Belongs_To_Relation(),
-			'Price_Type'=>new EE_Belongs_To_Relation(),
-			'Registration'=>new EE_Has_Many_Relation()
+			'Ticket'=>new EE_HABTM_Relation('Ticket_Price'),
+			'Price_Type'=>new EE_Belongs_To_Relation()
 		);
 		parent::__construct( $timezone );
 		

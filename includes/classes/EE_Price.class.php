@@ -43,13 +43,6 @@ class EE_Price extends EE_Base_Class{
 	protected $_PRT_ID = NULL;
 
 
-	/**
-	 * Event ID
-	 *
-	 * @access protected
-	 * @var int
-	 */
-	protected $_EVT_ID = NULL;
 
 
 	/**
@@ -79,41 +72,6 @@ class EE_Price extends EE_Base_Class{
 	protected $_PRC_desc = NULL;
 
 
-	/**
-	*	Registration Limit for this Price Level
-	*
-	*	@access	protected
-	*	@var int
-	*/
-	protected $_PRC_reg_limit = NULL; 				
-
-
-	/**
-	*	This is the tickets that have been sold at this price.
-	*
-	*	@access	protected
-	*	@var int
-	*/
-	protected $_PRC_tckts_sold = 0; 				
-
-
-
-	/**
-	*	this is when this price becomes active
-	*
-	*	@access	protected
-	*	@var int
-	*/
-	protected $_PRC_start_date	 = NULL;
-
-
-	/**
-	*	this is when this price becomes inactive
-	*
-	*	@access	protected
-	*	@var int
-	*/
-	protected $_PRC_end_date = NULL;
 
 
 	/**
@@ -170,17 +128,13 @@ class EE_Price extends EE_Base_Class{
 	*/
 	protected $_PRC_deleted = NULL;
 
+
+
 	/**
 	 *
-	 * @var EE_Event
+	 * @var EE_Ticket[]
 	 */
-	protected $_Event;
-	
-	
-	/**
-	 * @var EE_Registration
-	 */
-	protected $_Registration;
+	protected $_Ticket;
 	
 	
 	
@@ -266,61 +220,6 @@ class EE_Price extends EE_Base_Class{
 
 
 
-	/**
-	*		Set Reg Limit
-	*
-	*		@access		public
-	*		@param		string		$PRC_desc
-	*/
-	public function set_reg_limit( $PRC_reg_limit = FALSE ) {
-		$this->set('PRC_reg_limit',$PRC_reg_limit);
-	}
-
-
-
-
-
-	/**
-	*		Set Tickets Left
-	*
-	*		@access		public
-	*		@param		string		$PRC_desc
-	*/
-	public function set_tckts_left( $PRC_tckts_left = FALSE ) {
-		$this->set('PRC_tckts_left',$PRC_tckts_left);
-	}
-
-
-
-
-
-
-
-	/**
-	*		Set start date
-	*
-	* 		@access		public
-	*		@param		mixed		$PRC_start_date
-	*/
-	public function set_start_date( $PRC_start_date = NULL ) {
-		$this->set('PRC_start_date',$PRC_start_date);
-	}
-
-
-
-
-
-	/**
-	*		Set end date
-	*
-	* 		@access		public
-	*		@param		mixed		$PRC_end_date
-	*/
-	public function set_end_date( $PRC_end_date = NULL ) {
-		$this->set('PRC_end_date',$PRC_end_date);
-	}
-
-
 
 
 
@@ -364,14 +263,7 @@ class EE_Price extends EE_Base_Class{
 		return $this->get_first_related('Price_Type');
 	}
 
-	/**
-	*	get Event ID
-	* @access		public
-	* @return 		int
-	*/
-	public function event() {
-		return $this->get('EVT_ID');
-	}
+	
 
 
 	/**
@@ -404,66 +296,6 @@ class EE_Price extends EE_Base_Class{
 	}
 
 
-	/**
-	*	get Reg Limit
-	* @access		public
-	* @return 		string
-	*/
-	public function reg_limit() {
-		return $this->get('PRC_reg_limit');
-	}
-
-
-	/**
-	*	get # of Tickets Left 
-	* @access		public
-	* @return 		string
-	*/
-	public function tckts_left() {
-		return $this->get('PRC_tckts_left');
-	}
-
-
-
-
-	/**
-	*	get start date
-	*
-	* 	//note this ONLY returns the date (not the time)
-	* 
-	* @access		public
-	* @param 		string		$format 	defaults to 'Y-m-d'  
-	* @return 		string
-	*/
-	public function start_date( $format = NULL ) {
-		return $this->get_date('PRC_start_date', $format);
-	}
-
-
-	/**
-	*	get end date
-	*
-	*   //note this ONLY returns the date (not the time)
-	* 
-	* @access		public
-	* @param 		string		$format 	defaults to 'Y-m-d'  
-	* @return 		string
-	*/
-	public function end_date( $format = NULL  ) {
-		return $this->get_date('PRC_end_date', $format);
-	}
-
-
-
-	public function start() {
-		return $this->_PRC_start_date;
-	}
-
-
-
-	public function end() {
-		return $this->_PRC_end_date;
-	}
 
 
 	/**
