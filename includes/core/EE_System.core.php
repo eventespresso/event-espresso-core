@@ -77,7 +77,6 @@ final class EE_System {
 			// hookpoints
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 			add_action( 'init', array( $this, 'init' ), 3 );
-			add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
 			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
 		}
 	}
@@ -362,23 +361,6 @@ final class EE_System {
 		}
 	}
 
-
-
-	/**
-	 * 	add_query_vars
-	 *
-	 *  @access 	public
-	 *  @param 	boolean 		$to_flush_or_not_to_flush
-	 *  @return 	void
-	 */
-	public function add_query_vars($query_vars) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-//		$query_vars[] = 'event_slug';
-//		$query_vars[] = 'ee';
-//		$query_vars[] = 'e_reg';
-		//printr( $query_vars, '$query_vars  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $query_vars;
-	}
 
 
 
