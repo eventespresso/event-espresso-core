@@ -1035,7 +1035,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['org_options'] = $row_args['org_options'] = $org_options;
 		$template_args['event'] = $row_args['event'] = $this->_cpt_model_obj;
 		$template_args['price_rows'] = array();
-		$row_template = apply_filters('FHEE_events_pricing_meta_box_row_template', EVENTS_TEMPLATE_PATH . 'edit_event_price_metabox_content_row.template.php');
+		$row_template = apply_filters('FHEE_events_pricing_meta_box_row_template', EVENTS_TEMPLATE_PATH . 'edit_ticket_price_content_row.template.php');
 		$row = 1;
 		$price_ids = array();
 
@@ -1096,7 +1096,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['price_types'] = $price_types;
 		$template_args['price_ids'] = implode(',', $price_ids );
 
-		$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'event_price_metabox_content.template.php' );
+		$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'ticket_price_content.template.php' );
 		espresso_display_template($main_template, $template_args);
 	}
 

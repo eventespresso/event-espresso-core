@@ -84,13 +84,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 	public function new_price_row_template( $template ) {
-		return PRICING_TEMPLATE_PATH . 'edit_event_price_metabox_content_row.template.php';
+		return PRICING_TEMPLATE_PATH . 'edit_ticket_price_content_row.template.php';
 	}
 
 
 
 	public function new_price_main_template( $template ) {
-		return PRICING_TEMPLATE_PATH . 'event_price_metabox_content.template.php';
+		return PRICING_TEMPLATE_PATH . 'event_ticket_price_content.template.php';
 	}
 
 
