@@ -728,7 +728,7 @@ class EEH_Activation {
 
 
 
-		$table_name = "esp_ticket_model";  
+		$table_name = "esp_ticket_template";  
 		$sql = "TTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_name varchar(45) NOT NULL,
 					  TTM_description text,
