@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 require_once ( EE_CLASSES . 'EE_Ticket.class.php' );
 
 class EEM_Ticket extends EEM_Soft_Delete_Base {
