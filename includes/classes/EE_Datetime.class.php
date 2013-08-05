@@ -104,16 +104,6 @@ class EE_Datetime extends EE_Base_Class{
 	protected $_DTT_reg_limit = NULL;	
 		
 	
-	
-    /**
-    *	available spaces left
-	* 
-    *	registration limit for this date/time slot
-	* 
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_tckts_left = NULL;	
 
 
 
@@ -121,7 +111,7 @@ class EE_Datetime extends EE_Base_Class{
 	 * if dtt is the primary one or not
 	 * @var boolean
 	 */
-	protected $_DTT_primary = null;
+	protected $_DTT_is_primary = null;
 	
 
 
@@ -153,9 +143,9 @@ class EE_Datetime extends EE_Base_Class{
 	
 	/**
 	 *
-	 * @var EE_Registration[]
+	 * @var EE_Ticket[]
 	 */
-	protected $_Registration;
+	protected $_Ticket;
 
 
 
@@ -234,69 +224,7 @@ class EE_Datetime extends EE_Base_Class{
 	public function set_end_time( $time ) {
 		$this->_set_time_for($time,'DTT_EVT_end');
 	}
-	
-	
 
-
-
-	/**
-	*		Set registration start date
-	* 
-	*		set the registration start date for an event 
-	* 
-	* 		@access		public		
-	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
-	*/	
-	public function set_reg_start_date( $date ) {
-		$this->_set_date_for( $date, 'DTT_REG_start' );
-	}
-
-
-
-
-
-	/**
-	*		Set registration start time
-	* 
-	*		set the registration start time for an event 
-	* 
-	* 		@access		public		
-	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
-	*/	
-	public function set_reg_start_time( $time ) {
-		$this->_set_time_for( $time, 'DTT_REG_start' );
-	}
-
-
-
-
-	/**
-	*		Set registration end date
-	* 
-	*		set the registration end date for an event 
-	* 
-	* 		@access		public		
-	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
-	*/	
-	public function set_reg_end_date( $date ) {
-		$this->_set_date_for( $date, 'DTT_REG_end' );
-	}
-
-
-
-
-
-	/**
-	*		Set registration end time
-	* 
-	*		set the registration end time for an event 
-	* 
-	* 		@access		public		
-	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
-	*/	
-	public function set_reg_end_time( $time ) {
-		$this->_set_time_for( $time, 'DTT_REG_end' );
-	}
 
 
 
@@ -348,7 +276,7 @@ class EE_Datetime extends EE_Base_Class{
 	 * @return boolean          TRUE if is primary, FALSE if not.
 	 */
 	public function is_primary() {
-		return $this->get('DTT_primary');
+		return $this->get('DTT_is_primary');
 	}
 
 
@@ -384,15 +312,14 @@ class EE_Datetime extends EE_Base_Class{
 	* 
 	* 		@access		private	
 	* 		@param		string		$date_or_time - whether to display a date or time or both
-	* 		@param		string		$EVT_or_REG - whether to display event or registration datetimes
 	* 		@param		string		$start_or_end - whether to display start or end datetimes
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	* 		@param 		string 		$echo 		whether we echo or return (note echoing uses "pretty" formats, otherwise we use the standard formats)
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	private function _show_datetime( $date_or_time = NULL, $EVT_or_REG = 'EVT', $start_or_end = 'start', $dt_frmt = NULL, $tm_frmt = NULL, $echo = FALSE ) {
-		$field_name = "DTT_{$EVT_or_REG}_{$start_or_end}";
+	private function _show_datetime( $date_or_time = NULL, $start_or_end = 'start', $dt_frmt = NULL, $tm_frmt = NULL, $echo = FALSE ) {
+		$field_name = "DTT_EVT_{$start_or_end}";
 		$dtt = $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, $date_or_time, $echo );
 		if ( !$echo ) return $dtt;
 	}
@@ -408,12 +335,12 @@ class EE_Datetime extends EE_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function start_date( $dt_frmt = NULL ) {		
-		return $this->_show_datetime( 'D', 'EVT', 'start', $dt_frmt );
+		return $this->_show_datetime( 'D', 'start', $dt_frmt );
 	}
 
 
 	public function e_start_date( $dt_frmt = NULL ) {
-		$this->_show_datetime( 'D', 'EVT', 'start', $dt_frmt, NULL, TRUE );
+		$this->_show_datetime( 'D', 'start', $dt_frmt, NULL, TRUE );
 	}
 
 
@@ -427,11 +354,11 @@ class EE_Datetime extends EE_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function end_date( $dt_frmt = NULL ) {		
-		return $this->_show_datetime( 'D', 'EVT', 'end', $dt_frmt );
+		return $this->_show_datetime( 'D', 'end', $dt_frmt );
 	}
 
 	public function e_end_date( $dt_frmt = NULL ) {		
-		$this->_show_datetime( 'D', 'EVT', 'end', $dt_frmt, NULL, TRUE );
+		$this->_show_datetime( 'D', 'end', $dt_frmt, NULL, TRUE );
 	}
 
 
@@ -444,11 +371,11 @@ class EE_Datetime extends EE_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function start_time( $tm_format = NULL ) {
-		return $this->_show_datetime( 'T', 'EVT', 'start', NULL, $tm_format );
+		return $this->_show_datetime( 'T', 'start', NULL, $tm_format );
 	}
 
 	public function e_start_time( $tm_format = NULL ) {
-		$this->_show_datetime( 'T', 'EVT', 'start', NULL, $tm_format, TRUE );
+		$this->_show_datetime( 'T', 'start', NULL, $tm_format, TRUE );
 	}
 
 
@@ -461,11 +388,11 @@ class EE_Datetime extends EE_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function end_time( $tm_format = NULL ) {
-		return $this->_show_datetime( 'T', 'EVT', 'end', NULL, $tm_format );
+		return $this->_show_datetime( 'T', 'end', NULL, $tm_format );
 	}
 
 	public function e_end_time( $tm_format = NULL ) {
-		$this->_show_datetime( 'T', 'EVT', 'end', NULL, $tm_format, TRUE );
+		$this->_show_datetime( 'T', 'end', NULL, $tm_format, TRUE );
 	}
 
 
@@ -480,11 +407,11 @@ class EE_Datetime extends EE_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		return $this->_show_datetime( '', 'EVT', 'start', $dt_frmt, $tm_format );
+		return $this->_show_datetime( '', 'start', $dt_frmt, $tm_format );
 	}
 
 	public function e_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		$this->_show_datetime( '', 'EVT', 'start', $dt_frmt, $tm_format, TRUE);
+		$this->_show_datetime( '', 'start', $dt_frmt, $tm_format, TRUE);
 	}
 
 
@@ -499,126 +426,12 @@ class EE_Datetime extends EE_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function end_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
-		return $this->_show_datetime( '', 'EVT', 'end', $dt_frmt, $tm_format );
+		return $this->_show_datetime( '', 'end', $dt_frmt, $tm_format );
 	}
 
 	public function e_end_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
-		$this->_show_datetime( '', 'EVT', 'end', $dt_frmt, $tm_format, TRUE );
+		$this->_show_datetime( '', 'end', $dt_frmt, $tm_format, TRUE );
 	}
-
-
-
-
-	/**
-	*		get registration start date
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_start_date( $dt_frmt = NULL ) {		
-		return $this->_show_datetime( 'D', 'REG', 'start', $dt_frmt );
-	}
-
-	public function e_reg_start_date( $dt_frmt = NULL ) {		
-		$this->_show_datetime( 'D', 'REG', 'start', $dt_frmt, NULL, TRUE );
-	}
-
-
-
-
-	/**
-	*		get registration end date
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_end_date( $dt_frmt = NULL ) {		
-		return $this->_show_datetime( 'D', 'REG', 'end', $dt_frmt );
-	}
-
-	public function e_reg_end_date( $dt_frmt = NULL ) {		
-		$this->_show_datetime( 'D', 'REG', 'end', $dt_frmt, NULL, TRUE );
-	}
-
-
-
-
-
-//	/**
-//	*		get registration start time
-//	* 
-//	* 		@access		public	
-//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-//	*		@return 		mixed		string on success, FALSE on fail
-//	*/	
-//	public function reg_start_time( $tm_format = NULL ) {
-//		return $this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format );
-//	}
-//
-//	public function e_reg_start_time( $tm_format = NULL ) {
-//		$this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format, TRUE );
-//	}
-
-
-
-
-
-//	/**
-//	*		get registration end time
-//	* 
-//	* 		@access		public	
-//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-//	*		@return 		mixed		string on success, FALSE on fail
-//	*/	
-//	public function reg_end_time( $tm_format = NULL ) {
-//		return $this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format );
-//	}
-//
-//	public function e_reg_end_time( $tm_format = NULL ) {
-//		$this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format, TRUE );
-//	}
-
-
-
-
-
-//	/**
-//	*		get registrationstart date and start time
-//	* 
-//	* 		@access		public	
-//	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-//	*		@return 		mixed		string on success, FALSE on fail
-//	*/	
-//	public function reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-//		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format );
-//	}
-//
-//	public function e_reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-//		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format, TRUE );
-//	}
-
-
-
-
-//
-//	/**
-//	*		get registration end date and time
-//	* 
-//	* 		@access		public	
-//	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-//	*		@return 		mixed		string on success, FALSE on fail
-//	*/	
-//	public function reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-//		return $this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format );
-//	}
-//
-//	public function e_reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-//		$this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format, TRUE );
-//	}
 
 
 
@@ -646,31 +459,6 @@ class EE_Datetime extends EE_Base_Class{
 		return $this->_DTT_EVT_end;
 	}
 
-
-
-
-//	/**
-//	*		get registration start timestamp
-//	* 
-//	* 		@access		public	
-//	*		@return 		int
-//	*/	
-//	public function reg_start() {
-//		return $this->_DTT_REG_start;
-//	}
-
-
-
-
-//	/**
-//	*		get registration end timestamp
-//	* 
-//	* 		@access		public	
-//	*		@return 		int
-//	*/	
-//	public function reg_end() {
-//		return $this->_DTT_REG_end;
-//	}
 
 
 
@@ -723,11 +511,10 @@ class EE_Datetime extends EE_Base_Class{
 	/**
 	 * This simply compares the internal dtt for the given string with NOW and determines if the date is upcoming or not.
 	 * @access public
-	 * @param string $what What datetime value we want info on (default is EVT)
 	 * @return boolean 
 	 */
-	public function is_upcoming( $what = 'EVT' ) {
-		$start = '_DTT_' . $what . '_start';
+	public function is_upcoming() {
+		$start = '_DTT_EVT_start';
 		$this->_property_exists($start);
 		return ( $this->$start > time() );
 	}
@@ -736,12 +523,11 @@ class EE_Datetime extends EE_Base_Class{
 
 	/**
 	 * This simply compares the internal datetime for the given string with NOW and returns if the date is active (i.e. start and end time)
-	 * @param  string  $what What datetime value we want info on (default is EVT)
 	 * @return boolean       
 	 */
-	public function is_active( $what = 'EVT' ) {
-		$start = '_DTT_' . $what . '_start';
-		$end = '_DTT_' . $what . '_end';
+	public function is_active() {
+		$start = '_DTT_EVT_start';
+		$end = '_DTT_EVT_end';
 		$this->_property_exists( array( $start, $end ) );
 		return ( $this->$start < time() && $this->$end > time() );
 	}
@@ -751,11 +537,10 @@ class EE_Datetime extends EE_Base_Class{
 
 	/**
 	 * This simply compares the internal dtt for the given string with NOW and determines if the date is expired or not.
-	 * @param  string  $what what datetime value we want info on (default is EVT)
 	 * @return boolean       
 	 */
-	public function is_expired( $what = 'EVT' ) {
-		$end = '_DTT_' . $what . '_end';
+	public function is_expired() {
+		$end = '_DTT_EVT_end';
 		$this->_property_exists( $end );
 		return ( $this->$end < time() );
 	}
@@ -765,13 +550,12 @@ class EE_Datetime extends EE_Base_Class{
 
 	/**
 	 * This returns the active status for whether an event is active, upcoming, or expired
-	 * @param  string $what what datetime value we want info on (default is EVT)
 	 * @return int       return value will be one of three ints: -1 = expired, 0 = upcoming, 1 = active.
 	 */
-	public function get_active_status( $what = 'EVT' ) {
-		if ( $this->is_expired( $what ) ) return EE_Datetime::expired;
-		if ( $this->is_upcoming( $what ) ) return EE_Datetime::upcoming;
-		if ( $this->is_active( $what ) ) return EE_Datetime::active;
+	public function get_active_status() {
+		if ( $this->is_expired() ) return EE_Datetime::expired;
+		if ( $this->is_upcoming() ) return EE_Datetime::upcoming;
+		if ( $this->is_active() ) return EE_Datetime::active;
 	}
 
 

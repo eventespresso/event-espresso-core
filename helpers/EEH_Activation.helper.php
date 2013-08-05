@@ -599,12 +599,12 @@ class EEH_Activation {
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
-				  DTT_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+				  DTT_is_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				  DTT_order mediumint(3) unsigned DEFAULT 0,
 				  DTT_parent int(10) unsigned DEFAULT 0,
 						PRIMARY KEY  (DTT_ID),
 						KEY EVT_ID (EVT_ID),
-						KEY DTT_primary (DTT_primary)";
+						KEY DTT_is_primary (DTT_is_primary)";
 		
 		
 		
