@@ -325,21 +325,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 
-	/**
-	 * 		sort_event_prices_by_start_date
-	 *
-	 * 		@access		private
-	 * 		@return 		boolean			false on fail
-	 */
-	private function _sort_event_prices_by_start_date($price_a, $price_b) {
-		if ( $price_a->start_date( FALSE ) == $price_b->start_date( FALSE )) {
-			return 0;
-		}
-		return $price_a->start_date( FALSE ) < $price_b->start_date( FALSE ) ? -1 : 1;
-	}
-
-
-
 
 	/**
 	 * 		get all prices of a specific type
@@ -404,16 +389,48 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			if ( !$changed ) 
 				return $existing_prc;
 
-			//if tickets sold then we create a new price NOT update an existing one.  The existing one becomes archived.
-			if ( $existing_prc->get('PRC_tckts_sold') > 0 ) {
-				$existing_prc->set('PRC_deleted', 1 );
-				$existing_prc->save();
-				//create new price, but make sure that we 'reset' any necessary columns/fields.
-				$fields_n_values['PRC_tckts_sold'] = 0;
-				$new_id = $this->insert($fields_n_values);
+			//if tickets sold then we create a new price NOT update an existing one.  The existing one becomes archived.  We ALSO need to archive the existing ticket, clone a new ticket from the existing one and add all the prices except the changed one to the cloned ticket and add the new price to the new ticket.
+			if ( $existing_prc->get_first_related('Ticket')->tickets_sold() ) {
+				//get all prices and datetimes on the existing ticket
+				$existing_ticket = $existing_prc->get_first_related('Ticket');
+				$existing_ticket_prices = $existing_ticket->get_all_related('Price');
+				$existing_datetimes = $existing_ticket->get_all_related('Datetime');
 
-				//since update usually returns the object let's make sure we do that.
-				return ( $this->get_one_by_ID( $new_id ) );
+				//now let's copy the existing ticket
+				$new_ticket = $existing_ticket;
+
+				//archive the existing ticket;
+				$existing_ticket->set('TKT_deleted', 1);
+				$existing_ticket->save();
+
+				//set new ticket ID to null and save to create new ticket.
+				$new_ticket->set('ID', NULL);
+				$new_ticket->save();
+
+				//loop through existing prices and replace the existing price with a new one and attach to new ticket
+				$new_price_object = FALSE;
+				foreach ( $existing_ticket_prices as $price ) {
+					//is this the existing price?
+					if ( $existing_prc->ID() == $price->ID() ) {
+						//create new price, but make sure that we 'reset' any necessary columns/fields.
+						if ( isset( $fields_n_values['PRC_ID'] ) )
+							$fields_n_values['PRC_ID'] = NULL; //make sure if PRC_ID is set that we null it to force insert
+						$new_id = $this->insert($fields_n_values);
+						$new_price = $new_ticket->_add_relation_to($new_id, 'Price');
+						continue;
+					}
+
+					//not the existing price so make sure this price is added to the new ticket.
+					$new_ticket->_add_relation_to($price, 'Price');
+				}
+
+				//now we also need to make sure we add the datetimes to the new ticket
+				foreach ( $existing_datetimes as $datetime ) {
+					$new_ticket->_add_relation_to( $datetime, 'Datetime' );
+				}
+
+				//now let's just return the new price object.  Client code will have to take care of retrieving the new ticket attached to this price object if needed.
+				return $new_price;
 			}
 			
 		}
