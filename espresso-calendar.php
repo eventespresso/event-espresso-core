@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
-  Version: 2.1.0.DEV
+  Version: 2.1.0.BETA
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2012 Event Espresso (email : support@eventespresso.com)
@@ -129,7 +129,7 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function calendar_version() {
-		return '2.1.0.dev';
+		return '2.1.0.BETA';
 	}
 	
 
