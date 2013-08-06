@@ -1,35 +1,12 @@
-<fieldset>
-	<legend><?php printf( __('Ticket %s', 'event_espresso'), $ticket_row ); ?></legend>
-	<input id="edit-ticket-id-<?php echo $ticket_row; ?>" type="hidden" name="edit_ticket_info[<?php echo $ticket_row; ?>][TKT_ID]" value="<?php echo $ticket->ID(); ?>" />
-	<input id="edit-ticket-name-<?php echo $ticket_row; ?>" type="text" name="edit_ticket_info[<?php echo $ticket_row; ?>][TKT_name]" value="<?php echo $ticket->get('TKT_name'); ?>" placeholder="<?php _e('Ticket Name'); ?>" />
-	<textarea id="edit-ticket-description-<?php echo $ticket_row; ?>" type="textarea" name="edit_ticket_info[<?php echo $ticket_row; ?>][TKT_description]">
-			<?php echo $ticket->get('TKT_description'); ?>
-	</textarea>
-
-	<div id="ticket-price-container-<?php echo $ticket_row; ?>" class="ticket-half-column">
-		<?php echo $prices; ?>
-	</div>
-	<div id="ticket-cost-container-<?php echo $ticket_row; ?>" class="ticket-half-column">
-		<span class="ticket-cost-header-text"><?php _e('Single Unit Cost:'); ?></span>
-		<span class="ticket-cost-amount">$0</span>
-	</div>
-	<div class="ticket-half-column">
-		<?php echo $ticket_template_selector; ?>
-	</div>
-	<div class="ticket-half-column">
-		<input id="edit-ticket-reg-limit-<?php echo $ticket_row; ?>" type="text" name"edit_ticket_info[<?php echo $ticket_row; ?>][TKT_reg_limit]" value="<?php echo $ticket->get('TKT_reg_limit'); ?>" /> <br />
-		<input id="edit-ticket-start-date-<?php echo $ticket_row; ?>" type="text" class="dtm-es-picker dtm-inp" value="<?php $ticket->e_start_date_and_time( 'Y-m-d' ); ?>" />
-		<input id="edit-ticket-end-date-<?php echo $ticket_row; ?>" type="text" class="dtm-es-picker dtm-inp" value="<?php $ticket->e_end_date_and_time( 'Y-m-d' ); ?>" />
-	</div>
-
-	<div id="ticket-selected-datetimes">
-		<!-- a list of datetimes this ticket is attached to -->
-	<div>
-	<div class="ticket-half-column">
-		<input id="ticket-datetime-button" class="button-secondary" type="button" />
-	</div>
-	<div class="ticket-half-column">
-		<input id="ticket-archive-button" class="button-secondary archive" type="button" />
-	</div>
-</fieldset>
-<input id="ticket-add-button" class="button-secondary add-new-ticket" type="button" />
+<div id="all-tickets-container">
+	<?php foreach ( $tickets_rows as $tickets_row ) {
+		echo $tickets_row;
+	}
+	$total_tickets = count( $tickets_rows );
+	$next_ticket_row = $total_tickets + 1;
+	?>
+	<input type="hidden" id="total_count_ticket_rows" name="total_count_ticket_rows" value="<?php echo $total_tickets; ?>" />
+	<input type="hidden" id="next_ticket_row" name="next_ticket_row" value=<?php echo $next_ticket_row; ?> />
+	<input id="ticket-add-button" class="button-secondary add-new-ticket" type="button" />
+	<input id="ticket-IDs" name="ticket-IDs" type="hidden" value="<?php echo $ticket_ids; ?>" />
+</div>
