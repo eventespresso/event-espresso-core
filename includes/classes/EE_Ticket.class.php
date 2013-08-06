@@ -200,7 +200,15 @@ class EE_Ticket extends EE_Base_Class{
 	 * @return array
 	 */
 	public function tickets_sold() {
+		$dtks = $this->get_many_related('Datetime_Ticket');
+		$tickets_sold = array();
+		if ( !empty( $dtks ) ) {
+			foreach ( $dtks as $dtk ) {
+				$tickets_sold[$dtk->ID()] = $dtk->get('DTK_sold');
+			}
+		}
 
+		return $tickets_sold;
 	}
 
 
@@ -210,7 +218,14 @@ class EE_Ticket extends EE_Base_Class{
 	 * @return bool True if there are tickets sold, false if there aren't.
 	 */
 	public function any_tickets_sold() {
+		$tickets_sold = $this->tickets_sold();
+		if ( empty( $tickets_sold ) ) return FALSE; //early jumpout if there is an empty array (means there are not datetimes associated with this ticket)
 
+		foreach ( $tickets_sold as $sold ) {
+			if ( $ticket > 0 ) return TRUE;
+		}
+
+		return FALSE;
 	}
 
 
