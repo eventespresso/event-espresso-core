@@ -2,13 +2,13 @@
 <div class="error">
 	<p><?php echo $no_price_message_error; ?></p>
 </div>	
-<div id="no-ticket-prices-msg-dv">
+<div id="no-ticket-prices-msg-dv-ticketrow-<?php echo $ticket_row; ?>">
 	<p>
 	<?php echo $no_price_message; ?>					
 	</p>
 </div>
 <?php endif; ?>
-<table id="event_editor_pricing" width="100%" >
+<table id="event_editor_pricing-ticketrow-<?php echo $ticket_row; ?>" width="100%" >
 	<thead>
 		<tr>
 			<td class="event-price-tbl-hdr-type"><b><?php //_e('Type'); ?></b></td>
@@ -26,8 +26,8 @@
 </table>
 <br/>
 
-<input id="edit_event_save_prices_btn" class="button-primary save right" type="submit" name="save" value="Save Event Prices">
+<input id="edit_event_save_prices_btn-ticketrow-<?php echo $ticket_row; ?>" class="button-primary save right" type="submit" name="save" value="Save Event Prices">
 			
 <br class="clear"/><br/>
 
-<input id="price-IDs" name="price-IDs" type="hidden" value="<?php echo $price_ids; ?>" />
+<input id="price-IDs-ticketrow-<?php echo $ticket_row; ?>" name="price-IDs[<?php echo $ticket_row; ?>]" type="hidden" value="<?php echo $price_ids; ?>" />
