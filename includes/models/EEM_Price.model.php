@@ -165,13 +165,13 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 */
 	public function get_all_default_prices() {
 		return $this->get_all(array(
-							array(
-								'TKT_ID'=>0,
-								'Price_Type.PRT_is_global'=>true,
-								'Price_Type.PBT_ID'=>array('!=',4),
-								'PRC_is_active'=>true),
-							'order_by'=>$this->_order_by_array_for_get_all_method()
-						));
+			array(
+				'TKT_ID'=>0,
+				'Price_Type.PRT_is_global'=>true,
+				'Price_Type.PBT_ID'=>array('!=',4),
+				'PRC_is_active'=>true),
+			'order_by'=>$this->_order_by_array_for_get_all_method()
+		));
 	}
 
 
@@ -235,27 +235,20 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive all prices for an event plus default global prices, but not taxes
+	 * 		retreive all prices for an ticket plus default global prices, but not taxes
 	 *
 	 * 		@access		public
-	 * 		@param int     $EVT_ID          the id of the event.  If not included then we assume that this is a new EVENT.
+	 * 		@param int     $TKT          the id of the event.  If not included then we assume that this is a new ticket.
 	 * 		@return 		boolean			false on fail
 	 */
-	public function get_all_event_prices_for_admin( $EVT_ID = FALSE ) {
+	public function get_all_ticket_prices_for_admin( $TKT_ID = FALSE ) {
+		$ticket_prices = array();
+		if ( empty($TKT_ID) ) {
 
-		if ( ! $EVT_ID ) {
+			//if there is no tkt, get prices with no tkt ID, are global, are not a tax, and are active
+			//return that list
+			$ticket_prices = $this->get_all_default_prices();
 
-			//if there is no evt_id, get prices with no event ID, are global, are not a tax, and are active
-			//return taht list
-			$global_prices = $this->get_all_default_prices();
-			
-//			$this->_select_all_prices_where(
-//					array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
-//					array( 'PRC_start_date' ), 
-//					array( 'DESC' ),
-//					array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
-//			);
-			//printr( $prices, '$prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			if ( $global_prices ) {
 				$array_of_price_objects = array();
 				foreach ($global_prices as $price) {
@@ -266,29 +259,26 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				return array();
 			}
 			
+		} else {
+		
+			$ticket_prices = $this->get_all(array(
+				array(
+					'TKT_ID'=>$TKT_ID,
+					'PRC_deleted' => 0
+					),
+				'order_by'=> array('PRC_order' => 'ASC')
+			));
 		}
-
 		
-		$event_prices = $this->get_all(array(
-			array(
-				'EVT_ID'=>$EVT_ID,
-				'PRC_deleted' => 0
-				),
-			'order_by'=> array('PRC_order' => 'ASC')
-		));
-		
-		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
-		
-		//uasort( $prices, array( $this, '_sort_event_prices_by_type' ));
-		
-		if ( ! empty( $event_prices )) {
-			foreach ( $event_prices as $price ) {
+		if ( !empty( $ticket_prices ) ) {		
+			foreach ( $ticket_prices as $price ) {
 				$array_of_price_objects[ $price->type() ][] = $price;
 			}
 			return $array_of_price_objects;
-		} else {
-			return FALSE;
-		}
+
+		 } else {
+		 	return FALSE;
+		 }
 	}
 
 
