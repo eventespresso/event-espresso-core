@@ -34,6 +34,15 @@ class EE_Price extends EE_Base_Class{
 	protected $_PRC_ID = FALSE;
 
 
+
+
+	/**
+	 * Foreign key to Ticket
+	 * @var int
+	 */
+	protected $_TKT_ID = 0;
+
+
 	/**
 	*	Price Type ID
 	*
@@ -132,7 +141,7 @@ class EE_Price extends EE_Base_Class{
 
 	/**
 	 *
-	 * @var EE_Ticket[]
+	 * @var EE_Ticket
 	 */
 	protected $_Ticket;
 	

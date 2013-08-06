@@ -75,6 +75,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		$this->_fields = array(
 			'Price'=> array(
 				'PRC_ID'=>new EE_Primary_Key_Int_Field('PRC_ID', 'Price ID', false, 0),
+				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', 'Ticket ID', false, 0, 'Ticket'),
 				'PRT_ID'=>new EE_Foreign_Key_Int_Field('PRT_ID', 'Price type Id', false, 1, 'Price_Type'),
 				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
@@ -88,7 +89,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			)
 		);
 		$this->_model_relations = array(
-			'Ticket'=>new EE_HABTM_Relation('Ticket_Price'),
+			'Ticket'=>new EE_Belongs_To_Relation(),
 			'Price_Type'=>new EE_Belongs_To_Relation()
 		);
 		parent::__construct( $timezone );
@@ -137,27 +138,21 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive all active prices for a particular event
+	 * 		retreive all active prices for a particular ticket
 	 *
 	 * 		@access		public
-	 * 		@return 		array				on success
-	 * 		@return 		boolean			false on fail
+	 * 		@return 	array			on success
+	 * 		@return 	boolean			false on fail
 	 */
-	public function get_all_event_prices( $EVT_ID ) {
+	public function get_all_ticket_prices( $TKT_ID ) {
 		return $this->get_all(array(
 			array(
-				'EVT_ID'=>$EVT_ID,
+				'TKT_ID'=>$TKT_ID,
 				'PRC_is_active'=>true,
 				'Price_Type.PBT_ID'=>array('!=',  EEM_Price_Type::base_type_tax)
 			),
 			'order_by'=>$this->_order_by_array_for_get_all_method()
 		));
-//		return $this->_select_all_prices_where( 
-//				array( 'prc.EVT_ID' =>$EVT_ID, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE, 'prt.PBT_ID' => 4 ), 
-//				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
-//				'ASC', 
-//				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=', 'prt.PBT_ID' => '!=' )
-//		);
 	}
 
 
@@ -171,7 +166,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	public function get_all_default_prices() {
 		return $this->get_all(array(
 							array(
-								'EVT_ID'=>0,
+								'TKT_ID'=>0,
 								'Price_Type.PRT_is_global'=>true,
 								'Price_Type.PBT_ID'=>array('!=',4),
 								'PRC_is_active'=>true),

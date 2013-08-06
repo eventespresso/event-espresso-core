@@ -60,7 +60,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			'Registration'=>new EE_Has_Many_Relation(),
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Datetime'=>new EE_HABTM_Relation('Datetime_Ticket'),
-			'Price'=>new EE_HABTM_Relation('Ticket_Price'),
+			'Price'=>new EE_Has_Many_Revision_Relation('TKT_ID', 'PRC_parent', false ),
 			'Ticket_Template'=>new EE_Belongs_To_Relation()
 		);
 
