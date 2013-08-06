@@ -46,10 +46,10 @@ class EE_Event extends EE_CPT_Base{
 
 	
 	/**
-	 * All prices which apply to this event
-	 * @var EE_Price[] 
+	 * All tickets which apply to this event
+	 * @var EE_Ticket[] 
 	 */
-	protected $_Price;
+	protected $_Ticket;
 	
 	/**
 	 * Al question groups which apply to this event
