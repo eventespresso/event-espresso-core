@@ -703,7 +703,7 @@ class EEH_Activation {
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_ID int(10) unsigned NOT NULL,
 					  EVT_ID int(10) unsigned NOT NULL,
-					  TKT_reg_limit mediumint(8) unsigned DEFAULT NULL,
+					  TKT_reg_limit mediumint(8) DEFAULT NULL,
 					  TKT_start_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_end_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_tax tinyint(1) unsigned NOT NULL DEFAULT '0',
