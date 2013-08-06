@@ -354,9 +354,10 @@ class EE_Base_Class{
 	 * then only remove that one object from our cached array. Otherwise, clear the entire list.
 	 * @param string $relationName one of the keys in the _model_relations array on the model. Eg 'Registration'
 	 * @param EE_Base_Class $object_to_remove_from_cache
+	 * @param bool          $clear_all This flags clearing the entire cache relation property if this is HasMany or HABTM.
 	 * @return boolean success
 	 */
-	public function clear_cache($relationName, $object_to_remove_from_cache = null){
+	public function clear_cache($relationName, $object_to_remove_from_cache = null, $clear_all = FALSE){
 		$object_to_remove_from_cache = $this->ensure_related_thing_is_model_obj($object_to_remove_from_cache, $relationName);
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
 		if( ! $relationship_to_model){
@@ -366,7 +367,7 @@ class EE_Base_Class{
 			throw new EE_Error(sprintf(__("You have requested to remove the cached relationship to %s, but have not provided a model object. Instead you provided a %s",'event_espresso'),$relationName,get_class($object_to_remove_from_cache)));
 		}
 		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
-		if($relationship_to_model instanceof EE_Belongs_To_Relation){
+		if($relationship_to_model instanceof EE_Belongs_To_Relation || $clear_all ){
 			$this->$relationNameClassAttribute  = null;
 		}else{
 			if($object_to_remove_from_cache){
@@ -838,7 +839,9 @@ class EE_Base_Class{
 	 */
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array()){
 		$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
-		$this->cache( $relationName, $otherObject );
+
+		//clear cache so future get_many_related and get_first_related() return new results.
+		$this->clear_cache( $relationName, $otherObject, TRUE );
 		return $otherObject;
 	}
 	
