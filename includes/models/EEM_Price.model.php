@@ -408,7 +408,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				$new_ticket->save();
 
 				//loop through existing prices and replace the existing price with a new one and attach to new ticket
-				$new_price_object = FALSE;
+				$new_price = FALSE;
 				foreach ( $existing_ticket_prices as $price ) {
 					//is this the existing price?
 					if ( $existing_prc->ID() == $price->ID() ) {
