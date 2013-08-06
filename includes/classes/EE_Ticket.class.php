@@ -148,6 +148,15 @@ class EE_Ticket extends EE_Base_Class{
 
 
 	/**
+	 * Datetime_Ticket objects attached to this ticket (so we can get tickets sold for a particular datetime)
+	 * @var EE_Datetime_Ticket[]
+	 */
+	protected $_Datetime_Ticket;
+
+
+
+
+	/**
 	 * Prices attached to this ticket
 	 * @var EE_Price[]
 	 */
@@ -182,6 +191,26 @@ class EE_Ticket extends EE_Base_Class{
 
 	public function parent() {
 		return $this->get('TKT_parent');
+	}
+
+
+
+	/**
+	 * This returns an array indexed by datetime_id for tickets sold with this ticket.
+	 * @return array
+	 */
+	public function tickets_sold() {
+
+	}
+
+
+
+	/**
+	 * This helper function simply checks to see if any of this ticket have been sold for ANY of the datetimes associated with this 
+	 * @return bool True if there are tickets sold, false if there aren't.
+	 */
+	public function any_tickets_sold() {
+
 	}
 
 
