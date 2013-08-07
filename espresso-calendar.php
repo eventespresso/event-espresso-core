@@ -340,7 +340,7 @@ class EE_Calendar {
 		// set boolean for categories 
 		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
 		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : FALSE;
-		$type = $event_category_id ? 'cat' : 'all';
+
 		//Build the SQL to run
 		$SQL = "SELECT e.*, ese.start_time, ese.end_time ";
 		//Get the categories
@@ -373,8 +373,9 @@ class EE_Calendar {
 //		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h3>$events_data</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
+		$event_categories = array();
 		//Do we need to get Category data ?
-		if ( $use_categories && $type == 'all' ) {
+		if ( $use_categories ) {
 			// grab event_ids from query results above to use in category query
 			$EVT_IDs = array_keys($events_data);
 			$SQL = "SELECT event_id, c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc";
@@ -382,12 +383,12 @@ class EE_Calendar {
 			$SQL .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 			$SQL .= " WHERE event_id IN ( '" . implode("', '", $EVT_IDs) . "' )";
 			$categories = $wpdb->get_results( $wpdb->prepare( $SQL, NULL ));
-			//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			$event_categories = array();
+//			echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			foreach ($categories as $category) {
 				$event_categories[$category->event_id][] = $category;
 			}
 		}
+//		echo '<h3>$event_categories</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $event_categories, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
 		 $enable_cat_classes = isset( $this->_calendar_options['enable_cat_classes'] ) && $this->_calendar_options['enable_cat_classes'] ? TRUE : FALSE;
 		 $show_attendee_limit = isset( $this->_calendar_options['show_attendee_limit'] ) && $this->_calendar_options['show_attendee_limit'] ? TRUE : FALSE;
@@ -424,16 +425,14 @@ class EE_Calendar {
 			//Get details about the category of the event
 			if ($use_categories) {
 				// extract info from separate array of category data ?
-				if (isset($event_categories[$event->id]) && $type == 'all') {
+				if ( isset( $event_categories[$event->id] ) ) {
 					// get first element of array without modifying original array
 					$primary_cat = array_shift(array_values($event_categories[$event->id]));
 					$category_data['category_meta'] = unserialize($primary_cat->category_meta);
-				} else if ($type == 'cat') {
-					// or was one category set via the shortcode
-					$category_data['category_meta'] = unserialize($event->category_meta);
 				} else {
 					$category_data['category_meta'] = array();
 				}
+
 				//Assign colors to events by category
 				if ( $enable_cat_classes && isset($category_data['category_meta']['use_pickers']) && $category_data['category_meta']['use_pickers'] == 'Y') {
 					$events[ $cntr ]['color'] = $category_data['category_meta']['event_background'];
@@ -540,10 +539,10 @@ class EE_Calendar {
 			if ( $use_categories ) {
 				if ( $enable_cat_classes ) {
 
-					if (isset($event_categories[$event->id]) && $type == 'all') {
-						foreach ($event_categories[$event->id] as $EVT) {
+					if ( isset( $event_categories[$event->id] ) && ! $event_category_id ) {
+						foreach ( $event_categories[$event->id] as $cat ) {
 							//This is the css class name
-							$events[ $cntr ]['className'] .= ' ' . $EVT->category_identifier;
+							$events[ $cntr ]['className'] .= ' ' . $cat->category_identifier;
 						}
 						// set event type to the category id
 						$events[ $cntr ]['eventType'] = isset($primary_cat->category_name) && !empty($primary_cat->category_name) ? $primary_cat->category_name : '';
