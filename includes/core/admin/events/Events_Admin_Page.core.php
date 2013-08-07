@@ -712,7 +712,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'DTT_ID' => isset( $event_datetime['ID'] ) && $event_datetime['ID'] !== '' ? absint( $event_datetime['ID'] ) : NULL,
 					'DTT_EVT_start' => $event_datetime['evt_start'],
 					'DTT_EVT_end' => $event_datetime['evt_end'],
-					'DTT_primary' => $row === 1 ? TRUE : FALSE,
+					'DTT_is_primary' => $row === 1 ? TRUE : FALSE,
 					'DTT_order' => $row
 				),
 				$timezone);
@@ -1206,7 +1206,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$where = array(
 				//todo add event categories
-				'Datetime.DTT_primary' => 1,
+				'Datetime.DTT_is_primary' => 1,
 		);
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
