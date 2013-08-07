@@ -399,9 +399,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 	
 		$default_template_settings = array(
-			'display_description_in_event_list' => FALSE,
-			'display_short_description_in_event_list' => TRUE,
-			'display_address_in_event_list' => FALSE,
 			'display_address_in_regform' => TRUE,			
 		);
 		
@@ -410,6 +407,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? array_merge( $default_template_settings, $this->EE->CFG->template_settings )
 				: $default_template_settings;
 		
+		$this->_template_args = apply_filters( 'FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
+
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
@@ -426,21 +425,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = array(
 			'template_settings' => array()
 		);
-
-		$data['template_settings']['display_description_in_event_list'] = 
-				 isset( $this->_req_data['display_description_in_event_list'] ) 
-				? absint( $this->_req_data['display_description_in_event_list'] ) 
-				: FALSE;
-
-		$data['template_settings']['display_short_description_in_event_list'] =  
-				 isset( $this->_req_data['display_short_description_in_event_list'] ) 
-				? absint( $this->_req_data['display_short_description_in_event_list'] ) 
-				: TRUE;
-
-		$data['template_settings']['display_address_in_event_list'] = 
-				 isset( $this->_req_data['display_address_in_event_list'] ) 
-				? absint( $this->_req_data['display_address_in_event_list'] ) 
-				: FALSE;
 
 		$data['template_settings']['display_address_in_regform'] = 
 				 isset( $this->_req_data['display_address_in_regform'] ) 
