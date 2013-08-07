@@ -23,9 +23,44 @@
 	 *
 	 * @return bool
 	 */
-	function the_event_date() {
-		EEH_Event_View::the_event_date();
+	if ( ! function_exists( 'espresso_event_date' )) {
+		function espresso_event_date() {
+			EEH_Event_View::the_event_date();
+		}		
 	}
+
+
+
+	/**
+	 * the_event_date
+	 *
+	 * @returns a link to edit an event
+	 * @uses $wp_query
+	 *
+	 * @return bool
+	 */
+	if ( ! function_exists( 'espresso_edit_event_link' )) {
+		function espresso_edit_event_link() {
+			EEH_Event_View::edit_event_link();
+		}		
+	}
+
+
+
+	/**
+	 * espresso_event_desc
+	 *
+	 * @returns the primary date for an event
+	 * @uses $wp_query
+	 *
+	 * @return bool
+	 */
+//	if ( ! function_exists( 'espresso_event_desc' )) {
+//		function espresso_event_desc() {
+//			EEH_Event_View::event_desc();
+//		}		
+//	}
+
 
 
 
@@ -54,10 +89,54 @@ class EEH_Event_View extends EEH_Base {
 	public static function the_event_date() {
 		global $post;
 		if ( isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes )) {
-			$datetime = array_shift( $post->datetimes );
+			$datetime = array_shift( array_values( $post->datetimes ));
 			$datetime->e_start_date_and_time();		
 		}
 	}
+
+
+
+
+	/**
+	 * 	edit_event_link
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function edit_event_link( $link = '', $before = '<p class="edit-event-lnk small-txt clear">', $after = '</p>', $EVT_ID = FALSE ) {
+		global $post;
+		// get EVT_ID either from passed value or global $post var
+		$EVT_ID = $EVT_ID ? $EVT_ID : $post->ID;
+		// can the user edit this post ?
+		if ( current_user_can( 'edit_post', $EVT_ID )) {
+			// set link text
+			$link = ! empty( $link ) ? $link : __('edit this event');
+			// generate nonce
+			$nonce = wp_create_nonce( 'edit_nonce' );
+			// generate url to event editor for this event
+			$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'id' => $EVT_ID, 'edit_nonce' => $nonce ), admin_url() );
+			// get edit CPT text
+			$post_type_obj = get_post_type_object( $post->post_type );
+			// build final link html
+			$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
+			// put it all together 
+			echo $before . apply_filters( 'edit_post_link', $link, $EVT_ID ) . $after;			
+		}
+	}
+
+
+
+
+	/**
+	 * 	event_desc
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+//	public static function event_desc( ) {
+//			global $post;
+//			
+//	}
 
 
 
