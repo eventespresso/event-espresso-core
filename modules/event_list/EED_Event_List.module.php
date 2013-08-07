@@ -42,6 +42,22 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
+		add_filter('FHEE__Config__update_config__CFG', array( 'EED_Event_List', 'filter_config' ), 10 );
+		add_action( 'AHEE__general_settings_admin__template_settings__before_settings_form', array( 'EED_Event_List', 'template_settings_form' ), 10 );
+		add_action( 'admin_init', array( 'EED_Event_List', 'set_definitions' ), 10 );
+	}
+
+
+
+	/**
+	 * 	set_definitions
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function set_definitions() {
+		define( 'EVENT_LIST_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
+		define( 'EVENT_LIST_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
 	}
 
 
@@ -53,8 +69,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _initial_setup() {
-		define( 'EVENT_LIST_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
-		define( 'EVENT_LIST_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
+		$this->set_definitions();
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		$this->EE->load_helper( 'Event_View' );
@@ -62,8 +77,9 @@ class EED_Event_List  extends EED_Module {
 		remove_all_filters( 'excerpt_length' );
 		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 10 );
+		add_filter('the_excerpt', array( $this, 'the_excerpt' ), 999 );
+//		printr( $this->EE->CFG->EED_Event_List, '$this->EE->CFG->EED_Event_List  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
-
 
 
 	/**
@@ -74,7 +90,8 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function run() {
 		$this->_initial_setup();
-		EE_Config::register_view( 'events', 0, EVENT_LIST_TEMPLATES_PATH . 'archive-espresso_events.template.php' );		
+		$tempate = isset( $this->EE->CFG->EED_Event_List['templates']['full'] ) && ! empty( $this->EE->CFG->EED_Event_List['templates']['full'] ) ? $this->EE->CFG->EED_Event_List['templates']['full'] : 'archive-espresso_events';
+		EE_Config::register_view( 'events', 0, EVENT_LIST_TEMPLATES_PATH . $tempate . '.template.php' );	
 	}
 
 
@@ -99,7 +116,8 @@ class EED_Event_List  extends EED_Module {
 		$wp_query = EEH_Event_View::get_event_datetimes_and_prices_for_WP_Query( $wp_query );	
 		ob_start();
 		global $post;
-		include( EVENT_LIST_TEMPLATES_PATH . 'archive-event_list.template.php' );
+		$tempate = isset( $this->EE->CFG->EED_Event_List['templates']['part'] ) && ! empty( $this->EE->CFG->EED_Event_List['templates']['part'] ) ? $this->EE->CFG->EED_Event_List['templates']['part'] : 'archive-event_list';
+		include( EVENT_LIST_TEMPLATES_PATH . $tempate . '.template.php' );
 		$output = ob_get_clean();	
 		$this->EE->REQ->output .= $output;
 		wp_reset_query();
@@ -125,6 +143,17 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function excerpt_more( $more ) {
 		return '&hellip;';
+	}
+
+	/**
+	 * 	the_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function the_excerpt( $the_excerpt ) {
+		$display_address = isset( $this->EE->CFG->EED_Event_List['display_address'] ) ? $this->EE->CFG->EED_Event_List['display_address'] : TRUE;
+		return $display_address ? $the_excerpt : '';			
 	}
 
 
@@ -155,11 +184,101 @@ class EED_Event_List  extends EED_Module {
 		}
 
 	}
+
+
+
+
+	/**
+	 * 	template_settings_form
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function template_settings_form() {
+		if ( ! isset( EE_Registry::instance()->CFG->EED_Event_List )) {
+			//EE_Registry::instance()->CFG = $this->set_default_settings( EE_Registry::instance()->CFG );
+			add_filter( 'FHEE__Event_List__template_settings_form__CFG', array( 'EED_Event_List', 'set_default_settings' ));
+			EE_Registry::instance()->CFG = apply_filters( 'FHEE__Event_List__template_settings_form__CFG', EE_Registry::instance()->CFG );
+		}
+		espresso_display_template( EVENT_LIST_TEMPLATES_PATH . 'admin-event-list-settings.template.php', EE_Registry::instance()->CFG->EED_Event_List );
+	}
+
+
+
+
+	/**
+	 * 	set_default_settings
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function set_default_settings( $CFG ) {
+		//printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$CFG->EED_Event_List = array(
+			'display_description' => isset( $CFG->EED_Event_List['display_description'] ) && ! empty( $CFG->EED_Event_List['display_description'] ) ? $CFG->EED_Event_List['display_description'] : FALSE,
+			'display_exceprt' => isset( $CFG->EED_Event_List['display_exceprt'] ) && ! empty( $CFG->EED_Event_List['display_exceprt'] ) ? $CFG->EED_Event_List['display_exceprt'] : TRUE,
+			'display_address' => isset( $CFG->EED_Event_List['display_address'] ) && ! empty( $CFG->EED_Event_List['display_address'] ) ? $CFG->EED_Event_List['display_address'] : FALSE,
+			'templates' => array(
+				'full'  => isset( $CFG->EED_Event_List['templates']['full'] ) && ! empty( $CFG->EED_Event_List['templates']['full'] ) ? $CFG->EED_Event_List['templates']['full'] : 'archive-espresso_events',
+				'part'  => isset( $CFG->EED_Event_List['templates']['part'] ) && ! empty( $CFG->EED_Event_List['templates']['part'] ) ? $CFG->EED_Event_List['templates']['part'] : 'archive-event_list'
+			)
+		);
+		return $CFG;
+	}
+
+
+
+	/**
+	 * 	filter_config
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function filter_config( $CFG ) {
+		//printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$CFG->EED_Event_List = array(
+			'display_description' => isset( $CFG->template_settings['display_description_in_event_list'] ) ? $CFG->template_settings['display_description_in_event_list'] : $CFG->EED_Event_List['display_description'],
+			'display_exceprt' => isset( $CFG->template_settings['display_short_description_in_event_list'] ) ? $CFG->template_settings['display_short_description_in_event_list'] : $CFG->EED_Event_List['display_exceprt'],
+			'display_address' => isset( $CFG->template_settings['display_address_in_event_list'] ) ? $CFG->template_settings['display_address_in_event_list'] : $CFG->EED_Event_List['display_address'],
+			'templates' => array(
+				'full'  => 'archive-espresso_events',
+				'part'  => 'archive-event_list'
+			)
+		);
+		unset( $CFG->template_settings['display_description_in_event_list'] );
+		unset( $CFG->template_settings['display_short_description_in_event_list'] );
+		unset( $CFG->template_settings['display_address_in_event_list'] );
+		return $CFG;
+	}
+
+
+
+
+	/**
+	 * 	filter_config
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function filter_config_admin( $CFG ) {
+		$CFG->EED_Event_List = array(
+			'display_description' => isset( $REQ['display_description_in_event_list'] ) ? absint( $REQ['display_description_in_event_list'] ) : FALSE,
+			'display_exceprt' => isset( $REQ['display_short_description_in_event_list'] ) ? absint( $REQ['display_short_description_in_event_list'] ) : TRUE,
+			'display_address' => isset( $REQ['display_address_in_event_list'] ) ? absint( $REQ['display_address_in_event_list'] ) : FALSE,
+			'templates' => array(
+				'full'  => 'archive-espresso_events',
+				'part'  => 'archive-event_list'
+			)
+		);		
+		return $CFG;
+	}
 	
 	
 
 
 }
+
+
 
 
 
