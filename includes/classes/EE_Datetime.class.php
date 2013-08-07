@@ -101,7 +101,16 @@ class EE_Datetime extends EE_Base_Class{
 	*	@access	protected
     *	@var int	
     */
-	protected $_DTT_reg_limit = NULL;	
+	protected $_DTT_reg_limit = NULL;
+
+
+
+
+	/**
+	 * Number of sales occuring for this Datetime
+	 * @var int
+	 */
+	protected $_DTT_sold = 0;	
 		
 	
 

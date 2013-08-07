@@ -599,6 +599,7 @@ class EEH_Activation {
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
+				  DTT_sold mediumint(8) unsigned DEFAULT 0,
 				  DTT_is_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				  DTT_order mediumint(3) unsigned DEFAULT 0,
 				  DTT_parent int(10) unsigned DEFAULT 0,
