@@ -705,6 +705,8 @@ class EEH_Activation {
 					  TTM_ID int(10) unsigned NOT NULL,
 					  EVT_ID int(10) unsigned NOT NULL,
 					  TKT_reg_limit mediumint(8) DEFAULT NULL,
+					  TKT_sold mediumint(8) unsigned DEFAULT 0,
+					  TKT_uses tinyint unsigned DEFAULT 0,
 					  TKT_start_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_end_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_tax tinyint(1) unsigned NOT NULL DEFAULT '0',

@@ -390,7 +390,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				return $existing_prc;
 
 			//if tickets sold then we create a new price NOT update an existing one.  The existing one becomes archived.  We ALSO need to archive the existing ticket, clone a new ticket from the existing one and add all the prices except the changed one to the cloned ticket and add the new price to the new ticket.
-			if ( $existing_prc->get_first_related('Ticket')->tickets_sold() ) {
+			if ( $existing_prc->get_first_related('Ticket')->tickets_sold() > 0 ) {
 				//get all prices and datetimes on the existing ticket
 				$existing_ticket = $existing_prc->get_first_related('Ticket');
 				$existing_ticket_prices = $existing_ticket->get_all_related('Price');

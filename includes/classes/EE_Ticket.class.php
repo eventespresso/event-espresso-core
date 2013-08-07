@@ -81,6 +81,26 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
+	/**
+	 * Number of this ticket sold
+	 * @var int
+	 */
+	protected $_TKT_sold;
+
+
+
+
+
+	/**
+	 * The number of times this ticket can be used to checkin (per registration).
+	 * @var int
+	 */
+	protected $_TKT_uses;
+
+
+
+
+
 
 
 	/**
@@ -147,13 +167,6 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
-	/**
-	 * Datetime_Ticket objects attached to this ticket (so we can get tickets sold for a particular datetime)
-	 * @var EE_Datetime_Ticket[]
-	 */
-	protected $_Datetime_Ticket;
-
-
 
 
 	/**
@@ -199,14 +212,16 @@ class EE_Ticket extends EE_Base_Class{
 	 * This returns an array indexed by datetime_id for tickets sold with this ticket.
 	 * @return array
 	 */
-	public function tickets_sold() {
-		$dtks = $this->get_many_related('Datetime_Ticket');
+	public function all_tickets_sold() {
+		$dtts = $this->get_many_related('Datetime');
 		$tickets_sold = array();
-		if ( !empty( $dtks ) ) {
-			foreach ( $dtks as $dtk ) {
-				$tickets_sold[$dtk->ID()] = $dtk->get('DTK_sold');
+		if ( !empty( $dtts ) ) {
+			foreach ( $dtts as $dtt ) {
+				$tickets_sold['datetime'][$dtt->ID()] = $dtt->get('DTT_sold');
 			}
 		}
+
+		$tickets_sold['ticket'] = $this->get('TKT_sold');
 
 		return $tickets_sold;
 	}
@@ -214,18 +229,11 @@ class EE_Ticket extends EE_Base_Class{
 
 
 	/**
-	 * This helper function simply checks to see if any of this ticket have been sold for ANY of the datetimes associated with this 
-	 * @return bool True if there are tickets sold, false if there aren't.
+	 * return number of tickets_sold().
+	 * @return int
 	 */
-	public function any_tickets_sold() {
-		$tickets_sold = $this->tickets_sold();
-		if ( empty( $tickets_sold ) ) return FALSE; //early jumpout if there is an empty array (means there are not datetimes associated with this ticket)
-
-		foreach ( $tickets_sold as $sold ) {
-			if ( $ticket > 0 ) return TRUE;
-		}
-
-		return FALSE;
+	public function tickets_sold() {
+		return $this->get('TKT_sold');
 	}
 
 
