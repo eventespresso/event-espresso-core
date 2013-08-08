@@ -98,8 +98,7 @@ class EEM_Registration extends EEM_Base {
 				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', __('String to be used in URL for identifying registration','event_espresso'), false, ''),
 				'REG_count'=>new EE_Integer_Field('REG_count', __('Count of this registration in the group registraion ','event_espresso'), true, 1),
 				'REG_group_size'=>new EE_Integer_Field('REG_group_size', __('Number of registrations on this group','event_espresso'), false, 1),
-				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),
-				'REG_att_checked_in'=>new EE_Boolean_Field('REG_att_checked_in', __('Flag indicating the registrant has checked in','event_espresso'), false, false),
+				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),	
 			)
 		);
 		$this->_model_relations = array(

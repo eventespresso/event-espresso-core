@@ -185,15 +185,6 @@ class EE_Registration extends EE_Base_Class {
 	protected $_REG_att_is_going = 0;	
 	
 	
-    /**
-    *	Attendee Checked In
-	* 
-    *	whether or not the attendee checked in at the event
-	* 
-	*	@access	protected
-    *	@var boolean	
-    */
-	protected $_REG_att_checked_in = NULL;	
 
 	
 	/**
@@ -438,17 +429,6 @@ class EE_Registration extends EE_Base_Class {
 		$this->set('REG_att_is_going',$REG_att_is_going);
 	}
 
-
-
-	/**
-	*		Attendee Checked In
-	* 
-	* 		@access		public		
-	*		@param		boolean		$REG_att_checked_in 		Attendee Checked In
-	*/	
-	public function set_att_checked_in( $REG_att_checked_in = NULL ) {		
-		$this->set('REG_att_checked_in',$REG_att_checked_in);
-	}
 
 
 	
@@ -748,13 +728,6 @@ class EE_Registration extends EE_Base_Class {
 
 
 
-	/**
-	*		get Attendee Checked In
-	* 		@access		public
-	*/	
-	public function att_checked_in() {
-		return $this->get('REG_att_checked_in');
-	}
 	
 	/**
 	 * Gets related answers
