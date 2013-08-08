@@ -706,12 +706,15 @@ class EEH_Activation {
 					  TTM_ID int(10) unsigned NOT NULL,
 					  EVT_ID int(10) unsigned NOT NULL,
 					  TKT_qty mediumint(8) DEFAULT NULL,
-					  TKT_uses tinyint DEFAULT -1,
+					  TKT_uses tinyint NOT NULL DEFAULT '-1',
+					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
+					  TKT_max tinyint NOT NULL DEFAULT '-1',
 					  TKT_start_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_end_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_taxable tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  TKT_parent int(10) unsigned DEFAULT 0,
+					  TKT_is_default tinyint(1) unsigned NOT NULL DEFAULT '0',
+					  TKT_parent int(10) unsigned DEFAULT '0',
 					  TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (TKT_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');

@@ -70,6 +70,25 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
+	/**
+	 * Minimum quantity of this ticket that must be purchased in one transaction
+	 * @var int
+	 */
+	protected $_TKT_min;
+
+
+
+
+
+	/**
+	 * Maximum quantity of this ticket that can be purchased in one m_transaction
+	 * @var int
+	 */
+	protected $_TKT_max;
+
+
+
+
 
 	/**
 	 * The quantity of tickets available
@@ -110,6 +129,17 @@ class EE_Ticket extends EE_Base_Class{
 	 * @var INT
 	 */
 	protected $_TKT_order;
+
+
+
+
+
+
+	/**
+	 * Used to flag whether this is a default ticket or not
+	 * @var boolean
+	 */
+	protected $_TKT_is_default;
 
 
 
