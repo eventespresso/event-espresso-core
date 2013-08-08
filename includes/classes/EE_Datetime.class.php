@@ -144,6 +144,15 @@ class EE_Datetime extends EE_Base_Class{
 
 
 	/**
+	 * This is used to flag whether a datetime is archived or not
+	 * @var boolean
+	 */
+	protected $_DTT_deleted;
+
+
+
+
+	/**
 	 *	Related events
 	 * @var EE_Event[]
 	 */

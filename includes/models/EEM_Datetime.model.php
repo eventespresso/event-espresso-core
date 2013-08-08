@@ -21,10 +21,10 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 require_once ( EE_CLASSES . 'EE_Datetime.class.php' );
 
-class EEM_Datetime extends EEM_Base {
+class EEM_Datetime extends EEM_Soft_Delete_Base {
 
   	// private instance of the EEM_Datetime object
 	private static $_instance = NULL;
@@ -53,7 +53,8 @@ class EEM_Datetime extends EEM_Base {
 				'DTT_sold'=>new EE_Integer_Field('DTT_sold', __('How many sales for this Datetime that have occured', 'event_espresso'), true, 0 ),
 				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
 				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
-				'DTT_parent' => new EE_Integer_Field('DTT_parent', __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0 )
+				'DTT_parent' => new EE_Integer_Field('DTT_parent', __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0 ),
+				'DTT_deleted' => new EE_Boolean_Field('DTT_deleted', __('Flag indicating datetime is archived', 'event_espresso'), false, false ),
 			));
 		$this->_model_relations = array(
 			'Ticket'=>new EE_HABTM_Relation('Datetime_Ticket'),
