@@ -457,6 +457,7 @@ abstract class EEM_Base extends EE_Base{
 			//let's make sure default_where strategy is followed now
 			$this->_ignore_where_strategy = FALSE;
 		}
+
 		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
@@ -700,11 +701,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
 	 * @param string $relationName, key in EEMerimental_Base::_relations
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
+	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
 	 */
-	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName){
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query = array()){
 		$relation_obj = $this->related_settings_for($relationName);
-		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj);
+		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj, $where_query);
 	}
 	
 	/**
@@ -721,10 +723,11 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $other_model_id_or_obj EE_Base_Class or ID of other Model Object
 	 * @param string $relationName key in EEMerimental_Base::_relations
 	 * @return boolean of success
+	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 */
-	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName){
+	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName, $where_query= array() ){
 		$relation_obj = $this->related_settings_for($relationName);
-		$relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj);
+		return $relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj, $where_query );
 	}
 	
 	
@@ -1712,12 +1715,14 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $fieldSettings[$fieldName];
 	}
+
+
 	
 
 	
 	/**
-	 * gets the name of the field of type 'primary_key' from the fieldsSettings attribute.
-	 * Eg, on EE_Anwer that would be ANS_ID
+	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
+	 * Eg, on EE_Anwer that would be ANS_ID field object
 	 * @return EE_Model_Field_Base
 	 * @throws EE_Error
 	 */
@@ -1819,12 +1824,14 @@ abstract class EEM_Base extends EE_Base{
 	*/	
 	protected function _create_objects( $rows = array() ) {
 		$this->_include_php_class();
+
 		$array_of_objects=array();
 		if(empty($rows)){
 			return array();
 		}
 		$count_if_model_has_no_primary_key = 0;
 		foreach ( $rows as $row ) {
+	
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return array();
 			}
@@ -1927,6 +1934,7 @@ abstract class EEM_Base extends EE_Base{
 				}
 			}
 		}
+
 		//check we actually foudn results that we can use to build our model object
 		//if not, return null
 		if( ! $this_model_fields_n_values){
@@ -1935,8 +1943,7 @@ abstract class EEM_Base extends EE_Base{
 				
 		//get the required info to instantiate the class whcih relates to this model.
 		$className=$this->_get_class_name();
-		EE_REGISTRY::instance()->load_class($this->get_this_model_name(), false,false,false);
-		$classInstance = call_user_func_array( array( $className, 'new_instance_from_db' ), array( $this_model_fields_n_values, $this->_timezone ) );
+		$classInstance = EE_REGISTRY::instance()->load_class($this->get_this_model_name(), array( $this_model_fields_n_values, $this->_timezone ), TRUE );
 
 		//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
 		$this->set_timezone( $classInstance->get_timezone() );

@@ -136,11 +136,20 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _before_page_setup() {
+
 		$page = isset( $this->_req_data['page'] ) ? $this->_req_data['page'] : $this->page_slug;
 		$this->_cpt_object = get_post_type_object( $page );
 
-		//setup autosave ajax hook
-		add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 );
+		//get current page from autosave
+		$current_page = isset( $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] ) ? $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] : NULL;
+		$this->_current_page = isset( $this->_req_data['current_page'] ) ? $this->_req_data['current_page'] : $current_page;
+		
+		//autosave... make sure its only for the correct page
+		if ( !empty($this->_current_page ) && $this->_current_page == $this->page_slug ) {
+			//setup autosave ajax hook
+			add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 );
+		}
+
 	}
 
 
@@ -185,6 +194,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		$this->_autosave_containers = array_merge( $this->_autosave_containers, $containers );
+
+		//add hidden inputs container
+		$this->_autosave_containers[] = 'ee-cpt-hidden-inputs';
 	}
 
 
@@ -309,15 +321,20 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return JSON object 
 	 */
 	public function do_extra_autosave_stuff() {
-		//first let's check for the autosave nonce (we'll use _verify_nonce )
 
+		//next let's check for the autosave nonce (we'll use _verify_nonce )		
 		$nonce = isset( $this->_req_data['autosavenonce'] ) ? $this->_req_data['autosavenonce'] : NULL;
 		$this->_verify_nonce( $nonce, 'autosave' );
 
 
+		//make sure we define doing autosave (cause WP isn't triggering this we want to make sure we define it)
+		if ( !defined('DOING_AUTOSAVE') ) define('DOING_AUTOSAVE', true);
+
 		//if we made it here then the nonce checked out.  Let's run our methods and actions
 		if ( method_exists( $this, '_ee_autosave_' . $this->_current_view ) ) {
 			call_user_func( array( $this, '_ee_autosave_' . $this->_current_view ) );
+		} else {
+			$this->_template_args['success'] = TRUE;
 		}
 
 		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
@@ -380,7 +397,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 		if ( $this->_cpt_route  && ( $this->_req_action == 'create_new' || $this->_req_action == 'edit'  ) ) {
-			$id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
+			$id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 			$this->_set_model_object( $id );
 		}
 		
@@ -417,7 +434,41 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function admin_init_global() {
-		add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
+
+		$post = isset( $this->_req_data['post'] ) ? get_post( $this->_req_data['post'] ) : NULL;
+
+		//its possible this is a new save so let's catch that instead
+		$post = isset( $this->_req_data['post_ID'] ) ? get_post( $this->_req_data['post_ID'] ) : $post;
+
+
+		if ( $post && $post->post_type == $this->page_slug )
+			add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
+
+		//now let's filter redirect if we're on a revision page and the revision is for an event CPT.
+		$revision = isset( $this->_req_data['revision'] ) ? $this->_req_data['revision'] : NULL;
+
+		/**var_dump($this->_req_data);
+		exit();/**/
+		
+		if ( !empty( $revision ) ) {
+			$action = isset( $this->_req_data['action'] ) ? $this->_req_data['action'] : NULL;
+
+			//doing a restore?
+			if ( !empty( $action ) && $action == 'restore' ) {
+
+				//get post for revision
+				$rev_post = get_post( $revision );
+				$rev_parent = get_post( $rev_post->post_parent );
+
+				//only do our redirect filter AND our restore revision action if the post_type for the parent is one of our cpts.
+				if ( $rev_parent && $rev_parent->post_type == $this->page_slug ) {
+					add_filter('wp_redirect', array($this, 'revision_redirect'), 10, 2 );
+					//restores of revisions
+					add_action('wp_restore_post_revision', array($this, 'restore_revision'), 10, 2 );
+				}
+			}
+
+		}
 
 		//NOTE we ONLY want to run these hooks if we're on the right class for the given post type.  Otherwise we could see some really freaky things happen!
 		//try to get post type from $_POST data
@@ -426,6 +477,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( $post_type && $post_type == $this->page_slug ) {
 			//$post_id, $post
 			add_action('save_post', array( $this, 'insert_update'), 10, 2 );
+
 			//$post_id
 			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
 			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
@@ -437,6 +489,22 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+
+	/**
+	 * admin_footer_scripts_global
+	 * Anything triggered by the 'admin_print_footer_scripts' WP hook should be put in here. This particular method will apply on ALL EE_Admin pages.
+	 *
+	 * @access public
+	 * @return void 
+	 */
+	public function admin_footer_scripts_global() {
+		$this->_add_admin_page_ajax_loading_img();
+		$this->_add_admin_page_overlay();
+	}	
+
+
+
+
 	/**
 	 * This is a wrapper for the insert/update routes for cpt items so we can add things that are common to ALL insert/updates
 	 * @param  int    $post_id ID of post being updated
@@ -444,6 +512,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void          
 	 */
 	public function insert_update( $post_id, $post ) {
+
+		//make sure that if this is a revision action that we don't do any updates!
+		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] == 'restore' )
+			return;
+
 		//check for autosave and update our req_data property accordingly.
 		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && isset( $this->_req_data['ee_autosave_data'] ) ) {
 			foreach( (array) $this->_req_data['ee_autosave_data'] as $id => $values ) {
@@ -456,6 +529,38 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 		$this->_insert_update_cpt_item( $post_id, $post );
 	}
+
+
+
+
+
+
+
+	/**
+	 * This is a wrapper for the restore_cpt_revision route for cpt items so we can make sure that when a revision is triggered that we restore related items.  In order to work cpt classes MUST have a restore_cpt_revision method in them.  We also have our OWN action in here so addons can hook into the restore process easily.
+	 * @param  int    $post_id     ID of cpt item
+	 * @param  int    $revision_id ID of revision being restored
+	 * @return void 	            
+	 */
+	public function restore_revision( $post_id, $revision_id ) {
+		$this->_restore_cpt_item( $post_id, $revision_id );
+		
+		//global action
+		do_action( 'AHEE_EE_Admin_Page_CPT__restore_revision', $post_id, $revision_id);
+
+		//class specific action so you can limit hooking into a specific page.
+		do_action( 'AHEE_EE_Admin_Page_CPT_' . get_class($this) . '__restore_revision', $post_id, $revision_id );
+	}
+
+
+
+	/**
+	 * @see restore_revision() for details
+	 * @param  int $post_id     ID of cpt item
+	 * @param  int $revision_id ID of revision for item
+	 * @return void              
+	 */
+	abstract protected function _restore_cpt_item( $post_id, $revision_id );
 
 
 
@@ -540,27 +645,61 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	public function cpt_post_form_hidden_input() {
 		echo '<input type="hidden" name="ee_cpt_item_redirect_url" value="' . $this->_admin_base_url . '" />';
 
-		//we're also going to add the route value
+		//we're also going to add the route value and the current page so we can direct autosave parsing correctly
+		echo '<div id="ee-cpt-hidden-inputs">';
 		echo '<input type="hidden" id="current_route" name="current_route" value="' . $this->_current_view . '" />';
+		echo '<input type="hidden" id="current_page" name="current_page" value="' . $this->page_slug . '" />';
+		echo '</div>';
 	}
 
 
 
 
 	/**
-	 * This is the callback for the 'redirect_post_location' filter in wp-admin/post.php so that we can hijack the default redirect locations for wp custom post types that WE'RE using and send back to OUR routes.
+	 * This allows us to redirect the location of revision restores when they happen so it goes to our CPT routes.
+	 * @param  string $location Original location url
+	 * @param  int    $status   Status for http header
+	 * @return string           new (or original) url to redirect to.
+	 */
+	public function revision_redirect( $location, $status ) {
+		//get revision
+		$rev_id = isset($this->_req_data['revision']) ? $this->_req_data['revision'] : NULL;
+
+		//can't do anything without revision so let's get out if not present
+		if ( empty( $rev_id ) )
+			return $location;
+
+		//get rev_post_data
+		$rev = get_post($rev_id);
+
+		$admin_url = $this->_admin_base_url;
+		$query_args = array(
+				'action' => 'edit',
+				'post' => $rev->post_parent,
+				'revision' => $rev_id,
+				'message' => 5
+			);
+
+		$this->_process_notices( $query_args, TRUE );
+		return self::add_query_args_and_nonce( $query_args, $admin_url );
+	}
+
+
+
+
+	/**
+	 * This is the callback for the 'redirect_post_location' filter in wp-admin/post.php so that we can hijack the default redirect locations for wp custom post types that WE'RE using and send back to OUR routes.  This should only be hooked in on the right route.
 	 * @param  string $location This is the incoming currently set redirect location
 	 * @param  string $post_id  This is the 'ID' value of the wp_posts table
 	 * @return string           the new location to redirect to
 	 */
 	public function cpt_post_location_redirect( $location, $post_id ) {
-		//first let's see if we should even do a redirect
-		if ( !isset( $this->_req_data['ee_cpt_item_redirect_url'] ) )
-			return $location;
+		//we DO have a match so let's setup the url
+	
 
 		//shared query_args
-		$query_args = array( 'action' => 'edit', 'id' => $post_id );
-		$admin_url = $this->_req_data['ee_cpt_item_redirect_url'];
+		$query_args = array( 'action' => 'edit', 'post' => $post_id );
+		$admin_url = $this->_admin_base_url;
 		$message = '';
 		$append = '';
 
@@ -629,7 +768,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function post_update_messages( $messages ) {
 		global $post;
-		$id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
+		$id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$id = empty( $id ) && is_object( $post ) ? $post->ID : NULL;
 
 		$messages[$this->page_slug] = array(
@@ -693,7 +832,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */			
 	protected function _edit_cpt_item() {
 		global $post;
-		$post_id = isset( $this->_req_data['id'] ) ? $this->_req_data['id'] : NULL;
+		$post_id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$post = !empty( $post_id ) ? get_post( $post_id, OBJECT, 'edit' ) : NULL;
 
 		if ( empty ( $post ) ) {

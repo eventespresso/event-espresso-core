@@ -71,7 +71,6 @@ class Prices_List_Table extends EE_Admin_List_Table {
 				'type' => 'Price Type',
 				'description' => 'Description',
 				'amount' => 'Amount',
-				'price_date' => 'Date Control',
 				'active' => 'Active?'
 			);
 
@@ -182,14 +181,6 @@ class Prices_List_Table extends EE_Admin_List_Table {
 		}
 	}
 
-
-
-
-
-	function column_price_date($item) {
-		$uses_date = $item->use_dates() ? 'Yes' : '';
-		return '<div class="jst-cntr">' . $uses_date . '</div>';
-	}
 
 
 

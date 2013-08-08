@@ -57,6 +57,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		require_once( EE_MODELS . 'EEM_Event.model.php' );
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
+		$this->_admin_base_url = EVENTS_ADMIN_URL;
 		$this->_cpt_model_name = 'EEM_Event';
 		$this->_event_model = EEM_Event::instance();
 	}
@@ -66,7 +67,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 	protected function _define_page_props() {
-		$this->_admin_base_url = EVENTS_ADMIN_URL;
 		$this->_admin_page_title = EVENTS_LABEL;
 		$this->_labels = array(
 			'buttons' => array(
@@ -227,7 +227,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Edit Event', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false,
-					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id']), $this->_current_page_view_url) : $this->_admin_base_url
+					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post']), $this->_current_page_view_url) : $this->_admin_base_url
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
@@ -619,6 +619,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
+
+
+
+
+	/**
+	 * @see parent::restore_item()
+	 */
+	protected function _restore_cpt_item( $post_id, $revision_id ) {
+		//copy existing event meta to new post
+		$post_evt = $this->_event_model->get_one_by_ID($post_id);
+		
+		//meta revision restore
+		$post_evt->restore_revision($revision_id);
+
+		//related objs restore
+		$post_evt->restore_revision($revision_id, array( 'Venue', 'Datetime', 'Price' ) );
+	}
 	
 
 
@@ -657,7 +674,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 		
 
-		//if we've got the venue_id then we're just updating the exiting venue so let's do that and then get out.
+		//if we've got the venue_id then we're just updating the existing venue so let's do that and then get out.
 		if ( !empty( $venue_id ) ) {
 			$update_where = array( $venue_model->primary_key_name() => $venue_id );
 			$rows_affected = $venue_model->update( $venue_array, array( $update_where ) );
@@ -665,13 +682,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$evtobj->_add_relation_to( $venue_id, 'Venue' );
 			return $rows_affected > 0 ? TRUE : FALSE;
 		} else {	
-			//if this is a revision then we are going to handle the initial insert/update and then the add_relation_to which will also automatically add the relation to the parent.  NOTE... we also have to allow for if users have turned OFF revisions!
-		
-			if ( $evtobj->post_type() == 'revision' || ! WP_POST_REVISIONS ) {
-				$venue_id = $venue_model->insert( $venue_array );
-				$evtobj->_add_relation_to( $venue_id, 'Venue' );
-				return !empty( $venue_id ) ? TRUE : FALSE;
-			}
+			//we insert the venue
+			$venue_id = $venue_model->insert( $venue_array );
+			$evtobj->_add_relation_to( $venue_id, 'Venue' );
+			return !empty( $venue_id ) ? TRUE : FALSE;
 		}
 		return TRUE; //when we have the ancestor come in it's already been handled by the revision save.
 	}
@@ -694,20 +708,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
 			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
-			$event_datetime['reg_end'] = isset($event_datetime['reg_end']) && ! empty( $event_datetime['reg_end'] ) ? $event_datetime['reg_end'] : $event_datetime['reg_start'];
 			$DTM = EE_Datetime::new_instance( array(
 					'DTT_ID' => isset( $event_datetime['ID'] ) && $event_datetime['ID'] !== '' ? absint( $event_datetime['ID'] ) : NULL,
 					'DTT_EVT_start' => $event_datetime['evt_start'],
 					'DTT_EVT_end' => $event_datetime['evt_end'],
-					'DTT_REG_start' => $event_datetime['reg_start'],
-					'DTT_REG_end' => $event_datetime['reg_end']
+					'DTT_primary' => $row === 1 ? TRUE : FALSE,
+					'DTT_order' => $row
 				),
 				$timezone);
+
+			//we have to make sure we set the saved_id first (if it's not empty) because otherwise we could miss ids that are already attached to parents.
+			$dtt_id = $DTM->ID();
+
+			if ( !empty( $dtt_id ) )
+				$saved_dtts[] = $dtt_id;
 			
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
-			if ( $row === 1 )
-				$DTT->set_primary( $evtobj->ID() );
-			$DTT->set_order( $evtobj->ID(), $row );
+
+			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtts[] = $DTT->ID();
 
 			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message
@@ -715,6 +733,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//now we need to REMOVE any dtts that got deleted.
 		$old_datetimes = maybe_unserialize( $data['datetime_IDs'] );
+
+
 		if ( is_array( $old_datetimes ) ) {
 			$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
 			foreach ( $dtts_to_delete as $id ) {
@@ -749,10 +769,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//if no postid then get out cause we need it for stuff in here
 		if ( empty( $postid ) ) return;
 
-		//now let's determine if we're going to use the autosave post or the current post_ID!
-		$autosave = wp_get_post_autosave( $postid );
-
-		$postid = $autosave ? $autosave->ID : $postid;
 
 		//handle datetime saves
 		$items = array();
@@ -762,13 +778,33 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//now let's get the attached datetimes from the most recent autosave
 		$dtts = $event->get_many_related('Datetime');
+
 		$dtt_ids = array();
 		foreach( $dtts as $dtt ) {
 			$dtt_ids[] = $dtt->ID();
-			$order = $dtt->order($postid);
+			$order = $dtt->order();
 			$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
 		}
 		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
+
+		//handle DECAF venues
+		//we need to make sure that the venue_id gets updated in the form so that future autosaves will properly conntect that venue to the event.
+		if ( $do_venue_autosaves = apply_filters('FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
+			$venue = $event->get_first_related('Venue');
+			$this->_template_args['data']['items']['venue-id'] = $venue->ID();
+		}
+
+		$prices = $event->get_many_related('Price');
+
+		$price_ids = array();
+		foreach ( $prices as $price ) {
+			$price_ids[] = $price->ID();
+			$order = $price->get('PRC_display_order');
+			$this->_template_args['data']['items']['quick-edit-ticket-price-id-' . $order] = $price->ID();
+			$this->_template_args['data']['items']['edit-ticket-price-id-' . $order] = $price->ID();
+			$this->_template_args['data']['items']['edit-ticket-price-event-id-' . $order] = $event->ID();
+		}
+		$this->_template_args['data']['items']['price-IDs'] = implode(',', $price_ids);
 	}
 
 
@@ -788,125 +824,62 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$success = TRUE;
 
 		$data['price_count'] = 1;
-		$ticket_prices_to_save = array();
-		$quick_edit_ticket_price = isset($data['quick_edit_ticket_price']) ? $data['quick_edit_ticket_price'] : array();
-//			echo printr( $quick_edit_ticket_price, '$quick_edit_ticket_price' );
-		if ( isset( $quick_edit_ticket_price['XXXXXX'] )) {
-			$new_quick_price = $quick_edit_ticket_price['XXXXXX'];
-			if ( isset( $new_quick_price['PRC_name'] ) && ! empty( $new_quick_price['PRC_name'] ) && isset( $new_quick_price['PRC_amount'] )) {
-				$ticket_prices_to_save[] = array(
-					'PRT_ID' => 2,
-					'PRT_is_global' => FALSE,
-					'PRC_overrides' => 0,
-					'PRC_deleted' => FALSE,
-					'PRC_order' => isset( $new_quick_price['PRC_order'] ) && $new_quick_price['PRC_order'] ? $new_quick_price['PRC_order'] : 0,
-					'PRC_name' => $new_quick_price['PRC_name'] ? $new_quick_price['PRC_name'] : NULL,
-					'PRC_desc' => NULL,
-					'PRC_amount' => $new_quick_price['PRC_amount'] ? $new_quick_price['PRC_amount'] : 0,
-					'PRC_use_dates' => FALSE,
-					'PRC_start_date' => NULL,
-					'PRC_end_date' => NULL,
-					'PRC_is_active' => TRUE			
-				);
+		$saved_prices = array();
+		$old_prices = isset( $data['price-IDs'] ) ? explode(',',$data['price-IDs']) : array();
+		$edited_prices = isset($data['edit_ticket_price']) ? $data['edit_ticket_price'] : array();
+
+
+		if ( empty( $edited_prices ) )
+			return FALSE; //get out because theres something that went wrong (probably an error prevented display of the price form);
+
+		//let's loop through all prices and set things up.
+		foreach ( $edited_prices as $row => $price_data ) {
+			$PRC = $this->EE->load_class('Price', array( array(
+				'PRC_ID' => $price_data['PRC_ID'] === 0 ? NULL : $price_data['PRC_ID'],
+				'PRT_ID' => isset( $price_data['PRT_ID'] ) ? $price_data['PRT_ID'] : 2,
+				'PRC_order' => isset( $price_data['PRC_order'] ) && $price_data['PRC_order'] ? $price_data['PRC_order'] : 0,
+				'PRC_name' => $price_data['PRC_name'] ? $price_data['PRC_name'] : NULL,
+				'PRC_desc' => isset($price_data['PRC_desc']) ? $price_data['PRC_desc'] : '',
+				'PRC_amount' => $price_data['PRC_amount'] ? $price_data['PRC_amount'] : 0,
+				'PRC_start_date' => isset($price_data['start_date']) ? $price_data['start_date'] : current_time('mysql'),
+				'PRC_end_date' => isset($price_data['end_date'] ) ? $price_data['end_date'] : current_time('mysql'),
+				'PRC_reg_limit' => isset($price_data['PRC_reg_limit']) ? $price_data['PRC_reg_limit'] : NULL,
+				'PRC_is_active' => TRUE,
+				'PRC_display_order' => $row
+				), $timezone ), FALSE, FALSE );
+
+			//now we have to determine if this price is a default price (or new price).  If it is then we MUST insert.
+			if ( $price_data['EVT_ID'] === 0 && $PRC->ID() > 0 ) {
+				//unset the PRC_ID from the $old_prices array
+				unset($old_prices[$price_data['PRC_ID']] );
+				$PRC->set( 'PRC_ID', NULL );
 			}
+
+			//now we just have to add to the event (*note that EEM_Price model already takes care of handling NOT saving the price if the price has already been used however, in that case the price object that is returned is going to be different than the one that was saved so we need to make sure we don't accidentally remove it again!  This also means that we need to keep the old price attached to the evt (even though it might not be displayed ) ).
+			$saved_PRC = $evtobj->_add_relation_to( $PRC, 'Price' );
+
+			if ( ( $price_data['PRC_ID'] > 0 && $price_data['PRC_ID'] != $saved_PRC->ID() ) ) {
+				//make sure we keep old price attached to event (even though it won't be displayed because it's deleted)
+				$saved_prices[] = $price_data['PRC_ID'];
+			}
+
+			$saved_prices[] = $saved_PRC->ID();	
+
+		}
+
+
+		//now remove any prices that got deleted (note we don't actually hard delete but instead just archive the price).
+		$prices_to_delete = array_diff( $old_prices, $saved_prices );
+		foreach ( $prices_to_delete as $price ) {
+			$id = absint( $price );
+			$price_to_archive = $this->EE->load_model('Price')->get_one_by_ID( $id );
+			//let's modify this to be archived
+			$price_to_archive->set( 'PRC_deleted', 1 );
+			$price_to_archive->save();
 		}
 		
-		// grab list of edited ticket prices
-		if ($edited_ticket_price_IDs = isset($data['edited_ticket_price_IDs']) ? $data['edited_ticket_price_IDs'] : FALSE) {
-			// remove last comma
-			$edited_ticket_price_IDs = trim($edited_ticket_price_IDs, ',');
-			// create array of edited ticket prices
-			$edited_ticket_price_IDs = explode(',', $edited_ticket_price_IDs);
-			// flipper once
-			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
-			// flipper twice - hey!?!?! where did all the duplicate entries go???
-			$edited_ticket_price_IDs = array_flip($edited_ticket_price_IDs);
-//				echo printr( $edited_ticket_price_IDs, '$edited_ticket_price_IDs' );
-			// grab existing ticket price data
-			if ($edited_ticket_prices = isset($data['edit_ticket_price']) ? $data['edit_ticket_price'] : FALSE) {
-//					echo printr( $edited_ticket_prices, '$edited_ticket_prices' );
-				// cycle thru list                    
-				foreach ($edited_ticket_prices as $PRC_ID => $edited_ticket_price) {
-//						echo printr( $edited_ticket_price, '$edited_ticket_price' );	
-					// add edited ticket prices to list of ticket prices to save
-					if (in_array($PRC_ID, $edited_ticket_price_IDs)) {
-//							echo printr( $quick_edit_ticket_price[$PRC_ID], '$quick_edit_ticket_price[$PRC_ID]' );
-						if ( isset( $quick_edit_ticket_price[$PRC_ID] ) && is_array( $quick_edit_ticket_price[$PRC_ID] )) {
-							$edited_ticket_price = array_merge( $edited_ticket_price, $quick_edit_ticket_price[$PRC_ID] );
-//								echo printr( $edited_ticket_price, '$edited_ticket_price' );	
-						}
-						$ticket_prices_to_save[$PRC_ID] = $edited_ticket_price;
-					}
-				}
-			}
-		}
-		
-//			echo printr( $ticket_prices_to_save, '$ticket_prices_to_save' );	
 
-		// add new tickets if any
-		if ($new_ticket_price = isset($data['new_ticket_price']) ? $data['new_ticket_price'] : array('PRC_name' => NULL)) {
-			if ( ! empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
-				$ticket_prices_to_save[0] = $new_ticket_price;
-			} else if ( empty( $new_ticket_price['PRC_amount'] ) && ! empty( $new_ticket_price['PRC_name'] )) {
-				$msg = __( 'Event prices require an amount before they can be saved. Please make sure you enter an amount for the new event price before attempting to save it.', 'event_espresso' );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
-			} else if ( ! empty( $new_ticket_price['PRC_amount'] ) && empty( $new_ticket_price['PRC_name'] )) {
-				$msg = __( 'Event prices require a name before they can be saved. Please make sure you enter a name for the new event price before attempting to save it.', 'event_espresso' );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
-			}
-
-		}
-//		printr( $ticket_prices_to_save, '$ticket_prices_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		// and now we actually save the ticket prices
-		if (!empty($ticket_prices_to_save)) {
-
-			//echo printr( $new_ticket_price, '$new_ticket_price' );
-			require_once( EE_CLASSES . 'EE_Price.class.php');
-
-			global $current_user;
-			get_currentuserinfo();
-
-			foreach ($ticket_prices_to_save as $PRC_ID => $ticket_price) {
-
-
-				//determine whether this price overrides an existing global or not
-				$overrides = absint($ticket_price['PRT_is_global']) ? $PRC_ID : NULL;
-//echo '<br/><br/><h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-				// or whether it was already overriding a global from before
-				$overrides = $ticket_price['PRC_overrides'] ? absint($ticket_price['PRC_overrides']) : $overrides;
-//echo '<h4>$overrides : ' . $overrides . '  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-				$PRC = EE_Price::new_instance( array(
-						'PRC_ID' => $PRC_ID,
-						'PRT_ID' => $ticket_price['PRT_ID'],
-						'PRC_amount' => preg_replace( '/[^0-9,.]/', '', $ticket_price['PRC_amount'] ),
-						'PRC_name' => $ticket_price['PRC_name'],
-						'PRC_desc' => $ticket_price['PRC_desc'],
-						'PRC_reg_limit' => isset( $ticket_price['PRC_reg_limit'] ) ? $ticket_price['PRC_reg_limit'] : NULL,
-						'PRC_use_dates' => $ticket_price['PRC_use_dates'] ? TRUE : FALSE,
-						'PRC_start_date' => $ticket_price['PRC_start_date'],
-						'PRC_end_date' => $ticket_price['PRC_end_date'],
-						'PRC_is_active' => $ticket_price['PRC_is_active'] ? TRUE : FALSE,
-						'PRC_overrides' => $overrides,
-						'PRC_order' => $ticket_price['PRT_ID'] < 3 ? 0 : $ticket_price['PRC_order'],
-						'PRC_deleted' => $ticket_price['PRC_deleted']
-					), 
-					$timezone );
-				
-				if ( $PRC->deleted()) {
-					$data['price_count']--;
-				} else {
-					$data['price_count']++;
-				}
-
-				$works = $evtobj->_add_relation_to( $PRC, 'Price' );
-				$success = !$success ? $success : $works; //if ANY of these updates fail then we want the appropriate global error message
-
-			}
-		}
-
-		if ( isset( $data['price_count'] ) && absint( $data['price_count'] ) < 1 ) {
+		if ( count( $saved_prices ) < 1 ) {
 			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
 			$espresso_no_ticket_prices[ $evtobj->get('EVT_ID') ] = $evtobj->get('EVT_name');
 			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
@@ -1022,7 +995,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		global $org_options;
 
 		$timezone = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->timezone_string() : NULL; 
-		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
+		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : FALSE;
 
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
@@ -1037,54 +1010,59 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( ! $all_prices = $PRC->get_all_event_prices_for_admin( $event_id )) {
 			$all_prices = array();
 		}
+
 		
 		if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
 			$show_no_event_price_msg = TRUE;
 		}
-		
+		$price_types = array();
 
 		foreach ($PRT->get_all() as $type) {
 			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 			if ( $type->is_global() ) {
 				$global_price_types[ $type->ID() ] = $type;
-			} else {
+			} else { 
 				$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			}						
+			}
 		}
 		
 		$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
 
 		$template_args['show_no_event_price_msg'] = $show_no_event_price_msg;
-		$template_args['no_price_message_error'] = $show_no_event_price_msg ? __('There are currently no Prices set for this Event. Please see the Event Pricing section for more details.', 'event_espresso') : '';
-		$template_args['no_price_message'] = $show_no_event_price_msg ? apply_filters('FHEE_show_no_event_price_msg', __('Please enter at lease one Event Price for this Event to ensure that this Event displays and functions properly.'), 'event_espresso') : ''; 
+		$template_args['no_price_message_error'] = $show_no_event_price_msg ?  apply_filters( 'FHEE__Events_Admin_Page__pricing_metabox_show_no_price_message_error', __('There is currently no Price set for this Event. Please see the Event Pricing section for more details.', 'event_espresso') ) : '';
+		$template_args['no_price_message'] = $show_no_event_price_msg ? apply_filters('FHEE_show_no_event_price_msg', __('Please enter a price for this Event to ensure that this Event displays and functions properly.'), 'event_espresso') : ''; 
 		$template_args['PRT'] =  $row_args['PRT'] = $PRT;
 		$template_args['org_options'] = $row_args['org_options'] = $org_options;
 		$template_args['event'] = $row_args['event'] = $this->_cpt_model_obj;
 		$template_args['price_rows'] = array();
 		$row_template = apply_filters('FHEE_events_pricing_meta_box_row_template', EVENTS_TEMPLATE_PATH . 'edit_event_price_metabox_content_row.template.php');
+		$row = 1;
+		$price_ids = array();
+
 		if ( !empty( $all_prices ) ) :
 			
 			foreach ( $all_prices as $price_type => $prices ) :
 				foreach ( $prices as $price ) :
+					if ( $price->ID() !== 0 )
+						$price_ids[] = $price->ID();
 					if ( !$price->deleted() ) :
 						$row_args['disabled'] = ! $price->is_active() ? ' disabled="disabled"' : ''; 
 						$row_args['disabled_class'] = ! $price->is_active() ? ' input-disabled' : '';
-						$row_args['inactive'] = ! $price->is_active() ? '<span class="inactice-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE;
-						if ( $price->use_dates() ){
-							$today = time();
-							if ( $today < $price->start() ){
-								$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
-							} elseif ( $today > $price->start() && $today < $price->end() ) {
-								$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
-							} else {
-								$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
-								$row_args['disabled'] = ' disabled="disabled"'; 
-								$row_args['disabled_class'] = ' input-disabled'; 
-								$row_args['inactive'] = '<span class="inactive-price">'.__('This Event Price option has expired - edit advanced settings to reactivate', 'event_espresso').'</span>';
-							}
+						$row_args['inactive'] = ! $price->is_active() ? '<span class="inactive-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE;
+						$row_args['is_percent'] = $price->type_obj() ? $price->type_obj()->is_percent() : FALSE;
+						
+						$today = time();
+						if ( $today < $price->start() ){
+							$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
+						} elseif ( $today > $price->start() && $today < $price->end() ) {
+							$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
 						} else {
-							$price_date_status = '';
+							$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
+							$row_args['disabled'] = ' disabled="disabled"'; 
+							$row_args['disabled_class'] = ' input-disabled'; 
+							$row_args['inactive'] = '<span class="inactive-price">'.__('This Event Price option has expired - edit advanced settings to reactivate', 'event_espresso').'</span>';
 						}
+						
 						$price_type = $price->type_obj();
 						$row_args['type_label'] = $price_type->name() . ' ' . $price_date_status;
 						$row_args['price'] = $price;
@@ -1093,22 +1071,33 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]';
 						$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID-'.$price->ID().'" style="width:auto;"', 'edit-ticket-price-input' );
 						$row_args['price_type'] = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE;
-						$row_args['price_amount'] = $price_type->is_percent() ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 );
 
 						$row_args['counter'] = count($prices);
+						$row_args['row'] = $row;
+						$row_args['EVT_ID'] = $price->get('EVT_ID');
 						$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
 					endif;
+					$row++;
 				endforeach;
 			endforeach;
-			else :
-				$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
-			endif;
-			$price_types = empty( $all_prices ) ? array(  array( 'id' => 2, 'text' => __('Event Price', 'event_espresso'), 'order' => 0 )) : $price_types;
-			$template_args['new_ticket_price_selector'] = EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' );
-			$template_args['price_types'] = $price_types;
+		else :
+			$row_args['row'] = $row;
+			$row_args['type_label'] = __('New Event Price', 'event_espresso');
+			$row_args['price'] = $PRC->create_default_object();
+			$row_args['disabled_class'] = '';
+			$row_args['disabled'] = '';
+			$row_args['is_percent'] = FALSE;
+			$row_args['inactive'] = FALSE;
+			$row_args['price_amount'] = '';
+			$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
+		endif;
+		$price_types = empty( $all_prices ) ? array(  array( 'id' => 2, 'text' => __('Event Price', 'event_espresso'), 'order' => 0 )) : $price_types;
+		$template_args['new_ticket_price_selector'] = EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' );
+		$template_args['price_types'] = $price_types;
+		$template_args['price_ids'] = implode(',', $price_ids );
 
-			$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'event_price_metabox_content.template.php' );
-			espresso_display_template($main_template, $template_args);
+		$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'event_price_metabox_content.template.php' );
+		espresso_display_template($main_template, $template_args);
 	}
 
 
@@ -1152,11 +1141,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 
 		//states and countries model
-		require_once( 'EEM_State.model.php' );
-		require_once( 'EEM_Country.model.php');
-
-		$states = EEM_State::instance()->get_all_active_states();
-		$countries = EEM_Country::instance()->get_all_active_countries();
+		$states = $this->EE->load_model('State')->get_all_active_states();
+		$countries = $this->EE->load_model('Country')->get_all_active_countries();
 
 		//prepare state/country arrays
 		foreach ( $states as $id => $obj ) {
@@ -1167,11 +1153,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$ctry_ary[$id] = $obj->name();
 		}
 
-		require_once( 'EEM_Venue.model.php' );
+		$VNM = $this->EE->load_model('Venue');
 		//first let's see if we have a venue already
 		$evnt_id = $this->_cpt_model_obj->ID();
 		$venue = !empty( $evnt_id ) ? $this->_cpt_model_obj->venues() : NULL;
-		$venue = empty( $venue ) ? EEM_Venue::instance()->create_default_object() : array_shift( $venue );
+		$venue = empty( $venue ) ? $VNM->create_default_object() : array_shift( $venue );
 		$template_args['_venue'] = $venue;
 		$template_args['org_options'] = $org_options;
 		$template_args['states_dropdown'] = EE_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
@@ -1209,7 +1195,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? '' : $offset . ',' . $per_page;
-		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_name';
+		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 
 		if (isset($this->_req_data['month_range'])) {
@@ -1220,7 +1206,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$where = array(
 				//todo add event categories
-				'Event_Datetime.EVD_primary' => 1,
+				'Datetime.DTT_primary' => 1,
 		);
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
@@ -1252,6 +1238,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$days_this_month = date('t');
 			$where['DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
 		}
+
+		$where['post_type'] = array( '!=', 'revision' );
 
 		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
 
@@ -1437,7 +1425,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _delete_event( $redirect_after = TRUE ) {
 		//determine the event id and set to array.
 		$EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : NULL;
-		$EVT_ID = isset( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : NULL;
+		$EVT_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : NULL;
 
 
 		// loop thru events

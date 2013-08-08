@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require( EE_HELPERS . 'EEH_Base.helper.php' );
+require_once( EE_HELPERS . 'EEH_Base.helper.php' );
 class EEH_URL extends EEH_Base {
 
 	/**

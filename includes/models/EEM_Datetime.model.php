@@ -26,22 +26,9 @@ require_once ( EE_CLASSES . 'EE_Datetime.class.php' );
 
 class EEM_Datetime extends EEM_Base {
 
-  	// private instance of the Event_datetime object
+  	// private instance of the EEM_Datetime object
 	private static $_instance = NULL;
-
-	// all event datetimes
-	private $_event_DT = array();
-	// all registration datetimes
-	private $_reg_DT = array();
-	// all event start datetimes
-	private $_start_DT = array();
-	// all event end datetimes
-	private $_end_DT = array();
-
 	
-
-
-
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -50,10 +37,6 @@ class EEM_Datetime extends EEM_Base {
 	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
-		global $wpdb;
-		// set table name
-//		$this->table_name = $wpdb->prefix . 'esp_datetime';
-		// set item names
 		$this->singlular_item = __('Datetime','event_espresso');
 		$this->plural_item = __('Datetimes','event_espresso');		
 
@@ -63,17 +46,18 @@ class EEM_Datetime extends EEM_Base {
 		$this->_fields = array(
 			'Datetime'=>array(
 				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'DTT_REG_start'=>new EE_Datetime_Field('DTT_REG_start', __('Start time/date of Registration for Event','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'DTT_REG_end'=>new EE_Datetime_Field('DTT_REG_end', __('End time/date of Registration for Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration LImit for this time','event_espresso'), true, 999999),
-				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999)
+				'DTT_tckts_left'=>new EE_Integer_Field('DTT_tckts_left', __('Calculated Tickets Remaining','event_espresso'), true, 999999),
+				'DTT_primary'=>new EE_Boolean_Field('DTT_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
+				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
+				'DTT_parent' => new EE_Integer_Field('DTT_parent', __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0 )
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
-			'Event'=>new EE_HABTM_Relation('Event_Datetime'),
-			'Event_Datetime'=> new EE_Has_Many_Relation()
+			'Event'=>new EE_Belongs_To_Relation(),
 		);
 
 		parent::__construct( $timezone );
@@ -127,9 +111,7 @@ class EEM_Datetime extends EEM_Base {
 				EE_Datetime::new_instance( 
 					array(
 						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30), 
-						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30), 
-						'DTT_REG_start' => time('timestamp'), 
-						'DTT_REG_end' => time('timestamp') + (60 * 60 * 24 * 30) 
+						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30)
 						/*NULL,
 						NULL*/
 					)
@@ -138,8 +120,6 @@ class EEM_Datetime extends EEM_Base {
 
 		$times[0]->set_start_time("8am");
 		$times[0]->set_end_time("5pm");
-		$times[0]->set_reg_start_time("8am");
-		$times[0]->set_reg_end_time("5pm");/**/
 		return $times;
 	}
 
@@ -173,7 +153,7 @@ class EEM_Datetime extends EEM_Base {
 	public function get_datetimes_for_event_ordered_by_importance( $EVT_ID = FALSE, $limit = NULL){
 		return $this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
 			'limit'=>$limit,
-			'order_by'=>array('Event_Datetime.EVD_primary'=>'DESC','DTT_EVT_start'=>'ASC')));
+			'order_by'=>array('DTT_primary'=>'DESC','DTT_EVT_start'=>'ASC')));
 	}
 
 	/**
@@ -199,15 +179,13 @@ class EEM_Datetime extends EEM_Base {
 	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_all_reg_dates( $EVT_ID = FALSE ) {
-		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
-			$reg_times = $this->create_new_blank_datetime();
-			$reg_times[0]->set_start_time("12:00:01AM");
-			$reg_times[0]->set_end_time("11:59:59PM");
-			return $reg_times;
-		}
-		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID );
-	}
+//	public function get_all_reg_dates( $EVT_ID = FALSE ) {
+//		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
+//			$reg_times = $this->create_new_blank_datetime();
+//			return $reg_times;
+//		}
+//		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID );
+//	}
 
 
 
@@ -220,17 +198,18 @@ class EEM_Datetime extends EEM_Base {
 	* 		@param		int 			$EVT_ID
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_primary_reg_date_for_event( $EVT_ID = FALSE ) {
-		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
-			return FALSE;
-		}
-		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID, 1 );
-	}
+//	public function get_primary_reg_date_for_event( $EVT_ID = FALSE ) {
+//		if (empty($EVT_ID)) { // on add_new_event event_id gets set to 0
+//			return FALSE;
+//		}
+//		return $this->get_datetimes_for_event_ordered_by_importance( $EVT_ID, 1 );
+//	}
 
 
 	/**
 	 * @todo delete this
 	 * Any idea what this is for? It's not used anywhere. I guess it's for 3.1->4.0 conversion? mike, april 25th 2013
+	 * Yeah I still don't see what it's for. And am PRETTY CONFUSED by the arrays with random ints in it. mike, july 9th 2013
 	 * @global type $wpdb
 	 */
 	function convert_converted_event_datetimes() {

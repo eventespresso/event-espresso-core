@@ -89,25 +89,17 @@ class EE_Price extends EE_Base_Class{
 
 
 	/**
-	*	Number of tickets left or spaces available at this Price Level
+	*	This is the tickets that have been sold at this price.
 	*
 	*	@access	protected
 	*	@var int
 	*/
-	protected $_PRC_tckts_left = NULL; 				
+	protected $_PRC_tckts_sold = 0; 				
 
-
-	/**
-	*	Whether to use dates to control when pricing starts and ends
-	*
-	*	@access	protected
-	*	@var boolean
-	*/
-	protected $_PRC_use_dates = NULL;
 
 
 	/**
-	*	If use dates is active, this is when this price becomes active
+	*	this is when this price becomes active
 	*
 	*	@access	protected
 	*	@var int
@@ -116,7 +108,7 @@ class EE_Price extends EE_Base_Class{
 
 
 	/**
-	*	If use dates is active, this is when this price becomes inactive
+	*	this is when this price becomes inactive
 	*
 	*	@access	protected
 	*	@var int
@@ -149,6 +141,25 @@ class EE_Price extends EE_Base_Class{
 	*	@var int
 	*/
 	protected $_PRC_order = NULL;
+
+
+
+	/**
+	 * Order that this price is displayed
+	 * @var integer
+	 */
+	protected $_PRC_display_order = 1;
+
+
+
+
+	/**
+	 * This is the parent for the given PRC (will match another existing PRC_ID in the db).  This is so PRC's attached to revisions are relationally connected to the parent PRC.
+	 * @var int
+	 */
+	protected $_PRC_parent;
+
+
 
 
 	/**
@@ -283,18 +294,6 @@ class EE_Price extends EE_Base_Class{
 
 
 
-	/**
-	*		Set use dates boolean flag
-	*
-	* 		@access		public
-	*		@param		boolean		$PRC_use_dates
-	*/
-	public function set_use_dates( $PRC_use_dates = NULL ) {
-		$this->set('PRC_use_dates',$PRC_use_dates);
-	}
-
-
-
 
 
 	/**
@@ -315,7 +314,7 @@ class EE_Price extends EE_Base_Class{
 	*		Set end date
 	*
 	* 		@access		public
-	*		@param		mixed		$PRC_use_dates
+	*		@param		mixed		$PRC_end_date
 	*/
 	public function set_end_date( $PRC_end_date = NULL ) {
 		$this->set('PRC_end_date',$PRC_end_date);
@@ -425,14 +424,6 @@ class EE_Price extends EE_Base_Class{
 	}
 
 
-	/**
-	*	get Price use_dates
-	* @access		public
-	* @return 		string
-	*/
-	public function use_dates() {
-		return $this->get('PRC_use_dates');
-	}
 
 
 	/**
@@ -505,6 +496,18 @@ class EE_Price extends EE_Base_Class{
 	}
 
 
+
+
+	/**
+	 * get display order
+	 * @access public
+	 * @return int
+	 */
+	public function display_order() {
+		return $this->get('PRC_display_order');
+	}
+
+
 	/**
 	*	get deleted
 	* 	@access		public
@@ -512,6 +515,11 @@ class EE_Price extends EE_Base_Class{
 	*/
 	public function deleted() {
 		return $this->get('PRC_deleted');
+	}
+
+
+	public function parent() {
+		return $this->get('PRC_parent');
 	}
 
 

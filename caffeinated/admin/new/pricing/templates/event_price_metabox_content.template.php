@@ -26,10 +26,13 @@
 	foreach ( $price_rows as $row ) :
 		echo $row;
 	endforeach;
+	$total_rows = count( $price_rows );
+	$next_row = $total_rows + 1;
 	?>
 </table>
 <br/>
-
+<input type="hidden" id="total_count_price_rows" name="total_count_price_rows" value=<?php echo $total_rows; ?> />
+<input type="hidden" id="next_price_row" name="next_price_row" value=<?php echo $next_row; ?> />
 <div id="add-new-ticket-price-dv" class="hidden">
 
 	<h5 id="add-new-ticket-price-h5" ><?php _e('Add New Event Price', 'event_espresso'); ?></h5>
@@ -42,13 +45,10 @@
 				<td>
 					<?php echo $new_ticket_price_selector; ?>
 					<p class="description">&nbsp;&nbsp;<?php _e('Whether this is an Event Price, Discount, or Surcharge.', 'event_espresso'); ?></p>
-					<input id="new_ticket_price-EVT_ID" name="new_ticket_price[EVT_ID]" type="hidden" value="<?php echo $event->ID(); ?>" />
+					<input id="new_ticket_price-EVT_ID" name="new_ticket_price[EVT_ID]" type="hidden" value="<?php echo $EVT_ID; ?>" />
 					<input id="new_ticket_price-PRT_is_global" name="new_ticket_price[PRT_is_global]" type="hidden" value="0" />									
 					<input id="new_ticket_price-PRC_overrides" name="new_ticket_price[PRC_overrides]" type="hidden" value="0" />									
 					<input id="new_ticket_price-PRC_deleted" name="new_ticket_price[PRC_deleted]" type="hidden" value="0" />
-					<?php foreach( $price_types as $price_type ) : ?>
-						<input id="new_ticket_price-PRC_order-<?php echo $price_type['id'];?>" name="new_ticket_price[PRC_order][<?php echo $price_type['id'];?>]" type="hidden" value="<?php echo $price_type['order'];?>" />
-					<?php  endforeach; ?>
 				</td>
 			</tr>
 			
@@ -75,29 +75,11 @@
 					<p class="description">&nbsp;&nbsp;<?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
-
-	<?php /* DO NOT DELETE - NEW FEATURE IN PROGRESS 
 			<tr valign="top">
-				<th><label for="new-ticket-price-PRC_amount"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
+				<th><label for="new-ticket-price-PRC_reg_limit"><?php _e('Registration Limit', 'event_espresso'); ?></label></th>
 				<td>
 					<input type="text" id="new_ticket_price[PRC_reg_limit]" name="new_ticket_price[PRC_reg_limit]" class="add-new-ticket-price-input small-text" style="text-align:right;" value=""/>
-					<p class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registratered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></p>
-				</td>
-			</tr>
-		*/ ?>
-			
-			<tr valign="top">
-				<th><label><?php _e('Triggered by Date', 'event_espresso'); ?></label></th>
-				<td>
-					<label class="edit-ticket-price-radio-lbl">
-						<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="1" style="margin-right:5px;">
-						<?php _e('Yes', 'event_espresso');?>
-					</label>
-					<label class="edit-ticket-price-radio-lbl">
-						<input class="add-new-ticket-price-input" type="radio" name="new_ticket_price[PRC_use_dates]" value="0" style="margin-right:5px;" checked="checked" />
-						<?php _e('No', 'event_espresso');?>
-					</label>
-					<p class="description"><?php _e( 'If set to "Yes", then you will be able to set the dates for when this price will become active / inactive.', 'event_espresso' ); ?></p>
+					<p class="description">&nbsp;&nbsp;<?php _e('The maximum number of attendees that can be registered at this Price Level. Leave blank for no limit.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
@@ -105,7 +87,7 @@
 				<th><label for="new_ticket_price[PRC_start_date]"><?php _e('Start Date', 'event_espresso'); ?></label></th>
 				<td>
 					<input id="new-ticket-price[PRC_start_date]" name="new_ticket_price[PRC_start_date]" type="text" class="datepicker add-new-ticket-price-input" value="" />
-					<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If the "Triggered by Date" field above is set to "Yes", then this is the date that this Event Price would become active and displayed for this Event.' ), 'event_espresso'); ?></p>
+					<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'This is when this price becomes active and is displayed for the event (i.e. when Registration is "open")' ), 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
@@ -113,7 +95,7 @@
 				<th><label for="new_ticket_price[PRC_end_date]"><?php _e('End Date', 'event_espresso'); ?></label></th>
 				<td>
 					<input id="new-ticket-price[PRC_end_date]" name="new_ticket_price[PRC_end_date]" type="text" class="datepicker add-new-ticket-price-input" value="" />
-					<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'If "Triggered by Date" is set to "Yes", then this is the date that this Event Price would become inactive and no longer displayed for this Event.' ), 'event_espresso'); ?></p>
+					<p class="description">&nbsp;&nbsp;<?php _e( sprintf( 'This is the date that this Event Price would become inactive and no longer displayed for this Event (i.e. when Registration is "closed").' ), 'event_espresso'); ?></p>
 				</td>
 			</tr>			
 
@@ -135,7 +117,7 @@
 			<tr valign="top">
 				<th></th>
 				<td>
-					<input id="edit_event_save_price" class="button-primary save" type="submit" name="save" value="Save Price">
+					<input id="edit_event_save_price" class="button-primary save" type="button" name="save" value="Save Price">
 					<a id="hide-add-new-ticket-price" class="cancel-event-price-btn button-secondary hidden" rel="add-new-ticket-price" ><?php _e('cancel', 'event_espresso');?></a>
 				</td>
 			</tr>
@@ -153,4 +135,4 @@
 
 <br class="clear"/><br/>
 
-<input id="edited-ticket-price-IDs" name="edited_ticket_price_IDs" type="hidden" value="" />
+<input id="price-IDs" name="price_IDs" type="hidden" value="<?php echo $price_ids; ?>" />

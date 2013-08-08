@@ -576,7 +576,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This sets some global defaults for class properties.
 	 */
 	private function _set_defaults() {
-		$this->_admin_base_url = $this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = $this->_template_path = $this->_column_template_path = NULL;
+		$this->_current_screen = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = $this->_event = $this->_template_path = $this->_column_template_path = NULL;
 
 		$this->_nav_tabs = $this_views = $this->_page_routes = $this->_page_config = array();
 
@@ -989,7 +989,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_add_admin_page_overlay();
 
 		//if metaboxes are present we need to add the nonce field
-		if ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) || isset($this->_route_config['list_table']) ) {
+		if ( ( isset($this->_route_config['metaboxes']) || ( isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'] ) || isset($this->_route_config['list_table']) ) ) {
 			wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false);
 			wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false);
 		}
@@ -1215,7 +1215,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//enqueue global scripts
 
 		//taking care of metaboxes
-		if ( isset($this->_route_config['metaboxes'] ) || isset($this->_route_config['has_metaboxes']) ) {
+		if ( ( isset($this->_route_config['metaboxes'] ) || isset($this->_route_config['has_metaboxes']) ) && empty( $this->_cpt_route) ) {
 			wp_enqueue_script('dashboard');
 		}
 
@@ -1722,7 +1722,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access private
 	*		@return string
 	*/		
-	private function _add_admin_page_ajax_loading_img() {
+	protected function _add_admin_page_ajax_loading_img() {
 		?>
 			<div id="espresso-admin-page-ajax-loading" class="hidden">
 				<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL; ?>images/ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?>'</span>
@@ -1739,7 +1739,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@access private
 	*		@return string
 	*/		
-	private function _add_admin_page_overlay() {
+	protected function _add_admin_page_overlay() {
 		?>
 		<div id="espresso-admin-page-overlay-dv" class=""></div>
 		<?php
@@ -1983,7 +1983,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
 			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
 			'notices' => EE_Error::get_notices(),
-			'content' => utf8_encode($this->_template_args['admin_page_content']),
+			'content' => isset( $this->_template_args['admin_page_content'] ) ? utf8_encode($this->_template_args['admin_page_content']) : '',
 			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
 			'isEEajax' => TRUE //special flag so any ajax.Success methods in js can identify this return package as a EEajax package.
 			);
@@ -1995,6 +1995,21 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		echo json_encode( $json );
 		exit();
+	}
+
+
+
+	/**
+	 * Simply a wrapper for the protected method so we can call this outside the class (ONLY when doing ajax)	
+	 * @return json_obj|EE_Error
+	 */
+	public function return_json() {
+		if ( defined('DOING_AJAX') && DOING_AJAX )
+			$this->_return_json();
+
+		else {
+			throw new EE_Error( sprintf( __('The public %s method can only be called when DOING_AJAX = TRUE', 'event_espresso'), __FUNCTION__ ) );
+		}
 	}
 
 
@@ -2394,6 +2409,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 			wp_safe_redirect( remove_query_arg( array('pagenum', 'apage', 'paged'), wp_get_referer() ) );
 			exit;
 		}
+	}
+
+
+
+	/**
+	 * This just allows for setting the $_template_args property if it needs to be set outside the object
+	 * @param array $data array that will be assigned to template args.
+	 */
+	public function set_template_args( $data ) {
+		$this->_template_args = (array) $data;
 	}
 
 

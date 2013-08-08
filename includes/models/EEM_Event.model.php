@@ -111,11 +111,10 @@ class EEM_Event  extends EEM_CPT_Base{
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
-			'Datetime'=>new EE_HABTM_Relation('Event_Datetime'),
-			'Price'=>new EE_Has_Many_Relation(),
+			'Datetime'=>new EE_Has_Many_Revision_Relation('EVT_ID', 'DTT_parent', false),
+			'Price'=>new EE_Has_Many_Revision_Relation('EVT_ID', 'PRC_parent', false ),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
-			'Event_Datetime'=> new EE_Has_Many_Relation()
 		);
 		require_once( EE_CLASSES . 'EE_Event.class.php');
 		require_once( EE_MODELS . 'strategies/EE_CPT_Where_Conditions.strategy.php');
@@ -631,6 +630,31 @@ class EEM_Event  extends EEM_CPT_Base{
 		$query_params[0] = $where_params;
 		return $count ? $this->count($query_params, 'EVT_ID') : $this->get_all( $query_params );
 	}
+
+
+	/**
+	 * This is just injecting into the parent add_relationship_to so we do special handling on price relationships because we don't want to override any existing global default prices but instead insert NEW prices that get attached to the event.
+	 * See parent for param descriptions
+	 */
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query = array()){
+
+		if ( $relationName == 'Price' ) {
+			//let's get the PRC object for the given ID to make sure that we aren't dealing with a default
+			$prc_chk = $this->get_related_model_obj($relationName)->ensure_is_obj($other_model_id_or_obj);
+			//if EVT_ID = 0, then this is a default
+			if ( $prc_chk->get('EVT_ID') == 0 ) {
+				//let's set the prc_id as 0 so we force an insert on the add_relation_to carried out by relation
+				$prc_chk->set('PRC_ID', 0);
+			}
+
+			//run parent
+			return parent::add_relationship_to($id_or_obj, $prc_chk, $relationName, $where_query);
+		}
+
+		//otherwise carry on as normal
+		return parent::add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query);
+	}
+
 
 
 }

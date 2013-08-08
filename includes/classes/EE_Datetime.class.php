@@ -90,31 +90,6 @@ class EE_Datetime extends EE_Base_Class{
 	protected $_DTT_EVT_end;
 	
 	
-	
-	
-	
-	
-    /**
-    *	REG Start Timestamp
-	* 
-	*	date / time
-	*  
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_REG_start;
-	
-	
-	
-    /**
-    *	REG End Timestamp
-	* 
-	*	date / time
-	*  
-	*	@access	protected
-    *	@var int	
-    */
-	protected $_DTT_REG_end;
 		
 	
 	
@@ -142,6 +117,29 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+	/**
+	 * if dtt is the primary one or not
+	 * @var boolean
+	 */
+	protected $_DTT_primary = null;
+	
+
+
+	/**
+	 * The order this event_datetime is displayed in lists
+	 * @var int
+	 */
+	protected $_DTT_order;
+
+
+
+
+
+	/**
+	 * This is the parent for the given DTT (will match another existing DTT_ID in the db).  This is so DTT's attached to revisions are relationally connected to the parent DTT.
+	 * @var int
+	 */
+	protected $_DTT_parent;
 
 
 
@@ -160,12 +158,6 @@ class EE_Datetime extends EE_Base_Class{
 	protected $_Registration;
 
 
-
-	/**
-	 * All Event Datetimes this event has
-	 * @var Event_Datetime[]
-	 */
-	protected $_Event_Datetime;
 
 	
 	
@@ -362,73 +354,35 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	 * This helps to set the primary flag for this datetime (and given event) on the Event_Datetime join table.
-	 * @param int $EVT_ID The id of the event.
-	 */
-	public function set_primary( $EVT_ID ) {
-		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
-		if ( !empty( $evt_dtt ) ) {
-			$evt_dtt->set('EVD_primary', TRUE);
-			$evt_dtt->save();
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
 
 	/**
-	 * This helper sets the order for this datetime (and given event) on the Event_Datetime join table.
-	 * @param int  $EVT_ID The id of the event.
-	 * @param int  $order  The order for the datetime attached to this event.
-	 */
-	public function set_order( $EVT_ID, $order = 0 ) {
-		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
-		if ( !empty( $evt_dtt ) ) {
-			$evt_dtt->set('EVD_order', $order);
-			$evt_dtt->save();
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	}
-
-
-
-
-	/**
-	 * This helper simply returns whether the event_datetime for the current datetime and the given event is a primary datetime
-	 * @param  int  $EVT_ID The id of the event
+	 * This helper simply returns whether the event_datetime for the current datetime is a primary datetime
 	 * @return boolean          TRUE if is primary, FALSE if not.
 	 */
-	public function is_primary( $EVT_ID ) {
-		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
-		if ( !empty( $evt_dtt ) ) {
-			return $evt_dtt->get('EVD_primary');
-		} else {
-			return FALSE;
-		}
+	public function is_primary() {
+		return $this->get('DTT_primary');
 	}
 
 
 
 
 	/**
-	 * This helper simply returns the order for the datetime and given Event ID using the Event_Datetime join table
-	 * @param  int $EVT_ID The id of the event attached to this datetime
+	 * This helper simply returns the order for the datetime
 	 * @return int         The order of the datetime for this event.
 	 */
-	public function order( $EVT_ID ) {
-		$evt_dtt = EEM_Event_Datetime::instance()->get_one( array( array('DTT_ID' => $this->ID(), 'EVT_ID' => $EVT_ID)));
-		if ( !empty( $evt_dtt ) ) {
-			return $evt_dtt->get('EVD_order');
-		} else {
-			return FALSE;
-		}
+	public function order() {
+		return $this->get('DTT_order');
+	}
+
+
+
+
+	/**
+	 * This helper simply returns the parent id for the datetime
+	 * @return int
+	 */
+	public function parent() {
+		return $this->get('DTT_parent');
 	}
 
 
@@ -604,79 +558,79 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		get registration start time
-	* 
-	* 		@access		public	
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_start_time( $tm_format = NULL ) {
-		return $this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format );
-	}
-
-	public function e_reg_start_time( $tm_format = NULL ) {
-		$this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format, TRUE );
-	}
-
-
-
-
-
-	/**
-	*		get registration end time
-	* 
-	* 		@access		public	
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_end_time( $tm_format = NULL ) {
-		return $this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format );
-	}
-
-	public function e_reg_end_time( $tm_format = NULL ) {
-		$this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format, TRUE );
-	}
+//	/**
+//	*		get registration start time
+//	* 
+//	* 		@access		public	
+//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+//	*		@return 		mixed		string on success, FALSE on fail
+//	*/	
+//	public function reg_start_time( $tm_format = NULL ) {
+//		return $this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format );
+//	}
+//
+//	public function e_reg_start_time( $tm_format = NULL ) {
+//		$this->_show_datetime( 'T', 'REG', 'start', NULL, $tm_format, TRUE );
+//	}
 
 
 
 
 
-	/**
-	*		get registrationstart date and start time
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format );
-	}
-
-	public function e_reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format, TRUE );
-	}
-
+//	/**
+//	*		get registration end time
+//	* 
+//	* 		@access		public	
+//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+//	*		@return 		mixed		string on success, FALSE on fail
+//	*/	
+//	public function reg_end_time( $tm_format = NULL ) {
+//		return $this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format );
+//	}
+//
+//	public function e_reg_end_time( $tm_format = NULL ) {
+//		$this->_show_datetime( 'T', 'REG', 'end', NULL, $tm_format, TRUE );
+//	}
 
 
 
 
-	/**
-	*		get registration end date and time
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		return $this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format );
-	}
 
-	public function e_reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
-		$this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format, TRUE );
-	}
+//	/**
+//	*		get registrationstart date and start time
+//	* 
+//	* 		@access		public	
+//	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+//	*		@return 		mixed		string on success, FALSE on fail
+//	*/	
+//	public function reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
+//		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format );
+//	}
+//
+//	public function e_reg_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
+//		return $this->_show_datetime( '', 'REG', 'start', $dt_frmt, $tm_format, TRUE );
+//	}
+
+
+
+
+//
+//	/**
+//	*		get registration end date and time
+//	* 
+//	* 		@access		public	
+//	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+//	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+//	*		@return 		mixed		string on success, FALSE on fail
+//	*/	
+//	public function reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
+//		return $this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format );
+//	}
+//
+//	public function e_reg_end_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
+//		$this->_show_datetime( '', 'REG', 'end', $dt_frmt, $tm_format, TRUE );
+//	}
 
 
 
@@ -707,28 +661,28 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
-	/**
-	*		get registration start timestamp
-	* 
-	* 		@access		public	
-	*		@return 		int
-	*/	
-	public function reg_start() {
-		return $this->_DTT_REG_start;
-	}
+//	/**
+//	*		get registration start timestamp
+//	* 
+//	* 		@access		public	
+//	*		@return 		int
+//	*/	
+//	public function reg_start() {
+//		return $this->_DTT_REG_start;
+//	}
 
 
 
 
-	/**
-	*		get registration end timestamp
-	* 
-	* 		@access		public	
-	*		@return 		int
-	*/	
-	public function reg_end() {
-		return $this->_DTT_REG_end;
-	}
+//	/**
+//	*		get registration end timestamp
+//	* 
+//	* 		@access		public	
+//	*		@return 		int
+//	*/	
+//	public function reg_end() {
+//		return $this->_DTT_REG_end;
+//	}
 
 
 

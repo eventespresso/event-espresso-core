@@ -64,6 +64,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _init_page_props() {
 		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$this->page_slug = EE_VENUES_PG_SLUG;
+		$this->_admin_base_url = EE_VENUES_ADMIN_URL;
 		$this->page_label = __('Event Venues', 'event_espresso');
 		$this->_cpt_model_name = 'EEM_Venue';
 		$this->_venue_model = EEM_Venue::instance();
@@ -82,7 +83,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _define_page_props() {
-		$this->_admin_base_url = EE_VENUES_ADMIN_URL;
 		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
@@ -212,7 +212,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Edit Venue', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE,
-					'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
+					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 				),
 				'metaboxes' => array('_venue_editor_metaboxes')
 			),
@@ -470,6 +470,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_virtual_location_metabox_content.template.php';
 		espresso_display_template( $template, $template_args );
+	}
+
+
+
+	protected function _restore_cpt_item($post_id, $revision_id) {
+		$venue_obj = $this->_venue_model->get_one_by_ID($post_id);
+
+		//meta revision restore
+		$venue_obj->restore_revision($revision_id);
 	}
 
 

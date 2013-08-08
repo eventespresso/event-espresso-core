@@ -151,7 +151,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit',
-				'id' => $item->ID()
+				'post' => $item->ID()
 			);
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
 
@@ -244,9 +244,10 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_reg_begins($item) {
-		!empty( $this->_dtt ) ? $this->_dtt->e_reg_start_date_and_time('D, M d, Y', 'g:i a') : _e('No Date was saved for this Event', 'event_espresso');
+		/*!empty( $this->_dtt ) ? $this->_dtt->e_reg_start_date_and_time('D, M d, Y', 'g:i a') : _e('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('reg_start_date_and_time', array('D, M d, Y', 'g:i a'), 'My Timezone: ' ) : '';
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('reg_start_date_and_time', array('D, M d, Y', 'g:i a'), 'My Timezone: ' ) : '';/**/
+		echo 'Todo: this needs to be converted to use the earliest price date';
 	}
 
 
@@ -279,7 +280,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$edit_query_args = array(
 				'action' => 'edit',
-				'id' => $item->ID()
+				'post' => $item->ID()
 			);
 
 		$trash_event_query_args = array(

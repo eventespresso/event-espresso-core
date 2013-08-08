@@ -833,12 +833,11 @@ class EE_Base_Class{
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
+	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObject = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID,$relationName);
-		$this->get_model()->add_relationship_to($this, $otherObject, $relationName);
-		
+	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array()){
+		$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
 		$this->cache( $relationName, $otherObject );
 		return $otherObject;
 	}
@@ -846,15 +845,15 @@ class EE_Base_Class{
 	
 	
 	/**
-	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the curren tmodel is related
+	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the currentmodel is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName
+	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the relation was removed from
 	 */
-	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName){
-		$otherObject = $this->ensure_related_thing_is_model_obj($otherObjectModelObjectOrID, $relationName);
-		$this->get_model()->remove_relationship_to($this, $otherObject, $relationName);
+	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array() ){
+		$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
 		$this->clear_cache($relationName, $otherObject);
 		return $otherObject;
 	}

@@ -38,14 +38,6 @@ class EE_Event extends EE_CPT_Base{
 
 
 	/**
-	 * All Event Datetimes this event has
-	 * @var Event_Datetime[]
-	 */
-	protected $_Event_Datetime;
-
-
-
-	/**
 	 * This is just used for caching the Primary Datetime for the Event on initial retreival
 	 * @var EE_Datetime
 	 */

@@ -77,6 +77,9 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 		//hook into the handler for saving venue
 		add_filter( 'FHEE_event_editor_update', array( $this, 'modify_callbacks' ), 10 );
+
+		//remove default ee_autosave returns for DECAF venues (not needed for CAF venues cause we have a dropdown selector)
+		add_filter( 'FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', '__return_false' );
 		
 	}
 

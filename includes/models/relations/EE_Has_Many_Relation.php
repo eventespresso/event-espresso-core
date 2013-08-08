@@ -43,7 +43,8 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base{
 		 $fk_field_on_other_model = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 //set that field on the other model to this model's ID
 		 $other_model_obj->set($fk_field_on_other_model->get_name(), $this_model_obj->ID());
-		 return $other_model_obj->save();
+		 $other_model_obj->save();
+		 return $other_model_obj;
 	 }
 	/**
 	 * Sets the other model object's foreign key to its default, instead of pointing to this model object
@@ -58,5 +59,6 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base{
 		 //set that field on the other model to this model's ID
 		 $other_model_obj->set($fk_field_on_other_model->get_name(),null, true);
 		 $other_model_obj->save();
+		 return $other_model_obj;
 	 }
 }

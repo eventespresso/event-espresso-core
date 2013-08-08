@@ -81,14 +81,15 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
 				'PRC_desc'=>new EE_Simple_HTML_Field('PRC_desc', 'Price Description', false, ''),
 				'PRC_reg_limit'=>new EE_Integer_Field('PRC_reg_limit', 'Limit to how many tickets can be sold at this price', true, 999999),
-				'PRC_tckts_left'=>new EE_Integer_Field('PRC_tckts_left', 'Tickets remaining at this price', true, 999999),
-				'PRC_use_dates'=>new EE_Boolean_Field('PRC_use_dates', 'Flag indicating whether to use dates for this price', false, false),
+				'PRC_tckts_sold'=>new EE_Integer_Field('PRC_tckts_sold', 'Tickets sold at this price', true, 0),
 				'PRC_start_date'=>new EE_Datetime_Field('PRC_start_date', 'If using dates, when this price becomes available', true, NULL, $timezone ),
 				'PRC_end_date'=>new EE_Datetime_Field('PRC_end_date', 'If using dates, when this price is no longer available', true, NULL, $timezone ),
 				'PRC_is_active'=>new EE_Boolean_Field('PRC_is_active', 'Flag indicating whether price is active', false, true),
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
-				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false)
+				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),
+				'PRC_display_order' => new EE_Integer_Field('PRC_display_order', 'Order of how prices are displayed', false, 1 ),
+				'PRC_parent' => new EE_Integer_Field('PRC_parent', __('Indicates what PRC_ID is the parent of this PRC_ID'), true, 0 )
 			)
 		);
 		$this->_model_relations = array(
@@ -248,14 +249,16 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		retreive all prices for an event plus default global prices, but not taxes
 	 *
 	 * 		@access		public
+	 * 		@param int     $EVT_ID          the id of the event.  If not included then we assume that this is a new EVENT.
 	 * 		@return 		boolean			false on fail
 	 */
 	public function get_all_event_prices_for_admin( $EVT_ID = FALSE ) {
-		//if there is no evt_id, get prices with no event ID, are global, are not a tax, and are active
-		//return taht list
-		$global_prices =	$this->get_all_default_prices();
-		
+
 		if ( ! $EVT_ID ) {
+
+			//if there is no evt_id, get prices with no event ID, are global, are not a tax, and are active
+			//return taht list
+			$global_prices = $this->get_all_default_prices();
 			
 //			$this->_select_all_prices_where(
 //					array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
@@ -277,44 +280,20 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		}
 
 		
-//		$globals = $this->_select_all_prices_where(
-//				array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE, 'prc.PRC_deleted'=>FALSE ), 
-//				array( 'PRC_start_date' ), 
-//				array( 'DESC' ),
-//				array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=', 'prc.PRC_deleted'=>'=' )
-//		);
-		
 		$event_prices = $this->get_all(array(
 			array(
-				'EVT_ID'=>$EVT_ID
+				'EVT_ID'=>$EVT_ID,
+				'PRC_deleted' => 0
 				),
 			'order_by'=> array('PRC_order' => 'ASC')
 		));
 		
-		
-		//$this->_select_all_prices_where(array('prc.EVT_ID' => $EVT_ID, 'prc.PRC_deleted'=>FALSE ), array('PRC_start_date'), array('DESC'));
-//		echo printr( $event_prices, '$event_prices' ); 
-//		echo printr( $globals, '$globals' ); 
-
-		$overrides = array();
-		foreach ($event_prices as $event_price) {
-			if ($override = $event_price->overrides()) {
-				$overrides[] = $override;
-			}
-		}
-		foreach ($overrides as $override) {
-			if (array_key_exists($override, $global_prices)) {
-				unset( $global_prices[$override] );
-			}
-		}
-		$prices = array_merge( $event_prices, $global_prices);
-		//echo printr( $prices, 'prices');
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		
 		//uasort( $prices, array( $this, '_sort_event_prices_by_type' ));
 		
-		if ( ! empty( $prices )) {
-			foreach ( $prices as $price ) {
+		if ( ! empty( $event_prices )) {
+			foreach ( $event_prices as $price ) {
 				$array_of_price_objects[ $price->type() ][] = $price;
 			}
 			return $array_of_price_objects;
@@ -404,6 +383,59 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'Price_Type.PRT_order'=>'ASC',
 				'PRC_order'=>'ASC',
 				'PRC_ID'=>'ASC');
+	}
+
+
+
+	/**
+	 * This is injecting into the parent update() method to do a check first to see if the price being updated is ALREADY in use (i.e. has tickets sold).  If it does, then we're going to just make sure we insert a NEW price instead with all the same details (and we'll mark the given price as "archived") and of course we'll return what normally gets returned from an update so that any add_relation_to() run after the update will attach to the right object.
+	 *
+	 * So to summarize:
+	 * - if tickets have been sold for this price
+	 * - and we have a change in amount
+	 * - or we have a change in price type
+	 * ...then we create a new price and mark the incoming one as trashed.
+	 *
+	 * Another thing we have to check for is IF the reg_limit is changed, then we need to make sure its NOT set less than the tickets sold.  It can be EQUAL to or greater than but not less than. If reg limit is not correct then let's set an EE_Error msg and return false.
+	 *
+	 * @see parent method for param details.
+	 */
+	public function update($fields_n_values, $query_params){
+		//let's get the PRC_ID if present.
+		$PRC_ID = isset( $query_params[0] ) && isset( $query_params[0]['PRC_ID'] ) ? $query_params[0]['PRC_ID'] : NULL;		
+
+		//get EXISTING prc in db for checks
+		if ( !empty( $PRC_ID ) ) {
+			$existing_prc = $this->get_one_by_ID( $PRC_ID );
+
+
+			//first we need to detect if there are any changes from the incoming price... IF there are then we go to the next step... otherwise we just leave things as is and pass off to parent.
+			$changed = FALSE;
+			foreach ( $fields_n_values as $field => $value ) {
+				if ( $value != $existing_prc->get($field) )
+					$changed = TRUE;
+			}
+
+			//nothings changed so just return
+			if ( !$changed ) 
+				return $existing_prc;
+
+			//if tickets sold then we create a new price NOT update an existing one.  The existing one becomes archived.
+			if ( $existing_prc->get('PRC_tckts_sold') > 0 ) {
+				$existing_prc->set('PRC_deleted', 1 );
+				$existing_prc->save();
+				//create new price, but make sure that we 'reset' any necessary columns/fields.
+				$fields_n_values['PRC_tckts_sold'] = 0;
+				$new_id = $this->insert($fields_n_values);
+
+				//since update usually returns the object let's make sure we do that.
+				return ( $this->get_one_by_ID( $new_id ) );
+			}
+			
+		}
+
+		//nothing needs handling so let's just run regular update
+		parent::update( $fields_n_values, $query_params );
 	}
 }
 
