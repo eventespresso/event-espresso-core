@@ -708,14 +708,26 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
 			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
-			$DTM = EE_Datetime::new_instance( array(
-					'DTT_ID' => isset( $event_datetime['ID'] ) && $event_datetime['ID'] !== '' ? absint( $event_datetime['ID'] ) : NULL,
-					'DTT_EVT_start' => $event_datetime['evt_start'],
-					'DTT_EVT_end' => $event_datetime['evt_end'],
-					'DTT_is_primary' => $row === 1 ? TRUE : FALSE,
-					'DTT_order' => $row
-				),
-				$timezone);
+
+			$datetime_values = array(
+				'DTT_ID' => isset( $event_datetime['ID'] ) && $event_datetime['ID'] !== '' ? absint( $event_datetime['ID'] ) : NULL,
+				'DTT_EVT_start' => $event_datetime['evt_start'],
+				'DTT_EVT_end' => $event_datetime['evt_end'],
+				'DTT_is_primary' => $row === 1 ? TRUE : FALSE,
+				'DTT_order' => $row
+				);
+
+			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
+			
+			if ( !empty( $event_datetime['ID'] ) ) {
+				$DTM = $this->EE->load_model('Datetime', array($timezone) )->get_one_by_ID($event_datetime['ID'] );
+				foreach ( $datetime_values as $field => $value ) {
+					$DTM->set( $field, $value );
+				}
+			} else {
+				$DTM = $this->EE->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
+			}
+			
 
 			//we have to make sure we set the saved_id first (if it's not empty) because otherwise we could miss ids that are already attached to parents.
 			$dtt_id = $DTM->ID();
