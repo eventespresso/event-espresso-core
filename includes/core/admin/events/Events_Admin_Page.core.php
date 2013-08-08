@@ -806,17 +806,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['data']['items']['venue-id'] = $venue->ID();
 		}
 
-		$prices = $event->get_many_related('Price');
 
+		//handle ticket updates.
+		$tickets = $event->get_many_related('Ticket');
+
+		$ticket_ids = array();
 		$price_ids = array();
-		foreach ( $prices as $price ) {
-			$price_ids[] = $price->ID();
-			$order = $price->get('PRC_display_order');
-			$this->_template_args['data']['items']['quick-edit-ticket-price-id-' . $order] = $price->ID();
-			$this->_template_args['data']['items']['edit-ticket-price-id-' . $order] = $price->ID();
-			$this->_template_args['data']['items']['edit-ticket-price-event-id-' . $order] = $event->ID();
+		foreach ( $tickets as $ticket ) {
+			$ticket_ids[] = $price->ID();
+			$ticket_order = $price->get('TKT_order');
+			$this->_template_args['data']['items']['edit-ticket-id-' . $ticket_order] = $ticket->ID();
+			$this->_template_args['data']['items']['edit-ticket-event-id-' . $order] = $event->ID();
+
+			//now we have to make sure the prices are updated appropriately
+			$prices = $ticket->get_many_related('Prices');
+
+			foreach ( $prices as $price ) {
+				$price_ids[] = $price->ID();
+				$price_order = $price->get('PRC_display_order');
+				$this->_template_args['data']['items']['quick-edit-ticket-price-id-ticketrow-' . $ticket_order . '-' . $price_order] = $price->ID();
+				$this->_template_args['data']['items']['edit-ticket-price-id-ticketrow-' . $ticket_row . '-' . $price_row] = $price->ID();
+				$this->_template_args['data']['items']['edit-ticket-price-is-default-ticketrow-' . $ticket_row . '-' . $price_row] = $price->get('PRC_is_default');
+			}
+			$this->_template_args['data']['items']['price-IDs-ticketrow-' . $ticket_row] = implode(',', $price_ids);
 		}
-		$this->_template_args['data']['items']['price-IDs'] = implode(',', $price_ids);
+		$this->_template_args['data']['items']['ticket-IDs'] = implode(',', $ticket_ids);
 	}
 
 
@@ -835,67 +849,119 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 
-		$data['price_count'] = 1;
-		$saved_prices = array();
-		$old_prices = isset( $data['price-IDs'] ) ? explode(',',$data['price-IDs']) : array();
-		$edited_prices = isset($data['edit_ticket_price']) ? $data['edit_ticket_price'] : array();
+		$saved_tickets = array();
+		$old_tickets = isset( $data['ticket-IDs'] ) ? explode(',', $data['ticket-IDs'] ) : array();
+		$edited_tickets = isset( $data['edit_ticket_info'] ) ? $data['edit_ticket_info'] : array();
 
+		if ( empty( $edited_tickets ) )
+			return FALSE; //get out because there is somethign that went wrong (probably an error prevented display of the ticket form)
 
-		if ( empty( $edited_prices ) )
-			return FALSE; //get out because theres something that went wrong (probably an error prevented display of the price form);
+		//let's loop through all the tickets and set things up for saving
+		foreach ( $edited_tickets as $ticketrow => $ticket_data ) {
+			$TKT_values = array(
+				'TKT_ID' => !empty( $ticket_data['TKT_ID'] ) ? $ticket_data['TKT_ID'] : NULL,
+				'TTM_ID' => !empty( $ticket_data['TTM_ID'] ) ? $ticket_data['TTM_ID'] : 1,
+				'TKT_start_date' => isset( $ticket_data['TKT_start_date'] ) ? $ticket_data['TKT_start_date'] : current_time('mysql'),
+				'TKT_end_date' => isset( $ticket_data['TKT_end_date'] ) ? $ticket_data['TKT_end_date'] : current_time('mysql'),
+				'TKT_reg_limit' => isset( $ticket_data['TKT_reg_limit'] ) ? $ticket_data['TKT_reg_limit'] : -1,
+				'TKT_order' => $ticketrow,
+				);
 
-		//let's loop through all prices and set things up.
-		foreach ( $edited_prices as $row => $price_data ) {
-			$PRC = $this->EE->load_class('Price', array( array(
-				'PRC_ID' => $price_data['PRC_ID'] === 0 ? NULL : $price_data['PRC_ID'],
-				'PRT_ID' => isset( $price_data['PRT_ID'] ) ? $price_data['PRT_ID'] : 2,
-				'PRC_order' => isset( $price_data['PRC_order'] ) && $price_data['PRC_order'] ? $price_data['PRC_order'] : 0,
-				'PRC_name' => $price_data['PRC_name'] ? $price_data['PRC_name'] : NULL,
-				'PRC_desc' => isset($price_data['PRC_desc']) ? $price_data['PRC_desc'] : '',
-				'PRC_amount' => $price_data['PRC_amount'] ? $price_data['PRC_amount'] : 0,
-				'PRC_start_date' => isset($price_data['start_date']) ? $price_data['start_date'] : current_time('mysql'),
-				'PRC_end_date' => isset($price_data['end_date'] ) ? $price_data['end_date'] : current_time('mysql'),
-				'PRC_reg_limit' => isset($price_data['PRC_reg_limit']) ? $price_data['PRC_reg_limit'] : NULL,
-				'PRC_is_active' => TRUE,
-				'PRC_display_order' => $row
-				), $timezone ), FALSE, FALSE );
-
-			//now we have to determine if this price is a default price (or new price).  If it is then we MUST insert.
-			if ( $price_data['EVT_ID'] === 0 && $PRC->ID() > 0 ) {
-				//unset the PRC_ID from the $old_prices array
-				unset($old_prices[$price_data['PRC_ID']] );
-				$PRC->set( 'PRC_ID', NULL );
+			//if we have a TKT_ID then we need to get that existing TKT_obj and update it
+			if ( !empty( $ticket_data['TKT_ID'] ) ) {
+				$TKT = $this->EE->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $ticket_data['TKT_ID'] );
+				//set new values
+				foreach ( $TKT_values as $field => $value ) {
+					$TKT->set( $field, $value );
+				}
+			} else {
+				//no TKT_id so a new TKT
+				$TKT = $this->EE->load_class('Ticket', array( $TKT_values, $timezone ), FALSE, FALSE );
 			}
 
-			//now we just have to add to the event (*note that EEM_Price model already takes care of handling NOT saving the price if the price has already been used however, in that case the price object that is returned is going to be different than the one that was saved so we need to make sure we don't accidentally remove it again!  This also means that we need to keep the old price attached to the evt (even though it might not be displayed ) ).
-			$saved_PRC = $evtobj->_add_relation_to( $PRC, 'Price' );
+			//now we just have to add the ticket to the event which in turn will make sure we have a ticket ID generated if this is a new ticket. In the case of tickets
+			$saved_TKT = $evtobj->_add_relation_to( $TKT, 'Ticket' );
+			$saved_tickets[] = $saved_TKT->ID();
 
-			if ( ( $price_data['PRC_ID'] > 0 && $price_data['PRC_ID'] != $saved_PRC->ID() ) ) {
-				//make sure we keep old price attached to event (even though it won't be displayed because it's deleted)
-				$saved_prices[] = $price_data['PRC_ID'];
+			//now let's setup the price stuff for this ticket
+			$old_prices = isset( $data['price-IDs'][$ticketrow] ) ? explode(',',$data['price-IDs'][$ticket_row]) : array();
+			$edited_prices = isset($data['edit_ticket_price'][$ticketrow]) ? $data['edit_ticket_price'][$ticketrow] : array();
+			$saved_prices = array();
+
+			if ( $empty ( $edited_prices ) ) {
+				$success = FALSE;
+				EE_Error::add_error( __('There were no prices attached to the ticket.', 'event_espresso'), __FILE__, __FUNCTION, __LINE__ );
 			}
 
-			$saved_prices[] = $saved_PRC->ID();	
+			//let's loop through all prices and set things up.
+			foreach ( $edited_prices as $row => $price_data ) {
+				$PRC_values = array(
+					'PRC_ID' => $price_data['PRC_ID'] === 0 ? NULL : $price_data['PRC_ID'],
+					'PRT_ID' => isset( $price_data['PRT_ID'] ) ? $price_data['PRT_ID'] : 2,
+					'PRC_order' => isset( $price_data['PRC_order'] ) && $price_data['PRC_order'] ? $price_data['PRC_order'] : 0,
+					'PRC_name' => $price_data['PRC_name'] ? $price_data['PRC_name'] : NULL,
+					'PRC_desc' => isset($price_data['PRC_desc']) ? $price_data['PRC_desc'] : '',
+					'PRC_amount' => $price_data['PRC_amount'] ? $price_data['PRC_amount'] : 0,
+					'PRC_is_active' => TRUE,
+					'PRC_display_order' => $row
+					);
 
-		}
+				//if we have a PRC_ID then we need to get that existing PRC_obj and update it
+				if ( !empty( $price_data['PRC_ID'] ) ) {
+					$PRC = $this->EE->load_model( 'Price' )->get_one_by_ID( $price_data['PRC_ID'] );
+					//set new values
+					foreach ( $PRC_values as $field => $value ) {
+						$PRC->set( $field, $value );
+					}
+				} else {
+					//no PRC_ID so a new PRC
+					$PRC = $this->EE->load_class('Price', array( $PRC_values ), FALSE, FALSE );
+				}
 
+				
+				//now we have to determine if this price is a default price (or new price).  If it is then we MUST insert.
+				if ( $price_data['PRC_is_default'] === 1 && $PRC->ID() > 0 ) {
+					//unset the PRC_ID from the $old_prices array
+					unset($old_prices[$price_data['PRC_ID']] );
+					$PRC->set( 'PRC_ID', NULL );
+					$PRC->set( 'PRC_is_default', 0 );
+				}
 
-		//now remove any prices that got deleted (note we don't actually hard delete but instead just archive the price).
-		$prices_to_delete = array_diff( $old_prices, $saved_prices );
-		foreach ( $prices_to_delete as $price ) {
-			$id = absint( $price );
-			$price_to_archive = $this->EE->load_model('Price')->get_one_by_ID( $id );
-			//let's modify this to be archived
-			$price_to_archive->set( 'PRC_deleted', 1 );
-			$price_to_archive->save();
-		}
-		
+				//now we just have to add to the ticket (*note that EEM_Price model already takes care of handling NOT saving the price if the price has already been used however, in that case the price object that is returned is going to be different than the one that was saved so we need to make sure we don't accidentally remove it again!  This also means that we need to keep the old price attached to the ticket (even though it might not be displayed ) ).
+				$saved_PRC = $saved_TKT->_add_relation_to( $PRC, 'Price' );
 
-		if ( count( $saved_prices ) < 1 ) {
-			$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
-			$espresso_no_ticket_prices[ $evtobj->get('EVT_ID') ] = $evtobj->get('EVT_name');
-			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
-		} 
+				if ( ( $price_data['PRC_ID'] > 0 && $price_data['PRC_ID'] != $saved_PRC->ID()  && ! $price_data['PRC_is_default'] ) ) {
+					//make sure we keep old price attached to ticket (even though it won't be displayed because it's archived)
+					$saved_prices[] = $price_data['PRC_ID'];
+				}
+
+				$saved_prices[] = $saved_PRC->ID();		
+			}
+
+			//now remove any prices that got deleted (note IF this TKT has TKTs_sold, then we don't actually hard delete but instead just archive the price).
+			$prices_to_delete = array_diff( $old_prices, $saved_prices );
+			foreach ( $prices_to_delete as $price ) {
+				$id = absint( $price );
+				$price_to_archive = $this->EE->load_model('Price')->get_one_by_ID( $id );
+				if ( $saved_TKT->tickets_sold() ) {
+					//let's modify this to be archived
+					$price_to_archive->set( 'PRC_deleted', 1 );
+					$price_to_archive->save();
+				} else {
+					//no tickets sold so we can safely detach from the $saved_TKT and then hard delete.
+					$saved_TKT->_remove_relation_to($price_to_archive, 'Price');
+					$this->EE->load_model('Price')->delete_permanently_by_ID( $price_to_archive->ID() );
+				}
+			}
+			
+			//I don't think we need to worry about the below now because a ticket will always have at least one price associated with it but we'll just comment out for now until we've verified this.
+			/*if ( count( $saved_prices ) < 1 ) {
+				$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
+				$espresso_no_ticket_prices[ $evtobj->get('EVT_ID') ] = $evtobj->get('EVT_name');
+				update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
+			} /**/
+
+		}	
 
 		return $success;
 	}
@@ -970,11 +1036,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
-		//	require_once(EE_MODELS . 'EEM_Ticket.model.php');
-		//	$TKT_MDL = EEM_Ticket::instance();
-		//	
-		//	$all_event_tickets = $TKT_MDL->get_all_event_tickets( $event->id );
-
 
 		require_once(EE_MODELS . 'EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance( $timezone );
@@ -1009,107 +1070,123 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$timezone = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->timezone_string() : NULL; 
 		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : FALSE;
 
+
+		//first thing we do is get all tickets for this event
+		$tickets = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->get_many_related('Ticket') : array();
+
+		//if empty tickets then we need to generate an empty ticket object!
+		$tickets[] = $this->EE->load_model('Ticket')->create_default_object();
+
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 
 		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 
-		$show_no_event_price_msg = FALSE;		
-		
-		global $all_prices;
-		
-		if ( ! $all_prices = $PRC->get_all_event_prices_for_admin( $event_id )) {
-			$all_prices = array();
-		}
+		$main_ticket_content['ticket_rows'] = array();
+		$main_ticket_content['org_options'] = $ticket_row_content['org_options'] = $price_main_content['org_options'] = $price_row_content['org_options'] = $org_options;
+		$main_ticket_content['event'] = $ticket_row_content['event'] = $price_main_content['event'] = $price_row_content['event'] = $this->_cpt_model_obj;
 
+		//loop through the tickets and setup our template vars;	
+		foreach ( $tickets as $ticket ) {
+			$show_no_event_price_msg = FALSE;	
+			$ticket_id = $ticket->ID();	
 		
-		if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
-			$show_no_event_price_msg = TRUE;
-		}
-		$price_types = array();
-
-		foreach ($PRT->get_all() as $type) {
-			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			if ( $type->is_global() ) {
-				$global_price_types[ $type->ID() ] = $type;
-			} else { 
-				$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
+			if ( ! $all_prices = $PRC->get_all__prices_for_admin( $event_id )) {
+				$all_prices = array();
 			}
-		}
-		
-		$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
 
-		$template_args['show_no_event_price_msg'] = $show_no_event_price_msg;
-		$template_args['no_price_message_error'] = $show_no_event_price_msg ?  apply_filters( 'FHEE__Events_Admin_Page__pricing_metabox_show_no_price_message_error', __('There is currently no Price set for this Event. Please see the Event Pricing section for more details.', 'event_espresso') ) : '';
-		$template_args['no_price_message'] = $show_no_event_price_msg ? apply_filters('FHEE_show_no_event_price_msg', __('Please enter a price for this Event to ensure that this Event displays and functions properly.'), 'event_espresso') : ''; 
-		$template_args['PRT'] =  $row_args['PRT'] = $PRT;
-		$template_args['org_options'] = $row_args['org_options'] = $org_options;
-		$template_args['event'] = $row_args['event'] = $this->_cpt_model_obj;
-		$template_args['price_rows'] = array();
-		$row_template = apply_filters('FHEE_events_pricing_meta_box_row_template', EVENTS_TEMPLATE_PATH . 'edit_ticket_price_content_row.template.php');
-		$row = 1;
-		$price_ids = array();
-
-		if ( !empty( $all_prices ) ) :
 			
-			foreach ( $all_prices as $price_type => $prices ) :
-				foreach ( $prices as $price ) :
-					if ( $price->ID() !== 0 )
-						$price_ids[] = $price->ID();
-					if ( !$price->deleted() ) :
-						$row_args['disabled'] = ! $price->is_active() ? ' disabled="disabled"' : ''; 
-						$row_args['disabled_class'] = ! $price->is_active() ? ' input-disabled' : '';
-						$row_args['inactive'] = ! $price->is_active() ? '<span class="inactive-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE;
-						$row_args['is_percent'] = $price->type_obj() ? $price->type_obj()->is_percent() : FALSE;
-						
-						$today = time();
-						if ( $today < $price->start() ){
-							$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
-						} elseif ( $today > $price->start() && $today < $price->end() ) {
-							$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
-						} else {
-							$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
-							$row_args['disabled'] = ' disabled="disabled"'; 
-							$row_args['disabled_class'] = ' input-disabled'; 
-							$row_args['inactive'] = '<span class="inactive-price">'.__('This Event Price option has expired - edit advanced settings to reactivate', 'event_espresso').'</span>';
-						}
-						
-						$price_type = $price->type_obj();
-						$row_args['type_label'] = $price_type->name() . ' ' . $price_date_status;
-						$row_args['price'] = $price;
-						$row_args['price_amount'] = $price_type->is_percent() ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 );
+			if ( empty( $all_prices[1] ) && empty( $all_prices[2] )) {
+				$show_no_event_price_msg = TRUE;
+			}
+			$price_types = array();
 
-						$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]';
-						$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID-'.$price->ID().'" style="width:auto;"', 'edit-ticket-price-input' );
-						$row_args['price_type'] = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE;
+			foreach ($PRT->get_all() as $type) {
+				$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
+				if ( $type->is_global() ) {
+					$global_price_types[ $type->ID() ] = $type;
+				} else { 
+					$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
+				}
+			}
+			
+			$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
 
-						$row_args['counter'] = count($prices);
-						$row_args['row'] = $row;
-						$row_args['EVT_ID'] = $price->get('EVT_ID');
-						$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
-					endif;
-					$row++;
+			$template_args['show_no_event_price_msg'] = $show_no_event_price_msg;
+			$template_args['no_price_message_error'] = $show_no_event_price_msg ?  apply_filters( 'FHEE__Events_Admin_Page__pricing_metabox_show_no_price_message_error', __('There is currently no Price set for this Event. Please see the Event Pricing section for more details.', 'event_espresso') ) : '';
+			$template_args['no_price_message'] = $show_no_event_price_msg ? apply_filters('FHEE_show_no_event_price_msg', __('Please enter a price for this Event to ensure that this Event displays and functions properly.'), 'event_espresso') : ''; 
+			$template_args['PRT'] =  $row_args['PRT'] = $PRT;
+			$template_args['org_options'] = $row_args['org_options'] = $org_options;
+			$template_args['event'] = $row_args['event'] = $this->_cpt_model_obj;
+			$template_args['price_rows'] = array();
+			$row_template = apply_filters('FHEE_events_pricing_meta_box_row_template', EVENTS_TEMPLATE_PATH . 'edit_ticket_price_content_row.template.php');
+			$row = 1;
+			$price_ids = array();
+
+			if ( !empty( $all_prices ) ) :
+				
+				foreach ( $all_prices as $price_type => $prices ) :
+					foreach ( $prices as $price ) :
+						if ( $price->ID() !== 0 )
+							$price_ids[] = $price->ID();
+						if ( !$price->deleted() ) :
+							$row_args['disabled'] = ! $price->is_active() ? ' disabled="disabled"' : ''; 
+							$row_args['disabled_class'] = ! $price->is_active() ? ' input-disabled' : '';
+							$row_args['inactive'] = ! $price->is_active() ? '<span class="inactive-price">'.__('inactive price - edit advanced settings to reactivate', 'event_espresso').'</span>' : FALSE;
+							$row_args['is_percent'] = $price->type_obj() ? $price->type_obj()->is_percent() : FALSE;
+							
+							$today = time();
+							if ( $today < $price->start() ){
+								$price_date_status = '<a title="'. __('This Event Price option is not yet active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-pending-16x22.png" width="16" height="22" alt="'. __('This Event Price option is not yet active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
+							} elseif ( $today > $price->start() && $today < $price->end() ) {
+								$price_date_status = '<a title="'. __('This Event Price option is currently active', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-active-16x22.png" width="16" height="22" alt="'. __('This Event Price option is currently active', 'event_espresso') . '" class="price-date-status-img"/></a>';					
+							} else {
+								$price_date_status = '<a title="'. __('This Event Price option has expired', 'event_espresso') . '"><img src="'.EVENT_ESPRESSO_PLUGINFULLURL.'images/timer-expired-16x22.png" width="16" height="22" alt="'. __('This Event Price option has expired', 'event_espresso') . '" class="price-date-status-img"/></a>';
+								$row_args['disabled'] = ' disabled="disabled"'; 
+								$row_args['disabled_class'] = ' input-disabled'; 
+								$row_args['inactive'] = '<span class="inactive-price">'.__('This Event Price option has expired - edit advanced settings to reactivate', 'event_espresso').'</span>';
+							}
+							
+							$price_type = $price->type_obj();
+							$row_args['type_label'] = $price_type->name() . ' ' . $price_date_status;
+							$row_args['price'] = $price;
+							$row_args['price_amount'] = $price_type->is_percent() ? number_format( $price->amount(), 1 ) : number_format( $price->amount(), 2 );
+
+							$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]';
+							$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID-'.$price->ID().'" style="width:auto;"', 'edit-ticket-price-input' );
+							$row_args['price_type'] = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE;
+
+							$row_args['counter'] = count($prices);
+							$row_args['row'] = $row;
+							$row_args['EVT_ID'] = $price->get('EVT_ID');
+							$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
+						endif;
+						$row++;
+					endforeach;
 				endforeach;
-			endforeach;
-		else :
-			$row_args['row'] = $row;
-			$row_args['type_label'] = __('New Event Price', 'event_espresso');
-			$row_args['price'] = $PRC->create_default_object();
-			$row_args['disabled_class'] = '';
-			$row_args['disabled'] = '';
-			$row_args['is_percent'] = FALSE;
-			$row_args['inactive'] = FALSE;
-			$row_args['price_amount'] = '';
-			$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
-		endif;
-		$price_types = empty( $all_prices ) ? array(  array( 'id' => 2, 'text' => __('Event Price', 'event_espresso'), 'order' => 0 )) : $price_types;
-		$template_args['new_ticket_price_selector'] = EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' );
-		$template_args['price_types'] = $price_types;
-		$template_args['price_ids'] = implode(',', $price_ids );
+			else :
+				$row_args['row'] = $row;
+				$row_args['type_label'] = __('New Event Price', 'event_espresso');
+				$row_args['price'] = $PRC->create_default_object();
+				$row_args['disabled_class'] = '';
+				$row_args['disabled'] = '';
+				$row_args['is_percent'] = FALSE;
+				$row_args['inactive'] = FALSE;
+				$row_args['price_amount'] = '';
+				$template_args['price_rows'][] = espresso_display_template($row_template, $row_args, TRUE);
+			endif;
+			$price_types = empty( $all_prices ) ? array(  array( 'id' => 2, 'text' => __('Event Price', 'event_espresso'), 'order' => 0 )) : $price_types;
+			$template_args['new_ticket_price_selector'] = EE_Form_Fields::select_input( 'new_ticket_price[PRT_ID]', $price_types, 2, 'id="new-ticket-price-type-ID"', 'add-new-ticket-price-input' );
+			$template_args['price_types'] = $price_types;
+			$template_args['price_ids'] = implode(',', $price_ids );
 
-		$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'ticket_price_content.template.php' );
-		espresso_display_template($main_template, $template_args);
+			$main_template = apply_filters('FHEE_events_pricing_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'ticket_price_content.template.php' );
+			espresso_display_template($main_template, $template_args);
+		} //end tickets loop
+
+		$main_ticket_template = apply_filters('FHEE_events_ticket_meta_box_main_template', EVENTS_TEMPLATE_PATH . 'ticket_metabox_content.template.php' );
+		espresso_display_template($main_ticket_template, $main_ticket_content_args);
 	}
 
 
