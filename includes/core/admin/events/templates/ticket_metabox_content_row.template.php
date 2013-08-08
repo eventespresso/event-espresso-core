@@ -17,7 +17,7 @@
 		<?php echo $ticket_template_selector; ?>
 	</div>
 	<div class="ticket-half-column">
-		<input id="edit-ticket-reg-limit-<?php echo $ticket_row; ?>" type="text" name"edit_ticket_info[<?php echo $ticket_row; ?>][TKT_reg_limit]" value="<?php echo $ticket->get('TKT_reg_limit'); ?>" /> <br />
+		<input id="edit-ticket-reg-limit-<?php echo $ticket_row; ?>" type="text" name"edit_ticket_info[<?php echo $ticket_row; ?>][TKT_qty]" value="<?php echo $ticket->get('TKT_qty'); ?>" /> <br />
 		<input id="edit-ticket-start-date-<?php echo $ticket_row; ?>" type="text" class="dtm-es-picker dtm-inp" value="<?php $ticket->e_start_date_and_time( 'Y-m-d' ); ?>" />
 		<input id="edit-ticket-end-date-<?php echo $ticket_row; ?>" type="text" class="dtm-es-picker dtm-inp" value="<?php $ticket->e_end_date_and_time( 'Y-m-d' ); ?>" />
 	</div>

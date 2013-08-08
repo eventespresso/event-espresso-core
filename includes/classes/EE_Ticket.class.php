@@ -72,10 +72,10 @@ class EE_Ticket extends EE_Base_Class{
 
 
 	/**
-	 * The limit of this Ticket that can be sold
+	 * The quantity of tickets available
 	 * @var INT
 	 */
-	protected $_TKT_reg_limit;
+	protected $_TKT_qty;
 
 
 
@@ -96,6 +96,16 @@ class EE_Ticket extends EE_Base_Class{
 	 * @var int
 	 */
 	protected $_TKT_uses;
+
+
+
+
+
+	/**
+	 * Whether the ticket is taxable or not
+	 * @var int
+	 */
+	protected $_TKT_taxable;
 
 
 

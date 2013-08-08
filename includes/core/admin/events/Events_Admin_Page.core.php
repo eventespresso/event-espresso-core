@@ -863,7 +863,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'TTM_ID' => !empty( $ticket_data['TTM_ID'] ) ? $ticket_data['TTM_ID'] : 1,
 				'TKT_start_date' => isset( $ticket_data['TKT_start_date'] ) ? $ticket_data['TKT_start_date'] : current_time('mysql'),
 				'TKT_end_date' => isset( $ticket_data['TKT_end_date'] ) ? $ticket_data['TKT_end_date'] : current_time('mysql'),
-				'TKT_reg_limit' => isset( $ticket_data['TKT_reg_limit'] ) ? $ticket_data['TKT_reg_limit'] : -1,
+				'TKT_qty' => isset( $ticket_data['TKT_qty'] ) ? $ticket_data['TKT_qty'] : -1,
 				'TKT_order' => $ticketrow,
 				);
 

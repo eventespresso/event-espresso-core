@@ -50,10 +50,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'EVT_ID'=> new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID', 'event_espresso'), false, 0),
 				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'TKT_reg_limit'=>new EE_Integer_Field('TKT_reg_limit', __('Registration LImit for this ticket','event_espresso'), true, 0),
+				'TKT_qty'=>new EE_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), true, 0),
 				'TKT_sold'=>new EE_Integer_Field('TKT_sold', __('Number of this ticket that have been sold', 'event_espresso'), true, 0),
 				'TKT_uses'=>new EE_Integer_Field('TKT_uses', __('Number of times this ticket can be used (per registration ) to checkin before expiring', 'event_espresso'), TRUE, NULL ),
-				'TKT_tax'=>new EE_Boolean_Field('TKT_tax', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
+				'TKT_taxable'=>new EE_Boolean_Field('TKT_taxable', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed', 'event_espresso'), false, 0),
 				'TKT_deleted' => new EE_Trashed_Flag_Field('TKT_deleted', __('Flag indicating if this has been archived or not', 'event_espresso'), false, false),
 				'TKT_parent' => new EE_Integer_Field('TKT_parent', __('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'), true, 0 )
