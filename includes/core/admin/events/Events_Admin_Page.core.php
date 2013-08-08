@@ -648,7 +648,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _default_venue_update( $evtobj, $data ) {
 		require_once( EE_MODELS . 'EEM_Venue.model.php' );
-		$venue_model = EEM_Venue::instance();
+		$venue_model = $this->EE->load_model('Venue');
 		$rows_affected = NULL;
 		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
 
