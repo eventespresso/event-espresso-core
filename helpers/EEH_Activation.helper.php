@@ -872,7 +872,7 @@ class EEH_Activation {
 
 
 		$table_name='esp_checkin';
-		$sql="CHK_IN INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+		$sql="CHK_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
 					REG_ID INT(10) unsigned NOT NULL ,
 					DTT_ID INT(10) unsigned NOT NULL ,
 					CHK_in TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
