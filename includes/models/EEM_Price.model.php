@@ -117,7 +117,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
 	public function get_new_price() { 
-		return EE_Price::new_instance();
+		return $this->create_default_object();
 	}
 
 

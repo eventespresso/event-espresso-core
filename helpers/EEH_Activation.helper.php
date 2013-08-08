@@ -867,6 +867,18 @@ class EEH_Activation {
 
 
 
+
+		$table_name='esp_checkin';
+		$sql="CHK_IN INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+					REG_ID INT(10) unsigned NOT NULL ,
+					DTT_ID INT(10) unsigned NOT NULL ,
+					CHK_in TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
+					CHK_timestamp datetime NOT NULL default '0000-00-00 00:00:00' ,
+					PRIMARY KEY  (CHK_IN)";
+		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
+
+
+
 		$table_name = 'esp_state';
 		$sql = "STA_ID smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 					  CNT_ISO varchar(2) COLLATE utf8_bin NOT NULL,
