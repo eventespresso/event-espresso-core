@@ -83,6 +83,15 @@ class EE_Price extends EE_Base_Class{
 	protected $_PRC_is_active = NULL;
 
 
+
+
+	/**
+	 * Whether price is a default price or not
+	 * @var boolean
+	 */
+	protected $_PRC_is_default = TRUE;
+
+
 	/**
 	*	Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )
 	*

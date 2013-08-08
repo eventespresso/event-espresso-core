@@ -80,6 +80,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
 				'PRC_desc'=>new EE_Simple_HTML_Field('PRC_desc', 'Price Description', false, ''),
 				'PRC_is_active'=>new EE_Boolean_Field('PRC_is_active', 'Flag indicating whether price is active', false, true),
+				'PRC_is_default'=>new EE_Boolean_Field('PRC_is_default', 'Flag indicating whether price is a default price', false, true),
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
 				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),

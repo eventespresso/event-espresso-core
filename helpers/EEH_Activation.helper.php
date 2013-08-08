@@ -757,6 +757,7 @@ class EEH_Activation {
 					  PRC_name varchar(45) NOT NULL,
 					  PRC_desc text,
 					  PRC_is_active tinyint(1) unsigned NOT NULL DEFAULT '1',
+					  PRC_is_default tinyint(1) unsigned NOT NULL DEFAULT '1',
 					  PRC_overrides int(10) unsigned DEFAULT NULL,
 					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -1034,13 +1035,13 @@ class EEH_Activation {
 			
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
-							(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_start_date, PRC_end_date, PRC_reg_limit, PRC_tckts_sold, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted, PRC_display_order, PRC_parent ) VALUES
-							(1, 1, 0, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 0, 0, 1, 0),
-							(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 10, 0, 2, 0),
-							(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', -1, 0, NULL, NULL, 1, NULL, 20, 0, 3, 0),
-							(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 30, 0, 4, 0),
-							(5, 6, 0, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 40, 1, 5, 0),
-							(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 50, 1, 6, 0);";			
+							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc, PRC_is_active, PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_display_order, PRC_parent ) VALUES
+							(1, 1, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', 1, 1, NULL, 0, 0, 1, 0),
+							(2, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 1, 1, NULL, 10, 0, 2, 0),
+							(3, 4, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, 1, NULL, 20, 0, 3, 0),
+							(4, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, 1, NULL, 30, 0, 4, 0),
+							(5, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, 1, NULL, 40, 1, 5, 0),
+							(6, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, 1, NULL, 50, 1, 6, 0);";			
 				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}
