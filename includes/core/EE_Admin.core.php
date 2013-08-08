@@ -102,8 +102,16 @@ final class EE_Admin {
 		$this->EE->main_file = $this->main_file;
 		// pew pew pew
 		$this->EE->load_core( 'PUE' );
+		
+		if(EE_System::instance()->maintenance_mode_level() == 2){
+			add_filter('FHEE_admin_pages_array',array($this,'hide_admin_pages_except_maintenance_mode'));
+		}
+		
 	}
-
+	
+	public function hide_admin_pages_except_maintenance_mode($admin_page_folder_names = array()){
+		return array('maintenance');
+	}
 
 
 

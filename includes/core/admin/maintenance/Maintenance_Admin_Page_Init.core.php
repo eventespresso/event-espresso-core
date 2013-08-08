@@ -57,6 +57,16 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'espresso_events'
 			);
+		switch(EE_System::instance()->maintenance_mode_level()){
+			case 1:
+				break;
+			case 2:
+				$map['group']='main';
+				break;
+			case 0:
+			default:
+				$map['show_on_menu']=FALSE;
+		}
 		return $map;
 	}
 

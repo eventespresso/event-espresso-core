@@ -45,7 +45,7 @@ final class EE_System {
 	/**
 	 *		@singleton method used to instantiate class object
 	 *		@access public
-	 *		@return class instance
+	 *		@return EE_System
 	 */
 	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
@@ -81,6 +81,16 @@ final class EE_System {
 		}
 	}
 
+	/**
+	 * Determines whether or not we're in maintenance mode and what level. 
+	 * 0=> not in maintenance mode (in normal mode)
+	 * 1=> frontend-only mainteannce mode
+	 * 2=> frontend and backend mainteancne mode
+	 * @return int
+	 */
+	public function maintenance_mode_level(){
+		return 2;
+	}
 
 
 	/**
