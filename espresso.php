@@ -100,6 +100,25 @@ define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
 define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 
+
+
+//check for mainteannce mode
+
+/**
+ * 
+ * @return int level of maintenance mode. 0=> not in maintenance mode,
+ * 1=>frontend-only maintenance mode, 2=>frontend-and-backend maintenance mode
+ */
+function espresso_maintenance_mode_level(){
+	return 2;
+}
+
+if(espresso_maintenance_mode_level()==2){
+	add_filter('FHEE_admin_pages_array','maintenance_mode');
+	function maintenance_mode($stuff){
+		return array('maintenance');
+	}
+}
 // let's get it started		
 if ( is_admin() ) {
 	require_once( EE_CORE . 'EE_Admin.core.php' );
