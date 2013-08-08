@@ -706,7 +706,6 @@ class EEH_Activation {
 					  TTM_ID int(10) unsigned NOT NULL,
 					  EVT_ID int(10) unsigned NOT NULL,
 					  TKT_qty mediumint(8) DEFAULT NULL,
-					  TKT_sold mediumint(8) unsigned DEFAULT 0,
 					  TKT_uses tinyint DEFAULT -1,
 					  TKT_start_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_end_date datetime NOT NULL default '0000-00-00 00:00:00',
@@ -734,6 +733,7 @@ class EEH_Activation {
 		$sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  DTT_ID int(10) unsigned NOT NULL,
 					  TKT_ID int(10) unsigned NOT NULL,
+					  DTK_sold mediumint(8) unsigned NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (DTK_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
@@ -745,7 +745,7 @@ class EEH_Activation {
 		$sql = "TTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_name varchar(45) NOT NULL,
 					  TTM_description text,
-					  TTM_file varchar(45) NOT NULL DEFAULT ''
+					  TTM_file varchar(45) NOT NULL DEFAULT '',
 					  PRIMARY KEY  (TTM_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 

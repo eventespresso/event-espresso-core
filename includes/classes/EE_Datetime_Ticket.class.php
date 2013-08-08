@@ -50,6 +50,14 @@ class EE_Datetime_Ticket extends EE_Base_Class{
 
 
 
+	/**
+	 * Number of tickets for this datetime that have been sold
+	 * @var int
+	 */
+	protected $_DTK_sold;
+
+
+
 
 	//cached related objects
 	

@@ -51,7 +51,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_qty'=>new EE_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), true, 0),
-				'TKT_sold'=>new EE_Integer_Field('TKT_sold', __('Number of this ticket that have been sold', 'event_espresso'), true, 0),
 				'TKT_uses'=>new EE_Integer_Field('TKT_uses', __('Number of times this ticket can be used (per registration ) to checkin before expiring', 'event_espresso'), TRUE, NULL ),
 				'TKT_taxable'=>new EE_Boolean_Field('TKT_taxable', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed', 'event_espresso'), false, 0),
@@ -62,6 +61,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			'Registration'=>new EE_Has_Many_Relation(),
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Datetime'=>new EE_HABTM_Relation('Datetime_Ticket'),
+			'Datetime_Ticket'=>new EE_Has_Many_Relation(),
 			'Price'=>new EE_HABTM_Relation('Ticket_Price'),
 			'Ticket_Template'=>new EE_Belongs_To_Relation()
 		);

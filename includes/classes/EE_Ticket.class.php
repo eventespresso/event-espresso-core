@@ -81,14 +81,6 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
-	/**
-	 * Number of this ticket sold
-	 * @var int
-	 */
-	protected $_TKT_sold;
-
-
-
 
 
 	/**
@@ -177,6 +169,12 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
+	/**
+	 * Datetime Ticket objects related to this ticket
+	 * @var EE_Datetime_Ticket[]
+	 */
+	protected $_Datetime_Ticket;
+
 
 
 	/**
@@ -222,7 +220,7 @@ class EE_Ticket extends EE_Base_Class{
 	 * This returns an array indexed by datetime_id for tickets sold with this ticket.
 	 * @return array
 	 */
-	public function all_tickets_sold() {
+	protected function _all_tickets_sold() {
 		$dtts = $this->get_many_related('Datetime');
 		$tickets_sold = array();
 		if ( !empty( $dtts ) ) {
@@ -231,20 +229,49 @@ class EE_Ticket extends EE_Base_Class{
 			}
 		}
 
-		$tickets_sold['ticket'] = $this->get('TKT_sold');
+		//DATETIME TICKETS
+		$dtks = $this->get_many_related('Datetime_Ticket');
+		if ( !empty( $dtks ) ) {
+			foreach ( $dtks as $dtk ) {
+				$tickets_sold['datetime_ticket'][$dtk->get('DTT_ID')] = $dtt->get('DTK_sold');
+			}
+		}
 
 		return $tickets_sold;
 	}
 
 
 
-	/**
-	 * return number of tickets_sold().
-	 * @return int
-	 */
-	public function tickets_sold() {
-		return $this->get('TKT_sold');
-	}
 
+
+	
+	/**
+	 * This returns the totla tickets sold depending on the given parameters.
+	 * @param  string $what   Can be one of two options: 'ticket', 'datetime'.
+	 *                        'ticket' = total ticket sales for all datetimes this ticket is related to
+	 *                        'datetime' = total ticket sales for a specified datetime (required $dtt_id) 
+	 *                        'datetime' = total ticket sales in the datetime_ticket table. If $dtt_id is not given then we return an array of sales indexed by datetime.  If $dtt_id IS given then we return the tickets sold for that given datetime.
+	 * @param  int    $dtt_id [optional] include the dtt_id with $what = 'datetime'.
+	 * @return mixed (array|int)    	  how many tickets have sold
+	 */
+	public function tickets_sold( $what = 'ticket', $dtt_id = NULL ) {
+		$tickets_sold = $this->_all_tickets_sold();
+		switch ( $what ) {
+			case 'ticket' :
+				if ( empty( $tickets_sold['datetime_ticket'] ) )
+					return $total;
+				return array_sum( $tickets_sold['datetime_ticket'] );
+				break;
+			case 'datetime' :
+				if ( empty( $tickets_sold['datetime'] ) )
+					return $total;
+				if ( !empty( $dtt_id ) && !isset( $tickets_sold['datetime'][$dtt_id] ) ) {
+					EE_Error::add_error(__("You've requested the amount of tickets sold for a given ticket and datetime, however there are no records for the datetime id you included.  Are you SURE that is a datetime related to this ticket?", "event_espresso") );
+					return $total;
+				}
+
+				return empty( $dtt_id ) ? $tickets_sold['datetime'] : $tickets_sold['datetime'][$dtt_id];
+		}
+	}
 
 } //end EE_Ticket class
