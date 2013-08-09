@@ -88,7 +88,7 @@ final class EE_System {
 	 * 2=> frontend and backend mainteancne mode
 	 * @return int
 	 */
-	public function maintenance_mode_level(){
+	public function maintenance_mode(){
 		return 0;
 	}
 
