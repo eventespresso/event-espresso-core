@@ -66,21 +66,7 @@ final class EE_Front_Controller {
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
-		// load EE_Request_Handler
-		add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
-		// load other resources and begin to actually run shortcodes and modules
-		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
-		// before headers sent
-		add_action( 'wp', array( $this, 'wp' ), 5 );
-		// load css and js
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
-		// header
-		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
-		// the content
-		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-		// display errors
-		add_action('wp_footer', array( $this, 'display_errors' ), 999 );
-
+		// additional hooks get added in the init phase
 	}
 
 
@@ -135,21 +121,6 @@ final class EE_Front_Controller {
 
 
 
-	/**
-	 *	_get_request
-	 * 
-	 *	@access public
-	 *	@return void
-	 */
-	public function get_request() {
-		do_action( 'AHEE__Front_Controller__get_request__before_Request_Handler_loaded' );
-		$this->EE->load_helper( 'URL' );	
-		$this->EE->load_core( 'Request_Handler' );	
-		do_action( 'AHEE__Front_Controller__get_request__after_Request_Handler_loaded' );
-	}
-
-
-
 
 
 	/**
@@ -159,7 +130,26 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
-			
+		// shut 'er down down for maintenance ?
+		if ( EE_System::maintenance_mode() ) {
+			remove_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
+		} else {
+			// load EE_Request_Handler
+			add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
+			// load other resources and begin to actually run shortcodes and modules
+			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
+			// before headers sent
+			add_action( 'wp', array( $this, 'wp' ), 5 );
+			// load css and js
+			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
+			// header
+			add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
+			// the content
+			add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
+			// display errors
+			add_action('wp_footer', array( $this, 'display_errors' ), 999 );					
+		}
+	
 			//random debug code added by mike.
 //			$this->EE->load_class('Attendee',false,false,false);
 //			$att = EE_Attendee::new_instance(array('ATT_lname'=>'nelson','ATT_ID'=>15));
@@ -199,6 +189,21 @@ final class EE_Front_Controller {
 
 	/*********************************************** 		WP_LOADED ACTION HOOK		 ***********************************************/
 
+
+
+
+	/**
+	 *	_get_request
+	 * 
+	 *	@access public
+	 *	@return void
+	 */
+	public function get_request() {
+		do_action( 'AHEE__Front_Controller__get_request__before_Request_Handler_loaded' );
+		$this->EE->load_helper( 'URL' );	
+		$this->EE->load_core( 'Request_Handler' );	
+		do_action( 'AHEE__Front_Controller__get_request__after_Request_Handler_loaded' );
+	}
 
 
 
