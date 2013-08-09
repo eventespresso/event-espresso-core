@@ -30,7 +30,7 @@ get_header();
 				</header>
 
 				<div class="event-datetimes">
-					<h4><?php the_event_date(); ?></h4>
+					<h4><?php espresso_event_date(); ?></h4>
 				</div>				
 				<!-- .event-datetimes -->
 
