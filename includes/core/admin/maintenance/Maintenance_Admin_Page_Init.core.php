@@ -62,12 +62,23 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 				break;
 			case 2:
 				$map['group']='main';
+				$map['parent_slug'] = EE_MAINTENANCE_PG_SLUG;
+				add_filter('FHEE__EE_Admin_Page_Loader__set_menus__parent_slug',array($this,'make_maintenance_page_parent_slug'));
 				break;
 			case 0:
 			default:
 				$map['show_on_menu']=FALSE;
 		}
 		return $map;
+	}
+	
+	/**
+	 * When we're in maintence mode level 2, we want the maintenance page to be top level
+	 * @param string $old_parent_slug
+	 * @return string
+	 */
+	public function make_maintenance_page_parent_slug($old_parent_slug){
+		return EE_MAINTENANCE_PG_SLUG;
 	}
 
 } //end class Payments_Admin_Page_Init

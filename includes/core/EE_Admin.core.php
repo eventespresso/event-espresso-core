@@ -75,14 +75,12 @@ final class EE_Admin {
 		add_action( 'init', array( $this, 'get_request' ), 4 );
 		add_action( 'init', array( $this, 'init' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
-		add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
-		add_action( 'wp_ajax_event_list_load_state', array( $this, 'event_list_load_state_callback' ));
-		add_action( 'action_hook_espresso_help', array( $this, 'help_tab_links' ), 10, 4 );
+		
 //		add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
-		add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
-		add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
+		
+		
 	}
 
 
@@ -103,8 +101,17 @@ final class EE_Admin {
 		// pew pew pew
 		$this->EE->load_core( 'PUE' );
 		
+		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
+		//however, we want to make use of the admin infrastructure still
 		if(EE_System::instance()->maintenance_mode_level() == 2){
 			add_filter('FHEE_admin_pages_array',array($this,'hide_admin_pages_except_maintenance_mode'));
+		}else{
+			//ok so we want to enable the entire admin
+			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
+			add_action( 'wp_ajax_event_list_load_state', array( $this, 'event_list_load_state_callback' ));
+			add_action( 'action_hook_espresso_help', array( $this, 'help_tab_links' ), 10, 4 );
+			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
+			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 		}
 		
 	}
