@@ -33,6 +33,7 @@ class EED_Event_List  extends EED_Module {
 	public static function set_hooks() {
 		EE_Config::register_route( 'events', 'Event_List', 'run' );
 		EE_Config::register_route( 'event_list', 'Event_List', 'event_list' );
+		add_action( 'pre_get_posts', array( 'EED_Event_List', 'pre_get_posts' ), 1 );
 	}
 
 	/**
@@ -48,6 +49,31 @@ class EED_Event_List  extends EED_Module {
 	}
 
 
+
+	/**
+	 * 	pre_get_posts
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function pre_get_posts(  $WP_Query  ) {
+		
+		$request = EE_Registry::instance()->REQ->is_set( 'ee' ) ? EE_Registry::instance()->REQ->get( 'ee' ) : FALSE;
+		
+
+		//printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		if ( ! $WP_Query->is_main_query() || $query->query_vars['suppress_filters'] != FALSE || $request != 'events' ) {
+			return;
+		}
+		
+//		printr( EE_Registry::instance(), 'EE_Registry::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		$WP_Query->set( 'post_type', array( $this->CPT['post_type'] ));
+//		$WP_Query->set( 'fields', 'ids' );
+		return $WP_Query;
+	}
+
+//EVT_is_active
 
 	/**
 	 * 	set_definitions
