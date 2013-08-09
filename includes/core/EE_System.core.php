@@ -89,7 +89,7 @@ final class EE_System {
 	 * @return int
 	 */
 	public function maintenance_mode_level(){
-		return 2;
+		return 0;
 	}
 
 
