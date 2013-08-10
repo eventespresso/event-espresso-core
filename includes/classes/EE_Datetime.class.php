@@ -167,6 +167,15 @@ class EE_Datetime extends EE_Base_Class{
 
 
 
+
+	/**
+	 * Related Checkins for this datetime
+	 * @var EE_Checkin[]
+	 */
+	protected $_Checkin;
+
+
+
 	
 	
 
