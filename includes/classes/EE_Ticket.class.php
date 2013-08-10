@@ -52,6 +52,24 @@ class EE_Ticket extends EE_Base_Class{
 
 
 	/**
+	 * Name of Ticket
+	 * @var string
+	 */
+	protected $_TKT_name;
+
+
+
+
+	/**
+	 * Description for Ticket
+	 * @var string
+	 */
+	protected $_TKT_description;
+
+
+
+
+	/**
 	 * Date the Ticket goes on sale (internally this is stored as a UNIX timestamp)
 	 * @var string
 	 */
@@ -125,10 +143,20 @@ class EE_Ticket extends EE_Base_Class{
 
 
 	/**
-	 * The display order for this ticket (also used for autosaves etc)
+	 * The order for this ticket (used for autosaves a very transient value)
 	 * @var INT
 	 */
 	protected $_TKT_order;
+
+
+
+
+
+	/**
+	 * The display order for this ticket in ui
+	 * @var INT
+	 */
+	protected $_TKT_display_order;
 
 
 
