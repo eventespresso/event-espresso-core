@@ -44,6 +44,7 @@
 					<span class="clickable gear-icon" rel="edit-event-ticket-ticketrow2" data-ticket-row="ticket2"></span>
 				</li>
 			</ul>
+			<!-- NOTE that the add-new-ticket-table will only appear ONCE in the DOM, we'll use jQuery to simply show the element in the appropriate place when needed -->
 			<h5 class="datetime-tickets-heading">Add New Ticket</h5><a href="#" class="help_img">Help Link</a>
 			<table class="add-new-ticket-table">
 				<thead>
@@ -80,16 +81,19 @@
 						<input type="text" name="add_new_ticket[TKT_qty]" id="add-new-ticket-TKT_qty" size="1">
 					</td>
 					<td>
-						<span class="clickable gear-icon" id="add-new-ticket-edit-toggle"></span>
+						<span class="clickable gear-icon add-edit" data-context="ticket" data-datetime-row="row1"></span>
+						<!-- the "add-edit" class is used by jQuery to indicate we need to retrieve a edit form using the value from the #next-ticket-row hidden input (which in turn is incremented if the new created item is saved). -->
+						<!-- Also: when the Add New Ticket form is recalled, jQuery will automatically populate the data-context and data-datetime-row properties on the edit icon and save buttons from the event handler for the datetime being edited. -->
 					</td>
 				</tr>
 				<tr valign="top" id="add-new-ticket-action-row">
 					<td colspan="7">
 						<div class="save-cancel-button-container">
-							<button id="add-new-ticket-save-button" class="button-primary ee-save-button">
+							<!-- note: when the save button is clicked we update the #next-ticket-row hidden input (increment forward) -->
+							<button data-context="ticket" data-datetime-row="row1" class="button-primary ee-save-button">
 								Save_Ticket
 							</button>
-							<button id="add-new-ticket-cancel-button" class="button-secondary ee-cancel-button">
+							<button data-context="ticket" class="button-secondary ee-cancel-button add-edit">
 								Cancel
 							</button>
 						</div>
@@ -105,8 +109,9 @@
 			<span data-datetime-row="row2" data-context="datetime" class="ticket-icon clickable"></span>
 			<span data-datetime-row="row2" data-context="datetime" class="clone-icon clickable"></span>
 			<span data-datetime-row="row2" data-context="datetime" class="trash-icon clickable"></span>
-			<span idata-datetime-row="row2" data-context="datetime" class="datetime-tickets-sold">Total Tickets Sold: 152</span>
+			<span data-datetime-row="row2" data-context="datetime" class="datetime-tickets-sold">Total Tickets Sold: 152</span>
 		</section>
-		<!-- and you would have the edit and ticket sections here -->
+		<!-- and you would have the edit and ticket sections here for datetime row 2 -->
 	</div>
+	<!-- TODO continue on here (the next item for the skeleton is the add datetime form ) -->
 </div>
