@@ -32,16 +32,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	protected function _set_hooks_properties() {
 		$this->_name = 'pricing';
 		//if we were going to add our own metaboxes we'd use the below.
-		/*$this->_metaboxes = array(
+		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => 'edit_event',
+				'page_route' => array('edit','create_new'),
 				'func' => 'pricing_metabox',
-				'label' => __('Event Pricing', 'event_espresso'),
-				'priority' => 'core',
+				'label' => __('Event Tickets & Datetimes (experimental)', 'event_espresso'),
+				'priority' => 'high',
 				'context' => 'normal'
 				),
 
-			);*/
+			);/**/
 		$this->_scripts_styles = array(
 			'registers' => array(
 				'ee-prices-event-editor' => array(
@@ -185,6 +185,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$this->_set_page_object();
 		$this->_page_object->set_template_args( $template_args );	
 		$this->_page_object->return_json();
+	}
+
+
+	public function pricing_metabox() {
+		$template = EVENTS_TEMPLATE_PATH . 'new_price_layout.template.php';
+		espresso_display_template($template);
 	}
 
 

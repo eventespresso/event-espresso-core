@@ -1016,9 +1016,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _register_event_editor_meta_boxes() {
 
 
-		add_meta_box('espresso_event_editor_date_time', __('Dates &amp; Times', 'event_espresso'), array($this, 'date_time_metabox'), $this->page_slug, 'normal', 'high');
+		//add_meta_box('espresso_event_editor_date_time', __('Dates &amp; Times', 'event_espresso'), array($this, 'date_time_metabox'), $this->page_slug, 'normal', 'high');
 
-		add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array($this, 'pricing_metabox'), $this->page_slug, 'normal', 'core');
+		//add_meta_box('espresso_event_editor_pricing', __('Event Pricing', 'event_espresso'), array($this, 'pricing_metabox'), $this->page_slug, 'normal', 'core');
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'default');
 
