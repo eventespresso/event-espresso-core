@@ -48,63 +48,8 @@
 			<input type="hidden" name="datetime_ticket_IDs[row1][ticketrow1]" id="datetime-ticket-id-row1-ticketrow1" value="1">
 			<!-- here's an example of a row for a ticket that might not have a ticket id yet.  However we can still reference later what ticket it belongs to via the "ticketrow" arraykey -->
 			<!-- <input type="hidden" name="datetime_ticket_IDs[row1][ticketrow1]" id="datetime-ticket-id-row1-ticketrow1" value="0"> -->
-			<div class="add-datetime-ticket-container">
-				<!-- NOTE that the add-new-ticket-table will only appear ONCE in the DOM, we'll use jQuery to simply show the element in the appropriate place when needed -->
-				<h5 class="datetime-tickets-heading">Add New Ticket</h5><a href="#" class="help_img">Help Link</a>
-				<table class="add-new-ticket-table">
-					<thead>
-						<tr valign="top">
-							<td>Ticket Name</td>
-							<td>Goes On Sale</td>
-							<td>Sell Until</td>
-							<td>Base Price</td>
-							<td>Price</td>
-							<td>Qty</td>
-							<td></td>
-						</tr>
-					</thead>
-					<tr valign="top" id="add-new-ticket-shortcut-row">
-						<td>
-							<input type="text" name="add_new_ticket[TKT_name]" id="add-new-ticket-TKT_name">
-						</td>
-						<td>
-							<input type="text" name="add_new_ticket[TKT_start_date]" id="add-new-ticket-TKT_start_date">
-						</td>
-						<td>
-							<input type="text" name="add_new_ticket[TKT_end_date]" id="add-new-ticket-TKT_end_date">
-						</td>
-						<td>
-							<select name="add_new_ticket[PRT_ID]" id="add-new-ticket-PRT_ID">
-								<option value="1">Event Price</option>
-								<option value="2">Discount</option>
-							</select>
-						</td>
-						<td>	
-							<input type="text" name="add_new_ticket[PRC_amount]" id="add-new-ticket-PRC_amount" size="1">
-						</td>
-						<td>
-							<input type="text" name="add_new_ticket[TKT_qty]" id="add-new-ticket-TKT_qty" size="1">
-						</td>
-						<td>
-							<span class="clickable gear-icon add-edit" data-context="ticket" data-datetime-row="row1"></span>
-							<!-- the "add-edit" class is used by jQuery to indicate we need to retrieve a edit form using the value from the #next-ticket-row hidden input (which in turn is incremented if the new created item is saved). -->
-							<!-- Also: when the Add New Ticket form is recalled, jQuery will automatically populate the data-context and data-datetime-row properties on the edit icon and save buttons from the event handler for the datetime being edited. -->
-						</td>
-					</tr>
-					<tr valign="top" id="add-new-ticket-action-row">
-						<td colspan="7">
-							<div class="save-cancel-button-container">
-								<!-- note: when the save button is clicked we update the #next-ticket-row hidden input (increment forward) -->
-								<button data-context="ticket" data-datetime-row="row1" class="button-primary ee-save-button">
-									Save_Ticket
-								</button>
-								<button data-context="ticket" class="button-secondary ee-cancel-button add-edit">
-									Cancel
-								</button>
-							</div>
-						</td>
-					</tr>
-				</table>
+			<div id="add-new-datetime-ticket-holder-row1">
+				<!-- this is the location where jquery brings up the add new ticket form (found in div#add-new-ticket-form-holder) when needed -->
 			</div>
 		</section>
 	</div>
@@ -117,7 +62,7 @@
 			<span data-datetime-row="row2" data-context="datetime" class="trash-icon clickable"></span>
 			<span data-datetime-row="row2" data-context="datetime" class="datetime-tickets-sold">Total Tickets Sold: 152</span>
 		</section>
-		<!-- and you would have the edit and ticket sections here for datetime row 2 -->
+		<!-- and you would have the edit and ticket sections here for datetime row 2 but for the purpose of this example we're not adding them (yet). -->
 	</div>
 	<div id="add-event-datetime" class="event-datetime-row">
 		<input type="hidden" name="add_new_datetime[DTT_is_primary]" id="add-new-event-datetime-DTT_is_primary" value="1">
@@ -351,3 +296,67 @@
 	</table>
 </div>
 <div class="save-cancel-button-container"><button class="button-secondary ee-add-new-ticket-button">Create New Ticket</button></div>
+
+<!-- below here are the containers holding the "add-new" forms for various elements.  jQuery will move these forms in and out of this container as necessary -->
+<div id="add-new-datetime-ticket-form-holder">
+	<div id="add-datetime-ticket-container">
+		<!-- NOTE that the add-new-ticket-table will only appear ONCE in the DOM, we'll use jQuery to simply show the element in the appropriate place when needed -->
+		<h5 class="datetime-tickets-heading">Add New Ticket</h5><a href="#" class="help_img">Help Link</a>
+		<table class="add-new-ticket-table">
+			<thead>
+				<tr valign="top">
+					<td>Ticket Name</td>
+					<td>Goes On Sale</td>
+					<td>Sell Until</td>
+					<td>Base Price</td>
+					<td>Price</td>
+					<td>Qty</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tr valign="top" id="add-new-ticket-shortcut-row">
+				<td>
+					<input type="text" name="add_new_ticket[TKT_name]" id="add-new-ticket-TKT_name">
+				</td>
+				<td>
+					<input type="text" name="add_new_ticket[TKT_start_date]" id="add-new-ticket-TKT_start_date">
+				</td>
+				<td>
+					<input type="text" name="add_new_ticket[TKT_end_date]" id="add-new-ticket-TKT_end_date">
+				</td>
+				<td>
+					<select name="add_new_ticket[PRT_ID]" id="add-new-ticket-PRT_ID">
+						<option value="1">Event Price</option>
+						<option value="2">Discount</option>
+					</select>
+				</td>
+				<td>	
+					<input type="text" name="add_new_ticket[PRC_amount]" id="add-new-ticket-PRC_amount" size="1">
+				</td>
+				<td>
+					<input type="text" name="add_new_ticket[TKT_qty]" id="add-new-ticket-TKT_qty" size="1">
+				</td>
+				<td>
+					<span class="clickable gear-icon add-edit" data-context="ticket" data-datetime-row="row1"></span>
+					<!-- the "add-edit" class is used by jQuery to indicate we need to retrieve a edit form using the value from the #next-ticket-row hidden input (which in turn is incremented if the new created item is saved). -->
+					<!-- Also: when the Add New Ticket form is recalled, jQuery will automatically populate the data-context and data-datetime-row properties on the edit icon and save buttons from the event handler for the datetime being edited. -->
+				</td>
+			</tr>
+			<tr valign="top" id="add-new-ticket-action-row">
+				<td colspan="7">
+					<div class="save-cancel-button-container">
+						<!-- note: when the save button is clicked we update the #next-ticket-row hidden input (increment forward) -->
+						<button data-context="ticket" data-datetime-row="row1" class="button-primary ee-save-button">
+							Save_Ticket
+						</button>
+						<button data-context="ticket" class="button-secondary ee-cancel-button add-edit">
+							Cancel
+						</button>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<!-- The full add new ticket form is displayed when clicking the create new ticket.  However, that form will be pulled from ajax (loading the edit form with the proper values) - this will be much more efficient then cloning the dom object and going through and changing all the row values etc in it.  But we'll experiment of course! -->
