@@ -865,7 +865,7 @@ class EEH_Activation {
 					  KEY EVT_ID (EVT_ID),
 					  KEY ATT_ID (ATT_ID),
 					  KEY TXN_ID (TXN_ID),
-					  KEY DTT_ID (DTT_ID),
+					  KEY DTK_ID (DTK_ID),
 					  KEY STS_ID (STS_ID),
 					  KEY REG_url_link (REG_url_link),
 					  KEY REG_code (REG_code)";
@@ -880,7 +880,7 @@ class EEH_Activation {
 					DTT_ID INT(10) unsigned NOT NULL ,
 					CHK_in TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 					CHK_timestamp datetime NOT NULL default '0000-00-00 00:00:00' ,
-					PRIMARY KEY  (CHK_IN)";
+					PRIMARY KEY  (CHK_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 
 
