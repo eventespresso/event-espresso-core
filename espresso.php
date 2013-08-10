@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.001';
+	return '4.1.002';
 }
 //Returns the template version
 function espresso_template_version() {
@@ -99,6 +99,9 @@ define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
 define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
 define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
+
+
+
 
 // let's get it started		
 if ( is_admin() ) {

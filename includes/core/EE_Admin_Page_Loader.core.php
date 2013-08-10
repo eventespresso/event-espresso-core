@@ -307,7 +307,7 @@ class EE_Admin_Page_Loader {
 		global $espresso_manager;
 		//prep the pages (sort, group, set if display etc.)
 		$this->_prep_pages();
-		$parent_slug = 'espresso_events';
+		$parent_slug = apply_filters('FHEE__EE_Admin_Page_Loader__set_menus__parent_slug', 'espresso_events');
 		$add_main_menu = true;
 
 		//loop through prepped pages and hook into WP's menu functions

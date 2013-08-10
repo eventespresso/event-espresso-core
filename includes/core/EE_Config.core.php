@@ -194,6 +194,9 @@ final class EE_Config {
 		$this->EE->CFG->_module_route_map = EE_Config::$_module_route_map;
 		$this->EE->CFG->_module_forward_map = EE_Config::$_module_forward_map;
 		$this->EE->CFG->_module_view_map = EE_Config::$_module_view_map;
+		// filter config before saving
+		$this->EE->CFG = apply_filters( 'FHEE__Config__update_config__CFG', $this->EE->CFG );
+//		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// grab org options based on current admin user		
 		if ( ! update_user_meta( $this->EE->CFG->wp_user, 'events_organization_settings', $this->EE->CFG )) {
 			$msg = __( 'The Event Espresso Configuration Settings could not be updated.', 'event_espresso' );
@@ -259,14 +262,14 @@ final class EE_Config {
 		// grab list of installed shortcodes
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$shortcodes_to_register = apply_filters( 'AHEE__Front_Controller__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
+		$shortcodes_to_register = apply_filters( 'FHEE__Front_Controller__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
 		// cycle thru shortcode folders
 		foreach ( $shortcodes_to_register as $shortcode_path ) {
 			// add to list of installed shortcode modules
 			EE_Config::register_shortcode( $shortcode_path );
 		}
 		// filter list of installed modules
-		$this->EE->shortcodes = apply_filters( 'AHEE__Front_Controller__register_shortcodes__installed_shortcodes', $this->EE->shortcodes );
+		$this->EE->shortcodes = apply_filters( 'FHEE__Front_Controller__register_shortcodes__installed_shortcodes', $this->EE->shortcodes );
 	}
 
 
@@ -326,7 +329,7 @@ final class EE_Config {
 		// grab list of installed modules
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$modules_to_register = apply_filters( 'AHEE__Front_Controller__register_modules__modules_to_register', $modules_to_register );
+		$modules_to_register = apply_filters( 'FHEE__Front_Controller__register_modules__modules_to_register', $modules_to_register );
 		// loop through folders
 		foreach ( $modules_to_register as $module_path ) {
 			if ( $module_path != EE_MODULES . 'zzz-copy-this-module-template' ) {
@@ -335,7 +338,7 @@ final class EE_Config {
 			}
 		}
 		// filter list of installed modules
-		$this->EE->modules = apply_filters( 'AHEE__Front_Controller__register_modules__installed_modules', $this->EE->modules );
+		$this->EE->modules = apply_filters( 'FHEE__Front_Controller__register_modules__installed_modules', $this->EE->modules );
 	}
 
 

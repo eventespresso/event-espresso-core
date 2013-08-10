@@ -26,7 +26,7 @@
 			<article id="post-<?php echo $post->ID; ?>" <?php post_class(); ?>>
 			
 				<div class="event-datetimes">
-					<h4><?php the_event_date(); ?></h4>
+					<h4><?php espresso_event_date(); ?></h4>
 				</div>				
 				<!-- .event-datetimes -->
 
@@ -61,13 +61,12 @@
 						
 						<div class="event-content">
 							<?php the_excerpt(); ?> 
-							<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
 						</div>				
 						<!-- .event-content -->
 						
 						<footer class="event-meta clear">
 							<a class="ee-register-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
-							<?php edit_post_link( __( 'edit this event', 'event_espresso' ), '<p class="edit-event-lnk small-txt clear">', '</p>' ); ?>
+							<?php espresso_edit_event_link(); ?>
 						</footer>
 						<!-- .entry-meta -->
 

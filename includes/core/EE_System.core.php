@@ -45,7 +45,7 @@ final class EE_System {
 	/**
 	 *		@singleton method used to instantiate class object
 	 *		@access public
-	 *		@return class instance
+	 *		@return EE_System
 	 */
 	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
@@ -77,11 +77,20 @@ final class EE_System {
 			// hookpoints
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 			add_action( 'init', array( $this, 'init' ), 3 );
-			add_filter('query_vars', array( $this, 'add_query_vars' ), 5 );
 			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
 		}
 	}
 
+	/**
+	 * Determines whether or not we're in maintenance mode and what level. 
+	 * 0=> not in maintenance mode (in normal mode)
+	 * 1=> frontend-only mainteannce mode
+	 * 2=> frontend and backend mainteancne mode
+	 * @return int
+	 */
+	public function maintenance_mode(){
+		return 0;
+	}
 
 
 	/**
@@ -362,23 +371,6 @@ final class EE_System {
 		}
 	}
 
-
-
-	/**
-	 * 	add_query_vars
-	 *
-	 *  @access 	public
-	 *  @param 	boolean 		$to_flush_or_not_to_flush
-	 *  @return 	void
-	 */
-	public function add_query_vars($query_vars) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-//		$query_vars[] = 'event_slug';
-//		$query_vars[] = 'ee';
-//		$query_vars[] = 'e_reg';
-		//printr( $query_vars, '$query_vars  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $query_vars;
-	}
 
 
 

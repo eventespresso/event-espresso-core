@@ -16,16 +16,51 @@
 
 
 	/**
-	 * the_event_date
+	 * espresso_event_date
 	 *
 	 * @returns the primary date for an event
 	 * @uses $wp_query
 	 *
 	 * @return bool
 	 */
-	function the_event_date() {
-		EEH_Event_View::the_event_date();
+	if ( ! function_exists( 'espresso_event_date' )) {
+		function espresso_event_date() {
+			EEH_Event_View::the_event_date();
+		}		
 	}
+
+
+
+	/**
+	 * espresso_edit_event_link
+	 *
+	 * @returns a link to edit an event
+	 * @uses $wp_query
+	 *
+	 * @return bool
+	 */
+	if ( ! function_exists( 'espresso_edit_event_link' )) {
+		function espresso_edit_event_link() {
+			EEH_Event_View::edit_event_link();
+		}		
+	}
+
+
+
+	/**
+	 * espresso_event_desc
+	 *
+	 * @returns the primary date for an event
+	 * @uses $wp_query
+	 *
+	 * @return bool
+	 */
+//	if ( ! function_exists( 'espresso_event_desc' )) {
+//		function espresso_event_desc() {
+//			EEH_Event_View::event_desc();
+//		}		
+//	}
+
 
 
 
@@ -54,10 +89,54 @@ class EEH_Event_View extends EEH_Base {
 	public static function the_event_date() {
 		global $post;
 		if ( isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes )) {
-			$datetime = array_shift( $post->datetimes );
+			$datetime = array_shift( array_values( $post->datetimes ));
 			$datetime->e_start_date_and_time();		
 		}
 	}
+
+
+
+
+	/**
+	 * 	edit_event_link
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function edit_event_link( $link = '', $before = '<p class="edit-event-lnk small-txt clear">', $after = '</p>', $EVT_ID = FALSE ) {
+		global $post;
+		// get EVT_ID either from passed value or global $post var
+		$EVT_ID = $EVT_ID ? $EVT_ID : $post->ID;
+		// can the user edit this post ?
+		if ( current_user_can( 'edit_post', $EVT_ID )) {
+			// set link text
+			$link = ! empty( $link ) ? $link : __('edit this event');
+			// generate nonce
+			$nonce = wp_create_nonce( 'edit_nonce' );
+			// generate url to event editor for this event
+			$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'id' => $EVT_ID, 'edit_nonce' => $nonce ), admin_url() );
+			// get edit CPT text
+			$post_type_obj = get_post_type_object( $post->post_type );
+			// build final link html
+			$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
+			// put it all together 
+			echo $before . apply_filters( 'edit_post_link', $link, $EVT_ID ) . $after;			
+		}
+	}
+
+
+
+
+	/**
+	 * 	event_desc
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+//	public static function event_desc( ) {
+//			global $post;
+//			
+//	}
 
 
 
@@ -98,12 +177,12 @@ class EEH_Event_View extends EEH_Base {
 			$EVT_IDs = array( absint( $EVT_IDs ));
 		}
 		// load model
-		$EVD = EE_Registry::instance()->load_model( 'Event_Datetime' );
+		$EVD = EE_Registry::instance()->load_model( 'Datetime' );
 		// grab datetimes for events
-		$event_datetimes = $EVD->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs )), 'force_join' => array( 'Datetime' )));
-		$event_datetimes = is_array( $event_datetimes ) ? $event_datetimes : array();
-//		printr( $event_datetimes, '$event_datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $event_datetimes;
+		$datetimes = $EVD->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs ))));
+		$datetimes = is_array( $datetimes ) ? $datetimes : array();
+//		printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return $datetimes;
 	}	
 
 
@@ -137,20 +216,22 @@ class EEH_Event_View extends EEH_Base {
 	 *
 	 *  @access 	public
 	 *  @param 	WP_Query	$wp_query
-	 *  @param 	array		$event_datetimes
+	 *  @param 	array		$datetimes
 	 *  @param 	array		$event_prices
 	 *  @return 	string
 	 */
-	public static function add_event_datetimes_and_prices_to_WP_Query( WP_Query $wp_query = NULL, $event_datetimes = array(), $event_prices = array() ) {
-		$event_datetimes = is_array( $event_datetimes ) ? $event_datetimes : array();
+	public static function add_event_datetimes_and_prices_to_WP_Query( WP_Query $wp_query = NULL, $datetimes = array(), $event_prices = array() ) {
+		$datetimes = is_array( $datetimes ) ? $datetimes : array();
 		$event_prices = is_array( $event_prices ) ? $event_prices : array();
 		// now loop thru posts
 		foreach( $wp_query->posts as $EVT_ID => $event ) {
+			// add empty arrays to events
 			$wp_query->posts[ $EVT_ID ]->datetimes = array();
 			$wp_query->posts[ $EVT_ID ]->prices = array();
-			foreach ( $event_datetimes as $event_datetime ) {
-				if ( $event->ID == $event_datetime->get( 'EVT_ID' )) {
-					$wp_query->posts[ $EVT_ID ]->datetimes[] = $event_datetime->get_first_related( 'Datetime' );
+			// add datetimes
+			foreach ( $datetimes as $datetime ) {
+				if ( $event->ID == $datetime->get( 'EVT_ID' )) {
+					$wp_query->posts[ $EVT_ID ]->datetimes[] = $datetime;
 				}
 			}
 			foreach ( $event_prices as $event_price ) {
@@ -177,11 +258,11 @@ class EEH_Event_View extends EEH_Base {
 			$EVT_IDs = EEH_Event_View::extract_event_IDs_from_WP_Query( $wp_query );
 			if ( ! empty( $EVT_IDs )) {
 				// get datetimes
-				$event_datetimes = EEH_Event_View::get_datetimes_for_events( $EVT_IDs );
+				$datetimes = EEH_Event_View::get_datetimes_for_events( $EVT_IDs );
 				// get prices
-				$event_prices = EEH_Event_View::get_prices_for_events( $EVT_IDs );	
+				$prices = EEH_Event_View::get_prices_for_events( $EVT_IDs );	
 				// now put it all together
-				$wp_query = EEH_Event_View::add_event_datetimes_and_prices_to_WP_Query( $wp_query, $event_datetimes, $event_prices );
+				$wp_query = EEH_Event_View::add_event_datetimes_and_prices_to_WP_Query( $wp_query, $datetimes, $prices );
 			}					
 		}
 		return $wp_query;
