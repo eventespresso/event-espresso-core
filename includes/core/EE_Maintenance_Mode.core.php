@@ -91,7 +91,7 @@ class EE_Maintenance_Mode {
 	/**
 	 * 	template_include
 	 * 
-	 * 	repalcement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenace mode
+	 * 	replacement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenace mode
 	 *
 	 *  @access 	public
 	 *  @return 	string
