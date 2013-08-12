@@ -131,10 +131,14 @@ final class EE_Config {
 		$current_user_id = $current_user_id ? $current_user_id : 1;
 		// grab org options based on current admin user
 		$this->EE->CFG = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
+		if ( is_array( $this->EE->CFG )) {
+			$this->EE->load_helper( 'Activation' );
+			$this->EE->CFG = EEH_Activation::initialize_config( $this->EE->CFG );
+		}
 
 		// do settings for this user exist ?
 		if ( empty( $this->EE->CFG )) {
-			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+			$this->EE->load_helper( 'Activation' );
 			$this->EE->CFG = EEH_Activation::org_option_initialization();		
 		} else {
 			// list of critical settings
@@ -147,7 +151,7 @@ final class EE_Config {
 				// make sure each one actually exists 
 				if ( ! isset( $this->EE->CFG->$critical_setting )) {
 					// reinitialize the org options
-					require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+					$this->EE->load_helper( 'Activation' );
 					$this->EE->CFG = EEH_Activation::org_option_initialization();		
 					break;	
 				}
