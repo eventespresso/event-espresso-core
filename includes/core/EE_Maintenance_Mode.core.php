@@ -82,7 +82,7 @@ class EE_Maintenance_Mode {
 	 * @return int
 	 */
 	public function level(){
-		return 1;
+		return 0;
 	}
 
 
