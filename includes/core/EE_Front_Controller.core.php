@@ -66,6 +66,8 @@ final class EE_Front_Controller {
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
+		// load EE_Request_Handler
+		add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
 		// additional hooks get added in the init phase
 	}
 
@@ -131,11 +133,9 @@ final class EE_Front_Controller {
 	 */
 	public function init() {
 		// shut 'er down down for maintenance ?
-		if ( EE_System::maintenance_mode() ) {
-			remove_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
+		if ( EE_Maintenance_Mode::level() ) {
+			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
 		} else {
-			// load EE_Request_Handler
-			add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
 			// load other resources and begin to actually run shortcodes and modules
 			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
 			// before headers sent
@@ -287,7 +287,7 @@ final class EE_Front_Controller {
 							//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
 							if ( isset( $this->EE->CFG->post_shortcodes[ $current_post ] ) || $term_exists ) {
 								// let's pause to reflect on this...
-								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );								
+								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
 								// ensure that class is actually a shortcode
 								if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
 									$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );

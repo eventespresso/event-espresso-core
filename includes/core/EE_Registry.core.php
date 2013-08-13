@@ -331,12 +331,12 @@ final class EE_Registry {
 			//does the file exist and can be read ?
 			if ( ! $path ) {
 				// so sorry, can't find the file'
-				throw new EE_Error ( 
+				throw new EE_Error (
 					sprintf (
-						__('An error occured. The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath is correct: %s','event_espresso'), 
-						$type, 
-						$class_name, 
-						$file_paths[0] 
+						__('An error occured. The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath is correct: %s','event_espresso'),
+						$type,
+						$class_name,
+						$file_paths[0]
 					)
 				);
 			}
@@ -345,9 +345,9 @@ final class EE_Registry {
 			// if the class isn't already declared somewhere
 			if ( class_exists( $class_name, FALSE ) === FALSE ) {
 				// so sorry, not a class
-				throw new EE_Error( 
+				throw new EE_Error(
 					sprintf(
-						__('An error occured. The %s file %s does not appear to contain the %s Class.','event_espresso'), 
+						__('An error occured. The %s file %s does not appear to contain the %s Class.','event_espresso'),
 						$type, 
 						$class_name, 
 						$class_name 
@@ -364,18 +364,18 @@ final class EE_Registry {
 			// create reflection
 			$reflector = new ReflectionClass( $class_name );
 			// instantiate the class and add to the LIB array for tracking
-			if ( $reflector->isInstantiable() ) {
-				$class_obj =  $reflector->newInstance( $arguments );
-			//EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
-			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
+			// EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
+			if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
 			  $class_obj =  call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
-
 			} else if ( method_exists( $class_name, 'new_instance' ) ) {
 				$class_obj =  call_user_func_array( array( $class_name, 'new_instance' ), $arguments );
-
 			} else if ( method_exists( $class_name, 'instance' )) {
 				$class_obj =  call_user_func_array( array( $class_name, 'instance' ), $arguments );
-			}
+			} else if ( $reflector->getConstructor() === NULL ) {
+				// no constructor = static methods only... nothing to instantiate, loading file was enough
+			} else if ( $reflector->isInstantiable() ) {
+				$class_obj =  $reflector->newInstance( $arguments );			
+			} 
 			 
 		} catch ( EE_Error $e ) {
 			$e->get_error();

@@ -431,7 +431,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: TRUE;
 		
-		$data = apply_filters('FHEE_template_settings_save', $data);
+		$data = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', $data, $this->_req_data );
+//		printr( $data, '$data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		$what = 'Template Settings';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );

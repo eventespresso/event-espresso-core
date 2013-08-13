@@ -67,6 +67,7 @@ final class EE_System {
 		// handy dandy object for holding shtuff
 		$this->_load_registry();
 		$this->_register_custom_autoloaders();
+		$this->EE->load_core( 'Maintenance_Mode' );
 
 		if ( $activation ) {
 			$this->_register_custom_autoloaders();
@@ -81,16 +82,6 @@ final class EE_System {
 		}
 	}
 
-	/**
-	 * Determines whether or not we're in maintenance mode and what level. 
-	 * 0=> not in maintenance mode (in normal mode)
-	 * 1=> frontend-only mainteannce mode
-	 * 2=> frontend and backend mainteancne mode
-	 * @return int
-	 */
-	public function maintenance_mode(){
-		return 0;
-	}
 
 
 	/**
@@ -366,9 +357,10 @@ final class EE_System {
 		global $EE_Session;
 		// instantiate !!!
 		$this->EE->load_class( 'Session' );
-		if ( $this->EE->REQ->is_set( 'clear_session' )) {
-			espresso_clear_session( __CLASS__, __FUNCTION__ );
-		}
+//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		if ( $this->EE->REQ->is_set( 'clear_session' )) {
+//			espresso_clear_session( __CLASS__, __FUNCTION__ );
+//		}
 	}
 
 

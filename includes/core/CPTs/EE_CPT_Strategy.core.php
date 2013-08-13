@@ -24,7 +24,7 @@
 class EE_CPT_Strategy extends EE_BASE {
 
    /**
-     * 	EE_Registry Object
+     * 	EE_CPT_Strategy Object
      * 	@private _instance
 	 * 	@private 	protected
      */
@@ -136,8 +136,14 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * 	@return array
 	 */
 	public function apply_CPT_Strategy( $WP_Object ) {
-		// is current query for a CPT that matches an EE CPT ?
+		// is current query for an EE CPT ?
 		if ( isset( $WP_Object->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Object->query_vars['post_type'] ] )) {
+			// is EE on or off ?
+			if ( EE_Maintenance_Mode::level() ) {
+				// reroute CPT template view to maintenance_mode.template.php
+				add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
+				return;
+			}
 			// grab details for the CPT the current query is for
 			$this->CPT = $this->_CPTs[ $WP_Object->query_vars['post_type'] ];
 			// set post type

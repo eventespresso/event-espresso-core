@@ -33,7 +33,7 @@ class EED_Event_List  extends EED_Module {
 	public static function set_hooks() {
 		EE_Config::register_route( 'events', 'Event_List', 'run' );
 		EE_Config::register_route( 'event_list', 'Event_List', 'event_list' );
-		add_action( 'pre_get_posts', array( 'EED_Event_List', 'pre_get_posts' ), 1 );
+		add_action( 'posts_where', array( 'EED_Event_List', 'posts_where' ), 1 );
 	}
 
 	/**
@@ -46,31 +46,28 @@ class EED_Event_List  extends EED_Module {
 		add_filter('FHEE__Config__update_config__CFG', array( 'EED_Event_List', 'filter_config' ), 10 );
 		add_action( 'AHEE__general_settings_admin__template_settings__before_settings_form', array( 'EED_Event_List', 'template_settings_form' ), 10 );
 		add_action( 'admin_init', array( 'EED_Event_List', 'set_definitions' ), 10 );
+		add_filter( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', array( 'EED_Event_List', 'update_template_settings' ), 10, 2 );
 	}
 
 
 
 	/**
-	 * 	pre_get_posts
+	 * 	posts_where
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function pre_get_posts(  $WP_Query  ) {
+	public function posts_where( $SQL ) {
 		
-		$request = EE_Registry::instance()->REQ->is_set( 'ee' ) ? EE_Registry::instance()->REQ->get( 'ee' ) : FALSE;
-		
+		global $wp_query;
 
-		//printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		if ( ! $WP_Query->is_main_query() || $query->query_vars['suppress_filters'] != FALSE || $request != 'events' ) {
-			return;
+		if ( $wp_query->is_main_query() && apply_filters( 'FHEE_event_list', FALSE )) {
+//			echo '<h4>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			printr( EE_Registry::instance(), 'EE_Registry::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$SQL = " AND wp_posts.post_type = 'espresso_events' AND (wp_posts.post_status = 'publish' OR wp_posts.post_status = 'private') ";
 		}
-		
-//		printr( EE_Registry::instance(), 'EE_Registry::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		$WP_Query->set( 'post_type', array( $this->CPT['post_type'] ));
-//		$WP_Query->set( 'fields', 'ids' );
-		return $WP_Query;
+		return $SQL;
 	}
 
 //EVT_is_active
@@ -244,6 +241,7 @@ class EED_Event_List  extends EED_Module {
 			'display_description' => isset( $CFG->EED_Event_List['display_description'] ) && ! empty( $CFG->EED_Event_List['display_description'] ) ? $CFG->EED_Event_List['display_description'] : FALSE,
 			'display_exceprt' => isset( $CFG->EED_Event_List['display_exceprt'] ) && ! empty( $CFG->EED_Event_List['display_exceprt'] ) ? $CFG->EED_Event_List['display_exceprt'] : TRUE,
 			'display_address' => isset( $CFG->EED_Event_List['display_address'] ) && ! empty( $CFG->EED_Event_List['display_address'] ) ? $CFG->EED_Event_List['display_address'] : FALSE,
+			'display_venue' => isset( $CFG->EED_Event_List['display_venue'] ) && ! empty( $CFG->EED_Event_List['display_venue'] ) ? $CFG->EED_Event_List['display_venue'] : FALSE,
 			'templates' => array(
 				'full'  => isset( $CFG->EED_Event_List['templates']['full'] ) && ! empty( $CFG->EED_Event_List['templates']['full'] ) ? $CFG->EED_Event_List['templates']['full'] : 'archive-espresso_events',
 				'part'  => isset( $CFG->EED_Event_List['templates']['part'] ) && ! empty( $CFG->EED_Event_List['templates']['part'] ) ? $CFG->EED_Event_List['templates']['part'] : 'archive-event_list'
@@ -260,12 +258,13 @@ class EED_Event_List  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function filter_config( $CFG ) {
+	public function filter_config( $CFG ) {//display_short_description_in_event_list display_exceprt
 		//printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$CFG->EED_Event_List = array(
 			'display_description' => isset( $CFG->template_settings['display_description_in_event_list'] ) ? $CFG->template_settings['display_description_in_event_list'] : $CFG->EED_Event_List['display_description'],
 			'display_exceprt' => isset( $CFG->template_settings['display_short_description_in_event_list'] ) ? $CFG->template_settings['display_short_description_in_event_list'] : $CFG->EED_Event_List['display_exceprt'],
 			'display_address' => isset( $CFG->template_settings['display_address_in_event_list'] ) ? $CFG->template_settings['display_address_in_event_list'] : $CFG->EED_Event_List['display_address'],
+			'display_venue' => isset( $CFG->template_settings['display_venue_in_event_list'] ) ? $CFG->template_settings['display_venue_in_event_list'] : $CFG->EED_Event_List['display_venue'],
 			'templates' => array(
 				'full'  => 'archive-espresso_events',
 				'part'  => 'archive-event_list'
@@ -274,6 +273,7 @@ class EED_Event_List  extends EED_Module {
 		unset( $CFG->template_settings['display_description_in_event_list'] );
 		unset( $CFG->template_settings['display_short_description_in_event_list'] );
 		unset( $CFG->template_settings['display_address_in_event_list'] );
+		unset( $CFG->template_settings['display_venue_in_event_list'] );
 		return $CFG;
 	}
 
@@ -286,17 +286,20 @@ class EED_Event_List  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function filter_config_admin( $CFG ) {
-		$CFG->EED_Event_List = array(
+	public function update_template_settings( $data, $REQ ) {
+//		printr( $REQ, '$REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $data, '$data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$data['EED_Event_List'] = array(
 			'display_description' => isset( $REQ['display_description_in_event_list'] ) ? absint( $REQ['display_description_in_event_list'] ) : FALSE,
 			'display_exceprt' => isset( $REQ['display_short_description_in_event_list'] ) ? absint( $REQ['display_short_description_in_event_list'] ) : TRUE,
 			'display_address' => isset( $REQ['display_address_in_event_list'] ) ? absint( $REQ['display_address_in_event_list'] ) : FALSE,
+			'display_venue' => isset( $REQ['display_venue_in_event_list'] ) ? absint( $REQ['display_venue_in_event_list'] ) : FALSE,
 			'templates' => array(
 				'full'  => 'archive-espresso_events',
 				'part'  => 'archive-event_list'
 			)
 		);		
-		return $CFG;
+		return $data;
 	}
 	
 	
