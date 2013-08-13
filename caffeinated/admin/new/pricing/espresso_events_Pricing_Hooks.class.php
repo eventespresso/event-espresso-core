@@ -47,10 +47,20 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'ee-prices-event-editor' => array(
 					'url' => PRICING_ASSETS_URL . 'event_editor_prices.js',
 					'depends' => array('event_editor_js', 'ee-serialize-full-array')
+					),
+				'ee-tickets-datetimes-css' => array(
+					'url' => EVENTS_ASSETS_URL . 'event-tickets-datetimes.css',
+					'type' => 'css'
+					),
+				'ee-xp-ticket-metabox' => array(
+					'url' => EVENTS_ASSETS_URL . 'xp-ticket-metabox.js',
+					'depends' => array('jquery', 'ee-moment')
 					)
 				),
 			'enqueues' => array(
-				'ee-prices-event-editor' => array( 'edit', 'create_new' )
+				'ee-prices-event-editor' => array( 'edit', 'create_new' ),
+				'ee-tickets-datetimes-css' => array( 'edit', 'create_new' ),
+				'ee-xp-ticket-metabox' => array( 'edit', 'create_new' )
 				),
 			'localize' => array(
 				'ee-prices-event-editor' => array(
