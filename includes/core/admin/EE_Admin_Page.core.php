@@ -1199,6 +1199,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script( 'ee-serialize-full-array', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.serializefullarray.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		//helpers scripts
 		wp_register_script('ee-text-links', EVENT_ESPRESSO_PLUGINFULLURL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-moment', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/moment.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 
 		//jqplot library
 		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
