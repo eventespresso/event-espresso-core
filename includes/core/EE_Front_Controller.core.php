@@ -287,7 +287,7 @@ final class EE_Front_Controller {
 							//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
 							if ( isset( $this->EE->CFG->post_shortcodes[ $current_post ] ) || $term_exists ) {
 								// let's pause to reflect on this...
-								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );								
+								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
 								// ensure that class is actually a shortcode
 								if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
 									$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );

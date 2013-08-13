@@ -131,6 +131,7 @@ final class EE_Config {
 		$current_user_id = $current_user_id ? $current_user_id : 1;
 		// grab org options based on current admin user
 		$this->EE->CFG = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
+		// ensure org_options are an object - this can be removed at a later date
 		if ( is_array( $this->EE->CFG )) {
 			$this->EE->load_helper( 'Activation' );
 			$this->EE->CFG = EEH_Activation::initialize_config( $this->EE->CFG );
@@ -310,9 +311,10 @@ final class EE_Config {
 			return FALSE;
 		}
 		// which set hooks ?
-		$hook_point = is_admin() ? 'set_hooks_admin' : 'set_hooks';
-		// fire the shortcode class's set_hooks method during the wp_loaded hook, in case it needs to hook into other parts of the system
-		add_action( 'wp_loaded', array( $shortcode_class, $hook_point ), 1 );
+		$set_hooks = is_admin() ? 'set_hooks_admin' : 'set_hooks';
+		// fire the shortcode class's set_hooks method, in case it needs to hook into other parts of the system
+		call_user_func( array( $shortcode_class, $set_hooks ));
+		
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
@@ -379,9 +381,9 @@ final class EE_Config {
 			return FALSE;
 		}
 		// which set hooks ?
-		$hook_point = is_admin() ? 'set_hooks_admin' : 'set_hooks';
-		// fire the module class's set_hooks method during the  wp_loaded hook
-		add_action( 'wp_loaded', array( $module_class, $hook_point ), 1 );
+		$set_hooks = is_admin() ? 'set_hooks_admin' : 'set_hooks';
+		// fire the module class's set_hooks methods
+		call_user_func( array( $module_class, $set_hooks ));
 		// add to array of registered modules
 		EE_Registry::instance()->modules[ $module ] = $module_path . DS . $module_class . $module_ext;
 		return TRUE;
