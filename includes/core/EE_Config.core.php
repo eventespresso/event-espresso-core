@@ -310,11 +310,15 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
+		// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
 		// which set hooks ?
-		$set_hooks = is_admin() ? 'set_hooks_admin' : 'set_hooks';
-		// fire the shortcode class's set_hooks method, in case it needs to hook into other parts of the system
-		call_user_func( array( $shortcode_class, $set_hooks ));
-		
+		if ( is_admin() ) {
+			// fire immediately			
+			call_user_func( array( $shortcode_class, 'set_hooks_admin' ));
+		} else {
+			// delay until other systems are online
+			add_action( 'wp_loaded', array( $shortcode_class,'set_hooks' ), 1 );
+		}		
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
@@ -380,10 +384,15 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
+		// fire the module class's set_hooks methods in case it needs to hook into other parts of the system
 		// which set hooks ?
-		$set_hooks = is_admin() ? 'set_hooks_admin' : 'set_hooks';
-		// fire the module class's set_hooks methods
-		call_user_func( array( $module_class, $set_hooks ));
+		if ( is_admin() ) {
+			// fire immediately			
+			call_user_func( array( $module_class, 'set_hooks_admin' ));
+		} else {
+			// delay until other systems are online
+			add_action( 'wp_loaded', array( $module_class, 'set_hooks' ), 1 );
+		}
 		// add to array of registered modules
 		EE_Registry::instance()->modules[ $module ] = $module_path . DS . $module_class . $module_ext;
 		return TRUE;
