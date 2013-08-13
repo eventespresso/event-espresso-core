@@ -1,0 +1,258 @@
+.event-tickets-datetimes-title {
+	font-size: 1.35em;
+	margin: 10px 0 10px 0;
+	padding: 0;
+}
+
+.event-datetimes-container {
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
+.event-datetime-row {
+	border-bottom: 2px solid #eee;
+    padding-top: 15px;
+	padding-bottom: 11px;
+}
+
+.datetime-title {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.datetime-summary {
+    height: 28px;
+}
+
+
+.clickable {
+	cursor: pointer;
+}
+
+.gear-icon, .ticket-icon, .trash-icon, .clone-icon {
+	display: inline;
+    padding: 8px;
+    margin-left: 8px;
+}
+
+.gear-icon {
+	background: transparent url(../../../../../images/settings-16x16.png) 0 6px no-repeat;
+}
+
+.trash-icon {
+	background: transparent url(../../../../../images/trash-small-16x16.png) 0 6px no-repeat;
+}
+
+.ticket-icon {
+	background: transparent url(../../../../../images/tickets.png) 0 6px no-repeat;
+}
+
+.clone-icon {
+	background: transparent url(../../../../../images/clone-trooper-16x16.png) 0 6px no-repeat;
+}
+
+.datetime-tickets-sold {
+	font-size: 1em;
+	float: right;
+}
+
+.button-column {
+   padding-left: 10px;
+}
+
+
+.ee-text-inp, .ee-small-text-inp {
+	margin-left: 10px;
+	margin-right: 10px;
+	width: 150px;
+}
+
+.ee-small-text-inp {
+    width: 50px;
+}
+
+.ee-large-text-inp {
+	width: 60%;
+}
+
+.ee-full-textarea-inp {
+	width: 100%;
+	height: 150px;
+}
+
+.basic-ticket-info .ee-text-inp, .basic-ticket-info .ee-small-text-inp, .pricing-table .ee-text-inp, .ee-small-text-inp {
+    margin: 0;
+    margin-left: 10px;
+}
+
+
+.datetime-tickets-heading, .tickets-heading {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.datetime-ticket {
+    display: inline;
+    padding: 5px;
+    margin-left: 5px;
+    background-color: #ccc;
+ 	-webkit-border-radius: 8px;
+ 	-moz-border-radius: 8px;
+ 	border-radius: 8px;
+}
+
+.ticket-selected {
+	background-color: #9d7;
+}
+
+.event-tickets-container {
+    width: 100%;
+}
+
+.ticket-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.ticket-table thead {
+	border-bottom: 2px solid #eee;
+	font-weight: bold;
+}
+
+.ticket-table tbody tr td {
+  padding-top: 8px;
+}
+
+
+.ticket-fieldset {
+	border: 3px solid #eee;
+	-webkit-border-radius: 8px;
+ 	-moz-border-radius: 8px;
+ 	border-radius: 8px;
+	padding: 10px;
+	background-color: #eee;
+}
+
+.ticket-fieldset legend {
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 1.2em
+}
+
+.edit-ticket-TKT_name {
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.edit-ticket-TKT_description {
+	font-size: 1.5em;
+	padding: 10px;
+}
+
+.edit-ticket-TKT_start_date, .edit-ticket-TKT_end_date {
+    width: 180px;
+}
+
+.total-price-container {
+	float:right;
+	margin-top: 10px;
+	line-height: 10px;
+}
+
+.ticket-price-amount {
+	font-weight: bold;
+	font-size: 3em;
+	display: inline-block;
+	margin-left: 10px;
+}
+
+.basic-ticket-info, .price-table {
+    border-collapse: collapse;
+}
+
+.basic-ticket-info thead, .price-table thead {
+	font-weight: normal;
+	border: none;
+}
+
+.basic-ticket-info tbody tr td, .price-table tbody tr td {
+	padding: 0;
+}
+
+.basic-ticket-info td {
+    padding-left: 10px;
+}
+
+.basic-ticket-info {
+    text-align: right;
+}
+
+.basic-ticket-info thead:first-child {
+    text-align: left;
+}
+
+.basic-ticket-container {
+    float: left;
+    min-width: 50%;
+    max-width: 50%;
+}
+
+.price-table-container {
+    float: left;
+    min-width: 50%;
+    max-width: 50%;
+}
+
+.price-table thead tr td {
+    padding-bottom: 5px;
+    font-size: 1.1em;
+}
+
+.price-table thead tr td:first-child {
+    text-align: right;
+}
+
+.price-table td {
+    padding-left: 10px;
+}
+
+.price-table tbody td:first-child, .price-table tfoot td {
+    text-align: right;
+}
+
+.price-table tbody tr:last-child td {
+    padding-bottom: 7px;
+}
+
+.price-table tbody tr:last-child {
+    border-bottom: 2px solid #ddd;
+}
+
+.save-cancel-button-container {
+    float: right;
+    margin-top: 10px;
+}
+
+.save-cancel-button-container .button-secondary {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.save-cancel-button-container input {
+    margin-right: 10px;
+    margin-left: 6px;
+}
+
+.add-new-ticket-table {
+    float: left;
+}
+
+#add-datetime-ticket-container .save-cancel-button-container {
+    padding-top: 14px;
+}
+
+.add-edit {
+    padding-top: 3px;
+}
