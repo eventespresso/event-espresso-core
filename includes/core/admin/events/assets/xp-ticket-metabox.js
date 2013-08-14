@@ -518,10 +518,21 @@ jQuery(document).ready(function($) {
 		 */
 		DateTimeEditToggle: function( context, DTTrow ) {
 			if ( context == 'ticket' )
-				$('#edit-event-datetime-tickets-' + DTTrow ).slideToggle( 500 );
+				this.scrollTo($('#edit-event-datetime-tickets-' + DTTrow )).slideToggle( 500 );
 			else if ( context == 'datetime' )
-				$('#edit-event-datetime-' + DTTrow ).slideToggle( 500 );
+				this.scrollTo($('#edit-event-datetime-' + DTTrow )).slideToggle( 500 );
 			return this;
+		},
+
+
+
+
+		/**
+		 * This toggles the display of the edit form for a Ticket row num given.
+		 * @param {int} ticketRow the ref to the ticket we're editing.
+		 */
+		TicketEditToggle: function( ticketRow ) {
+			this.scrollTo($('#edit-ticketrow-' + ticketRow)).slideToggle(500);
 		},
 
 
@@ -545,13 +556,14 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * handy helper method for scrolling to an item.
-		 * @param  {jQuery obj}the selector obj that we want to scroll to in the DOM
-		 * @return {TKT_helper}    this object for chainability
+		 * @param  {jQuery obj}    the selector obj that we want to scroll to in the DOM
+		 * @return {jQuery obj}    selector for chainability
 		 */
 		scrollTo: function( selector ) {
 			$("html,body").animate({
 				scrollTop: selector.offset().top
 			}, 2000);
+			return selector;
 		}
 
 
@@ -594,8 +606,15 @@ jQuery(document).ready(function($) {
 	$('#event-and-ticket-form-content').on('click', '.gear-icon', function(e) {
 		e.preventDefault();
 		var data = $(this).data();
-		if ( data.context == 'datetime' ) {
-			TKT_helper.DateTimeEditToggle( 'datetime', data.datetimeRow );
+		switch ( data.context ) {
+			case 'datetime' :
+			case 'ticket-datetime' :
+				TKT_helper.DateTimeEditToggle( 'datetime', data.datetimeRow );
+				break;
+			case 'datetime-ticket' :
+			case 'ticket' :
+				TKT_helper.TicketEditToggle( data.ticketRow );
+				break;
 		}
 		return true;
 	});

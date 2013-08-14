@@ -38,12 +38,12 @@
 					<li data-datetime-row="row1" data-context="datetime-ticket" data-ticket-row="ticket1" class="datetime-ticket ticket-selected clickable">
 						<input type="checkbox" name="datetime_ticket[row1][ticketrow1]" class="datetime-ticket-checkbox" value="1" checked=checked>
 						<span class="ticket-list-ticket-name">General Admission: 152</span>
-						<span class="clickable gear-icon" data-datetime-row="row1" data-context="ticket" data-ticket-row="ticketrow1"></span>
+						<span class="clickable gear-icon" data-datetime-row="row1" data-context="datetime-ticket" data-ticket-row="ticketrow1"></span>
 					</li>
 					<li data-datetime-row="row1" data-context="datetime-ticket" data-ticket-row="ticket2" class="datetime-ticket clickable ticket-selected">
 						<input type="checkbox" name="datetime_ticket[row1][ticketrow2]" class="datetime-ticket-checkbox" value="1" checked=checked>
 						<span class="ticket-list-ticket-name">Early Bird: 17</span>
-						<span class="clickable gear-icon" date-datetime-row="row1" data-context="ticket" data-ticket-row="ticket2"></span>
+						<span class="clickable gear-icon" date-datetime-row="row1" data-context="datetime-ticket" data-ticket-row="ticket2"></span>
 					</li>
 				</ul>
 				<!-- these hidden inputs track changes in tickets attached to datetimes -->
@@ -204,12 +204,12 @@
 								<li class="datetime-ticket clickable ticket-selected" data-datetime-row="row1" data-context="ticket-datetime" data-ticket-row="ticketrow1">
 									<input type="checkbox" name="ticket_datetime[row1][ticketrow1]" class="datetime-ticket-checkbox" value="1">
 									<span class="ticket-list-ticket-name">Sept 10 - 10am - 2pm</span>
-									<span class="clickable gear-icon" data-datetime-row="row1" data-context="datetime" data-ticket-row="ticket1"></span>
+									<span class="clickable gear-icon" data-datetime-row="row1" data-context="ticket-datetime" data-ticket-row="ticket1"></span>
 								</li>
 								<li class="datetime-ticket clickable ticket-selected" data-datetime-row="row2" data-context="ticket-datetime" data-ticket-row="ticketrow1">
 									<input type="checkbox" name="ticket_datetime[row2][ticketrow1]" class="datetime-ticket-checkbox" value="1">
 									<span class="ticket-list-ticket-name">Sept 11 - 10am - 2pm</span>
-									<span class="clickable gear-icon" data-datetime-row="row2" data-context="datetime" data-ticket-row="ticket1"></span>
+									<span class="clickable gear-icon" data-datetime-row="row2" data-context="ticket-datetime" data-ticket-row="ticket1"></span>
 								</li>
 							</ul>
 							<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[ticketrow1][TKT_is_default]" id="edit-ticket-TKT_is_default">  
@@ -319,12 +319,12 @@
 								<li class="datetime-ticket clickable ticket-selected" data-datetime-row="row1" data-context="ticket-datetime" data-ticket-row="ticketrow1">
 									<input type="checkbox" name="ticket_datetime[row1][ticketrow1]" class="datetime-ticket-checkbox" value="1">
 									<span class="ticket-list-ticket-name">Sept 10 - 9am - 10am</span>
-									<span class="clickable gear-icon" data-datetime-row="row1" data-context="datetime" data-ticket-row="ticket1"></span>
+									<span class="clickable gear-icon" data-datetime-row="row1" data-context="ticket-datetime" data-ticket-row="ticket1"></span>
 								</li>
 								<li class="datetime-ticket clickable" data-datetime-row="row2" data-context="ticket-datetime" data-ticket-row="ticketrow1">
 									<input type="checkbox" name="ticket_datetime[row2][ticketrow1]" class="datetime-ticket-checkbox" value="1">
 									<span class="ticket-list-ticket-name">Sept 10 - 1pm - 2pm</span>
-									<span class="clickable gear-icon" data-datetime-row="row2" data-context="datetime" data-ticket-row="ticket1"></span>
+									<span class="clickable gear-icon" data-datetime-row="row2" data-context="ticket-datetime" data-ticket-row="ticket1"></span>
 								</li>
 							</ul>
 							<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[ticketrow1][TKT_is_default]" id="edit-ticket-TKT_is_default">  
@@ -380,8 +380,8 @@
 		<section id="edit-event-datetime-tickets-DTTNUM" class="datetime-tickets-edit">
 			<h5 class="datetime-tickets-heading">Assigned Tickets</h5>
 
-			<ul class="datetime-tickets-list" style="display:none">
-				<li></li>
+			<ul class="datetime-tickets-list">
+				<li class="hidden"></li>
 			</ul>
 			
 			<!-- these hidden inputs appear when a ticket is selected and are removed when a ticket is deselected -->
@@ -474,17 +474,17 @@
 		<li data-datetime-row="DTTNUM" data-context="datetime-ticket" data-ticket-row="ticket1" class="datetime-ticket ticket-selected clickable">
 			<input type="checkbox" name="datetime_ticket[DTTNUM][TICKETNUM]" class="datetime-ticket-checkbox" value="1" checked=checked>
 			<span class="ticket-list-ticket-name">General Admission: 152</span>
-			<span class="clickable gear-icon" data-datetime-row="DTTNUM" data-context="ticket" data-ticket-row="TICKETNUM"></span>
+			<span class="clickable gear-icon" data-datetime-row="DTTNUM" data-context="datetime-ticket" data-ticket-row="TICKETNUM"></span>
 		</li>
 	</ul>
 
 
 	<!-- single list item for a new available datetime to add to our available ticket rows -->
-	<ul id="dtt-existing-available-datetime-list-items-holder">
+	<ul id="dtt-new-available-datetime-list-items-holder">
 		<li class="datetime-ticket clickable" data-datetime-row="DTTNUM" data-context="ticket-datetime" data-ticket-row="TICKETNUM">
 			<input type="checkbox" name="ticket_datetime[DTTNUM][TICKETNUM]" class="datetime-ticket-checkbox" value="1">
 			<span class="ticket-list-ticket-name">DTTDATE</span>
-			<span class="clickable gear-icon" data-datetime-row="DTTNUM" data-context="datetime" data-ticket-row="TICKETNUM"></span>
+			<span class="clickable gear-icon" data-datetime-row="DTTNUM" data-context="ticket-datetime" data-ticket-row="TICKETNUM"></span>
 		</li>
 	</ul>
 </div>
