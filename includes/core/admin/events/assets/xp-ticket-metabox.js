@@ -135,8 +135,8 @@ jQuery(document).ready(function($) {
 			
 
 			//ARE there tickets?  If so, then we'll use them, if not, then we leave alone.
-			if ( $(existing_datetime_tickets).contains('li.datetime-ticket') ) {
-				$(existing_datetime_tickets_container).find('.datetime-tickets-list').append(existing_datetime_tickets).show();
+			if ( $(existing_datetime_tickets_container).contains('li.datetime-ticket') ) {
+				$(existing_datetime_tickets_container).find('.datetime-tickets-list').html(existing_datetime_tickets);
 			}
 
 			//create new DTT display row.
@@ -308,9 +308,17 @@ jQuery(document).ready(function($) {
 		 * @return {TKT_helper}        this object for chainability
 		 */
 		updateDTTrow: function( dttrow ) {
-			//need to update the displayed datetime string
+			var lidttitem;
+			//need to update the displayed datetime string for the datetime title...
 			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start-' + dttrow).val(), $('.event-datetime-DTT_EVT_end-' + dttrow).val() );
 			$('.datetime-title', '#event-datetime-' + dttrow).text(DTT_display_text);
+
+			//... and in all related dtt list rows!
+			$('.edit-ticket-row').each( function() {
+				lidttitem = $('li', '.datetime-tickets-list').find('[data-datetime-row="' + dttrow + '"]');
+				$('.ticket-list-ticket-name', lidttitem).text(DTT_display_text);
+			});
+
 			this.DateTimeEditToggle( 'datetime', dttrow );
 			return this;
 		},
@@ -323,17 +331,23 @@ jQuery(document).ready(function($) {
 		 * @param  {string} ticketrow this ticket row the dtt list item is being added to
 		 * @return {TKT_helper obj}   for chainability
 		 */
-		newDTTListRow: function(dttrow, ticketrow) {
-			var ticketrownum = $(ticketrow).attr('id').replace('edit-ticketrow-ticketrow-', '');
-			var new_dtt_list_row = $('#dtt-existing-available-datetime-list-items-holder').html().clone();
+		newDTTListRow: function(dttrow, ticketrowitm) {
+			var ticketrownum = $(ticketrowitm).attr('id').replace('edit-ticketrow-ticketrow-', '');
+			var new_dtt_list_row = $('#dtt-new-available-datetime-list-items-holder').html().clone();
+			var default_list_row_for_dtt;
 
 			//replace all instances of DTTNUM with dttrow
 			new_dtt_list_row = new_dtt_list_row.replace('/DTTNUM/g', dttrow);
+			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
 			new_dtt_list_row = new_dtt_list_row.replace('/TICKETNUM/g',ticketrownum);
 
 			//append new_dtt_list_row to the ul for datetime-tickets attached to ticket.
-			$(ticketrow).find('.datetime-tickets-list').append(new_dtt_list_row);
+			$(ticketrowitm).find('.datetime-tickets-list').append(new_dtt_list_row);
+
+			//append new dtt_list_row to the available dtts row BUT we need to make the ticketnum generic!
+			$('#dtt-existing-available-datetime-list-items-holder').append(default_list_row_for_dtt);
+
 			return this;
 		},
 
@@ -360,10 +374,10 @@ jQuery(document).ready(function($) {
 			
 
 			//updated tickets that have this row attached (and remove as option for tickets)
-			$('.edit-ticket-row').each( function() {
-				curid = $(this).attr('id');
-				$('li', '.datetime-tickets-list').find('[data-datetime-row="' + row + '"]').remove();
-			});
+			$('.datetime-tickets-list', '.event-tickets-container').find('li[data-datetime-row="' + row + '"]').remove();
+
+			//remove the dtt_list_row from the available dtts row
+			$('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row=' + row + '"]').remove();
 			
 		},
 
@@ -377,16 +391,16 @@ jQuery(document).ready(function($) {
 		toggleTicketSelect: function(itm) {
 			var data = $(itm).data();
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
-			var relateditm = data.context == 'datetime-ticket' ? '#ticket-datetime-li-' + data.datetimeRow : '#datetime-ticket-li-' + data.ticketRow;
+			var relateditm = data.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-ticketrow-' + data.ticketRow).find('li[data-datetime-row="' + data.ticketRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + data.datetimeRow).find('li[data-ticket-row="' + data.ticketRow + '"]');
 
 			if ( selecting ) {
 				$(itm).addClass('ticket-selected');
-				$(relateditm).addClass('ticket-selected');
+				relateditm.addClass('ticket-selected');
 				//update selected tracking in various contexts
 				this.addTicket(data);
 			} else {
 				$(itm).removeClass('ticket-selected');
-				$(relateditm).removeClass('ticket-selected');
+				relateditm.removeClass('ticket-selected');
 				this.removeTicket(data);
 			}
 			return this;
