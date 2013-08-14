@@ -662,6 +662,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('#event-and-ticket-form-content').on('click', '.ee-create-button', function(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		var data = $(this).data();
 		if ( data.context == 'datetime' ) {
 			TKT_helper.newDTTrow();
@@ -675,6 +676,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('#event-and-ticket-form-content').on('click', '.ee-save-button', function(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		var data = $(this).data();
 		if ( data.context == 'datetime' ) {
 			TKT_helper.updateDTTrow(data.datetimeRow);
@@ -686,6 +688,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('#event-and-ticket-form-content').on('click', '.gear-icon', function(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
@@ -710,6 +713,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('#event-and-ticket-form-content').on('click', '.ticket-icon', function(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		var data = $(this).data();
 		TKT_helper.DateTimeEditToggle( 'ticket', data.datetimeRow );
 		return true;
@@ -721,6 +725,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('#event-and-ticket-form-content').on('click', '.clone-icon', function(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		var data = $(this).data();
 		if ( data.context == 'datetime' )
 			TKT_helper.cloneDateTime(data.datetimeRow);
@@ -734,6 +739,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('#event-and-ticket-form-content').on('click', '.trash-icon', function(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		var data = $(this).data();
 		if ( data.context == 'datetime' ) {
 			TKT_helper.trashDTT(data.datetimeRow);
@@ -748,6 +754,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('#event-and-ticket-form-content').on('click', '.datetime-ticket', function(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		TKT_helper.toggleTicketSelect(this);
 		return true;
 	});
