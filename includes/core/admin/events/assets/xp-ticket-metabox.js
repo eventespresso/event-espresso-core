@@ -55,6 +55,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This decrements the row count of a given context by one and returns the new row count
+		 * note we do NOT UPDATE the value of the rowcountobject because otherwise we have to update any other existing rows.  We want to make sure we ALWAYS increment row counts.
 		 * @param  {string} context what context we're decreasing row count for
 		 * @return {int}            the new row count
 		 */
@@ -63,7 +64,6 @@ jQuery(document).ready(function($) {
 			var countobj = this.getrowcountobject(context);
 			var newcount = countobj.val();
 			newcount--;
-			countobj.val(newcount);
 			return newcount;
 		},
 
@@ -287,9 +287,53 @@ jQuery(document).ready(function($) {
 			//k all replacements done, let's append the new row to the datetime-row container
 			$('.event-datetimes-container').append(newDTTrow);
 
-			//todo we need to update ALL existing TKT edit forms with the new DTT li element.
-			//todo we need to toggle the edit DTT form for the new Datetime cloned.
+			// update ALL existing TKT edit forms with the new DTT li element.
+			$('.edit-ticket-row').each( function() {
+				TKT_helper.newDTTListRow( newrownum, this );
+			});
 
+			//we need to toggle the edit DTT form for the new Datetime cloned.
+			this.DateTimeEditToggle( 'datetime', nrewrownum );
+
+			return this;
+		},
+
+
+
+		/**
+		 * Simply updates the ui for the updated row.
+		 * NOTE: the save button only updates the ui and ensures that the autosave will get the data correctly.  ACTUAL edits to tickets and datetimes etc will NOT be attached to the "main" event post until the user clicks the "publish" or "update" button for the entire post.  That way the user can do manipulations and editing WIHOUT worrying about a "live" event being modified.
+		 *
+		 * @param  {int} dttrow        this is the dttrow being "updated"
+		 * @return {TKT_helper}        this object for chainability
+		 */
+		updateDTTrow: function( dttrow ) {
+			//need to update the displayed datetime string
+			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start-' + dttrow).val(), $('.event-datetime-DTT_EVT_end-' + dttrow).val() );
+			$('.datetime-title', '#event-datetime-' + dttrow).text(DTT_display_text);
+			this.DateTimeEditToggle( 'datetime', dttrow );
+			return this;
+		},
+
+
+
+		/**
+		 * generates a new DTT list row for available ticket rows.
+		 * @param  {string} dttrow    the row num for the dtt being added
+		 * @param  {string} ticketrow this ticket row the dtt list item is being added to
+		 * @return {TKT_helper obj}   for chainability
+		 */
+		newDTTListRow: function(dttrow, ticketrow) {
+			var ticketrownum = $(ticketrow).attr('id').replace('edit-ticketrow-ticketrow-', '');
+			var new_dtt_list_row = $('#dtt-existing-available-datetime-list-items-holder').html().clone();
+
+			//replace all instances of DTTNUM with dttrow
+			new_dtt_list_row = new_dtt_list_row.replace('/DTTNUM/g', dttrow);
+			//replace all instances of TICKETNUM with ticketrownum
+			new_dtt_list_row = new_dtt_list_row.replace('/TICKETNUM/g',ticketrownum);
+
+			//append new_dtt_list_row to the ul for datetime-tickets attached to ticket.
+			$(ticketrow).find('.datetime-tickets-list').append(new_dtt_list_row);
 			return this;
 		},
 
@@ -300,7 +344,27 @@ jQuery(document).ready(function($) {
 		 * @return {obj}     This object (allows for chaining)
 		 */
 		trashDTT: function(row) {
-			//todo
+			this.decreaserowcount(row);
+			var curid, newid, varnewids;
+			//remove row from dom
+			$('#event-datetime-row-' . row ).remove();
+
+
+			//update the datetime-ticket-ids tracked values cause ticket no longer can have this datetime associated with it.
+			var ticket_datetime_ids = $('#ticket-datetime-ids').val().split(",");
+			datetimeids.each( function(i, val) {
+				if ( val === row )
+					ticket_datetime_ids = this.removeFromArray(ticket_datetime_ids, i);
+			});
+			$('#ticket-datetime-ids').val( ticket_datetime_ids.join(',') );
+			
+
+			//updated tickets that have this row attached (and remove as option for tickets)
+			$('.edit-ticket-row').each( function() {
+				curid = $(this).attr('id');
+				$('li', '.datetime-tickets-list').find('[data-datetime-row="' + row + '"]').remove();
+			});
+			
 		},
 
 
@@ -364,7 +428,25 @@ jQuery(document).ready(function($) {
 			else if ( context == 'datetime' )
 				$('#edit-event-datetime-' + DTTrow ).slideToggle( 500 );
 			return this;
+		},
+
+
+
+		/**
+		 * This helper method simply removes an item (or group of items) from a js array.
+		 * @link http://ejohn.org/blog/javascript-array-remove/
+		 * @param  {array} array js array to remove items from
+		 * @param  {int} from    index of what element is being removed
+		 * @param  {int} to      index of what second element is being removed
+		 * @return {array}       array with removed items
+		 */
+		removeFromArray: function( array, from, to ) {
+			var rest = array.slice((to || from) +1 || array.length);
+			array.length = from < 0 ? array.length + from : from;
+			return array.push.apply(array, rest);
 		}
+
+
 
 
 	};
@@ -386,6 +468,17 @@ jQuery(document).ready(function($) {
 		return true;
 	});
 
+
+	/**
+	 * update datetime/ticket
+	 */
+	$('#event-and-ticket-form-content').on('click', '.ee-save-button', function(e) {
+		e.preventDefault();
+		var data = $(this).data();
+		if ( data.context == 'datetime' ) {
+			TKT_helper.updateDTTrow(data.datetimeRow);
+		}
+	});
 
 	/**
 	 * edit datetime/ticket
