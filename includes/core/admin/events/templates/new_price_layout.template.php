@@ -14,7 +14,7 @@
 					<tr>
 						<td class="event-datetime-column date-column">
 							<label for="event-datetime-DTT_EVT_start-row1">Event Start</label>
-							<input type="text" name="edit_event_datetimes[row1][DTT_EVT_start]" id="event-datetime-DTT_EVT_start_row1" class="ee-text-inp event-datetime-DTT_EVT_start">
+							<input type="text" name="edit_event_datetimes[row1][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-row1" class="ee-text-inp event-datetime-DTT_EVT_start">
 						</td>
 						<td class="event-datetime-column date-column">
 							<label for="event-datetime-DTT_EVT_end-row1">Event End</label>

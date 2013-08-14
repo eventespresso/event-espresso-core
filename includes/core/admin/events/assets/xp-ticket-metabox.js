@@ -354,7 +354,7 @@ jQuery(document).ready(function($) {
 			var ticket_datetime_ids = $('#ticket-datetime-ids').val().split(",");
 			datetimeids.each( function(i, val) {
 				if ( val === row )
-					ticket_datetime_ids = this.removeFromArray(ticket_datetime_ids, i);
+					ticket_datetime_ids = TKT_helper.removeFromArray(ticket_datetime_ids, i);
 			});
 			$('#ticket-datetime-ids').val( ticket_datetime_ids.join(',') );
 			
@@ -365,6 +365,86 @@ jQuery(document).ready(function($) {
 				$('li', '.datetime-tickets-list').find('[data-datetime-row="' + row + '"]').remove();
 			});
 			
+		},
+
+
+
+		/**
+		 * Toggle a datetime ticket or ticket datetime list item from active to inactive (and the related attachments to the datetime or ticket).
+		 * @param  {obj}        itm  the selected item
+		 * @return {TKT_helper}      this object for chainability
+		 */
+		toggleTicketSelect: function(itm) {
+			var data = $(itm).data();
+			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
+			var relateditm = data.context == 'datetime-ticket' ? '#ticket-datetime-li-' + data.datetimeRow : '#datetime-ticket-li-' + data.ticketRow;
+
+			if ( selecting ) {
+				$(itm).addClass('ticket-selected');
+				$(relateditm).addClass('ticket-selected');
+				//update selected tracking in various contexts
+				this.addTicket(data);
+			} else {
+				$(itm).removeClass('ticket-selected');
+				$(relateditm).removeClass('ticket-selected');
+				this.removeTicket(data);
+			}
+			return this;
+		},
+
+
+
+
+		/**
+		 * wrapper for TKT_helper.changeTicket that makes sure we're ADDING a ticket to an item
+		 * @param {obj} data the data object from the clicked ticket/datetime.
+		 * @return {TKT_helper} this object for chainability
+		 */
+		addTicket: function(data) {
+			this.changeTicket(data.datetimeRow, data.ticketRow);
+			this.changeTicket(data.ticketRow, data.datetimeRow, 'ticket-datetime');
+			return this;
+		},
+
+
+
+		/**
+		 * warpper for TKT_helper.changeTicket that makes sure we're REMOVING a ticket from an item
+		 * @param  {obj} data the data object from the clicked ticket/datetime
+		 * @return {TKT_helper}      this object for chainability
+		 */
+		removeTicket: function(data) {
+			this.changeTicket(data.datetimeRow, data.ticketRow, 'datetime-ticket', true);
+			this.changeTicket(data.ticketRow, data.datetimeRow, 'ticket-datetime', true);
+			return this;
+		},
+
+
+
+		/**
+		 * Makes sure that the hidden row recording selected tickets for the current session is updated accordingly
+		 * @param  {string} idrow    the row id for the row being updated.
+		 * @param  {string} valuerow the row id for the value being recorded.
+		 * @param  {string} context  the context that helps us determine which recording id we're using
+		 * @param  {bool}   remove     indicate whether we're rmoving the valuerow or adding it.
+		 * @return {TKT_helper}      This obj for chainability.
+		 */
+		changeTicket: function(idrow, valuerow, context, remove) {
+			remove = typeof(remove) === 'undefined' ? false : remove;
+			context = typeof(context) === 'undefined' ? 'datetime-ticket' : context;
+			var changeid = '#' + context + '-ids-' + idrow;
+			var curitems = $(changeid).val().split(',');
+
+			if ( remove ) {
+				curitems.each( function(i, val) {
+					if ( val === valuerow )
+						curitems = TKT_helper.removeFromArray(curitems, i);
+				});
+			} else {
+				curitems.push(valuerow);
+			}
+			$(changeid).val(curitems.join(','));
+			return this;
 		},
 
 
@@ -511,7 +591,7 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		var data = $(this).data();
 		if ( data.context == 'datetime' )
-			TXN_helper.cloneDateTime(data.datetimeRow);
+			TKT_helper.cloneDateTime(data.datetimeRow);
 		return true;
 	});
 
@@ -524,8 +604,19 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		var data = $(this).data();
 		if ( data.context == 'datetime' ) {
-			TXN_helper.trashDTT(data.datetimeRow);
+			TKT_helper.trashDTT(data.datetimeRow);
 		}
+		return true;
+	});
+
+
+
+	/**
+	 * datetime/ticket list item clicked to attach detach from related item.
+	 */
+	$('#event-and-ticket-form-content').on('click', '.datetime-ticket', function(e) {
+		e.preventDefault();
+		TKT_helper.toggleTicketSelect(this);
 		return true;
 	});
 });
