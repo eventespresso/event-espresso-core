@@ -2,16 +2,78 @@ jQuery(document).ready(function($) {
 
 	var TKT_helper = {
 
+		ticketRow : 1,
+		dateTimeRow: 1,
+		context: 'datetime',
+		itemdata: {},
+		currentDOMElement: {},
+
+		/**
+		 * sets the context property on this object (by default context is 'datetime')
+		 * @param  {string} context what context the event is being initiated in
+		 * @return {TKT_helper} TKT_helper object for chaining
+		 */
+		setcontext : function(context) {
+			if ( typeof(context) !== 'undefined' )
+				this.context = context;
+			return this;
+		},
+
+
+
+		/**
+		 * sets the dateTimeRow property value
+		 * @param  {int}    num dttrownum
+		 * @return {TKT_helper} TKT_helper object for chaining
+		 */
+		setdateTimeRow : function( num ) {
+			if ( typeof(num) !== 'undefined' )
+				this.dateTimeRow = num;
+			return this;
+		},
+
+
+		/**
+		 * sets the ticketRow property value
+		 * @param  {int}    num ticket row number to set
+		 * @return {TKT_helper} TKT_helper object for chaining
+		 */
+		setticketRow : function( num ) {
+			if ( typeof(num) !== 'undefined' )
+				this.ticketRow = num;
+			return this;
+		},
+
+
+		/**
+		 * sets the data property value
+		 * @param  {obj}    num data
+		 * @return {TKT_helper} TKT_helper object for chaining
+		 */
+		setitemdata : function( data ) {
+			if ( typeof(data) !== 'undefined' )
+				this.itemdata = data;
+			return this;
+		},
+
+
+
+		setcurrentDOMElement: function( element ) {
+			if ( typeof(element) !== 'undefined' )
+				this.currentDOMElement = element;
+			return this;
+		},
+
+
+
 		/**
 		 * gets the total row count jQuery object for the given context
-		 * @param  {string} context what context we're getting row count for
 		 * @return {jQuery obj}     jQuery obj that contains the row count
 		 */
-		getrowcountobject: function( context ) {
+		getrowcountobject: function() {
 			var rowcountobj;
-			if ( typeof(context) === 'undefined' ) context = 'datetime';
-
-			switch ( context ) {
+			
+			switch ( this.context ) {
 				case 'datetime' :
 					rowcountobj = $('#datetime-total-rows');
 					break;
@@ -26,27 +88,34 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * gets the total rows for a given context in the ui
-		 * @param  {string} context what context we're retrieiving rows for
 		 * @return {int}            the row count
 		 */
-		getrowcount: function( context ) {
-			if ( typeof(context) === 'undefined' ) context = 'datetime';
-			return this.getrowcountobject(context).val();
+		getrowcount: function() {
+			return this.getrowcountobject().val();
 		},
 
 
 
 		/**
 		 * This increments the row count of a given context by one and returns the new row count
-		 * @param  {string} context what context we're incrementing
 		 * @return {int}            the new row count
 		 */
-		increaserowcount: function( context ) {
-			if ( typeof(context) === 'undefined' ) context = 'datetime';
-			var countobj = this.getrowcountobject(context);
+		increaserowcount: function() {
+			var countobj = this.getrowcountobject();
 			var newcount = countobj.val();
 			newcount++;
 			countobj.val(newcount);
+
+			switch ( this.context ) {
+				case 'datetime' :
+					this.dateTimeRow = newcount;
+					break;
+
+				case 'ticket' :
+					this.ticketRow = newcount;
+					break;
+			}
+
 			return newcount;
 		},
 
@@ -56,14 +125,22 @@ jQuery(document).ready(function($) {
 		/**
 		 * This decrements the row count of a given context by one and returns the new row count
 		 * note we do NOT UPDATE the value of the rowcountobject because otherwise we have to update any other existing rows.  We want to make sure we ALWAYS increment row counts.
-		 * @param  {string} context what context we're decreasing row count for
 		 * @return {int}            the new row count
 		 */
-		decreaserowcount: function( context ) {
-			if ( typeof(context) === 'undefined' ) context = 'datetime';
-			var countobj = this.getrowcountobject(context);
+		decreaserowcount: function() {
+			var countobj = this.getrowcountobject(this.context);
 			var newcount = countobj.val();
+			var existingcount = newcount;
 			newcount--;
+			switch ( this.context ) {
+				case 'datetime' :
+					this.dateTimeRow = newcount;
+					break;
+
+				case 'ticket' :
+					this.ticketRow = newcount;
+					break;
+			}
 			return newcount;
 		},
 
@@ -72,11 +149,13 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * gets the Ticket Title for the given ticketrow value
-		 * @param  {int} ticketrow    What ticket row are we retrieving the title from
+		 * @param {int} rownum The rownumber for the we're retrieving.  If not present then we use whats set in the ticketRow property.
 		 * @return {string}           The title of the ticket.
 		 */
-		getTicketTitle: function( ticketrow ) {
-			return $('.edit-ticket-TKT-name', '#edit-ticketrow-' + ticketrow).val();
+		getTicketTitle: function( rownum ) {
+			if ( typeof(rownum) === 'undefined' )
+				rownum = this.ticketRow;
+			return $('.edit-ticket-TKT-name', '#edit-ticketrow-' + rownum).val();
 		},
 
 
@@ -92,6 +171,7 @@ jQuery(document).ready(function($) {
 			var DTTeditform = $('#edit-datetime-form-holder').html().clone();
 
 			//replace DTTNUM with new row.
+			this.context = 'datetime';
 			var row = this.increaserowcount();
 			DTTeditform = DTTeditform.replace('DTTNUM',row);
 			DTTeditformobj = $(DTTeditform);
@@ -149,7 +229,8 @@ jQuery(document).ready(function($) {
 
 			//now let's append to the other rows and we'll scroll up the editor for the user to add/create tickets to the new datetime.
 			$('.event-datetimes-container').append(newDTTrow);
-			this.DateTimeEditToggle( 'ticket', row);
+			this.context = 'ticket';
+			this.DateTimeEditToggle();
 			return this;
 		},
 
@@ -163,6 +244,7 @@ jQuery(document).ready(function($) {
 		 * @return {TKT_helper obj}     The TKT_helper obj that allows chaining.
 		 */
 		cloneDateTime: function( row ) {
+			this.dateTimeRow = row;
 			var newrownum = this.increaserowcount();
 			var newDTTrow = $('#event-datetime-' + row).clone();
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
@@ -179,10 +261,10 @@ jQuery(document).ready(function($) {
 			//next let's do the spans
 			$(newDTTrow).find('span').each( function() {
 				curclass = $(this).attr('class');
-				data = $(this).data();
+				this.itemdata = $(this).data();
 				
 				//handle data-datetime-row properties
-				if ( typeof(data) !== 'undefined' && typeof(data.datetimeRow) !== 'undefined' ) {
+				if ( typeof(this.itemdata) !== 'undefined' && typeof(this.itemdata.datetimeRow) !== 'undefined' ) {
 					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute and if the datetime row is cloned it doesn't appear to clone the data() obj cache for the selector.
 				}
 
@@ -194,13 +276,12 @@ jQuery(document).ready(function($) {
 
 				if ( curclass == 'ticket-list-ticket-name' ) {
 					//find out what ticket we are looking at.
-					data = $(this).parent().data();
+					var parentdata = $(this).parent().data();
 					
 					//now we can get the ticket title from the tickets list and simply replace what's in the datetime ticket with it.  Why do we do this instead of just replacing the numbers?  Because the ticket title may have a number in it.
-					tickettitle = TKT_helper.getTicketTitle( data.ticketRow );
+					tickettitle = TKT_helper.getTicketTitle( parentdata.ticketRow );
 					$(this).text(tickettitle + '0');
 				}
-
 
 			});
 
@@ -289,11 +370,12 @@ jQuery(document).ready(function($) {
 
 			// update ALL existing TKT edit forms with the new DTT li element.
 			$('.edit-ticket-row').each( function() {
-				TKT_helper.newDTTListRow( newrownum, this );
+				TKT_helper.newDTTListRow( this );
 			});
 
 			//we need to toggle the edit DTT form for the new Datetime cloned.
-			this.DateTimeEditToggle( 'datetime', nrewrownum );
+			this.context = 'datetime';
+			this.DateTimeEditToggle();
 
 			return this;
 		},
@@ -309,17 +391,19 @@ jQuery(document).ready(function($) {
 		 */
 		updateDTTrow: function( dttrow ) {
 			var lidttitem;
+			this.dateTimeRow = dttrow;
 			//need to update the displayed datetime string for the datetime title...
-			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start-' + dttrow).val(), $('.event-datetime-DTT_EVT_end-' + dttrow).val() );
-			$('.datetime-title', '#event-datetime-' + dttrow).text(DTT_display_text);
+			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end-' + this.dateTimeRow).val() );
+			$('.datetime-title', '#event-datetime-' + this.dateTimeRow).text(DTT_display_text);
 
 			//... and in all related dtt list rows!
 			$('.edit-ticket-row').each( function() {
-				lidttitem = $('li', '.datetime-tickets-list').find('[data-datetime-row="' + dttrow + '"]');
+				lidttitem = $('li', '.datetime-tickets-list').find('[data-datetime-row="' + this.dateTimeRow + '"]');
 				$('.ticket-list-ticket-name', lidttitem).text(DTT_display_text);
 			});
 
-			this.DateTimeEditToggle( 'datetime', dttrow );
+			this.context = 'datetime';
+			this.DateTimeEditToggle();
 			return this;
 		},
 
@@ -327,17 +411,16 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * generates a new DTT list row for available ticket rows.
-		 * @param  {string} dttrow    the row num for the dtt being added
 		 * @param  {string} ticketrow this ticket row the dtt list item is being added to
 		 * @return {TKT_helper obj}   for chainability
 		 */
-		newDTTListRow: function(dttrow, ticketrowitm) {
+		newDTTListRow: function(ticketrowitm) {
 			var ticketrownum = $(ticketrowitm).attr('id').replace('edit-ticketrow-ticketrow-', '');
 			var new_dtt_list_row = $('#dtt-new-available-datetime-list-items-holder').html().clone();
 			var default_list_row_for_dtt;
 
 			//replace all instances of DTTNUM with dttrow
-			new_dtt_list_row = new_dtt_list_row.replace('/DTTNUM/g', dttrow);
+			new_dtt_list_row = new_dtt_list_row.replace('/DTTNUM/g', this.datetimeRow);
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
 			new_dtt_list_row = new_dtt_list_row.replace('/TICKETNUM/g',ticketrownum);
@@ -378,7 +461,7 @@ jQuery(document).ready(function($) {
 
 			//remove the dtt_list_row from the available dtts row
 			$('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row=' + row + '"]').remove();
-			
+			return this;
 		},
 
 
@@ -389,19 +472,19 @@ jQuery(document).ready(function($) {
 		 * @return {TKT_helper}      this object for chainability
 		 */
 		toggleTicketSelect: function(itm) {
-			var data = $(itm).data();
+			this.itemdata = $(itm).data();
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
-			var relateditm = data.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-ticketrow-' + data.ticketRow).find('li[data-datetime-row="' + data.ticketRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + data.datetimeRow).find('li[data-ticket-row="' + data.ticketRow + '"]');
+			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.ticketRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
 
 			if ( selecting ) {
 				$(itm).addClass('ticket-selected');
 				relateditm.addClass('ticket-selected');
 				//update selected tracking in various contexts
-				this.addTicket(data);
+				this.addTicket();
 			} else {
 				$(itm).removeClass('ticket-selected');
 				relateditm.removeClass('ticket-selected');
-				this.removeTicket(data);
+				this.removeTicket();
 			}
 			return this;
 		},
@@ -411,25 +494,23 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * wrapper for TKT_helper.changeTicket that makes sure we're ADDING a ticket to an item
-		 * @param {obj} data the data object from the clicked ticket/datetime.
 		 * @return {TKT_helper} this object for chainability
 		 */
-		addTicket: function(data) {
-			this.changeTicket(data.datetimeRow, data.ticketRow);
-			this.changeTicket(data.ticketRow, data.datetimeRow, 'ticket-datetime');
+		addTicket: function() {
+			this.changeTicket(this.itemdata.datetimeRow, this.itemdata.ticketRow);
+			this.changeTicket(this.itemdata.ticketRow, this.itemdata.datetimeRow, 'ticket-datetime');
 			return this;
 		},
 
 
 
 		/**
-		 * warpper for TKT_helper.changeTicket that makes sure we're REMOVING a ticket from an item
-		 * @param  {obj} data the data object from the clicked ticket/datetime
+		 * wrapper for TKT_helper.changeTicket that makes sure we're REMOVING a ticket from an item
 		 * @return {TKT_helper}      this object for chainability
 		 */
-		removeTicket: function(data) {
-			this.changeTicket(data.datetimeRow, data.ticketRow, 'datetime-ticket', true);
-			this.changeTicket(data.ticketRow, data.datetimeRow, 'ticket-datetime', true);
+		removeTicket: function() {
+			this.changeTicket(this.itemdata.datetimeRow, this.itemdata.ticketRow, 'datetime-ticket', true);
+			this.changeTicket(this.itemdata.ticketRow, this.itemdata.datetimeRow, 'ticket-datetime', true);
 			return this;
 		},
 
@@ -512,15 +593,14 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 * This toggles the display of the edit form for a dtt row depending on the context and row num given.
-		 * @param {string} context indicates whether we're toggling ticket-selector or DTT edit forms.
-		 * @param {int}    DTTrow  the DTT row we're toggling
+		 * This toggles the display of the edit form for a dtt row depending on the context and row num properties set.
+		 *
 		 */
-		DateTimeEditToggle: function( context, DTTrow ) {
-			if ( context == 'ticket' )
-				this.scrollTo($('#edit-event-datetime-tickets-' + DTTrow )).slideToggle( 500 );
-			else if ( context == 'datetime' )
-				this.scrollTo($('#edit-event-datetime-' + DTTrow )).slideToggle( 500 );
+		DateTimeEditToggle: function() {
+			if ( this.context == 'ticket' )
+				this.scrollTo($('#edit-event-datetime-tickets-' + this.dateTimeRow )).slideToggle( 500 );
+			else if ( this.context == 'datetime' )
+				this.scrollTo($('#edit-event-datetime-' + this.dateTimeRow )).slideToggle( 500 );
 			return this;
 		},
 
@@ -529,10 +609,9 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This toggles the display of the edit form for a Ticket row num given.
-		 * @param {int} ticketRow the ref to the ticket we're editing.
 		 */
-		TicketEditToggle: function( ticketRow ) {
-			this.scrollTo($('#edit-ticketrow-' + ticketRow)).slideToggle(500);
+		TicketEditToggle: function() {
+			this.scrollTo($('#edit-ticketrow-' + this.ticketRow)).slideToggle(500);
 		},
 
 
@@ -560,6 +639,8 @@ jQuery(document).ready(function($) {
 		 * @return {jQuery obj}    selector for chainability
 		 */
 		scrollTo: function( selector ) {
+			if ( typeof(selector) === 'undefined' )
+				selector = this.selector;
 			$("html,body").animate({
 				scrollTop: selector.offset().top
 			}, 2000);
@@ -609,12 +690,16 @@ jQuery(document).ready(function($) {
 		switch ( data.context ) {
 			case 'datetime' :
 			case 'ticket-datetime' :
-				TKT_helper.DateTimeEditToggle( 'datetime', data.datetimeRow );
+				TKT_helper.setcontext('datetime').setDatetimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
+
 			case 'datetime-ticket' :
 			case 'ticket' :
-				TKT_helper.TicketEditToggle( data.ticketRow );
+				TKT_helper.setticketRow(data.ticketRow).TicketEditToggle();
 				break;
+			
+			case 'short-ticket' :
+				TKT_helper.newTicketrow().TicketEditToggle();
 		}
 		return true;
 	});
