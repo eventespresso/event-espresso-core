@@ -538,6 +538,20 @@ jQuery(document).ready(function($) {
 			var rest = array.slice((to || from) +1 || array.length);
 			array.length = from < 0 ? array.length + from : from;
 			return array.push.apply(array, rest);
+		},
+
+
+
+
+		/**
+		 * handy helper method for scrolling to an item.
+		 * @param  {jQuery obj}the selector obj that we want to scroll to in the DOM
+		 * @return {TKT_helper}    this object for chainability
+		 */
+		scrollTo: function( selector ) {
+			$("html,body").animate({
+				scrollTop: selector.offset().top
+			}, 2000);
 		}
 
 
