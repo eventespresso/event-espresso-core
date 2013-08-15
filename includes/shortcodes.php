@@ -83,7 +83,7 @@ if (!function_exists('event_espresso_attendee_list')) {
 		$show_expired = $show_expired == 'false' ? " AND e.start_date >= '" . date('Y-m-d') . "' " : '';
 		$show_secondary = $show_secondary == 'false' ? " AND e.event_status != 'S' " : '';
 		$show_deleted = $show_deleted == 'false' ? " AND e.event_status != 'D' " : '';
-		$sort = $sort_by == 'last name' ? " ORDER BY lname " : '';
+		$sort = $sort_by == 'last name' ? " ORDER BY ATT_lname " : '';
 		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
 		if ($event_identifier != 'NULL') {
 			$type = 'event';
