@@ -50,5 +50,16 @@ $values = array(
 				</td>
 			</tr>
 
+			<tr>
+				<th>
+					<label for="display_venue_in_event_list">
+						<?php _e('Display Venue', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EE_Form_Fields::select_input('display_venue_in_event_list', $values, $display_venue, 'id="display_venue_in_event_list"'); ?>
+				</td>
+			</tr>
+
 		</tbody>
 	</table>
