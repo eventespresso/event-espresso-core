@@ -70,7 +70,7 @@ global $wpdb;
 	$a_sql = "SELECT * FROM " . $wpdb->prefix . "esp_attendee att 
 				INNER JOIN ".$wpdb->prefix."esp_registration reg ON att.ATT_ID = reg.ATT_ID
 					WHERE reg.EVT_ID='" . $event_id . "'";
-	$a_sql .= $paid_only == 'true'? " AND REG.STS_ID= 'RAP' ":'';
+	$a_sql .= $paid_only == 'true'? " AND reg.STS_ID= 'RAP' ":'';
 	$a_sql .= $sort;
 
 	$attendees = $wpdb->get_results($a_sql);
