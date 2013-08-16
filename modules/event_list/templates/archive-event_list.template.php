@@ -17,13 +17,15 @@
 	<div id="espresso-events-list-wrap-dv" class="container">
 	
 		<h1  id="event-list-h1"><?php _e( 'Upcoming Events', 'event_espresso' ); ?></h1>
-
+		
+		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
+		
 		<div id="espresso-events-list-dv" class="column columns" role="main">
 				
 		<?php if ( have_posts() ) { ?>
 			<?php while ( have_posts() ) { the_post(); ?>
 			
-			<article id="post-<?php echo $post->ID; ?>" <?php post_class(); ?>>
+			<article id="post-<?php echo $post->ID; ?>" <?php post_class('espresso-event-list-event'); ?>>
 			
 				<div class="event-datetimes">
 					<h4><?php espresso_event_date(); ?></h4>
@@ -41,7 +43,7 @@
 							$wrap_class = ' has-img';
 				?>
 					<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
-						<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>				
+						<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>		
 					</div>
 				<?php 
 						}			
@@ -60,12 +62,18 @@
 						<!-- .event-header -->
 						
 						<div class="event-content">
-							<?php the_excerpt(); ?> 
+							<?php 
+								if( espresso_display_full_description_in_event_list() ) {
+									the_content(); 
+								} else if ( espresso_display_excerpt_in_event_list() ) {
+									the_excerpt(); 
+								}							
+							?> 
 						</div>				
 						<!-- .event-content -->
 						
 						<footer class="event-meta clear">
-							<a class="ee-register-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
+							<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
 							<?php espresso_edit_event_link(); ?>
 						</footer>
 						<!-- .entry-meta -->
@@ -87,7 +95,7 @@
 				</header>
 
 				<div class="event-content">
-					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p>
+					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p><br/>
 					<?php get_search_form(); ?>
 				</div>
 				<!-- .event-content -->
