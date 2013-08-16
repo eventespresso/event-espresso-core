@@ -70,9 +70,55 @@ class EE_CPT_Event_Strategy {
 //		printr( $this->EE->REQ, '<br /><br />$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 //		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
+		add_filter( 'posts_fields', array( $this, 'posts_fields' ));
+		add_filter( 'posts_join',	array( $this, 'posts_join' ));
+		add_filter( 'posts_where',	array( $this, 'posts_where' ));
 		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
 	}
 
+
+
+	/**
+	 * 	posts_fields
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function posts_fields( $SQL ) {
+		// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
+		$SQL .= ', ' . EE_DATETIME_TABLE . '.* ' ;
+		return $SQL;
+	}
+
+
+
+	/**
+	 * 	posts_join
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function posts_join( $SQL ) {
+		global $wpdb;
+		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
+		$SQL .= ' LEFT JOIN ' . EE_DATETIME_TABLE . ' ON ( ' . EE_DATETIME_TABLE . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+		return $SQL;
+	}
+
+
+
+	/**
+	 * 	posts_where
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function posts_where( $SQL ) {
+		global $wpdb;
+		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
+		$SQL .= ' AND ' . EE_DATETIME_TABLE . '.DTT_primary = 1 ';
+		return $SQL;
+	}
 
 
 
