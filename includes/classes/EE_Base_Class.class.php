@@ -385,13 +385,15 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function clear_cache($relationName, $object_to_remove_from_cache = null){
-		$object_to_remove_from_cache = $this->ensure_related_thing_is_model_obj($object_to_remove_from_cache, $relationName);
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
 		if( ! $relationship_to_model){
 			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot clear that cache",'event_espresso'),$relationName,get_class($this)));
 		}
-		if($object_to_remove_from_cache !== null && ! ($object_to_remove_from_cache instanceof EE_Base_Class)){
-			throw new EE_Error(sprintf(__("You have requested to remove the cached relationship to %s, but have not provided a model object. Instead you provided a %s",'event_espresso'),$relationName,get_class($object_to_remove_from_cache)));
+		if($object_to_remove_from_cache !== null){
+			$object_to_remove_from_cache = $this->ensure_related_thing_is_model_obj($object_to_remove_from_cache, $relationName);
+			if( ! ($object_to_remove_from_cache instanceof EE_Base_Class)){
+				throw new EE_Error(sprintf(__("You have requested to remove the cached relationship to %s, but have not provided a model object. Instead you provided a %s",'event_espresso'),$relationName,get_class($object_to_remove_from_cache)));
+			}
 		}
 		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
 		if($relationship_to_model instanceof EE_Belongs_To_Relation){
@@ -936,6 +938,12 @@ class EE_Base_Class{
 			}
 		}
 		return $related_model_object;
+	}
+	
+	public function delete_related($relationName,$query_params = array()){
+		$count =  $this->get_model()->delete_related($this, $relationName, $query_params);
+		$this->clear_cache($relationName);
+		return $count;
 	}
 
 

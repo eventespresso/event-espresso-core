@@ -522,7 +522,9 @@ abstract class EEM_Base extends EE_Base{
 		
 	}
 	/**
-	 * 
+	 * Deletes the model objects that meet the query params. Note: this method is overridden
+	 * in EEM_Soft_Delete_Base so that soft-deleted model objects are instead only flagged
+	 * as archived, not actually deleted 
 	 * @param array $query_params very much like EEMerimental_Base::get_all's $query_params
 	 * @return int how many rows got deleted
 	 */
@@ -552,18 +554,39 @@ abstract class EEM_Base extends EE_Base{
 		return $rows_deleted;//how many supposedly got updated
 	}
 	
+	
+	
 	/**
 	 * Checks all the relations that throw error messages when there are blcoking related objects
 	 * for related model objects. If there are any related model objects on those relations, 
 	 * adds an EE_Error, and return true
-	 * @param EE_Base_CLass|int $this_model_obj_or_id
+	 * @param EE_Base_Class|int $this_model_obj_or_id
+	 * @param EE_Base_Class $ignore_this_model_obj a model object like 'EE_Event', or 'EE_Term_Taxonomy', which should be ignored when
+	 * determining whether there are related model objects which block this model object's deletion. Useful
+	 * if you know A is related to B and are considering deleting A, but want to see if A has any other objects 
+	 * blocking its deletion before removing the relation between A and B
 	 * @return boolean
 	 */
-	public function delete_is_blocked_by_related_models($this_model_obj_or_id){
+	public function delete_is_blocked_by_related_models($this_model_obj_or_id, $ignore_this_model_obj = null){
+		//first, if $ignore_this_model_obj was supplied, get its model
+		if($ignore_this_model_obj && $ignore_this_model_obj instanceof EE_Base_Class){
+			$ignored_model = $ignore_this_model_obj->get_model();
+		}else{
+			$ignored_model = null;
+		}
+		//now check all the relations of $this_model_obj_or_id and see if there
+		//are any related model objects blocking it?
 		$is_blocked = false;
 		foreach($this->_model_relations as $relation_name => $relation_obj){
-			if($relation_obj->block_delete_if_related_models_exist()){
-				$related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id);
+			if( $relation_obj->block_delete_if_related_models_exist()){
+				//if $ignore_this_model_obj was supplied, then for the query
+				//on that model needs to be told to ignore $ignore_this_model_obj
+				if($ignored_model && $relation_name == $ignored_model->get_this_model_name()){
+					$related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id,array(
+					array($ignored_model->get_primary_key_field()->get_name() => array('!=',$ignore_this_model_obj->ID()))));
+				}else{
+					$related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id);
+				}
 				if($related_model_objects){
 					EE_Error::add_error($relation_obj->get_deletion_error_message(), __FILE__, __FUNCTION__, __LINE__);
 					$is_blocked = true;
@@ -778,6 +801,12 @@ abstract class EEM_Base extends EE_Base{
 		$model_obj = $this->ensure_is_obj($id_or_obj);
 		$relation_settings = $this->related_settings_for($model_name);
 		return $relation_settings->get_all_related($model_obj,$query_params);
+	}
+	
+	public function delete_related($id_or_obj,$model_name, $query_params = array()){
+		$model_obj = $this->ensure_is_obj($id_or_obj);
+		$relation_settings = $this->related_settings_for($model_name);
+		return $relation_settings->delete_all_related($model_obj,$query_params);
 	}
 	
 	/**
@@ -2045,6 +2074,26 @@ abstract class EEM_Base extends EE_Base{
 			$model_object->save();
 		}
 		return $model_object;	
+	}
+	/**
+	 * Similar to ensure_is_obj(), this method makes sure $base_class_obj_or_id
+	 * is a value of the this model's primary key. If it's an EE_Base_Class child,
+	 * returns it ID.
+	 * @param EE_Base_Class|int|string $base_class_obj_or_id
+	 * @return int|string depending on the type of this model object's ID
+	 * @throws EE_Error
+	 */
+	public function ensure_is_ID($base_class_obj_or_id){
+		if(is_a($base_class_obj_or_id,$this->_get_class_name())){
+			$id = $base_class_obj_or_id->ID();
+		}elseif(is_int($base_class_obj_or_id)){//assume i$this->get_one_by_ID($base_class_obj_or_id);t's an ID
+			$id = $base_class_obj_or_id;
+		}elseif(is_string($base_class_obj_or_id) && intval($base_class_obj_or_id)){//assume its a string representation of the object
+			$id = $base_class_obj_or_id;
+		}else{
+			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full valeu is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
+		}
+		return $id;	
 	}
 	
 	/**

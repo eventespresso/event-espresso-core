@@ -133,6 +133,27 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
+//		$r = EEM_Registration::instance()->get_one();
+		
+//		$related_answers = $r->answers();
+//		echo 'echodump of $related_answers';
+//		var_dump($related_answers);
+//		$r->delete_related('Answer');
+//		$related_answers = $r->answers();
+//		echo '<hr><hr>echodump of $related_answers';
+//		var_dump($related_answers);
+		
+		/* @var $r EE_Registration */
+//		$qs = EEM_Question::instance()->get_all();
+//		foreach($qs as $q){
+//			/* @var $q EE_Question */
+//			$ans1 = EE_Answer::new_instance(array('QST_ID'=>$q->ID(),'ANS_value'=>time(),'REG_ID'=>$r->ID()));
+//			$ans1->save();
+//		}
+//		$answers_for_r = $r->answers();
+//		echo 'echodump of $answers_for_r';
+//		var_dump($answers_for_r);
+		
 		// shut 'er down down for maintenance ?
 		if ( EE_Maintenance_Mode::level() ) {
 			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
