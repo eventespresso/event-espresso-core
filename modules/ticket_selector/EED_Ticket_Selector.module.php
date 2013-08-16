@@ -73,7 +73,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	void	
 	*/
-	public function run( $event = FALSE, $added_by_admin = FALSE ) {	
+	public function run(  $WP, $event = FALSE, $added_by_admin = FALSE ) {	
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	
 		if ( ! $event ) {

@@ -94,15 +94,18 @@ class EE_Base_Class{
 		$className=get_class($this);
 		do_action("AHEE__{$className}__construct",$this,$fieldValues);
 		$model=$this->get_model();
-		$model_fields = $model->field_settings(false);
+		$model_fields = $model->field_settings( FALSE );
+		// ensure $fieldValues is an array
+		$fieldValues = is_array( $fieldValues ) ? $fieldValues : array( $fieldValues );
+		// printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify client code hasnt passed any invalid field names
 		foreach($fieldValues as $field_name=> $field_value){
 			if( ! array_key_exists($field_name,$model_fields)){
 				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
 			}
 		}
-		
-		
+		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 		//if db model is instantiatiating
 		if( $bydb ){
 			//client code has indicated these field values are from teh database
@@ -116,25 +119,50 @@ class EE_Base_Class{
 				$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null ,true);
 			}
 		}
-		//verify we have all the attributes required in teh model
-		foreach($model->field_settings() as $fieldName=>$field_obj){
-			if( ! $field_obj->is_db_only_field() && ! property_exists($this,$this->_get_private_attribute_name($fieldName))){
-				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
-					attribute on %s. Please add $%s to %s','event_espresso'),
-						$fieldName,get_class($model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
+		
+		try {
+			
+			//verify we have all the attributes required in teh model
+			foreach($model->field_settings() as $fieldName=>$field_obj){
+				if( ! $field_obj->is_db_only_field() && ! property_exists($this,$this->_get_private_attribute_name($fieldName))){
+					throw new EE_Error( 
+						sprintf(
+							__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add $%s to %s','event_espresso'),
+							$fieldName,
+							get_class($model),
+							get_class($this),
+							$this->_get_private_attribute_name($fieldName),
+							get_class($this))
+					);
+				}
 			}
-		}
-//		//verify we have all the model relations
-		foreach($model->relation_settings() as $relationName=>$relationSettings){
-			if(!property_exists($this,$this->_get_private_attribute_name($relationName))){
-				throw new EE_Error(sprintf(__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding
-					attribute on %s. Please add protected $%s to %s','event_espresso'),
-						$relationName,get_class($model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
+			// verify we have all the model relations
+			foreach($model->relation_settings() as $relationName=>$relationSettings){
+				if( ! property_exists( $this, $this->_get_private_attribute_name( $relationName ))) {
+					throw new EE_Error(
+						sprintf(
+							__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add protected $%s to %s','event_espresso'),
+							$relationName,
+							get_class($model),
+							get_class($this),
+							$this->_get_private_attribute_name($relationName),
+							get_class($this)
+						)
+					);
+				}
 			}
+			
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+			echo EE_Error::get_notices();
 		}
+		
+		
+
 		$this->_timezone = $timezone;
 		//remember what values were passed to this constructor
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
+
 	}
 
 
@@ -430,6 +458,7 @@ class EE_Base_Class{
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		$field_obj = $this->get_model()->field_settings_for($field_name);
 		$this->$privateAttributeName = $field_obj->prepare_for_set_from_db($field_value_from_db);
+		//echo '<h4>' . $privateAttributeName . ' : ' . $this->$privateAttributeName . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	}
 	
 	

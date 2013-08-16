@@ -254,66 +254,101 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
 	 * @param array $query_params array with the following array key indexes:
+	 * 
 	 *		key			|					value
 	 * -------------------------------------------------------------------------
-	 *		0 (where)	|	an array of key-value pairs in its most basic form. Eg array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob'
-	 *					|	(which becomes SQL "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
+	 *		0 (where)	|	an array of key-value pairs in its most basic form. 
+	 *					|	eg: array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob')
+	 *					|	becomes 
+	 *					|	SQL >> "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
 	 *					|	however, to change the operator (from the default of '='), change the value to an numerically-indexed array, where the
 	 *					|	first item in the list is the operator. 
-	 *					|	eg array( 'QST_display_text' => array('LIKE','%bob%'), 'QST_ID' => array('<',34), 'QST_wp_user' => array('in',array(1,2,7,23))) becomes
-	 *					|	SQL "...WHERE QST_display_text LIKE '%bob%' AND QST_ID < 34 AND QST_wp_user IN (1,2,7,23)...".
+	 *					|	eg: array( 'QST_display_text' => array('LIKE','%bob%'), 'QST_ID' => array('<',34), 'QST_wp_user' => array('in',array(1,2,7,23))) 
+	 *					|	becomes
+	 *					|	SQL >> "...WHERE QST_display_text LIKE '%bob%' AND QST_ID < 34 AND QST_wp_user IN (1,2,7,23)...".
+	 * 
 	 *					|	Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN (followed by numeric-indexed array), NOT IN (dido), others?
-	 *					|	Also, by default all the where conditions are AND'd together. To override this, add an array key 'OR' (or 'AND') and the
-	 *					|	array to be OR'd together. Eg array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912)), which becomes SQL 
-	 *					|	"...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". 
-	 *					|	Also, to negate an entire set of
-	 *					|	conditions, user 'NOT' as an array key. Eg array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23) which becomes SQL to "...where ! (TXN_total =50 AND TXN_paid =23) 
+ 	 * 
+	 *					|	Also, by default all the where conditions are AND'd together. 
+	 *					|	To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together. 
+	 *					|	eg: array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912))
+	 *					|	becomes 
+	 *					|	SQL >> "...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". 
+	 * 
+	 *					|	Also, to negate an entire set of conditions, use 'NOT' as an array key. 
+	 *					|	eg: array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)
+	 *					|	becomes 
+	 *					|	SQL >> "...where ! (TXN_total =50 AND TXN_paid =23) 
+	 * 
 	 *					|	They can be nested indefinetely. 
-	 *					|	eg array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN)))) which 
-	 *					|	becomes SQL: "...WHERE TXN_total = 23 OR ! (TXN_timestmap = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
-	 *					|	GOTCHA: because this is an array, array keys must be unique, making it impossible to place two or more where conditions
-	 *					|	applying to the same field. Eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
-	 *					|	as PHP enforces that the array keys must be unique, thus removing the first two array entries
-	 *					|	with key 'PAY_timestamp'. (producign SQL "PAY_timestamp !=  4234232", ignoring the first two PAY_timestmap conditions).
+	 *					|	eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN))))
+	 *					|	becomes 
+	 *					|	SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestmap = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
+	 * 
+	 *					|	GOTCHA: 
+	 *					|	because this is an array, array keys must be unique, making it impossible to place two or more where conditions applying to the same field. 
+	 *					|	eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
+	 *					|	as PHP enforces that the array keys must be unique, thus removing the first two array entries with key 'PAY_timestamp'.
+	 *					|	becomes 
+	 *					|	SQL >> "PAY_timestamp !=  4234232", ignoring the first two PAY_timestmap conditions).
+	 * 
 	 *					|	To overcome this, you can add '*' characters to the end of the field's name.
 	 *					|	These will be removed when generating the SQL string, but allow for the array keys to be unique.
-	 *					|	Eg, you could rewrite the previous query as:
+	 *					|	eg: you could rewrite the previous query as:
 	 *					|	array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*'=>array('<',$end_date),'PAY_timestamp**'=>array('!=',$special_date))
-	 *					|	which will correctly generate SQL like "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
+	 *					|	which correctlybecomes 
+	 *					|	SQL >> "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
+	 * 
 	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become 
 	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
-	 *	 on_join_limit	|	allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins. Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).	
+	 * 
+	 *	 on_join_limit	|	allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins. 
+	 *					|	Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).	
+	 * 
 	 *		order_by	|	name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
 	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
 	 *					|	Like the 'where' conditions, these fields can be on related models. 
 	 *					|	Eg 'order_by'=>array('Registration.Tranaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
+	 * 
 	 *		order		|	If 'order_by' is used and its value is a string (NOT an array), then 'order' specifies whether to order the field specified in 'order_by' in ascending or
 	 *					|	descending order. Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you want to order by the primary key.
 	 *					|	Eg, EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join with the Datetime model's table(s) and order by its field DTT_EVT_start)
 	 *					|	or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
+	 * 
 	 *		group_by	|	name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
+	 * 
 	 *		having		|	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
+	 * 
 	 *		force_join	|	forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
 	 *					|	array('Attendee','Payment','Datetime'). You may join with transient models using period, eg "Registration.Transaction.Payment".
 	 *					|	You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model 
 	 *					|	(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
 	 *					|	to avoid future queries
+	 * 
 	 *default_where_conditions| can be set to 'none','other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
 	 *					|	if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
 	 *					|	set it to 'other_models_only'. If you want to use all default where conditions (default), set to 'all'.
-	 * Some full examples:
-	 * get 10 transactions which have Scottish attendees:
-	 * EEM_Transaction::instance()->get_all(array(
-	 *		array(
-	 *			'Registration.Attendee.ATT_fname'=>('like','Mc%'),
-	 *		'limit'=>10,
-	 *		'group_by'=>'TXN_ID'));
-	 * get all the answers to the question titled "shirt size" for event iwth id 12, ordered by their answer
-	 * EEM_Answer::instance()->get_all(array(
-	 *		array(
-	 *			'Question.QST_display_text'=>'shirt size',
-	 *			'Registration.Event.EVT_ID'=>12),
-	 *		'order_by'=>array('ANS_value'=>'ASC')
+	 * 
+	 * Some full examples: 
+	 * 
+	 * 		get 10 transactions which have Scottish attendees:
+	 * 
+	 * 		EEM_Transaction::instance()->get_all( array(
+	 *			array(
+	 *				'Registration.Attendee.ATT_fname'=>('like','Mc%')
+	 * 			),
+	 *			'limit'=>10,
+	 *			'group_by'=>'TXN_ID'
+	 * 		)); 
+	 * 
+	 * 		get all the answers to the question titled "shirt size" for event iwth id 12, ordered by their answer
+	 * 		
+	 * 		EEM_Answer::instance()->get_all(array(
+	 *			array(
+	 *				'Question.QST_display_text'=>'shirt size',
+	 *				'Registration.Event.EVT_ID'=>12
+	 * 			),
+	 *			'order_by'=>array('ANS_value'=>'ASC')
 	 *		));
 	 * 
 	 *	@param	array $query_params		
@@ -1878,7 +1913,6 @@ abstract class EEM_Base extends EE_Base{
 	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/	
 	protected function _create_objects( $rows = array() ) {
-		$this->_include_php_class();
 
 		$array_of_objects=array();
 		if(empty($rows)){
@@ -1929,7 +1963,6 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class single EE_Base_Class object with default values for the properties.
 	 */
 	public function create_default_object() {
-		$this->_include_php_class();
 
 		$this_model_fields_and_values = array();
 		//setup the row using default values;
@@ -1938,31 +1971,12 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		$className = $this->_get_class_name();
-		$classInstance = call_user_func_array( array( $className, 'new_instance' ), array( $this_model_fields_and_values ) );
+		$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_and_values ));
 
 		return $classInstance;
 	}
 
 
-
-	/**
-	 * takes care of including the PHP file with the corresponding .class file to this model.
-	 */
-	private function _include_php_class(){
-		//$className=$this->_get_class_name();
-		//$filepath = $className.".class.php";
-		EE_Registry::instance()->load_model( $this->get_this_model_name() );
-		/*(if(!class_exists($className)){
-			if(file_exists($filepath)){
-				require_once($filepath);
-			}else{
-				throw new EE_Error(sprintf(__('There is no file titled %s, nor class %s. They must exist in order for %s to work','event_espresso'),$filepath,$className, get_class($this)));
-			}
-		}
-		if(!class_exists($className)){
-			throw new EE_Error(sprintf(__('There is class with name %s contained in file %s.class.php. You must create one','event_espresso'),$className,$className));
-		}*/
-	}
 	
 	/**
 	 * 
@@ -1995,10 +2009,12 @@ abstract class EEM_Base extends EE_Base{
 		if( ! $this_model_fields_n_values){
 			return null;
 		}
+		
+		//printr( $this_model_fields_n_values, '$this_model_fields_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				
-		//get the required info to instantiate the class whcih relates to this model.
+		//get the required info to instantiate the class which relates to this model.
 		$className=$this->_get_class_name();
-		$classInstance = EE_REGISTRY::instance()->load_class($this->get_this_model_name(), array( $this_model_fields_n_values, $this->_timezone ), TRUE );
+		$classInstance = EE_REGISTRY::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
 
 		//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
 		$this->set_timezone( $classInstance->get_timezone() );
