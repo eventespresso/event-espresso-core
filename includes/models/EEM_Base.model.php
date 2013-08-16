@@ -1887,7 +1887,6 @@ abstract class EEM_Base extends EE_Base{
 	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/	
 	protected function _create_objects( $rows = array() ) {
-		$this->_include_php_class();
 
 		$array_of_objects=array();
 		if(empty($rows)){
