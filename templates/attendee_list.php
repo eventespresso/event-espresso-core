@@ -69,11 +69,14 @@ if (!function_exists('event_espresso_show_attendess')) {
 global $wpdb;
 	$a_sql = "SELECT * FROM " . $wpdb->prefix . "esp_attendee att 
 				INNER JOIN ".$wpdb->prefix."esp_registration reg ON att.ATT_ID = reg.ATT_ID
-				INNER JOIN ".$wpdb->prefix."esp_transaction txn ON reg.TXN_ID = txn.TXN_ID
 					WHERE reg.EVT_ID='" . $event_id . "'";
-	$a_sql .= $paid_only == 'true'? " AND txn.STS_ID IN ('TCM','TOP') ":'';
+	$a_sql .= $paid_only == 'true'? " AND REG.STS_ID= 'RAP' ":'';
 	$a_sql .= $sort;
-	//echo $a_sql;
+
+	echo 'echodump of $a_sql';
+	var_dump($a_sql);
+	echo 'echodump of $paid_only';
+	var_dump($paid_only);
 	$attendees = $wpdb->get_results($a_sql);
 	foreach ($attendees as $attendee){
 		$id = $attendee->ATT_ID;
