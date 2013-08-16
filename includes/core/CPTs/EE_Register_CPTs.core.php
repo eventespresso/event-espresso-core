@@ -96,19 +96,22 @@ class EE_Register_CPTs {
 				'singular_name' => __("Event Category", "event_espresso"),
 				'plural_name' => __("Event Categories", "event_espresso"),
 				'args' => array(
-					'public'=>true
+					'public'=>true,
+					'rewrite' => array( 'slug' => __( 'event-category', 'event_espresso' ))
 				)),
 			'espresso_venue_categories' => array(
 				'singular_name' => __("Venue Category", "event_espresso"),
 				'plural_name' => __("Venue Categories", "event_espresso"),
 				'args' => array(
-					'public'=>true
+					'public'=>true,
+					'rewrite' => array( 'slug' => __( 'venue-category', 'event_espresso' ))
 				)),
 			'espresso_event_type' => array(
 				'singular_name' => __("Event Type", "event_espresso"),
 				'plural_name' => __("Event Types", "event_espresso"),
 				'args' => array(
 					'public'=>true,
+					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
 					'show_ui'=>false,
 					'hierarchical'=>false
 				))
