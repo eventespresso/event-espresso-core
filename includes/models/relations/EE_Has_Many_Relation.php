@@ -47,7 +47,8 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base{
 		 return $other_model_obj;
 	 }
 	/**
-	 * Sets the other model object's foreign key to its default, instead of pointing to this model object
+	 * Sets the other model object's foreign key to its default, instead of pointing to this model object.
+	 * If $other_obj_or_id doesn't have any other relations, this function is essentially orphaning it
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
 	 * @return void
