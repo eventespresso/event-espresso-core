@@ -97,7 +97,7 @@ final class EE_Front_Controller {
 			require_once( EE_CORE . 'EE_System.core.php' );
 			$this->EE = EE_System::instance()->get_registry();
 			// create static copy of EE for modules and shortcodes to access during their initial phases
-			 self::$registry = $this->EE;
+			 //self::$registry = $this->EE;
 		} else {
 			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
 		}
@@ -112,7 +112,8 @@ final class EE_Front_Controller {
 	 * 		@return 		void
 	 */
 	public static function get_static_registry() {
-		return self::$registry;
+		return $this->EE;
+//		return self::$registry;
 	}
 
 
@@ -138,6 +139,10 @@ final class EE_Front_Controller {
 		} else {
 			// load other resources and begin to actually run shortcodes and modules
 			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
+			// process any content shortcodes
+			add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
+			// process request with module factory
+			add_action( 'parse_request', array( $this, '_process_request' ), 5 );
 			// before headers sent
 			add_action( 'wp', array( $this, 'wp' ), 5 );
 			// load css and js
@@ -226,25 +231,9 @@ final class EE_Front_Controller {
 
 
 
-	/*********************************************** 		WP HOOK		 ***********************************************/
+	/*********************************************** 		PARSE_REQUEST HOOK		 ***********************************************/
 
 
-
-
-
-
-	/**
-	 * 	wp - basically last chance to do stuff before headers sent
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp() {
-		// process any content shortcodes
-		$this->_initialize_shortcodes();
-		// process request with module factory
-		$this->_process_request();		
-	}
 
 
 
@@ -254,7 +243,7 @@ final class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	private function _initialize_shortcodes() {
+	public function _initialize_shortcodes( $WP ) {
 		// make sure post_name is set on REQ
 		if ( $this->EE->REQ->is_set( 'post_name' )) {
 			// grab post_name from request
@@ -317,10 +306,12 @@ final class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	private function _process_request() {
+	public function _process_request( $WP ) {
+		//printr( $WP, '$WP  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// load module request router
 		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
-		while ( $route = $Module_Request_Router->get_route() ) {
+		while ( $route = $Module_Request_Router->get_route( $WP ) ) {
 //			echo '<h4>$route : ' . $route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			// determine module and method for route
 			$module = $Module_Request_Router->resolve_route( $route );
@@ -338,6 +329,28 @@ final class EE_Front_Controller {
 	}
 
 
+
+
+
+	/*********************************************** 		WP HOOK		 ***********************************************/
+
+
+
+
+
+
+	/**
+	 * 	wp - basically last chance to do stuff before headers sent
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function wp() {
+		// process any content shortcodes
+//		$this->_initialize_shortcodes();
+		// process request with module factory
+//		$this->_process_request();		
+	}
 
 
 
