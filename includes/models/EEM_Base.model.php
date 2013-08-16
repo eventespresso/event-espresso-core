@@ -768,10 +768,36 @@ abstract class EEM_Base extends EE_Base{
 		return $relation_settings->get_all_related($model_obj,$query_params);
 	}
 	
+	/**
+	 * Deletes all the model objects across the relation indicated by $model_name
+	 * which are related to $id_or_obj which meet the criteria set in $query_params.
+	 * However, if the model objects can't be deleted because of blocking related model objects, then
+	 * they aren't deleted. (Unless the thing that would have been deleted can be soft-deleted, that still happens).
+	 * @param EE_Base_Class|int|string $id_or_obj
+	 * @param string $model_name
+	 * @param array $query_params
+	 * @return int how many deleted
+	 */
 	public function delete_related($id_or_obj,$model_name, $query_params = array()){
 		$model_obj = $this->ensure_is_obj($id_or_obj);
 		$relation_settings = $this->related_settings_for($model_name);
 		return $relation_settings->delete_all_related($model_obj,$query_params);
+	}
+	
+	/**
+	 * Hard deletes all the model objects across the relation indicated by $model_name
+	 * which are related to $id_or_obj which meet the criteria set in $query_params. If
+	 * the model objects can't be hard deleted because of blocking related model objects,
+	 * just does a soft-delete on them instead.
+	 * @param EE_Base_Class|int|string $id_or_obj
+	 * @param string $model_name
+	 * @param array $query_params
+	 * @return int how many deleted
+	 */
+	public function delete_permanently_related($id_or_obj,$model_name, $query_params = array()){
+		$model_obj = $this->ensure_is_obj($id_or_obj);
+		$relation_settings = $this->related_settings_for($model_name);
+		return $relation_settings->delete_permanently_all_related($model_obj,$query_params);
 	}
 	
 	/**

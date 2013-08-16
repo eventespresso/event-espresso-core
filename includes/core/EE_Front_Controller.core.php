@@ -132,6 +132,12 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
+		
+//		$qg = EEM_Question_Group::instance()->get_one();
+//		echo 'echodump of $qg';
+//		var_dump($qg);
+//		$qs = $qg->questions();
+//		$qg->delete_permanently_related('Question', array(array('QST_ID'=>2)));
 //		$r = EEM_Registration::instance()->get_one();
 		
 //		$related_answers = $r->answers();
