@@ -93,7 +93,7 @@ class EEM_Datetime extends EEM_Base {
 		}
 
 		//set timezone if we have in incoming string
-		if ( !empty( $timezone ) )
+//		if ( !empty( $timezone ) )
 			self::$_instance->set_timezone( $timezone );
 		
 		// Espresso_model object
