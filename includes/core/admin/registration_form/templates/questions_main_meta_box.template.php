@@ -21,10 +21,10 @@ $fields = $question->get_fields_settings();
 				if( in_array( $fieldName, array( 'QST_ID', 'QST_system','QST_wp_user','QST_deleted', 'QST_order' ))) {
 					continue;
 				}
-
+			?>
 			<tr>
 				<th>
-					<label for="<?php echo $fieldName?>"><?php echo $settings->get_nicename();?></label>
+					<label for="<?php echo $fieldName; ?>"><?php echo $settings->get_nicename();?></label>
 				</th>
 				<td>
 					<input type="text" class="regular-text" id="QST_display_text" name="QST_display_text" value="<?php echo $question->display_text()?>"/>
