@@ -73,10 +73,6 @@ global $wpdb;
 	$a_sql .= $paid_only == 'true'? " AND REG.STS_ID= 'RAP' ":'';
 	$a_sql .= $sort;
 
-	echo 'echodump of $a_sql';
-	var_dump($a_sql);
-	echo 'echodump of $paid_only';
-	var_dump($paid_only);
 	$attendees = $wpdb->get_results($a_sql);
 	foreach ($attendees as $attendee){
 		$id = $attendee->ATT_ID;

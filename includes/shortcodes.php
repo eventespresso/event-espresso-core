@@ -79,8 +79,6 @@ add_shortcode('EVENT_ESPRESSO_CATEGORY', 'show_event_category');
  */
 if (!function_exists('event_espresso_attendee_list')) {
 	function event_espresso_attendee_list($event_identifier = 'NULL', $category_identifier = 'NULL', $show_gravatar = 'false', $show_expired = 'false', $show_secondary = 'false', $show_deleted = 'false', $show_recurrence = 'true', $limit = '0', $paid_only = 'false', $sort_by = 'last name') {
-		echo 'echodump of $paid_only';
-		var_dump($paid_only);
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		$show_expired = $show_expired == 'false' ? " AND e.start_date >= '" . date('Y-m-d') . "' " : '';
 		$show_secondary = $show_secondary == 'false' ? " AND e.event_status != 'S' " : '';
@@ -155,8 +153,6 @@ if (!function_exists('event_espresso_list_attendees')) {
 		$show_secondary = "{$show_secondary}";
 		$show_deleted = "{$show_deleted}";
 		$paid_only = "{$paid_only}";
-		echo 'echodump of $paid_only';
-		var_dump($paid_only);
 		ob_start();
 		event_espresso_attendee_list($event_identifier, $category_identifier, $show_gravatar, $show_expired, $show_secondary, $show_deleted, $limit,$show_recurrence, $paid_only);
 		$buffer = ob_get_contents();
