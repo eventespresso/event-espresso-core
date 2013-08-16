@@ -50,7 +50,7 @@ class EED_Ical  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function run() {}
+	public function run( $WP ) {}
 
 
 
