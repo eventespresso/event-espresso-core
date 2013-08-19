@@ -94,15 +94,18 @@ class EE_Base_Class{
 		$className=get_class($this);
 		do_action("AHEE__{$className}__construct",$this,$fieldValues);
 		$model=$this->get_model();
-		$model_fields = $model->field_settings(false);
+		$model_fields = $model->field_settings( FALSE );
+		// ensure $fieldValues is an array
+		$fieldValues = is_array( $fieldValues ) ? $fieldValues : array( $fieldValues );
+		// printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify client code hasnt passed any invalid field names
 		foreach($fieldValues as $field_name=> $field_value){
 			if( ! array_key_exists($field_name,$model_fields)){
 				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
 			}
 		}
-		
-		
+		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 		//if db model is instantiatiating
 		if( $bydb ){
 			//client code has indicated these field values are from teh database
@@ -116,25 +119,50 @@ class EE_Base_Class{
 				$this->set($fieldName,isset($fieldValues[$fieldName]) ? $fieldValues[$fieldName] : null ,true);
 			}
 		}
-		//verify we have all the attributes required in teh model
-		foreach($model->field_settings() as $fieldName=>$field_obj){
-			if( ! $field_obj->is_db_only_field() && ! property_exists($this,$this->_get_private_attribute_name($fieldName))){
-				throw new EE_Error(sprintf(__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding
-					attribute on %s. Please add $%s to %s','event_espresso'),
-						$fieldName,get_class($model),get_class($this),$this->_get_private_attribute_name($fieldName),get_class($this)));
+		
+		try {
+			
+			//verify we have all the attributes required in teh model
+			foreach($model->field_settings() as $fieldName=>$field_obj){
+				if( ! $field_obj->is_db_only_field() && ! property_exists($this,$this->_get_private_attribute_name($fieldName))){
+					throw new EE_Error( 
+						sprintf(
+							__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add $%s to %s','event_espresso'),
+							$fieldName,
+							get_class($model),
+							get_class($this),
+							$this->_get_private_attribute_name($fieldName),
+							get_class($this))
+					);
+				}
 			}
-		}
-//		//verify we have all the model relations
-		foreach($model->relation_settings() as $relationName=>$relationSettings){
-			if(!property_exists($this,$this->_get_private_attribute_name($relationName))){
-				throw new EE_Error(sprintf(__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding
-					attribute on %s. Please add protected $%s to %s','event_espresso'),
-						$relationName,get_class($model),get_class($this),$this->_get_private_attribute_name($relationName),get_class($this)));
+			// verify we have all the model relations
+			foreach($model->relation_settings() as $relationName=>$relationSettings){
+				if( ! property_exists( $this, $this->_get_private_attribute_name( $relationName ))) {
+					throw new EE_Error(
+						sprintf(
+							__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add protected $%s to %s','event_espresso'),
+							$relationName,
+							get_class($model),
+							get_class($this),
+							$this->_get_private_attribute_name($relationName),
+							get_class($this)
+						)
+					);
+				}
 			}
+			
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+			echo EE_Error::get_notices();
 		}
+		
+		
+
 		$this->_timezone = $timezone;
 		//remember what values were passed to this constructor
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
+
 	}
 
 
@@ -358,13 +386,15 @@ class EE_Base_Class{
 	 * @return boolean success
 	 */
 	public function clear_cache($relationName, $object_to_remove_from_cache = null, $clear_all = FALSE){
-		$object_to_remove_from_cache = $this->ensure_related_thing_is_model_obj($object_to_remove_from_cache, $relationName);
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
 		if( ! $relationship_to_model){
 			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot clear that cache",'event_espresso'),$relationName,get_class($this)));
 		}
-		if($object_to_remove_from_cache !== null && ! ($object_to_remove_from_cache instanceof EE_Base_Class)){
-			throw new EE_Error(sprintf(__("You have requested to remove the cached relationship to %s, but have not provided a model object. Instead you provided a %s",'event_espresso'),$relationName,get_class($object_to_remove_from_cache)));
+		if($object_to_remove_from_cache !== null){
+			$object_to_remove_from_cache = $this->ensure_related_thing_is_model_obj($object_to_remove_from_cache, $relationName);
+			if( ! ($object_to_remove_from_cache instanceof EE_Base_Class)){
+				throw new EE_Error(sprintf(__("You have requested to remove the cached relationship to %s, but have not provided a model object. Instead you provided a %s",'event_espresso'),$relationName,get_class($object_to_remove_from_cache)));
+			}
 		}
 		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
 		if($relationship_to_model instanceof EE_Belongs_To_Relation || $clear_all ){
@@ -429,6 +459,7 @@ class EE_Base_Class{
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		$field_obj = $this->get_model()->field_settings_for($field_name);
 		$this->$privateAttributeName = $field_obj->prepare_for_set_from_db($field_value_from_db);
+		//echo '<h4>' . $privateAttributeName . ' : ' . $this->$privateAttributeName . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	}
 	
 	
@@ -911,7 +942,42 @@ class EE_Base_Class{
 		}
 		return $related_model_object;
 	}
+	
+	
+	/**
+	 * Does a delete on all related objects of type $relationName and removes
+	 * the current model object's relation to them. If they can't be deleted (because 
+	 * of blocking related model objects) does nothing. If the related model obejcts are
+	 * soft-deletable, they will be soft-deleted regardless of related blocking model objects
+	 * @param string $relationName
+	 * @param array $query_params like EEM_Base::get_all's 
+	 * @return int how many deleted
+	 */
+	public function delete_related($relationName,$query_params = array()){
+		$count =  $this->get_model()->delete_related($this, $relationName, $query_params);
+		$this->clear_cache($relationName);
+		return $count;
+	}
+	
+	/**
+	 * Does a hard delete (ie, removes teh DB row) on all related objects of type $relationName and removes
+	 * the current model object's relation to them. If they can't be deleted (because 
+	 * of blocking related model objects) just does a soft delete on it instead, if possible.
+	 * If the related thing isn't a soft-deletable model object, this function is identical
+	 * to delete_related()
+	 * @param string $relationName
+	 * @param array $query_params like EEM_Base::get_all's 
+	 * @return int how many deleted (includign those soft deleted)
+	 */
+	public function delete_permanently_related($relationName,$query_params = array()){
+		$count =  $this->get_model()->delete_permanently_related($this, $relationName, $query_params);
+		$this->clear_cache($relationName);
+		return $count;
+	}
 
+		/**
+
+	
 
 
 	/**

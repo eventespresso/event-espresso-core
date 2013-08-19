@@ -31,17 +31,17 @@ final class EE_Module_Request_Router {
 	private static $_previous_routes = array();
 
 	/**
-	 * 	@var 	string	$_current_route
-	 *  @access 	private
-	 */
-//	private $_current_route = NULL;
-
-	/**
 	 * 	EE_Registry Object
 	 *	@var 	EE_Registry	$EE	
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
+
+	/**
+	 * 	@var 	WP	$WP
+	 *  @access 	public
+	 */
+	public $WP = NULL;
 
 
 
@@ -69,7 +69,8 @@ final class EE_Module_Request_Router {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function get_route() {
+	public function get_route( $WP ) {
+		$this->WP = $WP;
 		// assume this if first route being called
 		$previous_route = FALSE;
 		// but is it really ???
@@ -192,7 +193,7 @@ final class EE_Module_Request_Router {
 		// and pass the request object to the run method
 		$module = $mod_reflector->newInstance( $this->EE );
 		// now call whatever action the route was for
-		call_user_func( array( $module, $method ));
+		call_user_func( array( $module, $method ), $this->WP );
 		return $module;
 	}
 

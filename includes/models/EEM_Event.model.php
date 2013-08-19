@@ -64,18 +64,22 @@ class EEM_Event  extends EEM_CPT_Base{
 	const additional_attendee_reg_info_none = 0;
 	const additional_attendee_reg_info_personal_info_only = 1;
 	const additional_attendee_reg_info_full = 2;
+	
+	
+	
 	protected function __construct($timezone = null){
-		$this->singular_item = __('Event','event_espresso');
-		$this->plural_item = __('Events','event_espresso');
 		
+		$this->singular_item = __('Event','event_espresso');
+		$this->plural_item = __('Events','event_espresso');		
 		
 		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
+		
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
 			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID')
 		);
 		
-		
+		EE_Registry::instance()->load_model( 'EEM_Registration' );
 		
 		$this->_fields = array(
 			'Event_CPT'=>array(
@@ -116,8 +120,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
 		);
-		require_once( EE_CLASSES . 'EE_Event.class.php');
-		require_once( EE_MODELS . 'strategies/EE_CPT_Where_Conditions.strategy.php');
+
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
 		parent::__construct( $timezone );
 	}

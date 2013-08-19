@@ -3,6 +3,11 @@ $values = array(
 	array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
 	array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 );
+$description = array(
+	array('id' => 0, 'text' => __('none', 'event_espresso')),
+	array('id' => 1, 'text' => __('excerpt (short desc)', 'event_espresso')),
+	array('id' => 2, 'text' => __('full description', 'event_espresso'))
+);
 ?>
 
 	<!--*************************   Event Listings  ****************************-->
@@ -21,28 +26,14 @@ $values = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('display_description_in_event_list', $values, $display_description, 'id="display_description_in_event_list"'); ?>
-				</td>
-			</tr>
-
-			<tr>
-				<th>
-					<label for="display_short_description_in_event_list">
-						<?php _e('Use SHORT Descriptions', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<?php echo EE_Form_Fields::select_input('display_short_description_in_event_list', $values, $display_exceprt, 'id="display_short_description_in_event_list"'); ?>
-					<p class="description">
-						<?php _e('Be sure to use the more... tag in your event description', 'event_espresso'); ?>
-					</p>
+					<?php echo EE_Form_Fields::select_input('display_description_in_event_list', $description, $display_description, 'id="display_description_in_event_list"'); ?>
 				</td>
 			</tr>
 
 			<tr>
 				<th>
 					<label for="display_address_in_event_list">
-						<?php _e('Display Addresses', 'event_espresso'); ?>
+						<?php _e('Display Address', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
@@ -53,11 +44,22 @@ $values = array(
 			<tr>
 				<th>
 					<label for="display_venue_in_event_list">
-						<?php _e('Display Venue', 'event_espresso'); ?>
+						<?php _e('Display Venue Details', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('display_venue_in_event_list', $values, $display_venue, 'id="display_venue_in_event_list"'); ?>
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="display_expired_events">
+						<?php _e('Display Expired Events', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EE_Form_Fields::select_input('display_expired_events', $values, $display_expired_events, 'id="display_expired_events"'); ?>
 				</td>
 			</tr>
 

@@ -45,9 +45,10 @@ abstract class EED_Module extends EE_Base {
 	 * 	this method is primarily used for activating resources in the EE_Front_Controller thru the use of filters
 	 *
 	 *  @access 	public
+	 *  @var 			WP $WP
 	 *  @return 	void
 	 */
-	public abstract function run();
+	public abstract function run( $WP );
 	
 	/**
 	*	instance - returns $this

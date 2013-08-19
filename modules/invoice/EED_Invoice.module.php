@@ -49,7 +49,7 @@ class EED_Invoice  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function run() {
+	public function run( $WP ) {
 		if ( is_readable( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/Invoice/lib/Invoice.class.php' )) {
 			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/Invoice/lib/Invoice.class.php' );
 		} else {

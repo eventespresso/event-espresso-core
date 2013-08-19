@@ -138,7 +138,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 	 * @return string the date/time requested
 	 */
 	private function _event_date( $type ) {
-
 		//check if we have the daytime_id that we need to retrieve the date stuff, otherwise we just return an empty string
 		if ( !isset( $this->_data['daytime_id'] ) )
 			return '';
@@ -146,7 +145,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 		//let's get the DTT Model and retrieve the Date Time object
 		require_once( EE_MODELS . 'EEM_Datetime.model.php' );
 		$DTTM = EEM_Datetime::instance();
-		$DTT = $DTTM-> $this->get_one_by_ID( $this->_data['datytime_id'] );
+		$DTT = $DTTM-> $this->get_one_by_ID( $this->_data['daytime_id'] );
 
 		//if empty|false let's get out
 		if ( empty( $DTT ) || !is_object( $DTT ) ) return '';

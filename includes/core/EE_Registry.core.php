@@ -246,6 +246,25 @@ final class EE_Registry {
 
 
 
+	/**
+	 * 	loads model classes - must be singletons
+	 * 
+	 *	@param string $class_name - simple class name ie: price
+	 *	@return instantiated class object
+	 */	
+	public function load_model_class ( $class_name, $arguments = array() ) {
+		$paths = array(
+			EE_MODELS . 'fields' . DS,
+			EE_MODELS . 'helpers' . DS,
+			EE_MODELS . 'relations' . DS,
+			EE_MODELS . 'strategies' . DS,
+		);
+		// retreive instantiated class
+		return $this->_load( $paths, 'EE_' , $class_name, '', $arguments, FALSE, TRUE, TRUE );
+	}
+
+
+
 
 
 	/**
@@ -293,9 +312,11 @@ final class EE_Registry {
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@return instantiated class object
 	 */	
-	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE ) {
-		// make sure $class name prefix is uppercase
-		$class_name = strtoupper( trim( $class_prefix )) . trim( $class_name );
+	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE, $no_load = FALSE ) {
+		// make sure $class_prefix is uppercase
+		$class_prefix = strtoupper( trim( $class_prefix ));
+		// add class prefix ONCE!!!
+		$class_name = $class_prefix . str_replace( $class_prefix, '', trim( $class_name ));
 
 		// check if class has already been loaded, and return it if it has been
 		if ( $class_name == 'EE_Request_Handler' && ! is_null( $this->REQ )) {
@@ -314,8 +335,10 @@ final class EE_Registry {
 		foreach ( $file_paths as $file_path ) {
 			// convert all separators to proper DS, if no filepth, then use EE_CLASSES
 			$file_path = $file_path ? str_replace( array( '/', '\\' ), DS, $file_path ) : EE_CLASSES;
+			// prep file type
+			$type = ! empty( $type ) ? trim( $type, '.' ) . '.' : '';
 			// build full file path
-			$file_path = rtrim( $file_path, DS ) . DS . $class_name . '.' . trim( $type, '.' ) . '.php';
+			$file_path = rtrim( $file_path, DS ) . DS . $class_name . '.' . $type . 'php';
 			//does the file exist and can be read ?
 			if ( is_readable( $file_path )) {
 				$path = $file_path;
@@ -358,28 +381,47 @@ final class EE_Registry {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
+
 		
 		// don't give up! you gotta...
-		try {			
+		try {
 			// create reflection
 			$reflector = new ReflectionClass( $class_name );
 			// instantiate the class and add to the LIB array for tracking
 			// EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
-			if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
-			  $class_obj =  call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
+			if ( $reflector->getConstructor() === NULL || $no_load ) {
+				$instantiation_mode = 0;
+				// no constructor = static methods only... nothing to instantiate, loading file was enough
+			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
+				$instantiation_mode = 1;
+				$class_obj =  call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
 			} else if ( method_exists( $class_name, 'new_instance' ) ) {
+				$instantiation_mode = 2;
 				$class_obj =  call_user_func_array( array( $class_name, 'new_instance' ), $arguments );
 			} else if ( method_exists( $class_name, 'instance' )) {
+				$instantiation_mode = 3;
 				$class_obj =  call_user_func_array( array( $class_name, 'instance' ), $arguments );
-			} else if ( $reflector->getConstructor() === NULL ) {
-				// no constructor = static methods only... nothing to instantiate, loading file was enough
 			} else if ( $reflector->isInstantiable() ) {
+				$instantiation_mode = 4;
 				$class_obj =  $reflector->newInstance( $arguments );			
-			} 
-			 
+			} else {
+				// heh ? something's not right !
+				$instantiation_mode = 5;
+			}
+			
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
+
+	
+
+//	echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">$instantiation_mode : ' . $instantiation_mode . '<br/>' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';			
+//	echo '<h4>$from_db : ' . $from_db . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	echo '<h4>$cache : ' . $cache . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	echo '<h4>$no_load : ' . $no_load . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	printr( $arguments, '$arguments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//	printr( $class_obj, '$class_obj  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 		
 		if ( isset( $class_obj )) {			
 			// return newly instantiated class

@@ -101,7 +101,7 @@ define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
 define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
 
 
-
+require_once( EE_CORE . 'EE_Error.core.php' );
 
 // let's get it started		
 if ( is_admin() ) {

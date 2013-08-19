@@ -233,13 +233,13 @@ class EE_Event extends EE_CPT_Base{
 	 * @return EE_Datetime[]
 	 */
 	public function datetimes(){
-		require_once( EE_MODELS . 'EEM_Datetime.model.php');
 		return EEM_Datetime::instance( $this->_timezone )->get_all_event_dates($this->_EVT_ID);
 	}
 
 	public function primary_datetime() {
-		if ( !empty ( $this->_Primary_Datetime ) ) return $this->_Primary_Datetime;
-		require_once( EE_MODELS . 'EEM_Datetime.model.php' );
+		if ( !empty ( $this->_Primary_Datetime )) { 
+			return $this->_Primary_Datetime; 
+		}
 		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
 		return $this->_Primary_Datetime;
 	}

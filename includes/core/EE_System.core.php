@@ -67,6 +67,8 @@ final class EE_System {
 		// handy dandy object for holding shtuff
 		$this->_load_registry();
 		$this->_register_custom_autoloaders();
+//		$this->_load_base_classes();
+		$this->_define_table_names();
 		$this->EE->load_core( 'Maintenance_Mode' );
 
 		if ( $activation ) {
@@ -109,14 +111,23 @@ final class EE_System {
 	 * 		@access private
 	 * 		@return void
 	 */
-//	private function _register_custom_autoloaders() {
-//		
-//		$classess = glob( EE_CORE . '*.core.php' );
-//		foreach( $classess as $class_path ) {
-//			$class_name = str_replace( '.core.php', '', basename( $class_path ));
-//			EE_Registry::register_autoloader( array( $class_name => $class_path ));
-//		}		
-//	}
+	private function _load_base_classes() {
+//		$this->EE->load_core( 'Base' );
+//		$this->EE->load_model_class( 'EE_All_Caps_Text_Field' );
+//		$this->EE->load_model_class( 'EE_Boolean_Field' );
+//		$this->EE->load_model_class( 'EE_Datetime_Field' );
+//		$this->EE->load_model_class( 'EE_DB_Only_Field_Base' );
+//		$this->EE->load_model_class( 'EE_DB_Only_Float_Field' );
+//		$this->EE->load_model_class( 'EE_DB_Only_Int_Field' );
+//		$this->EE->load_model_class( 'EE_DB_Only_Text_Field' );
+//		$this->EE->load_model_class( 'EE_Email_Field' );
+//		$this->EE->load_model_class( 'EE_Enum_Field' );
+//		$this->EE->load_model_class( 'EE_Float_Field_Base' );
+//		$this->EE->load_model_class( 'EE_Foreign_Key_Field_Base' );
+//		$this->EE->load_model_class( 'EE_Foreign_Key_Int_Field' );
+//		$this->EE->load_model_class( 'XXXXXXXXXXXXX' );
+//		$this->EE->load_model_class( 'XXXXXXXXXXXXX' );
+	}
 
 
 
@@ -153,7 +164,7 @@ final class EE_System {
 		//get all the files in that folder that end in php
 		$filepaths = glob( $folder.'*.php');
 		foreach($filepaths as $filepath){
-			$class_to_filepath_map [ $this->_get_classname_from_filepath_with_standard_filename($filepath) ] = $filepath;
+			$class_to_filepath_map [ $this->_get_classname_from_filepath_with_standard_filename( $filepath ) ] = $filepath;
 		}
 		//printr( $class_to_filepath_map, '$class_to_filepath_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		EE_Registry::register_autoloader($class_to_filepath_map);
@@ -173,7 +184,25 @@ final class EE_System {
 		$classname = substr($filename, 0, $pos_of_first_period);
 		return $classname;
 	}
-
+	
+	
+	/**
+	 * cycles through all of the models/*.model.php files, then checks for and calls define_table_name()
+	 * 
+	 * @return void
+	 */
+	private function _define_table_names(){
+		//get all the files in the EE_MODELS folder that end in .model.php
+		$models = glob( EE_MODELS.'*.model.php');
+		foreach( $models as $model ){
+			// get model classname
+			$classname = $this->_get_classname_from_filepath_with_standard_filename( $model );
+			// check for define_table_name() then call it
+			if ( method_exists( $classname, 'define_table_name' )) {
+				call_user_func( array( $classname, 'define_table_name' ));
+			}
+		}
+	}
 
 
 	/**

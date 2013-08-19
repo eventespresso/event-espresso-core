@@ -51,23 +51,24 @@ abstract class EE_Model_Relation_Base{
 		$this->_other_model_name = $other_model_name;
 	}
 	/**
-	 * 
+	 * Gets the model where this relation is defined.
 	 * @return EEM_Base
 	 */
 	function get_this_model(){
 		return $this->_get_model($this->_this_model_name);
 	}
 	/**
-	 * 
+	 * Gets the model which this relation establishes the relation TO (ie,
+	 * this relation object was defined on get_this_model(), get_other_model() is the other one)
 	 * @return EEM_Base
 	 */
 	function get_other_model(){
 		return $this->_get_model($this->_other_model_name);
 	}
 	/**
-	 * 
+	 * Internally used by get_this_model() and get_other_model()
 	 * @param string $model_name like Event, Question_Group, etc. omit the EEM_
-	 * @return EEMerimental_Base
+	 * @return EEM_Base
 	 */
 	protected function _get_model($model_name){
 		$modelInstance=call_user_func("EEM_".$model_name."::instance");
@@ -104,8 +105,74 @@ abstract class EE_Model_Relation_Base{
 		$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
 		$model_object_id = $this->_get_model_object_id( $model_object_or_id );
 		$query_params[0][$query_param_where_this_model_pk] = $model_object_id;
-		return $this->get_other_model()->get_all($query_params, $values_already_prepared_by_model_object);
+		return $this->get_other_model()->get_all($query_params);
 	}
+	
+	/**
+	 * Deletes the related model objects which meet the query parameters. If no 
+	 * parameters are specified, then all related model objects will be deleted.
+	 * Note: If the related model is extends EEM_Soft_Delete_Base, then the related
+	 * model objects will only be soft-deleted.
+	 * @param EE_Base_Class|int|string $model_object_or_id
+	 * @param array $query_params
+	 * @return int of how many related models got deleted
+	 */
+	public function delete_all_related($model_object_or_id,$query_params = array()){
+		//for each thing we would delete,
+		$related_model_objects = $this->get_all_related($model_object_or_id,$query_params);
+		//determine if it's blocked by anything else before it can be deletedx
+		$deleted_count = 0;
+		foreach($related_model_objects as $related_model_object){
+			$delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models($related_model_object, $model_object_or_id);
+			/* @var $model_object_or_id EE_Base_Class */
+			if( ! $delete_is_blocked ){
+				$this->remove_relation_to($model_object_or_id, $related_model_object);
+				$related_model_object->delete();
+				$deleted_count++;
+			}
+		}
+		return $deleted_count;
+	}
+	
+	/**
+	 * Deletes the related model objects which meet the query parameters. If no 
+	 * parameters are specified, then all related model objects will be deleted.
+	 * Note: If the related model is extends EEM_Soft_Delete_Base, then the related
+	 * model objects will only be soft-deleted.
+	 * @param EE_Base_Class|int|string $model_object_or_id
+	 * @param array $query_params
+	 * @return int of how many related models got deleted
+	 */
+	public function delete_permanently_all_related($model_object_or_id,$query_params = array()){
+		//for each thing we would delete,
+		$related_model_objects = $this->get_all_related($model_object_or_id,$query_params);
+		//determine if it's blocked by anything else before it can be deletedx
+		$deleted_count = 0;
+		foreach($related_model_objects as $related_model_object){
+			$delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models($related_model_object, $model_object_or_id);
+			/* @var $model_object_or_id EE_Base_Class */
+			if( $related_model_object instanceof EE_Soft_Delete_Base_Class ){
+				$this->remove_relation_to($model_object_or_id, $related_model_object);
+				$deleted_count++;
+				if( ! $delete_is_blocked ){
+					$related_model_object->delete_permanently();
+				}else{
+					//delete is blocked
+					//brent and darren, in this case, wanted to just soft delete it then
+					$related_model_object->delete();
+				}
+			}else{
+				//its not a soft-deletable thing anyways. do the normal logic.
+				if( ! $delete_is_blocked ){
+					$this->remove_relation_to($model_object_or_id, $related_model_object);
+					$related_model_object->delete();
+					$deleted_count++;
+				}
+			}
+		}
+		return $deleted_count;
+	}
+	
 
 
 

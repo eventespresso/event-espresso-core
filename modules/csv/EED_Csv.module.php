@@ -49,7 +49,7 @@ class EED_Csv  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function run() {
+	public function run( $WP ) {
 //		add_filter( 'FHEE_load_org_options', '__return_true' );
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
