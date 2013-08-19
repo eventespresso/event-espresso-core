@@ -241,6 +241,11 @@ jQuery(document).ready(function($) {
 			DTT_display_text = this.DTT_display_text(DTT_start_time, DTT_end_time);
 			$(DTT_display_row).find('.datetime-title').text(DTT_display_text);
 
+			//we need to make sure this new DTT has a related DTT_list_row created and added to all existing tickets and helper containers
+			$('.edit-ticket-row').each( function() {
+				TKT_helper.newDTTListRow( this );
+			});
+
 			
 			//on brand new events the ticket-container is hidden (making sure a datetime gets created first).  let's show that now
 			$('.event-tickets-container').fadeIn();
@@ -580,17 +585,26 @@ jQuery(document).ready(function($) {
 		 */
 		newDTTListRow: function(ticketrowitm) {
 			var ticketrownum = $(ticketrowitm).attr('id').replace('edit-ticketrow-', '');
+			
+			if ( typeof(ticketrownum) === 'undefined' )
+				return true; //we may have a blank ticket row.
+
 			var new_dtt_list_row = $('#dtt-new-available-datetime-list-items-holder').clone().html();
 
 
-			var active_tkts_on_dtt = $('.datetime-tickets-list', '#event-datetime-' + this.datetimeRow).find('.ticket-selected').data('ticketRow');
+			var active_tkts_on_dtt = $('.datetime-tickets-list', '#event-datetime-' + this.dateTimeRow).find('.ticket-selected').data('ticketRow');
 			var default_list_row_for_dtt;
 
 			//replace all instances of DTTNUM with dttrow
-			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.datetimeRow);
+			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.dateTimeRow);
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
 			new_dtt_list_row = new_dtt_list_row.replace(/TICKETNUM/g,ticketrownum);
+
+			//get name for dtt and add to the new li item
+			var dttname = $('.datetime-title', '#display-event-datetime-' + this.dateTimeRow ).text();
+			new_dtt_list_row = new_dtt_list_row.replace(/DTTDATE/g,dttname);
+
 
 			//is this ticketrow in the active tickets list? if so then we toggle.
 			if ( $.inArray(ticketrownum, active_tkts_on_dtt) > -1 ) {
@@ -602,8 +616,9 @@ jQuery(document).ready(function($) {
 			new_dtt_list_row = $(ticketrowitm).find('.datetime-tickets-list').append(new_dtt_list_row);
 
 
-			//append new dtt_list_row to the available dtts row BUT we need to make the ticketnum generic!
-			$('#dtt-existing-available-datetime-list-items-holder').append(default_list_row_for_dtt);
+			//append new dtt_list_row to the available dtts row BUT we need to make the ticketnum generic! (and only append if it isn't already present!)
+			if ( $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.dateTimeRow+'"]').length < 1 )
+				$('#dtt-existing-available-datetime-list-items-holder').append(default_list_row_for_dtt);
 
 			return this;
 		},
@@ -626,16 +641,22 @@ jQuery(document).ready(function($) {
 			//replace all instance of DTTNUM with  dttrownum
 			new_tkt_list_row = new_tkt_list_row.replace(/DTTNUM/g, dttrownum);
 
+			//get name for ticket and add to the new li item
+			var TKT_name = $('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow ).text();
+			new_tkt_list_row = new_tkt_list_row.replace(/TKTNAME/g, TKT_name);
+
+
 			//is this ticketrow in the active datetimes list? if so then we toggle.
 			if ( $.inArray(dttrownum, active_dtts_on_ticket ) > -1 ) {
 				this.toggleTicketSelect(new_tkt_list_row);
 			}
 
-			//append new_tkt_list_row to the ul for datetime-tickets attached to datetime.
+			//append new_tkt_list_row to the ul for datetime-tickets attached to datetime
 			$(dttrowitm).find('.datetime-tickets-list').append(new_tkt_list_row);
 
-			//append new_tkt_list_row to the available tkts row BUT keeping the DTTNUM generic!
-			$('#dtt-existing-available-ticket-list-items-holder').append(default_list_row_for_tkt);
+			//append new_tkt_list_row to the available tkts row BUT keeping the DTTNUM generic BUT only if existing row isn't already present
+			if ( $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="'+this.ticketRow+'"]').length < 1 )
+				$('#dtt-existing-available-ticket-list-items-holder').append(default_list_row_for_tkt);
 
 			return this;
 		},
@@ -801,11 +822,13 @@ jQuery(document).ready(function($) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
 			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.ticketRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
-			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + valuerow +'"]' ) : $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+valuerow+'"]');
+			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' ) : $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]');
 
 			if ( !selecting || trash ) {
 				$(itm).removeClass('ticket-selected');
+				$('input', itm).prop('checked',false);
 				relateditm.removeClass('ticket-selected');
+				$('input', relateditm).prop('checked',false);
 				this.removeTicket();
 				if ( trash ) {
 					$(itm).remove();
@@ -813,7 +836,9 @@ jQuery(document).ready(function($) {
 				}
 			} else  {
 				$(itm).addClass('ticket-selected');
+				$('input', itm).prop('checked',true);
 				relateditm.addClass('ticket-selected');
+				$('input', relateditm).prop('checked',true);
 				//update selected tracking in various contexts
 				this.addTicket();
 			}
@@ -840,7 +865,7 @@ jQuery(document).ready(function($) {
 		 * @return {TKT_helper}       this object for chainability
 		 */
 		removeTicket: function() {
-			this.changeTicket(this.itemdata.datetimeRow, this.itemdata.ticketRow, 'datetime-ticket', true, trash);
+			this.changeTicket(this.itemdata.datetimeRow, this.itemdata.ticketRow, 'datetime-ticket', true);
 			this.changeTicket(this.itemdata.ticketRow, this.itemdata.datetimeRow, 'ticket-datetime', true);
 			return this;
 		},
@@ -859,7 +884,15 @@ jQuery(document).ready(function($) {
 			remove = typeof(remove) === 'undefined' ? false : remove;
 			context = typeof(context) === 'undefined' ? 'datetime-ticket' : context;
 			var changeid = '#' + context + '-ids-' + idrow;
-			var curitems = $(changeid).val().split(',');
+			var curitems = $(changeid).val();
+			if ( typeof(curitems) !== 'undefined' )
+					curitems = curitems.split(',');
+			else {
+				$(changeid).val(curitems);
+				return this;
+			}
+
+
 
 			if ( remove ) {
 				curitems.each( function(i, val) {
