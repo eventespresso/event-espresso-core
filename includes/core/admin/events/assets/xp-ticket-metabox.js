@@ -175,18 +175,19 @@ jQuery(document).ready(function($) {
 		 */
 		newDTTrow: function() {
 			var inputid, inputvalue, DTT_start_time, DTT_end_time, newDTTrow;
-			//edit form stuff
-			var DTTeditform = $('#edit-datetime-form-holder').html().clone();
-
-			//replace DTTNUM with new row.
 			this.context = 'datetime';
 			var row = this.increaserowcount();
-			DTTeditform = DTTeditform.replace('/DTTNUM/g',row);
-			DTTeditformobj = $(DTTeditform);
+
+			var DTT_row_container = $('#edit-datetime-form-container-holder').clone().html().replace(/DTTNUM/g, row);
+			DTT_row_container = $(DTT_row_container).appendTo('.event-datetimes-container');
+
+			//edit form stuff
+			var DTTeditform = $('#edit-datetime-form-holder').clone().html().replace(/DTTNUM/g, row);
+			DTTeditform = $(DTTeditform).appendTo(DTT_row_container);
 
 			//make sure all input vals get their values from the create form!
-			DTTeditformobj.find('input').each( function() {
-				inputid = this.attr('id').replace('-'+row,'');
+			DTTeditform.find('input').each( function() {
+				inputid = $(this).attr('id').replace('-'+row,'');
 				//first handle values we know AREN'T in the add-new-datetime form
 				switch (inputid) {
 					case 'event-datetime-DTT_ID' :
@@ -212,33 +213,35 @@ jQuery(document).ready(function($) {
 						$(this).val(inputvalue);
 						break;
 				}
+
 			});
 
 			//get list of available tickets and make sure they are present in the list.
-			var existing_datetime_tickets_list = $('#dtt-existing-available-ticket-list-items-holder').html().clone();
-			var existing_datetime_tickets_container = $('#edit-datetime-evaliable-tickets-holder').html().clone();
+			var existing_datetime_tickets_list = $('#dtt-existing-available-ticket-list-items-holder').clone().html();
+			var existing_datetime_tickets_container = $('#edit-datetime-available-tickets-holder').clone().html();
 
 			//str replace on the existing_datetime_tickets so we get the DTTNUM set correctly
-			existing_datetime_tickets_container = existing_datetime_tickets_container.replace('/DTTNUM/g',row);
+			existing_datetime_tickets_container = existing_datetime_tickets_container.replace(/DTTNUM/g,row);
+			existing_datetime_tickets_container = $(existing_datetime_tickets_container).appendTo(DTT_row_container);
 			
 
 			//ARE there tickets?  If so, then we'll use them, if not, then we leave alone.
-			if ( $(existing_datetime_tickets_container).contains('li.datetime-ticket') ) {
-				$(existing_datetime_tickets_container).find('.datetime-tickets-list').html(existing_datetime_tickets);
+			if ( existing_datetime_tickets_list.length > 0 ) {
+				$(existing_datetime_tickets_container).find('.datetime-tickets-list').html(existing_datetime_tickets_list);
 			}
 
 			//create new DTT display row.
-			var DTT_display_row = $('#dtt_new_display_row_holder').html().clone();
+			var DTT_display_row = $('#dtt_new_display_row_holder').clone().html().replace(/DTTNUM/g, row);
+			DTT_display_row = $(DTT_display_row).prependTo(DTT_row_container);
+
+			//replace DTTNUM
 			DTT_display_text = this.DTT_display_text(DTT_start_time, DTT_end_time);
 			$(DTT_display_row).find('.datetime-title').text(DTT_display_text);
 
-			//now let's add in the various components together for our new DTT row.
-			newDTTrow = '<div id="event-datetime-' + row + '" class="event-datetime-row">' + $(DTT_display_row).html() + DTTeditformobj.html() + $(existing_datetime_tickets_container).html() + '</div>';
-
-			//now let's append to the other rows and we'll scroll up the editor for the user to add/create tickets to the new datetime.
-			$('.event-datetimes-container').append(newDTTrow);
+			
+			//on brand new events the ticket-container is hidden (making sure a datetime gets created first).  let's show that now
+			$('.event-tickets-container').fadeIn();
 			this.context = 'ticket';
-			this.DateTimeEditToggle();
 			return this;
 		},
 
@@ -254,12 +257,12 @@ jQuery(document).ready(function($) {
 		cloneDateTime: function( row ) {
 			this.dateTimeRow = row;
 			var newrownum = this.increaserowcount();
-			var newDTTrow = $('#event-datetime-' + row).clone();
+			var newDTTrow = $('#event-datetime-' + row).clone().appendTo('.event-datetimes-container');
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
 
 			/*replace all old row values with newrownum*/
 			//first let's do the <sections>.
-			$(newDTTrow).find('section').each( function() {
+			newDTTrow.find('section').each( function() {
 				curid = $(this).attr('id');
 				curclass = $(this).attr('class');
 				newid = curid.replace(row,newrownum);
@@ -267,7 +270,7 @@ jQuery(document).ready(function($) {
 			});
 
 			//next let's do the spans
-			$(newDTTrow).find('span').each( function() {
+			newDTTrow.find('span').each( function() {
 				curclass = $(this).attr('class');
 				this.itemdata = $(this).data();
 				
@@ -295,7 +298,7 @@ jQuery(document).ready(function($) {
 
 
 			//table id updates
-			$(newDTTrow).find('table').each( function() {
+			newDTTrow.find('table').each( function() {
 				curid = $(this).attr('id');
 
 				if ( typeof(curid) !== 'undefined' ) {
@@ -305,7 +308,7 @@ jQuery(document).ready(function($) {
 			});
 
 			//buttons
-			$(newDTTrow).find('button').each( function() {
+			newDTTrow.find('button').each( function() {
 				data = $(this).data();
 				if ( typeof(data) !== 'undefined' && typeof(data.datetimeRow) !== 'undefined' )
 					$(this).attr('data-datetime-row', newrownum);
@@ -313,7 +316,7 @@ jQuery(document).ready(function($) {
 
 
 			//li
-			$(newDTTrow).find('li').each( function() {
+			newDTTrow.find('li').each( function() {
 				data = $(this).data();
 				if ( typeof(data) !== 'undefined' && typeof(data.datetimeRow) !== 'undefined' )
 					$(this).attr('data-datetime-row', newrownum);
@@ -321,7 +324,7 @@ jQuery(document).ready(function($) {
 
 
 			//div
-			$(newDTTrow).find('div').each( function() {
+			newDTTrow.find('div').each( function() {
 				curid = $(this).attr('id');
 				newid = curid.replace(row, newrownum);
 				$(this).attr('id', newid);
@@ -329,7 +332,7 @@ jQuery(document).ready(function($) {
 
 
 			//labels
-			$(newDTTrow).find('label').each( function() {
+			newDTTrow.find('label').each( function() {
 				curid = $(this).attr('for');
 				newid = curid.replace(row, newrownum);
 				$(this).attr('for', newid);
@@ -337,7 +340,7 @@ jQuery(document).ready(function($) {
 
 
 			//the big enchilda inputs!
-			$(newDTTrow).find('input').each( function() {
+			newDTTrow.find('input').each( function() {
 				curclass = $(this).attr('class');
 				curid = $(this).attr('id');
 				curname = $(this).attr('name');
@@ -373,8 +376,6 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			//k all replacements done, let's append the new row to the datetime-row container
-			$('.event-datetimes-container').append(newDTTrow);
 
 			// update ALL existing TKT edit forms with the new DTT li element.
 			$('.edit-ticket-row').each( function() {
@@ -395,14 +396,15 @@ jQuery(document).ready(function($) {
 		 * @return {this}       TKT_Helper obj for chainability.
 		 */
 		cloneTicket: function(row) {
+			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
 			this.ticketRow = row;
 			var newrownum = this.increaserowcount();
-			var newTKTrow = $('#display-ticketrow-' + row).clone() + $('#edit-ticketrow-' + row );
-			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
+			var newTKTrow = $('#display-ticketrow-' + row).clone().add( $('#edit-ticketrow-' + row ).clone());
+			newTKTrow = $('.ticket-table', '.event-tickets-container').find('tbody').append(newTKTrow);
 
 			/*replace all old row values with newrownum*/
 			//first the trs
-			$(newTKTrow).find('tr').each( function() {
+			newTKTrow.find('tr').each( function() {
 				curid = $(this).attr('id');
 
 				// first make sure this isn't a vanilla tr
@@ -420,7 +422,7 @@ jQuery(document).ready(function($) {
 			});
 
 			//spans
-			$(newTKTrow).find('span').each( function() {
+			newTKTrow.find('span').each( function() {
 				curclass = $(this).attr('class');
 				curid = $(this).attr('id');
 				this.itemdata = $(this).data();
@@ -437,11 +439,11 @@ jQuery(document).ready(function($) {
 			});
 
 			//fieldset
-			var fieldsetid = $(newTKTrow).find('fieldset').attr('id');
-			$(newTKTrow).find('fieldset').attr('id', fieldsetid.replace(row, newrownum ) );
+			var fieldsetid = newTKTrow.find('fieldset').attr('id');
+			newTKTrow.find('fieldset').attr('id', fieldsetid.replace(row, newrownum ) );
 
 			//inputs
-			$(newTKTrow).find('input').each(function() {
+			newTKTrow.find('input').each(function() {
 				curname = $(this).attr('name');
 				curid = $(this).attr('id');
 
@@ -465,7 +467,7 @@ jQuery(document).ready(function($) {
 			});
 
 			//textarea
-			$(newTKTrow).find('textarea').each( function() {
+			newTKTrow.find('textarea').each( function() {
 				curname = $(this).attr('name');
 
 				//are we in the price rows?
@@ -478,24 +480,21 @@ jQuery(document).ready(function($) {
 			});
 
 			//select
-			$(newTKTrow).find('select').each( function() {
+			newTKTrow.find('select').each( function() {
 				curname = $(this).attr('name');
 				newname = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curname);
 				$(this).attr('name', newname);
 			});
 
 			//li
-			$(newTKTrow).find('li').each( function() {
+			newTKTrow.find('li').each( function() {
 				$(this).attr('data-ticket-row', newrownum);
 			});
 
 			//button
-			$(newTKTrow).find('button').each( function() {
+			newTKTrow.find('button').each( function() {
 				$(this).attr('data-ticket-row', newrownum);
 			});
-
-			//append to existing ticketrows.
-			$('.ticket-table', '.event-tickets-container').find('tbody').append(newTKTrow);
 
 			//okay all the elements have the ticketrownums changed now let's update the related DTT items!
 			//update all existing DTT edit forms with the new TKT li element (note we're also making sure that we match the active tickets).
@@ -578,24 +577,26 @@ jQuery(document).ready(function($) {
 		 */
 		newDTTListRow: function(ticketrowitm) {
 			var ticketrownum = $(ticketrowitm).attr('id').replace('edit-ticketrow-', '');
-			var new_dtt_list_row = $('#dtt-new-available-datetime-list-items-holder').html().clone();
+			var new_dtt_list_row = $('#dtt-new-available-datetime-list-items-holder').clone().html();
+
+
 			var active_tkts_on_dtt = $('.datetime-tickets-list', '#event-datetime-' + this.datetimeRow).find('.ticket-selected').data('ticketRow');
 			var default_list_row_for_dtt;
 
 			//replace all instances of DTTNUM with dttrow
-			new_dtt_list_row = new_dtt_list_row.replace('/DTTNUM/g', this.datetimeRow);
+			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.datetimeRow);
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
-			new_dtt_list_row = new_dtt_list_row.replace('/TICKETNUM/g',ticketrownum);
+			new_dtt_list_row = new_dtt_list_row.replace(/TICKETNUM/g,ticketrownum);
 
 			//is this ticketrow in the active tickets list? if so then we toggle.
 			if ( $.inArray(ticketrownum, active_tkts_on_dtt) > -1 ) {
 				this.toggleTicketSelect(new_dtt_list_row);
 			}
 
-			//append new_dtt_list_row to the ul for datetime-tickets attached to ticket.
-			$(ticketrowitm).find('.datetime-tickets-list').append(new_dtt_list_row);
 
+			//append new_dtt_list_row to the ul for datetime-tickets attached to ticket.
+			new_dtt_list_row = $(ticketrowitm).find('.datetime-tickets-list').append(new_dtt_list_row);
 
 
 			//append new dtt_list_row to the available dtts row BUT we need to make the ticketnum generic!
@@ -612,15 +613,15 @@ jQuery(document).ready(function($) {
 		 */
 		newTKTListRow: function(dttrowitm) {
 			var dttrownum = $(dttrowitm).attr('id').replace('event-datetime-', '');
-			var new_tkt_list_row = $('#dtt-new-available-ticket-list-items-holder').html().clone();
+			var new_tkt_list_row = $('#dtt-new-available-ticket-list-items-holder').clone().html();
 			var active_dtts_on_tkt = $('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow).find('.ticket-selected').data('dateTimeRow');
 			var default_list_row_for_tkt;
 
 			//replace all instances of TICKETNUM with ticketRow
-			new_tkt_list_row = new_tkt_list_row.replace('/TICKETNUM/g', this.ticketRow );
+			new_tkt_list_row = new_tkt_list_row.replace(/TICKETNUM/g, this.ticketRow );
 			default_list_row_for_tkt = new_tkt_list_row; //without DTTNUM replaced.
 			//replace all instance of DTTNUM with  dttrownum
-			new_tkt_list_row = new_tkt_list_row.replace('/DTTNUM/g', dttrownum);
+			new_tkt_list_row = new_tkt_list_row.replace(/DTTNUM/g, dttrownum);
 
 			//is this ticketrow in the active datetimes list? if so then we toggle.
 			if ( $.inArray(dttrownum, active_dtts_on_ticket ) > -1 ) {
@@ -691,22 +692,18 @@ jQuery(document).ready(function($) {
 		newTicketRow: function() {
 			var idref, curval, newval;
 			//edit form stuff
-			var newTKTrow = $('#ticket-row-form-holder').html().clone();
-			var initialPRCrow = $('#ticket-edit-row-new-price-row').html().clone();
+			var newTKTrow = $('#ticket-row-form-holder').clone().html().replace(/TICKETNUM/g, row ).appendTo;
+			var initialPRCrow = $('#ticket-edit-row-new-price-row').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row);
 			var incomingcontext = this.context;
 
 			//replace all instances of TICKETNUM with new generated row number
 			this.context = 'ticket';
 			var row = this.increaserowcount();
 			
-			
-			//since this is a new tkt the inital price num will be 1
-			$(initialPRCrow).replace('/PRICENUM/g', '1');
+			//append to existing TKTrows
+			newTKTrow = $('.ticket-table', 'event-tickets-container').find('tbody').append(newTKTrow);
+			initialPRCrow = newTKTrow.find('.ticket-price-rows').append(initialPRCrow);
 
-			//add the initialPRCrow to the newTKTrow
-			$(newTKTrow).find('.ticket-price-rows').append(initialPRCrow);
-			newTKTrow = newTKTrow.replace( '/TICKETNUM/g', row );
-			newTKTrowobj = $(newTKTrow);
 
 			//if this is triggered via the "short-ticket" context then we need to get the values from the create ticket form and add to the new row.
 			if ( incomingcontext == 'short-ticket' ) {
@@ -714,26 +711,26 @@ jQuery(document).ready(function($) {
 				$('.add-datetime-ticket-container','#edit-event-datetime-tickets-' + this.dateTimeRow ).find('input').each( function() {
 					idref = $(this).attr('class').replace('add-new-', 'edit-');
 					curval = $(this).val();
-					$(newTKTrow).find(idref).val(curval);
+					newTKTrow.find(idref).val(curval);
 				});
 
 				// selectors
 				var selected_price_type_val = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val();
 				var selected_price_title = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).text();
-				$(newTKTrow).find('.price-title-text', '.price-row-' + row).text(selected_price_title);
-				$(newTKTrow).find('.edit-price-PRT_ID', '.price-row-' + row).val(selected_price_type_val);
+				newTKTrow.find('.price-title-text', '.price-row-' + row).text(selected_price_title);
+				newTKTrow.find('.edit-price-PRT_ID', '.price-row-' + row).val(selected_price_type_val);
 
 				//update totals on the form.
 				var price_amount = $('.add-new-ticket-PRC_amount', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val();
-				$(newTKTrow).find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
-				$(newTKTrow).find('.price-total-amount-' + row).text('$' + price_amount);
-				$(newTKTrow).find('.ticket-price-amount').text('$' + price_amount);
+				newTKTrow.find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
+				newTKTrow.find('.price-total-amount-' + row).text('$' + price_amount);
+				newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
 			}
 
 			//pull in existing datetimes list items.
-			var existing_dtts = $('#dtt-existing-available-ticket-list-items-holder').html().clone();
+			var existing_dtts = $('#dtt-existing-available-ticket-list-items-holder').clone().html();
 			//append to newTKTrow and we want to make sure we select the existing dtt if this is triggered from 'short-ticket', otherwise we automatically select ALL dtts.
-			$(newTKTrow).find('.datetime-tickets-list').append(existing_dtts);
+			newTKTrow.find('.datetime-tickets-list').append(existing_dtts);
 			if ( incomingcontext == 'short-ticket' ) {
 				this.toggleActiveDTTorTicket('datetime');
 			} else {
@@ -742,30 +739,28 @@ jQuery(document).ready(function($) {
 			}
 
 			//now let's setup the display row!
-			$(newTKTrow).find('.ticket-display-row-TKT_name').text($(newTKTrow).find('.edit-ticket-TKT_name').val());
-			$(newTKTrow).find('.ticket-display-row-TKT_start_date').text(
+			newTKTrow.find('.ticket-display-row-TKT_name').text(newTKTrow.find('.edit-ticket-TKT_name').val());
+			newTKTrow.find('.ticket-display-row-TKT_start_date').text(
 				this.TKT_DTT_display_text(
-					$(newTKTrow).find('.edit-ticket-TKT_start_date').val(),
+					newTKTrow.find('.edit-ticket-TKT_start_date').val(),
 					'MMM d, yyyy'
 					)
 				);
-			$(newTKTrow).find('.ticket-display-row-TKT_end_date').text(
+			newTKTrow.find('.ticket-display-row-TKT_end_date').text(
 				this.TKT_DTT_display_text(
-					$(newTKTrow).find('.edit-ticket-TKT_end_date').val(),
+					newTKTrow.find('.edit-ticket-TKT_end_date').val(),
 					'MMM d, yyyy'
 					)
 				);
-			$(newTKTrow).find('.ticket-display-row-TKT_status').text(
+			newTKTrow.find('.ticket-display-row-TKT_status').text(
 				this.getTKTstatus(
-					$(newTKTrow).find('.edit-ticket-TKT_start_date').val(),
-					$(newTKTrow).find('edit-ticket-TKT_end_date').val()
+					newTKTrow.find('.edit-ticket-TKT_start_date').val(),
+					newTKTrow.find('edit-ticket-TKT_end_date').val()
 					)
 				);
-			$(newTKTrow).find('.ticket-display-row-TKT_total_amount').text($(newTKTrow).find('#price-total-amount-' + row ).text() );
-			$(newTKTrow).find('.ticket-display-row-TKT_qty').text($(newTKTrow).find('edit-ticket-TKT_qty').val());
+			newTKTrow.find('.ticket-display-row-TKT_total_amount').text(newTKTrow.find('#price-total-amount-' + row ).text() );
+			newTKTrow.find('.ticket-display-row-TKT_qty').text(newTKTrow.find('edit-ticket-TKT_qty').val());
 
-			//append to existing TKTrows
-			$('.ticket-table', 'event-tickets-container').find('tbody').append(newTKTrow);
 			return this;
 		},
 
@@ -779,19 +774,12 @@ jQuery(document).ready(function($) {
 			var curid, newid, curname, newname;
 			var row = this.itemdata.priceRow;
 			this.increaserowcount();
-			var newPRCrow = $('#ticket-edit-row-new-price-row').html().clone();
+			var newPRCrow = $('#ticket-edit-row-new-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace('/PRICENUM/g',this.priceRow);
+			newPRCrow = $('.price-table', '#edit-ticketrow-' + this.ticketRow).find('tbody').append(newPRCrow);
 
 			//replace existing selector with the price modifier selector.
-			$(newPRCrow).find('td').first().html( $('#ticket-edit-row-price-modifier-selector').html().clone() );
+			newPRCrow.find('td').first().html( $('#ticket-edit-row-price-modifier-selector').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow) );
 
-			//replace TICKETNUM
-			newPRCrow = newPRCrow.replace('/TICKETNUM/g', this.ticketRow);
-
-			//replace PRICENUM
-			newPRCrow = newPRCrow.replace('/PRICENUM/g', this.priceRow);
-
-			//append to existing prices
-			$('.price-table', '#edit-ticketrow-' + this.ticketRow).find('tbody').append(newPRCrow);
 			return this;
 		},
 
@@ -907,35 +895,35 @@ jQuery(document).ready(function($) {
 		 * This simply retrieves a human friendly DTT string for display in the DTT_display row
 		 * @param {string} start DTT_start_date
 		 * @param {string} end   DTT_end_date
-		 * @return {strgin} human friendly formatted DTT string combining start and end.
+		 * @return {string} human friendly formatted DTT string combining start and end.
 		 */
 		DTT_display_text: function(start, end) {
 			var datedisplaytext;
-			var fullstartdate = moment( start, 'yyyy-MM-dd h:mm a' );
-			var fullenddate = moment( end, 'yyyy-MM-dd H:mm a' );
+			var fullstartdate = moment( start, 'YYYY-MM-DD h:mm a' );
+			var fullenddate = moment( end, 'YYYY-MM-DD h:mm a' );
 
 			//first are months equal?
 			if ( fullstartdate.month() != fullenddate.month() ) {
-				datedisplaytext = fullstartdate.format("MMM D, YYYY h:mm a") + " - " + fullenddate.format("MMM D, YYYY h:mm a");
+				datedisplaytext = fullstartdate.format("MMM D[,] YYYY h:mm a") + " - " + fullenddate.format("MMM D[,] YYYY h:mm a");
 			} else if ( fullstartdate.month() == fullenddate.month() && fullstartdate.date() != fullenddate.date() ) {
-				datedisplaytext = fullstartdate.format("MMM D, h:mm a") + " - " + fullenddate.format("MMM D, h:mm a YYYY");
+				datedisplaytext = fullstartdate.format("MMM D[,] h:mm a") + " - " + fullenddate.format("MMM D[,] h:mm a YYYY");
 			} else {
-				datedisplaytext = fullstartdate.format("MMMM D, YYYY") + ' @ ' + fullstartdate.format("h:mm a") + ' - ' + fullenddate.format("h:mm a");
+				datedisplaytext = fullstartdate.format("MMMM D[,] YYYY") + ' @ ' + fullstartdate.format("h:mm a") + ' - ' + fullenddate.format("h:mm a");
 			}
 
-			return datedisplayformat;
+			return datedisplaytext;
 		},
 
 
 
 		/**
 		 * takes incoming date and returns the date in the given format
-		 * @param {string} date   incoming date (in format yyyy-MM-dd h:mm a)
+		 * @param {string} date   incoming date (in format YYYY-MM-DD h:mm a) (needs to be in a format that the moment.js library accepts see @link http://momentjs.com/docs/#/displaying/format/)
 		 * @param {string} format format date is returned in.
 		 */
 		TKT_DTT_display_text: function(date, dttformat) {
 			var datedisplaytext;
-			var fulldate = moment( start, 'yyyy-MM-dd h:mm a' );
+			var fulldate = moment( start, 'YYYY-MM-DD h:mm a' );
 			return fulldate.format(dttformat);
 
 		},
@@ -950,8 +938,8 @@ jQuery(document).ready(function($) {
 		 * @return {string}           one of three statuses depending on dates (On Sale, Pending, Expired)
 		 */
 		getTKTstatus: function(startdate, enddate) {
-			startdate = moment(startdate, 'yyyy-MM-dd h:mm a');
-			enddate = moment(enddate, 'yyyy-MM-dd h:mm a');
+			startdate = moment(startdate, 'YYYY-MM-DD h:mm a');
+			enddate = moment(enddate, 'YYYY-MM-DD h:mm a');
 			var now = moment();
 
 			if ( startdate.isAfter(now) )

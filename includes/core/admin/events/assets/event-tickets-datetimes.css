@@ -11,8 +11,8 @@
 
 .event-datetime-row {
 	border-bottom: 2px solid #eee;
-    padding-top: 15px;
-	padding-bottom: 11px;
+    /*padding-top: 15px;
+	padding-bottom: 11px;*/
 }
 
 .datetime-title {
@@ -22,6 +22,7 @@
 
 .datetime-summary {
     height: 28px;
+    margin-left: -10px;
 }
 
 
