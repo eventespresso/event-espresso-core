@@ -42,7 +42,7 @@ class EE_Price_Type extends EE_Base_Class{
 
 	/**
 	*	Price Base Type ID
-	* 	1 = Event Price , 2 = Discount , 3 = Surcharge , 4 = Tax
+	* 	1 = Base Price , 2 = Discount , 3 = Surcharge , 4 = Tax
 	*
 	*	@access	protected
 	*	@var int

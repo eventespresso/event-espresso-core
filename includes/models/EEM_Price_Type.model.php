@@ -69,7 +69,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	 * Although the 2nd is shorter, it's much less obvious what it's doing. Also, should these magic IDs ever
 	 * change, we can continue to use the constant, by simply change its value.
 	 */
-	const base_type_event_price = 1;
+	const base_type_base_price = 1;
 	const base_type_discount = 2;
 	const base_type_surcharge = 3;
 	const base_type_tax = 4;
@@ -85,7 +85,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 //		$this->table_name = $wpdb->prefix . 'esp_price_type';
 		// set item names
 		$this->base_types = array( 
-			EEM_Price_Type::base_type_event_price => __('Event Price','event_espresso'), 
+			EEM_Price_Type::base_type_base_price => __('Base Price','event_espresso'), 
 			EEM_Price_Type::base_type_discount => __('Discount','event_espresso'), 
 			EEM_Price_Type::base_type_surcharge => __('Surcharge','event_espresso'), 
 			EEM_Price_Type::base_type_tax => __('Tax','event_espresso') );

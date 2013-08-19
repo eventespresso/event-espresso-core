@@ -18,7 +18,7 @@ function espresso_frontend_init() {
 //	$a_datetime = $an_event->get_first_related('Datetime');
 //	echo 'echodump of $a_datetime';
 //	var_dump($a_datetime);
-//	$a_price = EEM_Price::instance()->get_one(array(array('Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_event_price)));//$an_event->get_first_related('Price', array(array('OR'=>array('Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_event_price,'EVT_ID'=>0))));
+//	$a_price = EEM_Price::instance()->get_one(array(array('Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_base_price)));//$an_event->get_first_related('Price', array(array('OR'=>array('Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_base_price,'EVT_ID'=>0))));
 //	echo 'echodump of $a_price';
 //	var_dump($a_price);
 	
