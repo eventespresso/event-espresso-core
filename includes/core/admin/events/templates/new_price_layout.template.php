@@ -439,7 +439,7 @@
 	<ul id="dtt-new-available-ticket-list-items-holder" class="hidden">
 		<li data-datetime-row="DTTNUM" data-context="datetime-ticket" data-ticket-row="TICKETNUM" class="datetime-ticket ticket-selected clickable">
 			<input type="checkbox" name="datetime_ticket[DTTNUM][TICKETNUM]" class="datetime-ticket-checkbox" value="1" checked=checked>
-			<span class="ticket-list-ticket-name">General Admission: 152</span>
+			<span class="ticket-list-ticket-name">TKTNAME</span>
 			<span class="clickable gear-icon" data-datetime-row="DTTNUM" data-context="datetime-ticket" data-ticket-row="TICKETNUM"></span>
 		</li>
 	</ul>
