@@ -831,10 +831,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params
 	 * @return int how many deleted
 	 */
-	public function delete_permanently_related($id_or_obj,$model_name, $query_params = array()){
+	public function delete_related_permanently($id_or_obj,$model_name, $query_params = array()){
 		$model_obj = $this->ensure_is_obj($id_or_obj);
 		$relation_settings = $this->related_settings_for($model_name);
-		return $relation_settings->delete_permanently_all_related($model_obj,$query_params);
+		return $relation_settings->delete_related_permanently($model_obj,$query_params);
 	}
 	
 	/**

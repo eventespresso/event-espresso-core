@@ -966,8 +966,8 @@ class EE_Base_Class{
 	 * @param array $query_params like EEM_Base::get_all's 
 	 * @return int how many deleted (includign those soft deleted)
 	 */
-	public function delete_permanently_related($relationName,$query_params = array()){
-		$count =  $this->get_model()->delete_permanently_related($this, $relationName, $query_params);
+	public function delete_related_permanently($relationName,$query_params = array()){
+		$count =  $this->get_model()->delete_related_permanently($this, $relationName, $query_params);
 		$this->clear_cache($relationName);
 		return $count;
 	}

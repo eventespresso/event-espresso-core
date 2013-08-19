@@ -138,7 +138,7 @@ final class EE_Front_Controller {
 //		echo 'echodump of $qg';
 //		var_dump($qg);
 //		$qs = $qg->questions();
-//		$qg->delete_permanently_related('Question', array(array('QST_ID'=>2)));
+//		$qg->delete_related_permanently('Question', array(array('QST_ID'=>2)));
 //		$r = EEM_Registration::instance()->get_one();
 		
 //		$related_answers = $r->answers();
