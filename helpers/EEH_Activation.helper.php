@@ -628,6 +628,7 @@ class EEH_Activation {
 			EVT_allow_overflow TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 			EVT_timezone_string VARCHAR(45) NULL ,
 			EVT_external_URL VARCHAR(200) NULL ,
+			EVT_donations TINYINT(1) NULL,
 			PRIMARY KEY  (EVTM_ID) ";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 		
