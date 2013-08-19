@@ -216,6 +216,9 @@ jQuery(document).ready(function($) {
 
 			});
 
+			//clear addnewdtt inputs
+			$('#add-event-datetime').find('input').each(function() { $(this).val(''); });
+
 			//get list of available tickets and make sure they are present in the list.
 			var existing_datetime_tickets_list = $('#dtt-existing-available-ticket-list-items-holder').clone().html();
 			var existing_datetime_tickets_container = $('#edit-datetime-available-tickets-holder').clone().html();
@@ -712,11 +715,14 @@ jQuery(document).ready(function($) {
 					idref = $(this).attr('class').replace('add-new-', 'edit-');
 					curval = $(this).val();
 					newTKTrow.find(idref).val(curval);
+					$(this).val('');
 				});
 
 				// selectors
 				var selected_price_type_val = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val();
+				$('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val('');
 				var selected_price_title = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).text();
+
 				newTKTrow.find('.price-title-text', '.price-row-' + row).text(selected_price_title);
 				newTKTrow.find('.edit-price-PRT_ID', '.price-row-' + row).val(selected_price_type_val);
 
@@ -962,10 +968,13 @@ jQuery(document).ready(function($) {
 		 *
 		 */
 		DateTimeEditToggle: function() {
-			if ( this.context == 'ticket' )
-				this.scrollTo($('#edit-event-datetime-tickets-' + this.dateTimeRow )).slideToggle( 500 );
-			else if ( this.context == 'datetime' || this.context == 'short-ticket' )
-				this.scrollTo($('#edit-event-datetime-' + this.dateTimeRow )).slideToggle( 500 );
+			if ( this.context == 'ticket' ) {
+				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
+				this.selector.slideToggle( 500 );
+			} else if ( this.context == 'datetime' || this.context == 'short-ticket' ) {
+				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
+				this.selector.slideToggle( 500 );
+			}
 			return this;
 		},
 
@@ -976,7 +985,8 @@ jQuery(document).ready(function($) {
 		 * This toggles the display of the edit form for a Ticket row num given.
 		 */
 		TicketEditToggle: function() {
-			this.scrollTo($('#edit-ticketrow-' + this.ticketRow)).slideToggle(500);
+			this.selector = $('#edit-ticketrow-' + this.ticketRow );
+			this.selector.slideToggle(500);
 		},
 
 
@@ -1001,15 +1011,17 @@ jQuery(document).ready(function($) {
 		/**
 		 * handy helper method for scrolling to an item.
 		 * @param  {jQuery obj}    the selector obj that we want to scroll to in the DOM
-		 * @return {jQuery obj}    selector for chainability
+		 * @return {TKT_helper}    this obj for chainability
 		 */
 		scrollTo: function( selector ) {
-			if ( typeof(selector) === 'undefined' )
+			//do we need to build the selector?
+			if ( typeof(selector) === 'undefined' ) {
 				selector = this.selector;
+			}
 			$("html,body").animate({
 				scrollTop: selector.offset().top
 			}, 2000);
-			return selector;
+			return this;
 		}
 
 
@@ -1031,13 +1043,13 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-				TKT_helper.newDTTrow().setcontext('ticket').DateTimeEditToggle();
+				TKT_helper.newDTTrow().setcontext('ticket').DateTimeEditToggle().scrollTo();
 				break;
 			case 'short-ticket' :
 				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow();
 				break;
 			case 'ticket' :
-				TKT_helper.setcontext('ticket').newTicketRow().TicketEditToggle();
+				TKT_helper.setcontext('ticket').newTicketRow().TicketEditToggle().scrollTo();
 				break;
 			case 'price' :
 				TKT_helper.setcontext('price').setitemdata(data).newPriceRow();
@@ -1103,7 +1115,7 @@ jQuery(document).ready(function($) {
 				break;
 			
 			case 'short-ticket' :
-				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').TicketEditToggle();
+				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').TicketEditToggle().scrollTo();
 		}
 		return false;
 	});
