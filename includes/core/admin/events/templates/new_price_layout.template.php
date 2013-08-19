@@ -116,16 +116,16 @@
 			<tbody>
 				<tr valign="top" class="ticket-row" id="display-ticketrow-ticketrow1">
 					<td></td>
-					<td>General Admission</td>
-					<td>Aug 1, 2013</td>
-					<td>Sept 10, 2013</td>
-					<td>On Sale</td>
-					<td>$50</td>
-					<td>600</td>
-					<td>330</td>
+					<td><span class="ticket-display-row-TKT_name">General Admission</span></td>
+					<td><span class="ticket-display-row-TKT_start_date">Aug 1, 2013</span></td>
+					<td><span class="ticket-display-row-TKT_end_date">Sept 10, 2013</span></td>
+					<td><span class="ticket-display-row-TKT_status">On Sale</span></td>
+					<td><span class="ticket-display-row-TKT_total_amount">$50</span></td>
+					<td><span class="ticket-display-row-TKT_qty">600</span></td>
+					<td><span class="ticket-display-row-TKT_sold">330</span></td>
 					<td><span class="gear-icon clickable" data-ticket-row="ticketrow1" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="ticketrow1" data-context="ticket"></span></td>
 				</tr>
-				<tr id="edit-ticketrow-ticketrow-ticketrow1" class="edit-ticket-row">
+				<tr id="edit-ticketrow-ticketrow1" class="edit-ticket-row">
 					<td colspan="9">
 						<fieldset id="edit-ticketrow-ticketrow1" class="ticket-fieldset">
 							<legend>Edit Ticket</legend>
@@ -182,17 +182,28 @@
 									</thead>
 									<tbody>
 										<tr id="price-row-ticketrow1-pricerow1">
-											<td>Event Price</td>
+											<td>
+												<span class="price-title-text">Event Price</span>
+												<select name="edit_prices[ticketrow1][pricerow1][PRT_ID]" class="edit-price-PRT_ID">
+													<option value="1">Event Price</option>
+													<option value="2">Big Event Price</option>
+												</select>
+											</td>
 											<td><input type="hidden" name="edit_prices[ticketrow1][pricerow1][PRT_ID]" class="edit-price-PRT_ID"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[ticketrow1][pricerow1][PRC_name]" value="General Admission"></td>
 											<td><input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[ticketrow1][pricerow1][PRC_amount]" value="50"></td>
-											<td><span class="gear-icon clickable" data-ticket-row="ticketrow1" data-context="price" data-price-row="price-row1"></span><span class="trash-icon clickable" data-ticket-row="ticketrow1" data-context="price" data-price-row="pricerow1"></span></td>
+											<td><span class="gear-icon clickable" data-ticket-row="ticketrow1" data-context="price-expanded" data-price-row="price-row1"></span><span class="trash-icon clickable" data-ticket-row="ticketrow1" data-context="price" data-price-row="pricerow1"></span></td>
+										</tr>
+										<tr id="extra-price-row-ticketrow1-pricerow1">
+											<td colspan="4">
+												<textarea name="edit_prices[ticketrow1][pricerow1][PRT_description]" class="edit-price-PRC_description ee-full-textarea-inp">Event Price Description</textarea>
+											</td>
 										</tr>
 									</tbody>
 									<tfoot>
 										<tr class="price-total-row">
 											<td colspan="2">Total</td>
-											<td>$50.00</td>
-											<td></td>
+											<td><span id="price-total-amount-ticketrow1">$50.00</span></td>
+											<td><input type="hidden" name="price_total_rows_ticket1" id="price-total-rows-ticketrow1" value="1"></td>
 										</tr>
 									</tfoot>
 								</table>
@@ -213,7 +224,7 @@
 								</li>
 							</ul>
 							<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[ticketrow1][TKT_is_default]" id="edit-ticket-TKT_is_default">  
-							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="ticketrow1">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket">Cancel</button></div>
+							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="ticketrow1">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="ticketrow1">Cancel</button></div>
 							<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
 							<input type="hidden" name="starting_ticket_datetime_IDs" id="starting-ticket-datetime-ids-ticketrow1" value="row1" class="starting-ticket-datetime-ids">
 							<input type="hidden" name="ticket_datetime_IDs" class="ticket-datetime-ids" id="ticket-datetime-ids-ticketrow1" value="">
@@ -234,7 +245,7 @@
 					<span class="clone-icon clickable" data-ticket-row="ticketrow2" data-context="ticket"></span>
 					<span class="trash-icon clickable" data-ticket-row="ticketrow2" data-context="ticket"></span></td>
 				</tr>
-				<tr id="edit-ticketrow-ticketrow-ticketrow2" class="edit-ticket-row">
+				<tr id="edit-ticketrow-ticketrow2" class="edit-ticket-row">
 					<td colspan="9">
 						<fieldset id="edit-ticketrow-ticketrow1" class="ticket-fieldset">
 							<legend>Edit Ticket</legend>
@@ -289,25 +300,38 @@
 									</thead>
 									<tbody>
 										<tr id="price-row-ticketrow1-pricerow1">
-											<td>Event Price</td>
-											<td><input type="hidden" name="edit_prices[ticketrow1][pricerow1][PRT_ID]" class="edit-price-PRT_ID"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[ticketrow1][pricerow1][PRC_name]" value="General Admission"></td>
+											<td>
+												<select name="edit_prices[TICKETNUM][PRICE_NUM][PRT_ID]" class="edit-price-PRT_ID">
+													<option value="1">Event PRC</option>
+												</select>
+											</td>
+											<td><input type="hidden" name="edit_prices[ticketrow1][pricerow1][PRC_ID]" class="edit-price-PRC_ID"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[ticketrow1][pricerow1][PRC_name]" value="General Admission"></td>
 											<td><input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[ticketrow1][pricerow1][PRC_amount]" value="50"></td>
 											<td><span class="gear-icon clickable" data-ticket-row="ticketrow1" data-context="price" data-price-row="price-row1"></span><span class="trash-icon clickable" data-ticket-row="ticketrow1" data-context="price" data-price-row="pricerow1"></span></td>
 										</tr>
 										<tr id="price-row-ticketrow1-pricerow2">
-											<td>- Discount</td>
-											<td><input type="hidden" name="edit_prices[ticketrow1][pricerow2][PRT_ID]" class="edit-price-PRT-ID"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[ticketrow1][pricerow2][PRC_name]" value="Early Bird"></td>
+											<td>
+												<select name="edit_prices[TICKETNUM][PRICE_NUM][PRT_ID]" class="edit-price-PRT_ID">
+													<option value="0">Select Price Modifier</option>
+													<option value="1">Discount</option>
+													<option value="2">Surcharge</option>
+												</select>
+											</td>
+											<td><input type="hidden" name="edit_prices[ticketrow1][pricerow1][PRC_ID]" class="edit-price-PRC_ID"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[ticketrow1][pricerow2][PRC_name]" value="Early Bird"></td>
 											<td><input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[ticketrow1][pricerow2][PRC_amount]" value="10%"></td>
 											<td><span class="gear-icon clickable" data-ticket-row="ticketrow1" data-context="price" data-price-row="price-row2"></span>
 											<span class="trash-icon clickable" data-ticket-row="ticketrow1" data-context="price" data-price-row="pricerow2"></span>
-											<button class="add-new-price"><strong>+</strong></button></td>
+											<button data-ticket-row="ticketrow1" data-price-row="price-row2"data-context="price" class="ee-create-button"><strong>+</strong></button></td>
 										</tr>
 									</tbody>
 									<tfoot>
 										<tr class="price-total-row">
 											<td colspan="2">Total</td>
 											<td>$45.00</td>
-											<td></td>
+											<td>
+												<input type="hidden" name="price_total_rows_ticketrow1" id="price-total-rows-ticketrow1" value="2">
+												<input type="hidden" name="starting_price_modifier_rows_ticketrow1" id="starting-price-modifier-rows-ticketrow1" value="">
+											</td>
 										</tr>
 									</tfoot>
 								</table>
@@ -328,7 +352,7 @@
 								</li>
 							</ul>
 							<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[ticketrow1][TKT_is_default]" id="edit-ticket-TKT_is_default">  
-							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="ticketrow1">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket">Cancel</button></div>
+							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="ticketrow1">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="ticketrow1">Cancel</button></div>
 						</fieldset>
 					</td>
 				</tr>
@@ -338,7 +362,7 @@
 		<input type="hidden" name="ticket_IDs" id="ticket-IDs" value="1,2">
 		<input type="hidden" name="ticket_total_rows" id="ticket-total-rows" value="2">
 	</div>
-	<div class="save-cancel-button-container"><button class="button-secondary ee-add-new-ticket-button">Create New Ticket</button></div>
+	<div class="save-cancel-button-container"><button class="button-secondary ee-create-button" data-context="ticket">Create New Ticket</button></div>
 
 
 
@@ -374,6 +398,134 @@
 	</div>
 
 
+	<!-- retrieved by js to set a new ticket row -->
+	<table id="ticket-row-form-holder" class="hidden">
+		<tr valign="top" class="ticket-row" id="display-ticketrow-TICKETNUM">
+			<td></td>
+			<td><span class="ticket-display-row-TKT_name"></span></td>
+			<td><span class="ticket-display-row-TKT_start_date"></span></td>
+			<td><span class="ticket-display-row-TKT_end_date"></span></td>
+			<td><span class="ticket-display-row-TKT_status"></span></td>
+			<td><span class="ticket-display-row-TKT_total_amount"></span></td>
+			<td><span class="ticket-display-row-TKT_qty"></span></td>
+			<td><span class="ticket-display-row-TKT_sold">0</span></td>
+			<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span></td>
+		</tr>
+		<tr id="edit-ticketrow-TICKETNUM" class="edit-ticket-row">
+			<td colspan="9">
+				<fieldset id="edit-ticketrow-TICKETNUM" class="ticket-fieldset">
+					<legend>Edit Ticket</legend>
+					<input type="hidden" name="edit_tickets[TICKETNUM][TKT_ID]" class="edit-ticket-TKT_ID" value="0">
+					<input type="hidden" name="edit_tickets[TICKETNUM][TKT_display_order]" class="edit-ticket-TKT_display_order" value="TICKETNUM">
+					<input type="text" name="edit_tickets[TICKETNUM][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="General Admission">
+					<div class="total-price-container">Total Final Price: <span class="ticket-price-amount">$0.00</span></div>
+					<textarea name="edit_tickets[TICKETNUM][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"></textarea>
+					<div class="basic-ticket-container">
+						<h5 class="tickets-heading">Ticket Details</h5>
+						<table class="basic-ticket-info">
+							<thead>
+								<tr valign="bottom">
+									<td colspan="2">Goes on Sale</td>
+									<td colspan="2">Sell Until</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp" value=""></td>
+									<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp" value=""></td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="basic-ticket-info">
+							<thead>
+								<tr valign="bottom">
+									<td>Quantity</td>
+									<td>#Uses</td>
+									<td>Min</td>
+									<td>Max</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><input type="text" class="edit-ticket-TKT_qty ee-small-text-inp" name="edit_tickets[TICKETNUM][TKT_qty]" value=""></td>
+									<td><input type="text" class="edit-ticket-TKT_uses ee-small-text-inp" name="edit_tickets[TICKETNUM][TKT_uses]"></td>
+									<td><input type="text" class="edit-ticket-TKT_min ee-small-text-inp" name="edit_tickets[TICKETNUM][TKT_min]"></td>
+									<td><input type="text" class="edit-ticket-TKT_max ee-small-text-inp" name="edit_tickets[TICKETNUM[TKT_max]"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="price-table-container">
+						<h5 class="tickets-heading">Base Ticket Price and Price Modifiers</h5>
+						<table class="price-table">
+							<thead>
+								<tr>
+									<td>Price Type</td>
+									<td>Name</td>
+									<td>Amount</td>
+									<td></td>
+								</tr>
+							</thead>
+							<tbody class="ticket-price-rows">
+								<tr class="hidden"><td colspan="4"></td></tr>
+							</tbody>
+							<tfoot>
+								<tr class="price-total-row">
+									<td colspan="2">Total</td>
+									<td><span id="price-total-amount-TICKETNUM">$0.00</span</td>
+									<td><input type="hidden" name="price_total_rows_ticket1" id="price-total-rows-TICKETNUM" value="1"></td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+					<div style="clear:both"></div>
+					<h5 class="tickets-heading">Event Datetimes</h5>
+					<p>This ticket will be usable (allow entrance) for the following selected event datetimes (click to select):</p>
+					<ul class="datetime-tickets-list">
+						<li class="hidden"></li>
+					</ul>
+					<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[TICKETNUM][TKT_is_default]" id="edit-ticket-TKT_is_default">  
+					<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="TICKETNUM">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="TICKETNUM">Cancel</button></div>
+					<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
+					<input type="hidden" name="starting_ticket_datetime_IDs" id="starting-ticket-datetime-ids-TICKETNUM" value="" class="starting-ticket-datetime-ids">
+					<input type="hidden" name="ticket_datetime_IDs" class="ticket-datetime-ids" id="ticket-datetime-ids-TICKETNUM" value="">
+
+				</fieldset>
+			</td>
+		</tr>
+	</table>
+
+	
+	<!-- this is retrieved by our js to set a new price row -->
+	<table id="ticket-edit-row-new-price-row">
+		<tr id="price-row-TICKETNUM-PRICENUM">
+			<td>
+				<select name="edit_prices[TICKETNUM][PRICENUM][PRT_ID]" class="edit-price-PRT_ID" style="display:none">
+					<!-- NOTE THAT these price options are only listing the default base prices (PBT == 1) currently available. on main ticket creation (i.e. not via the "short-ticket" form), the initial base price is listed. -->
+					<option value="1" selected=selected>Event Price</option>
+					<option value="2">Big Event Price</option>
+				</select>
+			</td>
+			<td><input type="hidden" name="edit_prices[TICKETNUM][PRICENUM][PRC_ID]" class="edit-price-PRC_ID"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[TICKETNUM][PRICENUM][PRC_name]" value="General Admission"></td>
+			<td><input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[TICKETNUM][PRICENUM][PRC_amount]" value="50"></td>
+			<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM"></span><span class="trash-icon clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM"></span><button data-ticket-row="TICKETNUM" data-price-row="PRICENUM" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
+		</tr>
+		<tr id="extra-price-row-TICKETNUM-PRICENUM" style="display:none">
+			<td colspan="4">
+				<textarea name="edit_prices[TICKETNUM][PRICENUM][PRT_description]" class="edit-price-PRC_description ee-full-textarea-inp" placeholder="Edit the description for the price here"></textarea>
+			</td>
+		</tr>
+	</table>
+
+
+	<!-- This is the selector and it ONLY lists price-modifiers (i.e. PBT_ID = 2 || 3) -->
+	<div id="ticket-edit-row-price-modifier-selector">
+		<select name="edit_prices[TICKETNUM][PRICE_NUM][PRT_ID]" class="edit-price-PRT_ID">
+			<option value="0">Select Price Modifier</option>
+			<option value="1">Discount</option>
+			<option value="2">Surcharge</option>
+		</select>
+	</div>
 
 	<!-- available tickets for datetime html -->
 	<div id="edit-datetime-available-tickets-holder">
@@ -389,8 +541,7 @@
 			<!-- here's an example of a row for a ticket that might not have a ticket id yet.  However we can still reference later what ticket it belongs to via the "ticketrow" arraykey -->
 			<!-- <input type="hidden" name="datetime_ticket_IDs[row1][ticketrow1]" id="datetime-ticket-id-row1-ticketrow1" value="0"> -->
 			
-			<div id="add-datetime-ticket-container">
-				<!-- NOTE that the add-new-ticket-table will only appear ONCE in the DOM, we'll use jQuery to simply show the element in the appropriate place when needed -->
+			<div class="add-datetime-ticket-container">
 				<h5 class="datetime-tickets-heading">Add New Ticket</h5><a href="#" class="help_img">Help Link</a>
 				<table class="add-new-ticket-table">
 					<thead>
@@ -405,30 +556,30 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr valign="top" id="add-new-ticket-shortcut-row">
+						<tr valign="top" class="add-new-ticket-shortcut-row">
 							<td>
-								<input type="text" name="add_new_ticket[TKT_name]" id="add-new-ticket-TKT_name">
+								<input type="text" name="add_new_ticket[TKT_name]" class="add-new-ticket-TKT_name">
 							</td>
 							<td>
-								<input type="text" name="add_new_ticket[TKT_start_date]" id="add-new-ticket-TKT_start_date">
+								<input type="text" name="add_new_ticket[TKT_start_date]" class="add-new-ticket-TKT_start_date">
 							</td>
 							<td>
-								<input type="text" name="add_new_ticket[TKT_end_date]" id="add-new-ticket-TKT_end_date">
+								<input type="text" name="add_new_ticket[TKT_end_date]" class="add-new-ticket-TKT_end_date">
 							</td>
 							<td>
-								<select name="add_new_ticket[PRT_ID]" id="add-new-ticket-PRT_ID">
+								<select name="add_new_ticket[PRT_ID]" class="add-new-ticket-PRT_ID">
 									<option value="1">Event Price</option>
-									<option value="2">Discount</option>
+									<option value="2">Big Event Price</option>
 								</select>
 							</td>
 							<td>	
-								<input type="text" name="add_new_ticket[PRC_amount]" id="add-new-ticket-PRC_amount" size="1">
+								<input type="text" name="add_new_ticket[PRC_amount]" class="add-new-ticket-PRC_amount" size="1">
 							</td>
 							<td>
-								<input type="text" name="add_new_ticket[TKT_qty]" id="add-new-ticket-TKT_qty" size="1">
+								<input type="text" name="add_new_ticket[TKT_qty]" class="add-new-ticket-TKT_qty" size="1">
 							</td>
 							<td>
-								<span class="clickable gear-icon add-edit" data-context="ticket" data-datetime-row="DTTNUM"></span>
+								<span class="clickable gear-icon add-edit" data-context="short-ticket" data-datetime-row="DTTNUM"></span>
 								<!-- the "add-edit" class is used by jQuery to indicate we need to retrieve a edit form using the value from the #next-ticket-row hidden input (which in turn is incremented if the new created item is saved). -->
 								<!-- Also: when the Add New Ticket form is recalled, jQuery will automatically populate the data-context and data-datetime-row properties on the edit icon and save buttons from the event handler for the datetime being edited. -->
 							</td>
@@ -440,7 +591,7 @@
 					<button data-context="short-ticket" data-datetime-row="DTTNUM" class="button-primary ee-create-button">
 						Save Ticket
 					</button>
-					<button data-context="short-ticket" class="button-secondary ee-cancel-button add-edit">
+					<button data-context="short-ticket" data-datetime-row="DTTNUM" class="button-secondary ee-cancel-button add-edit">
 						Cancel
 					</button>
 				</div>
@@ -449,6 +600,8 @@
 		</section>
 	</div>
 
+
+	<!-- new datetime display content -->
 	<div id="dtt_new_display_row_holder">
 		<section id="display-event-datetime-DTTNUM" class="datetime-summary">
 			<span class="datetime-title">September 10, 2013 08:00 am</span><span class="gear-icon clickable" data-datetime-row="DTTNUM" data-context="datetime"></span><span data-datetime-row="DTTNUM"  data-context="datetime" class="ticket-icon clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="clone-icon clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="trash-icon clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="datetime-tickets-sold">Total Tickets Sold: 169</span>
