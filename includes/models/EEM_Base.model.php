@@ -233,7 +233,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $timezone valid PHP DateTimeZone timezone string
 	 */
 	public function set_timezone( $timezone ) {
-		$this->_timezone = $timezone;
+		if($timezone !== NULL){
+			$this->_timezone = $timezone;
+		}
 
 		//note we need to loop through relations and set the timezone on those objects as well.
 		foreach ( $this->_model_relations as $relation ) {

@@ -44,9 +44,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			self::$_instance = new self( $timezone );
 		}
 
-		//set timezone if we have in incoming string
-		if ( !empty( $timezone ) )
-			self::$_instance->set_timezone( $timezone );
+		//we might have a timezone set, let set_timezone decide what to do with it
+		self::$_instance->set_timezone( $timezone );
 
 		// EEM_Event object
 		return self::$_instance;

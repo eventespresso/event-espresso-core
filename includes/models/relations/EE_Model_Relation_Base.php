@@ -82,7 +82,8 @@ abstract class EE_Model_Relation_Base{
 	 * @param string $timezone timezone to set.
 	 */
 	public function set_timezone( $timezone ) {
-		$this->_timezone = $timezone;
+		if($timezone !== NULL)
+			$this->_timezone = $timezone;
 	}
 	
 	
