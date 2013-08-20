@@ -656,7 +656,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param mixed $id
 	 * @return boolean whether the row got deleted or not
 	 */
-	function delete_by_ID($id){
+	public function delete_by_ID($id){
 		$query_params = array();
 		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
 		$query_params['limit'] = 1;

@@ -161,7 +161,7 @@ final class EE_Front_Controller {
 //		var_dump($answers_for_r);
 		
 		// shut 'er down down for maintenance ?
-		if ( EE_Maintenance_Mode::level() ) {
+		if ( EE_Maintenance_Mode::instance()->level() ) {
 			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
 		} else {
 			// load other resources and begin to actually run shortcodes and modules

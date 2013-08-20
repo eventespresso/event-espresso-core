@@ -192,7 +192,7 @@ final class EE_Admin {
 		
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
-		if ( EE_Maintenance_Mode::level() == 2 ){
+		if ( EE_Maintenance_Mode::instance()->level() == 2 ){
 			add_filter('FHEE_admin_pages_array',array($this,'hide_admin_pages_except_maintenance_mode'));
 		} else {
 			//ok so we want to enable the entire admin

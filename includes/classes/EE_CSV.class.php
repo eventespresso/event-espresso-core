@@ -135,7 +135,7 @@
 						}
 					
 						// if first cell is TABLE, then second cell is the table name
-						if ( $data[0]	== 'TABLE' ) {
+						if ( $data[0]	== 'TABLE' ) {//#3336 change to MODEL
 							$table = $data[1];
 							$row = 0;
 						}
@@ -153,7 +153,7 @@
 								$headers[$i] = $data[$i];
 							} else if ( $row === 1 && ! $first_row_is_headers ) {
 								// no column names means our final array will just use counters for keys
-								$csv_data[$table][$row][$headers[$i]] = $data[$i];
+								$csv_data[$table][$row][$headers[$i]] = $data[$i];//#3336 this might not be a field name-- might be "DESCRIPTION (FIELD_NAME)"
 								$headers[$i] = $i;
 								// and we need to store csv data
 							} else if ( $row ) {
