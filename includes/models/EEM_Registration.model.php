@@ -164,7 +164,7 @@ class EEM_Registration extends EEM_Base {
 	*		@return void
 	*/
 	public static function reg_status_array() {
-		call_user_func( array( __CLASS__, '_get_registration_status_array' ));
+		call_user_func( array( EEM_Registration::instance(), '_get_registration_status_array' ));
 		return self::$_reg_status;
 	}
 
