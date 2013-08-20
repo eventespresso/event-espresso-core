@@ -847,7 +847,6 @@ jQuery(document).ready(function($) {
 		 */
 		toggleTicketSelect: function(itm, trash) {
 			this.itemdata = $(itm).data();
-			console.log(this.itemdata);
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
 			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.datetimeRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
@@ -882,7 +881,6 @@ jQuery(document).ready(function($) {
 		 * @return {TKT_helper} this object for chainability
 		 */
 		addTicket: function() {
-			this.changeTicket(this.itemdata.datetimeRow, this.itemdata.ticketRow);
 			this.changeTicket(this.itemdata.ticketRow, this.itemdata.datetimeRow, 'ticket-datetime');
 			return this;
 		},
@@ -894,7 +892,6 @@ jQuery(document).ready(function($) {
 		 * @return {TKT_helper}       this object for chainability
 		 */
 		removeTicket: function() {
-			this.changeTicket(this.itemdata.datetimeRow, this.itemdata.ticketRow, 'datetime-ticket', true);
 			this.changeTicket(this.itemdata.ticketRow, this.itemdata.datetimeRow, 'ticket-datetime', true);
 			return this;
 		},
@@ -914,24 +911,26 @@ jQuery(document).ready(function($) {
 			context = typeof(context) === 'undefined' ? 'datetime-ticket' : context;
 			var changeid = '#' + context + '-ids-' + idrow;
 			var curitems = $(changeid).val();
-			if ( typeof(curitems) !== 'undefined' )
+			if ( typeof(curitems) !== 'undefined' && curitems !== '' )
 					curitems = curitems.split(',');
 			else {
-				$(changeid).val(curitems);
+				$(changeid).val(valuerow);
 				return this;
 			}
 
-
-
 			if ( remove ) {
-				curitems.each( function(i, val) {
-					if ( val === valuerow )
-						curitems = TKT_helper.removeFromArray(curitems, i);
+				$.each( curitems, function(i, val) {
+					if ( val == valuerow ) {
+						curitems = TKT_helper.removeFromArray(curitems, val);
+					}
 				});
 			} else {
 				curitems.push(valuerow);
 			}
-			$(changeid).val(curitems.join(','));
+			if ( curitems )
+				curitems = curitems.join(',');
+		
+			$(changeid).val(curitems);
 
 			return this;
 		},
@@ -1054,17 +1053,15 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 * This helper method simply removes an item (or group of items) from a js array.
-		 * @link http://ejohn.org/blog/javascript-array-remove/
-		 * @param  {array} array js array to remove items from
-		 * @param  {int} from    index of what element is being removed
-		 * @param  {int} to      index of what second element is being removed
-		 * @return {array}       array with removed items
+		 * This helper method simply removes any matching items from a js array.
+		 * @param  {array} arr js array to remove items from
+		 * @param  {string}   itm value of what element is being removed
+		 * @return {array}    new array with removed items
 		 */
-		removeFromArray: function( array, from, to ) {
-			var rest = array.slice((to || from) +1 || array.length);
-			array.length = from < 0 ? array.length + from : from;
-			return array.push.apply(array, rest);
+		removeFromArray: function( arr, ind ) {
+			return arr.filter( function(i) {
+				return i != ind;
+			});
 		},
 
 

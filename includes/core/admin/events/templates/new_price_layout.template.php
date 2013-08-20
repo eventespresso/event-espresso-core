@@ -347,10 +347,6 @@
 				<li class="hidden"></li>
 			</ul>
 			
-			<!-- these hidden inputs appear when a ticket is selected and are removed when a ticket is deselected -->
-			<!-- <input type="hidden" name="datetime_ticket_IDs[DTTNUM][TICKETNUM]" id="datetime-ticket-id-DTTNUM-TICKETNUM" value="1"> -->
-			<!-- here's an example of a row for a ticket that might not have a ticket id yet.  However we can still reference later what ticket it belongs to via the "ticketrow" arraykey -->
-			<!-- <input type="hidden" name="datetime_ticket_IDs[row1][ticketrow1]" id="datetime-ticket-id-row1-ticketrow1" value="0"> -->
 			
 			<div class="add-datetime-ticket-container">
 				<h5 class="datetime-tickets-heading">Add New Ticket</h5><!-- <a href="#" class="help_img">Help Link</a> -->
