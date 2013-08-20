@@ -199,6 +199,9 @@
 						<button data-datetime-row="DTTNUM"  data-context="datetime" class="button-primary ee-save-button">
 							Save Datetime
 						</button>
+						<button data-datetime-row="DTTNUM" data-context="datetime" class="button-secondary ee-cancel-button">
+							Cancel
+						</button>
 					</td>
 				</tr>
 			</table>
