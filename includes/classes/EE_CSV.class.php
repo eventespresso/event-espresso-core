@@ -78,8 +78,67 @@
 	}
 
 	
+	/**
+	 * Generic CSV-functionality to turn an entire CSV file into a single array that's 
+	 * NOT in a specific format to EE. It's just a 2-level array, with top-level arrays
+	 * representing each row in the CSV file, and the second-level arrays being each column in that row
+	 * @param string $path_to_file
+	 * @return array of arrays. Top-level array has rows, second-level array has each item
+	 */
+	public function import_csv_to_multi_dimensional_array($path_to_file){
+		// needed to deal with Mac line endings
+		ini_set('auto_detect_line_endings',TRUE);
 
+		// because fgetcsv does not correctly deal with backslashed quotes such as \"
+		// we'll read the file into a string
+		$file_contents = file_get_contents( $path_to_file );
+		// replace backslashed quotes with CSV enclosures
+		$file_contents = str_replace ( '\\"', '"""', $file_contents );
+		// HEY YOU! PUT THAT FILE BACK!!!
+		file_put_contents($path_to_file, $file_contents);
+		
+		if (($file_handle = fopen($path_to_file, "r")) !== FALSE) {
+			# Set the parent multidimensional array key to 0.
+			$nn = 0;
+			$csvarray = array();
+			
+			// in PHP 5.3 fgetcsv accepts a 5th parameter, but the pre 5.3 versions of fgetcsv choke if passed more than 4 - is that crazy or what?
+			if ( version_compare( PHP_VERSION, '5.3.0' ) < 0 ) {
 
+				//  PHP 5.2- version
+
+				// loop through each row of the file
+				while(($data = fgetcsv($file_handle, 0, ',', '"' )) !== FALSE){
+					# Count the total keys in the row.
+					$c = count($data);
+					# Populate the multidimensional array.
+					for ($x=0;$x<$c;$x++)
+					{
+						$csvarray[$nn][$x] = $data[$x];
+					}
+					$nn++;
+				}
+			}else{
+				// loop through each row of the file
+				while (( $data = fgetcsv( $file_handle, 0, ',', '"', '\\' )) !== FALSE ) {
+					# Count the total keys in the row.
+					$c = count($data);
+					# Populate the multidimensional array.
+					for ($x=0;$x<$c;$x++)
+					{
+						$csvarray[$nn][$x] = $data[$x];
+					}
+					$nn++;
+				}
+			}
+			# Close the File.
+			fclose($file_handle);
+			return $csvarray;
+		}else{
+			$this->_notices['errors'][] = 'An error occured - the file: ' . $path_to_file . ' could not opened.';
+			return false;
+		}
+	}
 
 	
 	/**
@@ -90,150 +149,64 @@
 	 *			@return mixed - array on success - multi dimensional with headers as keys (if headers exist) OR string on fail - error message
 	 */	
 	public function import_csv_to_array( $table_list, $path_to_file, $table = FALSE, $first_row_is_headers = TRUE ) {
-				
-		// first check to see if file exists
-		if (file_exists($path_to_file)) { 
-		
-			// gotta start somewhere
-			$row = 1;
-			// array to store csv data in
-			$csv_data = array();
-			// array to store headers (column names)
-			$headers = array();
+		$multi_dimensional_array = $this->import_csv_to_multi_dimensional_array($path_to_file);
+		if( ! $multi_dimensional_array ){
+			return false;
+		}
+		// gotta start somewhere
+		$row = 1;
+		// array to store csv data in
+		$ee_formatted_data = array();
+		// array to store headers (column names)
+		$headers = array();
 			
-			// no tables
-			if ( ! $table_list ) {
-				// get list of event espresso tables
-				$table_list = self::list_db_tables();
+		// no tables
+		if ( ! $table_list ) {
+			// get list of event espresso tables
+			$table_list = self::list_db_tables();
+		}
+	
+		foreach($multi_dimensional_array as $data){
+			// if first cell is TABLE, then second cell is the table name
+			if ( $data[0]	== 'TABLE' ) {//#3336 change to MODEL
+				$table = $data[1];
+				$row = 0;
 			}
-	
-			// needed to deal with Mac line endings
-			ini_set('auto_detect_line_endings',TRUE);
 
-			// because fgetcsv does not correctly deal with backslashed quotes such as \"
-			// we'll read the file into a string
-			$file_contents = file_get_contents( $path_to_file );
-			// replace backslashed quotes with CSV enclosures
-			$file_contents = str_replace ( '\\"', '"""', $file_contents );
-			// HEY YOU! PUT THAT FILE BACK!!!
-			file_put_contents($path_to_file, $file_contents);
-	
-			// now try to open and read the corrected file
-			if (($file_handle = fopen( $path_to_file, "r" )) !== FALSE) {
-				
-				// in PHP 5.3 fgetcsv accepts a 5th parameter, but the pre 5.3 versions of fgetcsv choke if passed more than 4 - is that crazy or what?
-				if ( version_compare( PHP_VERSION, '5.3.0' ) < 0 ) {
+			// how many columns are there?
+			$columns = count($data);
 
-					//  PHP 5.2- version
-
-					// loop through each row of the file
-					while (($data = fgetcsv($file_handle, 0, ',', '"' )) !== FALSE) {
-			
-						// add fail safe to prevent infinite looping in case something goes crazy
-						if ( $row > 1000 ) {
-							break;
-						}
-					
-						// if first cell is TABLE, then second cell is the table name
-						if ( $data[0]	== 'TABLE' ) {//#3336 change to MODEL
-							$table = $data[1];
-							$row = 0;
-						}
-						
-						// how many columns are there?
-						$columns = count($data);
-						
-						// loop through each column
-						for ( $i=0; $i < $columns; $i++ ) {
-							//replace csv_enclosures with backslashed quotes 
-							$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
-							// do we need to grab the column names?
-							if ( $row === 1 && $first_row_is_headers ) {
-								// store the column names to use for keys
-								$headers[$i] = $data[$i];
-							} else if ( $row === 1 && ! $first_row_is_headers ) {
-								// no column names means our final array will just use counters for keys
-								$csv_data[$table][$row][$headers[$i]] = $data[$i];//#3336 this might not be a field name-- might be "DESCRIPTION (FIELD_NAME)"
-								$headers[$i] = $i;
-								// and we need to store csv data
-							} else if ( $row ) {
-								// no headers just store csv data
-								$csv_data[$table][$row][$headers[$i]] = $data[$i];
-							}
-							
-						}
-						// advance to next row
-						$row++;
-						
-					}
-					
-				} else {
-				
-					// PHP 5.3+ version
-
-					// loop through each row of the file
-					while (( $data = fgetcsv( $file_handle, 0, ',', '"', '\\' )) !== FALSE ) {
-
-						// add fail safe to prevent infinite looping in case of errors
-						if ( $row > 1000 ) {
-							break;
-						}
-					
-						// if first cell is TABLE, then second cell is the table name
-						if ( $data[0]	== 'TABLE' ) {
-							$table = $data[1];
-							$row = 0;
-						}
-						
-						// how many columns are there?
-						$columns = count($data);
-						
-						// loop through each column
-						for ( $i=0; $i < $columns; $i++ ) {
-							//replace csv_enclosures with backslashed quotes 
-							$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
-							// do we need to grab the column names?
-							if ( $row === 1 && $first_row_is_headers ) {
-								// store the column names to use for keys
-								$headers[$i] = $data[$i];
-							} else if ( $row === 1 && ! $first_row_is_headers ) {
-								// no column names means our final array will just use counters for keys
-								$csv_data[$table][$row][$headers[$i]] = $data[$i];
-								$headers[$i] = $i;
-								// and we need to store csv data
-							} else if ( $row ) {
-								// no headers just store csv data
-								$csv_data[$table][$row][$headers[$i]] = $data[$i];
-							}
-						}
-						// advance to next row
-						$row++;
-						
-					}
-					
+			// loop through each column
+			for ( $i=0; $i < $columns; $i++ ) {
+				//replace csv_enclosures with backslashed quotes 
+				$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
+				// do we need to grab the column names?
+				if ( $row === 1 && $first_row_is_headers ) {
+					// store the column names to use for keys
+					$headers[$i] = $data[$i];
+				} else if ( $row === 1 && ! $first_row_is_headers ) {
+					// no column names means our final array will just use counters for keys
+					$ee_formatted_data[$table][$row][$headers[$i]] = $data[$i];//#3336 this might not be a field name-- might be "DESCRIPTION (FIELD_NAME)"
+					$headers[$i] = $i;
+					// and we need to store csv data
+				} else if ( $row ) {
+					// no headers just store csv data
+					$ee_formatted_data[$table][$row][$headers[$i]] = $data[$i];
 				}
 
-				// close file connection
-				fclose($file_handle);
-
-			} else {
-				$this->_notices['errors'][] = 'An error occured - the file: ' . $path_to_file . ' could not opened.';
-				return FALSE;
 			}
-			
-			// delete the uploaded file
-			unlink($path_to_file);
-	
-//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $csv_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
+			// advance to next row
+			$row++;
+
+		}
+
+		// delete the uploaded file
+		unlink($path_to_file);
+//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $ee_formatted_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 //die();
 
-			// it's good to give back
-			return $csv_data;
-			
-		} else {
-			$this->_notices['errors'][] = 'An error occured - could not locate the file: ' . $path_to_file . '.';
-			return FALSE;
-		}
+		// it's good to give back
+		return $ee_formatted_data;
 		
 	}
 	

@@ -16,7 +16,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	private static $_instance = NULL;
 	
   // instance of the EE_CSV object
-	static $EE_CSV = NULL;
+	var $EE_CSV = NULL;
 	
 	var $_basic_header = array();
 	var $_question_groups = array();
