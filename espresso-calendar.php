@@ -573,10 +573,13 @@ class EE_Calendar {
 				// show time ?
 				$events[ $cntr ]['tooltip'] .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 				// check attendee reg limit
-				$orig_attendee_limit = get_number_of_attendees_reg_limit( $event->id, $type = 'num_attendees_slash_reg_limit' );
-				$parse_limits = explode('/', $orig_attendee_limit, 2);
-				$num_completed = $parse_limits[0];
-				$reg_limit = $parse_limits[1];
+				$num_completed = 0;
+				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id=%d AND (payment_status='Completed' OR payment_status='Pending' OR payment_status='Refund') ";
+				$wpdb->get_results( $wpdb->prepare( $a_sql, $event->id ), ARRAY_A);
+				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+					$num_completed = $wpdb->last_result[0]->quantity;
+				}
+				$reg_limit = $event->reg_limit;
 				// add attendee limit if set
 				if ( $show_attendee_limit ) {
 					$attendee_limit = $reg_limit >= 999999 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $num_completed . ' / ' . $reg_limit;
