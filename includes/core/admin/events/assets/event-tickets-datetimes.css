@@ -1,23 +1,23 @@
 .event-tickets-datetimes-title {
-	font-size: 1.35em;
-	margin: 10px 0 10px 0;
-	padding: 0;
+    font-size: 1.35em;
+    margin: 10px 0 10px 0;
+    padding: 0;
 }
 
 .event-datetimes-container {
-	margin-left: 10px;
-	margin-top: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
 }
 
 .event-datetime-row {
-	border-bottom: 2px solid #eee;
+    border-bottom: 2px solid #eee;
     /*padding-top: 15px;
-	padding-bottom: 11px;*/
+    padding-bottom: 11px;*/
 }
 
 .datetime-title {
-	font-size: 1.2em;
-	font-weight: bold;
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
 .datetime-summary {
@@ -27,34 +27,38 @@
 
 
 .clickable {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .gear-icon, .ticket-icon, .trash-icon, .clone-icon {
-	display: inline;
+    display: inline;
     padding: 8px;
     margin-left: 8px;
 }
 
 .gear-icon {
-	background: transparent url(../../../../../images/settings-16x16.png) 0 6px no-repeat;
+    background: transparent url(../../../../../images/settings-16x16.png) 0 6px no-repeat;
 }
 
 .trash-icon {
-	background: transparent url(../../../../../images/trash-small-16x16.png) 0 6px no-repeat;
+    background: transparent url(../../../../../images/trash-small-16x16.png) 0 6px no-repeat;
 }
 
 .ticket-icon {
-	background: transparent url(../../../../../images/tickets.png) 0 6px no-repeat;
+    background: transparent url(../../../../../images/tickets.png) 0 6px no-repeat;
 }
 
 .clone-icon {
-	background: transparent url(../../../../../images/clone-trooper-16x16.png) 0 6px no-repeat;
+    background: transparent url(../../../../../images/clone-trooper-16x16.png) 0 6px no-repeat;
 }
 
 .datetime-tickets-sold {
-	font-size: 1em;
-	float: right;
+    font-size: 1em;
+    float: right;
+}
+
+.datetime-tickets-edit h5 {
+    margin: 0
 }
 
 .button-column {
@@ -63,9 +67,9 @@
 
 
 .ee-text-inp, .ee-small-text-inp {
-	margin-left: 10px;
-	margin-right: 10px;
-	width: 150px;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 150px;
 }
 
 .ee-small-text-inp {
@@ -73,12 +77,12 @@
 }
 
 .ee-large-text-inp {
-	width: 60%;
+    width: 60%;
 }
 
 .ee-full-textarea-inp {
-	width: 100%;
-	height: 150px;
+    width: 100%;
+    height: 150px;
 }
 
 .basic-ticket-info .ee-text-inp, .basic-ticket-info .ee-small-text-inp, .pricing-table .ee-text-inp, .ee-small-text-inp {
@@ -97,13 +101,13 @@
     padding: 5px;
     margin-left: 5px;
     background-color: #ccc;
- 	-webkit-border-radius: 8px;
- 	-moz-border-radius: 8px;
- 	border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
 }
 
 .ticket-selected {
-	background-color: #9d7;
+    background-color: #9d7;
 }
 
 .event-tickets-container {
@@ -116,8 +120,8 @@
 }
 
 .ticket-table thead {
-	border-bottom: 2px solid #eee;
-	font-weight: bold;
+    border-bottom: 2px solid #eee;
+    font-weight: bold;
 }
 
 .ticket-table tbody tr td {
@@ -126,12 +130,12 @@
 
 
 .ticket-fieldset {
-	border: 3px solid #eee;
-	-webkit-border-radius: 8px;
- 	-moz-border-radius: 8px;
- 	border-radius: 8px;
-	padding: 10px;
-	background-color: #eee;
+    border: 3px solid #eee;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #eee;
 }
 
 .ticket-fieldset legend {
@@ -148,8 +152,8 @@
 }
 
 .edit-ticket-TKT_description {
-	font-size: 1.5em;
-	padding: 10px;
+    font-size: 1.5em;
+    padding: 10px;
 }
 
 .edit-ticket-TKT_start_date, .edit-ticket-TKT_end_date {
@@ -157,16 +161,16 @@
 }
 
 .total-price-container {
-	float:right;
-	margin-top: 10px;
-	line-height: 10px;
+    float:right;
+    margin-top: 10px;
+    line-height: 10px;
 }
 
 .ticket-price-amount {
-	font-weight: bold;
-	font-size: 3em;
-	display: inline-block;
-	margin-left: 10px;
+    font-weight: bold;
+    font-size: 3em;
+    display: inline-block;
+    margin-left: 10px;
 }
 
 .basic-ticket-info, .price-table {
@@ -174,12 +178,12 @@
 }
 
 .basic-ticket-info thead, .price-table thead {
-	font-weight: normal;
-	border: none;
+    font-weight: normal;
+    border: none;
 }
 
 .basic-ticket-info tbody tr td, .price-table tbody tr td {
-	padding: 0;
+    padding: 0;
 }
 
 .basic-ticket-info td {
@@ -250,7 +254,7 @@
     float: left;
 }
 
-#add-datetime-ticket-container .save-cancel-button-container {
+.add-datetime-ticket-container .save-cancel-button-container {
     padding-top: 14px;
 }
 

@@ -264,7 +264,7 @@ jQuery(document).ready(function($) {
 			this.dateTimeRow = row;
 			this.context = 'datetime';
 			var newrownum = this.increaserowcount();
-			var newDTTrow = $('#event-datetime-' + row).clone().attr('id','#event-datetime-' + newrownum).appendTo('.event-datetimes-container');
+			var newDTTrow = $('#event-datetime-' + row).clone().attr('id','event-datetime-' + newrownum).appendTo('.event-datetimes-container');
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
 
 			/*replace all old row values with newrownum*/
@@ -414,7 +414,7 @@ jQuery(document).ready(function($) {
 			this.ticketRow = row;
 			this.context = 'ticket'
 			var newrownum = this.increaserowcount();
-			var newTKTrow = $('#display-ticketrow-' + row).clone().attr('id', '#display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone().attr('id', '#edit-ticketrow-' + newrownum));
+			var newTKTrow = $('#display-ticketrow-' + row).clone().attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone().attr('id', 'edit-ticketrow-' + newrownum));
 			newTKTrow = $('.ticket-table', '.event-tickets-container').find('tbody').append(newTKTrow);
 
 			/*replace all old row values with newrownum*/
@@ -697,17 +697,19 @@ jQuery(document).ready(function($) {
 		 */
 		trash: function(row) {
 			this.decreaserowcount(row);
-
+			console.log(row);
 			switch ( this.context ) {
 				case 'datetime' :
-					$('#event-datetime-row-' + row).remove();
+					$('#event-datetime-' + row).remove();
 					this.ticketRow = 0; //set to 0 so we remove dtts for all tickets.
+					this.dateTimeRow = row;
 					break;
 
 				case 'ticket' :
 					$('#edit-ticketrow-' + row).remove();
 					$('#display-ticket-row' + row).remove();
 					this.dateTimeRow = 0; //set to 0 so we remove tkts for all datetimes.
+					this.ticketRow = row;
 					break;
 			}
 			
@@ -725,16 +727,16 @@ jQuery(document).ready(function($) {
 			switch (what) {
 				// toggling a dtt attached to a ticket.
 				case 'datetime' :
-					li_item = this.ticketRow === 0 ? $('datetime-tickets-list', '.event-tickets-container').find('li[data-datetime-row="'+this.dateTimeRow+'"]') : $('datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow ).find('li[data-datetime-row="'+this.dateTimeRow+'"]');
+					li_item = TKT_helper.ticketRow === 0 ? $('.datetime-tickets-list', '.event-tickets-container').find('li[data-datetime-row="'+TKT_helper.dateTimeRow+'"]') : $('.datetime-tickets-list', '#edit-ticketrow-' + TKT_helper.ticketRow ).find('li[data-datetime-row="'+TKT_helper.dateTimeRow+'"]');
 					break;
 
 				// toggling a ticket attached to a dtt
 				case 'ticket' :
-					li_item = this.dateTimeRow === 0 ? $('datetime-tickets-list', '.event-datetimes-container').find('li[data-ticket-row="'+this.ticketRow+'"]') : $('datetime-tickets-list', '.edit-event-datetime-tickets-' + this.dateTimeRow).find('li[data-ticket-row="'+this.ticketRow+'"]');
+					li_item = TKT_helper.dateTimeRow === 0 ? $('.datetime-tickets-list', '.event-datetimes-container').find('li[data-ticket-row="'+TKT_helper.ticketRow+'"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + TKT_helper.dateTimeRow).find('li[data-ticket-row="'+TKT_helper.ticketRow+'"]');
 					break;
 			}
 
-			li_item.each( function() {TKT_helper.toggleTicketSelect(this);});
+			li_item.each( function() {TKT_helper.toggleTicketSelect(this, remove);});
 		},
 
 
@@ -860,7 +862,7 @@ jQuery(document).ready(function($) {
 				this.removeTicket();
 				if ( trash ) {
 					$(itm).remove();
-					avalable_list_row.remove();
+					available_list_row.remove();
 				}
 			} else  {
 				$(itm).addClass('ticket-selected');
@@ -914,7 +916,8 @@ jQuery(document).ready(function($) {
 			if ( typeof(curitems) !== 'undefined' && curitems !== '' )
 					curitems = curitems.split(',');
 			else {
-				$(changeid).val(valuerow);
+				if ( !remove )
+					$(changeid).val(valuerow);
 				return this;
 			}
 
