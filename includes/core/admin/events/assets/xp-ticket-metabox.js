@@ -264,6 +264,7 @@ jQuery(document).ready(function($) {
 		 */
 		cloneDateTime: function( row ) {
 			this.dateTimeRow = row;
+			this.context = 'datetime';
 			var newrownum = this.increaserowcount();
 			var newDTTrow = $('#event-datetime-' + row).clone().appendTo('.event-datetimes-container');
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
@@ -284,7 +285,8 @@ jQuery(document).ready(function($) {
 				
 				//handle data-datetime-row properties
 				if ( typeof(this.itemdata) !== 'undefined' && typeof(this.itemdata.datetimeRow) !== 'undefined' ) {
-					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute and if the datetime row is cloned it doesn't appear to clone the data() obj cache for the selector.
+					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.  
+					$(this).data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
 				}
 
 				//handle ticket counts!
@@ -318,24 +320,30 @@ jQuery(document).ready(function($) {
 			//buttons
 			newDTTrow.find('button').each( function() {
 				data = $(this).data();
-				if ( typeof(data) !== 'undefined' && typeof(data.datetimeRow) !== 'undefined' )
+				if ( typeof(data) !== 'undefined' && typeof(data.datetimeRow) !== 'undefined' ) {
 					$(this).attr('data-datetime-row', newrownum);
+					$(this).data('datetimeRow', newrownum);
+				}
 			});
 
 
 			//li
 			newDTTrow.find('li').each( function() {
 				data = $(this).data();
-				if ( typeof(data) !== 'undefined' && typeof(data.datetimeRow) !== 'undefined' )
+				if ( typeof(data) !== 'undefined' && typeof(data.datetimeRow) !== 'undefined' ) {
 					$(this).attr('data-datetime-row', newrownum);
+					$(this).data('datetimeRow', newrownum);
+				}
 			});
 
 
 			//div
 			newDTTrow.find('div').each( function() {
 				curid = $(this).attr('id');
-				newid = curid.replace(row, newrownum);
-				$(this).attr('id', newid);
+				if ( typeof(curid) !== 'undefined' ) {
+					newid = curid.replace(row, newrownum);
+					$(this).attr('id', newid);
+				}
 			});
 
 
@@ -406,6 +414,7 @@ jQuery(document).ready(function($) {
 		cloneTicket: function(row) {
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
 			this.ticketRow = row;
+			this.context = 'ticket'
 			var newrownum = this.increaserowcount();
 			var newTKTrow = $('#display-ticketrow-' + row).clone().add( $('#edit-ticketrow-' + row ).clone());
 			newTKTrow = $('.ticket-table', '.event-tickets-container').find('tbody').append(newTKTrow);
@@ -440,6 +449,7 @@ jQuery(document).ready(function($) {
 
 				if ( typeof(this.itemdata) !== 'undefined' && typeof(this.itemdata.ticketRow) !== 'undefined' ) {
 					$(this).attr('data-ticket-row', newrownum);
+					$(this).data('ticketRow', newrownum);
 				}
 
 				if ( typeof(curid) !== 'undefined' )
@@ -497,11 +507,13 @@ jQuery(document).ready(function($) {
 			//li
 			newTKTrow.find('li').each( function() {
 				$(this).attr('data-ticket-row', newrownum);
+				$(this).data('ticketRow', newrownum);
 			});
 
 			//button
 			newTKTrow.find('button').each( function() {
 				$(this).attr('data-ticket-row', newrownum);
+				$(this).data('ticketRow', newrownum);
 			});
 
 			//okay all the elements have the ticketrownums changed now let's update the related DTT items!
@@ -1001,10 +1013,10 @@ jQuery(document).ready(function($) {
 		 *
 		 */
 		DateTimeEditToggle: function() {
-			if ( this.context == 'ticket' ) {
+			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
 				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
 				this.selector.slideToggle( 500 );
-			} else if ( this.context == 'datetime' || this.context == 'short-ticket' ) {
+			} else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
 				this.selector.slideToggle( 500 );
 			}
@@ -1116,14 +1128,18 @@ jQuery(document).ready(function($) {
 	 */
 	$('#event-and-ticket-form-content').on('click', '.ee-cancel-button', function(e) {
 		e.preventDefault();
-		e.stopPropagation();
 		var data = $(this).data();
+		console.log(this);
 		switch ( data.context ) {
 			case 'ticket' :
 				TKT_helper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
 				break;
 			case 'short-ticket' :
 				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
+				break;
+			case 'datetime' :
+				console.log(data.datetimeRow);
+				TKT_helper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
 		}
 		return false;
