@@ -340,10 +340,13 @@ function espresso_calendar_do_stuff($show_expired) {
 		$eventArray['id'] = $event->id;
 		
 		if (isset($espresso_calendar['show_attendee_limit']) && $espresso_calendar['show_attendee_limit'] == true) {
-			$orig_attendee_limit = get_number_of_attendees_reg_limit($event->id, $type = 'num_attendees_slash_reg_limit');
-			$parse_limits = explode( '/', $orig_attendee_limit, 2 );
-			$num_completed = $parse_limits[0];
-			$reg_limit = $parse_limits[1];
+			$num_completed = 0;
+			$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id=%d AND (payment_status='Completed' OR payment_status='Pending' OR payment_status='Refund') ";
+			$wpdb->get_results( $wpdb->prepare( $a_sql, $event->id ), ARRAY_A);
+			if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+				$num_completed = $wpdb->last_result[0]->quantity;
+			}
+			$reg_limit = $event->reg_limit;
 			if ($reg_limit >= 999999){
 				$eventArray['attendee_limit'] = __('UNL', 'event_espresso');
 			}else{
