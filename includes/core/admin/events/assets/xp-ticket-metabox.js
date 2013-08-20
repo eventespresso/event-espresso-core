@@ -163,7 +163,7 @@ jQuery(document).ready(function($) {
 		getTicketTitle: function( rownum ) {
 			if ( typeof(rownum) === 'undefined' )
 				rownum = this.ticketRow;
-			return $('.edit-ticket-TKT-name', '#edit-ticketrow-' + rownum).val();
+			return $('.edit-ticket-TKT_name', '#edit-ticketrow-' + rownum).val();
 		},
 
 
@@ -220,11 +220,9 @@ jQuery(document).ready(function($) {
 			$('#add-event-datetime').find('input').each(function() { $(this).val(''); });
 
 			//get list of available tickets and make sure they are present in the list.
-			var existing_datetime_tickets_list = $('#dtt-existing-available-ticket-list-items-holder').clone().html();
-			var existing_datetime_tickets_container = $('#edit-datetime-available-tickets-holder').clone().html();
+			var existing_datetime_tickets_list = $('#dtt-existing-available-ticket-list-items-holder').clone().html().replace(/DTTNUM/g,row);
+			var existing_datetime_tickets_container = $('#edit-datetime-available-tickets-holder').clone().html().replace(/DTTNUM/g,row);
 
-			//str replace on the existing_datetime_tickets so we get the DTTNUM set correctly
-			existing_datetime_tickets_container = existing_datetime_tickets_container.replace(/DTTNUM/g,row);
 			existing_datetime_tickets_container = $(existing_datetime_tickets_container).appendTo(DTT_row_container);
 			
 
@@ -301,7 +299,7 @@ jQuery(document).ready(function($) {
 					
 					//now we can get the ticket title from the tickets list and simply replace what's in the datetime ticket with it.  Why do we do this instead of just replacing the numbers?  Because the ticket title may have a number in it.
 					tickettitle = TKT_helper.getTicketTitle( parentdata.ticketRow );
-					$(this).text(tickettitle + '0');
+					$(this).text(tickettitle + ': 0');
 				}
 
 			});
@@ -542,8 +540,10 @@ jQuery(document).ready(function($) {
 		updateDTTrow: function( dttrow ) {
 			var lidttitem;
 			this.dateTimeRow = dttrow;
+			console.log(this.dateTimeRow);
 			//need to update the displayed datetime string for the datetime title...
 			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end-' + this.dateTimeRow).val() );
+			console.log(DTT_display_text);
 			$('.datetime-title', '#event-datetime-' + this.dateTimeRow).text(DTT_display_text);
 
 			//... and in all related dtt list rows!
@@ -1129,7 +1129,7 @@ jQuery(document).ready(function($) {
 	$('#event-and-ticket-form-content').on('click', '.ee-cancel-button', function(e) {
 		e.preventDefault();
 		var data = $(this).data();
-		console.log(this);
+
 		switch ( data.context ) {
 			case 'ticket' :
 				TKT_helper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
@@ -1138,7 +1138,6 @@ jQuery(document).ready(function($) {
 				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
 			case 'datetime' :
-				console.log(data.datetimeRow);
 				TKT_helper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
 		}
