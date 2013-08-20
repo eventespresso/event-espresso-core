@@ -279,10 +279,10 @@ jQuery(document).ready(function($) {
 			//next let's do the spans
 			newDTTrow.find('span').each( function() {
 				curclass = $(this).attr('class');
-				this.itemdata = $(this).data();
+				TKT_helper.itemdata = $(this).data();
 				
 				//handle data-datetime-row properties
-				if ( typeof(this.itemdata) !== 'undefined' && typeof(this.itemdata.datetimeRow) !== 'undefined' ) {
+				if ( typeof(TKT_helper.itemdata) !== 'undefined' && typeof(TKT_helper.itemdata.datetimeRow) !== 'undefined' ) {
 					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.  
 					$(this).data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
 				}
@@ -450,12 +450,12 @@ jQuery(document).ready(function($) {
 			newTKTrow.find('span').each( function() {
 				curclass = $(this).attr('class');
 				curid = $(this).attr('id');
-				this.itemdata = $(this).data();
+				TKT_helper.itemdata = $(this).data();
 
 				if ( curclass === 'ticket-display-row-TKT_sold' )
 					$(this).text('0');
 
-				if ( typeof(this.itemdata) !== 'undefined' && typeof(this.itemdata.ticketRow) !== 'undefined' ) {
+				if ( typeof(TKT_helper.itemdata) !== 'undefined' && typeof(TKT_helper.itemdata.ticketRow) !== 'undefined' ) {
 					$(this).attr('data-ticket-row', newrownum);
 					$(this).data('ticketRow', newrownum);
 				}
@@ -553,12 +553,12 @@ jQuery(document).ready(function($) {
 			console.log(this.dateTimeRow);
 			//need to update the displayed datetime string for the datetime title...
 			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end', '#edit-event-datetime-' + this.dateTimeRow).val() );
-			
+
 			$('.datetime-title', '#display-event-datetime-' + this.dateTimeRow).text(DTT_display_text);
 
 			//... and in all related dtt list rows!
 			$('.edit-ticket-row').each( function() {
-				lidttitem = $('li.ticket-datetime', '.datetime-tickets-list').find('[data-datetime-row="' + this.dateTimeRow + '"]');
+				lidttitem = $('li', '.datetime-tickets-list').find('[data-datetime-row="' + TKT_helper.dateTimeRow + '"]');
 				$('.ticket-list-ticket-name', lidttitem).text(DTT_display_text);
 			});
 
@@ -589,7 +589,7 @@ jQuery(document).ready(function($) {
 
 			//..and in all related tkt list rows!
 			$('.edit-ticket-row').each( function() {
-				litktitm = $('li.datetime-ticket', '.datetime-tickets-list').find('[data-ticket-row="' + this.ticketRow + '"]');
+				litktitm = $('li.datetime-ticket', '.datetime-tickets-list').find('[data-ticket-row="' + TKT_helper.ticketRow + '"]');
 				$('.ticket-list-ticket-name', litktitm).text( TKT_name + ': ' + tktsold );
 			});
 
@@ -728,7 +728,7 @@ jQuery(document).ready(function($) {
 					break;
 			}
 
-			li_item.each( function() {this.toggleTicketSelect(this);});
+			li_item.each( function() {TKT_helper.toggleTicketSelect(this);});
 		},
 
 
