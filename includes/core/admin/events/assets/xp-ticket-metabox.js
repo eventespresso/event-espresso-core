@@ -550,7 +550,7 @@ jQuery(document).ready(function($) {
 		updateDTTrow: function( dttrow ) {
 			var lidttitem;
 			this.dateTimeRow = dttrow;
-			console.log(this.dateTimeRow);
+
 			//need to update the displayed datetime string for the datetime title...
 			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end', '#edit-event-datetime-' + this.dateTimeRow).val() );
 
@@ -637,6 +637,11 @@ jQuery(document).ready(function($) {
 
 			//append new_dtt_list_row to the ul for datetime-tickets attached to ticket.
 			new_dtt_list_row = $(ticketrowitm).find('.datetime-tickets-list').append(new_dtt_list_row);
+
+			//we need to update the jQuery.data() element for new row
+			$(new_dtt_list_row).data('datetimeRow', this.dateTimeRow);
+			$(new_dtt_list_row).data('ticketRow', ticketrownum);
+			$(new_dtt_list_row).data('context', 'ticket-datetime');
 
 
 			//append new dtt_list_row to the available dtts row BUT we need to make the ticketnum generic! (and only append if it isn't already present!)
@@ -842,10 +847,11 @@ jQuery(document).ready(function($) {
 		 */
 		toggleTicketSelect: function(itm, trash) {
 			this.itemdata = $(itm).data();
+			console.log(this.itemdata);
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
-			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.ticketRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
-			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' ) : $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]');
+			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.datetimeRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
+			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]') : $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' );
 
 			if ( !selecting || trash ) {
 				$(itm).removeClass('ticket-selected');
