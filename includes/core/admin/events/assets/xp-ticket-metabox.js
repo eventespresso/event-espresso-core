@@ -264,7 +264,7 @@ jQuery(document).ready(function($) {
 			this.dateTimeRow = row;
 			this.context = 'datetime';
 			var newrownum = this.increaserowcount();
-			var newDTTrow = $('#event-datetime-' + row).clone().appendTo('.event-datetimes-container');
+			var newDTTrow = $('#event-datetime-' + row).clone().attr('id','#event-datetime-' + newrownum).appendTo('.event-datetimes-container');
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
 
 			/*replace all old row values with newrownum*/
@@ -414,10 +414,20 @@ jQuery(document).ready(function($) {
 			this.ticketRow = row;
 			this.context = 'ticket'
 			var newrownum = this.increaserowcount();
-			var newTKTrow = $('#display-ticketrow-' + row).clone().add( $('#edit-ticketrow-' + row ).clone());
+			var newTKTrow = $('#display-ticketrow-' + row).clone().attr('id', '#display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone().attr('id', '#edit-ticketrow-' + newrownum));
 			newTKTrow = $('.ticket-table', '.event-tickets-container').find('tbody').append(newTKTrow);
 
 			/*replace all old row values with newrownum*/
+
+			//divs
+			newTKTrow.find('div').each( function() {
+				curid = $(this).attr('id');
+				if ( typeof(curid) !== 'undefined' ) {
+					newid = curid.replace(row, newrownum);
+					$(this).attr('id', newid);
+				}
+			});
+
 			//first the trs
 			newTKTrow.find('tr').each( function() {
 				curid = $(this).attr('id');
@@ -433,7 +443,7 @@ jQuery(document).ready(function($) {
 					newid = curid.replace(row, newrownum);
 				}
 
-				this.attr('id', newid);
+				$(this).attr('id', newid);
 			});
 
 			//spans
@@ -542,9 +552,9 @@ jQuery(document).ready(function($) {
 			this.dateTimeRow = dttrow;
 			console.log(this.dateTimeRow);
 			//need to update the displayed datetime string for the datetime title...
-			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end-' + this.dateTimeRow).val() );
-			console.log(DTT_display_text);
-			$('.datetime-title', '#event-datetime-' + this.dateTimeRow).text(DTT_display_text);
+			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end', '#edit-event-datetime-' + this.dateTimeRow).val() );
+			
+			$('.datetime-title', '#display-event-datetime-' + this.dateTimeRow).text(DTT_display_text);
 
 			//... and in all related dtt list rows!
 			$('.edit-ticket-row').each( function() {
