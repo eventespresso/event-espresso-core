@@ -51,7 +51,7 @@
 			<tbody>
 				<tr valign="top" class="ticket-row" id="display-ticketrow-1">
 				<td></td>
-				<td><span class="ticket-display-row-TKT_name">Default Ticket</span></td>
+				<td><span class="ticket-display-row-TKT_name">Free Admission</span></td>
 				<td><span class="ticket-display-row-TKT_start_date"></span></td>
 				<td><span class="ticket-display-row-TKT_end_date"></span></td>
 				<td><span class="ticket-display-row-TKT_status"></span></td>
@@ -66,7 +66,7 @@
 						<legend>Edit Ticket</legend>
 						<input type="hidden" name="edit_tickets[1][TKT_ID]" class="edit-ticket-TKT_ID" value="0">
 						<input type="hidden" name="edit_tickets[1][TKT_display_order]" class="edit-ticket-TKT_display_order" value="1">
-						<input type="text" name="edit_tickets[1][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="Default Ticket">
+						<input type="text" name="edit_tickets[1][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="Free Admission">
 						<div class="total-price-container">Total Final Price: <span class="ticket-price-amount">$0.00</span></div>
 						<textarea name="edit_tickets[1][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"></textarea>
 						<div class="basic-ticket-container">
