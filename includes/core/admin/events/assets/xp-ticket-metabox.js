@@ -558,8 +558,9 @@ jQuery(document).ready(function($) {
 
 			//... and in all related dtt list rows!
 			$('.edit-ticket-row').each( function() {
-				lidttitem = $('li', '.datetime-tickets-list').find('[data-datetime-row="' + TKT_helper.dateTimeRow + '"]');
-				$('.ticket-list-ticket-name', lidttitem).text(DTT_display_text);
+				lidttitem = $('.datetime-tickets-list', this).find('li[data-datetime-row="' + TKT_helper.dateTimeRow + '"]');
+				if ( typeof(lidttitem) !== 'undefined' )
+					$('.ticket-list-ticket-name', lidttitem).text(DTT_display_text);
 			});
 
 			this.context = 'datetime';
