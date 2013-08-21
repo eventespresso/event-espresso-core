@@ -1068,6 +1068,7 @@ jQuery(document).ready(function($) {
 		TicketEditToggle: function() {
 			this.selector = $('#edit-ticketrow-' + this.ticketRow );
 			this.selector.slideToggle(500);
+			return this;
 		},
 
 
@@ -1187,11 +1188,17 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-			case 'ticket-datetime' :
 				TKT_helper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
 
+			case 'ticket-datetime' :
+				TKT_helper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle().scrollTo();
+				break;
+
 			case 'datetime-ticket' :
+				TKT_helper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
+				break;
+
 			case 'ticket' :
 				TKT_helper.setticketRow(data.ticketRow).TicketEditToggle();
 				break;
