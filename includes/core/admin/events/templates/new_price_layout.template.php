@@ -10,7 +10,7 @@
 		<input type="hidden" name="datetime_total_rows" id="datetime-total-rows" value="0">
 		
 	</div>
-	<div id="add-event-datetime" class="event-datetime-row">
+	<div id="add-event-datetime" class="event-datetime-row add-dtt-row">
 		<h5 class="datetime-tickets-heading">Add New Datetime</h5><!-- <a href="#" class="help_img">Help Link</a> -->
 		<table id="add-new-event-datetime-table" class="datetime-edit-table">
 			<tr>
@@ -173,7 +173,7 @@
 	
 	<!-- main new dtt row container -->
 	<div id="edit-datetime-form-container-holder">
-		<div id="event-datetime-DTTNUM"></div>
+		<div id="event-datetime-DTTNUM" class="event-datetime-row edit-dtt-row"></div>
 	</div>
 
 	<!-- edit datetime base form -->
