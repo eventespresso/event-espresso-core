@@ -168,6 +168,39 @@ jQuery(document).ready(function($) {
 
 
 
+		/**
+		 * This takes in incoming item that existing ticket or datetime list items get appended to and takes care of grabbing existing items and doing the append.
+		 * Note since we're using clone.  This method also sets the data() properly on those list-items.
+		 *
+		 * @param  {string}  itmtoappendto This is the item we append the existing_list_container to.
+		 * @return {TKT_helper}            This object for chainability
+		 */
+		applyExistingTKTorDTTitems: function(itmtoappendto) {
+			var existing_list = this.context == 'datetime' ? $('#dtt-existing-available-ticket-list-items-holder').clone().html().replace(/DTTNUM/g,this.dateTimeRow) : $('#dtt-existing-available-datetime-list-items-holder').clone().html().replace(/TICKETNUM/g, this.ticketRow);
+			var existing_list_container = this.context == 'datetime' ? $('#edit-datetime-available-tickets-holder').clone().html().replace(/DTTNUM/g, this.dateTimeRow) : '';
+
+			existing_list_container = existing_list_container !== '' ? $(existing_list_container).appendTo(itmtoappendto) : '';
+
+			//are there existing items?  if so we'll use them, if not then nope.
+			if ( existing_list.length > 0 ) {
+				if ( existing_list_container !== '' )
+					$(existing_list_container).find('.datetime-tickets-list').html(existing_list);
+				else
+					$(existing_list).appendTo(itmtoappendto);
+
+				//and make sure the data for each list item is setup correctly
+				$(existing_list).each( function() {
+					$(this).data('context', $(this).attr('[data-context]'));
+					$(this).data('ticketRow', $(this).attr('[data-ticket-row]'));
+					$(this).data('datetimeRow', $(this).attr('[data-datetime-row]'));
+				});
+			}
+
+			return this;
+		},
+
+
+
 
 		/**
 		 * This creates a completely new row for an event Datetime and adds it to the UI.
@@ -219,25 +252,16 @@ jQuery(document).ready(function($) {
 			//clear addnewdtt inputs
 			$('#add-event-datetime').find('input').each(function() { $(this).val(''); });
 
-			//get list of available tickets and make sure they are present in the list.
-			var existing_datetime_tickets_list = $('#dtt-existing-available-ticket-list-items-holder').clone().html().replace(/DTTNUM/g,row);
-			var existing_datetime_tickets_container = $('#edit-datetime-available-tickets-holder').clone().html().replace(/DTTNUM/g,row);
-
-			existing_datetime_tickets_container = $(existing_datetime_tickets_container).appendTo(DTT_row_container);
-			
-
-			//ARE there tickets?  If so, then we'll use them, if not, then we leave alone.
-			if ( existing_datetime_tickets_list.length > 0 ) {
-				$(existing_datetime_tickets_container).find('.datetime-tickets-list').html(existing_datetime_tickets_list);
-			}
-
 			//create new DTT display row.
 			var DTT_display_row = $('#dtt_new_display_row_holder').clone().html().replace(/DTTNUM/g, row);
 			DTT_display_row = $(DTT_display_row).prependTo(DTT_row_container);
 
-			//replace DTTNUM
+			//replace Date text
 			DTT_display_text = this.DTT_display_text(DTT_start_time, DTT_end_time);
 			$(DTT_display_row).find('.datetime-title').text(DTT_display_text);
+
+			//apply existing tickets
+			this.applyExistingTKTorDTTitems(DTT_row_container);
 
 			//we need to make sure this new DTT has a related DTT_list_row created and added to all existing tickets and helper containers
 			$('.edit-ticket-row', '.event-tickets-container').each( function() {
@@ -246,7 +270,8 @@ jQuery(document).ready(function($) {
 
 			
 			//on brand new events the ticket-container is hidden (making sure a datetime gets created first).  let's show that now
-			$('.event-tickets-container').fadeIn();
+			if ( $('.event-tickets-container').is(':hidden') )
+				$('.event-tickets-container').fadeIn();
 			this.context = 'ticket';
 			return this;
 		},
@@ -379,13 +404,6 @@ jQuery(document).ready(function($) {
 					case 'datetime-ticket-checkbox' :
 						newname = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curname);
 						$(this).attr('name', newname);
-						break;
-
-					case 'datetime-ticket-ids' :
-						newname = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curname);
-						newid = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curid);
-						$(this).attr('name', newname);
-						$(this).attr('id', newid);
 						break;
 				}
 			});
@@ -682,6 +700,12 @@ jQuery(document).ready(function($) {
 			//append new_tkt_list_row to the ul for datetime-tickets attached to datetime
 			$(dttrowitm).find('.datetime-tickets-list').append(new_tkt_list_row);
 
+
+			//we need to update the jQuery.data() element for new row
+			$(new_tkt_list_row).data('datetimeRow', dttrownum);
+			$(new_tkt_list_row).data('ticketRow', this.ticketRow);
+			$(new_tkt_list_row).data('context', 'datetime-ticket');
+
 			//append new_tkt_list_row to the available tkts row BUT keeping the DTTNUM generic BUT only if existing row isn't already present
 			if ( $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="'+this.ticketRow+'"]').length < 1 )
 				$('#dtt-existing-available-ticket-list-items-holder').append(default_list_row_for_tkt);
@@ -820,10 +844,9 @@ jQuery(document).ready(function($) {
 			newTKTrow.find('.ticket-display-row-TKT_qty').text(newTKTrow.find('.edit-ticket-TKT_qty').val());
 
 			//add li items
-			//pull in existing datetimes list items.
-			var existing_dtts = $('#dtt-existing-available-datetime-list-items-holder').clone().html();
-			//append to newTKTrow and we want to make sure we select the existing dtt if this is triggered from 'short-ticket', otherwise we automatically select ALL dtts.
-			newTKTrow.find('.datetime-tickets-list').append(existing_dtts);
+			
+			this.applyExistingTKTorDTTitems(newTKTrow.find('.datetime-tickets-list'));
+
 
 			$('.edit-dtt-row', '.event-datetimes-container').each( function() {
 				TKT_helper.newTKTListRow(this);
@@ -1099,7 +1122,7 @@ jQuery(document).ready(function($) {
 				selector = this.selector;
 			}
 			$("html,body").animate({
-				scrollTop: selector.offset().top
+				scrollTop: selector.offset().top - 80
 			}, 2000);
 			return this;
 		}
