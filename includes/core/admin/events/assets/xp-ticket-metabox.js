@@ -283,7 +283,7 @@ jQuery(document).ready(function($) {
 				
 				//handle data-datetime-row properties
 				if ( typeof(TKT_helper.itemdata) !== 'undefined' && typeof(TKT_helper.itemdata.datetimeRow) !== 'undefined' ) {
-					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.  
+					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
 					$(this).data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
 				}
 
@@ -412,9 +412,10 @@ jQuery(document).ready(function($) {
 		cloneTicket: function(row) {
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
 			this.ticketRow = row;
-			this.context = 'ticket'
+			this.context = 'ticket';
 			var newrownum = this.increaserowcount();
 			var newTKTrow = $('#display-ticketrow-' + row).clone().attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone().attr('id', 'edit-ticketrow-' + newrownum));
+
 			newTKTrow = $('.ticket-table', '.event-tickets-container').find('tbody').append(newTKTrow);
 
 			/*replace all old row values with newrownum*/
@@ -697,7 +698,7 @@ jQuery(document).ready(function($) {
 		 */
 		trash: function(row) {
 			this.decreaserowcount(row);
-			console.log(row);
+
 			switch ( this.context ) {
 				case 'datetime' :
 					$('#event-datetime-' + row).remove();
@@ -744,44 +745,51 @@ jQuery(document).ready(function($) {
 
 		
 		newTicketRow: function() {
-			var idref, curval, newval;
-			//edit form stuff
-			var newTKTrow = $('#ticket-row-form-holder').clone().html().replace(/TICKETNUM/g, row ).appendTo;
-			var initialPRCrow = $('#ticket-edit-row-new-price-row').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row);
+			var idref, curval, newval, price_amount;
 			var incomingcontext = this.context;
-
 			//replace all instances of TICKETNUM with new generated row number
 			this.context = 'ticket';
 			var row = this.increaserowcount();
-			
+
+			//edit form stuff
+			var newTKTrow = $('#ticket-row-form-holder').find('tbody').clone().html().replace(/TICKETNUM/g, row );
+			var initialPRCrow = $('#ticket-edit-row-new-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row);
+
+
 			//append to existing TKTrows
-			newTKTrow = $('.ticket-table', 'event-tickets-container').find('tbody').append(newTKTrow);
-			initialPRCrow = newTKTrow.find('.ticket-price-rows').append(initialPRCrow);
+			var currow = $('.ticket-table', '.event-tickets-container').find('tbody').first();
+			newTKTrow = $(newTKTrow).appendTo(currow);
+			initialPRCrow = $(initialPRCrow).appendTo(newTKTrow.find('.ticket-price-rows'));
+
 
 
 			//if this is triggered via the "short-ticket" context then we need to get the values from the create ticket form and add to the new row.
 			if ( incomingcontext == 'short-ticket' ) {
 				// inputs
 				$('.add-datetime-ticket-container','#edit-event-datetime-tickets-' + this.dateTimeRow ).find('input').each( function() {
-					idref = $(this).attr('class').replace('add-new-', 'edit-');
+					idref = $(this).attr('class').replace('add-new-', '.edit-');
 					curval = $(this).val();
 					newTKTrow.find(idref).val(curval);
+					if ( $(this).hasClass('add-new-ticket-PRC_amount') ) {
+						price_amount = parseFloat(curval);
+						price_amount = price_amount.toFixed(2);
+					}
 					$(this).val('');
 				});
 
 				// selectors
 				var selected_price_type_val = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val();
+
 				$('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val('');
 				var selected_price_title = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).text();
 
 				newTKTrow.find('.price-title-text', '.price-row-' + row).text(selected_price_title);
-				newTKTrow.find('.edit-price-PRT_ID', '.price-row-' + row).val(selected_price_type_val);
+				newTKTrow.find('.edit-price-PRT_ID', '.price-row-' + row).val(selected_price_type_val); //todo this prolly doesn't work.  Need to loop through options and trigger selected on the correct option.
 
 				//update totals on the form.
-				var price_amount = $('.add-new-ticket-PRC_amount', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val();
 				newTKTrow.find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
-				newTKTrow.find('.price-total-amount-' + row).text('$' + price_amount);
-				newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
+				newTKTrow.find('#price-total-amount-' + row).text('\$' + price_amount);
+				newTKTrow.find('.ticket-price-amount').text('\$' + price_amount);
 			}
 
 			//pull in existing datetimes list items.
@@ -800,23 +808,27 @@ jQuery(document).ready(function($) {
 			newTKTrow.find('.ticket-display-row-TKT_start_date').text(
 				this.TKT_DTT_display_text(
 					newTKTrow.find('.edit-ticket-TKT_start_date').val(),
-					'MMM d, yyyy'
+					'MMM D[,] YYYY'
 					)
 				);
 			newTKTrow.find('.ticket-display-row-TKT_end_date').text(
 				this.TKT_DTT_display_text(
 					newTKTrow.find('.edit-ticket-TKT_end_date').val(),
-					'MMM d, yyyy'
+					'MMM D[,] YYYY'
 					)
 				);
 			newTKTrow.find('.ticket-display-row-TKT_status').text(
 				this.getTKTstatus(
 					newTKTrow.find('.edit-ticket-TKT_start_date').val(),
-					newTKTrow.find('edit-ticket-TKT_end_date').val()
+					newTKTrow.find('.edit-ticket-TKT_end_date').val()
 					)
 				);
-			newTKTrow.find('.ticket-display-row-TKT_total_amount').text(newTKTrow.find('#price-total-amount-' + row ).text() );
-			newTKTrow.find('.ticket-display-row-TKT_qty').text(newTKTrow.find('edit-ticket-TKT_qty').val());
+			var price_total_amount = newTKTrow.find('#price-total-amount-' + row ).text() 
+			price_total_amount = incomingcontext != 'short-ticket' ? parseFloat(price_total_amount).toFixed(2) : price_total_amount;
+
+
+			newTKTrow.find('.ticket-display-row-TKT_total_amount').text(price_total_amount);
+			newTKTrow.find('.ticket-display-row-TKT_qty').text(newTKTrow.find('.edit-ticket-TKT_qty').val());
 
 			return this;
 		},
@@ -992,8 +1004,7 @@ jQuery(document).ready(function($) {
 		 * @param {string} format format date is returned in.
 		 */
 		TKT_DTT_display_text: function(date, dttformat) {
-			var datedisplaytext;
-			var fulldate = moment( start, 'YYYY-MM-DD h:mm a' );
+			var fulldate = moment( date, 'YYYY-MM-DD h:mm a' );
 			return fulldate.format(dttformat);
 
 		},
@@ -1015,7 +1026,7 @@ jQuery(document).ready(function($) {
 			if ( startdate.isAfter(now) )
 				return 'Pending';
 
-			if ( endDate.isBefore(now ) )
+			if ( enddate.isBefore(now ) )
 				return 'Expired';
 
 			if ( startdate.isBefore(now) && enddate.isAfter(now) )
