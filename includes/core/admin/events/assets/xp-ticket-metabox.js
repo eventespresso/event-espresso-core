@@ -434,7 +434,7 @@ jQuery(document).ready(function($) {
 			var newrownum = this.increaserowcount();
 			var newTKTrow = $('#display-ticketrow-' + row).clone().attr('id', 'display-ticketrow-' + newrownum).add( $('#edit-ticketrow-' + row ).clone().attr('id', 'edit-ticketrow-' + newrownum));
 
-			newTKTrow = $('.ticket-table', '.event-tickets-container').find('tbody').append(newTKTrow);
+			newTKTrow = newTKTrow.appendTo($('.ticket-table', '.event-tickets-container').find('tbody').first() );
 
 			/*replace all old row values with newrownum*/
 
@@ -505,9 +505,9 @@ jQuery(document).ready(function($) {
 				//ids?
 				if ( typeof(curid) !== 'undefined' ) {
 					newid = curid.replace(row, newrownum);
+					$(this).attr('id', newid);
 				}
 
-				$(this).attr('id', newid);
 				$(this).attr('name', newname);
 			});
 
