@@ -190,3 +190,14 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 	box-shadow: none !important;
 }
 
+/* prevent transitions from getting applied to calendar links as some themes are known to do this */
+
+#espresso_calendar a {
+	-webkit-transition: none!important;
+	-moz-transition:    none!important;
+	-ms-transition:     none!important;
+	-o-transition:      none!important;
+	transition:         none!important;
+}
+
+
