@@ -237,7 +237,7 @@ final class EE_Registry {
 	 * 	loads model classes - must be singletons
 	 * 
 	 *	@param string $class_name - simple class name ie: price
-	 *	@return instantiated class object
+	 *	@return EEM_Base
 	 */	
 	public function load_model ( $class_name, $arguments = array() ) {
 		// retreive instantiated class
@@ -297,6 +297,37 @@ final class EE_Registry {
 		return $this->_load( $path_to_file, '', $class_name, $type, $arguments );
 	}
 
+	/**
+	 * Gets the list of all model names (and uses a filter so addons can add to this list).
+	 * Useful anywhere we might want to know all the models that exist...
+	 * @return array where each value is a model name, eg 'Answer','Attendee', etc.
+	 */
+	public function all_model_names(){
+		return apply_filters('FHEE__EE_Registry__all_model_names',array(
+			'Answer',
+			'Attendee',
+			'Country',
+			'Datetime',
+			'Event',
+			'Event_Question_Group',
+			'Event_Venue',
+			//'Message_Template', doesn't play nicely because it's not a child of EE_Base_Class
+			'Payment',
+			'Price',
+			'Price_Type',
+			'Question',
+			'Question_Group',
+			'Question_Group_Question',
+			'Question_Option',
+			'Registration',
+			'State',
+			'Term',
+			'Term_Relationship',
+			'Term_Taxonomy',
+			'Transaction',
+			'Venue'
+		));
+	}
 
 
 

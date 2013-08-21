@@ -162,7 +162,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 								// csv import export functions require a list of all event espresso tables
 								$this->table_list = $this->EE_CSV->list_db_tables();
 								// convert csv to array
-								$this->csv_array = $this->EE_CSV->import_csv_to_array( $this->table_list, $path_to_file );
+								$this->csv_array = $this->EE_CSV->import_csv_to_model_data_array( $path_to_file );
 									
 								// was data successfully stored in an array?
 								if ( is_array( $this->csv_array ) ) {

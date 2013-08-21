@@ -54,6 +54,27 @@ class EEH_Array extends EEH_Base {
 	private static function _compare_objects( EE_Base_Class $obj_a, EE_Base_Class $obj_b ) {
 		return $obj_a->ID() - $obj_b->ID();
 	}
+	
+	/**
+	 * Given that $arr is an array, determines if it's associative or numerically-indexed
+	 * @param array $arr
+	 * @return boolean
+	 */
+	public static function is_associative_array($arr){
+		return  array_keys($arr) !== range(0, count($arr) - 1);
+	}
+	
+	/**
+	 * Gets an item from the array and leave the array intact. Use in place of end() 
+	 * when you don't want to change the array
+	 * @param array $arr
+	 * @return mixed whatever's in the array
+	 */
+	public static function get_one_item_from_array($arr){
+		$item = end($arr);
+		reset($arr);
+		return $item;
+	}
 
 
 } //end EE_Template class

@@ -20,7 +20,11 @@
 
 	private $_primary_keys;
 
-
+	/**
+	 *
+	 * @var EE_Registry
+	 */
+	private $EE;
 
 	/**
 	 *		private constructor to prevent direct creation
@@ -30,6 +34,7 @@
 	 */	
  	private function __construct() {
 		
+		$this->EE = EE_Registry::instance();
 		global $wpdb;
 
 		$this->_primary_keys = array(
@@ -144,11 +149,28 @@
 	/**
 	 *			@Import contents of csv file and store values in an array to be manipulated by other functions
 	 *		  @access public
-	 *			@param string $path_to_file - the csv file to be imported including the path to it's location
+	 *			@param string $path_to_file - the csv file to be imported including the path to it's location.
+	 *			If $model_name is provided, assumes that each row in the CSV represents a model object for that model
+	 *			If $model_name ISN'T provided, assumes that before model object data, there is a row where the first entry is simply
+	 *			'MODEL', and next entry is the model's name, (untranslated) like Event, and then maybe a row of headers, and then the model data.
+	 *			Eg. '<br>MODEL,Event,<br>EVT_ID,EVT_name,...<br>1,Monkey Party,...<br>2,Llamarama,...<br>MODEL,Venue,<br>VNU_ID,VNU_name<br>1,The Forest
+	 *			@param string $model_name model name if we know what model we're importing
 	 *			@param boolean $first_row_is_headers - whether the first row of data is headers or not - TRUE = headers, FALSE = data
 	 *			@return mixed - array on success - multi dimensional with headers as keys (if headers exist) OR string on fail - error message
+	 * like the following array('Event'=>array(
+	 *								array('EVT_ID'=>1,'EVT_name'=>'bob party',...),
+	 *								array('EVT_ID'=>2,'EVT_name'=>'llamarama',...),
+	 *								...
+	 *							)
+	 *							'Venue'=>array(
+	 *								array('VNU_ID'=>1,'VNU_name'=>'the shack',...),
+	 *								array('VNU_ID'=>2,'VNU_name'=>'tree house',...),
+	 *								...
+	 *							)
+	 *						...
+	 *						)
 	 */	
-	public function import_csv_to_array( $table_list, $path_to_file, $table = FALSE, $first_row_is_headers = TRUE ) {
+	public function import_csv_to_model_data_array( $path_to_file, $model_name = FALSE, $first_row_is_headers = TRUE ) {
 		$multi_dimensional_array = $this->import_csv_to_multi_dimensional_array($path_to_file);
 		if( ! $multi_dimensional_array ){
 			return false;
@@ -161,15 +183,15 @@
 		$headers = array();
 			
 		// no tables
-		if ( ! $table_list ) {
-			// get list of event espresso tables
-			$table_list = self::list_db_tables();
-		}
+//		if ( ! $table_list ) {
+//			// get list of event espresso tables
+//			$table_list = self::list_db_tables();
+//		}
 	
 		foreach($multi_dimensional_array as $data){
-			// if first cell is TABLE, then second cell is the table name
-			if ( $data[0]	== 'TABLE' ) {//#3336 change to MODEL
-				$table = $data[1];
+			// if first cell is MODEL, then second cell is the MODEL name
+			if ( $data[0]	== 'MODEL' ) {
+				$model_name = $data[1];
 				$row = 0;
 			}
 
@@ -186,12 +208,12 @@
 					$headers[$i] = $data[$i];
 				} else if ( $row === 1 && ! $first_row_is_headers ) {
 					// no column names means our final array will just use counters for keys
-					$ee_formatted_data[$table][$row][$headers[$i]] = $data[$i];//#3336 this might not be a field name-- might be "DESCRIPTION (FIELD_NAME)"
+					$ee_formatted_data[$model_name][$row][$headers[$i]] = $data[$i];//#3336 this might not be a field name-- might be "DESCRIPTION (FIELD_NAME)"
 					$headers[$i] = $i;
 					// and we need to store csv data
 				} else if ( $row ) {
 					// no headers just store csv data
-					$ee_formatted_data[$table][$row][$headers[$i]] = $data[$i];
+					$ee_formatted_data[$model_name][$row][$headers[$i]] = $data[$i];
 				}
 
 			}
@@ -487,104 +509,23 @@
 			
 	}
 	
-	
 	/**
-	 *	@Export contents of a database table to csv file
-	 *	@access public
-	 *	@param array $table - the database table to be converted to csv and exported 
-	 *	@param array $prev_export - an array from a previous table export to be merged with these results
-	 *	@param string $query - custom query for pulling data from table
-	 *	@return TRUE on success, FALSE on fail
-	 */	
-	public function export_table_to_array ( $table = FALSE, $prev_export = FALSE, $query = FALSE ) {
-		
-		// no table ?? sorry but's it the law
-		if ( ! $table ) {
-			return FALSE;
-		}
-		
-		// somebody told me i might need this ???
-		global $wpdb;
-		
-		// create a nicer table name by removing the table prefix
-		$prefix = $wpdb->prefix;
-		$tablename = str_replace( $prefix, '', $table );
-	
-		$data = array();		
-		// retreive list of field names for the table
-		if ( ! $data[$tablename]['HEADINGS'] = self::list_db_table_fields($table) ) {
-			return FALSE;
-		}	
-		
-		// no query? then grab everything
-		if ( ! $query ) {
-			$query = "SELECT * FROM " . $table;
-		}
-		$result = $wpdb->get_results( $wpdb->prepare( $query, NULL ));
-		
-		if ($wpdb->num_rows > 0) {
-			$i = 1;
-			foreach ( $result as $row ) {
-				foreach ( $row as $column ) {
-					// create a multi dimensional array organized by table
-					$data[$tablename][$i][] = $column;
-				}
-				$i++;
-			}
-		
-		} else {
-			// no results for you!!! - we do nothing!
-		}
-		
-		// is there an array from a previous export?
-		if ( $prev_export && is_array($prev_export) ) {
-			$data = array_merge( $prev_export, $data );
-		}
-		
-		return $data;
-		
-	}
-	
-	
-	/**
-	 *			@Export contents of an array to csv file
-	 *		  @access public
-	 *			@param array $data - the array of data to be converted to csv and exported 
-	 *			@param string $filename - name for newly created csv file
-	 *			@param boolean $download - whether csv is sent to browser for download or saved to file system - TRUE = download, FALSE = save to file
-	 *			@return TRUE on success, FALSE on fail
-	 */	
-	public function export_array_to_csv( $table_list = FALSE, $data = FALSE, $filename = FALSE  ) {
-	
-		// no data file?? get outta here
-		if ( ! $data or ! is_array( $data ) or empty( $data ) ) {
-			return FALSE;
-		}
-		
-		// no filename?? get outta here
-		if ( ! $filename ) {
-			return FALSE;
-		}
-		
+	 * Sends HTTP headers to indicate that the browser should download a file,
+	 * and starts writing the file to PHP's output. Returns teh file handle so other functions can 
+	 * also write to it
+	 * @param string $new_filename the name of the file that the user will download
+	 * @return resource, like the results of fopen(), which can be used for fwrite, fputcsv2, etc.
+	 */
+	public function begin_sending_csv($filename){
 		// grab file extension
 		$ext = substr(strrchr($filename, '.'), 1);
 		if ( $ext == '.csv' or  $ext == '.xls' ) {
 			str_replace( $ext, '', $filename );
 		}
 		$filename .= '.csv';
-	
 		
-		// no tables
-		if ( ! $table_list ) {
-			// get list of event espresso tables
-			$table_list = self::list_db_tables();
-		}
-		
-		// somebody told me i might need this ???
-		global $wpdb;
-		$prefix = $wpdb->prefix;
-			
-	
+		//if somebody's been naughty and already started outputting stuff, trash it
+		//and start writing our stuff.
 		if (ob_get_length()) {
 			@ob_flush();
 			@flush();
@@ -600,43 +541,165 @@
 		header("Content-Type: application/download");
 		header('Content-disposition: attachment; filename='.$filename);
 		header("Content-Type: text/csv");
-	$fh = fopen('php://output', 'w');		
-		
-		$no_table = TRUE;
+		$fh = fopen('php://output', 'w');		
+		return $fh;
+	}
 	
-		// loop through data and add each row to the file/stream as csv
-		foreach ( $data as $table_name => $table_data ) {
+	
+	/**
+	 * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
+	 * @param array $data 2D array, first numerically-indexed, and next-level-down preferably indexed by string 
+	 * @param boolean $add_csv_column_names whether or not we should add the keys in the bottom-most array as a row for headers in teh CSV.
+	 * Eg, if $data looked like array(0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...), 1=>array(...),...)) 
+	 * then the first row we'd write to the CSV would be "EVT_ID,EVT_name,..."
+	 * @return boolean if we successfully wrote to the CSV or not. If there's no $data, we consider that a success (because we wrote everything there was...nothing)
+	 */
+	public function write_data_array_to_csv($filehandle, $data){
+		$this->EE->load_helper('Array');
 
-			$table_name = $prefix . $table_name;
-			// test first row to see if it is data or a table name
-			if ( in_array( $table_name, $table_list ) ) {
+		
+		//determine if $data is actually a 2d array
+		if ( $data && is_array($data) && is_array(EEH_Array::get_one_item_from_array($data))){
+			//make sure top level is numerically indexed,
 			
-				// we have a table name
-				$no_table = FALSE;
-	
-				// put the tablename into an array cuz that's how fputcsv rolls
-				$table_name = array( 'TABLE', $table_name );
-
-				// add table name to csv output
-				echo self::fputcsv2($fh, $table_name);
-	
-				// now get the rest of the data
-				foreach ( $table_data as $row ) {
-					// output the row
-					echo self::fputcsv2($fh, $row);
-				}
-				
+			if( EEH_Array::is_associative_array($data)){
+				throw new EE_Error(sprintf(__("top-level array must be numerically indexed. Does these look like numbers to you? %s","event_espresso"),implode(",",array_keys($data))));
 			}
-				
-			if ( $no_table ) {
-				// no table so just put the data
-				echo self::fputcsv2($fh, $table_data);
+			$item_in_top_level_array = EEH_Array::get_one_item_from_array($data);
+			//now, is the last item in the top-level array of $data an associative or numeric array?
+			if(EEH_Array::is_associative_array($item_in_top_level_array)){
+				//its associative, so we want to output its keys as column headers
+				$keys = array_keys($item_in_top_level_array);
+				echo $this->fputcsv2($filehandle, $keys);
 			}
+			//start writing data
+			foreach($data as $data_row){
+				echo $this->fputcsv2($filehandle, $data_row);
+			}
+			return true;
+		}else{
+			//no data TO write... so we can assume that's a success
+			return true;
+		}
+//		//if 2nd level is indexed by strings, use those as csv column headers (ie, the first row)
+//		
+//		
+//		$no_table = TRUE;
+//	
+//		// loop through data and add each row to the file/stream as csv
+//		foreach ( $data as $model_name => $model_data ) {
+//			// test first row to see if it is data or a model name
+//			$model = 	EE_System::instance()->get_registry()->load_model($model_name);
+//			//if the model really exists, 
+//			if ( $model ) {
+//			
+//				// we have a table name
+//				$no_table = FALSE;
+//	
+//				// put the tablename into an array cuz that's how fputcsv rolls
+//				$model_name_row = array( 'MODEL', $model_name );
+//
+//				// add table name to csv output
+//				echo self::fputcsv2($filehandle, $model_name_row);
+//	
+//				// now get the rest of the data
+//				foreach ( $model_data as $row ) {
+//					// output the row
+//					echo self::fputcsv2($filehandle, $row);
+//				}
+//				
+//			}
+//				
+//			if ( $no_table ) {
+//				// no table so just put the data
+//				echo self::fputcsv2($filehandle, $model_data);
+//			}
 		
-		} 		//		END OF foreach ( $data )
-
+//		} 		//		END OF foreach ( $data )
+	}
+	/**
+	 * Should be called after begin_sending_csv(), and one or more write_data_array_to_csv()s.
+	 * Calls exit to prevent polluting the CSV file with other junk
+	 * @param resource $fh filehandle where we're writing the CSV to 
+	 */
+	public function end_sending_csv($fh){
 		fclose($fh);
 		exit(0);
+	}
+	/**
+	 * Given an open file, writes all teh model data to it in the format the importer expects.
+	 * Usually preceded by begin_sending_csv($filename), and followed by end_sending_csv($filehandle).
+	 * @param resource $filehandle
+	 * @param array $model_data_array is assumed to be a 3d array: 1st layer has keys of model names (eg 'Event'),
+	 * next layer is numerically indexed to represent each model object (eg, each individual event), and the last layer
+	 * has all the attributes o fthat model object (eg, the event's id, name, etc)
+	 * @return boolean success
+	 */
+	public function write_model_data_to_csv($filehandle,$model_data_array){
+		foreach($model_data_array as $model_name => $model_instance_arrays){
+			//first: output a special row stating the model
+			echo $this->fputcsv2($filehandle,array('MODEL',$model_name));
+			//if we have items to put in the CSV, do it normally
+			
+			if( ! empty($model_instance_arrays) ){
+				$this->write_data_array_to_csv($filehandle, $model_instance_arrays);
+			}else{
+//				echo "no data to write... so jsut write the headers";
+				//so there's actually NO model objects for taht model.
+				//probably still want to show the columns
+				$model = $this->EE->load_model($model_name);
+				$column_names = array();
+				foreach($model->field_settings() as $field){
+					$column_names[$field->get_nicename()."[".$field->get_name()."]"] = null ;
+				}
+				$this->write_data_array_to_csv($filehandle, array($column_names));
+			}
+		}
+	}
+	
+	/**
+	 * Writes the CSV file to the output buffer, with rows corresponding to $model_data_array,
+	 * and dies (in order to avoid other plugins from messing up the csv output)
+	 * @param string $filename the filename you want to give the file
+	 * @param array $model_data_array 3d array, as described in EE_CSV::write_model_data_to_csv()
+	 * @return void writes CSV file to output and dies
+	 */
+	public function export_multiple_model_data_to_csv($filename,$model_data_array){
+		$filehandle = $this->begin_sending_csv($filename);
+		$this->write_model_data_to_csv($filehandle, $model_data_array);
+		$this->end_sending_csv($filehandle);
+	}
+	/**
+	 *			@Export contents of an array to csv file
+	 *		  @access public
+	 *			@param array $data - the array of data to be converted to csv and exported 
+	 *			@param string $filename - name for newly created csv file
+	 *			@return TRUE on success, FALSE on fail
+	 */	
+	public function export_array_to_csv( $data = FALSE, $filename = FALSE  ) {
+	
+		// no data file?? get outta here
+		if ( ! $data or ! is_array( $data ) or empty( $data ) ) {
+			return FALSE;
+		}
+		
+		// no filename?? get outta here
+		if ( ! $filename ) {
+			return FALSE;
+		}
+		
+		
+		
+		// somebody told me i might need this ???
+		global $wpdb;
+		$prefix = $wpdb->prefix;
+			
+	
+		$fh = $this->begin_sending_csv($filename);
+		
+		
+		$this->end_sending_csv($fh);
+		
 	
 	}
 	
