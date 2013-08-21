@@ -597,20 +597,18 @@ jQuery(document).ready(function($) {
 		 * @return {TKT_helper}    this object for chainability
 		 */
 		updateTKTrow: function( tktrow ) {
-			var litktitm;
 			var tktsold;
 			this.ticketRow = tktrow;
 
 			//need to update the displayed TKT name
-			var TKT_name = $('.edit-ticket-TKT_name', '#edit-ticket-row-' + this.ticketRow).val();
-			$('.ticket-display-row-TKT_name', '#display-ticket-row-' + this.ticketRow).text(TKT_name);
+			var TKT_name = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + this.ticketRow).val();
+			$('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow).text(TKT_name);
 
 			tktsold = $('.ticket-display-row-TKT_sold', '#display-ticket-row-' + this.ticketRow).text();
 
 			//..and in all related tkt list rows!
-			$('.edit-ticket-row').each( function() {
-				litktitm = $('li.datetime-ticket', '.datetime-tickets-list').find('[data-ticket-row="' + TKT_helper.ticketRow + '"]');
-				$('.ticket-list-ticket-name', litktitm).text( TKT_name + ': ' + tktsold );
+			$('li.datetime-ticket', '.datetime-tickets-list').find('[data-ticket-row="' + TKT_helper.ticketRow + '"]').each( function() {
+				$('.ticket-list-ticket-name', this).text( TKT_name + ': ' + tktsold );
 			});
 
 			this.context = 'ticket';
@@ -1074,10 +1072,10 @@ jQuery(document).ready(function($) {
 		DateTimeEditToggle: function() {
 			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
 				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
-				this.selector.slideToggle( 500 );
+				this.selector.slideToggle( 1000 );
 			} else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
-				this.selector.slideToggle( 500 );
+				this.selector.slideToggle( 1000 );
 			}
 			return this;
 		},
@@ -1090,7 +1088,7 @@ jQuery(document).ready(function($) {
 		 */
 		TicketEditToggle: function() {
 			this.selector = $('#edit-ticketrow-' + this.ticketRow );
-			this.selector.slideToggle(500);
+			this.selector.slideToggle(1000);
 			return this;
 		},
 
