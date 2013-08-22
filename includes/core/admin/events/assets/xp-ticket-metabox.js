@@ -774,15 +774,13 @@ jQuery(document).ready(function($) {
 
 			//edit form stuff
 			var newTKTrow = $('#ticket-row-form-holder').find('tbody').clone().html().replace(/TICKETNUM/g, row );
-			var initialPRCrow = $('#ticket-edit-row-new-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row);
+			var initialPRCrow = $('#ticket-edit-row-initial-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row);
 
 
 			//append to existing TKTrows
 			var currow = $('.ticket-table', '.event-tickets-container').find('tbody').first();
 			newTKTrow = $(newTKTrow).appendTo(currow);
 			initialPRCrow = $(initialPRCrow).appendTo(newTKTrow.find('.ticket-price-rows'));
-
-
 
 			//if this is triggered via the "short-ticket" context then we need to get the values from the create ticket form and add to the new row.
 			if ( incomingcontext == 'short-ticket' ) {
@@ -798,6 +796,8 @@ jQuery(document).ready(function($) {
 					$(this).val('');
 				});
 
+				newTKTrow.find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
+
 				// selectors
 				var selected_price_type_val = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val();
 
@@ -807,12 +807,13 @@ jQuery(document).ready(function($) {
 				newTKTrow.find('.price-title-text', '.price-row-' + row).text(selected_price_title);
 				newTKTrow.find('.edit-price-PRT_ID', '.price-row-' + row).val(selected_price_type_val); //todo this prolly doesn't work.  Need to loop through options and trigger selected on the correct option.
 
-				//update totals on the form.
-				newTKTrow.find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
-				newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
-				newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
 			}
 
+			//update totals on the form.
+			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice();
+			newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
+			newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
+			newTKTrow.find('.ticket-display-row-TKT_total_amount').text('$' + price_amount);
 
 			//now let's setup the display row!
 			newTKTrow.find('.ticket-display-row-TKT_name').text(newTKTrow.find('.edit-ticket-TKT_name').val());
@@ -834,11 +835,7 @@ jQuery(document).ready(function($) {
 					newTKTrow.find('.edit-ticket-TKT_end_date').val()
 					)
 				);
-			var price_total_amount = newTKTrow.find('#price-total-amount-' + row ).text();
-			price_total_amount = incomingcontext != 'short-ticket' ? parseFloat(price_total_amount).toFixed(2) : price_total_amount;
-
-
-			newTKTrow.find('.ticket-display-row-TKT_total_amount').text(price_total_amount);
+			
 			newTKTrow.find('.ticket-display-row-TKT_qty').text(newTKTrow.find('.edit-ticket-TKT_qty').val());
 
 			//add li items
@@ -1032,7 +1029,7 @@ jQuery(document).ready(function($) {
 		 */
 		TKT_DTT_display_text: function(date, dttformat) {
 			var fulldate = moment( date, 'YYYY-MM-DD h:mm a' );
-			return fulldate.format(dttformat);
+			return fulldate !== null ? fulldate.format(dttformat) : '';
 
 		},
 
@@ -1048,6 +1045,9 @@ jQuery(document).ready(function($) {
 		getTKTstatus: function(startdate, enddate) {
 			startdate = moment(startdate, 'YYYY-MM-DD h:mm a');
 			enddate = moment(enddate, 'YYYY-MM-DD h:mm a');
+
+			if ( startdate === null || enddate === null )
+				return '';
 			var now = moment();
 
 			if ( startdate.isAfter(now) )
@@ -1062,6 +1062,28 @@ jQuery(document).ready(function($) {
 		},
 
 
+
+		/**
+		 * calculate the total from the prices in the ticket row.
+		 * @return {fixed} The total amount by decimal.
+		 */
+		getTotalPrice: function() {
+			var runningtotal = 0, priceAmount, operator, is_percent;
+			//loop through all the prices for a given ticket
+			$('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow ).find('tr.ee-active-price').each( function() {
+				priceAmount = parseFloat($('.edit-price-PRC_amount', this).val());
+				operator = $('.ee-price-selected-operator', this).val();
+				is_percent = parseInt($('.ee-price-selected-is-percent', this).val() );
+
+				if ( is_percent ) {
+					runningtotal = operator == '+' ? runningtotal + (runningtotal*priceAmount) : runningtotal - (runningtotal*priceAmount);
+				} else {
+					runningtotal = operator == '+' ? runningtotal + priceAmount : runningtotal - priceAmount;
+				}
+			});
+
+			return runningtotal.toFixed(2); //todo eventually this can be dynamic according to currency setting
+		},
 
 
 

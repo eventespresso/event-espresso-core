@@ -116,13 +116,12 @@
 										</tr>
 									</thead>
 									<tbody class="ticket-price-rows">
-										<tr id="price-row-1-1">
+										<tr id="price-row-1-1" class="ee-active-price">
 											<td>
-												<select name="edit_prices[1][1][PRT_ID]" class="edit-price-PRT_ID" style="display:none">
-													<!-- NOTE THAT these price options are only listing the default base prices (PBT == 1) currently available. on main ticket creation (i.e. not via the "short-ticket" form), the initial base price is listed. -->
-													<option value="1" selected=selected>Free Event</option>
-													<option value="2">Paid Event</option>
-												</select>
+												<input type="hidden" name="edit_prices[TICKETNUM][PRICENUM][PRT_ID]" class="edit-price-PRT_ID" value="1">
+												<span class="price-type-text">Base Price</span>
+												<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-operator" value="+">
+												<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-is-percent" value="0">
 											</td>
 											<td><input type="hidden" name="edit_prices[1][1][PRC_ID]" class="edit-price-PRC_ID" value="0"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[1][1][PRC_name]" value="Free Admission"></td>
 											<td><input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[1][1][PRC_amount]" value="0"></td>
@@ -309,19 +308,22 @@
 	</table>
 
 	
-	<!-- this is retrieved by our js to set a new price row -->
-	<table id="ticket-edit-row-new-price-row" class="hidden">
+	<!-- this is retrieved by our js to set a new price row. Note this will also contain any default prices setup by event manager -->
+	<table id="ticket-edit-row-initial-price-row" class="hidden">
 		<tbody>
-			<tr id="price-row-TICKETNUM-PRICENUM">
+			<tr id="price-row-TICKETNUM-PRICENUM" class="ee-active-price">
 				<td>
-					<select name="edit_prices[TICKETNUM][PRICENUM][PRT_ID]" class="edit-price-PRT_ID">
-						<!-- NOTE THAT these price options are only listing the default base prices (PBT == 1) currently available. on main ticket creation (i.e. not via the "short-ticket" form), the initial base price is listed. -->
-						<option value="1">Event Price</option>
-						<option value="2">Big Event Price</option>
-					</select>
+					<input type="hidden" name="edit_prices[TICKETNUM][PRICENUM][PRT_ID]" class="edit-price-PRT_ID" value="1">
+					<span class="price-type-text">Base Price</span>
+					<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-operator" value="+">
+					<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-is-percent" value="0">
 				</td>
 				<td><input type="hidden" name="edit_prices[TICKETNUM][PRICENUM][PRC_ID]" class="edit-price-PRC_ID"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[TICKETNUM][PRICENUM][PRC_name]" value="General Admission"></td>
-				<td><input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[TICKETNUM][PRICENUM][PRC_amount]" value="50"></td>
+				<td>
+					<span style="display:none" class="ticket-price-info-display ticket-price-operator-display"></span>
+					<span class="ticket-price-info-display ticket-price-dollar-sign-display">$</span>
+					<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[TICKETNUM][PRICENUM][PRC_amount]" value="50">
+					<span class="ticket-price-info-display ticket-price-percentage-char-display" style="display:none">%</span></td>
 				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM"></span><span class="trash-icon clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM"></span><button data-ticket-row="TICKETNUM" data-price-row="PRICENUM" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
 			</tr>
 			<tr id="extra-price-row-TICKETNUM-PRICENUM" style="display:none">
@@ -333,13 +335,15 @@
 	</table>
 
 
-	<!-- This is the selector and it ONLY lists price-modifiers (i.e. PBT_ID = 2 || 3) -->
+	<!-- This is the selector and it ONLY lists price-modifiers (i.e. PBT_ID = 2 || 3).  It is used for new price rows added for EXISTING tickets (not new tickets) -->
 	<div id="ticket-edit-row-price-modifier-selector" class="hidden">
 		<select name="edit_prices[TICKETNUM][PRICE_NUM][PRT_ID]" class="edit-price-PRT_ID">
 			<option value="0">Select Price Modifier</option>
-			<option value="1">Discount</option>
-			<option value="2">Surcharge</option>
+			<option value="3">Discount<span class="ee-price-operator hidden">-</span><span class="ee-PRT_is_percent hidden">1</span></option>
+			<option value="4">Surcharge<span class="ee-price-operator hidden">+</span><span class="ee-PRT_is_percent hidden">0</span></option>
 		</select>
+		<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-operator" value="-">
+		<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-is-percent" value="0">
 	</div>
 
 	<!-- available tickets for datetime html -->
