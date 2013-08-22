@@ -200,14 +200,13 @@
 
 .basic-ticket-container {
     float: left;
-    min-width: 50%;
-    max-width: 50%;
+    max-width: 40%;
 }
 
 .price-table-container {
-    float: left;
-    min-width: 50%;
-    max-width: 50%;
+    float: right;
+    max-width: 55%;
+    padding: 0;
 }
 
 .price-table thead tr td {
@@ -260,4 +259,20 @@
 
 .add-edit {
     padding-top: 3px;
+}
+
+.ticket-price-info-display {
+    display: inline-block;
+    width: 10px;
+    text-align: right;
+    margin-right: -5px;
+}
+
+.ticket-price-info-display.ticket-price-percentage {
+    text-align: left;
+    margin-right: 0;
+}
+
+.edit-price-PRC_amount {
+    text-align: right;
 }
