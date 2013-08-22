@@ -276,7 +276,6 @@ jQuery(document).ready(function($) {
 
 
 			//verify that there isn't only one DTT row.  If there is then let's remove the trash icon from this element.  If there ISNT' then let's show all trash elements.
-			console.log($('.event-datetime-row', '.event-datetimes-container').length);
 			if ( $('.event-datetime-row', '.event-datetimes-container').length === 1 ) {
 				DTT_display_row.find('.trash-icon').hide();
 			} else {
@@ -616,8 +615,9 @@ jQuery(document).ready(function($) {
 			tktsold = $('.ticket-display-row-TKT_sold', '#display-ticket-row-' + this.ticketRow).text();
 
 			//..and in all related tkt list rows!
-			$('li.datetime-ticket', '.datetime-tickets-list').find('[data-ticket-row="' + TKT_helper.ticketRow + '"]').each( function() {
-				$('.ticket-list-ticket-name', this).text( TKT_name + ': ' + tktsold );
+			$('.datetime-tickets-list').find('li[data-ticket-row="' + TKT_helper.ticketRow + '"]').each( function() {
+				if ( $(this).attr('data-context') == 'datetime-ticket' )
+					$('.ticket-list-ticket-name', this).text( TKT_name + ': ' + tktsold );
 			});
 
 			this.context = 'ticket';
