@@ -584,10 +584,9 @@ jQuery(document).ready(function($) {
 			$('.datetime-title', '#display-event-datetime-' + this.dateTimeRow).text(DTT_display_text);
 
 			//... and in all related dtt list rows!
-			$('.edit-ticket-row').each( function() {
-				lidttitem = $('.datetime-tickets-list', this).find('li[data-datetime-row="' + TKT_helper.dateTimeRow + '"]');
-				if ( typeof(lidttitem) !== 'undefined' )
-					$('.ticket-list-ticket-name', lidttitem).text(DTT_display_text);
+			$('.datetime-tickets-list').find('li[data-datetime-row="' + TKT_helper.dateTimeRow + '"]').each( function() {
+				if ( typeof(this) !== 'undefined' && $(this).attr('data-context') == 'ticket-datetime' )
+					$('.ticket-list-ticket-name', this).text(DTT_display_text);
 			});
 
 			this.context = 'datetime';

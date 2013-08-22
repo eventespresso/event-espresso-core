@@ -419,7 +419,7 @@
 
 
 	<!-- this will always have existing tickets listed here.  When we create a new ticket they get added to this container so that if a new datetime is created it just pulls from here. -->
-	<ul id="dtt-existing-available-ticket-list-items-holder" class="hidden">
+	<ul id="dtt-existing-available-ticket-list-items-holder" class="hidden datetime-tickets-list">
 		<!-- on brand new events this will hold the default ticket(s) -->
 		<li data-datetime-row="DTTNUM" data-context="datetime-ticket" data-ticket-row="1" class="datetime-ticket clickable">
 			<input type="checkbox" name="datetime_ticket[DTTNUM][1]" class="datetime-ticket-checkbox" value="1">
@@ -430,7 +430,7 @@
 	
 
 	<!-- same as above except for dtts -->
-	<ul id="dtt-existing-available-datetime-list-items-holder" class="hidden">
+	<ul id="dtt-existing-available-datetime-list-items-holder" class="hidden datetime-tickets-list">
 		<!-- on brand new events this is empty -->
 		<li class="hidden"></li>
 	</ul>
