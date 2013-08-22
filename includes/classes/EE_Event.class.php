@@ -182,6 +182,12 @@ class EE_Event extends EE_CPT_Base{
 	 * @var string
 	 */
 	protected $_EVT_additional_attendee_reg_info;
+	
+	/**
+	 *Indicates whether or not this event accepts donations
+	 * @var boolean
+	 */
+	protected $_EVT_donations;
 
 
 
@@ -315,6 +321,9 @@ class EE_Event extends EE_CPT_Base{
 	function wp_user(){
 		return $this->get('EVT_wp_user');
 	}
+	function donations(){
+		return $this->get('EVT_donations');
+	}
 	function set_additional_limit($limit){
 		return $this->set('EVT_additional_limit',$limit);
 	}
@@ -377,6 +386,9 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_default_registration_status( $default_registration_status ) {
 		return $this->set('EVT_default_registration_status', $default_registration_status );
+	}
+	function set_donations($donations){
+		return $this->set('EVT_donations',$donations);
 	}
 	
 	/**

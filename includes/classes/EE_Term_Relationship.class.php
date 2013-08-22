@@ -47,6 +47,11 @@ class EE_Term_Relationship extends EE_Base_Class{
 	protected $_term_order=NULL;
 
 	/**
+	 * 
+	 * @var EE_Attendee
+	 */
+	protected $_Attendee;
+	/**
 	 * Related event, lazy-loaded
 	 * @access protected
 	 * @var EE_Event 

@@ -1862,7 +1862,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if (isset($this->_req_data['import']) && $this->_req_data['import'] == 'csv') {
 			EE_Import::instance()->import();
 		}
-
+		echo "csv notices";
+		var_dump(EE_CSV::instance()->_notices);
 		$title = __('Import Events', 'event_espresso');
 		$intro = __('If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
 		$form_url = EVENTS_ADMIN_URL;

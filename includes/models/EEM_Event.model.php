@@ -44,9 +44,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			self::$_instance = new self( $timezone );
 		}
 
-		//set timezone if we have in incoming string
-		if ( !empty( $timezone ) )
-			self::$_instance->set_timezone( $timezone );
+		//we might have a timezone set, let set_timezone decide what to do with it
+		self::$_instance->set_timezone( $timezone );
 
 		// EEM_Event object
 		return self::$_instance;
@@ -111,7 +110,9 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', __('Event Phone Number', 'event_espresso'), false ),
 				'EVT_allow_overflow'=>new EE_Boolean_Field('EVT_allow_overflow', __("Allow Overflow on Event", "event_espresso"), false, false),
 				'EVT_timezone_string'=>new EE_Plain_Text_Field('EVT_timezone_string', __("Timezone (name) for Event times", "event_espresso"), false),
-				'EVT_external_URL'=>new EE_Plain_Text_Field('EVT_external_URL', __("URL of Event Page if hosted elsewhere", "event_espresso"), true)
+				'EVT_external_URL'=>new EE_Plain_Text_Field('EVT_external_URL', __("URL of Event Page if hosted elsewhere", "event_espresso"), true),
+				'EVT_donations'=>new EE_Boolean_Field('EVT_donations', __("Accept Donations?", "event_espresso"), false, false)
+				
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),

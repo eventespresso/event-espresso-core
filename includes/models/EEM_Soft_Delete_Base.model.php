@@ -128,7 +128,7 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @param boolean $distinct
 	 * @return int count
 	 */
-	public function count($query_params, $field_to_count = null, $distinct = false){
+	public function count($query_params = array(), $field_to_count = null, $distinct = false){
 		//just calls parent, but changes PHP docs for this function
 		return parent::count($query_params, $field_to_count, $distinct);
 	}
@@ -268,7 +268,7 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @param mixed $ID value of the primary_key or primary_text_key
 	 * @return boolean success
 	 */
-	public function delete_by_ID($ID=FALSE){
+	public function delete_by_ID($ID){
 		return $this->delete_or_restore_by_ID(true,$ID);
 	}
 	/**

@@ -40,7 +40,7 @@ abstract class EEM_Base extends EE_Base{
 	 * For example, if you want to run EEM_Event::instance()->get_all(array(array('EVT_ID'=>$_GET['event_id'])));
 	 * @var boolean
 	 */
-	private $_values_already_prepared_by_model_object;
+	private $_values_already_prepared_by_model_object = false;
 	
 	protected $singular_item = 'Item';
 	protected $plural_item = 'Items';
@@ -233,7 +233,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $timezone valid PHP DateTimeZone timezone string
 	 */
 	public function set_timezone( $timezone ) {
-		$this->_timezone = $timezone;
+		if($timezone !== NULL){
+			$this->_timezone = $timezone;
+		}
 
 		//note we need to loop through relations and set the timezone on those objects as well.
 		foreach ( $this->_model_relations as $relation ) {
@@ -335,7 +337,10 @@ abstract class EEM_Base extends EE_Base{
 	 * 
 	 * 		EEM_Transaction::instance()->get_all( array(
 	 *			array(
-	 *				'Registration.Attendee.ATT_fname'=>('like','Mc%')
+	 *				'OR'=>array(
+	 *					'Registration.Attendee.ATT_fname'=>array('like','Mc%'),
+	 *					'Registration.Attendee.ATT_fname*other'=>array('like','Mac%')
+	 *				)
 	 * 			),
 	 *			'limit'=>10,
 	 *			'group_by'=>'TXN_ID'
@@ -654,7 +659,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param mixed $id
 	 * @return boolean whether the row got deleted or not
 	 */
-	function delete_by_ID($id){
+	public function delete_by_ID($id){
 		$query_params = array();
 		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
 		$query_params['limit'] = 1;
@@ -829,10 +834,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params
 	 * @return int how many deleted
 	 */
-	public function delete_permanently_related($id_or_obj,$model_name, $query_params = array()){
+	public function delete_related_permanently($id_or_obj,$model_name, $query_params = array()){
 		$model_obj = $this->ensure_is_obj($id_or_obj);
 		$relation_settings = $this->related_settings_for($model_name);
-		return $relation_settings->delete_permanently_all_related($model_obj,$query_params);
+		return $relation_settings->delete_related_permanently($model_obj,$query_params);
 	}
 	
 	/**
@@ -1776,6 +1781,21 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_model_relations;
 	}
 	
+	/**
+	 * Gets all related models that this model BELONGS TO. Handy to know sometimes
+	 * because without THOSE models, this model probably doesn't have much purpose.
+	 * (Eg, without an event, datetimes have little purpose.)
+	 * @return EE_Belongs_To_Relation[]
+	 */
+	public function belongs_to_relations(){
+		$belongs_to_relations = array();
+		foreach($this->relation_settings() as $model_name => $relation_obj){
+			if($relation_obj instanceof EE_Belongs_To_Relation){
+				$belongs_to_relations[$model_name] = $relation_obj;
+			}
+		}
+		return $belongs_to_relations;
+	}
 	
 	
 	/**

@@ -132,6 +132,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return void
 	 */
 	public function set_timezone( $timezone ) {
+		if( $timezone === NULL && $this->_timezone != NULL){
+			//leave the timezone AS-IS if we already ahve one and 
+			//the function arg didn't provide one
+			return;
+		}
 		$this->_timezone = empty( $timezone ) ? get_option('timezone_string') : $timezone;
 
 		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter

@@ -81,13 +81,6 @@ class EE_Price_Type extends EE_Base_Class{
   */
 	protected $_PRT_is_percent = NULL;
 
-	/**
-	*	Price type a global?
-	*
-	*	@access	protected
-	*	@var bool
-	*/
-	protected $_PRT_is_global = NULL;
 
 	/**
 	*	Price type order

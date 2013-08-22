@@ -82,7 +82,8 @@ abstract class EE_Model_Relation_Base{
 	 * @param string $timezone timezone to set.
 	 */
 	public function set_timezone( $timezone ) {
-		$this->_timezone = $timezone;
+		if($timezone !== NULL)
+			$this->_timezone = $timezone;
 	}
 	
 	
@@ -143,7 +144,7 @@ abstract class EE_Model_Relation_Base{
 	 * @param array $query_params
 	 * @return int of how many related models got deleted
 	 */
-	public function delete_permanently_all_related($model_object_or_id,$query_params = array()){
+	public function delete_related_permanently($model_object_or_id,$query_params = array()){
 		//for each thing we would delete,
 		$related_model_objects = $this->get_all_related($model_object_or_id,$query_params);
 		//determine if it's blocked by anything else before it can be deletedx
