@@ -58,7 +58,7 @@
 					<td><span class="ticket-display-row-TKT_total_amount">$0.00</span></td>
 					<td><span class="ticket-display-row-TKT_qty"></span></td>
 					<td><span class="ticket-display-row-TKT_sold">0</span></td>
-					<td><span class="gear-icon clickable" data-ticket-row="1" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="1" data-context="ticket"></span></td>
+					<td><span class="gear-icon clickable" data-ticket-row="1" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="1" data-context="ticket"><span class="trash-icon clickable" data-ticket-row="1" data-context="ticket" style="display:none;"></span></span></td>
 				</tr>
 				<tr id="edit-ticketrow-1" class="edit-ticket-row" style="display:none">
 					<td colspan="9">
@@ -220,7 +220,7 @@
 				<td><span class="ticket-display-row-TKT_total_amount"></span></td>
 				<td><span class="ticket-display-row-TKT_qty"></span></td>
 				<td><span class="ticket-display-row-TKT_sold">0</span></td>
-				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span></td>
+				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="trash-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span></td>
 			</tr>
 			<tr id="edit-ticketrow-TICKETNUM" class="edit-ticket-row" style="display:none">
 				<td colspan="9">

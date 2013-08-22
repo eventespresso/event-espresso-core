@@ -273,6 +273,15 @@ jQuery(document).ready(function($) {
 			if ( $('.event-tickets-container').is(':hidden') )
 				$('.event-tickets-container').fadeIn();
 			this.context = 'ticket';
+
+
+			//verify that there isn't only one DTT row.  If there is then let's remove the trash icon from this element.  If there ISNT' then let's show all trash elements.
+			console.log($('.event-datetime-row', '.event-datetimes-container').length);
+			if ( $('.event-datetime-row', '.event-datetimes-container').length === 1 ) {
+				DTT_display_row.find('.trash-icon').hide();
+			} else {
+				$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon', '.datetime-summary').show();
+			}
 			return this;
 		},
 
@@ -725,6 +734,9 @@ jQuery(document).ready(function($) {
 					$('#event-datetime-' + row).remove();
 					this.ticketRow = 0; //set to 0 so we remove dtts for all tickets.
 					this.dateTimeRow = row;
+					//if we've only got one row then we need to remove trash on that row.
+					if ( $('.event-datetime-row', '.event-datetimes-container').length == 1 )
+						$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon').hide();
 					break;
 
 				case 'ticket' :
@@ -732,6 +744,9 @@ jQuery(document).ready(function($) {
 					$('#display-ticket-row' + row).remove();
 					this.dateTimeRow = 0; //set to 0 so we remove tkts for all datetimes.
 					this.ticketRow = row;
+					//if we've only got one row then we need to remove trash on that row.
+					if ( $('.ticket-row', '.event-tickets-container').length === 1 )
+						$('.trash-icon', '.event-tickets-container .ticket-row').hide();
 					break;
 			}
 			
@@ -809,6 +824,10 @@ jQuery(document).ready(function($) {
 				newTKTrow.find('.price-title-text', '.price-row-' + row).text('Base Price');
 				newTKTrow.find('.edit-price-PRC_name', '.price-row-' + row).val(pricename); 
 				$('add-datetime-ticket-container', '#edit-event-datetime-tickets-' + this.dateTimeRow ).find('.gear-icon').hide(); //reset cog visibility.
+
+				//if there are multiple ticket rows after creating this then let's show all trash icons
+				if ( $('.ticket-row', '.event-tickets-container').length > 1 )
+					$('.trash-icon', '.event-tickets-container .ticket-row' ).show();
 
 			}
 
