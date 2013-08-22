@@ -766,7 +766,7 @@ jQuery(document).ready(function($) {
 
 		
 		newTicketRow: function() {
-			var idref, curval, newval, price_amount;
+			var idref, curval, newval, price_amount, pricename;
 			var incomingcontext = this.context;
 			//replace all instances of TICKETNUM with new generated row number
 			this.context = 'ticket';
@@ -793,19 +793,22 @@ jQuery(document).ready(function($) {
 						price_amount = parseFloat(curval);
 						price_amount = price_amount.toFixed(2);
 					}
+
+					if ( $(this).hasClass('add-new-ticket-TKT_name') ) {
+						pricename = $(this).val();
+					}
+
 					$(this).val('');
 				});
 
 				newTKTrow.find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
 
 				// selectors
-				var selected_price_type_val = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val();
+				var selected_price_type_val = 1;
 
-				$('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).val('');
-				var selected_price_title = $('.add-new-ticket-PRT_ID :selected', '#edit-event-datetime-tickets-' + this.dateTimeRow ).text();
-
-				newTKTrow.find('.price-title-text', '.price-row-' + row).text(selected_price_title);
-				newTKTrow.find('.edit-price-PRT_ID', '.price-row-' + row).val(selected_price_type_val); //todo this prolly doesn't work.  Need to loop through options and trigger selected on the correct option.
+				newTKTrow.find('.price-title-text', '.price-row-' + row).text('Base Price');
+				newTKTrow.find('.edit-price-PRC_name', '.price-row-' + row).val(pricename); 
+				$('add-datetime-ticket-container', '#edit-event-datetime-tickets-' + this.dateTimeRow ).find('.gear-icon').hide(); //reset cog visibility.
 
 			}
 
@@ -1075,6 +1078,9 @@ jQuery(document).ready(function($) {
 				operator = $('.ee-price-selected-operator', this).val();
 				is_percent = parseInt($('.ee-price-selected-is-percent', this).val() );
 
+				if ( typeof( priceAmount ) === 'undefined' || typeof( operator ) === 'undefined' || typeof( is_percent) === 'undefined' )
+					return 0;
+
 				if ( is_percent ) {
 					runningtotal = operator == '+' ? runningtotal + (runningtotal*priceAmount) : runningtotal - (runningtotal*priceAmount);
 				} else {
@@ -1315,5 +1321,18 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		TKT_helper.toggleTicketSelect(this);
 		return false;
+	});
+
+
+	/**
+	 * toggle cog for add-new-ticket row
+	 */
+	$('#event-and-ticket-form-content').on('keyup', '.add-new-ticket-TKT_name', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		if ( $(this).val() !== '' )
+			$(this).parent().parent().find('.gear-icon').show();
+		else
+			$(this).parent().parent().find('.gear-icon').hide();
 	});
 });

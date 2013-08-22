@@ -364,7 +364,6 @@
 							<td>Ticket Name</td>
 							<td>Goes On Sale</td>
 							<td>Sell Until</td>
-							<td>Base Price</td>
 							<td>Price</td>
 							<td>Qty</td>
 							<td></td>
@@ -381,12 +380,6 @@
 							<td>
 								<input type="text" name="add_new_ticket[TKT_end_date]" class="add-new-ticket-TKT_end_date">
 							</td>
-							<td>
-								<select name="add_new_ticket[PRT_ID]" class="add-new-ticket-PRT_ID">
-									<option value="1">Event Price</option>
-									<option value="2">Big Event Price</option>
-								</select>
-							</td>
 							<td>	
 								<input type="text" name="add_new_ticket[PRC_amount]" class="add-new-ticket-PRC_amount" size="1">
 							</td>
@@ -394,7 +387,7 @@
 								<input type="text" name="add_new_ticket[TKT_qty]" class="add-new-ticket-TKT_qty" size="1">
 							</td>
 							<td>
-								<span class="clickable gear-icon add-edit" data-context="short-ticket" data-datetime-row="DTTNUM"></span>
+								<span class="clickable gear-icon add-edit" data-context="short-ticket" data-datetime-row="DTTNUM" style="display:none"></span>
 								<!-- the "add-edit" class is used by jQuery to indicate we need to retrieve a edit form using the value from the #next-ticket-row hidden input (which in turn is incremented if the new created item is saved). -->
 								<!-- Also: when the Add New Ticket form is recalled, jQuery will automatically populate the data-context and data-datetime-row properties on the edit icon and save buttons from the event handler for the datetime being edited. -->
 							</td>
