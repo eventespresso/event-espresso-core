@@ -17,7 +17,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	
 	private static $_csv_array = array();
  
-	private static $_table_list = array();
+	/**
+	 *
+	 * @var array of model names
+	 */
+	private static $_model_list = array();
 	
 	private static $_columns_to_save = array();
  
@@ -159,8 +163,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 //									die();
 //								}
 													
-								// csv import export functions require a list of all event espresso tables
-								$this->table_list = $this->EE_CSV->list_db_tables();
 								// convert csv to array
 								$this->csv_array = $this->EE_CSV->import_csv_to_model_data_array( $path_to_file );
 									
@@ -186,9 +188,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 										break;
 									
 									}
-
 									// save processed codes to db
-									if ( $result = $this->EE_CSV->save_csv_to_db( $this->table_list, $processed_data, $this->columns_to_save ) ) {
+									if ( $result = $this->EE_CSV->save_csv_to_db( $processed_data, $this->columns_to_save ) ) {
 									
 										//echo $this->import_success ( $import_what . ' have been successfully imported into the database.' );
 										$this->EE_CSV->_notices['updates'][] = $import_what . ' have been successfully imported into the database.';
@@ -260,7 +261,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			// loop through data array to do a little processing
 			foreach ( $this->csv_array as $table_name => $table_data ) {
 				// check that the table name being imported is valid
-				if ( ! in_array( $table_name, $this->table_list )) {
+				if ( ! in_array( $table_name, $this->_table_list )) {
 					//$this->import_error ( 'Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database.' );
 					$this->EE_CSV->_notices['errors'][] = 'Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database.';
 					add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );

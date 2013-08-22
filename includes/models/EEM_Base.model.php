@@ -40,7 +40,7 @@ abstract class EEM_Base extends EE_Base{
 	 * For example, if you want to run EEM_Event::instance()->get_all(array(array('EVT_ID'=>$_GET['event_id'])));
 	 * @var boolean
 	 */
-	private $_values_already_prepared_by_model_object;
+	private $_values_already_prepared_by_model_object = false;
 	
 	protected $singular_item = 'Item';
 	protected $plural_item = 'Items';
@@ -337,7 +337,10 @@ abstract class EEM_Base extends EE_Base{
 	 * 
 	 * 		EEM_Transaction::instance()->get_all( array(
 	 *			array(
-	 *				'Registration.Attendee.ATT_fname'=>('like','Mc%')
+	 *				'OR'=>array(
+	 *					'Registration.Attendee.ATT_fname'=>array('like','Mc%'),
+	 *					'Registration.Attendee.ATT_fname*other'=>array('like','Mac%')
+	 *				)
 	 * 			),
 	 *			'limit'=>10,
 	 *			'group_by'=>'TXN_ID'
@@ -1778,6 +1781,21 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_model_relations;
 	}
 	
+	/**
+	 * Gets all related models that this model BELONGS TO. Handy to know sometimes
+	 * because without THOSE models, this model probably doesn't have much purpose.
+	 * (Eg, without an event, datetimes have little purpose.)
+	 * @return EE_Belongs_To_Relation[]
+	 */
+	public function belongs_to_relations(){
+		$belongs_to_relations = array();
+		foreach($this->relation_settings() as $model_name => $relation_obj){
+			if($relation_obj instanceof EE_Belongs_To_Relation){
+				$belongs_to_relations[$model_name] = $relation_obj;
+			}
+		}
+		return $belongs_to_relations;
+	}
 	
 	
 	/**

@@ -114,26 +114,12 @@
 
 				// loop through each row of the file
 				while(($data = fgetcsv($file_handle, 0, ',', '"' )) !== FALSE){
-					# Count the total keys in the row.
-					$c = count($data);
-					# Populate the multidimensional array.
-					for ($x=0;$x<$c;$x++)
-					{
-						$csvarray[$nn][$x] = $data[$x];
-					}
-					$nn++;
+					$csvarray[]= $data;
 				}
 			}else{
 				// loop through each row of the file
 				while (( $data = fgetcsv( $file_handle, 0, ',', '"', '\\' )) !== FALSE ) {
-					# Count the total keys in the row.
-					$c = count($data);
-					# Populate the multidimensional array.
-					for ($x=0;$x<$c;$x++)
-					{
-						$csvarray[$nn][$x] = $data[$x];
-					}
-					$nn++;
+					$csvarray[]=$data;
 				}
 			}
 			# Close the File.
@@ -181,41 +167,56 @@
 		$ee_formatted_data = array();
 		// array to store headers (column names)
 		$headers = array();
-			
-		// no tables
-//		if ( ! $table_list ) {
-//			// get list of event espresso tables
-//			$table_list = self::list_db_tables();
-//		}
-	
 		foreach($multi_dimensional_array as $data){
 			// if first cell is MODEL, then second cell is the MODEL name
 			if ( $data[0]	== 'MODEL' ) {
 				$model_name = $data[1];
-				$row = 0;
+				//don't bother looking for model data in this row. The rest of this
+				//row should be blank
+				//AND pretend this is the first row again
+				$row = 1;
+				continue;
 			}
 
 			// how many columns are there?
 			$columns = count($data);
 
+			$model_entry = array();
 			// loop through each column
 			for ( $i=0; $i < $columns; $i++ ) {
+				
 				//replace csv_enclosures with backslashed quotes 
 				$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
 				// do we need to grab the column names?
-				if ( $row === 1 && $first_row_is_headers ) {
-					// store the column names to use for keys
-					$headers[$i] = $data[$i];
-				} else if ( $row === 1 && ! $first_row_is_headers ) {
-					// no column names means our final array will just use counters for keys
-					$ee_formatted_data[$model_name][$row][$headers[$i]] = $data[$i];//#3336 this might not be a field name-- might be "DESCRIPTION (FIELD_NAME)"
-					$headers[$i] = $i;
+				if ( $row === 1){
+					if( $first_row_is_headers ) {
+						// store the column names to use for keys
+						$column_name = $data[$i];
+						//check it's not blank... sometimes CSV editign programs adda bunch of empty columns onto the end...
+						if(!$column_name){continue;}
+						$matches = array();
+						//now get the db table name from it (the part between square brackets)
+						$success = preg_match('~(.*)\[(.*)\]~', $column_name,$matches);
+						if (!$success){
+							$this->_notices['error']= sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data));
+							return false;
+						}
+						$headers[$i] = $matches[2];
+					}else{
+						// no column names means our final array will just use counters for keys
+						$model_entry[$headers[$i]] = $data[$i];
+						$headers[$i] = $i;
+					}
 					// and we need to store csv data
-				} else if ( $row ) {
+				} else {
 					// no headers just store csv data
-					$ee_formatted_data[$model_name][$row][$headers[$i]] = $data[$i];
+					$model_entry[$headers[$i]] = $data[$i];
 				}
-
+				
+			}
+			//save the row's data IF it's a non-header-row
+			if( ! $first_row_is_headers || ($first_row_is_headers && $row > 1)){
+				$ee_formatted_data[$model_name][] = $model_entry;
 			}
 			// advance to next row
 			$row++;
@@ -234,23 +235,25 @@
 	
 	
 	/**
-	 *			@Save the import contents of a csv file to the db
+	 *			Given an array of data (usually from a CSV import) attempts to save that data to teh db.
+	 *			If $model_name ISN'T provided, assumes that this is a 3d array, with toplevel keys being model names,
+	 *			next level being numeric indexes adn each value representing a model object, and teh last layer down
+	 *			being keys of model fields and their proposed values.
+	 *			If $model_name IS provided, assumes a 2d array of the bottom two layers previously mentioned.
+	 *			Regarding primary and foreing keys: tries to intelligently decide whether to insert a new
+	 *			model objects or not. If the model object's primary key is provided, checks if it's already in teh DB 
+	 *			and if it is, then just updates that existing model object with the $csv_data_array's values. HOWEVER,
+	 *			there is an exception: if a model object has previously been inserted from $csv_data_array that
+	 *			a model object BELONGS TO, then we will also insert that model object, ignoring its primary key in $csv_data_array.
+	 *			Eg, if we're decidign whether or not to insert a Datetime with DTT_ID=23, and EVT_ID=3, we check if we JUST
+	 *			inserted an event with EVT_ID=3. If so, then this Datetime with DTT_ID=23 should also be new... after all, it depends
+	 *			on Event with ID 3 which we just inserted. 
 	 *		  @access public
 	 *			@param array $csv_data_array - the array containing the csv data
-	 *			@param array $columns_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
+	 *			@param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
 	 *			@return TRUE on success, FALSE on fail
 	 */	
-	public function save_csv_to_db( $table_list, $csv_data_array, $columns_to_save = FALSE, $table = FALSE ) {
-
-		// somebody told me i might need this ???
-		global $wpdb;
-		
-		// no tables
-		if ( ! $table_list ) {
-			// get list of event espresso tables
-			$table_list = self::list_db_tables();
-		}
-	
+	public function save_csv_to_db( $csv_data_array, $model_name = FALSE ) {
 		$total_inserts = 0;
 		$total_updates = 0;
 		$total_insert_errors = 0;
@@ -258,247 +261,141 @@
 
 		$success = FALSE;
 		$error = FALSE;
-		
-		//save inital value so we can reset this later
-		$initial_columns_to_save_value = $columns_to_save;
-
-//echo '<h1>$table_list  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $table_list, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
-		
-//echo '<h1>$csv_data_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $csv_data_array, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
-		
-		// loop through each row of data
-		foreach ( $csv_data_array as $table_name => $table_data ) {		
-				
-//echo '<h1>$table_name : ' . $table_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-
-			// check for and set table name ?
-			if ( in_array( (string)$table_name, $table_list )) {
-				// we have a table info in the array
-				// our array is three levels deep and all is good
-				$table = $table_name;
-				// get columns for appropriate table directly from db
-				$columns_to_save = $this->list_db_table_fields($table);
-//echo '<h2>$columns_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
-//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $columns_to_save, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
-			} else if ( $table ) {
-				// first level of array is not table information but a table name was passed to the function
-				// array is only two levels deep, so let's fix that by adding a level, else the next steps will fail
-				$table_data = array( $table_data );
-				// if we haven't been passed specific table columns
-				if ( ! $columns_to_save ) {
-					$columns_to_save = $this->list_db_table_fields($table);
-				}
-//echo '<h2>$columns_to_save  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
-//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $columns_to_save, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
-			} else {
+		// first level of array is not table information but a table name was passed to the function
+		// array is only two levels deep, so let's fix that by adding a level, else the next steps will fail
+		if($model_name){
+			$csv_data_array = array($csv_data_array);
+		}
+		// begin looking through the $csv_data_array, expecting the toplevel key to be the model's name...
+		foreach ( $csv_data_array as $model_name_in_csv_data => $model_data_from_import ) {		
+			//now check that assumption was correct. If
+			if ( $this->EE->is_model_name($model_name_in_csv_data)) {
+				$model_name = $model_name_in_csv_data;
+			}else {
 				// no table info in the array and no table name passed to the function?? FAIL
 				$this->_notices['errors'][] = 'No table information was specified and/or found, therefore the import could not be completed';
 				return FALSE;
 			}
-//echo '<h1>table : ' . $table . '</h1>';
-	
-			// flip the array so we can check against it's data
-			$save_to_columns = array_flip($columns_to_save);
-
-//echo '<h2>$save_to_columns  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h2>';
-//echo '<pre style="height:auto;border:2px solid lightblue;">' . print_r( $save_to_columns, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';			
-								
-			$row_counter = 1;
+			$model = $this->EE->load_model($model_name);
 		
-			foreach ( $table_data as $table_row ) {		
-		
-				// arrays for storing data and data types required by WP insert function
-				$data = array();
-				$format = array();
-
-				// array to store keys for determining whether to insert new data or update existing data
-				$primary_keys = array();
-
-				$col_counter = 1;
-
-//echo '<h3>count(columns_to_save) = ' . count( $columns_to_save ) . '</h3>';
-//echo '<h3>count(table_row) = ' . count( $table_row ) . '</h3>';
-		
-				// loop through each row to determine data types for each column
-				foreach ( $table_row as $field_name => $cell_value ) {
-	
-//echo '<h3> field_name : ' . $field_name . '</h3>';
-					// check for blank cells added onto the ends of columns
-					if ( $field_name != '' && $field_name != NULL ) {
-					
-						// check if this csv column is to be saved to the database
-						if ( in_array( $field_name, $columns_to_save ) ) {
+			/**
+			 * @var $key_in_csv_to_id_in_db_map 2d array: toplevel keys being model names, bottom-level keys being the original key, and 
+			 * the value will be the newly-inserted ID
+			 */
+			$key_in_csv_to_id_in_db_map = array();
+			//so without further ado, scanning all the data provided for primary keys and their inital values
+			foreach ( $model_data_from_import as $model_object_data ) {		
+				//before we do ANYTHING, make sure the csv row wasn't just completely blank
+				$row_is_completely_empty = true;
+				foreach($model_object_data as $field){
+					if($field){
+						$row_is_completely_empty = false;
+					}
+				}
+				if($row_is_completely_empty){
+					continue;
+				}
+				$id_in_csv = $model_object_data[$model->primary_key_name()];
 				
-							// test it data type is an int ( %d ) or a string ( %s )
-							if (is_numeric($cell_value)) {
-								$format[] = '%d';
-							} else {
-								$format[] = '%s';
-							}
-							
-							// save to the multidimensional array
-							$data[$field_name] = $cell_value;
-							
-	
-							if ( isset ( $this->_primary_keys[$table] ) ) {
-								// is this column a primary key?
-								if ( in_array( $field_name, $this->_primary_keys[$table] )) {
-									// store it for use below
-									$primary_keys[] = array( $field_name => $cell_value );
-								}
-							}
-			
-						} else {
-						
-							if ( $field_name == '' ) {
-								$this->_notices['errors'][] = 'Row ' . $row_counter . ' : Column ' . $col_counter . ' - A column with no title was found in the CSV data for the table ' . $table . ' and could not be saved to the database. Please check your CSV data.';
-							} else {
-								$this->_notices['errors'][] = 'Row ' . $row_counter . ' : Column ' . $col_counter . ' - The following unknown column ( <strong>'. $field_name .'</strong> ) was found in the CSV data for the table ' . $table . ' and could not be saved to the database. Please check your CSV data.';
-							}
-							
-							$error = TRUE;
+				//now we need to decide if we're going to add a new model object given the $model_object_data,
+				//or just update.
+				//to decide that, first we want to know if this import has added
+				//a related model object this one depends on (eg, if we're currently
+				//deciding whether or not to add a Datetime, we ask did we JUST add
+				//its event? Because if we just added a new event, and datetimes DEPEND 
+				//on events for their existence, then we know we want to add a new datetime.
+				//...because even if there IS a datetime with the same ID, it COULDN'T have
+				//been for this same event, (because the event was JUST added), and therefore
+				//it's only a COINCIDENCE that a datetime with teh same ID exists
+				$models_it_belongs_to = $model->belongs_to_relations();
+				$do_insert = false;
+				foreach($models_it_belongs_to as $model_name_it_belongs_to => $relation_obj){
+					$fk_field = $model->get_foreign_key_to($model_name_it_belongs_to);
+					$fk_value = $model_object_data[$fk_field->get_name()];
+					//now, is that value in the list of PKs that have been inserted?
+					if(isset($key_in_csv_to_id_in_db_map[$model_name_it_belongs_to][$fk_value])){
+						//INSERT because we inserted the thing it BELONGS to
+						$do_insert = true;
+					}else{
+						$existing_model_object = $model->get_one_by_ID($id_in_csv);
+						if($existing_model_object){
+							//it already exists, so we'd rather just update it
+							$do_insert = false;
+						}else{
+							//it doesn't already exist, so we OBVIOUSLY can't update it
+							//so insert it
+							$do_insert = true;
 						}
-						
-					}
-
-					$col_counter++;
-					
-				}
-
-//echo '<h4>this->_primary_keys['.$table.']</h4>';
-//echo '<pre>';
-//echo print_r($this->_primary_keys[$table]);
-//echo '</pre>';
-//
-//echo '<h4>primary_keys</h4>';
-//echo '<pre>';
-//echo print_r($primary_keys);
-//echo '</pre>';
-
-				$pkeys = '';
-				$where = '';
-				$where_array = array();
-				$where_format = array();
-				$x = 0;
-			
-				foreach ( $primary_keys as $pkey_values ) {
-					foreach ( $pkey_values as $pkey => $val ) {
-						$pkeys .= $pkey . ', ';
-						$where .= $pkey . ' = ' . $val . ' AND ';
-						$where_array[$pkey] = $val;
-						$where_format[] = is_int( (int)$val ) ? '%d' : '%s';
-						unset( $data[$pkey] );
-						unset( $format[$x] );
-						$x++;
 					}
 				}
 				
-//echo '<h4>data</h4>';
-//echo '<pre>';
-//echo print_r($data);
-//echo '</pre>';
-//
-//echo '<h4>format</h4>';
-//echo '<pre>';
-//echo print_r($format);
-//echo '</pre>';
-//
-//echo '<h4>where_array</h4>';
-//echo '<pre>';
-//echo print_r($where_array);
-//echo '</pre>';
-//
-//echo '<h4>where_format</h4>';
-//echo '<pre>';
-//echo print_r($where_format);
-//echo '</pre>';
-
-//echo '<h3>count(data) = ' . count( $data ) . '</h3>';
-//echo '<h3>count(format) = ' . count( $format ) . '</h3>';
-//echo '<h3>count(where_array) = ' . count( $where_array ) . '</h3>';
-//echo '<h3>count(where_format) = ' . count( $where_format ) . '</h3>';
-
-
-
-				// remove last ',' from pkeys string
-				$pkeys  = substr($pkeys, 0, -2);
-				
-				// remove last ' AND ' from where string
-				$where  = substr($where, 0, -5);
-				
-				$query = 'SELECT ' . $pkeys . ' FROM ' . $table . ' WHERE ' . $where;
-//echo '<h3> query : ' . $query . '</h3>';
-				
-				// check if primary key(s) exist in table
-				$result = $wpdb->get_results( $wpdb->prepare( $query, NULL ));
-
-				if ($wpdb->num_rows > 0) {
-//echo '<h3>UPDATE</h3>';
-								
-					// primary key exists so we are going to do an UPDATE
-					$update = $wpdb->update( $table, $data, $where_array, $format, $where_format ); 
-//echo $wpdb->last_query;
-					
-					if ( $update !== FALSE ) {
-						$total_updates++;
-						$success = TRUE;
-					} else {
-						$total_update_errors++;
-						$error = TRUE;
-					}
-//echo '<h3> update : ' . $update . '</h3>';
-				
-				} else {
-
-//echo '<h3>INSERT</h3>';
-
-					// NO primary key exists so INSERT new data
-					// we'll use $wpdb->insert from now on, which automagically escapes and sanitizes data for us
-					$wpdb->insert( $table, $data, $format );
-//echo $wpdb->last_query;
-
-					// if we can't retrieve the insert id then the query failed
-					if ( $wpdb->insert_id ) {
-						$total_inserts++;
-						$success = TRUE;
-					} else {
+				if($do_insert){
+					unset($model_object_data[$model->primary_key_name()]);
+					//the model takes care of validating the CSV's input
+					try{
+						$new_id = $model->insert($model_object_data);
+						if($new_id){
+							$key_in_csv_to_id_in_db_map[$model_name][$id_in_csv] = $new_id;
+							$total_inserts++;
+							$this->_notices['updates'][] = sprintf(__("Successfully added new %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data));
+						}else{
+							$total_insert_errors++;
+							$model_object_data[$model->primary_key_name()] = $id_in_csv;
+							$this->_notices['errors'][] = sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,implode(",",$model_object_data));
+						}
+					}catch(EE_Error $e){
 						$total_insert_errors++;
-						$error = TRUE;
+						$model_object_data[$model->primary_key_name()] = $id_in_csv;
+						$this->_notices['errors'][] = sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage());
 					}
-		
+				}else{
+					try{
+//						$model->show_next_x_db_queries(1);
+//						echo '<br><br>';
+						$success = $model->update($model_object_data,array(array($model->primary_key_name() => $id_in_csv)));
+						if($success){
+							$total_updates++;
+							$this->_notices['updates'][] = sprintf(__("Successfully updated %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data));
+						}else{
+							$matched_items = $model->get_all(array(array($model->primary_key_name() => $id_in_csv )));
+							if( ! $matched_items){
+								//no items were matched (so we shouldn't have updated)... but then we should have inserted? what the heck?
+								$total_update_errors++;
+								$this->_notices['errors'][] =sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason", "event_espresso"),$model_name,implode(",",$model_object_data));
+							}else{
+								$total_updates++;
+								$this->_notices['updates'][] = sprintf(__("%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.", "event_espresso"),$model_name,implode(",",$model_object_data));
+							}
+						}
+					}catch(EE_Error $e){
+						$total_update_errors++;
+						$this->_notices['errors'][] =sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage());
+					}
 				}
-				$row_counter++;
 			}
-			
-			// reset 
-			$columns_to_save = $initial_columns_to_save_value;
-			
 		}
-	
-//echo '<h3>success 1 - total_updates = '.$total_updates.'</h3>';
-//echo '<h3>error 1 - total_update_errors = '.$total_update_errors.'</h3>';
-//echo '<h3>success 2 - total_inserts = '.$total_inserts.'</h3>';
-//echo '<h3>error 2 - total_insert_errors = '.$total_insert_errors.'</h3>';
 
-			if ( $total_updates > 0 ) {
-				$this->_notices['updates'][] = $total_updates . ' existing records in the database were updated.';
-				//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
-			}
-			if ( $total_inserts > 0 ) {
-				$this->_notices['updates'][] = $total_inserts . ' new records were added to the database.';
-				//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
-			}
-			
-			if ( $total_update_errors > 0 ) {
-				$this->_notices['errors'][] = 'One or more errors occured, and a total of ' . $total_update_errors . ' existing records in the database were <strong>not</strong> updated.';
-				//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
-			}
-			if ( $total_insert_errors > 0 ) {
-				$this->_notices['errors'][] = 'One or more errors occured, and a total of ' . $total_insert_errors . ' new records were <strong>not</strong> added to the database.';
-				//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
-			}
+		if ( $total_updates > 0 ) {
+			$this->_notices['updates'][] = $total_updates . ' existing records in the database were updated.';
+			$success = true;
+			//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
+		}
+		if ( $total_inserts > 0 ) {
+			$this->_notices['updates'][] = $total_inserts . ' new records were added to the database.';
+			$success = true;
+			//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
+		}
+
+		if ( $total_update_errors > 0 ) {
+			$this->_notices['errors'][] = 'One or more errors occured, and a total of ' . $total_update_errors . ' existing records in the database were <strong>not</strong> updated.';
+			$error = true;
+			//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
+		}
+		if ( $total_insert_errors > 0 ) {
+			$this->_notices['errors'][] = 'One or more errors occured, and a total of ' . $total_insert_errors . ' new records were <strong>not</strong> added to the database.';
+			$error = true;
+			//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
+		}
 
 		// if there was at least one success and absolutely no errors
 		if ( $success && ! $error ) {

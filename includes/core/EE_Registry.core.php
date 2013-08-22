@@ -298,6 +298,15 @@ final class EE_Registry {
 	}
 
 	/**
+	 * Determines if $model_name is the name of an actual EE model.
+	 * @param string $model_name like Event, Attendee, Question_Group_Question, etc.
+	 * @return boolean
+	 */
+	public function is_model_name($model_name){
+		$real_model_names = $this->all_model_names();
+		return in_array($model_name,$real_model_names);
+	}
+	/**
 	 * Gets the list of all model names (and uses a filter so addons can add to this list).
 	 * Useful anywhere we might want to know all the models that exist...
 	 * @return array where each value is a model name, eg 'Answer','Attendee', etc.

@@ -373,7 +373,15 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 					$model_data_array = array();
 					$fields = $model->field_settings();
 					foreach($fields as $field){
-						$model_data_array[$field->get_nicename()."[".$field->get_name()."]"] = $model_object->get($field->get_name());
+						$column_name = $field->get_nicename()."[".$field->get_name()."]";
+						if($field instanceof EE_Datetime_Field){
+//							$field->set_date_format('Y-m-d');
+//							$field->set_time_format('H:i:s');
+							$model_data_array[$column_name] = $model_object->get_datetime($field->get_name(),'Y-m-d','H:i:s');
+						}
+						else{
+							$model_data_array[$column_name] = $model_object->get($field->get_name());
+						}
 					}
 					$table_data[$model_name][] = $model_data_array;
 				}
