@@ -102,7 +102,6 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 				'PBT_ID'=>new EE_Enum_Field('PBT_ID', __('Price Base type ID, 1 = Base Price , 2 = Discount , 3 = Surcharge , 4 = Tax','event_espresso'), false, 1, $this->base_types,true),
 				'PRT_is_member'=>new EE_Boolean_Field('PRT_is_member', __('Flag indicating price is only for members','event_espresso'), false, false),
 				'PRT_is_percent'=>new EE_Boolean_Field('PRT_is_percent', __('Flag indicating price is a percentage','event_espresso'), false, false),
-				'PRT_is_global'=>new EE_Boolean_Field('PRT_is_global', __('Flag indicating price shoudl automatically be added to all events','event_espresso'), false, false),
 				'PRT_order'=>new EE_Integer_Field('PRT_order', __('Order in which price should be applied. ','event_espresso'), false, 0),
 				'PRT_deleted'=>new EE_Trashed_Flag_Field('PRT_deleted', __('Flag indicating price type has been trahsed','event_espresso'), false, false)
 			)
