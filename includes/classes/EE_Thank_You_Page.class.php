@@ -46,7 +46,7 @@ class EE_Thank_You_Page{
 	public static function instance() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// check if class object is instantiated
-		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
+		if (self::$_instance === NULL or !is_object(self::$_instance) or ! ( self::$_instance instanceof EE_Thank_You_Page )) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;

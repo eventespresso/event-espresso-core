@@ -77,7 +77,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public static function instance ( ) {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Session )) {
 			self::$_instance = new self();
 			//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		}

@@ -271,7 +271,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		if ( ! empty( $prices )) {
 			foreach ( $prices as $price ) {			
-				if ( is_object( $price ) && is_a( $price, 'EE_Ticket_Price' )) {
+				if ( $price instanceof EE_Ticket_Price ) {
 					//printr( $price, '$price  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );		
 					// add price 
 					$price_option = $price->name() . ': ';

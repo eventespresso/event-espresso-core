@@ -33,8 +33,15 @@ class EEH_Activation {
 	 */
 	public static function plugin_activation() {
 
+	    if ( ! current_user_can( 'activate_plugins' )) {
+			 return;
+		}
+	       
+	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	    check_admin_referer( "activate-plugin_{$plugin}" );		
+
 		$prev_version = get_option( 'events_detail_tbl_version' );
-		if ( $prev_version && version_compare( $prev_version, '3.2.0', '<' )) {
+		if ( $prev_version && version_compare( $prev_version, '3.2.0', '<=' )) {
 		
 			wp_die( '
 			<h2 style="color:red; font-size:2em; text-align:center;">' . __( 'Warning!', 'event_espresso' ) . '</h2>
@@ -729,7 +736,6 @@ class EEH_Activation {
 				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 				  PRT_is_member tinyint(1) NOT NULL DEFAULT '0',
 				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
-				  PRT_is_global tinyint(1) NOT NULL DEFAULT '0',
 				  PRT_order tinyint(1) UNSIGNED NULL,
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
@@ -958,13 +964,14 @@ class EEH_Activation {
 			
 			if ( ! $price_types_exist ) {
 				$SQL = "INSERT INTO " . ESP_PRICE_TYPE_TABLE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
-							(1, 'Default Event Price', 1, 0, 0, 1, 0, 1),
-							(2, 'Event Price', 1, 0, 0, 0, 0, 0),
-							(3, 'Member % Discount', 2, 1, 1, 0, 10, 0),
-							(4, 'Early Bird % Discount', 2, 0, 1, 0, 20, 0),
-							(5, 'Surcharge', 3, 0, 0, 0, 30, 0),
-							(6, 'Regional Tax', 4, 0, 1, 1, 40, 1),
-							(7, 'Federal Tax', 4, 0, 1, 1, 50, 1);";
+							(1, " . __('Base Price', 'event_espresso') . ", 1, 0, 0, 0, 0),
+							(2, " . __('Member % Discount', 'event_espresso') . ", 2, 1, 1, 10, 0),
+							(3, " . __('Early Bird % Discount', 'event_espresso') . ", 2, 0, 1, 20, 0),
+							(4, " . __('Dollar Discount', 'event_espresso') . ", 2, 0, 0, 30, 0),
+							(5, " . __('Percent Surcharge', 'event_espresso') . ", 3, 0, 1, 40, 0),
+							(6, " . __('Dollar Surcharge', 'event_espresso') . ", 3, 0, 0, 50, 0),
+							(7, " . __('Regional Tax', 'event_espresso') . ", 4, 0, 1, 60, 0),
+							(8, " . __('Federal Tax', 'event_espresso') . ", 4, 0, 1, 70, 0);";
 				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
 				$wpdb->query( $SQL );	
 			}
@@ -992,7 +999,7 @@ class EEH_Activation {
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
 							(PRC_ID, PRT_ID, EVT_ID, PRC_amount, PRC_name, PRC_desc, PRC_start_date, PRC_end_date, PRC_reg_limit, PRC_tckts_sold, PRC_is_active, PRC_overrides, PRC_order, PRC_deleted, PRC_display_order, PRC_parent ) VALUES
-							(1, 1, 0, '10.00', 'General Admission', 'Regular price for all Events. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 0, 0, 1, 0),
+							(1, 1, 0, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 0, 0, 1, 0),
 							(2, 3, 0, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 10, 0, 2, 0),
 							(3, 4, 0, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', -1, 0, NULL, NULL, 1, NULL, 20, 0, 3, 0),
 							(4, 5, 0, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 30, 0, 4, 0),

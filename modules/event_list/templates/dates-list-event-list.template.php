@@ -13,10 +13,10 @@
  */
 ?>
 
-<div class="max-width maxwidth row">
+<div id="dates-list-event-list-dv" class="max-width maxwidth row">
 	<div id="espresso-events-list-wrap-dv" class="container">
 	
-		<h1  id="event-list-h1"><?php _e( 'Upcoming Events', 'event_espresso' ); ?></h1>
+		<h1  id="event-list-h1"><?php _e( 'Upcoming Event Dates', 'event_espresso' ); ?></h1>
 		
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
@@ -27,37 +27,44 @@
 			
 			<article id="post-<?php echo $post->ID; ?>" <?php post_class('espresso-event-list-event'); ?>>
 			
-				<div class="event-datetimes">
-					<h4><?php espresso_event_date(); ?></h4>
-				</div>				
-				<!-- .event-datetimes -->
-
 				<div id="events-list-event-wrap-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
+				
+				<div class="event-datetimes">
+					<?php $datetime = espresso_event_date_obj();?>
+					<div class="event-date-calendar-page-dv">
+						<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
+						<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
+					</div>		
+				</div>		
+				<!-- .event-datetimes -->
 
 			<?php
 				$wrap_class = '';
 				if ( has_post_thumbnail( $post->ID )) {
-					if ( $img_ID = get_post_thumbnail_id( $post->ID )) {
-						if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'medium' )) {
-							$caption = esc_attr( get_post( get_post_thumbnail_id( $post->ID ))->post_excerpt );
-							$wrap_class = ' has-img';
+					$wrap_class = ' has-img';
 				?>
 					<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
-						<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>		
+						<?php the_post_thumbnail( array( 60, 60 ));?>
 					</div>
 				<?php 
-						}			
-					}			
 				}				
 			?>
+
+					<footer class="event-meta">
+						<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
+						<p class="event-categories-pg"><?php _e( 'category: ', 'event_espresso' ) . the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
+						
+						<?php espresso_edit_event_link(); ?>
+					</footer>
+					<!-- .entry-meta -->
+
 					<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
 						<header class="event-header">
-							<p><?php the_terms( $post->ID, 'espresso_event_categories' );// the_terms( $post->ID, 'category' );  ?></p>
-							<h1 class="event-title">
+							<h3 class="event-title">
 								<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
 									<?php the_title(); ?>							
 								</a>
-							</h1>
+							</h3>
 						</header>
 						<!-- .event-header -->
 						
@@ -65,21 +72,16 @@
 							<?php 
 								if( espresso_display_full_description_in_event_list() ) {
 									the_content(); 
-								} else if ( espresso_display_excerpt_in_event_list() ) {
+								} else {
 									the_excerpt(); 
-								}							
+								}
 							?> 
 						</div>				
 						<!-- .event-content -->
-						
-						<footer class="event-meta clear">
-							<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
-							<?php espresso_edit_event_link(); ?>
-						</footer>
-						<!-- .entry-meta -->
 
 					</div>
-			
+
+				<div class="clear"></div>
 				</div>
 			</article>
 			<!-- #post -->

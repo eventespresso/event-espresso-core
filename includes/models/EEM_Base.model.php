@@ -1874,7 +1874,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function get_a_field_of_type($field_class_name){
 		foreach($this->field_settings() as $field){
-			if(is_a($field,  $field_class_name)){
+			if( $field instanceof $field_class_name ){
 				return $field;
 			}
 		}
@@ -2106,7 +2106,8 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false){ 
-		if(is_a($base_class_obj_or_id,$this->_get_class_name())){
+		$className = $this->_get_class_name();
+		if( $base_class_obj_or_id instanceof $className ){
 			$model_object = $base_class_obj_or_id;
 		}elseif(is_int($base_class_obj_or_id)){//assume it's an ID
 			$model_object = $this->get_one_by_ID($base_class_obj_or_id);
@@ -2129,7 +2130,8 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	public function ensure_is_ID($base_class_obj_or_id){
-		if(is_a($base_class_obj_or_id,$this->_get_class_name())){
+		$className = $this->_get_class_name();
+		if( $base_class_obj_or_id instanceof $className ){
 			$id = $base_class_obj_or_id->ID();
 		}elseif(is_int($base_class_obj_or_id)){//assume i$this->get_one_by_ID($base_class_obj_or_id);t's an ID
 			$id = $base_class_obj_or_id;
