@@ -262,10 +262,15 @@
 }
 
 .ticket-price-info-display {
-    display: inline-block;
-    width: 10px;
+    margin: 0;
+    padding: 0;
     text-align: right;
-    margin-right: -5px;
+}
+
+.price-table tbody td:nth-child(3) {
+    padding: 0;
+    margin: 0;
+    text-align:right;
 }
 
 .ticket-price-info-display.ticket-price-percentage {
@@ -275,4 +280,7 @@
 
 .edit-price-PRC_amount {
     text-align: right;
+    margin: 0;
+    margin-left: 4px;
+    padding-right: 5px;
 }

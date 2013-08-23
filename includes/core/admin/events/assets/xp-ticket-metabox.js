@@ -821,7 +821,7 @@ jQuery(document).ready(function($) {
 				var selected_price_type_val = 1;
 
 				newTKTrow.find('.price-title-text', '.price-row-' + row).text('Base Price');
-				newTKTrow.find('.edit-price-PRC_name', '.price-row-' + row).val(pricename); 
+				newTKTrow.find('.edit-price-PRC_name', '.price-row-' + row).val(pricename);
 				$('add-datetime-ticket-container', '#edit-event-datetime-tickets-' + this.dateTimeRow ).find('.gear-icon').hide(); //reset cog visibility.
 
 				//if there are multiple ticket rows after creating this then let's show all trash icons
@@ -888,10 +888,22 @@ jQuery(document).ready(function($) {
 			var curid, newid, curname, newname;
 			var row = this.itemdata.priceRow;
 			this.increaserowcount();
-			var newPRCrow = $('#ticket-edit-row-new-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace('/PRICENUM/g',this.priceRow);
-			newPRCrow = $('.price-table', '#edit-ticketrow-' + this.ticketRow).find('tbody').append(newPRCrow);
+			var newPRCrow = $('tbody', '#ticket-edit-row-initial-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace('/PRICENUM/g',this.priceRow);
 
-			//replace existing selector with the price modifier selector.
+			newPRCrow = $(newPRCrow).appendTo('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow );
+
+			//clear out existing inputs
+			newPRCrow.find('input').each( function() {
+				$(this).val('');
+			});
+
+			//show trash icon
+			newPRCrow.find('.trash-icon').show();
+
+			//hide add-new button on previous row.
+			newPRCrow.prev().prev().find('.ee-create-button').hide();
+
+			//replace first column with the price modifier selector
 			newPRCrow.find('td').first().html( $('#ticket-edit-row-price-modifier-selector').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow) );
 
 			return this;
@@ -1352,5 +1364,36 @@ jQuery(document).ready(function($) {
 			$(this).parent().parent().find('.gear-icon').show();
 		else
 			$(this).parent().parent().find('.gear-icon').hide();
+	});
+
+
+	/**
+	 * toggle price modifier selection
+	 */
+	$('#event-and-ticket-form-content').on('change', '.edit-price-PRT_ID', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var parent = $(this).parent(); //parent (td)
+		var parentContainer = parent.parent();
+		var selected = $(this).find(':selected').val();
+		var operator = $('#price-option-' + selected, parent).find('.ee-price-operator').text();
+		var is_percent = parseInt($('#price-option-' + selected, parent).find('.ee-PRT_is_percent').text());
+
+		//now set selected operator
+		$('.ee-price-selected-operator', parent).val(operator);
+		$('.ee-price-selected-is-percent', parent).val(is_percent);
+
+		//set display
+		$('.ticket-price-info-display', parentContainer).hide();
+		if ( operator == '+' ) {
+			$('.ticket-price-plus', parentContainer).show();
+		} else {
+			$('.ticket-price-minus', parentContainer).show();
+		}
+		
+		if ( is_percent )
+			$('.ticket-price-percentage-char-display', parentContainer).show();
+		else 
+			$('.ticket-price-dollar-sign-display', parentContainer).show();
 	});
 });
