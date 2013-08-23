@@ -383,6 +383,7 @@ class EED_Event_List  extends EED_Module {
 			'display_address' => isset( $event_list_config['display_address'] ) && ! empty( $event_list_config['display_address'] ) ? $event_list_config['display_address'] : FALSE,
 			'display_venue' => isset( $event_list_config['display_venue'] ) && ! empty( $event_list_config['display_venue'] ) ? $event_list_config['display_venue'] : FALSE,
 			'display_expired_events' => isset( $event_list_config['display_expired_events'] ) && ! empty( $event_list_config['display_expired_events'] ) ? $event_list_config['display_expired_events'] : FALSE,
+			'hide_sold_out_events' => isset( $event_list_config['hide_sold_out_events'] ) && ! empty( $event_list_config['hide_sold_out_events'] ) ? $event_list_config['hide_sold_out_events'] : FALSE,
 			'default_view' => isset( $event_list_config['default_view'] ) && ! empty( $event_list_config['default_view'] ) ? $event_list_config['default_view'] : 'grid',
 			'event_list_grid_size' => isset( $event_list_config['event_list_grid_size'] ) && ! empty( $event_list_config['event_list_grid_size'] ) ? $event_list_config['event_list_grid_size'] : 'med',
 			'templates' => array(
