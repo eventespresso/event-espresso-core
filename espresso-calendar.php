@@ -59,6 +59,18 @@ class EE_Calendar {
 	 */
 	private $_calendar_options = array();
 
+	/**
+	 * 	@var 	INT	$_event_category_id
+	 *  @access 	private
+	 */
+	private $_event_category_id = 0;
+
+	/**
+	 * 	@var 	boolean	$_show_expired
+	 *  @access 	private
+	 */
+	private $_show_expired = TRUE;
+
 
 	private $timer = NULL;
 
@@ -257,8 +269,8 @@ class EE_Calendar {
 		// set default attributes
 		$atts = shortcode_atts( $defaults, $atts );
 		// grab some request vars
-		$atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
-		$atts['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $atts['show_expired'];
+		$this->_event_category_id = $atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
+		$this->_show_expired = $atts['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $atts['show_expired'];
 		// loop thru atts and add to js options
 		foreach ( $atts as $att_name => $att_value ) {
 			if ( ! empty( $att_value )) {
@@ -333,7 +345,9 @@ class EE_Calendar {
 			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif">
 		</div>
 	</div>
-	<div id="espresso_calendar_images" ></div>'; 
+	<div style="clear:both;" ></div>
+	<div id="espresso_calendar_images" ></div>
+	'; 
 	
 	}
 
@@ -359,12 +373,12 @@ class EE_Calendar {
 		$year = date('Y' );
 		$start_date = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d', absint( $_REQUEST['start_date'] )) : date('Y-m-d', mktime( 0, 0, 0, $month, 1, $year ));
 		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d', absint( $_REQUEST['end_date'] )) : date('Y-m-t', mktime( 0, 0, 0, $month, 1, $year ));
-		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';
+		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $this->_show_expired;
 //		echo '<h4>$show_expired : ' . $show_expired . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		
 		// set boolean for categories 
 		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
-		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : FALSE;
+		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 
 		//Build the SQL to run
 		$SQL = "SELECT e.*, ese.start_time, ese.end_time ";
