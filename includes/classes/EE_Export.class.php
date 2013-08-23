@@ -16,7 +16,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	private static $_instance = NULL;
 	
   // instance of the EE_CSV object
-	static $EE_CSV = NULL;
+	/**
+	 *
+	 * @var EE_CSV
+	 */
+	var $EE_CSV = NULL;
 	
 	var $_basic_header = array();
 	var $_question_groups = array();
@@ -28,6 +32,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	
 	private $_req_data = array();
 
+	/**
+	 *
+	 * @var EE_Registry
+	 */
+	protected $EE;
  
 	/**
 	 *		private constructor to prevent direct creation
@@ -37,6 +46,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
  	private function __construct( $request_data = array() ) {
 		$this->_req_data = $request_data;
+		$this->EE = EE_Registry::instance();
 	}
 
 
@@ -137,32 +147,13 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	function export_freakin_everything() {
 	
-		$tables_to_export = array( 
-			EVENTS_ANSWER_TABLE,
-			EVENTS_ATTENDEE_TABLE,
-			EVENTS_ATTENDEE_COST_TABLE,
-			EVENTS_CATEGORY_TABLE,
-			EVENTS_CATEGORY_REL_TABLE,
-			EVENTS_DETAIL_TABLE,
-			EVENTS_DISCOUNT_CODES_TABLE,
-			EVENTS_DISCOUNT_REL_TABLE,
-			EVENTS_EMAIL_TABLE,
-			EVENTS_LOCALE_TABLE,
-			EVENTS_LOCALE_REL_TABLE,
-			EVENTS_PERSONNEL_TABLE,
-			EVENTS_PERSONNEL_REL_TABLE,
-			EVENTS_PRICES_TABLE,
-			EVENTS_QST_GROUP_TABLE,
-			EVENTS_QST_GROUP_REL_TABLE,
-			EVENTS_QUESTION_TABLE,
-			EVENTS_VENUE_TABLE,
-			EVENTS_VENUE_REL_TABLE
-		);
+		$models_to_export = $this->EE->all_model_names();
 																				
-		$table_data = $this->process_multi_table_export( $tables_to_export );
+		$table_data = $this->_get_export_data_for_models( $models_to_export );
+		
 		$filename = $this->generate_filename ( 'full-db-export' );
 
-		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
@@ -187,7 +178,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 		$filename = $this->_req_data['all_events'] == "true" || count($event_ids) > 1 ? __('multiple-events', 'event_espresso') :	$filename;
 		$filename .= "-" . $this->today ;
-		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+		if ( ! $this->EE_CSV->export_array_to_csv( $table_data, $filename )) {
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
@@ -205,43 +196,57 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		global $wpdb;
 		//printr( $this->_req_data, 'XXXXXXX  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// are any Event IDs set?
+		$event_query_params = array();
+		$related_models_query_params = array();
+		$attendee_query_params = array();
 		if ( isset( $this->_req_data['EVT_ID'] )) {
 			// do we have an array of IDs ?
 			if ( is_array( $this->_req_data['EVT_ID'] )) {
-				// generate an "IN (CSV)" where clause
-				$EVT_ID = implode( array_map( 'sanitize_text_field', $this->_req_data['EVT_ID'] ), ',' );
+				
+				$EVT_IDs =  array_map( 'sanitize_text_field', $this->_req_data['EVT_ID'] );
+				$event_query_params[0]['EVT_ID'] = array('IN',$EVT_IDs);
+				$related_models_query_params[0]['Event.EVT_ID'] = array('IN',$EVT_IDs);
+				$attendee_query_params[0]['Registration.EVT_ID'] = array('IN',$EVT_IDs);
 				$filename = 'events';
-				$EVT_ID = 'IN (' . $EVT_ID . ')';
 			} else {
 				// generate regular where = clause
 				$EVT_ID = absint( $this->_req_data['EVT_ID'] );
 				$filename = 'event#' . $EVT_ID;
-				$EVT_ID = '= ' . $EVT_ID;
+				$event_query_params[0]['EVT_ID'] = $EVT_ID;
+				$related_models_query_params[0]['Event.EVT_ID'] = $EVT_ID;
+				$attendee_query_params[0]['Registration.EVT_ID'] = $EVT_ID;
 			}
 		} else {
-			// no IDs mena we will d/l the entire table
-			$EVT_ID = FALSE;
 			$filename = 'all-events';
 		}
 																				
 
 		// array in the format:  table name =>  query where clause
-		$tables_to_export = array( 
-				$wpdb->prefix . 'events_detail'	=> ' WHERE id ' . $EVT_ID,
-				$wpdb->prefix . 'esp_datetime'	=> ' WHERE EVT_ID ' . $EVT_ID,
-				//$wpdb->prefix . 'esp_event_question_group'	=> ' WHERE EVT_ID ' . $EVT_ID,				
-				$wpdb->prefix . 'esp_price'	=> ' WHERE EVT_ID ' . $EVT_ID,
-				$wpdb->prefix . 'events_category_detail'	=> FALSE,
-				$wpdb->prefix . 'events_category_rel'	=> ' WHERE event_id ' . $EVT_ID,
-				$wpdb->prefix . 'events_venue'	=> FALSE,
-				$wpdb->prefix . 'events_venue_rel' =>  ' WHERE event_id ' . $EVT_ID,
+		$models_to_export = array( 
+				'Event'=>$event_query_params,
+				'Datetime'=>$related_models_query_params,
+				'Price'=>$related_models_query_params,
+				'Term_Taxonomy'=>$related_models_query_params,
+				'Venue'=>$related_models_query_params,
+				'Event_Venue'=>$related_models_query_params,
+				'Registration'=>$related_models_query_params,
+				'Attendee'=>$attendee_query_params,
+//				$wpdb->prefix . 'events_detail'	=> ' WHERE id ' . $EVT_ID,
+//				$wpdb->prefix . 'esp_datetime'	=> ' WHERE EVT_ID ' . $EVT_ID,
+//				//$wpdb->prefix . 'esp_event_question_group'	=> ' WHERE EVT_ID ' . $EVT_ID,				
+//				$wpdb->prefix . 'esp_price'	=> ' WHERE EVT_ID ' . $EVT_ID,
+//				$wpdb->prefix . 'events_category_detail'	=> FALSE,
+//				$wpdb->prefix . 'events_category_rel'	=> ' WHERE event_id ' . $EVT_ID,
+//				$wpdb->prefix . 'events_venue'	=> FALSE,
+//				$wpdb->prefix . 'events_venue_rel' =>  ' WHERE event_id ' . $EVT_ID,
 
 			);
 			
-		$table_data = $this->process_multi_table_export( $tables_to_export );
+		$model_data = $this->_get_export_data_for_models( $models_to_export );
+		
 		$filename = $this->generate_filename ( $filename );
 
-		if ( ! $this->EE_CSV->export_array_to_csv( array_keys( $tables_to_export ), $table_data, $filename )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
@@ -254,15 +259,14 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	function export_attendees() {
-		$tables_to_export = array( 
-				EVENTS_ATTENDEE_TABLE,
-				EVENTS_ATTENDEE_COST_TABLE
+		$models_to_export = array( 
+				'Attendee'
 			);
 																				
-		$table_data = $this->process_multi_table_export( $tables_to_export );
+		$model_data = $this->_get_export_data_for_models( $models_to_export );
 		$filename = $this->generate_filename ( 'all-attendees' );
 
-		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Attendee data could not be exported from the database.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
@@ -276,34 +280,33 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	function export_categories() {
 		// are any Event IDs set?
+		$query_params = array();
 		if ( isset( $this->_req_data['EVT_CAT_ID'] )) {
 			// do we have an array of IDs ?
 			if ( is_array( $this->_req_data['EVT_CAT_ID'] )) {
 				// generate an "IN (CSV)" where clause
-				$EVT_CAT_ID = implode( array_map( 'sanitize_text_field', $this->_req_data['EVT_CAT_ID'] ), ',' );
+				$EVT_CAT_IDs = array_map( 'sanitize_text_field', $this->_req_data['EVT_CAT_ID'] );
 				$filename = 'event-categories';
-				$EVT_CAT_ID = 'IN (' . $EVT_CAT_ID . ')';
+				$query_params[0]['term_taxonomy_id'] = array('IN',$EVT_CAT_IDs);
 			} else {
 				// generate regular where = clause
 				$EVT_CAT_ID = absint( $this->_req_data['EVT_CAT_ID'] );
 				$filename = 'event-category#' . $EVT_CAT_ID;
-				$EVT_CAT_ID = '= ' . $EVT_CAT_ID;
+				$query_params[0]['term_taxonomy_id'] = $EVT_CAT_ID;
 			}
 		} else {
 			// no IDs mena we will d/l the entire table
-			$EVT_CAT_ID = FALSE;
 			$filename = 'all-event-categories';
 		}
 		
 		$tables_to_export = array( 
-				EVENTS_CATEGORY_REL_TABLE 	=> ' WHERE cat_id ' . $EVT_CAT_ID,
-				EVENTS_CATEGORY_TABLE	=> ' WHERE id ' . $EVT_CAT_ID,
+				'Term_Taxonomy' => $query_params
 			);
 																				
-		$table_data = $this->process_multi_table_export( $tables_to_export );
+		$table_data = $this->_get_export_data_for_models( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-categories' );
 
-		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $table_data, $filename )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Category details could not be exported from the database.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
@@ -316,8 +319,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	function export_groupons() {
-		$groupon_codes = $this->EE_CSV->export_table_to_array ( EVENTS_GROUPON_CODES_TABLE );
-		if ( ! $this->EE_CSV->export_array_to_csv( FALSE, $groupon_codes, 'groupon_codes' ) ) {
+		throw new EE_Error("method not yet implemented because groupon model does nto yet exist.");
+		
+		$groupon_codes = EEM_Groupon::instance()->get_all();
+		if ( ! $this->EE_CSV->export_array_to_csv( $groupon_codes, 'groupon_codes' ) ) {
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Groupon Code(s) could not be exported from the database.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
@@ -348,19 +353,46 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	/**
 	 *	@recursive funtion for exporting table data and merging the results with the next results
 	 *	@access private
-	 *	@param array - tables_to_export
+	 *	@param array keys are model names (eg 'Event', 'Attendee', etc.) and values are arrays of query params like on EEM_Base::get_all
 	 *	@return array on success, FALSE on fail
 	 */	
-	private function process_multi_table_export( $tables_to_export = FALSE ) {
+	private function _get_export_data_for_models( $models_to_export = FALSE ) {
 		$table_data = FALSE;
-		if ( is_array( $tables_to_export ) ) {
-			foreach ( $tables_to_export as $table => $query_where_clause ) {
-				$query = $query_where_clause ? 'SELECT * FROM ' . $table . $query_where_clause : FALSE;
-				$table_data = $this->EE_CSV->export_table_to_array ( $table, $table_data, $query );
+		if ( is_array( $models_to_export ) ) {
+			foreach ( $models_to_export as $model_name => $query_params ) {
+				//check for a numerically-indexed array. in that case, $model_name is the value!!
+				if(is_int($model_name)){
+					$model_name = $query_params;
+					$query_params = array();
+				}
+				$model = $this->EE->load_model($model_name);
+				$model_objects = $model->get_all($query_params);
+				
+				$table_data[$model_name] = array();
+				foreach($model_objects as $model_object){
+					$model_data_array = array();
+					$fields = $model->field_settings();
+					foreach($fields as $field){
+						$column_name = $field->get_nicename()."[".$field->get_name()."]";
+						if($field instanceof EE_Datetime_Field){
+//							$field->set_date_format('Y-m-d');
+//							$field->set_time_format('H:i:s');
+							$model_data_array[$column_name] = $model_object->get_datetime($field->get_name(),'Y-m-d','H:i:s');
+						}
+						else{
+							$model_data_array[$column_name] = $model_object->get($field->get_name());
+						}
+					}
+					$table_data[$model_name][] = $model_data_array;
+				}
+				
 			}
 		}
 		return $table_data;
 	}		
+	
+	
+	
 
 
 

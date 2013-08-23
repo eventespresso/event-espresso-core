@@ -1,6 +1,7 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
-function espresso_default_price_types_activation_sql( $SQL ) {
+//commenting out the below for now.
+/*function espresso_default_price_types_activation_sql( $SQL ) {
 	$SQL = "INSERT INTO " . ESP_PRICE_TYPE_TABLE . " 
 				( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
 				(1, 'Default Event Price', 1, 0, 0, 1, 0, 0),
@@ -26,4 +27,4 @@ function espresso_default_prices_activation_sql( $SQL ) {
 				(6, 7, 0, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', NULL, NULL, -1, 0, 1, NULL, 50, 0, 6, 0);";
 	return $SQL;
 }
-add_filter( 'FHEE_default_prices_activation_sql', 'espresso_default_prices_activation_sql', 10, 1 );
+add_filter( 'FHEE_default_prices_activation_sql', 'espresso_default_prices_activation_sql', 10, 1 );/**/

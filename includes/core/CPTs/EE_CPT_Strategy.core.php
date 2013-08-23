@@ -139,7 +139,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		// is current query for an EE CPT ?
 		if ( isset( $WP_Object->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Object->query_vars['post_type'] ] )) {
 			// is EE on or off ?
-			if ( EE_Maintenance_Mode::level() ) {
+			if ( EE_Maintenance_Mode::instance()->level() ) {
 				// reroute CPT template view to maintenance_mode.template.php
 				add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
 				return;

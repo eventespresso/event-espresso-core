@@ -940,12 +940,41 @@ class EE_Base_Class{
 		return $related_model_object;
 	}
 	
+	
+	/**
+	 * Does a delete on all related objects of type $relationName and removes
+	 * the current model object's relation to them. If they can't be deleted (because 
+	 * of blocking related model objects) does nothing. If the related model obejcts are
+	 * soft-deletable, they will be soft-deleted regardless of related blocking model objects
+	 * @param string $relationName
+	 * @param array $query_params like EEM_Base::get_all's 
+	 * @return int how many deleted
+	 */
 	public function delete_related($relationName,$query_params = array()){
 		$count =  $this->get_model()->delete_related($this, $relationName, $query_params);
 		$this->clear_cache($relationName);
 		return $count;
 	}
+	
+	/**
+	 * Does a hard delete (ie, removes teh DB row) on all related objects of type $relationName and removes
+	 * the current model object's relation to them. If they can't be deleted (because 
+	 * of blocking related model objects) just does a soft delete on it instead, if possible.
+	 * If the related thing isn't a soft-deletable model object, this function is identical
+	 * to delete_related()
+	 * @param string $relationName
+	 * @param array $query_params like EEM_Base::get_all's 
+	 * @return int how many deleted (includign those soft deleted)
+	 */
+	public function delete_related_permanently($relationName,$query_params = array()){
+		$count =  $this->get_model()->delete_related_permanently($this, $relationName, $query_params);
+		$this->clear_cache($relationName);
+		return $count;
+	}
 
+		/**
+
+	
 
 
 	/**

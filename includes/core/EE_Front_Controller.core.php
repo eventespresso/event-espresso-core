@@ -133,6 +133,12 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
+		
+//		$qg = EEM_Question_Group::instance()->get_one();
+//		echo 'echodump of $qg';
+//		var_dump($qg);
+//		$qs = $qg->questions();
+//		$qg->delete_related_permanently('Question', array(array('QST_ID'=>2)));
 //		$r = EEM_Registration::instance()->get_one();
 		
 //		$related_answers = $r->answers();
@@ -155,7 +161,7 @@ final class EE_Front_Controller {
 //		var_dump($answers_for_r);
 		
 		// shut 'er down down for maintenance ?
-		if ( EE_Maintenance_Mode::level() ) {
+		if ( EE_Maintenance_Mode::instance()->level() ) {
 			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
 		} else {
 			// load other resources and begin to actually run shortcodes and modules

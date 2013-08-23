@@ -40,7 +40,7 @@ abstract class EEM_Base extends EE_Base{
 	 * For example, if you want to run EEM_Event::instance()->get_all(array(array('EVT_ID'=>$_GET['event_id'])));
 	 * @var boolean
 	 */
-	private $_values_already_prepared_by_model_object;
+	private $_values_already_prepared_by_model_object = false;
 	
 	protected $singular_item = 'Item';
 	protected $plural_item = 'Items';
@@ -233,7 +233,9 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $timezone valid PHP DateTimeZone timezone string
 	 */
 	public function set_timezone( $timezone ) {
-		$this->_timezone = $timezone;
+		if($timezone !== NULL){
+			$this->_timezone = $timezone;
+		}
 
 		//note we need to loop through relations and set the timezone on those objects as well.
 		foreach ( $this->_model_relations as $relation ) {
@@ -335,7 +337,10 @@ abstract class EEM_Base extends EE_Base{
 	 * 
 	 * 		EEM_Transaction::instance()->get_all( array(
 	 *			array(
-	 *				'Registration.Attendee.ATT_fname'=>('like','Mc%')
+	 *				'OR'=>array(
+	 *					'Registration.Attendee.ATT_fname'=>array('like','Mc%'),
+	 *					'Registration.Attendee.ATT_fname*other'=>array('like','Mac%')
+	 *				)
 	 * 			),
 	 *			'limit'=>10,
 	 *			'group_by'=>'TXN_ID'
@@ -654,7 +659,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param mixed $id
 	 * @return boolean whether the row got deleted or not
 	 */
-	function delete_by_ID($id){
+	public function delete_by_ID($id){
 		$query_params = array();
 		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
 		$query_params['limit'] = 1;
@@ -803,10 +808,36 @@ abstract class EEM_Base extends EE_Base{
 		return $relation_settings->get_all_related($model_obj,$query_params);
 	}
 	
+	/**
+	 * Deletes all the model objects across the relation indicated by $model_name
+	 * which are related to $id_or_obj which meet the criteria set in $query_params.
+	 * However, if the model objects can't be deleted because of blocking related model objects, then
+	 * they aren't deleted. (Unless the thing that would have been deleted can be soft-deleted, that still happens).
+	 * @param EE_Base_Class|int|string $id_or_obj
+	 * @param string $model_name
+	 * @param array $query_params
+	 * @return int how many deleted
+	 */
 	public function delete_related($id_or_obj,$model_name, $query_params = array()){
 		$model_obj = $this->ensure_is_obj($id_or_obj);
 		$relation_settings = $this->related_settings_for($model_name);
 		return $relation_settings->delete_all_related($model_obj,$query_params);
+	}
+	
+	/**
+	 * Hard deletes all the model objects across the relation indicated by $model_name
+	 * which are related to $id_or_obj which meet the criteria set in $query_params. If
+	 * the model objects can't be hard deleted because of blocking related model objects,
+	 * just does a soft-delete on them instead.
+	 * @param EE_Base_Class|int|string $id_or_obj
+	 * @param string $model_name
+	 * @param array $query_params
+	 * @return int how many deleted
+	 */
+	public function delete_related_permanently($id_or_obj,$model_name, $query_params = array()){
+		$model_obj = $this->ensure_is_obj($id_or_obj);
+		$relation_settings = $this->related_settings_for($model_name);
+		return $relation_settings->delete_related_permanently($model_obj,$query_params);
 	}
 	
 	/**
@@ -1750,6 +1781,21 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_model_relations;
 	}
 	
+	/**
+	 * Gets all related models that this model BELONGS TO. Handy to know sometimes
+	 * because without THOSE models, this model probably doesn't have much purpose.
+	 * (Eg, without an event, datetimes have little purpose.)
+	 * @return EE_Belongs_To_Relation[]
+	 */
+	public function belongs_to_relations(){
+		$belongs_to_relations = array();
+		foreach($this->relation_settings() as $model_name => $relation_obj){
+			if($relation_obj instanceof EE_Belongs_To_Relation){
+				$belongs_to_relations[$model_name] = $relation_obj;
+			}
+		}
+		return $belongs_to_relations;
+	}
 	
 	
 	/**

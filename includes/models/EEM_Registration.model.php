@@ -144,9 +144,8 @@ class EEM_Registration extends EEM_Base {
 			self::$_instance = new self( $timezone );
 		}
 
-		//set timezone if we have in incoming string
-		if ( !empty( $timezone ) )
-			self::$_instance->set_timezone( $timezone );
+		//we might have a timezone set, let set_timezone decide what to do with it
+		self::$_instance->set_timezone( $timezone );
 		
 		// Espresso_model object
 		return self::$_instance;
@@ -165,7 +164,7 @@ class EEM_Registration extends EEM_Base {
 	*		@return void
 	*/
 	public static function reg_status_array() {
-		call_user_func( array( __CLASS__, '_get_registration_status_array' ));
+		call_user_func( array( EEM_Registration::instance(), '_get_registration_status_array' ));
 		return self::$_reg_status;
 	}
 
