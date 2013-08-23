@@ -260,7 +260,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 		
 		$this->_template_args['show_pending_payment_options'] = isset( $org_options['show_pending_payment_options'] ) ? absint( $org_options['show_pending_payment_options'] ) : FALSE;
-//		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
 
 		$this->_set_add_edit_form_tags( 'update_payment_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );

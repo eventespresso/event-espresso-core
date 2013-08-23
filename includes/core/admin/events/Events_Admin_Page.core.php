@@ -1675,7 +1675,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['values'] = $this->_yes_no_values;
 
 		$this->_template_args['org_options'] = isset($org_options['org_options']) ? maybe_unserialize($org_options['org_options']) : FALSE;
-		$this->_template_args['expire_on_registration_end'] = isset($org_options['expire_on_registration_end']) ? absint($org_options['expire_on_registration_end']) : FALSE;
 
 		$this->_template_args['reg_status_array'] = $this->_get_reg_status_array(array('RCN', 'RNA'));
 		$this->_template_args['default_reg_status'] = isset($org_options['default_reg_status']) ? sanitize_text_field($org_options['default_reg_status']) : 'RPN';
@@ -1699,7 +1698,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _update_default_event_settings() {
 
 		$data = array();
-		$data['expire_on_registration_end'] = isset($this->_req_data['expire_on_registration_end']) ? absint($this->_req_data['expire_on_registration_end']) : FALSE;
 		$data['default_reg_status'] = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
 		$data['pending_counts_reg_limit'] = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
 		$data['use_attendee_pre_approval'] = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
