@@ -906,6 +906,9 @@ jQuery(document).ready(function($) {
 			//replace first column with the price modifier selector
 			newPRCrow.find('td').first().html( $('#ticket-edit-row-price-modifier-selector').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow) );
 
+			//focus on select element
+			$('.edit-price-PRT_ID', newPRCrow).focus();
+
 			return this;
 		},
 
@@ -1106,19 +1109,33 @@ jQuery(document).ready(function($) {
 			$('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow ).find('tr.ee-active-price').each( function() {
 				priceAmount = parseFloat($('.edit-price-PRC_amount', this).val());
 				operator = $('.ee-price-selected-operator', this).val();
-				is_percent = parseInt($('.ee-price-selected-is-percent', this).val() );
+				is_percent = $('.ee-price-selected-is-percent', this ).val();
+				is_percent = parseInt(is_percent, 10);
 
-				if ( typeof( priceAmount ) === 'undefined' || typeof( operator ) === 'undefined' || typeof( is_percent) === 'undefined' )
+				if ( typeof( priceAmount ) === 'undefined' || typeof( operator ) === 'undefined' || typeof( is_percent) === 'undefined' || isNaN(priceAmount) )
 					return 0;
 
 				if ( is_percent ) {
-					runningtotal = operator == '+' ? runningtotal + (runningtotal*priceAmount) : runningtotal - (runningtotal*priceAmount);
+					runningtotal = operator == '+' ? runningtotal + (runningtotal*(priceAmount/100)) : runningtotal - (runningtotal*(priceAmount/100));
 				} else {
 					runningtotal = operator == '+' ? runningtotal + priceAmount : runningtotal - priceAmount;
 				}
 			});
 
 			return runningtotal.toFixed(2); //todo eventually this can be dynamic according to currency setting
+		},
+
+
+		/**
+		 * applies the total price to all places in the current ticket row that it is displayed
+		 * @return {TKT_helper} this object for chainability
+		 */
+		applyTotalPrice: function() {
+			var TKTrow = $( '#edit-ticketrow-' + this.ticketRow );
+			var price_amount = this.getTotalPrice();
+			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount);
+			TKTrow.find('.ticket-price-amount').text('$' + price_amount);
+			$('.ticket-display-row-TKT_total_amount',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 		},
 
 
@@ -1377,7 +1394,7 @@ jQuery(document).ready(function($) {
 		var parentContainer = parent.parent();
 		var selected = $(this).find(':selected').val();
 		var operator = $('#price-option-' + selected, parent).find('.ee-price-operator').text();
-		var is_percent = parseInt($('#price-option-' + selected, parent).find('.ee-PRT_is_percent').text());
+		var is_percent = parseInt($('#price-option-' + selected, parent).find('.ee-PRT_is_percent').text(), 10);
 
 		//now set selected operator
 		$('.ee-price-selected-operator', parent).val(operator);
@@ -1393,7 +1410,21 @@ jQuery(document).ready(function($) {
 		
 		if ( is_percent )
 			$('.ticket-price-percentage-char-display', parentContainer).show();
-		else 
+		else
 			$('.ticket-price-dollar-sign-display', parentContainer).show();
+
+		//recalculate price
+		var data = $(this).parent().parent().find('.gear-icon').data();
+		TKT_helper.setticketRow(data.ticketRow).applyTotalPrice();
+	});
+
+	/**
+	 * Toggle price amount change calculations
+	 */
+	$('#event-and-ticket-form-content').on('keyup', '.edit-price-PRC_amount', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var data = $(this).parent().parent().find('.gear-icon').data();
+		TKT_helper.setticketRow(data.ticketRow).applyTotalPrice();
 	});
 });
