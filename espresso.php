@@ -62,6 +62,8 @@ define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url(__FILE__));
 //  includes and templates paths
 define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
 define("EVENT_ESPRESSO_TEMPLATES", EVENT_ESPRESSO_PLUGINFULLPATH . 'templates' . DS );
+// asset URL paths
+define( 'EE_IMAGES_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'images' . DS );
 // core system paths
 define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
 define( 'EE_CLASSES', EVENT_ESPRESSO_INCLUDES_DIR . 'classes' . DS );
@@ -122,3 +124,15 @@ function espresso_plugin_activation() {
 	EEH_Activation::plugin_activation();
 }
 register_activation_hook( __FILE__, 'espresso_plugin_activation' );
+
+function espresso_plugin_deactivation() {
+//	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+//	EEH_Activation::plugin_deactivation();
+}
+//register_deactivation_hook( __FILE__, 'espresso_plugin_deactivation' );
+
+function espresso_plugin_uninstall() {
+//	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+//	EEH_Activation::plugin_uninstall();
+}
+//register_uninstall_hook(    __FILE__, 'espresso_plugin_uninstall' );
