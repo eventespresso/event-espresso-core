@@ -96,24 +96,16 @@ class EE_Calendar {
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLPATH', plugin_dir_path( __FILE__ ));
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLURL', plugin_dir_url( __FILE__ ));	
 		
-		if ( is_admin() ) {
-			
+		if ( is_admin() ) {			
+			register_activation_hook(  __FILE__ , array( $this, 'activation' ));
 			require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
-			register_activation_hook(  __FILE__ , 'espresso_calendar_install' );
-			add_filter( 'plugin_action_links', 'espresso_calendar_plugin_actions', 10, 2 );
-			add_action( 'action_hook_espresso_calendar_update_api', 'espresso_calendar_load_pue_update' );
-			add_action( 'action_hook_espresso_featured_image_add_to_meta_box', 'espresso_calendar_add_to_featured_image_meta_box' );			
-			add_action( 'action_hook_espresso_add_new_submenu_to_group_settings', 'espresso_add_calendar_to_admin_menu', 5 );
-			add_action( 'admin_notices', 'espresso_calendar_current_screen' );
-			// AJAX hooks for getting event data
+			EE_Calendar_Admin::instance();
+			// ajax hooks
 			add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
-			add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));
-			
+			add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));			
 		} else {
-
 			add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
 			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
-
 		}
 
 		add_action( 'widgets_init', array( $this, 'widget_init' ));
@@ -130,6 +122,39 @@ class EE_Calendar {
 	 */
 	public function calendar_version() {
 		return '2.1.0.BETA';
+	}
+
+
+
+	/**
+	 * 	activation
+	 *
+	 *  @return 	void
+	 */
+	function activation() {		
+	    if ( ! current_user_can( 'activate_plugins' )) {
+			 return;
+		}
+	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	    check_admin_referer( "activate-plugin_{$plugin}" );
+	 	require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
+		EE_Calendar_Admin::activation();
+	}
+
+
+
+	/**
+	 * 	plugin_file
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function plugin_file() {
+		static $plugin_file;
+		if ( ! $plugin_file ) {
+		    $plugin_file = plugin_basename( __FILE__ );
+		}
+		return $plugin_file;
 	}
 	
 
@@ -442,8 +467,9 @@ class EE_Calendar {
 
 			//Gets the URL of the event and links the event to the registration form.
 			$this->_calendar_options['espresso_page_post'] = isset( $this->_calendar_options['espresso_page_post'] ) ? $this->_calendar_options['espresso_page_post'] : 'R';
-			$registration_url = $this->_calendar_options['espresso_page_post'] == 'P' ? get_permalink( $event->id ) : add_query_arg( 'ee', $event->id, get_permalink( $org_options['event_page_id'] ));
+			$registration_url = $this->_calendar_options['espresso_page_post'] == 'P' ? get_permalink( $event->post_id ) : add_query_arg( 'ee', $event->id, get_permalink( $org_options['event_page_id'] ));
 			$events[ $cntr ]['url'] = $event->externalURL != '' ? htmlspecialchars_decode($event->externalURL) : $registration_url;
+			
 
 			//Id of the event
 			$events[ $cntr ]['id'] = $event->id;
@@ -573,10 +599,14 @@ class EE_Calendar {
 				// show time ?
 				$events[ $cntr ]['tooltip'] .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 				// check attendee reg limit
-				$orig_attendee_limit = get_number_of_attendees_reg_limit( $event->id, $type = 'num_attendees_slash_reg_limit' );
-				$parse_limits = explode('/', $orig_attendee_limit, 2);
-				$num_completed = $parse_limits[0];
-				$reg_limit = $parse_limits[1];
+				$num_completed = 0;
+				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id=%d AND (payment_status='Completed' OR payment_status='Pending' OR payment_status='Refund') ";
+				$wpdb->get_results( $wpdb->prepare( $a_sql, $event->id ), ARRAY_A);
+				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+					$num_completed = $wpdb->last_result[0]->quantity;
+				}
+				$reg_limit = $event->reg_limit; 
+
 				// add attendee limit if set
 				if ( $show_attendee_limit ) {
 					$attendee_limit = $reg_limit >= 999999 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $num_completed . ' / ' . $reg_limit;
