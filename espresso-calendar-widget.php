@@ -95,7 +95,6 @@ class Espresso_Calendar_Widget extends WP_Widget {
 		$instance['title'] = strip_tags($new_instance['title']);
 		$instance['show_expired'] = strip_tags($new_instance['show_expired']);
 		$instance['category_id'] = strip_tags($new_instance['category_id']);
-		$instance['calendar_page'] = strip_tags($new_instance['calendar_page']);
 
 		return $instance;
 	}
@@ -135,18 +134,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 			}
 			?>
 		</p>
-		<p>
-			<label for="<?php echo $this->get_field_id('calendar_page'); ?>">
-				<?php _e('Calendar Page', 'event_espresso'); ?>
-			</label>
-			<input type="text" id="<?php echo $this->get_field_id('calendar_page'); ?>" name="<?php echo $this->get_field_name('calendar_page'); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
-			<?php
-			if (function_exists('espresso_version')) {
-				if (espresso_version() >= '3.2.P')
-					echo apply_filters('filter_hook_espresso_help', 'calendar_page');
-			}
-			?>
-		</p>
+
 		<?php
 	}
 
