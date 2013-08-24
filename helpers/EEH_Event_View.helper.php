@@ -23,11 +23,42 @@
 	 *
 	 * @return bool
 	 */
+	if ( ! function_exists( 'espresso_event_date_obj' )) {
+		function espresso_event_date_obj() {
+			return EEH_Event_View::get_primary_date_obj();
+		}		
+	}
+
+
+	/**
+	 * espresso_event_date
+	 *
+	 * @returns the primary date for an event
+	 * @uses $wp_query
+	 *
+	 * @return bool
+	 */
 	if ( ! function_exists( 'espresso_event_date' )) {
 		function espresso_event_date() {
 			EEH_Event_View::the_event_date();
 		}		
 	}
+
+
+	/**
+	 * espresso_event_date_as_calendar_page
+	 *
+	 * @returns the primary date for an event
+	 * @uses $wp_query
+	 *
+	 * @return bool
+	 */
+	if ( ! function_exists( 'espresso_event_date_as_calendar_page' )) {
+		function espresso_event_date_as_calendar_page() {
+			EEH_Event_View::event_date_as_calendar_page();
+		}		
+	}
+
 
 
 
@@ -87,10 +118,43 @@ class EEH_Event_View extends EEH_Base {
 	 *  @return 	string
 	 */
 	public static function the_event_date() {
+		$datetime = EEH_Event_View::get_primary_date_obj();
+		$datetime->e_start_date_and_time();		
+	}
+
+
+
+	/**
+	 * 	event_date_as_calendar_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function event_date_as_calendar_page() {
+		$datetime = EEH_Event_View::get_primary_date_obj();
+	?>
+		<div class="event-date-calendar-page-dv">
+			<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
+			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
+		</div>
+	<?php	
+	}
+
+
+
+
+	/**
+	 * 	get_primary_date_obj
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function get_primary_date_obj() {
 		global $post;
 		if ( isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes )) {
 			$datetime = array_shift( array_values( $post->datetimes ));
-			$datetime->e_start_date_and_time();		
+			//printr( $datetime, '$datetime  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			return $datetime;		
 		}
 	}
 

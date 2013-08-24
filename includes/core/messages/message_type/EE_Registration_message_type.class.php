@@ -54,7 +54,7 @@ class EE_Registration_message_type extends EE_message_type {
 		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)! 
 
 
-		if ( is_a( $this->_data, 'EE_Session' ) ) {
+		if ( $this->_data instanceof 'EE_Session' ) {
 			//for SPCO trigger BUT we need to make sure that this isn't a FREE event.
 			$session = $this->_data->get_session_data();
 			$transaction = $session['transaction'];

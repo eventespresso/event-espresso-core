@@ -31,7 +31,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
-		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
+		if (self::$_instance === NULL or !is_object(self::$_instance) or ! ( self::$_instance instanceof  EE_Invoice )) {
 			self::$_instance = new self($model);
 			//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		}

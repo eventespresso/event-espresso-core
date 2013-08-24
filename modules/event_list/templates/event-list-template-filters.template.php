@@ -1,6 +1,5 @@
 <div id="espresso-events-list-filters-wrapper-dv" class="column columns">
 	
-	<!--<h3 id="espresso-events-list-filters-h3"><?php _e( 'View Events' );?></h3>-->
 	<div id="espresso-events-list-filters-dv">
 		<form id="espresso-events-list-filters-frm" action="<?php echo $form_url;?>" method="POST">
 		
@@ -21,7 +20,6 @@
 			
 			<span>
 				<?php echo __( 'Category:' )/* . $elf_category*/;?>&nbsp;
-				<?php //printr( $elf_category, '$elf_category  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );?>
 				<?php $event_categories = espresso_event_categories(); ?>
 				<select name="elf_category_dd" class="events-list-filter-category-slct">								
 					<?php
@@ -40,7 +38,7 @@
 			
 			<span>
 				<label class="ee-checkbox-lbl">
-					<?php $checked = $show_expired ? ' checked="checked"' : '';?>			
+					<?php $checked = $elf_show_expired ? ' checked="checked"' : '';?>			
 					<input type="checkbox" name="elf_expired_chk" class="events-list-filter-expired-chk ee-checkbox" value="1"<?php echo $checked;?>/><?php _e( 'Display Expired Events' );?>
 				</label>
 			</span>
@@ -52,7 +50,16 @@
 			<span>
 				<a class="ee-button-lnk" href="<?php echo $form_url;?>" ><?php _e( 'Reset' );?></a>
 			</span>
-						
+
+			<div id="espresso-events-list-filters-view-dv">
+			<?php _e( 'View:' );?>&nbsp;
+					<a id="events-list-filter-grid-view-lnk" class="events-list-filter-view-lnk submit-this" rel="grid" href="<?php echo $form_url;?>"  title="<?php _e( 'click to view the events in a grid' );?>"><img src="<?php echo EE_IMAGES_URL;?>event-list-grid-view.png" width="16" height="16" alt="<?php _e( 'Grid View' );?>" /></a>&nbsp;
+					<a id="events-list-filter-list-view-lnk" class="events-list-filter-view-lnk submit-this" rel="list" href="<?php echo $form_url;?>"   title="<?php _e( 'click to view the events as a list' );?>"><img src="<?php echo EE_IMAGES_URL;?>event-list-list-view.png" width="16" height="16" alt="<?php _e( 'List View' );?>" /></a><!--&nbsp;
+					<a id="events-list-filter-cal-view-lnk" class="events-list-filter-view-lnk submit-this" rel="list" href="<?php echo $form_url;?>"   title="<?php _e( 'click to view the events as a calendar' );?>"><img src="<?php echo EE_IMAGES_URL;?>calendar_year-16x16.png" width="16" height="16" alt="<?php _e( 'Calendar View' );?>" /></a>-->
+			</div>
+
+			<input type="hidden" id="elf_default_view" name="elf_default_view" value="<?php echo $elf_default_view;?>"/>						
+
 		</form>
 	</div>
 	
