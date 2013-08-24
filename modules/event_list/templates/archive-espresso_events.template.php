@@ -14,7 +14,8 @@
  * @ version		4+
  */
 get_header();
-include( 'archive-event_list.template.php' );
+$event_list_template_part = espresso_event_list_template_part();
+include( $event_list_template_part );
 // if you are copying this file into your theme folder in order to edit it, 
 // then replace the above line of code with something like:
 // get_template_part( 'archive', 'event_list.template' );

@@ -49,7 +49,7 @@ final class EE_System {
 	 */
 	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! is_a( self::$_instance, __CLASS__ )) {
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EE_System )) {
 			self::$_instance = new self( $activation );
 		}
 		return self::$_instance;
@@ -67,7 +67,6 @@ final class EE_System {
 		// handy dandy object for holding shtuff
 		$this->_load_registry();
 		$this->_register_custom_autoloaders();
-//		$this->_load_base_classes();
 		$this->_define_table_names();
 		$this->EE->load_core( 'Maintenance_Mode' );
 
@@ -101,31 +100,6 @@ final class EE_System {
 		}
 	}
 
-
-
-	/**
-	 * 		load and instantiate EE_Session class
-	 *
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function _load_base_classes() {
-//		$this->EE->load_core( 'Base' );
-//		$this->EE->load_model_class( 'EE_All_Caps_Text_Field' );
-//		$this->EE->load_model_class( 'EE_Boolean_Field' );
-//		$this->EE->load_model_class( 'EE_Datetime_Field' );
-//		$this->EE->load_model_class( 'EE_DB_Only_Field_Base' );
-//		$this->EE->load_model_class( 'EE_DB_Only_Float_Field' );
-//		$this->EE->load_model_class( 'EE_DB_Only_Int_Field' );
-//		$this->EE->load_model_class( 'EE_DB_Only_Text_Field' );
-//		$this->EE->load_model_class( 'EE_Email_Field' );
-//		$this->EE->load_model_class( 'EE_Enum_Field' );
-//		$this->EE->load_model_class( 'EE_Float_Field_Base' );
-//		$this->EE->load_model_class( 'EE_Foreign_Key_Field_Base' );
-//		$this->EE->load_model_class( 'EE_Foreign_Key_Int_Field' );
-//		$this->EE->load_model_class( 'XXXXXXXXXXXXX' );
-//		$this->EE->load_model_class( 'XXXXXXXXXXXXX' );
-	}
 
 
 
@@ -228,9 +202,7 @@ final class EE_System {
 	 * 		@return 		void
 	 */
 	public function plugins_loaded() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		// set names for db tables
-//		$this->_define_database_tables();
+
 	}
 
 

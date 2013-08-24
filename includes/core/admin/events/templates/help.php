@@ -65,6 +65,7 @@
 				<a href="http://eventespresso.com/forums/?p=512" target="_blank">
 					<?php _e('visit the forums', 'event_espresso'); ?>
 				</a>.
+			</p>
 		</div>
 	</div>
 	<?php

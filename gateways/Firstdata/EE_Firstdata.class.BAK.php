@@ -31,7 +31,7 @@ Class EE_Firstdata extends EE_Gateway {
 
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
-		if (self::$_instance === NULL or !is_object(self::$_instance) or !is_a(self::$_instance, __CLASS__)) {
+		if (self::$_instance === NULL or !is_object(self::$_instance) or ! ( self::$_instance instanceof  EE_Firstdata )) {
 			self::$_instance = new self($model);
 		}
 		return self::$_instance;

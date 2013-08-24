@@ -241,6 +241,14 @@ class EE_Event extends EE_CPT_Base{
 	public function datetimes(){
 		return EEM_Datetime::instance( $this->_timezone )->get_all_event_dates($this->_EVT_ID);
 	}
+	
+	/**
+	 * Returns one related datetime. Mostly only used by some legacy code.
+	 * @return EE_Datetime
+	 */
+	public function first_datetime(){
+		return $this->get_first_related('Datetime');
+	}
 
 	public function primary_datetime() {
 		if ( !empty ( $this->_Primary_Datetime )) { 

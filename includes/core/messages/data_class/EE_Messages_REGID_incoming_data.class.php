@@ -113,7 +113,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 			$this->_events[$line_item]['name'] = $events[$key]->event_name;
 
 			$daytime_id = isset($events[$key]->daytime_id) ? $events[$key]->daytime_id : '';
-			$daytime_id = empty($daytime_id) && isset($this->reg_obj) ? $this->reg_obj->event_daytime_id() : $daytime_id;
+			$daytime_id = empty($daytime_id) && isset($this->reg_obj) && isset($this->reg_obj->event_obj()) && isset($this->reg_obj->event_obj()->first_datetime()) ? $this->reg_obj->event_obj()->first_datetime()->ID() : $daytime_id;
 			$this->_events[$line_item]['daytime_id'] = $daytime_id;
 			
 			//we need to get the price details for this event (including the price objects etc);
