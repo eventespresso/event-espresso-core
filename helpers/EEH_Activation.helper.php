@@ -1026,7 +1026,7 @@ class EEH_Activation {
 			$price_types_exist = $wpdb->get_var( $SQL );
 			
 			if ( ! $price_types_exist ) {
-				$SQL = "INSERT INTO " . ESP_PRICE_TYPE_TABLE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_is_global, PRT_order, PRT_deleted ) VALUES
+				$SQL = "INSERT INTO " . ESP_PRICE_TYPE_TABLE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
 							(1, " . __('Base Price', 'event_espresso') . ", 1, 0, 0, 0, 0),
 							(2, " . __('Member % Discount', 'event_espresso') . ", 2, 1, 1, 10, 0),
 							(3, " . __('Early Bird % Discount', 'event_espresso') . ", 2, 0, 1, 20, 0),
