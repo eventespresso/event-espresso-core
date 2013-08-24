@@ -131,19 +131,20 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 			if ( !empty( $events) ) {
 				foreach ( $events as $eid => $reg ) {
-					$event = $reg->event();
+					/*@var $reg EE_Registration */
+					$event = $reg->event_obj();
 					$price_obj = $reg->price_obj();
 					$events[$eid] = array(
 						'ID' => $reg->event_ID(),
 						'line_ref' => $reg->event_ID(),
-						'name' => $event->event_name,
-						'daytime_id' => $reg->event_daytime_id(),
+						'name' => $event->name(),
+						'daytime_id' => isset($reg->event_obj()) && isset($reg->event_obj()->first_datetime()) ? $reg->event_obj()->first_datetime()->ID() : 0,
 						'price' => $reg->price_paid(),
 						'price_obj' => $price_obj,
 						'price_desc' => $price_obj->desc(),
-						'pre_approval' => $event->require_pre_approval,
+						'pre_approval' => $event->require_pre_approval(),// $event->require_pre_approval,
 						'price_id' => $price_obj->ID(),
-						'meta' => maybe_unserialize( $event->event_meta ),
+						'meta' => null, //used to be maybe_unserialize( $event->event_meta ), but htere is now NO event meta column
 						'line_total' => $this->txn->total(),
 						'total_attendees' => $event_attendee_count[$eid]
 					);
