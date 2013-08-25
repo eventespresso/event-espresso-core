@@ -749,6 +749,7 @@ jQuery(document).ready(function($) {
 					//if we've only got one row then we need to remove trash on that row.
 					if ( $('.event-datetime-row', '.event-datetimes-container').length == 1 )
 						$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon').hide();
+					this.toggleActiveDTTorTicket(this.context, true);
 					break;
 
 				case 'ticket' :
@@ -759,10 +760,16 @@ jQuery(document).ready(function($) {
 					//if we've only got one row then we need to remove trash on that row.
 					if ( $('.ticket-row', '.event-tickets-container').length === 1 )
 						$('.trash-icon', '.event-tickets-container .ticket-row').hide();
+					this.toggleActiveDTTorTicket(this.context, true);
 					break;
+
+				case 'price' :
+					$('#price-row-' + this.ticketRow + '-' + row ).remove();
+					$('#extra-price-row-' + this.ticketRow + '-' + row).remove();
+					this.priceRow = row;
+					//recalculate totals and apply.
+					TKT_helper.applyTotalPrice();
 			}
-			
-			this.toggleActiveDTTorTicket(this.context, true);
 			
 			return this;
 		},
@@ -1387,6 +1394,10 @@ jQuery(document).ready(function($) {
 
 			case 'ticket' :
 				TKT_helper.setcontext('ticket').trash(data.ticketRow);
+				break;
+
+			case 'price' :
+				TKT_helper.setcontext('price').setticketRow(data.ticketRow).trash(data.priceRow);
 				break;
 		}
 		return false;
