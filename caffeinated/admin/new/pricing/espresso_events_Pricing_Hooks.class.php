@@ -165,17 +165,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$all_PRTs = $this->EE->load_model('Price_Type')->get_all();
 		foreach ($all_PRTs as $type) {
 			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			if ( $type->is_global() ) {
-				$global_price_types[ $type->ID() ] = $type;
-			} else {
-				$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			}						
+			$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 		}
 
 
 		$select_name = 'edit_ticket_price['. $this->_req_data['rownum'] .'][PRT_ID]';
 		$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price_obj->type(), 'id="edit-ticket-price-type-ID-'.$this->_req_data['rownum'].'" style="width:auto;"', 'edit-ticket-price-input' );
-		$row_args['price_type'] = isset( $global_price_types[$price_obj->type()] ) ? $global_price_types[$price_obj->type()]->is_global() : FALSE;
+		$row_args['price_type'] = FALSE;
 		$row_args['counter'] = count( $existing_prices ) + 1; //added one because we popped off a price earlier remember?
 
 		//k load the template and give it the row args

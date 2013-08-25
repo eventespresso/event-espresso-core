@@ -852,9 +852,6 @@ class EE_Price_Composite {
 	public function is_percent() {
 		return $this->_PRT->is_percent();
 	}
-	public function is_global() {
-		return $this->_PRT->is_global();
-	}
 	public function type_order() {
 		return $this->_PRT->order();
 	}
