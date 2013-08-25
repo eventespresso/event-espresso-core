@@ -357,7 +357,7 @@
 
 	<!-- This is the selector and it ONLY lists price-modifiers (i.e. PBT_ID = 2 || 3).  It is used for new price rows added for EXISTING tickets (not new tickets) -->
 	<div id="ticket-edit-row-price-modifier-selector" class="hidden">
-		<select name="edit_prices[TICKETNUM][PRICE_NUM][PRT_ID]" class="edit-price-PRT_ID">
+		<select name="edit_prices[TICKETNUM][PRICENUM][PRT_ID]" class="edit-price-PRT_ID">
 			<option value="0">Select Price Modifier</option>
 			<option value="3">Discount</option>
 			<option value="4">Surcharge</option>

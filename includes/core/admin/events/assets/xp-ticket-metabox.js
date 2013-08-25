@@ -900,10 +900,15 @@ jQuery(document).ready(function($) {
 		newPriceRow: function() {
 			var curid, newid, curname, newname;
 			var row = this.itemdata.priceRow;
+			this.ticketRow = this.itemdata.ticketRow;
 			this.increaserowcount();
-			var newPRCrow = $('tbody', '#ticket-edit-row-initial-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace('/PRICENUM/g',this.priceRow);
+			var newPRCrow = $('tbody', '#ticket-edit-row-initial-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow);
 
-			newPRCrow = $(newPRCrow).appendTo('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow );
+			console.log(this.ticketRow);
+			console.log(this.priceRow);
+			console.log(this.itemdata);
+
+			newPRCrow = $(newPRCrow).appendTo( $('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow) );
 
 			//clear out existing inputs
 			newPRCrow.find('input').each( function() {
@@ -1326,7 +1331,7 @@ jQuery(document).ready(function($) {
 			case 'short-ticket' :
 				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').TicketEditToggle().scrollTo();
 				break;
-				
+
 			case 'price' :
 				TKT_helper.setcontext('price').setticketRow(data.ticketRow).setpriceRow(data.priceRow).PriceEditToggle();
 				break;
