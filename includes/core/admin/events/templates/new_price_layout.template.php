@@ -60,9 +60,9 @@
 					<td><span class="ticket-display-row-TKT_sold">0</span></td>
 					<td><span class="gear-icon clickable" data-ticket-row="1" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="1" data-context="ticket"><span class="trash-icon clickable" data-ticket-row="1" data-context="ticket" style="display:none;"></span></span></td>
 				</tr>
-				<tr id="edit-ticketrow-1" class="edit-ticket-row" style="display:none">
+				<tr id="edit-ticketrow-1" class="edit-ticket-row">
 					<td colspan="9">
-						<fieldset id="edit-ticketrow-1" class="ticket-fieldset">
+						<fieldset id="fieldset-edit-ticketrow-1" class="ticket-fieldset" style="display:none">
 							<legend>Edit Ticket</legend>
 							<input type="hidden" name="edit_tickets[1][TKT_ID]" class="edit-ticket-TKT_ID" value="0">
 							<input type="hidden" name="edit_tickets[1][TKT_display_order]" class="edit-ticket-TKT_display_order" value="1">
@@ -137,9 +137,11 @@
 											</td>
 											<td><span class="gear-icon clickable" data-ticket-row="1" data-context="price" data-price-row="1"></span><span class="trash-icon clickable" data-ticket-row="1" data-context="price" data-price-row="1" style="display:none"></span><button data-ticket-row="1" data-price-row="1" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
 										</tr>
-										<tr id="extra-price-row-1-1" style="display:none">
+										<tr id="extra-price-row-1-1">
 											<td colspan="5">
-												<textarea name="edit_prices[1][1][PRT_description]" class="edit-price-PRC_description ee-full-textarea-inp" placeholder="Edit the description for the price here">This is a free admission ticket</textarea>
+												<section class="extra-price-row" style="display:none">
+													<textarea name="edit_prices[1][1][PRT_description]" class="edit-price-PRC_description ee-full-textarea-inp" placeholder="Edit the description for the price here">This is a free admission ticket</textarea>
+												</section>
 											</td>
 										</tr>
 									</tbody>
@@ -232,9 +234,9 @@
 				<td><span class="ticket-display-row-TKT_sold">0</span></td>
 				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="trash-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span></td>
 			</tr>
-			<tr id="edit-ticketrow-TICKETNUM" class="edit-ticket-row" style="display:none">
+			<tr id="edit-ticketrow-TICKETNUM" class="edit-ticket-row">
 				<td colspan="9">
-					<fieldset id="edit-ticketrow-TICKETNUM" class="ticket-fieldset">
+					<fieldset id="fieldset-edit-ticketrow-TICKETNUM" class="ticket-fieldset" style="display:none">
 						<legend>Edit Ticket</legend>
 						<input type="hidden" name="edit_tickets[TICKETNUM][TKT_ID]" class="edit-ticket-TKT_ID" value="0">
 						<input type="hidden" name="edit_tickets[TICKETNUM][TKT_display_order]" class="edit-ticket-TKT_display_order" value="TICKETNUM">
@@ -342,9 +344,11 @@
 				</td>
 				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM"></span><span class="trash-icon clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM" style="display:none"></span><button data-ticket-row="TICKETNUM" data-price-row="PRICENUM" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
 			</tr>
-			<tr id="extra-price-row-TICKETNUM-PRICENUM" style="display:none">
+			<tr id="extra-price-row-TICKETNUM-PRICENUM">
 				<td colspan="5">
-					<textarea name="edit_prices[TICKETNUM][PRICENUM][PRT_description]" class="edit-price-PRC_description ee-full-textarea-inp" placeholder="Edit the description for the price here"></textarea>
+					<section class="extra-price-row" style="display:none">
+						<textarea name="edit_prices[TICKETNUM][PRICENUM][PRT_description]" class="edit-price-PRC_description ee-full-textarea-inp" placeholder="Edit the description for the price here"></textarea>
+					</section>
 				</td>
 			</tr>
 		</tbody>

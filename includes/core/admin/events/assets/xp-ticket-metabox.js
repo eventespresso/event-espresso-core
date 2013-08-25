@@ -46,6 +46,19 @@ jQuery(document).ready(function($) {
 		},
 
 
+
+		/**
+		 * sets the priceRow property value
+		 * @param  {int} num        price row number to set
+		 * @return {TKT_helper}     TKT_helper object for chaining.
+		 */
+		setpriceRow : function( num ) {
+			if ( typeof(num) !== 'undefined' )
+				this.priceRow = num;
+			return this;
+		},
+
+
 		/**
 		 * sets the data property value
 		 * @param  {obj}    num data
@@ -1159,10 +1172,21 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 * This toggles the display of the edit form for a Ticket row num given.
+		 * This toggles the display of the edit form for a Ticket row.
 		 */
 		TicketEditToggle: function() {
-			this.selector = $('#edit-ticketrow-' + this.ticketRow );
+			this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
+			this.selector.slideToggle(1000);
+			return this;
+		},
+
+
+
+		/**
+		 * This toggles the display of the edit form for a Price Row.
+		 */
+		PriceEditToggle: function() {
+			this.selector = $('.extra-price-row', '#extra-price-row-' + this.ticketRow + '-' + this.priceRow);
 			this.selector.slideToggle(1000);
 			return this;
 		},
@@ -1301,6 +1325,11 @@ jQuery(document).ready(function($) {
 			
 			case 'short-ticket' :
 				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').TicketEditToggle().scrollTo();
+				break;
+				
+			case 'price' :
+				TKT_helper.setcontext('price').setticketRow(data.ticketRow).setpriceRow(data.priceRow).PriceEditToggle();
+				break;
 		}
 		return false;
 	});
