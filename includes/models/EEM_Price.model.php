@@ -172,7 +172,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		return $this->get_all(array(
 			array(
 				'TKT_ID'=>0,
-				'Price_Type.PRT_is_global'=>true,
 				'Price_Type.PBT_ID'=>array('!=',4),
 				'PRC_is_active'=>true),
 			'order_by'=>$this->_order_by_array_for_get_all_method()

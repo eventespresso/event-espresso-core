@@ -61,7 +61,6 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 				'base_type' => '<div class="jst-cntr">' . __('Base Type', 'event_espresso') . '</div>',
 				'member' => '<div class="jst-cntr">' . __('Members', 'event_espresso') . '<br/>' . __('Only?', 'event_espresso') . '</div>',
 				'percent' => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>' . __('as ', 'event_espresso') . '<span class="big-text">' . __('%', 'event_espresso') . '</span>' . __(' or ', 'event_espresso') . '<span class="big-text">' . __('$', 'event_espresso') . '</span></div>',
-				'global' => '<div class="jst-cntr">' . __('Add as a Default', 'event_espresso') . '<br/>' . __('Price to New Events?', 'event_espresso') . '</div>',
 				'order' => '<div class="jst-cntr">' . __('Order of', 'event_espresso') . '<br/>' . __('Application', 'event_espresso') . '</div>'
 			);
 
@@ -155,14 +154,6 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 	function column_percent($item) {
 		global $org_options;
 		return '<div class="jst-cntr">' . (($item->is_percent()) ? '%' : $org_options['currency_symbol']) . '</div>';
-	}
-
-
-
-
-
-	function column_global($item) {
-		return ($item->is_global()) ? '<div class="jst-cntr">Yes</div>' : '';
 	}
 
 

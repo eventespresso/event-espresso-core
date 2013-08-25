@@ -194,18 +194,6 @@ class EE_Price_Type extends EE_Base_Class{
 
 
 
-	/**
-	*		Set Price Type a global
-	*
-	* 		@access		public
-	*		@param		bool		$PRT_is_global
-	*/
-	public function set_is_global ( $PRT_is_global = NULL ) {
-		$this->set('PRT_is_global',$PRT_is_global);
-	}
-
-
-
 
 
 	/**
@@ -275,14 +263,6 @@ class EE_Price_Type extends EE_Base_Class{
 		return $this->get('PRT_is_percent');
 	}
 
-
-	/**
-	*		get is Price Type a global?
-	* 		@access		public
-	*/
-	public function is_global() {
-		return $this->get('PRT_is_global');
-	}
 
 
 	/**
