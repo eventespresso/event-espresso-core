@@ -964,14 +964,14 @@ class EEH_Activation {
 			
 			if ( ! $price_types_exist ) {
 				$SQL = "INSERT INTO " . ESP_PRICE_TYPE_TABLE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
-							(1, " . __('Base Price', 'event_espresso') . ", 1, 0, 0, 0, 0),
-							(2, " . __('Member % Discount', 'event_espresso') . ", 2, 1, 1, 10, 0),
-							(3, " . __('Early Bird % Discount', 'event_espresso') . ", 2, 0, 1, 20, 0),
-							(4, " . __('Dollar Discount', 'event_espresso') . ", 2, 0, 0, 30, 0),
-							(5, " . __('Percent Surcharge', 'event_espresso') . ", 3, 0, 1, 40, 0),
-							(6, " . __('Dollar Surcharge', 'event_espresso') . ", 3, 0, 0, 50, 0),
-							(7, " . __('Regional Tax', 'event_espresso') . ", 4, 0, 1, 60, 0),
-							(8, " . __('Federal Tax', 'event_espresso') . ", 4, 0, 1, 70, 0);";
+							(1, '" . __('Base Price', 'event_espresso') . "', 1, 0, 0, 0, 0),
+							(2, '" . __('Member % Discount', 'event_espresso') . "', 2, 1, 1, 10, 0),
+							(3, '" . __('Early Bird % Discount', 'event_espresso') . "', 2, 0, 1, 20, 0),
+							(4, '" . __('Dollar Discount', 'event_espresso') . "', 2, 0, 0, 30, 0),
+							(5, '" . __('Percent Surcharge', 'event_espresso') . "', 3, 0, 1, 40, 0),
+							(6, '" . __('Dollar Surcharge', 'event_espresso') . "', 3, 0, 0, 50, 0),
+							(7, '" . __('Regional Tax', 'event_espresso') . "', 4, 0, 1, 60, 0),
+							(8, '" . __('Federal Tax', 'event_espresso') . "', 4, 0, 1, 70, 0);";
 				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
 				$wpdb->query( $SQL );	
 			}
