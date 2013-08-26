@@ -112,10 +112,10 @@ class EE_Price extends EE_Base_Class{
 
 
 	/**
-	 * Order that this price is displayed
+	 * Order that this price is displayed in the edit ui
 	 * @var integer
 	 */
-	protected $_PRC_order = 1;
+	protected $_PRC_row = 1;
 
 
 
