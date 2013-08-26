@@ -127,19 +127,8 @@ final class EE_Config {
 	 */
 	private function _load_config() {
 		
-		// grab espresso configuration
-		if ( is_multisite() ) {
-			// look for blog specific config
-			if ( ! $this->EE->CFG = get_blog_option( $this->current_blog_id, 'espresso_config', NULL )) {
-				// if not, then look for network config
-				if ( ! $this->EE->CFG = get_site_option( 'espresso_config' )) {
-				    // if not, then look for generic config
-					$this->EE->CFG = get_option( 'espresso_config' );
-				}						
-			}
-		} else {
-			$this->EE->CFG = get_option( 'espresso_config' );
-		}
+		$this->EE->CFG = $this->_get_espresso_config();
+
 		// ensure org_options are an object - this can be removed at a later date
 		if ( is_array( $this->EE->CFG )) {
 			$this->EE->load_helper( 'Activation' );
@@ -187,21 +176,69 @@ final class EE_Config {
 
 
 	/**
-	 * 	'update_config'
+	 * 	_get_espresso_config
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function update_config() {
+	private function _get_espresso_config() {
+		// grab espresso configuration
+		if ( is_multisite() ) {
+			// look for blog specific config
+			if ( ! $CFG = get_blog_option( $this->current_blog_id, 'espresso_config', NULL )) {
+				// if not, then look for network config
+				if ( ! $CFG = get_site_option( 'espresso_config', NULL )) {
+				    // if not, then look for generic config
+					$CFG = get_option( 'espresso_config', NULL );
+				}						
+			}
+		} else {
+			$CFG = get_option( 'espresso_config', NULL );
+		}
+		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
+		return $CFG;
+	}
+
+
+	/**
+	 * 	update_espresso_config'
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
+		// map... the maps ?!?!?
 		$this->EE->CFG->core->module_route_map = EE_Config::$_module_route_map;
 		$this->EE->CFG->core->module_forward_map = EE_Config::$_module_forward_map;
 		$this->EE->CFG->core->module_view_map = EE_Config::$_module_view_map;
 		// filter config before saving
-		$this->EE->CFG = apply_filters( 'FHEE__Config__update_config__CFG', $this->EE->CFG );
-		// grab org options based on current admin user		
-		if ( ! update_user_meta( $this->EE->CFG->wp_user, 'events_organization_settings', $this->EE->CFG )) {
-			$msg = __( 'The Event Espresso Configuration Settings could not be updated.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		$this->EE->CFG = apply_filters( 'FHEE__Config__update_espresso_config__CFG', $this->EE->CFG );
+		// update
+		if ( is_multisite() ) {
+			// look for blog specific config
+			if ( ! $saved = update_blog_option( $this->current_blog_id, 'espresso_config', $this->EE->CFG )) {
+				// if not, then look for network config
+				if ( ! $saved = update_site_option( 'espresso_config', $this->EE->CFG )) {
+				    // if not, then look for generic config
+					$saved = update_option( 'espresso_config', $this->EE->CFG );
+				}						
+			}
+		} else {
+			$saved = update_option( 'espresso_config', $this->EE->CFG );
+		}
+		// if config remains the same or was updated successfully
+		if ( $this->EE->CFG == $this->_get_espresso_config() || $saved ) {
+			if ( $add_succes ) {
+				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
+				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+			return TRUE;
+		} else {
+			if ( $add_error ) {
+				$msg = __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+			return FALSE;
 		}
 	}
 
@@ -228,8 +265,8 @@ final class EE_Config {
 				}
 			}
 		}
-		$this->update_config();
-//		add_action( 'shutdown', array( $this, 'update_config' ));
+		//only show errors
+		$this->update_espresso_config();
 	}
 
 
