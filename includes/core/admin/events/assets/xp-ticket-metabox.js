@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
 
 
-	var DTT_picker_helper = {
+	var dttPickerHelper = {
 		//some private defaults for the datetimepicker
 		dttOptions : {
 			dateFormat : 'yy-mm-dd',
@@ -24,6 +24,7 @@ jQuery(document).ready(function($) {
 		//selector elements
 		startobj: {}, //jquery selector obj for start date
 		endobj: {}, //jquery selector obj for end date
+		nextobj: {}, //jquery selector obj for next field to focus in on after date selected.
 
 
 		//defaults for start and end dates
@@ -46,7 +47,7 @@ jQuery(document).ready(function($) {
 
 
 
-		picker: function(start, end, doingstart) {
+		picker: function(start, end, next, doingstart) {
 
 			var dothis;
 
@@ -54,12 +55,14 @@ jQuery(document).ready(function($) {
  
 			this.startobj = start;
 			this.endobj = end;
+			this.nextobj = next;
 
 			this.startDate = this.startobj.val() === '' ? moment() : moment(this.startobj.val(), 'YYYY-MM-DD h:mm a');
-			this.endDate = this.endobj.val() === '' ? this.startDate.add('hours', 1) : moment(this.endobj.val(), 'YYYY-MM-DD h:mm a');
+			this.endDate = this.endobj.val() === '' ? this.startDate.clone().add('hours', 1) : moment(this.endobj.val(), 'YYYY-MM-DD h:mm a');
 
 			this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
 			this.dttOptions.minutes = doingstart ? this.startDate.minutes() : this.endDate.minutes();
+
 
 			//set min and max if necessary
 			if ( !doingstart ) {
@@ -68,18 +71,37 @@ jQuery(document).ready(function($) {
 				this.dttOptions.maxDate = this.dttOptions.maxDate === null ? minDate.clone().add('years', 100).toDate() : this.dttOptions.maxDate;
 			}/**/
 
+			this.dttOptions.onSelect = function(dateText, inst) {
+				//get diff from original start date
+				
+			};
+
 			this.dttOptions.onClose = function(dateText, inst) {
-					var newDate = moment( dateText, 'YYYY-MM-DD h:mm a');
-					if ( doingstart ) {
-						DTT_picker_helper.startDate = newDate;
-						DTT_picker_helper.endobj.val(DTT_picker_helper.endDate.format('YYYY-MM-DD h:mm a'));
+					var newDate = moment( dateText, 'YYYY-MM-DD h:mm a'), 
+						lastVal = inst.lastVal !== '' ? moment(inst.lastVal, 'YYYY-MM-DD h:mm a') : newDate,
+						diff = lastVal.diff(newDate, 'minutes');
+
+					if ( doingstart ) {					
+						dttPickerHelper.startDate = newDate;
+						dttPickerHelper.endobj.val(dttPickerHelper.endDate.format('YYYY-MM-DD h:mm a'));
+						dttPickerHelper.nextobj.focus();
 					} else {
-						DTT_picker_helper.endDate = newDate;
-						DTT_picker_helper.startobj.val(DTT_picker_helper.startDate.format('YYYY-MM-DD h:mm a'));
+						dttPickerHelper.endDate = newDate;
+						dttPickerHelper.startobj.val(dttPickerHelper.startDate.format('YYYY-MM-DD h:mm a'));
+						dttPickerHelper.nextobj.focus();
 					}
+
+					if ( dttPickerHelper.startDate.isAfter(dttPickerHelper.endDate) ) {
+						if ( doingstart )
+							//use the already calculated diff to set the new endDate or startDate.
+							dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a'));
+						else
+							dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a') );
+					}
+
 					
-					DTT_picker_helper.reset();
-					return DTT_picker_helper;
+					dttPickerHelper.reset();
+					return dttPickerHelper;
 				};
 
 			dothis = doingstart ? this.startobj : this.endobj;
@@ -96,7 +118,7 @@ jQuery(document).ready(function($) {
 	};
 
 
-	var TKT_helper = {
+	var tktHelper = {
 
 		ticketRow : 1,
 		dateTimeRow: 1,
@@ -108,7 +130,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * sets the context property on this object (by default context is 'datetime')
 		 * @param  {string} context what context the event is being initiated in
-		 * @return {TKT_helper} TKT_helper object for chaining
+		 * @return {tktHelper} tktHelper object for chaining
 		 */
 		setcontext : function(context) {
 			if ( typeof(context) !== 'undefined' )
@@ -121,7 +143,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * sets the dateTimeRow property value
 		 * @param  {int}    num dttrownum
-		 * @return {TKT_helper} TKT_helper object for chaining
+		 * @return {tktHelper} tktHelper object for chaining
 		 */
 		setdateTimeRow : function( num ) {
 			if ( typeof(num) !== 'undefined' )
@@ -133,7 +155,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * sets the ticketRow property value
 		 * @param  {int}    num ticket row number to set
-		 * @return {TKT_helper} TKT_helper object for chaining
+		 * @return {tktHelper} tktHelper object for chaining
 		 */
 		setticketRow : function( num ) {
 			if ( typeof(num) !== 'undefined' )
@@ -146,7 +168,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * sets the priceRow property value
 		 * @param  {int} num        price row number to set
-		 * @return {TKT_helper}     TKT_helper object for chaining.
+		 * @return {tktHelper}     tktHelper object for chaining.
 		 */
 		setpriceRow : function( num ) {
 			if ( typeof(num) !== 'undefined' )
@@ -158,7 +180,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * sets the data property value
 		 * @param  {obj}    num data
-		 * @return {TKT_helper} TKT_helper object for chaining
+		 * @return {tktHelper} tktHelper object for chaining
 		 */
 		setitemdata : function( data ) {
 			if ( typeof(data) !== 'undefined' )
@@ -282,7 +304,7 @@ jQuery(document).ready(function($) {
 		 * Note since we're using clone.  This method also sets the data() properly on those list-items.
 		 *
 		 * @param  {string}  itmtoappendto This is the item we append the existing_list_container to.
-		 * @return {TKT_helper}            This object for chainability
+		 * @return {tktHelper}            This object for chainability
 		 */
 		applyExistingTKTorDTTitems: function(itmtoappendto) {
 			var existing_list = this.context == 'datetime' ? $('#dtt-existing-available-ticket-list-items-holder').clone().html().replace(/DTTNUM/g,this.dateTimeRow) : $('#dtt-existing-available-datetime-list-items-holder').clone().html().replace(/TICKETNUM/g, this.ticketRow);
@@ -313,7 +335,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This creates a completely new row for an event Datetime and adds it to the UI.
-		 * @return {TKT_helper obj}  return "this" to allow for possible chaining.
+		 * @return {tktHelper obj}  return "this" to allow for possible chaining.
 		 */
 		newDTTrow: function() {
 			var inputid, inputvalue, DTT_start_time, DTT_end_time, newDTTrow;
@@ -374,7 +396,7 @@ jQuery(document).ready(function($) {
 
 			//we need to make sure this new DTT has a related DTT_list_row created and added to all existing tickets and helper containers
 			$('.edit-ticket-row', '.event-tickets-container').each( function() {
-				TKT_helper.newDTTListRow( this );
+				tktHelper.newDTTListRow( this );
 			});
 
 			
@@ -400,7 +422,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * This clones a given datetime row and adds the cloned datetime to the ui (updating all ui elements that have datetime references)
 		 * @param  {int} row    The given row that we are cloning (DTT)
-		 * @return {TKT_helper obj}     The TKT_helper obj that allows chaining.
+		 * @return {tktHelper obj}     The tktHelper obj that allows chaining.
 		 */
 		cloneDateTime: function( row ) {
 			this.dateTimeRow = row;
@@ -421,10 +443,10 @@ jQuery(document).ready(function($) {
 			//next let's do the spans
 			newDTTrow.find('span').each( function() {
 				curclass = $(this).attr('class');
-				TKT_helper.itemdata = $(this).data();
+				tktHelper.itemdata = $(this).data();
 				
 				//handle data-datetime-row properties
-				if ( typeof(TKT_helper.itemdata) !== 'undefined' && typeof(TKT_helper.itemdata.datetimeRow) !== 'undefined' ) {
+				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.datetimeRow) !== 'undefined' ) {
 					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
 					$(this).data('datetimeRow', newrownum); //we still need to change the data on the element otherwise it remains as the value set on the previous element.
 				}
@@ -440,7 +462,7 @@ jQuery(document).ready(function($) {
 					var parentdata = $(this).parent().data();
 					
 					//now we can get the ticket title from the tickets list and simply replace what's in the datetime ticket with it.  Why do we do this instead of just replacing the numbers?  Because the ticket title may have a number in it.
-					tickettitle = TKT_helper.getTicketTitle( parentdata.ticketRow );
+					tickettitle = tktHelper.getTicketTitle( parentdata.ticketRow );
 					$(this).text(tickettitle + ': 0');
 				}
 
@@ -519,7 +541,7 @@ jQuery(document).ready(function($) {
 						break;
 
 					case 'datetime-ticket-checkbox' :
-						newname = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curname);
+						newname = tktHelper.replaceRowValueByPosition(row, newrownum, 1, curname);
 						$(this).attr('name', newname);
 						break;
 				}
@@ -528,7 +550,7 @@ jQuery(document).ready(function($) {
 
 			// update ALL existing TKT edit forms with the new DTT li element.
 			$('.edit-ticket-row', '.event-tickets-container').each( function() {
-				TKT_helper.newDTTListRow( this );
+				tktHelper.newDTTListRow( this );
 			});
 
 			//set the context for any potential chains on this.
@@ -542,7 +564,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * This clones a ticket from a given row and updates all ui elements
 		 * @param  {string} row what row we're cloning
-		 * @return {this}       TKT_Helper obj for chainability.
+		 * @return {this}       tktHelper obj for chainability.
 		 */
 		cloneTicket: function(row) {
 			var newid, newname, curid, curclass, data, curname, ticketsold, tickettitle;
@@ -574,7 +596,7 @@ jQuery(document).ready(function($) {
 
 				//second make sure this isn't a price tr if it is we handle differently.
 				if ( $(this, '.price-table').length > 0 ) {
-					newid = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curid);
+					newid = tktHelper.replaceRowValueByPosition(row, newrownum, 1, curid);
 				} else {
 					newid = curid.replace(row, newrownum);
 				}
@@ -586,12 +608,12 @@ jQuery(document).ready(function($) {
 			newTKTrow.find('span').each( function() {
 				curclass = $(this).attr('class');
 				curid = $(this).attr('id');
-				TKT_helper.itemdata = $(this).data();
+				tktHelper.itemdata = $(this).data();
 
 				if ( curclass === 'ticket-display-row-TKT_sold' )
 					$(this).text('0');
 
-				if ( typeof(TKT_helper.itemdata) !== 'undefined' && typeof(TKT_helper.itemdata.ticketRow) !== 'undefined' ) {
+				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.ticketRow) !== 'undefined' ) {
 					$(this).attr('data-ticket-row', newrownum);
 					$(this).data('ticketRow', newrownum);
 				}
@@ -611,10 +633,10 @@ jQuery(document).ready(function($) {
 
 				//are we in the price rows?
 				if ( $(this, '.price-table').length > 0 ) {
-					newname = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curname);
+					newname = tktHelper.replaceRowValueByPosition(row, newrownum, 1, curname);
 				//are we in the dtt list-items?
 				} else if ( $(this, '.datetime-tickets-list').length > 0 ) {
-					newname = TKT_helper.replaceRowValueByPosition(row, newrownum, 2, curname);
+					newname = tktHelper.replaceRowValueByPosition(row, newrownum, 2, curname);
 				} else {
 					newname = curname.replace(row, newrownum);
 				}
@@ -634,7 +656,7 @@ jQuery(document).ready(function($) {
 
 				//are we in the price rows?
 				if ( $(this, '.price-table').length > 0 ) {
-					newname = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curname);
+					newname = tktHelper.replaceRowValueByPosition(row, newrownum, 1, curname);
 				} else {
 					newname = curname.replace(row, newrownum);
 				}
@@ -644,7 +666,7 @@ jQuery(document).ready(function($) {
 			//select
 			newTKTrow.find('select').each( function() {
 				curname = $(this).attr('name');
-				newname = TKT_helper.replaceRowValueByPosition(row, newrownum, 1, curname);
+				newname = tktHelper.replaceRowValueByPosition(row, newrownum, 1, curname);
 				$(this).attr('name', newname);
 			});
 
@@ -663,7 +685,7 @@ jQuery(document).ready(function($) {
 			//okay all the elements have the ticketrownums changed now let's update the related DTT items!
 			//update all existing DTT edit forms with the new TKT li element (note we're also making sure that we match the active tickets).
 			$('.edit-dtt-row', '.event-datetimes-container').each( function() {
-				TKT_helper.newTKTListRow( this );
+				tktHelper.newTKTListRow( this );
 			});
 
 
@@ -681,7 +703,7 @@ jQuery(document).ready(function($) {
 		 * NOTE: the save button only updates the ui and ensures that the autosave will get the data correctly.  ACTUAL edits to tickets and datetimes etc will NOT be attached to the "main" event post until the user clicks the "publish" or "update" button for the entire post.  That way the user can do manipulations and editing WIHOUT worrying about a "live" event being modified.
 		 *
 		 * @param  {int} dttrow        this is the dttrow being "updated"
-		 * @return {TKT_helper}        this object for chainability
+		 * @return {tktHelper}        this object for chainability
 		 */
 		updateDTTrow: function( dttrow ) {
 			var lidttitem;
@@ -693,7 +715,7 @@ jQuery(document).ready(function($) {
 			$('.datetime-title', '#display-event-datetime-' + this.dateTimeRow).text(DTT_display_text);
 
 			//... and in all related dtt list rows!
-			$('.datetime-tickets-list').find('li[data-datetime-row="' + TKT_helper.dateTimeRow + '"]').each( function() {
+			$('.datetime-tickets-list').find('li[data-datetime-row="' + tktHelper.dateTimeRow + '"]').each( function() {
 				if ( typeof(this) !== 'undefined' && $(this).attr('data-context') == 'ticket-datetime' )
 					$('.ticket-list-ticket-name', this).text(DTT_display_text);
 			});
@@ -710,7 +732,7 @@ jQuery(document).ready(function($) {
 		 * updates the ui for the updated row
 		 * NOTE: the save button only updates the ui and ensures that the autosave will get the data correctly.  ACTUAL edits to tickets and datetimes etc will NOT be attached to the "main" event post until the user clicks the "publish" or "update" button for the entire post.  That way the user can do manipulations and editing WIHOUT worrying about a "live" event being modified.
 		 * @param  {int}    tktrow this is the ticket being "updated"
-		 * @return {TKT_helper}    this object for chainability
+		 * @return {tktHelper}    this object for chainability
 		 */
 		updateTKTrow: function( tktrow ) {
 			var tktsold;
@@ -723,7 +745,7 @@ jQuery(document).ready(function($) {
 			tktsold = $('.ticket-display-row-TKT_sold', '#display-ticket-row-' + this.ticketRow).text();
 
 			//..and in all related tkt list rows!
-			$('.datetime-tickets-list').find('li[data-ticket-row="' + TKT_helper.ticketRow + '"]').each( function() {
+			$('.datetime-tickets-list').find('li[data-ticket-row="' + tktHelper.ticketRow + '"]').each( function() {
 				if ( $(this).attr('data-context') == 'datetime-ticket' )
 					$('.ticket-list-ticket-name', this).text( TKT_name + ': ' + tktsold );
 			});
@@ -738,7 +760,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * generates a new DTT list row for available ticket rows.
 		 * @param  {string} ticketrow this ticket row the dtt list item is being added to
-		 * @return {TKT_helper obj}   for chainability
+		 * @return {tktHelper obj}   for chainability
 		 */
 		newDTTListRow: function(ticketrowitm) {
 			var ticketrownum = $(ticketrowitm).attr('id').replace('edit-ticketrow-', '');
@@ -789,7 +811,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * generates a new TKT list row for available dtt rows
 		 * @param  {string} dttrowitm this dtt row the tkt list item is being added to
-		 * @return {TKT_helper obj}           for chainability
+		 * @return {tktHelper obj}           for chainability
 		 */
 		newTKTListRow: function(dttrowitm) {
 			var dttrownum = $(dttrowitm).attr('id').replace('event-datetime-', '');
@@ -864,7 +886,7 @@ jQuery(document).ready(function($) {
 					$('#extra-price-row-' + this.ticketRow + '-' + row).remove();
 					this.priceRow = row;
 					//recalculate totals and apply.
-					TKT_helper.applyTotalPrice();
+					tktHelper.applyTotalPrice();
 			}
 			
 			return this;
@@ -879,16 +901,16 @@ jQuery(document).ready(function($) {
 			switch (what) {
 				// toggling a dtt attached to a ticket.
 				case 'datetime' :
-					li_item = TKT_helper.ticketRow === 0 ? $('.datetime-tickets-list', '.event-tickets-container').find('li[data-datetime-row="'+TKT_helper.dateTimeRow+'"]') : $('.datetime-tickets-list', '#edit-ticketrow-' + TKT_helper.ticketRow ).find('li[data-datetime-row="'+TKT_helper.dateTimeRow+'"]');
+					li_item = tktHelper.ticketRow === 0 ? $('.datetime-tickets-list', '.event-tickets-container').find('li[data-datetime-row="'+tktHelper.dateTimeRow+'"]') : $('.datetime-tickets-list', '#edit-ticketrow-' + tktHelper.ticketRow ).find('li[data-datetime-row="'+tktHelper.dateTimeRow+'"]');
 					break;
 
 				// toggling a ticket attached to a dtt
 				case 'ticket' :
-					li_item = TKT_helper.dateTimeRow === 0 ? $('.datetime-tickets-list', '.event-datetimes-container').find('li[data-ticket-row="'+TKT_helper.ticketRow+'"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + TKT_helper.dateTimeRow).find('li[data-ticket-row="'+TKT_helper.ticketRow+'"]');
+					li_item = tktHelper.dateTimeRow === 0 ? $('.datetime-tickets-list', '.event-datetimes-container').find('li[data-ticket-row="'+tktHelper.ticketRow+'"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + tktHelper.dateTimeRow).find('li[data-ticket-row="'+tktHelper.ticketRow+'"]');
 					break;
 			}
 
-			li_item.each( function() {TKT_helper.toggleTicketSelect(this, remove);});
+			li_item.each( function() {tktHelper.toggleTicketSelect(this, remove);});
 		},
 
 
@@ -981,7 +1003,7 @@ jQuery(document).ready(function($) {
 
 
 			$('.edit-dtt-row', '.event-datetimes-container').each( function() {
-				TKT_helper.newTKTListRow(this);
+				tktHelper.newTKTListRow(this);
 			});
 
 			if ( incomingcontext == 'short-ticket' ) {
@@ -998,7 +1020,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This sets up a new price row for attaching to a ticket.
-		 * @return {TKT_helper} this object for chaining.
+		 * @return {tktHelper} this object for chaining.
 		 */
 		newPriceRow: function() {
 			var curid, newid, curname, newname;
@@ -1035,7 +1057,7 @@ jQuery(document).ready(function($) {
 		 * Toggle a datetime ticket or ticket datetime list item from active to inactive (and the related attachments to the datetime or ticket).
 		 * @param  {obj}        itm   the selected item
 		 * @param  {bool}       trash are we TRASHING this item? then it needs to be removed from the dom.
-		 * @return {TKT_helper}       this object for chainability
+		 * @return {tktHelper}       this object for chainability
 		 */
 		toggleTicketSelect: function(itm, trash) {
 			this.itemdata = $(itm).data();
@@ -1069,8 +1091,8 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 * wrapper for TKT_helper.changeTicket that makes sure we're ADDING a ticket to an item
-		 * @return {TKT_helper} this object for chainability
+		 * wrapper for tktHelper.changeTicket that makes sure we're ADDING a ticket to an item
+		 * @return {tktHelper} this object for chainability
 		 */
 		addTicket: function() {
 			this.changeTicket(this.itemdata.ticketRow, this.itemdata.datetimeRow, 'ticket-datetime');
@@ -1080,8 +1102,8 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 * wrapper for TKT_helper.changeTicket that makes sure we're REMOVING a ticket from an item
-		 * @return {TKT_helper}       this object for chainability
+		 * wrapper for tktHelper.changeTicket that makes sure we're REMOVING a ticket from an item
+		 * @return {tktHelper}       this object for chainability
 		 */
 		removeTicket: function() {
 			this.changeTicket(this.itemdata.ticketRow, this.itemdata.datetimeRow, 'ticket-datetime', true);
@@ -1096,7 +1118,7 @@ jQuery(document).ready(function($) {
 		 * @param  {string} valuerow the row id for the value being recorded.
 		 * @param  {string} context  the context that helps us determine which recording id we're using
 		 * @param  {bool}   remove   Indicate whether we're rmoving the valuerow or adding it.
-		 * @return {TKT_helper}      This obj for chainability.
+		 * @return {tktHelper}      This obj for chainability.
 		 */
 		changeTicket: function(idrow, valuerow, context, remove) {
 			remove = typeof(remove) === 'undefined' ? false : remove;
@@ -1114,7 +1136,7 @@ jQuery(document).ready(function($) {
 			if ( remove ) {
 				$.each( curitems, function(i, val) {
 					if ( val == valuerow ) {
-						curitems = TKT_helper.removeFromArray(curitems, val);
+						curitems = tktHelper.removeFromArray(curitems, val);
 					}
 				});
 			} else {
@@ -1131,7 +1153,7 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 *  Used to replace a row value in a given string.  So something like "datetime-ticket[row][row]" could have "row" replaced by "newrow" via doing TKT_helper.replaceRowValueByPosition(row, 2, 1, 'datetime-ticket[row][row]'); and getting the resulting string of "datetime-ticket[1][row]";
+		 *  Used to replace a row value in a given string.  So something like "datetime-ticket[row][row]" could have "row" replaced by "newrow" via doing tktHelper.replaceRowValueByPosition(row, 2, 1, 'datetime-ticket[row][row]'); and getting the resulting string of "datetime-ticket[1][row]";
 		 * @param  {string} searchstring   What we're replacing
 		 * @param  {string} newvalue       What we're replacing with
 		 * @param  {int}    position       What position in the stringtosearch we're replacing.
@@ -1246,7 +1268,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * applies the total price to all places in the current ticket row that it is displayed
-		 * @return {TKT_helper} this object for chainability
+		 * @return {tktHelper} this object for chainability
 		 */
 		applyTotalPrice: function() {
 			var TKTrow = $( '#edit-ticketrow-' + this.ticketRow );
@@ -1316,7 +1338,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * handy helper method for scrolling to an item.
 		 * @param  {jQuery obj}    the selector obj that we want to scroll to in the DOM
-		 * @return {TKT_helper}    this obj for chainability
+		 * @return {tktHelper}    this obj for chainability
 		 */
 		scrollTo: function( selector ) {
 			//do we need to build the selector?
@@ -1348,16 +1370,16 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-				TKT_helper.newDTTrow().setcontext('ticket').DateTimeEditToggle().scrollTo();
+				tktHelper.newDTTrow().setcontext('ticket').DateTimeEditToggle().scrollTo();
 				break;
 			case 'short-ticket' :
-				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow();
+				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow();
 				break;
 			case 'ticket' :
-				TKT_helper.setcontext('ticket').newTicketRow().TicketEditToggle().scrollTo();
+				tktHelper.setcontext('ticket').newTicketRow().TicketEditToggle().scrollTo();
 				break;
 			case 'price' :
-				TKT_helper.setcontext('price').setitemdata(data).newPriceRow();
+				tktHelper.setcontext('price').setitemdata(data).newPriceRow();
 		}
 		return false;
 	});
@@ -1372,11 +1394,11 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-				TKT_helper.updateDTTrow(data.datetimeRow);
+				tktHelper.updateDTTrow(data.datetimeRow);
 				break;
 
 			case 'ticket' :
-				TKT_helper.updateTKTrow(data.ticketRow);
+				tktHelper.updateTKTrow(data.ticketRow);
 		}
 		return false;
 	});
@@ -1392,13 +1414,13 @@ jQuery(document).ready(function($) {
 
 		switch ( data.context ) {
 			case 'ticket' :
-				TKT_helper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
+				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
 				break;
 			case 'short-ticket' :
-				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
+				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
 			case 'datetime' :
-				TKT_helper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
+				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
 		}
 		return false;
@@ -1413,27 +1435,27 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-				TKT_helper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
+				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
 
 			case 'ticket-datetime' :
-				TKT_helper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle().scrollTo();
+				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle().scrollTo();
 				break;
 
 			case 'datetime-ticket' :
-				TKT_helper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
+				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
 				break;
 
 			case 'ticket' :
-				TKT_helper.setticketRow(data.ticketRow).TicketEditToggle();
+				tktHelper.setticketRow(data.ticketRow).TicketEditToggle();
 				break;
 			
 			case 'short-ticket' :
-				TKT_helper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').TicketEditToggle().scrollTo();
+				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').TicketEditToggle().scrollTo();
 				break;
 
 			case 'price' :
-				TKT_helper.setcontext('price').setticketRow(data.ticketRow).setpriceRow(data.priceRow).PriceEditToggle();
+				tktHelper.setcontext('price').setticketRow(data.ticketRow).setpriceRow(data.priceRow).PriceEditToggle();
 				break;
 		}
 		return false;
@@ -1447,7 +1469,7 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
-		TKT_helper.setdateTimeRow(data.datetimeRow).setcontext('ticket').DateTimeEditToggle();
+		tktHelper.setdateTimeRow(data.datetimeRow).setcontext('ticket').DateTimeEditToggle();
 		return false;
 	});
 
@@ -1461,11 +1483,11 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-				TKT_helper.cloneDateTime(data.datetimeRow).DateTimeEditToggle();
+				tktHelper.cloneDateTime(data.datetimeRow).DateTimeEditToggle();
 				break;
 
 			case 'ticket' :
-				TKT_helper.cloneTicket(data.ticketRow).TicketEditToggle();
+				tktHelper.cloneTicket(data.ticketRow).TicketEditToggle();
 				break;
 		}
 		return false;
@@ -1482,15 +1504,15 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-				TKT_helper.setcontext('datetime').trash(data.datetimeRow);
+				tktHelper.setcontext('datetime').trash(data.datetimeRow);
 				break;
 
 			case 'ticket' :
-				TKT_helper.setcontext('ticket').trash(data.ticketRow);
+				tktHelper.setcontext('ticket').trash(data.ticketRow);
 				break;
 
 			case 'price' :
-				TKT_helper.setcontext('price').setticketRow(data.ticketRow).trash(data.priceRow);
+				tktHelper.setcontext('price').setticketRow(data.ticketRow).trash(data.priceRow);
 				break;
 		}
 		return false;
@@ -1504,7 +1526,7 @@ jQuery(document).ready(function($) {
 	$('#event-and-ticket-form-content').on('click', '.datetime-ticket', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		TKT_helper.toggleTicketSelect(this);
+		tktHelper.toggleTicketSelect(this);
 		return false;
 	});
 
@@ -1553,7 +1575,7 @@ jQuery(document).ready(function($) {
 
 		//recalculate price
 		var data = $(this).parent().parent().find('.gear-icon').data();
-		TKT_helper.setticketRow(data.ticketRow).applyTotalPrice();
+		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
 	});
 
 	/**
@@ -1563,7 +1585,7 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).parent().parent().find('.gear-icon').data();
-		TKT_helper.setticketRow(data.ticketRow).applyTotalPrice();
+		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
 	});
 
 
@@ -1578,8 +1600,9 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		var start = data.dateFieldContext == 'start' ? $(this, data.context ) : $(data.relatedField, data.context);
 		var end = data.dateFieldContext == 'end' ? $(this, data.context) : $(data.relatedField, data.context);
+		var next = $(data.nextField);
 		var doingstart = data.dateFieldContext == 'start' ? true : false;
 
-		DTT_picker_helper.picker(start, end, doingstart);
-	})
+		dttPickerHelper.picker(start, end, next, doingstart);
+	});
 });
