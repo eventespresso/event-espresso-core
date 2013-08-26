@@ -72,7 +72,6 @@ final class EE_System {
 
 		if ( $activation ) {
 			$this->_register_custom_autoloaders();
-			// set names for db tables
 			$this->check_database_tables();
 		} else  {
 			// hookpoints
@@ -175,6 +174,7 @@ final class EE_System {
 				call_user_func( array( $classname, 'define_table_name' ));
 			}
 		}
+
 		// because there's no model for the status table...
 		if ( ! defined( 'ESP_STATUS_TABLE' )) {
 			global $wpdb;

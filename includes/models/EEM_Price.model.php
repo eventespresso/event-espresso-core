@@ -177,7 +177,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		return $this->get_all(array(
 							array(
 								'EVT_ID'=>0,
-								'Price_Type.PRT_is_global'=>true,
 								'Price_Type.PBT_ID'=>array('!=',4),
 								'PRC_is_active'=>true),
 							'order_by'=>$this->_order_by_array_for_get_all_method()
@@ -259,13 +258,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			//return taht list
 			$global_prices = $this->get_all_default_prices();
 			
-//			$this->_select_all_prices_where(
-//					array( 'prc.EVT_ID' => 0, 'prt.PRT_is_global' => TRUE, 'prt.PBT_ID' => 4, 'prc.PRC_is_active'=>TRUE ), 
-//					array( 'PRC_start_date' ), 
-//					array( 'DESC' ),
-//					array( 'prc.EVT_ID' =>'=', 'prt.PRT_is_global' => '=', 'prt.PBT_ID' => '!=', 'prc.PRC_is_active'=>'=' )
-//			);
-			//printr( $prices, '$prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 			if ( $global_prices ) {
 				$array_of_price_objects = array();
 				foreach ($global_prices as $price) {

@@ -1019,11 +1019,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		foreach ($PRT->get_all() as $type) {
 			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			if ( $type->is_global() ) {
-				$global_price_types[ $type->ID() ] = $type;
-			} else { 
-				$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			}
+			$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 		}
 		
 		$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
@@ -1070,7 +1066,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 						$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]';
 						$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID-'.$price->ID().'" style="width:auto;"', 'edit-ticket-price-input' );
-						$row_args['price_type'] = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE;
+						$row_args['price_type'] = FALSE;
 
 						$row_args['counter'] = count($prices);
 						$row_args['row'] = $row;
