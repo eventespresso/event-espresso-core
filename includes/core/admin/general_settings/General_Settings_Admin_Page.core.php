@@ -347,19 +347,18 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	
 		$this->_transient_garbage_collection();
 		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args['event_ssl_active'] = isset( $this->EE->CFG->event_ssl_active ) && ! empty($this->EE->CFG->event_ssl_active ) ?$this->EE->CFG->event_ssl_active : FALSE;
 
-		$this->_template_args['event_page_id'] = isset($this->EE->CFG->event_page_id ) ?$this->EE->CFG->event_page_id : NULL;
-		$this->_template_args['event_reg_page'] = isset($this->EE->CFG->event_page_id ) ? get_page($this->EE->CFG->event_page_id ) : FALSE;
+		$this->_template_args['reg_page_id'] = isset($this->EE->CFG->core->reg_page_id ) ?$this->EE->CFG->core->reg_page_id : NULL;
+		$this->_template_args['reg_page_obj'] = isset($this->EE->CFG->core->reg_page_id ) ? get_page($this->EE->CFG->core->reg_page_id ) : FALSE;
 
-		$this->_template_args['return_url'] = isset($this->EE->CFG->return_url ) ?$this->EE->CFG->return_url : NULL;
-		$this->_template_args['thank_you_page'] = isset($this->EE->CFG->return_url ) ? get_page($this->EE->CFG->return_url ) : FALSE;
+		$this->_template_args['txn_page_id'] = isset($this->EE->CFG->core->txn_page_id) ?$this->EE->CFG->core->txn_page_id : NULL;
+		$this->_template_args['txn_page_obj'] = isset($this->EE->CFG->core->txn_page_id ) ? get_page($this->EE->CFG->core->txn_page_id ) : FALSE;
 
-		$this->_template_args['notify_url'] = isset($this->EE->CFG->notify_url) ?$this->EE->CFG->notify_url : NULL;
-		$this->_template_args['transactions_page'] = isset($this->EE->CFG->notify_url ) ? get_page($this->EE->CFG->notify_url ) : FALSE;
+		$this->_template_args['thank_you_page_id'] = isset($this->EE->CFG->core->thank_you_page_id ) ?$this->EE->CFG->core->thank_you_page_id : NULL;
+		$this->_template_args['thank_you_page_obj'] = isset($this->EE->CFG->core->thank_you_page_id ) ? get_page($this->EE->CFG->core->thank_you_page_id ) : FALSE;
 
-		$this->_template_args['cancel_return'] = isset($this->EE->CFG->cancel_return ) ?$this->EE->CFG->cancel_return : NULL;
-		$this->_template_args['cancel_return_page'] = isset($this->EE->CFG->cancel_return ) ? get_page($this->EE->CFG->cancel_return ) : FALSE;
+		$this->_template_args['cancel_page_id'] = isset($this->EE->CFG->core->cancel_page_id ) ?$this->EE->CFG->core->cancel_page_id : NULL;
+		$this->_template_args['cancel_page_obj'] = isset($this->EE->CFG->core->cancel_page_id ) ? get_page($this->EE->CFG->core->cancel_page_id ) : FALSE;
 		
 		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -370,13 +369,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_espresso_page_settings() {
 		
-		$data = array();
-		$data['event_page_id'] = isset( $this->_req_data['event_page_id'] ) ? absint( $this->_req_data['event_page_id'] ) : NULL;
-		$data['return_url'] = isset( $this->_req_data['return_url'] ) ? absint( $this->_req_data['return_url'] ) : NULL;
-		$data['cancel_return'] = isset( $this->_req_data['cancel_return'] ) ? absint( $this->_req_data['cancel_return'] ) : NULL;
-		$data['notify_url'] = isset( $this->_req_data['notify_url'] ) ? absint( $this->_req_data['notify_url'] ) : NULL;
-
-		$data = apply_filters('FHEE_page_settings_save', $data);
+		$this->EE->CFG->core->reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : NULL;
+		$this->EE->CFG->core->txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : NULL;
+		$this->EE->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : NULL;
+		$this->EE->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : NULL;
 		
 		$what = 'Critical Pages & Shortcodes';
 		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
@@ -577,16 +573,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _your_organization_settings() {
 	
 		$this->_template_args['site_license_key'] = isset( $this->EE->CFG->site_license_key ) ? $this->_display_nice( $this->EE->CFG->site_license_key ) : '';
-		$this->_template_args['default_logo_url'] = isset( $this->EE->CFG->default_logo_url ) ? $this->_display_nice( $this->EE->CFG->default_logo_url ) : FALSE;
-		$this->_template_args['organization'] = isset( $this->EE->CFG->organization ) ? $this->_display_nice( $this->EE->CFG->organization ) : '';
-		$this->_template_args['organization_street1'] = isset( $this->EE->CFG->organization_street1 ) ? $this->_display_nice( $this->EE->CFG->organization_street1 ) : '';
-		$this->_template_args['organization_street2'] = isset( $this->EE->CFG->organization_street2 ) ? $this->_display_nice( $this->EE->CFG->organization_street2 ) : '';
-		$this->_template_args['organization_city'] = isset( $this->EE->CFG->organization_city ) ? $this->_display_nice( $this->EE->CFG->organization_city ) : '';
-		$this->_template_args['organization_state'] = isset( $this->EE->CFG->organization_state ) ? $this->_display_nice( $this->EE->CFG->organization_state ) : '';
-		$this->_template_args['organization_zip'] = isset( $this->EE->CFG->organization_zip ) ? $this->_display_nice( $this->EE->CFG->organization_zip ) : '';
-		$this->_template_args['organization_country'] = isset( $this->EE->CFG->organization_country ) ? $this->_display_nice( $this->EE->CFG->organization_country ) : '';
-		$this->_template_args['currency_symbol'] = isset( $this->EE->CFG->currency_symbol ) ? $this->_display_nice( $this->EE->CFG->currency_symbol ) : '$';
-		$this->_template_args['contact_email'] = isset( $this->EE->CFG->contact_email ) ? $this->_display_nice( $this->EE->CFG->contact_email ) : '';
+		$this->_template_args['default_logo_url'] = isset( $this->EE->CFG->organization->logo_url ) ? $this->_display_nice( $this->EE->CFG->organization->logo_url ) : FALSE;
+		$this->_template_args['organization'] = isset( $this->EE->CFG->organization->name ) ? $this->_display_nice( $this->EE->CFG->organization->name ) : '';
+		$this->_template_args['organization_street1'] = isset( $this->EE->CFG->organization->address_1 ) ? $this->_display_nice( $this->EE->CFG->organization->address_1 ) : '';
+		$this->_template_args['organization_street2'] = isset( $this->EE->CFG->organization->address_2 ) ? $this->_display_nice( $this->EE->CFG->organization->address_2 ) : '';
+		$this->_template_args['organization_city'] = isset( $this->EE->CFG->organization->city ) ? $this->_display_nice( $this->EE->CFG->organization->city ) : '';
+		$this->_template_args['organization_state'] = isset( $this->EE->CFG->organization->STA_ID ) ? $this->_display_nice( $this->EE->CFG->organization->STA_ID ) : '';
+		$this->_template_args['organization_zip'] = isset( $this->EE->CFG->organization->zip ) ? $this->_display_nice( $this->EE->CFG->organization->zip ) : '';
+		$this->_template_args['organization_country'] = isset( $this->EE->CFG->organization->CNT_ISO ) ? $this->_display_nice( $this->EE->CFG->organization->CNT_ISO ) : '';
+		$this->_template_args['contact_email'] = isset( $this->EE->CFG->organization->email ) ? $this->_display_nice( $this->EE->CFG->organization->email ) : '';
+		$this->_template_args['currency_symbol'] = isset( $this->EE->CFG->currency->sign ) ? $this->_display_nice( $this->EE->CFG->currency->sign ) : '$';
 		//UXIP settings
 		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin' );
 
@@ -636,7 +632,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['use_venue_manager'] = isset( $this->EE->CFG->use_venue_manager ) ? absint( $this->EE->CFG->use_venue_manager ) : FALSE;
 		$this->_template_args['use_personnel_manager'] = isset( $this->EE->CFG->use_personnel_manager ) ? absint( $this->EE->CFG->use_personnel_manager ) : FALSE;
 		$this->_template_args['espresso_dashboard_widget'] = isset( $this->EE->CFG->espresso_dashboard_widget ) ? absint( $this->EE->CFG->espresso_dashboard_widget ) : TRUE;
-		$this->_template_args['events_in_dasboard'] = isset( $this->EE->CFG->events_in_dasboard ) ? absint( $this->EE->CFG->events_in_dasboard ) : 30;
+		$this->_template_args['events_in_dasboard'] = isset( $this->EE->CFG->admin->events_in_dasboard ) ? absint( $this->EE->CFG->admin->events_in_dasboard ) : 30;
 		$this->_template_args['use_event_timezones'] = isset( $this->EE->CFG->use_event_timezones ) ? absint( $this->EE->CFG->use_event_timezones ) : FALSE;
 		$this->_template_args['full_logging'] = isset( $this->EE->CFG->full_logging ) ? absint( $this->EE->CFG->full_logging ) : FALSE;
 		$this->_template_args['remote_logging'] = isset( $this->EE->CFG->remote_logging ) ? absint( $this->EE->CFG->remote_logging ) : FALSE;

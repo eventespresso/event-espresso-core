@@ -440,6 +440,10 @@ class EEH_Activation {
 			$default_config->core->module_route_map = array();
 			$default_config->core->module_forward_map = array();
 			$default_config->core->module_view_map = array();
+			$default_config->core->reg_page_id = FALSE;
+			$default_config->core->txn_page_id = FALSE;
+			$default_config->core->thank_you_page_id = FALSE;
+			$default_config->core->cancel_page_id = FALSE;
 			// organization settings
 			$default_config->organization = new stdClass();
 			$default_config->organization->name = get_bloginfo('name');
