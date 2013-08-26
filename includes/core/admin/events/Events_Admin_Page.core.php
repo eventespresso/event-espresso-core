@@ -136,8 +136,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_events_export',
 				'noheader' => true
 			),
-			'import' => '_import_events',
-			'import_events' => '_import_events',
+			'import_page'=>'_import_page',
+			'import' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
+			'import_events' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
 			'default_event_settings' => '_default_event_settings',
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
@@ -966,7 +973,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		require_once(EE_MODELS . 'EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance( $timezone );
-		require_once EE_HELPERS . 'EE_DTT_helper.helper.php';
+		require_once EE_HELPERS . 'EEH_DTT_helper.helper.php';
 
 		global $times;
 		// grab event times
@@ -982,8 +989,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['add_additional_time'] = apply_filters('FHEE_event_datetime_metabox_add_additional_date_time_template', '', $template_args);
 		$template_args['org_options'] = $org_options;
 		$template_args['current_time_help_link'] = $this->_get_help_tab_link('current_time_info');
-		$template_args['current_date'] = EE_DTT_helper::date_time_for_timezone(time(), get_option('date_format') . ' ' . get_option('time_format'), $timezone);
-		$template_args['event_timezone'] = EE_DTT_helper::ddtimezone($timezone);
+		$template_args['current_date'] = EEH_DTT_Helper::date_time_for_timezone(time(), get_option('date_format') . ' ' . get_option('time_format'), $timezone);
+		$template_args['event_timezone'] = EEH_DTT_Helper::ddtimezone($timezone);
 		$template_args['use_event_timezones_template'] = apply_filters('FHEE_event_datetime_metabox_timezones_template', '', $template_args);
 		$template_args['template_args'] = $template_args;
 
@@ -1019,11 +1026,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		foreach ($PRT->get_all() as $type) {
 			$all_price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			if ( $type->is_global() ) {
-				$global_price_types[ $type->ID() ] = $type;
-			} else { 
-				$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
-			}
+			$price_types[] = array( 'id' => $type->ID(), 'text' => $type->name(), 'order' => $type->order() );
 		}
 		
 		$table_class = apply_filters('FHEE_pricing_table_class_filter', 'event_editor_pricing');
@@ -1070,7 +1073,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 						$select_name = 'edit_ticket_price['. $price->ID() .'][PRT_ID]';
 						$row_args['edit_ticket_price_select'] =EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'id="edit-ticket-price-type-ID-'.$price->ID().'" style="width:auto;"', 'edit-ticket-price-input' );
-						$row_args['price_type'] = isset( $global_price_types[$price->type()] ) ? $global_price_types[$price->type()]->is_global() : FALSE;
+						$row_args['price_type'] = FALSE;
 
 						$row_args['counter'] = count($prices);
 						$row_args['row'] = $row;
@@ -1756,30 +1759,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$EE_Export->export();
 		}
 	}
-
 	/**
-	 * _import_events
-	 * This handles displaying the screen and running imports for importing events.
-	 * 	
-	 * @return string html
+	 * for GET requests to 
 	 */
-	protected function _import_events() {
 
-		require_once(EE_CLASSES . 'EE_Import.class.php');
-
-		//first check if we've got an incoming import
-		if (isset($this->_req_data['import']) && $this->_req_data['import'] == 'csv') {
-			EE_Import::instance()->import();
-		}
-		echo "csv notices";
-		var_dump(EE_CSV::instance()->_notices);
+	protected function _import_page(){
+		
 		$title = __('Import Events', 'event_espresso');
 		$intro = __('If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
 		$form_url = EVENTS_ADMIN_URL;
 		$action = 'import_events';
 		$type = 'csv';
 		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
-
+		
 		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 
 		$title_cat = __( 'Import Event Categories', 'event_espresso' );
@@ -1792,6 +1784,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
 	}
+	/**
+	 * _import_events
+	 * This handles displaying the screen and running imports for importing events.
+	 * 	
+	 * @return string html
+	 */
+	protected function _import_events() {
+		require_once(EE_CLASSES . 'EE_Import.class.php');
+		$success = EE_Import::instance()->import();
+		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
+		
+	}
+	
+	
 
 
 

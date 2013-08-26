@@ -174,6 +174,7 @@ final class EE_System {
 				call_user_func( array( $classname, 'define_table_name' ));
 			}
 		}
+
 		// because there's no model for the status table...
 		if ( ! defined( 'ESP_STATUS_TABLE' )) {
 			global $wpdb;

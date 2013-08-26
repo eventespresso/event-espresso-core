@@ -100,6 +100,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 					case 'all_event_data' :
 						$this->export_all_event_data();
 					break;  
+				
+					case 'registrations_report_for_event':
+						$this->report_registrations_for_event();
+					break;
 					
 					case 'attendees':
 						$this->export_attendees();
@@ -119,9 +123,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 					default:
 						// set the error message which is stored within the EE_CSV class
-						$this->EE_CSV->_notices['errors'][] = 'An error occured! The requested export report could not be found.';
-						// add the output of the csv_admin_notices function to the admin_notices hook
-						add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+						EE_Error::add_error(__('An error occured! The requested export report could not be found.','event_espresso')) ;
 						return FALSE;
 					break;
 					
@@ -154,8 +156,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'full-db-export' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
 		}
 	}	
 
@@ -179,8 +180,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->_req_data['all_events'] == "true" || count($event_ids) > 1 ? __('multiple-events', 'event_espresso') :	$filename;
 		$filename .= "-" . $this->today ;
 		if ( ! $this->EE_CSV->export_array_to_csv( $table_data, $filename )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__('An error occured and the Event details could not be exported from the database.', "event_espresso"));
 		}
 	}
 
@@ -247,8 +247,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( $filename );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__("'An error occured and the Event details could not be exported from the database.'", "event_espresso"));
 		}
 	}
 
@@ -267,9 +266,79 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'all-attendees' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Attendee data could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__('An error occured and the Attendee data could not be exported from the database.','event_espresso'));
 		}
+	}
+	
+	/**
+	 * Export a custom CSV of registration info including: A bunch of the reg fields, the time of the event, the price name,
+	 * and the questions associated with the registrations
+	 * @param type $event_id
+	 */
+	function report_registrations_for_event(){
+		$event_id = 10;
+		
+		$reg_fields_to_include = array(
+			'REG_ID',
+			'REG_date',
+			'STS_ID',
+			'REG_code',
+			'REG_count',
+			'REG_att_is_going',
+			'REG_att_checked_in'
+		);
+		
+		$registrations_csv_ready_array = array();
+		$registrations = EEM_Registration::instance()->get_all(array(array('EVT_ID'=>$event_id),'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc')));
+		
+		//get all questions which relate to someone in this group
+		$registration_ids = array_keys($registrations);
+//		EEM_Question::instance()->show_next_x_db_queries();
+		$questions_for_these_registrations = EEM_Question::instance()->get_all(array(array('Answer.REG_ID'=>array('IN',$registration_ids))));
+		foreach($registrations as $registration){
+			/*@var $registration EE_Registration */
+			$reg_csv_array = array();
+			foreach($reg_fields_to_include as $reg_field_name){
+				$field = EEM_Registration::instance()->field_settings_for($reg_field_name);
+				$reg_csv_array[$this->_get_column_name_for_field($field)] = $registration->get($field->get_name());
+			}
+			//add their choice of datetime
+			$reg_csv_array[$this->_get_column_name_for_field(EEM_Datetime::instance()->field_settings_for('DTT_EVT_start'))] = $registration->date_obj()->start_date_and_time();
+			//add their choice of price
+			$reg_csv_array[$this->_get_column_name_for_field(EEM_Price::instance()->field_settings_for('PRC_name'))] = $registration->price_obj()->name();
+			
+			//make sure each registration has the same questions in the same order
+			foreach($questions_for_these_registrations as $question){
+				if( ! isset($reg_csv_array[$question->admin_label()])){
+					$reg_csv_array[$question->admin_label()] = null;
+				}
+			}
+			
+			//now fill out the questions THEY answered
+			foreach($registration->answers() as $answer){
+				/* @var $answer EE_Answer */
+				$reg_csv_array[$answer->question()->admin_label()] = $answer->value();
+			}
+			
+			
+			
+			$registrations_csv_ready_array[] = $reg_csv_array;
+		}
+		$event = EEM_Event::instance()->get_one_by_ID($event_id);
+		$filename = sprintf("registrations-for-%s",$event->name());
+
+		$handle = $this->EE_CSV->begin_sending_csv( $filename);
+		$this->EE_CSV->write_data_array_to_csv($handle, $registrations_csv_ready_array);
+		$this->EE_CSV->end_sending_csv($handle);
+	}
+	
+	/**
+	 * Gets the 'normal' column named for fields
+	 * @param EE_Model_Field_Base $field
+	 * @return string
+	 */
+	protected function _get_column_name_for_field(EE_Model_Field_Base $field){
+		return $field->get_nicename()."[".$field->get_name()."]";
 	}
 
 	
@@ -307,28 +376,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'all-categories' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Category details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__('An error occured and the Category details could not be exported from the database.','event_espresso'));
 		}
 	}
-
-	
-	/**
-	 *			@Export data for groupons ?
-	 *		  @access public
-	 *			@return void
-	 */	
-	function export_groupons() {
-		throw new EE_Error("method not yet implemented because groupon model does nto yet exist.");
-		
-		$groupon_codes = EEM_Groupon::instance()->get_all();
-		if ( ! $this->EE_CSV->export_array_to_csv( $groupon_codes, 'groupon_codes' ) ) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Groupon Code(s) could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
-		}
-	}
-
-	
 	
 	
 	/**
@@ -343,8 +393,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			$filename = sanitize_key( $filename ) . '-' . $this->today;
 			return $filename;
 		}	 else {
-			$this->EE_CSV->_notices['errors'][] = 'No filename was provided.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__("No filename was provided", "event_espresso"));
 		}
 	}	
 	

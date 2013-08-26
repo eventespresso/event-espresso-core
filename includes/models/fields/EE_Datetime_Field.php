@@ -543,9 +543,22 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * This is used to set the $_date property using the PHP DateTime object for internal calcluations and timezone settings
 	 * @param string $datestring Incoming date/time string in an acceptable format
 	 * @param string $timezone   Valid Timezone for dates
+	 * @return void
 	 */
 	private function _set_date_obj( $datestring, $timezone ) {
-		$this->_date = new DateTime( $datestring, new DateTimeZone( $timezone ) );
+		try{
+			$this->_date = new DateTime( $datestring, new DateTimeZone( $timezone ) );
+		}catch(Exception $e){
+			//probably a badly formatted date string
+			//maybe it's the Microsoft excel format '16/08/2013 8:58' ?
+			try{
+				$format = 'd/m/Y H:i';
+				$this->_date = DateTime::createFromFormat($format, $datestring, new DateTimeZone( $timezone ));
+			}catch(Excetion $e){
+				//ok give up, but dont throw an error
+				$this->_date = new DateTime(null, new DateTimeZone( $timezone ));
+			}
+		}
 	}
 
 
