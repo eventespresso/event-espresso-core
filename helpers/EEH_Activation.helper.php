@@ -777,7 +777,7 @@ class EEH_Activation {
 					  PRC_overrides int(10) unsigned DEFAULT NULL,
 					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  PRC_display_order tinyint(3) unsigned NOT NULL DEFAULT '0',
+					  PRC_row tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  PRC_parent int(10) unsigned DEFAULT 0,
 					  PRIMARY KEY  (PRC_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
@@ -1062,7 +1062,7 @@ class EEH_Activation {
 			
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
-							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc, PRC_is_active, PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_display_order, PRC_parent ) VALUES
+							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc, PRC_is_active, PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_row, PRC_parent ) VALUES
 							(1, 1, '10.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, 1, NULL, 0, 0, 1, 0),
 							(2, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 1, 1, NULL, 10, 0, 2, 0),
 							(3, 4, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, 1, NULL, 20, 0, 3, 0),

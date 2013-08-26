@@ -823,7 +823,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			foreach ( $prices as $price ) {
 				$price_ids[] = $price->ID();
-				$price_order = $price->get('PRC_display_order');
+				$price_order = $price->get('PRC_order');
 				$this->_template_args['data']['items']['quick-edit-ticket-price-id-ticketrow-' . $ticket_order . '-' . $price_order] = $price->ID();
 				$this->_template_args['data']['items']['edit-ticket-price-id-ticketrow-' . $ticket_row . '-' . $price_row] = $price->ID();
 				$this->_template_args['data']['items']['edit-ticket-price-is-default-ticketrow-' . $ticket_row . '-' . $price_row] = $price->get('PRC_is_default');
@@ -903,7 +903,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'PRC_desc' => isset($price_data['PRC_desc']) ? $price_data['PRC_desc'] : '',
 					'PRC_amount' => $price_data['PRC_amount'] ? $price_data['PRC_amount'] : 0,
 					'PRC_is_active' => TRUE,
-					'PRC_display_order' => $row
+					'PRC_order' => $row
 					);
 
 				//if we have a PRC_ID then we need to get that existing PRC_obj and update it
