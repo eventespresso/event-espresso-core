@@ -224,8 +224,10 @@
 					}
 					// and we need to store csv data
 				} else {
-					// no headers just store csv data
-					$model_entry[$headers[$i]] = $data[$i];
+					// this column isn' ta header, store it if there is a header for it
+					if(isset($headers[$i])){
+						$model_entry[$headers[$i]] = $data[$i];
+					}
 				}
 				
 			}
