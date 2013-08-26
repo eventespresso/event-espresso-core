@@ -612,6 +612,8 @@ class EE_Event extends EE_CPT_Base{
 
 	//todo needs reworking
 	public function get_number_of_attendees_reg_limit( $type = 'NULL' ) {
+
+		return "TODO: '$type' needs to be refactored";
 		
 		$reg_limit = $this->_EVT_reg_limit;
 		switch ($type) {
