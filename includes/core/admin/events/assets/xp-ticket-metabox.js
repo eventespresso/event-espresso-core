@@ -1,5 +1,101 @@
 jQuery(document).ready(function($) {
 
+
+	var DTT_picker_helper = {
+		//some private defaults for the datetimepicker
+		dttOptions : {
+			dateFormat : 'yy-mm-dd',
+			timeFormat: 'h:mm tt',
+			ampm: true,
+			separator: '  ',
+			stepHour: 1,
+			stepMinute: 5,
+			hourGrid: 2,
+			minuteGrid: 5,
+			minDate: null,
+			maxDate: null,
+			numberOfMonths: 2,
+			hour: null,
+			minute: null,
+			showOn:'focus'
+		},
+
+
+		//selector elements
+		startobj: {}, //jquery selector obj for start date
+		endobj: {}, //jquery selector obj for end date
+
+
+		//defaults for start and end dates
+		startDate: {},
+		endDate: {},
+
+
+		setminDate: function(date, format) {
+			format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
+			this.dttOptions.minDate = moment(date, format);
+			return this;
+		},
+
+
+		setmaxDate: function(date, format) {
+			format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
+			thid.dttOptions.maxDate = moment(date, format);
+			return this;
+		},
+
+
+
+		picker: function(start, end, doingstart) {
+
+			var dothis;
+
+			if ( typeof(doingstart) === 'undefined' ) doingstart = true;
+ 
+			this.startobj = start;
+			this.endobj = end;
+
+			this.startDate = this.startobj.val() === '' ? moment() : moment(this.startobj.val(), 'YYYY-MM-DD h:mm a');
+			this.endDate = this.endobj.val() === '' ? this.startDate.add('hours', 1) : moment(this.endobj.val(), 'YYYY-MM-DD h:mm a');
+
+			this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
+			this.dttOptions.minutes = doingstart ? this.startDate.minutes() : this.endDate.minutes();
+
+			//set min and max if necessary
+			if ( !doingstart ) {
+				var minDate = this.startDate;
+				this.dttOptions.minDate = this.dttOptions.minDate === null ? minDate.toDate() : this.dttOptions.minDate;
+				this.dttOptions.maxDate = this.dttOptions.maxDate === null ? minDate.clone().add('years', 100).toDate() : this.dttOptions.maxDate;
+			}/**/
+
+			this.dttOptions.onClose = function(dateText, inst) {
+					var newDate = moment( dateText, 'YYYY-MM-DD h:mm a');
+					if ( doingstart ) {
+						DTT_picker_helper.startDate = newDate;
+						DTT_picker_helper.endobj.val(DTT_picker_helper.endDate.format('YYYY-MM-DD h:mm a'));
+					} else {
+						DTT_picker_helper.endDate = newDate;
+						DTT_picker_helper.startobj.val(DTT_picker_helper.startDate.format('YYYY-MM-DD h:mm a'));
+					}
+					
+					DTT_picker_helper.reset();
+					return DTT_picker_helper;
+				};
+
+			dothis = doingstart ? this.startobj : this.endobj;
+
+			dothis.datetimepicker(this.dttOptions);
+		},
+
+
+		reset: function() {
+			this.dttOptions.minDate = null;
+			this.dttOptions.maxDate = null;
+		}
+
+	};
+
+
 	var TKT_helper = {
 
 		ticketRow : 1,
@@ -911,10 +1007,6 @@ jQuery(document).ready(function($) {
 			this.increaserowcount();
 			var newPRCrow = $('tbody', '#ticket-edit-row-initial-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow);
 
-			console.log(this.ticketRow);
-			console.log(this.priceRow);
-			console.log(this.itemdata);
-
 			newPRCrow = $(newPRCrow).appendTo( $('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow) );
 
 			//clear out existing inputs
@@ -930,6 +1022,7 @@ jQuery(document).ready(function($) {
 
 			//replace first column with the price modifier selector
 			newPRCrow.find('td').first().html( $('#ticket-edit-row-price-modifier-selector').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow) );
+
 
 			//focus on select element
 			$('.edit-price-PRT_ID', newPRCrow).focus();
@@ -1472,4 +1565,21 @@ jQuery(document).ready(function($) {
 		var data = $(this).parent().parent().find('.gear-icon').data();
 		TKT_helper.setticketRow(data.ticketRow).applyTotalPrice();
 	});
+
+
+
+	/**
+	 * Datepicker functionality
+	 */
+	
+	$('#event-and-ticket-form-content').on('focus', '.ee-datepicker', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var data = $(this).data();
+		var start = data.dateFieldContext == 'start' ? $(this, data.context ) : $(data.relatedField, data.context);
+		var end = data.dateFieldContext == 'end' ? $(this, data.context) : $(data.relatedField, data.context);
+		var doingstart = data.dateFieldContext == 'start' ? true : false;
+
+		DTT_picker_helper.picker(start, end, doingstart);
+	})
 });

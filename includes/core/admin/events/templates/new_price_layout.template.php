@@ -16,11 +16,11 @@
 			<tr>
 				<td class="event-datetime-column date-column">
 					<label for="add-new-event-datetime-DTT_EVT_start">Event Start</label>
-					<input type="text" name="add_new_datetime[DTT_EVT_start]" id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp">
+					<input type="text" name="add_new_datetime[DTT_EVT_start]" id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp ee-datepicker" data-context="#add-event-datetime" data-date-field-context="start" data-related-field="#add-new-event-datetime-DTT_EVT_end">
 				</td>
 				<td class="event-datetime-column date-column">
 					<label for="add-new-event-datetime-DTT_EVT_end">Event End</label>
-					<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp">
+					<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp ee-datepicker" data-context="#add-event-datetime" data-date-field-context="end" data-related-field="#add-new-event-datetime-DTT_EVT_start">
 				</td>
 				<td class="event-datetime-column reg-limit-column">
 					<label for="add-new-event-datetime-DTT_reg_limit">Reg Limit</label>
@@ -80,8 +80,8 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td colspan="2"><input type="text" name="edit_tickets[1][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp" value=""></td>
-											<td colspan="2"><input type="text" name="edit_tickets[1][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp" value=""></td>
+											<td colspan="2"><input type="text" name="edit_tickets[1][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="" data-context="#edit-ticketrow-1" data-date-field-context="start" data-related-field=".edit-ticket-TKT_end_date"></td>
+											<td colspan="2"><input type="text" name="edit_tickets[1][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="" data-context="#edit-ticketrow-1" data-date-field-context="end" data-related-field=".edit-ticket-TKT_start_date"></td>
 										</tr>
 									</tbody>
 								</table>
@@ -119,12 +119,12 @@
 									<tbody class="ticket-price-rows">
 										<tr id="price-row-1-1" class="ee-active-price">
 											<td>
-												<input type="hidden" name="edit_prices[TICKETNUM][PRICENUM][PRT_ID]" class="edit-price-PRT_ID" value="1">
+												<input type="hidden" name="edit_prices[1][1][PRT_ID]" class="edit-price-PRT_ID" value="1">
 												<span class="price-type-text">Base Price</span>
-												<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-operator" value="+">
-												<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-is-percent" value="0">
+												<input type="hidden" name="ee_price_selected_operator[1][1]" class="ee-price-selected-operator" value="+">
+												<input type="hidden" name="ee_price_selected_operator[1][1]" class="ee-price-selected-is-percent" value="0">
 											</td>
-											<td><input type="hidden" name="edit_prices[1][1][PRC_ID]" class="edit-price-PRC_ID" value="0"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[1][1][PRC_name]" value="Free Admission"></td>
+											<td><input type="hidden" name="edit_prices[1][1][PRC_ID]" class="edit-price-PRC_ID" value="1"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[1][1][PRC_name]" value="Free Admission"></td>
 											<td>
 												<span class="ticket-price-info-display ticket-price-plus-minus" style="display:none">+/-</span>
 												<span class="ticket-price-info-display ticket-price-plus" style="display:none;">+</span>
@@ -166,6 +166,9 @@
 							<input type="hidden" name="starting_ticket_datetime_IDs" id="starting-ticket-datetime-ids-1" value="" class="starting-ticket-datetime-ids">
 							<input type="hidden" name="ticket_datetime_IDs" class="ticket-datetime-ids" id="ticket-datetime-ids-1" value="">
 
+							<!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session, note we only ADD actual price ids to this list.  It only gets updated after a autosave (or manual update)-->
+						<input type="hidden" name="ticket_price_ids[1][]" id="ticket-price-ids-1" class="ticket-price-ids" value="1">
+
 						</fieldset>
 					</td>
 				</tr>
@@ -196,11 +199,11 @@
 				<tr>
 					<td class="event-datetime-column date-column">
 						<label for="event-datetime-DTT_EVT_start-DTTNUM">Event Start</label>
-						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-DTTNUM" class="ee-text-inp event-datetime-DTT_EVT_start">
+						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-DTTNUM" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-context="#edit-event-datetime-DTTNUM" data-date-field-context="start" data-related-field=".event-datetime-DTT_EVT_end">
 					</td>
 					<td class="event-datetime-column date-column">
 						<label for="event-datetime-DTT_EVT_end-DTTNUM">Event End</label>
-						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-DTTNUM" class="ee-text-inp event-datetime-DTT_EVT_end">
+						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-DTTNUM" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="#edit-event-datetime-DTTNUM" data-date-field-context="end" data-related-field=".event-datetime-DTT_EVT_start">
 					</td>
 					<td class="event-datetime-column small-txt-column">
 						<label for="event-datetime-DTT_reg_limit-DTTNUM">Reg Limit</label>
@@ -254,8 +257,8 @@
 								</thead>
 								<tbody>
 									<tr>
-										<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp" value=""></td>
-										<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp" value=""></td>
+										<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="" data-context="#edit-ticketrow-TICKETNUM" data-date-field-context="start" data-related-field=".edit-ticket-TKT_end_date"></td>
+										<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="" data-context="#edit-ticketrow-TICKETNUM" data-date-field-context="end" data-related-field=".edit-ticket-TKT_start_date"></td>
 									</tr>
 								</tbody>
 							</table>
@@ -311,8 +314,11 @@
 						<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[TICKETNUM][TKT_is_default]" id="edit-ticket-TKT_is_default">  
 						<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="TICKETNUM">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="TICKETNUM">Cancel</button></div>
 						<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
-						<input type="hidden" name="starting_ticket_datetime_IDs" id="starting-ticket-datetime-ids-TICKETNUM" value="" class="starting-ticket-datetime-ids">
-						<input type="hidden" name="ticket_datetime_IDs" class="ticket-datetime-ids" id="ticket-datetime-ids-TICKETNUM" value="">
+						<input type="hidden" name="starting_ticket_datetime_IDs[TICKETNUM][]" id="starting-ticket-datetime-ids-TICKETNUM" value="" class="starting-ticket-datetime-ids">
+						<input type="hidden" name="ticket_datetime_IDs[TICKETNUM][]" class="ticket-datetime-ids" id="ticket-datetime-ids-TICKETNUM" value="">
+
+						<!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session -->
+						<input type="hidden" name="ticket_price_ids[TICKETNUM][]" id="ticket-price-ids-TICKETNUM" class="ticket-price-ids">
 
 					</fieldset>
 				</td>
@@ -403,10 +409,10 @@
 								<input type="text" name="add_new_ticket[TKT_name]" class="add-new-ticket-TKT_name">
 							</td>
 							<td>
-								<input type="text" name="add_new_ticket[TKT_start_date]" class="add-new-ticket-TKT_start_date">
+								<input type="text" name="add_new_ticket[TKT_start_date]" class="add-new-ticket-TKT_start_date ee-datepicker" data-context="#edit-event-datetime-tickets-DTTNUM" data-date-field-context="start" data-related-field=".add-new-ticket-TKT_end_date">
 							</td>
 							<td>
-								<input type="text" name="add_new_ticket[TKT_end_date]" class="add-new-ticket-TKT_end_date">
+								<input type="text" name="add_new_ticket[TKT_end_date]" class="add-new-ticket-TKT_end_date ee-datepicker" data-context="#edit-event-datetime-tickets-DTTNUM" data-date-field-context="end" data-related-field=".add-new-ticket-TKT_start_date">
 							</td>
 							<td>	
 								<input type="text" name="add_new_ticket[PRC_amount]" class="add-new-ticket-PRC_amount" size="1">
