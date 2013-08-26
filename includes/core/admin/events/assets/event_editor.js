@@ -17,12 +17,12 @@ jQuery(document).ready(function($) {
 //		$('#ticket-manager-dv').css({ top : 0, opacity : 0 });
 //	});
 	
-	$(".datepicker" ).datepicker({
+	/*$(".datepicker" ).datepicker({
 		changeMonth: true,
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
 		showButtonPanel: true
-	}); // close doc.ready
+	}); // close doc.ready/**/
 
 	var header_clicked = false;
 	$('#upload_image_button').click(function() {

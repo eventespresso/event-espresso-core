@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
 
 		setmaxDate: function(date, format) {
 			format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
-			thid.dttOptions.maxDate = moment(date, format);
+			this.dttOptions.maxDate = moment(date, format);
 			return this;
 		},
 
@@ -77,11 +77,11 @@ jQuery(document).ready(function($) {
 			};
 
 			this.dttOptions.onClose = function(dateText, inst) {
-					var newDate = moment( dateText, 'YYYY-MM-DD h:mm a'), 
-						lastVal = inst.lastVal !== '' ? moment(inst.lastVal, 'YYYY-MM-DD h:mm a') : newDate,
-						diff = lastVal.diff(newDate, 'minutes');
+					var newDate = moment( dateText, 'YYYY-MM-DD h:mm a'),
+						lastVal = moment(inst.lastVal, 'YYYY-MM-DD h:mm a'),
+						diff = lastVal !== null ? lastVal.diff(newDate, 'minutes') : newDate;
 
-					if ( doingstart ) {					
+					if ( doingstart ) {
 						dttPickerHelper.startDate = newDate;
 						dttPickerHelper.endobj.val(dttPickerHelper.endDate.format('YYYY-MM-DD h:mm a'));
 						dttPickerHelper.nextobj.focus();
@@ -735,20 +735,36 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper}    this object for chainability
 		 */
 		updateTKTrow: function( tktrow ) {
-			var tktsold;
+			var tktsold,
+				displayRowName,
+				displayRowPrefix = '.ticket-display-row-',
+				displayRowContext = '#display-ticketrow-' + this.ticketRow;
 			this.ticketRow = tktrow;
+
 
 			//need to update the displayed TKT name
 			var TKT_name = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + this.ticketRow).val();
 			$('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow).text(TKT_name);
-
-			tktsold = $('.ticket-display-row-TKT_sold', '#display-ticket-row-' + this.ticketRow).text();
 
 			//..and in all related tkt list rows!
 			$('.datetime-tickets-list').find('li[data-ticket-row="' + tktHelper.ticketRow + '"]').each( function() {
 				if ( $(this).attr('data-context') == 'datetime-ticket' )
 					$('.ticket-list-ticket-name', this).text( TKT_name + ': ' + tktsold );
 			});
+
+			//other tkt values
+			tktsold = $('.ticket-display-row-TKT_sold', '#display-ticket-row-' + this.ticketRow).text();
+			
+			$('.basic-ticket-info', '#edit-ticketrow-' + this.ticketRow).find('input').each( function() {
+				displayRowName = displayRowPrefix + $(this).attr('class').split(' ')[0].replace('edit-ticket-', '');
+				console.log(displayRowName);
+				if ( $(displayRowName, displayRowContext).length > 0 )
+					$(displayRowName, displayRowContext).text($(this).val());
+			});
+
+			//calculate the status
+			var tktstatus = this.getTKTstatus($('.edit-ticket-TKT_start_date', '#edit-ticketrow-' + this.ticketRow).val(), $('.edit-ticket-TKT_end_date', '#edit-ticketrow-' + this.ticketRow).val() );
+			$(displayRowPrefix + 'TKT_status', displayRowContext).text(tktstatus);
 
 			this.context = 'ticket';
 			this.TicketEditToggle();
