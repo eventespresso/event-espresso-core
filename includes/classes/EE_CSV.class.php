@@ -25,7 +25,10 @@
 	 * @var EE_Registry
 	 */
 	private $EE;
-
+	/**
+	 * string used for 1st cell in exports, which indicates that the following 2 rows will be metadata keys and values
+	 */
+	const metadata_header = 'Event Espresso Export Meta Data';
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -177,6 +180,13 @@
 				$row = 1;
 				continue;
 			}
+			if($data[0] == EE_CSV::metadata_header){
+				$model_name = EE_CSV::metadata_header;
+				//store like model data, we just won't try importing it etc.
+				$row = 1;
+				continue;
+			}
+			
 
 			// how many columns are there?
 			$columns = count($data);
@@ -195,13 +205,18 @@
 						//check it's not blank... sometimes CSV editign programs adda bunch of empty columns onto the end...
 						if(!$column_name){continue;}
 						$matches = array();
-						//now get the db table name from it (the part between square brackets)
-						$success = preg_match('~(.*)\[(.*)\]~', $column_name,$matches);
-						if (!$success){
-							$this->_notices['error']= sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data));
-							return false;
+						if($model_name == EE_CSV::metadata_header){
+							$headers[$i] = $column_name;
+						}else{
+							//now get the db table name from it (the part between square brackets)
+							$success = preg_match('~(.*)\[(.*)\]~', $column_name,$matches);
+							if (!$success){
+								$this->_notices['error']= sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data));
+								return false;
+							}
+							$headers[$i] = $matches[2];
 						}
-						$headers[$i] = $matches[2];
+						
 					}else{
 						// no column names means our final array will just use counters for keys
 						$model_entry[$headers[$i]] = $data[$i];
@@ -249,7 +264,7 @@
 	 *			inserted an event with EVT_ID=3. If so, then this Datetime with DTT_ID=23 should also be new... after all, it depends
 	 *			on Event with ID 3 which we just inserted. 
 	 *		  @access public
-	 *			@param array $csv_data_array - the array containing the csv data
+	 *			@param array $csv_data_array - the array containing the csv data produced from EE_CSV::import_csv_to_model_data_array()
 	 *			@param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
 	 *			@return TRUE on success, FALSE on fail
 	 */	
@@ -271,6 +286,9 @@
 			//now check that assumption was correct. If
 			if ( $this->EE->is_model_name($model_name_in_csv_data)) {
 				$model_name = $model_name_in_csv_data;
+			}elseif($model_name_in_csv_data == EE_CSV::metadata_header){
+				//ok so its metadata, dont try to save it to ehte db obviously...
+				continue;
 			}else {
 				// no table info in the array and no table name passed to the function?? FAIL
 				$this->_notices['errors'][] = 'No table information was specified and/or found, therefore the import could not be completed';
@@ -442,6 +460,22 @@
 		return $fh;
 	}
 	
+	/**
+	 * Writes some meta data to the CSV as a bunch of columns. Initially we're only
+	 * mentioning the version and timezone
+	 * @param resource $filehandle
+	 */
+	public function write_metadata_to_csv($filehandle){
+		$this->EE->load_helper('DTT_helper');
+		$data_row = array(EE_CSV::metadata_header);//do NOT translate because this exact string is used when importing
+		$this->fputcsv2($filehandle, $data_row);
+		$meta_data = array( 0=> array(
+			'version'=>espresso_version(),
+			'timezone'=>  EEH_DTT_Helper::get_timezone()));
+		$this->write_data_array_to_csv($filehandle, $meta_data);
+	}
+	
+	
 	
 	/**
 	 * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
@@ -533,6 +567,7 @@
 	 * @return boolean success
 	 */
 	public function write_model_data_to_csv($filehandle,$model_data_array){
+		$this->write_metadata_to_csv($filehandle);
 		foreach($model_data_array as $model_name => $model_instance_arrays){
 			//first: output a special row stating the model
 			echo $this->fputcsv2($filehandle,array('MODEL',$model_name));

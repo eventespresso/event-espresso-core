@@ -93,7 +93,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function set_definitions() {
+	public static function set_definitions() {
 		define( 'EVENT_LIST_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'EVENT_LIST_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 	}
