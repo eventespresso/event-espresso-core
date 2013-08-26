@@ -1708,7 +1708,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$data = apply_filters('FHEE_default_event_settings_save', $data);
 
 		$what = 'Default Event Settings';
-		$success = $this->_update_organization_settings($what, $data, __FILE__, __FUNCTION__, __LINE__);
+		$success = $this->_update_espresso_configuration($what, $data, __FILE__, __FUNCTION__, __LINE__);
 		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
 	}
 

@@ -841,7 +841,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$data = apply_filters('FHEE_reg_form_settings_save', $data);	
 		
 		$what = 'Registration Options';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
 		
 	}
