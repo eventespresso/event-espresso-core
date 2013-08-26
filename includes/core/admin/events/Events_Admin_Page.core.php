@@ -582,7 +582,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_values = array(
 			'EVT_display_desc' => isset( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => isset( $this->_req_data['display_reg_form'] ) ? 1 : 0,
-			'EVT_reg_limit' => !empty( $this->_req_data['reg_limit'] ) ? $this->_req_data['reg_limit'] : NULL,
 			'EVT_allow_multiple' => isset( $this->_req_data['allow_multiple'] ) ? 1 : 0,
 			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
 			'EVT_require_pre_approval' => isset( $this->_req_data['require_pre_approval'] ) ? 1 : 0,

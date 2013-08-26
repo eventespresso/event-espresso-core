@@ -127,11 +127,7 @@ class EE_Event extends EE_CPT_Base{
 	 * @var int 
 	 */
 	protected $_EVT_visible_on;
-	/**
-	 * registration limit on event
-	 * @var int 
-	 */
-	protected $_EVT_reg_limit;
+	
 	/**
 	 * flag indicating whehter to allwo group registrations
 	 * @var boolean
@@ -302,9 +298,7 @@ class EE_Event extends EE_CPT_Base{
 		return $this->get('EVT_order');
 	}
 	
-	function reg_limit(){
-		return $this->get('EVT_reg_limit');
-	}
+	
 	function require_pre_approval(){
 		return $this->get('EVT_require_pre_approval');
 	}
@@ -368,9 +362,7 @@ class EE_Event extends EE_CPT_Base{
 	function set_order($order) {
 		return $this->set('EVT_order', $order);
 	}
-	function set_reg_limit($reg_limit) {
-		return $this->set('EVT_reg_limit', $reg_limit);
-	}
+	
 	function set_require_pre_approval($require_pre_approval) {
 		return $this->set('EVT_require_pre_approval', $require_pre_approval);
 	}
@@ -618,7 +610,7 @@ class EE_Event extends EE_CPT_Base{
 
 
 
-
+	//todo needs reworking
 	public function get_number_of_attendees_reg_limit( $type = 'NULL' ) {
 		
 		$reg_limit = $this->_EVT_reg_limit;

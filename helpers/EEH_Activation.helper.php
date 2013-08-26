@@ -626,7 +626,6 @@ class EEH_Activation {
 			EVT_display_desc TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_display_reg_form TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_visible_on datetime NOT NULL default '0000-00-00 00:00:00',
-			EVT_reg_limit INT UNSIGNED NULL DEFAULT 9999 ,
 			EVT_allow_multiple TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 			EVT_additional_attendee_reg_info TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 			EVT_default_registration_status VARCHAR(3),

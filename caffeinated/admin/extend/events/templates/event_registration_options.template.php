@@ -3,14 +3,6 @@
 	<?php echo $active_status; ?>
 </p>
 
-<p>
-	<label for="reg-limit">
-		<?php _e('Attendee Limit: ', 'event_espresso'); ?>
-	</label>
-	<input id="reg-limit" name="reg_limit"  size="10" type="text" value="<?php echo $_event->reg_limit(); ?>" /><br />
-	<span>(<?php _e('leave blank for unlimited', 'event_espresso'); ?>)</span>
-</p>
-
 <p class="clearfix" style="clear: both;">
 	<label for="group-reg"><?php _e('Allow group registrations? ', 'event_espresso'); ?></label>
 	<?php echo $allow_group_reg_select; ?>
