@@ -757,7 +757,6 @@ jQuery(document).ready(function($) {
 			
 			$('.basic-ticket-info', '#edit-ticketrow-' + this.ticketRow).find('input').each( function() {
 				displayRowName = displayRowPrefix + $(this).attr('class').split(' ')[0].replace('edit-ticket-', '');
-				console.log(displayRowName);
 				if ( $(displayRowName, displayRowContext).length > 0 )
 					$(displayRowName, displayRowContext).text($(this).val());
 			});
