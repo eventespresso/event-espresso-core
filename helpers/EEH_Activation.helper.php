@@ -760,7 +760,7 @@ class EEH_Activation {
 		$sql = "TTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_name varchar(45) NOT NULL,
 					  TTM_description text,
-					  TTM_file varchar(45) NOT NULL DEFAULT '',
+					  TTM_file varchar(45),
 					  PRIMARY KEY  (TTM_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
