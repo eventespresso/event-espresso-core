@@ -1598,10 +1598,12 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
-		var start = data.dateFieldContext == 'start' ? $(this, data.context ) : $(data.relatedField, data.context);
-		var end = data.dateFieldContext == 'end' ? $(this, data.context) : $(data.relatedField, data.context);
-		var next = $(data.nextField);
-		var doingstart = data.dateFieldContext == 'start' ? true : false;
+		var start = data.context == 'start-dtt' || data.context == 'start-ticket' ? $(this, data.dateFieldContext ) : $(data.relatedField, data.dateFieldContext);
+		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.relatedField, data.dateFieldContext);
+		var next = $(data.nextField, data.dateFieldContext);
+		var doingstart = data.context == 'start-dtt' || data.context == 'start-ticket' ? true : false;
+
+		//@todo: intelligently create min and max values for the ticket dates according to any attached dtts.  This will be tricky tho so leaving for a future iteration.
 
 		dttPickerHelper.picker(start, end, next, doingstart);
 	});

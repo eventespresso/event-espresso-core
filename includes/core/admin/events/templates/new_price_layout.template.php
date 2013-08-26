@@ -16,11 +16,11 @@
 			<tr>
 				<td class="event-datetime-column date-column">
 					<label for="add-new-event-datetime-DTT_EVT_start">Event Start</label>
-					<input type="text" name="add_new_datetime[DTT_EVT_start]" id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp ee-datepicker" data-context="#add-event-datetime" data-date-field-context="start" data-related-field="#add-new-event-datetime-DTT_EVT_end" data-next-field="#add-new-event-datetime-DTT_EVT_start">
+					<input type="text" name="add_new_datetime[DTT_EVT_start]" id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp ee-datepicker" data-context="start-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_end" data-next-field="#add-new-event-datetime-DTT_EVT_start">
 				</td>
 				<td class="event-datetime-column date-column">
 					<label for="add-new-event-datetime-DTT_EVT_end">Event End</label>
-					<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp ee-datepicker" data-context="#add-event-datetime" data-date-field-context="end" data-related-field="#add-new-event-datetime-DTT_EVT_start" data-next-field="#add-new-event-datetime-DTT_reg_limit">
+					<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp ee-datepicker" data-context="end-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_start" data-next-field="#add-new-event-datetime-DTT_reg_limit">
 				</td>
 				<td class="event-datetime-column reg-limit-column">
 					<label for="add-new-event-datetime-DTT_reg_limit">Reg Limit</label>
@@ -80,8 +80,8 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td colspan="2"><input type="text" name="edit_tickets[1][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="" data-context="#edit-ticketrow-1" data-date-field-context="start" data-related-field=".edit-ticket-TKT_end_date" data-next-field=".edit-ticket-TKT_end_date"></td>
-											<td colspan="2"><input type="text" name="edit_tickets[1][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="" data-context="#edit-ticketrow-1" data-date-field-context="end" data-related-field=".edit-ticket-TKT_start_date" data-next-field=".edit-ticket-TKT_qty"></td>
+											<td colspan="2"><input type="text" name="edit_tickets[1][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="" data-context="start-ticket" data-date-field-context="#edit-ticketrow-1" data-related-field=".edit-ticket-TKT_end_date" data-next-field=".edit-ticket-TKT_end_date"></td>
+											<td colspan="2"><input type="text" name="edit_tickets[1][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="" data-context="end-ticket" data-date-field-context="#edit-ticketrow-1" data-related-field=".edit-ticket-TKT_start_date" data-next-field=".edit-ticket-TKT_qty"></td>
 										</tr>
 									</tbody>
 								</table>
@@ -199,11 +199,11 @@
 				<tr>
 					<td class="event-datetime-column date-column">
 						<label for="event-datetime-DTT_EVT_start-DTTNUM">Event Start</label>
-						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-DTTNUM" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-context="#edit-event-datetime-DTTNUM" data-date-field-context="start" data-related-field=".event-datetime-DTT_EVT_end" data-next-field=".event-datetime-DTT_EVT_end">
+						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-DTTNUM" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-context="start-dtt" data-date-field-context="#edit-event-datetime-DTTNUM" data-related-field=".event-datetime-DTT_EVT_end" data-next-field=".event-datetime-DTT_EVT_end">
 					</td>
 					<td class="event-datetime-column date-column">
 						<label for="event-datetime-DTT_EVT_end-DTTNUM">Event End</label>
-						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-DTTNUM" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="#edit-event-datetime-DTTNUM" data-date-field-context="end" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit">
+						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-DTTNUM" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="end-dtt" data-date-field-context="#edit-event-datetime-DTTNUM" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit">
 					</td>
 					<td class="event-datetime-column small-txt-column">
 						<label for="event-datetime-DTT_reg_limit-DTTNUM">Reg Limit</label>
@@ -257,8 +257,8 @@
 								</thead>
 								<tbody>
 									<tr>
-										<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="" data-context="#edit-ticketrow-TICKETNUM" data-date-field-context="start" data-related-field=".edit-ticket-TKT_end_date" data-next-field=".edit-ticket-TKT_end_date"></td>
-										<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="" data-context="#edit-ticketrow-TICKETNUM" data-date-field-context="end" data-related-field=".edit-ticket-TKT_start_date" data-next-field=".edit-ticket-TKT_qty"></td>
+										<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="" data-context="start-ticket" data-date-field-context="#edit-ticketrow-TICKETNUM" data-related-field=".edit-ticket-TKT_end_date" data-next-field=".edit-ticket-TKT_end_date"></td>
+										<td colspan="2"><input type="text" name="edit_tickets[TICKETNUM][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="" data-context="end-ticket" data-date-field-context="#edit-ticketrow-TICKETNUM" data-related-field=".edit-ticket-TKT_start_date" data-next-field=".edit-ticket-TKT_qty"></td>
 									</tr>
 								</tbody>
 							</table>
@@ -409,10 +409,10 @@
 								<input type="text" name="add_new_ticket[TKT_name]" class="add-new-ticket-TKT_name">
 							</td>
 							<td>
-								<input type="text" name="add_new_ticket[TKT_start_date]" class="add-new-ticket-TKT_start_date ee-datepicker" data-context="#edit-event-datetime-tickets-DTTNUM" data-date-field-context="start" data-related-field=".add-new-ticket-TKT_end_date" data-next-field=".add-new-ticket-TKT_end_date">
+								<input type="text" name="add_new_ticket[TKT_start_date]" class="add-new-ticket-TKT_start_date ee-datepicker" data-context="start-ticket" data-date-field-context="#edit-event-datetime-tickets-DTTNUM" data-related-field=".add-new-ticket-TKT_end_date" data-next-field=".add-new-ticket-TKT_end_date">
 							</td>
 							<td>
-								<input type="text" name="add_new_ticket[TKT_end_date]" class="add-new-ticket-TKT_end_date ee-datepicker" data-context="#edit-event-datetime-tickets-DTTNUM" data-date-field-context="end" data-related-field=".add-new-ticket-TKT_start_date" data-next-field=".add-new-ticket-PRC_amount">
+								<input type="text" name="add_new_ticket[TKT_end_date]" class="add-new-ticket-TKT_end_date ee-datepicker" data-context="end-ticket" data-date-field-context="#edit-event-datetime-tickets-DTTNUM" data-related-field=".add-new-ticket-TKT_start_date" data-next-field=".add-new-ticket-PRC_amount">
 							</td>
 							<td>	
 								<input type="text" name="add_new_ticket[PRC_amount]" class="add-new-ticket-PRC_amount" size="1">
