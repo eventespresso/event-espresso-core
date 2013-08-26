@@ -154,7 +154,7 @@ class EEH_URL extends EEH_Base {
 		// load espresso CPT endpoints
 		$espresso_CPT_endpoints = EE_CPT_Strategy::instance()->get_CPT_endpoints();
 		// load all pages using espresso shortcodes
-		$post_shortcodes = isset( EE_Registry::instance()->CFG->post_shortcodes ) ? EE_Registry::instance()->CFG->post_shortcodes : array();
+		$post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
 		// make sure core pages are included 
 		$espresso_pages = array_merge( $espresso_CPT_endpoints, $post_shortcodes );
 //		printr( $espresso_pages, '$espresso_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
