@@ -136,8 +136,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_events_export',
 				'noheader' => true
 			),
-			'import' => '_import_events',
-			'import_events' => '_import_events',
+			'import_page'=>'_import_page',
+			'import' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
+			'import_events' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
 			'default_event_settings' => '_default_event_settings',
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
@@ -1754,30 +1761,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$EE_Export->export();
 		}
 	}
-
 	/**
-	 * _import_events
-	 * This handles displaying the screen and running imports for importing events.
-	 * 	
-	 * @return string html
+	 * for GET requests to 
 	 */
-	protected function _import_events() {
 
-		require_once(EE_CLASSES . 'EE_Import.class.php');
-
-		//first check if we've got an incoming import
-		if (isset($this->_req_data['import']) && $this->_req_data['import'] == 'csv') {
-			EE_Import::instance()->import();
-		}
-		echo "csv notices";
-		var_dump(EE_CSV::instance()->_notices);
+	protected function _import_page(){
+		
 		$title = __('Import Events', 'event_espresso');
 		$intro = __('If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
 		$form_url = EVENTS_ADMIN_URL;
 		$action = 'import_events';
 		$type = 'csv';
 		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
-
+		
 		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 
 		$title_cat = __( 'Import Event Categories', 'event_espresso' );
@@ -1790,6 +1786,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
 	}
+	/**
+	 * _import_events
+	 * This handles displaying the screen and running imports for importing events.
+	 * 	
+	 * @return string html
+	 */
+	protected function _import_events() {
+		require_once(EE_CLASSES . 'EE_Import.class.php');
+		$success = EE_Import::instance()->import();
+		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
+		
+	}
+	
+	
 
 
 

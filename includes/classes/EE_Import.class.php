@@ -99,7 +99,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	/**
 	 *	@Import Event Espresso data - some code "borrowed" from event espresso csv_import.php
 	 *	@access public
-	 *	@return void
+	 *	@return boolean success
 	 */	
 	public function import() {
 	
@@ -114,28 +114,28 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			            $error_msg = FALSE;
 			            break;
 			        case UPLOAD_ERR_INI_SIZE:
-			            $error_msg = 'An error occured. The uploaded file exceeds the upload_max_filesize directive in php.ini.';
+			            $error_msg = __("'The uploaded file exceeds the upload_max_filesize directive in php.ini.'", "event_espresso");
 			            break;
 			        case UPLOAD_ERR_FORM_SIZE:
-			            $error_msg = 'An error occured. The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.';
+			            $error_msg = __('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.', "event_espresso");
 			            break;
 			        case UPLOAD_ERR_PARTIAL:
-			            $error_msg = 'An error occured. The uploaded file was only partially uploaded.';
+			            $error_msg = __('The uploaded file was only partially uploaded.', "event_espresso");
 			            break;
 			        case UPLOAD_ERR_NO_FILE:
-			            $error_msg = 'An error occured. No file was uploaded.';
+			            $error_msg = __('No file was uploaded.', "event_espresso");
 			            break;
 			        case UPLOAD_ERR_NO_TMP_DIR:
-			            $error_msg = 'An error occured. Missing a temporary folder.';
+			            $error_msg = __('Missing a temporary folder.', "event_espresso");
 			            break;
 			        case UPLOAD_ERR_CANT_WRITE:
-			            $error_msg = 'An error occured. Failed to write file to disk.';
+			            $error_msg = __('Failed to write file to disk.', "event_espresso");
 			            break;
 			        case UPLOAD_ERR_EXTENSION:
-			            $error_msg = 'An error occured. File upload stopped by extension.';
+			            $error_msg = __('File upload stopped by extension.', "event_espresso");
 			            break;
 			        default:
-			            $error_msg = 'An unknown error occured and the file could not be uploaded';
+			            $error_msg = __('An unknown error occured and the file could not be uploaded', "event_espresso");
 			            break;
 			    }
 				
@@ -189,46 +189,33 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 									
 									}
 									// save processed codes to db
-									if ( $result = $this->EE_CSV->save_csv_to_db( $processed_data, $this->columns_to_save ) ) {
-									
-										//echo $this->import_success ( $import_what . ' have been successfully imported into the database.' );
-										$this->EE_CSV->_notices['updates'][] = $import_what . ' have been successfully imported into the database.';
-										add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ));
+									if ( $this->EE_CSV->save_csv_to_db( $processed_data, $this->columns_to_save ) ) {
 										return TRUE;
 																		
-									} else { 
-										$this->EE_CSV->_notices['errors'][] = 'An error occured and the '.$import_what.' were not imported into the database.';
-										add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ));
-										return FALSE;
 									}
-
 								} else {
 									// no array? must be an error
-									add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ));
+									EE_Error::add_error(sprintf(__("No file seems to have been uploaded", "event_espresso")));
 									return FALSE;
 								}
 
 							} else {
-								$this->EE_CSV->_notices['errors'][] = $filename . ' was not successfully uploaded';
-								add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ));
+								EE_Error::add_error(sprintf(__("%s was not successfully uploaded", "event_espresso"),$filename));
 								return FALSE;
 							} 
 							
 						} else {
-							$this->EE_CSV->_notices['errors'][] = $filename . ' was too large of a file and could not be uploaded. The max filesize is ' . $max_upload . ' KB.';
-							add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ));
+							EE_Error::add_error( sprintf(__("%s was too large of a file and could not be uploaded. The max filesize is %s' KB.", "event_espresso"),$filename,$max_upload));
 							return FALSE;
 						}
 						
 					} else {
-						$this->EE_CSV->_notices['errors'][] = $filename . ' had an invalid file extension, not uploaded';
-						add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ));
+						EE_Error::add_error( sprintf(__("%s  had an invalid file extension, not uploaded", "event_espresso"),$filename));
 						return FALSE;
 					}
 					
 				} else {
-					$this->EE_CSV->_notices['errors'][] = $error_msg;
-					add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ));	
+					EE_Error::add_error( $error_msg );
 					return FALSE;	
 				}
 
@@ -238,54 +225,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	}
 	
 	
-	
-	
-	/**
-	 *			@Process Groupon Codes
-	 *		  @access private
-	 *			@return void
-	 */	
-	private function process_groupon_codes() {
-	
-			// the db fields and the csv column names we want the data saved to
-			$this->columns_to_save = array(
-																							'groupon_code'			=> 'Groupon No.',
-																							'groupon_status' 	=> 'Status',
-																							'groupon_holder'	=> 	'Customer Name'						
-																						);
-			// so we can check against keys and values as one list																			
-			$this->columns_to_save = array_merge( $this->columns_to_save, array_flip($this->columns_to_save));
-
-			$processed_groupon_codes = array();
-			
-			// loop through data array to do a little processing
-			foreach ( $this->csv_array as $table_name => $table_data ) {
-				// check that the table name being imported is valid
-				if ( ! in_array( $table_name, $this->_table_list )) {
-					//$this->import_error ( 'Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database.' );
-					$this->EE_CSV->_notices['errors'][] = 'Error! The CSV file contains a table name that does not exist. The Groupon Code(s) were not imported into the database.';
-					add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
-					exit;
-				}
-
-				// loop through data array to do a little processing
-				foreach ( $table_data as $outer_key => $inner_data ) {
-					foreach ( $inner_data as $inner_key => $value ) {
-						// change Unredeemed / Redeemed values to boolean
-						if ( $innerkey == 'Status' ) {
-							$value = 'Redeemed' ? 1 : 0 ;
-						}
-						// check if column is to be saved
-						if ( in_array( $inner_key, $this->columns_to_save )) {
-							$processed_groupon_codes[$table_name][$outer_key][$inner_key] = $value;
-						}																				
-					}																				
-				}					
-			}	
-			
-			return $processed_groupon_codes;
-			
-	}
 	
 	
 

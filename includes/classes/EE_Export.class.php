@@ -123,9 +123,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 					default:
 						// set the error message which is stored within the EE_CSV class
-						$this->EE_CSV->_notices['errors'][] = 'An error occured! The requested export report could not be found.';
-						// add the output of the csv_admin_notices function to the admin_notices hook
-						add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+						EE_Error::add_error(__('An error occured! The requested export report could not be found.','event_espresso')) ;
 						return FALSE;
 					break;
 					
@@ -158,8 +156,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'full-db-export' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
 		}
 	}	
 
@@ -183,8 +180,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->_req_data['all_events'] == "true" || count($event_ids) > 1 ? __('multiple-events', 'event_espresso') :	$filename;
 		$filename .= "-" . $this->today ;
 		if ( ! $this->EE_CSV->export_array_to_csv( $table_data, $filename )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__('An error occured and the Event details could not be exported from the database.', "event_espresso"));
 		}
 	}
 
@@ -251,8 +247,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( $filename );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__("'An error occured and the Event details could not be exported from the database.'", "event_espresso"));
 		}
 	}
 
@@ -271,8 +266,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'all-attendees' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Attendee data could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__('An error occured and the Attendee data could not be exported from the database.','event_espresso'));
 		}
 	}
 	
@@ -382,28 +376,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'all-categories' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Category details could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__('An error occured and the Category details could not be exported from the database.','event_espresso'));
 		}
 	}
-
-	
-	/**
-	 *			@Export data for groupons ?
-	 *		  @access public
-	 *			@return void
-	 */	
-	function export_groupons() {
-		throw new EE_Error("method not yet implemented because groupon model does nto yet exist.");
-		
-		$groupon_codes = EEM_Groupon::instance()->get_all();
-		if ( ! $this->EE_CSV->export_array_to_csv( $groupon_codes, 'groupon_codes' ) ) {
-			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Groupon Code(s) could not be exported from the database.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
-		}
-	}
-
-	
 	
 	
 	/**
@@ -418,8 +393,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			$filename = sanitize_key( $filename ) . '-' . $this->today;
 			return $filename;
 		}	 else {
-			$this->EE_CSV->_notices['errors'][] = 'No filename was provided.';
-			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
+			EE_Error::add_error(__("No filename was provided", "event_espresso"));
 		}
 	}	
 	
