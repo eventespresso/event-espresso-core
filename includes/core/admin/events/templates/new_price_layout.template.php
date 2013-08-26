@@ -65,7 +65,7 @@
 						<fieldset id="fieldset-edit-ticketrow-1" class="ticket-fieldset" style="display:none">
 							<legend>Edit Ticket</legend>
 							<input type="hidden" name="edit_tickets[1][TKT_ID]" class="edit-ticket-TKT_ID" value="0">
-							<input type="hidden" name="edit_tickets[1][TKT_display_order]" class="edit-ticket-TKT_display_order" value="1">
+							<input type="hidden" name="edit_tickets[1][TKT_row]" class="edit-ticket-TKT_row" value="1">
 							<input type="text" name="edit_tickets[1][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="Free Admission">
 							<div class="total-price-container">Total Final Price: <span class="ticket-price-amount">$0.00</span></div>
 							<textarea name="edit_tickets[1][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"></textarea>
@@ -242,7 +242,7 @@
 					<fieldset id="fieldset-edit-ticketrow-TICKETNUM" class="ticket-fieldset" style="display:none">
 						<legend>Edit Ticket</legend>
 						<input type="hidden" name="edit_tickets[TICKETNUM][TKT_ID]" class="edit-ticket-TKT_ID" value="0">
-						<input type="hidden" name="edit_tickets[TICKETNUM][TKT_display_order]" class="edit-ticket-TKT_display_order" value="TICKETNUM">
+						<input type="hidden" name="edit_tickets[TICKETNUM][TKT_row]" class="edit-ticket-TKT_row" value="TICKETNUM">
 						<input type="text" name="edit_tickets[TICKETNUM][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="General Admission">
 						<div class="total-price-container">Total Final Price: <span class="ticket-price-amount">$0.00</span></div>
 						<textarea name="edit_tickets[TICKETNUM][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"></textarea>
