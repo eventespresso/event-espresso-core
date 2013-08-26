@@ -59,6 +59,13 @@ final class EE_Config {
 	 */
 	protected $EE = NULL;
 
+	/**
+	 * 	current_blog_id
+	 *	@var 	int	$current_blog_id	
+	 * 	@access 	public
+	 */
+	public $current_blog_id = NULL;
+
 
 
 
@@ -86,6 +93,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	private function __construct() {
+		$this->current_blog_id = get_current_blog_id();
 		$this->EE = EE_Registry::instance();
 		// get EE site settings
 		$this->_load_config();
@@ -105,15 +113,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function wp_loaded() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $this->EE->shortcodes, '$this->EE->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $this->EE->modules, '$this->EE->modules  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
-//		printr( EE_Config::$_module_route_map, 'EE_Config::$_module_route_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( EE_Config::$_module_forward_map, 'EE_Config::$_module_forward_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( EE_Config::$_module_view_map, 'EE_Config::$_module_view_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( EE_Config::instance(), 'EE_Config::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 	}
 
 
@@ -126,26 +126,35 @@ final class EE_Config {
 	 * 		@return void
 	 */
 	private function _load_config() {
-
-		$current_user_id = get_current_user_id();
-		$current_user_id = $current_user_id ? $current_user_id : 1;
-		// grab org options based on current admin user
-		$this->EE->CFG = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
+		
+		// grab espresso configuration
+		if ( is_multisite() ) {
+			// look for blog specific config
+			if ( ! $this->EE->CFG = get_blog_option( $this->current_blog_id, 'espresso_config', NULL )) {
+				// if not, then look for network config
+				if ( ! $this->EE->CFG = get_site_option( 'espresso_config' )) {
+				    // if not, then look for generic config
+					$this->EE->CFG = get_option( 'espresso_config' );
+				}						
+			}
+		} else {
+			$this->EE->CFG = get_option( 'espresso_config' );
+		}
 		// ensure org_options are an object - this can be removed at a later date
 		if ( is_array( $this->EE->CFG )) {
 			$this->EE->load_helper( 'Activation' );
 			$this->EE->CFG = EEH_Activation::initialize_config( $this->EE->CFG );
 		}
 
-		// do settings for this user exist ?
+		// do settings for this blog exist ?
 		if ( empty( $this->EE->CFG )) {
 			$this->EE->load_helper( 'Activation' );
-			$this->EE->CFG = EEH_Activation::org_option_initialization();		
+			$this->EE->CFG = EEH_Activation::configuration_initialization();		
 		} else {
 			// list of critical settings
 			$critical_settings = array( 
-				'contact_email',
-				'currency_sign'
+				'organization',
+				'currency'
 			);
 			// cycle thru critical org_options
 			foreach ( $critical_settings as $critical_setting ) {
@@ -153,35 +162,24 @@ final class EE_Config {
 				if ( ! isset( $this->EE->CFG->$critical_setting )) {
 					// reinitialize the org options
 					$this->EE->load_helper( 'Activation' );
-					$this->EE->CFG = EEH_Activation::org_option_initialization();		
+					$this->EE->CFG = EEH_Activation::configuration_initialization( TRUE );		
 					break;	
 				}
 			}
 		}
+		
 		// add current_user_id
-		$this->EE->CFG->wp_user = $current_user_id;	
+		$this->EE->CFG->wp_user = get_current_user_id();	
 
 //		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		$this->EE->CFG->post_shortcodes = isset( $this->EE->CFG->post_shortcodes ) ? $this->EE->CFG->post_shortcodes : array();
 		// set _module_route_map
-		EE_Config::$_module_route_map = isset( $this->EE->CFG->_module_route_map ) ? $this->EE->CFG->_module_route_map : array();
+		EE_Config::$_module_route_map = isset( $this->EE->CFG->core->module_route_map ) ? $this->EE->CFG->core->module_route_map : array();
 		// set _module_forward_map
-		EE_Config::$_module_forward_map = isset( $this->EE->CFG->_module_forward_map ) ? $this->EE->CFG->_module_forward_map : array();
+		EE_Config::$_module_forward_map = isset( $this->EE->CFG->core->module_forward_map ) ? $this->EE->CFG->core->module_forward_map : array();
 		// set _module_view_map
-		EE_Config::$_module_view_map = isset( $this->EE->CFG->_module_view_map ) ? $this->EE->CFG->_module_view_map : array();
-		
-//		$remove_from_config = array(
-//			'_module_route_map',
-//			'_module_forward_map',
-//			'_module_view_map'
-//		);
-//		
-//		foreach ( $remove_from_config as $setting ) {
-//			if ( isset( $this->EE->CFG->$setting )) {
-//				unset( $this->EE->CFG->$setting );
-//			}
-//		}
+		EE_Config::$_module_view_map = isset( $this->EE->CFG->core->module_view_map ) ? $this->EE->CFG->core->module_view_map : array();
+
 		
 		do_action('AHEE_debug_file');
 	}
@@ -195,13 +193,11 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function update_config() {
-//		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$this->EE->CFG->_module_route_map = EE_Config::$_module_route_map;
-		$this->EE->CFG->_module_forward_map = EE_Config::$_module_forward_map;
-		$this->EE->CFG->_module_view_map = EE_Config::$_module_view_map;
+		$this->EE->CFG->core->module_route_map = EE_Config::$_module_route_map;
+		$this->EE->CFG->core->module_forward_map = EE_Config::$_module_forward_map;
+		$this->EE->CFG->core->module_view_map = EE_Config::$_module_view_map;
 		// filter config before saving
 		$this->EE->CFG = apply_filters( 'FHEE__Config__update_config__CFG', $this->EE->CFG );
-//		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// grab org options based on current admin user		
 		if ( ! update_user_meta( $this->EE->CFG->wp_user, 'events_organization_settings', $this->EE->CFG )) {
 			$msg = __( 'The Event Espresso Configuration Settings could not be updated.', 'event_espresso' );
@@ -218,7 +214,7 @@ final class EE_Config {
 	 */
 	public function update_post_shortcodes() {
 		// cycle thru post_shortcodes
-		foreach( $this->EE->CFG->post_shortcodes as $post_name => $shortcodes ){
+		foreach( $this->EE->CFG->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it
 			if ( $post_name != 'posts' ) {
 				foreach( $shortcodes as $shortcode => $post_id ){
@@ -228,7 +224,7 @@ final class EE_Config {
 							break;
 						}
 					}
-					unset( $this->EE->CFG->post_shortcodes[ $post_name ] );
+					unset( $this->EE->CFG->core->post_shortcodes[ $post_name ] );
 				}
 			}
 		}
