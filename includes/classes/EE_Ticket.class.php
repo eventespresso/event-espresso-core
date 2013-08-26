@@ -42,14 +42,6 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
-	/**
-	 * Foreign Key to the Ticket Event
-	 * @var INT
-	 */
-	protected $_EVT_ID;
-
-
-
 
 	/**
 	 * Name of Ticket
@@ -106,6 +98,12 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
+	/**
+	 * Final calculated price for the ticket
+	 * @var float
+	 */
+	protected $_TKT_price;
+
 
 
 	/**
@@ -153,10 +151,10 @@ class EE_Ticket extends EE_Base_Class{
 
 
 	/**
-	 * The display order for this ticket in ui
+	 * The row this ticket coresponds with in the editor ui.
 	 * @var INT
 	 */
-	protected $_TKT_display_order;
+	protected $_TKT_row;
 
 
 
@@ -205,14 +203,6 @@ class EE_Ticket extends EE_Base_Class{
 	 */
 	protected $_Registration;
 
-
-
-
-	/**
-	 * Event this ticket is attached to
-	 * @var EE_Event
-	 */
-	protected $_Event;
 
 
 

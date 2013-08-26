@@ -47,25 +47,24 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			'Ticket'=>array(
 				'TKT_ID'=> new EE_Primary_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0),
 				'TTM_ID'=>new EE_Foreign_Key_Int_Field('TTM_ID', __('Ticket Template ID','event_espresso'), false, 0, 'Ticket_Template'),
-				'EVT_ID'=> new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID', 'event_espresso'), false, 0),
 				'TKT_name'=>new EE_Plain_Text_Field('TKT_name', __('Ticket Name', 'event_espresso'), false, ''),
 				'TKT_description'=>new EE_Plain_Text_Field('TKT_description', __('Description of Ticket', 'event_espresso'), false, '' ),
 				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_min'=>new EE_Integer_Field('TKT_min', __('Minimum quantity of this ticket that must be purchased', 'event_espresso'), false, 0 ),
 				'TKT_max'=>new EE_Integer_Field('TKT_max', __('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'), false, -1 ),
+				'TKT_price'=> new EE_Money_Field('TKT_price', 'Final calculated price for ticket', false, 0),
 				'TKT_qty'=>new EE_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), true, 0),
 				'TKT_uses'=>new EE_Integer_Field('TKT_uses', __('Number of times this ticket can be used (per registration ) to checkin before expiring', 'event_espresso'), TRUE, NULL ),
 				'TKT_taxable'=>new EE_Boolean_Field('TKT_taxable', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
 				'TKT_is_default'=>new EE_Boolean_Field('TKT_is_default', __('Flag indicating that this ticket is a default ticket', 'event_espresso'), false, false ),
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed in the editor (used for autosaves when the form doesn\'t have the ticket ID yet)', 'event_espresso'), false, 0),
-				'TKT_display_order' => new EE_Integer_Field('TKT_display_order', __('Allows users to control the order tickets are displayed in the ui', 'event_espresso'), false, 0 ),
+				'TKT_row' => new EE_Integer_Field('TKT_row', __('How tickets are displayed in the ui', 'event_espresso'), false, 0 ),
 				'TKT_deleted' => new EE_Trashed_Flag_Field('TKT_deleted', __('Flag indicating if this has been archived or not', 'event_espresso'), false, false),
 				'TKT_parent' => new EE_Integer_Field('TKT_parent', __('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'), true, 0 )
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
-			'Event'=>new EE_Belongs_To_Relation(),
 			'Datetime'=>new EE_HABTM_Relation('Datetime_Ticket'),
 			'Datetime_Ticket'=>new EE_Has_Many_Relation(),
 			'Price'=>new EE_HABTM_Relation('Ticket_Price'),

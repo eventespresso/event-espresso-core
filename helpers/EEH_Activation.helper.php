@@ -73,6 +73,7 @@ class EEH_Activation {
 			EEH_Activation::org_option_initialization();
 			// default data
 			EEH_Activation::insert_default_prices();
+			EEH_Activation::insert_default_tickets();
 			EEH_Activation::insert_default_price_types();
 			EEH_Activation::insert_default_status_codes();
 			EEH_Activation::insert_default_countries();
@@ -712,18 +713,18 @@ class EEH_Activation {
 		$table_name = "esp_ticket";  
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_ID int(10) unsigned NOT NULL,
-					  EVT_ID int(10) unsigned NOT NULL,
 					  TKT_name varchar(100) NOT NULL DEFAULT '',
-					  TKT_desc TEXT NOT NULL DEFAULT '',
+					  TKT_description TEXT NOT NULL DEFAULT '',
 					  TKT_qty mediumint(8) DEFAULT NULL,
 					  TKT_uses tinyint NOT NULL DEFAULT '-1',
 					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
 					  TKT_max tinyint NOT NULL DEFAULT '-1',
+					  TKT_price decimal(10,3) NOT NULL DEFAULT '0.00',
 					  TKT_start_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_end_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  TKT_taxable tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  TKT_display_order tinyint(3) unsigned NOT NULL DEFAULT '0',
+					  TKT_row tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  TKT_is_default tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  TKT_parent int(10) unsigned DEFAULT '0',
 					  TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
@@ -1072,6 +1073,34 @@ class EEH_Activation {
 				$wpdb->query($SQL);			
 			}
 		}	
+	}
+
+
+
+	/**
+	 * insert default ticket
+	 *
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public static function insert_default_tickets() {
+
+		global $wpdb;
+
+		if ( $wpdb->get_var("SHOW TABLES LIKE'" . EE_TICKET_TABLE . "'") == EE_TICKET_TABLE ) {
+
+			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . EE_TICKET_TABLE;
+			$tickets_exist = $wpdb->get_var($SQL);
+
+			if ( ! $tickets_exist ) {
+				$SQL = "INSERT INTO " . EE_TICKET_TABLE . "
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
+					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 1, 0, 0);";
+				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
+				$wpdb->query($SQL);
+			}
+		}
 	}
 
 
