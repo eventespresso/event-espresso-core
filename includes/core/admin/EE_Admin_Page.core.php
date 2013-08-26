@@ -2584,7 +2584,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
-	 * updates events_organization_settings user_meta
+	 * updates  espresso configuration settings
 	 *
 	 * @access 	protected
 	 * @param string $tab
@@ -2594,29 +2594,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param string $line	line no where error occured
 	 * @return boolean
 	 */
-	protected function _update_organization_settings( $tab, $data, $file = '', $func = '', $line = '' ) {
-		// grab existing org options
-		$org_options = get_object_vars($this->EE->CFG);
-		// make sure everything is in arrays
-		$org_options = is_array( $org_options ) ? $org_options : array( $org_options );
-		$data = is_array( $data ) ? $data : (array) $data;
-		foreach ( $data as $key => $value ) {
-			$data[ $key ] = is_array( $value ) ? $value : addslashes( html_entity_decode( $value, ENT_QUOTES, 'UTF-8' ));
-		}
+	protected function _update_espresso_configuration( $tab, $data, $file = '', $func = '', $line = '' ) {
 
 		//remove any options that are NOT going to be saved with org_options.
-		if ( isset( $data['ee_ueip_optin'] ) ) {
-			$ee_ueip_optin = $data['ee_ueip_optin'];
-			unset( $data['ee_ueip_optin'] );
-			update_option( 'ee_ueip_optin', $ee_ueip_optin);
+		if ( isset( $data->ee_ueip_optin ) ) {
+			update_option( 'ee_ueip_optin', $data->ee_ueip_optin);
 			update_option( 'ee_ueip_has_notified', TRUE );
+			unset( $data->ee_ueip_optin );
 		}
-
-		// overwrite existing org options with new data
-		$data = array_merge( $org_options, $data );
-
 		// and save it
-		if ( ($data === $org_options) || update_user_meta( $this->EE->CFG->wp_user, 'events_organization_settings', $data )) {
+		if ( EE_Config::instance()->update_espresso_config() ) {
 			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {
@@ -2626,7 +2613,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}			
 
 	}
-	
+
+
+
+
+
 	/**
 	 * Returns an array to be used for EE_FOrm_Fields.helper.php's select_input as the $values argument.
 	 * @return array
