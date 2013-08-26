@@ -373,9 +373,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->EE->CFG->core->txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : NULL;
 		$this->EE->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : NULL;
 		$this->EE->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : NULL;
+
+		$this->EE->CFG->core = apply_filters( 'FHEE_page_settings_save', $this->EE->CFG->core, $this->_req_data );
 		
 		$what = 'Critical Pages & Shortcodes';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG->core, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, 'Template Settings', 'updated', array() );
 		
 	}
@@ -393,15 +395,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _template_settings() {
 		$this->_template_args['values'] = $this->_yes_no_values;
-	
-		$default_template_settings = array(
-			'display_address_in_regform' => TRUE,			
-		);
 		
-		$this->_template_args['template_settings'] = 
-				isset( $this->EE->CFG->template_settings ) && ! empty( $this->EE->CFG->template_settings ) 
-				? array_merge( $default_template_settings, $this->EE->CFG->template_settings )
-				: $default_template_settings;
+		$this->_template_args['display_address_in_regform'] = 
+				isset( $this->EE->CFG->template_settings->display_address_in_regform ) && ! empty( $this->EE->CFG->template_settings->display_address_in_regform ) 
+				? $this->EE->CFG->template_settings->display_address_in_regform
+				: TRUE;
 		
 		$this->_template_args = apply_filters( 'FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
 
@@ -416,22 +414,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_template_settings() {
 		
-		global $wpdb, $notices, $espresso_wp_user;
-
-		$data = array(
-			'template_settings' => array()
-		);
-
-		$data['template_settings']['display_address_in_regform'] = 
+		$this->EE->CFG->template_settings->display_address_in_regform = 
 				 isset( $this->_req_data['display_address_in_regform'] ) 
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: TRUE;
 		
-		$data = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', $data, $this->_req_data );
-//		printr( $data, '$data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$this->EE->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', $this->EE->CFG->template_settings, $this->_req_data );
 		
 		$what = 'Template Settings';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 		
 	}
@@ -560,7 +551,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('FHEE_google_map_settings_save', $data);	
 		
 		$what = 'Google Map Settings';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'google_map_settings' ) );
 		
 	}
@@ -616,7 +607,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('FHEE_your_organization_settings_save', $data);	
 		
 		$what = 'Your Organization Settings';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
 		
 	}
@@ -665,7 +656,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('FHEE_admin_option_settings_save', $data);	
 		
 		$what = 'Admin Options';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'admin_option_settings' ) );
 		
 	}
@@ -732,7 +723,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('FHEE_country_settings_save', $data);	
 		
 		$what = 'Countries';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'country_settings' ) );
 		
 	}

@@ -189,12 +189,10 @@
 
 		</tbody>
 	</table>
+	<br/><br/>
 
-	<h4 id="UXIP_settings" class="ee-admin-settings-hdr" style="width:300px;">
-		<?php _e('Event Espresso User eXperience Improvement Program', 'event_espresso'); ?>
-	</h4>
 	<p>
-		<?php echo EE_PUE::espresso_data_collection_optin_text( FALSE ); ?>
+		<?php echo  EE_PUE::espresso_data_collection_optin_text( FALSE ); ?>
 	</p>
 
 	<table class="form-table">
@@ -202,19 +200,16 @@
 
 			<tr>
 				<th>
-					<h4>
-						<?php _e('UXIP Settings', 'event_espresso'); ?>
-					</h4>
+					<label for="ueip_optin">
+						<?php _e('UXIP Opt In?', 'event_espresso'); ?>
+					</label>
 				</th>
 				<td>
-					<label for="ueip_optin">
-						<?php _e('Yes! I\'m In:', 'event_espresso'); ?>
-					</label>
 					<?php 
 						$values=array(					
-						array('id'=>'yes','text'=> __('Yes','event_espresso')),
-						array('id'=>'no','text'=> __('No','event_espresso'))
-					);
+							array('id'=>'yes','text'=> __('Yes! I want to help improve Event Espresso!','event_espresso')),
+							array('id'=>'no','text'=> __('No! I\'m a grumpy old toot and I don\'t like you >:(','event_espresso'))
+						);
 						echo EE_Form_Fields::select_input('ueip_optin', $values, !empty($ee_ueip_optin) ? $ee_ueip_optin : 'yes'); 
 					?>
 				</td>
