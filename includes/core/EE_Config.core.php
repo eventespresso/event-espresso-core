@@ -142,6 +142,7 @@ final class EE_Config {
 		} else {
 			// list of critical settings
 			$critical_settings = array( 
+				'core',
 				'organization',
 				'currency'
 			);
