@@ -1087,19 +1087,20 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-
+		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 		// process taxes
-		if ( $taxes = maybe_unserialize( $this->_registration->transaction()->tax() )) {
-			$this->_template_args['taxes'] = $taxes['taxes'];
+		if ( $transaction ) {
+			$taxes = $transaction->tax();
+			$this->_template_args['taxes'] = isset( $taxes['taxes'] ) ? $taxes['taxes'] : FALSE;
 		} else {
 			$this->_template_args['taxes'] = FALSE;
 		}
 
-		$this->_template_args['grand_total'] = $this->_registration->transaction()->total();
+		$this->_template_args['grand_total'] = $transaction->total();
 
 		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
 		$reg_status_class = 'status-' . $this->_registration->status_ID();
-		$reg_details = maybe_unserialize( $this->_registration->transaction()->details() );
+		$reg_details = maybe_unserialize( $transaction->details() );
 
 
 		if ( !is_array($reg_details) || ( is_array($reg_details) && isset($reg_details['REDO_TXN']) && $reg_details['REDO_TXN'] ) ) {
