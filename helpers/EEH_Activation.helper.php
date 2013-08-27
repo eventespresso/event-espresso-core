@@ -563,14 +563,15 @@ class EEH_Activation {
 					PRIMARY KEY  (ANS_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 		
-		$table_name = 'esp_attendee';
-		$sql = "ATT_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
+		$table_name = 'esp_attendee_meta';
+		$sql = "ATTM_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
+						ATT_ID int(10) unsigned NOT NULL,
 						ATT_fname varchar(45) NOT NULL,
 						ATT_lname varchar(45) NOT	NULL,
 						ATT_address varchar(45) DEFAULT	NULL,
 						ATT_address2 varchar(45) DEFAULT	NULL,
 						ATT_city varchar(45) DEFAULT	NULL,
-						STA_ID varchar(45) DEFAULT	NULL,
+						STA_ID int(10) DEFAULT	NULL,
 						CNT_ISO varchar(45) DEFAULT	NULL,
 						ATT_zip varchar(12) DEFAULT	NULL,
 						ATT_email varchar(100) NOT NULL,
@@ -578,8 +579,7 @@ class EEH_Activation {
 						ATT_social text,
 						ATT_comments mediumtext,
 						ATT_notes mediumtext,
-						ATT_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
-							PRIMARY KEY  (ATT_ID),
+							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
 								KEY ATT_email (ATT_email)";

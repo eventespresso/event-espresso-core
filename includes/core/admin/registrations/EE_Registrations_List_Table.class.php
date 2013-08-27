@@ -77,6 +77,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
  				'TXN_paid' => __('Paid', 'event_espresso'),
 	           	'actions' => __( 'Actions', 'event_espresso' )
 	        );			
+			$this->_bottom_buttons = array(
+				'report'=>'registrations_report'
+			);
 		} else {
 			$this->_columns = array(
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text

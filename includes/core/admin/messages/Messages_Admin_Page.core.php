@@ -1346,7 +1346,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'EVT_ID' => $this->_message_template->event()
 			);
 
-		$button = $this->_get_action_link_or_button( 'reset_to_default', 'reset', $extra_args, 'button-primary reset-default-button' );
+		$button = $this->get_action_link_or_button( 'reset_to_default', 'reset', $extra_args, 'button-primary reset-default-button' );
 		
 
 		//test button

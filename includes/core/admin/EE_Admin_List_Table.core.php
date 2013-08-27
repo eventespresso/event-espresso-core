@@ -198,6 +198,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	// yes / no array for admin form fields
 	protected $_yes_no = array();	
+	
+	/**
+	 * Array describing buttons that should appear at teh bottom of the page
+	 * Keys are strings that represent the button's function (specifically a key in _labels['buttons']), and the values are 
+	 * page routes
+	 * @var array $_bottom_buttons
+	 */
+	protected $_bottom_buttons = array();
 
 
 	/**
@@ -462,6 +470,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			$this->_filters();
 			echo "\n";
 			echo $this->_get_hidden_fields();
+		}else{
+			foreach($this->_bottom_buttons as $type => $action){
+				echo $this->_admin_page->get_action_link_or_button($action, $type,array('EVT_ID'=>$this->_req_data['event_id']));
+			}
 		}
 		//echo $this->_entries_per_page_dropdown;
 	}

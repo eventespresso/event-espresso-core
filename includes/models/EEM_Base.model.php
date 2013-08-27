@@ -1626,8 +1626,12 @@ abstract class EEM_Base extends EE_Base{
 			//in which case, turn it into an array
 			$values = explode(",",$values);
 		}
+		$cleaned_values = array();
 		foreach($values as $value){
 			$cleaned_values[] = $wpdb->prepare($field_obj->get_wpdb_data_type(),$this->_prepare_value_for_use_in_db($value, $field_obj));
+		}
+		if(empty($cleaned_values)){
+			$cleaned_values[] = '0';
 		}
 		return "(".implode(",",$cleaned_values).")";
 	}
