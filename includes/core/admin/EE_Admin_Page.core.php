@@ -2594,16 +2594,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param string $line	line no where error occured
 	 * @return boolean
 	 */
-	protected function _update_espresso_configuration( $tab, $data, $file = '', $func = '', $line = '' ) {
+	protected function _update_espresso_configuration( $tab, $config, $file = '', $func = '', $line = '' ) {
 
 		//remove any options that are NOT going to be saved with org_options.
-		if ( isset( $data->ee_ueip_optin ) ) {
-			update_option( 'ee_ueip_optin', $data->ee_ueip_optin);
+		if ( isset( $config->core->ee_ueip_optin ) ) {
+			update_option( 'ee_ueip_optin', $config->core->ee_ueip_optin);
 			update_option( 'ee_ueip_has_notified', TRUE );
-			unset( $data->ee_ueip_optin );
+			unset( $config->core->ee_ueip_optin );
 		}
 		// and save it
-		if ( EE_Config::instance()->update_espresso_config() ) {
+		if ( EE_Config::instance()->update_espresso_config( FALSE, FALSE ) ) {
 			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {

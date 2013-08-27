@@ -437,6 +437,7 @@ class EEH_Activation {
 			// core configuration
 			$default_config->core = new stdClass();
 			$default_config->core->site_license_key = NULL;
+			$default_config->core->ee_ueip_optin = TRUE;
 			$default_config->core->post_shortcodes = array();
 			$default_config->core->module_route_map = array();
 			$default_config->core->module_forward_map = array();
