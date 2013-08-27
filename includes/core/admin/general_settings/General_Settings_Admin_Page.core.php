@@ -369,10 +369,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_espresso_page_settings() {
 		
-		$this->EE->CFG->core->reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : NULL;
-		$this->EE->CFG->core->txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : NULL;
-		$this->EE->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : NULL;
-		$this->EE->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : NULL;
+		$this->EE->CFG->core->reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : $this->EE->CFG->core->reg_page_id;
+		$this->EE->CFG->core->txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : $this->EE->CFG->core->txn_page_id;
+		$this->EE->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : $this->EE->CFG->core->thank_you_page_id;
+		$this->EE->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : $this->EE->CFG->core->cancel_page_id;
 
 		$this->EE->CFG->core = apply_filters( 'FHEE_page_settings_save', $this->EE->CFG->core, $this->_req_data );
 		
@@ -417,12 +417,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->EE->CFG->template_settings->display_address_in_regform = 
 				 isset( $this->_req_data['display_address_in_regform'] ) 
 				? absint( $this->_req_data['display_address_in_regform'] ) 
-				: TRUE;
+				: $this->EE->CFG->template_settings->display_address_in_regform;
 		
 		$this->EE->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', $this->EE->CFG->template_settings, $this->_req_data );
 		
 		$what = 'Template Settings';
-		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 		
 	}
@@ -438,27 +438,27 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	
 		
 		$this->_template_args['values'] = $this->_yes_no_values;
-
-		$default_map_settings = array(
-			'use_google_maps' => FALSE,
-			'ee_map_width_single' => 585,
-			'ee_map_height_single' => 362,
-			'ee_map_zoom_single' => 14,
-			'ee_map_nav_display_single' => TRUE,
-			'ee_map_nav_size_single' => FALSE,
-			'ee_map_type_control_single' => 'default',
-			'ee_map_align_single' => 'center',
-			'ee_map_width' => 300,
-			'ee_map_height' => 185,
-			'ee_map_zoom' => 12,
-			'ee_map_nav_display' => FALSE,
-			'ee_map_nav_size' => TRUE,
-			'ee_map_type_control' => 'dropdown',
-			'ee_map_align' => 'center'
-		);
+		$default_map_settings->use_google_maps = TRUE;
+		// for event details pages (reg page)
+		$default_map_settings->event_details_map_width = 585; 			// ee_map_width_single
+		$default_map_settings->event_details_map_height = 362; 			// ee_map_height_single
+		$default_map_settings->event_details_map_zoom = 14; 			// ee_map_zoom_single
+		$default_map_settings->event_details_display_nav = TRUE; 			// ee_map_nav_display_single
+		$default_map_settings->event_details_nav_size = FALSE; 			// ee_map_nav_size_single
+		$default_map_settings->event_details_control_type = 'default'; 		// ee_map_type_control_single
+		$default_map_settings->event_details_map_align = 'center'; 			// ee_map_align_single
+		// for event list pages
+		$default_map_settings->event_list_map_width = 300; 			// ee_map_width
+		$default_map_settings->event_list_map_height = 185; 		// ee_map_height
+		$default_map_settings->event_list_map_zoom = 12; 			// ee_map_zoom
+		$default_map_settings->event_list_display_nav = FALSE; 		// ee_map_nav_display
+		$default_map_settings->event_list_nav_size = TRUE; 			// ee_map_nav_size
+		$default_map_settings->event_list_control_type = 'dropdown'; 		// ee_map_type_control
+		$default_map_settings->event_list_map_align = 'center'; 			// ee_map_align
+		
 		$this->_template_args['map_settings'] = 
 				isset( $this->EE->CFG->map_settings ) && ! empty( $this->EE->CFG->map_settings ) 
-				? array_merge( $default_map_settings, $this->EE->CFG->map_settings )
+				? (object)array_merge( (array)$default_map_settings, (array)$this->EE->CFG->map_settings )
 				: $default_map_settings;		
 
 		$this->_set_add_edit_form_tags( 'update_google_map_settings' );
@@ -469,89 +469,85 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_google_map_settings() {
 
-		$data = array(
-			'map_settings' => array()
-		);
-
-		$data['map_settings']['use_google_maps'] = 
+		$this->EE->CFG->map_settings->use_google_maps = 
 				 isset( $this->_req_data['use_google_maps'] ) 
 				? absint( $this->_req_data['use_google_maps'] ) 
-				: FALSE;
+				: $this->EE->CFG->map_settings->use_google_maps;
 
-		$data['map_settings']['ee_map_width_single'] = 
-				 isset( $this->_req_data['ee_map_width_single'] ) 
-				? absint( $this->_req_data['ee_map_width_single'] ) 
-				: 595;
+		$this->EE->CFG->map_settings->event_details_map_width = 
+				 isset( $this->_req_data['event_details_map_width'] ) 
+				? absint( $this->_req_data['event_details_map_width'] ) 
+				: $this->EE->CFG->map_settings->event_details_map_width;
 
-		$data['map_settings']['ee_map_height_single'] = 
-				 isset( $this->_req_data['ee_map_height_single'] ) 
-				? absint( $this->_req_data['ee_map_height_single'] ) 
-				: 368;
+		$this->EE->CFG->map_settings->event_details_map_height = 
+				 isset( $this->_req_data['event_details_map_height'] ) 
+				? absint( $this->_req_data['event_details_map_height'] ) 
+				: $this->EE->CFG->map_settings->event_details_map_height;
 
-		$data['map_settings']['ee_map_zoom_single'] = 
-				 isset( $this->_req_data['ee_map_zoom_single'] ) 
-				? absint( $this->_req_data['ee_map_zoom_single'] ) 
-				: 14;
+		$this->EE->CFG->map_settings->event_details_map_zoom = 
+				 isset( $this->_req_data['event_details_map_zoom'] ) 
+				? absint( $this->_req_data['event_details_map_zoom'] ) 
+				: $this->EE->CFG->map_settings->event_details_map_zoom;
 
-		$data['map_settings']['ee_map_nav_display_single'] = 
-				 isset( $this->_req_data['ee_map_nav_display_single'] ) 
-				? absint( $this->_req_data['ee_map_nav_display_single'] ) 
-				: TRUE;
+		$this->EE->CFG->map_settings->event_details_display_nav = 
+				 isset( $this->_req_data['event_details_display_nav'] ) 
+				? absint( $this->_req_data['event_details_display_nav'] ) 
+				: $this->EE->CFG->map_settings->event_details_display_nav;
 
-		$data['map_settings']['ee_map_nav_size_single'] = 
-				 isset( $this->_req_data['ee_map_nav_size_single'] ) 
-				? absint( $this->_req_data['ee_map_nav_size_single'] ) 
-				: FALSE;
+		$this->EE->CFG->map_settings->event_details_nav_size = 
+				 isset( $this->_req_data['event_details_nav_size'] ) 
+				? absint( $this->_req_data['event_details_nav_size'] ) 
+				: $this->EE->CFG->map_settings->event_details_nav_size;
 
-		$data['map_settings']['ee_map_type_control_single'] = 
-				 isset( $this->_req_data['ee_map_type_control_single'] ) 
-				? sanitize_text_field( $this->_req_data['ee_map_type_control_single'] ) 
-				: 'default';
+		$this->EE->CFG->map_settings->event_details_control_type = 
+				 isset( $this->_req_data['event_details_control_type'] ) 
+				? sanitize_text_field( $this->_req_data['event_details_control_type'] ) 
+				: $this->EE->CFG->map_settings->event_details_control_type;
 
-		$data['map_settings']['ee_map_align_single'] = 
-				 isset( $this->_req_data['ee_map_align_single'] ) 
-				? sanitize_text_field( $this->_req_data['ee_map_align_single'] ) 
-				: 'right';
+		$this->EE->CFG->map_settings->event_details_map_align = 
+				 isset( $this->_req_data['event_details_map_align'] ) 
+				? sanitize_text_field( $this->_req_data['event_details_map_align'] ) 
+				: $this->EE->CFG->map_settings->event_details_map_align;
 
-		$data['map_settings']['ee_map_width'] = 
-				 isset( $this->_req_data['ee_map_width'] ) 
-				? absint( $this->_req_data['ee_map_width'] ) 
-				: 300;
+		$this->EE->CFG->map_settings->event_list_map_width = 
+				 isset( $this->_req_data['event_list_map_width'] ) 
+				? absint( $this->_req_data['event_list_map_width'] ) 
+				: $this->EE->CFG->map_settings->event_list_map_width;
 
-		$data['map_settings']['ee_map_height'] = 
-				 isset( $this->_req_data['ee_map_height'] ) 
-				? absint( $this->_req_data['ee_map_height'] ) 
-				: 185;
+		$this->EE->CFG->map_settings->event_list_map_height = 
+				 isset( $this->_req_data['event_list_map_height'] ) 
+				? absint( $this->_req_data['event_list_map_height'] ) 
+				: $this->EE->CFG->map_settings->event_list_map_height;
 
-		$data['map_settings']['ee_map_zoom'] = 
-				 isset( $this->_req_data['ee_map_zoom'] ) 
-				? absint( $this->_req_data['ee_map_zoom'] ) 
-				: 11;
+		$this->EE->CFG->map_settings->event_list_map_zoom = 
+				 isset( $this->_req_data['event_list_map_zoom'] ) 
+				? absint( $this->_req_data['event_list_map_zoom'] ) 
+				: $this->EE->CFG->map_settings->event_list_map_zoom;
 
-		$data['map_settings']['ee_map_nav_display'] = 
-				 isset( $this->_req_data['ee_map_nav_display'] ) 
-				? absint( $this->_req_data['ee_map_nav_display'] ) 
-				: FALSE;
+		$this->EE->CFG->map_settings->event_list_display_nav = 
+				 isset( $this->_req_data['event_list_display_nav'] ) 
+				? absint( $this->_req_data['event_list_display_nav'] ) 
+				: $this->EE->CFG->map_settings->event_list_display_nav;
 
-		$data['map_settings']['ee_map_nav_size'] = 
-				 isset( $this->_req_data['ee_map_nav_size'] ) 
-				? absint( $this->_req_data['ee_map_nav_size'] ) 
-				: TRUE;
+		$this->EE->CFG->map_settings->event_list_nav_size = 
+				 isset( $this->_req_data['event_list_nav_size'] ) 
+				? absint( $this->_req_data['event_list_nav_size'] ) 
+				: $this->EE->CFG->map_settings->event_list_nav_size;
 
-		$data['map_settings']['ee_map_type_control'] = 
-				 isset( $this->_req_data['ee_map_type_control'] ) 
-				? sanitize_text_field( $this->_req_data['ee_map_type_control'] ) 
-				: 'default';
+		$this->EE->CFG->map_settings->event_list_control_type = 
+				 isset( $this->_req_data['event_list_control_type'] ) 
+				? sanitize_text_field( $this->_req_data['event_list_control_type'] ) 
+				: $this->EE->CFG->map_settings->event_list_control_type;
 
-		$data['map_settings']['ee_map_align'] = 
-				 isset( $this->_req_data['ee_map_align'] ) 
-				? sanitize_text_field( $this->_req_data['ee_map_align'] ) 
-				: 'right';
+		$this->EE->CFG->map_settings->event_list_map_align = 
+				 isset( $this->_req_data['event_list_map_align'] ) 
+				? sanitize_text_field( $this->_req_data['event_list_map_align'] ) 
+				: $this->EE->CFG->map_settings->event_list_map_align;
 
-		$data = apply_filters('FHEE_google_map_settings_save', $data);	
+		$this->EE->CFG->map_settings = apply_filters('FHEE_google_map_settings_save', $this->EE->CFG->map_settings);	
 		
 		$what = 'Google Map Settings';
-		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG->map_settings, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'google_map_settings' ) );
 		
 	}
@@ -563,17 +559,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _your_organization_settings() {
 	
-		$this->_template_args['site_license_key'] = isset( $this->EE->CFG->site_license_key ) ? $this->_display_nice( $this->EE->CFG->site_license_key ) : '';
-		$this->_template_args['default_logo_url'] = isset( $this->EE->CFG->organization->logo_url ) ? $this->_display_nice( $this->EE->CFG->organization->logo_url ) : FALSE;
-		$this->_template_args['organization'] = isset( $this->EE->CFG->organization->name ) ? $this->_display_nice( $this->EE->CFG->organization->name ) : '';
-		$this->_template_args['organization_street1'] = isset( $this->EE->CFG->organization->address_1 ) ? $this->_display_nice( $this->EE->CFG->organization->address_1 ) : '';
-		$this->_template_args['organization_street2'] = isset( $this->EE->CFG->organization->address_2 ) ? $this->_display_nice( $this->EE->CFG->organization->address_2 ) : '';
+		$this->_template_args['site_license_key'] = isset( $this->EE->CFG->core->site_license_key ) ? $this->_display_nice( $this->EE->CFG->core->site_license_key ) : '';
+		$this->_template_args['organization_name'] = isset( $this->EE->CFG->organization->name ) ? $this->_display_nice( $this->EE->CFG->organization->name ) : '';
+		$this->_template_args['organization_address_1'] = isset( $this->EE->CFG->organization->address_1 ) ? $this->_display_nice( $this->EE->CFG->organization->address_1 ) : '';
+		$this->_template_args['organization_address_2'] = isset( $this->EE->CFG->organization->address_2 ) ? $this->_display_nice( $this->EE->CFG->organization->address_2 ) : '';
 		$this->_template_args['organization_city'] = isset( $this->EE->CFG->organization->city ) ? $this->_display_nice( $this->EE->CFG->organization->city ) : '';
 		$this->_template_args['organization_state'] = isset( $this->EE->CFG->organization->STA_ID ) ? $this->_display_nice( $this->EE->CFG->organization->STA_ID ) : '';
 		$this->_template_args['organization_zip'] = isset( $this->EE->CFG->organization->zip ) ? $this->_display_nice( $this->EE->CFG->organization->zip ) : '';
 		$this->_template_args['organization_country'] = isset( $this->EE->CFG->organization->CNT_ISO ) ? $this->_display_nice( $this->EE->CFG->organization->CNT_ISO ) : '';
-		$this->_template_args['contact_email'] = isset( $this->EE->CFG->organization->email ) ? $this->_display_nice( $this->EE->CFG->organization->email ) : '';
+		$this->_template_args['organization_email'] = isset( $this->EE->CFG->organization->email ) ? $this->_display_nice( $this->EE->CFG->organization->email ) : '';
 		$this->_template_args['currency_symbol'] = isset( $this->EE->CFG->currency->sign ) ? $this->_display_nice( $this->EE->CFG->currency->sign ) : '$';
+		$this->_template_args['default_logo_url'] = isset( $this->EE->CFG->organization->logo_url ) ? $this->_display_nice( $this->EE->CFG->organization->logo_url ) : FALSE;
 		//UXIP settings
 		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin' );
 
@@ -591,17 +587,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_your_organization_settings() {
 		
-		$data = array();
+		$this->EE->CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : $this->EE->CFG->core->site_license_key;
+		$this->EE->CFG->organization->name = isset( $this->_req_data['organization_name'] ) ? sanitize_text_field( $this->_req_data['organization_name'] ) : $this->EE->CFG->organization->name;
+		$this->EE->CFG->organization->address_1 = isset( $this->_req_data['organization_address_1'] ) ? sanitize_text_field( $this->_req_data['organization_address_1'] ) : $this->EE->CFG->organization->address_1;
+		$this->EE->CFG->organization->address_2 = isset( $this->_req_data['organization_address_2'] ) ? sanitize_text_field( $this->_req_data['organization_address_2'] ) : $this->EE->CFG->organization->address_2;
+		$this->EE->CFG->organization->city = isset( $this->_req_data['organization_city'] ) ? sanitize_text_field( $this->_req_data['organization_city'] ) : $this->EE->CFG->organization->city;
+		$this->EE->CFG->organization->STA_ID = isset( $this->_req_data['organization_state'] ) ? sanitize_text_field( $this->_req_data['organization_state'] ) : $this->EE->CFG->organization->STA_ID;
+		$this->EE->CFG->organization->CNT_ISO = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : $this->EE->CFG->organization->CNT_ISO;
+		$this->EE->CFG->organization->zip = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : $this->EE->CFG->organization->zip;
+		$this->EE->CFG->organization->email = isset( $this->_req_data['organization_email'] ) ? sanitize_email( $this->_req_data['organization_email'] ) : $this->EE->CFG->organization->email;
 		$data['default_logo_url'] = isset( $this->_req_data['default_logo_url'] ) ? esc_url_raw( $this->_req_data['default_logo_url'] ) : NULL;
-		$data['organization'] = isset( $this->_req_data['organization'] ) ? sanitize_text_field( $this->_req_data['organization'] ) : NULL;
-		$data['organization_street1'] = isset( $this->_req_data['organization_street1'] ) ? sanitize_text_field( $this->_req_data['organization_street1'] ) : NULL;
-		$data['organization_street2'] = isset( $this->_req_data['organization_street2'] ) ? sanitize_text_field( $this->_req_data['organization_street2'] ) : NULL;
-		$data['organization_city'] = isset( $this->_req_data['organization_city'] ) ? sanitize_text_field( $this->_req_data['organization_city'] ) : NULL;
-		$data['organization_state'] = isset( $this->_req_data['organization_state'] ) ? sanitize_text_field( $this->_req_data['organization_state'] ) : NULL;
-		$data['organization_zip'] = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : NULL;
-		$data['organization_country'] = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : NULL;
-		$data['contact_email'] = isset( $this->_req_data['contact_email'] ) ? sanitize_email( $this->_req_data['contact_email'] ) : NULL;
-		$data['site_license_key'] = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : NULL;
 		$data['ee_ueip_optin'] = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : 'yes'; 
 
 		$data = apply_filters('FHEE_your_organization_settings_save', $data);	
