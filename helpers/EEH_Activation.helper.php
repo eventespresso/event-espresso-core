@@ -436,10 +436,16 @@ class EEH_Activation {
 			$default_config = new stdClass();
 			// core configuration
 			$default_config->core = new stdClass();
+			$default_config->core->site_license_key = NULL;
+			$default_config->core->ee_ueip_optin = TRUE;
 			$default_config->core->post_shortcodes = array();
 			$default_config->core->module_route_map = array();
 			$default_config->core->module_forward_map = array();
 			$default_config->core->module_view_map = array();
+			$default_config->core->reg_page_id = FALSE;
+			$default_config->core->txn_page_id = FALSE;
+			$default_config->core->thank_you_page_id = FALSE;
+			$default_config->core->cancel_page_id = FALSE;
 			// organization settings
 			$default_config->organization = new stdClass();
 			$default_config->organization->name = get_bloginfo('name');
@@ -459,8 +465,8 @@ class EEH_Activation {
 			$default_config->currency->sign =  '$'; 	// currency sign: $
 			$default_config->currency->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
 			$default_config->currency->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
-			$default_config->currency->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' - 0.01
-			$default_config->currency->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' - 1.000
+			$default_config->currency->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+			$default_config->currency->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
 			// registration settings
 			$default_config->registration = new stdClass();
 			$default_config->registration->default_STS_ID = 'RPN'; 	// default reg status
@@ -469,24 +475,31 @@ class EEH_Activation {
 			$default_config->registration->use_attendee_pre_approval = FALSE;
 			// general admin settings
 			$default_config->admin = new stdClass();
-			$default_config->admin->events_in_dasboard = 30;
 			$default_config->admin->use_venue_manager = TRUE;
 			$default_config->admin->use_personnel_manager = TRUE;
+			$default_config->admin->use_dashboard_widget = TRUE;
+			$default_config->admin->events_in_dasboard = 30;
+			$default_config->admin->use_event_timezones = FALSE;
+			$default_config->admin->use_full_logging = FALSE;
+			$default_config->admin->use_remote_logging = FALSE;
+			$default_config->admin->remote_logging_url = NULL;
+			$default_config->admin->show_reg_footer = TRUE;
+			$default_config->admin->affiliate_id = NULL;
 			// template settings
 			$default_config->template_settings = new stdClass();
 			$default_config->template_settings->enable_default_style = TRUE;
-			$default_config->template_settings->show_reg_footer = TRUE;
 			$default_config->template_settings->display_address_in_regform = TRUE;
 			$default_config->template_settings->display_description_on_multi_reg_page = FALSE;
 			$default_config->template_settings->use_custom_templates = FALSE;
 			// map settings
 			$default_config->map_settings = new stdClass();
+			$default_config->map_settings->use_google_maps = TRUE;
 			// for event details pages (reg page)
 			$default_config->map_settings->event_details_map_width = 585; 			// ee_map_width_single
 			$default_config->map_settings->event_details_map_height = 362; 			// ee_map_height_single
 			$default_config->map_settings->event_details_map_zoom = 14; 			// ee_map_zoom_single
 			$default_config->map_settings->event_details_display_nav = TRUE; 			// ee_map_nav_display_single
-			$default_config->map_settings->event_details_nav_size = 'default'; 			// ee_map_nav_size_single
+			$default_config->map_settings->event_details_nav_size = FALSE; 			// ee_map_nav_size_single
 			$default_config->map_settings->event_details_control_type = 'default'; 		// ee_map_type_control_single
 			$default_config->map_settings->event_details_map_align = 'center'; 			// ee_map_align_single
 			// for event list pages
@@ -494,8 +507,8 @@ class EEH_Activation {
 			$default_config->map_settings->event_list_map_height = 185; 		// ee_map_height
 			$default_config->map_settings->event_list_map_zoom = 12; 			// ee_map_zoom
 			$default_config->map_settings->event_list_display_nav = FALSE; 		// ee_map_nav_display
-			$default_config->map_settings->event_list_nav_size = 'default'; 			// ee_map_nav_size
-			$default_config->map_settings->event_list_control_type = 'default'; 		// ee_map_type_control
+			$default_config->map_settings->event_list_nav_size = TRUE; 			// ee_map_nav_size
+			$default_config->map_settings->event_list_control_type = 'dropdown'; 		// ee_map_type_control
 			$default_config->map_settings->event_list_map_align = 'center'; 			// ee_map_align
 
 			

@@ -16,66 +16,34 @@
 
 	<table class="form-table">
 		<tbody>
-			<?php
-			if ( $event_ssl_active ) : //Check to see if we are using the deprecated SSL option. If we are, recommend updating to WordPress HTTPS (SSL) ?>
-
-			<tr>
-				<td colspan="2">
-					<div id="ssl-reg" style="background-color: #ffffe0; border: #e6db55 1px solid; padding:4px;">
-						<p>
-							<strong>
-								<?php _e('Attention!', 'event_espresso');?>
-							</strong><br /><?php _e('The Secure Payment System has been removed.', 'event_espresso');?>
-						</p>
-						<p>
-							<?php
-							echo sprintf(
-								__('If your site uses SSL to handle secure transactions. Please install the %s plugin now.', 'event_espresso'),
-								'<a href="http://ee-updates.s3.amazonaws.com/espresso-https.1.0.zip" title="Install Now">Event Espresso SSL/HTTPS</a>'
-							);
-							?>
-							<a href="http://eventespresso.com/forums/2011/09/use-wordpress-https-for-ssl-encryption-on-your-event-espresso-site/" target="_blank">
-								<?php _e( 'More information here.', 'event_espresso')?>
-							</a>
-						</p>
-						<label for="event_ssl_active">
-							<?php _e('Turn off this message?', 'event_espresso'); ?>
-						</label>
-						<br />
-						<?php echo select_input('event_ssl_active', $values, $event_ssl_active ); ?>
-						<br/>
-					</div>
-				</td>
-			</tr>
-			<?php endif; ?>
 
 			<tr>
 				<th>
-					<label for="event_page_id">
+					<label for="reg_page_id">
 						<strong>
 							<?php _e('Event Registration Page', 'event_espresso'); ?>
 						</strong>
 						<?php echo EE_Template::get_help_tab_link('registration_page_info'); ?>
 						<br />
-						<?php echo General_Settings_Admin_Page::edit_view_links( $event_page_id );?>
+						<?php echo General_Settings_Admin_Page::edit_view_links( $reg_page_id );?>
 					</label>
 				</th>
 				<td>
-					<select name="event_page_id" data-placeholder="Choose a page...">
+					<select name="reg_page_id" data-placeholder="Choose a page...">
 						<option value="0">
 							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
-						<?php General_Settings_Admin_Page::page_settings_dropdown( $event_page_id ); ?>
+						<?php General_Settings_Admin_Page::page_settings_dropdown( $reg_page_id ); ?>
 					</select>
 					<span>
-						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $event_reg_page, '[ESPRESSO_EVENTS]' ); ?>
+						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $reg_page_obj, '[ESPRESSO_REGISTRATIONS]' ); ?>
 					</span>
 					<br />
 					<p class="description">
 						<?php
 						echo sprintf(
 							__("This page can be hidden from navigation if desired, but should always contain the %s shortcode.", 'event_espresso'),
-							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_EVENTS]</span>'
+							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_REGISTRATIONS]</span>'
 						);
 						?>
 					</p>
@@ -85,59 +53,25 @@
 
 			<tr>
 				<th>
-					<label for="return_url">
-						<strong>
-							<?php _e('Thank You Page', 'event_espresso'); ?>
-						</strong>
-						<?php echo EE_Template::get_help_tab_link('return_url_info'); ?>
-						<br />
-						<?php echo General_Settings_Admin_Page::edit_view_links( $return_url );?>
-					</label>
-				</th>
-				<td>
-					<select name="return_url" data-placeholder="Choose a page...">
-						<option value="0">
-							<?php _e('Main Page', 'event_espresso'); ?>
-						</option>
-						<?php General_Settings_Admin_Page::page_settings_dropdown( $return_url ); ?>
-					</select>
-					<span>
-						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $thank_you_page, '[ESPRESSO_PAYMENTS]' ); ?>
-					</span>
-					<br />
-					<p class="description">
-						<?php
-						echo sprintf(
-							__( 'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain the %s shortcode.', 'event_espresso' ),
-							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_PAYMENTS]</span>'
-						);
-						?>
-					</p>
-					<br/><br/>
-				</td>
-			</tr>
-
-			<tr>
-				<th>
-					<label for="notify_url">
+					<label for="txn_page_id">
 						<strong>
 							<?php _e('Transactions Page', 'event_espresso'); ?>
 						</strong>
 						<?php echo EE_Template::get_help_tab_link('notify_url_info'); ?>
 						<br />
 						<span class="lt-grey-text"><?php _e('Notify URL (processes payments)', 'event_espresso'); ?></span><br/>
-						<?php echo General_Settings_Admin_Page::edit_view_links( $notify_url );?>
+						<?php echo General_Settings_Admin_Page::edit_view_links( $txn_page_id );?>
 					</label>
 				</th>
 				<td>
-					<select name="notify_url" data-placeholder="Choose a page...">
+					<select name="txn_page_id" data-placeholder="Choose a page...">
 						<option value="0">
 							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
-						<?php General_Settings_Admin_Page::page_settings_dropdown( $notify_url ); ?>
+						<?php General_Settings_Admin_Page::page_settings_dropdown( $txn_page_id ); ?>
 					</select>
 					<span>
-						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $transactions_page, '[ESPRESSO_TXN_PAGE]' ); ?>
+						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $txn_page_obj, '[ESPRESSO_TXN_PAGE]' ); ?>
 					</span>
 					<br />
 					<p class="description">
@@ -154,24 +88,58 @@
 
 			<tr>
 				<th>
-					<label for="cancel_return">
+					<label for="thank_you_page_id">
+						<strong>
+							<?php _e('Thank You Page', 'event_espresso'); ?>
+						</strong>
+						<?php echo EE_Template::get_help_tab_link('return_url_info'); ?>
+						<br />
+						<?php echo General_Settings_Admin_Page::edit_view_links( $thank_you_page_id );?>
+					</label>
+				</th>
+				<td>
+					<select name="thank_you_page_id" data-placeholder="Choose a page...">
+						<option value="0">
+							<?php _e('Main Page', 'event_espresso'); ?>
+						</option>
+						<?php General_Settings_Admin_Page::page_settings_dropdown( $thank_you_page_id ); ?>
+					</select>
+					<span>
+						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $thank_you_page_obj, '[ESPRESSO_THANK_YOU]' ); ?>
+					</span>
+					<br />
+					<p class="description">
+						<?php
+						echo sprintf(
+							__( 'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain the %s shortcode.', 'event_espresso' ),
+							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_THANK_YOU]</span>'
+						);
+						?>
+					</p>
+					<br/><br/>
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="cancel_page_id">
 						<strong>
 							<?php _e('Cancel/Return Page', 'event_espresso'); ?>
 						</strong>
 						<?php echo EE_Template::get_help_tab_link('cancel_return_info'); ?>
 						<br />
-						<?php echo General_Settings_Admin_Page::edit_view_links( $cancel_return );?>
+						<?php echo General_Settings_Admin_Page::edit_view_links( $cancel_page_id );?>
 					</label>
 				</th>
 				<td>
-					<select name="cancel_return" data-placeholder="Choose a page...">
+					<select name="cancel_page_id" data-placeholder="Choose a page...">
 						<option value="0">
 							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
-						<?php General_Settings_Admin_Page::page_settings_dropdown( $cancel_return ); ?>
+						<?php General_Settings_Admin_Page::page_settings_dropdown( $cancel_page_id ); ?>
 					</select>
 					<span>
-						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $cancel_return_page, '[ESPRESSO_CANCELLED]' ); ?>
+						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $cancel_page_obj, '[ESPRESSO_CANCELLED]' ); ?>
 					</span>
 					<br />
 					<p class="description">

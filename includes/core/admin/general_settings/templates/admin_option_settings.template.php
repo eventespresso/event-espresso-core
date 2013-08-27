@@ -11,12 +11,12 @@
 			<tr>
 
 				<th>
-					<label for="espresso_dashboard_widget">
+					<label for="use_dashboard_widget">
 						<?php _e('Upcoming Events Widget', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('espresso_dashboard_widget', $values, $espresso_dashboard_widget ); ?>
+					<?php echo EE_Form_Fields::select_input('use_dashboard_widget', $values, $use_dashboard_widget ); ?>
 					<p class="description">
 						<?php _e('Activates the Upcoming Events Widget in the WordPress Dashboard so that you can see a list of upcoming events as soon as you log in.', 'event_espresso'); ?>
 					</p>
@@ -41,7 +41,7 @@
 
 	<table class="form-table">
 		<tbody>
-
+		
 			<tr>
 				<th>
 					<?php _e('Current Time: ', 'event_espresso'); ?>
@@ -54,30 +54,31 @@
 						<a class="change-date-time" href="options-general.php" target="_blank">
 							<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
 						</a><br />
-						<span class="important">
-							<?php _e('Note:', 'event_espresso'); ?>
+						<span class="reminder-spn">
+							<?php _e('Note: You must set the time zone for your city, or the city closest to you. <b>UTC time will not work</b>.', 'event_espresso'); ?>
+							<a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg?TB_iframe=true&height=200&width=630" class="thickbox">
+								<?php _e('View an example?', 'event_espresso'); ?>
+							</a>
 						</span>
-						<?php _e('You must set the time zone for your city, or the city closest to you. UTC time will not work.', 'event_espresso'); ?>
-						<a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg?TB_iframe=true&height=200&width=630" class="thickbox">
-							<?php _e('View an example?', 'event_espresso'); ?>
-						</a>
 					</p>
 				</td>
 			</tr>
 
-			<!--			<tr>
-			<th>
-			<label>
-			<?php _e('Custom Time Zone for Each Event', 'event_espresso'); ?>
-			</label>
-			</th>
-			<td>
-			<?php echo EE_Form_Fields::select_input('use_event_timezones', $values, $use_event_timezones ); ?>
-			<p class="description">
-			<?php _e('This allows you to set a custom time zone for each event. Modificatiosn to your site may be required for this to work properly.', 'event_espresso'); ?>
-			</p>
-			</td>
-			</tr>-->
+			<?php if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
+			<tr>
+				<th>
+					<label>
+					<?php _e('Custom Time Zone for Each Event', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EE_Form_Fields::select_input('use_event_timezones', $values, $use_event_timezones ); ?>
+					<p class="description">
+					<?php _e('This allows you to set a custom time zone for each event. Modificatiosn to your site may be required for this to work properly.', 'event_espresso'); ?>
+					</p>
+				</td>
+			</tr>
+			<?php endif; ?>
 
 		</tbody>
 	</table>
@@ -95,11 +96,11 @@
 					<?php echo EE_Template::get_help_tab_link('full_logging_info'); ?>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('full_logging', $values, $full_logging ); ?>
+					<?php echo EE_Form_Fields::select_input('use_full_logging', $values, $use_full_logging ); ?>
 					<p class="description">
-						<span class="red_text">
+						<span class="reminder-spn">
 							<?php _e('Please use caution when using this feature. These files may be publicly available.', 'event_espresso'); ?>
-						</span>&nbsp;&nbsp;
+						</span><br/>
 						<?php echo sprintf( __('File is available at: %s', 'event_espresso'), '<b>/wp-content/uploads/espresso/logs/</b>' ); ?>
 					</p>
 
@@ -112,7 +113,7 @@
 					<?php echo EE_Template::get_help_tab_link('remote_logging_info'); ?>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('remote_logging', $values, $remote_logging ); ?>
+					<?php echo EE_Form_Fields::select_input('use_remote_logging', $values, $use_remote_logging ); ?>
 					<p class="description">
 						<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
 					</p>
@@ -146,7 +147,7 @@
 			<tr>
 				<th>
 					<label>
-						<?php _e('Link to Event Espresso in your Registration Page', 'event_espresso'); ?>
+						<?php _e('Link to Event Espresso from your Registration Page footer?', 'event_espresso'); ?>
 						<?php echo EE_Template::get_help_tab_link('affiliate_info'); ?>
 					</label>
 				</th>

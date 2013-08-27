@@ -117,7 +117,6 @@ class espresso_log {
 
 }
 
-global $org_options;
 
 //Create logging function and action
 function espresso_log($file, $function, $message) {
@@ -128,7 +127,7 @@ function espresso_log_shortcode_parser( $file, $function, $message ) {
 	espresso_log::singleton()->log(array('file' => $file, 'function' => $function, 'status' => $message, 'type' => 'shortcode_parser') );
 }
 
-if (!empty($org_options['full_logging'])) {
+if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
 	add_action('AHEE_log', 'espresso_log', 10, 3);
 	add_action('AHEE_log_shortcode_parser', 'espresso_log_shortcode', 10, 3);
 	add_action('AHEE_debug_file', 'espresso_debug_file');	
@@ -140,17 +139,14 @@ function espresso_remote_log($file, $function, $message) {
 }
 
 function espresso_send_log() {
-	global $org_options;
 
-	if (empty($org_options['remote_logging_url'])) {
+	if ( empty( EE_Registry::instance()->CFG->admin->remote_logging_url )) {
 		return;
 	}
-	$url = $org_options['remote_logging_url'];
-	espresso_log::singleton()->send_log($url);
+	espresso_log::singleton()->send_log( EE_Registry::instance()->CFG->admin->remote_logging_url );
 }
 
-if (!empty($org_options['remote_logging'])) {
-	//echo "<pre>".print_r($org_options,true)."</pre>";
+if ( EE_Registry::instance()->CFG->admin->use_remote_logging ) {
 	add_action('AHEE_log', 'espresso_remote_log', 10, 3);
 	add_action('wp_footer', 'espresso_send_log');
 }

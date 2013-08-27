@@ -282,7 +282,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('FHEE_payment_settings_save', $data);	
 		
 		$what = __('Payment Settings','event_espresso');
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, __('updated','event_espresso'), array( 'action' => 'payment_settings' ) );
 				
 	}

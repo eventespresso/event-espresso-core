@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
 /*
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://eventespresso.com/
@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.002';
+	return '4.1.003';
 }
 //Returns the template version
 function espresso_template_version() {
