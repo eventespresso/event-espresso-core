@@ -37,12 +37,12 @@
 		<tbody>
 			<tr>
 				<th>
-					<label for="organization">
+					<label for="organization_name">
 						<?php _e('Organization Name:', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization" value="<?php echo $organization; ?>" />
+					<input class="regular-text" type="text" name="organization_name" value="<?php echo $organization_name; ?>" />
 					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
 					</p>
@@ -50,12 +50,12 @@
 			</tr>
 			<tr>
 				<th>
-					<label for="organization_street1">
+					<label for="organization_address_1">
 						<?php _e('Street Address:', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_street1" value="<?php echo $organization_street1; ?>" />
+					<input class="regular-text" type="text" name="organization_address_1" value="<?php echo $organization_address_1; ?>" />
 					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
 					</p>
@@ -63,12 +63,12 @@
 			</tr>
 			<tr>
 				<th>
-					<label for="organization_street2">
+					<label for="organization_address_2">
 						<?php _e('Street Address 2:', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_street2" value="<?php echo $organization_street2; ?>" />
+					<input class="regular-text" type="text" name="organization_address_2" value="<?php echo $organization_address_2; ?>" />
 					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
 					</p>
@@ -122,7 +122,7 @@
 				<td>
 					<?php printCountriesSelector( 'organization_country', $organization_country ); ?>
 					<p class="description">
-						<?php echo _e('currency sign: ', 'event_espresso') . $currency_symbol; ?>
+						<?php echo _e('currency sign: ', 'event_espresso') . $currency_sign; ?>
 					</p>
 					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
@@ -131,12 +131,12 @@
 			</tr>
 			<tr>
 				<th>
-					<label for="contact_email">
+					<label for="organization_email">
 						<?php _e('Primary Contact Email:', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="contact_email" value="<?php echo $contact_email; ?>" />
+					<input class="regular-text" type="text" name="organization_email" value="<?php echo $organization_email; ?>" />
 					<p class="description">
 						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
 					</p>
