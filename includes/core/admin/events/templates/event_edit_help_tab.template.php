@@ -16,18 +16,10 @@ function event_date_info_help_tab_html() {
 
 
 
-function reg_date_info_help_tab_html() {
+function ticket_options_info_help_tab_html() {
 	?>
 	<p>
-		<?php _e('The event will automatically turn the registration form on and off between these dates and times.', 'event_espresso'); ?>
-	</p>
-	<p><strong>
-			<?php _e('Note:', 'event_espresso'); ?>
-		</strong>
-		<?php _e('If the date of your event occurs before the regisration end date. Then the registation form will be displayed and also accept registrations.', 'event_espresso'); ?>
-	</p>
-	<p>
-		<?php _e('All events require registration start/end dates and start/end times in order to display properly on your pages.', 'event_espresso'); ?>
+		TODO: The text for this needs to be done.  See includes/core/admin/events/templates/event_edit_help_tab.template.php
 	</p>
 	<?php
 }
