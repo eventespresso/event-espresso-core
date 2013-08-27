@@ -24,6 +24,7 @@
 class EEH_Activation {
 
 
+
 	/**
 	 * 	plugin_activation
 	 *
@@ -40,48 +41,34 @@ class EEH_Activation {
 	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
 	    check_admin_referer( "activate-plugin_{$plugin}" );		
 
-		$prev_version = get_option( 'events_detail_tbl_version' );
-		if ( $prev_version && version_compare( $prev_version, '3.2.0', '<=' )) {
+		// load org options
+		add_filter( 'FHEE_load_org_options', '__return_true' );
+		// don't need JS when we load the system files, so turn it off
+		add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
+		// turn rewrite rule flushing on
+		add_filter( 'FHEE_flush_rewrite_rules', '__return_true' );
+		// load core system files
+		require_once( EE_CORE . 'EE_System.core.php' );
+		EE_System::instance( TRUE );
 		
-			wp_die( '
-			<h2 style="color:red; font-size:2em; text-align:center;">' . __( 'Warning!', 'event_espresso' ) . '</h2>
-			<p style="font-size:1.4em; text-align:center;">
-				' . __( 'THERE ARE NO DATA MIGRATION SCRIPTS AVAILABLE YET FOR IMPORTING YOUR EXISTING DATA INTO EVENT ESPRESSO 4+.<br/><br/>If you wish to activate Event Espresso, please backup your existing data and remove the tables from the database, or utilize a fresh install of WordPress.<br/><br/><span style="font-size:.7em;">Please press the back button on your browser to return to the plugins page.</span>', 'event_espresso' ) . '
-			</p>');
-
-		} else {
-			
-			// load org options
-			add_filter( 'FHEE_load_org_options', '__return_true' );
-			// don't need JS when we load the system files, so turn it off
-			add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-			// turn rewrite rule flushing on
-			add_filter( 'FHEE_flush_rewrite_rules', '__return_true' );
-			// load core system files
-			require_once( EE_CORE . 'EE_System.core.php' );
-			EE_System::instance( TRUE );
-			
-			if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
-				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
-				espresso_caffeinated_activation();
-			}
-
-			// not needed at the moment
-			//EEH_Activation::delete_unused_db_tables( $table_name );
-			EEH_Activation::initialize_system_questions();
-			EEH_Activation::create_upload_directories();
-			EEH_Activation::org_option_initialization();
-			// default data
-			EEH_Activation::insert_default_prices();
-			EEH_Activation::insert_default_price_types();
-			EEH_Activation::insert_default_status_codes();
-			EEH_Activation::insert_default_countries();
-			EEH_Activation::insert_default_states();
-			
-			EEH_Activation::generate_default_message_templates();
-			EEH_Activation::create_no_ticket_prices_array();
-
+		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
+			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
+			espresso_caffeinated_activation();
 		}
+
+		EEH_Activation::initialize_system_questions();
+		EEH_Activation::create_upload_directories();
+		EEH_Activation::configuration_initialization();
+		// default data
+		EEH_Activation::insert_default_prices();
+		EEH_Activation::insert_default_price_types();
+		EEH_Activation::insert_default_status_codes();
+		EEH_Activation::insert_default_countries();
+		EEH_Activation::insert_default_states();
+		
+		EEH_Activation::generate_default_message_templates();
+		EEH_Activation::create_no_ticket_prices_array();
+
 	}
 
 
@@ -434,82 +421,90 @@ class EEH_Activation {
 
 
 	/**
-	 * org_option_initialization
+	 * configuration_initialization
 	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function org_option_initialization( $missing_options = FALSE ) {
-		global $wpdb, $espresso_wp_user;
+	public static function configuration_initialization( $missing_options = FALSE ) {
 
-		$existing_org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
-		$existing_org_options = is_array( $existing_org_options ) ? $existing_org_options : array();
+		$espresso_config = get_option( 'espresso_config_' . get_current_blog_id(), NULL );
 		
-		if ( empty( $existing_org_options ) || $missing_options ) {
-			$default_org_options = array(
-					'organization' => get_bloginfo('name'),
-					'organization_street1' => '123 Onna Road',
-					'organization_street2' => 'PO Box 123',
-					'organization_city' => 'Inna City',
-					'organization_state' => 'AZ',
-					'organization_country' => 'US',
-					'organization_zip' => '12345',
-					'contact_email' => get_bloginfo('admin_email'),
-					'default_mail' => true,
-					'currency_code' => 'USD', 	// currency code: USD, CAD, EUR
-					'currency_name' => __( 'Dollar', 'event_espresso' ), 	// Dollar
-					'currency_plural' => __( 'Dollar', 'event_espresso' ), 	// Dollars
-					'currency_sign' => '$', 	// currency sign: $
-					'currency_sign_b4' => TRUE, 	// currency sign before or after: $TRUE  or  FALSE$
-					'currency_dec_plc' => 2, 	// decimal places: 2 = 0.00  3 = 0.000
-					'currency_dec_mrk' => '.', 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' - 0.01
-					'currency_thsnds' => ',', 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' - 1.000					
-					'default_logo_url' => '',
-					'default_reg_status' => 'RPN',
-					'pending_counts_reg_limit' => TRUE,
-					'events_in_dasboard' => '30',
-					'use_captcha' => false,
-					'expire_on_registration_end' => true,
-					'enable_default_style' => true,
-					'event_ssl_active' => false,
-					'use_venue_manager' => true,
-					'use_personnel_manager' => false,
-					'show_reg_footer' => true,
-					'use_attendee_pre_approval' => false,
-					'template_settings' => array(
-							'display_address_in_regform' => false,
-							'display_short_description_in_event_list' => true,
-							'display_address_in_event_list' => false,
-							'display_description_on_multi_reg_page' => false,
-							'display_description_in_event_list' => false,
-							'use_custom_templates' => false
-					),
-					'map_settings' => array(
-							'ee_map_width_single' => '300',
-							'ee_map_height_single' => '300',
-							'ee_map_zoom_single' => '12',
-							'ee_map_nav_display_single' => false,
-							'ee_map_nav_size_single' => 'default',
-							'ee_map_type_control_single' => 'default',
-							'ee_map_align_single' => '',
-							'ee_map_width' => '200',
-							'ee_map_height' => '200',
-							'ee_map_zoom' => '12',
-							'ee_map_nav_display' => false,
-							'ee_map_nav_size' => 'default',
-							'ee_map_type_control' => 'default',
-							'ee_map_align' => ''
-					),
-					'post_shortcodes' => array()
-			);
+		if ( empty( $espresso_config ) || $missing_options ) {
 			
-			$new_org_options = array_merge( $default_org_options, $existing_org_options );
-			update_user_meta( $espresso_wp_user, 'events_organization_settings', $new_org_options );
-			return self::initialize_config($new_org_options);
+			$default_config = new stdClass();
+			// core configuration
+			$default_config->core = new stdClass();
+			$default_config->core->post_shortcodes = array();
+			$default_config->core->module_route_map = array();
+			$default_config->core->module_forward_map = array();
+			$default_config->core->module_view_map = array();
+			// organization settings
+			$default_config->organization = new stdClass();
+			$default_config->organization->name = get_bloginfo('name');
+			$default_config->organization->address_1 = '123 Onna Road';
+			$default_config->organization->address_2 = 'PO Box 123';
+			$default_config->organization->city = 'Inna City';
+			$default_config->organization->STA_ID = 4;
+			$default_config->organization->CNT_ISO = 'US';
+			$default_config->organization->zip = '12345';
+			$default_config->organization->email = get_bloginfo('admin_email');
+			$default_config->organization->logo_url = '';
+			// currency settings
+			$default_config->currency = new stdClass();
+			$default_config->currency->code = 'USD'; 	// currency code: USD, CAD, EUR
+			$default_config->currency->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
+			$default_config->currency->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
+			$default_config->currency->sign =  '$'; 	// currency sign: $
+			$default_config->currency->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
+			$default_config->currency->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
+			$default_config->currency->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' - 0.01
+			$default_config->currency->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' - 1.000
+			// registration settings
+			$default_config->registration = new stdClass();
+			$default_config->registration->default_STS_ID = 'RPN'; 	// default reg status
+			$default_config->registration->pending_counts_reg_limit = TRUE;
+			$default_config->registration->use_captcha = FALSE;
+			$default_config->registration->use_attendee_pre_approval = FALSE;
+			// general admin settings
+			$default_config->admin = new stdClass();
+			$default_config->admin->events_in_dasboard = 30;
+			$default_config->admin->use_venue_manager = TRUE;
+			$default_config->admin->use_personnel_manager = TRUE;
+			// template settings
+			$default_config->template_settings = new stdClass();
+			$default_config->template_settings->enable_default_style = TRUE;
+			$default_config->template_settings->show_reg_footer = TRUE;
+			$default_config->template_settings->display_address_in_regform = TRUE;
+			$default_config->template_settings->display_description_on_multi_reg_page = FALSE;
+			$default_config->template_settings->use_custom_templates = FALSE;
+			// map settings
+			$default_config->map_settings = new stdClass();
+			// for event details pages (reg page)
+			$default_config->map_settings->event_details_map_width = 585; 			// ee_map_width_single
+			$default_config->map_settings->event_details_map_height = 362; 			// ee_map_height_single
+			$default_config->map_settings->event_details_map_zoom = 14; 			// ee_map_zoom_single
+			$default_config->map_settings->event_details_display_nav = TRUE; 			// ee_map_nav_display_single
+			$default_config->map_settings->event_details_nav_size = 'default'; 			// ee_map_nav_size_single
+			$default_config->map_settings->event_details_control_type = 'default'; 		// ee_map_type_control_single
+			$default_config->map_settings->event_details_map_align = 'center'; 			// ee_map_align_single
+			// for event list pages
+			$default_config->map_settings->event_list_map_width = 300; 			// ee_map_width
+			$default_config->map_settings->event_list_map_height = 185; 		// ee_map_height
+			$default_config->map_settings->event_list_map_zoom = 12; 			// ee_map_zoom
+			$default_config->map_settings->event_list_display_nav = FALSE; 		// ee_map_nav_display
+			$default_config->map_settings->event_list_nav_size = 'default'; 			// ee_map_nav_size
+			$default_config->map_settings->event_list_control_type = 'default'; 		// ee_map_type_control
+			$default_config->map_settings->event_list_map_align = 'center'; 			// ee_map_align
+
+			
+			$new_config = array_merge( (array)$default_config, (array)$espresso_config );
+			update_option( 'espresso_config_' . get_current_blog_id(), (object)$new_config );
+			return self::initialize_config($new_config);
 		
 		}
-		return self::initialize_config($existing_org_options);
+		return self::initialize_config($espresso_config);
 
 	}
 
@@ -517,19 +512,19 @@ class EEH_Activation {
 
 	/**
 	 * This simply takes an array of org_options, converts them to an object and returns
-	 * @param  array $cfg_options array of org_options
+	 * @param  array $espresso_config array of org_options
 	 * @return stdClass
 	 */
-	public static function initialize_config( $cfg_options ) {
+	public static function initialize_config( $espresso_config ) {
 		// force $this->EE->CFG into an object
-		if ( is_array( $cfg_options )) {
+		if ( is_array( $espresso_config )) {
 			$CFG = new stdClass();
-			foreach ( $cfg_options as $k => $v ) {
+			foreach ( $espresso_config as $k => $v ) {
 				$CFG->$k = $v;
 			}
 			return $CFG;
 		} else {
-			return array();
+			return $espresso_config;
 		}
 	}
 
@@ -911,7 +906,7 @@ class EEH_Activation {
 		// make sure it's an array
 		$espresso_db_update = is_array( $espresso_db_update ) ? $espresso_db_update : array( $espresso_db_update );
 		// add current EE version to list
-		$espresso_db_update[ EVENT_ESPRESSO_VERSION ] = date( 'Y-m-d H:i:s' );
+		$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
 		// resave
 		update_option( 'espresso_db_update', $espresso_db_update );
 		

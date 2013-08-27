@@ -278,10 +278,10 @@ final class EE_Front_Controller {
 			// if it's not set, then check if frontpage is blog
 			$current_post = ! empty( $current_post ) ? $current_post : get_option('show_on_front');
 			// make sure shortcodes are set
-			if ( isset( $this->EE->CFG->post_shortcodes )) {
-//				printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			if ( isset( $this->EE->CFG->core->post_shortcodes )) {
+//				printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				// cycle thru all posts with shortcodes set
-				foreach ( $this->EE->CFG->post_shortcodes as $post_name => $post_shortcodes ) {
+				foreach ( $this->EE->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 //					echo '<h4>$post_name : ' . $post_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 					// are we on this page ?
 					$term_exists = is_array( term_exists( $current_post, 'category' ));
@@ -301,7 +301,7 @@ final class EE_Front_Controller {
 								break;
 							}
 							//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-							if ( isset( $this->EE->CFG->post_shortcodes[ $current_post ] ) || $term_exists ) {
+							if ( isset( $this->EE->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
 								// let's pause to reflect on this...
 								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
 								// ensure that class is actually a shortcode
@@ -396,9 +396,9 @@ final class EE_Front_Controller {
 		// css is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_css', '__return_true' );
 		if ( apply_filters( 'FHEE_load_css', FALSE )) {
 			
-			$this->EE->CFG->style_settings['enable_default_style'] = TRUE;
+			$this->EE->CFG->template_settings->enable_default_style = TRUE;
 			//Load the ThemeRoller styles if enabled
-			if ( isset( $this->EE->CFG->style_settings['enable_default_style'] ) && $this->EE->CFG->style_settings['enable_default_style'] ) {
+			if ( isset( $this->EE->CFG->template_settings->enable_default_style ) && $this->EE->CFG->template_settings->enable_default_style ) {
 
 				add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
 				//Define the path to the ThemeRoller files

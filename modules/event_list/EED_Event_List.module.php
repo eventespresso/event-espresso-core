@@ -173,7 +173,8 @@ class EED_Event_List  extends EED_Module {
 		$this->_elf_category = $this->EE->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_category_dd' )) : '';
 		$display_expired_events = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
 		$this->_show_expired = $this->EE->REQ->is_set( 'elf_expired_chk' ) ? absint( $this->EE->REQ->get( 'elf_expired_chk' )) : FALSE;
-		self::$_default_view = $this->EE->REQ->is_set( 'elf_default_view' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_default_view' )) : EE_Registry::instance()->CFG->EED_Event_List['default_view'];
+		$default_view = isset( EE_Registry::instance()->CFG->EED_Event_List['default_view'] ) ? EE_Registry::instance()->CFG->EED_Event_List['default_view'] : 'grid';
+		self::$_default_view = $this->EE->REQ->is_set( 'elf_default_view' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_default_view' )) : $default_view;
 //		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		echo '<h4>$this->_elf_month : ' . $this->_elf_month . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->_elf_category : ' . $this->_elf_category . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -383,6 +384,7 @@ class EED_Event_List  extends EED_Module {
 			'display_address' => isset( $event_list_config['display_address'] ) && ! empty( $event_list_config['display_address'] ) ? $event_list_config['display_address'] : FALSE,
 			'display_venue' => isset( $event_list_config['display_venue'] ) && ! empty( $event_list_config['display_venue'] ) ? $event_list_config['display_venue'] : FALSE,
 			'display_expired_events' => isset( $event_list_config['display_expired_events'] ) && ! empty( $event_list_config['display_expired_events'] ) ? $event_list_config['display_expired_events'] : FALSE,
+			'hide_sold_out_events' => isset( $event_list_config['hide_sold_out_events'] ) && ! empty( $event_list_config['hide_sold_out_events'] ) ? $event_list_config['hide_sold_out_events'] : FALSE,
 			'default_view' => isset( $event_list_config['default_view'] ) && ! empty( $event_list_config['default_view'] ) ? $event_list_config['default_view'] : 'grid',
 			'event_list_grid_size' => isset( $event_list_config['event_list_grid_size'] ) && ! empty( $event_list_config['event_list_grid_size'] ) ? $event_list_config['event_list_grid_size'] : 'med',
 			'templates' => array(
