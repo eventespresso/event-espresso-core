@@ -596,13 +596,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->EE->CFG->organization->CNT_ISO = isset( $this->_req_data['organization_country'] ) ? absint( $this->_req_data['organization_country'] ) : $this->EE->CFG->organization->CNT_ISO;
 		$this->EE->CFG->organization->zip = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : $this->EE->CFG->organization->zip;
 		$this->EE->CFG->organization->email = isset( $this->_req_data['organization_email'] ) ? sanitize_email( $this->_req_data['organization_email'] ) : $this->EE->CFG->organization->email;
-		$this->EE->CFG->organization->logo_url = isset( $this->_req_data['default_logo_url'] ) ? esc_url_raw( $this->_req_data['default_logo_url'] ) : $this->EE->CFG->organization->logo_url;
+		$this->EE->CFG->organization->logo_url = isset( $this->_req_data['organization_logo_url'] ) ? esc_url_raw( $this->_req_data['organization_logo_url'] ) : $this->EE->CFG->organization->logo_url;
 		$this->EE->CFG->core->ee_ueip_optin = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : $this->EE->CFG->core->ee_ueip_optin; 
 
-		$this->EE->CFG = apply_filters('FHEE_your_organization_settings_save', $this->EE->CFG);	
+		$this->EE->CFG = apply_filters('FHEE_your_organization_settings_save', $this->EE->CFG );	
 		
 		$what = 'Your Organization Settings';
-		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
 		
 	}
@@ -615,16 +615,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	
 		$this->_template_args['values'] = $this->_yes_no_values;
 		
-		$this->_template_args['use_venue_manager'] = isset( $this->EE->CFG->use_venue_manager ) ? absint( $this->EE->CFG->use_venue_manager ) : FALSE;
-		$this->_template_args['use_personnel_manager'] = isset( $this->EE->CFG->use_personnel_manager ) ? absint( $this->EE->CFG->use_personnel_manager ) : FALSE;
-		$this->_template_args['espresso_dashboard_widget'] = isset( $this->EE->CFG->espresso_dashboard_widget ) ? absint( $this->EE->CFG->espresso_dashboard_widget ) : TRUE;
+		$this->_template_args['use_venue_manager'] = isset( $this->EE->CFG->admin->use_venue_manager ) ? absint( $this->EE->CFG->admin->use_venue_manager ) : FALSE;
+		$this->_template_args['use_personnel_manager'] = isset( $this->EE->CFG->admin->use_personnel_manager ) ? absint( $this->EE->CFG->admin->use_personnel_manager ) : FALSE;
+		$this->_template_args['use_dashboard_widget'] = isset( $this->EE->CFG->admin->use_dashboard_widget ) ? absint( $this->EE->CFG->admin->use_dashboard_widget ) : TRUE;
 		$this->_template_args['events_in_dasboard'] = isset( $this->EE->CFG->admin->events_in_dasboard ) ? absint( $this->EE->CFG->admin->events_in_dasboard ) : 30;
-		$this->_template_args['use_event_timezones'] = isset( $this->EE->CFG->use_event_timezones ) ? absint( $this->EE->CFG->use_event_timezones ) : FALSE;
-		$this->_template_args['full_logging'] = isset( $this->EE->CFG->full_logging ) ? absint( $this->EE->CFG->full_logging ) : FALSE;
-		$this->_template_args['remote_logging'] = isset( $this->EE->CFG->remote_logging ) ? absint( $this->EE->CFG->remote_logging ) : FALSE;
-		$this->_template_args['remote_logging_url'] = isset( $this->EE->CFG->remote_logging_url ) && ! empty( $this->EE->CFG->remote_logging_url ) ? stripslashes( $this->EE->CFG->remote_logging_url ) : '';
-		$this->_template_args['show_reg_footer'] = isset( $this->EE->CFG->show_reg_footer ) ? absint( $this->EE->CFG->show_reg_footer ) : TRUE;
-		$this->_template_args['affiliate_id'] = isset( $this->EE->CFG->affiliate_id ) ? $this->_display_nice( $this->EE->CFG->affiliate_id ) : '';
+		$this->_template_args['use_event_timezones'] = isset( $this->EE->CFG->admin->use_event_timezones ) ? absint( $this->EE->CFG->admin->use_event_timezones ) : FALSE;
+		$this->_template_args['use_full_logging'] = isset( $this->EE->CFG->admin->use_full_logging ) ? absint( $this->EE->CFG->admin->use_full_logging ) : FALSE;
+		$this->_template_args['use_remote_logging'] = isset( $this->EE->CFG->admin->use_remote_logging ) ? absint( $this->EE->CFG->admin->use_remote_logging ) : FALSE;
+		$this->_template_args['remote_logging_url'] = isset( $this->EE->CFG->admin->remote_logging_url ) && ! empty( $this->EE->CFG->admin->remote_logging_url ) ? stripslashes( $this->EE->CFG->admin->remote_logging_url ) : '';
+		$this->_template_args['show_reg_footer'] = isset( $this->EE->CFG->admin->show_reg_footer ) ? absint( $this->EE->CFG->admin->show_reg_footer ) : TRUE;
+		$this->_template_args['affiliate_id'] = isset( $this->EE->CFG->admin->affiliate_id ) ? $this->_display_nice( $this->EE->CFG->admin->affiliate_id ) : '';
 		
 		$this->_set_add_edit_form_tags( 'update_admin_option_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -635,23 +635,21 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_admin_option_settings() {
 		
-		$data = array();
-
-		$data['use_venue_manager'] = isset( $this->_req_data['use_venue_manager'] ) ? absint( $this->_req_data['use_venue_manager'] ) : FALSE;
-		$data['use_personnel_manager'] = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : FALSE;
-		$data['espresso_dashboard_widget'] = isset( $this->_req_data['espresso_dashboard_widget'] ) ? absint( $this->_req_data['espresso_dashboard_widget'] ) : TRUE;
-		$data['events_in_dasboard'] = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : 30;
-		$data['use_event_timezones'] = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : FALSE;
-		$data['full_logging'] = isset( $this->_req_data['full_logging'] ) ? absint( $this->_req_data['full_logging'] ) : FALSE;
-		$data['remote_logging'] = isset( $this->_req_data['remote_logging'] ) ? absint( $this->_req_data['remote_logging'] ) : FALSE;
-		$data['remote_logging_url'] = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : NULL;
-		$data['show_reg_footer'] = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : TRUE;
-		$data['affiliate_id'] = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : NULL;
+		$this->EE->CFG->admin->use_venue_manager = isset( $this->_req_data['use_venue_manager'] ) ? absint( $this->_req_data['use_venue_manager'] ) : $this->EE->CFG->admin->use_venue_manager;
+		$this->EE->CFG->admin->use_personnel_manager = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : $this->EE->CFG->admin->use_personnel_manager;
+		$this->EE->CFG->admin->use_dashboard_widget = isset( $this->_req_data['use_dashboard_widget'] ) ? absint( $this->_req_data['use_dashboard_widget'] ) : $this->EE->CFG->admin->use_dashboard_widget;
+		$this->EE->CFG->admin->events_in_dasboard = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : $this->EE->CFG->admin->events_in_dasboard;
+		$this->EE->CFG->admin->use_event_timezones = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : $this->EE->CFG->admin->use_event_timezones;
+		$this->EE->CFG->admin->use_full_logging = isset( $this->_req_data['use_full_logging'] ) ? absint( $this->_req_data['use_full_logging'] ) : $this->EE->CFG->admin->use_full_logging;
+		$this->EE->CFG->admin->use_remote_logging = isset( $this->_req_data['use_remote_logging'] ) ? absint( $this->_req_data['use_remote_logging'] ) : $this->EE->CFG->admin->use_remote_logging;
+		$this->EE->CFG->admin->remote_logging_url = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : $this->EE->CFG->admin->remote_logging_url;
+		$this->EE->CFG->admin->show_reg_footer = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : $this->EE->CFG->admin->show_reg_footer;
+		$this->EE->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : $this->EE->CFG->admin->affiliate_id;
 		
-		$data = apply_filters('FHEE_admin_option_settings_save', $data);	
+		$this->EE->CFG->admin = apply_filters( 'FHEE_admin_option_settings_save', $this->EE->CFG->admin );	
 		
 		$what = 'Admin Options';
-		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG->admin, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'admin_option_settings' ) );
 		
 	}
