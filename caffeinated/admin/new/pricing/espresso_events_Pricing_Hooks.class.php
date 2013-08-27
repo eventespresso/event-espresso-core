@@ -82,6 +82,21 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	public function autosave_handling( $event_admin_obj ) {
 		//todo when I get to this remember that I need to set the template args on the $event_admin_obj (use the set_template_args() method)
+		
+		/**
+		 * need to remember to handle TICKET DEFAULT saves correctly:  I've got two input fields in the dom:
+		 *
+		 * 1. TKT_is_default_selector (visible)
+		 * 2. TKT_is_default (hidden)
+		 *
+		 * I think we'll use the TKT_is_default for recording whether the ticket displayed IS a default ticket (on new event creations). Whereas the TKT_is_default_selector is for the user to indicate they want this ticket to be saved as a default.
+		 *
+		 * The tricky part is, on an initial display on create or edit (or after manually updating), the TKT_is_default_selector will always be unselected and the TKT_is_default will only be true if this is a create.  However, after an autosave, users will want some sort of indicator that the TKT HAS been saved as a default.. in other words we don't want to remove the check on TKT_is_default_selector. So here's what I'm thinking.
+		 * On Autosave:
+		 * 1. If TKT_is_default is true: we create a new TKT, send back the new id and add id to related elements, then set the TKT_is_default to false.
+		 * 2. If TKT_is_default_selector is true: we create/edit existing ticket (following conditions above as well).  We do NOT create a new default ticket.  The checkbox stays selected after autosave.
+		 * 3. only on MANUAL update do we check for the selection and if selected create the new default ticket. 
+		 */
 	}
 
 
