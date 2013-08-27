@@ -475,13 +475,19 @@ class EEH_Activation {
 			$default_config->registration->use_attendee_pre_approval = FALSE;
 			// general admin settings
 			$default_config->admin = new stdClass();
-			$default_config->admin->events_in_dasboard = 30;
 			$default_config->admin->use_venue_manager = TRUE;
 			$default_config->admin->use_personnel_manager = TRUE;
+			$default_config->admin->use_dashboard_widget = TRUE;
+			$default_config->admin->events_in_dasboard = 30;
+			$default_config->admin->use_event_timezones = FALSE;
+			$default_config->admin->use_full_logging = FALSE;
+			$default_config->admin->use_remote_logging = FALSE;
+			$default_config->admin->remote_logging_url = NULL;
+			$default_config->admin->show_reg_footer = TRUE;
+			$default_config->admin->affiliate_id = NULL;
 			// template settings
 			$default_config->template_settings = new stdClass();
 			$default_config->template_settings->enable_default_style = TRUE;
-			$default_config->template_settings->show_reg_footer = TRUE;
 			$default_config->template_settings->display_address_in_regform = TRUE;
 			$default_config->template_settings->display_description_on_multi_reg_page = FALSE;
 			$default_config->template_settings->use_custom_templates = FALSE;
