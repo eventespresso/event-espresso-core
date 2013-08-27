@@ -160,7 +160,8 @@
 							<ul class="datetime-tickets-list">
 								<li class="hidden"></li>
 							</ul>
-							<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[1][TKT_is_default]" id="edit-ticket-TKT_is_default">  
+							<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default_selector">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[1][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector"> 
+							<input type="hidden" name="edit_tickets[1][TKT_is_default]" class="edit-ticket-TKT_is_default" value=""> 
 							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="1">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="1">Cancel</button></div>
 							<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
 							<input type="hidden" name="starting_ticket_datetime_IDs" id="starting-ticket-datetime-ids-1" value="" class="starting-ticket-datetime-ids">
@@ -301,7 +302,7 @@
 									<tr class="price-total-row">
 										<td colspan="3">Total</td>
 										<td><span id="price-total-amount-TICKETNUM">$0.00</span</td>
-										<td><input type="hidden" name="price_total_rows_ticket1" id="price-total-rows-TICKETNUM" value="1"></td>
+										<td><input type="hidden" name="price_total_rows_ticket[TICKETNUM]" id="price-total-rows-TICKETNUM" value="1"></td>
 									</tr>
 								</tfoot>
 							</table>
@@ -312,8 +313,11 @@
 						<ul class="datetime-tickets-list">
 							<li class="hidden"></li>
 						</ul>
-						<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[TICKETNUM][TKT_is_default]" id="edit-ticket-TKT_is_default">  
-						<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="TICKETNUM">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="TICKETNUM">Cancel</button></div>
+						<div class="save-cancel-button-container">
+							<label for="edit-ticket-TKT_is_default_selector">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[TICKETNUM][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector">
+							<input type="hidden" name="edit_tickets[1][TKT_is_default]" class="edit-ticket-TKT_is_default" value=""> 
+							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="TICKETNUM">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="TICKETNUM">Cancel</button>
+						</div>
 						<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
 						<input type="hidden" name="starting_ticket_datetime_IDs[TICKETNUM][]" id="starting-ticket-datetime-ids-TICKETNUM" value="" class="starting-ticket-datetime-ids">
 						<input type="hidden" name="ticket_datetime_IDs[TICKETNUM][]" class="ticket-datetime-ids" id="ticket-datetime-ids-TICKETNUM" value="">
