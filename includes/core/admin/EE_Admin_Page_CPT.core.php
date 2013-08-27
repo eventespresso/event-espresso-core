@@ -864,4 +864,19 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 	}
 
+
+
+	/**
+	 * some getters
+	 */
+	
+
+	/**
+	 * This returns the protected _cpt_model_obj property
+	 * @return EE_Base_CPT object.
+	 */
+	public function get_cpt_model_obj() {
+		return $this->_cpt_model_obj;
+	}
+
 }
