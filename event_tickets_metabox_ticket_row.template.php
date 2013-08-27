@@ -37,7 +37,7 @@
  * $TKT_start_date
  * $TKT_end_date
  * $price_currency_symbol;
- * $PRC_amoun
+ * $PRC_amount
  * $PRT_ID
  * $PRC_ID
  * $PRC_is_default
