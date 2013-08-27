@@ -171,7 +171,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	/**
-	 * Something nifty.  We're going to loop through all the registered metaboxes and if the CALLBACK is an instance of EE_Admin_Page_CPT, then we'll add the id to our _autosave_containers array.
+	 * Something nifty.  We're going to loop through all the registered metaboxes and if the CALLBACK is an instance of EE_Admin_Page OR EE_Admin_Hooks, then we'll add the id to our _autosave_containers array.
 	 */
 	protected function _set_autosave_containers() {
 		global $wp_meta_boxes;
