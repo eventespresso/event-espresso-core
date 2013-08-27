@@ -174,9 +174,20 @@ class EE_Attendee extends EE_CPT_Base{
     */
 	protected $_ATT_phone = NULL;
 
-
+	/**
+	 * Attendee's social media information (eg, twitter ID or whatever).
+	 * @access protected
+	 * @var array
+	 */
+	protected $_ATT_social = NULL;
+	
+	/**
+	 * Attendee notes by the attendee themselves about themselves
+	 * @var string 
+	 */
+	protected $_ATT_comments = NULL;
     /**
-    *	Attendee Notes (about the attendee)
+    *	Attendee Notes  about the attendee by the customer
 	* 
 	*	@access	protected
     *	@var string	
@@ -610,7 +621,7 @@ class EE_Attendee extends EE_CPT_Base{
 
 
 	/**
-	*		get Attendee Notes (about the attendee)
+	*		get Attendee Notes (about the attendee by admin)
 	* 		@access		public
 	*/	
 	public function notes() {
