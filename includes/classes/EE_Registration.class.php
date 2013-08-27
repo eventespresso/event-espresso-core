@@ -384,10 +384,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		int		$STS_ID 		Status ID
 	*/	
-	public function set_status( $STS_ID = FALSE ) {		
-		if ( ! $this->_check_for( $STS_ID, 'Status ID' )) { 
-			return FALSE; 
-		}
+	public function set_status( $STS_ID = FALSE ) {	
 		//make sure related TXN is set
 		$this->get_first_related('Transaction');
 		// if status is ANYTHING other than approved, OR if it IS approved AND the TXN is paid in full (or free)

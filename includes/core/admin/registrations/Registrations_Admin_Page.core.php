@@ -941,7 +941,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 		if ( $REG_ID ) {
 			//echo '<h4>$REG_ID : ' . $REG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			$registration = EEM_Registration::instance()->get_registration_by_ID( $REG_ID );
+			$registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID );
 			$success = $registration->set_status( $status );
 			$registration->save();
 			//printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
