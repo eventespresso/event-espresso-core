@@ -3,7 +3,7 @@
 
 	<div class="event-datetimes-container">
 		
-		<!-- these are actual dttids that get updated by ajax when a dttid=0 is saved -->
+		<!-- these are the ids for the current displayed datetimes (on create new this is blank -->
 		<input type="hidden" name="datetime_IDs" id="datetime-IDs" value="">
 
 		<!-- this is used by js to calculate what the next datetime row will be and is incremented when a new datetime is "saved". -->

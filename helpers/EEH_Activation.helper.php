@@ -1100,6 +1100,26 @@ class EEH_Activation {
 				$wpdb->query($SQL);
 			}
 		}
+
+		if ( $wpdb->get_var("SHOW TABLES LIKE'" . EE_TICKET_PRICE_TABLE . "'") == EE_TICKET_PRICE_TABLE ) {
+
+			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . EE_TICKET_PRICE_TABLE;
+			$ticket_prc_exist = $wpdb->get_var($SQL);
+
+			if ( ! $ticket_prc_exist ) {
+
+				$SQL = "INSERT INTO " . EE_TICKET_PRICE_TABLE . "
+				( TKP_ID, TKT_ID, PRC_ID ) VALUES 
+				( 1, 1, 1 ),
+				( 2, 1, 2 ),
+				( 3, 1, 3 ),
+				( 4, 1, 4 )
+				";
+
+				$SQL = apply_filters( 'FHEE_default_ticket_price_activation_sql', $SQL);
+				$wpdb->query($SQL);
+			}
+		}
 	}
 
 
