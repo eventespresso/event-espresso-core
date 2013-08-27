@@ -140,6 +140,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//set global defaults
 		$this->_set_defaults();
 
+		//set early because incoming requests could be ajax related and we need to register those hooks.
+		$this->_ajax_hooks();
+
+
+		//other_page_hooks have to be early too.
+		$this->_do_other_page_hooks();
+
 		//This just allows us to have extending clases do something specific before the parent constructor runs _page_setup.
 		if ( method_exists( $this, '_before_page_setup' ) )
 			$this->_before_page_setup();
@@ -389,13 +396,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//requires?
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
-
-		//set early because incoming requests could be ajax related and we need to register those hooks.
-		$this->_ajax_hooks();
-
-
-		//other_page_hooks have to be early too.
-		$this->_do_other_page_hooks();
 
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
