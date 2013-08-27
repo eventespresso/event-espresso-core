@@ -1659,7 +1659,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( $delete ) {
 			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
 			$delete_link_args = array( $name => $id );
-			$delete = $this->_get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
+			$delete = $this->get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
 		}
 		
 		$this->_template_args['publish_delete_link'] = $delete;
@@ -1863,7 +1863,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function display_admin_caf_preview_page() {
 		//let's generate a default preview action button if there isn't one already present.
 		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
-		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->_get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
+		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
 		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
 		$this->admin_page_wrapper();
@@ -2308,10 +2308,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	
 
 	/**
-	 * _get_action_link_or_button
+	 * get_action_link_or_button
 	 * returns the button html for adding, editing, or deleting an item (depending on given type) 
 	 * 
-	 * @access  protected
+	 * @access  public
 	 *
 	 * @param string $action use this to indicate which action the url is generated with.
 	 * @param string $type accepted strings must be defined in the $_labels['button'] array(as the key) property.
@@ -2320,7 +2320,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param string $base_url If this is not provided the _admin_base_url will be used as the default for the button base_url.  Otherwise this value will be used.	
 	 * @return string html for button
 	 */
-	protected function _get_action_link_or_button($action, $type = 'add', $extra_request = array(), $class = 'button-primary', $base_url = FALSE) {
+	public function get_action_link_or_button($action, $type = 'add', $extra_request = array(), $class = 'button-primary', $base_url = FALSE) {
 		//first let's validate the action (if $base_url is FALSE otherwise validation will happen further along)
 		if ( !isset($this->_page_routes[$action]) && !$base_url )
 			throw new EE_Error( sprintf( __('There is no page route for given action for the button.  This action was given: %s', 'event_espresso'), $action) );
@@ -2331,7 +2331,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
 
 		$query_args = array(
-			'action' => $action );
+			'action' => $action  );
 
 		//merge extra_request args but make sure our original action takes precedence and doesn't get overwritten.
 		if ( !empty($extra_request) )

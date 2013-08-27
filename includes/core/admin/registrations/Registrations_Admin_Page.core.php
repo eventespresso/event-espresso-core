@@ -73,7 +73,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'add-registrant' => __('Register New Attendee', 'event_espresso'),
 					'add-attendee' => __('Add New Attendee Contact Info', 'event_espresso'),
 					'edit' => __('Edit Attendee', 'event_espresso'),
-					'delete' => __('Delete Attendee', 'event_espresso')
+					'delete' => __('Delete Attendee', 'event_espresso'),
+					'report'=>  __("Registrations CSV Report", "event_espresso")
 				)
 			);
 	}
@@ -214,7 +215,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'resend_registration' => array(
 					'func' => '_resend_registration',
 					'noheader' => TRUE
-					)
+					),
+				'registrations_report'=>array(
+					'func'=>'_registrations_report',
+					'noheader'=> TRUE
+				)
 		);
 		
 	}
@@ -238,7 +243,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Check In List', 'event_espresso'),
 					'order' => 10,
-					'persistent' => FALSE
+					'persistent' => true
 					),
 					'list_table' => 'EE_Event_Registrations_List_Table',
 					'metaboxes' => array()
@@ -548,7 +553,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	protected function _registrations_overview_list_table() {
 		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		if ( $EVT_ID ) {
-			$this->_admin_page_title .= $this->_get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'button add-new-h2' );
+			$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'button add-new-h2' );
 		}		
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_registration_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -2024,7 +2029,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _event_registrations_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('new_registration', 'add-registrant', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array(), 'button add-new-h2');
 		$legend_items = array(
 			'star-icon' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
@@ -2143,7 +2148,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _attendee_contact_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -2306,6 +2311,22 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		$this->_redirect_after_action( $success, __( 'Attendee Check In Status', 'event_espresso' ), __( 'updated', 'event_espresso' ), array( 'action' => 'event_registrations', 'event_id' => $EVT_ID ));
 		
+	}
+	
+	
+	public function _registrations_report(){
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'registrations_report_for_event',
+			'EVT_ID' => $this->_req_data['EVT_ID'],
+		);
+		$this->_req_data = array_merge($this->_req_data, $new_request_args);
+
+		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+			require_once(EE_CLASSES . 'EE_Export.class.php');
+			$EE_Export = EE_Export::instance($this->_req_data);
+			$EE_Export->export();
+		}
 	}
 
 

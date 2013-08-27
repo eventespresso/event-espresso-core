@@ -53,6 +53,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		);
 
 		$this->_hidden_columns = array();
+		
+		$this->_bottom_buttons = array(
+			'report'=>'registrations_report'
+		);
 	}
 
 

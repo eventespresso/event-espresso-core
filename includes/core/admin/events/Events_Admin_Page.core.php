@@ -566,7 +566,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _events_overview_list_table() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_template_args['after_list_table'] = $this->_display_legend($this->_event_legend_items());
-		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -1774,7 +1774,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$type = 'csv';
 		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
 		
-		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 
 		$title_cat = __( 'Import Event Categories', 'event_espresso' );
 		$intro_cat = __( 'If you have a previously exported list of Event Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
@@ -1858,7 +1858,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
