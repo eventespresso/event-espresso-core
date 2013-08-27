@@ -566,7 +566,7 @@ class EEH_Activation {
 						ATT_social text,
 						ATT_comments mediumtext,
 						ATT_notes mediumtext,
-							PRIMARY KEY  (ATT_ID),
+							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
 								KEY ATT_email (ATT_email)";
