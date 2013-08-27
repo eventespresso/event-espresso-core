@@ -65,8 +65,15 @@ final class EE_Config {
 	 * 	@access 	public
 	 */
 	public $current_blog_id = NULL;
+	
+	/**
+	 * 
+	 * @var EE_Currency_Config 
+	 */
+	public $currency;
 
 
+	
 
 
 
@@ -548,6 +555,59 @@ final class EE_Config {
 
 
 
+}
+/**
+ * Class for defining what's in the EE_Config relating to currency
+ */
+class EE_Currency_Config{
+	 
+	/**
+	 * @var $code string
+	 * eg 'US'
+	 */
+	public $code;
+	/**
+	 * @var $name string
+	 * eg 'Dollar'
+	 */
+      public $name;
+	  
+	  /**
+	   * PLural name
+	   * @var $plural string
+	   * eg 'Dollars'
+	   */
+      public $plural;
+	  
+	  /**
+	   * currency sign
+	   * @var $sign string
+	   * eg '$'
+	   */
+      public $sign;
+	  /**
+	   * Whether the currency sign shoudl come before the number or not
+	   * @var $sign_b4 boolean
+	   */
+      public $sign_b4;
+	  
+	  /**
+	   * How many digits should come after the decimal place
+	   * @var $dec_plc int
+	   */
+      public $dec_plc;
+	  /**
+	   * Symbol to use for decimal mark
+	   * @var $dec_mrk string
+	   * eg '.'
+	   */
+      public $dec_mrk;
+	  /**
+	   * Symbol to use for thousands
+	   * @var $thsnds string
+	   * eg ','
+	   */
+      public $thsnds;
 }
 // End of file EE_Config.core.php
 // Location: /core/EE_Config.core.php

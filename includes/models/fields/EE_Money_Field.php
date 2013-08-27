@@ -11,10 +11,10 @@ class EE_Money_Field extends EE_Float_Field_Base{
 		$EE = EE_Registry::instance();
 		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
 		
-		if($EE->CFG->currency_sign_b4){
-			$pretty_money = $EE->CFG->currency_sign.$pretty_float." (".$EE->CFG->currency_code.")";
+		if($EE->CFG->currency->sign_b4){
+			$pretty_money = $EE->CFG->currency->sign.$pretty_float." (".$EE->CFG->currency->code.")";
 		}else{
-			$pretty_money = $pretty_float.$EE->CFG->currency_sign." (".$EE->CFG->currency_code.")";
+			$pretty_money = $pretty_float.$EE->CFG->currency->sign." (".$EE->CFG->currency->code.")";
 		}
 		return $pretty_money;
 	}

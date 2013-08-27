@@ -43,7 +43,7 @@ final class EE_Registry {
    /**
      * 	org_option settings
 	 * 	@access 	public
-	 *	@var 	StdClass		$CFG
+	 *	@var 	EE_Config
      */
 	public $CFG = NULL;
 
