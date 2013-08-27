@@ -249,22 +249,26 @@ class EEM_Registration extends EEM_Base {
 
 
 	/**
-	*		get the number of registrations per day  for the Registration Admin page Reports Tab
+	*		get the number of registrations per day  for the Registration Admin page Reports Tab.
+	 *		(doesn't utilize models because it's a fairly specialized query)
 	* 		@access		public
+	 *		@param $period string which can be passed to php's strtotime functino (eg "-1 month")
+	 *		@return stdClass[] with properties regDate and total
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
-
-		global $wpdb;
-		$date_mod = strtotime( $period );
-
-		$SQL = "SELECT DATE(FROM_UNIXTIME(reg.REG_date)) AS 'regDate', COUNT(REG_ID) AS total";
-		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' reg';
-		$SQL .= ' WHERE REG_date >= %d';
-		$SQL .= ' GROUP BY `regDate`';
-		$SQL .= ' ORDER BY REG_date DESC';
-		
-		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
-
+		$sql_date = date("Y-m-d H:i:s", strtotime($period));
+		$results = $this->_get_all_wpdb_results(
+				array(
+					array('REG_date'=>array('>=',$sql_date)),
+					'group_by'=>'regDate',
+					'order_by'=>array('REG_date'=>'DESC')
+				), 
+				OBJECT, 
+				array(
+					'regDate'=>array('DATE(FROM_UNIXTIME(Registration.REG_date))','%d'),
+					'total'=>array('count(REG_ID)','%d')
+				));
+		return $results;
 	}
 
 
@@ -274,23 +278,27 @@ class EEM_Registration extends EEM_Base {
 	/**
 	*		get the number of registrations per event  for the Registration Admin page Reports Tab
 	* 		@access		public
+	 *		@return stdClass[] each with properties event_name, reg_limit, and total
 	*/
-	public function get_registrations_per_event_report( $period = '-1 month' ) {
-
-		global $wpdb;
-		$date_mod = strtotime( $period );
-
-		$SQL = "SELECT event_name, reg_limit, COUNT(REG_ID) AS total";
-		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' reg';
-		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
-		$SQL .= ' WHERE REG_date >= %d';
-		$SQL .= ' AND DTT_is_primary = 1';
-		$SQL .= ' GROUP BY event_name';
-		$SQL .= ' ORDER BY event_name';  // DTT_EVT_start
-		$SQL .= ' LIMIT 0, 24';
+	public function get_registrations_per_event_report( $period = '-1 month' ) {		
+		$date_sql = date("Y-m-d H:i:s", strtotime($period));
+		$results = $this->_get_all_wpdb_results(array(
+			array(
+				'REG_date'=>array('>=',$date_sql),
+				'Datetime.DTT_primary'=>1
+			),
+			'group_by'=>'Event.EVT_name',
+			'order_by'=>'Event.EVT_name',
+			'limit'=>array(0,24)),
+			OBJECT, 
+			array(
+				'event_name'=>array('Event_CPT.post_title','%s'),
+				'reg_limit'=>array('Event_Meta.EVT_reg_limit','%s'),
+				'total'=>array('COUNT(REG_ID)','%s')
+			)
+		);
 		
-		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+		return $results;
 
 	}
 

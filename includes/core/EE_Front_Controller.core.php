@@ -133,7 +133,9 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
-		
+//		var_dump(EEM_Registration::instance()->get_registrations_per_day_report());
+//		$results = EEM_Registration::instance()->get_registrations_per_event_report('-5 months');
+//		$regs = EEM_Registration::instance()->get_all(array('limit'=>4));
 //		$qg = EEM_Question_Group::instance()->get_one();
 //		echo 'echodump of $qg';
 //		var_dump($qg);
