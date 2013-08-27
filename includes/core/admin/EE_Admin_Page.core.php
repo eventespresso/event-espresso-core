@@ -2569,6 +2569,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * returns the _req_data protected property
+	 * @return string
+	 */
+	public function get_req_action() {
+		return $this->_req_action;
+	}
+
+
+
 
 
 	/**
