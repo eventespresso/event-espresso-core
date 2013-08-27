@@ -8,7 +8,7 @@
 		<input type="hidden" name="datetime_total_rows" id="datetime-total-rows" value="1">
 
 		<section id="edit-event-datetime-1" class="datetime-edit">
-			<input type="hidden" name="edit_event_datetimes[1][DTT_ID]" id="event-datetime-DTT_ID-1" class="event-datetime-DTT_ID" value="<?php echo $DTT_ID; ?>">
+			<input type="hidden" name="edit_event_datetimes[1][DTT_ID]" id="event-datetime-DTT_ID-1" class="event-datetime-DTT_ID" value="<?php echo $time->get('DTT_ID'); ?>">
 			<input type="hidden" name="edit_event_datetimes[1][DTT_is_primary]" id="event-datetime-DTT_is_primary-1" class="event-datetime-DTT_is_primary" value="1">
 			<table class="datetime-edit-table">
 				<thead>
@@ -22,15 +22,15 @@
 				<tbody>
 					<tr valign="top">
 						<td class="event-datetime-column date-column">
-							<input type="text" name="edit_event_datetimes[1][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-1" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-context="start-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_end" data-next-field=".event-datetime-DTT_EVT_end" value="<?php echo $DTT_EVT_start; ?>">
+							<input type="text" name="edit_event_datetimes[1][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-1" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-context="start-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_end" data-next-field=".event-datetime-DTT_EVT_end" value="<?php echo $time->get('DTT_EVT_start'); ?>">
 						</td>
 						<td class="event-datetime-column date-column">
-							<input type="text" name="edit_event_datetimes[1][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-1" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="end-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit" value="<?php echo $DTT_EVT_end; ?>">
+							<input type="text" name="edit_event_datetimes[1][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-1" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="end-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit" value="<?php echo $time->get('DTT_EVT_end'); ?>">
 						</td>
 						<td class="event-datetime-column reg-limit-column">
-							<input type="text" name="edit_event_datetimes[1][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-1" class="ee-small-text-inp event-datetime-DTT_reg_limit" value="<?php echo $DTT_reg_limit; ?>">
+							<input type="text" name="edit_event_datetimes[1][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-1" class="ee-small-text-inp event-datetime-DTT_reg_limit" value="<?php echo $time->get('DTT_reg_limit'); ?>">
 						</td>
-						<td><span class="datetime-tickets-sold"><?php printf( __('Tickets Sold: %s', 'event_espresso'), $DTT_sold); ?></span></td>
+						<td><span class="datetime-tickets-sold"><?php printf( __('Tickets Sold: %s', 'event_espresso'), $time->get('DTT_sold') ); ?></span></td>
 					</tr>
 				</tbody>
 			</table>
@@ -74,11 +74,7 @@
  * $event_datetime_help_link
  * $ticket_options_help_link
  * $existing_datetime_ids
- * $DTT_ID
- * $DTT_EVT_start
- * $DTT_EVT_end
- * $DTT_reg_limit
- * $DTT_sold
+ * $time
  * $ticket_rows
  * $existing_ticket_ids
  * $total_ticket_rows
