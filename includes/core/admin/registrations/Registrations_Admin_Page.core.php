@@ -774,7 +774,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['reg_nmbr']['value'] = $this->_registration->ID();
 			$this->_template_args['reg_nmbr']['label'] = __( 'Registration Number', 'event_espresso' );
 
-			$this->_template_args['reg_datetime']['value'] = date( 'l F j, Y,    g:i:s a', $this->_registration->date() );
+			$this->_template_args['reg_datetime']['value'] =  $this->_registration->pretty_date('l F j, Y','g:i:s a') ;
 			$this->_template_args['reg_datetime']['label'] = __( 'Date', 'event_espresso' );
 
 			$this->_template_args['reg_status']['value'] = str_replace( '_', ' ', self::$_reg_status[ $this->_registration->status_ID() ] );

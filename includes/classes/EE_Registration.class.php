@@ -668,6 +668,16 @@ class EE_Registration extends EE_Base_Class {
 	}
 	
 	/**
+	 * gets a pretty date
+	 * @param string $date_format
+	 * @param string $time_format
+	 * @return string
+	 */
+	public function pretty_date($date_format = null, $time_format = null){
+		return $this->get_datetime('REG_date', $date_format, $time_format);
+	}
+	
+	/**
 	 * get datetime object for this registration
 	 *
 	 * @access public
