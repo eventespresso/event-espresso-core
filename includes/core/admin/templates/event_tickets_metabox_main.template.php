@@ -7,32 +7,31 @@
 		<!-- this is used by js to calculate what the next datetime row will be and is incremented when a new datetime is "saved". -->
 		<input type="hidden" name="datetime_total_rows" id="datetime-total-rows" value="<?php echo $total_dtt_rows; ?>">
 
-		<?php echo $datetime_rows; ?>
-
-		<div id="add-event-datetime" class="event-datetime-row add-dtt-row">
-			<h5 class="datetime-tickets-heading"><?php _e('Add New Datetime', 'event_espresso'); ?></h5><?php echo $add_new_dtt_help_link; ?>
-			<table id="add-new-event-datetime-table" class="datetime-edit-table">
+		<section id="edit-event-datetime-1" class="datetime-edit">
+			<input type="hidden" name="edit_event_datetimes[1][DTT_ID]" id="event-datetime-DTT_ID-1" class="event-datetime-DTT_ID" value="<?php echo $time->get('DTT_ID'); ?>">
+			<input type="hidden" name="edit_event_datetimes[1][DTT_is_primary]" id="event-datetime-DTT_is_primary-1" class="event-datetime-DTT_is_primary" value="<?php echo $time->get('DTT_is_primary'); ?>">
+			<table id="edit-event-datetime-table-1" class="datetime-edit-table">
 				<tr>
 					<td class="event-datetime-column date-column">
-						<label for="add-new-event-datetime-DTT_EVT_start"><?php _e('Event Start', 'event_espresso'); ?></label>
-						<input type="text" name="add_new_datetime[DTT_EVT_start]" id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp ee-datepicker" data-context="start-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_end" data-next-field="#add-new-event-datetime-DTT_EVT_start">
+						<label for="event-datetime-DTT_EVT_start-1"><?php _e('Event Start', 'event_espresso'); ?></label>
+						<input type="text" name="edit_event_datetimes[1][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-1" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-context="start-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_end" data-next-field=".event-datetime-DTT_EVT_end" value="<?php echo $time->get('DTT_EVT_start'); ?>">
 					</td>
 					<td class="event-datetime-column date-column">
-						<label for="add-new-event-datetime-DTT_EVT_end"><?php _e('Event End', 'event_espresso'); ?></label>
-						<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp ee-datepicker" data-context="end-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_start" data-next-field="#add-new-event-datetime-DTT_reg_limit">
+						<label for="event-datetime-DTT_EVT_end-1"><?php _e('Event End', 'event_espresso'); ?></label>
+						<input type="text" name="edit_event_datetimes[1][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-1" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="end-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit" value="<?php echo $time->get('DTT_EVT_end'); ?>">
 					</td>
-					<td class="event-datetime-column reg-limit-column">
-						<label for="add-new-event-datetime-DTT_reg_limit"><?php _e('Reg Limit', 'event_espresso'); ?></label>
-						<input type="text" name="add_new_datetime[DTT_reg_limit]" id="add-new-event-datetime-DTT_reg_limit" class="ee-small-text-inp">
+					<td class="event-datetime-column small-txt-column">
+						<label for="event-datetime-DTT_reg_limit-1"><?php _e('Reg Limit', 'event_espresso'); ?></label>
+						<input type="text" name="edit_event_datetimes[1][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-1" class="ee-small-text-inp event-datetime-DTT_reg_limit" value="<?php echo $time->get('DTT_reg_limit'); ?>">
 					</td>
-					<td class="event-datetime-column button-column">
-						<button data-context="datetime" class="button-primary ee-create-button">
-							<?php _e('Save Datetime', 'event_espresso'); ?>
-						</button>
+					<td class="event-datetime-column">
+						<span class="datetime-tickets-sold"><?php printf( __('Tickets Sold: %d', 'event_espresso'), $time->get('DTT_sold') ); ?></span>
 					</td>
 				</tr>
 			</table>
-		</div> <!-- end #add-event-datetime -->
+		</section>
+
+		
 	</div> <!-- end .event-datetimes-container -->
 
 	<div class="event-tickets-container"<?php echo $show_tickets_container; ?>>
@@ -69,7 +68,7 @@
  * $existing_datetime_ids
  * $total_dtt_rows
  * $add_new_dtt_help_link
- * $datetime_rows
+ * $time (datetime)
  * $show_tickets_container
  * $ticket_rows
  * $existing_ticket_ids
