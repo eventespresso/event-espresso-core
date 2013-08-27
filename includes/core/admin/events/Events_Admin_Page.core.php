@@ -1037,8 +1037,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function ticket_metabox() {
-		global $org_options;
-
 		$existing_datetime_ids = $existing_ticket_ids = array();
 
 		//defaults for template args
