@@ -201,8 +201,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	
 	/**
 	 * Array describing buttons that should appear at teh bottom of the page
-	 * Keys are strings that represent the button's function, and the values are 
-	 * page routes (ie, an array key of _page_routes)
+	 * Keys are strings that represent the button's function (specifically a key in _labels['buttons']), and the values are 
+	 * page routes
 	 * @var array $_bottom_buttons
 	 */
 	protected $_bottom_buttons = array();
