@@ -210,10 +210,10 @@
 
 .ee-status {
 	display: block;
-   	padding: 3px 6px;
-   	-webkit-border-radius: 8px;
-   	-moz-border-radius: 8px;
-   	border-radius: 8px;
+   	padding: 2.5px 5px;
+   	-webkit-border-radius: 5px;
+   	-moz-border-radius: 5px;
+   	border-radius: 5px;
    	color: white;
    	font-size: 10px;
    	/*font-family: Georgia, serif;*/
