@@ -2,6 +2,7 @@
 	
 	<?php do_action('AHEE_general_settings_admin_options_settings_extra_settings', $template_args ); ?>
 
+	<?php /* @todo put back once we have a dashboard widget to use 
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('WordPress Dashboard', 'event_espresso'); ?>
 	</h4>
@@ -34,37 +35,19 @@
 
 		</tbody>
 	</table>
+	 
+<?php * 
+	 */
+/* @todo: implement in 4.2 or whenver timezones-per-event get implemented. 
+ * When implementing this, it would probably be more proper to add a filter here
+ * and use it from general_settings in the caffeinated folder
 
+if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('Time and Date Settings', 'event_espresso'); ?>
 	</h4>
-
 	<table class="form-table">
 		<tbody>
-		
-			<tr>
-				<th>
-					<?php _e('Current Time: ', 'event_espresso'); ?>
-				</th>
-				<td>
-					<strong>
-						<?php echo date(get_option('date_format') . ' ' . get_option('time_format')); ?>
-					</strong>
-					<p class="description">
-						<a class="change-date-time" href="options-general.php" target="_blank">
-							<?php _e('Change timezone and date format settings?', 'event_espresso'); ?>
-						</a><br />
-						<span class="reminder-spn">
-							<?php _e('Note: You must set the time zone for your city, or the city closest to you. <b>UTC time will not work</b>.', 'event_espresso'); ?>
-							<a href="http://ee-updates.s3.amazonaws.com/images/time-zone-settings-example.jpg?TB_iframe=true&height=200&width=630" class="thickbox">
-								<?php _e('View an example?', 'event_espresso'); ?>
-							</a>
-						</span>
-					</p>
-				</td>
-			</tr>
-
-			<?php if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 			<tr>
 				<th>
 					<label>
@@ -78,12 +61,9 @@
 					</p>
 				</td>
 			</tr>
-			<?php endif; ?>
-
 		</tbody>
 	</table>
-
-	<h4 class="ee-admin-settings-hdr">
+<?php endif; */ ?>	<h4 class="ee-admin-settings-hdr">
 		<?php _e('Debug/Logging Options', 'event_espresso'); ?>
 	</h4>
 
