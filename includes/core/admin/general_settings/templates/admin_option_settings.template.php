@@ -2,6 +2,7 @@
 	
 	<?php do_action('AHEE_general_settings_admin_options_settings_extra_settings', $template_args ); ?>
 
+	<?php /* @todo put back once we have a dashboard widget to use 
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('WordPress Dashboard', 'event_espresso'); ?>
 	</h4>
@@ -34,7 +35,9 @@
 
 		</tbody>
 	</table>
-<?php 
+	 
+<?php * 
+	 */
 /* @todo: implement in 4.2 or whenver timezones-per-event get implemented. 
  * When implementing this, it would probably be more proper to add a filter here
  * and use it from general_settings in the caffeinated folder
