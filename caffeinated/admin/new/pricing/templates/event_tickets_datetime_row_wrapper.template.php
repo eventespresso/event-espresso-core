@@ -1,4 +1,4 @@
-<div id="event-datetime-<?php echo $dttrow; ?>" class="event-datetime-row edit-dtt-row">
+<div id="event-datetime-<?php echo $dtt_row; ?>" class="event-datetime-row edit-dtt-row">
 	<?php echo $dtt_display_row; ?>
 	<?php echo $dtt_edit_row; ?>
 	<?php echo $dtt_attached_tickets_row; ?>

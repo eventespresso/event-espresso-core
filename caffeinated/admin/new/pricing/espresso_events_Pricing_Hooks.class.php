@@ -201,10 +201,79 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_datetime_row( EE_Datetime $dtt, $datetime_tickets, $all_tickets ) {
-		//todo
+	private function _get_datetime_row( $dttrow, EE_Datetime $dtt, $datetime_tickets, $all_tickets, $default = FALSE ) {
+
+		$dtt_display_template_args = array(
+			'dtt_display_row' => $this->_get_dtt_display_row( $dttrow, $dtt, $default ),
+			'dtt_edit_row' => $this->_get_dtt_edit_row( $dttrow, $dtt, $default ),
+			'dtt_attached_tickets_row' => $this->_get_dtt_attached_tickets_row( $dttrow, $dtt, $datetime_tickets, $all_tickets, $default ),
+			'dtt_row' => $default ? 'DTTNUM' : $dttrow
+			);
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_row_wrapper.template.php';
+		return espresso_display_template( $template, $dtt_display_template_args, TRUE);
+	}	
+
+
+	private function _get_dtt_display_row( $dttrow, $dtt, $default = FALSE ) {
+		$template_args = array(
+			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
+			'dttname' => $dtt->get_dtt_display_name(),
+			'dttsold' => $dtt->get('DTT_sold')
+			);
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_display_row.template.php';
+		return espresso_display_template( $template, $template_args, TRUE);
 	}
 
+
+	private function _get_dtt_edit_row( $dttrow, $dtt, $default ) {
+		$template_args = array(
+			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
+			'display_dtt_edit_row' => 'style="display:none;"',
+			'DTT_ID' => $dtt->ID(),
+			'DTT_is_primary' => $dtt->get('DTT_is_primary'),
+			'DTT_EVT_start' => $dtt->start_date( 'Y-m-d h:i a'),
+			'DTT_EVT_end' => $dtt->end_date( 'Y-m-d h:i a'),
+			'DTT_reg_limi' => $dtt->get('DTT_reg_limit')
+			);
+
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';
+		return espresso_display_template( $template, $template_args, TRUE );
+	}
+
+
+	private function _get_dtt_attached_tickets_row( $dttrow, $dtt, $datetime_tickets, $all_tickets, $default ) {
+		$template_args = array(
+			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
+			'datetime_tickets_list' => '',
+			'add_new_datetime_ticket_help_link' => EE_Template::get_help_tab_link('add_new_ticket_via_datetime', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add this help info id to the Events_Admin_Page core file so we can access it here.
+			);
+
+		//need to setup the list items
+		$tktrow = 1;
+		foreach ( $all_tickets as $ticket ) {
+			$template_args['datetime_tickets_list'] .= $this->_get_datetime_tickets_list_item( $dttrow, $tktrow, $dtt, $ticket, $datetime_tickets, $default );
+			$tktrow++;
+		}
+
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_attached_tickets_row.template.php';
+		return espresso_display_template( $template, $template_args, TRUE );
+	}
+
+
+
+	private function _get_datetime_tickets_list_item( $dttrow, $tktrow, $dtt, $ticket = NULL, $datetime_tickets, $default ) {
+		$tktid = $ticket->ID();
+		$template_args = array(
+			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
+			'tkt_row' => $default && empty( $ticket ) ? 'TKTNUM' : $tktrow,
+			'datetime_ticket_checked' => in_array($tktid, (array) $datetime_tickets) ? ' checked="checked"' : '',
+			'ticket_selected' => in_array($tktid, (array) $datetime_tickets) ? ' ticket-selected' : '',
+			'TKT_name' => $ticket->get('TKT_name')
+			);
+
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_dtt_tickets_list.template.php';
+		return espresso_display_template( $template, $template_args, TRUE );
+	}
 
 
 	private function _get_ticket_row( EE_Ticket $ticket, $ticket_datetimes, $all_dtts ) {
