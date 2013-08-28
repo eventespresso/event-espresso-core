@@ -261,7 +261,7 @@ final class EE_System {
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php' );
 
 		// session loading is turned OFF by default, but prior to the init hook, can be turned back on again via: add_filter( 'FHEE_load_EE_Session', '__return_true' );
-		if ( apply_filters( 'FHEE_load_EE_Session', FALSE )) {
+		if ( apply_filters( 'FHEE_load_EE_Session', FALSE ) || is_admin() ) {
 			$this->load_EE_Session();
 		}
 
@@ -280,8 +280,7 @@ final class EE_System {
 	public function load_EE_Session() {
 		global $EE_Session;
 		// instantiate !!!
-		$this->EE->load_class( 'Session' );
-//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$this->EE->load_core( 'Session' );
 //		if ( $this->EE->REQ->is_set( 'clear_session' )) {
 //			espresso_clear_session( __CLASS__, __FUNCTION__ );
 //		}
