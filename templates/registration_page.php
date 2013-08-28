@@ -34,10 +34,8 @@ if (!function_exists('event_registration')) {
 
 		//Build event queries
 		$sql = "SELECT e.*";
-		$org_options['use_venue_manager'] ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
 		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 
-		isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 		$sql.= " WHERE e.is_active=1 ";
 		$sql.= " AND e.event_status != 'D' ";
 
