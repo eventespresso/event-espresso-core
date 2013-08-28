@@ -146,7 +146,8 @@ class EE_Question_Form_Input {
 				'input_id' => '',
 				'input_class' => '',
 				'input_prefix' => 'qstn',
-				'append_qstn_id' => TRUE
+				'append_qstn_id' => TRUE,
+				'htmlentities' => TRUE
 		);		
 		$this->_QST_meta = array_merge( $default_q_meta, $q_meta );	
 		
@@ -286,6 +287,7 @@ class EE_Question_Form_Input {
 	}
 
 
+
 	/**
 	 * 	_question_form_input_property_exists
 	 * @access public
@@ -293,6 +295,17 @@ class EE_Question_Form_Input {
 	 */
 	public function options() {
 		return $this->_QST->temp_options();
+	}
+
+
+
+	/**
+	 * 	get_meta
+	 * @access public
+	 * @return array
+	 */
+	public function get_meta( $key = FALSE ) {
+		return $key && isset( $this->_QST_meta[$key ] ) ? $this->_QST_meta[$key ] : FALSE;
 	}
 
 

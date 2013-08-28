@@ -21,7 +21,7 @@
 				<th>
 					<label for="reg_page_id">
 						<strong>
-							<?php _e('Event Registration Page', 'event_espresso'); ?>
+							<?php _e('Registration Checkout Page', 'event_espresso'); ?>
 						</strong>
 						<?php echo EE_Template::get_help_tab_link('registration_page_info'); ?>
 						<br />
@@ -36,14 +36,14 @@
 						<?php General_Settings_Admin_Page::page_settings_dropdown( $reg_page_id ); ?>
 					</select>
 					<span>
-						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $reg_page_obj, '[ESPRESSO_REGISTRATIONS]' ); ?>
+						<?php echo General_Settings_Admin_Page::page_and_shortcode_status( $reg_page_obj, '[ESPRESSO_CHECKOUT]' ); ?>
 					</span>
 					<br />
 					<p class="description">
 						<?php
 						echo sprintf(
 							__("This page can be hidden from navigation if desired, but should always contain the %s shortcode.", 'event_espresso'),
-							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_REGISTRATIONS]</span>'
+							'<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_CHECKOUT]</span>'
 						);
 						?>
 					</p>

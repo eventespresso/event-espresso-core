@@ -159,13 +159,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Event Registration Page', 'event_espresso'),
 						'callback' => 'registration_page_info_help_tab'
 						),
-					'return_url_info' => array(
-						'title' => __('Thank You Page', 'event_espresso'),
-						'callback' => 'return_url_info_help_tab'
-						),
 					'notify_url_info' => array(
 						'title' => __('Transaction Page', 'event_espresso'),
-						'callback' => 'notify_url_info_help_tab'
+						'callback' => 'transactions_info_help_tab'
+						),
+					'return_url_info' => array(
+						'title' => __('Thank You Page', 'event_espresso'),
+						'callback' => 'thank_you_page_info_help_tab'
 						),
 					'cancel_return_info' => array(
 						'title' => __('Cancel/Return Page', 'event_espresso'),
@@ -264,13 +264,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function registration_page_info_help_tab(){
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
-	public function return_url_info_help_tab(){
+	public function transactions_info_help_tab() {
+		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
+	}
+	public function thank_you_page_info_help_tab(){
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 	public function cancel_return_info_help_tab(){
-		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
-	}
-	public function notify_url_info_help_tab() {
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 
@@ -754,7 +754,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 
 		//load field generator helper
-		//require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
 		$this->EE->load_helper( 'Form_Fields' );
 		
 		$this->_template_args['values'] = $this->_yes_no_values;
@@ -817,19 +816,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//printr( $country, '$country  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$country_input_types = array(
 			'CNT_ISO' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-//			'CNT_ISO3' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-//			'RGN_ID' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'CNT_ISO3' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'RGN_ID' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
 			'CNT_name' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'regular-text' ),
-//			'CNT_cur_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-//			'CNT_cur_single' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
-//			'CNT_cur_plural' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
-//			'CNT_cur_sign' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-//			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
-//			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '0' ), array( 'id' => 1, 'text' => '1' ), array( 'id' => 2, 'text' => '2' ), array( 'id' => 3, 'text' => '3' ))),
-//			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
-//			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
-//			'CNT_tel_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
-//			'CNT_is_EU' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
+			'CNT_cur_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'CNT_cur_single' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
+			'CNT_cur_plural' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
+			'CNT_cur_sign' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text', 'htmlentities' => FALSE ),
+			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
+			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '0' ), array( 'id' => 1, 'text' => '1' ), array( 'id' => 2, 'text' => '2' ), array( 'id' => 3, 'text' => '3' ))),
+			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
+			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
+			'CNT_tel_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
+			'CNT_is_EU' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
 			'CNT_active' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values )
 		);
 		$this->_template_args['inputs'] = $this->_generate_question_form_inputs_for_object( $country, $country_input_types );
@@ -863,9 +862,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			return '';
 		}
 		// for ajax
-//		if ( ! class_exists( 'EE_Form_Fields' )) {
-//			require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
-//		}
 		$this->EE->load_helper( 'Form_Fields' );
 		remove_all_filters( 'FHEE_form_field_label_html' );
 		remove_all_filters( 'FHEE_form_field_input_html' );
@@ -946,6 +942,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				$input_name = isset( $input_types[ $field_ID ] ) && isset( $input_types[ $field_ID ]['input_name'] ) ? $input_types[ $field_ID ]['input_name'] . '[' . $field_ID . ']' : $field_ID;
 				// css class for input
 				$class = isset( $input_types[ $field_ID ]['class'] ) && ! empty( $input_types[ $field_ID ]['class'] ) ? ' ' . $input_types[ $field_ID ]['class'] : '';
+				// whether to apply htmlentities to answer
+				$htmlentities = isset( $input_types[ $field_ID ]['htmlentities'] ) ? $input_types[ $field_ID ]['htmlentities'] : TRUE;
 				// create EE_Question_Form_Input object
 				$QFI = new EE_Question_Form_Input(
 					EE_Question::new_instance ( array(
@@ -964,7 +962,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'input_name' => $input_name,
 						'input_class' => $field_ID . $class,
 						'input_prefix' => '',
-						'append_qstn_id' => FALSE
+						'append_qstn_id' => FALSE,
+						'htmlentities' => $htmlentities
 					)
 				);
 
@@ -977,7 +976,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						$QSO = EE_Question_Option::new_instance ( array (
 								'QSO_name' => (string)$option_id,
 								'QSO_value' => $option['text'],
-								//'QST_ID' => $QFI->get( 'QST_ID' ),
 								'QSO_deleted' => FALSE
 							));
 						// all QST (and ANS) properties can be accessed indirectly thru QFI
@@ -1110,7 +1108,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$cols_n_values = apply_filters( 'FHEE_general_settings_country_save', $cols_n_values );
 		//printr( $cols_n_values, '$cols_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// where values
-		$where_cols_n_values = array( 'CNT_ISO' => $CNT_ISO );
+		$where_cols_n_values = array( array( 'CNT_ISO' => $CNT_ISO ));
 		// run the update
 		$success = EEM_Country::instance()->update( $cols_n_values, $where_cols_n_values );
 		//global $wpdb;
@@ -1128,7 +1126,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'STA_active' 	=> (bool)absint( $state['STA_active'] )
 				);
 				// where values
-				$where_cols_n_values = array( 'STA_ID' => $STA_ID );
+				$where_cols_n_values = array( array( 'STA_ID' => $STA_ID ));
 				// run the update
 				$success = EEM_State::instance()->update( $cols_n_values, $where_cols_n_values );
 			}
