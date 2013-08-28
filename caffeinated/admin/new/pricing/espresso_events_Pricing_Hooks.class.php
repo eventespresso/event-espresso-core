@@ -103,7 +103,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 	public function pricing_metabox() {
-		$existing_datetime_ids = $existing_ticket_ids = $ticket_datetimes = array();
+		$existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = array();
 
 		$evtobj = $this->_adminpage_obj->get_cpt_model_obj();
 
@@ -169,20 +169,31 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
 
 			//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
+			$dttrow = 1;
 			foreach ( $times as $time ) {
-				$main_template_args['datetime_rows'] .= $this->_get_datetime_row( $time, $datetime_tickets, $all_tickets );
+				$main_template_args['datetime_rows'] .= $this->_get_datetime_row( $dttrow, $time, $datetime_tickets, $all_tickets );
+				$dttrow++;
 			}
 
 			//then loop through all tickets for the ticket rows.
+			$tktrow = 1;
 			foreach ( $all_tickets as $ticket ) {
-				$main_template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket, $ticket_datetimes, $times );
+				$main_template_args['ticket_rows'] .= $this->_get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $times );
+				$tktrow++;
 			}
 		} else {
-			//this is a brand new event likely (with new dtt obviously) so we need to setup defaults
-			//todo
+
+			//get default tickets that are use on initial creation.
+			$all_tickets = $this->EE->load_model('Ticket')->get_all_default_tickets();
+			$main_template_args['datetime_rows'] .= $this->_get_datetime_row( 1, $times[0], $datetime_tickets, $all_tickets, TRUE);
+
+			$tktrow = 1;
+			foreach ( $all_tickets as $ticket ) {
+				$main_template_args['ticket_rows'] .= $this->_get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $times );
+			}
 		}
 
-		$main_template_args['ticket_js_structure'] = $this->_get_ticket_js_structure();
+		$main_template_args['ticket_js_structure'] = $this->_get_ticket_js_structure($times, $all_tickets);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php';
 		espresso_display_template( $template, $main_template_args );
 		return;
