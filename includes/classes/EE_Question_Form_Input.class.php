@@ -309,4 +309,101 @@ class EE_Question_Form_Input {
 	}
 
 
+
+
+
+
+	/**
+	 * 		generate_question_form_inputs_for_object
+	 *
+	 * 		@access 	protected
+	 * 		@param 	object 		$object
+	 * 		@param 	array 		$input_types
+	 * 		@return 		array
+	 */
+	static function generate_question_form_inputs_for_object( $object = FALSE, $input_types = array() ) {	
+		if ( ! is_object( $object )) {
+			return FALSE;
+		}
+		$inputs = array();
+		$fields = $object->get_model()->field_settings( FALSE );
+//		$pk = $object->_get_model()->primary_key_name();
+		$pk = $object->ID();
+
+//		printr( $object, get_class( $object ) . '<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $fields, '$fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $input_types, '$input_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		foreach ( $fields as $field_ID => $field ) {			
+//			printr( $field, '$field  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			if ( isset( $input_types[ $field_ID ] )) {
+				// get saved value for field
+				$value = $object->get( $field_ID );
+				// if no saved value, then use default
+				$value = ! empty( $value ) ? $value : $field->get_default_value();
+	//			if ( $field_ID == 'CNT_active' ) 
+	//			echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';	
+				// determine question type
+				$type = isset( $input_types[ $field_ID ] ) ? $input_types[ $field_ID ]['type'] : 'TEXT';
+				// input name
+				$input_name = isset( $input_types[ $field_ID ] ) && isset( $input_types[ $field_ID ]['input_name'] ) ? $input_types[ $field_ID ]['input_name'] . '[' . $field_ID . ']' : $field_ID;
+				// css class for input
+				$class = isset( $input_types[ $field_ID ]['class'] ) && ! empty( $input_types[ $field_ID ]['class'] ) ? ' ' . $input_types[ $field_ID ]['class'] : '';
+				// whether to apply htmlentities to answer
+				$htmlentities = isset( $input_types[ $field_ID ]['htmlentities'] ) ? $input_types[ $field_ID ]['htmlentities'] : TRUE;
+				// create EE_Question_Form_Input object
+				$QFI = new EE_Question_Form_Input(
+					EE_Question::new_instance ( array(
+						'QST_ID'=> 0,
+						'QST_display_text'=> $field->get_nicename(),
+						'QST_type' => $type
+					)),
+					EE_Answer::new_instance ( array( 
+						'ANS_ID'=> 0,
+						'QST_ID'=> 0,
+						'REG_ID'=> 0,
+						'ANS_value'=> $value
+					 )),
+					array(
+						'input_id' => $field_ID . '-' . $object->ID(),
+						'input_name' => $input_name,
+						'input_class' => $field_ID . $class,
+						'input_prefix' => '',
+						'append_qstn_id' => FALSE,
+						'htmlentities' => $htmlentities
+					)
+				);
+
+				// does question type have options ?
+				if ( in_array( $type, array( 'DROPDOWN', 'SINGLE', 'MULTIPLE' )) && isset ( $input_types[ $field_ID ] ) && isset ( $input_types[ $field_ID ]['options'] )) {
+					foreach ( $input_types[ $field_ID ]['options'] as $option ) {
+						$option = stripslashes_deep( $option );
+						$option_id = ! empty( $option['id'] ) ? $option['id'] : 0;
+
+						$QSO = EE_Question_Option::new_instance ( array (
+								'QSO_name' => (string)$option_id,
+								'QSO_value' => $option['text'],
+								'QSO_deleted' => FALSE
+							));
+						// all QST (and ANS) properties can be accessed indirectly thru QFI
+						$QFI->add_temp_option( $QSO );
+					}
+				}
+				// we don't want ppl manually changing primary keys cuz that would just lead to total craziness man
+				if ( $field_ID == $pk ) {
+					$QFI->set( 'QST_disabled', TRUE );
+				}
+				//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				
+				$inputs[ $field_ID ] = $QFI;	
+				
+	//			if ( $field_ID == 'CNT_active' ) {
+	//				printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	//			}
+			}		
+		}
+		return $inputs;
+	}
+
+
+
 }	
