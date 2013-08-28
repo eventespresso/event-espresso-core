@@ -586,6 +586,25 @@ class EE_Datetime extends EE_Base_Class{
 	}
 
 
+
+	/**
+	 * This returns a nice display name for the datetime that is contingent on the span between the dates and times.
+	 * @return string
+	 */
+	public function get_dtt_display_name() {
+		//first condition is to see if the months are different
+		if ( date('m', $this->_DTT_EVT_start) != date('m', $this->_DTT_EVT_end ) ) {
+			$displaydate = $this->start_date('M j\, Y g:i a') . ' - ' . $this->end_date('M j\, Y g:i a');
+		//next condition is if its the same month but different day
+		} else if ( date('m', $this->_DTT_EVT_start) == date('m', $this->_DTT_EVT_end ) && date('d', $this->_DTT_EVT_start) != date('d', $this->_DTT_EVT_end) ) {
+			$displaydate = $this->start_date('M j\, g:i a') . ' - ' . $this->end_date('M j\, g:i a Y');
+		} else {
+			$displaydate = $this->start_date('F j\, Y') . ' @ ' . $this->start_date('g:i a') . ' + ' . $this->end_date('g:i a');
+		}
+		return $displaydate;
+	}
+
+
 }
 
 /* End of file EE_Datetime.class.php */
