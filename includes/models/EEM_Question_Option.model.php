@@ -57,9 +57,10 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		$this->_fields = array(
 			'Question_Option'=>array(
 					'QSO_ID'=>new EE_Primary_Key_Int_Field('QSO_ID', __('Question OPtion ID','event_espresso'), false, 0),
+					'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
 					'QSO_name'=>new EE_Simple_HTML_Field('QSO_name', __('Question Option Name','event_espresso'), false, ''),
 					'QSO_value'=>new EE_Simple_HTML_Field('QSO_value','Question Option Value',false,''),
-					'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
+					'QSO_opt_group'=>new EE_Plain_Text_Field('QSO_opt_group','Question Option Opt Group', TRUE, NULL ),
 					'QSO_deleted'=>new EE_Trashed_Flag_Field('QSO_deleted', __('Flag indicating Option was trashed','event_espresso'), false, false)
 				)
 		);

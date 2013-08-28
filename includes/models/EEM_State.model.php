@@ -96,7 +96,7 @@ class EEM_State extends EEM_Base {
 	*/	
 	public function get_all_states() {
 		if ( ! self::$_all_states ) {
-			self::$_all_states = $this->get_all( NULL, 'ASC', array( 0,99999 ));
+			self::$_all_states = $this->get_all( array( 'order_by'=>array('STA_name'=>'ASC'), 'limit'=> array( 0, 99999 )));
 		}
 		return self::$_all_states;
 	}
@@ -109,12 +109,57 @@ class EEM_State extends EEM_Base {
 	*/	
 	public function get_all_active_states() {
 		if ( ! self::$_active_states ) {
-			self::$_active_states =  $this->get_all( 
-					array(array( 'STA_active' => 1 ), 
-					'limit'=>array(0,99999)));
+			self::$_active_states =  $this->get_all( array( array( 'STA_active' => TRUE ), 'order_by'=>array('STA_name'=>'ASC'), 'limit'=>array( 0, 99999 )));
 		}
 		return self::$_active_states;
 	}
+
+
+
+	/**
+	 * 	get_all_states_of_active_countries
+	 * @return array 
+	 */
+	public function get_all_states_of_active_countries(){
+		if ( $countries = EEM_Country::instance()->get_all_active_countries() ) {
+			if ( $states = $this->get_all( array( array( 'CNT_ISO' => array( 'IN', array_keys( $countries )), 'STA_active' => TRUE ),  'order_by' => array( 'STA_name' => 'ASC' )))) {
+				return $states;
+			}
+		}
+		return FALSE;
+	}
+
+
+
+	/**
+	 * 	get_all_states_of_active_countries
+	 * @return array 
+	 */
+	public function get_all_active_states_for_these_countries( $countries ){
+		if ( ! $countries ) {
+			return FALSE;
+		}
+		if ( $states = $this->get_all( array(  array( 'CNT_ISO' => array( 'IN', array_keys( $countries )), 'STA_active' => TRUE ),  'order_by' => array( 'CNT_ISO' => 'ASC' )))) {
+			return $states;
+		}
+		return FALSE;
+	}
+
+	/**
+	 * 	get_all_states_of_active_countries
+	 * @return array 
+	 */
+	public function get_all_states_for_these_countries( $countries ){
+		if ( ! $countries ) {
+			return FALSE;
+		}
+		if ( $states = $this->get_all( array( array( 'CNT_ISO' => array( 'IN', array_keys( $countries ))),  'order_by' => array( 'CNT_ISO' => 'ASC' )))) {
+			return $states;
+		}
+		return FALSE;
+	}
+
+
 
 
 

@@ -56,9 +56,6 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_address_1" value="<?php echo $organization_address_1; ?>" />
-					<p class="description">
-						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</p>
 				</td>
 			</tr>
 			<tr>
@@ -69,9 +66,6 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_address_2" value="<?php echo $organization_address_2; ?>" />
-					<p class="description">
-						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</p>
 				</td>
 			</tr>
 			<tr>
@@ -82,24 +76,10 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_city" value="<?php echo $organization_city; ?>" />
-					<p class="description">
-						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</p>
 				</td>
 			</tr>
-			<tr>
-				<th>
-					<label for="organization_state">
-						<?php _e('State / Province:', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<input class="regular-text" type="text" name="organization_state" value="<?php echo $organization_state; ?>" />
-					<p class="description">
-						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
+			<?php echo EEH_Form_Fields::generate_form_input( $states ); ?>
+			<?php echo EEH_Form_Fields::generate_form_input( $countries ); ?>
 			<tr>
 				<th>
 					<label for="organization_zip">
@@ -108,25 +88,6 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_zip" size="10" value="<?php echo $organization_zip; ?>" />
-					<p class="description">
-						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<label for="organization_country">
-						<?php _e('Country:', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<?php printCountriesSelector( 'organization_country', $organization_country ); ?>
-					<p class="description">
-						<?php echo _e('currency sign: ', 'event_espresso') . $currency_sign; ?>
-					</p>
-					<p class="description">
-						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</p>
 				</td>
 			</tr>
 			<tr>
@@ -137,9 +98,6 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_email" value="<?php echo $organization_email; ?>" />
-					<p class="description">
-						<?php echo __('Displayed on all emails and invoices.', 'event_espresso'); ?>
-					</p>
 				</td>
 			</tr>
 		</tbody>

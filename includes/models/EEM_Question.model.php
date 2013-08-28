@@ -79,7 +79,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				'QST_ID'=>new EE_Primary_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0),
 				'QST_display_text'=>new EE_Full_HTML_Field('QST_display_text', __('Question Text','event_espresso'), true, ''),
 				'QST_admin_label'=>new EE_Simple_HTML_Field('QST_admin_label', __('Questino Label (admin-only)','event_espresso'), true, ''),
-				'QST_system'=>new EE_Integer_Field('QST_system', __('Internal string ID for question','event_espresso'), true, 0),
+				'QST_system'=>new EE_Plain_Text_Field('QST_system', __('Internal string ID for question','event_espresso'), TRUE, NULL ),
 				'QST_type'=>new EE_Enum_Field('QST_type', __('Question Type','event_espresso'),false, 'TEXT',$this->_allowed_question_types),
 				'QST_required'=>new EE_Boolean_Field('QST_required', __('Required Question?','event_espresso'), false, false),
 				'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', __('Text to Display if Not Provided','event_espresso'), true, ''),

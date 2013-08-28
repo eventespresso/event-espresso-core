@@ -103,7 +103,7 @@ class EEM_Country extends EEM_Base {
 	*/	
 	public function get_all_countries() {
 		if ( ! self::$_all_countries ) {
-			self::$_all_countries = $this->get_all( array( 'order_by'=>array('CNT_ISO'=>'ASC'),'limit'=> array( 0,99999 )));
+			self::$_all_countries = $this->get_all( array( 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=> array( 0,99999 )));
 		}
 		return self::$_all_countries;
 	}
@@ -116,7 +116,7 @@ class EEM_Country extends EEM_Base {
 	*/	
 	public function get_all_active_countries() {
 		if ( ! self::$_active_countries ) {
-			self::$_active_countries =  $this->get_all( array( array('CNT_active' => 1),'order_by'=>array('CNT_ISO'=>'ASC'),'limit'=>array(0, 99999) ));
+			self::$_active_countries =  $this->get_all( array( array( 'CNT_active' => TRUE ), 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=>array( 0, 99999 )));
 		}
 		return self::$_active_countries;
 	}
