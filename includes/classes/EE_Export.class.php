@@ -313,27 +313,14 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				}else{
 					//must be a related thing
 					$model_object = $registration->get_first_related($model_name);
+					if( ! $model_object ) continue;
 				}
 				foreach($field_list as $field_name){
 					$field = $model->field_settings_for($field_name);
 					//if it's the STS_ID column, show a hard-coded pretty version (because theres no Status model right now)
-					if($field_name == 'STS_ID'){
-						switch($model_object->get($field->get_name())){
-							case EEM_Registration::status_id_approved:
-								$value = __("Approved", "event_espresso");
-								break;
-							case EEM_Registration::status_id_cancelled:
-								$value = __("Cancelled", "event_espresso");
-								break;
-							case EEM_Registration::status_id_not_approved:
-								$value = __("Not Approved", "event_espresso");
-								break;
-							case EEM_Registration::status_id_pending:
-								$value = __("Pending Approval", "event_espresso");
-								break;
-							default:
-								$value = __("Unknown", "event_espresso");
-						}
+					if($model_name == 'Registration' && $field_name == 'STS_ID'){
+						//in this case, we're assuming we want the registration's status and so we use EE_Registration::pretty_status()
+						$value = $model_object->pretty_status();
 					}else{
 						$value = $model_object->get_pretty($field->get_name());
 					}
