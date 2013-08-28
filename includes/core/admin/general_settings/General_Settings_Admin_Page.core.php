@@ -700,8 +700,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _admin_option_settings() {
 	
 		$this->_template_args['values'] = $this->_yes_no_values;
-		
-		$this->_template_args['use_venue_manager'] = isset( $this->EE->CFG->admin->use_venue_manager ) ? absint( $this->EE->CFG->admin->use_venue_manager ) : FALSE;
 		$this->_template_args['use_personnel_manager'] = isset( $this->EE->CFG->admin->use_personnel_manager ) ? absint( $this->EE->CFG->admin->use_personnel_manager ) : FALSE;
 		$this->_template_args['use_dashboard_widget'] = isset( $this->EE->CFG->admin->use_dashboard_widget ) ? absint( $this->EE->CFG->admin->use_dashboard_widget ) : TRUE;
 		$this->_template_args['events_in_dasboard'] = isset( $this->EE->CFG->admin->events_in_dasboard ) ? absint( $this->EE->CFG->admin->events_in_dasboard ) : 30;
@@ -720,8 +718,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _update_admin_option_settings() {
-		
-		$this->EE->CFG->admin->use_venue_manager = isset( $this->_req_data['use_venue_manager'] ) ? absint( $this->_req_data['use_venue_manager'] ) : $this->EE->CFG->admin->use_venue_manager;
 		$this->EE->CFG->admin->use_personnel_manager = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : $this->EE->CFG->admin->use_personnel_manager;
 		$this->EE->CFG->admin->use_dashboard_widget = isset( $this->_req_data['use_dashboard_widget'] ) ? absint( $this->_req_data['use_dashboard_widget'] ) : $this->EE->CFG->admin->use_dashboard_widget;
 		$this->EE->CFG->admin->events_in_dasboard = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : $this->EE->CFG->admin->events_in_dasboard;

@@ -475,7 +475,6 @@ class EEH_Activation {
 			$default_config->registration->use_attendee_pre_approval = FALSE;
 			// general admin settings
 			$default_config->admin = new stdClass();
-			$default_config->admin->use_venue_manager = TRUE;
 			$default_config->admin->use_personnel_manager = TRUE;
 			$default_config->admin->use_dashboard_widget = TRUE;
 			$default_config->admin->events_in_dasboard = 30;

@@ -270,14 +270,13 @@ if (!function_exists('espresso_reg_form_sc')) {
 				$virtual_phone = stripslashes_deep($event->virtual_phone);
 
 				//Venue information
-				if ($org_options['use_venue_manager']) {
-					$event_address = $event->venue_address;
-					$event_address2 = $event->venue_address2;
-					$event_city = $vent->venue_city;
-					$event_state = $event->venue_state;
-					$event_zip = $event->venue_zip;
-					$event_country = $event->venue_country;
-				}
+				$event_address = $event->venue_address;
+				$event_address2 = $event->venue_address2;
+				$event_city = $vent->venue_city;
+				$event_state = $event->venue_state;
+				$event_zip = $event->venue_zip;
+				$event_country = $event->venue_country;
+				
 				//var_dump($events);
 				//Address formatting
 				$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');

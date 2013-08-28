@@ -58,7 +58,7 @@ function display_event_espresso_categories($category_identifier = 'null', $css_c
  * @return 		void
  */
 function event_espresso_get_event_details( $attributes = array()) {
-
+	throw new EE_Error(__FUNCTION__." is deprecated");
 	global $wpdb, $org_options, $events_in_session, $ee_gmaps_opts, $EE_Cart;	
 	//printr( $org_options, '$org_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -107,10 +107,7 @@ function event_espresso_get_event_details( $attributes = array()) {
 	// get category
 	$category = $category_identifier != 'NULL' ? espresso_event_list_get_category($category_identifier) : FALSE;
 
-	// if $use_venues was not set in the attributes, then check $org_options
-	if (!$use_venues) {
-		$use_venues = ( isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] ) ? TRUE : FALSE;
-	}
+
 
 	if ($use_venues) {
 		$all_venues = espresso_event_list_get_venues();
