@@ -1448,44 +1448,35 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		global $wpdb, $org_options;
 
 	    $REG = EEM_Registration::instance();
-		$attendees = $REG->get_registrations_for_transaction( $this->_registration->transaction_ID(), $this->_registration->ID() );
+		//get all other registrations on this transaction, and cache 
+		//the attendees for them so we don't have to run another query using force_join
+		$registrations = $REG->get_all(array(
+			array(
+				'TXN_ID'=>$this->_registration->transaction_ID(),
+				'REG_ID'=>array('!=',$this->_registration->ID())
+			),
+			'force_join'=>array('Attendee')));//get_registrations_for_transaction( $this->_registration->transaction_ID(), $this->_registration->ID() );
 
 		$this->_template_args['attendees'] = array();
 		$this->_template_args['attendee_notice'] = '';
-
-		if ( empty( $attendees)  || ( is_array($attendees) && empty($attendees[0]) ) ) {
+		$this->EE->load_helper('Array');
+		if ( empty( $registrations)  || ( is_array($registrations) &&  ! EEH_Array::get_one_item_from_array($registrations) ) ) {
 			EE_Error::add_error( __('There are no attendees attached to this registration. Something may have gone wrong with the registration', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['attendee_notice'] = EE_Error::get_notices();
 		} else {
 
 			$att_nmbr = 1;
-			foreach ( $attendees as $attendee ) {
-			
-				$this->_template_args['attendees'][ $att_nmbr ]['fname'] = ( isset( $attendee->ATT_fname ) & ! empty( $attendee->ATT_fname ) ) ? $attendee->ATT_fname : '';
-				$this->_template_args['attendees'][ $att_nmbr ]['lname'] = ( isset( $attendee->ATT_lname ) & ! empty( $attendee->ATT_lname ) ) ? $attendee->ATT_lname : '';
-				$this->_template_args['attendees'][ $att_nmbr ]['email'] = ( isset( $attendee->ATT_email ) & ! empty( $attendee->ATT_email ) ) ? $attendee->ATT_email : '';
-				$this->_template_args['attendees'][ $att_nmbr ]['final_price'] = ( isset( $attendee->REG_final_price ) & ! empty( $attendee->REG_final_price ) ) ? $attendee->REG_final_price : '';
+			foreach ( $registrations as $registration ) {
+				/* @var $registration EE_Registration */
+				$attendee = $registration->attendee() ? $registration->attendee() : EE_Attendee::new_instance();
+				$this->_template_args['attendees'][ $att_nmbr ]['fname'] = $attendee->fname();//( isset( $registration->ATT_fname ) & ! empty( $registration->ATT_fname ) ) ? $registration->ATT_fname : '';
+				$this->_template_args['attendees'][ $att_nmbr ]['lname'] = $attendee->lname();//( isset( $registration->ATT_lname ) & ! empty( $registration->ATT_lname ) ) ? $registration->ATT_lname : '';
+				$this->_template_args['attendees'][ $att_nmbr ]['email'] = $attendee->email();//( isset( $registration->ATT_email ) & ! empty( $registration->ATT_email ) ) ? $registration->ATT_email : '';
+				$this->_template_args['attendees'][ $att_nmbr ]['final_price'] = $registration->price_paid();//( isset( $registration->REG_final_price ) & ! empty( $registration->REG_final_price ) ) ? $registration->REG_final_price : '';
 				
-				$address = array();
+				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $attendee->full_address_as_array() );
 				
-				if ( isset( $attendee->ATT_address ) && ( ! empty( $attendee->ATT_address ))) {
-					$address[] = $attendee->ATT_address;
-				}
-				if ( isset( $attendee->ATT_address2 ) && ( ! empty( $attendee->ATT_address2 ))) {
-					$address[] = $attendee->ATT_address2;
-				}
-				if ( isset( $attendee->ATT_city ) && ( ! empty( $attendee->ATT_city ))) {
-					$address[] = $attendee->ATT_city;
-				}
-				if ( isset( $attendee->ATT_state ) && ( ! empty( $attendee->ATT_state ))) {
-					$address[] = $attendee->ATT_state;
-				}
-				if ( isset( $attendee->ATT_zip ) && ( ! empty( $attendee->ATT_zip ))) {
-					$address[] = $attendee->ATT_zip;
-				}
-				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $address );
-				
-				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$attendee->ATT_ID ), REG_ADMIN_URL );
+				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$attendee->ID() ), REG_ADMIN_URL );
 				
 				$att_nmbr++;
 			}
@@ -1497,7 +1488,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
 		}
-
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_attendees.template.php';
 		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
 

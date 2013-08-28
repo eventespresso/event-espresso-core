@@ -509,12 +509,12 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function event_name() {
-		if ( empty( $this->_EVT_ID )) {
-			return FALSE;
+		$event = $this->event_obj();
+		if($event){
+			return $event->name();
+		}else{
+			return '';
 		}
-		global $wpdb;
-		$SQL = 'SELECT event_name, slug FROM ' . $wpdb->prefix . 'events_detail WHERE id = %d';
-		return stripslashes( trim( $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ))));
 	}
 
 

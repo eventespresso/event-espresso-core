@@ -315,45 +315,6 @@ class EEM_Registration extends EEM_Base {
 		return $this->get_one(array(array('TXN_ID'=>$TXN_ID,'REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT)));
 	}
 
-	/**
-	*		get all registrations for a specific transaction, possibly excluding one (ie: get all OTHER registrations except this one )
-	* 
-	* 		@access		public
-	* 		@param		int 			$TXN_ID
-	* 		@param		int 			$REG_ID
-	* 		@return		array
-	*/
-	public function get_registrations_for_transaction( $TXN_ID = FALSE, $REG_ID = FALSE ) {
-
-		if ( ! $TXN_ID ) {
-			return FALSE;
-		}
-
-		global $wpdb;
-
-		$SQL = 'SELECT att.*, reg.*';
-		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' RIGHT JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
-		$SQL .= ' WHERE reg.TXN_ID = %d';
-		
-		if ( $REG_ID ) {
-			$SQL .= ' AND reg.REG_ID != %d';
-			$attendees = $wpdb->get_row( $wpdb->prepare( $SQL, $TXN_ID, $REG_ID ));
-		} else {
-			$attendees = $wpdb->get_row( $wpdb->prepare( $SQL, $TXN_ID ));
-		}
-		
-		if ( ! is_array( $attendees )) {
-			$attendees = array( $attendees );
-		}
-		//printr( $attendee, 'attendee' ); die();		
-		return $attendees;
-		
-	}
-
-
-
-
 
 	/**
 	 *		get_event_registration_count
