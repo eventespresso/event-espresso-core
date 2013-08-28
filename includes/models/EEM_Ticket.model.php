@@ -113,4 +113,14 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 
 
 
+	/**
+	 * This returns all tickets that are defaults from the db
+	 * @return EE_Ticket[]
+	 */
+	public function get_all_default_tickets() {
+		return $this->get_all( array( array('TKT_is_default' => 1)) );
+	}
+
+
+
 } //end EEM_Ticket model
