@@ -103,8 +103,107 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 	public function pricing_metabox() {
-		echo 'IN PROGRESS';
+		$existing_datetime_ids = $existing_ticket_ids = $ticket_datetimes = array();
+
+		$evtobj = $this->_adminpage_obj->get_cpt_model_obj();
+
+		//default main template args
+		$main_template_args = array(
+			'event_datetime_help_link' => EE_Template::get_help_tab_link('event_date_info', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add a filter to the template for the help text in the Events_Admin_Page core file so we can add further help
+			'existing_datetime_ids' => '',
+			'total_dtt_rows' => 1,
+			'add_new_dtt_help_link' => EE_Template::get_help_tab_link('add_new_dtt_info', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add this help info id to the Events_Admin_Page core file so we can access it here.
+			'datetime_rows' => '',
+			'show_tickets_container' => ' style="display:none;"',
+			'ticket_rows' => '',
+			'existing_ticket_ids' => '',
+			'total_ticket_rows' => 1,
+			'ticket_js_structure' => ''
+			);
+
+		$event_id = is_object( $evtobj ) ? $evtobj->ID() : NULL;
+		$timezone = is_object( $evtobj ) ? $evtobj->tiemzone_string() : NULL;
+
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+
+		/**
+		 * 1. Start with retrieving Datetimes
+		 * 2. For each datetime get related tickets
+		 * 3. For each ticket get related prices
+		 */
+		
+		$DTM = $this->EE->load_model('Datetime', array($timezone) );
+		$times = $DTM->get_all_event_dates( $event_id );
+
+		//do we get related tickets (i.e. is this a brand new event?)
+		if ( $times[0]->get('DTT_ID') !== 0 ) {
+			$main_template_args['total_dtt_rows'] = count($times);
+			foreach ( $times as $time ) {
+				$dttid = $time->get('DTT_ID');
+				$existing_datetime_ids[] = $dttid;
+
+				//tickets attached
+				$related_tickets = $time->get_many_related('Ticket');
+
+				//we can't actually setup rows in this loop yet cause we don't know all the unique tickets for this event yet (tickets are linked through all datetimes). So we're going to temporarily cache some of that information.
+
+				//loop through and setup the ticket rows
+				foreach ( $related_tickets as $ticket ) {
+					$tktid = $ticket->get('TKT_ID');
+					//we only want unique tickets in our final display!!
+					if ( !in_array( $tktid, $existing_ticket_ids ) ) {
+						$existing_ticket_ids[] = $tktid;
+						$all_tickets[] = $ticket;
+					}
+					
+					//temporary cache of this ticket info for this datetime for later processing of datetime rows.
+					$datetime_tickets[$dttid][] = $tktid;
+
+					//temporary cache of this datetime info for this ticket for later processing of ticket rows.
+					if ( ! in_array( $dtt_id, $ticket_datetimes[$tktid] ) )
+						$ticket_datetimes[$tktid][] = $dtt_id;
+
+				}
+			}
+
+			$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
+
+			//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
+			foreach ( $times as $time ) {
+				$main_template_args['datetime_rows'] .= $this->_get_datetime_row( $time, $datetime_tickets, $all_tickets );
+			}
+
+			//then loop through all tickets for the ticket rows.
+			foreach ( $all_tickets as $ticket ) {
+				$main_template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket, $ticket_datetimes, $times );
+			}
+		} else {
+			//this is a brand new event likely (with new dtt obviously) so we need to setup defaults
+			//todo
+		}
+
+		$main_template_args['ticket_js_structure'] = $this->_get_ticket_js_structure();
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php';
+		espresso_display_template( $template, $main_template_args );
 		return;
+	}
+
+
+
+	private function _get_datetime_row( EE_Datetime $dtt, $datetime_tickets, $all_tickets ) {
+		//todo
+	}
+
+
+
+	private function _get_ticket_row( EE_Ticket $ticket, $ticket_datetimes, $all_dtts ) {
+		//todo
+	}
+
+
+
+	private function _get_ticket_js_structure() {
+		//todo
 	}
 
 
