@@ -94,24 +94,47 @@
 	background:#F0F8FB; border: 1px solid lightblue; border-radius:3px;
 }
 
-table .ee-admin-radio-lbl,
-.inside table .ee-admin-radio-lbl,
-table .ee-admin-radio-long-lbl,
-.inside table .ee-admin-radio-long-lbl {
-	display: inline-block; min-width:100px; margin: 0 4em 0 0; vertical-align: middle;
-}
-table .ee-admin-radio-long-lbl,
-.inside table .ee-admin-radio-long-lbl { margin:0 4em 1.5em 0 !important;  }
 
 table .ee-admin-radio-lbl input,
 .inside table .ee-admin-radio-lbl input,
 table .ee-admin-radio-long-lbl input,
 .inside table .ee-admin-radio-long-lbl input { position: relative; top:-2.5px; width: auto; margin:3px 0.5em 0 0; vertical-align: middle; }
 
+.espresso-radio-btn-options-ul { margin: 0; }
+.espresso-radio-btn-options-ul input,
+.espresso-form-input-lbl input,
+.ee-admin-radio-lbl:hover { cursor: pointer; }
+
+table .espresso-radio-btn-options-ul .nano-lbl,
+.inside table .espresso-radio-btn-options-ul .nano-lbl {
+    display: inline-block; width: 5.8%; min-width:50px;  max-width:60px;
+}
+
+table .espresso-radio-btn-options-ul .micro-lbl,
+.inside table .espresso-radio-btn-options-ul .micro-lbl {
+    display: inline-block; width: 5.8%; min-width:66px;  max-width:80px;
+}
+
+table .espresso-radio-btn-options-ul .tiny-lbl,
+.inside table .espresso-radio-btn-options-ul .tiny-lbl {
+    display: inline-block; width: 12%; min-width:100px;  max-width:120px;
+}
+
 table .espresso-radio-btn-options-ul .small-lbl,
 .inside table .espresso-radio-btn-options-ul .small-lbl {
-    display: inline-block; width: 49.5%;
+    display: inline-block; width: 24.4%; min-width:200px;  max-width:243px;
 }
+
+table .espresso-radio-btn-options-ul .medium-lbl,
+.inside table .espresso-radio-btn-options-ul .medium-lbl {
+    display: inline-block; width: 49%; min-width:400px;  max-width:486px;
+}
+
+table .espresso-radio-btn-options-ul .big-lbl,
+.inside table .espresso-radio-btn-options-ul .big-lbl {
+    display: inline-block; width:99%; min-width:486px;
+}
+
 
 #admin-page-header { clear: both; padding:.25em 0 0; }
 .admin-page-header-edit-lnk  { margin:0 0 0 1em; font-size:10px; }
