@@ -361,6 +361,8 @@ final class EE_Registry {
 		// check if class has already been loaded, and return it if it has been
 		if ( $class_name == 'EE_Request_Handler' && ! is_null( $this->REQ )) {
 			return $this->REQ;
+		} else if ( $class_name == 'EE_Session' && ! is_null( $this->SSN )) {
+			return $this->SSN;
 		} else if ( isset ( $this->{$class_name} )) {
 			return $this->{$class_name};
 		} else if ( isset ( $this->LIB[ $class_name ] )) {
@@ -467,6 +469,8 @@ final class EE_Registry {
 			// return newly instantiated class
 			if ( $class_name == 'EE_Request_Handler' ) {
 				$this->REQ = $class_obj;
+			} elseif ( $class_name == 'EE_Session' ) {
+				$this->SSN = $class_obj;
 			} else if ( property_exists( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
 			} else if ( !$from_db && $cache  ) {
