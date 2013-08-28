@@ -68,19 +68,15 @@ Class EEM_Gateways {
 	private function __construct() {
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		//activate resources
-		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+
+		$this->EE = EE_Registry::instance();
 		
 		//so client code can check for instatiation b4 including
+		$this->EE->load_class( 'Gateway' );
+		$this->EE->load_class( 'Offline_Gateway' );
+		$this->EE->load_class( 'Offsite_Gateway' );
+		$this->EE->load_class( 'Onsite_Gateway' );	
 		define('ESPRESSO_GATEWAYS', TRUE);
-		require_once(EE_CLASSES . 'EE_Gateway.class.php');
-		require_once(EE_CLASSES . 'EE_Offline_Gateway.class.php');
-		require_once(EE_CLASSES . 'EE_Offsite_Gateway.class.php');
-		require_once(EE_CLASSES . 'EE_Onsite_Gateway.class.php');
-		
-		
-		$this->EE = EE_Registry::instance();
-		EE_System::instance()->load_EE_Session();
 		
 		$this->_load_session_gateway_data();
 		$this->_set_active_gateways();
