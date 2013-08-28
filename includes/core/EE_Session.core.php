@@ -120,7 +120,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// are we using encryption?
 		if ( $this->_use_encryption ) {
-			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Encryption.class.php' );
+			EE_Registry::instance()->load_core( 'Encryption' );
 			// instantiate the class object making all properties and methods accessible via $this->encryption ex: $this->encryption->encrypt();
 			$this->encryption = EE_Encryption::instance();
 		}
