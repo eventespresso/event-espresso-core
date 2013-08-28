@@ -62,7 +62,7 @@ class EEM_State extends EEM_Base {
 		$this->_fields = array(
 			'State'=>array(
 				'STA_ID'=> new EE_Primary_Key_String_Field('STA_ID', __('State ID','event_espresso'), false,0),
-				'CNT_ISO'=> new EE_Foreign_Key_String_Field('CNT_ISO', __('COuntry ISO Code','event_espresso'), false, 1, 'Country'),
+				'CNT_ISO'=> new EE_Foreign_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso'), false, 1, 'Country'),
 				'STA_abbrev' => new EE_Plain_Text_Field('STA_abbrev', __('State Abbreviation','event_espresso'), false, ''),
 				'STA_name' => new EE_Plain_Text_Field('STA_name', __('State Name','event_espresso'), false, ''),
 				'STA_active'=> new EE_Boolean_Field('STA_active', __("State Active Flag", "event_espresso"), false, false)
@@ -96,7 +96,7 @@ class EEM_State extends EEM_Base {
 	*/	
 	public function get_all_states() {
 		if ( ! self::$_all_states ) {
-			self::$_all_states = $this->get_all( array( 'order_by'=>array('STA_name'=>'ASC'), 'limit'=> array( 0, 99999 )));
+			self::$_all_states = $this->get_all( array( 'order_by'=>array( 'STA_name'=>'ASC' ), 'limit'=> array( 0, 99999 )));
 		}
 		return self::$_all_states;
 	}
@@ -109,7 +109,7 @@ class EEM_State extends EEM_Base {
 	*/	
 	public function get_all_active_states() {
 		if ( ! self::$_active_states ) {
-			self::$_active_states =  $this->get_all( array( array( 'STA_active' => TRUE ), 'order_by'=>array('STA_name'=>'ASC'), 'limit'=>array( 0, 99999 )));
+			self::$_active_states =  $this->get_all( array( array( 'STA_active' => TRUE ), 'order_by'=>array( 'STA_name'=>'ASC' ), 'limit'=>array( 0, 99999 )));
 		}
 		return self::$_active_states;
 	}
@@ -121,11 +121,12 @@ class EEM_State extends EEM_Base {
 	 * @return array 
 	 */
 	public function get_all_states_of_active_countries(){
-		if ( $countries = EEM_Country::instance()->get_all_active_countries() ) {
-			if ( $states = $this->get_all( array( array( 'CNT_ISO' => array( 'IN', array_keys( $countries )), 'STA_active' => TRUE ),  'order_by' => array( 'STA_name' => 'ASC' )))) {
+//		if ( $countries = EEM_Country::instance()->get_all_active_countries() ) {
+//			if ( $states = $this->get_all( array( array( 'CNT_ISO' => array( 'IN', array_keys( $countries )), 'STA_active' => TRUE ),  'order_by' => array( 'STA_name' => 'ASC' )))) {
+			if ( $states = $this->get_all( array( array( 'Country.CNT_active' => TRUE, 'STA_active' => TRUE ),  'order_by' => array( 'Country.CNT_name' => 'ASC', 'STA_name' => 'ASC' )))) {
 				return $states;
 			}
-		}
+//		}
 		return FALSE;
 	}
 
@@ -139,7 +140,7 @@ class EEM_State extends EEM_Base {
 		if ( ! $countries ) {
 			return FALSE;
 		}
-		if ( $states = $this->get_all( array(  array( 'CNT_ISO' => array( 'IN', array_keys( $countries )), 'STA_active' => TRUE ),  'order_by' => array( 'CNT_ISO' => 'ASC' )))) {
+		if ( $states = $this->get_all( array(  array( 'Country.CNT_ISO' => array( 'IN', array_keys( $countries )), 'STA_active' => TRUE ),  'order_by' => array( 'Country.CNT_name' => 'ASC', 'STA_name' => 'ASC' )))) {
 			return $states;
 		}
 		return FALSE;
@@ -153,7 +154,7 @@ class EEM_State extends EEM_Base {
 		if ( ! $countries ) {
 			return FALSE;
 		}
-		if ( $states = $this->get_all( array( array( 'CNT_ISO' => array( 'IN', array_keys( $countries ))),  'order_by' => array( 'CNT_ISO' => 'ASC' )))) {
+		if ( $states = $this->get_all( array( array( 'Country.CNT_ISO' => array( 'IN', array_keys( $countries ))),  'order_by' => array( 'Country.CNT_name' => 'ASC', 'STA_name' => 'ASC' )))) {
 			return $states;
 		}
 		return FALSE;
@@ -178,7 +179,7 @@ class EEM_State extends EEM_Base {
 		}
 				
 		// retreive a particular transaction
-		$where_cols_n_values = array( 'STA_ID' => $STA_ID );
+		$where_cols_n_values = array( array( 'STA_ID' => $STA_ID ));
 		if ( $answer = $this->delete ( $where_cols_n_values )) {
 			return TRUE;
 		} else {
