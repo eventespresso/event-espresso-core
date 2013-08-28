@@ -448,53 +448,54 @@ class EEH_Form_Fields {
 	 * to see exactly what keys are expected
 	 * @return string HTML
 	 */
-	static function generate_form_input( EE_Question_Form_Input $QST ) {
+	static function generate_form_input( EE_Question_Form_Input $QFI ) {
 		
-		if ( isset( $QST->QST_admin_only) && $QST->QST_admin_only && ! is_admin() ) {
+		if ( isset( $QFI->QST_admin_only) && $QFI->QST_admin_only && ! is_admin() ) {
 			return;
-		}		
-//		printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$QST = self::_load_system_dropdowns( $QST );
+		}
+//		if ( $QFI->get('QST_display_text') == 'Currency Sign' ) 
+//		printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$QFI = self::_load_system_dropdowns( $QFI );
 
-		$display_text = $QST->get('QST_display_text');
-		$answer = $QST->get('ANS_value');
-		$input_name = $QST->get('QST_input_name');
-		$input_id = $QST->get('QST_input_id');
-		$input_class = $QST->get('QST_input_class');
-		$disabled = $QST->get('QST_disabled') ? ' disabled="disabled"' : '';
+		$display_text = $QFI->get('QST_display_text');
+		$answer = $QFI->get('ANS_value');
+		$input_name = $QFI->get('QST_input_name');
+		$input_id = $QFI->get('QST_input_id');
+		$input_class = $QFI->get('QST_input_class');
+		$disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
 		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
-		$QST_required = $QST->get('QST_required'); 
+		$QST_required = $QFI->get('QST_required'); 
 		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required', 'title' => $QST_required ) : array();
 		$label_class = 'espresso-form-input-lbl';
-		$QST_options = $QST->options(); 
+		$QST_options = $QFI->options(); 
 		$options = $QST_options ? self::prep_answer_options( $QST_options ) : array();
-		$system_ID = $QST->get('QST_system');
+		$system_ID = $QFI->get('QST_system');
 		
-		switch ( $QST->get('QST_type') ){
+		switch ( $QFI->get('QST_type') ){
 			
 			case 'TEXTAREA' :
-					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID );
+					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID, $QFI );
 				break;
 
 			case 'DROPDOWN' :
-					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
+					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
 				break;
 
 			case 'SINGLE' :
-					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
+					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
 				break;
 
 			case 'MULTIPLE' :
-					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
+					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
 				break;
 
 			case 'DATE' :
-					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
+					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
 				break;
 
 			case 'TEXT' :
 			default:
-					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID );
+					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
 				break;
 
 		}
@@ -520,13 +521,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
+	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -565,13 +566,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
+	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// make sure $dimensions is an array
@@ -615,7 +616,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
+	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
 				
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
@@ -623,7 +624,7 @@ class EEH_Form_Fields {
 		}
 
 		// prep the answer
-		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer );
+		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -716,13 +717,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE ) {
+	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST, $label_b4 = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -785,7 +786,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE ) {
+	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE, $QST ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -858,13 +859,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE ) {
+	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -927,8 +928,9 @@ class EEH_Form_Fields {
 	 * @param string $answer
 	 * @return string 
 	 */
-	static function prep_answer( $answer ){
-		return htmlentities( trim( stripslashes( str_replace( '&#039;', "'", $answer ))), ENT_QUOTES, 'UTF-8' );
+	static function prep_answer( $answer, $htmlentities = TRUE ){
+		$answer = trim( stripslashes( str_replace( '&#039;', "'", $answer )));
+		return $htmlentities ? htmlentities( $answer, ENT_QUOTES, 'UTF-8' ) : $answer;
 	}
 
 
@@ -1069,7 +1071,7 @@ class EEH_Form_Fields {
 	 */
 	private static function get_all_states(){
 		if ( empty( self::$_all_states )) {
-			self::$_states = EEM_State::instance()->get_all_states_of_active_countries();
+			self::$_states = EEM_State::instance()->get_all_states();
 
 		}
 		return self::$_states;
@@ -1110,32 +1112,21 @@ class EEH_Form_Fields {
 	 * @return array 
 	 */
 	public static function generate_state_dropdown( $QST, $get_all = FALSE ){
-//		$countries = $get_all ? self::get_all_countries() : self::get_active_countries();
-//		if ( $countries ) {	
-			$states = EEM_State::instance()->get_all_active_states_for_these_countries( $countries );
-			if ( $states ) {
-				//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-				$QST->set( 'QST_type', 'DROPDOWN' );
-				// if multiple countries, we'll create option groups within the dropdown
-				foreach ( $countries as $CNT_ISO => $country ) {
-					foreach ( $states as $STA_ID => $state ) {
-						// only adds states/provs for this country
-						if ( $state->get( 'CNT_ISO' ) == $CNT_ISO ) {
-							$QSO = EE_Question_Option::new_instance ( array (
-									'QSO_name' => $state->get( 'STA_ID' ),
-									'QSO_value' => $state->get( 'STA_name' ),
-									'QSO_opt_group' => $country->get( 'CNT_name' ),
-									'QST_ID' => $QST->get( 'QST_ID' ),
-									'QSO_deleted' => FALSE
-								));
-							$QST->add_temp_option( $QSO );
-							// remove state from $states array so we don't have to loop over it again
-							unset( $states[ $STA_ID ] );
-						}
-					}
-				}
+		$states = $get_all ? self::get_all_states() : self::get_active_states();
+		if ( $states ) {
+			$QST->set( 'QST_type', 'DROPDOWN' );
+			// if multiple countries, we'll create option groups within the dropdown
+			foreach ( $states as $STA_ID => $state ) {
+				$QSO = EE_Question_Option::new_instance ( array (
+						'QSO_name' => $state->ID(),
+						'QSO_value' => $state->name(),
+						'QSO_opt_group' => $state->country()->name(),
+						'QST_ID' => $QST->get( 'QST_ID' ),
+						'QSO_deleted' => FALSE
+					));
+				$QST->add_temp_option( $QSO );
 			}
-//		}
+		}
 		return $QST;
 	}
 
@@ -1152,8 +1143,8 @@ class EEH_Form_Fields {
 			$QST->set( 'QST_type', 'DROPDOWN' );
 			foreach ( $countries as $country ) {	
 				$QSO = EE_Question_Option::new_instance ( array (
-						'QSO_name' => $country->get( 'CNT_ISO' ),
-						'QSO_value' => $country->get( 'CNT_name' ),
+						'QSO_name' => $country->ID(),
+						'QSO_value' => $country->name(),
 						'QST_ID' => $QST->get( 'QST_ID' ),
 						'QSO_deleted' => FALSE
 					));
