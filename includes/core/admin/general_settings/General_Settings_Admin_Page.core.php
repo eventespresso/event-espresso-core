@@ -159,13 +159,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Event Registration Page', 'event_espresso'),
 						'callback' => 'registration_page_info_help_tab'
 						),
-					'return_url_info' => array(
-						'title' => __('Thank You Page', 'event_espresso'),
-						'callback' => 'return_url_info_help_tab'
-						),
 					'notify_url_info' => array(
 						'title' => __('Transaction Page', 'event_espresso'),
-						'callback' => 'notify_url_info_help_tab'
+						'callback' => 'transactions_info_help_tab'
+						),
+					'return_url_info' => array(
+						'title' => __('Thank You Page', 'event_espresso'),
+						'callback' => 'thank_you_page_info_help_tab'
 						),
 					'cancel_return_info' => array(
 						'title' => __('Cancel/Return Page', 'event_espresso'),
@@ -264,13 +264,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function registration_page_info_help_tab(){
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
-	public function return_url_info_help_tab(){
+	public function transactions_info_help_tab() {
+		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
+	}
+	public function thank_you_page_info_help_tab(){
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 	public function cancel_return_info_help_tab(){
-		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
-	}
-	public function notify_url_info_help_tab() {
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 
