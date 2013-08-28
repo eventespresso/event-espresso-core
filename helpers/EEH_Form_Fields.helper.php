@@ -351,7 +351,8 @@ class EEH_Form_Fields {
 			$values=$converted_values;
 		}
 		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
+		//EE_Registry::instance()->load_helper( 'Formatter' );
 
 		$field = '<select name="' . EE_Formatter::ee_tep_output_string($name) . '"';
 		//Debug
@@ -451,22 +452,9 @@ class EEH_Form_Fields {
 		
 		if ( isset( $QST->QST_admin_only) && $QST->QST_admin_only && ! is_admin() ) {
 			return;
-		}
-		
+		}		
 //		printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$QST = self::_load_system_dropdowns( $QST );
-//		printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		$display_text = isset( $QST->get('QST_display_text') ) ? $QST->get('QST_display_text') : FALSE;
-//		$answer = isset( $QST->ANS_value ) ? $QST->ANS_value : '';
-//		$input_name = isset( $QST->QST_input_name ) ? $QST->QST_input_name : FALSE;
-//		$input_id = isset( $QST->QST_input_id ) ? $QST->QST_input_id : '';
-//		$input_class = isset( $QST->QST_input_class ) ? $QST->QST_input_class : '';
-//		$disabled = isset( $QST->disabled ) ? $QST->disabled : '';
-//		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
-//		$required = isset( $QST->QST_required ) && $QST->QST_required ? array( 'label' => $required_label, 'class' => 'required', 'title' => $QST->QST_required ) : array();
-//		$label_class = 'espresso-form-input-lbl';		
-//		$options = isset( $QST->QST_options ) ? self::prep_answer_options( $QST->QST_options ) : array();
-//		$system_ID = isset( $QST->QST_system ) ? $QST->QST_system : NULL;
 
 		$display_text = $QST->get('QST_display_text');
 		$answer = $QST->get('ANS_value');
@@ -685,9 +673,8 @@ class EEH_Form_Fields {
 	 */
 	private static function _generate_select_option_group( $opt_group, $QSOs, $answer ){
 		$html = "\n\t\t\t\t" . '<optgroup label="' . self::prep_option_value( $opt_group ) . '">';
-		$only_option = count( $QSOs ) == 1 ? TRUE : FALSE;
 		foreach ( $QSOs as $QSO ) {	
-			$html .= self::_generate_select_option( $QSO->name(), $QSO->value(), $answer, $only_option );
+			$html .= self::_generate_select_option( $QSO->name(), $QSO->value(), $answer );
 		}
 		$html .= "\n\t\t\t\t" . '</optgroup>';
 		return $html;
@@ -1123,8 +1110,8 @@ class EEH_Form_Fields {
 	 * @return array 
 	 */
 	public static function generate_state_dropdown( $QST, $get_all = FALSE ){
-		$countries = $get_all ? self::get_all_countries() : self::get_active_countries();
-		if ( $countries ) {	
+//		$countries = $get_all ? self::get_all_countries() : self::get_active_countries();
+//		if ( $countries ) {	
 			$states = EEM_State::instance()->get_all_active_states_for_these_countries( $countries );
 			if ( $states ) {
 				//printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -1148,7 +1135,7 @@ class EEH_Form_Fields {
 					}
 				}
 			}
-		}
+//		}
 		return $QST;
 	}
 
