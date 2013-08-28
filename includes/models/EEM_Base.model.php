@@ -1268,7 +1268,14 @@ abstract class EEM_Base extends EE_Base{
 		//now, just verify they didnt pass anything wack
 		foreach($query_params as $query_key => $query_value){
 			if( ! in_array($query_key,$this->_allowed_query_params,true)){
-				throw new EE_Error(sprintf(__("You passed %s as a query parameter to %s, which is illegal!",'event_espresso'),$query_key,get_class($this)));
+				throw new EE_Error( 
+					sprintf(
+						__("You passed %s as a query parameter to %s, which is illegal! The allowed query parameters are %s",'event_espresso'),
+						$query_key,
+						get_class($this),
+						print_r( $this->_allowed_query_params, TRUE )
+					)
+				);
 			}
 		}
 		$main_model_join_sql = $query_object->get_main_model_join_sql();
