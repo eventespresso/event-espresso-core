@@ -102,7 +102,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * 	EE_Registry Object
-	 *	@var 	object	
+	 *	@var 	EE_Registry	
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
