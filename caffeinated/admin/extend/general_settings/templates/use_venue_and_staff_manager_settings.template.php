@@ -1,3 +1,4 @@
+<?php /* @todo: re-implement this admin option when the staff manager exists
 <h4 class="ee-admin-settings-hdr">
 	<?php _e('Espresso Admin Managers', 'event_espresso'); ?>
 </h4>
@@ -20,3 +21,5 @@
 
 	</tbody>
 </table>
+ 
+ */
