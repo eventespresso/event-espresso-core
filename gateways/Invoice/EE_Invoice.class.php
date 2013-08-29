@@ -49,7 +49,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 	protected function _default_settings() {
 		$org_config = $this->EE->CFG->organization;
 		$default_address = trim($org_config->address_1);
-		$default_address .= empty($org_config->address_2) ? '' : '<br />' . trim($org_config->address2);
+		$default_address .= empty($org_config->address_2) ? '' : '<br />' . trim($org_config->address_2);
 		$default_address .= '<br />' . trim($org_config->city);
 		$state_obj = $this->EE->load_model('State')->get_one_by_ID($org_config->STA_ID);
 		if($state_obj){
