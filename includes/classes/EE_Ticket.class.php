@@ -24,6 +24,13 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  */
 class EE_Ticket extends EE_Base_Class{
 
+	/**
+	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
+	 */
+	const expired = -1;
+	const pending = 1;
+	const onsale = 2;
+
 
 	/**
 	 * Primary key for Ticket. 
@@ -260,6 +267,49 @@ class EE_Ticket extends EE_Base_Class{
 
 	public function parent() {
 		return $this->get('TKT_parent');
+	}
+
+
+
+	/**
+	 * Return if a ticket is on sale or not
+	 * @return boolean      
+	 */
+	public function is_on_sale() {
+		return ( $this->_TKT_start_date < time() && $this->_TKT_end_date > time() );
+	}
+
+
+
+
+	/**
+	 * Return if a ticket is yet to go on sale or not
+	 * @return boolean
+	 */
+	public function is_pending() {
+		return ( $this->_TKT_start_date > time() );
+	}
+
+
+	/**
+	 * return if a ticket is no longer available cause its available dates have expired.
+	 * @return boolean
+	 */
+	public function is_expired() {
+		return ( $this->_TKT_end_date < time() );
+	}
+
+
+
+	/**
+	 * Using the start date and end date this method calculates whether the ticket is On Sale, Pending, or Expired
+	 * @param bool $display true = we'll return a localized string, otherwise we just return the value of the relevant status const
+	 * @return mixed(int|string) status int if the display string isn't requested
+	 */
+	public function ticket_status( $display = FALSE ) {
+		if ( $this->is_expired() ) return $display ? __('Expired', 'event_espresso') : EE_Ticket::expired;
+		if ( $this->is_pending() ) return $display ? __('Pending', 'event_espresso') : EE_Ticket::pending;
+		if ( $this->is_on_sale() ) return $display ? __('On Sale', 'event_espresso') : EE_Ticket::onsale;
 	}
 
 
