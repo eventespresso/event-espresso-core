@@ -69,7 +69,7 @@
 /**
  * template args in use
  * 
- * $default_datetiem_edit_row
+ * $default_datetime_edit_row
  * $default_ticket_row
  * $default_price_row
  * $default_price_modifier_selector_row
