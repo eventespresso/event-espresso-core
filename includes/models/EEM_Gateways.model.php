@@ -674,6 +674,7 @@ Class EEM_Gateways {
 		$this->_payment_settings = array();
 		$this->_active_gateways = array();
 		
+		$this->EE->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		$this->EE->SSN->set_session_data(
 				array(
 							'selected_gateway' => $this->_selected_gateway,
@@ -690,6 +691,8 @@ Class EEM_Gateways {
 		//all this effort clearing specific gateway items in the session, and now
 		//we're clearing teh whole thing? no, that must have been an error.
 		//so says Mike, March 27th 2013
+		// how about clearing it BEFORE resetting the data ??? (see above)
+		// wonders br3nt Aug 29th, 2013
 		
 		return TRUE;
 	}
