@@ -217,8 +217,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_dtt_display_row( $dttrow, $dtt, $default = FALSE ) {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
-			'dttname' => $dtt->get_dtt_display_name(),
-			'dttsold' => $dtt->get('DTT_sold')
+			'dttname' => $default ? '' : $dtt->get_dtt_display_name(),
+			'dttsold' => $default ? '0' : $dtt->get('DTT_sold')
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_display_row.template.php';
 		return espresso_display_template( $template, $template_args, TRUE);
@@ -229,11 +229,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'display_dtt_edit_row' => 'style="display:none;"',
-			'DTT_ID' => $dtt->ID(),
-			'DTT_is_primary' => $dtt->get('DTT_is_primary'),
-			'DTT_EVT_start' => $dtt->start_date( 'Y-m-d h:i a'),
-			'DTT_EVT_end' => $dtt->end_date( 'Y-m-d h:i a'),
-			'DTT_reg_limi' => $dtt->get('DTT_reg_limit')
+			'DTT_ID' => $default ? '' : $dtt->ID(),
+			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
+			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
+			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
+			'DTT_reg_limit' => $default ? '' : $dtt->get('DTT_reg_limit')
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';
@@ -262,13 +262,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 	private function _get_datetime_tickets_list_item( $dttrow, $tktrow, $dtt, $ticket = NULL, $datetime_tickets, $default ) {
-		$tktid = $ticket->ID();
+		$tktid = !empty( $ticket ) ? $ticket->ID() : 0;
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'tkt_row' => $default && empty( $ticket ) ? 'TKTNUM' : $tktrow,
 			'datetime_ticket_checked' => in_array($tktid, (array) $datetime_tickets) ? ' checked="checked"' : '',
 			'ticket_selected' => in_array($tktid, (array) $datetime_tickets) ? ' ticket-selected' : '',
-			'TKT_name' => $ticket->get('TKT_name')
+			'TKT_name' => $default ? 'TKTNAME' : $ticket->get('TKT_name')
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_dtt_tickets_list.template.php';
@@ -276,13 +276,146 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}
 
 
-	private function _get_ticket_row( EE_Ticket $ticket, $ticket_datetimes, $all_dtts ) {
-		//todo
+
+
+	private function _get_ticket_row( $tktrow, EE_Ticket $ticket, $ticket_datetimes, $all_dtts, $default = FALSE ) {
+		$prices = $ticket->get_many_related('Price');
+		if ( empty($prices) )
+			$prices = $this->EE->load_model('Price')->get_all(array( array('PRC_is_default' => 1 ) ) );
+		$template_args = array(
+			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
+			'TKT_name' => $default ? '' : $ticket->get('TKT_name'),
+			'TKT_start_date' => $default ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
+			'TKT_end_date' => $default ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ),
+			'TKT_status' => $default ? '' : $ticket->ticket_status(TRUE),
+			'TKT_price' => $default ? '' : $this->get_pretty('TKT_price'),
+			'TKT_qty' => $default ? '' : $this->get('TKT_qty'),
+			'TKT_uses' => $default ? '' : $this->get('TKT_uses'),
+			'TKT_min' => $default ? '' : $this->get('TKT_min'),
+			'TKT_max' => $default ? '' : $this->get('TKT_max'),
+			'TKT_sold' => $default ? 0 : $this->get('TKT_sold'),
+			'TKT_ID' => $default ? 0 : $this->get('TKT_ID'),
+			'TKT_description' => $default ? '' : $this->get('TKT_description'),
+			'TKT_is_default' => $default ? 0 : $this->get('TKT_is_default'),
+			'TKT_is_default_selector' => '',
+			'TKT_price_rows' => '',
+			'total_price_rows' => count($prices),
+			'ticket_datetimes_list' => '',
+			'starting_ticket_datetime_ids' => implode(',', $ticket_datetimes),
+			'existing_ticket_price_ids' => $default, '', implode(',', array_keys($prices) ),
+			'ticket_template_id' => $default ? 1 : $ticket->get('TTM_ID')
+			);
+
+		//generate ticket_datetime items
+		$dttrow = 1;
+		foreach ( $all_dtts as $dtt ) {
+			$template_args['ticket_datetimes_list'] .= $this->_get_ticket_datetime_list_item( $dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default );
+			$dttrow++;
+		}
+
+		//generate all price rows
+		$prcrow = 1;
+		foreach ( $prices as $price ) {
+			$template_args['TKT_pric_rows'] .= $this->_get_ticket_price_row( $tktrow, $prcrow, $price, $default );
+			$prcrow++;
+		}
+
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_row.template.php';
+		return espresso_display_template( $template, $template_args, TRUE );
 	}
 
 
 
-	private function _get_ticket_js_structure() {
+
+	private function _get_ticket_price_row( $tktrow, $prcrow, $price, $default ) {
+		$template_args = array(
+			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
+			'prc_row' => $default ? 'PRICENUM' : $prcrow,
+			'price_type_selector' => $default ? '' : $this->_get_price_type_selector( $tktrow, $prcrow, $price, $default ),
+			'PRC_ID' => $default ? 0 : $price->ID(),
+			'PRC_is_default' => $default ? 0 : $price->get('PRC_is_default'),
+			'PRC_name' => $default ? '' : $price->get('PRC_name'),
+			'price_currency_symbol' => $this->EE->CFG->currency_sign,
+			'show_plus_or_minus' => $default ? '' : ' style="display:none;"',
+			'show_plus' => $default ? ' style="display:none;"' : ( $price->is_discount() ? ' style="display:none;"' : ''),
+			'show_minus' => $default ? ' style="display:none;"' : ($price->is_discount() ? '' : ' style="display:none;"'),
+			'show_currency_symbol' => $default ? ' style="display:none"' : ($price->is_percent() ? ' style="display:none"' : '' ),
+			'PRC_amount' => $default ? 0 : $price->get('PRC_amount'),
+			'show_percentage' => $default ? ' style="display:none;"' : ( $price->is_percent() ? '' : ' style="display:none;"' ),
+			'show_trash_icon' => count($prices) > 1 && $prcrow > 1 ? '' : ' style="display:none;"',
+			'show_create_button' => (count($prices) === $prcrow) || count($prices) === 1 ? '' : ' style="display:none;"',
+			'PRC_description' => $default ? '' : $price->get('PRC_description')
+			);
+
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_row.template.php';
+		return espresso_display_template( $template, $template_args, TRUE );
+	}
+
+
+	private function _get_price_type_selector( $tktrow, $prcrow, $price, $default ) {
+		if ( $price->is_base_price() ) {
+			$template_args = array(
+				'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
+				'prc_row' => $default ? 'PRICENUM' : $prcrow,
+				'PRT_ID' => $default ? 1 : $price->get('PRT_ID'),
+				'PRT_name' => __('Base Price', 'event_espresso'),
+				'price_selected_operator' => '+',
+				'price_selected_is_percent' => 0
+			);
+			$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_type_base.template.php';
+		} else {
+			$select_name = $default ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]' : 'edit_prices[' . $tktrow . '][' . $prcrow . '][PRT_ID]';
+			$price_types = $this->EE->load_model('Price_Type')->get_all(array( array('PBT_ID' => '2', 'PBT_ID' => '3' ) ) );
+			$price_option_span_template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_option_span.template.php';
+			//setup pricetypes for selector
+			foreach ( $price_types as $price_type ) {
+				$all_price_types['id'] = $price_type->ID();
+				$all_price_types['text'] = $price_type->get('PRT_name');
+				$price_option_spans = '';
+
+				//while we're in the loop let's setup the option spans used by js
+				$spanargs = array(
+					'PRT_ID' => $price_type->ID(),
+					'PRT_operator' => $price_type->get('PRT_is_discount') ? '-' : '+',
+					'PRT_is_percent' => $price_type->get('PRT_is_percent') ? 1 : 0
+					);
+				$price_option_spans .= espresso_display_template($price_option_span_template, $spanargs, TRUE );
+			}
+
+			$template_args = array(
+				'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
+				'prc_row' => $default ? 'PRICENUM' : $prcrow,
+				'price_modifier_selector' => EE_Form_Fields::select_input( $select_name, $all_price_types, $price->type(), 'style="width:auto;"', 'edit-price-PRT_ID' ),
+				'price_option_spans' => $price_option_spans,
+				'price_selected_operator' => $price->is_discount() ? '-' : '+',
+				'price_selected_is_percent' => $price->is_percent() ? 1 : 0
+				);
+
+			$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_modifier_selector.template.php';
+		}
+
+		return espresso_display_template( $template, $template_args, TRUE );
+	}
+
+
+
+	private function _get_ticket_datetime_list_item( $dttrow, $tktrow, $dtt = NULL, $ticket, $ticket_datetimes, $default ) {
+		$dttid = !empty($dtt) ? $dtt->ID() : 0;
+		$template_args = array(
+			'dtt_row' => $default && empty( $dtt ) ? 'DTTNUM' : $dttrow,
+			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
+			'ticket_datetime_selected' => in_array( $dttid, (array) $ticket_datetimes ) ? ' ticket-selected' : '',
+			'ticket_datetime_checked' => in_array( $dttid, (array) $ticket_datetimes ) ? ' checked="checked"' : '',
+			'DTT_name' => empty( $dtt ) ? 'DTTNAME' : $dtt->get_dtt_display_name()
+			);
+
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_datetimes_list_item.template.php';
+		return espresso_display_template( $template, $template_args, TRUE );
+	}
+
+
+
+	private function _get_ticket_js_structure($all_dtts, $all_tickets) {
 		//todo
 	}
 

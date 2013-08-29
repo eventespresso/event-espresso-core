@@ -342,7 +342,10 @@
 					<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-operator" value="+">
 					<input type="hidden" name="ee_price_selected_operator[TICKETNUM][PRICENUM]" class="ee-price-selected-is-percent" value="0">
 				</td>
-				<td><input type="hidden" name="edit_prices[TICKETNUM][PRICENUM][PRC_ID]" class="edit-price-PRC_ID"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[TICKETNUM][PRICENUM][PRC_name]" value="General Admission"></td>
+				<td>
+					<input type="hidden" name="edit_prices[TICKETNUM][PRICENUM][PRC_ID]" class="edit-price-PRC_ID">
+					<input type="hidden" name="edit_prices[TICKETNUM][PRICENUM][PRC_is_default]" class="edit-price-PRC_is_default">
+					<input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[TICKETNUM][PRICENUM][PRC_name]" value="General Admission"></td>
 				<td>
 					<span class="ticket-price-info-display ticket-price-plus-minus">+/-</span>
 					<span class="ticket-price-info-display ticket-price-plus" style="display:none;">+</span>

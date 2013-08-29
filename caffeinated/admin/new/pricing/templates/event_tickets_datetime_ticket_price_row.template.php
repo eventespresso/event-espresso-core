@@ -2,7 +2,10 @@
 	<td>
 		<?php echo $price_type_selector; ?>
 	</td>
-	<td><input type="hidden" name="edit_prices[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_ID]" class="edit-price-PRC_ID" value="<?php echo $PRC_ID; ?>"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_name]" value="<?php echo $PRC_name; ?>"></td>
+	<td>
+		<input type="hidden" name="edit_prices[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_ID]" class="edit-price-PRC_ID" value="<?php echo $PRC_ID; ?>">
+		<input type="hidden" name="edit_prices[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_is_default]" class="edit-price-PRC_is_default" value="<?php echo $PRC_is_default; ?>">
+		<input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_name]" value="<?php echo $PRC_name; ?>"></td>
 	<td>
 		<span class="ticket-price-info-display ticket-price-plus-minus"<?php echo $show_plus_or_minus; ?>>+/-</span>
 		<span class="ticket-price-info-display ticket-price-plus"<?php echo $show_plus; ?>>+</span>
@@ -30,6 +33,7 @@
  * $prc_row
  * $price_type_selector;
  * $PRC_ID
+ * $PRC_is_default
  * $PRC_name
  * $price_currency_symbol
  * $show_plus_or_minus

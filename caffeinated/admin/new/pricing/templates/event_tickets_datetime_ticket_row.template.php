@@ -4,7 +4,7 @@
 	<td><span class="ticket-display-row-TKT_start_date"><?php echo $TKT_start_date; ?></span></td>
 	<td><span class="ticket-display-row-TKT_end_date"><?php echo $TKT_end_date; ?></span></td>
 	<td><span class="ticket-display-row-TKT_status"><?php echo $TKT_status; ?></span></td>
-	<td><span class="ticket-display-row-TKT_total_amount"><?php echo $TKT_total_amount; ?></span></td>
+	<td><span class="ticket-display-row-TKT_total_amount"><?php echo $TKT_price; ?></span></td>
 	<td><span class="ticket-display-row-TKT_qty"><?php echo $TKT_qty; ?></span></td>
 	<td><span class="ticket-display-row-TKT_sold"><?php echo $TKT_sold; ?></span></td>
 	<td><span class="gear-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="trash-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span></td>
@@ -16,7 +16,7 @@
 			<input type="hidden" name="edit_tickets[<?php echo $tkt_row; ?>][TKT_ID]" class="edit-ticket-TKT_ID" value="<?php echo $TKT_ID; ?>">
 			<input type="hidden" name="edit_tickets[<?php echo $tkt_row; ?>][TKT_row]" class="edit-ticket-TKT_row" value="<?php echo $tkt_row; ?>">
 			<input type="text" name="edit_tickets[<?php echo $tkt_row; ?>][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="<?php echo $TKT_name; ?>">
-			<div class="total-price-container"><?php printf( __('Total Final Price: %s', 'event_espresso'), '<span class="ticket-price-amount">' . $TKT_total_amount . '</span>'); ?> </div>
+			<div class="total-price-container"><?php printf( __('Total Final Price: %s', 'event_espresso'), '<span class="ticket-price-amount">' . $TKT_price . '</span>'); ?> </div>
 			<textarea name="edit_tickets[<?php echo $tkt_row; ?>][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"><?php echo $TKT_description; ?></textarea>
 			<div class="basic-ticket-container">
 				<h5 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h5>
@@ -85,7 +85,7 @@
 			</ul>
 			<div class="save-cancel-button-container">
 				<label for="edit-ticket-TKT_is_default_selector"><?php _e('use this new ticket as a default ticket for any new events', 'event_espresso'); ?></label>
-				<input type="checkbox" name="edit_tickets[<?php echo $tkt_row; ?>][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector" value="<?php echo $TKT_is_default_selector; ?>">
+				<input type="checkbox" name="edit_tickets[<?php echo $tkt_row; ?>][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector" value="1">
 				<input type="hidden" name="edit_tickets[1][TKT_is_default]" class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>"> 
 				<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Save Ticket', 'event_espresso'); ?></button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Cancel', 'event_espresso'); ?></button>
 			</div>
@@ -108,7 +108,7 @@
  * $TKT_start_date
  * $TKT_end_date
  * $TKT_status
- * $TKT_total_amount
+ * $TKT_price
  * $TKT_qty
  * $TKT_uses
  * $TKT_min
@@ -117,7 +117,6 @@
  * $TKT_ID
  * $TKT_description
  * $TKT_is_default
- * $TKT_is_default_selector
  * $TKT_price_rows
  * $total_price_rows
  * $ticket_datetimes_list
