@@ -37,7 +37,7 @@ Class EEM_Gateways {
 
 	/**
 	 * 	EE_Registry Object
-	 *	@var 	object	
+	 *	@var 	EE_Registry	
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
