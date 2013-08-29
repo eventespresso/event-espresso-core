@@ -363,7 +363,39 @@ class EE_Price extends EE_Base_Class{
 		return $this->get('PRC_parent');
 	}
 
+	
+	//some helper methods for getting info on the price_type for this price
+	
+	/**
+	 * return whether the price is a base price or not
+	 * @return boolean 
+	 */
+	public function is_base_price() {
+		$price_type = $this->type_obj();
+		return $price_type->get('PBT_ID') === 1;
+	}
 
+
+	
+	/**
+	 * Simply indicates whether this price increases or decreases the total
+	 * @return boolean true = discount, otherwise adds to the total
+	 */
+	public function is_discount() {
+		$price_type = $this->type_obj();
+		return $price_type->get('PRT_is_discount');
+	}
+
+
+
+	/**
+	 * whether the price is a percentage or not
+	 * @return boolean 
+	 */
+	public function is_percent() {
+		$price_type = $this->type_obj();
+		return $price_type->get('PRT_is_percent');
+	}
 
 }
 
