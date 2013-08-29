@@ -303,7 +303,10 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		array  or FALSE
 	*/	
 	public static function process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
-		
+		//we should really only have 1 registration in the works now (ie, no MER)
+		//so clear any previosu items in the cart. When MER happens this will probably need to be tweaked, 
+		//possibly wrappe din a conditional checking for some constant defined in MER etc.
+		espresso_clear_session();
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
