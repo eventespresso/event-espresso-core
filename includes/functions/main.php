@@ -445,44 +445,6 @@ if (!function_exists('event_espresso_require_file')) {
 
 
 
-/**
- * 		Clear EE_Session data
- *
- * 		@access public
- * 		@return void
- */
-function espresso_clear_session( $class = '', $func = '' ) {
-	//echo '<h3>'. $class . ' -> ' . $func . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-	global $EE_Session;
-	$EE_Session->reset_data( 
-			array(
-						'cart',
-						'gateway_data', 
-						'transaction', 
-						'registration',
-						'primary_attendee',
-						'tax_totals',
-						'taxes',
-						'billing_info',
-						'txn_results',
-						'grand_total_price_object'
-					));
-																
-	$EE_Session->set_session_data(
-			array(
-						'_events_in_cart' => array(),
-						'_cart_grand_total_qty' => 0,
-						'_cart_grand_total_amount' => 0
-					),
-					'session_data'
-	);
-
-}
-add_action( 'AHEE_before_event_list', 'espresso_clear_session', 10, 2 );
-
-
-
-
 
 /**
  * 		load and display a template
