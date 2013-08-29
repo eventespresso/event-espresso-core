@@ -45,7 +45,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 } else {
 	wp_die('Can not run multiple versions of Event Espresso.');
 }
-//used to be DIRECTORY_SEPERATOR, but that caused issues on windows
+
+//used to be DIRECTORY_SEPARATOR, but that caused issues on windows
 if ( ! defined( 'DS' )) {
 	define( 'DS', '/' );
 }
@@ -55,6 +56,7 @@ if ( ! defined( 'PS' )) {
 if( ! defined( 'SP' ) ){
 	define('SP',' ');
 }
+
 // define the plugin directory and URL
 define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename(__FILE__) . DS);
 define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path(__FILE__));
@@ -86,23 +88,11 @@ define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' 
 
 //Get language files
 load_plugin_textdomain( 'event_espresso', FALSE, EVENT_ESPRESSO_PLUGINFULLPATH . '/languages/' );
-// load debuggin tools?
+
+// load Error handling and debugging tools
 if ( WP_DEBUG === TRUE ) {
 	require_once( EE_HELPERS . 'EE_Debug_Tools.helper.php' );
 }
-global $wpdb;
-// DEPRECATED TABLES
-define("EVENTS_CATEGORY_TABLE", $wpdb->prefix . "events_category_detail");
-define("EVENTS_CATEGORY_REL_TABLE", $wpdb->prefix . "events_category_rel");
-define("EVENTS_DETAIL_TABLE", $wpdb->prefix . "events_detail");
-define("EVENTS_LOCALE_TABLE", $wpdb->prefix . "events_locale");
-define("EVENTS_LOCALE_REL_TABLE", $wpdb->prefix . "events_locale_rel");
-define("EVENTS_PERSONNEL_TABLE", $wpdb->prefix . "events_personnel");
-define("EVENTS_PERSONNEL_REL_TABLE", $wpdb->prefix . "events_personnel_rel");
-define("EVENTS_VENUE_TABLE", $wpdb->prefix . "events_venue");
-define("EVENTS_VENUE_REL_TABLE", $wpdb->prefix . "events_venue_rel");
-
-
 require_once( EE_CORE . 'EE_Error.core.php' );
 
 // let's get it started		
@@ -115,9 +105,6 @@ if ( is_admin() ) {
 }
 
 
-//function espresso_main_file() {
-//	return __FILE__;
-//}
 
 function espresso_plugin_activation() {
 	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
@@ -125,14 +112,18 @@ function espresso_plugin_activation() {
 }
 register_activation_hook( __FILE__, 'espresso_plugin_activation' );
 
+
+
 function espresso_plugin_deactivation() {
-//	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
-//	EEH_Activation::plugin_deactivation();
+	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+	EEH_Activation::plugin_deactivation();
 }
-//register_deactivation_hook( __FILE__, 'espresso_plugin_deactivation' );
+register_deactivation_hook( __FILE__, 'espresso_plugin_deactivation' );
+
+
 
 function espresso_plugin_uninstall() {
-//	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
-//	EEH_Activation::plugin_uninstall();
+	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+	EEH_Activation::plugin_uninstall();
 }
-//register_uninstall_hook(    __FILE__, 'espresso_plugin_uninstall' );
+register_uninstall_hook(    __FILE__, 'espresso_plugin_uninstall' );

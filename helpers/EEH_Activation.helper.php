@@ -1527,6 +1527,7 @@ class EEH_Activation {
 
 
 
+
 	/**
 	 * create_no_ticket_prices_array
 	 *
@@ -1543,6 +1544,29 @@ class EEH_Activation {
 		}	
 	}
 
+
+
+	/**
+	 * plugin_deactivation
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function plugin_deactivation() {
+	}
+
+
+
+	/**
+	 * plugin_uninstall
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function plugin_uninstall() {
+	}
 
 
 

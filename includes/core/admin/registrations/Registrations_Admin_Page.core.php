@@ -1613,7 +1613,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			return FALSE;
 		}
 		// gotta start with a clean slate
-		espresso_clear_session();
+		$this->EE->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		$this->_template_args['event_name'] = '' ;
 		// event name
 		if ( $this->_reg_event ) {
@@ -1987,7 +1987,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 //		$transaction->set_txn_session_data(null);
 //		//var_dump($EE_Session->get_session_data());
 //		$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
-//		$EE_Session->_update_espresso_session();
+//		$EE_Session->update_espresso_session();
 			
 //		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		die();

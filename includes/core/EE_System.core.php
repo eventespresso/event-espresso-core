@@ -278,12 +278,8 @@ final class EE_System {
 	 * 		@return void
 	 */
 	public function load_EE_Session() {
-		global $EE_Session;
 		// instantiate !!!
 		$this->EE->load_core( 'Session' );
-//		if ( $this->EE->REQ->is_set( 'clear_session' )) {
-//			espresso_clear_session( __CLASS__, __FUNCTION__ );
-//		}
 	}
 
 
