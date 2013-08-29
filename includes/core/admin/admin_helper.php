@@ -439,34 +439,25 @@ function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrd
 	}
 }
 
+
+
 function espresso_category_dropdown($current_value = '') {
-
-	global $wpdb;
-
-	$ecd = '';
-
-	$strQuery = "select id, category_name from " . EVENTS_CATEGORY_TABLE;
-	$data = $wpdb->get_results($strQuery, ARRAY_A);
-	//print_r($data);
-
-	if ($wpdb->num_rows > 0) {
+	$ecd = '';	
+	if ( $event_categories = EE_Registry::instance()->load_model('Term')->get_all_ee_categories() ) {
 		$ecd .= '<select name="category_id" class="" style="width:160px;">';
 		$ecd .= '<option value="">' . __('Show All Categories', 'event_espresso') . '</option>';
-
-		/*		 * * loop over the results ** */
-		foreach ($data as $row) {
-			/*			 * * create the options ** */
-			$ecd .= '<option value="' . $row["id"] . '"';
-			if ($row["id"] == $current_value) {
-				$ecd .= ' selected';
-			}
-			$ecd .= '>' . stripslashes_deep($row["category_name"]) . '</option>' . "\n";
+		// loop over the results 
+		foreach ( $event_categories as $category ) {
+			$ecd .= '<option value="' . $category->ID() . '"';
+			$ecd .= $category->ID() == $current_value ? ' selected="selected"' : '';
+			$ecd .= '>' . $category->get_pretty('name') . '</option>' . "\n";
 		}
 		$ecd .= "</select>";
 	}
-
 	return $ecd;
 }
+
+
 
 /**
  * This function grabs the event categories.
