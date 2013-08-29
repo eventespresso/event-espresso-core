@@ -238,6 +238,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			);
 			
 		$table_data = $this->process_multi_table_export( $tables_to_export );
+//		echo 'echodump of array_keys($tables_to_export)';
+//		var_dump($table_data);
+		$table_data[$wpdb->prefix."esp_attendee"] = 
+				$wpdb->get_results($wpdb->prepare("SELECT * FROM ".$wpdb->prefix."esp_attendee att INNER JOIN ".$wpdb->prefix."esp_registration reg
+			ON att.ATT_ID = reg.ATT_ID WHERE reg.EVT_ID=%d",$EVT_ID));
+		
 		$filename = $this->generate_filename ( $filename );
 
 		if ( ! $this->EE_CSV->export_array_to_csv( array_keys( $tables_to_export ), $table_data, $filename )) {
@@ -253,9 +259,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	function export_attendees() {
+		global $wpdb;
 		$tables_to_export = array( 
-				EVENTS_ATTENDEE_TABLE,
-				EVENTS_ATTENDEE_COST_TABLE,
+			$wpdb->prefix . 'esp_attendee'=>''
+				//EVENTS_ATTENDEE_TABLE,
+				//EVENTS_ATTENDEE_COST_TABLE,
 				//EVENTS_ATTENDEE_META_TABLE
 			);
 																				
