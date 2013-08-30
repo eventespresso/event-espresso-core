@@ -4,7 +4,7 @@
 	<td><span class="ticket-display-row-TKT_start_date"><?php echo $TKT_start_date; ?></span></td>
 	<td><span class="ticket-display-row-TKT_end_date"><?php echo $TKT_end_date; ?></span></td>
 	<td><span class="ticket-display-row-TKT_status"><?php echo $TKT_status; ?></span></td>
-	<td><span class="ticket-display-row-TKT_total_amount"><?php echo $TKT_price; ?></span></td>
+	<td><span class="ticket-display-row-TKT_price"><?php echo $TKT_price; ?></span></td>
 	<td><span class="ticket-display-row-TKT_qty"><?php echo $TKT_qty; ?></span></td>
 	<td><span class="ticket-display-row-TKT_sold"><?php echo $TKT_sold; ?></span></td>
 	<td><span class="gear-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="trash-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span></td>
@@ -71,7 +71,7 @@
 					<tfoot>
 						<tr class="price-total-row">
 							<td colspan="3"><?php _e('Total', 'event_espresso'); ?></td>
-							<td><span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_total_amoun; ?></span</td>
+							<td><span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span</td>
 							<td><input type="hidden" name="price_total_rows_ticket[<?php echo $tkt_row; ?>]" id="price-total-rows-<?php echo $tkt_row; ?>" value="<?php echo $total_price_rows; ?>"></td>
 						</tr>
 					</tfoot>
