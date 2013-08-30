@@ -341,7 +341,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'PRC_ID' => $default ? 0 : $price->ID(),
 			'PRC_is_default' => $default ? 0 : $price->get('PRC_is_default'),
 			'PRC_name' => $default ? '' : $price->get('PRC_name'),
-			'price_currency_symbol' => $this->EE->CFG->currency_sign,
+			'price_currency_symbol' => $this->EE->CFG->currency->sign,
 			'show_plus_or_minus' => $default ? '' : ' style="display:none;"',
 			'show_plus' => $default ? ' style="display:none;"' : ( $price->is_discount() ? ' style="display:none;"' : ''),
 			'show_minus' => $default ? ' style="display:none;"' : ($price->is_discount() ? '' : ' style="display:none;"'),
