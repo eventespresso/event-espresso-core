@@ -216,10 +216,14 @@ class EEH_Activation {
 
 		foreach ( $critical_pages as $critical ) {
 			// attempt to find post by ID
-			if ( $critical['page'] != get_post( EE_Registry::instance()->CFG->core->$critical['id'] )) {
+			$critical['page'] = get_post( EE_Registry::instance()->CFG->core->$critical['id'] );
+			// no dice?
+			if ( ! $critical['page'] ) {
 				// attempt to find post by title
-				if ( $critical['page'] != get_page_by_title( $critical['name'] )) {
-					$critical['page'] = EEH_Activation::create_critical_page( $critical );
+				$critical['page'] = get_page_by_title( $critical['name'] );
+				// still nothing?
+				if ( ! $critical['page'] ) {
+					$critical = EEH_Activation::create_critical_page( $critical );
 				}
 			}
 			$critical_page_problem =  ! isset( $critical['page']->post_status) || $critical['page']->post_status != 'publish' || strpos( $critical['page']->post_content, $critical['code'] ) === FALSE ? TRUE : $critical_page_problem;
@@ -255,11 +259,34 @@ class EEH_Activation {
 			'comment_status' => 'closed',
 			'post_content' => '[' . $page['code'] . ']'
 		);
-		if ( $post_id = wp_insert_post( $post_args )) {
-			EE_Registry::instance()->CFG->core->$page['id'] = $post_id;
-			return get_post( $post_id );
+		
+		$post_id = wp_insert_post( $post_args );
+		if ( ! $post_id ) {
+			$msg = sprintf(
+				__( 'The Event Espresso  critical page entitled "%s" could not be created.', 'event_espresso' ),
+				$page['name']
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
+			return NULL;
 		}
-		return NULL;
+		
+		$page['page'] = get_post( $post_id );
+		if ( ! $page['page'] ) {
+			$msg = sprintf(
+				__( 'The Event Espresso critical page entitled "%s" could not be retreived.', 'event_espresso' ),
+				$page['name']
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
+			return NULL;
+		}
+		
+		EE_Registry::instance()->CFG->core->$page['id'] = $post_id;
+		if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE ) ) {
+			$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return NULL;
+		}	
+		return $page;				
 
 	}
 
@@ -371,6 +398,21 @@ class EEH_Activation {
 	}
 
 
+	/**
+	 * drop_index
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function drop_index( $table_name, $index_name ) {
+		global $wpdb;
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . $table_name . "'" ) == $wpdb->prefix . $table_name ) {
+			$wpdb->query( 'ALTER TABLE '.$wpdb->prefix . $table_name . ' DROP INDEX ' . $index_name );
+		}
+	}
+
+
 
 
 
@@ -449,7 +491,6 @@ class EEH_Activation {
 				  DTT_is_primary tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
 				  DTT_order mediumint(3) unsigned DEFAULT 0,
 				  DTT_parent int(10) unsigned DEFAULT 0,
-				  DTT_deleted tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
 						PRIMARY KEY  (DTT_ID),
 						KEY EVT_ID (EVT_ID),
 						KEY DTT_is_primary (DTT_is_primary)";
@@ -475,8 +516,10 @@ class EEH_Activation {
 			EVT_timezone_string VARCHAR(45) NULL ,
 			EVT_external_URL VARCHAR(200) NULL ,
 			EVT_donations TINYINT(1) NULL,
-			PRIMARY KEY  (EVTM_ID) ";
+			PRIMARY KEY  (EVTM_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
+
+
 		
 		$table_name='esp_event_question_group';
 		$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -487,15 +530,16 @@ class EEH_Activation {
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 
 
+
 		$table_name='esp_event_venue';
 		$sql="EVV_ID INT(11) NOT NULL AUTO_INCREMENT ,
 				EVT_ID INT(11) NOT NULL ,
 				VNU_ID INT(11) NOT NULL ,
 				EVV_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-				PRIMARY KEY (EVV_ID)";
+				PRIMARY KEY  (EVV_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 
-		
+
 
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -505,7 +549,7 @@ class EEH_Activation {
 					MTP_content text NOT NULL,
 					PRIMARY KEY  (MTP_ID),
 					KEY GRP_ID (GRP_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -522,7 +566,7 @@ class EEH_Activation {
 					PRIMARY KEY  (GRP_ID),
 					KEY EVT_ID (EVT_ID),
 					KEY MTP_user_id (MTP_user_id)";
-		EEH_Activation::create_table( $table_name, $sql, 'ENGINE=InnoDB ');
+		EEH_Activation::create_table( $table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -650,10 +694,7 @@ class EEH_Activation {
 					PRIMARY KEY  (QST_ID)';
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 		
-
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . "esp_question_group'" ) == $wpdb->prefix.'esp_question_group' ) {
-			$wpdb->query( 'ALTER TABLE '.$wpdb->prefix.'esp_question_group DROP INDEX QSG_identifier_UNIQUE' );
-		}
+		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 		
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -726,7 +767,7 @@ class EEH_Activation {
 					CHK_in TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 					CHK_timestamp datetime NOT NULL default '0000-00-00 00:00:00' ,
 					PRIMARY KEY  (CHK_ID)";
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -767,7 +808,7 @@ class EEH_Activation {
 					  PRIMARY KEY  (TXN_ID),
 					  KEY TXN_timestamp (TXN_timestamp),
 					  KEY STS_ID (STS_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
 
 		
@@ -804,7 +845,7 @@ class EEH_Activation {
 			PRIMARY KEY  (VNUM_ID),
 			KEY (STA_ID),
 			KEY (CNT_ISO)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 		
 		
 		// grab espresso_db_update option
