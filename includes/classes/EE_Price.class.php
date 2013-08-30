@@ -372,7 +372,7 @@ class EE_Price extends EE_Base_Class{
 	 */
 	public function is_base_price() {
 		$price_type = $this->type_obj();
-		return $price_type->get('PBT_ID') === 1;
+		return $price_type->base_type() === 1;
 	}
 
 
@@ -395,6 +395,12 @@ class EE_Price extends EE_Base_Class{
 	public function is_percent() {
 		$price_type = $this->type_obj();
 		return $price_type->get('PRT_is_percent');
+	}
+
+
+
+	public function get_price_without_currency_symbol() {
+		return str_replace( EE_Registry::instance()->CFG->currency->sign, '', $this->get_pretty('PRC_amount'));
 	}
 
 }
