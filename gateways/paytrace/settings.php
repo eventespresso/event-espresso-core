@@ -1,17 +1,17 @@
 <?php
 
 function event_espresso_paytrace_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user, $org_options;
+	global $espresso_premium, $notices, $this->EE->CFG->wp_user, $org_options;
 	if ($espresso_premium != true)
 		return;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	if (isset($_POST['update_paytrace'])
 					&& check_admin_referer('espresso_form_check', 'add_paytrace_settings')) {
 		$payment_settings['paytrace']['paytrace_user_id'] = $_POST['paytrace_user_id'];
 		$payment_settings['paytrace']['paytrace_user_pass'] = $_POST['paytrace_user_pass'];
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 			$notices['updates'][] = __('Check Payment Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Check Payment Settings were not saved! ', 'event_espresso');
@@ -22,8 +22,8 @@ function event_espresso_paytrace_payment_settings() {
 		$payment_settings['paytrace']['active'] = false;
 		$payment_settings['paytrace']['paytrace_user_id'] = '';
 		$payment_settings['paytrace']['paytrace_user_pass'] = '';
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
+		if (add_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings, '', 'no') == false) {
+			update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings);
 		}
 	}
 	//Open or close the postbox div
@@ -48,7 +48,7 @@ function event_espresso_paytrace_payment_settings() {
 					<?php
 					if (!empty($_REQUEST['activate_paytrace'])) {
 						$payment_settings['paytrace']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Paytrace Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate Paytrace', 'event_espresso');
@@ -57,7 +57,7 @@ function event_espresso_paytrace_payment_settings() {
 
 					if (!empty($_REQUEST['deactivate_paytrace'])) {
 						$payment_settings['paytrace']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Paytrace De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate Paytrace', 'event_espresso');
@@ -84,8 +84,8 @@ function event_espresso_paytrace_payment_settings() {
 
 //PayPal Settings Form
 function event_espresso_display_paytrace_settings() {
-	global $espresso_wp_user;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_paytrace=true'));
 	?>

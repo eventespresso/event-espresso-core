@@ -2,11 +2,11 @@
 
 function event_espresso_worldpay_payment_settings() {
 
-	global $caffeinated, $notices, $espresso_wp_user, $org_options;
+	global $caffeinated, $notices, $this->EE->CFG->wp_user, $org_options;
 	if ($caffeinated != true)
 		return;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	if (isset($_POST['update_worldpay'])
 					&& check_admin_referer('espresso_form_check', 'add_worldpay_settings')) {
@@ -16,7 +16,7 @@ function event_espresso_worldpay_payment_settings() {
 		$payment_settings['worldpay']['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
 		$payment_settings['worldpay']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 		$payment_settings['worldpay']['button_url'] = $_POST['button_url'];
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 			$notices['updates'][] = __('Worldpay Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Worldpay Settings were not saved! ', 'event_espresso');
@@ -36,8 +36,8 @@ function event_espresso_worldpay_payment_settings() {
 		$payment_settings['worldpay']['use_sandbox'] = '';
 		$payment_settings['worldpay']['bypass_payment_page'] = false;
 		$payment_settings['worldpay']['button_url'] = $button_url;
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
+		if (add_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings, '', 'no') == false) {
+			update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings);
 		}
 	}
 	//Open or close the postbox div
@@ -61,7 +61,7 @@ function event_espresso_worldpay_payment_settings() {
 					<?php
 					if (!empty($_REQUEST['activate_worldpay'])) {
 						$payment_settings['worldpay']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Worldpay Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate Worldpay', 'event_espresso');
@@ -70,7 +70,7 @@ function event_espresso_worldpay_payment_settings() {
 
 					if (!empty($_REQUEST['deactivate_worldpay'])) {
 						$payment_settings['worldpay']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Worldpay De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate Worldpay', 'event_espresso');
@@ -97,8 +97,8 @@ function event_espresso_worldpay_payment_settings() {
 
 //worldpay Settings Form
 function event_espresso_display_worldpay_settings() {
-	global $espresso_wp_user;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_worldpay=true'));
 	?>

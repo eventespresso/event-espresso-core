@@ -1,12 +1,12 @@
 <?php
 
 function espresso_display_worldpay($attendee_id, $event_id, $event_cost) {
-	global $wpdb, $org_options, $espresso_wp_user;
+	global $wpdb, $org_options, $this->EE->CFG->wp_user;
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	include_once ('Worldpay.php');
 	$myworldpay = new worldpay(); // initiate an instance of the class
 	echo '<!-- Event Espresso worldpay Gateway Version ' . $myworldpay->worldpay_gateway_version . '-->';
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 	$worldpay_settings = $payment_settings['worldpay'];
 	$use_sandbox = $worldpay_settings['use_sandbox'];
 	if ($use_sandbox == 1) {

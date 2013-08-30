@@ -1,7 +1,7 @@
 <?php
-global $org_options, $wpdb, $espresso_wp_user;
+global $org_options, $wpdb, $this->EE->CFG->wp_user;
 do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 $ideal_mollie_settings = $payment_settings['ideal'];
 require_once('ideal.class.php');
 

@@ -1,7 +1,7 @@
 <?php
 global $wpdb;
-global $espresso_wp_user;
-$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+
+$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 $quickpay_settings = $payment_settings['quickpay'];
 $sessionid = $_SESSION['espresso_session']['id'];
 $ordernumber = substr(md5(uniqid() . rand()), 0, 20);

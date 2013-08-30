@@ -1,6 +1,6 @@
 <?php
-global $espresso_wp_user;
-$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+
+$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 $registration_id = espresso_registration_id($_POST['id']);
 
