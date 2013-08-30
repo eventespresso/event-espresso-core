@@ -189,7 +189,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$payment_settings = get_user_meta($current_user->ID, 'payment_settings', true);
 			$this->EE->SSN->set_session_data($payment_settings,'payment_settings');
 		}
-
 		//lets add all the metaboxes
 		foreach( $gateway_instances as $gate_obj ) {
 			$gate_obj->add_settings_page_meta_box();

@@ -261,13 +261,10 @@ abstract class EE_Gateway {
 
 	public function add_settings_page_meta_box() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;
-		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
-		if (( $espresso_premium || in_array( $this->_gateway_name, $default_gateways )) && isset( $this->_payment_settings['display_name'] )){
-			add_meta_box(
-						'espresso_' . $this->_gateway_name . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_espresso_payment_settings', 'normal'
-			);
-		}
+		add_meta_box(
+					'espresso_' . $this->_gateway_name . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_espresso_payment_settings', 'normal'
+		);
+		
 	}
 
 
@@ -284,11 +281,6 @@ abstract class EE_Gateway {
 
 	public function settings_meta_box() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $espresso_premium;
-		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
-		if ( ! $espresso_premium && ! in_array( $this->_gateway_name, $default_gateways )) {
-			return;
-		}
 		?>
 
 		<a name="<?php echo $this->_gateway_name; ?>" id="<?php echo $this->_gateway_name; ?>"></a>
