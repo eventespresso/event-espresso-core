@@ -299,6 +299,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_ID' => $default ? 0 : $this->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $this->get('TKT_description'),
 			'TKT_is_default' => $default ? 0 : $this->get('TKT_is_default'),
+			'TKT_price' => $default ? '' : $ticket->get_pretty('TKT_price'),
 			'TKT_is_default_selector' => '',
 			'TKT_price_rows' => $default ? '<tr class="hidden"><td colspan="4"></td></tr>' : '',
 			'total_price_rows' => count($prices),
