@@ -383,7 +383,7 @@ class EE_Price extends EE_Base_Class{
 	 */
 	public function is_discount() {
 		$price_type = $this->type_obj();
-		return $price_type->get('PRT_is_discount');
+		return $price_type->is_discount();
 	}
 
 

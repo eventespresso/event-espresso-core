@@ -57,21 +57,7 @@ class EE_Price_Type extends EE_Base_Class{
 	*/
 	protected $_PRT_is_member = NULL;
 
-	/**
-	*	Price type a discount?
-	*
-	*	@access	protected
-	*	@var bool
-	*/
-	protected $_PRT_is_discount = NULL;
 
-	/**
-	*	Price type a tax?
-	*
-	*	@access	protected
-	*	@var bool
-	*/
-	protected $_PRT_is_tax = NULL;
 
   /**
   *	Price type a percentage?
@@ -148,33 +134,6 @@ class EE_Price_Type extends EE_Base_Class{
 		$this->set('PRT_is_member',$PRT_is_member);
 	}
 
-
-
-
-
-	/**
-	*		Set Price Type is discount
-	*
-	* 		@access		public
-	*		@param		bool		$PRT_is_discount
-	*/
-	public function set_is_discount( $PRT_is_discount = NULL ) {
-		$this->set('PRT_is_discount',$PRT_is_discount);
-	}
-
-
-
-
-
-	/**
-	*		Set Price Type is tax
-	*
-	* 		@access		public
-	*		@param		bool		$PRT_is_tax
-	*/
-	public function set_is_tax( $PRT_is_tax = NULL ) {
-		$this->set('PRT_is_tax',$PRT_is_tax);
-	}
 
 
 
@@ -262,6 +221,12 @@ class EE_Price_Type extends EE_Base_Class{
 	public function is_percent() {
 		return $this->get('PRT_is_percent');
 	}
+
+
+	public function is_discount() {
+		return $this->get('PBT_ID') == 2 ? TRUE : FALSE;
+	}
+
 
 
 
