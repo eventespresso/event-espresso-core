@@ -13,7 +13,6 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base{
 	 */
 	function __construct($table_column, $nicename, $nullable, $default_value, $allowed_enum_values){
 		$this->_allowed_enum_values = $allowed_enum_values;
-		$this->_store_in_db_as_int = $store_in_db_as_int;
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
 	}
 	/**
