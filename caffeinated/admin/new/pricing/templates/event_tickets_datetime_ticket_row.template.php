@@ -54,7 +54,7 @@
 				</table>
 			</div>
 			<div class="price-table-container">
-				<h5 class="tickets-heading"><?php __e('Base Ticket Price and Price Modifiers', 'event_espresso'); ?></h5>
+				<h5 class="tickets-heading"><?php _e('Base Ticket Price and Price Modifiers', 'event_espresso'); ?></h5>
 				<table class="price-table">
 					<thead>
 						<tr>
