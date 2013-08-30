@@ -1,6 +1,6 @@
 <?php
 require_once( EE_MODELS . 'fields/EE_Enum_Field.php' );
-class EE_WP_Post_Status_Field extends EE_Enum_Field{
+class EE_WP_Post_Status_Field extends EE_Enum_Text_Field{
 
 	protected $_wp_post_stati;
 
@@ -28,10 +28,9 @@ class EE_WP_Post_Status_Field extends EE_Enum_Field{
 	 * @link http://codex.wordpress.org/Function_Reference/register_post_status for more info
 	 * @param boolean $store_in_db_as_int By default, enums are stored as STRINGS in the DB. However, if this var is set to true, it will be stored as an INT
 	 */
-	function __construct($table_column, $nicename, $nullable, $default_value, $new_stati = array(), $store_in_db_as_int = false){
+	function __construct($table_column, $nicename, $nullable, $default_value, $new_stati = array()){
 		$this->_register_new_stati( $new_stati );
 		$this->_set_allowed_enum_values();
-		$this->_store_in_db_as_int = $store_in_db_as_int;
 		parent::__construct($table_column, $nicename, $nullable, $default_value, $this->_allowed_enum_values);
 	}
 
