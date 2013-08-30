@@ -319,7 +319,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//generate all price rows
 			$prcrow = 1;
 			foreach ( $prices as $price ) {
-				$template_args['TKT_pric_rows'] .= $this->_get_ticket_price_row( $tktrow, $prcrow, $price, $default );
+				$show_trash = ( count( $prices ) > 1 && $prcrow === 1 ) || count( $prices === 1 ) ? FALSE : TRUE;
+				$show_create = count( $prices ) > 1 && count( $prices ) !== $prcrow ? FALSE : TRUE;
+				$template_args['TKT_pric_rows'] .= $this->_get_ticket_price_row( $tktrow, $prcrow, $price, $default, $show_trash, $show_create );
 				$prcrow++;
 			}
 		}
@@ -331,7 +333,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_ticket_price_row( $tktrow, $prcrow, $price, $default ) {
+	private function _get_ticket_price_row( $tktrow, $prcrow, $price, $default, $show_trash = TRUE, $show_create = TRUE ) {
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 			'prc_row' => $default ? 'PRICENUM' : $prcrow,
@@ -346,8 +348,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'show_currency_symbol' => $default ? ' style="display:none"' : ($price->is_percent() ? ' style="display:none"' : '' ),
 			'PRC_amount' => $default ? 0 : $price->get('PRC_amount'),
 			'show_percentage' => $default ? ' style="display:none;"' : ( $price->is_percent() ? '' : ' style="display:none;"' ),
-			'show_trash_icon' => count($prices) > 1 && $prcrow > 1 ? '' : ' style="display:none;"',
-			'show_create_button' => (count($prices) === $prcrow) || count($prices) === 1 ? '' : ' style="display:none;"',
+			'show_trash_icon' => $show_trash ? '' : ' style="display:none;"',
+			'show_create_button' => $show_create ? '' : ' style="display:none;"',
 			'PRC_desc' => $default ? '' : $price->get('PRC_desc')
 			);
 
