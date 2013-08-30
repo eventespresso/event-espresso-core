@@ -1,11 +1,11 @@
 <?php
 
 function event_espresso_firstdata_connect_2_payment_settings() {
-	global $caffeinated, $notices, $espresso_wp_user, $active_gateways;
+	global $caffeinated, $notices, $this->EE->CFG->wp_user, $active_gateways;
 	if ($caffeinated != true)
 		return;
 
-	$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', true);
+	$payment_settings = get_user_meta($this->EE->CFG->wp_user, 'payment_settings', true);
 	
 	if (isset($_POST['update_firstdata_connect_2'])
 					&& check_admin_referer('espresso_form_check', 'add_firstdata2_settings')) {
@@ -14,7 +14,7 @@ function event_espresso_firstdata_connect_2_payment_settings() {
 		$payment_settings['firstdata_connect_2']['timezone']     = $_POST['timezone'];
 		$payment_settings['firstdata_connect_2']['sandbox']      = empty($_POST['sandbox']) ? '' : $_POST['sandbox'];
 		$payment_settings['firstdata_connect_2']['button_url']   = $_POST['button_url'];
-		if (update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings)) {
+		if (update_user_meta($this->EE->CFG->wp_user, 'payment_settings', $payment_settings)) {
 			$notices['updates'][] = __('Firstdata Connect 2.0 Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Firstdata Connect 2.0 Settings were not saved! ', 'event_espresso');
@@ -34,7 +34,7 @@ function event_espresso_firstdata_connect_2_payment_settings() {
 		$payment_settings['firstdata_connect_2']['button_url'] = $button_url;
 		$payment_settings['firstdata_connect_2']['type'] = 'off-site';
 		$payment_settings['firstdata_connect_2']['display_name'] = "FirstData Connect 2.0";
-		update_user_meta($espresso_wp_user, 'payment_settings', $payment_settings);
+		update_user_meta($this->EE->CFG->wp_user, 'payment_settings', $payment_settings);
 	}
 	//Open or close the postbox div
 	if (empty($_REQUEST['deactivate_firstdata_connect_2'])
@@ -50,7 +50,7 @@ function event_espresso_firstdata_connect_2_payment_settings() {
 		<?php
 		if (!empty($_REQUEST['activate_firstdata_connect_2'])) {
 			$active_gateways['firstdata_connect_2'] = str_replace('\\', '/', dirname(__FILE__));
-			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
+			if (update_user_meta($this->EE->CFG->wp_user, 'active_gateways', $active_gateways)) {
 				$notices['updates'][] = __('First Data Connect 2 Activated', 'event_espresso');
 			} else {
 				$notices['errors'][] = __('Unable to Activate First Data Connect 2', 'event_espresso');
@@ -59,7 +59,7 @@ function event_espresso_firstdata_connect_2_payment_settings() {
 	
 		if (!empty($_REQUEST['deactivate_firstdata_connect_2'])) {
 			unset($active_gateways['firstdata_connect_2']);
-			if (update_user_meta($espresso_wp_user, 'active_gateways', $active_gateways)) {
+			if (update_user_meta($this->EE->CFG->wp_user, 'active_gateways', $active_gateways)) {
 				$notices['updates'][] = __('First Data Connect 2 De-activated', 'event_espresso');
 			} else {
 				$notices['errors'][] = __('Unable to De-activate First Data Connect 2', 'event_espresso');

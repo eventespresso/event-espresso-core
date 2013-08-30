@@ -142,8 +142,8 @@ Class EEM_Gateways {
 			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
 			
 		} else {
-			global $espresso_wp_user;
-			$this->_active_gateways = get_user_meta($espresso_wp_user, 'active_gateways', TRUE);
+			
+			$this->_active_gateways = get_user_meta($this->EE->CFG->wp_user, 'active_gateways', TRUE);
 			if (!is_array($this->_active_gateways)) {
 				$this->_active_gateways = array();
 			}
@@ -163,8 +163,8 @@ Class EEM_Gateways {
 //		if (!empty($this->_session_gateway_data['payment_settings'])) {
 //			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
 //		} else {
-			global $espresso_wp_user;
-			$this->_payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', TRUE);
+			
+			$this->_payment_settings = get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
 			if (!is_array($this->_payment_settings)) {
 				$this->_payment_settings = array();
 			}
@@ -324,12 +324,12 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 		//$this->_payment_settings[$gateway] = $new_gateway_settings;
-		global $espresso_wp_user;
+		
 		//echo "updateing usermeta with paymetn settings";var_dump($this->_payment_settings);
-		$old_payment_settings = get_user_meta($espresso_wp_user, 'payment_settings',true);
+		$old_payment_settings = get_user_meta($this->EE->CFG->wp_user, 'payment_settings',true);
 		$old_payment_settings[$gateway] = $new_gateway_settings;
 		$this->_payment_settings = $old_payment_settings;
-		if (update_user_meta($espresso_wp_user, 'payment_settings', $this->_payment_settings)) {
+		if (update_user_meta($this->EE->CFG->wp_user, 'payment_settings', $this->_payment_settings)) {
 
 			$msg = __('Payment Settings Updated!', 'event_espresso');
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -396,8 +396,8 @@ Class EEM_Gateways {
 		}
 		if (array_key_exists($gateway, $this->_all_gateways)) {
 			$this->_active_gateways[$gateway] = $this->_all_gateways[$gateway];
-			global $espresso_wp_user;
-			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
+			
+			if (update_user_meta($this->EE->CFG->wp_user, 'active_gateways', $this->_active_gateways)) {
 				$msg = $gateway . __(' Gateway Activated!', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
@@ -426,8 +426,8 @@ Class EEM_Gateways {
 		}
 		if (array_key_exists($gateway, $this->_active_gateways)) {
 			unset($this->_active_gateways[$gateway]);
-			global $espresso_wp_user;
-			if (update_user_meta($espresso_wp_user, 'active_gateways', $this->_active_gateways)) {
+			
+			if (update_user_meta($this->EE->CFG->wp_user, 'active_gateways', $this->_active_gateways)) {
 				$msg =$gateway .  __('Gateway Deactivated!', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;

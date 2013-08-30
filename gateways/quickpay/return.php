@@ -1,8 +1,8 @@
 <?php
 
 global $wpdb;
-global $espresso_wp_user;
-$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+
+$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 $quickpay_settings = $payment_settings['quickpay'];
 $md5secret = $quickpay_settings['quickpay_md5secret'];
 
