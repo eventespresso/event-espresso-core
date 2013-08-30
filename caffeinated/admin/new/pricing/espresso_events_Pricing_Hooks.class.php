@@ -299,7 +299,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),
 			'TKT_is_default_selector' => '',
-			'TKT_price_rows' => $default ? '<tr class="hidden"><td colspan="4"></td></tr>' : '',
+			'ticket_price_rows' => $default ? '<tr class="hidden"><td colspan="4"></td></tr>' : '',
 			'total_price_rows' => count($prices),
 			'ticket_datetimes_list' => $default ? '<li class="hidden"></li>' : '',
 			'starting_ticket_datetime_ids' => implode(',', (array) $ticket_datetimes),
@@ -320,7 +320,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			foreach ( $prices as $price ) {
 				$show_trash = ( count( $prices ) > 1 && $prcrow === 1 ) || count( $prices === 1 ) ? FALSE : TRUE;
 				$show_create = count( $prices ) > 1 && count( $prices ) !== $prcrow ? FALSE : TRUE;
-				$template_args['TKT_price_rows'] .= $this->_get_ticket_price_row( $tktrow, $prcrow, $price, $default, $show_trash, $show_create );
+				$template_args['ticket_price_rows'] .= $this->_get_ticket_price_row( $tktrow, $prcrow, $price, $default, $show_trash, $show_create );
 				$prcrow++;
 			}
 		}
