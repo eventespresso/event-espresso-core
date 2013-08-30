@@ -1229,10 +1229,7 @@ class EEH_Activation {
 
 				$SQL = "INSERT INTO " . EE_TICKET_PRICE_TABLE . "
 				( TKP_ID, TKT_ID, PRC_ID ) VALUES 
-				( 1, 1, 1 ),
-				( 2, 1, 2 ),
-				( 3, 1, 3 ),
-				( 4, 1, 4 )
+				( 1, 1, 1 )
 				";
 
 				$SQL = apply_filters( 'FHEE_default_ticket_price_activation_sql', $SQL);
