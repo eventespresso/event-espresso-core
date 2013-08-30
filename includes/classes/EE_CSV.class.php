@@ -518,7 +518,7 @@
 //		// loop through data and add each row to the file/stream as csv
 //		foreach ( $data as $model_name => $model_data ) {
 //			// test first row to see if it is data or a model name
-//			$model = 	EE_System::instance()->get_registry()->load_model($model_name);
+//			$model = 	EE_Registry::instance();->load_model($model_name);
 //			//if the model really exists, 
 //			if ( $model ) {
 //			

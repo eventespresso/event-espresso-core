@@ -125,7 +125,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 		);
 
-		$this->EE = EE_System::instance()->get_registry();
+		$this->EE = EE_Registry::instance();
 
 		//set the _req_data property.
 		$this->_req_data = array_merge( $_GET, $_POST );
