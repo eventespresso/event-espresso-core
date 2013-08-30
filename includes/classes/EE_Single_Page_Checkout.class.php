@@ -1179,7 +1179,7 @@ class EE_Single_Page_Checkout {
 			$transaction->set_txn_session_data(null);
 			//var_dump($EE_Session->get_session_data());
 			$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
-			$EE_Session->_update_espresso_session();
+			$EE_Session->update_espresso_session();
 			//var_dump($)
 			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			

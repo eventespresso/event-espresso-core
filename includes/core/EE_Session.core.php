@@ -120,7 +120,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// are we using encryption?
 		if ( $this->_use_encryption ) {
-			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Encryption.class.php' );
+			EE_Registry::instance()->load_core( 'Encryption' );
 			// instantiate the class object making all properties and methods accessible via $this->encryption ex: $this->encryption->encrypt();
 			$this->encryption = EE_Encryption::instance();
 		}
@@ -138,15 +138,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
-
-
-//		if ( isset( $_REQUEST['page_id'] ) ) {
-//			if (  $_REQUEST['page_id'] == $org_options['return_url'] or $_REQUEST['page_id'] == $org_options['notify_url'] ) {
-//				$this->reset_data( array() );
-//			}
-//		}
+		
+		add_action( 'AHEE_before_event_list', array( $this, 'clear_session' ), 10, 2 );
+		// check request for 'clear_session' param
+		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 10 );
 		// once everything is all said and done,
-		add_action( 'shutdown', array( &$this, '_update_espresso_session' ), 100);
+		add_action( 'shutdown', array( $this, 'update_espresso_session' ), 100);
 
 	}
 
@@ -345,7 +342,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		@access public
 	 *		@return TRUE on success, FALSE on fail
 	 */
-	public function _update_espresso_session( $new_session = FALSE ) {
+	public function update_espresso_session( $new_session = FALSE ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
@@ -430,7 +427,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// use the update function for now with $new_session arg set to TRUE
-		return  $this->_update_espresso_session( TRUE ) ? TRUE : FALSE;
+		return  $this->update_espresso_session( TRUE ) ? TRUE : FALSE;
 
 	}
 
@@ -612,6 +609,43 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 	/**
+	 * 		Clear EE_Session data
+	 *
+	 * 		@access public
+	 * 		@return void
+	 */
+	public function clear_session( $class = '', $func = '' ) {
+
+		$this->reset_data( 
+			array(
+				'cart',
+				'gateway_data', 
+				'transaction', 
+				'registration',
+				'primary_attendee',
+				'tax_totals',
+				'taxes',
+				'billing_info',
+				'txn_results',
+				'grand_total_price_object'
+			));
+																
+		$this->set_session_data(
+			array(
+						'_events_in_cart' => array(),
+						'_cart_grand_total_qty' => 0,
+						'_cart_grand_total_amount' => 0
+					),
+					'session_data'
+		);
+
+	}
+
+
+
+
+
+	/**
 	 *			@resets all non-default session vars
 	 *		  @access public
 	 *			@return TRUE on success, FALSE on fail
@@ -665,6 +699,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 
+
 	/**
 	 *   get the real "now" time
 	 *   @access private
@@ -697,6 +732,20 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		return mktime(gmdate('H'), gmdate('i'), gmdate('s'), gmdate('m'), gmdate('d'), gmdate('Y') );
 	}
 
+
+
+
+
+	/**
+	 *   wp_loaded
+	 *   @access public
+	 *   @return	 string
+	 */
+	public function wp_loaded() {
+		if ( EE_Registry::instance()->REQ->is_set( 'clear_session' )) {
+			$this->clear_session( __CLASS__, __FUNCTION__ );
+		}
+	}
 
 
 

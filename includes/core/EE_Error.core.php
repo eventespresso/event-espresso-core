@@ -84,6 +84,8 @@ class EE_Error extends Exception {
 	*/
 	function __construct( $message, $code = 0, Exception $previous = NULL ) {
 
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 1 );			
+
 		if (version_compare(phpversion(), '5.3.0', '<')) {
 			parent::__construct( $message, $code );
 		} else {
@@ -92,6 +94,20 @@ class EE_Error extends Exception {
 		
 	}
 
+
+
+	/**
+	 * 	wp_enqueue_scripts
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function wp_enqueue_scripts() {
+		// js for error handling
+		wp_register_script( 'ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, FALSE );
+		wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+		wp_enqueue_script( 'ee_error_js' );
+	}
 
 
 

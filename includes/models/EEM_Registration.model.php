@@ -246,263 +246,27 @@ class EEM_Registration extends EEM_Base {
 	}
 
 
-
-
-	
 	/**
-	*		return a list of attendees for a specific locale for the Registration Overview Admin page
+	*		get the number of registrations per day  for the Registration Admin page Reports Tab.
+	 *		(doesn't utilize models because it's a fairly specialized query)
 	* 		@access		public
-	*/
-	public function get_registrations_for_admin_page( $EVT_ID = FALSE, $CAT_ID = FALSE, $reg_status = FALSE, $month_range = FALSE, $today_a = FALSE, $this_month_a = FALSE, $start_date = FALSE, $end_date = FALSE, $orderby = 'REG_date', $order = 'DESC', $limit = NULL, $count = FALSE ) {
-
-		global $wpdb;
-
-		//Dates
-		$curdate = date('Y-m-d', current_time('timestamp'));
-		$this_year_r = date('Y', current_time('timestamp'));
-		$this_month_r = date('m', current_time('timestamp'));
-		$days_this_month = date( 't', current_time('timestamp') );
-		$time_start = ' 00:00:00';
-		$time_end = ' 23:59:59';
-
-		$sql_clause = ' WHERE ';
-		$SQL = '(';
-
-		// get list of attendees for regional managers locale
-		if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
-
-			$locales = get_user_meta(espresso_member_data('id'), "espresso_group", true);
-
-			if ( $locales != '' ) {
-				$locales = unserialize($locales);
-
-				$locales = implode(",", $locales);
-			} else {
-				$locales = FALSE;
-			}
-
-			$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.id event_id, evt.event_name, evt.require_pre_approval, txn.TXN_ID, txn.TXN_timestamp, txn.TXN_total, txn.STS_ID AS txn_status, txn.TXN_details, txn.TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
-			$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-			$SQL .= ' JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
-			$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID ';
-			$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
-			$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
-			$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
-
-			if ( $CAT_ID ) {
-				$SQL .= ' JOIN ' . EVENTS_CATEGORY_REL_TABLE . ' ect ON ect.event_id = evt.id ';
-				$SQL .= ' JOIN ' . EVENTS_CATEGORY_TABLE . ' cat ON  cat.id = ect.cat_id ';
-			}
-
-			if ( $locales ) {
-				$SQL .= ' JOIN ' . EVENTS_VENUE_REL_TABLE . ' evn ON evn.event_id = evt.id ';
-				$SQL .= ' JOIN ' . EVENTS_LOCALE_REL_TABLE . ' loc ON  loc.venue_id = evn.venue_id ';
-			}
-
-			$sql_clause = ' WHERE ';
-
-			if ( $CAT_ID ) {
-				$SQL .= $sql_clause .' cat.id = "' . $CAT_ID . '"" ';
-				$sql_clause = ' AND ';
-			}
-
-			if ( $reg_status ) {
-				$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
-				$sql_clause = ' AND ';
-			} else {
-				$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
-				$sql_clause = ' AND ';
-			}
-
-
-			if ( $month_range ) {
-				$pieces = explode('-', $month_range, 3);
-				$year_r = $pieces[0];
-				$month_r = $pieces[1];
-
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) . '" ';
-				$SQL .= 'AND "' . strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end )  . '"';
-				$sql_clause = ' AND ';
-			}
-
-			if ( $EVT_ID ) {
-				$SQL .= $sql_clause .' reg.EVT_ID = "' . $EVT_ID  . '"';
-				$sql_clause = ' AND ';
-			}
-
-
-			if ( $today_a ) {
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime($curdate . $time_start) . '" AND "' . strtotime($curdate . $time_end)  . '"';
-				$sql_clause = ' AND ';
-			}
-
-			if ( $this_month_a ) {
-				$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ) . '" ';
-				$SQL .= 'AND "' . strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end )  . '"';
-				$sql_clause = ' AND ';
-			}
-
-			if ( $locales ) {
-				$SQL .= $sql_clause . ' locale_id IN (' . $locales . ') ';
-			}
-
-			$SQL .= ' AND evt.event_status != "D" ';
-			$SQL .= ') UNION (';
-
-			// end if (function_exists('espresso_member_data')
-
-		}
-
-		$SQL .= $count ? "SELECT COUNT(reg.ATT_ID)" : "SELECT att.*, reg.*, dtt.*, reg.STS_ID REG_status, evt.id event_id, evt.event_name, CONCAT(ATT_fname, ' ', ATT_lname) as REG_att_name, evt.require_pre_approval, txn.TXN_ID, TXN_timestamp, TXN_total, txn.STS_ID AS txn_status, TXN_details, TXN_tax_data, txn.TXN_paid, PRC_amount, PRC_name";
-		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' LEFT JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
-		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
-
-		if ( $CAT_ID ) {
-			$SQL .= ' JOIN ' . EVENTS_CATEGORY_REL_TABLE . ' ect ON ect.event_id = evt.id';
-			$SQL .= ' JOIN ' . EVENTS_CATEGORY_TABLE . ' cat ON  cat.id = ect.cat_id';
-		}
-
-		$sql_clause = ' WHERE ';
-
-		if ( $CAT_ID ) {
-			$SQL .= $sql_clause .'cat.id = "' . $CAT_ID . '"';
-			$sql_clause = ' AND ';
-		}
-
-		if ( $reg_status ) {
-			$SQL .= $sql_clause ." reg.STS_ID = '$reg_status'";
-			$sql_clause = ' AND ';
-		} else {
-			$SQL .= $sql_clause ." reg.STS_ID != 'RCN'";
-			$sql_clause = ' AND ';
-		}
-
-		if ( $EVT_ID ) {
-			$SQL .= $sql_clause .' reg.EVT_ID = "' . $EVT_ID  . '"';
-			$sql_clause = ' AND ';
-		}
-
-		if ( $month_range ) {
-			$pieces = explode('-', $month_range, 3);
-			$year_r = $pieces[0];
-			$month_r = $pieces[1];
-
-			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $month_r . ' 01 ' . $year_r . ' ' . $time_start ) . '" ';
-			$SQL .= 'AND "' . strtotime( $month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end )  . '"';
-			$sql_clause = ' AND ';
-		}
-
-		if ( $today_a ) {
-			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime($curdate . $time_start) . '" AND "' . strtotime($curdate . $time_end)  . '"';
-			$sql_clause = ' AND ';
-		}
-
-		if ( $this_month_a ) {
-			$SQL .= $sql_clause .' reg.REG_date BETWEEN "' . strtotime( $this_year_r . '-' . $this_month_r . '-01' . $time_start ) . '" AND "' . strtotime( $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $time_end )  . '"';
-			$sql_clause = ' AND ';
-		}
-
-		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
-			$SQL .= $sql_clause . ' evt.wp_user = "' . espresso_member_data('id')  . '"';
-			$sql_clause = ' AND ';
-		}
-
-		$SQL .= ' AND evt.event_status != "D" ';
-
-
-
-		//let's setup orderby
-		switch ( $orderby ) {
-			
-			case 'REG_ID':
-				$orderby = 'reg.REG_ID ';
-				break;
-				
-			case 'STS_ID':
-				$orderby = 'reg.REG_status ';
-				break;
-				
-			case 'ATT_lname':
-				$orderby = 'att.ATT_lname ';
-				break;
-				
-			case 'event_name':
-				$orderby = 'evt.event_name ';
-				break;
-				
-			case 'DTT_EVT_start':
-				$orderby = 'dtt.DTT_EVT_start ';
-				break;
-				
-			default: //'REG_date'
-				$orderby = 'reg.REG_date ';
-		}
-
-		//let's setup limit
-		$limit = !empty($limit) ? 'LIMIT ' . implode(',', $limit) : '';
-		$SQL .= $count ? ')' : ") ORDER BY $orderby $order $limit";
-
-		$registrations = $count ? $wpdb->get_var( $SQL ) : $wpdb->get_results( $SQL );
-
-		return $registrations;
-	}
-
-
-
-
-
-	/**
-	*		return specific registration data for the Registration Admin page
-	* 		@access		public
-	*/
-	public function get_registration_for_admin_page( $REG_ID = FALSE ) {
-
-		if ( ! $REG_ID ) {
-			return FALSE;
-		}
-
-		global $wpdb;
-
-		$SQL = 'SELECT att.*, reg.*, evt.*, txn.*, prc.*, dtt.*, reg.STS_ID REG_status, txn.STS_ID txn_status';
-		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' RIGHT JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
-		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_price prc ON prc.PRC_ID = reg.PRC_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
-		$SQL .= ' WHERE reg.REG_ID = %d';
-
-		$attendee = $wpdb->get_row( $wpdb->prepare( $SQL, $REG_ID ));
-		//printr( $attendee, 'attendee' ); die();
-		
-		return $attendee;
-	}
-
-
-
-
-
-	/**
-	*		get the number of registrations per day  for the Registration Admin page Reports Tab
-	* 		@access		public
+	 *		@param $period string which can be passed to php's strtotime functino (eg "-1 month")
+	 *		@return stdClass[] with properties regDate and total
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
-
-		global $wpdb;
-		$date_mod = strtotime( $period );
-
-		$SQL = "SELECT DATE(FROM_UNIXTIME(reg.REG_date)) AS 'regDate', COUNT(REG_ID) AS total";
-		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' reg';
-		$SQL .= ' WHERE REG_date >= %d';
-		$SQL .= ' GROUP BY `regDate`';
-		$SQL .= ' ORDER BY REG_date DESC';
-		
-		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
-
+		$sql_date = date("Y-m-d H:i:s", strtotime($period));
+		$results = $this->_get_all_wpdb_results(
+				array(
+					array('REG_date'=>array('>=',$sql_date)),
+					'group_by'=>'regDate',
+					'order_by'=>array('REG_date'=>'DESC')
+				), 
+				OBJECT, 
+				array(
+					'regDate'=>array('DATE(FROM_UNIXTIME(Registration.REG_date))','%d'),
+					'total'=>array('count(REG_ID)','%d')
+				));
+		return $results;
 	}
 
 
@@ -512,23 +276,27 @@ class EEM_Registration extends EEM_Base {
 	/**
 	*		get the number of registrations per event  for the Registration Admin page Reports Tab
 	* 		@access		public
+	 *		@return stdClass[] each with properties event_name, reg_limit, and total
 	*/
-	public function get_registrations_per_event_report( $period = '-1 month' ) {
-
-		global $wpdb;
-		$date_mod = strtotime( $period );
-
-		$SQL = "SELECT event_name, reg_limit, COUNT(REG_ID) AS total";
-		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' reg';
-		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
-		$SQL .= ' JOIN ' . $wpdb->prefix . 'esp_datetime dtt ON dtt.DTT_ID = reg.DTT_ID';
-		$SQL .= ' WHERE REG_date >= %d';
-		$SQL .= ' AND DTT_is_primary = 1';
-		$SQL .= ' GROUP BY event_name';
-		$SQL .= ' ORDER BY event_name';  // DTT_EVT_start
-		$SQL .= ' LIMIT 0, 24';
+	public function get_registrations_per_event_report( $period = '-1 month' ) {		
+		$date_sql = date("Y-m-d H:i:s", strtotime($period));
+		$results = $this->_get_all_wpdb_results(array(
+			array(
+				'REG_date'=>array('>=',$date_sql),
+				'Datetime.DTT_primary'=>1
+			),
+			'group_by'=>'Event.EVT_name',
+			'order_by'=>'Event.EVT_name',
+			'limit'=>array(0,24)),
+			OBJECT, 
+			array(
+				'event_name'=>array('Event_CPT.post_title','%s'),
+				'reg_limit'=>array('Event_Meta.EVT_reg_limit','%s'),
+				'total'=>array('COUNT(REG_ID)','%s')
+			)
+		);
 		
-		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
+		return $results;
 
 	}
 
@@ -544,45 +312,6 @@ class EEM_Registration extends EEM_Base {
 		}
 		return $this->get_one(array(array('TXN_ID'=>$TXN_ID,'REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT)));
 	}
-
-	/**
-	*		get all registrations for a specific transaction, possibly excluding one (ie: get all OTHER registrations except this one )
-	* 
-	* 		@access		public
-	* 		@param		int 			$TXN_ID
-	* 		@param		int 			$REG_ID
-	* 		@return		array
-	*/
-	public function get_registrations_for_transaction( $TXN_ID = FALSE, $REG_ID = FALSE ) {
-
-		if ( ! $TXN_ID ) {
-			return FALSE;
-		}
-
-		global $wpdb;
-
-		$SQL = 'SELECT att.*, reg.*';
-		$SQL .= ' FROM ' . $wpdb->prefix . 'esp_attendee att';
-		$SQL .= ' RIGHT JOIN ' . $this->_get_main_table()->get_table_name() . ' reg ON reg.ATT_ID = att.ATT_ID';
-		$SQL .= ' WHERE reg.TXN_ID = %d';
-		
-		if ( $REG_ID ) {
-			$SQL .= ' AND reg.REG_ID != %d';
-			$attendees = $wpdb->get_row( $wpdb->prepare( $SQL, $TXN_ID, $REG_ID ));
-		} else {
-			$attendees = $wpdb->get_row( $wpdb->prepare( $SQL, $TXN_ID ));
-		}
-		
-		if ( ! is_array( $attendees )) {
-			$attendees = array( $attendees );
-		}
-		//printr( $attendee, 'attendee' ); die();		
-		return $attendees;
-		
-	}
-
-
-
 
 
 	/**

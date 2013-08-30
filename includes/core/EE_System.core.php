@@ -69,12 +69,9 @@ final class EE_System {
 		$this->_register_custom_autoloaders();
 		$this->_define_table_names();
 		$this->EE->load_core( 'Maintenance_Mode' );
+		$this->check_espresso_version();
 
-		if ( $activation ) {
-			$this->_register_custom_autoloaders();
-			$this->check_database_tables();
-		} else  {
-			// hookpoints
+		if ( ! $activation ) {
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 			add_action( 'init', array( $this, 'init' ), 3 );
 			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
@@ -183,43 +180,18 @@ final class EE_System {
 	}
 
 
-	/**
-	 * 		get_registry
-	 *
-	 * 		@access public
-	 * 		@return object
-	 */
-	public function get_registry() {
-		return $this->EE;
-	}
-
 
 
 	/**
-	 * 		plugins_loaded
-	 *
-	 * 		@access 	public
-	 * 		@return 		void
-	 */
-	public function plugins_loaded() {
-
-	}
-
-
-
-
-	/**
-	* check_database_tables
+	* check_espresso_version
 	* 
-	* ensures that the database has been updated to the current version
-	* and also ensures that all necessary data migration scripts have been applied
-	* in order to bring the content of the database up to snuff as well
+	* compares the current EE version versus previously activated versions
 	* 
 	* @access public
 	* @since 3.1.28
 	* @return void
 	*/
-	public function check_database_tables() {
+	public function check_espresso_version() {
 		// check if db has been updated, cuz autoupdates don't trigger database install script
 		$espresso_db_update = get_option( 'espresso_db_update' );
 		// chech that option is an array
@@ -235,62 +207,28 @@ final class EE_System {
 				update_option( 'espresso_db_update', $espresso_db_update );
 			}
 		}
+	
 		
 		// if current EE version is NOT in list of db updates, then update the db
 		if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
-			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
-			EEH_Activation::create_database_tables();
+//			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+//			EEH_Activation::create_database_tables();
+//			LOAD AND INITIATE UPGRADE PROCESS
 		}	
-		
-		// grab list of any existing data migrations from db
-		if ( ! $existing_data_migrations = get_option( 'espresso_data_migrations' )) {
-			// or initialize as an empty array
-			$existing_data_migrations = array();
-			// and set WP option
-			add_option( 'espresso_data_migrations', array(), '', 'no' );
-		}
 
-		// array of all previous data migrations to date
-		// using the name of the callback function for the value
-		$espresso_data_migrations = array(
-		);
-		
-		// temp array to track scripts we need to run 
-		$scripts_to_run = array();
-		// for tracking script errors
-		$previous_script = '';
-		// if we don't need them, don't load them
-		$load_data_migration_scripts = FALSE;
-		// have we already performed some data migrations ?
-		if ( ! empty( $existing_data_migrations )) {	
-			// loop through all previous migrations
-			foreach ( $existing_data_migrations as $ver => $migrations ) {
-				// ensure that migrations is an array, then loop thru it
-				$migrations = is_array( $migrations ) ? $migrations : array( $migrations );
-				foreach ( $migrations as $migration_func => $errors_array ) {
-					// make sure they have been executed
-					if ( ! in_array( $migration_func, $espresso_data_migrations )) {		
-						// ok NOW load the scripts
-						$load_data_migration_scripts = TRUE;
-						$scripts_to_run[ $migration_func ] = $migration_func;
-					} 
-				}
-			}		
-			
-		} else {
-			$load_data_migration_scripts = TRUE;
-			$scripts_to_run = $espresso_data_migrations;
-		}
+	}
 
-		if ( $load_data_migration_scripts && ! empty( $scripts_to_run )) {
-			require_once( 'includes/functions/data_migration_scripts.php' );		
-			// run the appropriate migration script
-			foreach( $scripts_to_run as $migration_func ) {
-				if ( function_exists( $migration_func )) {
-					call_user_func( $migration_func );
-				}		
-			}
-		}
+
+
+
+	/**
+	 * 		plugins_loaded
+	 *
+	 * 		@access 	public
+	 * 		@return 		void
+	 */
+	public function plugins_loaded() {
+
 	}
 
 
@@ -310,7 +248,7 @@ final class EE_System {
 		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php' );
 
 		// session loading is turned OFF by default, but prior to the init hook, can be turned back on again via: add_filter( 'FHEE_load_EE_Session', '__return_true' );
-		if ( apply_filters( 'FHEE_load_EE_Session', FALSE )) {
+		if ( apply_filters( 'FHEE_load_EE_Session', FALSE ) || is_admin() ) {
 			$this->load_EE_Session();
 		}
 
@@ -327,13 +265,8 @@ final class EE_System {
 	 * 		@return void
 	 */
 	public function load_EE_Session() {
-		global $EE_Session;
 		// instantiate !!!
-		$this->EE->load_class( 'Session' );
-//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		if ( $this->EE->REQ->is_set( 'clear_session' )) {
-//			espresso_clear_session( __CLASS__, __FUNCTION__ );
-//		}
+		$this->EE->load_core( 'Session' );
 	}
 
 
@@ -399,12 +332,7 @@ final class EE_System {
 	public function wp_enqueue_scripts() {
 		// unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
 		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE )) {
-
-			// js for error handling
-			wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
-			wp_localize_script('ee_error_js','ee_settings',array('wp_debug'=>WP_DEBUG));
-			wp_enqueue_script('ee_error_js');
-			
+		
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
 				// load jQuery Validate script from CDN with local fallback
@@ -429,5 +357,7 @@ final class EE_System {
 
 
 }
+EE_System::instance();
+
 // End of file EE_System.core.php
 // Location: /core/EE_System.core.php

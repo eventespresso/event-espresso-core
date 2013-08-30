@@ -24,6 +24,7 @@
 class EEH_Activation {
 
 
+
 	/**
 	 * 	plugin_activation
 	 *
@@ -37,51 +38,241 @@ class EEH_Activation {
 			 return;
 		}
 	       
-	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	    check_admin_referer( "activate-plugin_{$plugin}" );		
+//	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+//	    check_admin_referer( "activate-plugin_{$plugin}" );		
 
-		$prev_version = get_option( 'events_detail_tbl_version' );
-		if ( $prev_version && version_compare( $prev_version, '3.2.0', '<=' )) {
+		// don't need JS when we load the system files, so turn it off
+		add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
+		// turn rewrite rule flushing on
+		add_filter( 'FHEE_flush_rewrite_rules', '__return_true' );
+		// load core system files
+		require_once( EE_CORE . 'EE_System.core.php' );
+		EE_System::instance( TRUE );
+		// load EE_Config
+		EE_Registry::instance()->load_core( 'Config' );
 		
-			wp_die( '
-			<h2 style="color:red; font-size:2em; text-align:center;">' . __( 'Warning!', 'event_espresso' ) . '</h2>
-			<p style="font-size:1.4em; text-align:center;">
-				' . __( 'THERE ARE NO DATA MIGRATION SCRIPTS AVAILABLE YET FOR IMPORTING YOUR EXISTING DATA INTO EVENT ESPRESSO 4+.<br/><br/>If you wish to activate Event Espresso, please backup your existing data and remove the tables from the database, or utilize a fresh install of WordPress.<br/><br/><span style="font-size:.7em;">Please press the back button on your browser to return to the plugins page.</span>', 'event_espresso' ) . '
-			</p>');
+		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
+			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
+			espresso_caffeinated_activation();
+		}
 
-		} else {
-			
-			// load org options
-			add_filter( 'FHEE_load_org_options', '__return_true' );
-			// don't need JS when we load the system files, so turn it off
-			add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-			// turn rewrite rule flushing on
-			add_filter( 'FHEE_flush_rewrite_rules', '__return_true' );
-			// load core system files
-			require_once( EE_CORE . 'EE_System.core.php' );
-			EE_System::instance( TRUE );
-			
-			if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
-				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
-				espresso_caffeinated_activation();
+		EEH_Activation::configuration_initialization();
+		EEH_Activation::verify_default_pages_exist();
+		EEH_Activation::create_upload_directories();
+		EEH_Activation::create_database_tables();
+		// default data
+		EEH_Activation::initialize_system_questions();
+		EEH_Activation::insert_default_prices();
+		EEH_Activation::insert_default_price_types();
+		EEH_Activation::insert_default_tickets();
+		EEH_Activation::insert_default_status_codes();
+		EEH_Activation::insert_default_countries();
+		EEH_Activation::insert_default_states();
+		
+		EEH_Activation::generate_default_message_templates();
+		EEH_Activation::create_no_ticket_prices_array();
+
+	}
+
+
+
+
+	/**
+	 * configuration_initialization
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function configuration_initialization( $missing_options = FALSE ) {
+		
+		$default_config = new stdClass();
+		// core configuration
+		$default_config->core = new stdClass();
+		$default_config->core->site_license_key = NULL;
+		$default_config->core->ee_ueip_optin = TRUE;
+		$default_config->core->post_shortcodes = array();
+		$default_config->core->module_route_map = array();
+		$default_config->core->module_forward_map = array();
+		$default_config->core->module_view_map = array();
+		$default_config->core->reg_page_id = FALSE;
+		$default_config->core->txn_page_id = FALSE;
+		$default_config->core->thank_you_page_id = FALSE;
+		$default_config->core->cancel_page_id = FALSE;
+		// organization settings
+		$default_config->organization = new stdClass();
+		$default_config->organization->name = get_bloginfo('name');
+		$default_config->organization->address_1 = '123 Onna Road';
+		$default_config->organization->address_2 = 'PO Box 123';
+		$default_config->organization->city = 'Inna City';
+		$default_config->organization->STA_ID = 4;
+		$default_config->organization->CNT_ISO = 'US';
+		$default_config->organization->zip = '12345';
+		$default_config->organization->email = get_bloginfo('admin_email');
+		$default_config->organization->logo_url = '';
+		// currency settings
+		$default_config->currency = new stdClass();
+		$default_config->currency->code = 'USD'; 	// currency code: USD, CAD, EUR
+		$default_config->currency->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
+		$default_config->currency->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
+		$default_config->currency->sign =  '$'; 	// currency sign: $
+		$default_config->currency->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
+		$default_config->currency->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
+		$default_config->currency->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+		$default_config->currency->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+		// registration settings
+		$default_config->registration = new stdClass();
+		$default_config->registration->default_STS_ID = 'RPN'; 	// default reg status
+		$default_config->registration->pending_counts_reg_limit = TRUE;
+		$default_config->registration->use_captcha = FALSE;
+		$default_config->registration->use_attendee_pre_approval = FALSE;
+		// general admin settings
+		$default_config->admin = new stdClass();
+		$default_config->admin->use_personnel_manager = TRUE;
+		$default_config->admin->use_dashboard_widget = TRUE;
+		$default_config->admin->events_in_dasboard = 30;
+		$default_config->admin->use_event_timezones = FALSE;
+		$default_config->admin->use_full_logging = FALSE;
+		$default_config->admin->use_remote_logging = FALSE;
+		$default_config->admin->remote_logging_url = NULL;
+		$default_config->admin->show_reg_footer = TRUE;
+		$default_config->admin->affiliate_id = NULL;
+		// template settings
+		$default_config->template_settings = new stdClass();
+		$default_config->template_settings->enable_default_style = TRUE;
+		$default_config->template_settings->display_address_in_regform = TRUE;
+		$default_config->template_settings->display_description_on_multi_reg_page = FALSE;
+		$default_config->template_settings->use_custom_templates = FALSE;
+		// map settings
+		$default_config->map_settings = new stdClass();
+		$default_config->map_settings->use_google_maps = TRUE;
+		// for event details pages (reg page)
+		$default_config->map_settings->event_details_map_width = 585; 			// ee_map_width_single
+		$default_config->map_settings->event_details_map_height = 362; 			// ee_map_height_single
+		$default_config->map_settings->event_details_map_zoom = 14; 			// ee_map_zoom_single
+		$default_config->map_settings->event_details_display_nav = TRUE; 			// ee_map_nav_display_single
+		$default_config->map_settings->event_details_nav_size = FALSE; 			// ee_map_nav_size_single
+		$default_config->map_settings->event_details_control_type = 'default'; 		// ee_map_type_control_single
+		$default_config->map_settings->event_details_map_align = 'center'; 			// ee_map_align_single
+		// for event list pages
+		$default_config->map_settings->event_list_map_width = 300; 			// ee_map_width
+		$default_config->map_settings->event_list_map_height = 185; 		// ee_map_height
+		$default_config->map_settings->event_list_map_zoom = 12; 			// ee_map_zoom
+		$default_config->map_settings->event_list_display_nav = FALSE; 		// ee_map_nav_display
+		$default_config->map_settings->event_list_nav_size = TRUE; 			// ee_map_nav_size
+		$default_config->map_settings->event_list_control_type = 'dropdown'; 		// ee_map_type_control
+		$default_config->map_settings->event_list_map_align = 'center'; 			// ee_map_align
+
+		// if we are only missing config items then let's merge with what we do have'
+		EE_Registry::instance()->CFG = $missing_options ? (object) array_merge( (array)$default_config, (array)EE_Registry::instance()->CFG ) : (object)$default_config;
+		// and then save it
+		if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE ) ) {
+			$msg = __( 'The Event Espresso Configuration Settings could not be initialized.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}	
+
+	}
+
+
+
+
+	/**
+	 * verify_default_pages_exist
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function verify_default_pages_exist() {
+		
+		$critical_page_problem = FALSE;
+		
+		$critical_pages = array(
+			array( 
+				'id' =>'reg_page_id',
+				'name' => __( 'Registration Checkout', 'event_espresso' ),
+				'page' => NULL,
+				'code' => 'ESPRESSO_CHECKOUT'
+			),
+			array( 
+				'id' => 'txn_page_id',
+				'name' => __( 'Transactions', 'event_espresso' ),
+				'page' => NULL,
+				'code' => 'ESPRESSO_TXN_PAGE'
+			),
+			array( 
+				'id' => 'thank_you_page_id',
+				'name' => __( 'Thank You', 'event_espresso' ),
+				'page' => NULL,
+				'code' => 'ESPRESSO_THANK_YOU'
+			),
+			array( 
+				'id' => 'cancel_page_id',
+				'name' => __( 'Registration Cancelled', 'event_espresso' ),
+				'page' => NULL,
+				'code' => 'ESPRESSO_CANCELLED'
+			),
+		);
+
+		foreach ( $critical_pages as $critical ) {
+			// attempt to find post by ID
+			if ( $critical['page'] != get_post( EE_Registry::instance()->CFG->core->$critical['id'] )) {
+				// attempt to find post by title
+				if ( $critical['page'] != get_page_by_title( $critical['name'] )) {
+					$critical['page'] = EEH_Activation::create_critical_page( $critical );
+				}
 			}
+			$critical_page_problem =  ! isset( $critical['page']->post_status) || $critical['page']->post_status != 'publish' || strpos( $critical['page']->post_content, $critical['code'] ) === FALSE ? TRUE : $critical_page_problem;
+		}
 
-			// not needed at the moment
-			//EEH_Activation::delete_unused_db_tables( $table_name );
-			EEH_Activation::initialize_system_questions();
-			EEH_Activation::create_upload_directories();
-			EEH_Activation::org_option_initialization();
-			// default data
-			EEH_Activation::insert_default_prices();
-			EEH_Activation::insert_default_tickets();
-			EEH_Activation::insert_default_price_types();
-			EEH_Activation::insert_default_status_codes();
-			EEH_Activation::insert_default_countries();
-			EEH_Activation::insert_default_states();
-			
-			EEH_Activation::generate_default_message_templates();
-			EEH_Activation::create_no_ticket_prices_array();
+		if ( $critical_page_problem ) {
+			$msg = sprintf(
+				__('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso' ),
+				'<a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>'
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
 
+	}
+
+
+
+
+
+	/**
+	 * 	This function generates a post for critical espresso pages
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function create_critical_page( $page ) {
+
+		$post_args = array(
+			'post_title' => $page['name'],
+			'post_status' => 'publish',
+			'post_type' => 'page',
+			'comment_status' => 'closed',
+			'post_content' => '[' . $page['code'] . ']'
+		);
+		if ( $post_id = wp_insert_post( $post_args )) {
+			EE_Registry::instance()->CFG->core->$page['id'] = $post_id;
+			return get_post( $post_id );
+		}
+		return NULL;
+
+	}
+
+
+
+	//Function to show an admin message if the main pages are not setup.
+	function espresso_updated_pages() {
+		echo '<div class="updated fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. As long as all of the Page Status and Shortcode notices below are OK, then this meassage will dissappear. Please attend to any issues that require attention.', 'event_espresso') . '</strong></p></div>';
+	}
+
+	function espresso_page_problems() {
+		if ( isset( $_GET['page'] ) && $_GET['page'] != 'espresso_general_settings' ) {
+			echo '<div class="updated"><p><strong>' . __('A potential issue has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
 		}
 	}
 
@@ -167,372 +358,19 @@ class EEH_Activation {
 
 
 
-
 	/**
-	 * initialize_system_questions
+	 * delete_unused_db_table
 	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function initialize_system_questions() {
-		// QUESTION GROUPS
+	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
-		$SQL = 'SELECT QSG_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system != 0';
-		// what we have
-		$question_groups = $wpdb->get_col( $SQL );
-		// check the reponse
-		$question_groups = is_array( $question_groups ) ? $question_groups : array();
-		// what we should have
-		$QSG_systems = array( 1, 2 );
-		// loop thru what we should have and compare to what we have
-		foreach ( $QSG_systems as $QSG_system ) {
-			// if we don't have what we should have
-			if ( ! in_array( $QSG_system, $question_groups )) {
-				// add it
-				switch ( $QSG_system ) {
-					
-					case 1:
-							$QSG_values = array( 
-									'QSG_name' => __( 'Personal Information', 'event_espresso' ),
-									'QSG_identifier' => 'personal-information-' . time(),
-									'QSG_desc' => '',
-									'QSG_order' => 1,
-									'QSG_show_group_name' => 1,
-									'QSG_show_group_desc' => 1,
-									'QSG_system' => 1,
-									'QSG_deleted' => 0
-								);
-						break;
-						
-					case 2:
-							$QSG_values = array( 
-									'QSG_name' => __( 'Address Information','event_espresso' ),
-									'QSG_identifier' => 'address-information-' . time(),
-									'QSG_desc' => '',
-									'QSG_order' => 2,
-									'QSG_show_group_name' => 1,
-									'QSG_show_group_desc' => 1,
-									'QSG_system' => 2,
-									'QSG_deleted' => 0
-								);
-						break;
-						
-				}
-				// insert system question
-				$wpdb->insert(
-					$wpdb->prefix . 'esp_question_group', 
-					$QSG_values, 
-					array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
-				);
-				$QSG_IDs[ $QSG_system ] = $wpdb->insert_id;		
-			}
-		}
-
-
-		
-		// QUESTIONS
-		global $wpdb;
-		$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . "esp_question WHERE QST_system != ''";
-		// what we have
-		$questions = $wpdb->get_col( $SQL );
-		// what we should have
-		$QST_systems = array( 
-			'fname', 
-			'lname', 
-			'email', 
-			'address', 
-			'address2', 
-			'city', 
-			'state', 
-			'country', 
-			'zip', 
-			'phone' 
-		);
-		
-		// loop thru what we should have and compare to what we have
-		foreach ( $QST_systems as $QST_system ) {
-			// if we don't have what we should have
-			if ( ! in_array( $QST_system, $questions )) {
-				// add it
-				switch ( $QST_system ) {
-					
-					case 'fname':
-							$QST_values = array( 
-									'QST_display_text' => __( 'First Name', 'event_espresso' ),
-									'QST_admin_label' => __( 'First Name - System Question', 'event_espresso' ),
-									'QST_system' => 'fname',
-									'QST_type' => 'TEXT',
-									'QST_required' => 1,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 1,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'lname':
-							$QST_values = array( 
-									'QST_display_text' => __( 'Last Name', 'event_espresso' ),
-									'QST_admin_label' => __( 'Last Name - System Question', 'event_espresso' ),
-									'QST_system' => 'lname',
-									'QST_type' => 'TEXT',
-									'QST_required' => 1,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 2,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'email':
-							$QST_values = array( 
-									'QST_display_text' => __( 'Email Address', 'event_espresso' ),
-									'QST_admin_label' => __( 'Email Address - System Question', 'event_espresso' ),
-									'QST_system' => 'email',
-									'QST_type' => 'TEXT',
-									'QST_required' => 1,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 3,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'address':
-							$QST_values = array( 
-									'QST_display_text' => __( 'Address', 'event_espresso' ),
-									'QST_admin_label' => __( 'Address - System Question', 'event_espresso' ),
-									'QST_system' => 'address',
-									'QST_type' => 'TEXT',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 4,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'address2':
-							$QST_values = array( 
-									'QST_display_text' => __( 'Address2', 'event_espresso' ),
-									'QST_admin_label' => __( 'FirAddress2 - System Question', 'event_espresso' ),
-									'QST_system' => 'address2',
-									'QST_type' => 'TEXT',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 5,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'city':
-							$QST_values = array( 
-									'QST_display_text' => __( 'City', 'event_espresso' ),
-									'QST_admin_label' => __( 'City - System Question', 'event_espresso' ),
-									'QST_system' => 'city',
-									'QST_type' => 'TEXT',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 6,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'state':
-							$QST_values = array( 
-									'QST_display_text' => __( 'State / Province', 'event_espresso' ),
-									'QST_admin_label' => __( 'State / Province - System Question', 'event_espresso' ),
-									'QST_system' => 'state',
-									'QST_type' => 'TEXT',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 7,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'country' : 
-							$QST_values = array( 
-									'QST_display_text' => __( 'Country', 'event_espresso' ),
-									'QST_admin_label' => __( 'Country - System Question', 'event_espresso' ),
-									'QST_system' => 'country',
-									'QST_type' => 'TEXT',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 8,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'zip':
-							$QST_values = array( 
-									'QST_display_text' => __( 'Zip / Postal Code', 'event_espresso' ),
-									'QST_admin_label' => __( 'Zip / Postal Code - System Question', 'event_espresso' ),
-									'QST_system' => 'zip',
-									'QST_type' => 'TEXT',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 9,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-					case 'phone':
-							$QST_values = array( 
-									'QST_display_text' => __( 'Phone Number', 'event_espresso' ),
-									'QST_admin_label' => __( 'Phone Number - System Question', 'event_espresso' ),
-									'QST_system' => 'phone',
-									'QST_type' => 'TEXT',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 10,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => 1,
-									'QST_deleted' => 0
-								);
-						break;
-						
-				}
-				// insert system question
-				$wpdb->insert(
-					$wpdb->prefix . 'esp_question', 
-					$QST_values, 
-					array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
-				);
-				$QST_ID = $wpdb->insert_id;	
-				
-				// QUESTION GROUP QUESTIONS 
-				
-				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;			
-				// add system questions to groups
-				$wpdb->insert(
-					$wpdb->prefix . 'esp_question_group_question', 
-					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID ), 
-					array( '%d', '%d' )
-				);			
-				
-			}
-		}
-
+		$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . $table_name );
 	}
 
 
-
-
-	/**
-	 * org_option_initialization
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function org_option_initialization( $missing_options = FALSE ) {
-		global $wpdb, $espresso_wp_user;
-
-		$existing_org_options = get_user_meta( $espresso_wp_user, 'events_organization_settings', TRUE );
-		$existing_org_options = is_array( $existing_org_options ) ? $existing_org_options : array();
-		
-		if ( empty( $existing_org_options ) || $missing_options ) {
-			$default_org_options = array(
-					'organization' => get_bloginfo('name'),
-					'organization_street1' => '123 Onna Road',
-					'organization_street2' => 'PO Box 123',
-					'organization_city' => 'Inna City',
-					'organization_state' => 'AZ',
-					'organization_country' => 'US',
-					'organization_zip' => '12345',
-					'contact_email' => get_bloginfo('admin_email'),
-					'default_mail' => true,
-					'currency_code' => 'USD', 	// currency code: USD, CAD, EUR
-					'currency_name' => __( 'Dollar', 'event_espresso' ), 	// Dollar
-					'currency_plural' => __( 'Dollar', 'event_espresso' ), 	// Dollars
-					'currency_sign' => '$', 	// currency sign: $
-					'currency_sign_b4' => TRUE, 	// currency sign before or after: $TRUE  or  FALSE$
-					'currency_dec_plc' => 2, 	// decimal places: 2 = 0.00  3 = 0.000
-					'currency_dec_mrk' => '.', 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' - 0.01
-					'currency_thsnds' => ',', 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' - 1.000					
-					'default_logo_url' => '',
-					'default_reg_status' => 'RPN',
-					'pending_counts_reg_limit' => TRUE,
-					'events_in_dasboard' => '30',
-					'use_captcha' => false,
-					'expire_on_registration_end' => true,
-					'enable_default_style' => true,
-					'event_ssl_active' => false,
-					'use_venue_manager' => true,
-					'use_personnel_manager' => false,
-					'show_reg_footer' => true,
-					'use_attendee_pre_approval' => false,
-					'template_settings' => array(
-							'display_address_in_regform' => false,
-							'display_short_description_in_event_list' => true,
-							'display_address_in_event_list' => false,
-							'display_description_on_multi_reg_page' => false,
-							'display_description_in_event_list' => false,
-							'use_custom_templates' => false
-					),
-					'map_settings' => array(
-							'ee_map_width_single' => '300',
-							'ee_map_height_single' => '300',
-							'ee_map_zoom_single' => '12',
-							'ee_map_nav_display_single' => false,
-							'ee_map_nav_size_single' => 'default',
-							'ee_map_type_control_single' => 'default',
-							'ee_map_align_single' => '',
-							'ee_map_width' => '200',
-							'ee_map_height' => '200',
-							'ee_map_zoom' => '12',
-							'ee_map_nav_display' => false,
-							'ee_map_nav_size' => 'default',
-							'ee_map_type_control' => 'default',
-							'ee_map_align' => ''
-					),
-					'post_shortcodes' => array()
-			);
-			
-			$new_org_options = array_merge( $default_org_options, $existing_org_options );
-			update_user_meta( $espresso_wp_user, 'events_organization_settings', $new_org_options );
-			return self::initialize_config($new_org_options);
-		
-		}
-		return self::initialize_config($existing_org_options);
-
-	}
-
-
-
-	/**
-	 * This simply takes an array of org_options, converts them to an object and returns
-	 * @param  array $cfg_options array of org_options
-	 * @return stdClass
-	 */
-	public static function initialize_config( $cfg_options ) {
-		// force $this->EE->CFG into an object
-		if ( is_array( $cfg_options )) {
-			$CFG = new stdClass();
-			foreach ( $cfg_options as $k => $v ) {
-				$CFG->$k = $v;
-			}
-			return $CFG;
-		} else {
-			return array();
-		}
-	}
 
 
 
@@ -556,14 +394,15 @@ class EEH_Activation {
 					PRIMARY KEY  (ANS_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 		
-		$table_name = 'esp_attendee';
-		$sql = "ATT_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
+		$table_name = 'esp_attendee_meta';
+		$sql = "ATTM_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
+						ATT_ID int(10) unsigned NOT NULL,
 						ATT_fname varchar(45) NOT NULL,
 						ATT_lname varchar(45) NOT	NULL,
 						ATT_address varchar(45) DEFAULT	NULL,
 						ATT_address2 varchar(45) DEFAULT	NULL,
 						ATT_city varchar(45) DEFAULT	NULL,
-						STA_ID varchar(45) DEFAULT	NULL,
+						STA_ID int(10) DEFAULT	NULL,
 						CNT_ISO varchar(45) DEFAULT	NULL,
 						ATT_zip varchar(12) DEFAULT	NULL,
 						ATT_email varchar(100) NOT NULL,
@@ -571,8 +410,7 @@ class EEH_Activation {
 						ATT_social text,
 						ATT_comments mediumtext,
 						ATT_notes mediumtext,
-						ATT_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
-							PRIMARY KEY  (ATT_ID),
+							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
 								KEY ATT_email (ATT_email)";
@@ -974,7 +812,7 @@ class EEH_Activation {
 		// make sure it's an array
 		$espresso_db_update = is_array( $espresso_db_update ) ? $espresso_db_update : array( $espresso_db_update );
 		// add current EE version to list
-		$espresso_db_update[ EVENT_ESPRESSO_VERSION ] = date( 'Y-m-d H:i:s' );
+		$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
 		// resave
 		update_option( 'espresso_db_update', $espresso_db_update );
 		
@@ -982,29 +820,269 @@ class EEH_Activation {
 
 
 
+
+
 	/**
-	 * create_upload_directories
-	 * Creates folders in the uploads directory to facilitate addons and templates
+	 * initialize_system_questions
 	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function create_upload_directories() {
-		// Create the required folders
-		$folders = array(
-				EVENT_ESPRESSO_UPLOAD_DIR,
-				EVENT_ESPRESSO_TEMPLATE_DIR,
-				EVENT_ESPRESSO_GATEWAY_DIR,
-				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/',
-		);
-		foreach ($folders as $folder) {
-			wp_mkdir_p($folder);
-			@ chmod($folder, 0755);
+	public static function initialize_system_questions() {
+		// QUESTION GROUPS
+		global $wpdb;
+		$SQL = 'SELECT QSG_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system != 0';
+		// what we have
+		$question_groups = $wpdb->get_col( $SQL );
+		// check the reponse
+		$question_groups = is_array( $question_groups ) ? $question_groups : array();
+		// what we should have
+		$QSG_systems = array( 1, 2 );
+		// loop thru what we should have and compare to what we have
+		foreach ( $QSG_systems as $QSG_system ) {
+			// if we don't have what we should have
+			if ( ! in_array( $QSG_system, $question_groups )) {
+				// add it
+				switch ( $QSG_system ) {
+					
+					case 1:
+							$QSG_values = array( 
+									'QSG_name' => __( 'Personal Information', 'event_espresso' ),
+									'QSG_identifier' => 'personal-information-' . time(),
+									'QSG_desc' => '',
+									'QSG_order' => 1,
+									'QSG_show_group_name' => 1,
+									'QSG_show_group_desc' => 1,
+									'QSG_system' => 1,
+									'QSG_deleted' => 0
+								);
+						break;
+						
+					case 2:
+							$QSG_values = array( 
+									'QSG_name' => __( 'Address Information','event_espresso' ),
+									'QSG_identifier' => 'address-information-' . time(),
+									'QSG_desc' => '',
+									'QSG_order' => 2,
+									'QSG_show_group_name' => 1,
+									'QSG_show_group_desc' => 1,
+									'QSG_system' => 2,
+									'QSG_deleted' => 0
+								);
+						break;
+						
+				}
+				// insert system question
+				$wpdb->insert(
+					$wpdb->prefix . 'esp_question_group', 
+					$QSG_values, 
+					array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
+				);
+				$QSG_IDs[ $QSG_system ] = $wpdb->insert_id;		
+			}
 		}
+
+
+		
+		// QUESTIONS
+		global $wpdb;
+		$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . "esp_question WHERE QST_system != ''";
+		// what we have
+		$questions = $wpdb->get_col( $SQL );
+		// what we should have
+		$QST_systems = array( 
+			'fname', 
+			'lname', 
+			'email', 
+			'address', 
+			'address2', 
+			'city', 
+			'state', 
+			'country', 
+			'zip', 
+			'phone' 
+		);
+		
+		// loop thru what we should have and compare to what we have
+		foreach ( $QST_systems as $QST_system ) {
+			// if we don't have what we should have
+			if ( ! in_array( $QST_system, $questions )) {
+				// add it
+				switch ( $QST_system ) {
+					
+					case 'fname':
+							$QST_values = array( 
+									'QST_display_text' => __( 'First Name', 'event_espresso' ),
+									'QST_admin_label' => __( 'First Name - System Question', 'event_espresso' ),
+									'QST_system' => 'fname',
+									'QST_type' => 'TEXT',
+									'QST_required' => 1,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 1,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'lname':
+							$QST_values = array( 
+									'QST_display_text' => __( 'Last Name', 'event_espresso' ),
+									'QST_admin_label' => __( 'Last Name - System Question', 'event_espresso' ),
+									'QST_system' => 'lname',
+									'QST_type' => 'TEXT',
+									'QST_required' => 1,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 2,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'email':
+							$QST_values = array( 
+									'QST_display_text' => __( 'Email Address', 'event_espresso' ),
+									'QST_admin_label' => __( 'Email Address - System Question', 'event_espresso' ),
+									'QST_system' => 'email',
+									'QST_type' => 'TEXT',
+									'QST_required' => 1,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 3,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'address':
+							$QST_values = array( 
+									'QST_display_text' => __( 'Address', 'event_espresso' ),
+									'QST_admin_label' => __( 'Address - System Question', 'event_espresso' ),
+									'QST_system' => 'address',
+									'QST_type' => 'TEXT',
+									'QST_required' => 0,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 4,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'address2':
+							$QST_values = array( 
+									'QST_display_text' => __( 'Address2', 'event_espresso' ),
+									'QST_admin_label' => __( 'FirAddress2 - System Question', 'event_espresso' ),
+									'QST_system' => 'address2',
+									'QST_type' => 'TEXT',
+									'QST_required' => 0,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 5,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'city':
+							$QST_values = array( 
+									'QST_display_text' => __( 'City', 'event_espresso' ),
+									'QST_admin_label' => __( 'City - System Question', 'event_espresso' ),
+									'QST_system' => 'city',
+									'QST_type' => 'TEXT',
+									'QST_required' => 0,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 6,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'state':
+							$QST_values = array( 
+									'QST_display_text' => __( 'State / Province', 'event_espresso' ),
+									'QST_admin_label' => __( 'State / Province - System Question', 'event_espresso' ),
+									'QST_system' => 'state',
+									'QST_type' => 'TEXT',
+									'QST_required' => 0,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 7,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'country' : 
+							$QST_values = array( 
+									'QST_display_text' => __( 'Country', 'event_espresso' ),
+									'QST_admin_label' => __( 'Country - System Question', 'event_espresso' ),
+									'QST_system' => 'country',
+									'QST_type' => 'TEXT',
+									'QST_required' => 0,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 8,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'zip':
+							$QST_values = array( 
+									'QST_display_text' => __( 'Zip / Postal Code', 'event_espresso' ),
+									'QST_admin_label' => __( 'Zip / Postal Code - System Question', 'event_espresso' ),
+									'QST_system' => 'zip',
+									'QST_type' => 'TEXT',
+									'QST_required' => 0,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 9,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+					case 'phone':
+							$QST_values = array( 
+									'QST_display_text' => __( 'Phone Number', 'event_espresso' ),
+									'QST_admin_label' => __( 'Phone Number - System Question', 'event_espresso' ),
+									'QST_system' => 'phone',
+									'QST_type' => 'TEXT',
+									'QST_required' => 0,
+									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+									'QST_order' => 10,
+									'QST_admin_only' => 0,
+									'QST_wp_user' => 1,
+									'QST_deleted' => 0
+								);
+						break;
+						
+				}
+				// insert system question
+				$wpdb->insert(
+					$wpdb->prefix . 'esp_question', 
+					$QST_values, 
+					array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
+				);
+				$QST_ID = $wpdb->insert_id;	
+				
+				// QUESTION GROUP QUESTIONS 
+				
+				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;			
+				// add system questions to groups
+				$wpdb->insert(
+					$wpdb->prefix . 'esp_question_group_question', 
+					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID ), 
+					array( '%d', '%d' )
+				);			
+				
+			}
+		}
+
 	}
 
 
@@ -1524,17 +1602,33 @@ class EEH_Activation {
 
 
 
+
+
 	/**
-	 * delete_unused_db_table
+	 * create_upload_directories
+	 * Creates folders in the uploads directory to facilitate addons and templates
 	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function delete_unused_db_table( $table_name ) {
-		global $wpdb;
-		$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . $table_name );
+	public static function create_upload_directories() {
+		// Create the required folders
+		$folders = array(
+				EVENT_ESPRESSO_UPLOAD_DIR,
+				EVENT_ESPRESSO_TEMPLATE_DIR,
+				EVENT_ESPRESSO_GATEWAY_DIR,
+				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
+				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
+				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/',
+				EVENT_ESPRESSO_UPLOAD_DIR . '/themeroller/',
+		);
+		foreach ($folders as $folder) {
+			wp_mkdir_p($folder);
+			@ chmod($folder, 0755);
+		}
 	}
+
 
 
 
@@ -1631,6 +1725,7 @@ class EEH_Activation {
 
 
 
+
 	/**
 	 * create_no_ticket_prices_array
 	 *
@@ -1647,6 +1742,29 @@ class EEH_Activation {
 		}	
 	}
 
+
+
+	/**
+	 * plugin_deactivation
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function plugin_deactivation() {
+	}
+
+
+
+	/**
+	 * plugin_uninstall
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function plugin_uninstall() {
+	}
 
 
 

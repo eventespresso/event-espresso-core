@@ -389,7 +389,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -882,7 +882,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 

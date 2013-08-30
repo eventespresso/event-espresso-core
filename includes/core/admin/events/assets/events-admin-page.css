@@ -210,10 +210,10 @@
 
 .ee-status {
 	display: block;
-   	padding: 3px 6px;
-   	-webkit-border-radius: 8px;
-   	-moz-border-radius: 8px;
-   	border-radius: 8px;
+   	padding: 2.5px 5px;
+   	-webkit-border-radius: 5px;
+   	-moz-border-radius: 5px;
+   	border-radius: 5px;
    	color: white;
    	font-size: 10px;
    	/*font-family: Georgia, serif;*/
@@ -224,20 +224,19 @@
    }
 
 .inactive {
-	background-color: #b2b2b2;
+	background-color: #E44064;
 }
 
 .active {
-	background-color: #87c442;
+	background-color: #70CC50;		/*#87c442*/
 }
 
 .upcoming {
-	background-color: #e5ff00;
-	color: grey;
+	background-color: #007BAE;  /*#e5ff00*/
 }
 
 .expired {
-	background-color: red;
+	background-color: #A39D9C;
 }
 
 .inside .ee-status {

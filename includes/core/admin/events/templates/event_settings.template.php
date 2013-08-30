@@ -4,21 +4,6 @@
 
 			<tr>
 				<th>
-					<label for="expire_on_registration_end">
-						<?php _e('Events Expire on Reg End Date', 'event_espresso'); ?>
-						<?php echo EE_Template::get_help_tab_link('events_expire_on_reg_end_date_help_tab'); ?>
-					</label>
-				</th>
-				<td>
-					<p><?php echo EE_Form_Fields::select_input( 'expire_on_registration_end', $values, $expire_on_registration_end ); ?></p>
-					<p class="description">
-						<?php _e('If set to "Yes", then as soon as an event\'s registration end date has passed, the event will become inactive, and will no longer appear in your event listings.', 'event_espresso'); ?>
-					</p>
-				</td>
-			</tr>
-
-			<tr>
-				<th>
 					<label for="default_reg_status">
 						<?php _e('Default Registration Status', 'event_espresso'); ?>
 						<?php echo EE_Template::get_help_tab_link('default_payment_status_help_tab'); ?>					

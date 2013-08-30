@@ -136,7 +136,7 @@ final class EE_Admin {
 	private function _load_system_files() {
 		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
 			require_once( EE_CORE . 'EE_System.core.php' );
-			$this->EE = EE_System::instance()->get_registry();
+			$this->EE = EE_Registry::instance();
 		} else {
 			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
 		}
@@ -203,7 +203,7 @@ final class EE_Admin {
 			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			
 			// check for db changes
-			EE_System::instance()->check_database_tables();
+			EE_System::instance()->check_espresso_version();
 			// bring out the pidgeons!!!
 			require_once( EE_CORE . 'messages' . DS . 'EE_messages_init.core.php' );
 			EE_messages_init::init();
@@ -631,8 +631,8 @@ final class EE_Admin {
 			// post on frontpage ?
 			$show_on_front = get_option('show_on_front');
 			$update_post_shortcodes = FALSE;
-			$this->EE->CFG->post_shortcodes = isset( $this->EE->CFG->post_shortcodes ) ? $this->EE->CFG->post_shortcodes : array();
-			$this->EE->CFG->post_shortcodes[ $post->post_name ] = array();
+			$this->EE->CFG->core->post_shortcodes = isset( $this->EE->CFG->core->post_shortcodes ) ? $this->EE->CFG->core->post_shortcodes : array();
+			$this->EE->CFG->core->post_shortcodes[ $post->post_name ] = array();
 			// loop thru shortcodes
 			foreach ( $this->EE->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
@@ -641,13 +641,13 @@ final class EE_Admin {
 				// is the shortcode in the post_content ?
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
 					// map shortcode to post
-					$this->EE->CFG->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
+					$this->EE->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// and to frontpage in case it's displaying latest posts
-					$this->EE->CFG->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
+					$this->EE->CFG->core->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
 					$update_post_shortcodes = TRUE;
 				} 
 			}
-//			printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			if ( $update_post_shortcodes ) {
 				$this->EE->LIB['EE_Config']->update_post_shortcodes();

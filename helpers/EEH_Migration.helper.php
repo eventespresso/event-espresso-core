@@ -79,10 +79,8 @@ class EEH_Migration {
 		}
 
 		$org_options['default_mail'] = $org_options['default_mail'] || $org_options['default_mail'] == 'Y' ? true : false;
-		$org_options['expire_on_registration_end'] = $org_options['expire_on_registration_end'] || $org_options['expire_on_registration_end'] == 'Y' ? true : false;
 		$org_options['enable_default_style'] = $org_options['enable_default_style'] || $org_options['enable_default_style'] == 'Y' ? true : false;
 		$org_options['event_ssl_active'] = $org_options['event_ssl_active'] || $org_options['event_ssl_active'] == 'Y' ? true : false;
-		$org_options['use_venue_manager'] = $org_options['use_venue_manager'] || $org_options['use_venue_manager'] == 'Y' ? true : false;
 		$org_options['show_reg_footer'] = $org_options['show_reg_footer'] || $org_options['show_reg_footer'] == 'Y' ? true : false;
 		$org_options['template_settings']['use_custom_post_types'] = $org_options['template_settings']['use_custom_post_types'] || $org_options['template_settings']['use_custom_post_types'] == 'Y' ? true : false;
 		$org_options['template_settings']['display_address_in_regform'] = $org_options['template_settings']['display_address_in_regform'] || $org_options['template_settings']['display_address_in_regform'] == 'Y' ? true : false;

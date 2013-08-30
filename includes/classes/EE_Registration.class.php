@@ -360,10 +360,7 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public		
 	*		@param		int		$STS_ID 		Status ID
 	*/	
-	public function set_status( $STS_ID = FALSE ) {		
-		if ( ! $this->_check_for( $STS_ID, 'Status ID' )) { 
-			return FALSE; 
-		}
+	public function set_status( $STS_ID = FALSE ) {	
 		//make sure related TXN is set
 		$this->get_first_related('Transaction');
 		// if status is ANYTHING other than approved, OR if it IS approved AND the TXN is paid in full (or free)
@@ -467,12 +464,12 @@ class EE_Registration extends EE_Base_Class {
 	* 		@access		public
 	*/	
 	public function event_name() {
-		if ( empty( $this->_EVT_ID )) {
-			return FALSE;
+		$event = $this->event_obj();
+		if($event){
+			return $event->name();
+		}else{
+			return '';
 		}
-		global $wpdb;
-		$SQL = 'SELECT event_name, slug FROM ' . $wpdb->prefix . 'events_detail WHERE id = %d';
-		return stripslashes( trim( $wpdb->get_var( $wpdb->prepare( $SQL, $this->_EVT_ID ))));
 	}
 
 
@@ -623,6 +620,16 @@ class EE_Registration extends EE_Base_Class {
 	*/	
 	public function date() {
 		return $this->get('REG_date');
+	}
+	
+	/**
+	 * gets a pretty date
+	 * @param string $date_format
+	 * @param string $time_format
+	 * @return string
+	 */
+	public function pretty_date($date_format = null, $time_format = null){
+		return $this->get_datetime('REG_date', $date_format, $time_format);
 	}
 	
 	/**

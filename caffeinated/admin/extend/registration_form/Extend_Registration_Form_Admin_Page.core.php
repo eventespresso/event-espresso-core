@@ -343,14 +343,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _questions_overview_list_table() {
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
 
 
 	protected function _question_groups_overview_list_table() {
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_question_group', 'add_question_group', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -841,7 +841,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$data = apply_filters('FHEE_reg_form_settings_save', $data);	
 		
 		$what = 'Registration Options';
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
 		
 	}

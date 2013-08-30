@@ -15,7 +15,7 @@
  
 	
 	// multidimensional array to store update & error messages
-	var $_notices = array( 'updates' => array(), 'errors' => array() );
+//	var $_notices = array( 'updates' => array(), 'errors' => array() );
 
 
 	private $_primary_keys;
@@ -25,7 +25,10 @@
 	 * @var EE_Registry
 	 */
 	private $EE;
-
+	/**
+	 * string used for 1st cell in exports, which indicates that the following 2 rows will be metadata keys and values
+	 */
+	const metadata_header = 'Event Espresso Export Meta Data';
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -126,7 +129,7 @@
 			fclose($file_handle);
 			return $csvarray;
 		}else{
-			$this->_notices['errors'][] = 'An error occured - the file: ' . $path_to_file . ' could not opened.';
+			EE_Error::add_error( sprintf(__("An error occured - the file: %s could not opened.", "event_espresso"),$path_to_file));
 			return false;
 		}
 	}
@@ -177,6 +180,13 @@
 				$row = 1;
 				continue;
 			}
+			if($data[0] == EE_CSV::metadata_header){
+				$model_name = EE_CSV::metadata_header;
+				//store like model data, we just won't try importing it etc.
+				$row = 1;
+				continue;
+			}
+			
 
 			// how many columns are there?
 			$columns = count($data);
@@ -195,13 +205,18 @@
 						//check it's not blank... sometimes CSV editign programs adda bunch of empty columns onto the end...
 						if(!$column_name){continue;}
 						$matches = array();
-						//now get the db table name from it (the part between square brackets)
-						$success = preg_match('~(.*)\[(.*)\]~', $column_name,$matches);
-						if (!$success){
-							$this->_notices['error']= sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data));
-							return false;
+						if($model_name == EE_CSV::metadata_header){
+							$headers[$i] = $column_name;
+						}else{
+							//now get the db table name from it (the part between square brackets)
+							$success = preg_match('~(.*)\[(.*)\]~', $column_name,$matches);
+							if (!$success){
+								EE_Error::add_error( sprintf(__("The column titled %s is invalid for importing. It must be be in the format of 'Nice Name[model_field_name]' in row %s", "event_espresso"),$column_name,implode(",",$data)));
+								return false;
+							}
+							$headers[$i] = $matches[2];
 						}
-						$headers[$i] = $matches[2];
+						
 					}else{
 						// no column names means our final array will just use counters for keys
 						$model_entry[$headers[$i]] = $data[$i];
@@ -209,8 +224,10 @@
 					}
 					// and we need to store csv data
 				} else {
-					// no headers just store csv data
-					$model_entry[$headers[$i]] = $data[$i];
+					// this column isn' ta header, store it if there is a header for it
+					if(isset($headers[$i])){
+						$model_entry[$headers[$i]] = $data[$i];
+					}
 				}
 				
 			}
@@ -249,7 +266,7 @@
 	 *			inserted an event with EVT_ID=3. If so, then this Datetime with DTT_ID=23 should also be new... after all, it depends
 	 *			on Event with ID 3 which we just inserted. 
 	 *		  @access public
-	 *			@param array $csv_data_array - the array containing the csv data
+	 *			@param array $csv_data_array - the array containing the csv data produced from EE_CSV::import_csv_to_model_data_array()
 	 *			@param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
 	 *			@return TRUE on success, FALSE on fail
 	 */	
@@ -271,9 +288,12 @@
 			//now check that assumption was correct. If
 			if ( $this->EE->is_model_name($model_name_in_csv_data)) {
 				$model_name = $model_name_in_csv_data;
+			}elseif($model_name_in_csv_data == EE_CSV::metadata_header){
+				//ok so its metadata, dont try to save it to ehte db obviously...
+				continue;
 			}else {
 				// no table info in the array and no table name passed to the function?? FAIL
-				$this->_notices['errors'][] = 'No table information was specified and/or found, therefore the import could not be completed';
+				EE_Error::add_error( __('No table information was specified and/or found, therefore the import could not be completed','event_espresso'));
 				return FALSE;
 			}
 			$model = $this->EE->load_model($model_name);
@@ -337,16 +357,16 @@
 						if($new_id){
 							$key_in_csv_to_id_in_db_map[$model_name][$id_in_csv] = $new_id;
 							$total_inserts++;
-							$this->_notices['updates'][] = sprintf(__("Successfully added new %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data));
+							EE_Error::add_success( sprintf(__("Successfully added new %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data)));
 						}else{
 							$total_insert_errors++;
 							$model_object_data[$model->primary_key_name()] = $id_in_csv;
-							$this->_notices['errors'][] = sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,implode(",",$model_object_data));
+							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,implode(",",$model_object_data)));
 						}
 					}catch(EE_Error $e){
 						$total_insert_errors++;
 						$model_object_data[$model->primary_key_name()] = $id_in_csv;
-						$this->_notices['errors'][] = sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage());
+						EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()));
 					}
 				}else{
 					try{
@@ -355,46 +375,42 @@
 						$success = $model->update($model_object_data,array(array($model->primary_key_name() => $id_in_csv)));
 						if($success){
 							$total_updates++;
-							$this->_notices['updates'][] = sprintf(__("Successfully updated %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data));
+							EE_Error::add_success( sprintf(__("Successfully updated %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data)));
 						}else{
 							$matched_items = $model->get_all(array(array($model->primary_key_name() => $id_in_csv )));
 							if( ! $matched_items){
 								//no items were matched (so we shouldn't have updated)... but then we should have inserted? what the heck?
 								$total_update_errors++;
-								$this->_notices['errors'][] =sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason", "event_espresso"),$model_name,implode(",",$model_object_data));
+								EE_Error::add_error( sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason", "event_espresso"),$model_name,implode(",",$model_object_data)));
 							}else{
 								$total_updates++;
-								$this->_notices['updates'][] = sprintf(__("%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.", "event_espresso"),$model_name,implode(",",$model_object_data));
+								EE_Error::add_success( sprintf(__("%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.", "event_espresso"),$model_name,implode(",",$model_object_data)));
 							}
 						}
 					}catch(EE_Error $e){
 						$total_update_errors++;
-						$this->_notices['errors'][] =sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage());
+						EE_Error::add_error( sprintf(__("Could not update %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()));
 					}
 				}
 			}
 		}
 
 		if ( $total_updates > 0 ) {
-			$this->_notices['updates'][] = $total_updates . ' existing records in the database were updated.';
+			EE_Error::add_success( sprintf(__("%s existing records in the database were updated.", "event_espresso"),$total_updates));
 			$success = true;
-			//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
 		}
 		if ( $total_inserts > 0 ) {
-			$this->_notices['updates'][] = $total_inserts . ' new records were added to the database.';
+			EE_Error::add_success(sprintf(__("$s new records were added to the database.", "event_espresso"),$total_inserts));
 			$success = true;
-			//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
 		}
 
 		if ( $total_update_errors > 0 ) {
-			$this->_notices['errors'][] = 'One or more errors occured, and a total of ' . $total_update_errors . ' existing records in the database were <strong>not</strong> updated.';
+			EE_Error::add_error(sprintf(__("'One or more errors occured, and a total of %s existing records in the database were <strong>not</strong> updated.'", "event_espresso"),$total_update_errors));
 			$error = true;
-			//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
 		}
 		if ( $total_insert_errors > 0 ) {
-			$this->_notices['errors'][] = 'One or more errors occured, and a total of ' . $total_insert_errors . ' new records were <strong>not</strong> added to the database.';
+			EE_Error::add_error(sprintf(__("One or more errors occured, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors));
 			$error = true;
-			//add_action('admin_notices', array( &$this, 'csv_admin_notices' ) );
 		}
 
 		// if there was at least one success and absolutely no errors
@@ -442,6 +458,22 @@
 		return $fh;
 	}
 	
+	/**
+	 * Writes some meta data to the CSV as a bunch of columns. Initially we're only
+	 * mentioning the version and timezone
+	 * @param resource $filehandle
+	 */
+	public function write_metadata_to_csv($filehandle){
+		$this->EE->load_helper('DTT_helper');
+		$data_row = array(EE_CSV::metadata_header);//do NOT translate because this exact string is used when importing
+		$this->fputcsv2($filehandle, $data_row);
+		$meta_data = array( 0=> array(
+			'version'=>espresso_version(),
+			'timezone'=>  EEH_DTT_Helper::get_timezone()));
+		$this->write_data_array_to_csv($filehandle, $meta_data);
+	}
+	
+	
 	
 	/**
 	 * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
@@ -486,7 +518,7 @@
 //		// loop through data and add each row to the file/stream as csv
 //		foreach ( $data as $model_name => $model_data ) {
 //			// test first row to see if it is data or a model name
-//			$model = 	EE_System::instance()->get_registry()->load_model($model_name);
+//			$model = 	EE_Registry::instance();->load_model($model_name);
 //			//if the model really exists, 
 //			if ( $model ) {
 //			
@@ -533,6 +565,7 @@
 	 * @return boolean success
 	 */
 	public function write_model_data_to_csv($filehandle,$model_data_array){
+		$this->write_metadata_to_csv($filehandle);
 		foreach($model_data_array as $model_name => $model_instance_arrays){
 			//first: output a special row stating the model
 			echo $this->fputcsv2($filehandle,array('MODEL',$model_name));
@@ -602,65 +635,6 @@
 	
 	
 	/**
-	 *			@Retreive the fieldnames from a database table
-	 *		  @access public
-	 *			@param array $table - the database table to be converted to csv and exported 
-	 *			@param string $filename - name for newly created csv file
-	 *			@param boolean $download - whether csv is sent to browser for download or saved to file system - TRUE = download, FALSE = save to file
-	 *			@return TRUE on success, FALSE on fail
-	 */	
-	public function list_db_table_fields ( $table = FALSE ) {
-		
-		// no table name?? get outta here
-		if ( ! $table || empty( $table )) {
-			return FALSE;
-		}
-		
-		// somebody told me i might need this ???
-		global $wpdb;
-		
-		$headers = array();		
-	
-		$SQL = 'SHOW COLUMNS FROM ' . $table;
-		$result = $wpdb->get_results( $SQL );
-		if ($wpdb->num_rows > 0) {
-			foreach ( $result as $column ) {
-				$headers[$column->Field] = $column->Field;
-			}
-		}
-		
-		return $headers;
-	}
-	
-	
-	/**
-	 *			@Retreive a list of all event espresso tables from the database
-	 *			@return array on success, FALSE on fail
-	 */	
-	public function list_db_tables() {
-	
-		// somebody told me i might need this ???
-		global $wpdb;
-		
-		$pattern1 = $wpdb->prefix . 'events_%';
-		$pattern2 = $wpdb->prefix . 'esp_%';
-		//$sql = "select TABLE_NAME from information_schema.tables WHERE TABLE_SCHEMA = '".DB_NAME."' AND TABLE_NAME LIKE '".$prefix."'";
-		$SQL = 'SHOW TABLES FROM `' . DB_NAME . '` ';
-		$SQL .= 'WHERE `Tables_in_'. DB_NAME . '` LIKE "' . $pattern1 . '" ';
-		$SQL .= 'OR `Tables_in_'. DB_NAME . '` LIKE "' . $pattern2 . '"';
-	
-	
-		$result = $wpdb->get_col( $SQL );
-		if ($wpdb->num_rows > 0) {
-			return $result;
-		} else {
-			return FALSE;
-		}
-		
-	}
-	
-	
-	/**
 	 *			@Determine the maximum upload file size based on php.ini settings
 	 *		  @access public
 	 *			@param int $percent_of_max - desired percentage of the max upload_mb
@@ -726,31 +700,31 @@
 
 
 
-	/**
-	 *			@CSV Import / Export messages 
-	 *		  @access public
-	 *			@return void
-	 */	
-	public function csv_admin_notices () {
-			
-		// We play both kinds of music here! Country AND Western! - err... I mean, cycle through both types of notices
-		foreach( array('updates', 'errors') as $type ) {
-		
-			// if particular notice type is not empty, then "You've got Mail"
-			if( ! empty( $this->_notices[$type] )) {
-			
-				// is it an update or an error ?
-				$msg_class = $type == 'updates' ? 'updated' : 'error';
-				echo '<div id="message" class="'. $msg_class .'">';
-				// display each notice, however many that may be
-				foreach($this->_notices[$type] as $message) {
-					echo '<p>'. $message .'</p>';
-				}
-				// wrap it up
-				echo '</div>';
-			}
-		}
-	}
+//	/**
+//	 *			@CSV Import / Export messages 
+//	 *		  @access public
+//	 *			@return void
+//	 */	
+//	public function csv_admin_notices () {
+//			
+//		// We play both kinds of music here! Country AND Western! - err... I mean, cycle through both types of notices
+//		foreach( array('updates', 'errors') as $type ) {
+//		
+//			// if particular notice type is not empty, then "You've got Mail"
+//			if( ! empty( $this->_notices[$type] )) {
+//			
+//				// is it an update or an error ?
+//				$msg_class = $type == 'updates' ? 'updated' : 'error';
+//				echo '<div id="message" class="'. $msg_class .'">';
+//				// display each notice, however many that may be
+//				foreach($this->_notices[$type] as $message) {
+//					echo '<p>'. $message .'</p>';
+//				}
+//				// wrap it up
+//				echo '</div>';
+//			}
+//		}
+//	}
 	
 	
 

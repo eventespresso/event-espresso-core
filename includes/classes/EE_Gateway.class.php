@@ -65,6 +65,11 @@ abstract class EE_Gateway {
 	 */
 	protected $_PAY = null;
 	
+	/**
+	 *
+	 * @var EE_Registry
+	 */
+	protected $EE = null;
 	
 	
 	/**
@@ -83,6 +88,7 @@ abstract class EE_Gateway {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//echo '<h4>$this->_gateway_name : ' . $this->_gateway_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
+		$this->EE = EE_Registry::instance();
 		if (!defined('GATEWAYS_ADMIN_URL')) {
 			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=espresso_payment_settings'));
 		}

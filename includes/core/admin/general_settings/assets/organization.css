@@ -2,3 +2,19 @@
 	padding-left: 20px;
 	background: transparent url(images/accept.png) no-repeat left;
 }
+#country-details-settings-dv {
+	float:left; width:47%; min-width:400px;  margin:0 5% 3em 0;
+}
+#general-setting-country-details-tbl td { position: relative; }
+#general-setting-country-details-tbl .CNT_name { width:95%; max-width:20em; }
+
+#country-states-settings-dv {
+	float:left; width:47%; min-width:400px;
+}
+#general-setting-country-states-tbl { width:auto; }
+#general-setting-country-states-tbl td { margin:0; }
+#general-setting-country-states-tbl tr td:first-child { width:10%; }
+#general-setting-country-states-tbl tr td .STA_name { width:95%; max-width:20em; }
+#general-setting-country-states-tbl .STA_active-ul { width:120px; }
+#general-setting-country-states-tbl tr td:nth-child(3) { width:25%; min-width:120px; }
+#general-setting-country-states-tbl tr .delete-state-td { width:5%; }

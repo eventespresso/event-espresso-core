@@ -140,7 +140,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$EEM_Gateways->set_active_gateways();
 		}
 
-		$gateway_data = $this->EE->EE_Session->get_session_data(FALSE, 'gateway_data');
+		$gateway_data = $this->EE->SSN->get_session_data(FALSE, 'gateway_data');
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
 		//printr( $gateway_instances, '$gateway_instances  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
@@ -183,7 +183,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
 		
-		$gateway_data = $this->EE->EE_Session->get_session_data(FALSE, 'gateway_data');
+		$gateway_data = $this->EE->SSN->get_session_data(FALSE, 'gateway_data');
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
 		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
 		/* if there are no payment settings in the session yet, add them from the DB. This fixes a bug where on first page load
@@ -191,7 +191,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		 * To reproduce that error, clear your cookies and delete the entry for 'payment_settings' in the usermeta table */
 		if (  empty($gateway_data['payment_settings']) ){
 			$payment_settings = get_user_meta($current_user->ID, 'payment_settings', true);
-			$this->EE->EE_Session->set_session_data($payment_settings,'payment_settings');
+			$this->EE->SSN->set_session_data($payment_settings,'payment_settings');
 		}
 
 		//lets add all the metaboxes
@@ -238,7 +238,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			
 		}
 		//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
-		$this->EE->EE_Session->set_session_data($gateway_data,'gateway_data');
+		$this->EE->SSN->set_session_data($gateway_data,'gateway_data');
 		
 		if ( ! $selected_gateway_name ) {
 //			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
@@ -260,7 +260,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 		
 		$this->_template_args['show_pending_payment_options'] = isset( $org_options['show_pending_payment_options'] ) ? absint( $org_options['show_pending_payment_options'] ) : FALSE;
-//		$data['expire_on_registration_end'] = isset( $this->_req_data['expire_on_registration_end'] ) ? absint( $this->_req_data['expire_on_registration_end'] ) : FALSE;
 
 		$this->_set_add_edit_form_tags( 'update_payment_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -283,7 +282,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$data = apply_filters('FHEE_payment_settings_save', $data);	
 		
 		$what = __('Payment Settings','event_espresso');
-		$success = $this->_update_organization_settings( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, __('updated','event_espresso'), array( 'action' => 'payment_settings' ) );
 				
 	}

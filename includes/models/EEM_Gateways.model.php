@@ -37,7 +37,7 @@ Class EEM_Gateways {
 
 	/**
 	 * 	EE_Registry Object
-	 *	@var 	object	
+	 *	@var 	EE_Registry	
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
@@ -68,19 +68,16 @@ Class EEM_Gateways {
 	private function __construct() {
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		//activate resources
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+
+		$this->EE = EE_Registry::instance();
 		
 		//so client code can check for instatiation b4 including
+		$this->EE->load_class( 'Gateway' );
+		$this->EE->load_class( 'Offline_Gateway' );
+		$this->EE->load_class( 'Offsite_Gateway' );
+		$this->EE->load_class( 'Onsite_Gateway' );	
 		define('ESPRESSO_GATEWAYS', TRUE);
-		require_once(EE_CLASSES . 'EE_Gateway.class.php');
-		require_once(EE_CLASSES . 'EE_Offline_Gateway.class.php');
-		require_once(EE_CLASSES . 'EE_Offsite_Gateway.class.php');
-		require_once(EE_CLASSES . 'EE_Onsite_Gateway.class.php');
-		
-		
-		$this->EE = EE_Registry::instance();
-		EE_System::instance()->load_EE_Session();
 		
 		$this->_load_session_gateway_data();
 		$this->_set_active_gateways();
@@ -106,7 +103,7 @@ Class EEM_Gateways {
 	private function _load_session_gateway_data() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
-		$this->_session_gateway_data = $this->EE->EE_Session->get_session_data(FALSE, 'gateway_data');
+		$this->_session_gateway_data = $this->EE->SSN->get_session_data(FALSE, 'gateway_data');
 		if (!empty($this->_session_gateway_data['selected_gateway'])) {
 			$this->_selected_gateway = $this->_session_gateway_data['selected_gateway'];
 		}
@@ -150,7 +147,7 @@ Class EEM_Gateways {
 			if (!is_array($this->_active_gateways)) {
 				$this->_active_gateways = array();
 			}
-			$this->EE->EE_Session->set_session_data(array('active_gateways' => $this->_active_gateways), 'gateway_data');
+			$this->EE->SSN->set_session_data(array('active_gateways' => $this->_active_gateways), 'gateway_data');
 		}
 	}
 
@@ -171,7 +168,7 @@ Class EEM_Gateways {
 			if (!is_array($this->_payment_settings)) {
 				$this->_payment_settings = array();
 			}
-			$this->EE->EE_Session->set_session_data(array('payment_settings' => $this->_payment_settings), 'gateway_data');
+			$this->EE->SSN->set_session_data(array('payment_settings' => $this->_payment_settings), 'gateway_data');
 //		}
 
 		//echo printr( $this->_payment_settings, __CLASS__ . ' ->' . __FUNCTION__ . ' ( line #' .  __LINE__ . ' )' );
@@ -617,7 +614,7 @@ Class EEM_Gateways {
 						'ajax' => $this->_ajax
 				);
 		// returns TRUE or FALSE
-		return $this->EE->EE_Session->set_session_data( $session_data, 'gateway_data' );		
+		return $this->EE->SSN->set_session_data( $session_data, 'gateway_data' );		
 
 	}
 
@@ -677,7 +674,8 @@ Class EEM_Gateways {
 		$this->_payment_settings = array();
 		$this->_active_gateways = array();
 		
-		$this->EE->EE_Session->set_session_data(
+		$this->EE->SSN->clear_session( __CLASS__, __FUNCTION__ );
+		$this->EE->SSN->set_session_data(
 				array(
 							'selected_gateway' => $this->_selected_gateway,
 							'hide_other_gateways' => $this->_hide_other_gateways,
@@ -693,6 +691,8 @@ Class EEM_Gateways {
 		//all this effort clearing specific gateway items in the session, and now
 		//we're clearing teh whole thing? no, that must have been an error.
 		//so says Mike, March 27th 2013
+		// how about clearing it BEFORE resetting the data ??? (see above)
+		// wonders br3nt Aug 29th, 2013
 		
 		return TRUE;
 	}
@@ -830,7 +830,7 @@ Class EEM_Gateways {
 					'method' => 'none'
 			);
 
-			$this->EE->EE_Session->set_session_data(array('txn_results' => $txn_results), 'session_data');
+			$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), 'session_data');
 			$response = array(
 					'msg' => array('success'=>TRUE),
 					'forward_url' => $return_page_url
@@ -856,7 +856,7 @@ Class EEM_Gateways {
 	private function _get_return_page_url() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		global $org_options;
-		$session_data = $this->EE->EE_Session->get_session_data();
+		$session_data = $this->EE->SSN->get_session_data();
 		$a_current_registration=current($session_data['registration']);
 		
 		$return_page_id = $org_options['return_url'];

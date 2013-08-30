@@ -399,6 +399,14 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 		}
 	}
 	/**
+	 * returns an array of EE_Question_Options which relate to this question
+	 * @param EE_Question_Option $option
+	 * @return boolean success
+	 */
+	public function temp_options(){
+		return $this->_Question_Option;
+	}
+	/**
 	 * Adds an option for this question. Note: if the option were previously associted with a different
 	 * Question, that relationship will be overwritten.
 	 * @param EE_Question_Option $option
@@ -407,7 +415,14 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function add_option(EE_Question_Option $option){
 		return $this->_add_relation_to($option, 'Question_Option');
 	}
-	
+	/**
+	 * Adds an option directly to this question without saving to the db
+	 * @param EE_Question_Option $option
+	 * @return boolean success
+	 */
+	public function add_temp_option( EE_Question_Option $option ){
+		return $this->_Question_Option[] = $option;
+	}	
 	/**
 	 * Marks the option as deleted.
 	 * @param EE_Question_Option $option

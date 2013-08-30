@@ -246,7 +246,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return string html for the report page
 	 */
 	protected function _view_report() {
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
 		$this->_template_args['admin_page_content'] = 'in here';
 		$this->display_admin_page_with_sidebar();
 	}

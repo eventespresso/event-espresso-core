@@ -59,7 +59,26 @@ final class EE_Config {
 	 */
 	protected $EE = NULL;
 
+	/**
+	 * 	current_blog_id
+	 *	@var 	int	$current_blog_id	
+	 * 	@access 	public
+	 */
+	public $current_blog_id = NULL;
+	
+	/**
+	 * 
+	 * @var EE_Currency_Config 
+	 */
+	public $currency;
 
+	/**
+	 *
+	 * @var EE_Organization_Config
+	 */
+	public $organization;
+
+	
 
 
 
@@ -69,10 +88,10 @@ final class EE_Config {
 	 *		@access public
 	 *		@return class instance
 	 */
-	public static function instance() {
+	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Config )) {
-			self::$_instance = new self();
+			self::$_instance = new self( $activation );
 		}
 		return self::$_instance;
 	}
@@ -85,10 +104,13 @@ final class EE_Config {
 	 *  @access 	private
 	 *  @return 	void
 	 */
-	private function __construct() {
+	private function __construct( $activation ) {
+		$this->current_blog_id = get_current_blog_id();
 		$this->EE = EE_Registry::instance();
 		// get EE site settings
-		$this->_load_config();
+		if ( ! $activation ) {
+			$this->_load_config();
+		}
 		$this->_register_shortcodes_and_modules();
 		//add_action( 'init', array( $this, 'init' ), 5 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 3 );
@@ -105,15 +127,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function wp_loaded() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		printr( $this->EE->CFG->post_shortcodes, '$this->EE->CFG->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $this->EE->shortcodes, '$this->EE->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $this->EE->modules, '$this->EE->modules  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
-//		printr( EE_Config::$_module_route_map, 'EE_Config::$_module_route_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( EE_Config::$_module_forward_map, 'EE_Config::$_module_forward_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( EE_Config::$_module_view_map, 'EE_Config::$_module_view_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( EE_Config::instance(), 'EE_Config::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 	}
 
 
@@ -127,25 +141,18 @@ final class EE_Config {
 	 */
 	private function _load_config() {
 
-		$current_user_id = get_current_user_id();
-		$current_user_id = $current_user_id ? $current_user_id : 1;
-		// grab org options based on current admin user
-		$this->EE->CFG = get_user_meta( $current_user_id, 'events_organization_settings', TRUE );
-		// ensure org_options are an object - this can be removed at a later date
-		if ( is_array( $this->EE->CFG )) {
-			$this->EE->load_helper( 'Activation' );
-			$this->EE->CFG = EEH_Activation::initialize_config( $this->EE->CFG );
-		}
-
-		// do settings for this user exist ?
+		$this->EE->CFG = $this->_get_espresso_config();
+		
+		// do settings for this blog exist ?
 		if ( empty( $this->EE->CFG )) {
 			$this->EE->load_helper( 'Activation' );
-			$this->EE->CFG = EEH_Activation::org_option_initialization();		
+			EEH_Activation::configuration_initialization();
 		} else {
 			// list of critical settings
 			$critical_settings = array( 
-				'contact_email',
-				'currency_sign'
+				'core',
+				'organization',
+				'currency'
 			);
 			// cycle thru critical org_options
 			foreach ( $critical_settings as $critical_setting ) {
@@ -153,35 +160,24 @@ final class EE_Config {
 				if ( ! isset( $this->EE->CFG->$critical_setting )) {
 					// reinitialize the org options
 					$this->EE->load_helper( 'Activation' );
-					$this->EE->CFG = EEH_Activation::org_option_initialization();		
+					$this->EE->CFG = EEH_Activation::configuration_initialization( TRUE );		
 					break;	
 				}
 			}
 		}
+		
 		// add current_user_id
-		$this->EE->CFG->wp_user = $current_user_id;	
+		$this->EE->CFG->wp_user = get_current_user_id();	
 
 //		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		$this->EE->CFG->post_shortcodes = isset( $this->EE->CFG->post_shortcodes ) ? $this->EE->CFG->post_shortcodes : array();
 		// set _module_route_map
-		EE_Config::$_module_route_map = isset( $this->EE->CFG->_module_route_map ) ? $this->EE->CFG->_module_route_map : array();
+		EE_Config::$_module_route_map = isset( $this->EE->CFG->core->module_route_map ) ? $this->EE->CFG->core->module_route_map : array();
 		// set _module_forward_map
-		EE_Config::$_module_forward_map = isset( $this->EE->CFG->_module_forward_map ) ? $this->EE->CFG->_module_forward_map : array();
+		EE_Config::$_module_forward_map = isset( $this->EE->CFG->core->module_forward_map ) ? $this->EE->CFG->core->module_forward_map : array();
 		// set _module_view_map
-		EE_Config::$_module_view_map = isset( $this->EE->CFG->_module_view_map ) ? $this->EE->CFG->_module_view_map : array();
-		
-//		$remove_from_config = array(
-//			'_module_route_map',
-//			'_module_forward_map',
-//			'_module_view_map'
-//		);
-//		
-//		foreach ( $remove_from_config as $setting ) {
-//			if ( isset( $this->EE->CFG->$setting )) {
-//				unset( $this->EE->CFG->$setting );
-//			}
-//		}
+		EE_Config::$_module_view_map = isset( $this->EE->CFG->core->module_view_map ) ? $this->EE->CFG->core->module_view_map : array();
+
 		
 		do_action('AHEE_debug_file');
 	}
@@ -189,23 +185,69 @@ final class EE_Config {
 
 
 	/**
-	 * 	'update_config'
+	 * 	_get_espresso_config
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function update_config() {
-//		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$this->EE->CFG->_module_route_map = EE_Config::$_module_route_map;
-		$this->EE->CFG->_module_forward_map = EE_Config::$_module_forward_map;
-		$this->EE->CFG->_module_view_map = EE_Config::$_module_view_map;
+	private function _get_espresso_config() {
+		// grab espresso configuration
+		if ( is_multisite() ) {
+			// look for blog specific config
+			if ( ! $CFG = get_blog_option( $this->current_blog_id, 'espresso_config', NULL )) {
+				// if not, then look for network config
+				if ( ! $CFG = get_site_option( 'espresso_config', NULL )) {
+				    // if not, then look for generic config
+					$CFG = get_option( 'espresso_config', NULL );
+				}						
+			}
+		} else {
+			$CFG = get_option( 'espresso_config', NULL );
+		}
+		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
+		return $CFG;
+	}
+
+
+	/**
+	 * 	update_espresso_config'
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
+		// map... the maps ?!?!?
+		$this->EE->CFG->core->module_route_map = EE_Config::$_module_route_map;
+		$this->EE->CFG->core->module_forward_map = EE_Config::$_module_forward_map;
+		$this->EE->CFG->core->module_view_map = EE_Config::$_module_view_map;
 		// filter config before saving
-		$this->EE->CFG = apply_filters( 'FHEE__Config__update_config__CFG', $this->EE->CFG );
-//		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		// grab org options based on current admin user		
-		if ( ! update_user_meta( $this->EE->CFG->wp_user, 'events_organization_settings', $this->EE->CFG )) {
-			$msg = __( 'The Event Espresso Configuration Settings could not be updated.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		$this->EE->CFG = apply_filters( 'FHEE__Config__update_espresso_config__CFG', $this->EE->CFG );
+		// update
+		if ( is_multisite() ) {
+			// look for blog specific config
+			if ( ! $saved = update_blog_option( $this->current_blog_id, 'espresso_config', $this->EE->CFG )) {
+				// if not, then look for network config
+				if ( ! $saved = update_site_option( 'espresso_config', $this->EE->CFG )) {
+				    // if not, then look for generic config
+					$saved = update_option( 'espresso_config', $this->EE->CFG );
+				}						
+			}
+		} else {
+			$saved = update_option( 'espresso_config', $this->EE->CFG );
+		}
+		// if config remains the same or was updated successfully
+		if ( $this->EE->CFG == $this->_get_espresso_config() || $saved ) {
+			if ( $add_succes ) {
+				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
+				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+			return TRUE;
+		} else {
+			if ( $add_error ) {
+				$msg = __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' );
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+			return FALSE;
 		}
 	}
 
@@ -218,7 +260,7 @@ final class EE_Config {
 	 */
 	public function update_post_shortcodes() {
 		// cycle thru post_shortcodes
-		foreach( $this->EE->CFG->post_shortcodes as $post_name => $shortcodes ){
+		foreach( $this->EE->CFG->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it
 			if ( $post_name != 'posts' ) {
 				foreach( $shortcodes as $shortcode => $post_id ){
@@ -228,12 +270,12 @@ final class EE_Config {
 							break;
 						}
 					}
-					unset( $this->EE->CFG->post_shortcodes[ $post_name ] );
+					unset( $this->EE->CFG->core->post_shortcodes[ $post_name ] );
 				}
 			}
 		}
-		$this->update_config();
-//		add_action( 'shutdown', array( $this, 'update_config' ));
+		//only show errors
+		$this->update_espresso_config();
 	}
 
 
@@ -552,6 +594,103 @@ final class EE_Config {
 
 
 
+}
+
+/**
+ * Base class used for config classes. These classes should generally not have
+ * magic functions in use, except we'll allow them to magically set and get stuff...
+ * basically, they should just be well-defined stdClasses
+ */
+class EE_Config_Base{
+	/**
+	 *		@ override magic methods
+	 *		@ return void
+	 */	
+//	public function __get($a) { return FALSE; }
+//	public function __set($a,$b) { return FALSE; }
+	public function __isset($a) { return FALSE; }
+	public function __unset($a) { return FALSE; }
+	public function __clone() { return FALSE; }
+	public function __wakeup() { return FALSE; }	
+	public function __destruct() { return FALSE; }		
+}
+
+/**
+ * Config class for storing info on the Organization
+ */
+class EE_Organization_Config extends EE_Config_Base{
+	 /** @var $name eg EE4.1*/ 
+	var $name;
+      /** @var $address_1 eg 123 Onna Road*/ 
+	var $address_1;
+      /** @var $address_2 eg PO Box 123*/ 
+	var $address_2;
+      /** @var $city eg Inna City*/ 
+	var $city;
+      /** @var $STA_ID eg 4*/ 
+	var $STA_ID;
+      /** @var $CNT_ISO eg US*/ 
+	var $CNT_ISO;
+      /** @var $zip eg 12345*/ 
+	var $zip;
+      /** @var $email eg michael@eventespresso.com*/ 
+	var $email;
+      /** @var $logo_url eg */ 
+	var $logo_url;
+}
+
+/**
+ * Class for defining what's in the EE_Config relating to currency
+ */
+class EE_Currency_Config extends EE_Config_Base{
+	 
+	/**
+	 * @var $code string
+	 * eg 'US'
+	 */
+	public $code;
+	/**
+	 * @var $name string
+	 * eg 'Dollar'
+	 */
+      public $name;
+	  
+	  /**
+	   * PLural name
+	   * @var $plural string
+	   * eg 'Dollars'
+	   */
+      public $plural;
+	  
+	  /**
+	   * currency sign
+	   * @var $sign string
+	   * eg '$'
+	   */
+      public $sign;
+	  /**
+	   * Whether the currency sign shoudl come before the number or not
+	   * @var $sign_b4 boolean
+	   */
+      public $sign_b4;
+	  
+	  /**
+	   * How many digits should come after the decimal place
+	   * @var $dec_plc int
+	   */
+      public $dec_plc;
+	  /**
+	   * Symbol to use for decimal mark
+	   * @var $dec_mrk string
+	   * eg '.'
+	   */
+      public $dec_mrk;
+	  /**
+	   * Symbol to use for thousands
+	   * @var $thsnds string
+	   * eg ','
+	   */
+      public $thsnds;
 }
 // End of file EE_Config.core.php
 // Location: /core/EE_Config.core.php

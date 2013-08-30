@@ -174,9 +174,20 @@ class EE_Attendee extends EE_CPT_Base{
     */
 	protected $_ATT_phone = NULL;
 
-
+	/**
+	 * Attendee's social media information (eg, twitter ID or whatever).
+	 * @access protected
+	 * @var array
+	 */
+	protected $_ATT_social = NULL;
+	
+	/**
+	 * Attendee notes by the attendee themselves about themselves
+	 * @var string 
+	 */
+	protected $_ATT_comments = NULL;
     /**
-    *	Attendee Notes (about the attendee)
+    *	Attendee Notes  about the attendee by the customer
 	* 
 	*	@access	protected
     *	@var string	
@@ -492,6 +503,40 @@ class EE_Attendee extends EE_CPT_Base{
 		return $this->get('ATT_lname');
 	}
 
+	/**
+	 * Gest the attendee's full address as an array so client code can decide hwo to display it
+	 * @return array numerically indexed, with each part of the address taht is known.
+	 * Eg, if the user only responded to state and country,
+	 * it would be array(0=>'Alabama',1=>'USA')
+	 */
+	public function full_address_as_array(){
+		$full_address_array = array();
+		$initial_address_fields = array(
+			'ATT_address','ATT_address2','ATT_city',
+		);
+		foreach($initial_address_fields as $address_field_name){
+			$address_fields_value = $this->get($address_field_name);
+			if (!empty($address_fields_value)){
+				$full_address_array[] = $address_fields_value;
+			}
+		}
+		//now handle state and country
+		$state_obj = $this->state_obj();
+		if ( ! empty($state_obj)){
+			$full_address_array[] = $state_obj->name();
+		}
+		$country_obj = $this->country_obj();
+		if( ! empty($country_obj)){
+			$full_address_array[] = $country_obj->name();
+		}
+		//lastly get the xip
+		$zip_value = $this->zip();
+		if( ! empty($zip_value)){
+			$full_address_array[] = $zip_value;
+		}
+		
+		return $full_address_array;
+	}
 
 
 	/**
@@ -610,7 +655,7 @@ class EE_Attendee extends EE_CPT_Base{
 
 
 	/**
-	*		get Attendee Notes (about the attendee)
+	*		get Attendee Notes (about the attendee by admin)
 	* 		@access		public
 	*/	
 	public function notes() {

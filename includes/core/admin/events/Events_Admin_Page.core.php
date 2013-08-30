@@ -136,8 +136,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_events_export',
 				'noheader' => true
 			),
-			'import' => '_import_events',
-			'import_events' => '_import_events',
+			'import_page'=>'_import_page',
+			'import' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
+			'import_events' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
 			'default_event_settings' => '_default_event_settings',
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
@@ -559,7 +566,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _events_overview_list_table() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_template_args['after_list_table'] = $this->_display_legend($this->_event_legend_items());
-		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -1065,6 +1072,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$DTM_MDL = $this->EE->load_model('Datetime', array($timezone) );
 		$times = $DTM_MDL->get_all_event_dates( $event_id );
 
+		require_once(EE_MODELS . 'EEM_Datetime.model.php');
+		$DTM_MDL = EEM_Datetime::instance( $timezone );
+		require_once EE_HELPERS . 'EEH_DTT_helper.helper.php';
 
 		//do we get related tickets?
 		if ( $times[0]->get('DTT_ID') !== 0 ) {
@@ -1711,7 +1721,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['values'] = $this->_yes_no_values;
 
 		$this->_template_args['org_options'] = isset($org_options['org_options']) ? maybe_unserialize($org_options['org_options']) : FALSE;
-		$this->_template_args['expire_on_registration_end'] = isset($org_options['expire_on_registration_end']) ? absint($org_options['expire_on_registration_end']) : FALSE;
 
 		$this->_template_args['reg_status_array'] = $this->_get_reg_status_array(array('RCN', 'RNA'));
 		$this->_template_args['default_reg_status'] = isset($org_options['default_reg_status']) ? sanitize_text_field($org_options['default_reg_status']) : 'RPN';
@@ -1735,7 +1744,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _update_default_event_settings() {
 
 		$data = array();
-		$data['expire_on_registration_end'] = isset($this->_req_data['expire_on_registration_end']) ? absint($this->_req_data['expire_on_registration_end']) : FALSE;
 		$data['default_reg_status'] = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
 		$data['pending_counts_reg_limit'] = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
 		$data['use_attendee_pre_approval'] = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
@@ -1743,7 +1751,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$data = apply_filters('FHEE_default_event_settings_save', $data);
 
 		$what = 'Default Event Settings';
-		$success = $this->_update_organization_settings($what, $data, __FILE__, __FUNCTION__, __LINE__);
+		$success = $this->_update_espresso_configuration($what, $data, __FILE__, __FUNCTION__, __LINE__);
 		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
 	}
 
@@ -1794,31 +1802,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$EE_Export->export();
 		}
 	}
-
 	/**
-	 * _import_events
-	 * This handles displaying the screen and running imports for importing events.
-	 * 	
-	 * @return string html
+	 * for GET requests to 
 	 */
-	protected function _import_events() {
 
-		require_once(EE_CLASSES . 'EE_Import.class.php');
-
-		//first check if we've got an incoming import
-		if (isset($this->_req_data['import']) && $this->_req_data['import'] == 'csv') {
-			EE_Import::instance()->import();
-		}
-		echo "csv notices";
-		var_dump(EE_CSV::instance()->_notices);
+	protected function _import_page(){
+		
 		$title = __('Import Events', 'event_espresso');
 		$intro = __('If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
 		$form_url = EVENTS_ADMIN_URL;
 		$action = 'import_events';
 		$type = 'csv';
 		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
-
-		$this->_admin_page_title .= $this->_get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
 
 		$title_cat = __( 'Import Event Categories', 'event_espresso' );
 		$intro_cat = __( 'If you have a previously exported list of Event Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
@@ -1830,6 +1827,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
 	}
+	/**
+	 * _import_events
+	 * This handles displaying the screen and running imports for importing events.
+	 * 	
+	 * @return string html
+	 */
+	protected function _import_events() {
+		require_once(EE_CLASSES . 'EE_Import.class.php');
+		$success = EE_Import::instance()->import();
+		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
+		
+	}
+	
+	
 
 
 
@@ -1888,7 +1899,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->_get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 

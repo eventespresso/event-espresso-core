@@ -16,12 +16,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_DTT_Helper
+ * EEH_DTT_Helper
  *
  * This is a helper utility class containging a variety for date time formatting helpers for Event Espresso.
  *
  * @package		Event Espresso
- * @subpackage	/helpers/EE_DTT_Helper.helper.php
+ * @subpackage	/helpers/EEH_DTT_Helper.helper.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -30,14 +30,14 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 
 
-class EE_DTT_Helper {
+class EEH_DTT_Helper {
 
 
 	/**
 	 * return the timezone set for the WP install
 	 * @return string valid timezone string for PHP DateTimeZone() class
 	 */
-	private static function _get_timezone() {
+	public static function get_timezone() {
 		$timezone = get_option('timezone_string');
 		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
 		if ( empty( $timezone ) ) {
@@ -79,7 +79,7 @@ class EE_DTT_Helper {
 
 	public function prepare_dtt_from_db( $dttvalue, $format = 'U' ) {
 		
-		$timezone = self::_get_timezone();
+		$timezone = self::get_timezone();
 
 		$date_obj = new DateTime( $dttvalue, new DateTimeZone('UTC') );
 		if ( !$date_obj )
@@ -178,7 +178,7 @@ class EE_DTT_Helper {
 
 
 	public static function date_time_for_timezone( $timestamp, $format, $timezone ) {
-		$timezone = empty( $timezone ) ? self::_get_timezone() : $timezone;
+		$timezone = empty( $timezone ) ? self::get_timezone() : $timezone;
 
 		//set timezone
 		date_default_timezone_set( $timezone );
@@ -191,4 +191,4 @@ class EE_DTT_Helper {
 	}
 
 
-}// end class EE_DTT_Helper
+}// end class EEH_DTT_Helper

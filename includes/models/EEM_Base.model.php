@@ -154,6 +154,11 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit','default_where_conditions');
 
+	/**
+	 * All the datatypes that can be used in $wpdb->prepare statements.
+	 * @var array
+	 */
+	private $_valid_wpdb_data_types = array('%d','%s','%f');
 	
 	/**
 	 * 	EE_Registry Object
@@ -168,6 +173,14 @@ abstract class EEM_Base extends EE_Base{
 	 * @var int
 	 */
 	protected $_show_next_x_db_queries = 0;
+	
+	/**
+	 * When using _get_all_wpdb_results, you can specify a custom selection. If you do so, 
+	 * it gets saved on this property so those selections can be used in WHERE, GROUP_BY, etc.
+	 * @var array
+	 */
+	protected $_custom_selections = array();
+	
 	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
@@ -374,16 +387,56 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
 	 * @param boolean $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
 	 * and the models we joined to in the query. However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc.
+	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
+	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
+	 * and 1 is the datatype. Eg, array('count'=>array('COUNT(REG_ID)','%d'))
 	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
 		global $wpdb;
+		
+		//remember the custom selections, if any
+		if(is_array($columns_to_select)){
+			$this->_custom_selections = $columns_to_select;
+		}elseif(is_string($columns_to_select)){
+			$this->_custom_selections = array($this->_custom_selections);
+		}else{
+			$this->_custom_selections = array();
+		}
+		
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
-		$select_expressions = $columns_to_select ? $columns_to_select : $this->_construct_select_sql($model_query_info);
+		$select_expressions = $columns_to_select ? $this->_construct_select_from_input($columns_to_select) : $this->_construct_default_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 		$results =  $wpdb->get_results($SQL, $output);
 		$this->show_db_query_if_previously_requested($SQL);
 		return $results;
+	}
+	
+	/**
+	 * For creating a custom select statement
+	 * @param mixed $columns_to_select either a string to be inserted directly as the select statement, 
+	 * or an array where keys are aliases, and values are arrays where 0=>the selection SQL, and 1=>is the datatype
+	 * @return string
+	 */
+	private function _construct_select_from_input($columns_to_select){
+		if(is_array($columns_to_select)){
+			$select_sql_array = array();
+			
+			foreach($columns_to_select as $alias => $selection_and_datatype){
+				if( ! is_array($selection_and_datatype) || ! isset($selection_and_datatype[1])){
+					throw new EE_Error(sprintf(__("Custom selection %s (alias %s) needs to be an array like array('COUNT(REG_ID)','%%d')", "event_espresso"),$selection_and_datatype,$alias));
+				}
+				if( ! in_array( $selection_and_datatype[1],$this->_valid_wpdb_data_types)){
+					throw new EE_Error(sprintf(__("Datatype %s (for selection '%s' and alias '%s') is not a valid wpdb datatype (eg %%s)", "event_espresso"),$selection_and_datatype[1],$selection_and_datatype[0],$alias,implode(",",$this->_valid_wpdb_data_types)));
+				}
+				$select_sql_array[] = "{$selection_and_datatype[0]} AS $alias";
+			}
+			$columns_to_select_string = implode(", ",$select_sql_array);
+		}else{
+			$columns_to_select_string = $columns_to_select;
+		}
+		return $columns_to_select_string;
+		
 	}
 	
 	/**
@@ -984,12 +1037,16 @@ abstract class EEM_Base extends EE_Base{
 	 * and depending on $value_already_prepare_by_model_obj, may also call the field's prepare_for_set() method.
 	 * @param mixed $value value in the client code domain if $value_already_preapred_by_model_object is false, otherwise a value
 	 * in the model object's domain (see lengthy comment at top of file)
-	 * @param EE_Model_Field_Base $field field which will be doing the preparing of the value
+	 * @param EE_Model_Field_Base $field field which will be doing the preparing of the value. If null, we assume $value is a custom selection
 	 * @return mixed a value ready for use in the database for insertions, updating, or in a where clause
 	 */
-	private function _prepare_value_for_use_in_db($value, EE_Model_Field_Base $field){
-		$value = $this->_values_already_prepared_by_model_object ? $value : $field->prepare_for_set($value);
-		return $field->prepare_for_use_in_db($value);
+	private function _prepare_value_for_use_in_db($value, $field){
+		if($field && $field instanceof EE_Model_Field_Base){
+			$value = $this->_values_already_prepared_by_model_object ? $value : $field->prepare_for_set($value);
+			return $field->prepare_for_use_in_db($value);
+		}else{
+			return $value;
+		}
 	}
 	/**
 	 * Returns the main table on this model
@@ -1169,19 +1226,17 @@ abstract class EEM_Base extends EE_Base{
 				$order_array = array();
 				foreach($query_params['order_by'] as $field_name_to_order_by => $order){
 					$order = $this->_extract_order($order);
-					$field_to_order_by = $this->_deduce_field_from_query_param($field_name_to_order_by);
-					$order_array[] = $field_to_order_by->get_qualified_column() .SP. $order ;
+					$order_array[] = $this->_deduce_column_name_from_query_param($field_name_to_order_by).SP.$order;
 				}
 				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
 			}else{
 				$this->_extract_related_model_info_from_query_param($query_params['order_by'],$query_object,'order',$query_params['order_by']);
-				$field_to_order_by = $this->_deduce_field_from_query_param( $query_params['order_by'] );
 				if(isset($query_params['order'])){
 					$order = $this->_extract_order($query_params['order']);
 				}else{
 					$order = 'DESC';
 				}
-				$query_object->set_order_by_sql(" ORDER BY ".$field_to_order_by->get_qualified_column().SP.$order);
+				$query_object->set_order_by_sql(" ORDER BY ".$this->_deduce_column_name_from_query_param($query_params['order_by']).SP.$order);
 			}
 		}
 		
@@ -1198,13 +1253,11 @@ abstract class EEM_Base extends EE_Base{
 				//it's an array, so assume we'll be grouping by a bunch of stuff
 				$group_by_array = array();
 				foreach($query_params['group_by'] as $field_name_to_group_by){
-					$field_obj = $this->_deduce_field_from_query_param($field_name_to_group_by);//$this->field_settings_for($field_name_to_group_by);
-					$group_by_array[] = $field_obj->get_qualified_column();
+					$group_by_array[] = $this->_deduce_column_name_from_query_param($field_name_to_group_by);
 				}
 				$query_object->set_group_by_sql(" GROUP BY ".implode(", ",$group_by_array));
 			}else{
-				$field_obj = $this->_deduce_field_from_query_param($query_params['group_by']);
-				$query_object->set_group_by_sql(" GROUP BY ".$field_obj->get_qualified_column());
+				$query_object->set_group_by_sql(" GROUP BY ".$this->_deduce_column_name_from_query_param($query_params['group_by']));
 			}
 		}
 		//set having
@@ -1215,7 +1268,14 @@ abstract class EEM_Base extends EE_Base{
 		//now, just verify they didnt pass anything wack
 		foreach($query_params as $query_key => $query_value){
 			if( ! in_array($query_key,$this->_allowed_query_params,true)){
-				throw new EE_Error(sprintf(__("You passed %s as a query parameter to %s, which is illegal!",'event_espresso'),$query_key,get_class($this)));
+				throw new EE_Error( 
+					sprintf(
+						__("You passed %s as a query parameter to %s, which is illegal! The allowed query parameters are %s",'event_espresso'),
+						$query_key,
+						get_class($this),
+						print_r( $this->_allowed_query_params, TRUE )
+					)
+				);
 			}
 		}
 		$main_model_join_sql = $query_object->get_main_model_join_sql();
@@ -1290,7 +1350,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Query_Info_Carrier $model_query_info
 	 * @return string
 	 */
-	public function _construct_select_sql(EE_Model_Query_Info_Carrier $model_query_info){
+	private function _construct_default_select_sql(EE_Model_Query_Info_Carrier $model_query_info){
 		$selects = $this->_get_columns_to_select_for_this_model();
 		foreach($model_query_info->get_model_names_included() as $name_of_other_model_included=>$model_relation_chain){
 			$other_model_included = $this->get_related_model_obj($name_of_other_model_included);
@@ -1358,7 +1418,11 @@ abstract class EEM_Base extends EE_Base{
 			}else{
 				throw new EE_Error(sprintf(__("Logic query params (%s) are being used in the wrong quer params on model %s", "event_espresso"),implode(",",$this->_logic_query_param_keys),get_class($this)));
 			}
-		}	
+		}
+		//check if it's a custom selection
+		elseif(array_key_exists($query_param,$this->_custom_selections)){
+			return;
+		}
 
 		//check if has a model name at the beginning 
 		//and
@@ -1520,8 +1584,16 @@ abstract class EEM_Base extends EE_Base{
 				}
 			}else{
 				$field_obj = $this->_deduce_field_from_query_param($query_param);
+				//if it's not a normal field, mayeb it's a custom selection?
+				if( ! $field_obj){
+					if(isset( $this->_custom_selections[$query_param][1])){
+						$field_obj = $this->_custom_selections[$query_param][1];
+					}else{
+						throw new EE_Error(sprintf(__("%s is neither a valid model field name, nor a custom selection", "event_espresso"),$query_param));
+					}
+				}
 				$op_and_value_sql = $this->_construct_op_and_value($op_and_value_or_sub_condition, $field_obj);
-				$where_clauses[]=$field_obj->get_qualified_column().SP.$op_and_value_sql;
+				$where_clauses[]=$this->_deduce_column_name_from_query_param($query_param).SP.$op_and_value_sql;//
 			}
 		}
 		if($where_clauses){
@@ -1530,6 +1602,24 @@ abstract class EEM_Base extends EE_Base{
 			$SQL = '';
 		}
 		return $SQL;
+	}
+	
+	/**
+	 * Takes the input parameter and extract the table name (alias) and column name
+	 * @param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
+	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
+	 */
+	private function _deduce_column_name_from_query_param($query_param){
+		$field = $this->_deduce_field_from_query_param($query_param);
+		if( $field ){
+			return $field->get_qualified_column();
+		}elseif(array_key_exists($query_param,$this->_custom_selections)){
+			//maybe it's custom selection item?
+			//if so, just use it as the "column name"
+			return $query_param;
+		}else{
+			throw new EE_Error(sprintf(__("%s is not a valid field on this model, nor a custom selection (%s)", "event_espresso"),$query_param,implode(",",$this->_custom_selections)));
+		}
 	}
 	
 	/**
@@ -1551,12 +1641,12 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	/**
-	 * creates the SQL 
+	 * creates the SQL for the operator and the value in a WHERE clause, eg "< 23" or "LIKE '%monkey%'"
 	 * @param type $op_and_value
-	 * @param EE_Model_Feild $field_obj
+	 * @param EE_Model_Field_Base|string $field_obj. If string, should be one of EEM_Base::_valid_wpdb_data_types
 	 * @return string
 	 */
-	private function _construct_op_and_value($op_and_value, EE_Model_Field_Base $field_obj){
+	private function _construct_op_and_value($op_and_value, $field_obj){
 		if(is_array( $op_and_value ) && preg_match( '/NULL/', $op_and_value[0]) ){
 			//handle special operators that don't HAVE a value (such as "IS NOT NULL")
 			$operator = $op_and_value[0];
@@ -1586,8 +1676,7 @@ abstract class EEM_Base extends EE_Base{
 		} else if( in_array( $operator, $this->_null_style_operators ) ) {
 			return $operator;
 		}elseif( ! in_array($operator, $this->_in_style_operators) && ! is_array($value)){
-			global $wpdb;
-			return $wpdb->prepare($operator.SP.$field_obj->get_wpdb_data_type(), $this->_prepare_value_for_use_in_db($value, $field_obj));
+			return $operator.SP.$this->_wpdb_prepare_using_field($value,$field_obj);
 		}elseif(in_array($operator, $this->_in_style_operators) && ! is_array($value)){
 			throw new EE_Error(sprintf(__("Operator '%s' must be used with an array of values, eg 'Registration.REG_ID' => array('%s',array(1,2,3))",'event_espresso'),$operator, $operator));
 		}elseif( ! in_array($operator, $this->_in_style_operators) && is_array($value)){
@@ -1597,11 +1686,16 @@ abstract class EEM_Base extends EE_Base{
 
 
 
-
-	function _construct_between_value( $values, EE_Model_Field_Base $field_obj ) {
+	/**
+	 * Creates the operands to be used in a BETWEEN query, eg "'2014-12-31 20:23:33' AND '2015-01-23 12:32:54'"
+	 * @param array $values
+	 * @param EE_Model_Field_Base|string $field_obj if string, it should be the datatype to be used when querying, eg '%s'
+	 * @return string
+	 */
+	function _construct_between_value( $values, $field_obj ) {
 		global $wpdb;
 		foreach ( $values as $value ) {
-			$cleaned_values[] = $wpdb->prepare( $field_obj->get_wpdb_data_type(), $this->_prepare_value_for_use_in_db( $value, $field_obj ) );
+			$cleaned_values[] = $this->_wpdb_prepare_using_field($value,$field_obj);
 		}
 		return  $cleaned_values[0] . " AND " . $cleaned_values[1];
 	}
@@ -1616,27 +1710,47 @@ abstract class EEM_Base extends EE_Base{
 	 * return '(1,2,3)'; _construct_in_value("1,2,hack",'%d') would return '(1,2,1)' (assuming
 	 * I'm right that a string, when interpreted as a digit, becomes a 1. It might become a 0)
 	 * @param mixed $values array or comma-seperated string
-	 * @param EE_MOdel_Field_Base $field-OBj
+	 * @param EE_MOdel_Field_Base|string $field_obj if string, it should be a wpdb datatype like '%s', or '%d'
 	 * @return string of SQL to follow an 'IN' or 'NOT IN' operator
 	 */
-	function _construct_in_value($values, EE_Model_Field_Base $field_obj){
+	function _construct_in_value($values,  $field_obj){
 		global $wpdb;
 		//check if the value is a CSV'd list
 		if(is_string($values)){
 			//in which case, turn it into an array
 			$values = explode(",",$values);
 		}
+		$cleaned_values = array();
 		foreach($values as $value){
-			$cleaned_values[] = $wpdb->prepare($field_obj->get_wpdb_data_type(),$this->_prepare_value_for_use_in_db($value, $field_obj));
+			$cleaned_values[] = $this->_wpdb_prepare_using_field($value,$field_obj);
+		}
+		if(empty($cleaned_values)){
+			$cleaned_values[] = '0';
 		}
 		return "(".implode(",",$cleaned_values).")";
+	}
+	/**
+	 * 
+	 * @param type $value
+	 * @param EE_Model_Field|string $field_obj if string it should be a wpdb datatype like '%d'
+	 */
+	private function _wpdb_prepare_using_field($value,$field_obj){
+		global $wpdb;
+		if($field_obj instanceof EE_Model_Field_Base){
+			return $wpdb->prepare($field_obj->get_wpdb_data_type(),$this->_prepare_value_for_use_in_db($value, $field_obj));
+		}else{//$field_obj should really just be a datatype
+			if( ! in_array($field_obj,$this->_valid_wpdb_data_types)){
+				throw new EE_Error(sprintf(__("%s is not a valid wpdb datatype. Valid ones are %s", "event_espresso"),$field_obj,implode(",",$this->_valid_wpdb_data_types)));
+			}
+			return $wpdb->prepare($field_obj,$value);
+		}
 	}
 	
 	
 	/**
-	 * Takes the input parameter and extract the table name (alias) and column name
+	 * Takes the input parameter and finds the model field that it indicates.
 	 * @param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
-	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
+	 * @return EE_Model_Field
 	 */
 	protected function _deduce_field_from_query_param($query_param_name){
 		//ok, now proceed with deducing which part is the model's name, and which is the field's name
@@ -1656,7 +1770,11 @@ abstract class EEM_Base extends EE_Base{
 			$field_name = $last_query_param_part;
 			$model_obj = $this->get_related_model_obj( $query_param_parts[ $number_of_parts - 2 ]);
 		}
-		return $model_obj->field_settings_for($field_name);
+		try{
+			return $model_obj->field_settings_for($field_name);
+		}catch(EE_Error $e){
+			return null;
+		}
 	}
 	
 	

@@ -346,18 +346,6 @@ function event_espresso_admin_news($url) {
 	return wp_remote_retrieve_body(wp_remote_get($url));
 }
 
-
-//Function to show an admin message if the main pages are not setup.
-function espresso_updated_pages() {
-	echo '<div class="updated fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. As long as all of the Page Status and Shortcode notices below are OK, then this meassage will dissappear. Please attend to any issues that require attention.', 'event_espresso') . '</strong></p></div>';
-}
-
-function espresso_page_problems() {
-	if ( isset( $_GET['page'] ) && $_GET['page'] != 'espresso_general_settings' ) {
-		echo '<div class="updated"><p><strong>' . __('A potential issue has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
-	}
-}
-
 //Function to show an admin message if registration id's are missing.
 function event_espresso_registration_id_notice() {
 	if (function_exists('admin_url')) {
@@ -439,34 +427,25 @@ function espresso_db_dropdown($intIdField, $strNameField, $strTableName, $strOrd
 	}
 }
 
+
+
 function espresso_category_dropdown($current_value = '') {
-
-	global $wpdb;
-
-	$ecd = '';
-
-	$strQuery = "select id, category_name from " . EVENTS_CATEGORY_TABLE;
-	$data = $wpdb->get_results($strQuery, ARRAY_A);
-	//print_r($data);
-
-	if ($wpdb->num_rows > 0) {
+	$ecd = '';	
+	if ( $event_categories = EE_Registry::instance()->load_model('Term')->get_all_ee_categories() ) {
 		$ecd .= '<select name="category_id" class="" style="width:160px;">';
 		$ecd .= '<option value="">' . __('Show All Categories', 'event_espresso') . '</option>';
-
-		/*		 * * loop over the results ** */
-		foreach ($data as $row) {
-			/*			 * * create the options ** */
-			$ecd .= '<option value="' . $row["id"] . '"';
-			if ($row["id"] == $current_value) {
-				$ecd .= ' selected';
-			}
-			$ecd .= '>' . stripslashes_deep($row["category_name"]) . '</option>' . "\n";
+		// loop over the results 
+		foreach ( $event_categories as $category ) {
+			$ecd .= '<option value="' . $category->ID() . '"';
+			$ecd .= $category->ID() == $current_value ? ' selected="selected"' : '';
+			$ecd .= '>' . $category->get_pretty('name') . '</option>' . "\n";
 		}
 		$ecd .= "</select>";
 	}
-
 	return $ecd;
 }
+
+
 
 /**
  * This function grabs the event categories.

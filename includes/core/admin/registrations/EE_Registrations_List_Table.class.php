@@ -77,6 +77,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
  				'TXN_paid' => __('Paid', 'event_espresso'),
 	           	'actions' => __( 'Actions', 'event_espresso' )
 	        );			
+			$this->_bottom_buttons = array(
+				'report'=>'registrations_report'
+			);
 		} else {
 			$this->_columns = array(
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
@@ -134,10 +137,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		require_once( EE_CORE_ADMIN . 'total_count_queries.php' );
-		$this->_views['all']['count'] = espresso_total_all_attendees();
-		$this->_views['month']['count'] = espresso_total_attendees_this_month();
-		$this->_views['today']['count'] = espresso_total_attendees_today();
+//		require_once( EE_CORE_ADMIN . 'total_count_queries.php' );
+//		$this->_views['all']['count'] = espresso_total_all_attendees();
+//		$this->_views['month']['count'] = espresso_total_attendees_this_month();
+//		$this->_views['today']['count'] = espresso_total_attendees_today();
 	}
 
 
@@ -251,7 +254,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	*/
    	function column_ATT_fname(EE_Registration $item){
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->attendee_ID() ), REG_ADMIN_URL );
-		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->attendee()->full_name()) . '</a>';
+		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->attendee() ? $item->attendee()->full_name() : '') . '</a>';
 		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 		return $link;
 	}
@@ -336,12 +339,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_TXN_paid(EE_Registration $item){
 		
 		if ( $item->count() == 1 ) {
+			$transaction = $item->transaction() ? $item->transaction() : EE_Transaction::new_instance();
 			
-			if ( $item->transaction()->paid() >= $item->transaction()->total() ) {
+			if ( $transaction->paid() >= $transaction->total() ) {
 				return '<span class="reg-pad-rght"><img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
-				return '<span class="reg-pad-rght"><a class="status-'. $item->transaction()->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $item->transaction()->pretty_paid() . '</a><span>';
+				return '<span class="reg-pad-rght"><a class="status-'. $transaction->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $item->transaction()->pretty_paid() . '</a><span>';
 			}			
 		}
 		
