@@ -218,7 +218,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_name' => $default ? '' : $dtt->get_dtt_display_name(),
-			'dttsold' => $default ? '0' : $dtt->get('DTT_sold')
+			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold')
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_display_row.template.php';
 		return espresso_display_template( $template, $template_args, TRUE);
