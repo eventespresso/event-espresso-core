@@ -136,16 +136,10 @@ final class EE_Config {
 		
 		$this->EE->CFG = $this->_get_espresso_config();
 
-		// ensure org_options are an object - this can be removed at a later date
-		if ( is_array( $this->EE->CFG )) {
-			$this->EE->load_helper( 'Activation' );
-			$this->EE->CFG = EEH_Activation::initialize_config( $this->EE->CFG );
-		}
-
 		// do settings for this blog exist ?
 		if ( empty( $this->EE->CFG )) {
 			$this->EE->load_helper( 'Activation' );
-			$this->EE->CFG = EEH_Activation::configuration_initialization();		
+			EEH_Activation::configuration_initialization();
 		} else {
 			// list of critical settings
 			$critical_settings = array( 
