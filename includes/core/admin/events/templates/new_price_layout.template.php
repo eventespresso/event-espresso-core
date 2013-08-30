@@ -140,7 +140,7 @@
 										<tr id="extra-price-row-1-1">
 											<td colspan="5">
 												<section class="extra-price-row" style="display:none">
-													<textarea name="edit_prices[1][1][PRT_description]" class="edit-price-PRC_description ee-full-textarea-inp" placeholder="Edit the description for the price here">This is a free admission ticket</textarea>
+													<textarea name="edit_prices[1][1][PRT_description]" class="edit-price-PRC_desc ee-full-textarea-inp" placeholder="Edit the description for the price here">This is a free admission ticket</textarea>
 												</section>
 											</td>
 										</tr>
@@ -361,7 +361,7 @@
 			<tr id="extra-price-row-TICKETNUM-PRICENUM">
 				<td colspan="5">
 					<section class="extra-price-row" style="display:none">
-						<textarea name="edit_prices[TICKETNUM][PRICENUM][PRT_description]" class="edit-price-PRC_description ee-full-textarea-inp" placeholder="Edit the description for the price here"></textarea>
+						<textarea name="edit_prices[TICKETNUM][PRICENUM][PRT_description]" class="edit-price-PRC_desc ee-full-textarea-inp" placeholder="Edit the description for the price here"></textarea>
 					</section>
 				</td>
 			</tr>

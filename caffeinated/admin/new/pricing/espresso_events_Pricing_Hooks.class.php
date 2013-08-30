@@ -348,7 +348,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'show_percentage' => $default ? ' style="display:none;"' : ( $price->is_percent() ? '' : ' style="display:none;"' ),
 			'show_trash_icon' => count($prices) > 1 && $prcrow > 1 ? '' : ' style="display:none;"',
 			'show_create_button' => (count($prices) === $prcrow) || count($prices) === 1 ? '' : ' style="display:none;"',
-			'PRC_description' => $default ? '' : $price->get('PRC_description')
+			'PRC_desc' => $default ? '' : $price->get('PRC_desc')
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_row.template.php';
