@@ -321,7 +321,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			foreach ( $prices as $price ) {
 				$show_trash = ( count( $prices ) > 1 && $prcrow === 1 ) || count( $prices === 1 ) ? FALSE : TRUE;
 				$show_create = count( $prices ) > 1 && count( $prices ) !== $prcrow ? FALSE : TRUE;
-				$template_args['TKT_pric_rows'] .= $this->_get_ticket_price_row( $tktrow, $prcrow, $price, $default, $show_trash, $show_create );
+				$template_args['TKT_price_rows'] .= $this->_get_ticket_price_row( $tktrow, $prcrow, $price, $default, $show_trash, $show_create );
 				$prcrow++;
 			}
 		}
