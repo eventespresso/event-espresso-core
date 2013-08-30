@@ -390,13 +390,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$price_option_span_template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_option_span.template.php';
 		$all_price_types = $default ? array(array('id' => 0, 'text' => __('Select Modifier', 'event_espresso')) ) : array();
 		$selected_price_type_id = $default ? 0 : $price->type();
+		$price_option_spans = '';
 		//setup pricetypes for selector
 		foreach ( $price_types as $price_type ) {
 			$all_price_types[] = array(
 				'id' => $price_type->ID(),
 				'text' => $price_type->get('PRT_name'),
 				);
-			$price_option_spans = '';
 
 			//while we're in the loop let's setup the option spans used by js
 			$spanargs = array(
@@ -406,6 +406,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				);
 			$price_option_spans .= espresso_display_template($price_option_span_template, $spanargs, TRUE );
 		}
+
 
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
