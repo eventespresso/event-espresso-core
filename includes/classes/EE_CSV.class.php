@@ -582,7 +582,10 @@
 	 *			@return TRUE on success, FALSE on fail
 	 */	
 	public function export_array_to_csv( $table_list = FALSE, $data = FALSE, $filename = FALSE  ) {
-	
+//		echo 'echodump of $table_list';
+//		var_dump($table_list);
+//		echo 'echodump of $data';
+//		var_dump($data);die;
 		// no data file?? get outta here
 		if ( ! $data or ! is_array( $data ) or empty( $data ) ) {
 			return FALSE;
@@ -776,6 +779,8 @@
 		$enclosure_esc = preg_quote($enclosure, '/');
 		
 		$output = array();
+//		echo 'echodump of $row';
+//		var_dump($row);die;
 		foreach ($row as $field) {
 			if ($field === null && $mysql_null) {
 				$output[] = 'NULL';

@@ -159,8 +159,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'action' => 'export_events',
 				'EVT_ID' => $item->event_id
 			);
+		$report_attendees_query_args = array(
+			'action'=>'report_event_registrations',
+			'EVT_ID'=>$item->event_id
+		);
 		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
-
+		$report_event_registrations_link = EE_Admin_Page::add_query_args_and_nonce($report_attendees_query_args,EVENTS_ADMIN_URL);
 		$trash_event_query_args = array(
 				'action' => 'trash_event',
 				'EVT_ID' => $item->event_id
@@ -185,7 +189,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
 			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '">' . __('Attendees', 'event_espresso') . '</a>',
-			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>'
+			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>',
+			'report_event_registrations'=> '<a href="'.$report_event_registrations_link.'" title="'. __("Report Registrations for Event", "event_espresso").'">'.__("Report Registrations", "event_espresso").'</a>',
 			);
 			
 		switch ( $this->_event_status ) {

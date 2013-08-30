@@ -36,6 +36,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *		@return void
 	 */	
  	private function __construct( $request_data = array() ) {
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_CSV.class.php' );
+		$this->EE_CSV= EE_CSV::instance();
 		$this->_req_data = $request_data;
 	}
 
@@ -61,8 +63,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	public function export() {
 	
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_CSV.class.php' );
-		$this->EE_CSV= EE_CSV::instance();
+		
 
 		$this->today = date("Y-m-d",time());
 		
@@ -246,6 +247,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		
 		$filename = $this->generate_filename ( $filename );
 
+//		echo 'echodump of array_keys( $tables_to_export )';
+//		var_dump(array_keys( $tables_to_export ));
 		if ( ! $this->EE_CSV->export_array_to_csv( array_keys( $tables_to_export ), $table_data, $filename )) {
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Event details could not be exported from the database.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
@@ -274,6 +277,74 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			$this->EE_CSV->_notices['errors'][] = 'An error occured and the Attendee data could not be exported from the database.';
 			add_action('admin_notices', array( $this->EE_CSV, 'csv_admin_notices' ) );
 		}
+	}
+	
+	function report_event_registrations($event_id){
+		$data = array('registrations'=>array(
+			'HEADINGS'=>array(
+				'monkey'=>'monkey',
+				'bob'=>'bob'
+			),
+			array('col1','col2'),
+			array('monkey','chimp')
+		));
+		//get all registraionts for this event
+		$registrations = EEM_Registration::instance()->get_all_where(array('EVT_ID'=>$event_id),null,'ASC','=',99999);
+//		echo 'echodump of $registrations';
+//		var_dump($registrations);die;
+		global $wpdb;
+		$registration_columns = array(
+			'REG_ID',
+			'ATT_ID',
+			'REG_final_price',
+			'REG_count',
+			'REG_group_size',
+			'STS_ID',
+		);
+		$question_columns = array();
+		//get all questions answerd by any of these registrants
+		$questionStdClasses = $wpdb->get_results("select * from ".$wpdb->prefix."esp_question q 
+			INNER JOIN ".$wpdb->prefix."esp_answer a ON q.QST_ID = a.QST_ID WHERE REG_ID IN (".implode(",",array_keys($registrations)).")",OBJECT_K);
+		foreach($questionStdClasses as $questionStdClass){
+			$question_columns[$questionStdClass->QST_ID] = $questionStdClass->QST_admin_label;
+		}
+
+	//get all answers for this registration
+		$csv_ready_data_array = array();
+		$csv_ready_data_array['HEADINGS'] = array_merge($registration_columns,$question_columns);
+		foreach($registrations as $registration){
+			$csv_ready_entry = array();
+			/* @var $registration EE_Registration */
+			foreach($registration_columns as $reg_column){
+				if($reg_column == 'STS_ID'){
+					$csv_ready_entry[] = $registration->pretty_status();
+				}else{
+					$csv_ready_entry[] = $registration->get($reg_column);
+				}
+				
+			}
+			//now get their answers to custom questions
+			$answers = $registration->answers_and_questions();
+			
+			//and insert into csv ready array in the same order as the columns
+			foreach($question_columns as $question_id => $question_column){
+				//now find their answer to that question
+				foreach($answers as $answer){
+					if($answer->question_ID() == $question_id){
+						$csv_ready_entry[] = $answer->value();
+					}
+				}
+			}
+			
+			$csv_ready_data_array[] = $csv_ready_entry;
+		}
+		
+//		echo 'echodump of $csv_ready_data_array';
+//		var_dump($csv_ready_data_array);
+//echo 'echodump of $data';
+//var_dump($data);
+		$a_reg = array_shift($registrations);
+		$this->EE_CSV->export_array_to_csv(array('wp_registrations'),$csv_ready_data_array,  sanitize_title_with_dashes($a_reg->event_name())."-registrations");
 	}
 
 	

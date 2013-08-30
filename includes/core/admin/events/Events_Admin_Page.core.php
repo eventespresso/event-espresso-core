@@ -151,6 +151,10 @@ class Events_Admin_Page extends EE_Admin_Page {
 				'func' => '_events_export',
 				'noheader' => true
 				),
+			'report_event_registrations'=>array(
+				'func'=> '_report_event_registrations',
+				'noheader'=> true
+			),
 
 //			'export_payments' => array(
 //				'func' => '_payment_export',
@@ -4230,6 +4234,13 @@ class Events_Admin_Page extends EE_Admin_Page {
 		}
 	}
 
+	protected function _report_event_registrations(){
+		
+		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+		$EE_Export = EE_Export::instance();
+		$EE_Export->report_event_registrations($this->_req_data['EVT_ID']);
+
+	}
 
 
 
