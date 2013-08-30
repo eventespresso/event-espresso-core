@@ -38,8 +38,8 @@ class EEH_Activation {
 			 return;
 		}
 	       
-	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	    check_admin_referer( "activate-plugin_{$plugin}" );		
+//	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+//	    check_admin_referer( "activate-plugin_{$plugin}" );		
 
 		// don't need JS when we load the system files, so turn it off
 		add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
@@ -59,6 +59,7 @@ class EEH_Activation {
 		EEH_Activation::configuration_initialization();
 		EEH_Activation::verify_default_pages_exist();
 		EEH_Activation::create_upload_directories();
+		EEH_Activation::create_database_tables();
 		// default data
 		EEH_Activation::initialize_system_questions();
 		EEH_Activation::insert_default_prices();
@@ -164,7 +165,7 @@ class EEH_Activation {
 		// if we are only missing config items then let's merge with what we do have'
 		EE_Registry::instance()->CFG = $missing_options ? (object) array_merge( (array)$default_config, (array)EE_Registry::instance()->CFG ) : (object)$default_config;
 		// and then save it
-		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE ) ) {
+		if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE ) ) {
 			$msg = __( 'The Event Espresso Configuration Settings could not be initialized.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}	
@@ -184,39 +185,94 @@ class EEH_Activation {
 	public static function verify_default_pages_exist() {
 		
 		$critical_page_problem = FALSE;
-		$cfg_core = EE_Registry::instance()->CFG->core;
-				
-		// first check that critical page id's are set in the org options and that those page id's exist in the WP post db
-		$all_page_ids = array_flip( get_all_page_ids() );		
-		if (	! $cfg_core->reg_page_id || ! isset( $all_page_ids[ $cfg_core->reg_page_id ] ) || 
-				! $cfg_core->txn_page_id || ! isset( $all_page_ids[ $cfg_core->txn_page_id ] ) || 
-				! $cfg_core->thank_you_page_id || ! isset( $all_page_ids[ $cfg_core->thank_you_page_id ] ) || 
-				! $cfg_core->cancel_page_id || ! isset( $all_page_ids[ $cfg_core->cancel_page_id ] )
-		) { 
-			$critical_page_problem = TRUE;
-		} else {
 		
-			$critical_pages = array(
-					$cfg_core->reg_page_id => array( get_page( $cfg_core->reg_page_id ), '[ESPRESSO_CHECKOUT ' ),
-					$cfg_core->txn_page_id => array( get_page( $cfg_core->txn_page_id ), '[ESPRESSO_TXN_PAGE' ),
-					$cfg_core->thank_you_page_id => array( get_page( $cfg_core->thank_you_page_id ), '[ESPRESSO_THANK_YOU' ),
-					$cfg_core->cancel_page_id => array( get_page( $cfg_core->cancel_page_id ), '[ESPRESSO_CANCELLED' )
-				);
+		$critical_pages = array(
+			array( 
+				'id' =>'reg_page_id',
+				'name' => __( 'Registration Checkout', 'event_espresso' ),
+				'page' => NULL,
+				'code' => 'ESPRESSO_CHECKOUT'
+			),
+			array( 
+				'id' => 'txn_page_id',
+				'name' => __( 'Transactions', 'event_espresso' ),
+				'page' => NULL,
+				'code' => 'ESPRESSO_TXN_PAGE'
+			),
+			array( 
+				'id' => 'thank_you_page_id',
+				'name' => __( 'Thank You', 'event_espresso' ),
+				'page' => NULL,
+				'code' => 'ESPRESSO_THANK_YOU'
+			),
+			array( 
+				'id' => 'cancel_page_id',
+				'name' => __( 'Registration Cancelled', 'event_espresso' ),
+				'page' => NULL,
+				'code' => 'ESPRESSO_CANCELLED'
+			),
+		);
 
-			foreach ( $critical_pages as $critical_page ) {
-				if ( ! isset($critical_page[0]->post_status) || $critical_page[0]->post_status != 'publish' || strpos( $critical_page[0]->post_content, $critical_page[1] ) === FALSE ) {	
-					$critical_page_problem = TRUE;
+		foreach ( $critical_pages as $critical ) {
+			// attempt to find post by ID
+			if ( $critical['page'] != get_post( EE_Registry::instance()->CFG->core->$critical['id'] )) {
+				// attempt to find post by title
+				if ( $critical['page'] != get_page_by_title( $critical['name'] )) {
+					$critical['page'] = EEH_Activation::create_critical_page( $critical );
 				}
 			}
-				
+			$critical_page_problem =  ! isset( $critical['page']->post_status) || $critical['page']->post_status != 'publish' || strpos( $critical['page']->post_content, $critical['code'] ) === FALSE ? TRUE : $critical_page_problem;
 		}
 
 		if ( $critical_page_problem ) {
-			require_once( EE_CORE . 'admin/admin_helper.php' );
-			add_action( 'admin_notices', 'espresso_page_problems' );
+			$msg = sprintf(
+				__('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso' ),
+				'<a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>'
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
+	}
 
+
+
+
+
+	/**
+	 * 	This function generates a post for critical espresso pages
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function create_critical_page( $page ) {
+
+		$post_args = array(
+			'post_title' => $page['name'],
+			'post_status' => 'publish',
+			'post_type' => 'page',
+			'comment_status' => 'closed',
+			'post_content' => '[' . $page['code'] . ']'
+		);
+		if ( $post_id = wp_insert_post( $post_args )) {
+			EE_Registry::instance()->CFG->core->$page['id'] = $post_id;
+			return get_post( $post_id );
+		}
+		return NULL;
+
+	}
+
+
+
+	//Function to show an admin message if the main pages are not setup.
+	function espresso_updated_pages() {
+		echo '<div class="updated fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. As long as all of the Page Status and Shortcode notices below are OK, then this meassage will dissappear. Please attend to any issues that require attention.', 'event_espresso') . '</strong></p></div>';
+	}
+
+	function espresso_page_problems() {
+		if ( isset( $_GET['page'] ) && $_GET['page'] != 'espresso_general_settings' ) {
+			echo '<div class="updated"><p><strong>' . __('A potential issue has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
+		}
 	}
 
 
