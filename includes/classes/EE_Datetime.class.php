@@ -599,7 +599,7 @@ class EE_Datetime extends EE_Base_Class{
 		} else if ( date('m', $this->_DTT_EVT_start) == date('m', $this->_DTT_EVT_end ) && date('d', $this->_DTT_EVT_start) != date('d', $this->_DTT_EVT_end) ) {
 			$displaydate = $this->start_date('M j\, g:i a') . ' - ' . $this->end_date('M j\, g:i a Y');
 		} else {
-			$displaydate = $this->start_date('F j\, Y') . ' @ ' . $this->start_date('g:i a') . ' + ' . $this->end_date('g:i a');
+			$displaydate = $this->start_date('F j\, Y') . ' @ ' . $this->start_date('g:i a') . ' - ' . $this->end_date('g:i a');
 		}
 		return $displaydate;
 	}
