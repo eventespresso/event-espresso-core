@@ -1,4 +1,10 @@
+.espresso-help-tab-lnk.help_img {
+    top: 0px;
+}
+
+
 .event-tickets-datetimes-title {
+    display: inline-block;
     font-size: 1.35em;
     margin: 10px 0 10px 0;
     padding: 0;
@@ -92,6 +98,7 @@
 
 
 .datetime-tickets-heading, .tickets-heading {
+    display: inline-block;
     font-size: 1.2em;
     margin-bottom: 5px;
 }
