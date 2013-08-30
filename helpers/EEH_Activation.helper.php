@@ -1062,7 +1062,7 @@ class EEH_Activation {
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc, PRC_is_active, PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_row, PRC_parent ) VALUES
-							(1, 1, '10.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, 1, NULL, 0, 0, 1, 0),
+							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, 1, NULL, 0, 0, 1, 0),
 							(2, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 1, 1, NULL, 10, 0, 2, 0),
 							(3, 4, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, 1, NULL, 20, 0, 3, 0),
 							(4, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, 1, NULL, 30, 0, 4, 0),
