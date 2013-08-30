@@ -118,7 +118,26 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * @return EE_Ticket[]
 	 */
 	public function get_all_default_tickets() {
-		return $this->get_all( array( array('TKT_is_default' => 1)) );
+		$tickets = $this->get_all( array( array('TKT_is_default' => 1)) );
+
+		//we need to set the start date and end date to today's date and the start of the default dtt
+		return $this->_set_default_dates( $tickets );
+	}
+
+
+
+	/**
+	 * sets up relevant start and end date for EE_Ticket (s)
+	 * @param EE_Ticket[] $tickets
+	 * @return EE_Ticket[]
+	 */
+	private function _set_default_dates( $tickets ) {
+		foreach ( $tickets as $ticket ) {
+			$ticket->set('TKT_start_date', time('timestamp') );
+			$ticket->set('TKT_end_date', time('timestamp') + (60 * 60 * 24 * 30 ) );
+		}
+
+		return $tickets;
 	}
 
 
