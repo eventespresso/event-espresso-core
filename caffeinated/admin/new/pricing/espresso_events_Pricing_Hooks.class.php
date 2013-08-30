@@ -352,7 +352,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'PRC_desc' => $default ? '' : $price->get('PRC_desc')
 			);
 
-		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_row.template.php';
+		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_price_row.template.php';
 		return espresso_display_template( $template, $template_args, TRUE );
 	}
 
