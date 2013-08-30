@@ -281,9 +281,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 	private function _get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default = FALSE ) {
-		$prices = $ticket->get_many_related('Price');
-		if ( empty($prices) )
-			$prices = $this->EE->load_model('Price')->get_all(array( array('PRC_is_default' => 1 ) ) );
+		$prices = !empty($ticket) ? $ticket->get_many_related('Price') : $this->EE->load_model('Price')->get_all( array( array('PRC_is_default' => 1 ) ) );
+		
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 			'TKT_name' => $default ? '' : $ticket->get('TKT_name'),
