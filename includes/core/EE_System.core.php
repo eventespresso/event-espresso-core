@@ -69,12 +69,9 @@ final class EE_System {
 		$this->_register_custom_autoloaders();
 		$this->_define_table_names();
 		$this->EE->load_core( 'Maintenance_Mode' );
+		$this->check_espresso_version();
 
-		if ( $activation ) {
-			$this->_register_custom_autoloaders();
-			$this->check_espresso_version();
-		} else  {
-			// hookpoints
+		if ( ! $activation ) {
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 			add_action( 'init', array( $this, 'init' ), 3 );
 			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
@@ -183,29 +180,6 @@ final class EE_System {
 	}
 
 
-	/**
-	 * 		get_registry
-	 *
-	 * 		@access public
-	 * 		@return object
-	 */
-	public function get_registry() {
-		return $this->EE;
-	}
-
-
-
-	/**
-	 * 		plugins_loaded
-	 *
-	 * 		@access 	public
-	 * 		@return 		void
-	 */
-	public function plugins_loaded() {
-
-	}
-
-
 
 
 	/**
@@ -241,6 +215,19 @@ final class EE_System {
 //			EEH_Activation::create_database_tables();
 //			LOAD AND INITIATE UPGRADE PROCESS
 		}	
+
+	}
+
+
+
+
+	/**
+	 * 		plugins_loaded
+	 *
+	 * 		@access 	public
+	 * 		@return 		void
+	 */
+	public function plugins_loaded() {
 
 	}
 
@@ -345,12 +332,7 @@ final class EE_System {
 	public function wp_enqueue_scripts() {
 		// unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
 		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE )) {
-
-			// js for error handling
-			wp_register_script('ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, false);
-			wp_localize_script('ee_error_js','ee_settings',array('wp_debug'=>WP_DEBUG));
-			wp_enqueue_script('ee_error_js');
-			
+		
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
 				// load jQuery Validate script from CDN with local fallback
@@ -375,5 +357,7 @@ final class EE_System {
 
 
 }
+EE_System::instance();
+
 // End of file EE_System.core.php
 // Location: /core/EE_System.core.php
