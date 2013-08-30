@@ -397,7 +397,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//while we're in the loop let's setup the option spans used by js
 			$spanargs = array(
 				'PRT_ID' => $price_type->ID(),
-				'PRT_operator' => $price_type->is_discount ? '-' : '+',
+				'PRT_operator' => $price_type->is_discount() ? '-' : '+',
 				'PRT_is_percent' => $price_type->get('PRT_is_percent') ? 1 : 0
 				);
 			$price_option_spans .= espresso_display_template($price_option_span_template, $spanargs, TRUE );
