@@ -344,7 +344,7 @@ class EE_Ticket extends EE_Base_Class{
 
 	
 	/**
-	 * This returns the totla tickets sold depending on the given parameters.
+	 * This returns the total tickets sold depending on the given parameters.
 	 * @param  string $what   Can be one of two options: 'ticket', 'datetime'.
 	 *                        'ticket' = total ticket sales for all datetimes this ticket is related to
 	 *                        'datetime' = total ticket sales for a specified datetime (required $dtt_id) 
@@ -353,6 +353,7 @@ class EE_Ticket extends EE_Base_Class{
 	 * @return mixed (array|int)    	  how many tickets have sold
 	 */
 	public function tickets_sold( $what = 'ticket', $dtt_id = NULL ) {
+		$total = 0;
 		$tickets_sold = $this->_all_tickets_sold();
 		switch ( $what ) {
 			case 'ticket' :
