@@ -217,7 +217,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_dtt_display_row( $dttrow, $dtt, $default = FALSE ) {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
-			'dttname' => $default ? '' : $dtt->get_dtt_display_name(),
+			'dtt_name' => $default ? '' : $dtt->get_dtt_display_name(),
 			'dttsold' => $default ? '0' : $dtt->get('DTT_sold')
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_display_row.template.php';
