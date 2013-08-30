@@ -386,7 +386,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	private function _get_price_modifier_template( $tktrow, $prcrow, $price, $default ) {
 		$select_name = $default ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]' : 'edit_prices[' . $tktrow . '][' . $prcrow . '][PRT_ID]';
-		$price_types = $this->EE->load_model('Price_Type')->get_all(array( array('PBT_ID' => '2', 'PBT_ID' => '3' ) ) );
+		$price_types = $this->EE->load_model('Price_Type')->get_all(array( array('OR' => array('PBT_ID' => '2', 'PBT_ID*' => '3' ) ) ) );
 		$price_option_span_template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_option_span.template.php';
 		$all_price_types = $default ? array(array('id' => 0, 'text' => __('Select Modifier', 'event_espresso')) ) : array();
 		$selected_price_type_id = $default ? 0 : $price->type();
