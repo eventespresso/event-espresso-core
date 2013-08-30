@@ -202,19 +202,20 @@ jQuery(document).ready(function($) {
 		 * gets the total row count jQuery object for the given context
 		 * @return {jQuery obj}     jQuery obj that contains the row count
 		 */
-		getrowcountobject: function() {
+		getrowcountobject: function( fordecrease ) {
 			var rowcountobj;
+
+			fordecrease = typeof(fordecrease) === 'undefined' ? false : true;
 			
 			switch ( this.context ) {
 				case 'datetime' :
-					rowcountobj = $('#datetime-total-rows');
+					rowcountobj = fordecrease ?  $('.event-datetime-row') : $('#datetime-total-rows');
 					break;
 				case 'ticket' :
-					rowcountobj = $('#ticket-total-rows');
+					rowcountobj = fordecrease ? $('.ticket-row') : $('#ticket-total-rows');
 					break;
 				case 'price' :
-					this.ticketRow = this.itemdata.ticketRow;
-					rowcountobj = $('#price-total-rows-' + this.ticketRow);
+					rowcountobj = fordecrease ? $('.ee-active-price',  '#edit-ticketrow-' + this.ticketRow ) : $('#price-total-rows-' + this.ticketRow);
 					break;
 			}
 
@@ -263,12 +264,12 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This decrements the row count of a given context by one and returns the new row count
-		 * note we do NOT UPDATE the value of the rowcountobject because otherwise we have to update any other existing rows.  We want to make sure we ALWAYS increment row counts.
+		 * note we do NOT UPDATE the value of the rowcountobject because otherwise we have to update any other existing rows.  We want to make sure we ALWAYS increment row counts during the current session.
 		 * @return {int}            the new row count
 		 */
 		decreaserowcount: function() {
-			var countobj = this.getrowcountobject(this.context);
-			var newcount = countobj.val();
+			var countobj = this.getrowcountobject(true);
+			var newcount = countobj.length;
 			var existingcount = newcount;
 			newcount--;
 			switch ( this.context ) {
@@ -278,6 +279,10 @@ jQuery(document).ready(function($) {
 
 				case 'ticket' :
 					this.ticketRow = newcount;
+					break;
+
+				case 'price' :
+					this.priceRow = newcount;
 					break;
 			}
 			return newcount;
@@ -872,7 +877,8 @@ jQuery(document).ready(function($) {
 		 * @return {obj}     This object (allows for chaining)
 		 */
 		trash: function(row) {
-			this.decreaserowcount(row);
+
+			var previousrow = this.decreaserowcount(row);
 
 			switch ( this.context ) {
 				case 'datetime' :
@@ -897,11 +903,14 @@ jQuery(document).ready(function($) {
 					break;
 
 				case 'price' :
+					//show create button for previous row
+					var last_row = $('.ee-active-price', '#edit-ticketrow-' + this.ticketRow ).last();
+					if ( last_row[0] == $('#price-row-' + this.ticketRow + '-' + row )[0] )
+						$('#price-row-' + this.ticketRow + '-' + previousrow ).find('.ee-create-button').show();
 					$('#price-row-' + this.ticketRow + '-' + row ).remove();
 					$('#extra-price-row-' + this.ticketRow + '-' + row).remove();
-					this.priceRow = row;
 					//recalculate totals and apply.
-					tktHelper.applyTotalPrice();
+					this.applyTotalPrice();
 			}
 			
 			return this;
@@ -987,7 +996,7 @@ jQuery(document).ready(function($) {
 			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice();
 			newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
 			newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
-			newTKTrow.find('.ticket-display-row-TKT_price').text('$' + price_amount);
+			newTKTrow.find('.ticket-display-row-TKT_total_amount').text('$' + price_amount);
 
 			//now let's setup the display row!
 			newTKTrow.find('.ticket-display-row-TKT_name').text(newTKTrow.find('.edit-ticket-TKT_name').val());
@@ -1290,7 +1299,7 @@ jQuery(document).ready(function($) {
 			var price_amount = this.getTotalPrice();
 			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount);
 			TKTrow.find('.ticket-price-amount').text('$' + price_amount);
-			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
+			$('.ticket-display-row-TKT_total_amount',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 		},
 
 
