@@ -102,12 +102,12 @@ abstract class EE_Model_Field_Base{
 	
 	/**
 	 * When instantiating a model object from DB results, this function is called before setting each field.
-	 * We may want to serialize the value, etc. By default, we do nothing.
+	 * We may want to serialize the value, etc. By default, we return the value using prepare_for_set() method as that is the one child classes will most often define.
 	 * @param mixed $value_found_in_db_for_model_object
 	 * @return mixed
 	 */
 	function prepare_for_set_from_db($value_found_in_db_for_model_object){
-		return $value_found_in_db_for_model_object;
+		return $this->prepare_for_set($value_found_in_db_for_model_object);
 	}
 	
 	/**
