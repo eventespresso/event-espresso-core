@@ -390,8 +390,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$selected_price_type_id = $default ? 0 : $price->type();
 		//setup pricetypes for selector
 		foreach ( $price_types as $price_type ) {
-			$all_price_types[]['id'] = $price_type->ID();
-			$all_price_types[]['text'] = $price_type->get('PRT_name');
+			$all_price_types[] = array(
+				'id' => $price_type->ID(),
+				'text' => $price_type->get('PRT_name'),
+				);
 			$price_option_spans = '';
 
 			//while we're in the loop let's setup the option spans used by js
