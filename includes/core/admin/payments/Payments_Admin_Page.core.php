@@ -152,19 +152,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$payment_settings = get_user_meta( $current_user->ID, 'payment_settings', TRUE );
 		}
 
-		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
-		$default_gateways = apply_filters( 'FHEE_default_gateways', $default_gateways );
-
+	
 		foreach ( $payment_settings as $gateway => $settings ) {
-			if ( in_array( $gateway, $default_gateways) ) {
-				$ht_content = isset( $gateway_instances[$gateway] ) ? $gateway_instances[$gateway]->get_help_tab_content() : FALSE;
-				if ( $ht_content ) {
-					$ht_ref = 'ee_' . $gateway . '_help';
-					$help_tabs[$ht_ref] = array(
-						'title' => $settings['display_name'] . __(' Help', 'event_espresso'),
-						'content' => $ht_content
-						);					
-				}
+			$ht_content = isset( $gateway_instances[$gateway] ) ? $gateway_instances[$gateway]->get_help_tab_content() : FALSE;
+			if ( $ht_content ) {
+				$ht_ref = 'ee_' . $gateway . '_help';
+				$help_tabs[$ht_ref] = array(
+					'title' => $settings['display_name'] . __(' Help', 'event_espresso'),
+					'content' => $ht_content
+					);					
 			}
 		}
 
@@ -203,38 +199,35 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//printr( $gateway_data, '$gateway_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$selected_gateway_name = null;
 		$gateways = array();
-		$default_gateways = array( 'Bank', 'Check', 'Invoice', 'Paypal_Standard' );
-		$default_gateways = apply_filters( 'FHEE_default_gateways', $default_gateways );
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $payment_settings as $gateway => $settings ) {
-
-			if (  in_array( $gateway, $default_gateways )){				
-				if(	isset($this->_req_data['activate_' . $gateway]) ||
-					isset($this->_req_data['deactivate_' . $gateway]) ||
-					isset($this->_req_data['update_' . $gateway])){
-					$selected_gateway_name =  $gateway;
-				}
-				
-				// now add or remove gateways from list
-				if ( isset( $this->_req_data['activate_' . $gateway] )) {
-					$gateway_data['active_gateways'][$gateway] = array();
-					//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
-					$EEM_Gateways->set_active($gateway);
-				}
-				if ( isset( $this->_req_data['deactivate_' . $gateway] )) {
-					unset($gateway_data['active_gateways'][$gateway]);
-					//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
-					$EEM_Gateways->unset_active($gateway);
-				}		
-
-				$gateways[$gateway] = array(
-					'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
-					'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
-					'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
-					'title' => __('Modify this Gateway', 'event_espresso'),
-					'slug' => $gateway
-					);
+		
+			if(	isset($this->_req_data['activate_' . $gateway]) ||
+				isset($this->_req_data['deactivate_' . $gateway]) ||
+				isset($this->_req_data['update_' . $gateway])){
+				$selected_gateway_name =  $gateway;
 			}
+
+			// now add or remove gateways from list
+			if ( isset( $this->_req_data['activate_' . $gateway] )) {
+				$gateway_data['active_gateways'][$gateway] = array();
+				//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
+				$EEM_Gateways->set_active($gateway);
+			}
+			if ( isset( $this->_req_data['deactivate_' . $gateway] )) {
+				unset($gateway_data['active_gateways'][$gateway]);
+				//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
+				$EEM_Gateways->unset_active($gateway);
+			}		
+
+			$gateways[$gateway] = array(
+				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
+				'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
+				'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
+				'title' => __('Modify this Gateway', 'event_espresso'),
+				'slug' => $gateway
+				);
+			
 			
 		}
 		//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
