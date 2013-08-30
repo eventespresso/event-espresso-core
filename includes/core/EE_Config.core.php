@@ -72,6 +72,11 @@ final class EE_Config {
 	 */
 	public $currency;
 
+	/**
+	 *
+	 * @var EE_Organization_Config
+	 */
+	public $organization;
 
 	
 
@@ -588,10 +593,54 @@ final class EE_Config {
 
 
 }
+
+/**
+ * Base class used for config classes. These classes should generally not have
+ * magic functions in use, except we'll allow them to magically set and get stuff...
+ * basically, they should just be well-defined stdClasses
+ */
+class EE_Config_Base{
+	/**
+	 *		@ override magic methods
+	 *		@ return void
+	 */	
+//	public function __get($a) { return FALSE; }
+//	public function __set($a,$b) { return FALSE; }
+	public function __isset($a) { return FALSE; }
+	public function __unset($a) { return FALSE; }
+	public function __clone() { return FALSE; }
+	public function __wakeup() { return FALSE; }	
+	public function __destruct() { return FALSE; }		
+}
+
+/**
+ * Config class for storing info on the Organization
+ */
+class EE_Organization_Config extends EE_Config_Base{
+	 /** @var $name eg EE4.1*/ 
+	var $name;
+      /** @var $address_1 eg 123 Onna Road*/ 
+	var $address_1;
+      /** @var $address_2 eg PO Box 123*/ 
+	var $address_2;
+      /** @var $city eg Inna City*/ 
+	var $city;
+      /** @var $STA_ID eg 4*/ 
+	var $STA_ID;
+      /** @var $CNT_ISO eg US*/ 
+	var $CNT_ISO;
+      /** @var $zip eg 12345*/ 
+	var $zip;
+      /** @var $email eg michael@eventespresso.com*/ 
+	var $email;
+      /** @var $logo_url eg */ 
+	var $logo_url;
+}
+
 /**
  * Class for defining what's in the EE_Config relating to currency
  */
-class EE_Currency_Config{
+class EE_Currency_Config extends EE_Config_Base{
 	 
 	/**
 	 * @var $code string
