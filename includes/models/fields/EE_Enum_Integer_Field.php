@@ -32,7 +32,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field{
 				return $this->get_default_value();
 			}
 		}
-		return $value_inputted_for_field_on_model_object;
+		return intval($value_inputted_for_field_on_model_object);
 	}
 	
 	/**
