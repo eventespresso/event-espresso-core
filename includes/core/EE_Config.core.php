@@ -88,10 +88,10 @@ final class EE_Config {
 	 *		@access public
 	 *		@return class instance
 	 */
-	public static function instance() {
+	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Config )) {
-			self::$_instance = new self();
+			self::$_instance = new self( $activation );
 		}
 		return self::$_instance;
 	}
@@ -104,11 +104,13 @@ final class EE_Config {
 	 *  @access 	private
 	 *  @return 	void
 	 */
-	private function __construct() {
+	private function __construct( $activation ) {
 		$this->current_blog_id = get_current_blog_id();
 		$this->EE = EE_Registry::instance();
 		// get EE site settings
-		$this->_load_config();
+		if ( ! $activation ) {
+			$this->_load_config();
+		}
 		$this->_register_shortcodes_and_modules();
 		//add_action( 'init', array( $this, 'init' ), 5 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 3 );
@@ -138,9 +140,9 @@ final class EE_Config {
 	 * 		@return void
 	 */
 	private function _load_config() {
-		
-		$this->EE->CFG = $this->_get_espresso_config();
 
+		$this->EE->CFG = $this->_get_espresso_config();
+		
 		// do settings for this blog exist ?
 		if ( empty( $this->EE->CFG )) {
 			$this->EE->load_helper( 'Activation' );
