@@ -104,6 +104,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	public function pricing_metabox() {
 		$existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = array();
+		$has_related_tickets = FALSE;
 
 		$evtobj = $this->_adminpage_obj->get_cpt_model_obj();
 
@@ -135,62 +136,61 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$DTM = $this->EE->load_model('Datetime', array($timezone) );
 		$times = $DTM->get_all_event_dates( $event_id );
 
-		//do we get related tickets (i.e. is this a brand new event?)
-		if ( $times[0]->get('DTT_ID') !== 0 ) {
-			$main_template_args['total_dtt_rows'] = count($times);
-			foreach ( $times as $time ) {
-				$dttid = $time->get('DTT_ID');
-				$existing_datetime_ids[] = $dttid;
+		
+		
+		$main_template_args['total_dtt_rows'] = count($times);
+		foreach ( $times as $time ) {
+			$dttid = $time->get('DTT_ID');
+			$existing_datetime_ids[] = $dttid;
 
-				//tickets attached
-				$related_tickets = $time->get_many_related('Ticket');
+			//tickets attached
+			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket') : array();
 
-				//we can't actually setup rows in this loop yet cause we don't know all the unique tickets for this event yet (tickets are linked through all datetimes). So we're going to temporarily cache some of that information.
+			//if there are no related tickets this is likely a new event so we need to generate the default tickets
+			if ( empty ( $related_tickets ) ) {
+				$has_related_tickets = TRUE;
+				$related_tickets = $this->EE->load_model('Ticket')->get_all_default_tickets();
+			}
 
-				//loop through and setup the ticket rows
-				foreach ( $related_tickets as $ticket ) {
-					$tktid = $ticket->get('TKT_ID');
-					//we only want unique tickets in our final display!!
-					if ( !in_array( $tktid, $existing_ticket_ids ) ) {
-						$existing_ticket_ids[] = $tktid;
-						$all_tickets[] = $ticket;
-					}
-					
+
+			//we can't actually setup rows in this loop yet cause we don't know all the unique tickets for this event yet (tickets are linked through all datetimes). So we're going to temporarily cache some of that information.
+
+			//loop through and setup the ticket rows
+			foreach ( $related_tickets as $ticket ) {
+				$tktid = $ticket->get('TKT_ID');
+				//we only want unique tickets in our final display!!
+				if ( !in_array( $tktid, $existing_ticket_ids ) ) {
+					$existing_ticket_ids[] = $tktid;
+					$all_tickets[] = $ticket;
+				}
+				
+				
+				if ( ! $has_related_tickets ) { 
 					//temporary cache of this ticket info for this datetime for later processing of datetime rows.
 					$datetime_tickets[$dttid][] = $tktid;
 
 					//temporary cache of this datetime info for this ticket for later processing of ticket rows.
 					if ( ! in_array( $dtt_id, $ticket_datetimes[$tktid] ) )
 						$ticket_datetimes[$tktid][] = $dtt_id;
-
 				}
+
 			}
+		}
 
-			$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
+		$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
 
-			//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
-			$dttrow = 1;
-			foreach ( $times as $time ) {
-				$main_template_args['datetime_rows'] .= $this->_get_datetime_row( $dttrow, $time, $datetime_tickets, $all_tickets );
-				$dttrow++;
-			}
+		//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
+		$dttrow = 1;
+		foreach ( $times as $time ) {
+			$main_template_args['datetime_rows'] .= $this->_get_datetime_row( $dttrow, $time, $datetime_tickets, $all_tickets );
+			$dttrow++;
+		}
 
-			//then loop through all tickets for the ticket rows.
-			$tktrow = 1;
-			foreach ( $all_tickets as $ticket ) {
-				$main_template_args['ticket_rows'] .= $this->_get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $times );
-				$tktrow++;
-			}
-		} else {
-
-			//get default tickets that are use on initial creation.
-			$all_tickets = $this->EE->load_model('Ticket')->get_all_default_tickets();
-			$main_template_args['datetime_rows'] .= $this->_get_datetime_row( 1, $times[0], $datetime_tickets, $all_tickets, TRUE);
-
-			$tktrow = 1;
-			foreach ( $all_tickets as $ticket ) {
-				$main_template_args['ticket_rows'] .= $this->_get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $times );
-			}
+		//then loop through all tickets for the ticket rows.
+		$tktrow = 1;
+		foreach ( $all_tickets as $ticket ) {
+			$main_template_args['ticket_rows'] .= $this->_get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $times );
+			$tktrow++;
 		}
 
 		$main_template_args['ticket_js_structure'] = $this->_get_ticket_js_structure($times, $all_tickets);
