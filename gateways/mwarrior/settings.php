@@ -1,10 +1,10 @@
 <?php
 
 function event_espresso_mwarrior_payment_settings() {
-	global $caffeinated, $notices, $espresso_wp_user;
+	global $caffeinated, $notices, $this->EE->CFG->wp_user;
 	if ($caffeinated != true)
 		return;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	if (isset($_POST['update_mwarrior'])
 					&& check_admin_referer('espresso_form_check', 'add_mwarrior_settings')) {
@@ -16,7 +16,7 @@ function event_espresso_mwarrior_payment_settings() {
 		$payment_settings['mwarrior']['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
 		$payment_settings['mwarrior']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 		$payment_settings['mwarrior']['button_url'] = $_POST['button_url'];
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 			$notices['updates'][] = __('Merchant Warrior Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Merchant Warrior Settings were not saved! ', 'event_espresso');
@@ -38,8 +38,8 @@ function event_espresso_mwarrior_payment_settings() {
 		$payment_settings['mwarrior']['use_sandbox'] = '';
 		$payment_settings['mwarrior']['bypass_payment_page'] = false;
 		$payment_settings['mwarrior']['button_url'] = $button_url;
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
+		if (add_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings, '', 'no') == false) {
+			update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings);
 		}
 		// insert a new field
 		global $wpdb;
@@ -70,7 +70,7 @@ function event_espresso_mwarrior_payment_settings() {
 					<?php
 					if (!empty($_REQUEST['activate_mwarrior'])) {
 						$payment_settings['mwarrior']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Merchant Warrior Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate Merchant Warrior', 'event_espresso');
@@ -79,7 +79,7 @@ function event_espresso_mwarrior_payment_settings() {
 
 					if (!empty($_REQUEST['deactivate_mwarrior'])) {
 						$payment_settings['mwarrior']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Merchant Warrior Payments De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate Merchant Warrior', 'event_espresso');
@@ -106,8 +106,8 @@ function event_espresso_mwarrior_payment_settings() {
 
 //Mwarrior Settings Form
 function event_espresso_display_mwarrior_settings() {
-	global $espresso_wp_user;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_mwarrior=true'));
 	?>

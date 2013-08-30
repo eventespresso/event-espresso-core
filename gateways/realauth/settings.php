@@ -1,12 +1,12 @@
 <?php
 
 function event_espresso_realauth_payment_settings() {
-	global $caffeinated, $notices, $espresso_wp_user;
+	global $caffeinated, $notices, $this->EE->CFG->wp_user;
 	if ($caffeinated != true) {
 		return;
 	}
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	//Update settings
 	if (isset($_POST['update_realauth'])
@@ -17,7 +17,7 @@ function event_espresso_realauth_payment_settings() {
 		$payment_settings['realauth']['auto_settle'] = $_POST['auto_settle'];
 		$payment_settings['realauth']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 			$notices['updates'][] = __('realauth Payment Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('realauth Payment Settings were not saved! ', 'event_espresso');
@@ -31,8 +31,8 @@ function event_espresso_realauth_payment_settings() {
 		$payment_settings['realauth']['currency_format'] = 'USD';
 		$payment_settings['realauth']['auto_settle'] = true;
 		$payment_settings['realauth']['bypass_payment_page'] = false;
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
+		if (add_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings, '', 'no') == false) {
+			update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings);
 		}
 	}
 
@@ -59,7 +59,7 @@ function event_espresso_realauth_payment_settings() {
 					<?php
 					if (!empty($_REQUEST['activate_realauth'])) {
 						$payment_settings['realauth']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Realauth Payments Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate Realauth Payments', 'event_espresso');
@@ -68,7 +68,7 @@ function event_espresso_realauth_payment_settings() {
 
 					if (!empty($_REQUEST['deactivate_realauth'])) {
 						$payment_settings['realauth']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Realauth Payments De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate Realauth Payments', 'event_espresso');
@@ -99,9 +99,9 @@ function event_espresso_realauth_payment_settings() {
 
 //realauth Settings Form
 function event_espresso_display_realauth_settings() {
-	global $org_options, $espresso_wp_user;
+	global $org_options, $this->EE->CFG->wp_user;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),

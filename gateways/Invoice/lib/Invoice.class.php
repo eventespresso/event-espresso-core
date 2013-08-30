@@ -15,8 +15,7 @@ class Invoice {
 		if ( $this->registration = $REG->get_registration_for_reg_url_link( $url_link)) {
 			$this->transaction = $this->registration->transaction();
 			
-			global $espresso_wp_user;
-			$payment_settings = get_user_meta($espresso_wp_user, 'payment_settings', TRUE);
+			$payment_settings = get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
 			$this->invoice_settings = $payment_settings['Invoice'];
 		} else {
 			echo "error message";

@@ -6,8 +6,8 @@ echo '<!--Event Espresso Merchant Warrior Gateway Version ' . $mwarrior_gateway_
 $mwarrior = new Mwarrior();
 // Log the IPN results
 $mwarrior->ipnLog = TRUE;
-global $espresso_wp_user;
-$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+
+$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 $mwarrior_settings = $payment_settings['mwarrior'];
 // Set merchant info
 $mwarrior->setMerchantInfo($mwarrior_settings['mwarrior_id'], $mwarrior_settings['mwarrior_apikey'], $mwarrior_settings['mwarrior_passphrase']);

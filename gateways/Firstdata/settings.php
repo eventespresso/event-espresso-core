@@ -1,18 +1,18 @@
 <?php
 
 function event_espresso_firstdata_payment_settings() {
-	global $caffeinated, $notices, $espresso_wp_user;
+	global $caffeinated, $notices, $this->EE->CFG->wp_user;
 	if ($caffeinated != true)
 		return;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	if (isset($_POST['update_firstdata'])
 					&& check_admin_referer('espresso_form_check', 'add_firstdata_settings')) {
 		$payment_settings['firstdata']['firstdata_store_id'] = $_POST['firstdata_store_id'];
 		$payment_settings['firstdata']['use_sandbox'] = empty($_POST['use_sandbox']) ? '' : $_POST['use_sandbox'];
 		$payment_settings['firstdata']['firstdata_credit_cards'] = empty($_POST['firstdata_credit_cards']) ? '' : implode(",", $_POST['firstdata_credit_cards']);
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 			$notices['updates'][] = __('Firstdata Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Firstdata Settings were not saved! ', 'event_espresso');
@@ -23,8 +23,8 @@ function event_espresso_firstdata_payment_settings() {
 		$payment_settings['firstdata']['firstdata_store_id'] = '';
 		$payment_settings['firstdata']['use_sandbox'] = '';
 		$payment_settings['firstdata']['firstdata_credit_cards'] = '';
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
+		if (add_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings, '', 'no') == false) {
+			update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings);
 		}
 	}
 	//Open or close the postbox div
@@ -48,7 +48,7 @@ function event_espresso_firstdata_payment_settings() {
 					<?php
 					if (!empty($_REQUEST['activate_firstdata'])) {
 						$payment_settings['firstdata']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('First Data Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate First Data', 'event_espresso');
@@ -57,7 +57,7 @@ function event_espresso_firstdata_payment_settings() {
 
 					if (!empty($_REQUEST['deactivate_firstdata'])) {
 						$payment_settings['firstdata']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('First Data De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate First Data', 'event_espresso');
@@ -85,8 +85,8 @@ function event_espresso_firstdata_payment_settings() {
 
 //PayPal Settings Form
 function event_espresso_display_firstdata_settings() {
-	global $espresso_wp_user;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 	$file_location = EVENT_ESPRESSO_GATEWAY_DIR . "firstdata";
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri",0,strpos($uri,'&activate_firstdata=true'));

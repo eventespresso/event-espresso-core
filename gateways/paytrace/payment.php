@@ -1,6 +1,6 @@
 <?php
-global $espresso_wp_user;
-$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+
+$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 $paytrace_settings = $payment_settings['paytrace'];
 ?>
 <div class="event-display-boxes">

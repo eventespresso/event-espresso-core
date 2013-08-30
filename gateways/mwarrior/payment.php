@@ -4,8 +4,8 @@
 include_once ('Mwarrior.php');
 echo '<!-- Event Espresso Merchant Warrior Gateway Version ' . $mwarrior_gateway_version . '-->';
 $mwarrior = new Mwarrior(); // initiate an instance of the class
-global $org_options, $espresso_wp_user;
-$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+global $org_options, $this->EE->CFG->wp_user;
+$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 $mwarrior_settings = $payment_settings['mwarrior'];
 $mwarrior_id = empty($mwarrior_settings['mwarrior_id']) ? '' : $mwarrior_settings['mwarrior_id'];

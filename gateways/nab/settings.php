@@ -2,17 +2,17 @@
 
 function event_espresso_nab_settings() {
 
-	global $espresso_premium, $notices, $espresso_wp_user, $org_options;
+	global $espresso_premium, $notices, $this->EE->CFG->wp_user, $org_options;
 	if ($espresso_premium != true)
 		return;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	if (isset($_POST['update_nab'])) {
 		$payment_settings['nab']['nab_merchant_id'] = $_POST['nab_merchant_id'];
 		$payment_settings['nab']['nab_merchant_password'] = $_POST['nab_merchant_password'];
 		$payment_settings['nab']['nab_use_sandbox'] = isset($_POST['nab_use_sandbox']) ? 1 : 0;
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 			$notices['updates'][] = __('NAB Transact Direct Post Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('NAB Transact Direct Post Settings were not saved! ', 'event_espresso');
@@ -24,8 +24,8 @@ function event_espresso_nab_settings() {
 		$payment_settings['nab']['nab_merchant_id'] = '';
 		$payment_settings['nab']['nab_merchant_password'] = '';
 		$payment_settings['nab']['nab_use_sandbox'] = 0;
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
+		if (add_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings, '', 'no') == false) {
+			update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings);
 		}
 	}
 	//Open or close the postbox div
@@ -49,7 +49,7 @@ function event_espresso_nab_settings() {
 					<?php
 					if (!empty($_REQUEST['activate_nab'])) {
 						$payment_settings['nab']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('NAB Transact Direct Post Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate NAB Transact Direct Post', 'event_espresso');
@@ -58,7 +58,7 @@ function event_espresso_nab_settings() {
 
 					if (!empty($_REQUEST['deactivate_nab'])) {
 						$payment_settings['nab']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('NAB Transact Direct Post De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate NAB Transact Direct Post', 'event_espresso');
@@ -85,8 +85,8 @@ function event_espresso_nab_settings() {
 
 //nab Settings Form
 function event_espresso_display_nab_settings() {
-	global $espresso_wp_user;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_nab=true'));
 	?>

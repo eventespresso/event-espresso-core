@@ -1,11 +1,11 @@
 <?php
 
 function event_espresso_quickpay_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user, $org_options;
+	global $espresso_premium, $notices, $this->EE->CFG->wp_user, $org_options;
 	if ($espresso_premium != true)
 		return;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	if (isset($_POST['update_quickpay']) && check_admin_referer('espresso_form_check', 'add_quickpay_settings')) {
 		$payment_settings['quickpay']['quickpay_merchantid'] = $_POST['quickpay_merchantid'];
@@ -14,7 +14,7 @@ function event_espresso_quickpay_payment_settings() {
 		$payment_settings['quickpay']['quickpay_autocapture'] = $_POST['quickpay_autocapture'];
 		$payment_settings['quickpay']['quickpay_currency'] = $_POST['quickpay_currency'];
 		$payment_settings['quickpay']['use_sandbox'] = (empty($_POST['use_sandbox'])) ? '0' : $_POST['use_sandbox'];
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 			$notices['updates'][] = __('Quickpay Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Quickpay Settings were not saved! ', 'event_espresso');
@@ -29,8 +29,8 @@ function event_espresso_quickpay_payment_settings() {
 		$payment_settings['quickpay']['quickpay_autocapture'] = '1';
 		$payment_settings['quickpay']['quickpay_currency'] = 'USD';
 		$payment_settings['quickpay']['use_sandbox'] = '0';
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
+		if (add_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings, '', 'no') == false) {
+			update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings);
 		}
 	}
 	//Open or close the postbox div
@@ -54,7 +54,7 @@ function event_espresso_quickpay_payment_settings() {
 					<?php
 					if (!empty($_REQUEST['activate_quickpay'])) {
 						$payment_settings['quickpay']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Quickpay Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate Quickpay', 'event_espresso');
@@ -63,7 +63,7 @@ function event_espresso_quickpay_payment_settings() {
 
 					if (!empty($_REQUEST['deactivate_quickpay'])) {
 						$payment_settings['quickpay']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Quickpay De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate Quickpay', 'event_espresso');
@@ -90,8 +90,8 @@ function event_espresso_quickpay_payment_settings() {
 
 //quickpay Settings Form
 function event_espresso_display_quickpay_settings() {
-	global $espresso_wp_user;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_quickpay=true'));
 	?>

@@ -43,8 +43,8 @@ class ClsPaytrace {
 	}
 
 	function do_transaction($amount, $discount, $line_item, $cc, $csc, $exp_month, $exp_year, $csc, $bname="", $baddress="", $bcity="", $bstate="", $bzip="", $email="") {
-		global $espresso_wp_user;
-		$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+		
+		$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 		$paytrace_settings = $payment_settings['paytrace'];
 
 		$UN = $paytrace_settings['paytrace_user_id'];

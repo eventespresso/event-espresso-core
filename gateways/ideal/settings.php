@@ -1,17 +1,17 @@
 <?php
 
 function event_espresso_ideal_payment_settings() {
-	global $espresso_premium, $notices, $espresso_wp_user;
+	global $espresso_premium, $notices, $this->EE->CFG->wp_user;
 	if ($espresso_premium != true)
 		return;
 
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 
 	if (isset($_POST['update_ideal']) && check_admin_referer('espresso_form_check', 'add_mollie_settings')) {
 		$payment_settings['ideal']['ideal_mollie_partner_id'] = $_POST['ideal_mollie_partner_id'];
 		$payment_settings['ideal']['ideal_mollie_use_sandbox'] = empty($_POST['ideal_mollie_use_sandbox']) ? '' : $_POST['ideal_mollie_use_sandbox'];
 
-		if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 			$notices['updates'][] = __('Ideal Mollie Settings Updated!', 'event_espresso');
 		} else {
 			$notices['errors'][] = __('Ideal Mollie Settings were not saved! ', 'event_espresso');
@@ -22,8 +22,8 @@ function event_espresso_ideal_payment_settings() {
 		$payment_settings['ideal']['active'] = false;
 		$payment_settings['ideal']['ideal_mollie_partner_id'] = '';
 		$payment_settings['ideal']['ideal_mollie_use_sandbox'] = '';
-		if (add_option('payment_data_' . $espresso_wp_user, $payment_settings, '', 'no') == false) {
-			update_option('payment_data_' . $espresso_wp_user, $payment_settings);
+		if (add_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings, '', 'no') == false) {
+			update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings);
 		}
 	}
 	//Open or close the postbox div
@@ -47,7 +47,7 @@ function event_espresso_ideal_payment_settings() {
 					<?php
 					if (!empty($_REQUEST['activate_ideal'])) {
 						$payment_settings['ideal']['active'] = true;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Ideal Mollie Activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to Activate Ideal Mollie', 'event_espresso');
@@ -56,7 +56,7 @@ function event_espresso_ideal_payment_settings() {
 
 					if (!empty($_REQUEST['deactivate_ideal'])) {
 						$payment_settings['ideal']['active'] = false;
-						if (update_option('payment_data_' . $espresso_wp_user, $payment_settings) == true) {
+						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
 							$notices['updates'][] = __('Ideal Mollie Payments De-activated', 'event_espresso');
 						} else {
 							$notices['errors'][] = __('Unable to De-activate Ideal Mollie', 'event_espresso');
@@ -83,8 +83,8 @@ function event_espresso_ideal_payment_settings() {
 
 //PayPal Settings Form
 function event_espresso_display_ideal_settings() {
-	global $espresso_wp_user;
-	$payment_settings = get_option('payment_data_' . $espresso_wp_user);
+	
+	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 	$uri = $_SERVER['REQUEST_URI'];
 	$uri = substr("$uri", 0, strpos($uri, '&activate_ideal=true'));
 	?>

@@ -77,6 +77,14 @@ final class EE_Config {
 	 * @var EE_Organization_Config
 	 */
 	public $organization;
+	
+	
+	/**
+	 * ID of the 'primary' ee user. Mike thinks thinks this will be deprecated in 
+	 * 4.2 when we no longer are storing global config stuff in user meta tables
+	 * @var int
+	 */
+	public $wp_user;
 
 	
 
