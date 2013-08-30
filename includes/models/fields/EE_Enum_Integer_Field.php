@@ -1,6 +1,6 @@
 <?php
-require_once( EE_MODELS . 'fields/EE_Integer_Field_Base.php' );
-class EE_Enum_Integer_Field extends EE_Integer_Field_Base{
+require_once( EE_MODELS . 'fields/EE_Integer_Field.php' );
+class EE_Enum_Integer_Field extends EE_Integer_Field{
 	var $_allowed_enum_values;
 	
 	/**
