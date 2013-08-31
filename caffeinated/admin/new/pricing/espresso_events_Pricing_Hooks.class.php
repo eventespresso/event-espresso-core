@@ -294,7 +294,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_qty' => $default ? '' : $ticket->get('TKT_qty'),
 			'TKT_uses' => $default ? '' : $ticket->get('TKT_uses'),
 			'TKT_min' => $default ? '' : $ticket->get('TKT_min'),
-			'TKT_max' => $default ? '' : $ticket->get('TKT_max'),
+			'TKT_max' => $default ? '' : ( $ticket->get('TKT_max') === -1 ? '' : $ticket->get('TKT_max') ),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
@@ -319,7 +319,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//generate all price rows
 			$prcrow = 1;
 			foreach ( $prices as $price ) {
-				$show_trash = ( count( $prices ) > 1 && $prcrow === 1 ) || count( $prices === 1 ) ? FALSE : TRUE;
+				$show_trash = ( count( $prices ) > 1 && $prcrow === 1 ) || count( $prices ) === 1  ? FALSE : TRUE;
 				$show_create = count( $prices ) > 1 && count( $prices ) !== $prcrow ? FALSE : TRUE;
 				$template_args['ticket_price_rows'] .= $this->_get_ticket_price_row( $tktrow, $prcrow, $price, $default, $show_trash, $show_create );
 				$prcrow++;
@@ -386,17 +386,17 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	private function _get_price_modifier_template( $tktrow, $prcrow, $price, $default ) {
 		$select_name = $default ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]' : 'edit_prices[' . $tktrow . '][' . $prcrow . '][PRT_ID]';
-		$price_types = $this->EE->load_model('Price_Type')->get_all(array( array('PBT_ID' => '2', 'PBT_ID' => '3' ) ) );
+		$price_types = $this->EE->load_model('Price_Type')->get_all(array( array('OR' => array('PBT_ID' => '2', 'PBT_ID*' => '3' ) ) ) );
 		$price_option_span_template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_option_span.template.php';
 		$all_price_types = $default ? array(array('id' => 0, 'text' => __('Select Modifier', 'event_espresso')) ) : array();
 		$selected_price_type_id = $default ? 0 : $price->type();
+		$price_option_spans = '';
 		//setup pricetypes for selector
 		foreach ( $price_types as $price_type ) {
 			$all_price_types[] = array(
 				'id' => $price_type->ID(),
 				'text' => $price_type->get('PRT_name'),
 				);
-			$price_option_spans = '';
 
 			//while we're in the loop let's setup the option spans used by js
 			$spanargs = array(
@@ -406,6 +406,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				);
 			$price_option_spans .= espresso_display_template($price_option_span_template, $spanargs, TRUE );
 		}
+
 
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,

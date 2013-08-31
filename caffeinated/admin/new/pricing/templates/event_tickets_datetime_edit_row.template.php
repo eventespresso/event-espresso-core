@@ -13,7 +13,7 @@
 			</td>
 			<td class="event-datetime-column small-txt-column">
 				<label for="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>"><?php _e('Reg Limit', 'event_espresso'); ?></label>
-				<input type="text" name="edit_event_datetimes[<?php echo $dtt_row; ?>][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>" class="ee-small-text-inp event-datetime-DTT_reg_limit" value="echo $DTT_reg_limit; ?>">
+				<input type="text" name="edit_event_datetimes[<?php echo $dtt_row; ?>][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>" class="ee-small-text-inp event-datetime-DTT_reg_limit" value="<?php echo $DTT_reg_limit; ?>">
 			</td>
 			<td class="event-datetime-column button-column">
 				<button data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="button-primary ee-save-button">

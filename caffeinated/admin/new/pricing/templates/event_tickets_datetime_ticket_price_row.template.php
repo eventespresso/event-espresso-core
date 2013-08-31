@@ -10,7 +10,7 @@
 		<span class="ticket-price-info-display ticket-price-plus-minus"<?php echo $show_plus_or_minus; ?>>+/-</span>
 		<span class="ticket-price-info-display ticket-price-plus"<?php echo $show_plus; ?>>+</span>
 		<span class="ticket-price-info-display ticket-price-minus"<?php echo $show_minus; ?>>-</span>
-		<span class="ticket-price-info-display ticket-price-dollar-sign-display"<?php $show_currency_symbol; ?>><?php echo $price_currency_symbol; ?></span>
+		<span class="ticket-price-info-display ticket-price-dollar-sign-display"<?php echo $show_currency_symbol; ?>><?php echo $price_currency_symbol; ?></span>
 	</td>
 	<td>
 		<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_amount]" value="<?php echo $PRC_amount; ?>">
