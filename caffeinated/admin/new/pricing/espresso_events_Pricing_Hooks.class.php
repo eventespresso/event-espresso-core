@@ -268,10 +268,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$tktid = !empty( $ticket ) ? $ticket->ID() : 0;
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
-			'tkt_row' => $default && empty( $dtt ) ? 'TKTNUM' : $tktrow,
+			'tkt_row' => $default && empty( $ticket ) ? 'TKTNUM' : $tktrow,
 			'datetime_ticket_checked' => in_array($tktid, (array) $datetime_tickets) ? ' checked="checked"' : '',
 			'ticket_selected' => in_array($tktid, (array) $datetime_tickets) ? ' ticket-selected' : '',
-			'TKT_name' => $default && empty( $dtt ) ? 'TKTNAME' : $ticket->get('TKT_name')
+			'TKT_name' => $default && empty( $ticket ) ? 'TKTNAME' : $ticket->get('TKT_name')
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_dtt_tickets_list.template.php';
@@ -427,11 +427,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_ticket_datetime_list_item( $dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default ) {
 		$dttid = !empty($dtt) ? $dtt->ID() : 0;
 		$template_args = array(
-			'dtt_row' => $default && empty( $ticket ) ? 'DTTNUM' : $dttrow,
+			'dtt_row' => $default && empty( $dtt ) ? 'DTTNUM' : $dttrow,
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 			'ticket_datetime_selected' => in_array( $dttid, (array) $ticket_datetimes ) ? ' ticket-selected' : '',
 			'ticket_datetime_checked' => in_array( $dttid, (array) $ticket_datetimes ) ? ' checked="checked"' : '',
-			'DTT_name' => $default && empty( $ticket ) ? 'DTTNAME' : $dtt->get_dtt_display_name()
+			'DTT_name' => $default && empty( $dtt ) ? 'DTTNAME' : $dtt->get_dtt_display_name()
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_datetimes_list_item.template.php';
