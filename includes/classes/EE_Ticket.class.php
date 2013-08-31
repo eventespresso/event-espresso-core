@@ -204,13 +204,6 @@ class EE_Ticket extends EE_Base_Class{
 	/** Related Object Caches **/
 
 
-	/**
-	 * Registrations this ticket is attached to
-	 * @var EE_Registration[]
-	 */
-	protected $_Registration;
-
-
 
 
 
@@ -372,5 +365,40 @@ class EE_Ticket extends EE_Base_Class{
 				return empty( $dtt_id ) ? $tickets_sold['datetime'] : $tickets_sold['datetime'][$dtt_id];
 		}
 	}
-
+	
+	/**
+	 * Gets all the prices that combine to form teh final price of this ticket
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Price[]
+	 */
+	public function prices($query_params = array()){
+		return $this->get_many_related('Price', $query_params);
+	}
+	
+	
+	/**
+	 * Gets all the ticket applicabilities (ie, relations between datetimes and tickets)
+	 * @param array $query_params see EEM_Base::get_all()
+	 * @return EE_Datetime_Ticket
+	 */
+	public function datetime_tickets($query_params = array()){
+		return $this->get_many_related('Datetime_Ticket', $query_params);
+	}
+	
+	/**
+	 * Gets all the datetimes this ticket can be used for attending
+	 * @param array $query_params see EEM_Base::get_all()
+	 * @return EE_Datetime
+	 */
+	public function datetimes($query_params = array()){
+		return $this->get_many_related('Datetime', $query_params);
+	}
+	
+	/**
+	 * Gets the template for the ticket
+	 * @return EE_Ticket_Template
+	 */
+	public function template(){
+		return $this->get_first_related('Ticket_Template');
+	}
 } //end EE_Ticket class

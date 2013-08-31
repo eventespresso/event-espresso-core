@@ -64,7 +64,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_parent' => new EE_Integer_Field('TKT_parent', __('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'), true, 0 )
 			));
 		$this->_model_relations = array(
-			'Registration'=>new EE_Has_Many_Relation(),
 			'Datetime'=>new EE_HABTM_Relation('Datetime_Ticket'),
 			'Datetime_Ticket'=>new EE_Has_Many_Relation(),
 			'Price'=>new EE_HABTM_Relation('Ticket_Price'),

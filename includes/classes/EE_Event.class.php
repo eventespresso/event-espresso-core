@@ -246,6 +246,10 @@ class EE_Event extends EE_CPT_Base{
 		return $this->get_first_related('Datetime');
 	}
 
+	/**
+	 * Returns the 'primary' datetime for the event
+	 * @return EE_Datetime
+	 */
 	public function primary_datetime() {
 		if ( !empty ( $this->_Primary_Datetime )) { 
 			return $this->_Primary_Datetime; 
@@ -254,6 +258,14 @@ class EE_Event extends EE_CPT_Base{
 		return $this->_Primary_Datetime;
 	}
 
+	/**
+	 * Gets all the tickets available for purhcase of this event
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Ticket
+	 */
+	public function tickets($query_params = array()){
+		return $this->get_many_related('Ticket', $query_params);
+	}
 	
 	
 	function additional_limit(){
