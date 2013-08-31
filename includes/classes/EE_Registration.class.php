@@ -717,6 +717,25 @@ class EE_Registration extends EE_Base_Class {
 	public function reg_date(){
 		return $this->get('REG_date');
 	}
+	
+	/**
+	 * Gets the datetime-ticket for this registration (ie, it can be used to isolate
+	 * the ticket this registration purchased, or the datetime they have registered
+	 * to attend)
+	 * @return EE_Datetime_Ticket
+	 */
+	public function datetime_ticket(){
+		return $this->get_first_related('Datetime_Ticket');
+	}
+	
+	/**
+	 * Sets the registration's datetime_ticket.
+	 * @param EE_Datetime_Ticket $datetime_ticket
+	 * @return EE_Datetime_Ticket
+	 */
+	public function set_datetime_ticket($datetime_ticket){
+		return$this->_add_relation_to($datetime_ticket, 'Datetime_Ticket');
+	}
 }
 
 
