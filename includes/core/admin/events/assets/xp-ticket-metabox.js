@@ -798,7 +798,7 @@ jQuery(document).ready(function($) {
 			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.dateTimeRow);
 			//get name for dtt and add to the new li item
 			var dttname = $('.datetime-title', '#display-event-datetime-' + this.dateTimeRow ).text();
-			new_dtt_list_row = new_dtt_list_row.replace(/DTTDATE/g,dttname);
+			new_dtt_list_row = new_dtt_list_row.replace(/DTTNAME/g,dttname);
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
 			new_dtt_list_row = new_dtt_list_row.replace(/TICKETNUM/g,ticketrownum);
