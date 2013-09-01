@@ -148,7 +148,7 @@
 									<tfoot>
 										<tr class="price-total-row">
 											<td colspan="3">Total</td>
-											<td><span id="price-total-amount-1">$0.00</span</td>
+											<td><input type="hidden" name="edit_tickets[1][TKT_price]" class="edit-tickets-TKT_price" value="0"><span id="price-total-amount-1">$0.00</span</td>
 											<td><input type="hidden" name="price_total_rows_ticket1" id="price-total-rows-1" value="1"></td>
 										</tr>
 									</tfoot>
@@ -164,7 +164,7 @@
 							<input type="hidden" name="edit_tickets[1][TKT_is_default]" class="edit-ticket-TKT_is_default" value=""> 
 							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="1">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="1">Cancel</button></div>
 							<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
-							<input type="hidden" name="starting_ticket_datetime_IDs" id="starting-ticket-datetime-ids-1" value="" class="starting-ticket-datetime-ids">
+							<input type="hidden" name="starting_ticket_datetime_IDs[1]" id="starting-ticket-datetime-ids-1" value="" class="starting-ticket-datetime-ids">
 							<input type="hidden" name="ticket_datetime_IDs" class="ticket-datetime-ids" id="ticket-datetime-ids-1" value="">
 
 							<!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session, note we only ADD actual price ids to this list.  It only gets updated after a autosave (or manual update)-->

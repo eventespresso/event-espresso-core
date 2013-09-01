@@ -1147,7 +1147,7 @@ jQuery(document).ready(function($) {
 		changeTicket: function(idrow, valuerow, context, remove) {
 			remove = typeof(remove) === 'undefined' ? false : remove;
 			context = typeof(context) === 'undefined' ? 'datetime-ticket' : context;
-			var changeid = '#' + context + '-ids-' + idrow;
+			var changeid = '#' + context + '-rows-' + idrow;
 			var curitems = $(changeid).val();
 			if ( typeof(curitems) !== 'undefined' && curitems !== '' )
 					curitems = curitems.split(',');
@@ -1299,6 +1299,7 @@ jQuery(document).ready(function($) {
 			var price_amount = this.getTotalPrice();
 			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount);
 			TKTrow.find('.ticket-price-amount').text('$' + price_amount);
+			TKTrow.find('.edit-ticket-TKT_price').val(price_amount);
 			$('.ticket-display-row-TKT_total_amount',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 		},
 

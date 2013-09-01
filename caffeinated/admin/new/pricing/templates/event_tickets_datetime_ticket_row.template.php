@@ -71,7 +71,10 @@
 					<tfoot>
 						<tr class="price-total-row">
 							<td colspan="3"><?php _e('Total', 'event_espresso'); ?></td>
-							<td><span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span</td>
+							<td>
+								<span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span>
+								<input type="hidden" name="edit_tickets[<?php echo $tkt_row; ?>][TKT_price]" class="edit-ticket-TKT_price" value="0">
+							</td>
 							<td><input type="hidden" name="price_total_rows_ticket[<?php echo $tkt_row; ?>]" id="price-total-rows-<?php echo $tkt_row; ?>" value="<?php echo $total_price_rows; ?>"></td>
 						</tr>
 					</tfoot>
@@ -90,11 +93,11 @@
 				<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Save Ticket', 'event_espresso'); ?></button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Cancel', 'event_espresso'); ?></button>
 			</div>
 			<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
-			<input type="hidden" name="starting_ticket_datetime_IDs[<?php echo $tkt_row; ?>][]" id="starting-ticket-datetime-ids-<?php echo $tkt_row; ?>" value="<?php echo $starting_ticket_datetime_ids; ?>" class="starting-ticket-datetime-ids">
-			<input type="hidden" name="ticket_datetime_IDs[<?php echo $tkt_row; ?>][]" class="ticket-datetime-ids" id="ticket-datetime-ids-<?php echo $tkt_row; ?>" value="">
+			<input type="hidden" name="starting_ticket_datetime_rows[<?php echo $tkt_row; ?>]" id="starting-ticket-datetime-rows-<?php echo $tkt_row; ?>" value="<?php echo $starting_ticket_datetime_rows; ?>" class="starting-ticket-datetime-rows">
+			<input type="hidden" name="ticket_datetime_rows[<?php echo $tkt_row; ?>]" class="ticket-datetime-rows" id="ticket-datetime-rows-<?php echo $tkt_row; ?>" value="<?php echo $ticket_datetime_rows; ?>">
 
 			<!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session -->
-			<input type="hidden" name="ticket_price_ids[<?php echo $tkt_row; ?>][]" id="ticket-price-ids-<?php echo $tkt_row; ?>" class="ticket-price-ids" value="echo $existing_ticket_price_ids; ?>">
+			<input type="hidden" name="ticket_price_ids[<?php echo $tkt_row; ?>][]" id="ticket-price-ids-<?php echo $tkt_row; ?>" class="ticket-price-ids" value="<?php echo $existing_ticket_price_ids; ?>">
 			<input type="hidden" name="edit_tickets[<?php echo $tkt_row; ?>][TTM_ID]" class="ticket-template-id" value="<?php echo $ticket_template_id; ?>">
 		</fieldset>
 	</td>
@@ -120,7 +123,7 @@
  * $TKT_price_rows
  * $total_price_rows
  * $ticket_datetimes_list
- * $starting_ticket_datetime_ids (datetimes attached to ticket on page load)
+ * $starting_ticket_datetime_rows (datetimes attached to ticket on page load)
  * $existing_ticket_price_ids;
  * $ticket_template_id;
  */
