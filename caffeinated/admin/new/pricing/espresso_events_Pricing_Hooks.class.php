@@ -233,6 +233,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'display_dtt_edit_row' => 'style="display:none;"',
+			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
 			'DTT_ID' => $default ? '' : $dtt->ID(),
 			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
@@ -290,6 +291,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
+			'edit_tickets_name' => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_name' => $default ? '' : $ticket->get('TKT_name'),
 			'TKT_start_date' => $default ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
 			'TKT_end_date' => $default ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ),
@@ -342,6 +344,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 			'prc_row' => $default ? 'PRICENUM' : $prcrow,
+			'edit_prices_name' => $default ? 'PRICENAMEATTR' : 'edit_prices',
 			'price_type_selector' => $default ? $this->_get_base_price_template( $tktrow, $prcrow, $price, $default ) : $this->_get_price_type_selector( $tktrow, $prcrow, $price, $default ),
 			'PRC_ID' => $default ? 0 : $price->ID(),
 			'PRC_is_default' => $default ? 0 : $price->get('PRC_is_default'),

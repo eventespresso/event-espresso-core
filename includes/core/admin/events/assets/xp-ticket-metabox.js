@@ -312,7 +312,7 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper}            This object for chainability
 		 */
 		applyExistingTKTorDTTitems: function(itmtoappendto) {
-			var existing_list = this.context == 'datetime' ? $('#dtt-existing-available-ticket-list-items-holder').clone().html().replace(/DTTNUM/g,this.dateTimeRow) : $('#dtt-existing-available-datetime-list-items-holder').clone().html().replace(/TICKETNUM/g, this.ticketRow);
+			var existing_list = this.context == 'datetime' ? $('#dtt-existing-available-ticket-list-items-holder').clone().html().replace(/DTTNUM/g,this.dateTimeRow) : $('#dtt-existing-available-datetime-list-items-holder').clone().html().replace(/TICKETNUM/g, this.ticketRow).replace(/TICKETNAMEATTR/g, 'edit_tickets');
 			var existing_list_container = this.context == 'datetime' ? $('#edit-datetime-available-tickets-holder').clone().html().replace(/DTTNUM/g, this.dateTimeRow) : '';
 
 			existing_list_container = existing_list_container !== '' ? $(existing_list_container).appendTo(itmtoappendto) : '';
@@ -347,11 +347,11 @@ jQuery(document).ready(function($) {
 			this.context = 'datetime';
 			var row = this.increaserowcount();
 
-			var DTT_row_container = $('#edit-datetime-form-container-holder').clone().html().replace(/DTTNUM/g, row);
+			var DTT_row_container = $('#edit-datetime-form-container-holder').clone().html().replace(/DTTNUM/g, row).replace(/DTTNAMEATTR/g, 'edit_event_datetimes');
 			DTT_row_container = $(DTT_row_container).appendTo('.event-datetimes-container');
 
 			//edit form stuff
-			var DTTeditform = $('#edit-datetime-form-holder').clone().html().replace(/DTTNUM/g, row);
+			var DTTeditform = $('#edit-datetime-form-holder').clone().html().replace(/DTTNUM/g, row).replace(/DTTNAMEATTR/g, 'edit_event_datetimes');
 			DTTeditform = $(DTTeditform).appendTo(DTT_row_container);
 
 			//make sure all input vals get their values from the create form!
@@ -949,8 +949,8 @@ jQuery(document).ready(function($) {
 			var row = this.increaserowcount();
 
 			//edit form stuff
-			var newTKTrow = $('#ticket-row-form-holder').find('tbody').clone().html().replace(/TICKETNUM/g, row );
-			var initialPRCrow = $('#ticket-edit-row-initial-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row);
+			var newTKTrow = $('#ticket-row-form-holder').find('tbody').clone().html().replace(/TICKETNUM/g, row ).replace(/TICKETNAMEATTR/g, 'edit_tickets');
+			var initialPRCrow = $('#ticket-edit-row-initial-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row).replace(/PRICENAMEATTR/g, 'edit_prices');
 
 
 			//append to existing TKTrows
@@ -1051,7 +1051,7 @@ jQuery(document).ready(function($) {
 			var row = this.itemdata.priceRow;
 			this.ticketRow = this.itemdata.ticketRow;
 			this.increaserowcount();
-			var newPRCrow = $('tbody', '#ticket-edit-row-initial-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow);
+			var newPRCrow = $('tbody', '#ticket-edit-row-initial-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow).replace(/PRICENAMEATTR/g, 'edit_prices');
 
 			newPRCrow = $(newPRCrow).appendTo( $('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow) );
 
@@ -1067,7 +1067,7 @@ jQuery(document).ready(function($) {
 			newPRCrow.prev().prev().find('.ee-create-button').hide();
 
 			//replace first column with the price modifier selector
-			newPRCrow.find('td').first().html( $('#ticket-edit-row-price-modifier-selector').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow) );
+			newPRCrow.find('td').first().html( $('#ticket-edit-row-price-modifier-selector').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow).replace(/PRICENAMEATTR/g, 'edit_prices') );
 
 
 			//focus on select element
