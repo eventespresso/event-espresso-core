@@ -909,10 +909,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			
 
 			//first let's do the add_relation_to()
+			$dtts_added = $dtts_added[0] == '' ? array() : $dtts_added;
 			foreach ( $dtts_added as $dttrow ) {
 				$saved_dtts[$dttrow]->_add_relation_to( $TKT, 'Ticket' );
 			}
 
+			$dtts_removed = $dtts_removed[0] == '' ? array() : $dtts_removed;
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
 				$saved_dtts[$dttrow]->_remove_relation_to( $TKT, 'Ticket' );
