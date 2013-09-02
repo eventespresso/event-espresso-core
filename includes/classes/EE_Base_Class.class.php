@@ -697,6 +697,18 @@ class EE_Base_Class{
 			return false;
 		}
 	}
+
+
+
+	/**
+	 * Deletes this model object permanently from db (but keep in mind related models my block the delete and return an error)
+	 * @return boolean success
+	 */
+	public function delete_permanently(){
+		$model=$this->get_model();
+		$result=$model->delete_permanently_by_ID($this->ID());
+		return $result ? true : false;
+	}
 	
 	
 	
