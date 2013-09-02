@@ -122,7 +122,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	 	
 	 	//if this is an autosave then we're going to get things differently
 	 	if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
-	 		return $this->_do_autosave_get_all($model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false);
+	 		return $this->_do_autosave_get_all($model_object_or_id, $query_params, $values_already_prepared_by_model_object = false);
 	 	}
 
 	 	return parent::get_all_related( $model_object_or_id, $query_params, $values_already_prepared_by_model_object );
