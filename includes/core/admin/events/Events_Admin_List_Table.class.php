@@ -78,6 +78,17 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_hidden_columns = array();
+		
+		//add a few custom buttons to the bottom of the page
+		add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', array($this,'_add_custom_bottom_buttons'));
+	}
+	
+	/**
+	 * Add buttons to the bottom of the event page
+	 */
+	function _add_custom_bottom_buttons(){
+		echo EE_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), __("View Event Archive Page", "event_espresso"), 'button' );
+		
 	}
 
 
