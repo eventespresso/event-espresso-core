@@ -629,6 +629,7 @@ class EEH_Activation {
 					  TKT_name varchar(100) NOT NULL DEFAULT '',
 					  TKT_description TEXT NOT NULL DEFAULT '',
 					  TKT_qty mediumint(8) DEFAULT NULL,
+					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
 					  TKT_uses tinyint NOT NULL DEFAULT '-1',
 					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
 					  TKT_max tinyint NOT NULL DEFAULT '-1',
@@ -661,7 +662,6 @@ class EEH_Activation {
 		$sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  DTT_ID int(10) unsigned NOT NULL,
 					  TKT_ID int(10) unsigned NOT NULL,
-					  DTK_sold mediumint(8) unsigned NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (DTK_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
@@ -769,7 +769,7 @@ class EEH_Activation {
 					  EVT_ID int(10) unsigned NOT NULL,
 					  ATT_ID int(10) unsigned NOT NULL,
 					  TXN_ID int(10) unsigned NOT NULL,
-					  DTK_ID int(10) unsigned NOT NULL,
+					  TKT_ID int(10) unsigned NOT NULL,
 					  STS_ID varchar(3) COLLATE utf8_bin NOT NULL DEFAULT 'RPN',
 					  REG_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  REG_final_price decimal(10,3) NOT NULL DEFAULT '0.00',
@@ -783,7 +783,7 @@ class EEH_Activation {
 					  KEY EVT_ID (EVT_ID),
 					  KEY ATT_ID (ATT_ID),
 					  KEY TXN_ID (TXN_ID),
-					  KEY DTK_ID (DTK_ID),
+					  KEY TKT_ID (TKT_ID),
 					  KEY STS_ID (STS_ID),
 					  KEY REG_url_link (REG_url_link),
 					  KEY REG_code (REG_code)";
@@ -1245,8 +1245,8 @@ class EEH_Activation {
 
 			if ( ! $tickets_exist ) {
 				$SQL = "INSERT INTO " . EE_TICKET_TABLE . "
-					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
-					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
+					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
 				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
 				$wpdb->query($SQL);
 			}

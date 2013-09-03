@@ -54,6 +54,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_min'=>new EE_Integer_Field('TKT_min', __('Minimum quantity of this ticket that must be purchased', 'event_espresso'), false, 0 ),
 				'TKT_max'=>new EE_Integer_Field('TKT_max', __('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'), false, -1 ),
 				'TKT_price'=> new EE_Money_Field('TKT_price', 'Final calculated price for ticket', false, 0),
+				'TKT_sold' => new EE_Integer_Field('TKT_sold', __('Number of this ticket sold', 'event_espresso'), false, 0),
 				'TKT_qty'=>new EE_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), true, 0),
 				'TKT_uses'=>new EE_Integer_Field('TKT_uses', __('Number of times this ticket can be used (per registration ) to checkin before expiring', 'event_espresso'), TRUE, NULL ),
 				'TKT_taxable'=>new EE_Boolean_Field('TKT_taxable', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
@@ -67,7 +68,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			'Datetime'=>new EE_HABTM_Relation('Datetime_Ticket'),
 			'Datetime_Ticket'=>new EE_Has_Many_Relation(),
 			'Price'=>new EE_HABTM_Relation('Ticket_Price'),
-			'Ticket_Template'=>new EE_Belongs_To_Relation()
+			'Ticket_Template'=>new EE_Belongs_To_Relation(),
+			'Registration' => new EE_Has_Many_Relation()
 		);
 
 		parent::__construct( $timezone );

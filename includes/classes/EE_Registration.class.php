@@ -72,14 +72,14 @@ class EE_Registration extends EE_Base_Class {
 	
 	
     /**
-    *	Datetime Ticket ID
+    *	Ticket ID
 	* 
-    *	foreign key from Datetime_Ticket table
+    *	foreign key from Ticket table
 	* 
 	*	@access	protected
     *	@var int	
     */
-	protected $_DTK_ID = NULL;	
+	protected $_TKT_ID = NULL;	
 	
 	
 	
@@ -214,11 +214,11 @@ class EE_Registration extends EE_Base_Class {
 	
 	
 	/**
-	 * Datetime_Ticket object of the Event this registration is for
+	 * Ticket object of the Event Datetime(s) this registration is for
 	 * @access protected
-	 * @var EE_Datetime
+	 * @var EE_Ticket
 	 */
-	protected $_Datetime_Ticket = NULL;
+	protected $_Ticket = NULL;
 	
 
 	

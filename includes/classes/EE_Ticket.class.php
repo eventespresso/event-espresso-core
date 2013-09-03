@@ -121,7 +121,11 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
-
+	/**
+	 * the quantity of tickets sold
+	 * @var int
+	 */
+	protected $_TKT_sold;
 
 
 
@@ -233,6 +237,14 @@ class EE_Ticket extends EE_Base_Class{
 
 
 
+	/**
+	 * Registrations on this ticket
+	 * @var EE_Registration[]
+	 */
+	protected $_Registration;
+
+
+
 
 
 	/**
@@ -320,13 +332,9 @@ class EE_Ticket extends EE_Base_Class{
 			}
 		}
 
-		//DATETIME TICKETS
+		//Tickets sold
 		$dtks = $this->get_many_related('Datetime_Ticket');
-		if ( !empty( $dtks ) ) {
-			foreach ( $dtks as $dtk ) {
-				$tickets_sold['datetime_ticket'][$dtk->get('DTT_ID')] = $dtk->get('DTK_sold');
-			}
-		}
+		$tickets_sold['ticket'] = $this->_TKT_sold;
 
 		return $tickets_sold;
 	}
@@ -350,9 +358,9 @@ class EE_Ticket extends EE_Base_Class{
 		$tickets_sold = $this->_all_tickets_sold();
 		switch ( $what ) {
 			case 'ticket' :
-				if ( empty( $tickets_sold['datetime_ticket'] ) )
+				if ( empty( $tickets_sold['ticket'] ) )
 					return $total;
-				return array_sum( $tickets_sold['datetime_ticket'] );
+				return $tickets_sold['datetime_ticket'];
 				break;
 			case 'datetime' :
 				if ( empty( $tickets_sold['datetime'] ) )
@@ -363,6 +371,7 @@ class EE_Ticket extends EE_Base_Class{
 				}
 
 				return empty( $dtt_id ) ? $tickets_sold['datetime'] : $tickets_sold['datetime'][$dtt_id];
+				break;
 		}
 	}
 	
