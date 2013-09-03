@@ -22,7 +22,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  *
  * ------------------------------------------------------------------------
  */
-class EE_Ticket extends EE_Base_Class{
+class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
