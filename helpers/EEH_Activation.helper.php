@@ -629,6 +629,7 @@ class EEH_Activation {
 					  TKT_name varchar(100) NOT NULL DEFAULT '',
 					  TKT_description TEXT NOT NULL DEFAULT '',
 					  TKT_qty mediumint(8) DEFAULT NULL,
+					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
 					  TKT_uses tinyint NOT NULL DEFAULT '-1',
 					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
 					  TKT_max tinyint NOT NULL DEFAULT '-1',
@@ -1244,8 +1245,8 @@ class EEH_Activation {
 
 			if ( ! $tickets_exist ) {
 				$SQL = "INSERT INTO " . EE_TICKET_TABLE . "
-					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
-					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
+					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
 				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
 				$wpdb->query($SQL);
 			}
