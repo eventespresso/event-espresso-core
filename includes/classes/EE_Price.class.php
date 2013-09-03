@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Price extends EE_Base_Class{
+class EE_Price extends EE_Soft_Delete_Base_Class{
 	
 	/**
 	*		Price ID
