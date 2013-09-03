@@ -36,7 +36,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			0 => array(
 				'page_route' => array('edit','create_new'),
 				'func' => 'pricing_metabox',
-				'label' => __('Event Tickets & Datetimes (experimental)', 'event_espresso'),
+				'label' => __('Event Tickets & Datetimes', 'event_espresso'),
 				'priority' => 'high',
 				'context' => 'normal'
 				),
