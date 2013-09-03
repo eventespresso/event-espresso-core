@@ -113,7 +113,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 					array(
 						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30), 
 						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30),
-						'DTT_is_primary' => 1
+						'DTT_is_primary' => 1,
+						'DTT_order' => 1
 						/*NULL,
 						NULL*/
 					)
