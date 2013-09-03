@@ -911,7 +911,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			//now we just have to add the ticket to all the datetimes its supposed to be with and removing the ticket from datetimes it got removed from.
 			
-
+			
 			//first let's do the add_relation_to()
 			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && $dtts_added[0] == '' ) ? array() : $dtts_added;
 			foreach ( $dtts_added as $dttrow ) {
@@ -985,6 +985,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$PRC = $this->EE->load_class('Price', array( $PRC_values ), FALSE, FALSE);
 			} else {
 				$PRC = $this->EE->load_model( 'Price' )->get_one_by_ID( $prc['PRC_ID'] );
+				//update this price with new values
+				foreach ( $PRC_values as $field => $newprc ) {
+					$PRC->set( $field, $newprc );
+				}
+				$PRC->save();
 			}
 
 			$PRC = $ticket->_add_relation_to( $PRC, 'Price' );
