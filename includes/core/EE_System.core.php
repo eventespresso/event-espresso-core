@@ -228,7 +228,10 @@ final class EE_System {
 	 * 		@return 		void
 	 */
 	public function plugins_loaded() {
-
+		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
+			EE_Error::add_error( $activation_errors );
+			update_option( 'espresso_plugin_activation_errors', FALSE );
+		}
 	}
 
 
