@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.003';
+	return '4.1.008';
 }
 //Returns the template version
 function espresso_template_version() {
@@ -46,6 +46,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 	wp_die('Can not run multiple versions of Event Espresso.');
 }
 
+define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
+
 //used to be DIRECTORY_SEPARATOR, but that caused issues on windows
 if ( ! defined( 'DS' )) {
 	define( 'DS', '/' );
@@ -58,9 +60,9 @@ if( ! defined( 'SP' ) ){
 }
 
 // define the plugin directory and URL
-define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename(__FILE__) . DS);
-define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path(__FILE__));
-define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url(__FILE__));
+define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) . DS);
+define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path( EVENT_ESPRESSO_MAIN_FILE ));
+define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url( EVENT_ESPRESSO_MAIN_FILE ));
 //  includes and templates paths
 define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
 define("EVENT_ESPRESSO_TEMPLATES", EVENT_ESPRESSO_PLUGINFULLPATH . 'templates' . DS );
@@ -98,10 +100,10 @@ require_once( EE_CORE . 'EE_Error.core.php' );
 // let's get it started		
 if ( is_admin() ) {
 	require_once( EE_CORE . 'EE_Admin.core.php' );
-	EE_Admin::instance( __FILE__ );
+	EE_Admin::instance( EVENT_ESPRESSO_MAIN_FILE );
 } else {
 	require_once( EE_CORE . 'EE_Front_Controller.core.php' );
-	new EE_Front_Controller( __FILE__ );
+	new EE_Front_Controller( EVENT_ESPRESSO_MAIN_FILE );
 }
 
 
@@ -110,7 +112,7 @@ function espresso_plugin_activation() {
 	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_activation();
 }
-register_activation_hook( __FILE__, 'espresso_plugin_activation' );
+register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
 
 
 
@@ -118,7 +120,7 @@ function espresso_plugin_deactivation() {
 	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_deactivation();
 }
-register_deactivation_hook( __FILE__, 'espresso_plugin_deactivation' );
+register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
 
 
 
@@ -126,4 +128,4 @@ function espresso_plugin_uninstall() {
 	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_uninstall();
 }
-register_uninstall_hook(    __FILE__, 'espresso_plugin_uninstall' );
+register_uninstall_hook(    EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_uninstall' );
