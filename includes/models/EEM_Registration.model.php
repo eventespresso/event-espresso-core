@@ -89,7 +89,7 @@ class EEM_Registration extends EEM_Base {
 				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Even tID','event_espresso'), false, 0, 'Event'),
 				'ATT_ID'=>new EE_Foreign_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0, 'Attendee'),
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
-				'DTK_ID'=>new EE_Foreign_Key_Int_Field('DTK_ID', __('Datetime ID','event_espresso'), false, 0, 'Datetime_Ticket'),
+				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_not_approved, 'Status'),
 				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occured','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
@@ -105,7 +105,7 @@ class EEM_Registration extends EEM_Base {
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Attendee'=>new EE_Belongs_To_Relation(),
 			'Transaction'=>new EE_Belongs_To_Relation(),
-			'Datetime_Ticket'=>new EE_Belongs_To_Relation(),
+			'Ticket'=>new EE_Belongs_To_Relation(),
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Answer'=>new EE_Has_Many_Relation(),
 			'Checkin'=>new EE_Has_Many_Relation()

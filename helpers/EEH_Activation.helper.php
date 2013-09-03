@@ -769,7 +769,7 @@ class EEH_Activation {
 					  EVT_ID int(10) unsigned NOT NULL,
 					  ATT_ID int(10) unsigned NOT NULL,
 					  TXN_ID int(10) unsigned NOT NULL,
-					  DTK_ID int(10) unsigned NOT NULL,
+					  TKT_ID int(10) unsigned NOT NULL,
 					  STS_ID varchar(3) COLLATE utf8_bin NOT NULL DEFAULT 'RPN',
 					  REG_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  REG_final_price decimal(10,3) NOT NULL DEFAULT '0.00',
@@ -783,7 +783,7 @@ class EEH_Activation {
 					  KEY EVT_ID (EVT_ID),
 					  KEY ATT_ID (ATT_ID),
 					  KEY TXN_ID (TXN_ID),
-					  KEY DTK_ID (DTK_ID),
+					  KEY TKT_ID (TKT_ID),
 					  KEY STS_ID (STS_ID),
 					  KEY REG_url_link (REG_url_link),
 					  KEY REG_code (REG_code)";
