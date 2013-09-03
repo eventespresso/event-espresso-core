@@ -199,6 +199,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$event_query_params = array();
 		$related_models_query_params = array();
 		$attendee_query_params = array();
+		$datetime_ticket_query_params = array();
+		$term_query_params  = array();
 		if ( isset( $this->_req_data['EVT_ID'] )) {
 			// do we have an array of IDs ?
 			if ( is_array( $this->_req_data['EVT_ID'] )) {
@@ -207,6 +209,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				$event_query_params[0]['EVT_ID'] = array('IN',$EVT_IDs);
 				$related_models_query_params[0]['Event.EVT_ID'] = array('IN',$EVT_IDs);
 				$attendee_query_params[0]['Registration.EVT_ID'] = array('IN',$EVT_IDs);
+				$datetime_ticket_query_params[0]['Datetime.EVT_ID'] = array('IN',$EVT_IDs);
+				$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = array('IN',$EVT_IDs);
 				$filename = 'events';
 			} else {
 				// generate regular where = clause
@@ -215,6 +219,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				$event_query_params[0]['EVT_ID'] = $EVT_ID;
 				$related_models_query_params[0]['Event.EVT_ID'] = $EVT_ID;
 				$attendee_query_params[0]['Registration.EVT_ID'] = $EVT_ID;
+				$datetime_ticket_query_params[0]['Datetime.EVT_ID'] = $EVT_ID;
+				$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $EVT_ID;
 			}
 		} else {
 			$filename = 'all-events';
@@ -225,8 +231,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$models_to_export = array( 
 				'Event'=>$event_query_params,
 				'Datetime'=>$related_models_query_params,
+				'Datetime_Ticket'=>$datetime_ticket_query_params,
+				'Ticket'=>$datetime_ticket_query_params,
 				//'Price'=>$related_models_query_params,
 				'Term_Taxonomy'=>$related_models_query_params,
+				'Term'=>$term_query_params,
 				'Venue'=>$related_models_query_params,
 				'Event_Venue'=>$related_models_query_params,
 				'Registration'=>$related_models_query_params,
