@@ -215,7 +215,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			} else {
 				// generate regular where = clause
 				$EVT_ID = absint( $this->_req_data['EVT_ID'] );
-				$filename = 'event#' . $EVT_ID;
+				$event = $this->EE->load_model('Event')->get_one_by_ID($EVT_ID);
+				
+				$filename = 'event-' . ($event ? $event->slug() : 'unknown');
 				$event_query_params[0]['EVT_ID'] = $EVT_ID;
 				$related_models_query_params[0]['Event.EVT_ID'] = $EVT_ID;
 				$attendee_query_params[0]['Registration.EVT_ID'] = $EVT_ID;
