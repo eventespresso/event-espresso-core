@@ -7,7 +7,7 @@
 	
 	
 	<div class="add-datetime-ticket-container">
-		<h5 class="datetime-tickets-heading"><?php _e('Add New Ticket', 'event_espresso'); ?></h5><?php echo $add_new_datetime_ticket_help_link; ?>
+		<h5 class="datetime-tickets-heading"><?php _e('Add New Ticket', 'event_espresso'); ?></h5><?php echo $add_new_datetime_ticket_help_link; ?><br>
 		<table class="add-new-ticket-table">
 			<thead>
 				<tr valign="top">
