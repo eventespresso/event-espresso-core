@@ -105,7 +105,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	public function pricing_metabox() {
 		$existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = array();
-		$has_related_tickets = FALSE;
 
 		$evtobj = $this->_adminpage_obj->get_cpt_model_obj();
 
@@ -148,9 +147,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//tickets attached
 			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket') : array();
 
-			//if there are no related tickets this is likely a new event so we need to generate the default tickets
+			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!. 
 			if ( empty ( $related_tickets ) ) {
-				$has_related_tickets = TRUE;
 				$related_tickets = $this->EE->load_model('Ticket')->get_all_default_tickets();
 			}
 
@@ -167,18 +165,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$all_tickets[] = $ticket;
 				}
 				
-				if ( !isset( $ticket_datetimes[$tktid] ) )
-					$ticket_datetimes[$tktid] = array();
-				
-				if ( ! $has_related_tickets ) { 
-					//temporary cache of this ticket info for this datetime for later processing of datetime rows.
-					$datetime_tickets[$dttid][] = $tktrow;
+				//temporary cache of this ticket info for this datetime for later processing of datetime rows.
+				$datetime_tickets[$dttid][] = $tktrow;
 
-					//temporary cache of this datetime info for this ticket for later processing of ticket rows.
-					if ( ! in_array( $dttrow, $ticket_datetimes[$tktid] ) )
-						$ticket_datetimes[$tktid][] = $dttrow;
-				}
-
+				//temporary cache of this datetime info for this ticket for later processing of ticket rows.
+				if ( !isset( $ticket_datetimes[$tktid] ) || ! in_array( $dttrow, $ticket_datetimes[$tktid] ) )
+					$ticket_datetimes[$tktid][] = $dttrow;
 			}
 		}
 
