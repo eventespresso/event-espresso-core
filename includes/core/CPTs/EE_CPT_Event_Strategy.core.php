@@ -116,7 +116,7 @@ class EE_CPT_Event_Strategy {
 	public function posts_where( $SQL ) {
 		global $wpdb;
 		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
-		$SQL .= ' AND ' . EE_DATETIME_TABLE . '.DTT_primary = 1 ';
+		$SQL .= ' AND ' . EE_DATETIME_TABLE . '.DTT_is_primary = 1 ';
 		return $SQL;
 	}
 

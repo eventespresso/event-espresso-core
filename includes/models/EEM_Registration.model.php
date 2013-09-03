@@ -283,7 +283,7 @@ class EEM_Registration extends EEM_Base {
 		$results = $this->_get_all_wpdb_results(array(
 			array(
 				'REG_date'=>array('>=',$date_sql),
-				'Datetime.DTT_primary'=>1
+				'Datetime.DTT_is_primary'=>1
 			),
 			'group_by'=>'Event.EVT_name',
 			'order_by'=>'Event.EVT_name',
