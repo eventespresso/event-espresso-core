@@ -1,7 +1,14 @@
 <?php
 
 
-
+function event_list_cpt_info_help_tab_html(){
+	?>
+	<h2><?php _e('Event List Link', 'event_espresso'); ?></h2>
+	<p><?php echo sprintf(__('If you would like to style the look of your events archive page, %s follow the Wordpress instructions for creating a custom template for archive pages %s. ', 'event_espresso'), '<a href="http://codex.wordpress.org/Post_Type_Templates">','</a>'); ?></p>
+	<p><?php	_e("Note: if you want to create a custom template for your events, you should create template named 'archive-espresso_events.php' and place it in your theme's root directory (eg 'wp-content/themes/twenty-thirteen/')", "event_espresso"); ?></p>
+	<p><?php	_e("Likewise, if you want to create a custom template for styling individual events, create a template named 'single-espresso_events' and place it in the same folder", "event_espresso"); ?>
+	<?php
+}
 function registration_page_info_help_tab_html() { 
 	?>
 	<h2><?php _e('Registration Checkout Page', 'event_espresso'); ?></h2>
