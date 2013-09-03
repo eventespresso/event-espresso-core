@@ -801,7 +801,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$update_prices = FALSE;
 		$new_default = NULL;
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
-		$ticket_price = isset( $tkt['TKT_price'] ) ? $tkt['TKT_price'] : 0;
 
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
@@ -811,6 +810,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$tkt_dtt_rows = explode(',', $data['ticket_datetime_rows'][$row] );
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
+
+			$ticket_price = isset( $tkt['TKT_price'] ) ? $tkt['TKT_price'] : 0;
 
 			$TKT_values = array(
 				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
@@ -872,6 +873,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					$update_prices = TRUE; 
 				}
 				
+				//make sure price is set if it hasn't been already
+				$TKT->set( 'TKT_price', $ticket_price );
 
 			} else {
 				//no TKT_id so a new TKT
@@ -879,7 +882,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$TKT = $this->EE->load_class('Ticket', array( $TKT_values, $timezone ), FALSE, FALSE );
 				$update_prices = TRUE;
 			}
-
 
 			//update ticket.
 			$TKT->save();
@@ -909,12 +911,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			
 
 			//first let's do the add_relation_to()
-			$dtts_added = $dtts_added[0] == '' ? array() : $dtts_added;
+			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && $dtts_added[0] == '' ) ? array() : $dtts_added;
 			foreach ( $dtts_added as $dttrow ) {
 				$saved_dtts[$dttrow]->_add_relation_to( $TKT, 'Ticket' );
 			}
 
-			$dtts_removed = $dtts_removed[0] == '' ? array() : $dtts_removed;
+			$dtts_removed = empty( $dtts_added ) || ( is_array( $dtts_removed ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
 				$saved_dtts[$dttrow]->_remove_relation_to( $TKT, 'Ticket' );

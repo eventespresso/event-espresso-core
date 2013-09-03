@@ -167,6 +167,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$all_tickets[] = $ticket;
 				}
 				
+				if ( !isset( $ticket_datetimes[$tktid] ) )
+					$ticket_datetimes[$tktid] = array();
 				
 				if ( ! $has_related_tickets ) { 
 					//temporary cache of this ticket info for this datetime for later processing of datetime rows.
@@ -174,7 +176,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 					//temporary cache of this datetime info for this ticket for later processing of ticket rows.
 					if ( ! in_array( $dttrow, $ticket_datetimes[$tktid] ) )
-						$ticket_datetimes[$tktid][] = $ddtrow;
+						$ticket_datetimes[$tktid][] = $dttrow;
 				}
 
 			}
@@ -270,12 +272,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	private function _get_datetime_tickets_list_item( $dttrow, $tktrow, $dtt, $ticket, $datetime_tickets, $default ) {
 		$tktid = !empty( $ticket ) ? $ticket->ID() : 0;
+		$dtt_tkts = $dtt instanceof EE_Datetime && isset( $datetime_tickets[$dtt->ID()] ) ? $datetime_tickets[$dtt->ID()] : array();
 		$displayrow = !empty( $ticket ) ? $ticket->get('TKT_row') : 0;
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'tkt_row' => $default && empty( $ticket ) ? 'TKTNUM' : $tktrow,
-			'datetime_ticket_checked' => in_array($displayrow, (array) $datetime_tickets) ? ' checked="checked"' : '',
-			'ticket_selected' => in_array($displayrow, (array) $datetime_tickets) ? ' ticket-selected' : '',
+			'datetime_ticket_checked' => in_array($displayrow, $dtt_tkts) ? ' checked="checked"' : '',
+			'ticket_selected' => in_array($displayrow, $dtt_tkts) ? ' ticket-selected' : '',
 			'TKT_name' => $default && empty( $ticket ) ? 'TKTNAME' : $ticket->get('TKT_name')
 			);
 
@@ -288,6 +291,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	private function _get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default = FALSE ) {
 		$prices = !empty($ticket) ? $ticket->get_many_related('Price') : $this->EE->load_model('Price')->get_all( array( array('PRC_is_default' => 1 ) ) );
+
+		$tkt_dtts = $ticket instanceof EE_Ticket && isset( $ticket_datetimes[$ticket->ID()] ) ? $ticket_datetimes[$ticket->ID()] : array();
 		
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
@@ -309,8 +314,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'ticket_price_rows' => $default ? '<tr class="hidden"><td colspan="4"></td></tr>' : '',
 			'total_price_rows' => count($prices),
 			'ticket_datetimes_list' => $default ? '<li class="hidden"></li>' : '',
-			'starting_ticket_datetime_rows' => implode(',', (array) $ticket_datetimes),
-			'ticket_datetime_rows' => implode(',', (array) $ticket_datetimes),
+			'starting_ticket_datetime_rows' => implode(',', $tkt_dtts),
+			'ticket_datetime_rows' => implode(',', $tkt_dtts),
 			'existing_ticket_price_ids' => $default, '', implode(',', array_keys( $prices) ),
 			'ticket_template_id' => $default ? 1 : $ticket->get('TTM_ID')
 			);
@@ -435,11 +440,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_ticket_datetime_list_item( $dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default ) {
 		$dttid = !empty($dtt) ? $dtt->ID() : 0;
 		$displayrow = !empty($dtt) ? $dtt->get('DTT_order') : 0;
+		$tkt_dtts = $ticket instanceof EE_Ticket && isset( $ticket_datetimes[$ticket->ID()] ) ? $ticket_datetimes[$ticket->ID()] : array();
 		$template_args = array(
 			'dtt_row' => $default && empty( $dtt ) ? 'DTTNUM' : $dttrow,
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
-			'ticket_datetime_selected' => in_array( $displayrow, (array) $ticket_datetimes ) ? ' ticket-selected' : '',
-			'ticket_datetime_checked' => in_array( $displayrow, (array) $ticket_datetimes ) ? ' checked="checked"' : '',
+			'ticket_datetime_selected' => in_array( $displayrow, $tkt_dtts ) ? ' ticket-selected' : '',
+			'ticket_datetime_checked' => in_array( $displayrow, $tkt_dtts ) ? ' checked="checked"' : '',
 			'DTT_name' => $default && empty( $dtt ) ? 'DTTNAME' : $dtt->get_dtt_display_name()
 			);
 

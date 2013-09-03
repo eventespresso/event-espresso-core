@@ -324,7 +324,7 @@ class EE_Ticket extends EE_Base_Class{
 		$dtks = $this->get_many_related('Datetime_Ticket');
 		if ( !empty( $dtks ) ) {
 			foreach ( $dtks as $dtk ) {
-				$tickets_sold['datetime_ticket'][$dtk->get('DTT_ID')] = $dtt->get('DTK_sold');
+				$tickets_sold['datetime_ticket'][$dtk->get('DTT_ID')] = $dtk->get('DTK_sold');
 			}
 		}
 
