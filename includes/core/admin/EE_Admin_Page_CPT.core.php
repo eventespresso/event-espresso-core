@@ -147,7 +147,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//autosave... make sure its only for the correct page
 		if ( !empty($this->_current_page ) && $this->_current_page == $this->page_slug ) {
 			//setup autosave ajax hook
-			add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 );
+			//add_action('wp_ajax_ee-autosave', array( $this, 'do_extra_autosave_stuff' ), 10 ); //TODO reactivate when 4.2 autosave is implemented
 		}
 
 	}
@@ -275,7 +275,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		parent::load_page_dependencies();
 		$this->modify_current_screen();
-		add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 );
+		//add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 ); //todo reactivate when implementing autosaves in 4.2
 		//we route REALLY early.
 		try {
 			$this->_route_admin_request();
@@ -518,7 +518,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			return;
 
 		//check for autosave and update our req_data property accordingly.
-		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && isset( $this->_req_data['ee_autosave_data'] ) ) {
+		/*if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && isset( $this->_req_data['ee_autosave_data'] ) ) {
 			foreach( (array) $this->_req_data['ee_autosave_data'] as $id => $values ) {
 
 				foreach ( (array) $values as $key => $value ) {
@@ -526,7 +526,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 				}
 			}
 			
-		}
+		}/**/ //TODO reactivate after autosave is implemented in 4.2
+
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+			return; //TODO we'll remove this after reimplementing autosave in 4.2
 		$this->_insert_update_cpt_item( $post_id, $post );
 	}
 

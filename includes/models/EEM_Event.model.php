@@ -115,8 +115,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Has_Many_Relation(),
-			'Datetime'=>new EE_Has_Many_Revision_Relation('EVT_ID', 'DTT_parent', false),
-			'Ticket'=>new EE_Has_Many_Revision_Relation('EVT_ID', 'TKT_parent', false ),
+			//'Datetime'=>new EE_Has_Many_Revision_Relation('EVT_ID', 'DTT_parent', false), //TODO 4.2 -> add back in when autosae stuff is worked out.
+			'Datetime'=>new EE_Has_Many_Relation('EVT_ID', 'DTT_parent', false),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
 		);
