@@ -996,7 +996,7 @@ jQuery(document).ready(function($) {
 			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice();
 			newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
 			newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
-			newTKTrow.find('.ticket-display-row-TKT_total_amount').text('$' + price_amount);
+			newTKTrow.find('.ticket-display-row-TKT_price').text('$' + price_amount);
 
 			//now let's setup the display row!
 			newTKTrow.find('.ticket-display-row-TKT_name').text(newTKTrow.find('.edit-ticket-TKT_name').val());
@@ -1300,7 +1300,7 @@ jQuery(document).ready(function($) {
 			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount);
 			TKTrow.find('.ticket-price-amount').text('$' + price_amount);
 			TKTrow.find('.edit-ticket-TKT_price').val(price_amount);
-			$('.ticket-display-row-TKT_total_amount',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
+			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 		},
 
 
