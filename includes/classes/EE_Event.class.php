@@ -43,13 +43,6 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_Primary_Datetime;
 
-
-	
-	/**
-	 * All tickets which apply to this event
-	 * @var EE_Ticket[] 
-	 */
-	protected $_Ticket;
 	
 	/**
 	 * Al question groups which apply to this event
