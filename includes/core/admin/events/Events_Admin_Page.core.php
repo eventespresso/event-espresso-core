@@ -735,7 +735,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
 				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? -1 : $dtt['DTT_reg_limit'],
-				'DTT_order' => $row
+				'DTT_order' => $row,
+				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
