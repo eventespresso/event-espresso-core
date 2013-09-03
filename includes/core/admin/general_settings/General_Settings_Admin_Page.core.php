@@ -171,6 +171,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Cancel/Return Page', 'event_espresso'),
 						'callback' => 'cancel_return_info_help_tab'
 						),
+					'event_list_cpt_info'=> array(
+						'title'=>  __("Event List Link", "event_espresso"),
+						'callback'=> 'event_list_cpt_info_help_tab'
+						),
 					)
 				),
 			'template_settings' => array(
@@ -271,6 +275,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 	public function cancel_return_info_help_tab(){
+		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
+	}
+	public function event_list_cpt_info_help_tab(){
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 

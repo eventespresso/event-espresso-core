@@ -474,6 +474,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			foreach($this->_bottom_buttons as $type => $action){
 				echo $this->_admin_page->get_action_link_or_button($action, $type,array('EVT_ID'=>$this->_req_data['event_id']));
 			}
+			do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons');
 		}
 		//echo $this->_entries_per_page_dropdown;
 	}

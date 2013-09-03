@@ -153,6 +153,27 @@
 					<br/><br/>
 				</td>
 			</tr>
+			
+			<tr>
+				<th>
+					<label for="event_list_id">
+						<strong>
+							<?php _e('Event List', 'event_espresso'); ?>
+						</strong>
+						<?php echo EE_Template::get_help_tab_link('event_list_cpt_info'); ?>
+						<br />
+						<a href='<?php echo get_post_type_archive_link('espresso_events') ?>'><?php	_e("View", "event_espresso");?></a>
+				</th>
+				<td>
+					<p class="description">
+						<?php echo __("Events are custom post types and use Wordpress' normal archive pages for displaying events.", "event_espresso") ?>
+					</p>
+					<p class='description'>
+						<?php printf(__("If you would still like your events on a page like in Event Espresso 3.1 or earlier, simply create a page and place a shortcode to display them on the page, as described %s here %s", "event_espresso"),'<a href="admin.php?page=espresso_support&action=shortcodes">','</a>') ?>
+					</p>
+					<br/><br/>
+				</td>
+			</tr>
 
 		</tbody>
 	</table>

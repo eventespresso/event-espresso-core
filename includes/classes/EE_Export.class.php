@@ -225,7 +225,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$models_to_export = array( 
 				'Event'=>$event_query_params,
 				'Datetime'=>$related_models_query_params,
-				'Price'=>$related_models_query_params,
+				//'Price'=>$related_models_query_params,
 				'Term_Taxonomy'=>$related_models_query_params,
 				'Venue'=>$related_models_query_params,
 				'Event_Venue'=>$related_models_query_params,
