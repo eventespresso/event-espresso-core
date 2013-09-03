@@ -26,6 +26,22 @@
  */
 class EE_Maintenance_Mode {
 
+	/**
+	 * constants available to client code for interpreting the values of EE_Maintenance_Mode::level().
+	 * level_0_not_in_maintenance means the site is NOT in maintenance mode (so everything's normal)
+	 */
+	const level_0_not_in_maintenance = 0;
+	/**
+	 * level_1_frontend_only_maintenance means that the site's frontend EE code should be completely disabled
+	 * but the admin backend should be running as normal. Maybe an admin can view the frontend though
+	 */
+	const level_1_frontend_only_maintenance = 1;
+	/**
+	 * level_2_complete_maintenance means the frontend AND EE backend code are disabled. The only system running
+	 * is the maintenance mode stuff, which will require users to update all addons, and then finish running all
+	 * migration scripts before taking the site out of maintenance mode
+	 */
+	const level_2_complete_maintenance = 2;
    /**
      * 	EE_Maintenance_Mode Object
      * 	@var EE_Maintenance_Mode $_instance
@@ -76,13 +92,13 @@ class EE_Maintenance_Mode {
 
 	/**
 	 * Determines whether or not we're in maintenance mode and what level. 
-	 * 0=> not in maintenance mode (in normal mode)
-	 * 1=> frontend-only mainteannce mode
-	 * 2=> frontend and backend mainteancne mode
+	 * EE_Maintenance_Mode::level_0_not_in_maintenance => not in maintenance mode (in normal mode)
+	 * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only mainteannce mode
+	 * EE_Maintenance_Mode::level_2_complete_maintenance => frontend and backend mainteancne mode
 	 * @return int
 	 */
 	public function level(){
-		return 0;
+		return EE_Maintenance_Mode::level_0_not_in_maintenance;
 	}
 
 
