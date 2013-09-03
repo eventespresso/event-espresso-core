@@ -48,13 +48,11 @@ class EEM_Datetime_Ticket extends EEM_Base {
 			'Datetime_Ticket'=>array(
 				'DTK_ID'=>new EE_Primary_Key_Int_Field('DTK_ID', __('Datetime Ticket ID','event_espresso'), false, 0),
 				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', __('The ID to the Datetime','event_espresso'), false, 0, 'Datetime' ),
-				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('The ID to the Ticket','event_espresso'), false, 0, 'Ticket' ),
-				'DTK_sold'=>new EE_Integer_Field('DTK_sold', __('How many tickets were sold for this Datetime and Ticket'), true, 0)
+				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('The ID to the Ticket','event_espresso'), false, 0, 'Ticket' )
 			));
 		$this->_model_relations = array(
 			'Ticket'=>new EE_Belongs_To_Relation(),
-			'Datetime'=>new EE_Belongs_To_Relation(),
-			'Registration'=> new EE_Has_Many_Relation()
+			'Datetime'=>new EE_Belongs_To_Relation()
 		);
 
 		parent::__construct( $timezone );

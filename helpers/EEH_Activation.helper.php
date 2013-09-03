@@ -661,7 +661,6 @@ class EEH_Activation {
 		$sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  DTT_ID int(10) unsigned NOT NULL,
 					  TKT_ID int(10) unsigned NOT NULL,
-					  DTK_sold mediumint(8) unsigned NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (DTK_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 
