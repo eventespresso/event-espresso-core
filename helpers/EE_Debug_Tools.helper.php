@@ -100,7 +100,9 @@
 	 */
 	function espresso_plugin_activation_errors() {
 		if ( WP_DEBUG === TRUE ) {
-			file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', ob_get_contents() );
+			$errors = ob_get_contents();
+			file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', $errors );
+			update_option( 'espresso_plugin_activation_errors', $errors );
 		}	
 	}
 	add_action( 'activated_plugin', 'espresso_plugin_activation_errors' );

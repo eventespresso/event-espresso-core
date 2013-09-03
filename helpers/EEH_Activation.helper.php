@@ -77,6 +77,24 @@ class EEH_Activation {
 
 
 
+
+
+	/**
+	 * deactivate_event_espresso
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function deactivate_event_espresso() {
+		$active_plugins = array_flip( get_option( 'active_plugins' ));
+		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
+		update_option( 'active_plugins', array_flip( $active_plugins ));	
+	}
+
+
+
+
 	/**
 	 * configuration_initialization
 	 *
@@ -215,20 +233,40 @@ class EEH_Activation {
 		);
 
 		foreach ( $critical_pages as $critical ) {
-			// attempt to find post by ID
-			$critical['page'] = get_post( EE_Registry::instance()->CFG->core->$critical['id'] );
+			// is critical page ID set in config ?
+			if ( EE_Registry::instance()->CFG->core->$critical['id'] !== FALSE ) {
+				// attempt to find post by ID
+				$critical['page'] = get_post( EE_Registry::instance()->CFG->core->$critical['id'] );
+			}
 			// no dice?
-			if ( ! $critical['page'] ) {
+			if ( $critical['page'] == NULL ) {
 				// attempt to find post by title
 				$critical['page'] = get_page_by_title( $critical['name'] );
 				// still nothing?
-				if ( ! $critical['page'] ) {
+				if ( $critical['page'] == NULL ) {
 					$critical = EEH_Activation::create_critical_page( $critical );
+					// REALLY? Still nothing ??!?!?
+					if ( $critical['page'] == NULL ) {
+						$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
+						EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+						break;				
+					}
 				}
 			}
+			// check that Post ID matches critical page ID in config
+			if ( isset( $critical['page']->ID ) && $critical['page']->ID != EE_Registry::instance()->CFG->core->$critical['id'] ) {
+				//update Config with post ID
+				EE_Registry::instance()->CFG->core->$critical['id'] = $critical['page']->ID;
+				if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE ) ) {
+					$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
+					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				}					
+			}				
+			
 			$critical_page_problem =  ! isset( $critical['page']->post_status) || $critical['page']->post_status != 'publish' || strpos( $critical['page']->post_content, $critical['code'] ) === FALSE ? TRUE : $critical_page_problem;
-		}
 
+		}
+						
 		if ( $critical_page_problem ) {
 			$msg = sprintf(
 				__('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso' ),
@@ -267,7 +305,7 @@ class EEH_Activation {
 				$page['name']
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
-			return NULL;
+			return $page;
 		}
 		
 		$page['page'] = get_post( $post_id );
@@ -277,15 +315,8 @@ class EEH_Activation {
 				$page['name']
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
-			return NULL;
 		}
 		
-		EE_Registry::instance()->CFG->core->$page['id'] = $post_id;
-		if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE ) ) {
-			$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return NULL;
-		}	
 		return $page;				
 
 	}
@@ -844,8 +875,8 @@ class EEH_Activation {
 			VNU_enable_for_gmap tinyint(1) DEFAULT '0',
 			VNU_google_map_link varchar(255) DEFAULT NULL,
 			PRIMARY KEY  (VNUM_ID),
-			KEY (STA_ID),
-			KEY (CNT_ISO)";
+			KEY STA_ID (STA_ID),
+			KEY CNT_ISO (CNT_ISO)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 		
 		

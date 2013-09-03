@@ -506,7 +506,7 @@ class EE_Error extends Exception {
 		$attention_messages = '';
 		$error_messages = '';
 
-		//printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		// grab any notices that have been sent via REQUEST vars
 		if (isset($_REQUEST['success']) && $_REQUEST['success'] != '') {
@@ -520,7 +520,7 @@ class EE_Error extends Exception {
 		}
 
 		// check for success messages
-		if ( self::$_espresso_notices['success'] ) {
+		if ( self::$_espresso_notices['success'] && ! empty(  self::$_espresso_notices['success'] )) {
 			// combine messages
 			$success_messages .= implode( self::$_espresso_notices['success'], '<br />' );
 			// possibly encode for url transmission
@@ -528,7 +528,7 @@ class EE_Error extends Exception {
 		}
 
 		// check for attention messages
-		if ( self::$_espresso_notices['attention'] ) {
+		if ( self::$_espresso_notices['attention'] && ! empty(  self::$_espresso_notices['attention'] ) ) {
 			// combine messages
 			$attention_messages .= implode( self::$_espresso_notices['attention'], '<br />' );
 			// possibly encode for url transmission
@@ -536,8 +536,8 @@ class EE_Error extends Exception {
 		}
 
 		// check for error messages
-		if ( self::$_espresso_notices['errors'] ) {
-			$error_messages .= count( self::$_espresso_notices['errors'] ) > 1 ? __( 'The following errors have occured:<br />', 'event_espresso' ) : __( 'An error has occured. ', 'event_espresso' );
+		if ( self::$_espresso_notices['errors'] && ! empty(  self::$_espresso_notices['errors'] ) ) {
+			$error_messages .= count( self::$_espresso_notices['errors'] ) > 1 ? __( 'The following errors have occured:<br />', 'event_espresso' ) : __( 'An error has occured:<br />', 'event_espresso' );
 			// combine messages
 			$error_messages .= implode( self::$_espresso_notices['errors'], '<br />' );
 			$error_messages = $url_encode ? urlencode($error_messages) : $error_messages;
@@ -547,25 +547,27 @@ class EE_Error extends Exception {
 
 			$notices = '<div id="espresso-notices">';
 			
-			$css_id = is_admin() ? 'message' : 'espresso-notices-';
 			$close = is_admin() ? '' : '<a class="close-espresso-notice">&times;</a>';
 
 			if ($success_messages != '') {
+				$css_id = is_admin() ? 'message' : 'espresso-notices-success';
 				$css_class = is_admin() ? 'updated fade' : 'success fade-away';
 				//showMessage( $success_messages );
-				$notices .= '<div id="' . $css_id . 'success" class="espresso-notices ' . $css_class . '"><p>' . $success_messages . '</p>' . $close . '</div>';
+				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '"><p>' . $success_messages . '</p>' . $close . '</div>';
 			}
 
 			if ($attention_messages != '') {
+				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
 				$css_class = is_admin() ? 'updated fade' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
-				$notices .= '<div id="' . $css_id . 'attention" class="espresso-notices ' . $css_class . '"><p>' . $attention_messages . '</p>' . $close . '</div>';
+				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
 			
 			if ($error_messages != '') {
+				$css_id = is_admin() ? 'message' : 'espresso-notices-error';
 				$css_class = is_admin() ? 'error fade' : 'error fade-away';
 				//showMessage( $error_messages, TRUE );
-				$notices .= '<div id="' . $css_id . 'error" class="espresso-notices ' . $css_class . '"><p>' . $error_messages . '</p>' . $close . '</div>';
+				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '"><p>' . $error_messages . '</p>' . $close . '</div>';
 			}
 			
 			$notices .= '</div>';
@@ -586,9 +588,7 @@ class EE_Error extends Exception {
 					}
 				}
 			}
-
 		}
-
 		return $notices;
 	}
 
