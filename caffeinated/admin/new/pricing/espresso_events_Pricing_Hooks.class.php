@@ -284,6 +284,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default = FALSE ) {
 		$prices = !empty($ticket) ? $ticket->get_many_related('Price') : $this->EE->load_model('Price')->get_all( array( array('PRC_is_default' => 1 ) ) );
 
+		// check if we're dealing with a default dtt (in which we want to link the first ticket(s) with it BUT not indicate it as a starting ticket (otherwise there won't be any new relationships created))
+		$default_dtt = isset( $all_dtts[0] ) && $all_dtts[0] instanceof EE_Datetime && $all_dtts[0]->ID() === 0 ? TRUE : FALSE;
+
 		$tkt_dtts = $ticket instanceof EE_Ticket && isset( $ticket_datetimes[$ticket->ID()] ) ? $ticket_datetimes[$ticket->ID()] : array();
 		
 		$template_args = array(
@@ -306,8 +309,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'ticket_price_rows' => $default ? '<tr class="hidden"><td colspan="4"></td></tr>' : '',
 			'total_price_rows' => count($prices),
 			'ticket_datetimes_list' => $default ? '<li class="hidden"></li>' : '',
-			'starting_ticket_datetime_rows' => implode(',', $tkt_dtts),
-			'ticket_datetime_rows' => implode(',', $tkt_dtts),
+			'starting_ticket_datetime_rows' => $default || $default_dtt ? '' : implode(',', $tkt_dtts),
+			'ticket_datetime_rows' => $default ? '' : implode(',', $tkt_dtts),
 			'existing_ticket_price_ids' => $default, '', implode(',', array_keys( $prices) ),
 			'ticket_template_id' => $default ? 1 : $ticket->get('TTM_ID')
 			);
