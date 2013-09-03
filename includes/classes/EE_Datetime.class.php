@@ -22,7 +22,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  *
  * ------------------------------------------------------------------------
  */
-class EE_Datetime extends EE_Base_Class{
+class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	
 	/**
 	 * constant used by get_active_status, indicates datetime has expired (event is over)
