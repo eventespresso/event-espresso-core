@@ -882,9 +882,17 @@ jQuery(document).ready(function($) {
 
 			switch ( this.context ) {
 				case 'datetime' :
+					//if this datetime is the primary dtt then we need to make sure that the next dtt in the list becomes the primary
+					if ( $( '#edit-event-datetime-' + row ).find('.event-datetime-DTT_is_primary').val() === '1' ) {
+						var nextrow = row + 1;
+						$('#edit-event-datetime-' + nextrow ).find('.event-datetime-DTT_is_primary').val('1');
+					}
+
 					$('#event-datetime-' + row).remove();
 					this.ticketRow = 0; //set to 0 so we remove dtts for all tickets.
 					this.dateTimeRow = row;
+
+
 					//if we've only got one row then we need to remove trash on that row.
 					if ( $('.event-datetime-row', '.event-datetimes-container').length == 1 )
 						$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon').hide();
