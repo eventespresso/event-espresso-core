@@ -171,7 +171,7 @@ final class EE_Front_Controller {
 			// process any content shortcodes
 			add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
 			// process request with module factory
-			add_action( 'parse_request', array( $this, '_process_request' ), 5 );
+			add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );
 			// before headers sent
 			add_action( 'wp', array( $this, 'wp' ), 5 );
 			// load css and js
@@ -330,17 +330,17 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * 	_process_request - basically a module factory for instantiating modules and selecting the final view template
+	 * 	pre_get_posts - basically a module factory for instantiating modules and selecting the final view template
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function _process_request( $WP ) {
-		//printr( $WP, '$WP  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	public function pre_get_posts( $WP_Query ) {
+//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// load module request router
 		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
-		while ( $route = $Module_Request_Router->get_route( $WP ) ) {
+		while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
 //			echo '<h4>$route : ' . $route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			// determine module and method for route
 			$module = $Module_Request_Router->resolve_route( $route );
