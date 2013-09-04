@@ -275,7 +275,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		parent::load_page_dependencies();
 		$this->modify_current_screen();
-		//add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 ); //todo reactivate when implementing autosaves in 4.2
+		add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 );
 		//we route REALLY early.
 		try {
 			$this->_route_admin_request();
@@ -291,7 +291,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 	public function setup_autosave_hooks() {
 		$this->_set_autosave_containers();
-		$this->_load_autosave_scripts_styles();
+		//$this->_load_autosave_scripts_styles(); //todo reactivate when implementing autosaves in 4.2
 		//add_action('admin_enqueue_scripts', array( $this, 'load_autosave_scripts_styles'), 10 );
 	}
 
