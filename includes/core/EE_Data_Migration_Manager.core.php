@@ -94,15 +94,17 @@ class EE_Data_Migration_Manager{
 	
 	/**
 	 * Checks if there are any data migration scripts that ought to be run. If found,
-	 * returns the instantiated class. If none are found (ie, they've all already been run
-	 * or they don't apply), returns null
-	 * @return EE_Data_Migration_Script_Base
+	 * returns the instantiated classes. If none are found (ie, they've all already been run
+	 * or they don't apply), returns an empty array
+	 * @return EE_Data_Migration_Script_Base[]
 	 */
 	public function check_for_applicable_data_migration_scripts(){
 		//get the option describing what options have already run
 		$scripts_ran = get_option(EE_Data_Migration_Manager::data_migrations_option_name);
 		//$scripts_ran = array('4.1.0.core'=>array('monkey'=>null));
 		$script_files_available = $this->get_all_data_migration_scripts_available();
+		
+		$script_classes_that_should_run = array();
 		//determine which have already been run
 		foreach($script_files_available as $classname => $filepath){
 			preg_match('~EE_DMS_([0-9]*)_([0-9]*)_([0-9]*)_(.*)~',$classname,$matches);
@@ -126,14 +128,17 @@ class EE_Data_Migration_Manager{
 				}
 				$can_migrate = $script->can_migrate_from_version($current_database_state);
 				if($can_migrate){
-					return $script;
+					$script_classes_that_should_run[$classname] = $script;
 				}
 			}else{
 				//we've already run it! dont run it again!
 			}
 		}
-		//I guess we didn't find any data migration files that should have run.
-		return null;
+		ksort($script_classes_that_should_run);
+		//NOTE: scripts should be listed in alphabetic order... meaning
+		//if two scripts apply to 4.1.0, one called 4.1.0.core and another called 4.1.0.groups,
+		//4.1.0.core will run first.
+		return $script_classes_that_should_run;
 	}
 	
 	/**
