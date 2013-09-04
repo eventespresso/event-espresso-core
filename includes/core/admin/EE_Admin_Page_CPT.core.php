@@ -206,14 +206,21 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	protected function _load_autosave_scripts_styles() {
-		wp_register_script('cpt-autosave', EE_CORE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script('cpt-autosave');
+		/*wp_register_script('cpt-autosave', EE_CORE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array', 'event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script('cpt-autosave');/**/ //todo re-enable when we start doing autosave again in 4.2
 
 		//filter _autosave_containers
 		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_setup_autosave_js_containers', $this->_autosave_containers, $this );
 		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_' . get_class($this) . '_setup_autosave_js_containers', $containers, $this );
 
-		wp_localize_script('cpt-autosave', 'EE_AUTOSAVE_IDS', $containers );
+		wp_localize_script('event_editor_js', 'EE_AUTOSAVE_IDS', $containers ); //todo once we enable autosaves, this needs to be switched to localize with "cpt-autosave"
+
+		$unsaved_data_msg = array(
+			'eventmsg' => sprintf( __("The changes you made to this %s will be lost if you navigate away from this page.", 'event_espresso'), $this->_cpt_object->labels->singular_name),
+			'inputChanged' => 0
+			);
+
+		wp_localize_script('event_editor_js', 'UNSAVED_DATA_MSG', $unsaved_data_msg);
 	}
 
 
@@ -275,7 +282,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		parent::load_page_dependencies();
 		$this->modify_current_screen();
-		//add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 ); //todo reactivate when implementing autosaves in 4.2
+		add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 );
 		//we route REALLY early.
 		try {
 			$this->_route_admin_request();
@@ -292,7 +299,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	public function setup_autosave_hooks() {
 		$this->_set_autosave_containers();
 		$this->_load_autosave_scripts_styles();
-		//add_action('admin_enqueue_scripts', array( $this, 'load_autosave_scripts_styles'), 10 );
 	}
 
 

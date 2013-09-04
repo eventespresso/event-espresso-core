@@ -27,7 +27,7 @@
 				</td>
 				<td class="event-datetime-column button-column">
 					<button data-context="datetime" class="button-primary ee-create-button">
-						<?php _e('Save Datetime', 'event_espresso'); ?>
+						<?php _e('Create Datetime', 'event_espresso'); ?>
 					</button>
 				</td>
 			</tr>
@@ -56,7 +56,7 @@
 
 		<input type="hidden" name="ticket_IDs" id="ticket-IDs" value="<?php echo $existing_ticket_ids; ?>">
 		<input type="hidden" name="ticket_total_rows" id="ticket-total-rows" value="<?php echo $total_ticket_rows; ?>">
-		<div class="save-cancel-button-container"><button class="button-secondary ee-create-button" data-context="ticket"><?php _e('Create New Ticket', 'event_espresso'); ?></button></div>
+		<div class="save-cancel-button-container"><button class="button-secondary ee-create-button" data-context="ticket"><?php _e('Create Ticket', 'event_espresso'); ?></button></div>
 	</div> <!-- end .event-tickets-container -->
 	<div style="clear:both"></div>
 </div> <!-- end #event-and-ticket-form-content -->

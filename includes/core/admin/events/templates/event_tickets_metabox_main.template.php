@@ -22,15 +22,15 @@
 				<tbody>
 					<tr valign="top">
 						<td class="event-datetime-column date-column">
-							<input type="text" name="edit_event_datetimes[1][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-1" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-context="start-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_end" data-next-field=".event-datetime-DTT_EVT_end" value="<?php echo $time->get('DTT_EVT_start'); ?>">
+							<input type="text" name="edit_event_datetimes[1][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-1" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-context="start-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_end" data-next-field=".event-datetime-DTT_EVT_end" value="<?php echo $time->get_date('DTT_EVT_start', 'Y-m-d h:i a'); ?>">
 						</td>
 						<td class="event-datetime-column date-column">
-							<input type="text" name="edit_event_datetimes[1][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-1" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="end-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit" value="<?php echo $time->get('DTT_EVT_end'); ?>">
+							<input type="text" name="edit_event_datetimes[1][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-1" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="end-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit" value="<?php echo $time->get_date('DTT_EVT_end', 'Y-m-d h:i a'); ?>">
 						</td>
 						<td class="event-datetime-column reg-limit-column">
-							<input type="text" name="edit_event_datetimes[1][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-1" class="ee-small-text-inp event-datetime-DTT_reg_limit" value="<?php echo $time->get('DTT_reg_limit'); ?>">
+							<input type="text" name="edit_event_datetimes[1][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-1" class="ee-small-text-inp ee-inp-right event-datetime-DTT_reg_limit" value="<?php echo $time->get('DTT_reg_limit'); ?>">
 						</td>
-						<td><span class="datetime-tickets-sold"><?php printf( __('Tickets Sold: %s', 'event_espresso'), $time->get('DTT_sold') ); ?></span></td>
+						<td class="datetime-tickets-sold"><?php printf( __('Tickets Sold: %s', 'event_espresso'), $time->get('DTT_sold') ); ?></td>
 					</tr>
 				</tbody>
 			</table>
@@ -39,34 +39,34 @@
 	</div> <!-- end .event-datetimes-container -->
 
 	<div class="event-tickets-container">
-		<h4 class="event-tickets-datetimes-title"><?php _e('Ticket Options', 'event_espresso'); ?></h4><?php echo $ticket_options_help_link; ?>
-			<table class="add-new-ticket-table">
-				<thead>
-					<tr valign="top">
-						<td><?php _e('Ticket Name', 'event_espresso'); ?></td>
-						<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
-						<td><?php _e('Sell Until', 'event_espresso'); ?></td>
-						<td><?php _e('Price', 'event_espresso'); ?></td>
-						<td><?php _e('Qty', 'event_espresso'); ?></td>
-						<td></td>
-					</tr>
-				</thead>
-				<tbody>
-					<?php echo $ticket_rows; ?>
-				</tbody>
-			</table> <!-- end .add-new-ticket-table -->
+		<h4 class="event-tickets-datetimes-title"><?php _e('Ticket Options', 'event_espresso'); ?></h4><?php echo $ticket_options_help_link; ?><br />
+		<table class="add-new-ticket-table">
+			<thead>
+				<tr valign="top">
+					<td><?php _e('Ticket Name', 'event_espresso'); ?></td>
+					<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
+					<td><?php _e('Sell Until', 'event_espresso'); ?></td>
+					<td><?php _e('Price', 'event_espresso'); ?></td>
+					<td><?php _e('Qty', 'event_espresso'); ?></td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody id="all-ticket-rows">
+				<?php echo $ticket_rows; ?>
+			</tbody>
+		</table> <!-- end .add-new-ticket-table -->
 
 		<input type="hidden" name="ticket_IDs" id="ticket-IDs" value="<?php echo $existing_ticket_ids; ?>">
 		<input type="hidden" name="ticket_total_rows" id="ticket-total-rows" value="<?php echo $total_ticket_rows; ?>">
 		<div class="save-cancel-button-container">
-			<button class="button-secondary ee-create-button" data-context="ticket"><?php _e('Add New Ticket', 'event_espresso'); ?></button>
-			<button class="button-primary"><?php _e('Save Datetime & Tickets', 'event_espresso'); ?></button>
+			<button class="button-secondary ee-create-button" data-context="ticket"><?php _e('Create New Ticket', 'event_espresso'); ?></button>
 		</div>
 	</div> <!-- end .event-tickets-container -->
 	<div style="clear:both"></div>
 </div> <!-- end #event-and-ticket-form-content -->
-
-<?php echo $ticket_js_structure; ?>
+<table id="new-ticket-row-form" class="hidden">
+	<tbody><?php echo $ticket_js_structure; ?></tbody>
+</table>
 <?php
 /**
  * template vars in use

@@ -36,7 +36,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			0 => array(
 				'page_route' => array('edit','create_new'),
 				'func' => 'pricing_metabox',
-				'label' => __('Event Tickets & Datetimes (experimental)', 'event_espresso'),
+				'label' => __('Event Tickets & Datetimes', 'event_espresso'),
 				'priority' => 'high',
 				'context' => 'normal'
 				),
@@ -59,20 +59,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					),
 				'ee-xp-ticket-metabox' => array(
 					'url' => EVENTS_ASSETS_URL . 'xp-ticket-metabox.js',
-					'depends' => array('jquery', 'ee-moment')
+					'depends' => array('ee-datepicker')
 					)
 				),
 			'enqueues' => array(
 				'ee-tickets-datetimes-css' => array( 'edit', 'create_new' ),
 				'ee-xp-ticket-metabox' => array( 'edit', 'create_new' )
-				),
-			/*'localize' => array(
-				'ee-prices-event-editor' => array(
-					'PRICE_METABOX_ITEMS' => array(
-						'adding_price_error' => __('There was a problem with adding the price.  No new price was generated', 'event_espresso')
-						)
-					)
-				)/**/
+				)
 			);
 
 		add_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_Extend_Events_Admin_Page', array( $this, 'autosave_handling' ), 10 );
