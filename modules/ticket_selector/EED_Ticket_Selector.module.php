@@ -69,29 +69,14 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	gets the ball rolling
 	*
 	*	@access 	public
-	* 	@param	object 			$event  
-	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
+	* 	@param	object 			$WP  
 	* 	@return 	void	
 	*/
-	public function run(  $WP, $event = FALSE, $added_by_admin = FALSE ) {	
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	public function run( $WP ) {	
 	
-		if ( ! $event ) {
-			$user_msg = __( 'No Event was not supplied.', 'event_espresso' );
-			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing an event object to the EE_Ticket_Selector class constructor.', 'event_espresso' );
-			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );	
-			return FALSE;
-		}
-
-		if ( ! class_exists( 'EE_Ticket_Price' )) {
-			//require_once(EE_CLASSES . 'EE_Ticket_Prices.class.php');
-			$this->EE->load_class( 'EE_Ticket_Prices', FALSE, TRUE );
-		}		
-		
-		$this->_event = $event;
-		$this->_added_by_admin = $added_by_admin;
-		add_action('wp_enqueue_scripts', array( $this, 'load_tckt_slctr_js' ), 10 );
-		$this->_display_ticket_selector();
+		$this->EE->load_class( 'Cost_Calculator' );
+		add_action( 'AHEE_display_ticket_selector', array( $this, 'load_tckt_slctr_js' ), 10 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_tckt_slctr_js' ), 10 );		
 
 	}
 
@@ -102,11 +87,23 @@ class EED_Ticket_Selector extends  EED_Module {
 	/**
 	* 	creates buttons for selecting number of attendees for an event
 	*
-	*	@access private
+	*	@access public
+	* 	@param	object 			$event  
+	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	string	
 	*/
-	private function _display_ticket_selector() {
+	public function display_ticket_selector( $event = FALSE, $added_by_admin = FALSE ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
+
+		if ( ! $event ) {
+			$user_msg = __( 'No Event was not supplied.', 'event_espresso' );
+			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing an event object to the EE_Ticket_Selector class constructor.', 'event_espresso' );
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );	
+			return FALSE;
+		}
+
+		$this->_event = $event;
+		$this->_added_by_admin = $added_by_admin;
 
 		$template_args = array();
 		//printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
