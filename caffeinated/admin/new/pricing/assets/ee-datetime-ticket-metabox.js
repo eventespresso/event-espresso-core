@@ -653,6 +653,10 @@ jQuery(document).ready(function($) {
 			$(displayRowPrefix + 'TKT_status', displayRowContext).text(tktstatus);
 
 			this.context = 'ticket';
+
+			//apply total price
+			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + this.getTotalPrice());
+
 			this.TicketEditToggle();
 			return this;
 		},
@@ -1190,7 +1194,7 @@ jQuery(document).ready(function($) {
 			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount);
 			TKTrow.find('.ticket-price-amount').text('$' + price_amount);
 			TKTrow.find('.edit-ticket-TKT_price').val(price_amount);
-			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
+			//$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 		},
 
 
