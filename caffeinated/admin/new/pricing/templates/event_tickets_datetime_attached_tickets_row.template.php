@@ -46,7 +46,7 @@
 		</table>
 		<div class="save-cancel-button-container">
 			<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-primary ee-create-button">
-				<?php _e('Save Ticket', 'event_espresso'); ?>
+				<?php _e('Create Ticket', 'event_espresso'); ?>
 			</button>
 			<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-secondary ee-cancel-button add-edit">
 				<?php _e('Cancel', 'event_espresso'); ?>

@@ -17,7 +17,7 @@
 			</td>
 			<td class="event-datetime-column button-column">
 				<button data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="button-primary ee-save-button">
-					<?php _e('Save Datetime', 'event_espresso'); ?>
+					<?php _e('Update Datetime', 'event_espresso'); ?>
 				</button>
 				<button data-datetime-row="<?php echo $dtt_row; ?>" data-context="datetime" class="button-secondary ee-cancel-button">
 					<?php _e('Cancel', 'event_espresso'); ?>
