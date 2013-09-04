@@ -22,6 +22,12 @@ abstract class EE_Data_Migration_Script_Base{
 	
 	
 	/**
+	 * Returns a pretty, internationalized name of the script which can be used on
+	 * the frontend
+	 * @return string
+	 */
+	abstract public function pretty_name();
+	/**
 	 * Returns whether or not this data migration script can operate on the given version of the database.
 	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
 	 * it's passed a string like '3.1.38B', it should return true
@@ -60,6 +66,13 @@ abstract class EE_Data_Migration_Script_Base{
 	abstract public function count_records_to_migrate();
 	
 	/**
+	 * Returns the number of records updated so far. Usually this is easiest to do
+	 * by just setting a transient and updating it after each migration_step
+	 * @return int
+	 */
+	abstract public function count_records_migrated();
+	
+	/**
 	 * Is called repeatedly by the migration script manager to proceed witht he migration. 
 	 * This function should keep track of its own progress (probaly using wp options it defines and then cleans up),
 	 *  and only migrate the indicated  number of records at a time. 
@@ -72,11 +85,4 @@ abstract class EE_Data_Migration_Script_Base{
 	abstract public function migration_step($num_records_to_migrate=50);
 	
 	
-	protected function _add_error($error_code,$error_description){
-		//get the option that stores data migrations and errors
-		
-		//add this as an error
-		
-		//save the option
-	}
 }
