@@ -1200,6 +1200,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//helpers scripts
 		wp_register_script('ee-text-links', EVENT_ESPRESSO_PLUGINFULLURL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-moment', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/moment.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-datepicker', EE_CORE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		//jqplot library
 		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
