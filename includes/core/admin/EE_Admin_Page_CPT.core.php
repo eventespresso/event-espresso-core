@@ -206,14 +206,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	protected function _load_autosave_scripts_styles() {
-		wp_register_script('cpt-autosave', EE_CORE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script('cpt-autosave');
+		/*wp_register_script('cpt-autosave', EE_CORE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array', 'event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_enqueue_script('cpt-autosave');/**/ //todo re-enable when we start doing autosave again in 4.2
 
 		//filter _autosave_containers
 		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_setup_autosave_js_containers', $this->_autosave_containers, $this );
 		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_' . get_class($this) . '_setup_autosave_js_containers', $containers, $this );
 
-		wp_localize_script('cpt-autosave', 'EE_AUTOSAVE_IDS', $containers );
+		wp_localize_script('event_editor_js', 'EE_AUTOSAVE_IDS', $containers ); //todo once we enable autosaves, this needs to be switched to localize with "cpt-autosave"
 	}
 
 
@@ -291,8 +291,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 	public function setup_autosave_hooks() {
 		$this->_set_autosave_containers();
-		//$this->_load_autosave_scripts_styles(); //todo reactivate when implementing autosaves in 4.2
-		//add_action('admin_enqueue_scripts', array( $this, 'load_autosave_scripts_styles'), 10 );
+		$this->_load_autosave_scripts_styles();
 	}
 
 
