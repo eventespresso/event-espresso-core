@@ -1225,13 +1225,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 			wp_enqueue_script('ee_admin_js');
 			wp_enqueue_style('ee-admin-css');
 		}
-		
-
-
-		//localizers (for passing variables to js as well)
-//		;
-//		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
-//		wp_localize_script( 'event_editor_js', 'EE_EDIT_VARS', EE_Registry::$i18n_js_strings );
 
 
 		/** remove filters **/
@@ -1249,7 +1242,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/	
 	public function admin_footer_scripts_eei18n_js_strings() {
 		
-		;
 		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
 		
 		EE_Registry::$i18n_js_strings['January'] = __( 'January', 'event_espresso' );
