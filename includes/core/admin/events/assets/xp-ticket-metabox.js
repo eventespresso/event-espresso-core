@@ -1413,6 +1413,7 @@ jQuery(document).ready(function($) {
 				break;
 			case 'price' :
 				tktHelper.setcontext('price').setitemdata(data).newPriceRow();
+				break;
 		}
 		return false;
 	});
@@ -1503,6 +1504,7 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		tktHelper.setdateTimeRow(data.datetimeRow).setcontext('ticket').DateTimeEditToggle();
+		UNSAVED_DATA_MSG.inputChanged=1;
 		return false;
 	});
 
@@ -1523,6 +1525,7 @@ jQuery(document).ready(function($) {
 				tktHelper.cloneTicket(data.ticketRow).TicketEditToggle();
 				break;
 		}
+		UNSAVED_DATA_MSG.inputChanged=1;
 		return false;
 	});
 
@@ -1548,6 +1551,7 @@ jQuery(document).ready(function($) {
 				tktHelper.setcontext('price').setticketRow(data.ticketRow).trash(data.priceRow);
 				break;
 		}
+		UNSAVED_DATA_MSG.inputChanged=1;
 		return false;
 	});
 
@@ -1560,6 +1564,7 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		tktHelper.toggleTicketSelect(this);
+		UNSAVED_DATA_MSG.inputChanged=1;
 		return false;
 	});
 
