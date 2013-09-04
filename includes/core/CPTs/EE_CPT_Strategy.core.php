@@ -93,8 +93,8 @@ class EE_CPT_Strategy extends EE_BASE {
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
 		// load EE_Request_Handler
-//		add_action( 'wp_loaded', array( $this, 'apply_CPT_Strategy' ), 2 );
 		add_action( 'parse_request', array( $this, 'apply_CPT_Strategy' ), 1 );
+		
 	}
 
 
@@ -136,6 +136,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * 	@return array
 	 */
 	public function apply_CPT_Strategy( $WP_Object ) {
+//		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// is current query for an EE CPT ?
 		if ( isset( $WP_Object->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Object->query_vars['post_type'] ] )) {
 			// is EE on or off ?
@@ -165,8 +166,10 @@ class EE_CPT_Strategy extends EE_BASE {
 				// creates classname like:  EE_CPT_Event_Strategy
 				$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
 				// load and instantiate
-				 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));
+				 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));	
 //				printr( $CPT_Strategy, '$CPT_Strategy  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+				add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 				add_filter( 'posts_join',	array( $this, 'posts_join' ));
 				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
@@ -174,6 +177,36 @@ class EE_CPT_Strategy extends EE_BASE {
 			}				
 		}
 //		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	}
+
+
+
+	/**
+	 * 	pre_get_posts
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function pre_get_posts(  $WP_Query  ) {
+
+		if ( ! $WP_Query->is_main_query() ) {
+			return;
+		}
+		
+		if ( is_archive() ) {
+			//echo '<h1>is_archive  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+			// ie: set "ee" to "events"
+			$this->EE->REQ->set( 'ee', $this->CPT['plural_slug'] );
+		// or does it match a single page CPT like /event/
+		} else if ( is_single() ) {
+			//echo '<h1>is_single  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+			// ie: set "ee" to "event"
+			$this->EE->REQ->set( 'ee', $this->CPT['singular_slug'] );
+		} 
+//		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
+		return $WP_Query;
+		
 	}
 
 
@@ -191,6 +224,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
+//		echo '<h4>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return $SQL;
 	}
 
@@ -209,6 +243,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON ( ' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID ) ';
 		}
+//		echo '<h4>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return $SQL;
 	}
 
