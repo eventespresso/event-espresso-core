@@ -54,26 +54,24 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$this->_scripts_styles = array(
 			'registers' => array(
 				'ee-tickets-datetimes-css' => array(
-					'url' => EVENTS_ASSETS_URL . 'event-tickets-datetimes.css',
+					'url' => PRICING_ASSETS_URL . 'event-tickets-datetimes.css',
 					'type' => 'css'
 					),
-				'ee-xp-ticket-metabox' => array(
-					'url' => EVENTS_ASSETS_URL . 'xp-ticket-metabox.js',
-					'depends' => array('jquery', 'ee-moment')
+				'ee-dtt-ticket-metabox' => array(
+					'url' => PRICING_ASSETS_URL . 'ee-datetime-ticket-metabox.js',
+					'depends' => array('ee-datepicker')
 					)
+				),
+			'deregisters' => array(
+				'event-editor-css' => array('type' => 'css' ),
+				'event-datetime-metabox' => array('type' => 'js')
 				),
 			'enqueues' => array(
 				'ee-tickets-datetimes-css' => array( 'edit', 'create_new' ),
-				'ee-xp-ticket-metabox' => array( 'edit', 'create_new' )
-				),
-			/*'localize' => array(
-				'ee-prices-event-editor' => array(
-					'PRICE_METABOX_ITEMS' => array(
-						'adding_price_error' => __('There was a problem with adding the price.  No new price was generated', 'event_espresso')
-						)
-					)
-				)/**/
+				'ee-dtt-ticket-metabox' => array( 'edit', 'create_new' )
+				)
 			);
+
 
 		add_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_Extend_Events_Admin_Page', array( $this, 'autosave_handling' ), 10 );
 

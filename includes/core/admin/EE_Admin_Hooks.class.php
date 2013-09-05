@@ -320,6 +320,21 @@ abstract class EE_Admin_Hooks extends EE_Base {
 					}
 				}
 			}
+
+			//let's do the deregisters
+			if ( !isset( $this->_scripts_styles['deregisters'] ) )
+				return;
+			foreach ( $this->_scripts_styles['deregisters'] as $ref => $details ) {
+				$defaults = array(
+					'type' => 'js'
+					);
+				$details = wp_parse_args( $details, $defaults );
+				extract( $details );
+
+				$type == 'js' ? wp_deregister_script($ref) : wp_deregister_style($ref);
+
+			}
+
 		}
 	}
 

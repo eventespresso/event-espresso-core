@@ -385,9 +385,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_style('jquery-ui-style');
 		wp_enqueue_style('jquery-ui-style-datepicker-css');
 
+		wp_register_style('event-editor-css', EVENTS_ASSETS_URL . 'event-editor.css', array('ee-admin-css'), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('event-editor-css');
+
 		//scripts
 		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon', 'jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('event-datetime-metabox', EVENTS_ASSETS_URL . 'event-datetime-metabox.js', array('event_editor_js', 'ee-datepicker'), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script('event_editor_js');
+		wp_enqueue_script('event-datetime-metabox');
 
 		;
 		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
@@ -818,6 +823,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$TKT_values = array(
 				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
 				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 1,
+				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
+				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
 				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
 				'TKT_qty' => isset( $tkt['TKT_qty'] ) ? $tkt['TKT_qty'] : -1,
@@ -1392,9 +1399,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				}
 			}
 		} else {
-			$template_args['time'] = $time[0];
-			$ticket = $this->EE->load_model('Ticket')->create_default_object();
-			$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket );
+			$template_args['time'] = $times[0];
+			$ticket = $this->EE->load_model('Ticket')->get_all_default_tickets();
+			$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket[1] ); //note we're just sending the first default row (decaf can't manage default tickets so this should be sufficent);
 		}
 
 		$template_args['event_datetime_help_link'] = $this->_get_help_tab_link('event_date_info');
@@ -1421,23 +1428,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'ticketrow' => $skeleton ? 'TICKETNUM' : $ticket->get('TKT_row'),
 			'TKT_ID' => $ticket->get('TKT_ID'),
 			'TKT_name' => $ticket->get('TKT_name'),
-			'TKT_start_date' => $ticket->get('TKT_start_date'),
-			'TKT_end_date' => $ticket->get('TKT_end_date'),
-			'TKT_qty' => $ticket->get('TKT_qty')
+			'TKT_start_date' => $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
+			'TKT_end_date' => $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
+			'TKT_is_default' => $ticket->get('TKT_is_default'),
+			'TKT_qty' => $ticket->get('TKT_qty'),
+			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets'
 			);
 
-		$price = $ticket->get('TKT_ID') !== 0 ? $ticket->get_first_related('Price') : array();
+		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price') : $this->EE->load_model('Price')->create_default_object();
 
-		if ( empty( $price ) )
-			$price = $this->EE->load_model('Price')->create_default_object();
 
 		$price_args = array(
-			'price_currency_symbol' => $this->EE->CFG->currency_sign,
+			'price_currency_symbol' => $this->EE->CFG->currency->sign,
 			'PRC_amount' => $price->get('PRC_amount'),
 			'PRT_ID' => $price->get('PRT_ID'),
 			'PRC_ID' => $price->get('PRC_ID'),
 			'PRC_is_default' => $price->get('PRC_is_default'),
 			);
+
 		$template_args = array_merge( $template_args, $price_args );
 		$template = apply_filters('FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
 		return espresso_display_template($template, $template_args, TRUE);

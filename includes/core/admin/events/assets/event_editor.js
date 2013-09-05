@@ -29,5 +29,4 @@ jQuery(document).ready(function($) {
 			UNSAVED_DATA_MSG.inputChanged = 1;
 		});
 	});
-
 });

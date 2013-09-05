@@ -133,6 +133,12 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
+		
+//		$dms = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
+//		echo 'echodump of $dms';
+//		var_dump($dms);
+		
+		
 //		var_dump(EEM_Registration::instance()->get_registrations_per_day_report());
 //		$results = EEM_Registration::instance()->get_registrations_per_event_report('-5 months');
 //		$regs = EEM_Registration::instance()->get_all(array('limit'=>4));

@@ -21,7 +21,7 @@
 <tr id="extra-price-row-<?php echo $tkt_row; ?>-<?php echo $prc_row; ?>">
 	<td colspan="5">
 		<section class="extra-price-row" style="display:none">
-			<textarea name="<?php echo $edit_prices_name; ?>[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRT_description]" class="edit-price-PRC_desc ee-full-textarea-inp" placeholder="Edit the description for the price here"><?php echo $PRC_desc; ?></textarea>
+			<textarea name="<?php echo $edit_prices_name; ?>[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_desc]" class="edit-price-PRC_desc ee-full-textarea-inp" placeholder="Edit the description for the price here"><?php echo $PRC_desc; ?></textarea>
 		</section>
 	</td>
 </tr>
