@@ -112,7 +112,7 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function loop_start( WP_Query $wp_query ) {
 		$this->EE->load_helper('Event_View');
-		$wp_query = EEH_Event_View::get_event_datetimes_and_prices_for_WP_Query( $wp_query );
+		$wp_query = EEH_Event_View::get_event_datetimes_and_tickets_for_WP_Query( $wp_query );
 	}
 
 
