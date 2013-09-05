@@ -29,7 +29,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* @access protected
 	* @var array
 	*/
-	protected $_event = NULL;
+	protected static $_event = NULL;
 
 
 
@@ -52,6 +52,15 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+//		add_action( 'AHEE_events_list_footer', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
+		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10 );
+		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
+		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
+		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
+		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );		
+		define( 'TICKET_SELECTOR_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) );
+		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) );
+
 	}
 
 	/**
@@ -72,12 +81,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@param	object 			$WP  
 	* 	@return 	void	
 	*/
-	public function run( $WP ) {	
-	
-		$this->EE->load_class( 'Cost_Calculator' );
-		add_action( 'AHEE_display_ticket_selector', array( $this, 'load_tckt_slctr_js' ), 10 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_tckt_slctr_js' ), 10 );		
-
+	public function run( $event ) {
+		
 	}
 
 
@@ -102,56 +107,49 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-		$this->_event = $event;
-		$this->_added_by_admin = $added_by_admin;
+//		EE_Registry::instance()->load_class( 'Cost_Calculator' );
+
+		self::$_event = $event;
+//		printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		self::_added_by_admin = $added_by_admin;
 
 		$template_args = array();
-		//printr( $this->_event, '$this->_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( self::$_event, 'self::$_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		if ( $this->_event->allow_multiple ) {
+		if ( self::$_event->EVT_allow_multiple ) {
 			// make sure additional_limit is set
-			if ( ! isset( $this->_event->additional_limit ) or $this->_event->additional_limit == '' ) {
-				$this->_event->additional_limit = $this->_event->reg_limit;
+			if ( ! isset( self::$_event->EVT_additional_limit ) or self::$_event->EVT_additional_limit == '' ) {
+				self::$_event->EVT_additional_limit = self::$_event->reg_limit;
 			}
 			// then make it at least 1
-			$this->_event->additional_limit = ( $this->_event->additional_limit == 0 ) ? 1 : $this->_event->additional_limit;
+			self::$_event->EVT_additional_limit = ( self::$_event->EVT_additional_limit == 0 ) ? 1 : self::$_event->EVT_additional_limit;
 			// let's make the max amount of attendees somebody can select a little more reasonable
-			$template_args['max_atndz'] = $this->_event->additional_limit > 16 ? 16 : $this->_event->additional_limit;	
+			$template_args['max_atndz'] = self::$_event->EVT_additional_limit > 16 ? 16 : self::$_event->EVT_additional_limit;	
 		} else {
 			$template_args['max_atndz'] = 1;
 		}
 		
-
+		$template_args['event_id'] = self::$_event->ID;
+		$template_args['event_name'] = self::$_event->post_title;
+		$template_args['require_pre_approval'] = self::$_event->EVT_require_pre_approval;
+		$template_args['datetimes'] = self::$_event->datetimes;
 		
-		$template_args['event_id'] = $this->_event->id;
-		$template_args['event_name'] = $this->_event->event_name;
-		$template_args['require_pre_approval'] = $this->_event->require_pre_approval;
-
-		$template_args['dates'] = $this->_event->datetimes;
-		$template_args['dates'] = $this->_format_date($template_args['dates']);
-		//printr( $template_args['dates'], 'dates <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		$template_args['times'] = $this->_process_event_times($this->_event->datetimes);
-		$template_args['datetimes'] = $this->_process_event_datetimes($this->_event->datetimes);
-		$template_args['multiple_time_options'] = count($template_args['times']) > 1 ? TRUE : FALSE;
-		//echo printr( $template_args['times'], 'times <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-		//echo printr( $this->_event->datetimes, 'event->datetimes <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-
-		$template_args['prices'] = $this->_process_event_prices( $this->_event->prices, $this->_event->currency_symbol );
-		$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
-		//echo printr($this->_event->prices, 'event->prices <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-
-		$template_args['event_meta'] = EE_Ticket_Prices::obfuscate( empty( $this->_event->meta ) ? array() : $this->_event->meta );
-//		$template_args['event_meta'] = base64_encode( serialize( empty( $this->_event->meta ) ? array() : $this->_event->meta ));
-//		printr( $template_args['event_meta'], 'event_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		$template_args['currency_symbol'] = $this->_event->currency_symbol;
-		$template_args = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__template_args',$template_args,$this->_event);
 		
-		$templates['ticket_selector'] =  apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__template_path',
-							EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_chart.template.php',$this->_event);
-	//	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_multi_selects.template.php';
-	//	$templates['ticket_selector'] =  EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/ticket_selector/ticket_selector_threaded_chart.template.php';
+
+
+//		$template_args['dates'] = self::_format_date( self::$_event->datetimes );
+//		$template_args['times'] = self::_process_event_times(self::$_event->datetimes);
+//		$template_args['datetimes'] = self::_process_event_datetimes(self::$_event->datetimes);
+//		$template_args['multiple_time_options'] = count($template_args['times']) > 1 ? TRUE : FALSE;
+//		$template_args['prices'] = self::_process_event_prices( self::$_event->prices, self::$_event->currency_symbol );
+//		$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
+//		$template_args['event_meta'] = EE_Ticket_Prices::obfuscate( empty( self::$_event->meta ) ? array() : self::$_event->meta );
+//		$template_args['currency_symbol'] = self::$_event->currency_symbol;
+//		$template_args = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__template_args',$template_args,self::$_event);
+		$templates['ticket_selector'] =  TICKET_SELECTOR_PATH . 'ticket_selector_chart.template.php';
+//	//	$templates['ticket_selector'] =  TICKET_SELECTOR_PATH . 'ticket_selector_multi_selects.template.php';
+//	//	$templates['ticket_selector'] =  TICKET_SELECTOR_PATH . 'ticket_selector_threaded_chart.template.php';
+//		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 		espresso_display_template($templates['ticket_selector'], $template_args);
 
 	}
@@ -172,7 +170,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		//printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// start with an empty array
 		$dates = array();
-		foreach ( $datetimes as $DTT_ID => $date ) {
+		foreach ( $datetimes as $date ) {
 			$frmtd = $date->start_date('D M jS');
 			$dates[ $DTT_ID ] = str_replace( ' ', '&nbsp;', $frmtd );
 		}
@@ -285,6 +283,61 @@ class EED_Ticket_Selector extends  EED_Module {
 		//printr( $price_options, '$price_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		return $price_options;
+	}
+
+
+
+
+
+	
+	/**
+	* 	ticket_selector_form_open
+	* 
+	*	@access public
+	* 	@access 		public
+	* 	@return		string
+	*/	
+	public static function ticket_selector_form_open() {
+		$checkout_url = get_permalink( EE_Registry::instance()->CFG->core->reg_page_id );
+		if ( ! $checkout_url ) {
+			$msg = __('The URL for the event registration checkout page could not be retreived.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+		echo '
+		<form id="" method="POST" action="' . $checkout_url . '">';
+	}
+
+
+
+
+	
+	/**
+	* 	display_ticket_selector_submit
+	* 
+	*	@access public
+	* 	@access 		public
+	* 	@return		string
+	*/	
+	public static function display_ticket_selector_submit() {
+		echo '
+		<input id="" class="ee-register-button-lnk" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
+		';
+
+	}
+
+
+
+	
+	/**
+	* 	ticket_selector_form_close
+	* 
+	*	@access public
+	* 	@access 		public
+	* 	@return		string
+	*/	
+	public static function ticket_selector_form_close() {
+		echo '
+		</form>';
 	}
 
 
@@ -681,7 +734,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			if ($EE_Cart->add_to_cart($which_cart, $add_to_cart_args)) {
 
 				// retreive event id list
-				//$events_in_cart = $this->session->data('events_in_cart');
+				//$events_in_cart = self::session->data('events_in_cart');
 				//echo $EE_Cart->session->pre_r($EE_Cart); die();
 				// add this event to list
 				$EE_Cart->set_events_in_cart_list($event['id']);
@@ -763,12 +816,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return 		void
 	*/
-	public function load_tckt_slctr_js() {
+	public function load_tckt_slctr_assets() {
 		// add some style
-		wp_register_style('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/ticket_selector/ticket_selector.css');
+		wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
 		wp_enqueue_style('ticket_selector');
 		// make it dance
-		wp_register_script('ticket_selector', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ticket_selector.js', array('jquery'), '', TRUE);
+		wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
 		wp_enqueue_script('ticket_selector');
 		// loco grande 
 		wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
