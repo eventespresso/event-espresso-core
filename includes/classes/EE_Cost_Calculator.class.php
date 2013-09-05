@@ -310,7 +310,6 @@ abstract class EE_Ticket_Cost {
 	abstract public function price_history();
 	abstract public function order_totals();
 	abstract public function order_levels();
-	abstract public function obfuscate();
 
 
 
