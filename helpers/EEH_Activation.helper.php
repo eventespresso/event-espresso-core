@@ -93,8 +93,6 @@ class EEH_Activation {
 	}
 
 
-
-
 	/**
 	 * configuration_initialization
 	 *
@@ -880,14 +878,42 @@ class EEH_Activation {
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
 		
 		
+		
 		// grab espresso_db_update option
 		$espresso_db_update = get_option( 'espresso_db_update', array() );
+		
+		
 		// make sure it's an array
-		$espresso_db_update = is_array( $espresso_db_update ) ? $espresso_db_update : array( $espresso_db_update );
+		$espresso_db_update = is_array( $espresso_db_update ) ? $espresso_db_update : array( $espresso_db_update =>array());
+		
+		
+		//make sure the current database state wp option has been set 		
+		if( ! get_option(EE_Data_Migration_Manager::current_database_state)){
+			//mark teh DB as being in teh state as teh last version in there.
+			//this is done to trigger maintenance mode and do data migration scripts
+			//if the admin installed this version of EE over 3.1.x or 4.0.x
+			//otherwise, the normal maintenance mode code is fine
+			$previous_version_installed = end(array_keys($espresso_db_update));
+			if(version_compare('4.1.0', $previous_version_installed)){
+				//last installed version was less than 4.1
+				//so we want the data migrations to happen. SO, we're going to say the DB is at that state
+				update_option(EE_Data_Migration_Manager::current_database_state,$previous_version_installed);
+				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			}else{
+				//well this is weird: somehow the current database state option wasn't set
+				//but apparently we've had a version fo EE over 4.1.x installed...
+				//oh well. it's probably at teh current db's version
+				update_option(EE_Data_Migration_Manager::current_database_state,EVENT_ESPRESSO_VERSION);
+			}
+		}
+		
+		
+		
 		// add current EE version to list
 		$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
 		// resave
 		update_option( 'espresso_db_update', $espresso_db_update );
+		
 		
 	}
 

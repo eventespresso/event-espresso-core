@@ -42,6 +42,11 @@ class EE_Maintenance_Mode {
 	 * migration scripts before taking the site out of maintenance mode
 	 */
 	const level_2_complete_maintenance = 2;
+	
+	/**
+	 * the nameof the option which stores the current level of maintenance mode
+	 */
+	const option_name_maintenance_mode = 'maintenance_mode';
    /**
      * 	EE_Maintenance_Mode Object
      * 	@var EE_Maintenance_Mode $_instance
@@ -98,7 +103,17 @@ class EE_Maintenance_Mode {
 	 * @return int
 	 */
 	public function level(){
-		return EE_Maintenance_Mode::level_0_not_in_maintenance;
+		$maintenance_mode_level = get_option(self::option_name_maintenance_mode,0);
+		return $maintenance_mode_level;
+	}
+	
+	/**
+	 * Determines if we need to put EE in maintenance mode because teh database needs updating
+	 */
+	public function set_maintenance_mode_if_db_old(){
+		if( EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()){
+			update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
+		}
 	}
 
 
