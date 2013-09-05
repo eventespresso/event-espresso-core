@@ -252,11 +252,11 @@ class EE_Calendar_Admin {
 
 	public function calendar_admin() {
 		
-		global $espresso_calendar, $notices;
+		global $espresso_calendar, $notices,$espresso_premium;
 
 		if (isset($_POST['update_calendar']) && check_admin_referer('espresso_form_check', 'update_calendar')) {
 			
-			$espresso_calendar['espresso_page_post'] = $_POST['espresso_page_post'];
+			$espresso_calendar['espresso_page_post'] = isset($_POST['espresso_page_post']) ? $_POST['espresso_page_post'] : 'R';
 			
 			$espresso_calendar['header_left'] = $_POST['espresso_calendar_header_left'];
 			$espresso_calendar['header_center'] = $_POST['espresso_calendar_header_center'];
@@ -375,7 +375,7 @@ class EE_Calendar_Admin {
 								</li>
 								<li>
 									<strong>
-										<?php _e('Category Colors:', 'event_espresso'); ?>
+										<?php _e('Category Colors (premium version only):', 'event_espresso'); ?>
 									</strong><br />
 									<?php _e('Event Categories can have their own colors on the calendar. To use this feature, simply create a class in theme CSS file with the names of your event categories. For more inforamtion <a href="http://eventespresso.com/forums/?p=650" target="_blank">please visit the tutorial</a> for this topic.', 'event_espresso'); ?>
 								</li>
@@ -449,11 +449,11 @@ class EE_Calendar_Admin {
 											echo '/>&nbsp;' . __('Custom:') . '</label>&nbsp;<input type="text" name="time_format_custom" value="' . esc_attr($espresso_calendar['time_format']) . '" class="small-text" /> ';
 											echo '<span class="example"> ' . date_i18n($espresso_calendar['time_format']) . "</span></div>";
 											?>
-											<span class="description">
+											<p><span class="description">
 												<a href="http://codex.wordpress.org/Formatting_Date_and_Time">
 													<?php _e('Documentation on date and time formatting', 'event_espresso'); ?>
 												</a>
-											</span>
+											</span></p>
 											<img class="ajax-loading" src="<?php echo esc_url(admin_url('images/wpspin_light.gif'));?>" alt="" />
 										</td>
 									</tr>
@@ -551,6 +551,7 @@ class EE_Calendar_Admin {
 									<?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma separated list of page id\'s. If left to the default of 0, the calendar stylesheet will load on every page of the site. You can find Page ID\'s by going to the WordPress menu Pages > All Pages, and hovering your mouse over the Page title, at the bottom of your browser a small box will appear with some code in it. Where it says post= then a number (post=4), that number is the Page ID. You can improve site performance and reduce conflicts by specifying which page/s have calendars on them.', 'event_espresso'); ?>
 									</span></td>
 									</tr>-->
+<?php if ($espresso_premium == true) { ?>
 									<tr>
 										<th>
 											<label for="calendar_page_post">
@@ -578,8 +579,10 @@ class EE_Calendar_Admin {
 											</span>
 										</td>
 									</tr>
+<?php } ?>
 								</tbody>
 							</table>
+<?php if ($espresso_premium == true) { ?>
 							<h4>
 								<?php _e('Theme Settings', 'event_espresso'); ?>
 							</h4>
@@ -716,6 +719,7 @@ class EE_Calendar_Admin {
 
 								</tbody>
 							</table>
+<?php } ?>
 							<p>
 								<input class="button-primary" type="submit" name="save_calendar_settings" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings2" />
 								<?php wp_nonce_field('espresso_form_check', 'update_calendar') ?>
@@ -918,7 +922,7 @@ class EE_Calendar_Admin {
 				$("input[name='time_format_custom']").focus(function(){
 						$("#time_format_custom_radio").attr("checked", "checked");
 					});
-
+<?php if ($espresso_premium == true) { ?>
 				// disable color picker & thumb sizes inputs & fade if not use controls true
 				window.scp = $('select#espresso_use_pickers option:selected').val();
 				window.ect = $('select#enable-calendar-thumbs option:selected').val();
@@ -980,7 +984,7 @@ class EE_Calendar_Admin {
 							$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').removeAttr('style');
 						}
 					});
-
+<?php } ?>
 
 				// WP toggle function
 				postboxes.add_postbox_toggles('espresso_calendar');
