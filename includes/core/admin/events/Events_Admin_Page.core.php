@@ -712,17 +712,171 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return bool             success or fail
 	 */
 	protected function _default_tickets_update( $evtobj, $data ) {
-		//first we need to start with datetimes cause they are the "root" items attached to events.
-		$saved_dtts = $this->_update_dtts( $evtobj, $data );
+		$success = TRUE;
+		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
+			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
+			$datetime_values = array(
+				'DTT_ID' => !empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
+				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
+				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
+				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? -1 : $dtt['DTT_reg_limit'],
+				'DTT_order' => $row,
+				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
+				);
+			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
+			
+			if ( !empty( $dtt['DTT_ID'] ) ) {
+				$DTM = $this->EE->load_model('Datetime')->get_one_by_ID($dtt['DTT_ID'] );
+				foreach ( $datetime_values as $field => $value ) {
+					$DTM->set( $field, $value );
+				}
+				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
+				$saved_dtts[$DTM->ID()] = $DTM;
+			} else {
+				$DTM = $this->EE->load_class('Datetime', array( $datetime_values ), FALSE, FALSE );
+			}
+			
+			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
-		//next tackle the tickets (and prices?)
-		$success = $this->_update_tkts( $evtobj, $saved_dtts, $data );
+			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
+			$saved_dtt = $DTT;
 
+			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message. //todod this is actually sucky we need a better error message but this is what it is for now.
+		}
+
+		//no dtts get deleted so we don't do any of that logic here.
+		//update tickets next
+		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
+		$update_prices = false;
+
+		foreach ( $data['edit_tickets'] as $row => $tkt ) {
+			$ticket_price = isset( $data['edit_prices'][$row][1]['PRC_amount'] ) ? $data['edit_prices'][$row][1]['PRC_amount'] : 0;
+
+			$TKT_values = array(
+				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
+				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 1,
+				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
+				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
+				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
+				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
+				'TKT_qty' => isset( $tkt['TKT_qty'] ) ? $tkt['TKT_qty'] : -1,
+				'TKT_uses' => isset( $tkt['TKT_uses'] ) ? $tkt['TKT_uses'] : -1,
+				'TKT_min' => isset( $tkt['TKT_min'] ) ? $tkt['TKT_min'] : 1,
+				'TKT_max' => isset( $tkt['TKT_max'] ) ? $tkt['TKT_max'] : -1,
+				'TKT_row' => $row,
+				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
+				'TKT_price' => $ticket_price
+				);
+
+
+
+			//if this is a default TKT, then we need to set the TKT_ID to 0 and update accordingly, which means in turn that the prices will become new prices as well.
+			if ( isset( $tkt['TKT_is_default'] ) && $tkt['TKT_is_default'] ) {
+				$TKT_values['TKT_ID'] = 0;
+				$TKT_values['TKT_is_default'] = 0;
+				$TKT_values['TKT_price'] = $ticket_price;
+				$update_prices = TRUE;
+			}
+
+			//if we have a TKT_ID then we need to get that existing TKT_obj and update it
+			//we actually do our saves a head of doing any add_relations to because its entirely possible that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
+			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
+			
+			if ( !empty( $tkt['TKT_ID'] ) ) {
+				$TKT = $this->EE->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
+
+				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
+
+				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
+				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') ? TRUE : FALSE;
+
+				//set new values
+				foreach ( $TKT_values as $field => $value ) {
+					$TKT->set( $field, $value );
+				}
+
+				//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket. 
+				if ( $create_new_TKT ) {
+					//archive the old ticket first
+					$TKT->set('TKT_deleted', 1);
+					$TKT->save();
+
+					//make sure this ticket is still recorded in our saved_tkts so we don't run it through the regular trash routine.
+					$saved_tickets[$TKT->ID()] = $TKT;
+
+
+					//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
+					$TKT->set( 'TKT_ID', 0 );
+					$TKT->set( 'TKT_deleted', 0 );
+					$TKT->set( 'TKT_price', $ticket_price );
+					$TKT->set( 'TKT_sold', 0 );
+
+					//now we need to make sure that $new prices are created as well and attached to new ticket.
+					$update_prices = TRUE; 
+				}
+				
+				//make sure price is set if it hasn't been already
+				$TKT->set( 'TKT_price', $ticket_price );
+
+			} else {
+				//no TKT_id so a new TKT
+				$TKT_values['TKT_price'] = $ticket_price;
+				$TKT = $this->EE->load_class('Ticket', array( $TKT_values ), FALSE, FALSE );
+				$update_prices = TRUE;
+			}
+
+			//update ticket.
+			$TKT->save();
+			$saved_tickets[$TKT->ID()] = $TKT;
+
+			//add prices to ticket
+			$this->_add_prices_to_ticket( $data['edit_prices'][$row], $TKT, $update_prices );
+
+
+			//with decaf tickets never get removed (trashed)... so we just need to make sure the ticket is added to the solitary dtt saved.
+			$saved_dtt->_add_relation_to( $TKT, 'Ticket' );
+
+		}
 	}
 
 
 
-	
+	/**
+	 * This attaches a list of given prices to a ticket.
+	 * Note we dont' have to worry about ever removing relationships (or archiving prices) because if there is a change in price information on a ticket, a new ticket is created anyways so the archived ticket will retain the old price info and prices are automatically "archived" via the ticket.
+	 *
+	 * @access  private
+	 * @param array  	$prices  	Array of prices from the form.
+	 * @param EE_Ticket $ticket  	EE_Ticket object that prices are being attached to.
+	 * @param bool 		$new_prices Whether attach existing incoming prices or create new ones.
+	 * @return  void
+	 */
+	private function  _add_prices_to_ticket( $prices, EE_Ticket $ticket, $new_prices = FALSE ) {
+		foreach ( $prices as $row => $prc ) {
+			$PRC_values = array(
+				'PRC_ID' => !empty( $prc['PRC_ID'] ) ? $prc['PRC_ID'] : NULL,
+				'PRT_ID' => !empty( $prc['PRT_ID'] ) ? $prc['PRT_ID'] : NULL,
+				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
+				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
+				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
+				'PRC_row' => $row
+				);
+
+			if ( $new_prices || empty( $PRC_values['PRC_ID'] ) ) {
+				$PRC_values['PRC_ID'] = 0;
+				$PRC = $this->EE->load_class('Price', array( $PRC_values ), FALSE, FALSE);
+			} else {
+				$PRC = $this->EE->load_model( 'Price' )->get_one_by_ID( $prc['PRC_ID'] );
+				//update this price with new values
+				foreach ( $PRC_values as $field => $newprc ) {
+					$PRC->set( $field, $newprc );
+				}
+				$PRC->save();
+			}
+
+			$PRC = $ticket->_add_relation_to( $PRC, 'Price' );
+		}
+	}
 
 
 
@@ -882,7 +1036,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
-		$timezone = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->timezone_string() : NULL; 
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
@@ -892,24 +1045,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		 * 3. For each ticket get related prices
 		 */
 		
-		$DTM_MDL = $this->EE->load_model('Datetime', array($timezone) );
+		$DTM_MDL = $this->EE->load_model('Datetime' );
 		$times = $DTM_MDL->get_all_event_dates( $event_id );
 
 		require_once(EE_MODELS . 'EEM_Datetime.model.php');
-		$DTM_MDL = EEM_Datetime::instance( $timezone );
+		$DTM_MDL = EEM_Datetime::instance();
 		require_once EE_HELPERS . 'EEH_DTT_helper.helper.php';
 
+		$firstdtt = array_slice($times, 0, 1);
 		//do we get related tickets?
-		if ( $times[0]->get('DTT_ID') !== 0 ) {
+		if ( $firstdtt[0]->get('DTT_ID') !== 0 ) {
 			foreach ( $times as $time ) {
 				$existing_datetime_ids[] = $time->get('DTT_ID');
 				$template_args['time'] = $time;
-				$related_tickets = $time->get_all_related('Ticket');
+				$related_tickets = $time->get_many_related('Ticket');
 				
 				if ( !empty($related_tickets) ) {
 					$template_args['total_ticket_rows'] = count($related_tickets);
 					foreach ( $related_tickets as $ticket ) {
-						$existing_ticket_ids[] = $ticket->get('DTT_ID');
+						$existing_ticket_ids[] = $ticket->get('TKT_ID');
 						$template_args['ticket_rows'] .= $this->_get_ticket_row($ticket);
 					}
 				} else {
