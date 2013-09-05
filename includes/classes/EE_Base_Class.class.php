@@ -515,12 +515,11 @@ class EE_Base_Class{
 		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : $dt_frmt;
 		$in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
 
-		
 		//validate field for datetime and returns field settings if valid.
 		$field = $this->_get_dtt_field_settings( $field_name );
 		$var_name = $this->_get_private_attribute_name( $field_name );
 
-		if ( !empty($dt_frmt) ) {
+		if ( $dt_frmt !== NULL ) {
 			$this->_clear_cached_property( $var_name );
 			if ( $echo )
 				$field->set_pretty_date_format( $in_dt_frmt );
