@@ -712,28 +712,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return bool             success or fail
 	 */
 	protected function _default_tickets_update( $evtobj, $data ) {
-		//first we need to start with datetimes cause they are the "root" items attached to events.
-		$saved_dtts = $this->_update_dtts( $evtobj, $data );
-
-		//next tackle the tickets (and prices?)
-		$success = $this->_update_tkts( $evtobj, $saved_dtts, $data );
-
-	}
-
-
-
-	
-
-	/**
-	 * update event_datetimes
-	 * @param  EE_Event 	$evt_obj Event being updated
-	 * @param  array    	$data    the request data from the form
-	 * @return EE_Datetime           array of EE_Datetime ids created/updated.
-	 */
-	private function _update_dtts( $evt_obj, $data ) {
-		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
-
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
 			$datetime_values = array(
@@ -744,81 +723,34 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'DTT_order' => $row,
 				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
-
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 			
 			if ( !empty( $dtt['DTT_ID'] ) ) {
-				$DTM = $this->EE->load_model('Datetime', array($timezone) )->get_one_by_ID($dtt['DTT_ID'] );
+				$DTM = $this->EE->load_model('Datetime')->get_one_by_ID($dtt['DTT_ID'] );
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[$DTM->ID()] = $DTM;
 			} else {
-				$DTM = $this->EE->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
+				$DTM = $this->EE->load_class('Datetime', array( $datetime_values ), FALSE, FALSE );
 			}
 			
-			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
+			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
 			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
-			$saved_dtts[$DTT->ID()] = $DTT;
-			$saved_dtt_objs[$DTT->get('DTT_order')] = $DTT;
+			$saved_dtt = $DTT;
 
 			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message. //todod this is actually sucky we need a better error message but this is what it is for now.
 		}
 
-		//now we need to REMOVE any dtts that got deleted.  Keep in mind that this process will only kick in for DTT's that don't have any DTT_sold on them. So its safe to permanently delete at this point.
-		$old_datetimes = explode(',', $data['datetime_IDs'] );
-		$old_datetimes = $old_datetimes[0] == '' ? array() : $old_datetimes;
-
-		if ( is_array( $old_datetimes ) ) {
-			$dtts_to_delete = array_diff( $old_datetimes, array_keys($saved_dtts) );
-			foreach ( $dtts_to_delete as $id ) {
-				$id = absint( $id );
-
-				//remove tkt relationships.
-				//Note: there shouldn't be any "orphaned" permanently deleteable tickets due to work that will be done on this codebase ticket -> https://events.codebasehq.com/projects/event-espresso/tickets/3533
-				$related_tickets = $saved_dtts[$id]->get_many_related('Tickets');
-				foreach ( $related_tickets as $tkt ) {
-					$saved_dtts[$id]->_remove_relation_to($tkt, 'Ticket');
-				}
-				 
-
-				$evt_obj->_remove_relation_to( $id, 'Datetime' );
-			}
-		}
-
-		return $saved_dtt_objs;
-	}
-
-
-
-
-	/**
-	 * update tickets
-	 * @param  EE_Event         $evtobj     Event object being updated
-	 * @param  EE_Datetime[]    $saved_dtts an array of datetime ids being updated
-	 * @param  array            $data       incoming request data
-	 * @return bool                 		success or fail
-	 */
-	private function _update_tkts( $evtobj, $saved_dtts, $data ) {
-		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
-		$success = TRUE;
-		$saved_tickets = array();
-		$update_prices = FALSE;
-		$new_default = NULL;
+		//no dtts get deleted so we don't do any of that logic here.
+		//update tickets next
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
+		$update_prices = false;
 
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
-
-			//figure out what dtts were added to the ticket and what dtts were removed from the ticket in the session.
-
-			$starting_tkt_dtt_rows = explode(',',$data['starting_ticket_datetime_rows'][$row]);
-			$tkt_dtt_rows = explode(',', $data['ticket_datetime_rows'][$row] );
-			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
-			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
-
-			$ticket_price = isset( $tkt['TKT_price'] ) ? $tkt['TKT_price'] : 0;
+			$ticket_price = isset( $data['edit_prices'][$row][1]['PRC_amount'] ) ? $data['edit_prices'][$row][1]['PRC_amount'] : 0;
 
 			$TKT_values = array(
 				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
@@ -832,7 +764,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'TKT_min' => isset( $tkt['TKT_min'] ) ? $tkt['TKT_min'] : 1,
 				'TKT_max' => isset( $tkt['TKT_max'] ) ? $tkt['TKT_max'] : -1,
 				'TKT_row' => $row,
-				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0
+				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
+				'TKT_price' => $ticket_price
 				);
 
 
@@ -850,7 +783,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
 			
 			if ( !empty( $tkt['TKT_ID'] ) ) {
-				$TKT = $this->EE->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
+				$TKT = $this->EE->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
 
 				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
 
@@ -888,7 +821,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			} else {
 				//no TKT_id so a new TKT
 				$TKT_values['TKT_price'] = $ticket_price;
-				$TKT = $this->EE->load_class('Ticket', array( $TKT_values, $timezone ), FALSE, FALSE );
+				$TKT = $this->EE->load_class('Ticket', array( $TKT_values ), FALSE, FALSE );
 				$update_prices = TRUE;
 			}
 
@@ -900,69 +833,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_add_prices_to_ticket( $data['edit_prices'][$row], $TKT, $update_prices );
 
 
-			//handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
-			if ( ! defined('DOING_AUTOSAVE' ) ) {
-				if ( !empty($tkt['TKT_is_default_selector'] ) ) {
-					$new_default = $TKT;
-					$new_default->set( 'TKT_ID', 0 );
-					$new_default->set( 'TKT_is_default', 1 );
-					$new_default->set( 'TKT_order', 0 );
-					$new_default->set( 'TKT_row', 1 );
-					$new_default->SET( 'TKT_price', $ticket_price );
-					$new_default->save();
+			//with decaf tickets never get removed (trashed)... so we just need to make sure the ticket is added to the solitary dtt saved.
+			$saved_dtt->_add_relation_to( $TKT, 'Ticket' );
 
-					//todo we need to add the current attached prices as new prices to the new default ticket.
-					$this->_add_prices_to_ticket($data['edit_prices'][$row], $new_default, $update_prices);
-				}
-			}
-
-			//now we just have to add the ticket to all the datetimes its supposed to be with and removing the ticket from datetimes it got removed from.
-			
-			
-			//first let's do the add_relation_to()
-			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && $dtts_added[0] == '' ) ? array() : $dtts_added;
-			foreach ( $dtts_added as $dttrow ) {
-				$saved_dtts[$dttrow]->_add_relation_to( $TKT, 'Ticket' );
-			}
-
-			$dtts_removed = empty( $dtts_added ) || ( is_array( $dtts_removed ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
-			//now let's do the remove_relation_to()
-			foreach ( $dtts_removed as $dttrow ) {
-				$saved_dtts[$dttrow]->_remove_relation_to( $TKT, 'Ticket' );
-			}
-
-
-			//DO ALL dtt relationships for both current tickets and any archived tickets for the given dtt that are related to the current ticket. TODO... not sure exactly how we're going to do this considering we don't know what current ticket the archived tickets are related to (and TKT_parent is used for autosaves so that's not a field we can reliably use).
-			
-		}
-
-		//now we need to handle tickets actually "deleted permanently".  There are cases where we'd want this to happen (i.e. autosaves are happening and then in between autosaves the user trashes a ticket).  Or a draft event was saved and in the process of editing a ticket is trashed.  No sense in keeping all the related data in the db!
-		$old_tickets = $old_tickets[0] == '' ? array() : $old_tickets;
-		$tickets_removed = array_diff( $old_tickets, array_keys($saved_tickets) );
-
-		foreach ( $tickets_removed as $id ) {
-			$id = absint( $id );
-
-			//need to get all the related datetimes on this ticket and remove from every single one of them (remember this process can ONLY kick off if there are NO tkts_sold)
-			$dtts = $saved_tickets[$id]->get_many_related('Datetime');
-
-			foreach( $dtts as $dtt ) {
-				$saved_tickets[$id]->_remove_relation_to($dtt, 'Datetime');
-			}
-
-			//need to do the same for prices (except these prices can also be deleted because again, tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
-			$prcs = $saved_tickets[$id]->get_may_related('Ticket');
-
-			foreach( $prcs as $prc ) {
-				$saved_tickets[$id]->delete_related_permanently($prc, 'Price');
-			}
-
-			//finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
-			$saved_tickets[$id]->delete_permanently();
 		}
 	}
-
-
 
 
 
@@ -1002,74 +877,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$PRC = $ticket->_add_relation_to( $PRC, 'Price' );
 		}
 	}
-
-
-	/**
-	 * Attach the Datetimes to the Event
-	 * @param  object $evtobj Event Object to add the datetime(s) to
-	 * @param  array  $data   The request data from the form
-	 * @return bool           success or fail
-	 */
-	protected function _default_dtt_update( $evtobj, $data ) {
-		
-		return $evt_obj; //TEMPORARILY EXITING CAUSE THIS IS A TODO
-
-		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
-		$success = TRUE;
-
-
-		foreach ( $data['event_datetimes'] as $row => $event_datetime ) {
-			$event_datetime['evt_end'] = isset($event_datetime['evt_end']) && ! empty( $event_datetime['evt_end'] ) ? $event_datetime['evt_end'] : $event_datetime['evt_start'];
-
-			$datetime_values = array(
-				'DTT_ID' => isset( $event_datetime['ID'] ) && $event_datetime['ID'] !== '' ? absint( $event_datetime['ID'] ) : NULL,
-				'DTT_EVT_start' => $event_datetime['evt_start'],
-				'DTT_EVT_end' => $event_datetime['evt_end'],
-				'DTT_is_primary' => $row === 1 ? TRUE : FALSE,
-				'DTT_order' => $row
-				);
-
-			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
-			
-			if ( !empty( $event_datetime['ID'] ) ) {
-				$DTM = $this->EE->load_model('Datetime', array($timezone) )->get_one_by_ID($event_datetime['ID'] );
-				foreach ( $datetime_values as $field => $value ) {
-					$DTM->set( $field, $value );
-				}
-			} else {
-				$DTM = $this->EE->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
-			}
-			
-
-			//we have to make sure we set the saved_id first (if it's not empty) because otherwise we could miss ids that are already attached to parents.
-			$dtt_id = $DTM->ID();
-
-			if ( !empty( $dtt_id ) )
-				$saved_dtts[] = $dtt_id;
-			
-			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
-
-			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
-			$saved_dtts[] = $DTT->ID();
-
-			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message
-		}
-
-		//now we need to REMOVE any dtts that got deleted.
-		$old_datetimes = maybe_unserialize( $data['datetime_IDs'] );
-
-
-		if ( is_array( $old_datetimes ) ) {
-			$dtts_to_delete = array_diff( $old_datetimes, $saved_dtts );
-			foreach ( $dtts_to_delete as $id ) {
-				$id = absint( $id );
-				$evtobj->_remove_relation_to( $id, 'Datetime' );
-			}
-		}
-
-		return $success;
-	}
-
 
 
 
@@ -1154,139 +961,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * Attach the price(s) to the Event (note decaf only adds one price but we're adding the handling for multiple prices here)
-	 * @param  object $evtobj Event Object to add the price(s) to
-	 * @param  array  $data   The request data from the form
-	 * @return bool           success or fail.
-	 */
-	protected function _default_prices_update( $evtobj, $data ) {
-
-		return $evt_obj; //TEMPORARILY EXITING CAUSE THIS IS A TODO
-
-		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
-		$success = TRUE;
-
-		$saved_tickets = array();
-		$old_tickets = isset( $data['ticket-IDs'] ) ? explode(',', $data['ticket-IDs'] ) : array();
-		$edited_tickets = isset( $data['edit_ticket_info'] ) ? $data['edit_ticket_info'] : array();
-
-		if ( empty( $edited_tickets ) )
-			return FALSE; //get out because there is somethign that went wrong (probably an error prevented display of the ticket form)
-
-		//let's loop through all the tickets and set things up for saving
-		foreach ( $edited_tickets as $ticketrow => $ticket_data ) {
-			$TKT_values = array(
-				'TKT_ID' => !empty( $ticket_data['TKT_ID'] ) ? $ticket_data['TKT_ID'] : NULL,
-				'TTM_ID' => !empty( $ticket_data['TTM_ID'] ) ? $ticket_data['TTM_ID'] : 1,
-				'TKT_start_date' => isset( $ticket_data['TKT_start_date'] ) ? $ticket_data['TKT_start_date'] : current_time('mysql'),
-				'TKT_end_date' => isset( $ticket_data['TKT_end_date'] ) ? $ticket_data['TKT_end_date'] : current_time('mysql'),
-				'TKT_qty' => isset( $ticket_data['TKT_qty'] ) ? $ticket_data['TKT_qty'] : -1,
-				'TKT_order' => $ticketrow,
-				);
-
-			//if we have a TKT_ID then we need to get that existing TKT_obj and update it
-			if ( !empty( $ticket_data['TKT_ID'] ) ) {
-				$TKT = $this->EE->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $ticket_data['TKT_ID'] );
-				//set new values
-				foreach ( $TKT_values as $field => $value ) {
-					$TKT->set( $field, $value );
-				}
-			} else {
-				//no TKT_id so a new TKT
-				$TKT = $this->EE->load_class('Ticket', array( $TKT_values, $timezone ), FALSE, FALSE );
-			}
-
-			//now we just have to add the ticket to the event which in turn will make sure we have a ticket ID generated if this is a new ticket. In the case of tickets
-			$saved_TKT = $evtobj->_add_relation_to( $TKT, 'Ticket' );
-			$saved_tickets[] = $saved_TKT->ID();
-
-			//now let's setup the price stuff for this ticket
-			$old_prices = isset( $data['price-IDs'][$ticketrow] ) ? explode(',',$data['price-IDs'][$ticket_row]) : array();
-			$edited_prices = isset($data['edit_ticket_price'][$ticketrow]) ? $data['edit_ticket_price'][$ticketrow] : array();
-			$saved_prices = array();
-
-			if ( $empty ( $edited_prices ) ) {
-				$success = FALSE;
-				EE_Error::add_error( __('There were no prices attached to the ticket.', 'event_espresso'), __FILE__, __FUNCTION, __LINE__ );
-			}
-
-			//let's loop through all prices and set things up.
-			foreach ( $edited_prices as $row => $price_data ) {
-				$PRC_values = array(
-					'PRC_ID' => $price_data['PRC_ID'] === 0 ? NULL : $price_data['PRC_ID'],
-					'PRT_ID' => isset( $price_data['PRT_ID'] ) ? $price_data['PRT_ID'] : 2,
-					'PRC_order' => isset( $price_data['PRC_order'] ) && $price_data['PRC_order'] ? $price_data['PRC_order'] : 0,
-					'PRC_name' => $price_data['PRC_name'] ? $price_data['PRC_name'] : NULL,
-					'PRC_desc' => isset($price_data['PRC_desc']) ? $price_data['PRC_desc'] : '',
-					'PRC_amount' => $price_data['PRC_amount'] ? $price_data['PRC_amount'] : 0,
-					'PRC_is_active' => TRUE,
-					'PRC_order' => $row
-					);
-
-				//if we have a PRC_ID then we need to get that existing PRC_obj and update it
-				if ( !empty( $price_data['PRC_ID'] ) ) {
-					$PRC = $this->EE->load_model( 'Price' )->get_one_by_ID( $price_data['PRC_ID'] );
-					//set new values
-					foreach ( $PRC_values as $field => $value ) {
-						$PRC->set( $field, $value );
-					}
-				} else {
-					//no PRC_ID so a new PRC
-					$PRC = $this->EE->load_class('Price', array( $PRC_values ), FALSE, FALSE );
-				}
-
-				
-				//now we have to determine if this price is a default price (or new price).  If it is then we MUST insert.
-				if ( $price_data['PRC_is_default'] === 1 && $PRC->ID() > 0 ) {
-					//unset the PRC_ID from the $old_prices array
-					unset($old_prices[$price_data['PRC_ID']] );
-					$PRC->set( 'PRC_ID', NULL );
-					$PRC->set( 'PRC_is_default', 0 );
-				}
-
-				//now we just have to add to the ticket (*note that EEM_Price model already takes care of handling NOT saving the price if the price has already been used however, in that case the price object that is returned is going to be different than the one that was saved so we need to make sure we don't accidentally remove it again!  This also means that we need to keep the old price attached to the ticket (even though it might not be displayed ) ).
-				$saved_PRC = $saved_TKT->_add_relation_to( $PRC, 'Price' );
-
-				if ( ( $price_data['PRC_ID'] > 0 && $price_data['PRC_ID'] != $saved_PRC->ID()  && ! $price_data['PRC_is_default'] ) ) {
-					//make sure we keep old price attached to ticket (even though it won't be displayed because it's archived)
-					$saved_prices[] = $price_data['PRC_ID'];
-				}
-
-				$saved_prices[] = $saved_PRC->ID();		
-			}
-
-			//now remove any prices that got deleted (note IF this TKT has TKTs_sold, then we don't actually hard delete but instead just archive the price).
-			$prices_to_delete = array_diff( $old_prices, $saved_prices );
-			foreach ( $prices_to_delete as $price ) {
-				$id = absint( $price );
-				$price_to_archive = $this->EE->load_model('Price')->get_one_by_ID( $id );
-				if ( $saved_TKT->tickets_sold() ) {
-					//let's modify this to be archived
-					$price_to_archive->set( 'PRC_deleted', 1 );
-					$price_to_archive->save();
-				} else {
-					//no tickets sold so we can safely detach from the $saved_TKT and then hard delete.
-					$saved_TKT->_remove_relation_to($price_to_archive, 'Price');
-					$this->EE->load_model('Price')->delete_permanently_by_ID( $price_to_archive->ID() );
-				}
-			}
-			
-			//I don't think we need to worry about the below now because a ticket will always have at least one price associated with it but we'll just comment out for now until we've verified this.
-			/*if ( count( $saved_prices ) < 1 ) {
-				$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', array() );
-				$espresso_no_ticket_prices[ $evtobj->get('EVT_ID') ] = $evtobj->get('EVT_name');
-				update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
-			} /**/
-
-		}	
-
-		return $success;
-	}
-
-
-
-
-	/**
 	 * 	_generate_publish_box_extra_content
 	 * 	@access private
 	 * @return void
@@ -1362,7 +1036,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
-		$timezone = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->timezone_string() : NULL; 
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
@@ -1372,24 +1045,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		 * 3. For each ticket get related prices
 		 */
 		
-		$DTM_MDL = $this->EE->load_model('Datetime', array($timezone) );
+		$DTM_MDL = $this->EE->load_model('Datetime' );
 		$times = $DTM_MDL->get_all_event_dates( $event_id );
 
 		require_once(EE_MODELS . 'EEM_Datetime.model.php');
-		$DTM_MDL = EEM_Datetime::instance( $timezone );
+		$DTM_MDL = EEM_Datetime::instance();
 		require_once EE_HELPERS . 'EEH_DTT_helper.helper.php';
 
+		$firstdtt = array_slice($times, 0, 1);
 		//do we get related tickets?
-		if ( $times[0]->get('DTT_ID') !== 0 ) {
+		if ( $firstdtt[0]->get('DTT_ID') !== 0 ) {
 			foreach ( $times as $time ) {
 				$existing_datetime_ids[] = $time->get('DTT_ID');
 				$template_args['time'] = $time;
-				$related_tickets = $time->get_all_related('Ticket');
+				$related_tickets = $time->get_many_related('Ticket');
 				
 				if ( !empty($related_tickets) ) {
 					$template_args['total_ticket_rows'] = count($related_tickets);
 					foreach ( $related_tickets as $ticket ) {
-						$existing_ticket_ids[] = $ticket->get('DTT_ID');
+						$existing_ticket_ids[] = $ticket->get('TKT_ID');
 						$template_args['ticket_rows'] .= $this->_get_ticket_row($ticket);
 					}
 				} else {
