@@ -605,6 +605,21 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	}
 
 
+	
+	/**
+	 * Gets all the tickets for this datetime
+	 * @param array $query_params see EEM_Base::get_all()
+	 * @return EE_Datetime
+	 */
+	public function tickets($query_params = array()){
+		return $this->get_many_related('Ticket', $query_params);
+	}
+
+
+
+
+
+
 }
 
 /* End of file EE_Datetime.class.php */
