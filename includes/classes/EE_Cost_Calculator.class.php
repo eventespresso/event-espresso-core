@@ -13,16 +13,16 @@
  *
  * ------------------------------------------------------------------------
  *
- * Ticket Prices class
+ * Cost Calculator class
  *
  * @package		Event Espresso
- * @subpackage	includes/classes/EE_Ticket_Prices.class.php
+ * @subpackage	includes/classes/EE_Cost_Calculator.class.php
  * @author			Brent Christensen
  * @author			Sidney Harell
  *
  * ------------------------------------------------------------------------
  */
-class EE_Ticket_Prices extends EE_BASE {
+class EE_Cost_Calculator extends EE_BASE {
 
 	/**
 	* array of all event ticket prices and price modifiers
@@ -236,42 +236,6 @@ class EE_Ticket_Prices extends EE_BASE {
 
 
 
-	/**
-	* 	serialize and encode object for use in forms, etc.
-	* 	usage EE_Ticket_Prices::obfuscate( $thing_to_obfuscate );
-	* 
-	* 	@access 		public
-	* 	@param 		string $thing_to_obfuscate
-	* 	@return 		string
-	*/
-	public static function obfuscate( $thing_to_obfuscate = '' ) {
-		// use the following to unencode price objects:
-		// unserialize( gzinflate( base64_decode( $obfuscatedThing )))
-		// OR call EE_Ticket_Prices::unobfuscate( $obfuscatedThing );		
-		return base64_encode( serialize( $thing_to_obfuscate ));
-//		return gzdeflate( base64_encode( serialize( $thing_to_obfuscate )));
-	}
-
-
-
-
-	/**
-	*	undo obfuscation of price object
-	* 	usage EE_Ticket_Prices::unobfuscate( $obfuscatedThing );	
-	* 
-	* @access 		public
-	* @param 		string $obfuscatedThing
-	* @return 		string
-	*/
-	public static function unobfuscate ( $obfuscatedThing = '' ) {
-		return unserialize( base64_decode( $obfuscatedThing ));
-//		return unserialize( base64_decode( gzinflate( $obfuscatedThing )));
-	}
-
-
-
-
-
 }
 
 
@@ -290,7 +254,7 @@ class EE_Ticket_Prices extends EE_BASE {
 *
 * ------------------------------------------------------------------------
 */
-abstract class EE_Ticket_Price extends EE_BASE {
+abstract class EE_Ticket_Cost {
 
 	/**
 	* the FINAL Ticket Price after all modifications
@@ -346,9 +310,46 @@ abstract class EE_Ticket_Price extends EE_BASE {
 	abstract public function price_history();
 	abstract public function order_totals();
 	abstract public function order_levels();
-	abstract public function obfuscate();
-	// protected methods
 
+
+
+
+
+	/**
+	* 	serialize and encode object for use in forms, etc.
+	* 
+	* 	@access 		public
+	* 	@return 		string
+	*/
+	public function __sleep() {
+		return base64_encode( serialize( $this ));
+	}
+
+
+
+
+	/**
+	*	undo obfuscation of price object
+	* 
+	* @access 		public
+	* @return 		string
+	*/
+	public function __wakeup() {
+		return unserialize( base64_decode( $this ));
+	}
+
+
+
+	/**
+	 *		@ override magic methods
+	 *		@ return void
+	 */	
+	public function __get($a) { return FALSE; }
+	public function __set($a,$b) { return FALSE; }
+	public function __isset($a) { return FALSE; }
+	public function __unset($a) { return FALSE; }
+	public function __clone() { return FALSE; }
+	public function __destruct() { return FALSE; }		
 
 }
 
@@ -362,12 +363,12 @@ abstract class EE_Ticket_Price extends EE_BASE {
 * Ticket Price Base class
 *
 * @package		Event Espresso
-* @subpackage	includes/classes/EE_Ticket_Price.class.php
+* @subpackage	includes/classes/EE_Ticket_Cost.class.php
 * @author			Brent Christensen
 *
 * ------------------------------------------------------------------------
 */
-class EE_Ticket_Price_Base extends EE_Ticket_Price {
+class EE_Ticket_Cost_Base extends EE_Ticket_Cost {
 
 	protected $_ticket_price;
 	protected $_name;
@@ -454,20 +455,6 @@ class EE_Ticket_Price_Base extends EE_Ticket_Price {
 	}
 
 
-	/**
-	* 	serialize and encode object for use in forms, etc.
-	* 
-	* 	@access 		public
-	* 	@return 		string
-	*/
-	public function obfuscate() {
-		// use the following to unencode price objects:
-		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
-		// OR call EE_Ticket_Prices::unobfuscate( $obfuscatedString );		
-		return base64_encode( serialize( $this ));
-//		return gzdeflate( base64_encode( serialize( $this )));
-	}
-
 
 		
 }
@@ -483,12 +470,12 @@ class EE_Ticket_Price_Base extends EE_Ticket_Price {
 *
 *	@abstract
 * 	@package		Event Espresso
-* 	@subpackage	includes/classes/EE_Ticket_Price.class.php
+* 	@subpackage	includes/classes/EE_Ticket_Cost.class.php
 * 	@author			Brent Christensen
 *
 * ------------------------------------------------------------------------
 */
-abstract class EE_Price_Modifier extends EE_Ticket_Price {
+abstract class EE_Price_Modifier extends EE_Ticket_Cost {
 
 	protected $_ticket_price;
 	protected $_price_mod;
@@ -501,7 +488,7 @@ abstract class EE_Price_Modifier extends EE_Ticket_Price {
 	protected $_order_levels = array();
 
 	
-	function __construct( EE_Ticket_Price $ticket_price, EE_Price_Composite $price_mod ) {
+	function __construct( EE_Ticket_Cost $ticket_price, EE_Price_Composite $price_mod ) {
 		$this->_ticket_price = $ticket_price;
 		$this->_price_mod = $price_mod;
 		// copy elements
@@ -536,12 +523,12 @@ abstract class EE_Price_Modifier extends EE_Ticket_Price {
 * 	Ticket Price Modifier class
 *
 * 	@package		Event Espresso
-* 	@subpackage	includes/classes/EE_Ticket_Price.class.php
+* 	@subpackage	includes/classes/EE_Ticket_Cost.class.php
 * 	@author			Brent Christensen
 *
 * ------------------------------------------------------------------------
 */
-class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
+class EE_Ticket_Cost_Modifier extends EE_Price_Modifier {
 
 	/**
 	* 	set get the price for the ticket
@@ -695,20 +682,6 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	}
 
 
-	/**
-	* 	serialize and encode object for use in forms, etc.
-	* 
-	* 	@access 		public
-	* 	@return 		string
-	*/
-	public function obfuscate() {
-		// use the following to unencode price objects:
-		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
-		// OR call EE_Ticket_Prices::unobfuscate( $obfuscatedString );		
-		return base64_encode( serialize( $this ));
-	}
-
-
 
 }
 
@@ -724,7 +697,7 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 *	simply combines a Price and Price Type object into one
 *
 * 	@package		Event Espresso
-* 	@subpackage	includes/classes/EE_Ticket_Price.class.php
+* 	@subpackage	includes/classes/EE_Ticket_Cost.class.php
 * 	@author			Brent Christensen
 *
 * ------------------------------------------------------------------------
@@ -867,5 +840,5 @@ class EE_Price_Composite {
 
 
 
-// End of file EE_Ticket_Price.class.php
-// Location: /includes/classes/EE_Ticket_Price.class.php
+// End of file EE_Cost_Calculator.class.php
+// Location: /includes/classes/EE_Cost_Calculator.class.php

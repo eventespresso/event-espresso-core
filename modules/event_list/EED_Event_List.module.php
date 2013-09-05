@@ -125,7 +125,7 @@ class EED_Event_List  extends EED_Module {
 //		$this->_initial_setup();
 //		$args = array( 'post_type' => 'espresso_events' );
 //		$wp_query = new WP_Query( $args );
-//		$wp_query = EEH_Event_View::get_event_datetimes_and_prices_for_WP_Query( $wp_query );	
+//		$wp_query = EEH_Event_View::get_event_datetimes_and_tickets_for_WP_Query( $wp_query );	
 //		ob_start();
 //		include( $this->_get_template('part') );
 //		$output = ob_get_clean();	
@@ -192,7 +192,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_join( $SQL ) {
 		global $wpdb, $wp_query;
-		if ( $wp_query->is_main_query() && apply_filters( 'FHEE_event_list', FALSE )) {
+		if ( $wp_query->is_main_query() ) {
 			// Category
 			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
 			if ( ! empty( $elf_category )) {
@@ -213,7 +213,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_where( $SQL ) {
 		global $wpdb, $wp_query;
-		if ( $wp_query->is_main_query() && apply_filters( 'FHEE_event_list', FALSE )) {			
+		if ( $wp_query->is_main_query() ) {			
 			// Show Expired ?
 			$display_expired_events = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
 			// override default expired option if set via filter
@@ -238,7 +238,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_orderby( $SQL ) {
 		global $wpdb, $wp_query;
-		if ( $wp_query->is_main_query() && apply_filters( 'FHEE_event_list', FALSE )) {			
+		if ( $wp_query->is_main_query() ) {			
 			$SQL = ' ' . EE_DATETIME_TABLE . '.DTT_EVT_start ASC ';
 		}
 		return $SQL;
