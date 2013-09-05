@@ -125,7 +125,7 @@ class EED_Event_List  extends EED_Module {
 //		$this->_initial_setup();
 //		$args = array( 'post_type' => 'espresso_events' );
 //		$wp_query = new WP_Query( $args );
-//		$wp_query = EEH_Event_View::get_event_datetimes_and_prices_for_WP_Query( $wp_query );	
+//		$wp_query = EEH_Event_View::get_event_datetimes_and_tickets_for_WP_Query( $wp_query );	
 //		ob_start();
 //		include( $this->_get_template('part') );
 //		$output = ob_get_clean();	
