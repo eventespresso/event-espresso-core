@@ -19,16 +19,17 @@
 	.espresso-event-wrapper-dv  .event-content p { margin: 0 0 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	}	
 	.espresso-event-wrapper-dv  .event-meta { text-align: right; margin: 0 0 1em; }	
 	
-	.ee-register-button-lnk {
-		display: inline-block; position: relative; padding: 1em 2em; margin: 1em;
+
+	.espresso-event-details .ee-register-button-lnk {
+		display: inline-block; float: right; position: relative; padding: .75em 1.5em; margin: 1em;
 		background: #7DBD29; border-radius: 3px; text-align: center;
 		border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
 		font-weight: bold; font-size:16px; color:#fff; text-shadow:1px 1px 0px rgba(0,0,0,.5); text-decoration: none;
 	}
-	.ee-register-button-lnk:hover { background: #6CBA00; color:#fff; }
-	.ee-register-button-lnk:visited { color:#fff; }
-	.ee-register-button-lnk:active { top:-1px; }
-	.edit-event-lnk { margin:0 1em; }
+	.espresso-event-details .ee-register-button-lnk:hover { background: #6CBA00; color:#fff; }
+	.espresso-event-details .ee-register-button-lnk:visited { color:#fff; }
+	.espresso-event-details .ee-register-button-lnk:active { top:-1px; }
+	.espresso-event-details .edit-event-lnk { margin:0 1em; }
 	
 	.tiny-txt { font-size:.5em; letter-spacing:1px; }
 	.smaller-txt { font-size:.7em; letter-spacing:.6px; }

@@ -51,6 +51,7 @@
 			?>
 
 					<footer class="event-meta">
+						
 						<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
 						<p class="event-categories-pg"><?php _e( 'category: ', 'event_espresso' ) . the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
 						
@@ -76,6 +77,7 @@
 									the_excerpt(); 
 								}
 							?> 
+							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
 						</div>				
 						<!-- .event-content -->
 

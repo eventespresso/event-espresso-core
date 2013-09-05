@@ -22,18 +22,23 @@ get_header();
 		<?php if ( have_posts() ) { ?>
 			<?php while ( have_posts() ) { the_post();?>
 			
-			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+			<?php do_action( 'AHEE_event_details_before_post', $post ); ?>
+			<article id="post-<?php the_ID(); ?>" <?php post_class('espresso-event-details'); ?>>
 				
 				<header class="event-header">
+					<?php do_action( 'AHEE_event_details_header_top', $post ); ?>
 					<p><?php the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
 					<h1  id="event-details-h1"><?php the_title(); ?></h1>
+					<?php do_action( 'AHEE_event_details_header_bottom', $post ); ?>
 				</header>
 
 				<div class="event-datetimes">
+					<?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
 					<h4><?php espresso_event_date(); ?></h4>
+					<?php do_action( 'AHEE_event_details_after_event_date', $post ); ?>
 				</div>				
 				<!-- .event-datetimes -->
-
+				
 			<?php
 			//echo '<h3>$post</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $post, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
 				$wrap_class = '';
@@ -44,7 +49,7 @@ get_header();
 							$wrap_class = ' has-img';
 				?>
 				<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
-					<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>				
+					<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>
 				</div>
 				<?php 
 						}			
@@ -54,18 +59,22 @@ get_header();
 			<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
 				<!-- .event-header -->
 				<div class="event-content">
-					<?php the_excerpt(); ?> 
+					<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
+					<?php the_content(); ?> 
+					<?php do_action( 'AHEE_event_details_after_the_content', $post ); ?>
 					<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
 				</div>				
 				<!-- .event-content -->
 				<footer class="event-meta">
-					<a class="ee-register-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
+					<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>
 					<?php edit_post_link( __( 'edit this event', 'event_espresso' ), '<p class="edit-event-lnk small-txt clear">', '</p>' ); ?>
+					<?php do_action( 'AHEE_event_details_footer_bottom', $post ); ?>
 				</footer>
 				<!-- .entry-meta -->
 			</div>
 
 			</article><!-- #post -->
+			<?php do_action( 'AHEE_event_details_after_post', $post ); ?>
 
 			<?php } ?>
 

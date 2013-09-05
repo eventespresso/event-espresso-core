@@ -136,11 +136,21 @@ class EE_Error extends Exception {
 		self::$_all_exceptions[ $x_time ]['trace'] 	= $this->getTrace();
 		self::$_all_exceptions[ $x_time ]['string'] 	= $this->getTraceAsString();
 		self::$_error_count++;
-
 		
 		//add_action( 'shutdown', array( $this, 'display_errors' ));
 		$this->display_errors();
 		
+	}
+
+
+
+	/**
+	*	has_error
+	*	@access public
+	*	@return boolean
+	*/
+    public static function has_error(){
+		return self::$_error_count ? TRUE : FALSE;
 	}
 
 
@@ -487,6 +497,23 @@ class EE_Error extends Exception {
 		self::$_espresso_notices['errors'] = FALSE;
 	}
 
+
+
+	/**
+	*	has_errors
+	*	@access public
+	*	@return int
+	*/
+    public static function has_notices(){
+		$has_notices = 0;
+		// check for success messages
+		$has_notices = self::$_espresso_notices['success'] && ! empty(  self::$_espresso_notices['success'] ) ? 3 : $has_notices;
+		// check for attention messages
+		$has_notices = self::$_espresso_notices['attention'] && ! empty(  self::$_espresso_notices['attention'] ) ? 2 : $has_notices;
+		// check for error messages
+		$has_notices = self::$_espresso_notices['errors'] && ! empty(  self::$_espresso_notices['errors'] ) ? 1 : $has_notices;
+		return $has_notices;
+	}
 
 
 

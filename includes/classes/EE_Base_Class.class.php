@@ -302,11 +302,13 @@ class EE_Base_Class{
 	 * @param mixed  $value        The value we are caching.
 	 * @return void
 	 */
-	protected function _set_cached_property( $propertyname, $value ) {
+	protected function _set_cached_property( $propertyname, $value, $pretty = FALSE ) {
 		//first make sure this property exists
 		if ( !property_exists( $this, $propertyname ) )
 			throw new EE_Error( sprintf( __('Trying to cache a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
-		$this->_cached_properties[$propertyname] = $value;
+
+		$cache_type = $pretty ? 'pretty' : 'standard';
+		$this->_cached_properties[$propertyname][$cache_type] = $value;
 	}
 
 
@@ -324,15 +326,17 @@ class EE_Base_Class{
 		if ( !property_exists( $this, $propertyname ) )
 			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
 
-		if ( isset( $this->_cached_properties[$propertyname] ) ) {
-			return $this->_cached_properties[$propertyname];
+		$cache_type = $pretty ? 'pretty' : 'standard';
+
+		if ( isset( $this->_cached_properties[$propertyname][$cache_type] ) ) {
+			return $this->_cached_properties[$propertyname][$cache_type];
 		}
 
 		//otherwise let's return the property
 		$field_name = ltrim( $propertyname, '_' );
 		$field_obj = $this->get_model()->field_settings_for($field_name);
 		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname) : $field_obj->prepare_for_get($this->$propertyname );
-		$this->_set_cached_property( $propertyname, $value );
+		$this->_set_cached_property( $propertyname, $value, $pretty );
 		return $value;
 	}
 
@@ -515,12 +519,11 @@ class EE_Base_Class{
 		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : $dt_frmt;
 		$in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
 
-		
 		//validate field for datetime and returns field settings if valid.
 		$field = $this->_get_dtt_field_settings( $field_name );
 		$var_name = $this->_get_private_attribute_name( $field_name );
 
-		if ( !empty($dt_frmt) ) {
+		if ( $dt_frmt !== NULL ) {
 			$this->_clear_cached_property( $var_name );
 			if ( $echo )
 				$field->set_pretty_date_format( $in_dt_frmt );
