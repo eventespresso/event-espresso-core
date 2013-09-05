@@ -72,6 +72,7 @@
 						<!-- .event-content -->
 						
 						<footer class="event-meta clear">
+							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
 							<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
 							<?php espresso_edit_event_link(); ?>
 						</footer>
