@@ -1,8 +1,14 @@
 /* -------------------------------------------------------------------------
- * Espresso Events Calendar Stylesheet
+ * Espresso Events Calendar Stylesheet   localhost/ee-dev
  * (c) 2013 Espresso Events
  * -------------------------------------------------------------------------*/
 
+@import url(font-awesome.css);
+
+*, *:before, *:after { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+html{
+	font-size:100%;
+}
 #espresso_calendar { position: relative !important; width: 100% !important; margin:1em 0 0; z-index:100; }
 #espresso_calendar.calendar_widget .fc-content tbody {/* display:none;*/ }
 
@@ -11,32 +17,55 @@
 class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar .fc-header-title h2 { color: #606267; }
 
-#espresso_calendar:not(.ui-widget) .fc-header-title h2 {
-	margin:0; font-size: 2.5em; font-weight: bold; line-height: 1em;
+#espresso_calendar:not(.ui-widget),h2.fc-header-title{
+	margin:0; 
+	font-size: 120%;
 }
-#espresso_calendar.calendar_widget .fc-header-title h2 { font-size: 1.5em;  }
-
-#espresso_calendar .fc-content table { background-color:#fff; }
+#espresso_calendar .fc-button{
+	background:#eee;
+	margin-right:.5em;
+}
+#espresso_calendar .fc-button:last-child{
+	margin-right:none;
+}
+#espresso_calendar .fc-content table { 
+	background-color:#fff; 
+	}
 
 #espresso_calendar table.fc-header, 
-#espresso_calendar table.fc-border-separate, .fc-header th, .fc-header td { border: none; }
+#espresso_calendar .fc-header td,
+#espresso_calendar table.fc-border-separate, 
+.fc-header th, .fc-header td { 
+	border: none;
+	}
 
 #espresso_calendar .fc-day-header {
-	padding:.5em 0; background:#606267; color: #fff; font-weight: bold;
+	padding:.5em 0; 
+	background:#606267; 
+	color: #fff;
+	font-weight:normal;
+	letter-spacing: 1px;
 }
 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button { 
-	height:15px; padding: 15px 0.6em; background:#EEEEE6; box-sizing: content-box !important; -moz-box-sizing: content-box !important; 
-	border:none; border-radius: 0px; box-shadow:none; 
-	color:#606267; font-size:15px; line-height:15px; font-weight: bold; text-shadow:.5px .5px 0px #fff; opacity: 1; word-wrap: normal;
+	background:#EEEEE6; 
+	border:none; 
+	border-radius: 0px; 
+	box-shadow:none; 
+	color:#606267; 
+	font-size:100%; 
 }
 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev, 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next { 
-	height:25px; padding: 10px 0.6em; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-	font-size:25px; line-height:20px; color:#777A80; text-shadow:.5px .5px 0px #fff;
+	font-family: inherit; 
+	color:#777A80; 
 }
-
+#espresso_calendar .fc-event-inner{
+	hyphens:none;
+	-webkit-hyphens:none;
+	-moz-hyphens:none;
+}
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev,
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-month {  border-top-left-radius: 1px; border-bottom-left-radius: 1px; }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next,
@@ -48,7 +77,7 @@ class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-text-arrow { color:#777A80; text-shadow:.5px .5px 0px #fff; }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-other-month {  background:#fcfcfc; }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-state-highlight {  background:#FEFEDF; }
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number { font-size: 1.2em; line-height:1.2em; }
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number { line-height:1.2em; }
 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-view-agendaDay .fc-agenda-body td div {min-height:50px;}
 
@@ -63,8 +92,11 @@ class name '.event-has-thumb' is added to top level parent event */
 	
 	
 #espresso_calendar:not(.ui-widget) .fc-event {
-	padding:5px; margin:0 1.5px 3px; background-color:#007BAE; border: none; 
-	border-radius:0; font-size:1em; line-height:1.1em; 
+	padding:5px; 
+	margin:-1.2em 0 0 0; 
+	background-color:#007BAE; 
+	border: none; 
+	border-radius:0; 
 }
 #espresso_calendar.calendar_widget .fc-event { min-height:15px; padding:0px; margin:0 0 2px; }
 
@@ -72,7 +104,7 @@ class name '.event-has-thumb' is added to top level parent event */
 #espresso_calendar .fc-event a:hover { text-shadow: none; }
 #espresso_calendar:not(.ui-widget) .fc-event.expired { background:#EEEEE6 !important; color:#999 !important; }
 
-#espresso_calendar .fc-event-title { display: inline-block; padding: 0 0 2px; margin-right:1em; }
+#espresso_calendar .fc-event-title { display: inline-block; padding: 0 0 2px; margin-right:1em;hyphens:none; }
 #espresso_calendar .fc-event-time { display: inline-block; padding: 0 0 2px; }
 
 
@@ -192,5 +224,3 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 	-o-transition:      none!important;
 	transition:         none!important;
 }
-
-
