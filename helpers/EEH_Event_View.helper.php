@@ -119,7 +119,7 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_event_date() {
 		$datetime = EEH_Event_View::get_primary_date_obj();
-		$datetime->e_start_date_and_time();		
+		$datetime->e_start_date_and_time( 'l F jS, Y', 'g:i a' );		
 	}
 
 
@@ -237,13 +237,14 @@ class EEH_Event_View extends EEH_Base {
 	 *  @return 	string
 	 */
 	public static function get_datetimes_for_events( $EVT_IDs = array() ) {
+		
 		if ( ! is_array( $EVT_IDs )) {
 			$EVT_IDs = array( absint( $EVT_IDs ));
 		}
 		// load model
-		$EVD = EE_Registry::instance()->load_model( 'Datetime' );
+		EE_Registry::instance()->load_model( 'Datetime' );
 		// grab datetimes for events
-		$datetimes = $EVD->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs ))));
+		$datetimes = EEM_Datetime::instance()->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs ))));
 		$datetimes = is_array( $datetimes ) ? $datetimes : array();
 //		printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return $datetimes;
@@ -251,56 +252,29 @@ class EEH_Event_View extends EEH_Base {
 
 
 
-	/**
-	 * 	get_prices_for_events
-	 * 	given an array of event IDs, this method will retrieve all prices associated with those events
-	 *
-	 *  @access 	public
-	 *  @param 	array	$EVT_IDs an array of Event IDs
-	 *  @return 	string
-	 */
-	public static function get_prices_for_events( $EVT_IDs = array() ) {
-		if ( ! is_array( $EVT_IDs )) {
-			$EVT_IDs = array( absint( $EVT_IDs ));
-		}
-		// load model
-//		$EVP = EE_Registry::instance()->load_model( 'Event_Price' );
-		// grab prices
-//		$event_prices = $EVP->get_all( array( array( 'Event_Price.EVT_ID' => array( 'IN', $EVT_IDs ))));
-		$event_prices = isset( $prices ) && is_array( $prices ) ? $prices : array();
-//		printr( $event_prices, '$event_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $event_prices;
-	}	
-
-
 
 	/**
-	 * 	add_event_datetimes_and_prices_to_WP_Query
-	 *	efficiently adds event datetimes and event prices to WP_Query event CPT posts 
+	 * 	add_event_datetimes_and_tickets_to_WP_Query
+	 *	efficiently adds event datetimes and event tickets to WP_Query event CPT posts 
 	 *
 	 *  @access 	public
 	 *  @param 	WP_Query	$wp_query
 	 *  @param 	array		$datetimes
-	 *  @param 	array		$event_prices
+	 *  @param 	array		$tickets
 	 *  @return 	string
 	 */
-	public static function add_event_datetimes_and_prices_to_WP_Query( WP_Query $wp_query = NULL, $datetimes = array(), $event_prices = array() ) {
+	public static function add_event_datetimes_and_tickets_to_WP_Query( WP_Query $wp_query = NULL, $datetimes = array(), $tickets = array() ) {
 		$datetimes = is_array( $datetimes ) ? $datetimes : array();
-		$event_prices = is_array( $event_prices ) ? $event_prices : array();
+		$tickets = is_array( $tickets ) ? $tickets : array();
 		// now loop thru posts
 		foreach( $wp_query->posts as $EVT_ID => $event ) {
 			// add empty arrays to events
 			$wp_query->posts[ $EVT_ID ]->datetimes = array();
-			$wp_query->posts[ $EVT_ID ]->prices = array();
 			// add datetimes
 			foreach ( $datetimes as $datetime ) {
 				if ( $event->ID == $datetime->get( 'EVT_ID' )) {
-					$wp_query->posts[ $EVT_ID ]->datetimes[] = $datetime;
-				}
-			}
-			foreach ( $event_prices as $event_price ) {
-				if ( $event->ID == $event_price->get( 'EVT_ID' )) {
-					$wp_query->posts[ $EVT_ID ]->prices[] = $event_price;
+					//$datetime->tickets();
+					$wp_query->posts[ $EVT_ID ]->datetimes[ $datetime->ID() ] = $datetime;
 				}
 			}
 		}
@@ -309,24 +283,22 @@ class EEH_Event_View extends EEH_Base {
 
 
 	/**
-	 * 	get_event_datetimes_and_prices_for_WP_Query
-	 *	given WP_Query object, will add datetimes and prices to any event CPTs in the posts array
+	 * 	get_event_datetimes_and_tickets_for_WP_Query
+	 *	given WP_Query object, will add datetimes and tickets to any event CPTs in the posts array
 	 *
 	 *  @access 	public
 	 *  @param 	WP_Query	$wp_query
 	 *  @return 	string
 	 */
-	public static function get_event_datetimes_and_prices_for_WP_Query( WP_Query $wp_query = NULL ) {
+	public static function get_event_datetimes_and_tickets_for_WP_Query( WP_Query $wp_query = NULL ) {
 		if ( $wp_query ) {
 			// array of Event IDs
 			$EVT_IDs = EEH_Event_View::extract_event_IDs_from_WP_Query( $wp_query );
 			if ( ! empty( $EVT_IDs )) {
 				// get datetimes
 				$datetimes = EEH_Event_View::get_datetimes_for_events( $EVT_IDs );
-				// get prices
-				$prices = EEH_Event_View::get_prices_for_events( $EVT_IDs );	
 				// now put it all together
-				$wp_query = EEH_Event_View::add_event_datetimes_and_prices_to_WP_Query( $wp_query, $datetimes, $prices );
+				$wp_query = EEH_Event_View::add_event_datetimes_and_tickets_to_WP_Query( $wp_query, $datetimes );
 			}					
 		}
 		return $wp_query;
