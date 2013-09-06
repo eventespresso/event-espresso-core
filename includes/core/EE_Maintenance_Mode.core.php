@@ -103,7 +103,7 @@ class EE_Maintenance_Mode {
 	 * @return int
 	 */
 	public function level(){
-		return 0;
+//		return 0;
 		$maintenance_mode_level = get_option(self::option_name_maintenance_mode,0);
 		return $maintenance_mode_level;
 	}

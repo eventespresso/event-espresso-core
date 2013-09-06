@@ -137,6 +137,12 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 		$this->errors[] = $error;
 	}
 	
+	public function count_records_migrated() {
+		return $this->_records_migrated;
+	}
+	protected function _mark_x_records_migrated($num_migrated = 1){
+		$this->_records_migrated += $num_migrated;
+	}
 	
 }
 
