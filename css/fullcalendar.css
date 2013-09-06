@@ -5,10 +5,21 @@
  */
 
 
-*,html {
+.fc {
+	direction: ltr;
+	text-align: left;
+	}
+	
+.fc table {
 	border-collapse: collapse;
 	border-spacing: 0;
 	}
+	
+html .fc,
+.fc table {
+	font-size: 1em;
+	}
+	
 .fc td,
 .fc th {
 	padding: 0;
@@ -19,10 +30,6 @@
 
 /* Header
 ------------------------------------------------------------------------*/
-
-table.fc-header{
-	border:0 solid gray;
-}
 
 .fc-header td {
 	white-space: nowrap;
@@ -42,13 +49,23 @@ table.fc-header{
 	text-align: right;
 	}
 	
+.fc-header-title {
+	display: inline-block;
+	vertical-align: top;
+	}
+	
+.fc-header-title h2 {
+	margin-top: 0;
+	white-space: nowrap;
+	}
+	
 .fc .fc-header-space {
-	display:none;
-	visibility:hidden;
+	padding-left: 10px;
 	}
 	
 .fc-header .fc-button {
 	margin-bottom: 1em;
+	vertical-align: top;
 	}
 	
 /* buttons edges butting together */
@@ -120,7 +137,12 @@ table.fc-header{
 .fc-button {
 	position: relative;
 	display: inline-block;
-	padding: .5em 1em;
+	padding: 0 .6em;
+	overflow: hidden;
+	height: 1.9em;
+	line-height: 1.9em;
+	white-space: nowrap;
+	cursor: pointer;
 	}
 	
 .fc-state-default { /* non-theme */
@@ -154,7 +176,7 @@ table.fc-header{
 	font-weight: bold;
 	}
 	
-/* icon (for jquery ui) 
+/* icon (for jquery ui) */
 	
 .fc-button .fc-icon-wrap {
 	position: relative;
@@ -174,11 +196,7 @@ table.fc-header{
   button states
   borrowed from twitter bootstrap (http://twitter.github.com/bootstrap/)
 */
-#espressp_calendar span.ui-icon,
-#espressp_calendar .ui-icon .ui-icon-circle-triangle-w{
-	display:none !important;
-	visibility:hidden !important;
-}
+
 .fc-state-default {
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
@@ -557,3 +575,5 @@ table.fc-border-separate {
 .fc-agenda .ui-resizable-resizing { /* TODO: better selector */
 	_overflow: hidden;
 	}
+	
+	

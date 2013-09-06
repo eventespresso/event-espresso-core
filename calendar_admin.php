@@ -318,7 +318,8 @@ class EE_Calendar_Admin {
 		}
 		if ( ! empty($_REQUEST['reset_calendar']) && check_admin_referer('espresso_form_check', 'reset_calendar_nonce' )) {
 			delete_option( 'espresso_calendar_settings' );
-			espresso_calendar_install();
+			EE_Calendar_Admin::activation();
+			$notices['updates'] = array();
 			$notices['updates'][] = __('The calendar settings were successfully reset ', 'event_espresso');
 		}
 		$espresso_calendar = get_option( 'espresso_calendar_settings', array() );

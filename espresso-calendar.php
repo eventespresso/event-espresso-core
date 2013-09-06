@@ -202,16 +202,16 @@ class EE_Calendar {
 		$show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
 		if ( $show_tooltips ) {
 			// load jQuery qtip script from CDN with local fallback
-			$qtip_js_url = 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.js'; 
+			$qtip_js_url = 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js';
 			// is the URL accessible ?
 			$test_url = @fopen( $qtip_js_url, 'r' );
 			// use CDN URL or local fallback ?
-			$qtip_js_url = $test_url !== FALSE ? $qtip_js_url : ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.min.js';
+			$qtip_js_url = $test_url !== FALSE ? $qtip_js_url : ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.js';
 			// use CDN URL or local fallback ?
 			$qtip_css_url = $test_url !== FALSE ? 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css' : ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/jquery.qtip.min.css';
 			// register jQuery qtip
-			wp_register_style( 'qtip', $qtip_css_url ); 
-			wp_register_script( 'jquery-qtip-min', $qtip_js_url, array('jquery'), '2.1.1', TRUE);			
+			wp_register_style( 'qtip', $qtip_css_url );
+			wp_register_script( 'jquery-qtip', $qtip_js_url, array('jquery'), '2.1.1', TRUE);			
 		}
 		
 		// load base calendar style
@@ -235,7 +235,7 @@ class EE_Calendar {
 			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE ) {
 				if ( $show_tooltips ) {
 					wp_enqueue_style('qtip');
-					wp_enqueue_script('jquery-qtip-min');
+					wp_enqueue_script('jquery-qtip');
 				}
 				wp_enqueue_style('fullcalendar');
 				wp_enqueue_style('espresso_calendar');
@@ -601,7 +601,7 @@ class EE_Calendar {
 
 			if ( $show_tooltips ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-				$events[ $cntr ]['description'] = espresso_format_content( $event->event_desc );
+				$events[ $cntr ]['description'] = wpautop( stripslashes_deep( html_entity_decode( do_shortcode( $event->event_desc ), ENT_QUOTES, 'UTF-8' )));
 				//Supports 3.1 short descriptions
 				if ( isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
 					$events[ $cntr ]['description'] = array_shift( explode( '<!--more-->', $events[ $cntr ]['description'] ));
