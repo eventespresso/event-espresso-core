@@ -58,8 +58,9 @@ class EED_Ticket_Selector extends  EED_Module {
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );		
-		define( 'TICKET_SELECTOR_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) );
-		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) );
+		// set paths 
+		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
+		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 
 	}
 
@@ -133,23 +134,13 @@ class EED_Ticket_Selector extends  EED_Module {
 		$template_args['event_name'] = self::$_event->post_title;
 		$template_args['require_pre_approval'] = self::$_event->EVT_require_pre_approval;
 		$template_args['datetimes'] = self::$_event->datetimes;
+		$template_args['datetimes'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__datetimes', self::$_event->datetimes, self::$_event );
 		
-		
+		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
+//		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_multi_selects.template.php';
+//		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_threaded_chart.template.php';
+		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
-
-//		$template_args['dates'] = self::_format_date( self::$_event->datetimes );
-//		$template_args['times'] = self::_process_event_times(self::$_event->datetimes);
-//		$template_args['datetimes'] = self::_process_event_datetimes(self::$_event->datetimes);
-//		$template_args['multiple_time_options'] = count($template_args['times']) > 1 ? TRUE : FALSE;
-//		$template_args['prices'] = self::_process_event_prices( self::$_event->prices, self::$_event->currency_symbol );
-//		$template_args['multiple_price_options'] = count($template_args['prices']) > 1 ? TRUE : FALSE;
-//		$template_args['event_meta'] = EE_Ticket_Prices::obfuscate( empty( self::$_event->meta ) ? array() : self::$_event->meta );
-//		$template_args['currency_symbol'] = self::$_event->currency_symbol;
-//		$template_args = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__template_args',$template_args,self::$_event);
-		$templates['ticket_selector'] =  TICKET_SELECTOR_PATH . 'ticket_selector_chart.template.php';
-//	//	$templates['ticket_selector'] =  TICKET_SELECTOR_PATH . 'ticket_selector_multi_selects.template.php';
-//	//	$templates['ticket_selector'] =  TICKET_SELECTOR_PATH . 'ticket_selector_threaded_chart.template.php';
-//		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 		espresso_display_template($templates['ticket_selector'], $template_args);
 
 	}
@@ -201,7 +192,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		foreach ($times as $DTT_ID => $time) {		
 			$time_options[ $DTT_ID ] = array(
 					'id' => $DTT_ID,
-					'event_id' => $time->event_ID(),
+//					'event_id' => $time->event_ID(),
 					'start_time' => $time->start(),
 					'formatted' => $time->end_time() ? $time->start_time($tm_frmt) . ' - ' . $time->end_time($tm_frmt) : $time->start_time($tm_frmt),
 					'date' => str_replace( ' ', '&nbsp;', $time->start_date('D M jS'))	
@@ -229,10 +220,9 @@ class EED_Ticket_Selector extends  EED_Module {
 		// start with an empty array
 		$datetime_options = array();
 		$tm_frmt = 'g:ia';
-		foreach ($datetimes as $DTT_ID => $datetime) {		
+		foreach ( $datetimes as $DTT_ID => $datetime ) {		
 			$datetime_options[ $DTT_ID ] = array(
 					'id' => $DTT_ID,
-					'event_id' => $datetime->event_ID(),
 					'start_date' => str_replace( ' ', '&nbsp;', $datetime->start_date('D M jS') ),
 					'start_time' => $datetime->start(),
 					'formatted' => $datetime->end_time() ? $datetime->start_time($tm_frmt) . ' - ' . $datetime->end_time($tm_frmt) : $datetime->start_time($tm_frmt)
