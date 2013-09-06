@@ -89,6 +89,7 @@ class EE_Taxes extends EE_BASE {
 		$this->EE = EE_Registry::instance();	
 		$this->_PRC_MDL = $this->EE->load_model( 'Price' );
 		$this->_PRT_MDL = $this->EE->load_model( 'Price_Type' );
+		$this->EE->load_class( 'EE_Cost_Calculator' );
 		
 		$this->_grand_total = $grand_total;
 		$this->_taxes = $this->_PRC_MDL->get_all_prices_that_are_taxes();
@@ -185,9 +186,9 @@ class EE_Taxes extends EE_BASE {
 
 
 
-if ( ! class_exists( 'EE_Cost_Calculator' )) {
-	require_once(EE_CLASSES . 'EE_Cost_Calculator.class.php');
-}
+
+
+
 		
 
 
@@ -207,7 +208,9 @@ class EE_Total extends EE_Ticket_Cost {
 	protected $_name;
 	
 	function __construct( $total, $name ) {
-		global $org_options;
+		
+		EE_Registry::instance()->load_class( 'EE_Cost_Calculator' );
+
 		$this->_price = $total;
 		$this->_name = $name;
 		$this->_ID_list[] = 0;
