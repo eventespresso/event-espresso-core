@@ -2,7 +2,7 @@
 
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('reCAPTCHA Anti-spam Settings', 'event_espresso'); ?>
-		<?php echo EE_Template::get_help_tab_link('recaptcha_info'); ?>
+		<?php echo EEH_Template::get_help_tab_link('recaptcha_info'); ?>
 	</h4>
 
 	<table class="form-table">

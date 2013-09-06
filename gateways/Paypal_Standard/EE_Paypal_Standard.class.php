@@ -173,7 +173,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
 			<td><select name="currency_format" data-placeholder="Choose a currency...">
 					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
@@ -256,7 +256,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			<th>
 				<label for="pp_image_url">
 					<?php _e('Image URL', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label>
 			</th>
 			<td>
@@ -274,7 +274,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
 			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
@@ -283,7 +283,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			<th>
 				<label for="no_shipping">
 					<?php _e('Shipping Address Options', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label>
 			</th>
 			<td>

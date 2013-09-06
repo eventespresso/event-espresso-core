@@ -395,7 +395,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EEH_Template.helper.php';
 
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
@@ -801,11 +801,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param  string $help_tab_id the id for the connected help tab
 	 * @param  string $icon_style (optional) include css class for the style you want to use for the help icon.
 	 * @param  string $help_text (optional) send help text you want to use for the link if default not to be used
-	 * @uses EE_Template::get_help_tab_link()
+	 * @uses EEH_Template::get_help_tab_link()
 	 * @return string              generated link
 	 */
 	protected function _get_help_tab_link( $help_tab_id, $icon_style = FALSE, $help_text = FALSE ) {
-		return EE_Template::get_help_tab_link( $help_tab_id, $this->page_slug, $this->_req_action, $icon_style, $help_text );
+		return EEH_Template::get_help_tab_link( $help_tab_id, $this->page_slug, $this->_req_action, $icon_style, $help_text );
 	}
 
 
@@ -2333,8 +2333,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url );
 
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
-		$button = EE_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EEH_Template.helper.php';
+		$button = EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
 
 		return $button;
 	}

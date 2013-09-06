@@ -6,7 +6,7 @@
 				<th>
 					<label for="default_reg_status">
 						<?php _e('Default Registration Status', 'event_espresso'); ?>
-						<?php echo EE_Template::get_help_tab_link('default_payment_status_help_tab'); ?>					
+						<?php echo EEH_Template::get_help_tab_link('default_payment_status_help_tab'); ?>					
 					</label>
 				</th>
 				<td>
@@ -21,7 +21,7 @@
 				<th>
 					<label for="pending_counts_reg_limit">
 						<?php _e('Pending Registrations Count Towards Registration Limits', 'event_espresso'); ?>
-						<?php //echo EE_Template::get_help_tab_link('payment_status_info'); ?>
+						<?php //echo EEH_Template::get_help_tab_link('payment_status_info'); ?>
 					</label>
 				</th>
 				<td>

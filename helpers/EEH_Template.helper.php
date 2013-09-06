@@ -15,12 +15,12 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  *
- * EE_Template	
+ * EEH_Template	
  *
  * This is a helper utility class that provides different helpers related to template files.
  *
  * @package		Event Espresso
- * @subpackage	/helpers/EE_Template.helper.php
+ * @subpackage	/helpers/EEH_Template.helper.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -29,7 +29,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
 
 
 
-class EE_Template {
+class EEH_Template {
 
 
 	/**
@@ -70,7 +70,7 @@ class EE_Template {
 	
 
 	/**
-	 * EE_Template::format_currency
+	 * EEH_Template::format_currency
 	 * This helper takes a raw float value and formats it according to the default config country currency settings, or the country currency settings from the supplied country ISO code
 	 * 
 	 * @param  float $amount   raw money value
@@ -176,4 +176,4 @@ class EE_Template {
 
 
 
-} //end EE_Template class
+} //end EEH_Template class

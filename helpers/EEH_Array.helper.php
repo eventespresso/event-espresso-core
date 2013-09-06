@@ -77,4 +77,4 @@ class EEH_Array extends EEH_Base {
 	}
 
 
-} //end EE_Template class
+} //end EEH_Template class

@@ -525,8 +525,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular'])), $wrapper_template );
 
 		//require template helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Template.helper.php';
-		return EE_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
+		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EEH_Template.helper.php';
+		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 
 

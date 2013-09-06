@@ -73,7 +73,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 			<tr>
 				<th>
 					<?php _e('Enable Full Logging', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link('full_logging_info'); ?>
+					<?php echo EEH_Template::get_help_tab_link('full_logging_info'); ?>
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('use_full_logging', $values, $use_full_logging ); ?>
@@ -90,7 +90,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 			<tr>
 				<th>
 					<?php _e('Enable Remote Logging', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link('remote_logging_info'); ?>
+					<?php echo EEH_Template::get_help_tab_link('remote_logging_info'); ?>
 				</th>
 				<td>
 					<?php echo EE_Form_Fields::select_input('use_remote_logging', $values, $use_remote_logging ); ?>
@@ -103,7 +103,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 			<tr>
 				<th>
 					<?php _e('Remote Logging URL', 'event_espresso'); ?>
-					<?php echo EE_Template::get_help_tab_link('remote_logging_url_info'); ?>
+					<?php echo EEH_Template::get_help_tab_link('remote_logging_url_info'); ?>
 				</th>
 				<td>
 					<input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo $remote_logging_url;?>" />
@@ -128,7 +128,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 				<th>
 					<label>
 						<?php _e('Link to Event Espresso from your Registration Page footer?', 'event_espresso'); ?>
-						<?php echo EE_Template::get_help_tab_link('affiliate_info'); ?>
+						<?php echo EEH_Template::get_help_tab_link('affiliate_info'); ?>
 					</label>
 				</th>
 				<td>

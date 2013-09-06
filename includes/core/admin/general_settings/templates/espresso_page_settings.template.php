@@ -23,7 +23,7 @@
 						<strong>
 							<?php _e('Registration Checkout Page', 'event_espresso'); ?>
 						</strong>
-						<?php echo EE_Template::get_help_tab_link('registration_page_info'); ?>
+						<?php echo EEH_Template::get_help_tab_link('registration_page_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $reg_page_id );?>
 					</label>
@@ -57,7 +57,7 @@
 						<strong>
 							<?php _e('Transactions Page', 'event_espresso'); ?>
 						</strong>
-						<?php echo EE_Template::get_help_tab_link('notify_url_info'); ?>
+						<?php echo EEH_Template::get_help_tab_link('notify_url_info'); ?>
 						<br />
 						<span class="lt-grey-text"><?php _e('Notify URL (processes payments)', 'event_espresso'); ?></span><br/>
 						<?php echo General_Settings_Admin_Page::edit_view_links( $txn_page_id );?>
@@ -92,7 +92,7 @@
 						<strong>
 							<?php _e('Thank You Page', 'event_espresso'); ?>
 						</strong>
-						<?php echo EE_Template::get_help_tab_link('return_url_info'); ?>
+						<?php echo EEH_Template::get_help_tab_link('return_url_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $thank_you_page_id );?>
 					</label>
@@ -126,7 +126,7 @@
 						<strong>
 							<?php _e('Cancel/Return Page', 'event_espresso'); ?>
 						</strong>
-						<?php echo EE_Template::get_help_tab_link('cancel_return_info'); ?>
+						<?php echo EEH_Template::get_help_tab_link('cancel_return_info'); ?>
 						<br />
 						<?php echo General_Settings_Admin_Page::edit_view_links( $cancel_page_id );?>
 					</label>
@@ -160,7 +160,7 @@
 						<strong>
 							<?php _e('Event List', 'event_espresso'); ?>
 						</strong>
-						<?php echo EE_Template::get_help_tab_link('event_list_cpt_info'); ?>
+						<?php echo EEH_Template::get_help_tab_link('event_list_cpt_info'); ?>
 						<br />
 						<a href='<?php echo get_post_type_archive_link('espresso_events') ?>'><?php	_e("View", "event_espresso");?></a>
 				</th>

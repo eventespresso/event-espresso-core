@@ -448,15 +448,12 @@ if (!function_exists('event_espresso_require_file')) {
 
 /**
  * 		load and display a template
- * 		This is a wrapper for the EE_Template::display_template helper.
+ * 		This is a wrapper for the EEH_Template::display_template helper.
  * 		@return 		void
  */
-function espresso_display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
-	//require the template helper 
-	require_once(EE_HELPERS . 'EE_Template.helper.php');
-	if ( $return_string )
-		return EE_Template::display_template( $path_to_file, $template_args, $return_string );
-	else
-		EE_Template::display_template( $path_to_file, $template_args, $return_string );
+function espresso_display_template( $path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE ) {
+	// load the template helper 
+	EE_Registry::instance()->load_helper( 'Template' );
+	return $return_string ? EEH_Template::display_template( $path_to_file, $template_args, $return_string ) : EEH_Template::display_template( $path_to_file, $template_args, $return_string );
 }		
 
