@@ -28,18 +28,18 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ author				Seth Shoultes
+ * @ copyright			(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
+ * @ link				http://www.eventespresso.com
  * @ version		 	3.1
  *
  * ------------------------------------------------------------------------
  *
  * EE_Calendar
  *
- * @package			Event Espresso
- * @subpackage	espresso-calendar
+ * @package				Event Espresso
+ * @subpackage			espresso-calendar
  * @author				Seth Shoultes, Chris Reynolds, Brent Christensen 
  *
  * ------------------------------------------------------------------------

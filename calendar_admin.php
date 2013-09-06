@@ -369,7 +369,7 @@ class EE_Calendar_Admin {
 								</li>
 								<li>
 									<strong>
-										<?php _e('Styles/Colors:', 'event_espresso'); ?>
+										<?php _e('Styles/Colors (premium version only):', 'event_espresso'); ?>
 									</strong><br />
 									<?php _e('To edit the calendar styles, copy the CSS file located in the plugin folder to your "wp-content/uploads/espresso/" directory. Then edit as needed. Refer to <a href="http://arshaw.com/fullcalendar/docs/event_rendering/Colors/" target="_blank">this page</a> for an example of styling the calendar and colors.', 'event_espresso'); ?>
 								</li>
@@ -732,7 +732,7 @@ class EE_Calendar_Admin {
 				<!-- / .postbox -->
 			</div>
 			<!-- / .metabox-holder -->
-
+<?php if ($espresso_premium == true) { ?>
 			<!-- Advanced settings metabox -->
 			<div class="metabox-holder">
 				<div class="postbox">
@@ -901,6 +901,7 @@ class EE_Calendar_Admin {
 				<!-- / .postbox -->
 			</div>
 			<!-- / .metabox-holder -->
+<?php } ?>
 			<!--</li>
 			</ul>-->
 		</form>
