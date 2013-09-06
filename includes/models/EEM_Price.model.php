@@ -152,12 +152,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			),
 			'order_by'=>$this->_order_by_array_for_get_all_method()
 		));
-//		return $this->_select_all_prices_where( 
-//				array( 'prc.EVT_ID' =>$EVT_ID, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE, 'prt.PBT_ID' => 4 ), 
-//				array( 'prt.PRT_order', 'prc.PRC_order', 'prc.PRC_ID' ), 
-//				'ASC', 
-//				array( 'prc.EVT_ID' =>'=', 'prc.PRC_is_active' => '=', 'prc.PRC_deleted' => '=', 'prt.PBT_ID' => '!=' )
-//		);
 	}
 
 

@@ -25,6 +25,13 @@
 class EE_Cost_Calculator extends EE_BASE {
 
 	/**
+	 * 	EE_Registry Object
+	 *	@var 	EE_Registry	$EE	
+	 * 	@access 	protected
+	 */
+	protected $EE = NULL;
+
+	/**
 	* array of all event ticket prices and price modifiers
 	*
 	* @access protected
@@ -68,12 +75,10 @@ class EE_Cost_Calculator extends EE_BASE {
 			$espresso_notices['errors'][] = 'An Event ID was not supplied.';
 			return FALSE;
 		}
-
-		require_once(EE_MODELS . 'EEM_Price.model.php');
-		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
-		
-		$this->_PRC_MDL = EEM_Price::instance();
-		$this->_PRT_MDL = EEM_Price_Type::instance();
+		// load registry and models
+		$this->EE = EE_Registry::instance();	
+		$this->_PRC_MDL = $this->EE->load_model( 'Price' );
+		$this->_PRT_MDL = $this->EE->load_model( 'Price_Type' );
 		
 		$this->_get_all_event_prices_and_modifiers( $EVT_ID );
 		
@@ -172,7 +177,7 @@ class EE_Cost_Calculator extends EE_BASE {
 				if ( ( ( $event_price->start_date( FALSE ) <= $today && $event_price->end_date( FALSE ) >= $today )) || ! $event_price->use_dates() ) {
 					// separate ticket prices ( order = 0 ) from adjuestments ( order > 0 )
 					if ( $types[ $event_price->type() ]->order() == 0 ) {
-						$base_prices[ $event_price->ID() ] = new EE_Ticket_Price_Base( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));					
+						$base_prices[ $event_price->ID() ] = new EE_Base_Ticket_Price( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));					
 					} else {
 						$price_modifiers[ $event_price->order() ][ $event_price->ID() ] = new EE_Price_Composite( $event_price, $types[ $event_price->type() ] );
 					}
@@ -368,7 +373,7 @@ abstract class EE_Ticket_Cost {
 *
 * ------------------------------------------------------------------------
 */
-class EE_Ticket_Cost_Base extends EE_Ticket_Cost {
+class EE_Base_Ticket_Price extends EE_Ticket_Cost {
 
 	protected $_ticket_price;
 	protected $_name;
@@ -528,7 +533,7 @@ abstract class EE_Price_Modifier extends EE_Ticket_Cost {
 *
 * ------------------------------------------------------------------------
 */
-class EE_Ticket_Cost_Modifier extends EE_Price_Modifier {
+class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 
 	/**
 	* 	set get the price for the ticket

@@ -24,6 +24,13 @@
 class EE_Taxes extends EE_BASE {
 
 	/**
+	 * 	EE_Registry Object
+	 *	@var 	EE_Registry	$EE	
+	 * 	@access 	protected
+	 */
+	protected $EE = NULL;
+
+	/**
 	* total after taxes have been applied
 	*
 	* @access protected
@@ -76,16 +83,14 @@ class EE_Taxes extends EE_BASE {
 	* 	@param		object		$grand_total  
 	* 	@return 		void
 	*/
-	public function __construct( EE_Ticket_Price $grand_total ) {
+	public function __construct( EE_Ticket_Cost $grand_total ) {
 
+		// load registry and models
+		$this->EE = EE_Registry::instance();	
+		$this->_PRC_MDL = $this->EE->load_model( 'Price' );
+		$this->_PRT_MDL = $this->EE->load_model( 'Price_Type' );
+		
 		$this->_grand_total = $grand_total;
-
-		require_once(EE_MODELS . 'EEM_Price.model.php');
-		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
-		
-		$this->_PRC_MDL = EEM_Price::instance();
-		$this->_PRT_MDL = EEM_Price_Type::instance();
-		
 		$this->_taxes = $this->_PRC_MDL->get_all_prices_that_are_taxes();
 		$this->_calculate_taxes();
 		add_filter( 'espresso_filter_hook_grand_total_after_taxes', array( $this, '_grand_total_after_taxes' ), 10, 1 );
@@ -180,8 +185,8 @@ class EE_Taxes extends EE_BASE {
 
 
 
-if ( ! class_exists( 'EE_Ticket_Price' )) {
-	require_once(EE_CLASSES . 'EE_Ticket_Prices.class.php');
+if ( ! class_exists( 'EE_Cost_Calculator' )) {
+	require_once(EE_CLASSES . 'EE_Cost_Calculator.class.php');
 }
 		
 
@@ -197,7 +202,7 @@ if ( ! class_exists( 'EE_Ticket_Price' )) {
 *
 * ------------------------------------------------------------------------
 */
-class EE_Total extends EE_Ticket_Price {
+class EE_Total extends EE_Ticket_Cost {
 
 	protected $_name;
 	
@@ -285,12 +290,12 @@ class EE_Total extends EE_Ticket_Price {
 	* 	@access 		public
 	* 	@return 		string
 	*/
-	public function obfuscate() {
-		// use the following to unencode price objects:
-		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
-		// OR call EE_Ticket_Price::unobfuscate( $obfuscatedString );		
-		return base64_encode( serialize( $this ));
-	}
+//	public function obfuscate() {
+//		// use the following to unencode price objects:
+//		// unserialize( gzinflate( base64_decode( $obfuscatedString )))
+//		// OR call EE_Ticket_Price::unobfuscate( $obfuscatedString );		
+//		return base64_encode( serialize( $this ));
+//	}
 	
 
 	
