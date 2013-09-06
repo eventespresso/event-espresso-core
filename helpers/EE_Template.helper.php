@@ -70,6 +70,67 @@ class EE_Template {
 	
 
 	/**
+	 * EE_Template::format_currency
+	 * This helper takes a raw float value and formats it according to the default config country currency settings, or the country currency settings from the supplied country ISO code
+	 * 
+	 * @param  float $amount   raw money value
+	 * @param  string $CNT_ISO 2 letter ISO code for a country
+	 * @param  boolean $display_code  whether to display the country code (USD). Default = TRUE
+	 * @return string        the html output for the formatted money value
+	 */
+	public static function format_currency( $amount = FALSE, $CNT_ISO = FALSE, $display_code = TRUE ) {
+		// ensure amount was received
+		if ( ! $amount ) {
+			$msg = __( 'In order to format currency, an amount needs to be passed.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return;
+		}
+		// load registray
+		$EE = EE_Registry::instance();
+		$mny = new stdClass();
+		// first set default config country currency settings
+		if ( isset( $EE->CFG->currency->code )) {
+			$mny = $EE->CFG->currency;
+		} else {
+			// manually set defaults
+			$mny->code = 'USD';
+			$mny->dec_plc = 2;
+			$mny->dec_mrk = '.';
+			$mny->thsnds = ',';
+			$mny->sign = '$';
+			$mny->sign_b4 = TRUE;			
+		}
+		// was a country ISO code passed ?
+		if ( $CNT_ISO ) {			
+			// get country
+			if ( $cntry = $EE->load_model( 'Country' )->get_one_by_ID( $CNT_ISO )) {	
+				// overwrite default settings
+				$mny->code = $cntry->get('CNT_cur_code');
+				$mny->dec_plc = $cntry->get('CNT_cur_dec_plc');
+				$mny->dec_mrk = $cntry->get('CNT_cur_dec_mrk');
+				$mny->thsnds = $cntry->get('CNT_cur_thsnds');
+				$mny->sign = $cntry->get('CNT_cur_sign');
+				$mny->sign_b4 =$cntry->get('CNT_cur_sign_b4');			
+			}			
+		}		
+		// format float
+		$amount = number_format( $amount, max( array( 2, $mny->dec_plc )), $mny->dec_mrk, $mny->thsnds );
+		// add currency sign
+		$amount = $mny->sign_b4 ? $mny->sign . $amount : $amount . $mny->sign;
+		// add currency code ?
+		$amount = $display_code ? $amount . ' (' . $mny->code . ')' : $amount;
+		// clean up vars
+		unset( $mny );
+		unset( $EE );
+		// return formatted currency amount
+		return $amount;
+	}
+
+
+
+	
+
+	/**
 	 * This helper just returns a button or link for the given parameters
 	 * @param  string $url   the url for the link
 	 * @param  string $class what class is used for the button (defaults to 'button-primary')
