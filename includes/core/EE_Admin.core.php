@@ -194,6 +194,7 @@ final class EE_Admin {
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
 			add_filter('FHEE_admin_pages_array',array($this,'hide_admin_pages_except_maintenance_mode'));
+			
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
@@ -207,10 +208,11 @@ final class EE_Admin {
 			// bring out the pidgeons!!!
 			require_once( EE_CORE . 'messages' . DS . 'EE_messages_init.core.php' );
 			EE_messages_init::init();
-			// run the admin page factory
-			$this->EE_Admin_Page_Loader();
+			
 	//		espresso_verify_default_pages_exist();
 		}
+		// run the admin page factory
+			$this->EE_Admin_Page_Loader();
 		
 
 	}

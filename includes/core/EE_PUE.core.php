@@ -48,7 +48,7 @@ class EE_PUE {
 	 *	@return void
 	 */	
 	public function __construct() {
-		
+//		throw new EE_Error('error');
 		$this->EE = EE_Registry::instance();
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		global $org_options;
@@ -139,6 +139,7 @@ class EE_PUE {
 	 * @return string html.
 	 */
 	 public static function espresso_data_collection_optin_text( $extra = TRUE ) {
+//		 $this->EE->load_file( EE_CORE_ADMIN, 'PUE', 'core' );
 		 echo '<h4>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').'</h4>';
 		 $settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'your_organization_settings'), admin_url( 'admin.php?page=espresso_general_settings') );
 		 $settings_url = $settings_url . '#UXIP_settings';
@@ -152,6 +153,7 @@ class EE_PUE {
 
 
 	function espresso_data_collection_optin_notice() {
+		$this->EE->load_file( EE_CORE_ADMIN, 'EE_Admin_Page', 'core' );
 		$ueip_has_notified = get_option('ee_ueip_has_notified');
 		$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'your_organization_settings'), admin_url( 'admin.php?page=espresso_general_settings') );
 		$settings_url = $settings_url . '#UXIP_settings';

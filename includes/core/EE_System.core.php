@@ -203,7 +203,7 @@ final class EE_System {
 				add_option( 'espresso_db_update', $espresso_db_update, '', 'no' );
 			} else {
 				// option is NOT FALSE but also is NOT an array, so make it an array and save it
-				$espresso_db_update =  array( $espresso_db_update );
+				$espresso_db_update =  array( $espresso_db_update=>array() );
 				update_option( 'espresso_db_update', $espresso_db_update );
 			}
 		}
@@ -211,9 +211,9 @@ final class EE_System {
 		
 		// if current EE version is NOT in list of db updates, then update the db
 		if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
-//			require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
-//			EEH_Activation::create_database_tables();
-//			LOAD AND INITIATE UPGRADE PROCESS
+//			check if the database is now out of sync. if so, trigger maintenance mode
+			//so taht the admin can't do anything until they run the migration scripts
+			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 		}	
 
 	}
