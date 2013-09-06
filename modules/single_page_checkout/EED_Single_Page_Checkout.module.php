@@ -431,39 +431,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
-	 * 	event_list_template_filters
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function event_list_template_filters() {
-		$args = array(
-			'form_url' => add_query_arg( array( ), home_url( __( 'events', 'event_espresso' )) ),
-			'elf_month' => $this->_elf_month,
-			'elf_category' => $this->_elf_category,
-			'elf_show_expired' => $this->_show_expired,
-			'elf_default_view' => $this->_default_view
-		);
-		espresso_display_template( EVENT_LIST_TEMPLATES_PATH . 'event-list-template-filters.template.php', $args );		
-	}
-
-
-
-
-
-	/**
-	 * 	event_categories
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function event_categories() {
-		$event_categories = EE_Registry::instance()->load_model('Term')->get_all_ee_categories();
-//		printr( $event_categories, '$event_categories  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $event_categories;
-	}
-
 
 
 
@@ -489,20 +456,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
-	/**
-	 * 	event_list_grid_size
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function event_list_grid_size() {
-		$event_list_grid_size = isset( EE_Registry::instance()->CFG->EED_Event_List['event_list_grid_size'] ) ? EE_Registry::instance()->CFG->EED_Event_List['event_list_grid_size'] : 'med';
-		$event_list_grid_size .= '-event-list-grid';
-		return $event_list_grid_size;
-	}
-	
-	
 
 
 }
