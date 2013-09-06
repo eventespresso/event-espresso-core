@@ -221,7 +221,6 @@ class EE_Admin_Page_Loader {
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class);
 		$installed_refs = apply_filters( 'FHEE_admin_pages_array', $installed_refs );
 
-
 		//loop through admin pages and setup the $_installed_pages array.
 		$hooks_ref = array();
 		foreach ( $installed_refs as $page ) {
