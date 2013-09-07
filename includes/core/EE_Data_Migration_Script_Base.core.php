@@ -20,7 +20,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * it's passed a string like '3.1.38B', it should return true
 	 * @return boolean
 	 */
-	abstract static public function  can_migrate_from_version($version_string);
+	abstract public function  can_migrate_from_version($version_string);
 	/**
 	 * Performs database schema changes that need to occur BEFORE the data is migrated.
 	 * Eg, if we were going to change user passwords from plaintext to encoded versions
@@ -53,7 +53,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	protected function _count_records_to_migrate(){
 		$count = 0;
 		foreach($this->stages() as $stage){
-			$count+= $stage->count_records_migrated();
+			$count+= $stage->count_records_to_migrate();
 		}
 		return $count;
 	}
@@ -68,22 +68,31 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		foreach($this->stages() as $stage){
 			$count+= $stage->count_records_migrated();
 		}
+		$this->_records_migrated = $count;
 		return $count;
 	}
 	
 	public function migration_step($num_records_to_migrate){
-		
 		$items_actually_updated =0;
 		//get the next stage that isn't complete
 		foreach($this->stages() as $stage){
 			if( in_array($stage->get_status(),array(EE_Data_Migration_Manager::status_continue,  EE_Data_Migration_Manager::status_error))){
 				$items_actually_updated += $stage->migration_step($num_records_to_migrate);
-				$this->set_status($stage->get_status());
+				if(in_array($stage->get_status(),array(
+					EE_Data_Migration_Manager::status_error,
+					EE_Data_Migration_Manager::status_fatal_error
+				))){
+					$this->set_status($stage->get_status());
+				}
+					
 			}
 			//check for errors
 			if ($items_actually_updated == $num_records_to_migrate){
 				break;
 			}
+		}
+		if($items_actually_updated < $num_records_to_migrate){
+			$this->set_status(EE_Data_Migration_Manager::status_completed);
 		}
 		return $items_actually_updated;
 	}
@@ -118,12 +127,19 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 *
 	 * @var array
 	 */
-	protected $errors;
+	protected $errors = array();
+	
+	public function migration_step($num_items_to_migrate=50){
+		$items_migrated = $this->_migration_step($num_items_to_migrate);
+		$this->_records_migrated += $items_migrated;
+		return $items_migrated;
+	}
 	/**
-	 * Note: if an error is encountered, or everything is finished, this stage should update its status property accordingly
+	 * Note: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
+	 * Note: it should not alter teh count of items migrated. That is done in the public function that calls this.
 	 * @return int number of items ACTUALLY migrated
 	 */
-	abstract public function migration_step($num_items_to_migrate=50);
+	abstract protected function _migration_step($num_items_to_migrate=50);
 	
 	/**
 	 * returns an arrya of strings describing errors
@@ -140,9 +156,6 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	public function count_records_migrated() {
 		return $this->_records_migrated;
 	}
-	protected function _mark_x_records_migrated($num_migrated = 1){
-		$this->_records_migrated += $num_migrated;
-	}
 	
 }
 
@@ -153,12 +166,12 @@ abstract class EE_Data_Migration_Class_Base{
 	/**
 	 * @var $records_to_migrate int count of all that have been migrated
 	 */
-	protected $_records_to_migrate;
+	protected $_records_to_migrate = 0;
 	/**
 	 *
 	 * @var $records_migrated int
 	 */
-	protected $_records_migrated;
+	protected $_records_migrated = 0;
 	
 	
 	/**
@@ -167,6 +180,10 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @var string one of status_completed, status_continue, or status_error
 	 */
 	protected $_status;
+	
+	public function __construct(){
+		$this->set_status(EE_Data_Migration_Manager::status_continue);
+	}
 	public function count_records_to_migrate(){
 		if( $this->_records_to_migrate == null){
 			$this->_records_to_migrate = $this->_count_records_to_migrate();

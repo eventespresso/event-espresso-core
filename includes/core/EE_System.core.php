@@ -194,6 +194,8 @@ final class EE_System {
 	public function check_espresso_version() {
 		// check if db has been updated, cuz autoupdates don't trigger database install script
 		$espresso_db_update = get_option( 'espresso_db_update' );
+//		echo 'echodump of $espresso_db_update';
+//		var_dump($espresso_db_update);
 		// chech that option is an array
 		if( ! is_array( $espresso_db_update )) {
 			// if option is FALSE, then it never existed
@@ -206,16 +208,37 @@ final class EE_System {
 				$espresso_db_update =  array( $espresso_db_update=>array() );
 				update_option( 'espresso_db_update', $espresso_db_update );
 			}
+		}else{
+			$corrected_db_update = array();
+			//if IS an array, but is it an array where KEYS are verion numbers, and values are arrays?
+			foreach($espresso_db_update as $should_be_version_string => $should_be_array){
+				if(is_int($should_be_version_string) && ! is_array($should_be_array)){
+					//the key is an int, and the value ISNT an array
+					//so it must be numerically-indexed, where values are versions installed...
+					//fix it!
+					$version_string = $should_be_array;
+					$corrected_db_update[$version_string] = array('unknown-date');
+				}else{
+					//ok it checks out
+					$corrected_db_update[$should_be_version_string] = $should_be_array;
+				}
+			}
+			$espresso_db_update = $corrected_db_update;
+			update_option( 'espresso_db_update', $espresso_db_update );
+			
 		}
 	
-		
+//		echo "? is ".espresso_version()." in ";var_dump($espresso_db_update);
 		// if current EE version is NOT in list of db updates, then update the db
 		if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
 //			check if the database is now out of sync. if so, trigger maintenance mode
 			//so taht the admin can't do anything until they run the migration scripts
 			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-		}	
-
+			
+			$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
+			// resave
+			update_option( 'espresso_db_update', $espresso_db_update );
+		}
 	}
 
 

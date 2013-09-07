@@ -875,28 +875,7 @@ class EEH_Activation {
 			PRIMARY KEY  (VNUM_ID),
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
-		
-		
-		
-		// grab espresso_db_update option
-		$espresso_db_update = get_option( 'espresso_db_update', array() );
-		
-		
-		// make sure it's an array
-		$espresso_db_update = is_array( $espresso_db_update ) ? $espresso_db_update : array( $espresso_db_update =>array());
-		
-		
-		//make sure the current database state wp option has been set.
-		//it's important this is done BEFORE adding teh current version to the 'espresso_db_update' option,
-		//as it uses the last version in determining the database version.
-		EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
-		// add current EE version to list
-		$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
-		// resave
-		update_option( 'espresso_db_update', $espresso_db_update );
-		
-		
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');		
 	}
 
 

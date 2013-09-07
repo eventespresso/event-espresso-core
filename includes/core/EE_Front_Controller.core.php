@@ -133,7 +133,9 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
-		
+//		global $wpdb;
+//		$result = $wpdb->get_var("SELECT option_value from wp_options where option_name='espresso_data_migrations'");
+//		echo $result;die;
 //		$dms = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 //		echo 'echodump of $dms';
 //		var_dump($dms);
