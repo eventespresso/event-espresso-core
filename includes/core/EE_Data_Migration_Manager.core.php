@@ -263,7 +263,7 @@ class EE_Data_Migration_Manager{
 				//but dont forget to make sure intial data is there
 				$this->EE->load_helper('Activation');
 				EEH_Activation::initialize_db_content();
-				
+				//we should be good to allow them to exit maintenance mode now
 				return array(
 					'records_to_migrate'=>1,
 					'records_migrated'=>1,
@@ -320,20 +320,20 @@ class EE_Data_Migration_Manager{
 	 * to buffer output so that we don't throw junk into our json
 	 */
 	public function response_to_migration_ajax_request(){
-		//thow away anythign already set to send as output.
-//		@ob_end_clean();
-//		//start output buffer just to make sure we don't mess up the js
-//		ob_start();
+//		//start output buffer just to make sure we don't mess up the json
+		ob_start();
 		try{
 			$response = $this->migration_step();
 		}catch(Exception $e){
-			$response = array('records_to_migrate'=>0,
-					'records_migrated'=>0,
-					'status'=> EE_Data_Migration_Manager::status_fatal_error,
-					'message'=> sprintf(__("Unknown fatal error occurred: %s", "event_espresso"),$e->getMessage()),
-					'script'=>'Unknown');
+			$response = array(
+				'records_to_migrate'=>0,
+				'records_migrated'=>0,
+				'status'=> EE_Data_Migration_Manager::status_fatal_error,
+				'message'=> sprintf(__("Unknown fatal error occurred: %s", "event_espresso"),$e->getMessage()),
+				'script'=>'Unknown');
 		}
-		$warnings_etc = ob_get_contents();
+		$warnings_etc = '';
+		$warnings_etc = @ob_get_contents();
 		ob_end_clean();
 		$response['message'] .=$warnings_etc;
 		echo json_encode($response);

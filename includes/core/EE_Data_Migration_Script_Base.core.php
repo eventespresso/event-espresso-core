@@ -144,7 +144,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		//so this property will be ither _schema_changes_after_migration_output or _schema_changes_before_migration_output
 		$property_name = '_schema_changes_'. ($before ? 'before' : 'after').'_migration_output';
 		$fatal_error_occurred = false;
-		if ( ! $this->$property_name){
+		$output = '';
+		if ( ! $this->$property_name ){
 			try{
 				ob_start();
 				if($before){
@@ -213,7 +214,14 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	protected $errors = array();
 	
 	public function migration_step($num_items_to_migrate=50){
+		//before we run the migration step, we want ot take note of warnings that get outputted
+		ob_start();
 		$items_migrated = $this->_migration_step($num_items_to_migrate);
+		$output = ob_get_contents();
+		ob_end_clean();
+		if( $output ){
+			$this->add_error($output);
+		}
 		$this->_records_migrated += $items_migrated;
 		return $items_migrated;
 	}
