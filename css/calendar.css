@@ -3,25 +3,20 @@
  * (c) 2013 Espresso Events
  * -------------------------------------------------------------------------*/
 
-#espresso_calendar {
-	position: relative !important;
-}
+#espresso_calendar { position: relative !important; width: 100% !important; margin:1em 0 0; z-index:100; }
+#espresso_calendar.calendar_widget .fc-content tbody {/* display:none;*/ }
 
 /* calendar thumbnail rules */
 /* if thumbnails are set to display for an event
 class name '.event-has-thumb' is added to top level parent event */
-#espresso_calendar .fc-header-title h2 {
-	color: #606267;
-}
+#espresso_calendar .fc-header-title h2 { color: #606267; }
 
 #espresso_calendar:not(.ui-widget) .fc-header-title h2 {
 	margin:0; font-size: 2.5em; font-weight: bold; line-height: 1em;
 }
-#espresso_calendar.calendar_widget .fc-header-title h2 {
-	font-size: 2em; 
-}
+#espresso_calendar.calendar_widget .fc-header-title h2 { font-size: 1.5em;  }
 
-/*#espresso_calendar table { font-size:14px !important; line-height:14px !important; }*/
+#espresso_calendar .fc-content table { background-color:#fff; }
 
 #espresso_calendar table.fc-header, 
 #espresso_calendar table.fc-border-separate, .fc-header th, .fc-header td { border: none; }
@@ -71,7 +66,7 @@ class name '.event-has-thumb' is added to top level parent event */
 	padding:5px; margin:0 1.5px 3px; background-color:#007BAE; border: none; 
 	border-radius:0; font-size:1em; line-height:1.1em; 
 }
-#espresso_calendar.calendar_widget .fc-event { padding:0px; margin:0 0 2px; }
+#espresso_calendar.calendar_widget .fc-event { min-height:15px; padding:0px; margin:0 0 2px; }
 
 #espresso_calendar .fc-event a { letter-spacing:-.5px; }
 #espresso_calendar .fc-event a:hover { text-shadow: none; }
@@ -125,8 +120,8 @@ class name '.event-has-thumb' is added to top level parent event */
 	display: inline-block; float: right; padding: .5em 1em .5em; margin:1em 0 1em 1em; border-radius: 2px; 
 	color: #fff; text-decoration: none; font-size: 1em; line-height: 2em; font-weight: bold;
 }
-.reg-now-btn:hover { color:#fff; }
-.reg-now-btn { background: #007BAE; }
+a.reg-now-btn:hover { color:#fff; }
+a.reg-now-btn { background: #007BAE; color:#fff;  }
 .sold-out-dv { background: #E44064; }
 
 
@@ -147,10 +142,8 @@ class name '.event-has-thumb' is added to top level parent event */
 }
 
 
-.espresso_calendar_widget .fc-day-content { min-width: 26px; }
+.espresso_calendar_widget .fc-day-content div { min-height: 15px; }
 .espresso_calendar_widget a.fc-event-skin div:hover { background-position:6px 0px!important; }
-/* fugue icon pack can be downloaded here: http://randyjensenonline.com/thoughts/wordpress-custom-post-type-fugue-icons/ */
-/* using this pack is good if you want to have the same hover effects, otherwise, you can use any icon or icon pack.  I also like http://famfamfam.com */
 .espresso_calendar_widget .fc-header h2 { font-size: 1.2em; font-weight: normal; } /* resets the height of the month name */
 .espresso_calendar_widget th.fc-widget-header { font-weight: normal; } /* resets the weight of the days */
 .espresso_calendar_widget .fc-button-content { line-height: 16px; padding: 0 5px; height: 16px; font-size: 0.8em; } /* resets the button styles */
@@ -163,7 +156,7 @@ class name '.event-has-thumb' is added to top level parent event */
 	color: #000;*/
 } 
 
-.espresso_calendar_widget table.fc-border-separate thead { font-size: 0.9em; } /* resets the font size of the day names */
+.espresso_calendar_widget table.fc-border-separate thead { font-size: 0.75em; } /* resets the font size of the day names */
 
 /* default resets for themeroller */
 
@@ -189,4 +182,15 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 	position:absolute; top:-16px; left:50%; margin:0 0 0 -33px;
 	box-shadow: none !important;
 }
+
+/* prevent transitions from getting applied to calendar links as some themes are known to do this */
+
+#espresso_calendar a {
+	-webkit-transition: none!important;
+	-moz-transition:    none!important;
+	-ms-transition:     none!important;
+	-o-transition:      none!important;
+	transition:         none!important;
+}
+
 

@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
-  Version: 2.1.0.DEV
+  Version: 2.1.0.BETA
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2012 Event Espresso (email : support@eventespresso.com)
@@ -28,18 +28,18 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ author				Seth Shoultes
+ * @ copyright			(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
+ * @ link				http://www.eventespresso.com
  * @ version		 	3.1
  *
  * ------------------------------------------------------------------------
  *
  * EE_Calendar
  *
- * @package			Event Espresso
- * @subpackage	espresso-calendar
+ * @package				Event Espresso
+ * @subpackage			espresso-calendar
  * @author				Seth Shoultes, Chris Reynolds, Brent Christensen 
  *
  * ------------------------------------------------------------------------
@@ -58,6 +58,18 @@ class EE_Calendar {
 	 *  @access 	private
 	 */
 	private $_calendar_options = array();
+
+	/**
+	 * 	@var 	INT	$_event_category_id
+	 *  @access 	private
+	 */
+	private $_event_category_id = 0;
+
+	/**
+	 * 	@var 	boolean	$_show_expired
+	 *  @access 	private
+	 */
+	private $_show_expired = TRUE;
 
 
 	private $timer = NULL;
@@ -96,24 +108,16 @@ class EE_Calendar {
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLPATH', plugin_dir_path( __FILE__ ));
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLURL', plugin_dir_url( __FILE__ ));	
 		
-		if ( is_admin() ) {
-			
+		if ( is_admin() ) {			
+			register_activation_hook(  __FILE__ , array( $this, 'activation' ));
 			require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
-			register_activation_hook(  __FILE__ , 'espresso_calendar_install' );
-			add_filter( 'plugin_action_links', 'espresso_calendar_plugin_actions', 10, 2 );
-			add_action( 'action_hook_espresso_calendar_update_api', 'espresso_calendar_load_pue_update' );
-			add_action( 'action_hook_espresso_featured_image_add_to_meta_box', 'espresso_calendar_add_to_featured_image_meta_box' );			
-			add_action( 'action_hook_espresso_add_new_submenu_to_group_settings', 'espresso_add_calendar_to_admin_menu', 5 );
-			add_action( 'admin_notices', 'espresso_calendar_current_screen' );
-			// AJAX hooks for getting event data
+			EE_Calendar_Admin::instance();
+			// ajax hooks
 			add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
-			add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));
-			
+			add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));			
 		} else {
-
 			add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
 			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
-
 		}
 
 		add_action( 'widgets_init', array( $this, 'widget_init' ));
@@ -129,7 +133,40 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function calendar_version() {
-		return '2.1.0.dev';
+		return '2.1.0.BETA';
+	}
+
+
+
+	/**
+	 * 	activation
+	 *
+	 *  @return 	void
+	 */
+	function activation() {		
+	    if ( ! current_user_can( 'activate_plugins' )) {
+			 return;
+		}
+	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	    check_admin_referer( "activate-plugin_{$plugin}" );
+	 	require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
+		EE_Calendar_Admin::activation();
+	}
+
+
+
+	/**
+	 * 	plugin_file
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function plugin_file() {
+		static $plugin_file;
+		if ( ! $plugin_file ) {
+		    $plugin_file = plugin_basename( __FILE__ );
+		}
+		return $plugin_file;
 	}
 	
 
@@ -165,16 +202,16 @@ class EE_Calendar {
 		$show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
 		if ( $show_tooltips ) {
 			// load jQuery qtip script from CDN with local fallback
-			$qtip_js_url = 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.js'; 
+			$qtip_js_url = 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js';
 			// is the URL accessible ?
 			$test_url = @fopen( $qtip_js_url, 'r' );
 			// use CDN URL or local fallback ?
-			$qtip_js_url = $test_url !== FALSE ? $qtip_js_url : ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.min.js';
+			$qtip_js_url = $test_url !== FALSE ? $qtip_js_url : ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.js';
 			// use CDN URL or local fallback ?
 			$qtip_css_url = $test_url !== FALSE ? 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css' : ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/jquery.qtip.min.css';
 			// register jQuery qtip
-			wp_register_style( 'qtip', $qtip_css_url ); 
-			wp_register_script( 'jquery-qtip-min', $qtip_js_url, array('jquery'), '2.1.1', TRUE);			
+			wp_register_style( 'qtip', $qtip_css_url );
+			wp_register_script( 'jquery-qtip', $qtip_js_url, array('jquery'), '2.1.1', TRUE);			
 		}
 		
 		// load base calendar style
@@ -198,7 +235,7 @@ class EE_Calendar {
 			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE ) {
 				if ( $show_tooltips ) {
 					wp_enqueue_style('qtip');
-					wp_enqueue_script('jquery-qtip-min');
+					wp_enqueue_script('jquery-qtip');
 				}
 				wp_enqueue_style('fullcalendar');
 				wp_enqueue_style('espresso_calendar');
@@ -226,14 +263,14 @@ class EE_Calendar {
 		}
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
-		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE ), $this->_calendar_options );
+		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE, 'show_tooltips' => FALSE ), $this->_calendar_options );
 		// make sure $atts is an array
 		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
 		$atts = shortcode_atts( $defaults, $atts );
 		// grab some request vars
-		$atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
-		$atts['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $atts['show_expired'];
+		$this->_event_category_id = $atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
+		$this->_show_expired = $atts['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $atts['show_expired'];
 		// loop thru atts and add to js options
 		foreach ( $atts as $att_name => $att_value ) {
 			if ( ! empty( $att_value )) {
@@ -293,6 +330,8 @@ class EE_Calendar {
 			
 		global $org_options;
 		$ee_calendar_js_options['theme'] = ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
+		
+//		echo '<h3>$ee_calendar_js_options</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $ee_calendar_js_options, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
 		// Get current page protocol
 		$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
@@ -308,7 +347,9 @@ class EE_Calendar {
 			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif">
 		</div>
 	</div>
-	<div id="espresso_calendar_images" ></div>'; 
+	<div style="clear:both;" ></div>
+	<div id="espresso_calendar_images" ></div>
+	'; 
 	
 	}
 
@@ -334,13 +375,13 @@ class EE_Calendar {
 		$year = date('Y' );
 		$start_date = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d', absint( $_REQUEST['start_date'] )) : date('Y-m-d', mktime( 0, 0, 0, $month, 1, $year ));
 		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d', absint( $_REQUEST['end_date'] )) : date('Y-m-t', mktime( 0, 0, 0, $month, 1, $year ));
-		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';
+		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $this->_show_expired;
 //		echo '<h4>$show_expired : ' . $show_expired . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		
 		// set boolean for categories 
 		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
-		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : FALSE;
-		$type = $event_category_id ? 'cat' : 'all';
+		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
+
 		//Build the SQL to run
 		$SQL = "SELECT e.*, ese.start_time, ese.end_time ";
 		//Get the categories
@@ -373,8 +414,9 @@ class EE_Calendar {
 //		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h3>$events_data</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
+		$event_categories = array();
 		//Do we need to get Category data ?
-		if ( $use_categories && $type == 'all' ) {
+		if ( $use_categories ) {
 			// grab event_ids from query results above to use in category query
 			$EVT_IDs = array_keys($events_data);
 			$SQL = "SELECT event_id, c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc";
@@ -382,23 +424,24 @@ class EE_Calendar {
 			$SQL .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 			$SQL .= " WHERE event_id IN ( '" . implode("', '", $EVT_IDs) . "' )";
 			$categories = $wpdb->get_results( $wpdb->prepare( $SQL, NULL ));
-			//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			$event_categories = array();
+//			echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			foreach ($categories as $category) {
 				$event_categories[$category->event_id][] = $category;
 			}
 		}
+//		echo '<h3>$event_categories</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $event_categories, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
 		 $enable_cat_classes = isset( $this->_calendar_options['enable_cat_classes'] ) && $this->_calendar_options['enable_cat_classes'] ? TRUE : FALSE;
 		 $show_attendee_limit = isset( $this->_calendar_options['show_attendee_limit'] ) && $this->_calendar_options['show_attendee_limit'] ? TRUE : FALSE;
 		 $show_time = isset( $this->_calendar_options['show_time'] ) && $this->_calendar_options['show_time'] ? TRUE : FALSE;
 		 $show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
 		if ( $show_tooltips ) {
-			 $tooltip_style = isset( $this->_calendar_options['tooltip_style'] ) && $this->_calendar_options['tooltip_style'] ? $this->_calendar_options['tooltip_style'] : 'qtip-light';
 			$tooltip_my = isset( $this->_calendar_options['tooltips_pos_my_1'] ) && ! empty( $this->_calendar_options['tooltips_pos_my_1'] ) ? $this->_calendar_options['tooltips_pos_my_1'] : 'bottom';
 			$tooltip_my .= isset( $this->_calendar_options['tooltips_pos_my_2'] ) && ! empty( $this->_calendar_options['tooltips_pos_my_2'] ) ? ' ' . $this->_calendar_options['tooltips_pos_my_2'] : ' center';
 			$tooltip_at = isset( $this->_calendar_options['tooltips_pos_at_1'] ) && ! empty( $this->_calendar_options['tooltips_pos_at_1'] ) ? $this->_calendar_options['tooltips_pos_at_1'] : 'top';
 			$tooltip_at .= isset( $this->_calendar_options['tooltips_pos_at_2'] ) && ! empty( $this->_calendar_options['tooltips_pos_at_2']) ? ' ' . $this->_calendar_options['tooltips_pos_at_2'] : ' center';
+			$tooltip_style = isset( $this->_calendar_options['tooltip_style'] ) && $this->_calendar_options['tooltip_style'] ? $this->_calendar_options['tooltip_style'] : 'qtip-light';
+			$tooltip_word_count = isset( $this->_calendar_options['tooltip_word_count'] ) ? $this->_calendar_options['tooltip_word_count'] : 50;
 		}
 		$enable_calendar_thumbs = isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ? TRUE : FALSE;
 		
@@ -424,16 +467,14 @@ class EE_Calendar {
 			//Get details about the category of the event
 			if ($use_categories) {
 				// extract info from separate array of category data ?
-				if (isset($event_categories[$event->id]) && $type == 'all') {
+				if ( isset( $event_categories[$event->id] ) ) {
 					// get first element of array without modifying original array
 					$primary_cat = array_shift(array_values($event_categories[$event->id]));
 					$category_data['category_meta'] = unserialize($primary_cat->category_meta);
-				} else if ($type == 'cat') {
-					// or was one category set via the shortcode
-					$category_data['category_meta'] = unserialize($event->category_meta);
 				} else {
 					$category_data['category_meta'] = array();
 				}
+
 				//Assign colors to events by category
 				if ( $enable_cat_classes && isset($category_data['category_meta']['use_pickers']) && $category_data['category_meta']['use_pickers'] == 'Y') {
 					$events[ $cntr ]['color'] = $category_data['category_meta']['event_background'];
@@ -443,8 +484,9 @@ class EE_Calendar {
 
 			//Gets the URL of the event and links the event to the registration form.
 			$this->_calendar_options['espresso_page_post'] = isset( $this->_calendar_options['espresso_page_post'] ) ? $this->_calendar_options['espresso_page_post'] : 'R';
-			$registration_url = $this->_calendar_options['espresso_page_post'] == 'P' ? get_permalink( $event->id ) : add_query_arg( 'ee', $event->id, get_permalink( $org_options['event_page_id'] ));
+			$registration_url = $this->_calendar_options['espresso_page_post'] == 'P' ? get_permalink( $event->post_id ) : add_query_arg( 'ee', $event->id, get_permalink( $org_options['event_page_id'] ));
 			$events[ $cntr ]['url'] = $event->externalURL != '' ? htmlspecialchars_decode($event->externalURL) : $registration_url;
+			
 
 			//Id of the event
 			$events[ $cntr ]['id'] = $event->id;
@@ -507,10 +549,6 @@ class EE_Calendar {
 				$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
 				$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
 				
-//				echo '<h4>event_thumbnail_url : ' . $event_meta['event_thumbnail_url'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//				echo '<h4>$thumbnail_size : ' . $thumbnail_size . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//				echo '<h4>$path_to_thumbnail : ' . $path_to_thumbnail . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				
 				// check if file exists
 				if ( $pathinfo['dirname'] == $upload_dir['baseurl'] ) {
 					// since the above is true we know the file is in the uploads so we can use file_exists() to verify it
@@ -519,6 +557,11 @@ class EE_Calendar {
 						$path_to_thumbnail = file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext ) ? $event_meta['event_thumbnail_url'] : FALSE;
 					}			
 				}
+				
+//				echo '<h4>event_thumbnail_url : ' . $event_meta['event_thumbnail_url'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//				echo '<h4>$thumbnail_size : ' . $thumbnail_size . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//				echo '<h4>$path_to_thumbnail : ' . $path_to_thumbnail . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+				
 				
 				if ( $path_to_thumbnail ) { 
 					$events[ $cntr ]['event_img_thumb'] = '
@@ -540,10 +583,10 @@ class EE_Calendar {
 			if ( $use_categories ) {
 				if ( $enable_cat_classes ) {
 
-					if (isset($event_categories[$event->id]) && $type == 'all') {
-						foreach ($event_categories[$event->id] as $EVT) {
+					if ( isset( $event_categories[$event->id] ) && ! $event_category_id ) {
+						foreach ( $event_categories[$event->id] as $cat ) {
 							//This is the css class name
-							$events[ $cntr ]['className'] .= ' ' . $EVT->category_identifier;
+							$events[ $cntr ]['className'] .= ' ' . $cat->category_identifier;
 						}
 						// set event type to the category id
 						$events[ $cntr ]['eventType'] = isset($primary_cat->category_name) && !empty($primary_cat->category_name) ? $primary_cat->category_name : '';
@@ -562,22 +605,26 @@ class EE_Calendar {
 
 			if ( $show_tooltips ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-				$events[ $cntr ]['description'] = espresso_format_content( $event->event_desc );
+				$events[ $cntr ]['description'] = wpautop( stripslashes( do_shortcode( $event->event_desc )));
 				//Supports 3.1 short descriptions
 				if ( isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
 					$events[ $cntr ]['description'] = array_shift( explode( '<!--more-->', $events[ $cntr ]['description'] ));
 				}
 				// and just in case it's still too long, or somebody forgot to use the more tag...
-				$events[ $cntr ]['description'] = wp_trim_words( $events[ $cntr ]['description'], 50 );
+				$events[ $cntr ]['description'] = $tooltip_word_count ? wp_trim_words( $events[ $cntr ]['description'], $tooltip_word_count ) : $events[ $cntr ]['description'];
 				// tooltip wrapper
 				$events[ $cntr ]['tooltip'] = '<div class="qtip_info">';
 				// show time ?
 				$events[ $cntr ]['tooltip'] .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 				// check attendee reg limit
-				$orig_attendee_limit = get_number_of_attendees_reg_limit( $event->id, $type = 'num_attendees_slash_reg_limit' );
-				$parse_limits = explode('/', $orig_attendee_limit, 2);
-				$num_completed = $parse_limits[0];
-				$reg_limit = $parse_limits[1];
+				$num_completed = 0;
+				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id=%d AND (payment_status='Completed' OR payment_status='Pending' OR payment_status='Refund') ";
+				$wpdb->get_results( $wpdb->prepare( $a_sql, $event->id ), ARRAY_A);
+				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
+					$num_completed = $wpdb->last_result[0]->quantity;
+				}
+				$reg_limit = $event->reg_limit; 
+
 				// add attendee limit if set
 				if ( $show_attendee_limit ) {
 					$attendee_limit = $reg_limit >= 999999 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $num_completed . ' / ' . $reg_limit;
