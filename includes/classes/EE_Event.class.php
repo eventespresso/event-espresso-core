@@ -620,8 +620,21 @@ class EE_Event extends EE_CPT_Base{
 	}
 
 
+	public function get_number_of_tickets_sold() {
+		$tkt_sold = 0;
 
-	//todo needs reworking
+		$datetimes = $this->get_many_related('Datetime');
+
+		foreach ( $datetimes as $datetime ) {
+			$tkt_sold += $datetime->get('DTT_sold');
+		}
+
+		return $tkt_sold;
+	}
+
+
+
+	//todo needs reworking an may get dropped.
 	public function get_number_of_attendees_reg_limit( $type = 'NULL' ) {
 
 		return "TODO: '$type' needs to be refactored";
