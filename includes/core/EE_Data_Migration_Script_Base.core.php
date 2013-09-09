@@ -13,7 +13,26 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	protected $_migration_stages;
 	
+	/**
+	 * Output (warnings, errors) from doing the schema changes before the migration.
+	 * If there are warnings this will be a string. If there are no warnings, it will
+	 * simply be TRUE. If it hasn't run, it will be null.
+	 * @var mixed
+	 */
+	protected $_schema_changes_before_migration_output = null;
+	/**
+	 * Output (warnings, errors) from doing the schema changes after the migration.
+	 * If there are warnings this will be a string. If there are no warnings, it will
+	 * simply be TRUE. If it hasn't run, it will be null.
+	 * @var mixed
+	 */
+	protected $_schema_changes_after_migration_output = null;
 	
+	/**
+	 * String which describes what's currently happening in this migration
+	 * @var string
+	 */
+	protected $_feedback_message;
 	/**
 	 * Returns whether or not this data migration script can operate on the given version of the database.
 	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
@@ -73,11 +92,22 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 	
 	public function migration_step($num_records_to_migrate){
+		
+		//if wehaven't yet done the 1st schema changes, do them now. buffer any output
+		$was_fatal = $this->_maybe_do_schema_changes(true);
+		if($was_fatal){
+			$this->_feedback_message = sprintf(__("Fatal error occcured in finalizing the database during %s", "event_espresso"),$this->pretty_name());
+			return 0;
+		}
 		$items_actually_updated =0;
 		//get the next stage that isn't complete
 		foreach($this->stages() as $stage){
 			if( in_array($stage->get_status(),array(EE_Data_Migration_Manager::status_continue,  EE_Data_Migration_Manager::status_error))){
-				$items_actually_updated += $stage->migration_step($num_records_to_migrate);
+				try{
+					$items_actually_updated += $stage->migration_step($num_records_to_migrate);
+				}catch(Exception $e){
+					$stage->set_status(EE_Data_Migration_Manager::status_fatal_error);
+				}
 				if(in_array($stage->get_status(),array(
 					EE_Data_Migration_Manager::status_error,
 					EE_Data_Migration_Manager::status_fatal_error
@@ -86,16 +116,60 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 				}
 					
 			}
-			//check for errors
 			if ($items_actually_updated == $num_records_to_migrate){
 				break;
 			}
 		}
 		if($items_actually_updated < $num_records_to_migrate){
+			//apparently we're done
 			$this->set_status(EE_Data_Migration_Manager::status_completed);
+			//do schema changes for after the migration now
+			//first double-cehckw ehaven't already done this
+			$was_fatal = $this->_maybe_do_schema_changes(false);
+			if($was_fatal){
+				$this->_feedback_message = sprintf(__("Fatal error occcured in finalizing the database during %s", "event_espresso"),$this->pretty_name());
+			}
+		}else{
+			//update the feedback message
+			$this->_feedback_message = sprintf(__("Migrated %d records successfully during %s", "event_espresso"),$items_actually_updated,$stage->pretty_name());
 		}
 		return $items_actually_updated;
 	}
+	/**
+	 * Calls either schema_changes_before_migration() (if $before==true) or schema_changes_after_migration
+	 * (if $before==false). Buffers their outputs and stores them on the class.
+	 * @param boolean $before
+	 */
+	private function _maybe_do_schema_changes($before = true){
+		//so this property will be ither _schema_changes_after_migration_output or _schema_changes_before_migration_output
+		$property_name = '_schema_changes_'. ($before ? 'before' : 'after').'_migration_output';
+		$fatal_error_occurred = false;
+		if ( ! $this->$property_name){
+			try{
+				ob_start();
+				if($before){
+					$this->schema_changes_before_migration();
+				}else{
+					$this->schema_changes_after_migration();
+				}
+				$output = ob_get_contents();
+				ob_end_clean();
+			}catch(Exception $e){
+				$output = print_r($e,true);
+				$this->set_status(EE_Data_Migration_Manager::status_fatal_error);
+				$fatal_error_occurred = true;
+			}
+			if( $output ){
+				//there were some warnings
+				$this->$property_name = $output;
+			}else{
+				//there were no warnings etc from the data migration changes
+				$this->$property_name = TRUE;
+			}
+		}
+		return apply_filters('FHEE__'.get_class($this).'__maybe_do_schema_changes__return',$fatal_error_occurred,$before,$output);
+	}
+	
 	/**
 	 * returns an arrya of strings describing errors by all the script's stages
 	 * @return array
@@ -119,6 +193,15 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$stages = apply_filters('FHEE__EE_Data_Migration_Script_Base__stages',$this->_migration_stages);
 		ksort($stages);
 		return $stages;
+	}
+	
+	/**
+	 * Gets a string which should describe what's going on currently with this migration, which
+	 * can be displayed to the user
+	 * @return string
+	 */
+	public function get_feedback_message(){
+		return $this->_feedback_message;
 	}
 }
 

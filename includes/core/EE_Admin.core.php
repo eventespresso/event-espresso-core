@@ -136,6 +136,7 @@ final class EE_Admin {
 	private function _load_system_files() {
 		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
 			require_once( EE_CORE . 'EE_System.core.php' );
+			EE_System::instance();
 			$this->EE = EE_Registry::instance();
 		} else {
 			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));

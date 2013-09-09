@@ -94,7 +94,8 @@ final class EE_Front_Controller {
 	 */
 	private function _load_system_files() {
 		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
-			require_once( EE_CORE . 'EE_System.core.php' );			
+			require_once( EE_CORE . 'EE_System.core.php' );		
+			EE_System::instance();
 			$this->EE = EE_Registry::instance();
 			// create static copy of EE for modules and shortcodes to access during their initial phases
 			 //self::$registry = $this->EE;

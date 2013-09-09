@@ -260,6 +260,10 @@ class EE_Data_Migration_Manager{
 			$scripts = $this->check_for_applicable_data_migration_scripts();
 			if( ! $scripts ){
 				//huh, no more scripts to run... apparently we're done!
+				//but dont forget to make sure intial data is there
+				$this->EE->load_helper('Activation');
+				EEH_Activation::initialize_db_content();
+				
 				return array(
 					'records_to_migrate'=>1,
 					'records_migrated'=>1,
@@ -282,7 +286,7 @@ class EE_Data_Migration_Manager{
 					'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
 					'records_migrated'=>$current_script_class->count_records_migrated(),
 					'status'=>EE_Data_Migration_Manager::status_continue,
-					'message'=>'',
+					'message'=>$current_script_class->get_feedback_message(),
 					'script'=>$current_script_class->pretty_name());
 				break;
 			case EE_Data_Migration_Manager::status_completed:
@@ -292,7 +296,7 @@ class EE_Data_Migration_Manager{
 					'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
 					'records_migrated'=>$current_script_class->count_records_to_migrate(),//so we're done, so just assume we've finished ALL records
 					'status'=> EE_Data_Migration_Manager::status_completed,
-					'message'=>'',
+					'message'=>$current_script_class->get_feedback_message(),
 					'script'=> $current_script_class->pretty_name()
 				);
 				break;
@@ -302,7 +306,7 @@ class EE_Data_Migration_Manager{
 					'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
 					'records_migrated'=>$current_script_class->count_records_migrated(),
 					'status'=> $current_script_class->get_status(),
-					'message'=>implode(", ",$current_script_class->get_errors()),
+					'message'=>  sprintf(__("Minor errors occured during %s: %s", "event_espresso"), $current_script_class->pretty_name(), implode(", ",$current_script_class->get_errors())),
 					'script'=>$current_script_class->pretty_name()
 				);
 				break;
@@ -312,10 +316,27 @@ class EE_Data_Migration_Manager{
 	}
 	
 	/**
-	 * Echo out JSON response to migration script AJAX requests
+	 * Echo out JSON response to migration script AJAX requests. Takes precautions
+	 * to buffer output so that we don't throw junk into our json
 	 */
 	public function response_to_migration_ajax_request(){
-		echo json_encode($this->migration_step());
+		//thow away anythign already set to send as output.
+//		@ob_end_clean();
+//		//start output buffer just to make sure we don't mess up the js
+//		ob_start();
+		try{
+			$response = $this->migration_step();
+		}catch(Exception $e){
+			$response = array('records_to_migrate'=>0,
+					'records_migrated'=>0,
+					'status'=> EE_Data_Migration_Manager::status_fatal_error,
+					'message'=> sprintf(__("Unknown fatal error occurred: %s", "event_espresso"),$e->getMessage()),
+					'script'=>'Unknown');
+		}
+		$warnings_etc = ob_get_contents();
+		ob_end_clean();
+		$response['message'] .=$warnings_etc;
+		echo json_encode($response);
 		die;
 	}
 	

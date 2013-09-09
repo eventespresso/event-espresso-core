@@ -38,7 +38,40 @@ final class EE_System {
 	 */
 	protected $EE = NULL;
 
-
+	/**
+	 * Whether this request was from activating EE or if it was already activated
+	 * @var boolean
+	 */
+	private $_activation = false;
+	
+	/**
+	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation. So examples of this
+	 * would be a normal GET request on teh frontend or backcend, or a POST, etc. 
+	 */
+	const req_type_normal = 0;
+	/**
+	 * Indicates this is a brand new installation of EE, and we'll probably want to create db tables etc.
+	 */
+	const req_type_new_activation = 1;
+	/**
+	 * normal request except the activation hook was called... probably want to recheck database is ok
+	 */
+	const req_type_reactivation = 2;
+	/**
+	 * indicates that EE has been upgraded since its previous request. We may have data migration scripts
+	 * to call and will want to trigger maintenance mode
+	 */
+	const req_type_upgrade = 3;
+	/**
+	 * TODO: will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
+	 */
+	const req_type_downgrade = 4;
+	/**
+	 * Stores which type of request this is, options being one of the consts on EE_System starting with
+	 * req_type_*. It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
+	 * @var int
+	 */
+	private $_req_type;
 
 
 
@@ -64,12 +97,14 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct( $activation ) {
+		
 		// handy dandy object for holding shtuff
+		$this->_activation = $activation;
 		$this->_load_registry();
 		$this->_register_custom_autoloaders();
 		$this->_define_table_names();
 		$this->EE->load_core( 'Maintenance_Mode' );
-		$this->check_espresso_version();
+		$this->handle_new_install_or_upgrade_etc();
 
 		if ( ! $activation ) {
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
@@ -183,17 +218,49 @@ final class EE_System {
 
 
 	/**
-	* check_espresso_version
+	* handle_new_install_or_upgrade_etc
 	* 
-	* compares the current EE version versus previously activated versions
+	* Takes care of detecting whether this is a brand new install or code upgrade,
+	* and either setting up the DB or setting up maintenance mode etc.
 	* 
 	* @access public
 	* @since 3.1.28
 	* @return void
 	*/
-	public function check_espresso_version() {
-		// check if db has been updated, cuz autoupdates don't trigger database install script
-		$espresso_db_update = get_option( 'espresso_db_update' );
+	private function handle_new_install_or_upgrade_etc() {
+		// check if db has been updated, or if its a brand-new installation
+		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
+		switch($this->detect_req_type($espresso_db_update)){
+			case EE_System::req_type_new_activation:
+			case EE_System::req_type_reactivation:
+				EEH_Activation::initialize_db_and_folders();
+				EEH_Activation::initialize_db_content();
+				break;
+			case EE_System::req_type_upgrade:
+				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+				break;
+			case EE_System::req_type_normal:
+			case EE_System::req_type_downgrade:
+			default:
+				break;
+		}
+		$this->update_list_of_installed_versions($espresso_db_update);
+	}
+
+	
+	/**
+	 * standardizes the wp option 'espresso_db_upgrade' which actually stores
+	 * information about what versions of EE have been installed and activated,
+	 * NOT necessarily the state of the database
+	 * @param array $espresso_db_update_value teh value of the wordpress option. 
+	 * If not supplied, fetches it from teh options table
+	 * @return array the correct value of 'espresso_db_upgrade', after saving it
+	 * if it needed correction
+	 */
+	private function fix_espresso_db_upgrade_option($espresso_db_update = null){
+		if( ! $espresso_db_update){
+			$espresso_db_update = get_option( 'espresso_db_update' );
+		}
 //		echo 'echodump of $espresso_db_update';
 //		var_dump($espresso_db_update);
 		// chech that option is an array
@@ -227,20 +294,60 @@ final class EE_System {
 			update_option( 'espresso_db_update', $espresso_db_update );
 			
 		}
-	
-//		echo "? is ".espresso_version()." in ";var_dump($espresso_db_update);
-		// if current EE version is NOT in list of db updates, then update the db
-		if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
-//			check if the database is now out of sync. if so, trigger maintenance mode
-			//so taht the admin can't do anything until they run the migration scripts
-			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-			
-			$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
-			// resave
-			update_option( 'espresso_db_update', $espresso_db_update );
-		}
+		return $espresso_db_update;
 	}
-
+	
+	/**
+	 * Detects if the current version indicated in the has existed in the list of 
+	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
+	 * @param array $espresso_db_update_value teh value of the wordpress option. 
+	 * If not supplied, fetches it from teh options table.
+	 * Also, caches its result so later parts of the code can also know whether there's been an
+	 * update or not. This way we can add the current version to espresso_db_update,
+	 * but still know if this is a new install or not
+	 * @return int one of the consts on EE_System::req_type_*
+	 */
+	public function detect_req_type($espresso_db_update = null){
+		
+		if ($this->_req_type === null){
+			$espresso_db_update = $this->fix_espresso_db_upgrade_option($espresso_db_update);
+			if($espresso_db_update){
+				//it exists, so this isn't a completely new install
+				//check if this version already in that list of previously installed versions
+				if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
+					//its a new version!
+					$this->_req_type = EE_System::req_type_upgrade;
+				}else{
+					//its not an update. maybe a reactivation?
+					if($this->_activation){
+						$this->_req_type = EE_System::req_type_reactivation;
+					}else{
+						//its not a new install, not an upgrade, and not even a reactivation. its nothing special
+						$this->_req_type = EE_System::req_type_normal;
+					}
+				}
+			}else{
+				//it doesn't exist. It's a completely new install
+				$this->_req_type = EE_System::req_type_new_activation;
+			}
+		}
+		return $this->_req_type;
+		
+	}
+	
+	/**
+	 * Adds teh current code version to the saved wp option which stores a list
+	 * of all ee versions ever installed.
+	 * @param array $espresso_db_update_value teh value of the wordpress option. 
+	 * If not supplied, fetches it from teh options table
+	 * @return boolean success as to whether or not this option was changed
+	 */
+	public function update_list_of_installed_versions($espresso_db_update = null){
+		$espresso_db_update = $this->fix_espresso_db_upgrade_option($espresso_db_update);
+		$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
+		// resave
+		return update_option( 'espresso_db_update', $espresso_db_update );
+	}
 
 
 
@@ -383,7 +490,7 @@ final class EE_System {
 
 
 }
-EE_System::instance();
+//EE_System::instance();
 
 // End of file EE_System.core.php
 // Location: /core/EE_System.core.php
