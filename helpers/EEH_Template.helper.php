@@ -88,7 +88,7 @@ class EEH_Template {
 		}
 		// load registray
 		$EE = EE_Registry::instance();
-		$mny = new stdClass();
+		$mny = new EE_Currency_Config();
 		// first set default config country currency settings
 		if ( isset( $EE->CFG->currency->code )) {
 			$mny = $EE->CFG->currency;
