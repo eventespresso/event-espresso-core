@@ -263,7 +263,7 @@ class EE_Calendar {
 		}
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
-		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE ), $this->_calendar_options );
+		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE, 'show_tooltips' => FALSE ), $this->_calendar_options );
 		// make sure $atts is an array
 		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
@@ -330,6 +330,8 @@ class EE_Calendar {
 			
 		global $org_options;
 		$ee_calendar_js_options['theme'] = ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
+		
+//		echo '<h3>$ee_calendar_js_options</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $ee_calendar_js_options, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
 		// Get current page protocol
 		$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
@@ -434,11 +436,12 @@ class EE_Calendar {
 		 $show_time = isset( $this->_calendar_options['show_time'] ) && $this->_calendar_options['show_time'] ? TRUE : FALSE;
 		 $show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
 		if ( $show_tooltips ) {
-			 $tooltip_style = isset( $this->_calendar_options['tooltip_style'] ) && $this->_calendar_options['tooltip_style'] ? $this->_calendar_options['tooltip_style'] : 'qtip-light';
 			$tooltip_my = isset( $this->_calendar_options['tooltips_pos_my_1'] ) && ! empty( $this->_calendar_options['tooltips_pos_my_1'] ) ? $this->_calendar_options['tooltips_pos_my_1'] : 'bottom';
 			$tooltip_my .= isset( $this->_calendar_options['tooltips_pos_my_2'] ) && ! empty( $this->_calendar_options['tooltips_pos_my_2'] ) ? ' ' . $this->_calendar_options['tooltips_pos_my_2'] : ' center';
 			$tooltip_at = isset( $this->_calendar_options['tooltips_pos_at_1'] ) && ! empty( $this->_calendar_options['tooltips_pos_at_1'] ) ? $this->_calendar_options['tooltips_pos_at_1'] : 'top';
 			$tooltip_at .= isset( $this->_calendar_options['tooltips_pos_at_2'] ) && ! empty( $this->_calendar_options['tooltips_pos_at_2']) ? ' ' . $this->_calendar_options['tooltips_pos_at_2'] : ' center';
+			$tooltip_style = isset( $this->_calendar_options['tooltip_style'] ) && $this->_calendar_options['tooltip_style'] ? $this->_calendar_options['tooltip_style'] : 'qtip-light';
+			$tooltip_word_count = isset( $this->_calendar_options['tooltip_word_count'] ) ? $this->_calendar_options['tooltip_word_count'] : 50;
 		}
 		$enable_calendar_thumbs = isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ? TRUE : FALSE;
 		
@@ -546,10 +549,6 @@ class EE_Calendar {
 				$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
 				$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
 				
-//				echo '<h4>event_thumbnail_url : ' . $event_meta['event_thumbnail_url'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//				echo '<h4>$thumbnail_size : ' . $thumbnail_size . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//				echo '<h4>$path_to_thumbnail : ' . $path_to_thumbnail . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				
 				// check if file exists
 				if ( $pathinfo['dirname'] == $upload_dir['baseurl'] ) {
 					// since the above is true we know the file is in the uploads so we can use file_exists() to verify it
@@ -558,6 +557,11 @@ class EE_Calendar {
 						$path_to_thumbnail = file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext ) ? $event_meta['event_thumbnail_url'] : FALSE;
 					}			
 				}
+				
+//				echo '<h4>event_thumbnail_url : ' . $event_meta['event_thumbnail_url'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//				echo '<h4>$thumbnail_size : ' . $thumbnail_size . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//				echo '<h4>$path_to_thumbnail : ' . $path_to_thumbnail . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+				
 				
 				if ( $path_to_thumbnail ) { 
 					$events[ $cntr ]['event_img_thumb'] = '
@@ -601,13 +605,13 @@ class EE_Calendar {
 
 			if ( $show_tooltips ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-				$events[ $cntr ]['description'] = wpautop( stripslashes_deep( html_entity_decode( do_shortcode( $event->event_desc ), ENT_QUOTES, 'UTF-8' )));
+				$events[ $cntr ]['description'] = wpautop( stripslashes( do_shortcode( $event->event_desc )));
 				//Supports 3.1 short descriptions
 				if ( isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
 					$events[ $cntr ]['description'] = array_shift( explode( '<!--more-->', $events[ $cntr ]['description'] ));
 				}
 				// and just in case it's still too long, or somebody forgot to use the more tag...
-				$events[ $cntr ]['description'] = wp_trim_words( $events[ $cntr ]['description'], 50 );
+				$events[ $cntr ]['description'] = $tooltip_word_count ? wp_trim_words( $events[ $cntr ]['description'], $tooltip_word_count ) : $events[ $cntr ]['description'];
 				// tooltip wrapper
 				$events[ $cntr ]['tooltip'] = '<div class="qtip_info">';
 				// show time ?
