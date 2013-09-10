@@ -163,7 +163,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 				//remove tkt relationships.
 				//Note: there shouldn't be any "orphaned" permanently deleteable tickets due to work that will be done on this codebase ticket -> https://events.codebasehq.com/projects/event-espresso/tickets/3533
-				$related_tickets = $saved_dtts[$id]->get_many_related('Tickets');
+				$related_tickets = $saved_dtts[$id]->get_many_related('Ticket');
 				foreach ( $related_tickets as $tkt ) {
 					$saved_dtts[$id]->_remove_relation_to($tkt, 'Ticket');
 				}
@@ -605,7 +605,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 	private function _get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default = FALSE ) {
-		$prices = !empty($ticket) ? $ticket->get_many_related('Price') : $this->EE->load_model('Price')->get_all( array( array('PRC_is_default' => 1 ) ) );
+		$prices = !empty($ticket) ? $ticket->get_many_related('Price', array('default_where_conditions' => 'none') ) : $this->EE->load_model('Price')->get_all( array( array('PRC_is_default' => 1 ) ) );
+
 
 		// check if we're dealing with a default dtt (in which we want to link the first ticket(s) with it BUT not indicate it as a starting ticket (otherwise there won't be any new relationships created))
 		$default_dtt = isset( $all_dtts[0] ) && $all_dtts[0] instanceof EE_Datetime && $all_dtts[0]->ID() === 0 ? TRUE : FALSE;
