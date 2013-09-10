@@ -43,27 +43,28 @@
 			$prev_time = '';
 			
 			foreach ( $datetimes as $DTT_ID => $datetime ) {  
-				foreach ( $datetime->tickets() as $TKT_ID => $ticket ) {
-
-				if ( $row == 0 ) {
-					$date_display = $prev_date = $datetime->start_date('D M jS');
-				} elseif ( $datetime->start_date('D M jS') == $prev_date ) { 
-					// add styling to duplicate dates
-					$date_display = '<span class="lt-grey-text">' . $datetime->start_date('D M jS') . '</span>';
-				} else {
-					$date_display = $prev_date = $datetime->start_date('D M jS');
-				}				
+				foreach ( $datetime->tickets() as $TKT_ID => $ticket ) {					
+					if ( $ticket->is_on_sale() && $ticket->available() ) {
+									
+						if ( $row == 0 ) {
+							$date_display = $prev_date = $datetime->start_date('D M jS');
+						} elseif ( $datetime->start_date('D M jS') == $prev_date ) { 
+							// add styling to duplicate dates
+							$date_display = '<span class="lt-grey-text">' . $datetime->start_date('D M jS') . '</span>';
+						} else {
+							$date_display = $prev_date = $datetime->start_date('D M jS');
+						}				
+							
+						if ( $row == 0 ) {
+							$time_display = $prev_time = $datetime->start_time('g:ia');
+						} elseif ( $datetime->start_time('g:ia') == $prev_time ) { 
+							// add styling to duplicate times
+							$time_display = '<span class="lt-grey-text">' . $datetime->start_time('g:ia') . '</span>';
+						} else {
+							$time_display = $prev_time = $datetime->start_time('g:ia');
+						}
 					
-				if ( $row == 0 ) {
-					$time_display = $prev_time = $datetime->start_time('g:ia');
-				} elseif ( $datetime->start_time('g:ia') == $prev_time ) { 
-					// add styling to duplicate times
-					$time_display = '<span class="lt-grey-text">' . $datetime->start_time('g:ia') . '</span>';
-				} else {
-					$time_display = $prev_time = $datetime->start_time('g:ia');
-				}
-				
-				//$raw_price = $ticket->get('TKT_price');
+						//$raw_price = $ticket->get('TKT_price');
 
 ?>
 				<tr>				
@@ -100,26 +101,31 @@
 									value="<?php echo $DTT_ID; ?>"
 							/>	
 						<input type="hidden"
-									name="tkt-slctr-price-<?php echo $event_id; ?>[]"
+									name="tkt-slctr-ticket-<?php echo $event_id; ?>[]"
 									value="<?php echo $ticket->get('TKT_price'); ?>"
 							/>
 						<input type="hidden"
-									name="tkt-slctr-price-id-<?php echo $event_id; ?>[]"
+									name="tkt-slctr-ticket-id-<?php echo $event_id; ?>[]"
 									value="<?php echo $TKT_ID; ?>"
 							/>
 						<input type="hidden"
-									name="tkt-slctr-price-desc-<?php echo $event_id; ?>[]"
+									name="tkt-slctr-ticket-desc-<?php echo $event_id; ?>[]"
 									value="<?php echo esc_attr( $ticket->get('TKT_name') ); ?>"
 							/>
-						<!--<input type="hidden"
-									name="tkt-slctr-price-obj-<?php echo $event_id; ?>[]"
-									value="<?php //echo $ticket->__sleep(); ?>"
-							/>-->
+						<input type="hidden"
+									name="tkt-slctr-$datetime-obj-<?php echo $event_id; ?>[]"
+									value="<?php echo base64_encode( serialize( $datetime )); ?>"
+							/>
+						<input type="hidden"
+									name="tkt-slctr-ticket-obj-<?php echo $event_id; ?>[]"
+									value="<?php echo base64_encode( serialize( $ticket )); ?>"
+							/>
 
 					</td>
 				</tr>
 <?php
-							$row++;
+								$row++;
+							}
 						} 
 					}
 

@@ -522,11 +522,11 @@ class EE_Error extends Exception {
 	*
 	*	@access public
 	* 	@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
-	* 	@param		boolean		$url_encode			whether or not to urlencode messages for use as REQUEST vars
+	* 	@param		boolean		$save_to_transient	whether or not to save notices to a transient for retreival on next request
 	* 	@param		boolean		$remove_empty		whether or not to unset empty messages
 	* 	@return 		array
 	*/
-	public static function get_notices( $format_output = TRUE, $url_encode = FALSE, $remove_empty = TRUE ) {
+	public static function get_notices( $format_output = TRUE, $save_to_transient = FALSE, $remove_empty = TRUE ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$success_messages = '';
@@ -535,15 +535,12 @@ class EE_Error extends Exception {
 
 //		printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		// grab any notices that have been sent via REQUEST vars
-		if (isset($_REQUEST['success']) && $_REQUEST['success'] != '') {
-			self::$_espresso_notices['success'][] = urldecode($_REQUEST['success']);
-		}
-		if (isset($_REQUEST['attention']) && $_REQUEST['attention'] != '') {
-			self::$_espresso_notices['attention'][] = urldecode($_REQUEST['attention']);
-		}
-		if (isset($_REQUEST['errors']) && $_REQUEST['errors'] != '') {
-			self::$_espresso_notices['errors'][] = urldecode($_REQUEST['errors']);
+		// grab any notices that have been saved to a transient
+		if ( $notices = get_option( 'espresso_notices', FALSE )) {
+			foreach ( $notices as $type => $notice ) {
+				self::$_espresso_notices[ $type ] = $notice;
+			}
+			update_option( 'espresso_notices', FALSE );
 		}
 
 		// check for success messages

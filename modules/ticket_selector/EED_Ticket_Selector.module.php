@@ -52,16 +52,15 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+		// routing
+		EE_Config::register_route( 'process_ticket_selections', 'EED_Ticket_Selector', 'process_ticket_selections' );
+		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 //		add_action( 'AHEE_events_list_footer', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
-		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10 );
+		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );		
-		// set paths 
-		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
-		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
-
 	}
 
 	/**
@@ -73,6 +72,18 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function set_hooks_admin() {
 	}
 
+
+
+	/**
+	 * 	set_definitions
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function set_definitions() {
+		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
+		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
+	}
 
 
 	/**
@@ -111,11 +122,8 @@ class EED_Ticket_Selector extends  EED_Module {
 //		EE_Registry::instance()->load_class( 'Cost_Calculator' );
 
 		self::$_event = $event;
-//		printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		self::_added_by_admin = $added_by_admin;
 
 		$template_args = array();
-		//printr( self::$_event, 'self::$_event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		if ( self::$_event->EVT_allow_multiple ) {
 			// make sure additional_limit is set
@@ -148,137 +156,6 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-
-	/**
-	* 	format date for display
-	*
-	*	@access private
-	* 	@param  mixed 		$dates
-	* 	@return 	string
-	*/
-	private function _format_date( $datetimes ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		//printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		// start with an empty array
-		$dates = array();
-		foreach ( $datetimes as $date ) {
-			$frmtd = $date->start_date('D M jS');
-			$dates[ $DTT_ID ] = str_replace( ' ', '&nbsp;', $frmtd );
-		}
-		// flip it once
-		$dates = array_flip( $dates );
-		// flip it twice - and the duplicates magically dissappear
-		$dates = array_flip( $dates );
-		return $dates;
-	}
-
-
-
-
-
-	/**
-	* 	process event times
-	*
-	*	@access private
-	* 	@param array  	$times
-	* 	@return array
-	* 	@return string
-	*/
-	private function _process_event_times($times) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		// start with an empty array
-		$time_options = array();
-		$tm_frmt = 'g:ia';
-		foreach ($times as $DTT_ID => $time) {		
-			$time_options[ $DTT_ID ] = array(
-					'id' => $DTT_ID,
-//					'event_id' => $time->event_ID(),
-					'start_time' => $time->start(),
-					'formatted' => $time->end_time() ? $time->start_time($tm_frmt) . ' - ' . $time->end_time($tm_frmt) : $time->start_time($tm_frmt),
-					'date' => str_replace( ' ', '&nbsp;', $time->start_date('D M jS'))	
-			);
-		}
-		//echo printr($time_options);
-		return $time_options;
-	}
-
-
-
-
-
-
-	/**
-	* 	process event date times
-	*
-	*	@access private
-	* 	@param array  	$times
-	* 	@return array
-	* 	@return string
-	*/
-	private function _process_event_datetimes($datetimes) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		// start with an empty array
-		$datetime_options = array();
-		$tm_frmt = 'g:ia';
-		foreach ( $datetimes as $DTT_ID => $datetime ) {		
-			$datetime_options[ $DTT_ID ] = array(
-					'id' => $DTT_ID,
-					'start_date' => str_replace( ' ', '&nbsp;', $datetime->start_date('D M jS') ),
-					'start_time' => $datetime->start(),
-					'formatted' => $datetime->end_time() ? $datetime->start_time($tm_frmt) . ' - ' . $datetime->end_time($tm_frmt) : $datetime->start_time($tm_frmt)
-			);
-		}
-		//echo printr( $datetime_options,'$datetime_options'  );
-
-		return $datetime_options;
-	}
-
-
-
-
-
-	/**
-	* 	process event prices for display
-	*
-	*	@access private
-	* 	@param array  	$times
-	* 	@param string  	$currency_symbol
-	* 	@return array
-	* 	@return string
-	*/
-	private function _process_event_prices( $prices = array(), $currency_symbol = '$', $surcharge_type = 'included' ) {
-
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		//printr( $prices, '$prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		// start with an empty array
-		$price_options = array();
-
-		if ( ! empty( $prices )) {
-			foreach ( $prices as $price ) {			
-				if ( $price instanceof EE_Ticket_Price ) {
-					//printr( $price, '$price  <span style="margin:0 0 0 3em;font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );		
-					// add price 
-					$price_option = $price->name() . ': ';
-					// format ticket price
-					$price_option .= $price == '0.00' ? '<span class="price-is-free">free</span>' : $currency_symbol . $price->price();
-					// add this price option to the array of options
-					$price_options[ implode( ',', $price->ID_list() ) ] = array( 'raw' => $price->price(), 'option' => $price_option, 'obj' => $price->obfuscate() );				
-				} else {
-					$error_msg = __( 'An error occured. A supplied ticket price was not of the correct type.', 'event_espresso' );
-					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );					
-				}
-			}		
-		}
-		//printr( $price_options, '$price_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		return $price_options;
-	}
-
-
-
-
-
 	
 	/**
 	* 	ticket_selector_form_open
@@ -287,8 +164,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return		string
 	*/	
-	public static function ticket_selector_form_open() {
-		$checkout_url = get_permalink( EE_Registry::instance()->CFG->core->reg_page_id );
+	public static function ticket_selector_form_open( $post ) {
+		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), get_permalink( $post->ID ));
 		if ( ! $checkout_url ) {
 			$msg = __('The URL for the event registration checkout page could not be retreived.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -342,15 +219,17 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return		array  or FALSE
 	*/	
-	public static function process_ticket_selections( $registration_url = FALSE, $return = FALSE ) {
+	public function process_ticket_selections() {
+		
+		$return = FALSE;
 		//we should really only have 1 registration in the works now (ie, no MER)
 		//so clear any previosu items in the cart. When MER happens this will probably need to be tweaked, 
 		//possibly wrappe din a conditional checking for some constant defined in MER etc.
-		espresso_clear_session();
+		EE_Registry::instance()->load_core( 'Session' );
+		EE_Registry::instance()->SSN->clear_session();
+		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		
-		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		
+	
 		// do we have an event id?
 		if ( isset($_POST['tkt-slctr-event-id'] )) {
 		
@@ -388,9 +267,9 @@ class EED_Ticket_Selector extends  EED_Module {
 						$event_to_add = array(
 								'id' => $valid['id'],
 								'name' => $valid['name'],
-								'price' => $valid['price'][$x],
-								'price_id' => $valid['price_id'][$x],
-								'price_obj' => $valid['price_obj'][$x],
+								'ticket' => $valid['ticket'][$x],
+								'ticket_id' => $valid['ticket_id'][$x],
+								'ticket_obj' => $valid['ticket_obj'][$x],
 								'qty' => $valid['qty'][$x],
 //								'meta_keys' => $valid['meta_keys'],
 //								'meta_values' => $valid['meta_values'],
@@ -399,8 +278,8 @@ class EED_Ticket_Selector extends  EED_Module {
 										'date' => $valid['date'][$x],
 										'time' => $valid['time'][$x],
 										'dtt_id' => $valid['dtt_id'][$x],
-										'price_desc' => $valid['price_desc'][$x],
-										'event_meta' => $valid['event_meta'],
+										'ticket_desc' => $valid['ticket_desc'][$x],
+//										'event_meta' => $valid['event_meta'],
 										'pre_approval' => $valid['pre_approval']
 								)
 						);
@@ -421,15 +300,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( $return ) {
 							return TRUE;
 						} else {
-							if ( ! $registration_url ) {
-								$registration_url = add_query_arg( array( 'e_reg'=>'register', 'step' => 1 ), espresso_get_reg_page_full_url() );
-							}
-//echo '<h4>$registration_url : ' . $registration_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//$cart = EE_Cart::instance()->whats_in_the_cart();
-//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//printr( EE_Session::instance()->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//
-//die();
+							$registration_url = add_query_arg( array( 'ee'=>'register', 'step' => 1 ), get_permalink( $this->EE->CFG->core->reg_page_id ));
 							wp_safe_redirect($registration_url);
 							exit();
 						}
@@ -447,11 +318,15 @@ class EED_Ticket_Selector extends  EED_Module {
 			}
 //die();
 			if ( isset( $_POST['tkt-slctr-return-url-'.$valid['id']] )) {
-				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_POST['tkt-slctr-return-url-'.$valid['id']] );
+				EE_Error::get_notices( FALSE, TRUE );
+				$return_url = $_POST['tkt-slctr-return-url-'.$valid['id']];
+				echo '<h4>$return_url : ' . $return_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				wp_safe_redirect( $return_url );
 				exit();
-			} elseif ( isset( $_SERVER['HTTP_REFERER'] )) {
-				$return_url = add_query_arg( EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
+			} elseif ( isset( $event_to_add['id'] )) {
+				EE_Error::get_notices( FALSE, TRUE );
+				$return_url = get_permalink( $event_to_add['id'] );
+				echo '<h4>$return_url : ' . $return_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';				
 				wp_safe_redirect( $return_url );
 				exit(); 
 			} else {
@@ -504,14 +379,14 @@ class EED_Ticket_Selector extends  EED_Module {
 					'atndz' => 'tkt-slctr-max-atndz-',
 					'rows' => 'tkt-slctr-rows-',
 					'qty' => 'tkt-slctr-qty-',
-					'price' => 'tkt-slctr-price-',
-					'price_id' => 'tkt-slctr-price-id-',
+					'ticket' => 'tkt-slctr-ticket-',
+					'ticket_id' => 'tkt-slctr-ticket-id-',
 					'date' => 'tkt-slctr-date-',
 					'dtt_id' => 'tkt-slctr-dtt-id-',
 					'time' => 'tkt-slctr-time-',
-					'price_desc' => 'tkt-slctr-price-desc-',
-					'price_obj' => 'tkt-slctr-price-obj-',
-					'event_meta' => 'tkt-slctr-event-meta-',
+					'ticket_desc' => 'tkt-slctr-ticket-desc-',
+					'ticket_obj' => 'tkt-slctr-ticket-obj-',
+//					'event_meta' => 'tkt-slctr-event-meta-',
 //					'meta_keys' => 'tkt-slctr-meta-keys-',
 //					'meta_values' => 'tkt-slctr-meta-values-',
 					'pre_approval' => 'tkt-slctr-pre-approval-'
@@ -586,7 +461,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						break;
 
 					// floats
-					case 'price':
+					case 'ticket':
 						// grab the array
 						$floats = $_POST[$input_to_clean . $id];
 						// cycle thru values
@@ -622,7 +497,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						break;
 
 					// arrays of string
-					case 'price_id':
+					case 'ticket_id':
 					case 'meta_keys':
 					case 'meta_values':
 						$value_array = array();
@@ -636,7 +511,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						$valid_data[$what] = $value_array;
 						break;
 						
-					case 'price_desc':
+					case 'ticket_desc':
 						// grab the array
 						$descs = maybe_unserialize($_POST[$input_to_clean . $id]);
 						// cycle thru values
@@ -646,7 +521,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						}
 						break;
 						
-					case 'price_obj':
+					case 'ticket_obj':
 						// grab the array
 						$values = $_POST[$input_to_clean . $id];
 						// cycle thru values
@@ -687,17 +562,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
-		global $EE_Cart; 
+		EE_Registry::instance()->load_core( 'Cart' );
 		// check that an event has been passed
 		if (!$event or !is_array($event) or empty($event)) {
 			$error_msg = 'An error occured. No event details were submitted. Could not add to cart';
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
-		}
-		// make sure cart is loaded
-		if (!defined('ESPRESSO_CART')) {
-			require_once(EE_CLASSES . 'EE_Cart.class.php');
-			$EE_Cart = EE_Cart::instance();
 		}
 
 		$event['options'] = isset($event['options']) ? $event['options'] : '';
@@ -705,33 +575,33 @@ class EED_Ticket_Selector extends  EED_Module {
 		$add_to_cart_args = array(
 				'id' => $event['id'],
 				'name' => $event['name'],
-				'price' => $event['price'],
-				'price_id' => $event['price_id'],
-				'price_obj' => $event['price_obj'],
+				'ticket' => $event['ticket'],
+				'ticket_id' => $event['ticket_id'],
+				'ticket_obj' => $event['ticket_obj'],
 				'qty' => $event['qty'],
 				'options' => $event['options'],
 //				'meta_keys' => $event['meta_keys'],
 //				'meta_values' => $event['meta_values']
-//				'event_meta' => $event['event_meta']
+//				'event_meta' => $event['event_meta'] 
 		);
 
 		// get the number of spaces left for this event
-		$available_spaces = self::get_available_spaces($event['id']);
+		$available_spaces = self::get_available_spaces( $event );
 
 		// compare availalbe spaces against the number of tickets being purchased
 		if ($available_spaces >= $event['qty']) {
 			// add event to cart
-			if ($EE_Cart->add_to_cart($which_cart, $add_to_cart_args)) {
+			if ( EE_Registry::instance()->CART->add_to_cart($which_cart, $add_to_cart_args)) {
 
 				// retreive event id list
 				//$events_in_cart = self::session->data('events_in_cart');
-				//echo $EE_Cart->session->pre_r($EE_Cart); die();
+				//echo EE_Registry::instance()->CART->session->pre_r(EE_Registry::instance()->CART); die();
 				// add this event to list
-				$EE_Cart->set_events_in_cart_list($event['id']);
+				EE_Registry::instance()->CART->set_events_in_cart_list($event['id']);
 				// send event id list back to session
-				//$EE_Cart->session->set_session_data( $EE_Cart->get_events_in_cart_list(), 'events_in_cart' );
+				//EE_Registry::instance()->CART->session->set_session_data( EE_Registry::instance()->CART->get_events_in_cart_list(), 'events_in_cart' );
 				// add event id to list of events in cart within individual cart
-				$EE_Cart->add_to_cart_event_id_list($which_cart, $event['id']);
+				EE_Registry::instance()->CART->add_to_cart_event_id_list($which_cart, $event['id']);
 
 				return TRUE;
 			} else {
@@ -767,32 +637,18 @@ class EED_Ticket_Selector extends  EED_Module {
 	*	@param 		string 		$event_id
 	* 	@return 		int
 	*/
-	public static function get_available_spaces($event_id) {
-
-		global $wpdb, $org_options;
-
-		$nmbr_attendees = 0;
-		$available_spaces = 0;
-
+	public static function get_available_spaces( $event ) {
 		// first get the number of attendees already registered
-		$SQL = 'SELECT COUNT(REG_ID) quantity FROM ' . $wpdb->prefix . 'esp_registration ';
-		$SQL .= 'WHERE EVT_ID=%d AND (STS_ID="RAP"';
-		$SQL .= $org_options['pending_counts_reg_limit'] ? ' OR STS_ID="RPN")' : ')';		
-
-		$wpdb->get_results($wpdb->prepare($SQL, $event_id));
-
-		if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
-			$nmbr_attendees = $wpdb->last_result[0]->quantity;
-		}
+		$nmbr_attendees = EE_Registry::instance()->LIB->EEM_Registration->get_event_registration_count( $event['id']  );
+		EE_Registry::instance()->load_model( 'Datetime' );
 		// now get the reg limit for the event
-		$SQL = "SELECT reg_limit FROM " . EVENTS_DETAIL_TABLE . " WHERE id=%d";
-
-		$reg_limit = $wpdb->get_var($wpdb->prepare($SQL, $event_id));
-		//return $reg_limit;  <<< check this
-
-		// then determine how many spaces are left
-		$available_spaces = max(( $reg_limit - $nmbr_attendees ), 0 );
-		return $available_spaces;
+		$reg_limit = EE_Registry::instance()->LIB->EEM_Datetime->get_one_by_ID( $event['options']['dtt_id'] )->get( 'DTT_reg_limit' );
+		if ( $reg_limit == 0 ) {
+			// infinite spaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaces
+			return 1000;
+		} 
+		// determine how many spaces are left
+		return max(( $reg_limit - $nmbr_attendees ), 0 );
 	}
 
 

@@ -78,7 +78,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID')
 		);
 		
-		EE_Registry::instance()->load_model( 'EEM_Registration' );
+		EE_Registry::instance()->load_model( 'Registration' );
 		
 		$this->_fields = array(
 			'Event_CPT'=>array(
@@ -173,17 +173,21 @@ class EEM_Event  extends EEM_CPT_Base{
 		$QSGs = $this->get_question_groups_for_event( $q_meta['EVT_ID'], $system_ID, $q_meta['att_nmbr'] );
 		if ( ! empty( $QSGs )) {
 			// csv list of QSG IDs
-			$QSG_IDs = implode( array_keys( $QSGs ), ',' );
+			$QSG_IDs = array_keys( $QSGs );
 			// get Questions
 			$QSTs = $this->get_questions_in_groups( $QSG_IDs );
 			if ( ! empty( $QSTs )) {
 				// csv list of QST IDs
-				$QST_IDs = implode( array_keys( $QSTs ), ',' );
+				$QST_IDs = array_keys( $QSTs );
 				// get Question Options
 				$QSOs = $this->get_options_for_question( $QST_IDs );
 				// package it all up and send it off
 			}
 		}
+		
+		printr( $QSGs, '$QSGs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		printr( $QSTs, '$QSTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		printr( $QSOs, '$QSOs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		return $this->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs, $q_meta );
 
@@ -202,12 +206,17 @@ class EEM_Event  extends EEM_CPT_Base{
 	*		@return 		array		
 	*/	
 	public function get_all_question_groups() {
-		global $wpdb;
-		// get Question Groups
-		$SQL = 'SELECT QSG.* FROM ' . $wpdb->prefix . 'esp_question_group QSG ';
-		$SQL .= 'WHERE QSG.QSG_deleted = 0 '; 
-		$SQL .= 'ORDER BY QSG.QSG_order'; 
-		$QSGs = $wpdb->get_results( $SQL, 'OBJECT_K' );
+		$QSG_MDL = $this->EE->load_model( 'Question_Group' );
+		$QSGs = $QSG_MDL->get_all( array(
+			array( 'QSG_deleted' => FALSE ),
+			'order_by' => 'QSG_order'
+		));
+//		global $wpdb;
+//		// get Question Groups
+//		$SQL = 'SELECT QSG.* FROM ' . $wpdb->prefix . 'esp_question_group QSG ';
+//		$SQL .= 'WHERE QSG.QSG_deleted = 0 '; 
+//		$SQL .= 'ORDER BY QSG.QSG_order'; 
+//		$QSGs = $wpdb->get_results( $SQL, 'OBJECT_K' );
 		return $QSGs;
 	}
 
@@ -228,11 +237,17 @@ class EEM_Event  extends EEM_CPT_Base{
 			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
-		global $wpdb;
-		// get Event Question Groups
-		$SQL = 'SELECT QSG_ID FROM ' . $wpdb->prefix . 'esp_event_question_group ';
-		$SQL .= 'WHERE EVT_ID = %d'; 		
-		$EQGs = $wpdb->get_col( $wpdb->prepare( $SQL, $EVT_ID ));
+		
+		$EQG_MDL = $this->EE->load_model( 'Event_Question_Group' );
+		$EQGs = $EQG_MDL->get_all( array(
+			array( 'EVT_ID' => $EVT_ID )
+		));
+		
+//		global $wpdb;
+//		// get Event Question Groups
+//		$SQL = 'SELECT QSG_ID FROM ' . $wpdb->prefix . 'esp_event_question_group ';
+//		$SQL .= 'WHERE EVT_ID = %d'; 		
+//		$EQGs = $wpdb->get_col( $wpdb->prepare( $SQL, $EVT_ID ));
 		return $EQGs;		
 	}
 
@@ -253,12 +268,18 @@ class EEM_Event  extends EEM_CPT_Base{
 			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
-		global $wpdb;
-		// get Event Question Groups
-		$SQL = 'SELECT QSG_ID FROM ' . $wpdb->prefix . 'esp_event_question_group ';
-		$SQL .= 'WHERE EVT_ID = %d'; 		
-		$SQL .= $for_primary_attendee ? ' AND EQG_primary = 1' : ' AND EQG_primary = 0'; 
-		$EQGs = $wpdb->get_col( $wpdb->prepare( $SQL, $EVT_ID ));
+
+		$EQG_MDL = $this->EE->load_model( 'Event_Question_Group' );
+		$EQGs = $EQG_MDL->get_all( array(
+			array( 'EVT_ID' => $EVT_ID, 'EQG_primary' => $for_primary_attendee )
+		));
+
+//		global $wpdb;
+//		// get Event Question Groups
+//		$SQL = 'SELECT QSG_ID FROM ' . $wpdb->prefix . 'esp_event_question_group ';
+//		$SQL .= 'WHERE EVT_ID = %d'; 		
+//		$SQL .= $for_primary_attendee ? ' AND EQG_primary = 1' : ' AND EQG_primary = 0'; 
+//		$EQGs = $wpdb->get_col( $wpdb->prepare( $SQL, $EVT_ID ));
 		return $EQGs;		
 	}
 
@@ -283,26 +304,37 @@ class EEM_Event  extends EEM_CPT_Base{
 			return false;
 		}
 
-		global $wpdb;
-		// get Question Groups
-		$SQL = 'SELECT QSG.*, EQG.EVT_ID FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
-		$SQL .= 'WHERE EQG.EVT_ID = %d AND QSG.QSG_deleted = 0 '; 
-		$SQL .= $for_primary_attendee === TRUE || $for_primary_attendee === 1 ? ' AND EQG.EQG_primary = 1 ' : ' AND EQG.EQG_primary = 0 '; 
-		// system groups only?
+		$QSG_MDL = $this->EE->load_model( 'Question_Group' );
+		
+		$where_params = array(
+			'Event_Question_Group.EVT_ID' => $EVT_ID,
+			'Event_Question_Group.EQG_primary' => $for_primary_attendee,
+			'QSG_deleted' => FALSE 
+		);
+		
 		if ( $system_ID ) {
-			$SQL .= ' AND QSG.QSG_system < %d AND QSG.QSG_system != 0 ';
+			$where_params['QSG_system'] = array( '<' =>$system_ID, '!=' => 0 );
 		}
-		$SQL .= 'ORDER BY QSG.QSG_order'; 
-		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID, $system_ID ), 'OBJECT_K' );
+		
+		$QSGs = $QSG_MDL->get_all( array(
+			$where_params,
+			'order_by' => 'QSG_order'
+		));
 
-		// WHAT?!?!? NOTHING?!?!?
-//		if ( empty( $QSGs )) {
-//			$SQL = 'SELECT QSG.* FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
-//			$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
-//			$SQL .= 'WHERE QSG.QST_system = 1';
-//			$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID, $system_ID ), 'OBJECT_K' );		
+
+//		global $wpdb;
+//		// get Question Groups
+//		$SQL = 'SELECT QSG.*, EQG.EVT_ID FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
+//		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
+//		$SQL .= 'WHERE EQG.EVT_ID = %d AND QSG.QSG_deleted = 0 '; 
+//		$SQL .= $for_primary_attendee === TRUE || $for_primary_attendee === 1 ? ' AND EQG.EQG_primary = 1 ' : ' AND EQG.EQG_primary = 0 '; 
+//		// system groups only?
+//		if ( $system_ID ) {
+//			$SQL .= ' AND QSG.QSG_system < %d AND QSG.QSG_system != 0 ';
 //		}
+//		$SQL .= 'ORDER BY QSG.QSG_order'; 
+//		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID, $system_ID ), 'OBJECT_K' );
+
 		
 		return $QSGs;
 		
@@ -328,13 +360,25 @@ class EEM_Event  extends EEM_CPT_Base{
 			return false;
 		}
 
-		global $wpdb;
-		// get Questions		
-		$SQL = 'SELECT QST.*, QGQ.QSG_ID FROM ' . $wpdb->prefix . 'esp_question_group_question QGQ '; 
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question QST ON  QGQ.QST_ID = QST.QST_ID '; 
-		$SQL .= 'WHERE QGQ.QSG_ID IN (' . $QSG_IDs . ') AND QST.QST_deleted = 0 AND QST.QST_admin_only = %d '; 
-		$SQL .= 'ORDER BY QST.QST_order'; 
-		$QSTs = $wpdb->get_results( $wpdb->prepare( $SQL, is_admin() ), 'OBJECT_K' );
+		$QST_MDL = $this->EE->load_model( 'Question' );		
+		$QSTs = $QST_MDL->get_all( array(
+			array(
+				'Question_Group.QSG_ID' => array( 'IN', $QSG_IDs ),
+				'QST_deleted' => FALSE,
+				'QST_admin_only' => is_admin()
+			),
+			'order_by' => 'QST_order'
+		));
+
+
+
+//		global $wpdb;
+//		// get Questions		
+//		$SQL = 'SELECT QST.*, QGQ.QSG_ID FROM ' . $wpdb->prefix . 'esp_question_group_question QGQ '; 
+//		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question QST ON  QGQ.QST_ID = QST.QST_ID '; 
+//		$SQL .= 'WHERE QGQ.QSG_ID IN (' . $QSG_IDs . ') AND QST.QST_deleted = 0 AND QST.QST_admin_only = %d '; 
+//		$SQL .= 'ORDER BY QST.QST_order'; 
+//		$QSTs = $wpdb->get_results( $wpdb->prepare( $SQL, is_admin() ), 'OBJECT_K' );
 		return $QSTs;
 	}
 
@@ -358,12 +402,21 @@ class EEM_Event  extends EEM_CPT_Base{
 			return false;
 		}
 
-		global $wpdb;
-		// get Question Options		
-		$SQL = 'SELECT * FROM ' . $wpdb->prefix . 'esp_question_option '; 
-		$SQL .= 'WHERE QST_ID IN (' . $QST_IDs . ') AND QSO_deleted = 0 '; 
-		$SQL .= 'ORDER BY QSO_ID'; 
-		$QSOs = $wpdb->get_results( $wpdb->prepare( $SQL, is_admin() ), 'OBJECT_K' );
+		$QSO_MDL = $this->EE->load_model( 'Question_Option' );		
+		$QSOs = $QSO_MDL->get_all( array(
+			array(
+				'Question.QST_ID' => array( 'IN', $QST_IDs ),
+				'QSO_deleted' => FALSE
+			),
+			'order_by' => 'QSO_ID'
+		));
+
+//		global $wpdb;
+//		// get Question Options		
+//		$SQL = 'SELECT * FROM ' . $wpdb->prefix . 'esp_question_option '; 
+//		$SQL .= 'WHERE QST_ID IN (' . $QST_IDs . ') AND QSO_deleted = 0 '; 
+//		$SQL .= 'ORDER BY QSO_ID'; 
+//		$QSOs = $wpdb->get_results( $wpdb->prepare( $SQL, is_admin() ), 'OBJECT_K' );
 		return $QSOs;
 	}
 

@@ -41,9 +41,16 @@ final class EE_Registry {
 	private static $_autoloaders = array();
 
    /**
-     * 	org_option settings
+     * 	EE_Cart Object
 	 * 	@access 	public
-	 *	@var 	EE_Config
+	 *	@var 	EE_Cart $CART
+     */
+	public $CART = NULL;
+
+   /**
+     * 	EE_Config Object
+	 * 	@access 	public
+	 *	@var 	EE_Config $CFG
      */
 	public $CFG = NULL;
 
@@ -51,7 +58,7 @@ final class EE_Registry {
      * array for storing library classes in
      * @public LIB
      */
-	public $LIB = array();
+	public $LIB = NULL;
 
 	/**
 	 * 	EE_Request_Handler Object
@@ -127,6 +134,7 @@ final class EE_Registry {
 	private function __construct() {
 		// setup object for adding configuration settings to
 		$this->CFG = new StdClass();
+		$this->LIB = new StdClass();
 		add_action( 'init', array( $this, 'init' ), 1 );
 		spl_autoload_register( array( $this, 'espresso_autoloader' ));
 	}
@@ -226,9 +234,9 @@ final class EE_Registry {
 	 *	@param bool   $cache      if you dont' want the class to be stored in the internal cache (non-persistent) then set this to FALSE (ie. when instantiating model objects from client in a loop)
 	 *	@return instantiated class object
 	 */
-	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE ) {
+	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $no_load = FALSE ) {
 		// retreive instantiated class
-		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache );
+		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $no_load );
 	}
 
 
@@ -357,16 +365,20 @@ final class EE_Registry {
 		$class_prefix = strtoupper( trim( $class_prefix ));
 		// add class prefix ONCE!!!
 		$class_name = $class_prefix . str_replace( $class_prefix, '', trim( $class_name ));
+		
+		$class_abbreviations = array(
+			'EE_Request_Handler' => 'REQ',
+			'EE_Session' => 'SSN',
+			'EE_Cart' => 'CART',
+		);
 
 		// check if class has already been loaded, and return it if it has been
-		if ( $class_name == 'EE_Request_Handler' && ! is_null( $this->REQ )) {
-			return $this->REQ;
-		} else if ( $class_name == 'EE_Session' && ! is_null( $this->SSN )) {
-			return $this->SSN;
+		if ( isset( $class_abbreviations[ $class_name ] ) && ! is_null( $this->$class_abbreviations[ $class_name ] )) {
+			return $this->$class_abbreviations[ $class_name ];
 		} else if ( isset ( $this->{$class_name} )) {
 			return $this->{$class_name};
-		} else if ( isset ( $this->LIB[ $class_name ] )) {
-			return $this->LIB[ $class_name ];
+		} else if ( isset ( $this->LIB->$class_name )) {
+			return $this->LIB->$class_name;
 		}
 		
 		// assume all paths lead nowhere
@@ -467,14 +479,12 @@ final class EE_Registry {
 		
 		if ( isset( $class_obj )) {			
 			// return newly instantiated class
-			if ( $class_name == 'EE_Request_Handler' ) {
-				$this->REQ = $class_obj;
-			} elseif ( $class_name == 'EE_Session' ) {
-				$this->SSN = $class_obj;
+			if ( isset( $class_abbreviations[ $class_name ] )) {		
+				$this->$class_abbreviations[ $class_name ] = $class_obj;
 			} else if ( property_exists( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
 			} else if ( !$from_db && $cache  ) {
-				$this->LIB[ $class_name ] = $class_obj;
+				$this->LIB->$class_name = $class_obj;
 			}
 			return $class_obj;
 		}		
