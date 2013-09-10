@@ -78,9 +78,9 @@ class EEH_Template {
 	 * @param  boolean $display_code  whether to display the country code (USD). Default = TRUE
 	 * @return string        the html output for the formatted money value
 	 */
-	public static function format_currency( $amount = FALSE, $CNT_ISO = FALSE, $display_code = TRUE ) {
+	public static function format_currency( $amount = NULL, $CNT_ISO = FALSE, $display_code = TRUE ) {
 		// ensure amount was received
-		if ( ! $amount ) {
+		if ( is_null( $amount ) ) {
 			$msg = __( 'In order to format currency, an amount needs to be passed.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
