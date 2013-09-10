@@ -468,7 +468,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$existing_datetime_ids[] = $dttid;
 
 			//tickets attached
-			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket') : array();
+			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none' ) ) : array();
 
 			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!. 
 			if ( empty ( $related_tickets ) ) {
@@ -644,7 +644,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'price_currency_symbol' => $this->EE->CFG->currency->sign,
 			'TKT_subtotal_amount_display' => EEH_Template::format_currency($ticket_subtotal, FALSE, FALSE ),
 			'TKT_subtotal_amount' => $ticket_subtotal,
-			'tax_rows' => $this->_get_tax_rows( $tktrow, $ticket )
+			'tax_rows' => $this->_get_tax_rows( $tktrow, $ticket ),
+			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' disabled' : ''
 			);
 
 		//generate ticket_datetime items
