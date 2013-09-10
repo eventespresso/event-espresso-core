@@ -74,11 +74,12 @@ class EEH_Template {
 	 * This helper takes a raw float value and formats it according to the default config country currency settings, or the country currency settings from the supplied country ISO code
 	 * 
 	 * @param  float $amount   raw money value
-	 * @param  string $CNT_ISO 2 letter ISO code for a country
+	 * @param  boolean $return_raw  whether to return the formatted float value only with no currency sign or code
 	 * @param  boolean $display_code  whether to display the country code (USD). Default = TRUE
+	 * @param  string $CNT_ISO 2 letter ISO code for a country
 	 * @return string        the html output for the formatted money value
 	 */
-	public static function format_currency( $amount = NULL, $CNT_ISO = FALSE, $display_code = TRUE ) {
+	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE ) {
 		// ensure amount was received
 		if ( is_null( $amount ) ) {
 			$msg = __( 'In order to format currency, an amount needs to be passed.', 'event_espresso' );
@@ -87,7 +88,7 @@ class EEH_Template {
 		}
 		// load registray
 		$EE = EE_Registry::instance();
-		$mny = new stdClass();
+		$mny = new EE_Currency_Config();
 		// first set default config country currency settings
 		if ( isset( $EE->CFG->currency->code )) {
 			$mny = $EE->CFG->currency;
@@ -115,10 +116,12 @@ class EEH_Template {
 		}		
 		// format float
 		$amount = number_format( $amount, max( array( 2, $mny->dec_plc )), $mny->dec_mrk, $mny->thsnds );
-		// add currency sign
-		$amount = $mny->sign_b4 ? $mny->sign . $amount : $amount . $mny->sign;
-		// add currency code ?
-		$amount = $display_code ? $amount . ' (' . $mny->code . ')' : $amount;
+		if ( ! $return_raw ) {
+			// add currency sign
+			$amount = $mny->sign_b4 ? $mny->sign . $amount : $amount . $mny->sign;
+			// add currency code ?
+			$amount = $display_code ? $amount . ' (' . $mny->code . ')' : $amount;			
+		}
 		// clean up vars
 		unset( $mny );
 		unset( $EE );
