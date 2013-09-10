@@ -93,8 +93,6 @@ class EEH_Activation {
 	}
 
 
-
-
 	/**
 	 * configuration_initialization
 	 *
@@ -118,7 +116,7 @@ class EEH_Activation {
 		$default_config->core->thank_you_page_id = FALSE;
 		$default_config->core->cancel_page_id = FALSE;
 		// organization settings
-		$default_config->organization = new EE_Organization_Config();
+		$default_config->organization = new stdClass();
 		$default_config->organization->name = get_bloginfo('name');
 		$default_config->organization->address_1 = '123 Onna Road';
 		$default_config->organization->address_2 = 'PO Box 123';
@@ -129,7 +127,7 @@ class EEH_Activation {
 		$default_config->organization->email = get_bloginfo('admin_email');
 		$default_config->organization->logo_url = '';
 		// currency settings
-		$default_config->currency = new EE_Currency_Config();
+		$default_config->currency = new stdClass();
 		$default_config->currency->code = 'USD'; 	// currency code: USD, CAD, EUR
 		$default_config->currency->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
 		$default_config->currency->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
@@ -141,13 +139,9 @@ class EEH_Activation {
 		// registration settings
 		$default_config->registration = new stdClass();
 		$default_config->registration->default_STS_ID = 'RPN'; 	// default reg status
-		$default_config->registration->use_attendee_pre_approval = FALSE;
 		$default_config->registration->pending_counts_reg_limit = TRUE;
 		$default_config->registration->use_captcha = FALSE;
-		$default_config->registration->recaptcha_theme = 'clean';
-		$default_config->registration->recaptcha_language = 'en';
-		$default_config->registration->recaptcha_publickey = NULL;
-		$default_config->registration->recaptcha_privatekey = NULL;
+		$default_config->registration->use_attendee_pre_approval = FALSE;
 		// general admin settings
 		$default_config->admin = new stdClass();
 		$default_config->admin->use_personnel_manager = TRUE;
@@ -919,6 +913,7 @@ class EEH_Activation {
 		$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
 		// resave
 		update_option( 'espresso_db_update', $espresso_db_update );
+		
 		
 	}
 

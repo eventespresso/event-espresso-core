@@ -192,20 +192,17 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( ! $WP_Query->is_main_query() ) {
 			return;
 		}
-		// if no other module has already set a route
-		if ( ! $this->EE->REQ->is_set( 'ee' )) {
-			if ( is_archive() ) {
-				//echo '<h1>is_archive  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-				// ie: set "ee" to "events"
-				$this->EE->REQ->set( 'ee', $this->CPT['plural_slug'] );
-			// or does it match a single page CPT like /event/
-			} else if ( is_single() ) {
-				//echo '<h1>is_single  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-				// ie: set "ee" to "event"
-				$this->EE->REQ->set( 'ee', $this->CPT['singular_slug'] );
-			} 			
-		}
-
+		
+		if ( is_archive() ) {
+			//echo '<h1>is_archive  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+			// ie: set "ee" to "events"
+			$this->EE->REQ->set( 'ee', $this->CPT['plural_slug'] );
+		// or does it match a single page CPT like /event/
+		} else if ( is_single() ) {
+			//echo '<h1>is_single  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+			// ie: set "ee" to "event"
+			$this->EE->REQ->set( 'ee', $this->CPT['singular_slug'] );
+		} 
 //		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		return $WP_Query;

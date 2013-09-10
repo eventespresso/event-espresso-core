@@ -287,7 +287,7 @@ final class EE_Front_Controller {
 			$current_post = ! empty( $current_post ) ? $current_post : get_option('show_on_front');
 			// make sure shortcodes are set
 			if ( isset( $this->EE->CFG->core->post_shortcodes )) {
-				//printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//				printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				// cycle thru all posts with shortcodes set
 				foreach ( $this->EE->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 //					echo '<h4>$post_name : ' . $post_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -320,17 +320,16 @@ final class EE_Front_Controller {
 									break;
 								}
 								// and pass the request object to the run method
-								$shortcode = $sc_reflector->newInstance( $this->EE );
+								$shortcode =$sc_reflector->newInstance( $this->EE );
 								// fire the shortcode class's run method, so that it can activate resources
 								$shortcode->run( $this->EE );
-//								printr( $shortcode, '$shortcode  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 							}
 						}
 					}
 				}
 			}
 		}
-//		printr( $this->EE->shortcodes, '$this->EE->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $this->EE->shortcodes, '$this->EE->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -343,6 +342,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function pre_get_posts( $WP_Query ) {
+//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// load module request router
 		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
@@ -409,11 +409,39 @@ final class EE_Front_Controller {
 			if ( isset( $this->EE->CFG->template_settings->enable_default_style ) && $this->EE->CFG->template_settings->enable_default_style ) {
 
 				add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
+				//Define the path to the ThemeRoller files
+				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'themeroller/index.php' )) {
+				$themeroller_style_path = EVENT_ESPRESSO_UPLOAD_URL . 'themeroller/';
+				} else {
+					$themeroller_style_path = EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/';
+				}
 
 				//Load custom style sheet if available
 				if ( isset( $this->EE->CFG->style_settings['css_name'] )) {
 					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . $this->EE->CFG->style_settings['css_name']);
 					wp_enqueue_style('espresso_custom_css');
+				}
+
+				//Register the ThemeRoller styles
+				if ( isset( $this->EE->CFG->themeroller )) {
+
+					//Load the themeroller base style sheet
+					//If the themeroller-base.css is in the uploads folder, then we will use it instead of the one in the core
+					if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . $themeroller_style_path . 'themeroller-base.css' )) {
+						wp_register_style( 'espresso_themeroller_base', $themeroller_style_path . 'themeroller-base.css' );
+					} else {
+						wp_register_style( 'espresso_themeroller_base', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/themeroller-base.css' );
+					}
+					wp_enqueue_style('espresso_themeroller_base');
+
+					//Load the smoothness style by default<br />
+					if ( ! isset( $this->EE->CFG->themeroller['themeroller_style'] ) || empty( $this->EE->CFG->themeroller['themeroller_style'] )) {
+						$this->EE->CFG->themeroller['themeroller_style'] = 'smoothness';
+					}
+
+					//Load the selected themeroller style
+					wp_register_style('espresso_themeroller', $themeroller_style_path . $this->EE->CFG->themeroller['themeroller_style'] . '/style.css');
+					wp_enqueue_style('espresso_themeroller');
 				}
 				
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' )) {
@@ -430,6 +458,7 @@ final class EE_Front_Controller {
 		// js is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_js', '__return_true' );
 		if ( apply_filters( 'FHEE_load_js', FALSE )) {
 			wp_enqueue_script( 'jquery' );			
+			wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 			// check if required scripts are loaded
 			if ( function_exists( 'wp_script_is' )) {
 				if ( ! wp_script_is( 'jquery' )) {

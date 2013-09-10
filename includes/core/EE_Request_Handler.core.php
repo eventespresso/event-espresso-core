@@ -38,16 +38,9 @@ final class EE_Request_Handler {
 	/**
 	 * 	rendered output to be returned to WP
 	 *	@var 	string
-	 * 	@access 	private
+	 * 	@access 	public
 	 */
-	private $_output = '';
-
-	/**
-	 * whether current request is via AJAX
-	 *	@var 	boolean
-	 * 	@access 	private
-	 */
-	public $ajax = FALSE;
+	public $output = '';
 
 
 
@@ -59,8 +52,7 @@ final class EE_Request_Handler {
 	 *  @return 	void
 	 */
 	public function __construct() {
-		// AJAX ???
-		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		// grab request vars
 		$this->_params = $_REQUEST;
 		// get current post name from URL
@@ -133,7 +125,7 @@ final class EE_Request_Handler {
 
 	
 	/**
-	 * 	set_notice
+	 * 	setter
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -145,37 +137,13 @@ final class EE_Request_Handler {
 
 	
 	/**
-	 * 	get_notice
+	 * 	getter
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public function get_notice( $key ) {
 		return isset( $this->_notice[ $key ] ) ? $this->_notice[ $key ] : NULL;
-	}
-
-
-	
-	/**
-	 * 	set_output
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function set_output( $string ) {
-		$this->_output .= $string;
-	}
-
-
-	
-	/**
-	 * 	get_output
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function get_output() {
-		return $this->_output;
 	}
 
 

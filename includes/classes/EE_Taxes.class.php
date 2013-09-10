@@ -170,7 +170,8 @@ class EE_Taxes extends EE_BASE {
 			}
 		}
 		// add tax data to session
-		EE_Registry::instance()->SSN->set_session_data( 
+		global $EE_Session;
+		$EE_Session->set_session_data( 
 				array(
 						'taxes' 										=> $this->_calculated_taxes,
 						'tax_totals' 								=> $tax_totals,
@@ -179,7 +180,7 @@ class EE_Taxes extends EE_BASE {
 				),
 				'session_data'
 		);
-		$session_data = EE_Registry::instance()->SSN->get_session_data();
+		$session_data = $EE_Session->get_session_data();
 		
 	}
 
@@ -309,14 +310,11 @@ class EE_Total extends EE_Ticket_Cost {
 	protected $_name;
 	
 	function __construct( $total, $name ) {
-		
-		EE_Registry::instance()->load_class( 'Cost_Calculator' );
-		EE_Registry::instance()->load_helper( 'Template' );
 
 		$this->_price = $total;
 		$this->_name = $name;
 		$this->_ID_list[] = 0;
-		$this->_price_history[] = $name . ': ' . EEH_Template::format_currency( $this->_price );
+		$this->_price_history[] = $name . ': ' . $org_options['currency_symbol'] . $this->price();
 		$this->_order_totals[ 0 ] = $this->price();
 		$this->_order_levels[] = 0;
 	}
@@ -330,7 +328,7 @@ class EE_Total extends EE_Ticket_Cost {
 	* 	@return 		float
 	*/
 	public function price() {
-		return EEH_Template::format_currency( $this->_price, TRUE );
+		return number_format( max( $this->_price, 0 ), 2, '.', ',' );
 	}
 
 
