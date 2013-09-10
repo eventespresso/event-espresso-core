@@ -410,4 +410,34 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	public function template(){
 		return $this->get_first_related('Ticket_Template');
 	}
+
+
+
+	/**
+	 * Simply returns an array of EE_Price objects that are taxes.
+	 * @return EE_Taxes[] 
+	 */
+	public function get_ticket_taxes_for_admin() {
+		return EE_Taxes::get_taxes_for_admin($this);
+	}
+
+
+
+
+	/**
+	 * Returns the total taxes applied to this ticket
+	 * @return float
+	 */
+	public function get_ticket_taxes_total_for_admin() {
+		return EE_Taxes::get_total_taxes_for_admin($this);
+	}
+
+
+
+
+	public function get_ticket_subtotal() {
+		return $this->_TKT_taxable ? EE_Taxes::get_subtotal_for_admin($this) : $this->_TKT_price;
+	}
+
+
 } //end EE_Ticket class
