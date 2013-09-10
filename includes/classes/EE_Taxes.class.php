@@ -253,7 +253,7 @@ class EE_Taxes extends EE_BASE {
 		$subtotal = 0;
 
 		//get all prices
-		$prices = $ticket->get_many_related( 'Price' );
+		$prices = $ticket->get_many_related( 'Price', array('default_where_conditions' => 'none') );
 		//let's loop through them (base price is always the first item)
 		foreach ( $prices as $price ) {
 			switch ( $price->get( 'PRT_ID' ) ) {
