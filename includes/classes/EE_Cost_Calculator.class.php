@@ -379,12 +379,12 @@ class EE_Base_Ticket_Price extends EE_Ticket_Cost {
 	protected $_name;
 	
 	function __construct( EE_Price_Composite $base_price ) {
-		global $org_options;
+		EE_Registry::instance()->load_helper( 'Template' );
 		$this->_ticket_price = $base_price;
 		$this->_price = $base_price->amount();
 		$this->_name = $base_price->name();
 		$this->_ID_list[] = $base_price->ID();
-		$this->_price_history[] = $base_price->name() . ': ' . $org_options['currency_symbol'] . number_format( max( $base_price->amount(), 0 ), 2, '.', ',' );
+		$this->_price_history[] = $base_price->name() . ': ' . EEH_Template::format_currency( $base_price->amount() );
 		$this->_order_totals[ $this->_ticket_price->order() ] = $this->price();
 		if ( ! in_array( $this->_ticket_price->order(), $this->_order_levels )) {
 			$this->_order_levels[] = $this->_ticket_price->order();
@@ -400,8 +400,7 @@ class EE_Base_Ticket_Price extends EE_Ticket_Cost {
 	* 	@return 		float
 	*/
 	public function price() {
-		//return $this->_price;
-		return number_format( max( $this->_price, 0 ), 2, '.', ',' );
+		return EEH_Template::format_currency( $this->_price, TRUE );
 	}
 
 
@@ -543,7 +542,7 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	*/
 	protected function _set_price() {
 		$this->_price = $this->_price + $this->_mod_amount;
-		$this->_price = number_format( max( $this->_price, 0 ), 2, '.', ',' );
+		$this->_price = EEH_Template::format_currency( $this->_price, TRUE );
 	}
 
 
@@ -581,7 +580,7 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 
 		// if base type is discount, then multiply $mod_amount by -1 to make it negative, so that it actually gets subtracted when it's added
 		$mod_amount = ( $this->_price_mod->base_type() == 2 ? -1 : 1 ) * $mod_amount;
-		$mod_amount = number_format( $mod_amount, 2, '.', ',' );
+		$mod_amount = EEH_Template::format_currency( $mod_amount, TRUE );
 //		echo '<h4>$mod_amount : ' . $mod_amount . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4><br/><br/>';
 		$this->_mod_amount = $mod_amount;
 	}
@@ -596,7 +595,7 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	protected function _set_price_history() {
 		global $org_options;
 		$plus_or_minus = $this->_price_mod->base_type() == 3 ? ' +' : ' ';
-		$this->_price_history[] = $this->_price_mod->name() . ':' . $plus_or_minus . $this->_mod_amount . ' = ' . $org_options['currency_symbol'] . $this->price();
+		$this->_price_history[] = $this->_price_mod->name() . ':' . $plus_or_minus . $this->_mod_amount . ' = ' . EEH_Template::format_currency( $this->price() );
 	}
 
 
@@ -779,21 +778,6 @@ class EE_Price_Composite {
 	public function end_date( $format = 'Y-m-d' ) {
 		return $this->_PRC->end_date( $format );
 	}
-//		public function disc_limit_qty() {
-//			return $this->_PRC->disc_limit_qty();
-//		}
-//		public function disc_code() {
-//			return $this->_PRC->disc_code();
-//		}
-//		public function disc_qty() {
-//			return $this->_PRC->disc_qty();
-//		}
-//		public function disc_apply_all() {
-//			return $this->_PRC->disc_apply_all();
-//		}
-//		public function disc_wp_user() {
-//			return $this->_PRC->disc_wp_user();
-//		}
 	public function is_active() { 
 		return $this->_PRC->is_active(); 
 	}
