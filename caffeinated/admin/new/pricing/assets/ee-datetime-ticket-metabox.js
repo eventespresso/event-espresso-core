@@ -1,5 +1,9 @@
 jQuery(document).ready(function($) {
 
+	var dialogHelper = {
+
+	};
+
 	var tktHelper = {
 
 		ticketRow : 1,
@@ -768,21 +772,27 @@ jQuery(document).ready(function($) {
 
 			switch ( this.context ) {
 				case 'datetime' :
-					//if this datetime is the primary dtt then we need to make sure that the next dtt in the list becomes the primary
-					if ( $( '#edit-event-datetime-' + row ).find('.event-datetime-DTT_is_primary').val() === '1' ) {
-						var nextrow = row + 1;
-						$('#edit-event-datetime-' + nextrow ).find('.event-datetime-DTT_is_primary').val('1');
+
+					var dodelete = this.verifyDTTsOnTickets(row);
+
+					if ( dodelete ) {
+
+						//if this datetime is the primary dtt then we need to make sure that the next dtt in the list becomes the primary
+						if ( $( '#edit-event-datetime-' + row ).find('.event-datetime-DTT_is_primary').val() === '1' ) {
+							var nextrow = row + 1;
+							$('#edit-event-datetime-' + nextrow ).find('.event-datetime-DTT_is_primary').val('1');
+						}
+
+						$('#event-datetime-' + row).remove();
+						this.ticketRow = 0; //set to 0 so we remove dtts for all tickets.
+						this.dateTimeRow = row;
+
+
+						//if we've only got one row then we need to remove trash on that row.
+						if ( $('.event-datetime-row', '.event-datetimes-container').length == 1 )
+							$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon').hide();
+						this.toggleActiveDTTorTicket(this.context, true);
 					}
-
-					$('#event-datetime-' + row).remove();
-					this.ticketRow = 0; //set to 0 so we remove dtts for all tickets.
-					this.dateTimeRow = row;
-
-
-					//if we've only got one row then we need to remove trash on that row.
-					if ( $('.event-datetime-row', '.event-datetimes-container').length == 1 )
-						$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon').hide();
-					this.toggleActiveDTTorTicket(this.context, true);
 					break;
 
 				case 'ticket' :
@@ -808,6 +818,34 @@ jQuery(document).ready(function($) {
 			}
 			
 			return this;
+		},
+
+
+
+
+
+		/**
+		 * verify whether the trashed dtt is the ONLY dtt remaining on a ticket and if it is then we display a modal with options.
+		 * @return {bool} true if DTT can be trashed (i.e. it isn't the only dtt on any tickets) false, if its the only dtt on any ticket.
+		 */
+		verifyDTTsOnTickets: function(row) {
+			//get all ticket rows that have this dtt active on them.
+			var tktrow,
+				singleDTTTKTs,
+				activeTKTs = $('.ticket-selected', '#event-datetime-' + row);
+
+			//foreach of these tickets lets check if this datetime is the ONLY dtt active.
+			activeTKTs.each( function() {
+				tktrow = $(this).data('ticketRow');
+				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 )
+					singleDTTTKTs[] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).text();
+			});
+
+			if ( singleDTTTKTS.length === 0 )
+				return true; //we're okay
+
+			//otherwise let's throw up the dialog and prompt
+			
 		},
 
 

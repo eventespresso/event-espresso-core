@@ -382,6 +382,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * admin_footer
+	 * anything triggered by the 'admin_footer' WP action hook should be added to here. This particular method will apply to all pages/views loaded by child class.
+	 *
+	 * @access  public
+	 * @return void
+	 */
+	abstract public function admin_footer();
+
+
+
+
+
+
 
 
 	/**
@@ -561,6 +575,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
 			add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
+
+		//admin footer scripts
+		add_action('admin_footer', array( $this, 'admin_footer_global' ), 99 );
+		add_action('admin_footer', array( $this, 'admin_footer', 100 ) );
+		if ( method_exists( $this, 'admin_footer_' . $this->_current_view ) )
+			add_action('admin_footer', array( $this, 'admin_footer_' . $this->current_view ), 101 );
 		
 
 		do_action('FHEE_admin_load_page_dependencies', $this->page_slug );
@@ -995,6 +1015,25 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 	}
 
+
+
+
+
+	/**
+	 * admin_footer_global
+	 * Anything triggered by the wp 'admin_footer' wp hook should be put in here. This particluar method will apply on ALL EE_Admin Pages.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function admin_footer_global() {
+		//dialog container for dialog helper
+		$d_cont = '<div class="ee-admin-dialog-container auto-hide hidden">' . "\n";
+		$d_cont .= '<div class="ee-notices"></div>';
+		$d_cont .= '<div class="ajax-loader-grey"></div>';
+		$d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
+		$d_cont .= '</div>'
+	}
 
 
 	/**
