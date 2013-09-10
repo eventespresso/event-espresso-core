@@ -24,10 +24,8 @@ add_action('action_hook_espresso_add_new_submenu_to_group_settings', 'espresso_a
 
 function espresso_calendar_config_mnu() {
 	global $espresso_calendar, $notices, $espresso_premium;
-	$espresso_premium = true;
 
 	/* Calendar */
-
 	function espresso_calendar_updated() {
 		
 	}
@@ -546,7 +544,7 @@ function espresso_calendar_config_mnu() {
 			$("input[name='time_format_custom']").focus(function(){
 				$("#time_format_custom_radio").attr("checked", "checked");
 			});
-
+			<?php if ($espresso_premium == true) { ?>
 			// disable color picker & thumb sizes inputs & fade if not use controls true
 			window.scp = $('select#espresso_use_pickers option:selected').val();
 			window.ect = $('select#enable-calendar-thumbs option:selected').val();
@@ -609,7 +607,7 @@ function espresso_calendar_config_mnu() {
 				}
 			});
 			
-			
+			<?php } ?>
 			// WP toggle function
 			postboxes.add_postbox_toggles('espresso_calendar');
 
