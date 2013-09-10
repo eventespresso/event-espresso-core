@@ -1243,8 +1243,8 @@ class EEH_Activation {
 							(2, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 1, 1, NULL, 10, 0, 2, 0),
 							(3, 4, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, 1, NULL, 20, 0, 3, 0),
 							(4, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, 1, NULL, 30, 0, 4, 0),
-							(5, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, 1, NULL, 40, 1, 5, 0),
-							(6, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, 1, NULL, 50, 1, 6, 0);";			
+							(5, 7, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, 1, NULL, 40, 0, 5, 0),
+							(6, 8, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, 1, NULL, 50, 0, 6, 0);";			
 				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}
