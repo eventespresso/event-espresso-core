@@ -296,12 +296,23 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 
 
+
 	/**
 	 * return if a ticket is no longer available cause its available dates have expired.
 	 * @return boolean
 	 */
 	public function is_expired() {
 		return ( $this->_TKT_end_date < time() );
+	}
+
+
+
+	/**
+	 * return if a ticket is no longer available cause its available dates have expired.
+	 * @return boolean
+	 */
+	public function available() {
+		return $this->_TKT_qty == 0 || $this->_TKT_qty > $this->_TKT_sold ? TRUE : FALSE;
 	}
 
 
