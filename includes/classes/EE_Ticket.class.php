@@ -333,7 +333,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		}
 
 		//Tickets sold
-		$dtks = $this->get_many_related('Datetime_Ticket');
 		$tickets_sold['ticket'] = $this->_TKT_sold;
 
 		return $tickets_sold;
@@ -358,10 +357,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		$tickets_sold = $this->_all_tickets_sold();
 		switch ( $what ) {
 			case 'ticket' :
-				if ( empty( $tickets_sold['ticket'] ) )
-					return $total;
-				return $tickets_sold['datetime_ticket'];
+				return $tickets_sold['ticket'];
 				break;
+				
 			case 'datetime' :
 				if ( empty( $tickets_sold['datetime'] ) )
 					return $total;

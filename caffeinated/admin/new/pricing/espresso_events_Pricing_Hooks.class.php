@@ -191,7 +191,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _update_tkts( $evtobj, $saved_dtts, $data ) {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
-		$saved_tickets = array();
+		$saved_tickets = $dtts_on_existing = array();
 		$update_prices = FALSE;
 		$new_default = NULL;
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
@@ -243,7 +243,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') ? TRUE : FALSE;
+				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {
@@ -252,7 +252,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 				//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket. 
 				if ( $create_new_TKT ) {
-					//archive the old ticket first
+
+					//we also need to make sure this new ticket gets the same datetime attachments as the archived ticket (and it'll get updated later if there were dtts added or removed in the session)
+					$dtts_on_existing = $TKT->get_many_related('Datetime');
+
+					//archive the old ticket
 					$TKT->set('TKT_deleted', 1);
 					$TKT->save();
 
@@ -282,6 +286,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//update ticket.
 			$TKT->save();
+
+			//possible this is a new ticket because of edited prices when ticket was sold, so let's make sure we attache the datetimes from the archived ticket
+			foreach ( $dtts_on_existing as $adddtt ) {
+				$adddtt->_add_relation_to( $TKT, 'Ticket' );
+			}
+
 			$saved_tickets[$TKT->ID()] = $TKT;
 
 			//add prices to ticket
