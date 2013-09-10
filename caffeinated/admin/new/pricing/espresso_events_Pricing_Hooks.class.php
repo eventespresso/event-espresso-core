@@ -686,7 +686,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	private function _get_tax_added( EE_Price $tax, $ticket ) {
 		$subtotal = empty( $ticket ) ? 0 : $ticket->get_ticket_subtotal();
-		return $subtotal + ( $subtotal * $tax->get('PRC_amount') / 100 );
+		return $subtotal * $tax->get('PRC_amount') / 100;
 	}
 
 
