@@ -612,6 +612,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_end_date' => $default ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ),
 			'TKT_status' => $default ? '' : $ticket->ticket_status(TRUE),
 			'TKT_price' => $default ? '' : $ticket->get_pretty('TKT_price'),
+			'TKT_price_amount' => $default ? 0 : $ticket->get('TKT_price'),
 			'TKT_qty' => $default ? '' : $ticket->get('TKT_qty'),
 			'TKT_uses' => $default ? '' : $ticket->get('TKT_uses'),
 			'TKT_min' => $default ? '' : $ticket->get('TKT_min'),
