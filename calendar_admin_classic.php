@@ -23,7 +23,8 @@ function espresso_add_calendar_to_admin_menu($espresso_manager) {
 add_action('action_hook_espresso_add_new_submenu_to_group_settings', 'espresso_add_calendar_to_admin_menu', 5);
 
 function espresso_calendar_config_mnu() {
-	global $espresso_calendar, $notices;
+	global $espresso_calendar, $notices, $espresso_premium;
+	$espresso_premium = true;
 
 	/* Calendar */
 
@@ -32,35 +33,35 @@ function espresso_calendar_config_mnu() {
 	}
 
 	if (isset($_POST['update_calendar']) && check_admin_referer('espresso_form_check', 'update_calendar')) {
-		$espresso_calendar['espresso_page_post'] = $_POST['espresso_page_post'];
-		$espresso_calendar['espresso_calendar_header'] = $_POST['espresso_calendar_header'];
-		$espresso_calendar['espresso_calendar_buttonText'] = $_POST['espresso_calendar_buttonText'];
-		$espresso_calendar['espresso_calendar_firstday'] = $_POST['espresso_calendar_firstday'];
-		$espresso_calendar['espresso_calendar_weekends'] = $_POST['espresso_calendar_weekends'];
-		$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
-		$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
-		$espresso_calendar['show_tooltips'] = $_POST['show_tooltips'];
-		$espresso_calendar['tooltips_pos']['my_1'] = $_POST['tooltips_pos_my_1'];
-		$espresso_calendar['tooltips_pos']['my_2'] = $_POST['tooltips_pos_my_2'];
-		$espresso_calendar['tooltips_pos']['at_1'] = $_POST['tooltips_pos_at_1'];
-		$espresso_calendar['tooltips_pos']['at_2'] = $_POST['tooltips_pos_at_2'];
-		$espresso_calendar['show_time'] = $_POST['show_time'];
-		$espresso_calendar['throttle']['enable'] = $_POST['throttle_enable'];
-		$espresso_calendar['throttle']['amount'] = $_POST['throttle_amount'];
-		$espresso_calendar['disable_categories'] = $_POST['disable_categories'];
-		$espresso_calendar['show_attendee_limit'] = $_POST['show_attendee_limit'];
-		$espresso_calendar['time_format'] = $_POST['time_format_custom'];
-		$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
+		$espresso_calendar['espresso_page_post'] = isset($_POST['espresso_page_post']) ? $_POST['espresso_page_post'] : 'R';
+		$espresso_calendar['espresso_calendar_header'] = isset($_POST['espresso_calendar_header']) ? $_POST['espresso_calendar_header'] : '';;
+		$espresso_calendar['espresso_calendar_buttonText'] = isset($_POST['espresso_calendar_buttonText']) ? $_POST['espresso_calendar_buttonText'] : '';;
+		$espresso_calendar['espresso_calendar_firstday'] = isset($_POST['espresso_calendar_firstday']) ? $_POST['espresso_calendar_firstday'] : '';;
+		$espresso_calendar['espresso_calendar_weekends'] = isset($_POST['espresso_calendar_weekends']) ? $_POST['espresso_calendar_weekends'] : '';;
+		$espresso_calendar['espresso_calendar_height'] = isset($_POST['espresso_calendar_height']) ? $_POST['espresso_calendar_height'] : '';;
+		$espresso_calendar['enable_calendar_thumbs'] = isset($_POST['enable_calendar_thumbs']) ? $_POST['enable_calendar_thumbs'] : '';;
+		$espresso_calendar['show_tooltips'] = isset($_POST['show_tooltips']) ? $_POST['show_tooltips'] : '';;
+		$espresso_calendar['tooltips_pos']['my_1'] = isset($_POST['tooltips_pos_my_1']) ? $_POST['tooltips_pos_my_1'] : '';;
+		$espresso_calendar['tooltips_pos']['my_2'] = isset($_POST['tooltips_pos_my_2']) ? $_POST['tooltips_pos_my_2'] : '';;
+		$espresso_calendar['tooltips_pos']['at_1'] = isset($_POST['tooltips_pos_at_1']) ? $_POST['tooltips_pos_at_1'] : '';;
+		$espresso_calendar['tooltips_pos']['at_2'] = isset($_POST['tooltips_pos_at_2']) ? $_POST['tooltips_pos_at_2'] : '';;
+		$espresso_calendar['show_time'] = isset($_POST['show_time']) ? $_POST['show_time'] : '';;
+		$espresso_calendar['throttle']['enable'] = isset($_POST['throttle_enable']) ? $_POST['throttle_enable'] : '';;
+		$espresso_calendar['throttle']['amount'] = isset($_POST['throttle_amount']) ? $_POST['throttle_amount'] : '';;
+		$espresso_calendar['disable_categories'] = isset($_POST['disable_categories']) ? $_POST['disable_categories'] : '';;
+		$espresso_calendar['show_attendee_limit'] = isset($_POST['show_attendee_limit']) ? $_POST['show_attendee_limit'] : '';;
+		$espresso_calendar['time_format'] = isset($_POST['time_format_custom']) ? $_POST['time_format_custom'] : '';;
+		$espresso_calendar['espresso_use_pickers'] = isset($_POST['espresso_use_pickers']) ? $_POST['espresso_use_pickers'] : '';;
 		$espresso_calendar['ee_event_background'] = (!empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : $espresso_calendar['ee_event_background'];
 		$espresso_calendar['ee_event_text_color'] = (!empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : $espresso_calendar['ee_event_text_color'];
-		$espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
+		$espresso_calendar['enable_cat_classes'] = isset($_POST['enable_cat_classes']) ? $_POST['enable_cat_classes'] : '';;
 		//$espresso_calendar['use_themeroller'] = $_POST['use_themeroller'];
-		$espresso_calendar['espresso_calendar_titleFormat'] = $_POST['espresso_calendar_titleFormat'];
-		$espresso_calendar['espresso_calendar_columnFormat'] = $_POST['espresso_calendar_columnFormat'];
-		$espresso_calendar['espresso_calendar_monthNames'] = $_POST['espresso_calendar_monthNames'];
-		$espresso_calendar['espresso_calendar_monthNamesShort'] = $_POST['espresso_calendar_monthNamesShort'];
-		$espresso_calendar['espresso_calendar_dayNames'] = $_POST['espresso_calendar_dayNames'];
-		$espresso_calendar['espresso_calendar_dayNamesShort'] = $_POST['espresso_calendar_dayNamesShort'];
+		$espresso_calendar['espresso_calendar_titleFormat'] = isset($_POST['espresso_calendar_titleFormat']) ? $_POST['espresso_calendar_titleFormat'] : '';;
+		$espresso_calendar['espresso_calendar_columnFormat'] = isset($_POST['espresso_calendar_columnFormat']) ? $_POST['espresso_calendar_columnFormat'] : '';;
+		$espresso_calendar['espresso_calendar_monthNames'] = isset($_POST['espresso_calendar_monthNames']) ? $_POST['espresso_calendar_monthNames'] : '';;
+		$espresso_calendar['espresso_calendar_monthNamesShort'] = isset($_POST['espresso_calendar_monthNamesShort']) ? $_POST['espresso_calendar_monthNamesShort'] : '';;
+		$espresso_calendar['espresso_calendar_dayNames'] = isset($_POST['espresso_calendar_dayNames']) ? $_POST['espresso_calendar_dayNames'] : '';;
+		$espresso_calendar['espresso_calendar_dayNamesShort'] = isset($_POST['espresso_calendar_dayNamesShort']) ? $_POST['espresso_calendar_dayNamesShort'] : '';;
 		$espresso_calendar['calendar_pages'] = $_POST['calendar_pages'] == '' ? 0 : $_POST['calendar_pages'];
 
 		update_option('espresso_calendar_settings', $espresso_calendar);
@@ -239,6 +240,7 @@ function espresso_calendar_config_mnu() {
 										<?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma separated list of page id\'s. If left to the default of 0, the calendar stylesheet will load on every page of the site. You can find Page ID\'s by going to the WordPress menu Pages > All Pages, and hovering your mouse over the Page title, at the bottom of your browser a small box will appear with some code in it. Where it says post= then a number (post=4), that number is the Page ID. You can improve site performance and reduce conflicts by specifying which page/s have calendars on them.', 'event_espresso'); ?>
 										</span></td>
 								</tr>
+								<?php if ($espresso_premium == true) { ?>
 								<tr>
 									<th> <label for="calendar_page_post">
 											<?php _e('Link to Post or Registration Page', 'event_espresso'); ?>
@@ -259,8 +261,10 @@ function espresso_calendar_config_mnu() {
 										<?php _e('The "Featured Image" box in the event editor handles the thumbnail image URLs for each event. After setting the "Enable Calendar images" option to "Yes" in the calendar settings, upload an event image in the built-in WordPress media uploader, then click the Insert into post button on the media uploader.', 'event_espresso'); ?>
 										</span></td>
 								</tr>
+								<?php } ?>
 							</tbody>
 						</table>
+						<?php if ($espresso_premium == true) { ?>
 						<h4>
 							<?php _e('Theme Settings', 'event_espresso'); ?>
 						</h4>
@@ -346,6 +350,7 @@ function espresso_calendar_config_mnu() {
 								</tr>
 							</tbody>
 						</table>
+						<?php } ?>
 						<p>
 							<input class="button-primary" type="submit" name="save_calendar_settings" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings2" />
 							<?php wp_nonce_field('espresso_form_check', 'update_calendar') ?>
@@ -358,7 +363,7 @@ function espresso_calendar_config_mnu() {
 			<!-- / .postbox --> 
 		</div>
 		<!-- / .metabox-holder --> 
-		
+		<?php if ($espresso_premium == true) { ?>
 		<!-- Advanced settings metabox -->
 		<div class="metabox-holder">
 			<div class="postbox">
@@ -506,11 +511,7 @@ function espresso_calendar_config_mnu() {
 							<input class="button-primary" type="submit" name="Submit" value="<?php _e('Save Calendar Options', 'event_espresso'); ?>" id="save_calendar_settings_1" />
 							<?php wp_nonce_field('espresso_form_check', 'update_calendar') ?>
 						</p>
-						<p>
-							<?php _e('Reset Calendar Settings?', 'event_espresso'); ?>
-							<input name="reset_calendar" type="checkbox" />
-							<?php wp_nonce_field('espresso_form_check', 'reset_calendar_nonce') ?>
-						</p>
+						
 					</div>
 					<!-- / .padding --> 
 				</div>
@@ -518,9 +519,15 @@ function espresso_calendar_config_mnu() {
 			</div>
 			<!-- / .postbox --> 
 		</div>
-		<!-- / .metabox-holder --> 
+		<!-- / .metabox-holder -->
+		<?php } ?>
 		<!--</li>
 	</ul>-->
+	<p>
+							<?php _e('Reset Calendar Settings?', 'event_espresso'); ?>
+							<input name="reset_calendar" type="checkbox" />
+							<?php wp_nonce_field('espresso_form_check', 'reset_calendar_nonce') ?>
+						</p>
 	</form>
 	<?php
 		$main_post_content = ob_get_clean();
