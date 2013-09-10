@@ -116,6 +116,21 @@ class EE_Maintenance_Mode {
 			update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
 		}
 	}
+	
+	/**
+	 * Updates the maintenance level on the site... BUT, also checks if there are data
+	 * migration scripts that need to run. If there, triggers level 2.
+	 * @param int $level
+	 * @return void
+	 */
+	public function set_maintenance_level($level){
+		//only do what they say IF there are no data migration scripts that need to run
+		if( ! EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()){
+			update_option(self::option_name_maintenance_mode, intval($level));
+		}else{
+			$this->set_maintenance_mode_if_db_old();
+		}
+	}
 
 
 

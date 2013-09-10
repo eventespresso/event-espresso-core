@@ -264,12 +264,13 @@ class EE_Data_Migration_Manager{
 				$this->EE->load_helper('Activation');
 				EEH_Activation::initialize_db_content();
 				//we should be good to allow them to exit maintenance mode now
+				EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 				return array(
 					'records_to_migrate'=>1,
 					'records_migrated'=>1,
 					'status'=>self::status_no_more_migration_scripts,  
-					'script'=>null,
-					'message'=>__("Data Migration Completed Successfully", "event_espresso"));
+					'script'=>__("Data Migration Completed Successfully", "event_espresso"),
+					'message'=>'');
 			}
 			$currently_executing_script = array_shift($scripts);
 			//and add to the array/wp option showing the scripts ran
@@ -317,7 +318,13 @@ class EE_Data_Migration_Manager{
 	
 	/**
 	 * Echo out JSON response to migration script AJAX requests. Takes precautions
-	 * to buffer output so that we don't throw junk into our json
+	 * to buffer output so that we don't throw junk into our json.
+	 * @return array with keys:
+	 * 'records_to_migrate' which counts ALL the records for the current migration, and should remain constant. (ie, it's NOT the count of hwo many remain)
+	 * 'records_migrated' which also coutns ALL the records which have been migrated (ie, percent_complete = records_migrated/records_to_migrate)
+	 * 'status'=>a string, one of EE_Data_migratino_Manager::status_*
+	 * 'message'=>a string, containing any message you want to show to the user. We may decide to split this up into errors, notifications, and successes
+	 * 'script'=>a pretty name of the script currently running
 	 */
 	public function response_to_migration_ajax_request(){
 //		//start output buffer just to make sure we don't mess up the json
@@ -336,8 +343,7 @@ class EE_Data_Migration_Manager{
 		$warnings_etc = @ob_get_contents();
 		ob_end_clean();
 		$response['message'] .=$warnings_etc;
-		echo json_encode($response);
-		die;
+		return $response;
 	}
 	
 	/**
