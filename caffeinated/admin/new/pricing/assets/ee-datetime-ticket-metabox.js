@@ -1222,7 +1222,6 @@ jQuery(document).ready(function($) {
 			$('.TKT-tax-percentage', editTicketRow ).each( function() {
 				id = $(this).attr('id').replace('TKT-tax-percentage-', '');
 				tax = parseFloat($(this).val());
-				console.log(tax);
 				tax = subtotal * tax/100;
 				$('#TKT-tax-amount-' + id).val(tax);
 				$('#TKT-tax-amount-display-' + id).text('$' + tax);
