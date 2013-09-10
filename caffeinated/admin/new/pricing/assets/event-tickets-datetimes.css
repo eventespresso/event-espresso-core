@@ -41,7 +41,7 @@
     padding-bottom: 5px;
 }
 
-.gear-icon, .ticket-icon, .trash-icon, .clone-icon {
+.gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
     display: inline;
     padding: 8px;
     margin-left: 8px;
@@ -61,6 +61,10 @@
 
 .clone-icon {
     background: transparent url(../../../../../images/clone-trooper-16x16.png) 0 6px no-repeat;
+}
+
+.lock-icon {
+    background: transparent url(../../../../../images/lock.png) 0 6px no-repeat;
 }
 
 .datetime-tickets-sold {

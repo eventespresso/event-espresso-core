@@ -647,7 +647,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_subtotal_amount' => $ticket_subtotal,
 			'tax_rows' => $this->_get_tax_rows( $tktrow, $ticket ),
 			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' disabled' : '',
-			'ticket_archive_class' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' ticket-archived' : ''
+			'ticket_archive_class' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' ticket-archived' : '',
+			'trash_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? 'lock-icon ' : 'trash-icon clickable',
 			);
 
 		//generate ticket_datetime items
