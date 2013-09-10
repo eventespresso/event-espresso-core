@@ -69,8 +69,24 @@
 						<?php echo $ticket_price_rows; ?>
 					</tbody>
 					<tfoot>
+						<tr class="price-subtotal-row TKT-taxes-display"<?php echo $display_subtotal; ?>>
+							<td colspan="3">
+								<span class="TKT-taxable-subtotal-label"><strong><?php _e('Subtotal', 'event_espresso'); ?></strong></span>
+							</td>
+							<td>
+								<span class="TKT-taxable-subtotal-amount-display"><?php echo $TKT_subtotal_amount_display; ?></span>
+								<input type="hidden" value="<?php echo $TKT_subtotal_amount; ?>" name="subtotal_amount_<?php echo $tkt_row; ?>" class="TKT-taxable-subtotal-amount">
+							</td>
+							<td></td>
+						</tr>
+						<?php echo $tax_rows; ?>
 						<tr class="price-total-row">
-							<td colspan="3"><?php _e('Total', 'event_espresso'); ?></td>
+							<td>
+								<input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>" type="checkbox" name="<?php echo $edit_tickets_name;?>[<?php echo $tkt_row; ?>][TKT_taxable]" value="1"<?php echo $TKT_taxable; ?>><label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php _e('apply taxes', 'event_espresso'); ?>
+							</td>
+							<td colspan="2">	
+								<strong><?php _e('Total', 'event_espresso'); ?></strong>
+							</td>
 							<td>
 								<span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span>
 								<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_price]" class="edit-ticket-TKT_price" value="0">
@@ -121,6 +137,12 @@
  * $TKT_description
  * $TKT_is_default
  * $TKT_price_rows
+ * 
+ * $TKT_taxable
+ * $display_subtotal
+ * $TKT_subtotal_amount
+ * $tax_rows
+ * 
  * $total_price_rows
  * $ticket_datetimes_list
  * $starting_ticket_datetime_rows (datetimes attached to ticket on page load)

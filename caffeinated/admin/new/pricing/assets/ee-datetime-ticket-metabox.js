@@ -1161,8 +1161,9 @@ jQuery(document).ready(function($) {
 		 * calculate the total from the prices in the ticket row.
 		 * @return {fixed} The total amount by decimal.
 		 */
-		getTotalPrice: function() {
+		getTotalPrice: function( dotaxes ) {
 			var runningtotal = 0, priceAmount, operator, is_percent;
+			dotaxes = typeof(dotaxes) === 'undefined' ? true : false;
 			//loop through all the prices for a given ticket
 			$('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow ).find('tr.ee-active-price').each( function() {
 				priceAmount = parseFloat($('.edit-price-PRC_amount', this).val());
@@ -1180,6 +1181,15 @@ jQuery(document).ready(function($) {
 				}
 			});
 
+			//apply taxes?
+			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
+				this.applyTaxes();
+				//get tax amounts and add to running total
+				$('.TKT-tax-amount', '#edit-ticketrow-' + this.ticketRow ).each( function(){
+					runningtotal += parseFloat( $(this).val() );
+				});
+			}
+
 			return runningtotal.toFixed(2); //todo eventually this can be dynamic according to currency setting
 		},
 
@@ -1195,6 +1205,28 @@ jQuery(document).ready(function($) {
 			TKTrow.find('.ticket-price-amount').text('$' + price_amount);
 			TKTrow.find('.edit-ticket-TKT_price').val(price_amount);
 			//$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
+		},
+
+
+
+
+		applyTaxes: function() {
+			//get subtotal
+			var tax,
+				id,
+				subtotal = this.getTotalPrice(false),
+				editTicketRow = '#edit-ticketrow-' + this.ticketRow;
+			//make sure subtotal shows the right total
+			$('.TKT-taxable-subtotal-amount-display', editTicketRow ).text('$' + subtotal);
+			$('.TKT-taxable-subtotal-amount', editTicketRow).val(subtotal);
+			$('.TKT-tax-percentage', editTicketRow ).each( function() {
+				id = $(this).attr('id').replace('TKT-tax-percentage-', '');
+				tax = parseFloat($(this).val());
+				console.log(tax);
+				tax = subtotal * tax/100;
+				$('#TKT-tax-amount-' + id).val(tax);
+				$('#TKT-tax-amount-display-' + id).text('$' + tax);
+			});
 		},
 
 
@@ -1510,6 +1542,16 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).parent().parent().find('.gear-icon').data();
 		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
+	});
+
+
+	/**
+	 * toggling of TKT_taxable checkbox
+	 */
+	$('#event-and-ticket-form-content').on('click', '.TKT-taxable-checkbox', function(e) {
+		var tktrow = $(this).attr('id').replace('edit-ticket-TKT_taxable-', '');
+		$('.TKT-taxes-display', '#edit-ticketrow-' + tktrow).slideToggle();
+		tktHelper.setticketRow(tktrow).applyTotalPrice();
 	});
 
 
