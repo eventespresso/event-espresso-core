@@ -1,5 +1,5 @@
 .espresso-help-tab-lnk.help_img {
-    top: 0px;
+    top: 0;
 }
 
 
@@ -34,6 +34,11 @@
 
 .clickable {
     cursor: pointer;
+}
+
+.ticket-archived td {
+    background-color: #e6e6e6;
+    padding-bottom: 5px;
 }
 
 .gear-icon, .ticket-icon, .trash-icon, .clone-icon {

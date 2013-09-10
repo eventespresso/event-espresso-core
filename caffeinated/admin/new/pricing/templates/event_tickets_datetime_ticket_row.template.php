@@ -1,4 +1,4 @@
-<tr valign="top" class="ticket-row" id="display-ticketrow-<?php echo $tkt_row; ?>">
+<tr valign="top" class="ticket-row<?php echo $ticket_archive_class; ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
 	<td></td>
 	<td><span class="ticket-display-row-TKT_name"><?php echo $TKT_name; ?></span></td>
 	<td><span class="ticket-display-row-TKT_start_date"><?php echo $TKT_start_date; ?></span></td>
@@ -138,6 +138,7 @@
  * $TKT_is_default
  * $TKT_price_rows
  * $disabled
+ * $ticket_archive_class
  * 
  * $TKT_taxable
  * $display_subtotal
