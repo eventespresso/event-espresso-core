@@ -1,9 +1,5 @@
 jQuery(document).ready(function($) {
 
-	var dialogHelper = {
-
-	};
-
 	var tktHelper = {
 
 		ticketRow : 1,

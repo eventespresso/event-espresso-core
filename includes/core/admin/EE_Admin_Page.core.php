@@ -1032,7 +1032,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$d_cont .= '<div class="ee-notices"></div>';
 		$d_cont .= '<div class="ajax-loader-grey"></div>';
 		$d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
-		$d_cont .= '</div>'
+		$d_cont .= '</div>';
 	}
 
 
@@ -1225,7 +1225,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		/** SCRIPTS **/
 
 		//register all scripts
-		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery', 'ee-parse-uri'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script('ee-dialog', EE_CORE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery'), EVENT_ESPRESSSO_VERSION, TRUE );
+		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true );
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
