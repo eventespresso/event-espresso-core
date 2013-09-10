@@ -67,7 +67,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 				break;
 			case 0:
 			default:
-				$map['show_on_menu']=FALSE;
+				$map['show_on_menu']=TRUE;
 		}
 		return $map;
 	}

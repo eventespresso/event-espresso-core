@@ -44,7 +44,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		//todo: all hooks for ajax goes here.
+		add_action('wp_ajax_migration_step',array($this,'migration_step'));
 	}
 
 
@@ -67,7 +67,32 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	public function _maintenance(){
 		//it all depends if we're in maintenance model level 1 (frontend-only) or
 		//level 2 (everything except maintenance page)
-		echo "welcome ot maintenance mode page";
+		switch(EE_Maintenance_Mode::instance()->level()){
+			case EE_Maintenance_Mode::level_0_not_in_maintenance:
+				
+				break;
+			case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
+				
+				break;
+			case EE_Maintenance_Mode::level_2_complete_maintenance:
+				$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
+			$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
+			//localize script stuff
+			wp_localize_script('ee-maintenance', 'ee_maintenance', array(
+				'migrating'=>  __("Migrating...", "event_espresso"),
+				'status_no_more_migration_scripts'=>  EE_Data_Migration_Manager::status_no_more_migration_scripts,
+				'status_fatal_error'=>  EE_Data_Migration_Manager::status_fatal_error,));
+			$this->display_admin_page_with_sidebar();
+				break;
+		}
+	}
+	public function migration_step(){
+		$this->_template_args['data'] = EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
+		$this->_return_json();
+	}
+	public function change_maintenance_level($new_level){
+		EE_Maintenance_Mode::instance()->set_maintenance_level(intval($new_level));
+		$this->_redirect_after_action(1);
 	}
 
 
@@ -100,10 +125,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles() {
-//		wp_enqueue_script('ee_admin_js');
+		wp_enqueue_script('ee_admin_js');
 //		wp_enqueue_media();
 //		wp_enqueue_script('media-upload');
-//		wp_enqueue_script('ee-maintenance',EE_MAINTENANCE_ASSETS_URL.'/ee-maintenance.js');
+		wp_enqueue_script('ee-maintenance',EE_MAINTENANCE_ASSETS_URL.'/ee-maintenance.js',array('jquery'),null,true);
 	}
 
 
@@ -112,8 +137,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_default() {
 		//styles
-//		wp_register_style( 'espresso_maintenance', EE_MAINTENANCE_ASSETS_URL . 'ee-maintenance.css', array(), EVENT_ESPRESSO_VERSION );
-//		wp_enqueue_style('espresso_maintenance');
+		wp_register_style( 'espresso_maintenance', EE_MAINTENANCE_ASSETS_URL . 'ee-maintenance.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style('espresso_maintenance');
 //		wp_enqueue_style('ee-text-links');
 //		//scripts
 //		wp_enqueue_script('ee-text-links');

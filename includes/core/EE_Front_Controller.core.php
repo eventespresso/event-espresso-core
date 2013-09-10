@@ -82,7 +82,8 @@ final class EE_Front_Controller {
 	public function plugins_loaded() {
 		// registry, settings, autoloaders, and other config stuff
 		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
-			require_once( EE_CORE . 'EE_System.core.php' );			
+			require_once( EE_CORE . 'EE_System.core.php' );		
+			EE_System::instance();
 			$this->EE = EE_Registry::instance();
 		} else {
 			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
@@ -107,7 +108,9 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
-		
+//		global $wpdb;
+//		$result = $wpdb->get_var("SELECT option_value from wp_options where option_name='espresso_data_migrations'");
+//		echo $result;die;
 //		$dms = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 //		echo 'echodump of $dms';
 //		var_dump($dms);
