@@ -28,6 +28,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
 	 */
 	const expired = -1;
+	const archived = 0;
 	const pending = 1;
 	const onsale = 2;
 
@@ -323,6 +324,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return mixed(int|string) status int if the display string isn't requested
 	 */
 	public function ticket_status( $display = FALSE ) {
+		if ( $this->_TKT_deleted ) return $display ? __('Archived', 'event_espresso') : EE_Ticket::archived;
 		if ( $this->is_expired() ) return $display ? __('Expired', 'event_espresso') : EE_Ticket::expired;
 		if ( $this->is_pending() ) return $display ? __('Pending', 'event_espresso') : EE_Ticket::pending;
 		if ( $this->is_on_sale() ) return $display ? __('On Sale', 'event_espresso') : EE_Ticket::onsale;

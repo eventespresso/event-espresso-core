@@ -505,7 +505,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'EVT_ID' => 0,
 				'PRC_amount' => floatval ($this->_req_data['PRC_amount']),
 				'PRC_name' => $this->_req_data['PRC_name'],
-				'PRC_desc' => htmlentities(wp_strip_all_tags($this->_req_data['PRC_desc']), ENT_QUOTES, 'UTF-8'),
+				'PRC_desc' => wp_strip_all_tags($this->_req_data['PRC_desc']),
 				'PRC_start_date' => NULL,
 				'PRC_end_date' => NULL,
 				'PRC_overrides' => NULL,
@@ -884,7 +884,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		}
 	
 		//$this->_req_data['PRT_name'] = ucwords(strtolower($this->_req_data['PRT_name']));
-		$this->_req_data['PRT_name'] = htmlentities($this->_req_data['PRT_name'], ENT_QUOTES, 'UTF-8');
+		$this->_req_data['PRT_name'] = $this->_req_data['PRT_name'];
 		$set_column_values = array(
 				'PRT_name' => $this->_req_data['PRT_name'],
 				'PBT_ID' => absint($this->_req_data['PBT_ID']),

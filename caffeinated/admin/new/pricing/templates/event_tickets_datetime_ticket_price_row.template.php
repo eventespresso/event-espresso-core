@@ -13,7 +13,7 @@
 		<span class="ticket-price-info-display ticket-price-dollar-sign-display"<?php echo $show_currency_symbol; ?>><?php echo $price_currency_symbol; ?></span>
 	</td>
 	<td>
-		<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="<?php echo $edit_prices_name; ?>[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_amount]" value="<?php echo $PRC_amount; ?>">
+		<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="<?php echo $edit_prices_name; ?>[<?php echo $tkt_row; ?>][<?php echo $prc_row; ?>][PRC_amount]" value="<?php echo $PRC_amount; ?>"<?php echo $disabled; ?>>
 		<span class="ticket-price-info-display ticket-price-percentage-char-display"<?php echo $show_percentage; ?>>%</span>
 	</td>
 	<td><span class="gear-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $prc_row; ?>"></span><span class="trash-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $prc_row; ?>"<?php echo $show_trash_icon; ?>></span><button data-ticket-row="<?php echo $tkt_row; ?>" data-price-row="<?php echo $prc_row; ?>" data-context="price" class="ee-create-button"<?php echo $show_create_button; ?>><strong>+</strong></button></td>
@@ -45,4 +45,5 @@
  * $show_trash_icon
  * $show_create_button
  * $PRC_desc
+ * $disabled
  */
