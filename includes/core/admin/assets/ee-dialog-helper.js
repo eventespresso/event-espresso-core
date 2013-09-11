@@ -43,3 +43,37 @@ $(window).resize(function(){
 	}
 	eeTimeout = setTimeout(doneResizing, 200);
 });
+
+
+jQuery(document).ready(function($) {
+	
+	//prepare dialog
+	var eeDialog = $('.ee-admin-dialog-container').draggable();
+
+	var dialogHelper = {
+
+		displayModal: function() {
+			position_overlay();
+			position_dialog();
+			overlay.on('click', function() {
+				dialogHelper.closeModal();
+				$('.ee-admin-dialog-container-inner-content').html('');
+			});
+			return this;
+		},
+
+		closeModal: function() {
+			dialog.fadeOut( 'fast' );
+			overlay.fadeOut( 'fast' );
+			return this;
+		},
+
+		addContent: function(content) {
+			$('.ee-admin-dialog-container-inner-content').html(content);
+			return this;
+		}
+	};
+
+	window.dialogHelper = dialogHelper; //send to global space
+	window.dialog = eeDialog; //send to global space
+});
