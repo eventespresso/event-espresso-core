@@ -548,7 +548,7 @@ class EE_Error extends Exception {
 			// combine messages
 			$success_messages .= implode( self::$_espresso_notices['success'], '<br />' );
 			// possibly encode for url transmission
-			$success_messages = $url_encode ? urlencode($success_messages) : $success_messages;
+			$success_messages = $format_output ? urlencode($success_messages) : $success_messages;
 		}
 
 		// check for attention messages
@@ -556,7 +556,7 @@ class EE_Error extends Exception {
 			// combine messages
 			$attention_messages .= implode( self::$_espresso_notices['attention'], '<br />' );
 			// possibly encode for url transmission
-			$attention_messages = $url_encode ? urlencode($attention_messages) : $attention_messages;
+			$attention_messages = $format_output ? urlencode($attention_messages) : $attention_messages;
 		}
 
 		// check for error messages
@@ -564,7 +564,7 @@ class EE_Error extends Exception {
 			$error_messages .= count( self::$_espresso_notices['errors'] ) > 1 ? __( 'The following errors have occured:<br />', 'event_espresso' ) : __( 'An error has occured:<br />', 'event_espresso' );
 			// combine messages
 			$error_messages .= implode( self::$_espresso_notices['errors'], '<br />' );
-			$error_messages = $url_encode ? urlencode($error_messages) : $error_messages;
+			$error_messages = $format_output ? urlencode($error_messages) : $error_messages;
 		}
 
 		if ($format_output) {
