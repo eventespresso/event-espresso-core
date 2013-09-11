@@ -41,9 +41,16 @@ final class EE_Registry {
 	private static $_autoloaders = array();
 
    /**
-     * 	org_option settings
+     * 	EE_Cart Object
 	 * 	@access 	public
-	 *	@var 	EE_Config
+	 *	@var 	EE_Cart $CART
+     */
+	public $CART = NULL;
+
+   /**
+     * 	EE_Config Object
+	 * 	@access 	public
+	 *	@var 	EE_Config $CFG
      */
 	public $CFG = NULL;
 
@@ -51,7 +58,7 @@ final class EE_Registry {
      * array for storing library classes in
      * @public LIB
      */
-	public $LIB = array();
+	public $LIB = NULL;
 
 	/**
 	 * 	EE_Request_Handler Object
@@ -127,8 +134,9 @@ final class EE_Registry {
 	private function __construct() {
 		// setup object for adding configuration settings to
 		$this->CFG = new StdClass();
-		add_action( 'init', array( $this, 'init' ), 1 );
+		$this->LIB = new StdClass();
 		spl_autoload_register( array( $this, 'espresso_autoloader' ));
+		add_action( 'init', array( $this, 'init' ), 1 );
 	}
 
 
@@ -224,11 +232,12 @@ final class EE_Registry {
 	 *	@param array  $arguments - an array of arguments to pass to the class
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@param bool   $cache      if you dont' want the class to be stored in the internal cache (non-persistent) then set this to FALSE (ie. when instantiating model objects from client in a loop)
+	 *	@param bool   $load_only      whether or not to just load the file and NOT instantiate, or load AND instantiate (default)
 	 *	@return instantiated class object
 	 */
-	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE ) {
+	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
 		// retreive instantiated class
-		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache );
+		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $load_only );
 	}
 
 
@@ -352,21 +361,25 @@ final class EE_Registry {
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@return instantiated class object
 	 */	
-	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE, $no_load = FALSE ) {
+	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
 		// make sure $class_prefix is uppercase
 		$class_prefix = strtoupper( trim( $class_prefix ));
 		// add class prefix ONCE!!!
 		$class_name = $class_prefix . str_replace( $class_prefix, '', trim( $class_name ));
 
+		$class_abbreviations = array(
+			'EE_Request_Handler' => 'REQ',
+			'EE_Session' => 'SSN',
+			'EE_Cart' => 'CART',
+		);
+
 		// check if class has already been loaded, and return it if it has been
-		if ( $class_name == 'EE_Request_Handler' && ! is_null( $this->REQ )) {
-			return $this->REQ;
-		} else if ( $class_name == 'EE_Session' && ! is_null( $this->SSN )) {
-			return $this->SSN;
+		if ( isset( $class_abbreviations[ $class_name ] ) && ! is_null( $this->$class_abbreviations[ $class_name ] )) {
+			return $this->$class_abbreviations[ $class_name ];
 		} else if ( isset ( $this->{$class_name} )) {
 			return $this->{$class_name};
-		} else if ( isset ( $this->LIB[ $class_name ] )) {
-			return $this->LIB[ $class_name ];
+		} else if ( isset ( $this->LIB->$class_name )) {
+			return $this->LIB->$class_name;
 		}
 		
 		// assume all paths lead nowhere
@@ -431,7 +444,7 @@ final class EE_Registry {
 			$reflector = new ReflectionClass( $class_name );
 			// instantiate the class and add to the LIB array for tracking
 			// EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
-			if ( $reflector->getConstructor() === NULL || $no_load ) {
+			if ( $reflector->getConstructor() === NULL || $load_only ) {
 				$instantiation_mode = 0;
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
@@ -455,29 +468,26 @@ final class EE_Registry {
 			$e->get_error();
 		}
 
-	
-
 //	echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">$instantiation_mode : ' . $instantiation_mode . '<br/>' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';			
 //	echo '<h4>$from_db : ' . $from_db . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //	echo '<h4>$cache : ' . $cache . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//	echo '<h4>$no_load : ' . $no_load . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	echo '<h4>$load_only : ' . $load_only . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //	printr( $arguments, '$arguments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //	printr( $class_obj, '$class_obj  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		
 		if ( isset( $class_obj )) {			
 			// return newly instantiated class
-			if ( $class_name == 'EE_Request_Handler' ) {
-				$this->REQ = $class_obj;
-			} elseif ( $class_name == 'EE_Session' ) {
-				$this->SSN = $class_obj;
+			if ( isset( $class_abbreviations[ $class_name ] )) {		
+				$this->$class_abbreviations[ $class_name ] = $class_obj;
 			} else if ( property_exists( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
 			} else if ( !$from_db && $cache  ) {
-				$this->LIB[ $class_name ] = $class_obj;
+				$this->LIB->$class_name = $class_obj;
 			}
 			return $class_obj;
-		}		
+		}
+			
 	}
 
 

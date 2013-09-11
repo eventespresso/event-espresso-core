@@ -328,11 +328,11 @@ class EEM_Registration extends EEM_Base {
 				'EVT_ID'=>$EVT_ID,
 			)
 		);
-		if($for_incomplete_payments){
+		if( $for_incomplete_payments ){
 			$query_params[0]['Transaction.STS_ID']=array('!=',  EEM_Transaction::complete_status_code);
 		}
-		global $org_options;
-		if($org_options['pending_counts_reg_limit']){
+
+		if( $this->EE->CFG->registration->pending_counts_reg_limit ){
 			$query_params[0]['STS_ID']=  EEM_Registration::status_id_pending;
 		}
 		return $this->count($query_params);
