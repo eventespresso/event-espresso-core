@@ -65,26 +65,81 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * default maintenance page
 	 */
 	public function _maintenance(){
+		
+		
 		//it all depends if we're in maintenance model level 1 (frontend-only) or
 		//level 2 (everything except maintenance page)
 		switch(EE_Maintenance_Mode::instance()->level()){
 			case EE_Maintenance_Mode::level_0_not_in_maintenance:
-				echo "level 0";
-				break;
 			case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
-				echo "level 1";
+				$show_maintenance_switch = true;
+				$show_backup_db_text = false;
+				$show_migration_progress = false;
+				$script_names = array();
 				break;
 			case EE_Maintenance_Mode::level_2_complete_maintenance:
-				$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
-			$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
-			//localize script stuff
-			wp_localize_script('ee-maintenance', 'ee_maintenance', array(
-				'migrating'=>  __("Migrating...", "event_espresso"),
-				'status_no_more_migration_scripts'=>  EE_Data_Migration_Manager::status_no_more_migration_scripts,
-				'status_fatal_error'=>  EE_Data_Migration_Manager::status_fatal_error,));
-			$this->display_admin_page_with_sidebar();
+				$show_maintenance_switch = false;
+				$show_migration_progress = true;
+				if(isset($this->_req_data['continue_migration'])){
+					$show_backup_db_text = false;
+				}else{
+					$show_backup_db_text = true;
+				}
+				$scripts_needing_to_run = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
+				$script_names = array();
+				foreach($scripts_needing_to_run as $script){
+					if($script instanceof EE_Data_Migration_Script_Base)
+					$script_names[] = $script->pretty_name();
+				}
+				
 				break;
 		}
+		$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
+		if($most_recent_migration && 
+				$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
+				$most_recent_migration->can_continue()){
+			$show_backup_db_text = false;
+			$show_continue_current_migration_script = true;
+			$show_most_recent_migration = true;
+			$last_migration_was_borked = false;
+		}elseif($most_recent_migration && 
+				$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
+				$most_recent_migration->is_borked()){
+			$show_most_recent_migration = true;
+			$show_backup_db_text = false;
+			$show_migration_progress = false;
+			$last_migration_was_borked = true;
+		}elseif(isset($this->_req_data['continue_migration'])){
+			$show_most_recent_migration = true;
+			$show_continue_current_migration_script = false;
+			$last_migration_was_borked = false;
+		}else{
+			$show_most_recent_migration = false;
+			$show_continue_current_migration_script = false;
+			$last_migration_was_borked = false;
+		}
+		
+		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
+		$this->_template_args = array_merge($this->_template_args,array(
+			'show_most_recent_migration' => $show_most_recent_migration,
+			'most_recent_migration'=> $most_recent_migration,
+			'show_migration_progress' => $show_migration_progress,
+			'show_backup_db_text' => $show_backup_db_text,
+			'show_maintenance_switch'=> $show_maintenance_switch,
+			'script_names'=>$script_names,
+			'show_continue_current_migration_script'=>$show_continue_current_migration_script,
+			'last_migration_was_borked'=>$last_migration_was_borked
+		));
+		require_once(EE_HELPERS . 'EE_Form_Fields.helper.php');
+		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
+		//localize script stuff
+		wp_localize_script('ee-maintenance', 'ee_maintenance', array(
+			'migrating'=>  __("Migrating...", "event_espresso"),
+			'status_no_more_migration_scripts'=>  EE_Data_Migration_Manager::status_no_more_migration_scripts,
+			'status_fatal_error'=>  EE_Data_Migration_Manager::status_fatal_error,
+			'status_completed'=>  EE_Data_Migration_Manager::status_completed,
+			'status_no_more_migration_scripts'=> EE_Data_Migration_Manager::status_no_more_migration_scripts));
+		$this->display_admin_page_with_sidebar();
 	}
 	public function migration_step(){
 		$this->_template_args['data'] = EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
@@ -128,7 +183,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('ee_admin_js');
 //		wp_enqueue_media();
 //		wp_enqueue_script('media-upload');
-		wp_enqueue_script('ee-maintenance',EE_MAINTENANCE_ASSETS_URL.'/ee-maintenance.js',array('jquery'),null,true);
+		wp_enqueue_script('ee-maintenance',EE_MAINTENANCE_ASSETS_URL.'/ee-maintenance.js',array('jquery'),EVENT_ESPRESSO_VERSION,true);
 	}
 
 
