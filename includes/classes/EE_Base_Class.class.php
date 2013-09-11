@@ -302,12 +302,12 @@ class EE_Base_Class{
 	 * @param mixed  $value        The value we are caching.
 	 * @return void
 	 */
-	protected function _set_cached_property( $propertyname, $value, $pretty = FALSE ) {
+	protected function _set_cached_property( $propertyname, $value, $cache_type = NULL ) {
 		//first make sure this property exists
 		if ( !property_exists( $this, $propertyname ) )
 			throw new EE_Error( sprintf( __('Trying to cache a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
 
-		$cache_type = $pretty ? 'pretty' : 'standard';
+		$cache_type = empty( $cache_type ) ? 'standard' : $cache_type;
 		$this->_cached_properties[$propertyname][$cache_type] = $value;
 	}
 
@@ -319,14 +319,18 @@ class EE_Base_Class{
 	 * This returns the value cached property if it exists OR the actual property value if the cache doesn't exist.
 	 * This also SETS the cache if we return the actual property!
 	 * @param  string $propertyname the name of the property we're trying to retrieve
+	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
 	 * @return mixed                whatever the value for the property is we're retrieving
 	 */
-	protected function _get_cached_property( $propertyname, $pretty = FALSE ) {
+	protected function _get_cached_property( $propertyname, $pretty = FALSE, $extra_cache_ref = NULL ) {
+	
 		//first make sure this property exists
 		if ( !property_exists( $this, $propertyname ) )
 			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
 
 		$cache_type = $pretty ? 'pretty' : 'standard';
+		$cache_type .= !empty( $extra_cache_ref ) ? '_' . $extra_cache_ref : '';
+
 
 		if ( isset( $this->_cached_properties[$propertyname][$cache_type] ) ) {
 			return $this->_cached_properties[$propertyname][$cache_type];
@@ -336,7 +340,7 @@ class EE_Base_Class{
 		$field_name = ltrim( $propertyname, '_' );
 		$field_obj = $this->get_model()->field_settings_for($field_name);
 		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname) : $field_obj->prepare_for_get($this->$propertyname );
-		$this->_set_cached_property( $propertyname, $value, $pretty );
+		$this->_set_cached_property( $propertyname, $value, $cache_type );
 		return $value;
 	}
 
@@ -473,32 +477,35 @@ class EE_Base_Class{
 	 * verifies that the specified field is of the correct type
 	 * @param mixed $value the value to check if it's of the correct type
 	 * @param EE_Model_Field $fieldSettings settings for a specific field. 
+	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
 	 * @return boolean
 	 * @throws EE_Error if fieldSettings is misconfigured
 	 */
-	public function get($field_name){
+	public function get($field_name, $extra_cache_ref = NULL ){
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
-		return $this->_get_cached_property( $privateAttributeName );
+		return $this->_get_cached_property( $privateAttributeName, FALSE, $extra_cache_ref );
 	}
 	
 	/**
 	 * To be used in template to immediately echo out the value, and format it for output.
 	 * Eg, shoudl call stripslashes and whatnought before echoing
 	 * @param string $field_name the name of the field as it appears in teh DB
+	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
 	 * @return void
 	 */
-	public function e($field_name){
-		echo $this->get_pretty($field_name);
+	public function e($field_name, $extra_cache_ref = NULL){
+		echo $this->get_pretty($field_name, $extra_cache_ref);
 	}
 	
 	/**
 	 * 
 	 * @param string $field_name
+	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
 	 * @return mixed
 	 */
-	public function get_pretty($field_name){
+	public function get_pretty($field_name, $extra_cache_ref = NULL){
 		$privateAttributeName = $this->_get_private_attribute_name($field_name);
-		return  $this->_get_cached_property( $privateAttributeName, TRUE );
+		return  $this->_get_cached_property( $privateAttributeName, TRUE, $extra_cache_ref );
 	}
 
 
@@ -516,28 +523,30 @@ class EE_Base_Class{
 	 * @return mixed               string on success, FALSE on fail, or EE_Error Exception is thrown if field is not a valid dtt field
 	 */
 	protected function _get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $date_or_time = NULL, $echo = FALSE ) {
+		
 		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : $dt_frmt;
 		$in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
+
 
 		//validate field for datetime and returns field settings if valid.
 		$field = $this->_get_dtt_field_settings( $field_name );
 		$var_name = $this->_get_private_attribute_name( $field_name );
 
 		if ( $dt_frmt !== NULL ) {
-			$this->_clear_cached_property( $var_name );
-			if ( $echo )
-				$field->set_pretty_date_format( $in_dt_frmt );
-			else 
-				$field->set_date_format( $in_dt_frmt );
+			$this->_clear_cached_property( $var_name, $date_or_time );
 		}
+		if ( $echo )
+			$field->set_pretty_date_format( $in_dt_frmt );
+		else 
+			$field->set_date_format( $in_dt_frmt );
 
-		if ( !empty($tm_frmt) ) {
-			$this->_clear_cached_property( $var_name );
-			if ( $echo )
-				$field->set_pretty_time_format( $in_tm_frmt );
-			else
-				$field->set_time_format( $in_tm_frmt );
+		if ( $tm_frmt !== NULL ) {
+			$this->_clear_cached_property( $var_name, $date_or_time );
 		}
+		if ( $echo )
+			$field->set_pretty_time_format( $in_tm_frmt );
+		else
+			$field->set_time_format( $in_tm_frmt );
 
 		//set timezone in field object
 		$field->set_timezone( $this->_timezone );
@@ -557,10 +566,11 @@ class EE_Base_Class{
 				$field->set_date_time_output();
 		}
 
+
 		if ( $echo ) {
-			$this->e( ltrim( $var_name, '_' ) );
+			$this->e( ltrim( $var_name, '_' ), $date_or_time );
 		 } else
-			return $this->get( ltrim( $var_name, '_' ) );
+			return $this->get( ltrim( $var_name, '_' ), $date_or_time );
 	}
 
 
