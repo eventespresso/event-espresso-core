@@ -55,7 +55,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 			'group' => 'settings',
 			'menu_order' => 30,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'espresso_events'
+			'parent_slug' => 'espresso_tools'
 			);
 		switch( EE_Maintenance_Mode::instance()->level() ){
 			case 1:
@@ -67,7 +67,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 				break;
 			case 0:
 			default:
-				$map['show_on_menu']=TRUE;
+				$map['show_on_menu']=false;
 		}
 		return $map;
 	}

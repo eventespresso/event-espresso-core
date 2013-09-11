@@ -69,10 +69,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		//level 2 (everything except maintenance page)
 		switch(EE_Maintenance_Mode::instance()->level()){
 			case EE_Maintenance_Mode::level_0_not_in_maintenance:
-				
+				echo "level 0";
 				break;
 			case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
-				
+				echo "level 1";
 				break;
 			case EE_Maintenance_Mode::level_2_complete_maintenance:
 				$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';

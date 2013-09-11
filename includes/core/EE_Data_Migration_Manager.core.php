@@ -128,7 +128,7 @@ class EE_Data_Migration_Manager{
 	private function _migrates_to_version($migration_script_name){
 		preg_match('~EE_DMS_([0-9]*)_([0-9]*)_(.*)~',$migration_script_name,$matches);
 			if( ! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))){
-				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w x and y are numbers, and z is either 'core' or the slug of an addon", "event_espresso"),$classname));
+				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w x and y are numbers, and z is either 'core' or the slug of an addon", "event_espresso"),$migration_script_name));
 			}
 		$version =   $matches[1].".".$matches[2].".".$matches[3]; 
 		return $version;

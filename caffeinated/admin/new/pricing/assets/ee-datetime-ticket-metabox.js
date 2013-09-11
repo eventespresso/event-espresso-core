@@ -631,6 +631,7 @@ jQuery(document).ready(function($) {
 
 			//need to update the displayed TKT name
 			var TKT_name = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + this.ticketRow).val();
+			tktsold = $('.ticket-display-row-TKT_sold', '#display-ticketrow-' + this.ticketRow).text();
 			$('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow).text(TKT_name);
 
 			//..and in all related tkt list rows!
@@ -728,7 +729,8 @@ jQuery(document).ready(function($) {
 			//replace all instances of TICKETNUM with ticketRow
 			new_tkt_list_row = new_tkt_list_row.replace(/TICKETNUM/g, this.ticketRow );
 			//get name for ticket and add to the new li item
-			var TKT_name = $('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow ).text() + ': 0';
+			var TKT_name = $('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow ).text();
+			TKT_name += ': 0';
 			new_tkt_list_row = new_tkt_list_row.replace(/TKTNAME/g, TKT_name);
 			default_list_row_for_tkt = new_tkt_list_row; //without DTTNUM replaced.
 			//replace all instance of DTTNUM with  dttrownum
@@ -768,21 +770,27 @@ jQuery(document).ready(function($) {
 
 			switch ( this.context ) {
 				case 'datetime' :
-					//if this datetime is the primary dtt then we need to make sure that the next dtt in the list becomes the primary
-					if ( $( '#edit-event-datetime-' + row ).find('.event-datetime-DTT_is_primary').val() === '1' ) {
-						var nextrow = row + 1;
-						$('#edit-event-datetime-' + nextrow ).find('.event-datetime-DTT_is_primary').val('1');
+
+					var dodelete = this.verifyDTTsOnTickets(row);
+
+					if ( dodelete ) {
+
+						//if this datetime is the primary dtt then we need to make sure that the next dtt in the list becomes the primary
+						if ( $( '#edit-event-datetime-' + row ).find('.event-datetime-DTT_is_primary').val() === '1' ) {
+							var nextrow = row + 1;
+							$('#edit-event-datetime-' + nextrow ).find('.event-datetime-DTT_is_primary').val('1');
+						}
+
+						$('#event-datetime-' + row).remove();
+						this.ticketRow = 0; //set to 0 so we remove dtts for all tickets.
+						this.dateTimeRow = row;
+
+
+						//if we've only got one row then we need to remove trash on that row.
+						if ( $('.event-datetime-row', '.event-datetimes-container').length == 1 )
+							$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon').hide();
+						this.toggleActiveDTTorTicket(this.context, true);
 					}
-
-					$('#event-datetime-' + row).remove();
-					this.ticketRow = 0; //set to 0 so we remove dtts for all tickets.
-					this.dateTimeRow = row;
-
-
-					//if we've only got one row then we need to remove trash on that row.
-					if ( $('.event-datetime-row', '.event-datetimes-container').length == 1 )
-						$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon').hide();
-					this.toggleActiveDTTorTicket(this.context, true);
 					break;
 
 				case 'ticket' :
@@ -808,6 +816,44 @@ jQuery(document).ready(function($) {
 			}
 			
 			return this;
+		},
+
+
+
+
+
+		/**
+		 * verify whether the trashed dtt is the ONLY dtt remaining on a ticket and if it is then we display a modal with options.
+		 * @return {bool} true if DTT can be trashed (i.e. it isn't the only dtt on any tickets) false, if its the only dtt on any ticket.
+		 */
+		verifyDTTsOnTickets: function(row) {
+			//get all ticket rows that have this dtt active on them.
+			var tktrow,
+				tktdata,
+				singleDTTTKTs = [],
+				activeTKTs = $('.ticket-selected', '#event-datetime-' + row);
+
+			console.log(activeTKTs);
+
+			//foreach of these tickets lets check if this datetime is the ONLY dtt active.
+			activeTKTs.each( function() {
+				tktdata = $(this).data();
+				tktrow = tktdata.ticketRow;
+				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 )
+					singleDTTTKTs[tktrow] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).val();
+				});
+
+			console.log(singleDTTTKTs);
+
+			if ( singleDTTTKTs.length === 0 )
+				return true; //we're okay
+
+			//otherwise let's throw up the dialog and prompt
+			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.cancel_button + '</div>';
+
+			
+			dialogHelper.displayModal().addContent(htmlcontent);
+			return false;
 		},
 
 

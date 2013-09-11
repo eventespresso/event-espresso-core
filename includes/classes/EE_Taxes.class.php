@@ -246,7 +246,7 @@ class EE_Taxes extends EE_BASE {
 	/**
 	 * simply take an incoming ticket and calculate the subtotal for the ticket
 	 * @param  EE_Ticket $ticket 
-	 * @return float              subtotal calced from all EE_Price[] on Ticket.
+	 * @return float     subtotal calced from all EE_Price[] on Ticket.
 	 */
 	private static function _get_subtotal_for_admin( EE_Ticket $ticket ) {
 		$subtotal = 0;
@@ -297,13 +297,14 @@ class EE_Taxes extends EE_BASE {
 *
 * ------------------------------------------------------------------------
 */
+EE_Registry::instance()->load_class( 'Cost_Calculator', array(), FALSE, TRUE, TRUE ); //has to be moved outside of the EE_Total class BECAUSE EE_Ticket_cost is defined in EE_Cost_Calculator.class.php
 class EE_Total extends EE_Ticket_Cost {
 
 	protected $_name;
 	
 	function __construct( $total, $name ) {
 		
-		EE_Registry::instance()->load_class( 'Cost_Calculator', array(), FALSE, TRUE, TRUE );
+		
 		EE_Registry::instance()->load_helper( 'Template' );
 
 		$this->_price = $total;

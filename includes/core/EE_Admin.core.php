@@ -409,7 +409,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-events-new',
 				'parent' => 'espresso-toolbar-events',
 				'title' => 'Add New',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'add_event' ), EVENTS_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'create_new' ), EVENTS_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Add New'),
 						'target' => '',

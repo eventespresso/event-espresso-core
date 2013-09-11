@@ -382,6 +382,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * admin_footer
+	 * anything triggered by the 'admin_footer' WP action hook should be added to here. This particular method will apply to all pages/views loaded by child class.
+	 *
+	 * @access  public
+	 * @return void
+	 */
+	public function admin_footer() {}
+
+
+
+
+
+
 
 
 	/**
@@ -561,6 +575,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
 			add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
+
+		//admin footer scripts
+		add_action('admin_footer', array( $this, 'admin_footer_global' ), 99 );
+		add_action('admin_footer', array( $this, 'admin_footer'), 100 );
+		if ( method_exists( $this, 'admin_footer_' . $this->_current_view ) )
+			add_action('admin_footer', array( $this, 'admin_footer_' . $this->current_view ), 101 );
 		
 
 		do_action('FHEE_admin_load_page_dependencies', $this->page_slug );
@@ -997,6 +1017,26 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
+	/**
+	 * admin_footer_global
+	 * Anything triggered by the wp 'admin_footer' wp hook should be put in here. This particluar method will apply on ALL EE_Admin Pages.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function admin_footer_global() {
+		//dialog container for dialog helper
+		$d_cont = '<div class="ee-admin-dialog-container auto-hide hidden">' . "\n";
+		$d_cont .= '<div class="ee-notices"></div>';
+		$d_cont .= '<div class="ajax-loader-grey"></div>';
+		$d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
+		$d_cont .= '</div>';
+		echo $d_cont;
+	}
+
+
 	/**
 	 * This function sees if there is a method for help popup content existing for the given route.  If there is then we'll use the retrieved array to output the content using the template.
 	 *
@@ -1186,7 +1226,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		/** SCRIPTS **/
 
 		//register all scripts
-		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('jquery', 'ee-parse-uri'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script('ee-dialog', EE_CORE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true );
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
