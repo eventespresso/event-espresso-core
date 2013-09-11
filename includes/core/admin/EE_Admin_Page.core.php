@@ -1226,7 +1226,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		/** SCRIPTS **/
 
 		//register all scripts
-		wp_register_script('ee-dialog', EE_CORE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('ee-dialog', EE_CORE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true );
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
