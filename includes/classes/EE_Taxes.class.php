@@ -21,6 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
+EE_Registry::instance()->load_class( 'Cost_Calculator', array(), FALSE, TRUE, TRUE );
 class EE_Taxes extends EE_BASE {
 
 	/**
@@ -297,13 +298,11 @@ class EE_Taxes extends EE_BASE {
 *
 * ------------------------------------------------------------------------
 */
-EE_Registry::instance()->load_class( 'Cost_Calculator', array(), FALSE, TRUE, TRUE ); //has to be moved outside of the EE_Total class BECAUSE EE_Ticket_cost is defined in EE_Cost_Calculator.class.php
 class EE_Total extends EE_Ticket_Cost {
 
 	protected $_name;
 	
 	function __construct( $total, $name ) {
-		
 		
 		EE_Registry::instance()->load_helper( 'Template' );
 
