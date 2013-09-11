@@ -827,21 +827,31 @@ jQuery(document).ready(function($) {
 		verifyDTTsOnTickets: function(row) {
 			//get all ticket rows that have this dtt active on them.
 			var tktrow,
-				singleDTTTKTs,
+				tktdata,
+				singleDTTTKTs = [],
 				activeTKTs = $('.ticket-selected', '#event-datetime-' + row);
+
+			console.log(activeTKTs);
 
 			//foreach of these tickets lets check if this datetime is the ONLY dtt active.
 			activeTKTs.each( function() {
-				tktrow = $(this).data('ticketRow');
+				tktdata = $(this).data();
+				tktrow = tktdata.ticketRow;
 				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 )
-					singleDTTTKTs[] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).text();
-			});
+					singleDTTTKTs[tktrow] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).val();
+				});
 
-			if ( singleDTTTKTS.length === 0 )
+			console.log(singleDTTTKTs);
+
+			if ( singleDTTTKTs.length === 0 )
 				return true; //we're okay
 
 			//otherwise let's throw up the dialog and prompt
+			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.cancel_button + '</div>';
+
 			
+			dialogHelper.displayModal().addContent(htmlcontent);
+			return false;
 		},
 
 

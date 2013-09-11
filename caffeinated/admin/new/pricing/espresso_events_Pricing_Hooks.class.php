@@ -59,7 +59,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					),
 				'ee-dtt-ticket-metabox' => array(
 					'url' => PRICING_ASSETS_URL . 'ee-datetime-ticket-metabox.js',
-					'depends' => array('ee-datepicker')
+					'depends' => array('ee-datepicker', 'ee-dialog')
 					)
 				),
 			'deregisters' => array(
@@ -69,6 +69,15 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'enqueues' => array(
 				'ee-tickets-datetimes-css' => array( 'edit', 'create_new' ),
 				'ee-dtt-ticket-metabox' => array( 'edit', 'create_new' )
+				),
+			'localize' => array(
+				'ee-dtt-ticket-metabox' => array(
+					'DTT_TRASH_BLOCK' => array(
+						'main_warning' => __('The Datetime you are attempting to trash is the only datetime selected for the following ticket(s):', 'event_espresso'),
+						'after_warning' => __('In order to trash this datetime you must first make sure the above ticket(s) are attached to other datetimes.', 'event_espresso'),
+						'cancel_button' => '<button class="button-secondary ee-modal-cancel">' . __('Cancel', 'event_espresso') . '</button>'
+						)
+					)
 				)
 			);
 

@@ -578,7 +578,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//admin footer scripts
 		add_action('admin_footer', array( $this, 'admin_footer_global' ), 99 );
-		add_action('admin_footer', array( $this, 'admin_footer', 100 ) );
+		add_action('admin_footer', array( $this, 'admin_footer'), 100 );
 		if ( method_exists( $this, 'admin_footer_' . $this->_current_view ) )
 			add_action('admin_footer', array( $this, 'admin_footer_' . $this->current_view ), 101 );
 		
@@ -1033,6 +1033,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$d_cont .= '<div class="ajax-loader-grey"></div>';
 		$d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
 		$d_cont .= '</div>';
+		echo $d_cont;
 	}
 
 

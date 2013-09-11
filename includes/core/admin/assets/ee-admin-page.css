@@ -535,3 +535,18 @@ label.error  { display: block; color: #FE2A00 !important; }
 	font-size: .8em;
 	display: block;
 }
+
+
+/**
+ * ee-dialog helper css
+ */
+.ee-admin-dialog-container {
+	position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
+	background:#fff; border:1px solid #ddd; border-radius:5px;
+}
+
+.ajax-loader-grey {
+	background: transparent url(../../../../../images/ajax-loader-grey.gif) no-repeat top left;
+	padding: 31px;
+	display: none;
+}
