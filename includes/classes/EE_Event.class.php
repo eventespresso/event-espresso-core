@@ -623,6 +623,9 @@ class EE_Event extends EE_CPT_Base{
 	public function get_number_of_tickets_sold() {
 		$tkt_sold = 0;
 
+		if ( empty( $this->_EVT_ID ) )
+			return 0;
+
 		$datetimes = $this->get_many_related('Datetime');
 
 		foreach ( $datetimes as $datetime ) {
