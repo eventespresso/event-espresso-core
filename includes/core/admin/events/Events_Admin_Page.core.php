@@ -1011,7 +1011,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'default');
 
-		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->page_slug, 'normal', 'core');	
+		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->page_slug, 'normal', 'core');
 
 
 		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
