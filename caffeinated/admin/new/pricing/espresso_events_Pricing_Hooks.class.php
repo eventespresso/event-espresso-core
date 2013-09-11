@@ -602,7 +602,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$displayrow = !empty( $ticket ) ? $ticket->get('TKT_row') : 0;
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
-			'tkt_row' => $default && empty( $ticket ) ? 'TKTNUM' : $tktrow,
+			'tkt_row' => $default && empty( $ticket ) ? 'TICKETNUM' : $tktrow,
 			'datetime_ticket_checked' => in_array($displayrow, $dtt_tkts) ? ' checked="checked"' : '',
 			'ticket_selected' => in_array($displayrow, $dtt_tkts) ? ' ticket-selected' : '',
 			'TKT_name' => $default && empty( $ticket ) ? 'TKTNAME' : $ticket->get('TKT_name')

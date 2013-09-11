@@ -631,6 +631,7 @@ jQuery(document).ready(function($) {
 
 			//need to update the displayed TKT name
 			var TKT_name = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + this.ticketRow).val();
+			tktsold = $('.ticket-display-row-TKT_sold', '#display-ticketrow-' + this.ticketRow).text();
 			$('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow).text(TKT_name);
 
 			//..and in all related tkt list rows!
@@ -728,7 +729,8 @@ jQuery(document).ready(function($) {
 			//replace all instances of TICKETNUM with ticketRow
 			new_tkt_list_row = new_tkt_list_row.replace(/TICKETNUM/g, this.ticketRow );
 			//get name for ticket and add to the new li item
-			var TKT_name = $('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow ).text() + ': 0';
+			var TKT_name = $('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow ).text();
+			TKT_name += ': 0';
 			new_tkt_list_row = new_tkt_list_row.replace(/TKTNAME/g, TKT_name);
 			default_list_row_for_tkt = new_tkt_list_row; //without DTTNUM replaced.
 			//replace all instance of DTTNUM with  dttrownum
