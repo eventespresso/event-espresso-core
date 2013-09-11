@@ -21,6 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
+EE_Registry::instance()->load_class( 'Cost_Calculator', array(), FALSE, TRUE, TRUE );
 class EE_Taxes extends EE_BASE {
 
 	/**
@@ -303,7 +304,6 @@ class EE_Total extends EE_Ticket_Cost {
 	
 	function __construct( $total, $name ) {
 		
-		EE_Registry::instance()->load_class( 'Cost_Calculator', array(), FALSE, TRUE, TRUE );
 		EE_Registry::instance()->load_helper( 'Template' );
 
 		$this->_price = $total;
