@@ -371,7 +371,7 @@ function espresso_calendar_do_stuff($show_expired) {
 		
 		//Supports 3.1 short descriptions
 		if (isset($org_options['display_short_description_in_event_list']) && $org_options['display_short_description_in_event_list'] == 'Y') {
-			$eventArray['description'] = array_shift(explode('<!--more-->', $eventArray['description']));
+			$eventArray['description'] = !empty($eventArray['description']) ? array_shift(explode('<!--more-->', $eventArray['description'])) : '';
 		}
 		
 		$eventArray['display_reg_form'] = $event->display_reg_form;
