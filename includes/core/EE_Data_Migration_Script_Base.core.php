@@ -13,14 +13,33 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	protected $_migration_stages;
 	
+	/**
+	 * Output (warnings, errors) from doing the schema changes before the migration.
+	 * If there are warnings this will be a string. If there are no warnings, it will
+	 * simply be TRUE. If it hasn't run, it will be null.
+	 * @var mixed
+	 */
+	protected $_schema_changes_before_migration_output = null;
+	/**
+	 * Output (warnings, errors) from doing the schema changes after the migration.
+	 * If there are warnings this will be a string. If there are no warnings, it will
+	 * simply be TRUE. If it hasn't run, it will be null.
+	 * @var mixed
+	 */
+	protected $_schema_changes_after_migration_output = null;
 	
+	/**
+	 * String which describes what's currently happening in this migration
+	 * @var string
+	 */
+	protected $_feedback_message;
 	/**
 	 * Returns whether or not this data migration script can operate on the given version of the database.
 	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
 	 * it's passed a string like '3.1.38B', it should return true
 	 * @return boolean
 	 */
-	abstract static public function  can_migrate_from_version($version_string);
+	abstract public function  can_migrate_from_version($version_string);
 	/**
 	 * Performs database schema changes that need to occur BEFORE the data is migrated.
 	 * Eg, if we were going to change user passwords from plaintext to encoded versions
@@ -53,7 +72,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	protected function _count_records_to_migrate(){
 		$count = 0;
 		foreach($this->stages() as $stage){
-			$count+= $stage->count_records_migrated();
+			$count+= $stage->count_records_to_migrate();
 		}
 		return $count;
 	}
@@ -68,25 +87,90 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		foreach($this->stages() as $stage){
 			$count+= $stage->count_records_migrated();
 		}
+		$this->_records_migrated = $count;
 		return $count;
 	}
 	
 	public function migration_step($num_records_to_migrate){
 		
+		//if wehaven't yet done the 1st schema changes, do them now. buffer any output
+		$was_fatal = $this->_maybe_do_schema_changes(true);
+		if($was_fatal){
+			$this->_feedback_message = sprintf(__("Fatal error occcured in finalizing the database during %s", "event_espresso"),$this->pretty_name());
+			return 0;
+		}
 		$items_actually_updated =0;
 		//get the next stage that isn't complete
 		foreach($this->stages() as $stage){
 			if( in_array($stage->get_status(),array(EE_Data_Migration_Manager::status_continue,  EE_Data_Migration_Manager::status_error))){
-				$items_actually_updated += $stage->migration_step($num_records_to_migrate);
-				$this->set_status($stage->get_status());
+				try{
+					$items_actually_updated += $stage->migration_step($num_records_to_migrate);
+				}catch(Exception $e){
+					$stage->set_status(EE_Data_Migration_Manager::status_fatal_error);
+				}
+				if(in_array($stage->get_status(),array(
+					EE_Data_Migration_Manager::status_error,
+					EE_Data_Migration_Manager::status_fatal_error
+				))){
+					$this->set_status($stage->get_status());
+				}
+					
 			}
-			//check for errors
 			if ($items_actually_updated == $num_records_to_migrate){
 				break;
 			}
 		}
+		if($items_actually_updated < $num_records_to_migrate){
+			//apparently we're done
+			$this->set_status(EE_Data_Migration_Manager::status_completed);
+			//do schema changes for after the migration now
+			//first double-cehckw ehaven't already done this
+			$was_fatal = $this->_maybe_do_schema_changes(false);
+			if($was_fatal){
+				$this->_feedback_message = sprintf(__("Fatal error occcured in finalizing the database during %s", "event_espresso"),$this->pretty_name());
+			}
+		}else{
+			//update the feedback message
+			$this->_feedback_message = sprintf(__("Migrated %d records successfully during %s", "event_espresso"),$items_actually_updated,$stage->pretty_name());
+		}
 		return $items_actually_updated;
 	}
+	/**
+	 * Calls either schema_changes_before_migration() (if $before==true) or schema_changes_after_migration
+	 * (if $before==false). Buffers their outputs and stores them on the class.
+	 * @param boolean $before
+	 */
+	private function _maybe_do_schema_changes($before = true){
+		//so this property will be ither _schema_changes_after_migration_output or _schema_changes_before_migration_output
+		$property_name = '_schema_changes_'. ($before ? 'before' : 'after').'_migration_output';
+		$fatal_error_occurred = false;
+		$output = '';
+		if ( ! $this->$property_name ){
+			try{
+				ob_start();
+				if($before){
+					$this->schema_changes_before_migration();
+				}else{
+					$this->schema_changes_after_migration();
+				}
+				$output = ob_get_contents();
+				ob_end_clean();
+			}catch(Exception $e){
+				$output = print_r($e,true);
+				$this->set_status(EE_Data_Migration_Manager::status_fatal_error);
+				$fatal_error_occurred = true;
+			}
+			if( $output ){
+				//there were some warnings
+				$this->$property_name = $output;
+			}else{
+				//there were no warnings etc from the data migration changes
+				$this->$property_name = TRUE;
+			}
+		}
+		return apply_filters('FHEE__'.get_class($this).'__maybe_do_schema_changes__return',$fatal_error_occurred,$before,$output);
+	}
+	
 	/**
 	 * returns an arrya of strings describing errors by all the script's stages
 	 * @return array
@@ -111,6 +195,15 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		ksort($stages);
 		return $stages;
 	}
+	
+	/**
+	 * Gets a string which should describe what's going on currently with this migration, which
+	 * can be displayed to the user
+	 * @return string
+	 */
+	public function get_feedback_message(){
+		return $this->_feedback_message;
+	}
 }
 
 abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Base{
@@ -118,12 +211,26 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 *
 	 * @var array
 	 */
-	protected $errors;
+	protected $errors = array();
+	
+	public function migration_step($num_items_to_migrate=50){
+		//before we run the migration step, we want ot take note of warnings that get outputted
+		ob_start();
+		$items_migrated = $this->_migration_step($num_items_to_migrate);
+		$output = ob_get_contents();
+		ob_end_clean();
+		if( $output ){
+			$this->add_error($output);
+		}
+		$this->_records_migrated += $items_migrated;
+		return $items_migrated;
+	}
 	/**
-	 * Note: if an error is encountered, or everything is finished, this stage should update its status property accordingly
+	 * Note: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
+	 * Note: it should not alter teh count of items migrated. That is done in the public function that calls this.
 	 * @return int number of items ACTUALLY migrated
 	 */
-	abstract public function migration_step($num_items_to_migrate=50);
+	abstract protected function _migration_step($num_items_to_migrate=50);
 	
 	/**
 	 * returns an arrya of strings describing errors
@@ -137,6 +244,9 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 		$this->errors[] = $error;
 	}
 	
+	public function count_records_migrated() {
+		return $this->_records_migrated;
+	}
 	
 }
 
@@ -147,12 +257,12 @@ abstract class EE_Data_Migration_Class_Base{
 	/**
 	 * @var $records_to_migrate int count of all that have been migrated
 	 */
-	protected $_records_to_migrate;
+	protected $_records_to_migrate = 0;
 	/**
 	 *
 	 * @var $records_migrated int
 	 */
-	protected $_records_migrated;
+	protected $_records_migrated = 0;
 	
 	
 	/**
@@ -161,6 +271,10 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @var string one of status_completed, status_continue, or status_error
 	 */
 	protected $_status;
+	
+	public function __construct(){
+		$this->set_status(EE_Data_Migration_Manager::status_continue);
+	}
 	public function count_records_to_migrate(){
 		if( $this->_records_to_migrate == null){
 			$this->_records_to_migrate = $this->_count_records_to_migrate();
