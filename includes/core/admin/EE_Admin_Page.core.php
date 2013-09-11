@@ -389,7 +389,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @access  public
 	 * @return void
 	 */
-	abstract public function admin_footer();
+	public function admin_footer() {}
 
 
 
