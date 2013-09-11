@@ -636,6 +636,33 @@ class EEM_Event  extends EEM_CPT_Base{
 	}
 
 
+
+	/**
+	 * This basically just returns the events that do not have the publish status or that are expired.
+	 * @param  array  $query_params  An array of query params to further filter on (note that status will be overwritten)
+	 * @param  boolean $count        whether to return the count or not (default FALSE)
+	 * @return EE_Event[]            array of EE_Event objects
+	 */
+	public function get_inactive_events( $query_params, $count = FALSE ) {
+		if ( array_key_exists( 0, $query_params ) ) {
+			$where_params = $query_params[0];
+			unset( $query_params[0] );
+		} else {
+			$where_params = array();
+		}
+
+		//let's add in specific query_params for inactive events.
+		if ( isset( $where_params['status'] ) )
+			unset( $where_params['status'] );
+
+		//we check for events that are not published OR are expired.
+
+		$where_params['OR'] = array( 'status' => array( '!=', 'publish' ), 'Datetime.DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
+		$query_params[0] = $where_params;
+		return $count ? $this->count( $query_params, 'EVT_ID' ) : $this->get_all( $query_params );
+	}
+
+
 	/**
 	 * This is just injecting into the parent add_relationship_to so we do special handling on price relationships because we don't want to override any existing global default prices but instead insert NEW prices that get attached to the event.
 	 * See parent for param descriptions
