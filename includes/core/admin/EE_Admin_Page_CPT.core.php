@@ -811,10 +811,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return string template for add new cpt form
 	 */
 	protected function _create_new_cpt_item() {
-		global $post;
+		global $post, $title;
 		$this->_template_args['post_type'] = $this->page_slug;
 		$this->_template_args['post_type_object'] = $this->_cpt_object;
-		$this->_template_args['title'] = $this->_template_args['post_type_object']->labels->add_new_item;
+		$title = $this->_template_args['post_type_object']->labels->add_new_item;
 		$this->_template_args['editing'] = TRUE;
 		wp_enqueue_script( 'autosave' );
 		$this->_template_args['post'] = $post = get_default_post_to_edit( $this->page_slug, TRUE );
@@ -840,7 +840,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return string   template for edit cpt form
 	 */			
 	protected function _edit_cpt_item() {
-		global $post;
+		global $post, $title;
 		$post_id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$post = !empty( $post_id ) ? get_post( $post_id, OBJECT, 'edit' ) : NULL;
 
@@ -861,7 +861,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			wp_enqueue_script('autosave');
 		}
 
-		$this->_template_args['title'] = $this->_cpt_object->labels->edit_item;
+		$title = $this->_cpt_object->labels->edit_item;
+		$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new'), $this->_admin_base_url );
 
 		if ( post_type_supports($this->page_slug, 'comments') ) {
 			wp_enqueue_script('admin-comments');
