@@ -103,7 +103,7 @@ class EE_MSG_Template {
 
 		//if the count is greater than 0 then we need to update the templates so they are active.
 		if ( $count > 0 ) {
-			$MTP->update( array('MTP_is_active' => 1), array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type ) );
+			$MTP->update( array('MTP_is_active' => 1), array(array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type )) );
 		}
 		
 		return ( $count > 0 ) ? TRUE : FALSE;

@@ -1281,6 +1281,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				case 'active' :
 					return $EEME->get_active_events( $query_params, $count );
 					break;
+
+				case 'inactive' :
+					return $EEME->get_inactive_events( $query_params, $count );
+					break;
 			}
 		}
 
@@ -1580,7 +1584,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function  active_status_dropdown( $current_value = '' ) {
 		$select_name = 'active_status';
-		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_epsresso'), 'upcoming' => __('Upcoming', 'event_espresso'), 'expired' => __('Expired', 'event_espresso') );
+		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_epsresso'), 'upcoming' => __('Upcoming', 'event_espresso'), 'expired' => __('Expired', 'event_espresso'), 'inactive' => __('Inactive', 'event_espresso') );
 		$id = 'id="espresso-active-status-dropdown-filter"';
 		$class = 'wide';
 		echo EE_Form_Fields::select_input( $select_name, $values, $current_value, $id, $class );

@@ -247,7 +247,7 @@ class EE_Taxes extends EE_BASE {
 	/**
 	 * simply take an incoming ticket and calculate the subtotal for the ticket
 	 * @param  EE_Ticket $ticket 
-	 * @return float              subtotal calced from all EE_Price[] on Ticket.
+	 * @return float     subtotal calced from all EE_Price[] on Ticket.
 	 */
 	private static function _get_subtotal_for_admin( EE_Ticket $ticket ) {
 		$subtotal = 0;

@@ -136,6 +136,7 @@ final class EE_Admin {
 	private function _load_system_files() {
 		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
 			require_once( EE_CORE . 'EE_System.core.php' );
+			EE_System::instance();
 			$this->EE = EE_Registry::instance();
 		} else {
 			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
@@ -189,7 +190,8 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function init() {
-		
+		// initialize teh systen, which also checks for db changes
+		EE_System::instance();
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
@@ -203,8 +205,7 @@ final class EE_Admin {
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			
-			// check for db changes
-			EE_System::instance()->check_espresso_version();
+			
 			// bring out the pidgeons!!!
 			require_once( EE_CORE . 'messages' . DS . 'EE_messages_init.core.php' );
 			EE_messages_init::init();
@@ -408,7 +409,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-events-new',
 				'parent' => 'espresso-toolbar-events',
 				'title' => 'Add New',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'add_event' ), EVENTS_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'create_new' ), EVENTS_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Add New'),
 						'target' => '',
