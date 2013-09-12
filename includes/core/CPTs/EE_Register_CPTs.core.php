@@ -279,7 +279,7 @@ class EE_Register_CPTs {
 		$term_details = array(
 			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized venues', 'event_espresso') )
 			);
-		$this->set_initial_terms( 'espresso_event_categories', $term_details );
+		$this->set_initial_terms( 'espresso_venue_categories', $term_details );
 	}
 
 
@@ -287,15 +287,18 @@ class EE_Register_CPTs {
 
 	function set_initial_event_types() {
 		$term_details = array(
-			'single' => array( __('Single Day', 'event_espresso'), __('Events whose datetimes are the same day. Attendees register for each datetime individually', 'event_espresso') ),
-			'extended' => array( __('Extended', 'event_espresso'), __('Single check-in consecutively occurring range of datetimes. Attendees only need one ticket to attend the event for the entire datetime range.', 'event_espresso') ),
-			'extended-custom' => array( __('Extended Custom', 'event_espresso'), __('Multiple datetimes, consecutively occurring, custom entry events. Attendees can choose to attend one, all, or any combination of datetimes. A ticket is required to attend each datetime.', 'event_espresso') ),
-			'course' => array( __('Course', 'event_espresso'), __('Multiple datetime, sequentially required, single entry events. Attendees register for a single datetime and are automatically enrolled in the subsequent datetimes. A single ticket can be used for all datetimes.', 'event_espresso') ),
+			'single-event' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: a party or two-day long workshop
 
-			'walk-in' => array( __('Walk In', 'event_espresso'), __('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),
+			'multi-event' => array( __('Multi Event', 'event_espresso'), __('Multiple, separate, but related events that occur on consecutive days. Attendee\'s can register for any of the date-times', 'event_espresso') ), //example: a three day music festival or week long conference
+
+			'event-series' => array( __('Event Series', 'event_espresso'), __(' Multiple events that occur over multiple non-consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: an 8 week introduction to basket weaving course
+
+			'recurring-event' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days. Attendee\'s can register for any of the date-times.', 'event_espresso') ), //example: a yoga class
+
+			//'walk-in' => array( __('Walk In', 'event_espresso'), __('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),
 			//'reservation' => array( __('Reservation', 'event_espresso'), __('Reservations are created by specifying available datetimes and quantities. Attendees choose from the available datetimes and specify the quantity available (if the maximum is greater than 1)') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
 			// 'multiple-session' => array( __('Multiple Session', 'event_espresso'), __('Multiple event, multiple datetime, hierarchically organized, custom entry events. Attendees may be required to register for a parent event before being allowed to register for child events. Attendees can register for any combination of child events as long as the datetimes do not conflict. Parent and child events may have additional fees or registration questions.') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
-			'appointment' => array( __('Appointments', 'event_espresso'), __('Time slotted events where datetimes are generally in hours or minutes. For example, attendees can register for a single 15 minute or 1 hour time slot and this type of availability frequently reoccurs.', 'event_espresso') )
+			//'appointment' => array( __('Appointments', 'event_espresso'), __('Time slotted events where datetimes are generally in hours or minutes. For example, attendees can register for a single 15 minute or 1 hour time slot and this type of availability frequently reoccurs.', 'event_espresso') )
 
 			);
 		$this->set_initial_terms( 'espresso_event_type', $term_details );

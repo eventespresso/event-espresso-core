@@ -17,8 +17,10 @@
 
 /* PROGRESS BAR STUFF */
 
-progress-responsive {
-  width: 90%;
+.progress-responsive {
+  width: 80%;
+  margin-right:auto;
+  margin-left:auto;
 }
 /* Progress bar containers */
 figure {

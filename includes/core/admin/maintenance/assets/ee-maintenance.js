@@ -90,8 +90,9 @@ var Maintenance_helper = {
 		//update the main title of what we're doing
 		Maintenance_helper.display_content(migration_data.script, '#main-message', 'clear');
 		//update the descriptive text
-		Maintenance_helper.display_content(migration_data.message, '#migration-messages', 'append');
-		if(migration_data.status === ee_maintenance.status_no_more_migration_scripts){
+		Maintenance_helper.display_content(migration_data.message+'<br>', '#migration-messages', 'prepend');
+		if(migration_data.status === ee_maintenance.status_completed ||
+			migration_data.status === ee_maintenance.status_no_more_migration_scripts){
 			Maintenance_helper.finish();
 		}else if(migration_data.status === ee_maintenance.status_fatal_error){
 			//
@@ -102,6 +103,7 @@ var Maintenance_helper = {
 	finish: function(){
 		//change button 
 		//show after-migration options
+		document.location.href = document.location.href + '&continue_migration=true';
 	},
 	do_ajax: function(data, setup) {
 
@@ -165,7 +167,7 @@ var Maintenance_helper = {
 };
 
 jQuery(function() {
-	
+//	alert("jquery a go");
 	//dynamic page stuff
 	//showing start-button and hiding explanatory text
 	jQuery('#db-backed-up').click(function(){

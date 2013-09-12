@@ -178,6 +178,12 @@ class EE_Admin_Page_Loader {
 				'show_heading' => TRUE,
 				'slug' => 'extras',
 				'capability' => 'administrator'
+				),
+			'tools'=>array(
+				'title' => __("Tools", "event_espresso"),
+				'show_heading' => TRUE,
+				'slug' => 'tools',
+				'capability' => 'administrator'
 				)
 			);
 

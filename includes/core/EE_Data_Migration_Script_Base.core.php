@@ -182,6 +182,21 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return $all_errors;
 	}
+	/**
+	 * Indicates whether or not this migration script shoudl continue
+	 * @return boolean
+	 */
+	public function can_continue(){
+		return in_array($this->get_status(),  EE_Data_Migration_Manager::instance()->stati_that_indicate_to_continue_single_migration_script);
+	}
+	
+	/**
+	 * Indicates there was a fatal error and the migration cannot possibly continue
+	 * @return boolean
+	 */
+	public function is_borked(){
+		return $this->get_status() == EE_Data_Migration_Manager::status_fatal_error;
+	}
 	
 	/**
 	 * Gets all the data migration stages associated with this script. Note:

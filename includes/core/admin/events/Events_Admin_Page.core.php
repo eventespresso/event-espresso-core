@@ -279,7 +279,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Unique ID', 'event_espresso'),
 						'callback' => 'unique_id_help_tab'
 						)
-					)
+					),
+				'metaboxes' => array('_publish_post_box')
 				),
 			'edit_category' => array(
 				'nav' => array(
@@ -293,7 +294,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Unique ID', 'event_espresso'),
 						'callback' => 'unique_id_help_tab'
 						)
-					)
+					),
+				'metaboxes' => array('_publish_post_box')
 				),
 			'category_list' => array(
 				'nav' => array(
@@ -1847,8 +1849,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$category_id = absint($this->_req_data['EVT_CAT_ID']);
-		$term = get_term( $category_id, 'espresso_event_categories' );
 
+		$term = get_term( $category_id, 'espresso_event_categories' );
 
 		if ( !empty( $term ) ) {
 			$this->_category->category_name = $term->name;
@@ -1901,7 +1903,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$delete_action = $this->_category->category_identifier == 'uncategorized' ? FALSE : 'delete_category';
 
-		$this->_set_publish_post_box_vars( 'category_id', $id, $delete_action );
+		//custom redirect
+		$redirect = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'category_list'), $this->_admin_base_url );
+
+		$this->_set_publish_post_box_vars( 'EVT_CAT_ID', $id, $delete_action, $redirect );
 
 		//take care of contents
 		$this->_template_args['admin_page_content'] = $this->_category_details_content();
@@ -1964,7 +1969,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'action' => 'edit_category', 
 			'EVT_CAT_ID' => $cat_id
 		);
-		$this->_redirect_after_action( $success, '','', $query_args );
+		$this->_redirect_after_action( $success, '','', $query_args, TRUE );
 
 	}
 
@@ -1972,28 +1977,27 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	private function _insert_category( $update = FALSE ) {
 		global $wpdb;
-		$cat_id = '';
+		$cat_id = $update ? $this->_req_data['EVT_CAT_ID'] : '';
 		$category_name= $this->_req_data['category_name'];
 		$category_identifier = $this->_req_data['category_identifier'];
 		$category_desc= $this->_req_data['category_desc']; 
 
-
 	
 		$term_args=array(
-			'category_name'=>$category_name, 
+			'name'=>$category_name, 
 			'slug'=>$category_identifier, 
 			'description'=>$category_desc,
 			//'parent'=>$espresso_wp_user //eventually this will be added.
 		);
 		
-		$insert_ids = $update ? wp_update_term( $category_name, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
+		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
 			$msg = __( 'An error occured and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];
-			$msg = sprintf ( __('The category %s was successfuly created', 'event_espresso'), $category_name );
+			$msg = sprintf ( __('The category %s was successfuly saved', 'event_espresso'), $category_name );
 			EE_Error::add_success( $msg );
 		}
 		
