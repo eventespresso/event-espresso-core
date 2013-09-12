@@ -42,7 +42,7 @@ jQuery(document).ready(function($) {
 		if( eeTimeout !== false) {
 			clearTimeout(eeTimeout);
 		}
-		eeTimeout = setTimeout(doneResizing, 200);
+		eeTimeout = setTimeout(doneResizing, 100);
 	});
 	
 	//prepare dialog
@@ -63,6 +63,7 @@ jQuery(document).ready(function($) {
 		closeModal: function() {
 			eedialog.fadeOut( 'fast' );
 			overlay.fadeOut( 'fast' );
+			overlay.removeClass('active');
 			$('.ee-admin-dialog-container-inner-content').html('');
 			return this;
 		},
