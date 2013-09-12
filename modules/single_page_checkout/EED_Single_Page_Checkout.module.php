@@ -89,7 +89,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
-		$this->EE = EE_Registry::instance();
+		
 		// load classes
 		$this->EE->load_core( 'Cart' );
 		$this->EE->load_model( 'Gateways' );
@@ -101,7 +101,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->EE->load_class( 'Taxes', array(), FALSE, FALSE, TRUE );
 		$this->set_templates();
 		// load css and js
-		add_action('wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 5 );
+		add_filter( 'FHEE_load_css', '__return_true' );
+		add_filter( 'FHEE_load_js', '__return_true' );
+		add_action('wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 10 );
 		add_filter( 'espresso_filter_hook_calculate_taxes', array( 'EE_Taxes', 'calculate_taxes' ));
 		
 		$this->_reg_page_base_url = get_permalink( $this->EE->CFG->core->reg_page_id );
@@ -540,7 +542,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
 
-//		printr( $EE_Session->get_session_data(), '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $this->EE->SSN->get_session_data(), '$this->EE->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		$this->EE->REQ->set_output( espresso_display_template( $this->_templates['registration_page_wrapper'], $template_args, TRUE ));
 	}
@@ -593,7 +595,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public function process_registration_step_1() {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -612,14 +613,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$valid_data = $_POST;
 		$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_registration_step_1__valid_data', $valid_data );
 //		printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $this->EE->SSN, '$this->EE->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// if we don't have a qstn field then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if (isset($valid_data['qstn'])) {
 		
 			if (isset($valid_data['qstn']['custom_questions'])) {
 				$custom_questions = $valid_data['qstn']['custom_questions'];
-				$EE_Session->set_session_data(array('custom_questions'=>$custom_questions), 'session_data');
+				$this->EE->SSN->set_session_data(array('custom_questions'=>$custom_questions), 'session_data');
 //				printr( $valid_data['qstn']['custom_questions'], 'custom_questions  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				unset($valid_data['qstn']['custom_questions']);
 			}
@@ -666,7 +667,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 										$primary_attendee['fname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['fname'];
 										$primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['lname'];
 										$primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['email'];
-										$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+										$this->EE->SSN->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 									} else if ( $form_input == 'additional_attendee_reg_info' && $input_value == 1 ) {
 										// we need to copy basic info from primary attendee
 										$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['fname'] = $attendees[$line_item_id][$event_id]['attendees'][1]['fname'];
@@ -753,7 +754,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public function process_registration_step_2() {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -764,7 +764,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 			// FREE EVENT !!! YEAH : )
-			if ($EE_Session->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
+			if ($this->EE->SSN->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
 				$msg = __( 'Registration Step 2 completed.', 'event_espresso' );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );	
 			} 
@@ -833,9 +833,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public function display_data_for_confirmation() {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $org_options, $EE_Session;
 
-		$session_data = $EE_Session->get_session_data();
+		$session_data = $this->EE->SSN->get_session_data();
 		//printr( $session_data, '$session_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
@@ -918,7 +917,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			}
 
-			$template_args['billing'][ __('total due', 'event_espresso') ] = $org_options['currency_symbol'] . number_format($total, 2);
+			$template_args['billing'][ __('total due', 'event_espresso') ] = EEH_Template::format_currency( $total );
 
 			$ouput = espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
 		}		
@@ -938,10 +937,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public function process_registration_step_3() {
 		// Sidney is watching me...   { : \
-		global $EE_Session;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		global $org_options;
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -949,25 +946,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$txn_details = array();
 
 		// check recaptcha
-		if ($org_options['use_captcha'] && !is_user_logged_in()) {
-			if (!function_exists('recaptcha_check_answer')) {
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc/recaptchalib.php');
+		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
+			if ( ! function_exists( 'recaptcha_check_answer' )) {
+				$this->EE->load_file( EVENT_ESPRESSO_PLUGINFULLPATH . DS . 'tpc', 'recaptchalib', '' );
 				$response = recaptcha_check_answer(
-										$org_options['recaptcha_privatekey'], 
+										$this->EE->CFG->registration->recaptcha_privatekey, 
 										$_SERVER["REMOTE_ADDR"], 
 										$_POST["recaptcha_challenge_field"], 
 										$_POST["recaptcha_response_field"]
 								);
 			}
 
-			if (!$response->is_valid) {
+			if ( ! $response->is_valid ) {
 				$continue_reg = FALSE;
 				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
 			}
 		}
-		global $EE_Session;
 		// grab session data
-		$session = $EE_Session->get_session_data();
+		$session = $this->EE->SSN->get_session_data();
 		
 		if ($continue_reg) {
 
@@ -1020,19 +1016,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			$saved_registrations = self::save_registration_items( $reg_items, $transaction );
 			
-			//$updated_session=$EE_Session->get_session_data();
+			//$updated_session=$this->EE->SSN->get_session_data();
 			$transaction->set_txn_session_data( $session );
 			$transaction->save();
 			//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
 			$transaction->set_txn_session_data(null);
-			//var_dump($EE_Session->get_session_data());
-			$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
-			$EE_Session->update_espresso_session();
+			//var_dump($this->EE->SSN->get_session_data());
+			$this->EE->SSN->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
+			$this->EE->SSN->update_espresso_session();
 			//var_dump($)
 			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			
 
-//			printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
+//			printr( $this->EE->SSN, '$this->EE->SSN data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 //			die();
 
 			// attempt to perform transaction via payment gateway
@@ -1043,7 +1039,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__end', $this);
 		
-		//$session = $EE_Session->get_session_data();
+		//$session = $this->EE->SSN->get_session_data();
 		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 		//die();
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
@@ -1075,9 +1071,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				return array();			
 		}
 
-		global $EE_Session;
 		// grab session data
-		$session = $EE_Session->get_session_data();
+		$session = $this->EE->SSN->get_session_data();
 		// get some class would ya !
 		require_once ( EE_CLASSES . 'EE_Registration.class.php' );
 		require_once ( EE_MODELS . 'EEM_Attendee.model.php' );
@@ -1148,8 +1143,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
 				}					
 
-				$default_reg_status = isset( $org_options['default_reg_status'] ) ? $org_options['default_reg_status'] : 'RPN';
-
 				// now create a new registration for the attendee
 				$reg_url_link=md5($new_reg_code);
 				$saved_registrations[$line_item_id] = EE_Registration::new_instance(
@@ -1159,7 +1152,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'TXN_ID' => $transaction->ID(),
 							'DTT_ID' => $DTT_ID,
 							'PRC_ID' => $PRC_ID,
-							'STS_ID' => $default_reg_status,
+							'STS_ID' => $this->EE->CFG->registration->default_STS_ID,
 							'REG_date' => current_time('timestamp'),
 							'REG_final_price' => $price_paid,
 							'REG_session' => $session['id'],
@@ -1183,10 +1176,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
 					$primary_attendee = $session['primary_attendee'];
 					$primary_attendee['registration_id'] = $new_reg_code;
-					$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+					$this->EE->SSN->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 				}
 				
-				$EE_Session->set_session_data( $session['cart'] );
+				$this->EE->SSN->set_session_data( $session['cart'] );
 				// save attendee question answerss
 				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj', 'additional_attendee_reg_info' );
 //				printr( $reg_items, '$reg_items  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -1229,10 +1222,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return false;
 		}
 			
-		global $EE_Session, $wpdb;
+		global, $wpdb;
 
 		// grab session data
-		$session = $EE_Session->get_session_data();
+		$session = $this->EE->SSN->get_session_data();
 		$reg_items = $session['cart']['REG']['items'];
 		$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj' );
 		
