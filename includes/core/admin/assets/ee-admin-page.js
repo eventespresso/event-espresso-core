@@ -240,7 +240,6 @@ jQuery(document).ready(function($) {
 	var wp_status = $('.ee-status-container', '#misc-publishing-actions').first();
 	var our_status = $('#cur_status').text();
 	var extra_statuses = $('#ee_post_status').html();
-	console.log(our_status);
 	if ( our_status != '' )
 		$('#post-status-display').text(our_status);
 
