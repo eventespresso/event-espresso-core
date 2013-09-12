@@ -279,7 +279,7 @@ class EE_Register_CPTs {
 		$term_details = array(
 			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized venues', 'event_espresso') )
 			);
-		$this->set_initial_terms( 'espresso_event_categories', $term_details );
+		$this->set_initial_terms( 'espresso_venue_categories', $term_details );
 	}
 
 
