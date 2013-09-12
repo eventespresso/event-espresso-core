@@ -187,5 +187,30 @@ class EEM_CPT_Base extends EEM_Base{
 		return $statuses;
 	}
 
+
+	/**
+	 * this returns the post statuses that are NOT the default wordpress status
+	 * @return array
+	 */
+	public function get_custom_post_statuses() {
+		$new_stati = array();
+		$statuses = self::get_post_statuses();
+		$defaults = array(
+			'publish',
+			'future',
+			'private',
+			'pending',
+			'auto-draft',
+			'draft',
+			'trash',
+			'inherit'
+			);
+		foreach ( $statuses as $status => $label ) {
+			if ( !in_array( $status, $defaults ) )
+				$new_stati[$status] = $label;
+		}
+		return $new_stati;
+	}
+
 	
 }
