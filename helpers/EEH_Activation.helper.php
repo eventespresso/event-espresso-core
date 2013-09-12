@@ -155,8 +155,12 @@ class EEH_Activation {
 		$default_config->registration = new stdClass();
 		$default_config->registration->default_STS_ID = 'RPN'; 	// default reg status
 		$default_config->registration->pending_counts_reg_limit = TRUE;
-		$default_config->registration->use_captcha = FALSE;
 		$default_config->registration->use_attendee_pre_approval = FALSE;
+		$default_config->registration->use_captcha = FALSE;
+		$default_config->registration->recaptcha_theme = 'clean';
+		$default_config->registration->recaptcha_language = 'en';
+		$default_config->registration->recaptcha_publickey = NULL;
+		$default_config->registration->recaptcha_privatekey = NULL;
 		// general admin settings
 		$default_config->admin = new stdClass();
 		$default_config->admin->use_personnel_manager = TRUE;
