@@ -74,6 +74,21 @@ class EEM_Event  extends EEM_CPT_Base{
 		$this->plural_item = __('Events','event_espresso');		
 		
 		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
+
+		$custom_stati = array(
+			'cancelled' => array(
+				'label' => __('Cancelled', 'event_espresso'),
+				'public' => true
+				),
+			'postponed' => array(
+				'label' => __('Postponed', 'event_espresso'),
+				'public' => true
+				),
+			'sold_out' => array(
+				'label' => __('Sold Out', 'event_espresso'),
+				'public' => true
+				)
+			);
 		
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
@@ -92,7 +107,8 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
-				'post_type'=>new EE_Plain_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events')
+				'post_type'=>new EE_Plain_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events'),
+				'status' => new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $custom_stati)
 			),
 			'Event_Meta'=>array(
 				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),

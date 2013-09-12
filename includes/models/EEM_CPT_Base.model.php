@@ -166,7 +166,7 @@ class EEM_CPT_Base extends EEM_Base{
 	 */
 	public static function get_post_statuses(){
 		global $wp_post_statuses;
-		$statuses= array();
+		$statuses = array();
 		foreach($wp_post_statuses as $post_status => $args_object){
 			$statuses[$post_status] = $args_object->label;
 		}
