@@ -67,8 +67,6 @@ final class EE_Front_Controller {
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
 		// load EE_Request_Handler
-		add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
-		// additional hooks get added in the init phase
 	}
 
 
@@ -149,6 +147,8 @@ final class EE_Front_Controller {
 		if ( EE_Maintenance_Mode::instance()->level() ) {
 			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
 		} else {
+			add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
+			// additional hooks get added in the init phase
 			// load other resources and begin to actually run shortcodes and modules
 			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
 			// process any content shortcodes
@@ -163,10 +163,11 @@ final class EE_Front_Controller {
 			add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
 			// the content
 			add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-			// display errors
-			add_action('wp_footer', array( $this, 'display_errors' ), 999 );					
 		}
 	
+			// display errors
+			add_action('wp_footer', array( $this, 'display_errors' ), 1 );					
+
 			//random debug code added by mike.
 //			$this->EE->load_class('Attendee',false,false,false);
 //			$att = EE_Attendee::new_instance(array('ATT_lname'=>'nelson','ATT_ID'=>15));
@@ -197,7 +198,9 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function employ_CPT_Strategy() {
-		$this->EE->load_core( 'CPT_Strategy' );
+		if ( ! EE_Maintenance_Mode::instance()->level() ) {
+			$this->EE->load_core( 'CPT_Strategy' );
+		}
 	}
 
 
@@ -406,7 +409,14 @@ final class EE_Front_Controller {
 
 		// js is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_js', '__return_true' );
 		if ( apply_filters( 'FHEE_load_js', FALSE )) {
-			wp_enqueue_script( 'jquery' );			
+			wp_enqueue_script( 'jquery' );
+			// load core js
+			if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'scripts/espresso_core.js' )) {
+				wp_register_script( 'espresso_core', EVENT_ESPRESSO_UPLOAD_DIR . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+			} else {
+				wp_register_script( 'espresso_core', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+			}
+			wp_enqueue_script( 'espresso_core' );
 			// check if required scripts are loaded
 			if ( function_exists( 'wp_script_is' )) {
 				if ( ! wp_script_is( 'jquery' )) {

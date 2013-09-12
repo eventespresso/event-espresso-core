@@ -208,7 +208,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function get_all_question_groups() {
 		return $this->EE->load_model( 'Question_Group' )->get_all( array(
 			array( 'QSG_deleted' => FALSE ),
-			'order_by' => 'QSG_order'
+			'order_by' => array( 'QSG_order' => 'ASC' )
 		));
 	}
 

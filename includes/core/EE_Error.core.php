@@ -84,8 +84,9 @@ class EE_Error extends Exception {
 	*/
 	function __construct( $message, $code = 0, Exception $previous = NULL ) {
 
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 1 );			
-
+		wp_enqueue_script( 'ee_error_js' );
+		wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+	
 		if (version_compare(phpversion(), '5.3.0', '<')) {
 			parent::__construct( $message, $code );
 		} else {
@@ -94,20 +95,6 @@ class EE_Error extends Exception {
 		
 	}
 
-
-
-	/**
-	 * 	wp_enqueue_scripts
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp_enqueue_scripts() {
-		// js for error handling
-		wp_register_script( 'ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, FALSE );
-		wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
-		wp_enqueue_script( 'ee_error_js' );
-	}
 
 
 
@@ -170,7 +157,7 @@ class EE_Error extends Exception {
 		max-width:90% !important;	
 	}
 </style>		
-<div id="message" class="error">';
+<div id="ee-error-message" class="error">';
 
 		if ( ! WP_DEBUG ) {
 			$ouput .= '
@@ -270,7 +257,7 @@ class EE_Error extends Exception {
 				<span class="big-text">"' . trim( $ex['msg'] ) . '"</span>  &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '</a><br />
 				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' )
 			</p>
-			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv">
+			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv hidden">
 				' . $trace_details;
 				
 				if ( ! empty( $class )) {
@@ -441,7 +428,7 @@ class EE_Error extends Exception {
 	*/
 	private static function _add_notice( $type = 'success', $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
 		// get error code only on error
-		$error_code = $type == 'error' ? self::generate_error_code ( $file, $func, $line ) : '';
+		$error_code = $type == 'errors' ? EE_Error::generate_error_code ( $file, $func, $line ) : '';
 		// get separate user and developer messages if they exist		
 		$msg = explode( '||', $msg );
 		$user_msg = $msg[0];
@@ -449,8 +436,11 @@ class EE_Error extends Exception {
 		$msg = WP_DEBUG ? $dev_msg : $user_msg;
 		// add notice if message exists
 		if ( ! empty( $msg )) {
-			add_filter( 'FHEE_load_css', '__return_true' );
 			self::$_espresso_notices[ $type ][] = $msg . $error_code;
+			add_filter( 'FHEE_load_css', '__return_true' );
+			add_filter( 'FHEE_load_js', '__return_true' );
+			wp_enqueue_script( 'ee_error_js' );
+			wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
 		}
 		
 	}
@@ -532,6 +522,7 @@ class EE_Error extends Exception {
 		$success_messages = '';
 		$attention_messages = '';
 		$error_messages = '';
+		$print_scripts = FALSE;
 
 		// printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
@@ -547,12 +538,14 @@ class EE_Error extends Exception {
 		if ( self::$_espresso_notices['success'] && ! empty(  self::$_espresso_notices['success'] )) {
 			// combine messages
 			$success_messages .= implode( self::$_espresso_notices['success'], '<br />' );
+			$print_scripts = TRUE;
 		}
 
 		// check for attention messages
 		if ( self::$_espresso_notices['attention'] && ! empty(  self::$_espresso_notices['attention'] ) ) {
 			// combine messages
 			$attention_messages .= implode( self::$_espresso_notices['attention'], '<br />' );
+			$print_scripts = TRUE;
 		}
 
 		// check for error messages
@@ -560,6 +553,7 @@ class EE_Error extends Exception {
 			$error_messages .= count( self::$_espresso_notices['errors'] ) > 1 ? __( 'The following errors have occured:<br />', 'event_espresso' ) : __( 'An error has occured:<br />', 'event_espresso' );
 			// combine messages
 			$error_messages .= implode( self::$_espresso_notices['errors'], '<br />' );
+			$print_scripts = TRUE;
 		}
 
 		if ($format_output) {
@@ -608,6 +602,12 @@ class EE_Error extends Exception {
 				}
 			}
 		}
+		
+		if ( $print_scripts ) {
+			wp_enqueue_script( 'ee_error_js' );
+			wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+		}
+		
 		return $notices;
 	}
 
@@ -634,12 +634,12 @@ class EE_Error extends Exception {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$error_code = '';
-		$code_bits = array( 0 => $file, 1 => $func, 2 => $line );
+		$code_bits = array( 'file' => $file, 'func' => $func, 'line' => $line );
 
 		foreach ( $code_bits as $key => $code_bit ) {
 			switch ( $key ) {
 
-				case 0:
+				case 'file':
 					$code_bit = str_replace( '\\', '/', $code_bit );
 					// break filepath up by the /
 					$code_bit = explode ( '/', $code_bit );
@@ -683,7 +683,7 @@ class EE_Error extends Exception {
 
 				break;
 
-				case 1:
+				case 'func':
 					//change all dashes to underscores
 					$code_bit = str_replace ( '-', '_', $code_bit );
 					// break function name by the underscore if there are any
@@ -699,7 +699,7 @@ class EE_Error extends Exception {
 					$error_code .= $func != '' ? $func . '-' :  '';
 				break;
 
-				case 2:
+				case 'line':
 					// i can't figure this one out
 					$error_code .= $code_bit;
 				break;
@@ -762,5 +762,23 @@ class EE_Error extends Exception {
 
 
 }
+// end of Class EE_Exceptions
+
+
+
+/**
+ * 	espresso_error_enqueue_scripts
+ *
+ *  @access 	public
+ *  @return 	void
+ */
+function espresso_error_enqueue_scripts() {
+	// js for error handling
+	wp_register_script( 'ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('jquery'), EVENT_ESPRESSO_VERSION, FALSE );
+}
+add_action('wp_enqueue_scripts', 'espresso_error_enqueue_scripts', 2 );
+
+
+
 /* End of file EE_Exceptions.class.php */
 /* Location: includes/classes/EE_Exceptions.class.php */	

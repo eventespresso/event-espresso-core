@@ -248,9 +248,9 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return EEM_Base
 	 */	
-	public function load_model ( $class_name, $arguments = array() ) {
+	public function load_model ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		// retreive instantiated class
-		return $this->_load( EE_MODELS, 'EEM_' , $class_name, 'model', $arguments );
+		return $this->_load( EE_MODELS, 'EEM_' , $class_name, 'model', $arguments, FALSE, TRUE, $load_only );
 	}
 
 
@@ -261,7 +261,7 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
 	 */	
-	public function load_model_class ( $class_name, $arguments = array() ) {
+	public function load_model_class ( $class_name, $arguments = array(), $load_only = TRUE ) {
 		$paths = array(
 			EE_MODELS . 'fields' . DS,
 			EE_MODELS . 'helpers' . DS,
@@ -269,7 +269,7 @@ final class EE_Registry {
 			EE_MODELS . 'strategies' . DS,
 		);
 		// retreive instantiated class
-		return $this->_load( $paths, 'EE_' , $class_name, '', $arguments, FALSE, TRUE, TRUE );
+		return $this->_load( $paths, 'EE_' , $class_name, '', $arguments, FALSE, TRUE, $load_only );
 	}
 
 
@@ -282,9 +282,9 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
 	 */	
-	public function load_helper ( $class_name, $arguments = array() ) {
+	public function load_helper ( $class_name, $arguments = array(), $load_only = TRUE ) {
 		// retreive instantiated class
-		return $this->_load( EE_HELPERS, 'EEH_', $class_name, 'helper', $arguments );
+		return $this->_load( EE_HELPERS, 'EEH_', $class_name, 'helper', $arguments, FALSE, TRUE, $load_only );
 	}
 
 
@@ -298,12 +298,12 @@ final class EE_Registry {
 	 *	@param string $type - file type - core? class? helper? model?
 	 *	@return instantiated class object
 	 */	
-	public function load_file ( $path_to_file, $class_name, $type = 'class', $arguments = array() ) {
+	public function load_file ( $path_to_file, $class_name, $type = 'class', $arguments = array(), $load_only = TRUE ) {
 		// set path to class file
 		$path_to_file = rtrim( $path_to_file, '/\\' ) . DS;
 		$type = trim( $type, '. ' );
 		// retreive instantiated class
-		return $this->_load( $path_to_file, '', $class_name, $type, $arguments );
+		return $this->_load( $path_to_file, '', $class_name, $type, $arguments, FALSE, TRUE, $load_only );
 	}
 
 	/**

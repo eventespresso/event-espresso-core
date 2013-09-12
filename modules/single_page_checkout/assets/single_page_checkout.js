@@ -8,42 +8,39 @@
 
 	//$('#mer-registration-frm-1').validate();
 	
-	$('.close-event-queue-msg').show();
+//	$('.close-event-queue-msg').show();
 
 
 	// move notifications from top of reg form to just before closing body tag
 	// so that notifications can easily be centered on screen regardless of resolution or scroll position
-	var notifications = $('#multi-event-registration-notifications').html();
-	$('#multi-event-registration-notifications').html('');
-	$('body').append( notifications );
-	
-
-	
-	// add jQuery function to center elements on screen
-	$.fn.center = function () {
-		this.css({ 'position' : 'absolute' });
-		var element_top = Math.max( 0, ((( $(window).height() / 2 ) - this.outerHeight() ) / 2 )  + $(window).scrollTop() );
-		var element_left = Math.max( 0, (( $(window).width() - this.outerWidth() ) / 2 ) + $(window).scrollLeft() );
-		this.css({ 'top' : element_top + 'px' });
-		this.css({ 'left' : element_left + 'px' });
-		if ( $(window).width() > 600 ) {
-			this.css({ 'max-width' : '600px' });
-		}
-		return this;
-	};
-
-
+//	var notifications = $('#multi-event-registration-notifications').html();
+//	$('#multi-event-registration-notifications').html('');
+//	$('body').append( notifications );
+//	
+//
+//	
+//	// add jQuery function to center elements on screen
+//	$.fn.center = function () {
+//		this.css({ 'position' : 'absolute' });
+//		var element_top = Math.max( 0, ((( $(window).height() / 2 ) - this.outerHeight() ) / 2 )  + $(window).scrollTop() );
+//		var element_left = Math.max( 0, (( $(window).width() - this.outerWidth() ) / 2 ) + $(window).scrollLeft() );
+//		this.css({ 'top' : element_top + 'px' });
+//		this.css({ 'left' : element_left + 'px' });
+//		if ( $(window).width() > 600 ) {
+//			this.css({ 'max-width' : '600px' });
+//		}
+//		return this;
+//	};
 
 
-	$('.show-if-js').css({ 'display' : 'inline-block' });
-	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
+
 
 
 	
 	//close btn for notifications
-	$('.close-event-queue-msg').on( 'click', function(){
-		$(this).parent().hide();
-	});
+//	$('.close-event-queue-msg').on( 'click', function(){
+//		$(this).parent().hide();
+//	});
 
 
 

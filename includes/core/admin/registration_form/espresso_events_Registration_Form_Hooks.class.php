@@ -102,19 +102,20 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 			$EQGs = !empty( $event_id ) ? $this->_event->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 1 )) ) : array();
 			$EQGids = array_keys($EQGs);
 			
+			//printr( $QSGs, '$QSGs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			if ( ! empty( $QSGs )) {
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
 				foreach ( $QSGs as $QSG ) {
 
-					$checked = ( in_array( $QSG->QSG_ID, $EQGids ) || $QSG->QSG_system == 1 ) ? ' checked="checked"' : '';
-					$visibility = $QSG->QSG_system == 1 ? ' style="visibility:hidden"' : '';
-					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->QSG_ID ), EE_FORMS_ADMIN_URL );
+					$checked = ( in_array( $QSG->ID(), $EQGids ) || $QSG->get('QSG_system') == 1 ) ? ' checked="checked"' : '';
+					$visibility = $QSG->get('QSG_system') == 1 ? ' style="visibility:hidden"' : '';
+					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->ID() ), EE_FORMS_ADMIN_URL );
 					
 					$html .= '
-					<p id="event-question-group-' . $QSG->QSG_ID . '">
-						<input value="' . $QSG->QSG_ID . '" type="checkbox"' . $visibility . ' name="question_groups[' . $QSG->QSG_ID . ']"' . $checked . ' /> 
-						<a href="' . $edit_link . '" title="Edit ' . $QSG->QSG_name . ' Group" target="_blank">' . $QSG->QSG_name . '</a>
+					<p id="event-question-group-' . $QSG->ID() . '">
+						<input value="' . $QSG->ID() . '" type="checkbox"' . $visibility . ' name="question_groups[' . $QSG->ID() . ']"' . $checked . ' /> 
+						<a href="' . $edit_link . '" title="Edit ' . $QSG->get('QSG_name') . ' Group" target="_blank">' . $QSG->get('QSG_name') . '</a>
 					</p>';
 				}
 				$html .= count( $QSGs ) > 10 ? '</div>' : '';
