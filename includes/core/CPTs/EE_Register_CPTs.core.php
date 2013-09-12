@@ -287,13 +287,13 @@ class EE_Register_CPTs {
 
 	function set_initial_event_types() {
 		$term_details = array(
-			'single' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: a party or two-day long workshop
+			'single-event' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: a party or two-day long workshop
 
 			'multi-event' => array( __('Multi Event', 'event_espresso'), __('Multiple, separate, but related events that occur on consecutive days. Attendee\'s can register for any of the date-times', 'event_espresso') ), //example: a three day music festival or week long conference
 
 			'event-series' => array( __('Event Series', 'event_espresso'), __(' Multiple events that occur over multiple non-consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: an 8 week introduction to basket weaving course
 
-			'recurring' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days. Attendee\'s can register for any of the date-times.', 'event_espresso') ), //example: a yoga class
+			'recurring-event' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days. Attendee\'s can register for any of the date-times.', 'event_espresso') ), //example: a yoga class
 
 			//'walk-in' => array( __('Walk In', 'event_espresso'), __('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),
 			//'reservation' => array( __('Reservation', 'event_espresso'), __('Reservations are created by specifying available datetimes and quantities. Attendees choose from the available datetimes and specify the quantity available (if the maximum is greater than 1)') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
