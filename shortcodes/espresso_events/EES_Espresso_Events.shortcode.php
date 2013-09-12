@@ -80,6 +80,15 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	/**
 	 * 	process_shortcode - EVENT_LIST - Returns a list of events
 	 * 
+	 * 	[EVENT_LIST]
+	 * 	[EVENT_LIST limit=1]
+	 * 	[EVENT_LIST css_class=my-custom-class]
+	 * 	[EVENT_LIST show_expired=true]
+	 * 	[EVENT_LIST show_deleted=true]
+	 * 	[EVENT_LIST show_secondary=true]
+	 * 	[EVENT_LIST show_recurrence=true]
+	 * 	[EVENT_LIST category_identifier=your_category_identifier]
+	 *  
 	 *  @access 	public
 	 *  @param		array 	$attributes
 	 *  @return 	void

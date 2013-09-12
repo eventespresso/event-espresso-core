@@ -70,7 +70,7 @@ class EE_Register_CPTs {
 
 		//set default terms
 		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events') );
-		$this->set_default_term( 'espresso_event_type', 'multi_day', array('espresso_events' ) );
+		$this->set_default_term( 'espresso_event_type', 'single', array('espresso_events') );
 		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
 
 
@@ -111,9 +111,9 @@ class EE_Register_CPTs {
 				'plural_name' => __("Event Types", "event_espresso"),
 				'args' => array(
 					'public'=>true,
-					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
 					'show_ui'=>false,
-					'hierarchical'=>false
+					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
+					'hierarchical'=>true
 				))
 			);		
 	}
@@ -287,7 +287,19 @@ class EE_Register_CPTs {
 
 	function set_initial_event_types() {
 		$term_details = array(
-			'multi_day' => array( __('Multi Day', 'event_espresso'), __('Consecutively recurring multi-day multi entry: ex: an annual 3 day music festival, where you can attend any of the days', 'event_espresso') )
+			'single' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: a party or two-day long workshop
+
+			'multi-event' => array( __('Multi Event', 'event_espresso'), __('Multiple, separate, but related events that occur on consecutive days. Attendee\'s can register for any of the date-times', 'event_espresso') ), //example: a three day music festival or week long conference
+
+			'event-series' => array( __('Event Series', 'event_espresso'), __(' Multiple events that occur over multiple non-consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: an 8 week introduction to basket weaving course
+
+			'recurring' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days. Attendee\'s can register for any of the date-times.', 'event_espresso') ), //example: a yoga class
+
+			//'walk-in' => array( __('Walk In', 'event_espresso'), __('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),
+			//'reservation' => array( __('Reservation', 'event_espresso'), __('Reservations are created by specifying available datetimes and quantities. Attendees choose from the available datetimes and specify the quantity available (if the maximum is greater than 1)') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
+			// 'multiple-session' => array( __('Multiple Session', 'event_espresso'), __('Multiple event, multiple datetime, hierarchically organized, custom entry events. Attendees may be required to register for a parent event before being allowed to register for child events. Attendees can register for any combination of child events as long as the datetimes do not conflict. Parent and child events may have additional fees or registration questions.') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
+			//'appointment' => array( __('Appointments', 'event_espresso'), __('Time slotted events where datetimes are generally in hours or minutes. For example, attendees can register for a single 15 minute or 1 hour time slot and this type of availability frequently reoccurs.', 'event_espresso') )
+
 			);
 		$this->set_initial_terms( 'espresso_event_type', $term_details );
 	}

@@ -423,10 +423,108 @@ class EEH_Form_Fields {
 					$html .= $before_question_group_questions;
 					// loop thru questions
 					foreach ( $QSG['QSG_questions'] as $question ) {
-						$html .= self::generate_form_input( $question );
+						printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						$QFI = new EE_Question_Form_Input(
+							EE_Question::new_instance ( $question ),
+							EE_Answer::new_instance ( array( 
+								'ANS_ID'=> 0,
+								'QST_ID'=> 0,
+								'REG_ID'=> 0,
+								'ANS_value'=> ''
+							 ))
+						);						
+						$html .= self::generate_form_input( $QFI );						
 					}
-					$html .= $after_question_group_questions;
+					$html .= $after_question_group_questions;					
+					$html .= "\n\t" . '</' . $group_wrapper . '>';
+				}
+			}
+		}
+		
+		return $html;
+		
+	}
+
+
+
+
+
+
+	/**
+	 * generate_question_groups_html
+ 	 * 
+	 * @param string $question_groups 
+	 * @return string HTML
+	 */
+	static function generate_question_groups_html2( $question_groups = array(), $q_meta = array(), $group_wrapper = 'fieldset' ) {
+			
+		$html = '';
+		$before_question_group_questions = apply_filters( 'FHEE_form_before_question_group_questions', '' );
+		$after_question_group_questions = apply_filters( 'FHEE_form_after_question_group_questions', '' );		
+
+		$default_q_meta = array(
+				'att_nmbr' => 1,
+				'ticket_id' => '',
+				'date' => '',
+				'time' => '',
+				'input_name' => '',
+				'input_id' => '',
+				'input_class' => ''
+		);		
+		$q_meta = array_merge( $default_q_meta, $q_meta );
+		//printr( $q_meta, '$q_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			
+		if ( ! empty( $question_groups )) {
+//			printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// loop thru question groups
+			foreach ( $question_groups as $QSG ) {
+				// check that questions exist
+				$questions = $QSG->questions();
+				if ( ! empty( $questions )) {
+					// use fieldsets
+					$html .= "\n\t" . '<' . $group_wrapper . ' class="espresso-question-group-wrap" id="' . $QSG->get( 'QSG_identifier' ) . '">';
+					// group_name
+					if ( $QSG->show_group_name() ) {
+						$html .=  "\n\t\t" . '<h4 class="espresso-question-group-title-h4 section-title">' . $QSG->get_pretty( 'QSG_name' ) . '</h4>';					
+					}
+					// group_desc
+					if ( $QSG->show_group_desc() ) {
+						$html .=  '<p class="espresso-question-group-desc-pg">' . $QSG->get_pretty( 'QSG_desc'  ) . '</p>';
+					}
 					
+					$html .= $before_question_group_questions;
+					// loop thru questions
+					foreach ( $questions as $QST ) {
+					
+						$qst_name = $qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST_ID;
+						$qst_name = isset( $QST->ANS_ID ) ? '[' . $qst_name . '][' . $QST->ANS_ID . ']' : '[' . $qst_name . ']';
+						$input_name = isset( $q_meta['input_name'] ) ? $q_meta['input_name']  : '';
+						$input_id = isset( $q_meta['input_id'] ) ? $q_meta['input_id'] : sanitize_key( $QST->display_text() );
+						$input_class = isset( $q_meta['input_class'] ) ? $q_meta['input_class'] : '';
+						
+						$QST->QST_input_name = 'qstn' . $input_name . $qst_name;
+						$QST->QST_input_id = $input_id . '-' . $qstn_id;
+						$QST->QST_input_class = $input_class;
+						$QST->options();
+						
+						// check for answer in $_GET in case we are reprocessing a form after an error
+						if ( isset( $q_meta['EVT_ID'] ) && isset( $q_meta['att_nmbr'] ) && isset( $q_meta['date'] ) && isset( $q_meta['time'] ) && isset( $q_meta['price_id'] )) {
+							$answer = isset( $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] ) ? $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] : '';
+						}
+						
+						$QFI = new EE_Question_Form_Input(
+							$QST,
+							EE_Answer::new_instance ( array( 
+								'ANS_ID'=> 0,
+								'QST_ID'=> 0,
+								'REG_ID'=> 0,
+								'ANS_value'=> $answer
+							 )),
+							$q_meta
+						);						
+						$html .= self::generate_form_input( $QFI );						
+					}
+					$html .= $after_question_group_questions;					
 					$html .= "\n\t" . '</' . $group_wrapper . '>';
 				}
 			}
@@ -460,6 +558,7 @@ class EEH_Form_Fields {
 		$display_text = $QFI->get('QST_display_text');
 		$answer = $QFI->get('ANS_value');
 		$input_name = $QFI->get('QST_input_name');
+//		echo '<h4>$input_name : ' . $input_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		$input_id = $QFI->get('QST_input_id');
 		$input_class = $QFI->get('QST_input_class');
 		$disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
@@ -1120,10 +1219,12 @@ class EEH_Form_Fields {
 				$QSO = EE_Question_Option::new_instance ( array (
 						'QSO_name' => $state->ID(),
 						'QSO_value' => $state->name(),
-						'QSO_opt_group' => $state->country()->name(),
 						'QST_ID' => $QST->get( 'QST_ID' ),
 						'QSO_deleted' => FALSE
 					));
+				// set option group
+				$QSO->set_opt_group( $state->country()->name() );
+				// add option to question			
 				$QST->add_temp_option( $QSO );
 			}
 		}

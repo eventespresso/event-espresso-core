@@ -127,7 +127,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * @return bool success
 	 */
 	public function set_opt_group($text){
-		return $this->set('QSO_opt_group',$text);
+		return $this->_QSO_opt_group = $text;
 	}
 	
 	/**
@@ -174,7 +174,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * @return string
 	 */
 	public function opt_group(){
-		return $this->get('QSO_opt_group');
+		return $this->_QSO_opt_group;
 	}
 }
 

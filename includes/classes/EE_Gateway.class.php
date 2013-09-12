@@ -203,10 +203,9 @@ abstract class EE_Gateway {
 
 	private function _gateways_frontend() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 		add_action('AHEE_display_payment_gateways', array(&$this, 'espresso_display_payment_gateways'));
 		// grab session data for this gateway
-		if ($this->_session_gateway_data = $EE_Session->get_session_data($this->_gateway_name, "gateway_data")) {
+		if ($this->_session_gateway_data = $this->EE->SSN->get_session_data($this->_gateway_name, "gateway_data")) {
 			if (!empty($this->_session_gateway_data['form_url'])) {
 				$this->_form_url = $this->_session_gateway_data['form_url'];
 			}
@@ -423,8 +422,8 @@ abstract class EE_Gateway {
 
 	private function _set_session_data() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
-		$EE_Session->set_session_data(
+		
+		$this->EE->SSN->set_session_data(
 				array(
 							$this->_gateway_name => array(
 									'form_url' => $this->_form_url,
@@ -503,14 +502,13 @@ abstract class EE_Gateway {
 	 */
 	/*public function thank_you_page() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 		require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
 
 		// grab session data
-		$session = $EE_Session->get_session_data();
+		$session = $this->EE->SSN->get_session_data();
 		//printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 		//die();
 		//check that we hvae the info we need in the session before proceeding.
@@ -616,7 +614,7 @@ abstract class EE_Gateway {
 
 //printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 //die();
-//		printr( $EE_Session, '$EE_Session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
+//		printr( $this->EE->SSN, '$this->EE->SSN data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
 //		die();
 		
 
@@ -624,13 +622,12 @@ abstract class EE_Gateway {
 	
 	/**
 	 * Logic general to all gateways on the thank you page. Mostly just updates the transaction
-	 * @global EE_Sesison $EE_Session
 	 * @param EE_Transaction $transaction
 	 * @return boolean
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction){
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
+		
+		$session_data = $this->EE->SSN->get_session_data();
 		//update the session as if we just updated the session
 		//...actually, I'm not sure if there's much to save. 
 		unset($session_data['transaction']);

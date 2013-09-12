@@ -48,11 +48,11 @@ class EEH_Template {
 			return FALSE;
 		}
 		// if $template_args are not in an array, then make it so
-		if (!is_array($template_args)) {
-			$template_args = array($template_args);
+		if ( ! is_array( $template_args ) && ! is_object( $template_args )) {
+			$template_args = array( $template_args );
 		}
 
-		extract($template_args);
+		extract( (array)$template_args);
 
 		if ($return_string) {
 			// becuz we want to return a string, we are going to capture the output

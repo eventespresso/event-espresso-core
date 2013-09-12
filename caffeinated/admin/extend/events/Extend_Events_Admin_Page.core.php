@@ -198,6 +198,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->page_slug, 'side', 'default');
 
+		add_meta_box('espresso_event_types', __('Event Type', 'event_espresso'), array( $this, 'event_type_meta_box' ), $this->page_slug, 'side', 'core' );
+
 		//todo feature in progress
 		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
@@ -216,7 +218,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function registration_options_meta_box() {
 
 		global $org_options;
-
 		$yes_no_values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
@@ -240,6 +241,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
+
+	/**
+	 * event type metabox for events
+	 * @param  object $post current post object
+	 * @param  array  $box  metabox args
+	 * @return string       metabox contents
+	 */
+	public function event_type_meta_box( $post, $box ) {
+		$template_args['radio_list'] = $this->wp_terms_radio($post->ID, array( 'taxonomy' => 'espresso_event_type' ) );
+		$template = EVENTS_CAF_TEMPLATE_PATH . 'event_type_metabox_contents.template.php';
+		espresso_display_template($template, $template_args);
+	}
+
+
+
 	/**
 	 * _view_report
 	 * Shows the report page for events
@@ -252,5 +268,87 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	}
 
 
+	public function wp_terms_radio( $post_id = 0, $args = array() ) {
+		$defaults = array(
+			'descendants_and_self' => 0,
+			'selected_cats' => false,
+			'popular_cats' => false,
+			'walker' => null,
+			'taxonomy' => 'category',
+			'checked_ontop' => true
+		);
+		$args = apply_filters( 'wp_terms_checklist_args', $args, $post_id );
+
+		extract( wp_parse_args($args, $defaults), EXTR_SKIP );
+
+		if ( empty($walker) || !is_a($walker, 'Walker') )
+			$walker = new Walker_Radio_Checklist;
+
+		$descendants_and_self = (int) $descendants_and_self;
+
+		$args = array('taxonomy' => $taxonomy);
+
+		$tax = get_taxonomy($taxonomy);
+		$args['disabled'] = !current_user_can($tax->cap->assign_terms);
+
+		if ( is_array( $selected_cats ) )
+			$args['selected_cats'] = $selected_cats;
+		elseif ( $post_id )
+			$args['selected_cats'] = wp_get_object_terms($post_id, $taxonomy, array_merge($args, array('fields' => 'ids')));
+		else
+			$args['selected_cats'] = array();
+
+		if ( is_array( $popular_cats ) )
+			$args['popular_cats'] = $popular_cats;
+		else
+			$args['popular_cats'] = get_terms( $taxonomy, array( 'fields' => 'ids', 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );
+
+		if ( $descendants_and_self ) {
+			$categories = (array) get_terms($taxonomy, array( 'child_of' => $descendants_and_self, 'hierarchical' => 0, 'hide_empty' => 0 ) );
+			$self = get_term( $descendants_and_self, $taxonomy );
+			array_unshift( $categories, $self );
+		} else {
+			$categories = (array) get_terms($taxonomy, array('get' => 'all'));
+		}
+
+		if ( $checked_ontop ) {
+			// Post process $categories rather than adding an exclude to the get_terms() query to keep the query the same across all posts (for any query cache)
+			$checked_categories = array();
+			$keys = array_keys( $categories );
+
+			foreach( $keys as $k ) {
+				if ( in_array( $categories[$k]->term_id, $args['selected_cats'] ) ) {
+					$checked_categories[] = $categories[$k];
+					unset( $categories[$k] );
+				}
+			}
+
+			// Put checked cats on top
+			$list = call_user_func_array(array(&$walker, 'walk'), array($checked_categories, 0, $args));
+		}
+		// Then the rest of them
+		$list .= call_user_func_array(array(&$walker, 'walk'), array($categories, 0, $args));
+		return $list;
+	}
+
+
 
 } //end class Events_Admin_Page
+
+require_once ABSPATH . 'wp-admin/includes/template.php';
+class Walker_Radio_Checklist extends Walker_Category_Checklist {
+	
+	function start_el( &$output, $category, $depth = 0, $args = array(), $id = 0 ) {
+		extract($args);
+		if ( empty($taxonomy) )
+			$taxonomy = 'category';
+
+		if ( $taxonomy == 'category' )
+			$name = 'post_category';
+		else
+			$name = 'tax_input['.$taxonomy.']';
+
+		$class = '';
+		$output .= "\n<li id='{$taxonomy}-{$category->term_id}'$class>" . '<label class="selectit"><input value="' . $category->term_id . '" type="radio" name="'.$name.'[]" id="in-'.$taxonomy.'-' . $category->term_id . '"' . checked( in_array( $category->term_id, $selected_cats ), true, false ) . disabled( empty( $args['disabled'] ), false, false ) . ' /> ' . esc_html( apply_filters('the_category', $category->name )) . '</label>';
+	}
+}

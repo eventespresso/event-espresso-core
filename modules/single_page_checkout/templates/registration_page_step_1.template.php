@@ -36,7 +36,7 @@
 		<?php foreach( $item['attendee_questions'][ $line_item ] as $att_nmbr => $attendee_questions ) { ?>
 
 				<fieldset id="mer-reg-page-attendee-wrap-<?php echo $item['id'] . '-' . $counter;?>" class="mer-reg-page-attendee-wrap-fs">
-	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr] . ' : ' . $item['price_desc']?></legend>
+	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr] . ' : ' . $item['ticket_desc']?></legend>
 
 			<?php if ( ! empty( $attendee_questions )) { ?>
 						<?php //do an action before the questions output, including the item and count 

@@ -326,9 +326,9 @@ abstract class EE_Ticket_Cost {
 	* 	@access 		public
 	* 	@return 		string
 	*/
-	public function __sleep() {
-		return base64_encode( serialize( $this ));
-	}
+//	public function __sleep() {
+//		return base64_encode( serialize( $this ));
+//	}
 
 
 
@@ -339,9 +339,9 @@ abstract class EE_Ticket_Cost {
 	* @access 		public
 	* @return 		string
 	*/
-	public function __wakeup() {
-		return unserialize( base64_decode( $this ));
-	}
+//	public function __wakeup() {
+//		return unserialize( base64_decode( $this ));
+//	}
 
 
 
