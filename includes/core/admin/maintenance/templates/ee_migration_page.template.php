@@ -9,6 +9,7 @@
  * @var $show_continue_current_migration_script boolean 
  * @var $show_maintenance_switch boolean
  * @var $show_migration_progress boolean
+ * @var $update_migration_script_page_link string
  */
 
 ?>
@@ -40,8 +41,6 @@
 					<h2><?php printf(__("The last ran data migration task (%s) had no errors.", "event_espresso"),$most_recent_migration->pretty_name())?></h2>
 				<?php }?>
 			<?php }else{
-	 echo 'echodump of $most_recent_migration';
-	 var_dump($most_recent_migration);
 			}
 ?>
 		<?php }?>
@@ -87,18 +86,19 @@
 			</div><!-- .progress-responsive -->
 		</div>
 		<h2 id='main-message'>
-			
+			<!-- content dynamically added by js -->
 		</h2>
 		<div id='migration-messages' style='height:400px;overflow-y:scroll'>
-
+			<!-- content dynamically added by js -->
 		</div>
 	</div>
 	<?php }
 	if ($show_maintenance_switch){?>
-	<form method='post' action=''>
+	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
 		<?php echo EE_Form_Fields::radio(__("Maintenance Mode Level", "event_espresso"), EE_Maintenance_Mode::instance()->level(), 
 				array(EE_Maintenance_Mode::level_0_not_in_maintenance=>  __("Not In Maintenance (normal)", "event_espresso"),
-			EE_Maintenance_Mode::level_1_frontend_only_maintenance=>  __("Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)", "event_espresso")), 'maintenance_model_level'); ?>
+			EE_Maintenance_Mode::level_1_frontend_only_maintenance=>  __("Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)", "event_espresso")), 
+				'maintenance_model_level'); ?>
 		<p class='description'><?php _e("Frontend Maintenance might be handy if you want to debug something on the frontend of your website before allowing non-administrators to see.", "event_espresso");?></p>
 		<input type='submit' value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
 	</form>

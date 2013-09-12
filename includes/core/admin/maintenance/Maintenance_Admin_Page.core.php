@@ -58,15 +58,18 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_maintenance',);
+			'default' => '_maintenance',
+			'change_maintenance_level'=>array(
+				'func'=>'_change_maintenance_level',
+				'noheader'=>true
+			));
 	}
 
 	/**
-	 * default maintenance page
+	 * default maintenance page. If we're in maintenance mode level 2, then we need to show
+	 * the migration scripts and all that UI.
 	 */
 	public function _maintenance(){
-		
-		
 		//it all depends if we're in maintenance model level 1 (frontend-only) or
 		//level 2 (everything except maintenance page)
 		switch(EE_Maintenance_Mode::instance()->level()){
@@ -121,15 +124,17 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
 		$this->_template_args = array_merge($this->_template_args,array(
-			'show_most_recent_migration' => $show_most_recent_migration,
-			'most_recent_migration'=> $most_recent_migration,
-			'show_migration_progress' => $show_migration_progress,
-			'show_backup_db_text' => $show_backup_db_text,
-			'show_maintenance_switch'=> $show_maintenance_switch,
-			'script_names'=>$script_names,
-			'show_continue_current_migration_script'=>$show_continue_current_migration_script,
-			'last_migration_was_borked'=>$last_migration_was_borked
+			'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
+			'most_recent_migration'=> $most_recent_migration,//the actual most recently ran migration
+			'show_migration_progress' => $show_migration_progress,//flag for showing the option to run migrations and see their progress
+			'show_backup_db_text' => $show_backup_db_text,//flag for showing text telling the user to backup their DB
+			'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
+			'script_names'=>$script_names,//array of names of scripts that have run
+			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
+			'last_migration_was_borked'=>$last_migration_was_borked,//flag indicating that the last migration had a fatal error
+			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
 		));
+		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
 		require_once(EE_HELPERS . 'EE_Form_Fields.helper.php');
 		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
 		//localize script stuff
@@ -137,17 +142,17 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'migrating'=>  __("Migrating...", "event_espresso"),
 			'status_no_more_migration_scripts'=>  EE_Data_Migration_Manager::status_no_more_migration_scripts,
 			'status_fatal_error'=>  EE_Data_Migration_Manager::status_fatal_error,
-			'status_completed'=>  EE_Data_Migration_Manager::status_completed,
-			'status_no_more_migration_scripts'=> EE_Data_Migration_Manager::status_no_more_migration_scripts));
+			'status_completed'=>  EE_Data_Migration_Manager::status_completed));
 		$this->display_admin_page_with_sidebar();
 	}
 	public function migration_step(){
 		$this->_template_args['data'] = EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
 		$this->_return_json();
 	}
-	public function change_maintenance_level($new_level){
-		EE_Maintenance_Mode::instance()->set_maintenance_level(intval($new_level));
-		$this->_redirect_after_action(1);
+	public function _change_maintenance_level(){
+		$new_level = intval($this->_req_data['maintenance_model_level']);
+		EE_Maintenance_Mode::instance()->set_maintenance_level($new_level);
+		$this->_redirect_after_action(true, 'Maintenance Mode', __("Updated", "event_espresso"));
 	}
 
 

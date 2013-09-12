@@ -308,7 +308,7 @@ class EE_Data_Migration_Manager{
 						'message'=>$current_script_class->get_feedback_message(),
 						'script'=> $current_script_class->pretty_name()
 					);
-				//check if there are any more after this one
+				//check if there are any more after this one. 
 				$scripts_remaining = $this->check_for_applicable_data_migration_scripts();
 				if( ! $scripts_remaining ){
 					//huh, no more scripts to run... apparently we're done!
