@@ -54,7 +54,7 @@ class EE_Base_Class{
 	*	@access	protected
     *	@var string	
     */
-	protected $_dt_frmt = 'F j, Y';	
+	protected $_dt_frmt;	
 	
 	
 	
@@ -66,7 +66,7 @@ class EE_Base_Class{
 	*	@access	protected
     *	@var string	
     */
-	protected $_tm_frmt = 'g:i a';
+	protected $_tm_frmt;
 
 
 
@@ -92,6 +92,10 @@ class EE_Base_Class{
 	 */
 	protected function __construct($fieldValues=null, $bydb = FALSE, $timezone = NULL ){
 		$className=get_class($this);
+		//set default formats for date and time
+		$this->_dt_frmt = get_option('date_format');
+		$this->_tm_frmt = get_option('time_format');
+
 		do_action("AHEE__{$className}__construct",$this,$fieldValues);
 		$model=$this->get_model();
 		$model_fields = $model->field_settings( FALSE );
