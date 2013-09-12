@@ -100,6 +100,8 @@ class EE_Data_Migration_Manager{
 	 */
 	public function get_data_migrations_ran(){
 		if( ! $this->_data_migrations_ran ){
+			//setup autoloaders for each of the scripts in there
+			$this->get_all_data_migration_scripts_available();
 			$this->_data_migrations_ran = get_option(EE_Data_Migration_Manager::data_migrations_option_name);
 			if ( ! $this->_data_migrations_ran || ! is_array($this->_data_migrations_ran) ){
 				$this->_data_migrations_ran = array();
@@ -221,7 +223,8 @@ class EE_Data_Migration_Manager{
 	 * @return EE_Data_Migration_Script_Base
 	 * @throws EE_Error
 	 */
-	public function get_currently_executing_script(){
+	public function get_last_ran_script($include_completed_scripts = false){
+		//make sure data migration script classes have autoloaders
 		$scripts_ran = $this->get_data_migrations_ran();
 		if( ! $scripts_ran ){
 			return null;
@@ -234,8 +237,13 @@ class EE_Data_Migration_Manager{
 			}elseif($last_ran_script->get_status() == self::status_fatal_error){
 				throw new EE_Error(sprintf(__("Last script ran had a fatal error. You must revert your database to where it was BEFORE the migration", "event_espresso")));
 			}else{
-				//it must be marked as complete
-				return null;
+				//it must be marked as complete.
+				if($include_completed_scripts){
+					return $last_ran_script;
+				}else{
+					//in this case, we only want to show a script that isn't complete
+					return null;
+				}
 			}
 		}else{
 			//its not a data migration script class, so it must be a 3.1 legacy array. That's ok
@@ -254,7 +262,7 @@ class EE_Data_Migration_Manager{
 	public function migration_step(){
 		//first: add all dms scripts to the autoloader
 		$this->get_all_data_migration_scripts_available();
-		$currently_executing_script = $this->get_currently_executing_script();
+		$currently_executing_script = $this->get_last_ran_script();
 		if( ! $currently_executing_script){
 			//Find the next script that needs to execute
 			$scripts = $this->check_for_applicable_data_migration_scripts();
@@ -294,12 +302,25 @@ class EE_Data_Migration_Manager{
 				//ok so THAT script has completed
 				$this->_update_current_database_state_to($this->_migrates_to_version($current_script_name, false));
 				$response_array =  array(
-					'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
-					'records_migrated'=>$current_script_class->count_records_to_migrate(),//so we're done, so just assume we've finished ALL records
-					'status'=> EE_Data_Migration_Manager::status_completed,
-					'message'=>$current_script_class->get_feedback_message(),
-					'script'=> $current_script_class->pretty_name()
-				);
+						'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
+						'records_migrated'=>$current_script_class->count_records_to_migrate(),//so we're done, so just assume we've finished ALL records
+						'status'=> EE_Data_Migration_Manager::status_completed,
+						'message'=>$current_script_class->get_feedback_message(),
+						'script'=> $current_script_class->pretty_name()
+					);
+				//check if there are any more after this one. 
+				$scripts_remaining = $this->check_for_applicable_data_migration_scripts();
+				if( ! $scripts_remaining ){
+					//huh, no more scripts to run... apparently we're done!
+					//but dont forget to make sure intial data is there
+					$this->EE->load_helper('Activation');
+					EEH_Activation::initialize_db_content();
+					//we should be good to allow them to exit maintenance mode now
+					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
+					$response_array['status'] = self::status_no_more_migration_scripts;
+				}
+				
+				
 				break;
 			case EE_Data_Migration_Manager::status_error:
 			default:

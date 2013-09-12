@@ -52,22 +52,15 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function get_menu_map() {
 		$map = array(
-			'group' => 'settings',
+			'group' => 'tools',
 			'menu_order' => 30,
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'espresso_tools'
 			);
-		switch( EE_Maintenance_Mode::instance()->level() ){
-			case 1:
-				break;
-			case 2:
+		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
 				$map['group']='main';
 				$map['parent_slug'] = EE_MAINTENANCE_PG_SLUG;
 				add_filter('FHEE__EE_Admin_Page_Loader__set_menus__parent_slug',array($this,'make_maintenance_page_parent_slug'));
-				break;
-			case 0:
-			default:
-				$map['show_on_menu']=false;
 		}
 		return $map;
 	}
