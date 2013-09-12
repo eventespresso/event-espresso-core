@@ -864,7 +864,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		
 		// WHAT?!?!! check the validity of properties before you validate them ?!?!? geez... my head hurts
 		if ( ! isset( $properties ) or ! is_array( $properties ) or empty( $properties )) {
-			$msg = __( 'An error occured. No cart properties were submitted for verification.', 'event_espresso' );
+			$msg = __( 'No cart properties were submitted for verification.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -875,7 +875,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				case 'which_cart' :
 						// check for a valid cart
 						if ( ! $property or ! isset( $this->cart[ $property ] )) {
-							$msg = __( 'An error occured. No cart or an invalid cart was specified.', 'event_espresso' );
+							$msg = __( 'No cart or an invalid cart was specified.', 'event_espresso' );
 							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
@@ -884,7 +884,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				case 'line_item_ids' :
 						//check for a line item id(s)
 						if ( ! $property ) {
-							$msg = __( 'An error occured. No item was specified.', 'event_espresso' );
+							$msg = __( 'No items were specified.', 'event_espresso' );
 							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
@@ -893,7 +893,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				case 'line_item_id' :
 						// check for a line item id(s)
 						if ( ! $property or ! isset( $this->cart[ $properties['which_cart'] ]['items'][ $property ] )) {
-							$msg = __( 'An error occured. No item was specified.', 'event_espresso' );
+							$msg = __( 'No item was specified.', 'event_espresso' );
 							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}						
@@ -902,7 +902,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				case 'new_qty' :
 						//check for a new_qty
 						if ( ! $property or ! is_int( $property )) {
-							$msg = __( 'An error occured. Either no item quantity, or an invalid item quantity was specified.', 'event_espresso' );
+							$msg = __( 'Either no item quantity, or an invalid item quantity was specified.', 'event_espresso' );
 							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
@@ -915,7 +915,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 						foreach ( $required_keys as $required_key ) {
 							// check that item has required property
 							if ( ! isset ( $property[ $required_key ] )) { 
-								$msg = sprintf( __( 'An error occured. Items passed to the cart must possess a valid %s.', 'event_espresso' ), $required_key );
+								$msg = sprintf( __( 'Items passed to the cart must possess a valid %s.', 'event_espresso' ), $required_key );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								return FALSE;
 							}
@@ -924,7 +924,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				
 				case 'items' :
 						if ( ! is_array( $property ) or empty( $property ) ) {
-							$msg = __( 'An error occured. The data passed to the cart was invalid. No items could be added to the cart.', 'event_espresso' );
+							$msg = __( 'The data passed to the cart was invalid. No items could be added to the cart.', 'event_espresso' );
 							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}
@@ -933,7 +933,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				case 'event_id' :
 						// check $event_id 
 						if ( ! $property or ! is_int( $property )) {
-							$msg = __( 'An error occured. An invalid or missing event id was submitted and therefore could not be added to the events in cart list.', 'event_espresso' );
+							$msg = __( 'An invalid or missing event id was submitted and therefore could not be added to the events in cart list.', 'event_espresso' );
 							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 							return FALSE;
 						}						
@@ -1031,7 +1031,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			unset( $this->cart[$which_cart]['event_id_list'][ $event_id ] );
 			return TRUE;
 		} else {
-			$msg = __( 'An error occured. The submitted event id was not found in the events in cart list.', 'event_espresso' );
+			$msg = __( 'The submitted event id was not found in the events in cart list.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}		
@@ -1095,7 +1095,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// check $event_id 
 		if ( ! $event_id or ! is_int( $event_id )) {
-			$msg = __( 'An error occured. An invalid or missing event id was submitted and therefore could not be removed from the events in cart list.', 'event_espresso' );
+			$msg = __( 'An invalid or missing event id was submitted and therefore could not be removed from the events in cart list.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -1106,7 +1106,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			unset( $this->_events_in_cart[ $event_id ]);
 			return TRUE;
 		} else {
-			$msg = __( 'An error occured. The submitted event id was not found in the events in cart list.', 'event_espresso' );
+			$msg = __( 'The submitted event id was not found in the events in cart list.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}		
@@ -1158,7 +1158,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// check $extra_details
 		if ( ! $extra_details or ! is_array( $extra_details ) or empty( $extra_details )) {
-			$msg = __( 'An error occured. An invalid or missing set of details was submitted and therefore could not be added to the cart item.', 'event_espresso' );
+			$msg = __( 'An invalid or missing set of details was submitted and therefore could not be added to the cart item.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
