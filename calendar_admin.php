@@ -131,6 +131,7 @@ class EE_Calendar_Admin {
 				'tooltips_pos_at_1' => 'center',
 				'tooltips_pos_at_2' => 'center',
 				'tooltip_style' => 'qtip-light',
+				'tooltip_word_count' => 50,
 				
 				'espresso_use_pickers' => false,
 				'ee_event_background' => '007BAE',
@@ -282,6 +283,7 @@ class EE_Calendar_Admin {
 			$espresso_calendar['tooltips_pos_at_1'] = isset( $_POST['tooltips_pos_at_1'] ) ? $_POST['tooltips_pos_at_1'] : 'center';
 			$espresso_calendar['tooltips_pos_at_2'] = isset( $_POST['tooltips_pos_at_2'] ) ? $_POST['tooltips_pos_at_2'] : 'center';
 			$espresso_calendar['tooltip_style'] = $_POST['tooltip_style'];
+			$espresso_calendar['tooltip_word_count'] = isset( $_POST['tooltip_word_count'] ) ? absint( $_POST['tooltip_word_count'] ) : 50;
 			
 			$espresso_calendar['show_time'] = $_POST['show_time'];
 
@@ -302,7 +304,7 @@ class EE_Calendar_Admin {
 			$espresso_calendar['columnFormat_day'] = $_POST['columnFormat_day'];
 			
 			$existing_settings = get_option( 'espresso_calendar_settings', array() );
-			$differences = array_diff_assoc( $existing_settings, $espresso_calendar );
+			$differences = array_diff_assoc( $espresso_calendar, $existing_settings );
 			
 			if ( ! empty( $differences )) {
 				if ( update_option('espresso_calendar_settings', $espresso_calendar)) {
@@ -714,6 +716,20 @@ class EE_Calendar_Admin {
 											<?php echo select_input('tooltip_style', $tooltip_style, !empty($espresso_calendar['tooltip_style']) ? $espresso_calendar['tooltip_style'] : 'qtip-light', 'id="tooltip_style"'); ?><br/>
 											<span class="description">
 												<?php _e('Adds styling to tooltips. Default: light', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
+
+									<tr class="tooltip_word_count">
+										<th>
+											<label for="tooltip_word_count">
+												<?php _e('Tooltip Desc Word Count', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td>
+											<input id="tooltip_word_count" type="text" name="tooltip_word_count" value="<?php echo isset( $espresso_calendar['tooltip_word_count'] ) ? $espresso_calendar['tooltip_word_count'] : 50; ?>" /><br/>
+											<span class="description">
+												<?php _e('Number of words to show in tooltip event descriptions. Set to "0" for no limit. Default: 50.<br/>Please note that using this feature will strip all formating and images from your tool tip event descriptions.', 'event_espresso'); ?>
 											</span>
 										</td>
 									</tr>

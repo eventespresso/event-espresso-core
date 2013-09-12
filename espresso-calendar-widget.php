@@ -73,7 +73,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 				$calendar_options = get_option( 'espresso_calendar_settings', array() );
 				if ( isset( $calendar_options['show_tooltips'] ) && $calendar_options['show_tooltips'] ? TRUE : FALSE ) {
 					wp_enqueue_style('qtip');
-					wp_enqueue_script('jquery-qtip-min');
+					wp_enqueue_script('jquery-qtip');
 				}
 				wp_enqueue_style('fullcalendar');
 				wp_enqueue_style('espresso_calendar');
