@@ -669,8 +669,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
 		wp_enqueue_style('ticket_selector');
 		// make it dance
-		wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
-		wp_enqueue_script('ticket_selector');
+//		wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
+//		wp_enqueue_script('ticket_selector');
 		// loco grande 
 		wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
