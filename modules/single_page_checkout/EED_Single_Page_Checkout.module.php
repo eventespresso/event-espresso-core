@@ -569,6 +569,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
 
 		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
+		$confirm_n_pay = sprintf( 
+			__('YES!%1$sConfirm%1$sRegistration%1$s%2$s%1$sProceed%1$sto%1$sPayment', 'event_espresso'),
+			'&nbsp;',  // %1$s
+			'&amp;'	// %2$s
+		);
+		$confirm = sprintf( 
+			__('YES!%1$sConfirm%1$sRegistration%1$s', 'event_espresso'),
+			'&nbsp;'  // %1$s
+		);
+		$template_args['confirmation_btn_text'] = $grand_total > 0 ? $confirm_n_pay : $confirm;
 
 		$template_args['event_queue'] = $event_queue;
 		$template_args['nmbr_of_carts'] = count($event_queue);
