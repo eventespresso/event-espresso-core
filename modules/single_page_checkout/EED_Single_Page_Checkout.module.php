@@ -25,6 +25,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 	// base url for the site's registration checkout page - additional url params will be added to this
 	private $_reg_page_base_url = '';
+	// thank you page
+	private $_thank_you_page_url = '';
 
 	private $_templates = array();
 
@@ -1104,7 +1106,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			// attempt to perform transaction via payment gateway
 			$response = $this->EE->LIB->EEM_Gateways->process_reg_step_3();
-			$this->_return_page_url = $response['forward_url'];
+			$this->_thank_you_page_url = $response['forward_url'];
 			$success_msg = $response['msg']['success'];
 		}
 		
@@ -1114,7 +1116,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 		//die();
 		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
-			wp_safe_redirect($this->_return_page_url);
+			wp_safe_redirect($this->_thank_you_page_url);
 			exit();
 		} else {
 			$reg_page_step_3_url = add_query_arg(array('ee' => 'register', 'step' => '3'), $this->_reg_page_base_url);
@@ -1325,7 +1327,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$response_data = array(
 				'success' => $success_msg,
-				'return_data' => array('redirect-to-thank-you-page' => $this->_return_page_url)
+				'return_data' => array('redirect-to-thank-you-page' => $this->_thank_you_page_url)
 		);
 
 		echo json_encode($response_data);
