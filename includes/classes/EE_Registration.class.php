@@ -223,7 +223,7 @@ class EE_Registration extends EE_Base_Class {
 	/**
 	 * Status of the registration
 	 * @access protected
-	 * @var EE_Status $_Status (looks unfinished right now)
+	 * @var EE_Status $_Status
 	 */
 	protected $_Status = NULL;
 	
@@ -739,6 +739,15 @@ class EE_Registration extends EE_Base_Class {
 	 */
 	public function set_datetime_ticket($datetime_ticket){
 		return$this->_add_relation_to($datetime_ticket, 'Datetime_Ticket');
+	}
+	
+	
+	/**
+	 * Get the status object of this object
+	 * @return EE_Status
+	 */
+	public function status_obj(){
+		return $this->get_first_related('Status');
 	}
 }
 
