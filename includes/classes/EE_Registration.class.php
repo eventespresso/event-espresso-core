@@ -191,7 +191,7 @@ class EE_Registration extends EE_Base_Class {
 	 * Event for which this registration is for
 	 * 
 	 * @access protected
-	 * @var EE_Event
+	 * @var EE_Event $_Event
 	 */
 	protected $_Event = NULL;
 	
@@ -200,7 +200,7 @@ class EE_Registration extends EE_Base_Class {
 	 * Attendee data for this registration
 	 * 
 	 * @access protected
-	 * @var EE_Attendee
+	 * @var EE_Attendee $_Attendee
 	 */
 	protected $_Attendee = NULL;
 	
@@ -208,7 +208,7 @@ class EE_Registration extends EE_Base_Class {
 	/**
 	 * Transaction of this Registration
 	 * @access protected
-	 * @var EE_Tranaction
+	 * @var EE_Tranaction $_Transaction
 	 */
 	protected $_Transaction = NULL;
 	
@@ -216,26 +216,30 @@ class EE_Registration extends EE_Base_Class {
 	/**
 	 * Ticket object of the Event Datetime(s) this registration is for
 	 * @access protected
-	 * @var EE_Ticket
+	 * @var EE_Ticket $_Ticket
 	 */
 	protected $_Ticket = NULL;
-	
-
-	
-	
+		
 	/**
 	 * Status of the registration
 	 * @access protected
-	 * @var EE_Status (looks unfinished right now)
+	 * @var EE_Status $_Status (looks unfinished right now)
 	 */
 	protected $_Status = NULL;
 	
 	/**
 	 * Answers made to questions for this registration
 	 * @access protected 
-	 * @var EE_Answer[]
+	 * @var EE_Answer $_Answer
 	 */
 	protected $_Answer = NULL;
+	
+	/**
+	 * Checkin
+	 * @access protected 
+	 * @var EE_Checkin $_Checkin
+	 */
+	protected $_Checkin = NULL;
 
 
 
