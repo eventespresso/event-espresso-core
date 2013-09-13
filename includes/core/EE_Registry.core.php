@@ -152,6 +152,7 @@ final class EE_Registry {
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		// Output admin-ajax.php URL with same protocol as current page
 		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
+		self::$i18n_js_strings['wp_debug'] = WP_DEBUG;
 	}
 
 
@@ -216,6 +217,7 @@ final class EE_Registry {
 		$paths = array(
 			EE_CORE,
 			EE_CORE . 'CPTs' . DS,
+			EE_CORE . 'messages' . DS,
 		);
 		// retreive instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments );
