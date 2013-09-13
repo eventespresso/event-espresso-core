@@ -24,12 +24,8 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 	-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;
 }
 
-#mer-ajax-loading { display:none; position:absolute; top:18px; left:50%; margin-left:-15px; padding:0; z-index:1000; }
-.espresso-paid-status-icon-img,
-#mer-ajax-loading img { box-shadow: none !important; box-radius: 0 !important;  }
-#mer-ajax-loading span { display:none; }
 
-.event-queue-msg {
+/*.event-queue-msg {
 	display:block; position:absolute; top:3.5em; left:0; width:80%; max-width:600px; height:auto; padding:.75em 7%; margin:0m 3%;	z-index:999; 
 	background:#fff; border-radius:5px; border-width:2px; border-style:solid; 
 	font-size:.95em; color:#444 !important; line-height:1.4em; text-align:center;
@@ -52,7 +48,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .close-event-queue-msg:hover { border-color:#444 !important; color:#444 !important; }
 
 #mer-success-msg .ui-icon, #mer-error-msg .ui-icon,
-.mer-reg-page-copy-error-msg .ui-icon { position:absolute; left:3.5%; top:50%; margin:-8px 0 0 -8px; }
+.mer-reg-page-copy-error-msg .ui-icon { position:absolute; left:3.5%; top:50%; margin:-8px 0 0 -8px; }*/
 
 
 .event-queue-update-btns { position:relative; min-width:165px; }
