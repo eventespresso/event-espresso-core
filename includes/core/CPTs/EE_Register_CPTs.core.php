@@ -32,14 +32,14 @@ class EE_Register_CPTs {
 
 	/**
 	 * $_taxonomies
-	  *
+	 *
 	 * @var array $_taxonomies
 	 */
 	private $_taxonomies = array();
 
 	/**
 	 * This property is used to hold an array of EE_default_term objects assigned to a custom post type when the post for that post type is published with no terms set for the taxonomy.
-	  *
+	 *
 	 * @var array of EE_Default_Term objects
 	 */
 	protected $_default_terms = array();

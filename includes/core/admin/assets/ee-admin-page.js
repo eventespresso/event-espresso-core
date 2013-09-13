@@ -233,6 +233,20 @@ jQuery(document).ready(function($) {
 
 	}
 
+
+	/**
+	 * add in our own statuses
+	 */
+	var wp_status = $('.ee-status-container', '#misc-publishing-actions').first();
+	var our_status = $('#cur_status').text();
+	var extra_statuses = $('#ee_post_status').html();
+	if ( our_status != '' )
+		$('#post-status-display').text(our_status);
+
+	if ( extra_statuses != '' )
+		$(extra_statuses).appendTo($('#post_status'));
+
+
 	/**
 	 * EE Help dialog loads
 	 */
@@ -270,6 +284,37 @@ jQuery(document).ready(function($) {
 		$(target_help_tab).trigger('click');
 	});
 
+
+
+	/**
+	 * lazy loading of content
+	 */
+
+	espressoAjaxPopulate = function(el) {
+		function show(i, id) {
+			var p, e = $('#' + id).find('.widget-loading');
+			if ( e.length ) {
+				p = e.parent();
+				var u = $('#' + id + '_url').text();
+				setTimeout( function(){
+					p.load( ajaxurl + '?action=espresso-ajax-content&contentid=' + id + '&contenturl=' + u, '', function() {
+						p.hide().slideDown('normal', function(){
+							$(this).css('display', '');
+						});
+					});
+				}, i * 500 );
+			}
+		}
+
+		if ( el ) {
+			el = el.toString();
+			if ( $.inArray(el, eeLazyLoadingContainers) != -1 )
+				show(0, el);
+		} else {
+			$.each( eeLazyLoadingContainers, show );
+		}
+	};
+	espressoAjaxPopulate();
 
 
 });

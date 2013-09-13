@@ -271,6 +271,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
 			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
 
+		//insert our own post_stati dropdown
+		add_action('post_submitbox_misc_actions', array($this, 'custom_post_stati_dropdown' ), 10 );
+
 		//This allows adding additional information to the publish post submitbox on the wp post edit form
 		if ( method_exists( $this, 'extra_misc_actions_publish_box' ) )
 			add_action('post_submitbox_misc_actions', array( $this, 'extra_misc_actions_publish_box' ), 10 );
@@ -291,6 +294,24 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 	}
 
+
+
+
+	/**
+	 * add our custom post stati dropdown on the wp post page for this cpt
+	 * @return string html for dropdown
+	 */
+	public function custom_post_stati_dropdown() {
+		global $post;
+		$statuses = EEM_CPT_Base::get_custom_post_statuses();
+		$template_args = array(
+			'cur_status' =>  $post->post_status,
+			'statuses' => $statuses,
+			'cur_status_label' => array_key_exists($post->post_status, $statuses) ? $statuses[$post->post_status] : ''
+			);
+		$template = EE_CORE_ADMIN_TEMPLATE . 'status_dropdown.template.php';
+		espresso_display_template( $template, $template_args );
+	}
 
 
 

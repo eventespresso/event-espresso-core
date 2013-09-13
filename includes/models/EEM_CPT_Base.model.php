@@ -166,7 +166,7 @@ class EEM_CPT_Base extends EEM_Base{
 	 */
 	public static function get_post_statuses(){
 		global $wp_post_statuses;
-		$statuses= array();
+		$statuses = array();
 		foreach($wp_post_statuses as $post_status => $args_object){
 			$statuses[$post_status] = $args_object->label;
 		}
@@ -185,6 +185,31 @@ class EEM_CPT_Base extends EEM_Base{
 		//now the class specific filter
 		$statuses = apply_filters( 'FHEE_EEM_' . get_class($this) . '__get_status_array', $statuses );
 		return $statuses;
+	}
+
+
+	/**
+	 * this returns the post statuses that are NOT the default wordpress status
+	 * @return array
+	 */
+	public function get_custom_post_statuses() {
+		$new_stati = array();
+		$statuses = self::get_post_statuses();
+		$defaults = array(
+			'publish',
+			'future',
+			'private',
+			'pending',
+			'auto-draft',
+			'draft',
+			'trash',
+			'inherit'
+			);
+		foreach ( $statuses as $status => $label ) {
+			if ( !in_array( $status, $defaults ) )
+				$new_stati[$status] = $label;
+		}
+		return $new_stati;
 	}
 
 	
