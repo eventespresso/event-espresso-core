@@ -82,7 +82,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function set_definitions() {
+	public static function set_definitions() {
 		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 	}
@@ -664,7 +664,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return 		void
 	*/
-	public function load_tckt_slctr_assets() {
+	public static function load_tckt_slctr_assets() {
 		// add some style
 		wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
 		wp_enqueue_style('ticket_selector');

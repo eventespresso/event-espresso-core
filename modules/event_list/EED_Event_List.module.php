@@ -145,9 +145,9 @@ class EED_Event_List  extends EED_Module {
 		// grab POST data
 		$this->get_post_data();		
 		// build event list query
-		add_action( 'posts_join', array( 'EED_Event_List', 'posts_join' ), 1 );
-		add_action( 'posts_where', array( 'EED_Event_List', 'posts_where' ), 1 );
-		add_action( 'posts_orderby', array( 'EED_Event_List', 'posts_orderby' ), 1 );
+		add_action( 'posts_join', array( $this, 'posts_join' ), 1 );
+		add_action( 'posts_where', array( $this, 'posts_where' ), 1 );
+		add_action( 'posts_orderby', array( $this, 'posts_orderby' ), 1 );
 
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
