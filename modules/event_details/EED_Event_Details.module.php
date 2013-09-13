@@ -160,10 +160,10 @@ class EED_Event_Details  extends EED_Module {
 				// first check uploads folder
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'templates/event_details.css' )) {
 					wp_register_style( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.js', array(), '1.0', FALSE  );
+					wp_register_script( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.js', array('jquery'), '1.0', TRUE  );
 				} else {
 					wp_register_style( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.js', array(), '1.0', FALSE );
+					wp_register_script( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.js', array('jquery'), '1.0', TRUE );
 				}
 				wp_enqueue_style( 'espresso_event_details' );
 				wp_enqueue_script( 'espresso_event_details' );
