@@ -177,14 +177,13 @@ class EE_messages_init extends EE_Base {
 
 	/**
 	 * Message triggers for after successful frontend registration go here
-	 * @param  EE_Single_Page_Checkout object  $SPCO 	
+	 * @param  EED_Single_Page_Checkout object  $SPCO 	
 	 * @return void
 	 */
-	public function registration( EE_Single_Page_Checkout $SPCO ) {
-		global $EE_Session;
+	public function registration( EED_Single_Page_Checkout $SPCO ) {
 		$this->_load_controller();
 		//notice... we don't actually send the SPCO here, might need to change at some point but really everything we need is in the session at this point.
-		$this->_EEMSG->send_message( 'registration', $EE_Session );
+		$this->_EEMSG->send_message( 'registration', EE_Registry::instance()->SSN );
 	}
 
 
