@@ -463,7 +463,7 @@
 					msg = new Object();
 					msg.error = eei18n.reg_step_error;
 					if ( eei18n.wp_debug == 1 ) {
-						msg.error = msg.error + ' ( ' + getFunctionName( arguments.callee.toString() ) + ' ' + (new Error).lineNumber + ' )';
+						msg.error = msg.error + ' ( process_reg_step(' + step + ') ' + (new Error).lineNumber + ' )';
 					}
 					show_event_queue_ajax_error_msg( msg );
 					return false;
