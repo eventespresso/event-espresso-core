@@ -955,7 +955,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	private function _check_user_access() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if ( ! function_exists( 'is_admin' ) or  ! current_user_can( 'manage_options' )) {
+		if (( ! function_exists( 'is_admin' ) or ! current_user_can( 'manage_options' )) && ! defined( 'DOING_AJAX')) {
 			wp_redirect( home_url('/') . 'wp-admin/' );
 		}
 	}
