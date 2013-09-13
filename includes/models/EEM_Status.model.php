@@ -77,39 +77,6 @@ class EEM_Status extends EEM_Base {
 	}
 
 
-
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() { }
-
-
-
-	/**
-	 * retreives a list of all EE event categories
-	 * 
-	 * @access public
-	 */
-	public function get_all_ee_categories( $all = FALSE ) {
-	
-		$where_params = array(
-			'Term_Taxonomy.taxonomy' => 'espresso_event_categories',
-			'NOT' => array( 'name' => __( 'Uncategorized', 'event_espresso' ))
-		);
-		
-		if ( $all ) {
-			unset( $where_params['NOT'] );
-		}
-
-	 	return EEM_Term::instance()->get_all( array( 
-			$where_params,
-			'order_by' => array( 'name' => 'ASC' )
-		));
-	
-	
-	}
-
 }
 // End of file EEM_Answer.model.php
 // Location: /includes/models/EEM_Answer.model.php

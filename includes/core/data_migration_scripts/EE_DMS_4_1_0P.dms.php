@@ -186,6 +186,25 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					KEY PAY_timestamp (PAY_timestamp)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 
+		$table_name = 'esp_promotion';
+		$sql = "PRO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+					PRC_ID INT UNSIGNED NOT NULL ,
+					PRO_scope VARCHAR(16) NOT NULL DEFAULT 'event' ,
+					PRO_start DATETIME NULL DEFAULT NULL ,
+					PRO_end DATETIME NULL DEFAULT NULL ,
+					PRO_code VARCHAR(45) NULL DEFAULT NULL ,
+					PRO_uses SMALLINT UNSIGNED NULL DEFAULT NULL ,
+					PRO_global TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRO_global_uses TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRO_exclusive TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRO_accept_msg TINYTEXT NULL DEFAULT NULL ,
+					PRO_decline_msg TINYTEXT NULL DEFAULT NULL ,
+					PRO_default TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRO_order TINYINT UNSIGNED NOT NULL DEFAULT 40 ,
+					PRIMARY KEY  (PRO_ID) ,
+					KEY FK_wp_esp_price_PRC_ID2 (PRC_ID ASC) )";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
 
 
 		$table_name = "esp_ticket";  
