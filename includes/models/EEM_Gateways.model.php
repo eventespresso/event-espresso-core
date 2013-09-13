@@ -855,17 +855,11 @@ Class EEM_Gateways {
 	 */
 	private function _get_return_page_url() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $org_options;
 		$session_data = $this->EE->SSN->get_session_data();
 		$a_current_registration=current($session_data['registration']);
-		
-		$return_page_id = $org_options['return_url'];
-		// get permalink for thank you page
 		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		return add_query_arg(array('e_reg_url_link'=>$a_current_registration->reg_url_link()),
-				rtrim( get_permalink( $return_page_id ), '/' ));
+		return add_query_arg( array( 'e_reg_url_link'=>$a_current_registration->reg_url_link() ), rtrim( get_permalink( $this->EE->CFG->core->thank_you_page_id ), '/' ));
 	}
-
 
 
 	/**
