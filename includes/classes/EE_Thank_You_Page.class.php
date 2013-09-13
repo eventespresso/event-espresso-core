@@ -52,6 +52,7 @@ class EE_Thank_You_Page{
 		return self::$_instance;
 	}
 	
+	
 	protected function __construct(){
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		

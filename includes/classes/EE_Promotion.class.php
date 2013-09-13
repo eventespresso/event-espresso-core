@@ -63,9 +63,20 @@ class EE_Promotion extends EE_Base_Class{
 				/** Usable by default on all new items within promotion's scope", "event_espresso @var PRO_default*/ 
 	protected $_PRO_default = NULL;
 				
-				/** Order", "event_espresso @var PRO_order*/ protected $_PRO_order = NULL;
+				/** Order", "event_espresso @var PRO_order*/ 
+	protected $_PRO_order = NULL;
 				
-
+	/**
+	 *
+	 * @var EE_Promotion_Rule[]
+	 */
+	protected $_Promotion_Rule = NULL;
+	
+	/**
+	 *
+	 * @var EE_Rule[]
+	 */
+	protected $_Rule = NULL;
 				
 
 	public static function new_instance( $props_n_values = array() ) {

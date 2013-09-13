@@ -202,7 +202,32 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					PRO_default TINYINT(1) NOT NULL DEFAULT 0 ,
 					PRO_order TINYINT UNSIGNED NOT NULL DEFAULT 40 ,
 					PRIMARY KEY  (PRO_ID) ,
-					KEY FK_wp_esp_price_PRC_ID2 (PRC_ID ASC) )";
+					KEY FK_wp_esp_price_PRC_ID2 (PRC_ID ASC)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
+		$table_name = 'esp_promotion_rule';
+		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+					PRO_ID INT UNSIGNED NOT NULL ,
+					RUL_ID INT UNSIGNED NOT NULL ,
+					PRR_order TINYINT UNSIGNED NOT NULL DEFAULT 1 ,
+					PRR_add_rule_comparison ENUM('AND','OR') NULL DEFAULT AND ,
+					PRIMARY KEY  (PRR_ID) ,
+					INDEX FK_wp_esp_promotions_PRO_ID2 (PRO_ID ASC) ,
+					INDEX FK_wp_esp_promo_rule_RUL_ID1 (RUL_ID ASC) ";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
+		$table_name = 'esp_rule';
+		$sql = "RUL_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+					RUL_name VARCHAR(45) NOT NULL ,
+					RUL_desc TEXT NULL ,
+					RUL_trigger VARCHAR(45) NOT NULL ,
+					RUL_trigger_type VARCHAR(45) NULL DEFAULT NULL ,
+					RUL_comparison ENUM('=','!=','<','>') NOT NULL DEFAULT '=' ,
+					RUL_value VARCHAR(45) NOT NULL ,
+					RUL_value_type VARCHAR(45) NULL DEFAULT NULL ,
+					RUL_is_active TINYINT(1) NOT NULL DEFAULT 1 ,
+					RUL_archived TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRIMARY KEY  (RUL_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 		
 

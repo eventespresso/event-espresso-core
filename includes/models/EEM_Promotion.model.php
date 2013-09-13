@@ -69,7 +69,9 @@ class EEM_Promotion extends EEM_Base {
 				'PRO_order'=>new EE_Integer_Field('PRO_order', __("Order", "event_espresso"), false,0),
 			));
 		$this->_model_relations = array(
-			'Price'=>new EE_Belongs_To_Relation()
+			'Price'=>new EE_Belongs_To_Relation(),
+			'Promotion_Rule'=>new EE_Has_Many_Relation(),
+			'Rule'=>new EE_HABTM_Relation('Promotion_Rule')
 		);
 		
 		parent::__construct();
