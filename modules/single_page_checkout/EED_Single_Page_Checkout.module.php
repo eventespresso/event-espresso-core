@@ -116,7 +116,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function set_definitions() {
+	public static function set_definitions() {
 		define( 'SPCO_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'SPCO_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 	}
