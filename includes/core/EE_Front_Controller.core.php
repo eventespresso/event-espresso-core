@@ -106,6 +106,22 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init() {
+		//CREATE A BASIC REG, ATTENDEE, AND TRANSACTION
+//		$txn = EE_Transaction::new_instance(array('TXN_total'=>34.02,'TXN_paid'=>34.02, 'STS_ID'=>'TIN'));
+//		$txn->save();
+//		$att = EE_Attendee::new_instance(array('ATT_fname'=>'monkey'));
+//		$att->save();
+//		$evt = EEM_Event::instance()->get_one();
+//		$reg = EE_Registration::new_instance(array('TXN_ID'=>$txn->ID(),'ATT_ID'=>$att->ID(),'TKT_ID'=>1,'STS_ID'=>'RCN'));
+//		$reg->save();
+//		$regs = EEM_Registration::instance()->get_all(array(array('Status.STS_open'=>true)));
+//		echo 'echodump of $regs';
+//		var_dump($regs);
+		
+//		$status = EEM_Status::instance()->get_one(array(array('STS_ID'=>'RCN')));
+//		$regs = $status->get_many_related('Registration');
+//		echo 'echodump of $regs';
+//		var_dump($regs);
 //		global $wpdb;
 //		$result = $wpdb->get_var("SELECT option_value from wp_options where option_name='espresso_data_migrations'");
 //		echo $result;die;

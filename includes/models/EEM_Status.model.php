@@ -49,7 +49,7 @@ class EEM_Status extends EEM_Base {
 		$this->singlular_item = __('Status','event_espresso');
 		$this->plural_item = __('Stati','event_espresso');
 		$this->_tables = array(
-			'Status'=> new EE_Primary_Table('status', 'STS_ID')
+			'Status'=> new EE_Primary_Table('esp_status', 'STS_ID')
 		);
 		$this->_fields = array(
 			'Status'=>array(
@@ -57,6 +57,7 @@ class EEM_Status extends EEM_Base {
 				'STS_code'=>new EE_Plain_Text_Field('STS_code',__('Status Code','event_espresso'),false, ''),
 				'STS_type'=>new EE_Enum_Text_Field('STS_type', __("Type", "event_espresso"), false, 'event', 
 						array(
+							'event'=> __("Event", "event_espresso"),//deprecated
 							'registration'=>  __("Registration", "event_espresso"),
 							'transaction'=>  __("Transaction", "event_espresso"),
 							'payment'=>  __("Payment", "event_espresso"),
