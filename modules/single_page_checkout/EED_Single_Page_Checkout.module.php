@@ -1043,10 +1043,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			do_action('AHEE_begin_reg');
 
 			// load and instantiate models
-			require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-			require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
-			$REG = EEM_Registration::instance();
-			$TXN = EEM_Transaction::instance();
+			$REG = $this->EE->load_model( 'Registration' );
+			$TXN = $this->EE->load_model( 'Transaction' );
 
 			$reg_items = $session['cart']['REG']['items'];
 
@@ -1058,7 +1056,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			}
 			// start the transaction record
-			require_once ( EE_CLASSES . 'EE_Transaction.class.php' );
+			$this->EE->load_class( 'Transaction' ); // , FALSE, FALSE, TRUE, TRUE
 			// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
 			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
 			//check for existing transaction in the session
@@ -1067,7 +1065,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$transaction = $session['transaction'];
 				//var_dump($transaction);
 				//delete all old registrations on this transaction, because we're going to re-add them according to the updated data in the session now
-				$REG->delete(array('TXN_ID'=>$transaction->ID()));
+				$REG->delete( array( array( 'TXN_ID'=>$transaction->ID() )));
 			}else{
 				$transaction = EE_Transaction::new_instance( 
 					array(
@@ -1147,9 +1145,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// grab session data
 		$session = EE_Registry::instance()->SSN->get_session_data();
 		// get some class would ya !
-		require_once ( EE_CLASSES . 'EE_Registration.class.php' );
-		require_once ( EE_MODELS . 'EEM_Attendee.model.php' );
-		$ATT = EEM_Attendee::instance();
+		EE_Registry::instance()->load_class( 'Answer', FALSE, FALSE, TRUE, TRUE );
+		EE_Registry::instance()->load_class( 'Registration', FALSE, FALSE, TRUE, TRUE );
+		EE_Registry::instance()->load_model( 'Question' );
+		$ATT = EE_Registry::instance()->load_model( 'Attendee' );
+		
 		$saved_registrations = array();
 		$reg_count = 0;
 		$total_registrations = $session['cart']['REG']['total_items'];
@@ -1246,10 +1246,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
 					$primary_attendee = $session['primary_attendee'];
 					$primary_attendee['registration_id'] = $new_reg_code;
-					$this->EE->SSN->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+					EE_Registry::instance()->SSN->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 				}
 				
-				$this->EE->SSN->set_session_data( $session['cart'] );
+				EE_Registry::instance()->SSN->set_session_data( $session['cart'] );
 				// save attendee question answerss
 				$exclude = array( 'price_paid', 'primary_attendee', 'att_obj', 'reg_obj', 'additional_attendee_reg_info' );
 //				printr( $reg_items, '$reg_items  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
