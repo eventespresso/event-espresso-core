@@ -10,7 +10,6 @@
 		<form id="mer-registration-frm-2" action="<?php echo $reg_page_goto_step_3_url;?>" method="post">
 
 			<input type="hidden" id="mer-reg-page-step-2-action" name="ajax_action" value="espresso_process_registration_step_2" />
-			<input type="hidden" id="mer-reg-page-step-2-ajax" name="espresso_ajax" value="0" />
 			<input type="hidden" id="mer-reg-page-step-2-noheader" name="noheader" value="" />		
 
 <?php
@@ -93,7 +92,8 @@
 
 		<div id="mer-reg-page-whats-next-buttons" class="mer-whats-next-buttons">
 
-			<a href="" onclick="return false" id="mer-reg-page-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >
+		<!--<a href="" onclick="return false" id="mer-reg-page-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >-->
+			<a href="" id="mer-reg-page-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big hide-if-no-js" >
 				<?php _e('Registration&nbsp;Step&nbsp;3&nbsp;', 'event_espresso'); ?><span class="ui-icon ui-icon-carat-1-e"></span>
 			</a>
 
