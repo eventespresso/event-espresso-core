@@ -13,10 +13,10 @@
  *
  * ------------------------------------------------------------------------
  *
- * Event List
+ * Single Page Checkout (SPCO)
  *
  * @package			Event Espresso
- * @subpackage	/modules/event_list/
+ * @subpackage	/modules/single_page_checkout/
  * @author				Brent Christensen 
  *
  * ------------------------------------------------------------------------
@@ -29,6 +29,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_templates = array();
 
 
+
+ 
+	/**
+	 *		@singleton method used to instantiate class object
+	 *		@access public
+	 *		@return class instance
+	 */	
+	public static function instance ( ) {
+		// check if class object is instantiated
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EED_Single_Page_Checkout )) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
+
+
+
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *
@@ -38,15 +56,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function set_hooks() {
 		// routing
 		EE_Config::register_route( 'register', 'EED_Single_Page_Checkout', 'run' );
-		EE_Config::register_route( 'process_reg_step_1', 'EED_Single_Page_Checkout', 'process_registration_step_1' );
-		EE_Config::register_route( 'process_reg_step_2', 'EED_Single_Page_Checkout', 'process_registration_step_2' );
-		EE_Config::register_route( 'process_reg_step_3', 'EED_Single_Page_Checkout', 'process_registration_step_3' );
+		EE_Config::register_route( 'process_reg_step_1', 'EED_Single_Page_Checkout', 'process_reg_step_1' );
+		EE_Config::register_route( 'process_reg_step_2', 'EED_Single_Page_Checkout', 'process_reg_step_2' );
+		EE_Config::register_route( 'process_reg_step_3', 'EED_Single_Page_Checkout', 'process_reg_step_3' );
 		// hooks
 		add_action( 'wp_loaded', array( 'EED_Single_Page_Checkout', 'set_definitions' ), 2 );
-		// AJAX
-		add_action('wp_ajax_espresso_process_registration_step_1', array( 'EED_Single_Page_Checkout', 'process_registration_step_1'));
-		add_action('wp_ajax_espresso_process_registration_step_2', array( 'EED_Single_Page_Checkout', 'process_registration_step_2'));
-		add_action('wp_ajax_espresso_process_registration_step_3', array( 'EED_Single_Page_Checkout', 'process_registration_step_3'));
 	}
 
 
@@ -58,12 +72,40 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-
+		add_action( 'wp_loaded', array( 'EED_Single_Page_Checkout', 'set_definitions' ), 2 );
 		// AJAX
-		add_action('wp_ajax_nopriv_espresso_process_registration_step_1', array( 'EED_Single_Page_Checkout', 'process_registration_step_1'));
-		add_action('wp_ajax_nopriv_espresso_process_registration_step_2', array( 'EED_Single_Page_Checkout', 'process_registration_step_2'));
-		add_action('wp_ajax_nopriv_espresso_process_registration_step_3', array( 'EED_Single_Page_Checkout', 'process_registration_step_3'));
+		add_action('wp_ajax_espresso_process_registration_step_1', array( 'EED_Single_Page_Checkout', 'process_reg_step_1'));
+		add_action('wp_ajax_espresso_process_registration_step_2', array( 'EED_Single_Page_Checkout', 'process_reg_step_2'));
+		add_action('wp_ajax_espresso_process_registration_step_3', array( 'EED_Single_Page_Checkout', 'process_reg_step_3'));
+		// no priv AJAX
+		add_action('wp_ajax_nopriv_espresso_process_registration_step_1', array( 'EED_Single_Page_Checkout', 'process_reg_step_1'));
+		add_action('wp_ajax_nopriv_espresso_process_registration_step_2', array( 'EED_Single_Page_Checkout', 'process_reg_step_2'));
+		add_action('wp_ajax_nopriv_espresso_process_registration_step_3', array( 'EED_Single_Page_Checkout', 'process_reg_step_3'));
+	}
 
+
+
+	/**
+	 * 	ajax_process_registration_steps
+	 */
+	public function 	process_reg_step_1() {
+		$SPCO = EED_Single_Page_Checkout::instance();
+		$SPCO->init();
+		$SPCO->process_registration_step_1();
+	}
+	
+	
+	public function 	process_reg_step_2() {
+		$SPCO = EED_Single_Page_Checkout::instance();
+		$SPCO->init();
+		$SPCO->process_registration_step_2();
+	}
+	
+	
+	public function 	process_reg_step_3() {
+		$SPCO = EED_Single_Page_Checkout::instance();
+		$SPCO->init();
+		$SPCO->process_registration_step_3();
 	}
 
 
@@ -83,30 +125,43 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	run - initial module setup
+	 * 	init - initial module setup
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function init() {
+		// load classes
+		$this->EE->load_core( 'Cart' );
+		$this->EE->load_model( 'Gateways' );
+		$this->EE->LIB->EEM_Gateways->set_ajax( $this->EE->REQ->ajax );
+		//taxes
+		$this->EE->load_class( 'Cost_Calculator' );
+		$this->EE->load_class( 'Taxes', array(), FALSE, FALSE, TRUE );
+		$this->set_templates();
+		$this->_reg_page_base_url = get_permalink( $this->EE->CFG->core->reg_page_id );		
+		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'translate_js_strings' ), 1 );
+	}
+
+
+
+
+	/**
+	 * 	run
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
 		
-		// load classes
-		$this->EE->load_core( 'Cart' );
-		$this->EE->load_model( 'Gateways' );
-		$this->EE->LIB->EEM_Gateways->set_ajax( $this->EE->REQ->ajax );
-		
+		$this->init();
 		//printr( $this->EE->CART, '$this->EE->CART  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		//taxes
-		$this->EE->load_class( 'Cost_Calculator' );
-		$this->EE->load_class( 'Taxes', array(), FALSE, FALSE, TRUE );
-		$this->set_templates();
 		// load css and js
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_js', '__return_true' );
-		add_action('wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 10 );
+		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 10 );
 		add_filter( 'espresso_filter_hook_calculate_taxes', array( 'EE_Taxes', 'calculate_taxes' ));
 		
-		$this->_reg_page_base_url = get_permalink( $this->EE->CFG->core->reg_page_id );
 		$this->registration_checkout();
 
 	}
@@ -131,6 +186,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
+	 * 		translate_js_strings
+	 *
+	 * 		@access 		public
+	 * 		@return 		void
+	 */
+	public function translate_js_strings() {
+		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be vaild. If this is incorrect, please contact the site administrator.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['required_field'] = __(' is a required field. Please enter a value for this field and all other required fields before preceeding.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['reg_step_error'] = __('An error occured! This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['answer_required_questions'] = __('You need to answer all required questions before you can proceed.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['enter_valid_email'] = __('You must enter a valid email address.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['valid_email_and_questions'] = __('You must enter a valid email address and answer all other required questions before you can proceed.', 'event_espresso');
+	}
+
+
+
+	/**
 	 * 		wp_enqueue_scripts
 	 *
 	 * 		@access 		public
@@ -141,7 +213,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		wp_enqueue_style( 'single_page_checkout' );
 		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('jquery'), '', TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
-		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );		
+		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
 
@@ -254,6 +326,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		foreach ($cart_types as $cart_type) {
 
 			$cart_contents = $this->EE->CART->whats_in_the_cart($cart_type);
+			//printr( $cart_contents, '$cart_contents  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			$event_queue[$cart_type]['title'] = __('Registrations', 'event_espresso');
 			$attendee_headings = array();
@@ -270,12 +343,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				foreach ($cart_contents['items'] as $item) {
 					//printr( $item, '$item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					$step_1_line_items .= '#mer-reg-page-line-item-' . $item['id'];					
-					$event_queue[$cart_type]['items'][$item['line_item']]['id'] = $item['id'];
-					$event_queue[$cart_type]['items'][$item['line_item']]['name'] = stripslashes( $item['name'] );
-					$event_queue[$cart_type]['items'][$item['line_item']]['ticket_desc'] = stripslashes( $item['options']['ticket_desc'] );
-					$event_queue[$cart_type]['items'][$item['line_item']]['ticket'] = $item['ticket'];
-					$event_queue[$cart_type]['items'][$item['line_item']]['qty'] = $item['qty'];
-					$event_queue[$cart_type]['items'][$item['line_item']]['line_total'] = number_format($item['line_total'], 2, '.', '');
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['id'] = $item['id'];
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['name'] = stripslashes( $item['name'] );
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['ticket_desc'] = stripslashes( $item['options']['ticket_desc'] );
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['ticket'] = $item['ticket'];
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['qty'] = $item['qty'];
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['line_total'] = number_format($item['line_total'], 2, '.', '');
 
 					// get additional event registration details not currently in the sesion/cart
 					//$event_reg_details = $this->_get_event_reg_details($item['id']);
@@ -289,19 +362,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //					 echo '<h2>use groupon code : ' . $event_reg_details->use_groupon_code . '</h2>';
 
 //					if ($event_reg_details->require_pre_approval == 1) {
-//						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
+//						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
 //					}
 
 //					if ($event_reg_details->use_coupon_code) {
-//						$events_that_use_coupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
+//						$events_that_use_coupon_codes[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
 //					}
 //
 //					if (defined('EVENTS_GROUPON_CODES_TABLE') && $event_reg_details->use_groupon_code) {
-//						$events_that_use_groupon_codes[$cart_type]['items'][$item['line_item']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
+//						$events_that_use_groupon_codes[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
 //					}
 
 					// $additional_event_registration_info = apply_filters( 'FHEE_additional_event_registration_info', $additional_event_registration_info );
-					// $event_queue[$cart_type]['items'][ $item['line_item'] ]['extra_reg_info'] = $additional_event_registration_info;
+					// $event_queue[$cart_type]['items'][ $item['line_item_id'] ]['extra_reg_info'] = $additional_event_registration_info;
 
 					$questions_and_groups = $this->EE->load_model( 'Question_Group' )->get_all( array(
 						array(
@@ -374,20 +447,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									type="hidden"
 									id="' . $input_id . '-line_item_id"
 									name="qstn' . $input_name . '[line_item_id]"
-									value="' . $item['line_item'] . '"
+									value="' . $item['line_item_id'] . '"
 							/>' . "\n";
 
 
 
 						// add to array
-						$attendee_questions[$item['line_item']][$att_nmbr] = $att_questions;
+						$attendee_questions[$item['line_item_id']][$att_nmbr] = $att_questions;
 						//fieldset legend
-						$attendee_headings[$item['line_item']][$att_nmbr] = __('Attendee #', 'event_espresso') . $att_nmbr;
+						$attendee_headings[$item['line_item_id']][$att_nmbr] = __('Attendee #', 'event_espresso') . $att_nmbr;
 
 						// for all  attendees other than the primary attendee
 						if ($counter != 1) {
 
-							$additional_attendees[$item['line_item']][$att_nmbr] = array(
+							$additional_attendees[$item['line_item_id']][$att_nmbr] = array(
 									'event_id' => $item['id'],
 									'event_name' => $item['name'],
 									'att_nmbr' => $att_nmbr,
@@ -400,30 +473,30 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 							if ($att_nmbr == 1) {
 								// if this is the first attendee for an event then display a heading
-								$additional_attendees[$item['line_item']][$att_nmbr]['event_hdr'] = $item_name;
+								$additional_attendees[$item['line_item_id']][$att_nmbr]['event_hdr'] = $item_name;
 							} elseif ($att_nmbr == 2 && $x == 1) {
 								// OR the very first additional attendee after the primary attendee
-								$additional_attendees[$item['line_item']][$att_nmbr]['event_hdr'] = $item_name;
+								$additional_attendees[$item['line_item_id']][$att_nmbr]['event_hdr'] = $item_name;
 							} else {
 								// no heading
-								$additional_attendees[$item['line_item']][$att_nmbr]['event_hdr'] = FALSE;
+								$additional_attendees[$item['line_item_id']][$att_nmbr]['event_hdr'] = FALSE;
 							}
 						} else {
 
 							// grab line item from primary attendee
-							$prim_att_line_item = $item['line_item'];
+							$prim_att_line_item = $item['line_item_id'];
 							$template_args['prmy_att_input_name'] = $input_name;
 						}
 
 						// delete empty attendee placeholder
-						unset($additional_attendees[$item['line_item']][0]);
+						unset($additional_attendees[$item['line_item_id']][0]);
 
 						$counter++;
 					}
 
 
-					$event_queue[$cart_type]['items'][$item['line_item']]['attendee_headings'] = $attendee_headings;
-					$event_queue[$cart_type]['items'][$item['line_item']]['attendee_questions'] = $attendee_questions;
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['attendee_headings'] = $attendee_headings;
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['attendee_questions'] = $attendee_questions;
 
 					$x++;
 				} // end foreach ( $cart_contents['items'] as $item )
@@ -542,7 +615,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
 
-//		printr( $this->EE->SSN->get_session_data(), '$this->EE->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//printr( $this->EE->SSN->get_session_data(), '$this->EE->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		$this->EE->REQ->set_output( espresso_display_template( $this->_templates['registration_page_wrapper'], $template_args, TRUE ));
 	}
@@ -593,7 +666,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		int
 	 */
 	public function process_registration_step_1() {
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$success_msg = FALSE;
@@ -683,11 +755,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 			
 			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			// now we'll save our data to the session by doing... MORE LOOPING !!!
 			foreach ($attendees as $line_item_id => $line_item) {
 				foreach ($line_item as $event_id => $attendees_data) {
-					$this->cart->set_line_item_details($attendees_data, $line_item_id);
+					$this->EE->CART->set_line_item_details($attendees_data, $line_item_id);
 				}
 			}
 
@@ -709,11 +782,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_1__end',$this,$valid_data);
 
 		if ($this->send_ajax_response($success_msg, $error_msg)) {
-			$reg_page_step_2_url = add_query_arg(array('e_reg' => 'register', 'step' => '2'), $this->_reg_page_base_url);
+			$reg_page_step_2_url = add_query_arg(array('ee' => 'register', 'step' => '2'), $this->_reg_page_base_url);
 			wp_safe_redirect($reg_page_step_2_url);
 			exit();
 		} else {
-			$args = $this->_process_return_to_reg_step_query_args( array('e_reg' => 'register', 'step' => '1', 'errors' => urlencode( $error_msg )));
+			$args = $this->_process_return_to_reg_step_query_args( array('ee' => 'register', 'step' => '1', 'errors' => urlencode( $error_msg )));
 			$reg_page_step_1_url = add_query_arg( $args, $this->_reg_page_base_url );
 			wp_safe_redirect($reg_page_step_1_url);
 			exit();
@@ -772,7 +845,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else { 
 			
 			// PAID EVENT !!!  BOO  : (
-			$this->gateways->process_gateway_selection();
+			$this->EE->LIB->EEM_Gateways->process_gateway_selection();
 			
 			//grab notices
 			$notices = EE_Error::get_notices(FALSE);
@@ -780,11 +853,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 
 			if ($this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_2_ajax_response' )) {
-				$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
+				$reg_page_step_3_url = add_query_arg(array('ee' => 'register', 'step' => '3'), $this->_reg_page_base_url);
 				wp_safe_redirect($reg_page_step_3_url);
 				exit();
 			} else {
-				$reg_page_step_2_url = add_query_arg(array('e_reg' => 'register', 'step' => '2'), $this->_reg_page_base_url);
+				$reg_page_step_2_url = add_query_arg(array('ee' => 'register', 'step' => '2'), $this->_reg_page_base_url);
 				wp_safe_redirect($reg_page_step_2_url);
 				exit();
 			}
@@ -854,7 +927,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$template_args['events'][$line_item_id]['name'] = stripslashes( trim( $event['name'] ));
 				$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
 				$template_args['events'][$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
-				$template_args['events'][$line_item_id]['ticket-price'] = stripslashes( trim( $event['options']['price_desc'] ));
+				$template_args['events'][$line_item_id]['ticket-price'] = stripslashes( trim( $event['options']['ticket_desc'] ));
 	
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 					// if attendee has no name, then use primary attendee's details
@@ -906,7 +979,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$ouput = '<h3>' . __('No payment required.<br/>Please click "Confirm Registration" below to complete the registration process.', 'event_espresso') . '</h3>';
 		} else {
 			// get billing info fields
-			$template_args['billing'] = $this->gateways->set_billing_info_for_confirmation( $billing_info );
+			$template_args['billing'] = $this->EE->LIB->EEM_Gateways->set_billing_info_for_confirmation( $billing_info );
 			$total = $session_data['_cart_grand_total_amount'];
 
 			// add taxes
@@ -998,7 +1071,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}else{
 				$transaction = EE_Transaction::new_instance( 
 					array(
-						'TXN_timestamp' => current_time(), 
+						'TXN_timestamp' =>  current_time('mysql'),
 						'TXN_total' => $grand_total, 
 						'TXN_paid' => 0, 
 						'STS_ID' => $txn_status, 
@@ -1032,7 +1105,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			die();
 
 			// attempt to perform transaction via payment gateway
-			$response = $this->gateways->process_reg_step_3();
+			$response = $this->EE->LIB->EEM_Gateways->process_reg_step_3();
 			$this->_return_page_url = $response['forward_url'];
 			$success_msg = $response['msg']['success'];
 		}
@@ -1046,7 +1119,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			wp_safe_redirect($this->_return_page_url);
 			exit();
 		} else {
-			$reg_page_step_3_url = add_query_arg(array('e_reg' => 'register', 'step' => '3'), $this->_reg_page_base_url);
+			$reg_page_step_3_url = add_query_arg(array('ee' => 'register', 'step' => '3'), $this->_reg_page_base_url);
 			wp_safe_redirect($reg_page_step_3_url);
 			exit();
 		}
@@ -1072,7 +1145,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 
 		// grab session data
-		$session = $this->EE->SSN->get_session_data();
+		$session = EE_Registry::instance()->SSN->get_session_data();
 		// get some class would ya !
 		require_once ( EE_CLASSES . 'EE_Registration.class.php' );
 		require_once ( EE_MODELS . 'EEM_Attendee.model.php' );
@@ -1128,42 +1201,39 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// add attendee object to attendee info in session
 				$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = base64_encode( serialize( $att[$att_nmbr] ));
 
-				$DTT_ID = $event['options']['dtt_id'];
-				$PRC_ID = explode( ',', $event['options']['price_id'] );
-				$PRC_ID = $PRC_ID[0];
+				$TKT_ID = $event['options']['ticket_id'];
 				$price_paid = $attendee['price_paid'];
 
 				$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );				
-				$new_reg_code = $transaction->ID() . '-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));				
+				$new_reg_code = $transaction->ID() . '-' . $event['id'] . $TKT_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));				
 				$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code );
 				
 				if ( has_filter( 'FHEE_new_registration_code' ) ) {
 					$prev_reg_code = $new_reg_code;
 				} else {
-					$prev_reg_code = '%-' . $event['id'] . $DTT_ID . $PRC_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
+					$prev_reg_code = '%-' . $event['id'] . $TKT_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
 				}					
 
 				// now create a new registration for the attendee
 				$reg_url_link=md5($new_reg_code);
 				$saved_registrations[$line_item_id] = EE_Registration::new_instance(
-						array(	
-							'EVT_ID' => $event['id'],
-							'ATT_ID' => $ATT_ID,
-							'TXN_ID' => $transaction->ID(),
-							'DTT_ID' => $DTT_ID,
-							'PRC_ID' => $PRC_ID,
-							'STS_ID' => $this->EE->CFG->registration->default_STS_ID,
-							'REG_date' => current_time('timestamp'),
-							'REG_final_price' => $price_paid,
-							'REG_session' => $session['id'],
-							'REG_code' => $new_reg_code,
-							'REG_url_link' => $reg_url_link,
-							'REG_count' => $att_nmbr,
-							'REG_group_size' => count($event['attendees']),
-							'REG_att_is_going' => FALSE,
-							'REG_att_checked_in' => FALSE
-						)
-					);
+					// REG_ID, EVT_ID, ATT_ID, TXN_ID, TKT_ID, STS_ID, REG_date, REG_final_price, REG_session, REG_code, REG_url_link, REG_count, REG_group_size, REG_att_is_going
+					array(	
+						'EVT_ID' => $event['id'],
+						'ATT_ID' => $ATT_ID,
+						'TXN_ID' => $transaction->ID(),
+						'TKT_ID' => $TKT_ID,
+						'STS_ID' => EE_Registry::instance()->CFG->registration->default_STS_ID,
+						'REG_date' => current_time('timestamp'),
+						'REG_final_price' => $price_paid,
+						'REG_session' => $session['id'],
+						'REG_code' => $new_reg_code,
+						'REG_url_link' => $reg_url_link,
+						'REG_count' => $att_nmbr,
+						'REG_group_size' => count($event['attendees']),
+						'REG_att_is_going' => FALSE
+					)
+				);
 				//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
 
 				$reg_results = $saved_registrations[$line_item_id]->save();
@@ -1272,22 +1342,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *   @return void
 	 */
 	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+
 		$valid_callback = FALSE;
 		// check for valid callback function
 		if ($callback != FALSE && $callback != '' && !function_exists($callback)) {
 			$valid_callback = TRUE;
 		}
+//		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->EE->REQ->ajax : ' . $this->EE->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		if ($success_msg) {
-
 			// if this is an ajax request AND a callback function exists
-			if ($this->_ajax === 1 && $valid_callback) {
+			if ( $this->EE->REQ->ajax  && $valid_callback) {
 				// send data through to the callback function
-				$this->$callback($callback_param, $success_msg);
-			} elseif ($this->_ajax === 1) {
+				$this->$callback( $callback_param, $success_msg );
+			} elseif ( $this->EE->REQ->ajax ) {
 				// just send the ajax
-				echo json_encode(array('success' => $success_msg));
+				echo json_encode( array( 'success' => $success_msg ));
 				// to be... or...
 				die();
 			} else {
@@ -1298,8 +1369,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 		} elseif ($error_msg) {
 
-			if ($this->_ajax === 1) {
-				echo json_encode(array('error' => $error_msg));
+			if ( $this->EE->REQ->ajax ) {
+				echo json_encode( array( 'error' => $error_msg ));
 				die();
 			} else {
 				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -1321,4 +1392,4 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 // End of file EED_Single_Page_Checkout.module.php
-// Location: /modules/event_list/EED_Single_Page_Checkout.module.php
+// Location: /modules/single_page_checkout/EED_Single_Page_Checkout.module.php
