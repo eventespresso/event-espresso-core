@@ -129,16 +129,18 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 			//let's loop through the unique event=>reg items and setup data on them
 
+
 			if ( !empty( $events) ) {
 				foreach ( $events as $eid => $reg ) {
 					/*@var $reg EE_Registration */
 					$event = $reg->event_obj();
+					$first_datetime = $event->first_datetime();
 					$price_obj = $reg->price_obj();
 					$events[$eid] = array(
 						'ID' => $reg->event_ID(),
 						'line_ref' => $reg->event_ID(),
 						'name' => $event->name(),
-						'daytime_id' => isset($reg->event_obj()) && isset($reg->event_obj()->first_datetime()) ? $reg->event_obj()->first_datetime()->ID() : 0,
+						'daytime_id' => $first_datetime  ? $first_datetime->ID() : 0,
 						'price' => $reg->price_paid(),
 						'price_obj' => $price_obj,
 						'price_desc' => $price_obj->desc(),
