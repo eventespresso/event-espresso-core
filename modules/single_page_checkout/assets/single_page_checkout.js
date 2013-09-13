@@ -7,34 +7,6 @@
 
 
 	//$('#mer-registration-frm-1').validate();
-	
-//	$('.close-event-queue-msg').show();
-
-
-	// move notifications from top of reg form to just before closing body tag
-	// so that notifications can easily be centered on screen regardless of resolution or scroll position
-//	var notifications = $('#multi-event-registration-notifications').html();
-//	$('#multi-event-registration-notifications').html('');
-//	$('body').append( notifications );
-//	
-//
-//	
-//	// add jQuery function to center elements on screen
-//	$.fn.center = function () {
-//		this.css({ 'position' : 'absolute' });
-//		var element_top = Math.max( 0, ((( $(window).height() / 2 ) - this.outerHeight() ) / 2 )  + $(window).scrollTop() );
-//		var element_left = Math.max( 0, (( $(window).width() - this.outerWidth() ) / 2 ) + $(window).scrollLeft() );
-//		this.css({ 'top' : element_top + 'px' });
-//		this.css({ 'left' : element_left + 'px' });
-//		if ( $(window).width() > 600 ) {
-//			this.css({ 'max-width' : '600px' });
-//		}
-//		return this;
-//	};
-
-
-
-
 
 	
 	//close btn for notifications
@@ -47,6 +19,9 @@
 	// apply coupon button
 	$('#mer-reg-page-apply-coupon-btn').on( 'click', function() {
 		var error_msg = eei18n.invalid_coupon;
+		if ( eei18n.wp_debug == 1 ) {
+			error_msg = error_msg + ' (' + getFunctionName( arguments.callee.toString() ) + ' ' + (new Error).lineNumber + ' )';
+		}
 		show_event_queue_ajax_error_msg( error_msg );
 		return false;
 	});
@@ -69,9 +44,8 @@
 				$(this).trigger('click');
 			}
 		});
-		var good_to_go = verify_all_questions_answered('#mer-registration-frm-1');
-		
-		if ( good_to_go != true && good_to_go != '' && typeof( error_msg ) === 'object' ) {
+		var good_to_go = verify_all_questions_answered('#mer-registration-frm-1');		
+		if ( good_to_go !== true ) {
 			show_event_queue_ajax_error_msg( good_to_go );
 		}
 	});
@@ -87,14 +61,14 @@
 		
 		// the primary attendee question group
 		var prmry_att_qstn_grp = $(this).val();
-		//alert( 'prmry_att_qstn_grp = ' + prmry_att_qstn_grp );
+//		console.log( JSON.stringify( 'prmry_att_qstn_grp: ' + prmry_att_qstn_grp, null, 4 ));
 		// find all of the primaray attendee's questions for this event
 		var prmry_att_questions = $( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input');		
 		//$( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');		
 
 		// the targeted attendee question group
 		var trgt_att_qstn_grp = $(this).attr('rel');
-		//alert ( 'trgt_att_qstn_grp = ' + trgt_att_qstn_grp );
+//		console.log( JSON.stringify( 'trgt_att_qstn_grp: ' + trgt_att_qstn_grp, null, 4 ));
 		
 		// set some empty vars (and reset when we loop back)
 		var input_id = '';
@@ -110,14 +84,22 @@
 			if ( input_id != undefined ) {
 				// split the above var
 				var input_id_array =  input_id.split('-');
+//				console.log( input_id_array );
 	
 				// grab the current event id
 				var event_id = input_id_array[0];		 
+				var att_nmbr = input_id_array[1];		 
+				var event_date = input_id_array[2];		 
+				var event_time = input_id_array[3];		 
+				var ticket_price = input_id_array[4];		 
+				var input_name = input_id_array[5];		 
+				var answer_id = input_id_array[6];		 
 				
-				input_name = $(this).attr('name');
+//				input_name = $(this).attr('name');
 				input_value = $(this).val();
-				
-				//alert ( 'input_id = ' + input_id + '\n' + 'input_name = ' + input_name  + '\n' + 'event_id = ' + event_id  ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
+//				console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
+//				console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
+//				console.log( JSON.stringify( 'event_id: ' + event_id, null, 4 ));
 							
 				// if the input is required but has not been filled out
 				if ( $(this).hasClass('required') && input_value == '' ) {  
@@ -127,39 +109,38 @@
 					var lbl = $(this).prev('label');
 					// grab it's text
 					var lbl_txt = $(lbl).html();
-					//alert('lbl_txt = ' + lbl_txt);
 					// remove "<em>*</em>" from end
 					lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 					// show an error msg
 					var error_msg = lbl_txt + eei18n.required_field;
-					//show_reg_page_copy_attendee_error( event_id, error_msg );	
+					if ( eei18n.wp_debug == 1 ) {
+						error_msg = error_msg + ' ( mer-reg-page-copy-attendee-chk ' + (new Error).lineNumber + ' )';
+					}
 					show_event_queue_ajax_error_msg( error_msg );	
 					// uncheck the checkbox that was clicked
 					$(clicked_checkbox).prop('checked', false);
-					// fill out yer damn form will ya!!!
+					// fill out yer dang form will ya!!!
 					exit;			
 				
 				} else {
 	
-					new_input_id = '#' + trgt_att_qstn_grp + '-' +  input_id_array[5];
-					if ( input_id_array[6] != undefined ) {
-						new_input_id = new_input_id + '-' +  input_id_array[6];
+					new_input_id = '#' + trgt_att_qstn_grp + '-' +  input_name;
+					if ( answer_id != undefined ) {
+						new_input_id = new_input_id + '-' + answer_id;
 					}
-					//alert ( 'new_input_id = ' + new_input_id + '\n' + 'input_id = ' + input_id ); // + '\n' + 'att_nmbr = ' + trgt_att_nmbr
+//					console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
 					
 					if ( $(new_input_id).length > 0 ){
 						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
-							//alert ( 'radio = ' + new_input_id  );
 					       $(new_input_id).prop('checked', true);
 					    } else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
-							//alert ( 'checkbox = ' + new_input_id  );
 					        $(new_input_id).prop('checked', true);
 					    } else {
 							$(new_input_id).val(input_value);
 						}						
 					}
 	
-					var billing = '#reg-page-billing-' + input_id_array[5];
+					var billing = '#reg-page-billing-' + input_name;
 					// copy to billing info
 					if ( $(billing).val() == '' ) {
 						$(billing).val(input_value);
@@ -177,8 +158,8 @@
 	*/	
 	function do_before_event_queue_ajax() {
 		// stop any message alerts that are in progress	
-		$('.event-queue-msg').stop();
-		$('#mer-ajax-loading').center().show();		
+		$('.espresso-ajax-notices').stop();
+		$('#espresso-ajax-loading').center().show();		
 	}
 
 
@@ -195,12 +176,12 @@
 			}		
 			//alert( 'success_msg'+success_msg);
 
-			$('#mer-success-msg').center();	
-			$('#mer-success-msg > .msg').html( success_msg );
-			$('#mer-ajax-loading').fadeOut('fast');
-			$('#mer-success-msg').removeClass('hidden').show().delay(4000).fadeOut();			
+			$('#espresso-ajax-notices').center();	
+			$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
+			$('#espresso-ajax-loading').fadeOut('fast');
+			$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(4000).fadeOut();			
 		} else {
-			$('#mer-ajax-loading').fadeOut('fast');
+			$('#espresso-ajax-loading').fadeOut('fast');
 		}	
 	}	
 
@@ -212,20 +193,18 @@
 	function show_event_queue_ajax_error_msg( error_msg ) {
 			
 		if ( error_msg != undefined && error_msg != '' ) {
-			//alert( 'typeof( error_msg ) = '+ typeof( error_msg ) );
 			
 			if ( typeof( error_msg ) === 'object' && error_msg.error != undefined && error_msg.error != '' ) {
 				error_msg = error_msg.error;				
 			} 
-			//alert( '209) show_event_queue_ajax_error_msg = '+ error_msg);
 						
-			$('#mer-error-msg').center();				
-			$('#mer-error-msg > .msg').html( error_msg );
-			$('#mer-ajax-loading').fadeOut('fast');
-			$('#mer-error-msg').removeClass('hidden').show().delay(8000).fadeOut();
+			$('#espresso-ajax-notices').center();				
+			$('#espresso-ajax-notices-error > .espresso-notices-msg').html( error_msg );
+			$('#espresso-ajax-loading').fadeOut('fast');
+			$('#espresso-ajax-notices-error').removeClass('hidden').show().delay(10000).fadeOut();
 
 		} else {
-			$('#mer-ajax-loading').fadeOut('fast');
+			$('#espresso-ajax-loading').fadeOut('fast');
 		}
 	}
 	
@@ -276,7 +255,7 @@
 		$('.mer-reg-page-step-display-dv').removeClass('active-step').addClass('inactive-step');	
 		$('#mer-reg-page-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
 		$('#mer-reg-page-edit-step-'+step_to_show+'-lnk').addClass('hidden');	
-		$('#mer-ajax-loading').fadeOut('fast');
+		$('#espresso-ajax-loading').fadeOut('fast');
 		$('#mer-reg-page-step-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
 			scroll_to_top_of_form( msg );
 		});
@@ -344,19 +323,25 @@
 
 
 	// go to step 1 via edit link
-	$('.mer-reg-page-go-to-step-1').on( 'click', function() {
+	$('.mer-reg-page-go-to-step-1').on( 'click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
 		mer_reg_page_go_to_step_1('');
 		return false;
 	});
 	
 	// go to step 2 via edit link
-	$('.mer-reg-page-go-to-step-2').on( 'click', function() {
+	$('.mer-reg-page-go-to-step-2').on( 'click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
 		mer_reg_page_go_to_step_2('');
 		return false;
 	});
 
 	// go to step 3 via edit link
-	$('.mer-reg-page-go-to-step-3').on( 'click', function() {
+	$('.mer-reg-page-go-to-step-3').on( 'click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
 		selected_gateway_dv = process_selected_gateway();		
 		process_reg_step ( 2, selected_gateway_dv );
 		return false;
@@ -364,21 +349,26 @@
 
 	
 	// submit Step 1 of registraion form
-	$('#mer-reg-page-go-to-step-2-btn').on( 'click', function() {	
+	$('#mer-reg-page-go-to-step-2-btn').on( 'click', function(e) {	
+		e.preventDefault();
+		e.stopPropagation();
 		process_reg_step ( 1 );
 	});
 		
 	
 	// submit Step 2 of registraion form
-	$('#mer-reg-page-go-to-step-3-btn').on( 'click', function() {	
+	$('#mer-reg-page-go-to-step-3-btn').on( 'click', function(e) {	
+		e.preventDefault();
+		e.stopPropagation();
 		selected_gateway_dv = process_selected_gateway();
 		process_reg_step ( 2, selected_gateway_dv );
 	});
 		
 	
 	// submit Step 3 of registraion form
-	$('#mer-reg-page-confirm-reg-btn').on( 'click', function() {	
-
+	$('#mer-reg-page-confirm-reg-btn').on( 'click', function(e) {	
+		e.preventDefault();
+		e.stopPropagation();
 		off_site_payment = $('#reg-page-off-site-gateway').val();
 		if ( off_site_payment == 1 ) {
 			$('#mer-registration-frm-3').submit();
@@ -437,7 +427,6 @@
 		}
 		
 		var good_to_go = verify_all_questions_answered( form_to_check );
-//		alert( '433) good_to_go = ' + good_to_go );
 
 		if ( good_to_go === true ) {
 
@@ -449,31 +438,37 @@
 //alert( '#mer-reg-page-step-'+step+'-action = ' + $('#mer-reg-page-step-'+step+'-action').val() );
 //alert( 'eei18n.ajax_url = ' + eei18n.ajax_url );
 
-
 			$.ajax({
-						type: "POST",
-						url:  eei18n.ajax_url,
-						data: form_data,
-						dataType: "json",
-						beforeSend: function() {
-							do_before_event_queue_ajax();
-						}, 
-						success: function(response){	
-							var next = parseInt(step) + 1;
-							//alert( 'step = ' + step + '\n' + 'response.return_data = ' + response.return_data + '\n' + 'response.success = ' + response.success + '\n' + 'response.error = ' + response.error );
-							if ( response.return_data != undefined ) {
-								process_return_data( next, response );
-							} else {
-								mer_reg_page_go_to( next, response );						
-							}								
-						},
-						error: function(response) {
-							//console.log( dump( response ) );
-							msg = new Object();
-							msg.error = eei18n.reg_step_error;
-							show_event_queue_ajax_error_msg( msg );
-						}			
-				});	
+				type: "POST",
+				url:  eei18n.ajax_url,
+				data: form_data,
+				dataType: "json",
+				beforeSend: function() {
+					do_before_event_queue_ajax();
+				}, 
+				success: function(response){	
+					var next = parseInt(step) + 1;
+//					console.log( JSON.stringify( 'step: ' + step, null, 4 ));
+//					console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
+//					console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
+//					console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
+					if ( response.return_data != undefined ) {
+						process_return_data( next, response );
+					} else {
+						mer_reg_page_go_to( next, response );						
+					}								
+				},
+				error: function(response) {
+					//console.log( dump( response ) );
+					msg = new Object();
+					msg.error = eei18n.reg_step_error;
+					if ( eei18n.wp_debug == 1 ) {
+						msg.error = msg.error + ' ( ' + getFunctionName( arguments.callee.toString() ) + ' ' + (new Error).lineNumber + ' )';
+					}
+					show_event_queue_ajax_error_msg( msg );
+					return false;
+				}			
+			});	
 
 		} else {
 			
@@ -535,12 +530,13 @@
 		 if ( whch_form == '' ){
 			whch_form = '#mer-registration-frm-1';
 		}
-		//alert( 'whch_form = '+whch_form );
+//		alert( 'whch_form = '+whch_form );
 		
 		var good_to_go = true;
 		
 		$( whch_form + ' .required' ).each( function(index) {
-			//alert( $(this).attr('id') );
+
+//			console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
 			
 			// empty field
 			if ( $(this).val() == '' ) {
@@ -548,8 +544,16 @@
 				// set error messages
 				if ( good_to_go === true ) {
 					good_to_go = eei18n.answer_required_questions;
+					if ( eei18n.wp_debug == 1 ) {
+						good_to_go = good_to_go + ' ( verify_all_questions_answered ' + (new Error).lineNumber + ' )';
+					}
+					return false;
 				} else if ( good_to_go == eei18n.enter_valid_email ) {
 					good_to_go = eei18n.valid_email_and_questions;
+					if ( eei18n.wp_debug == 1 ) {
+						good_to_go = good_to_go + ' ( verify_all_questions_answered ' + (new Error).lineNumber + ' )';
+					}
+					return false;
 				} 
 				
 				$(this).addClass('requires-value');
@@ -570,9 +574,17 @@
 						// set error messages
 						if ( good_to_go === true ) {
 							good_to_go = eei18n.enter_valid_email;
-						} else if ( good_to_go == eei18n.answer_required_questions ) {
+							if ( eei18n.wp_debug == 1 ) {
+								good_to_go = good_to_go + ' ( verify_all_questions_answered ' + (new Error).lineNumber + ' )';
+							}
+							return false;
+						}  else if ( good_to_go == eei18n.answer_required_questions ) {
 							good_to_go = eei18n.valid_email_and_questions;
-						} 						
+							if ( eei18n.wp_debug == 1 ) {
+								good_to_go = good_to_go + ' ( verify_all_questions_answered ' + (new Error).lineNumber + ' )';
+							}
+							return false;
+						} 			
 					}								
 							
 				} else {
@@ -581,6 +593,7 @@
 				
 			}	
 		});
+		
 			
 		// does copy all attendees checkbox exist ?
 		if ( $('#mer-reg-page-copy-all-attendee-chk').size() ) {
@@ -595,7 +608,7 @@
 			$('.espresso-question-group-wrap').slideUp(); 
 			$('#mer-reg-page-copy-attendee-dv').slideUp();
 			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
-		} else if ( good_to_go != '' && good_to_go!==true ) {
+		} else if ( good_to_go != '' && good_to_go != true ) {
 			msg = new Object();
 			msg.error = good_to_go;
 			good_to_go = msg;
@@ -614,18 +627,6 @@
 		$(this).addClass('hidden');
 	});
 
-
-
-	/**
-	*		show reg page copy attendee error msg
-	*/	
-	function show_reg_page_copy_attendee_error( event_id, error_msg ) {
-		
-		$('#mer-error-msg-' + event_id + ' > .msg').html( error_msg );
-		$('#mer-ajax-loading').fadeOut('fast');
-		$('#mer-error-msg-' + event_id ).show().delay(8000).fadeOut();
-	
-	}
 
 
 
@@ -666,79 +667,11 @@
 	});
 
 
-
-	// generic click event for displaying and giving focus to an element and hiding control 
-	$('.display-the-hidden').on( 'click', function() {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = $(this).attr("rel"); 
-		var control = $(this);
-		control.addClass('hidden');  
-		// display the target's div container - use slideToggle or removeClass
-		$('#'+item_to_display+'-dv').slideToggle( 500, function() {
-			// hide the control element
-			//control.addClass('hidden');  
-			// display the target div's hide link
-			$('#hide-'+item_to_display).removeClass('hidden'); 
-		// if hiding/showing a form input, then id of the form input must = item_to_display
-		//$('#'+item_to_display).focus(); // add focus to the target
-		}); 
-		return false;
-	});
-
-	// generic click event for re-hiding an element and displaying it's display control 
-	$('.hide-the-displayed').on( 'click', function() {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = $(this).attr("rel"); 
-		var control = $(this);
-		control.addClass('hidden');  
-		// hide the target's div container - use slideToggle or addClass
-		$('#'+item_to_hide+'-dv').slideToggle( 500, function() {
-			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
-			// hide the control element
-			//control.addClass('hidden');  
-			// display the control element that toggles display of this element
-			$('#display-'+item_to_hide).removeClass('hidden');  
-		}); 
-		return false;
-	});			
-
-	
-	/**
-	 * Function : dump()
-	 * Arguments: The data - array,hash(associative array),object
-	 *    The level - OPTIONAL
-	 * Returns  : The textual representation of the array.
-	 * This function was inspired by the print_r function of PHP.
-	 * This will accept some data as the argument and return a
-	 * text that will be a more readable version of the
-	 * array/hash/object that is given.
-	 * Docs: http://www.openjs.com/scripts/others/dump_function_php_print_r.php
-	 */
-	function dump(arr,level) {
-		var dumped_text = "";
-		if(!level) level = 0;
-		
-		//The padding given at the beginning of the line.
-		var level_padding = "";
-		for(var j=0;j<level+1;j++) level_padding += "    ";
-		
-		if(typeof(arr) == 'object') { //Array/Hashes/Objects 
-			for(var item in arr) {
-				var value = arr[item];
-				
-				if(typeof(value) == 'object') { //If it is an array,
-					dumped_text += level_padding + "'" + item + "' ...\n";
-					dumped_text += dump(value,level+1);
-				} else {
-					dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
-				}
-			}
-		} else { //Stings/Chars/Numbers etc.
-			dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
-		}
-		return dumped_text;
+	function getFunctionName( functionName = '' ) {
+		functionName = functionName.substr('function '.length);
+		functionName = functionName.substr(0, functionName.indexOf('('));	
+		return functionName;
 	}
-
 
 
 })(jQuery);
