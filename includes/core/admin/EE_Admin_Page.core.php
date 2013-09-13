@@ -141,6 +141,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_set_defaults();
 
 		//set early because incoming requests could be ajax related and we need to register those hooks.
+		$this->_global_ajax_hooks();
 		$this->_ajax_hooks();
 
 
@@ -170,7 +171,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	abstract protected function _init_page_props();
-
 
 
 
@@ -394,7 +394,29 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * _global_ajax_hooks
+	 * all global add_action('wp_ajax_{name_of_hook}') hooks in here.
+	 * Note: within the ajax callback methods.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	protected function _global_ajax_hooks() {
+		//for lazy loading of metabox content
+		add_action( 'wp_ajax_espresso-ajax-content', array( $this, 'ajax_metabox_content'), 10 );
+	}
 
+
+
+	public function ajax_metabox_content() {
+		$contentid = isset( $this->_req_data['contentid'] ) ? $this->_req_data['contentid'] : '';
+		$url = isset( $this->_req_data['contenturl'] ) ? $this->_req_data['contenturl'] : '';
+		
+		self::cached_rss_display( $contentid, $url );
+		wp_die();
+	}
 
 
 
@@ -955,7 +977,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	private function _check_user_access() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if ( ! function_exists( 'is_admin' ) or  ! current_user_can( 'manage_options' )) {
+		if (( ! function_exists( 'is_admin' ) or ! current_user_can( 'manage_options' )) && ! defined( 'DOING_AJAX')) {
 			wp_redirect( home_url('/') . 'wp-admin/' );
 		}
 	}
@@ -1267,6 +1289,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 			wp_enqueue_script('ee_admin_js');
 			wp_enqueue_style('ee-admin-css');
 		}
+
+
+		//localize script for ajax lazy loading
+		$lazy_loader_container_ids = apply_filters('FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers', array('espresso_news_post_box_content') );
+		wp_localize_script( 'ee_admin_js', 'eeLazyLoadingContainers', $lazy_loader_container_ids);
 
 
 		/** remove filters **/
@@ -1591,18 +1618,44 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+	public static function cached_rss_display( $rss_id, $url ) {
+		$loading = '<p class="widget-loading hide-if-no-js">' . __( 'Loading&#8230;' ) . '</p><p class="hide-if-js">' . __( 'This widget requires JavaScript.' ) . '</p>';
+		$doing_ajax = ( defined( 'DOING_AJAX' ) && DOING_AJAX );
+		$pre = '<div class="espresso-rss-display">' . "\n\t";
+		$pre .= '<span id="' . $rss_id . '_url" class="hidden">' . $url . '</span>';
+		$post = '</div>' . "\n";
+
+		$cache_key = 'esp_rss_' . md5( $rss_id );
+		if ( FALSE != ( $output = get_transient( $cache_key ) ) ) {
+			echo $pre . $output . $post;
+			return TRUE;
+		}
+
+		if ( ! $doing_ajax ) {
+			echo $pre . $loading . $post;
+			return FALSE;
+		}
+
+		ob_start();
+		wp_widget_rss_output($url, array('show_date' => 0, 'items' => 5) );
+		set_transient( $cache_key, ob_get_flush(), 12 * HOUR_IN_SECONDS );
+		return TRUE;
+
+	}
+
+
 	public function espresso_news_post_box() {
 		?>
 	  <div class="padding">
-	  	<div class="infolinks">
+	  	<div id="espresso_news_post_box_content" class="infolinks">
 	  		<?php
 	  		// Get RSS Feed(s)
-	  		@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date'=> 0,'items'    => 5));
-
-	  		do_action( 'AHEE_news_meta_box_extra_content');
+	  		$url = urlencode('http://eventespresso.com/feed/');
+	  		self::cached_rss_display( 'espresso_news_post_box_content', $url );
 	  		
 	  		?>
 	  	</div>
+	  	<?php do_action( 'AHEE_news_meta_box_extra_content'); ?>
 	  </div>
 		<?php
 	}

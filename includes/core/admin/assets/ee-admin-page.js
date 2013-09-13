@@ -286,5 +286,36 @@ jQuery(document).ready(function($) {
 
 
 
+	/**
+	 * lazy loading of content
+	 */
+
+	espressoAjaxPopulate = function(el) {
+		function show(i, id) {
+			var p, e = $('#' + id).find('.widget-loading');
+			if ( e.length ) {
+				p = e.parent();
+				var u = $('#' + id + '_url').text();
+				setTimeout( function(){
+					p.load( ajaxurl + '?action=espresso-ajax-content&contentid=' + id + '&contenturl=' + u, '', function() {
+						p.hide().slideDown('normal', function(){
+							$(this).css('display', '');
+						});
+					});
+				}, i * 500 );
+			}
+		}
+
+		if ( el ) {
+			el = el.toString();
+			if ( $.inArray(el, eeLazyLoadingContainers) != -1 )
+				show(0, el);
+		} else {
+			$.each( eeLazyLoadingContainers, show );
+		}
+	};
+	espressoAjaxPopulate();
+
+
 });
 

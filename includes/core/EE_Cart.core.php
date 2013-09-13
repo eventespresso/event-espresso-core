@@ -309,7 +309,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			$line_item_id = md5( $which_cart . $item['id'] . $item['ticket'] );
 		}
 		
-		$item = array_merge( array( 'line_item' => $line_item_id ), $item );
+		$item = array_merge( array( 'line_item_id' => $line_item_id ), $item );
 		
 		// remove previous entries of this item so as not to carry over unwanted options
 		$this->remove_from_cart ( $which_cart, $line_item_id );
@@ -358,9 +358,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 					// add qty of this item to total
 					$total_items = $total_items + $item['qty'];
 					// calculate price of item multiplied by qty 
-					$this->cart[ $which_cart ]['items'][ $item['line_item'] ]['line_total'] = $item['qty'] * $item['ticket'];
+					$this->cart[ $which_cart ]['items'][ $item['line_item_id'] ]['line_total'] = $item['qty'] * $item['ticket'];
 					// and add that to subtotal
-					$sub_total = $sub_total + $this->cart[ $which_cart ]['items'][ $item['line_item'] ]['line_total'];
+					$sub_total = $sub_total + $this->cart[ $which_cart ]['items'][ $item['line_item_id'] ]['line_total'];
 					
 				} else {
 					// garbage item ! get rid of it !
@@ -755,13 +755,14 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	public function whats_in_the_cart( $which_cart = 'REG', $line_item_id = FALSE ) {
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-		// check that the passed properties are valid
-		$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_id' => $line_item_id )); 
-
+		
 		if ( $line_item_id ) {
+			// check that the passed properties are valid
+			$this->_verify_cart_properties ( array( 'which_cart' => $which_cart, 'line_item_id' => $line_item_id )); 
 			return $this->cart[ $which_cart ]['items'][ $line_item_id ];					
 		} else {
+			// check that the passed properties are valid
+			$this->_verify_cart_properties ( array( 'which_cart' => $which_cart )); 
 			return $this->cart[ $which_cart ];		
 		}
 
@@ -823,10 +824,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				foreach ( $cart['items'] as $items ) {
 					foreach ( $items as $line_item_id => $item ) {					
 						// do both instances of the line item id match ???
-						if(!isset($item['line_item'])){
+						if(!isset($item['line_item_id'])){
 							$this->remove_from_cart( $which_cart, $line_item_id );
 							break;
-						} elseif ( $line_item_id != $item['line_item'] ) {
+						} elseif ( $line_item_id != $item['line_item_id'] ) {
 							// delete
 							$this->remove_from_cart( $which_cart, $line_item_id );
 							break;

@@ -423,7 +423,7 @@ class EEH_Form_Fields {
 					$html .= $before_question_group_questions;
 					// loop thru questions
 					foreach ( $QSG['QSG_questions'] as $question ) {
-						printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//						printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						$QFI = new EE_Question_Form_Input(
 							EE_Question::new_instance ( $question ),
 							EE_Answer::new_instance ( array( 
@@ -495,16 +495,17 @@ class EEH_Form_Fields {
 					$html .= $before_question_group_questions;
 					// loop thru questions
 					foreach ( $questions as $QST ) {
-					
-						$qst_name = $qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST_ID;
-						$qst_name = isset( $QST->ANS_ID ) ? '[' . $qst_name . '][' . $QST->ANS_ID . ']' : '[' . $qst_name . ']';
-						$input_name = isset( $q_meta['input_name'] ) ? $q_meta['input_name']  : '';
-						$input_id = isset( $q_meta['input_id'] ) ? $q_meta['input_id'] : sanitize_key( $QST->display_text() );
-						$input_class = isset( $q_meta['input_class'] ) ? $q_meta['input_class'] : '';
+						//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						
-						$QST->QST_input_name = 'qstn' . $input_name . $qst_name;
-						$QST->QST_input_id = $input_id . '-' . $qstn_id;
-						$QST->QST_input_class = $input_class;
+						$qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST->ID();
+//						$qst_name = isset( $QST->ANS_ID ) ? '[' . $qst_name . '][' . $QST->ANS_ID . ']' : '[' . $qst_name . ']';
+//						$input_name = isset( $q_meta['input_name'] ) ? $q_meta['input_name']  : '';
+//						$input_id = isset( $q_meta['input_id'] ) ? $q_meta['input_id'] : sanitize_key( $QST->display_text() );
+//						$input_class = isset( $q_meta['input_class'] ) ? $q_meta['input_class'] : '';
+//						
+//						$QST->QST_input_name = 'qstn' . $input_name . $qst_name;
+//						$QST->QST_input_id = $input_id . '-' . $qstn_id;
+//						$QST->QST_input_class = $input_class;
 						$QST->options();
 						
 						// check for answer in $_GET in case we are reprocessing a form after an error
@@ -521,7 +522,9 @@ class EEH_Form_Fields {
 								'ANS_value'=> $answer
 							 )),
 							$q_meta
-						);						
+						);
+						//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 						$html .= self::generate_form_input( $QFI );						
 					}
 					$html .= $after_question_group_questions;					
@@ -558,7 +561,6 @@ class EEH_Form_Fields {
 		$display_text = $QFI->get('QST_display_text');
 		$answer = $QFI->get('ANS_value');
 		$input_name = $QFI->get('QST_input_name');
-//		echo '<h4>$input_name : ' . $input_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		$input_id = $QFI->get('QST_input_id');
 		$input_class = $QFI->get('QST_input_class');
 		$disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';

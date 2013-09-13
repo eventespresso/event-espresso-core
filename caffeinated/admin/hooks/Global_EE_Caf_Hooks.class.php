@@ -37,6 +37,7 @@ class Global_EE_Caf_Hooks {
 
 	private function _do_hooks() {
 		add_filter('FHEE_show_sponsors_meta_box', create_function('$show_sponsors', 'return FALSE;' ), 10 );
+		add_filter('FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers', array( $this, 'forums_lazy_loading'), 10 );
 		add_action('AHEE_news_meta_box_extra_content', array( $this, 'extra_news_box_content' ), 10 );
 	}
 
@@ -45,7 +46,16 @@ class Global_EE_Caf_Hooks {
 
 	public function extra_news_box_content( $content ) {
 		echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
-		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed/', array('show_date' => 0, 'items' => 4));
+		echo '<div id="ee_forum_posts_content">';
+		$url = 'http://eventespresso.com/forum/event-espresso-support/feed/';
+		EE_Admin_Page::cached_rss_display( 'ee_forum_posts_content', $url);
+		echo '</div>';
+	}
+
+
+	public function forums_lazy_loading( $ids ) {
+		$ids[] = 'ee_forum_posts_content';
+		return $ids;
 	}
 
 } //end class Global_EE_Caf_Hooks

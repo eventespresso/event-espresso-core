@@ -561,6 +561,7 @@ final class EE_Front_Controller {
 	 */
 	public function display_errors() {
 		echo EE_Error::get_notices();
+		echo espresso_display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php', array(), TRUE );
 	}
 
 

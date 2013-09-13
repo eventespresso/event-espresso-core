@@ -204,18 +204,16 @@ final class EE_Admin {
 			add_action( 'action_hook_espresso_help', array( $this, 'help_tab_links' ), 10, 4 );
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
-			
-			
+
 			// bring out the pidgeons!!!
-			require_once( EE_CORE . 'messages' . DS . 'EE_messages_init.core.php' );
+			//require_once( EE_CORE . 'messages' . DS . 'EE_messages_init.core.php' );
+			$this->EE->load_core( 'messages_init' );
 			EE_messages_init::init();
 			
-	//		espresso_verify_default_pages_exist();
 		}
 		// run the admin page factory
-			$this->EE_Admin_Page_Loader();
+		$this->EE_Admin_Page_Loader();
 		
-
 	}
 
 

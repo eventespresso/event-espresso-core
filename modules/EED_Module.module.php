@@ -27,6 +27,13 @@
 abstract class EED_Module extends EE_Base { 
 
 	/**
+	 * 	instance of the EED_Module object
+	 * 	@access 	private
+	 *	@var 	EED_Module $_instance
+	 */
+	protected static $_instance = NULL;
+
+	/**
 	 * 	EE_Registry Object
 	 *	@var 	object	
 	 * 	@access 	protected
@@ -49,16 +56,7 @@ abstract class EED_Module extends EE_Base {
 	 *  @return 	void
 	 */
 	public abstract function run( $WP );
-	
-	/**
-	*	instance - returns $this
-	*
-	*	@access public
-	*	@return 	void
-	*/
-	final public static function instance() {
-		return $this;
-	}
+
 	
 	/**
 	*	class constructor - can ONLY be instantiated by EE_Front_Controller
