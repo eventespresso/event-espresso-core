@@ -959,6 +959,23 @@ abstract class EEM_Base extends EE_Base{
 	function get_this_model_name(){
 		return str_replace("EEM_","",get_class($this));
 	}
+	
+	/**
+	 * Gets the model field on this model which is of type EE_Any_Foreign_Model_Name_Field
+	 * @return EE_Any_Foreign_Model_Name_Field
+	 * @throws EE_Error
+	 */
+	public function get_field_containing_related_model_name(){
+		foreach($this->field_settings(true) as $field){
+			if($field instanceof EE_Any_Foreign_Model_Name_Field){
+				$field_with_model_name = $field;
+			}
+		}
+		if( !isset($field_with_model_name) || !$field_with_model_name ){
+			throw new EE_Error(sprintf(__("There is no EE_Any_Foreign_Model_Name field on model %d", "event_espresso"),get_class($this->get_this_model())));
+		}
+		return $field_with_model_name;
+	}
 	/**
 	 * Inserts a new entry into the database, for each table
 	 * @global type $wpdb

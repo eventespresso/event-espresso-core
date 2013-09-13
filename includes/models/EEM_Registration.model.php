@@ -106,7 +106,7 @@ class EEM_Registration extends EEM_Base {
 			'Attendee'=>new EE_Belongs_To_Relation(),
 			'Transaction'=>new EE_Belongs_To_Relation(),
 			'Ticket'=>new EE_Belongs_To_Relation(),
-//			'Status'=>new EE_Belongs_To_Relation(),
+			'Status'=>new EE_Belongs_To_Relation(),
 			'Answer'=>new EE_Has_Many_Relation(),
 			'Checkin'=>new EE_Has_Many_Relation()
 		);

@@ -631,6 +631,16 @@ class EE_Payment extends EE_Base_Class{
 	private function _strip_all_tags_within_array( &$item, $key ){
 	        wp_strip_all_tags( $item );
 	}
+	
+	
+	
+	/**
+	 * Get the status object of this object
+	 * @return EE_Status
+	 */
+	public function status_obj(){
+		return $this->get_first_related('Status');
+	}
 
 
 

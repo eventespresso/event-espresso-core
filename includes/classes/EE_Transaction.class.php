@@ -157,6 +157,12 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	protected $_Payment = NULL;
 
+	
+	/**
+	 *
+	 * @var EE_Status
+	 */
+	protected $_Status = NULL;
 
 
 
@@ -590,6 +596,13 @@ class EE_Transaction extends EE_Base_Class{
 		return $details['response_msg'];
 	}
 
+	/**
+	 * Get the status object of this object
+	 * @return EE_Status
+	 */
+	public function status_obj(){
+		return $this->get_first_related('Status');
+	}
 
 
 }
