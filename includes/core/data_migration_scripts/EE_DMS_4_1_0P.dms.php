@@ -205,6 +205,17 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					KEY FK_wp_esp_price_PRC_ID2 (PRC_ID ASC)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 		
+		$table_name = 'esp_promotion_object';
+		$sql = "POB_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			PRO_ID INT UNSIGNED NOT NULL,
+			OBJ_ID INT UNSIGNED NOT NULL,
+			POB_type VARCHAR(45) NULL,
+			POB_used INT NULL,
+			PRIMARY KEY (POB_ID),
+			INDEX FK_wp_esp_ticket_TKT_ID2 (OBJ_ID ASC),
+			INDEX FK_wp_esp_promotions_PRO_ID3 (PRO_ID ASC)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
 		$table_name = 'esp_promotion_rule';
 		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					PRO_ID INT UNSIGNED NOT NULL ,
