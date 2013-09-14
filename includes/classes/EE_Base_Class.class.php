@@ -966,6 +966,7 @@ class EE_Base_Class{
 			//first, check if we've already cached the result of this query
 			$cached_result = $this->get_one_from_cache($relationName);
 			if ( ! $cached_result ){
+				
 				$related_model_object = $this->get_model()->get_first_related($this, $relationName, $query_params);
 				$this->cache($relationName,$related_model_object);
 			}else{

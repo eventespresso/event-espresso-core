@@ -78,14 +78,27 @@ class EE_Promotion extends EE_Base_Class{
 	 */
 	protected $_Rule = NULL;
 				
-
+	/**
+	 *
+	 * @var EE_Price
+	 */
+	protected $_Price = NULL;
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return self
+	 */
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
 		return $has_object ? $has_object : new self( $props_n_values);
 	}
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return self
+	 */
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}

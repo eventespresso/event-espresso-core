@@ -195,7 +195,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					PRO_code VARCHAR(45) NULL DEFAULT NULL ,
 					PRO_uses SMALLINT UNSIGNED NULL DEFAULT NULL ,
 					PRO_global TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRO_global_uses TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRO_global_uses SMALLINT UNSIGNED NOT NULL DEFAULT 0 ,
 					PRO_exclusive TINYINT(1) NOT NULL DEFAULT 0 ,
 					PRO_accept_msg TINYTEXT NULL DEFAULT NULL ,
 					PRO_decline_msg TINYTEXT NULL DEFAULT NULL ,
@@ -211,7 +211,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			OBJ_ID INT UNSIGNED NOT NULL,
 			POB_type VARCHAR(45) NULL,
 			POB_used INT NULL,
-			PRIMARY KEY (POB_ID),
+			PRIMARY KEY  (POB_ID),
 			INDEX FK_wp_esp_ticket_TKT_ID2 (OBJ_ID ASC),
 			INDEX FK_wp_esp_promotions_PRO_ID3 (PRO_ID ASC)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
@@ -220,12 +220,14 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					PRO_ID INT UNSIGNED NOT NULL ,
 					RUL_ID INT UNSIGNED NOT NULL ,
-					PRR_order TINYINT UNSIGNED NOT NULL DEFAULT 1 ,
-					PRR_add_rule_comparison ENUM('AND','OR') NULL DEFAULT AND ,
+					PRR_order TINYINT UNSIGNED NOT NULL DEFAULT 1,
+					PRR_add_rule_comparison ENUM('AND','OR') NULL DEFAULT 'AND',
 					PRIMARY KEY  (PRR_ID) ,
-					INDEX FK_wp_esp_promotions_PRO_ID2 (PRO_ID ASC) ,
+					INDEX FK_wp_esp_promotions_PRO_ID2 (PRO_ID ASC),
 					INDEX FK_wp_esp_promo_rule_RUL_ID1 (RUL_ID ASC) ";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
+		
 		
 		$table_name = 'esp_rule';
 		$sql = "RUL_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,

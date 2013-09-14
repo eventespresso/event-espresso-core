@@ -67,14 +67,22 @@ class EE_Promotion_Object extends EE_Base_Class{
 	 */
 	protected $_Transaction = NULL;
 	
-	
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Promotion_Object
+	 */
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
 		return $has_object ? $has_object : new self( $props_n_values);
 	}
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Promotion_Object
+	 */
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}
@@ -117,7 +125,7 @@ class EE_Promotion_Object extends EE_Base_Class{
 	 * @return string
 	 */
 	function type() {
-		return $this->get('PRO_type');
+		return $this->get('POB_type');
 	}
 
 	/**
@@ -126,7 +134,7 @@ class EE_Promotion_Object extends EE_Base_Class{
 	 * @return boolean
 	 */
 	function set_type($type) {
-		return $this->set('PRO_type', $type);
+		return $this->set('POB_type', $type);
 	}
 	/**
 	 * Gets used
@@ -150,7 +158,7 @@ class EE_Promotion_Object extends EE_Base_Class{
 	 * applies the promotion to an event (ie, has POB_type=='Event'), then it will return an EE_Event
 	 * @return EE_Base_Class (one of the model objects that the field OBJ_ID can point to... see the 'OBJ_ID' field on EEM_Promotion_Object)
 	 */
-	function get_object(){
+	function object(){
 		$model_name_of_related_obj = $this->type();
 		$is_model_name = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
 		if( ! $is_model_name ){

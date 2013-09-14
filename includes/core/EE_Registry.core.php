@@ -314,6 +314,7 @@ final class EE_Registry {
 	 * @return boolean
 	 */
 	public function is_model_name($model_name){
+		return true;
 		$real_model_names = $this->all_model_names();
 		return in_array($model_name,$real_model_names);
 	}
@@ -326,24 +327,33 @@ final class EE_Registry {
 		return apply_filters('FHEE__EE_Registry__all_model_names',array(
 			'Answer',
 			'Attendee',
+			'Checkin',
 			'Country',
 			'Datetime',
 			'Event',
 			'Event_Question_Group',
 			'Event_Venue',
-			//'Message_Template', doesn't play nicely because it's not a child of EE_Base_Class
+			'Message_Template', //doesn't play nicely because it's not a child of EE_Base_Class
 			'Payment',
 			'Price',
 			'Price_Type',
+			'Promotion',
+			'Promotion_Object',
+			'Promotion_Rule',
 			'Question',
 			'Question_Group',
 			'Question_Group_Question',
 			'Question_Option',
 			'Registration',
+			'Rule',
 			'State',
+			'Status',
 			'Term',
 			'Term_Relationship',
 			'Term_Taxonomy',
+			'Ticket',
+			'Ticket_Price',
+			'Ticket_Template',
 			'Transaction',
 			'Venue'
 		));

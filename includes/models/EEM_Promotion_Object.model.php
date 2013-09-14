@@ -56,7 +56,7 @@ class EEM_Promotion_Object extends EEM_Base {
 				'POB_ID'=>new EE_Primary_Key_Int_Field('POB_ID', __("Price-to-Object ID", "event_espresso"), false),
 				'PRO_ID'=>new EE_Foreign_Key_Int_Field('PRO_ID', __("Promotion Object", "event_espresso"), false, 0, 'Promotion'),
 				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("ID of the Related Object", "event_espresso"), false, 0, array('Event','Venue','Datetime','Ticket','Transaction')),
-				'POB_type'=>new EE_Any_Foreign_Model_Name_Field('POB_type', __("Model of Related Object", "event_espresso"), 'Event', array('Event','Venue','Datetime','Ticket','Transaction')),
+				'POB_type'=>new EE_Any_Foreign_Model_Name_Field('POB_type', __("Model of Related Object", "event_espresso"),false, 'Event', array('Event','Venue','Datetime','Ticket','Transaction')),
 				'POB_used'=>new EE_Integer_Field('POB_used', __("Times the promotion has been used for this object", "event_espresso"), false,0)
 				
 			));
