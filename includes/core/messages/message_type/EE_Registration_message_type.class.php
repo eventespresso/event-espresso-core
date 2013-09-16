@@ -258,17 +258,6 @@ class EE_Registration_message_type extends EE_message_type {
 	}
 
 
-
-	private function _get_event_admin_id($event_id) {
-		global $wpdb;
-		$event_id = (int) $event_id;
-		$sql = "SELECT e.wp_user as event_admin_id FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.id = %d";
-		$result = $wpdb->get_var( $wpdb->prepare( $sql, $event_id ) );
-		return $result;
-	}
-
-
-
 	/**
 	 * Takes care of setting up the addressee object(s) for the primary attendee.
 	 *
