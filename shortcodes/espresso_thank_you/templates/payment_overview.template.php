@@ -3,7 +3,6 @@ EE_Template_Validator::verify_instanceof($transaction, '$transaction', 'EE_Trans
 EE_Template_Validator::verify_instanceof($primary_registrant, '$primary_registrant', 'EE_Registration');
 EE_Template_Validator::verify_is_array_of($payments, '$payments', 'EE_Payment');
 EE_Template_Validator::verify_is_array($event_names, '$event_names');
-EE_Template_Validator::verify_isnt_null($currency_symbol, '$currency_symbol');
 EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
 EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay_again_link');
 EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
@@ -12,7 +11,6 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
  * @var $primary_registrant EE_Registration
  * @var $payments EE_Payment[]
  * @var $event_names array of strings of only event names
- * @var $currency_symbol string
  * @var $SPCO_step_2_url string
  * @var $show_try_pay_again_link boolean whether or not to show the link back to SPCO step 2 to retry paying
  * @var $gateway_content string of content from the gateway.
@@ -24,16 +22,20 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 	</h2>
 
 	<div class='reg-payment-details'>
-		<?php if ( empty($payments)){
-			if($transaction->total()){
-				_e("No payment have yet been made toward this registration.",'event_espresso');
+		<?php 
+		if ( empty($payments)){
+			
+			if ( $transaction->total() ){
+				_e("No payments have been made yet towards this registration.",'event_espresso');
 				echo $gateway_content;
 			}else{
 				 _e("No payment required",'event_espresso');
-			}?>
-		<?php }else{?>
-		
-			<?php foreach ($payments as $payment) { ?>
+			}
+			
+		} else {
+			
+			foreach ( $payments as $payment ) { 
+		?>
 			<table class='ee-table'>
 				<tbody>
 					<tr>
@@ -57,7 +59,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 							<label><?php _e("Payment Amount: ", 'event_espresso') ?></label>
 						</td>
 						<td>
-							<?php echo $currency_symbol; ?><?php $payment->e('PAY_amount'); ?>
+							<?php EEH_Template::format_currency( $payment->e( 'PAY_amount' )); ?>
 						</td>
 					</tr>
 					<tr>
@@ -105,7 +107,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 						<label><?php _e('Amount Paid: ', 'event_espresso'); ?></label>
 					</td>
 					<td class='<?php echo ($transaction->paid() == $transaction->total()) ? 'ee-transaction-paid' : 'ee-transaction-unpaid' ?>'>
-						<?php echo $currency_symbol . number_format($transaction->paid(), 2, '.', ','); ?> 
+						<?php echo EEH_Template::format_currency( $transaction->paid() ); ?> 
 					</td>
 				</tr>
 				<tr>
@@ -113,7 +115,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 						<label><?php _e('Total Cost: ', 'event_espresso'); ?></label>
 					</td>
 					<td>
-						<?php echo $currency_symbol . number_format($transaction->total(), 2, '.', ','); ?>
+						<?php echo EEH_Template::format_currency( $transaction->total() ); ?>
 					</td>
 				</tr>
 				<tr>
@@ -142,7 +144,9 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 						<label><?php _e('Primary Registrant:', 'event_espresso'); ?></label>
 					</td>
 					<td>
-						<?php echo htmlentities( $primary_registrant->attendee()->get('ATT_fname') . ' ' . $primary_registrant->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' ); ?>
+						<?php 
+						//printr( $primary_registrant, '$primary_registrant  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						 echo htmlentities( $primary_registrant->attendee()->get('ATT_fname') . ' ' . $primary_registrant->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' ); ?>
 					</td>
 				</tr>
 			</tbody>
