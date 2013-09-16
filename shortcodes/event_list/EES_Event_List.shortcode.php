@@ -48,11 +48,9 @@ class EES_Event_List  extends EES_Shortcode {
 	 * 	run - initial module setup
 	 *
 	 *  @access 	public
-	 *	@param 	EE_Request_Handler	$EE
 	 *  @return 	void
 	 */
-	public function run( EE_Registry $EE = NULL ) {
-		$this->EE = $EE;
+	public function run() {
 		//add_filter( 'the_content', array( $this, 'the_content' ));
 		$this->EE->REQ->set( 'ee', 'event_list' );
 	}
