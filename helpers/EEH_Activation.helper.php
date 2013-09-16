@@ -156,6 +156,7 @@ class EEH_Activation {
 		$default_config->registration->default_STS_ID = 'RPN'; 	// default reg status
 		$default_config->registration->pending_counts_reg_limit = TRUE;
 		$default_config->registration->use_attendee_pre_approval = FALSE;
+		$default_config->registration->show_pending_payment_options = FALSE;
 		$default_config->registration->use_captcha = FALSE;
 		$default_config->registration->recaptcha_theme = 'clean';
 		$default_config->registration->recaptcha_language = 'en';

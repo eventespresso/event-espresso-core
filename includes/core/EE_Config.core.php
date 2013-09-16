@@ -730,6 +730,12 @@ class EE_Registration_Config extends EE_Config_Base{
 	   * @var $use_attendee_pre_approval boolean
 	   */
       public $use_attendee_pre_approval = FALSE;
+	  
+	/**
+	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
+	 * @var $pending_counts_reg_limit boolean
+	 */
+      public $show_pending_payment_options = FALSE;
 	
 	/**
 	 * 	Whether pending registration status counts toward reg limits
