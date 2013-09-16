@@ -68,7 +68,6 @@ Class EEM_Gateways {
 	private function __construct() {
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 
 		$this->EE = EE_Registry::instance();
 		
@@ -77,6 +76,7 @@ Class EEM_Gateways {
 		$this->EE->load_class( 'Offline_Gateway' );
 		$this->EE->load_class( 'Offsite_Gateway' );
 		$this->EE->load_class( 'Onsite_Gateway' );	
+		$this->EE->load_core( 'Session' );	
 		define('ESPRESSO_GATEWAYS', TRUE);
 		
 		$this->_load_session_gateway_data();

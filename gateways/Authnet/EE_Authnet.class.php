@@ -417,8 +417,11 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		return $output;
 	}
 
+
+
+
+
 	public function thank_you_page() {
-		global $EE_Session;
 
 		$expected_fields = array(
 				'x_method',
@@ -460,11 +463,11 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 			$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
 			$txn_details['status'] = 'Approved';
 		}
-		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+		EE_Registry::instance()->SSN->set_session_data(array('txn_results' => $txn_details), 'session_data');
 
 		$success = $txn_details['approved'];
 
-		do_action( 'AHEE_after_payment', $EE_Session, $success );
+		do_action( 'AHEE_after_payment', EE_Registry::instance()->SSN, $success );
 
 		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
 			do_action('AHEE_mail_successful_transaction_debugging_output');
@@ -473,6 +476,10 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		}
 		parent::thank_you_page();
 	}
+
+
+
+
 
 	public function espresso_display_payment_gateways() {
 		echo $this->_generate_payment_gateway_selection_button();

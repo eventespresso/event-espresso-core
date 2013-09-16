@@ -408,50 +408,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->redirect_after_reg_step_3();
 	}
 
-	/*public function thank_you_page() {
-		global $EE_Session;
-		//printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$txn_details = array(
-				'gateway' => $this->_payment_settings['display_name'],
-				'approved' => FALSE,
-				'response_msg' => __('You\'re registration has not been completed successfully.', 'event_espresso'),
-				'status' => 'Incomplete',
-				'raw_response' => serialize($_POST),
-				'amount' => 0.00,
-				'method' => sanitize_text_field($_POST['txn_type']),
-				'auth_code' => sanitize_text_field($_POST['payer_id']),
-				'md5_hash' => sanitize_text_field($_POST['verify_sign']),
-				//'invoice_number' => sanitize_text_field($_POST['invoice_id']),
-				//'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
-		);
-		$this->ipnLog = TRUE;
-		if ($this->_payment_settings['use_sandbox']) {
-			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-		}
-		if ($this->validateIpn()) {
-			$txn_details['raw_response'] = serialize($this->ipnData);
-			$txn_details['transaction_id'] = $this->ipnData['txn_id'];
-			if ($this->ipnData['payment_status'] == 'Completed' || $this->ipnData['payment_status'] == 'Pending') {
-				$txn_details['approved'] = TRUE;
-				$txn_details['amount'] = floatval($_REQUEST['mc_gross']);
-				$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
-				$txn_details['status'] = 'Approved';
-			}
-		}
-		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
 
-		$success = $txn_details['approved'];
 
-		do_action( 'AHEE_after_payment', $EE_Session, $success );
 
-		if ($txn_details['approved'] == TRUE && $this->_payment_settings['use_sandbox']) {
-			do_action('AHEE_mail_successful_transaction_debugging_output');
-		} else {
-			do_action('AHEE_mail_failed_transaction_debugging_output');
-		}
-		parent::thank_you_page();
-	}*/
-	
 	/**
 	 * Handles a paypal IPN, verifies we haven't already processed this IPN, creates a payment (regardless of success or not)
 	 * and updates the provided transaction, and saves to DB

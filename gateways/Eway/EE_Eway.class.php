@@ -200,8 +200,8 @@ Class EE_Eway extends EE_Offsite_Gateway {
 	}
 
 	public function process_reg_step_3() {
-		global $EE_Session, $org_options;
-		$session_data = $EE_Session->get_session_data();
+		global $org_options;
+		$session_data = EE_Registry::instance()->SSN->get_session_data();
 
 		$total = $session_data['_cart_grand_total_amount'];
 		if (isset($session_data['tax_totals'])) {
@@ -298,8 +298,10 @@ Class EE_Eway extends EE_Offsite_Gateway {
 			return $fetch_data;
 		}
 
+
+
 	public function thank_you_page() {
-		global $EE_Session;
+
 		$txn_details = array(
 				'gateway' => $this->_payment_settings['display_name'],
 				'approved' => FALSE,
@@ -370,11 +372,11 @@ Class EE_Eway extends EE_Offsite_Gateway {
 			$txn_details['invoice_number'] = $response_array['txn_id'];
 			$txn_details['transaction_id'] = $response_array['txn_id'];
 		}
-		$EE_Session->set_session_data(array('txn_results' => $txn_details), 'session_data');
+		EE_Registry::instance()->SSN->set_session_data(array('txn_results' => $txn_details), 'session_data');
 
 		$success = $txn_details['approved'];
 
-		do_action( 'AHEE_after_payment', $EE_Session, $success );
+		do_action( 'AHEE_after_payment', EE_Registry::instance()->SSN, $success );
 
 		if ($txn_details['approved'] && $this->_payment_settings['use_sandbox']) {
 			do_action('AHEE_mail_successful_transaction_debugging_output');
@@ -383,6 +385,9 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		}
 		parent::thank_you_page();
 	}
+
+
+
 
 	public function espresso_display_payment_gateways() {
 		echo $this->_generate_payment_gateway_selection_button();
