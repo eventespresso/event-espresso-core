@@ -49,8 +49,8 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	 *	@param 	EE_Registry $EE
 	 *  @return 	void
 	 */
-	public function run( EE_Registry $EE = NULL ) {
-		$this->EE = $EE;
+	public function run( /*EE_Registry $EE = NULL*/ ) {
+//		$this->EE = $EE;
 		$this->EE->REQ->set( 'ee', 'register' );
 
 	}

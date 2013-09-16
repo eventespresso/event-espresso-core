@@ -38,7 +38,7 @@ abstract class EES_Shortcode extends EE_Base {
 	 *	@param 	EE_Registry	$EE
 	 *  @return 	void
 	 */
-	public abstract function run( EE_Registry $EE = NULL );
+	public abstract function run( /*EE_Registry $EE = NULL*/ );
 
 	/**
 	 * 	process_shortcode
@@ -75,7 +75,8 @@ abstract class EES_Shortcode extends EE_Base {
 	*	@access public
 	*	@return 	void
 	*/
-	final public function __construct( ) {
+	final public function __construct( EE_Registry $EE = NULL ) {
+		$this->EE = $EE;
 		// get classname, remove EES_prefix, and convert to UPPERCASE
 		$classname = get_class( $this );
 		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this ) ));

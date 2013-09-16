@@ -71,16 +71,18 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *	@param 	EE_Registry $EE
 	 *  @return 	void
 	 */
-	public function run( EE_Registry $EE = NULL ) {
-		$this->EE = $EE;
+	public function run( /*EE_Registry $EE = NULL*/ ) {
+//		$this->EE = $EE;
+		$post_name = $this->EE->REQ->get( 'post_name' );
+		if ( ! empty( $post_name )) {
+			$txn = EEM_Transaction::instance()->get_one( array(  array( 'TXN_ID' => 14 )));
+			$reg = $txn->primary_registration();
+			printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
+		}
+
+
 		//only do thank you page stuff if we have a REG_url_link in the url
 		//otherwise, just leave the transaction page shortcode as-is
-		
-		$txn = EEM_Transaction::instance()->get_one( array(  array( 'TXN_ID' => 14 )));
-		$reg = $txn->primary_registration();
-		printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-
 //		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {
 //			// load classes
 //			$this->EE->load_model( 'Gateways' );
