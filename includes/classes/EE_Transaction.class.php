@@ -164,6 +164,11 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	protected $_Status = NULL;
 
+	
+	/**
+	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
+	 */
+	protected $_Promotion_Object;
 
 
 

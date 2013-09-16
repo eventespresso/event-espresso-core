@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * STatus Model
+ * Promotion-Rule join Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
@@ -23,7 +23,7 @@
  */
 require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
-class EEM_Status extends EEM_Base {
+class EEM_Promotion_Rule extends EEM_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -46,31 +46,23 @@ class EEM_Status extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Status','event_espresso');
-		$this->plural_item = __('Stati','event_espresso');
+		$this->singlular_item = __('Promotion-Rule-Relation','event_espresso');
+		$this->plural_item = __('Promotion-Rule-Relation','event_espresso');
 		$this->_tables = array(
-			'Status'=> new EE_Primary_Table('esp_status', 'STS_ID')
+			'Promotion_Rule'=> new EE_Primary_Table('esp_promotion_rule', 'PRR_ID')
 		);
 		$this->_fields = array(
 			'Status'=>array(
-				'STS_ID'=> new EE_Primary_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false),
-				'STS_code'=>new EE_Plain_Text_Field('STS_code',__('Status Code','event_espresso'),false, ''),
-				'STS_type'=>new EE_Enum_Text_Field('STS_type', __("Type", "event_espresso"), false, 'event', 
-						array(
-							'event'=> __("Event", "event_espresso"),//deprecated
-							'registration'=>  __("Registration", "event_espresso"),
-							'transaction'=>  __("Transaction", "event_espresso"),
-							'payment'=>  __("Payment", "event_espresso"),
-							'email'=>  __("Email", "event_espresso")
-						)),
-				'STS_can_edit'=>new EE_Boolean_Field('STS_can_edit', __('Editable?','event_espresso'), false),
-				'STS_desc'=>new EE_Simple_HTML_Field('STS_desc', __("Description", "event_espresso"), false, ''),
-				'STS_open'=>new EE_Boolean_Field('STS_open', __("Open?", "event_espresso"), false,false)
+				'PRR_ID'=>new EE_Primary_Key_Int_Field('PRR_ID', __("Relation ID between Promotion and Rule", "event_espresso"), false),
+				'PRO_ID'=>new EE_Foreign_Key_Int_Field('PRO_ID', __("Promotion ID", "event_espresso"), true, null, 'Promotion'),
+				'RUL_ID'=>new EE_Foreign_Key_Int_Field('RUL_ID', __("Rule ID", "event_espresso"), true, null, 'Rule'),
+				'PRR_order'=>new EE_Integer_Field('PRR_order', __("Order of this Rule in applying to the Promotion", "event_espresso"), false,0),
+				'PRR_add_rule_comparison'=>new EE_Enum_Text_Field('PRR_add_rule_comparison', __("Comparision Operator", "event_espresso"), false, 'AND', 
+						array('AND'=>  __("And", "event_espresso"),'OR'=>  __("Or", "event_espresso")))
 			));
 		$this->_model_relations = array(
-			'Registration'=>new EE_Has_Many_Relation(),
-			'Transaction'=>new EE_Has_Many_Relation(),
-			'Payment'=>new EE_Has_Many_Relation()
+			'Promotion'=>new EE_Belongs_To_Relation(),
+			'Rule'=>new EE_Belongs_To_Relation()
 		);
 		
 		parent::__construct();

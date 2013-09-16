@@ -20,6 +20,11 @@ class EE_Venue extends EE_CPT_Base {
 	 * @var Event_Venue[]
 	 */
 	protected $_Event_Venue;
+	
+	/**
+	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
+	 */
+	protected $_Promotion_Object;
 
 	/**
 	 * related country

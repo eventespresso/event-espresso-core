@@ -105,8 +105,28 @@ final class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
-		//CREATE A BASIC REG, ATTENDEE, AND TRANSACTION
+	public function init(){
+		//create basic promotion
+//		$pro =  EE_Promotion::new_instance(array('PRO_scope'=>'Event'));				
+//		$pro->save();
+//		$ticket = EEM_Ticket::instance()->get_one();
+//		$pro_ticket = EE_Promotion_Object::new_instance(array(
+//			'PRO_ID'=>$pro->ID(),
+//			'OBJ_ID'=>$ticket->ID(),
+//			'POB_type'=>'Ticket',
+//			));
+//		$pro_ticket->save();
+//		$pro_ticket = EEM_Promotion_Object::instance()->get_one(array(array('POB_type'=>'Ticket')));
+//		echo 'echodump of $pro_ticket';
+//		var_dump($pro_ticket);
+//		$obj = $pro_ticket->object();
+//		echo 'echodump of $obj';
+//		var_dump($obj);
+//		$promo = EEM_Promotion_Object::instance()->get_one(array(array('Ticket.TKT_ID'=>1)));
+//		echo 'echodump of $promo';
+//		var_dump($promo);
+//CREATE A BASIC REG, ATTENDEE, AND TRANSACTION
+		//
 //		$txn = EE_Transaction::new_instance(array('TXN_total'=>34.02,'TXN_paid'=>34.02, 'STS_ID'=>'TIN'));
 //		$txn->save();
 //		$att = EE_Attendee::new_instance(array('ATT_fname'=>'monkey'));

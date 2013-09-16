@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * STatus Model
+ * Promotion-to-almost-anything Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
@@ -23,7 +23,7 @@
  */
 require_once ( EE_MODELS . 'EEM_Base.model.php' );
 
-class EEM_Status extends EEM_Base {
+class EEM_Promotion_Object extends EEM_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -49,28 +49,25 @@ class EEM_Status extends EEM_Base {
 		$this->singlular_item = __('Status','event_espresso');
 		$this->plural_item = __('Stati','event_espresso');
 		$this->_tables = array(
-			'Status'=> new EE_Primary_Table('esp_status', 'STS_ID')
+			'Promotion_Object'=> new EE_Primary_Table('esp_promotion_object', 'POB_ID')
 		);
+		$relations = array('Event','Venue','Datetime','Ticket','Transaction');
 		$this->_fields = array(
-			'Status'=>array(
-				'STS_ID'=> new EE_Primary_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false),
-				'STS_code'=>new EE_Plain_Text_Field('STS_code',__('Status Code','event_espresso'),false, ''),
-				'STS_type'=>new EE_Enum_Text_Field('STS_type', __("Type", "event_espresso"), false, 'event', 
-						array(
-							'event'=> __("Event", "event_espresso"),//deprecated
-							'registration'=>  __("Registration", "event_espresso"),
-							'transaction'=>  __("Transaction", "event_espresso"),
-							'payment'=>  __("Payment", "event_espresso"),
-							'email'=>  __("Email", "event_espresso")
-						)),
-				'STS_can_edit'=>new EE_Boolean_Field('STS_can_edit', __('Editable?','event_espresso'), false),
-				'STS_desc'=>new EE_Simple_HTML_Field('STS_desc', __("Description", "event_espresso"), false, ''),
-				'STS_open'=>new EE_Boolean_Field('STS_open', __("Open?", "event_espresso"), false,false)
+			'Promotion_Object'=>array(
+				'POB_ID'=>new EE_Primary_Key_Int_Field('POB_ID', __("Price-to-Object ID", "event_espresso"), false),
+				'PRO_ID'=>new EE_Foreign_Key_Int_Field('PRO_ID', __("Promotion Object", "event_espresso"), false, 0, 'Promotion'),
+				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("ID of the Related Object", "event_espresso"), false, 0, $relations),
+				'POB_type'=>new EE_Any_Foreign_Model_Name_Field('POB_type', __("Model of Related Object", "event_espresso"),false, 'Event',$relations),
+				'POB_used'=>new EE_Integer_Field('POB_used', __("Times the promotion has been used for this object", "event_espresso"), false,0)
+				
 			));
 		$this->_model_relations = array(
-			'Registration'=>new EE_Has_Many_Relation(),
-			'Transaction'=>new EE_Has_Many_Relation(),
-			'Payment'=>new EE_Has_Many_Relation()
+			'Event'=>new EE_Belongs_To_Any_Relation(),
+			'Venue'=>new EE_Belongs_To_Any_Relation(),
+			'Datetime'=>new EE_Belongs_To_Any_Relation(),
+			'Ticket'=>new EE_Belongs_To_Any_Relation(),
+			'Transaction'=>new EE_Belongs_To_Any_Relation(),
+			'Promotion'=>new EE_Belongs_To_Relation(),
 		);
 		
 		parent::__construct();
@@ -78,5 +75,6 @@ class EEM_Status extends EEM_Base {
 
 
 }
-// End of file EEM_Answer.model.php
-// Location: /includes/models/EEM_Answer.model.php
+// 
+// End of file EEM_Promotion_Object.model.php
+// Location: /includes/models/EEM_Promotion_Object.model.php

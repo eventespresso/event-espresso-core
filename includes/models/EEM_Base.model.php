@@ -407,6 +407,7 @@ abstract class EEM_Base extends EE_Base{
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$select_expressions = $columns_to_select ? $this->_construct_select_from_input($columns_to_select) : $this->_construct_default_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
+//		echo "sql:$SQL";
 		$results =  $wpdb->get_results($SQL, $output);
 		$this->show_db_query_if_previously_requested($SQL);
 		return $results;

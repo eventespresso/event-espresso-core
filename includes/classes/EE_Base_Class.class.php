@@ -965,12 +965,16 @@ class EE_Base_Class{
 	 * @return EE_Base_Class (not an array, a single object)
 	 */
 	public function get_first_related($relationName,$query_params = array()){
-		if ($query_params){
+		//if they've provided some query parameters, don't bother trying to cache teh result
+		//also make sure we're not caching the result of get_first_related
+		//on a relation which should have an array of objects (because the cache might have an array of objects)
+		if ($query_params || ! $this->get_model()->related_settings_for($relationName) instanceof EE_Belongs_To_Relation){
 			$related_model_object =  $this->get_model()->get_first_related($this, $relationName, $query_params);
 		}else{
 			//first, check if we've already cached the result of this query
 			$cached_result = $this->get_one_from_cache($relationName);
 			if ( ! $cached_result ){
+				
 				$related_model_object = $this->get_model()->get_first_related($this, $relationName, $query_params);
 				$this->cache($relationName,$related_model_object);
 			}else{

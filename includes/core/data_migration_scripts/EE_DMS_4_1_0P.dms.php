@@ -186,6 +186,63 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					KEY PAY_timestamp (PAY_timestamp)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 
+		$table_name = 'esp_promotion';
+		$sql = "PRO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+					PRC_ID INT UNSIGNED NOT NULL ,
+					PRO_scope VARCHAR(16) NOT NULL DEFAULT 'event' ,
+					PRO_start DATETIME NULL DEFAULT NULL ,
+					PRO_end DATETIME NULL DEFAULT NULL ,
+					PRO_code VARCHAR(45) NULL DEFAULT NULL ,
+					PRO_uses SMALLINT UNSIGNED NULL DEFAULT NULL ,
+					PRO_global TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRO_global_uses SMALLINT UNSIGNED NOT NULL DEFAULT 0 ,
+					PRO_exclusive TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRO_accept_msg TINYTEXT NULL DEFAULT NULL ,
+					PRO_decline_msg TINYTEXT NULL DEFAULT NULL ,
+					PRO_default TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRO_order TINYINT UNSIGNED NOT NULL DEFAULT 40 ,
+					PRIMARY KEY  (PRO_ID) ,
+					KEY FK_wp_esp_price_PRC_ID2 (PRC_ID ASC)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
+		$table_name = 'esp_promotion_object';
+		$sql = "POB_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			PRO_ID INT UNSIGNED NOT NULL,
+			OBJ_ID INT UNSIGNED NOT NULL,
+			POB_type VARCHAR(45) NULL,
+			POB_used INT NULL,
+			PRIMARY KEY  (POB_ID),
+			INDEX FK_wp_esp_ticket_TKT_ID2 (OBJ_ID ASC),
+			INDEX FK_wp_esp_promotions_PRO_ID3 (PRO_ID ASC)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
+		$table_name = 'esp_promotion_rule';
+		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+					PRO_ID INT UNSIGNED NOT NULL ,
+					RUL_ID INT UNSIGNED NOT NULL ,
+					PRR_order TINYINT UNSIGNED NOT NULL DEFAULT 1,
+					PRR_add_rule_comparison ENUM('AND','OR') NULL DEFAULT 'AND',
+					PRIMARY KEY  (PRR_ID) ,
+					INDEX FK_wp_esp_promotions_PRO_ID2 (PRO_ID ASC),
+					INDEX FK_wp_esp_promo_rule_RUL_ID1 (RUL_ID ASC) ";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
+		
+		
+		$table_name = 'esp_rule';
+		$sql = "RUL_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+					RUL_name VARCHAR(45) NOT NULL ,
+					RUL_desc TEXT NULL ,
+					RUL_trigger VARCHAR(45) NOT NULL ,
+					RUL_trigger_type VARCHAR(45) NULL DEFAULT NULL ,
+					RUL_comparison ENUM('=','!=','<','>') NOT NULL DEFAULT '=' ,
+					RUL_value VARCHAR(45) NOT NULL ,
+					RUL_value_type VARCHAR(45) NULL DEFAULT NULL ,
+					RUL_is_active TINYINT(1) NOT NULL DEFAULT 1 ,
+					RUL_archived TINYINT(1) NOT NULL DEFAULT 0 ,
+					PRIMARY KEY  (RUL_ID)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
 
 
 		$table_name = "esp_ticket";  
