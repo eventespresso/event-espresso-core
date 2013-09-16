@@ -56,7 +56,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function set_definitions() {
+	static public function set_definitions() {
 		define( 'THANK_YOU_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'THANK_YOU_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 	}
