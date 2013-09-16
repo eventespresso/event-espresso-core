@@ -111,7 +111,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	string	
 	*/
-	public function display_ticket_selector( $event = FALSE, $added_by_admin = FALSE ) {
+	public static function display_ticket_selector( $event = FALSE, $added_by_admin = FALSE ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
 
 		if ( ! $event ) {

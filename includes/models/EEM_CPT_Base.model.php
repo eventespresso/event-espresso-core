@@ -192,7 +192,7 @@ class EEM_CPT_Base extends EEM_Base{
 	 * this returns the post statuses that are NOT the default wordpress status
 	 * @return array
 	 */
-	public function get_custom_post_statuses() {
+	public static function get_custom_post_statuses() {
 		$new_stati = array();
 		$statuses = self::get_post_statuses();
 		$defaults = array(
