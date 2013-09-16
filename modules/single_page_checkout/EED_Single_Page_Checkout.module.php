@@ -90,21 +90,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	/**
 	 * 	ajax_process_registration_steps
 	 */
-	public function 	process_reg_step_1() {
+	public static function 	process_reg_step_1() {
 		$SPCO = EED_Single_Page_Checkout::instance();
 		$SPCO->init();
 		$SPCO->process_registration_step_1();
 	}
 	
 	
-	public function 	process_reg_step_2() {
+	public static function 	process_reg_step_2() {
 		$SPCO = EED_Single_Page_Checkout::instance();
 		$SPCO->init();
 		$SPCO->process_registration_step_2();
 	}
 	
 	
-	public function 	process_reg_step_3() {
+	public static function process_reg_step_3() {
 		$SPCO = EED_Single_Page_Checkout::instance();
 		$SPCO->init();
 		$SPCO->process_registration_step_3();
