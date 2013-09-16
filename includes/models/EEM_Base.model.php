@@ -1204,6 +1204,12 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$where_query_params = array();
 		}
+		//verify where_query_params has NO numeric indexes.... that's simply not how you use it!
+		foreach($where_query_params as $key => $value){
+			if(is_int($key)){
+				throw new EE_Error(sprintf(__("WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. Please read documentation on EEM_Base::get_all.", "event_espresso"),$key, $value,get_class($this)));
+			}
+		}
 		if(array_key_exists('default_where_conditions',$query_params)){
 			$use_default_where_conditions = $query_params['default_where_conditions'];
 		}else{
