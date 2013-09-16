@@ -83,6 +83,12 @@ class EE_Promotion extends EE_Base_Class{
 	 * @var EE_Price
 	 */
 	protected $_Price = NULL;
+	
+	/**
+	 * 
+	 * @var EE_Promotion_Object[] relation to join-model between promotions and whatevers
+	 */
+	protected $_Promotion_Object = NULL;
 	/**
 	 * 
 	 * @param type $props_n_values
