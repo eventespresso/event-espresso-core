@@ -427,8 +427,8 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Registration
 	 */
 	public function primary_registration( $return_obj = FALSE ){
-		require_once( EE_MODELS . 'EEM_Registration.model.php');
-		$result = $this->get_first_related('Registration', array(array('REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT)));
+		$this->EE->load_model( 'Registration' );
+		$result = $this->get_first_related('Registration', array(array( 'REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT )));
 		return $result;//$return_obj ? array_shift($result) : $result;
 	}
 	
@@ -449,7 +449,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Payment[]
 	 */
 	public function approved_payments(){
-		require_once( EE_MODELS . 'EEM_Payment.model.php');
+		$this->EE->load_model( 'Payment' );
 		return $this->get_many_related('Payment', array(array('STS_ID'=>  EEM_Payment::status_id_approved), 'order_by'=>array('PAY_timestamp' =>'DESC')));
 	}
 	
@@ -595,6 +595,8 @@ class EE_Transaction extends EE_Base_Class{
 		$details = $this->details();
 		return $details['response_msg'];
 	}
+
+
 
 	/**
 	 * Get the status object of this object

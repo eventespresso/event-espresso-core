@@ -26,7 +26,7 @@ final class EE_Front_Controller {
 	/**
 	 * 	system registry
 	 *	@var 	EE_Registry		$EE
-	 * 	@access 	public
+	 * 	@access 	private
 	 */
 	private $EE;
 
@@ -283,7 +283,7 @@ final class EE_Front_Controller {
 			$current_post = ! empty( $current_post ) ? $current_post : get_option('show_on_front');
 			// make sure shortcodes are set
 			if ( isset( $this->EE->CFG->core->post_shortcodes )) {
-				//printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//				printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				// cycle thru all posts with shortcodes set
 				foreach ( $this->EE->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 //					echo '<h4>$post_name : ' . $post_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
