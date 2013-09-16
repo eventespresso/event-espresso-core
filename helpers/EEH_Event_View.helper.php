@@ -152,7 +152,8 @@ class EEH_Event_View extends EEH_Base {
 	public static function get_primary_date_obj() {
 		global $post;
 		if ( isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes )) {
-			$datetime = array_shift( array_values( $post->datetimes ));
+			$datetime_values = array_values( $post->datetimes );//seperated array_shift from array_values because it caused a warning
+			$datetime = array_shift($datetime_values );
 			//printr( $datetime, '$datetime  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			return $datetime;		
 		}
