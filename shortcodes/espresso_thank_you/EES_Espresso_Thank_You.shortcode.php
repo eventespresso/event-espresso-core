@@ -72,24 +72,22 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( /*EE_Registry $EE = NULL*/ ) {
-//		$this->EE = $EE;
-		$post_name = $this->EE->REQ->get( 'post_name' );
-		if ( ! empty( $post_name )) {
-			$txn = EEM_Transaction::instance()->get_one( array(  array( 'TXN_ID' => 14 )));
-			$reg = $txn->primary_registration();
-			printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
-		}
+
 
 
 		//only do thank you page stuff if we have a REG_url_link in the url
 		//otherwise, just leave the transaction page shortcode as-is
 //		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {
-//			// load classes
-//			$this->EE->load_model( 'Gateways' );
-//			$this->EE->LIB->EEM_Gateways->set_ajax( false );
+			// load classes
+			$this->EE->load_model( 'Gateways' );
+			$this->EE->LIB->EEM_Gateways->set_ajax( false );
 //			$this->EE->load_class( 'Registration' );
-//			$this->EE->load_model( 'Transaction' );
-//			
+			$this->EE->load_model( 'Transaction' );
+
+			$txn = EEM_Transaction::instance()->get_one( array(  array( 'TXN_ID' => 14 )));
+			$reg = $txn->primary_registration();
+			printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
+			
 //			$this->_current_txn =$this->EE->LIB->EEM_Transaction->get_transaction_from_reg_url_link();
 //			add_action( 'init', array( $this, 'handle_thank_you_page' ), 30 );
 //		}
