@@ -342,8 +342,8 @@ class EEM_Transaction extends EEM_Base {
 	 * @return EE_Transaction
 	 */
 	public function get_transaction_from_reg_url_link( $reg_url_link = NULL ){
-		if( NULL == $reg_url_link ){
-			$reg_url_link = $_REQUEST['e_reg_url_link'];
+		if( $reg_url_link === NULL ){
+			$reg_url_link = $this->EE->REQ->get( 'e_reg_url_link' );
 		}
 		$transaction = $this->get_one(array(array('Registration.REG_url_link'=>$reg_url_link)));
 		return $transaction;

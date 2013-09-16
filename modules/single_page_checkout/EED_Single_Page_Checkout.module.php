@@ -629,7 +629,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		//printr( $this->EE->SSN->get_session_data(), '$this->EE->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		$this->EE->REQ->set_output( espresso_display_template( $this->_templates['registration_page_wrapper'], $template_args, TRUE ));
+		$this->EE->REQ->add_output( espresso_display_template( $this->_templates['registration_page_wrapper'], $template_args, TRUE ));
 	}
 
 

@@ -27,6 +27,13 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 class EE_Base_Class{
 
 	/**
+	 * 	system registry
+	 *	@var 	EE_Registry		$EE
+	 * 	@access 	protected
+	 */
+	protected $EE;
+	
+	/**
 	 * This is an array of the original properties and values provided during construction
 	 * of this model object. (keys are model field names, values are their values).
 	 * This list is important to remember so that when we are merging data from the db, we know
@@ -91,6 +98,7 @@ class EE_Base_Class{
 	 * 
 	 */
 	protected function __construct($fieldValues=null, $bydb = FALSE, $timezone = NULL ){
+		$this->EE = EE_Registry::instance();
 		$className=get_class($this);
 		//set default formats for date and time
 		$this->_dt_frmt = get_option('date_format');

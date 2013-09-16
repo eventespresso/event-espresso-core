@@ -157,12 +157,12 @@ final class EE_Request_Handler {
 
 	
 	/**
-	 * 	set_output
+	 * 	add_output
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function set_output( $string ) {
+	public function add_output( $string ) {
 		$this->_output .= $string;
 	}
 
