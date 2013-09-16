@@ -35,10 +35,9 @@ abstract class EES_Shortcode extends EE_Base {
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
-	 *	@param 	EE_Registry	$EE
 	 *  @return 	void
 	 */
-	public abstract function run( /*EE_Registry $EE = NULL*/ );
+	public abstract function run();
 
 	/**
 	 * 	process_shortcode
@@ -73,6 +72,7 @@ abstract class EES_Shortcode extends EE_Base {
 	*	class constructor - can ONLY be instantiated by EE_Front_Controller
 	*
 	*	@access public
+	 *	@param 	EE_Registry	$EE
 	*	@return 	void
 	*/
 	final public function __construct( EE_Registry $EE = NULL ) {

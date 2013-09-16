@@ -71,27 +71,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *	@param 	EE_Registry $EE
 	 *  @return 	void
 	 */
-	public function run( /*EE_Registry $EE = NULL*/ ) {
-
-
-
-		//only do thank you page stuff if we have a REG_url_link in the url
-		//otherwise, just leave the transaction page shortcode as-is
-//		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {
-			// load classes
-			$this->EE->load_model( 'Gateways' );
-			$this->EE->LIB->EEM_Gateways->set_ajax( false );
-//			$this->EE->load_class( 'Registration' );
-			$this->EE->load_model( 'Transaction' );
-
-			$txn = EEM_Transaction::instance()->get_one( array(  array( 'TXN_ID' => 14 )));
-			$reg = $txn->primary_registration();
-			printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
-			
-//			$this->_current_txn =$this->EE->LIB->EEM_Transaction->get_transaction_from_reg_url_link();
-//			add_action( 'init', array( $this, 'handle_thank_you_page' ), 30 );
-//		}
-
+	public function run() {
+		// only do thank you page stuff if we have a REG_url_link in the url
+		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {
+			$this->_current_txn = $this->EE->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
+			add_action( 'init', array( $this, 'handle_thank_you_page' ), 30 );
+		}
 	}
 
 
@@ -114,26 +99,20 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes ) {
-		
-		
-//		$txn1 = $this->EE->LIB->EEM_Transaction->get_one_by_ID( 13 );
-//		$reg = $txn1->primary_registration();
-//		printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 		//prepare variables for displaying
-		//get teh transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
 		$registrations = $this->_current_txn->registrations();
 		$event_names = array();
 		foreach( $registrations as $registration ){
 			$event_names[ $registration->event_name() ] = $registration->event_name();
 		}
+		//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
 		$this->_current_txn = $this->EE->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
-		//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$template_args = array();
 		//update the trsansaction, in case we just updated it.
 		$template_args['transaction'] = $this->_current_txn;
 		$template_args['payments'] = $this->_current_txn->payments();
 		$template_args['primary_registrant'] = $this->_current_txn->primary_registration();
-		printr( $template_args['primary_registrant'], 'primary_registrant  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$template_args['event_names'] = $event_names;
 
 		// txn status ? 

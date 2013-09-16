@@ -46,11 +46,9 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
-	 *	@param 	EE_Registry $EE
 	 *  @return 	void
 	 */
-	public function run( /*EE_Registry $EE = NULL*/ ) {
-//		$this->EE = $EE;
+	public function run() {
 		$this->EE->REQ->set( 'ee', 'register' );
 
 	}
