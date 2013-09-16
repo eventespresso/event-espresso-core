@@ -73,7 +73,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');		
 		
-		self::$_additional_attendee_reg_info_enum = $this->_get_additional_attendee_reg_info_array();
+		self::$_additional_attendee_reg_info_enum = self::_get_additional_attendee_reg_info_array();
 
 		$custom_stati = array(
 			'cancelled' => array(
@@ -555,7 +555,7 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 
-	private function _get_additional_attendee_reg_info_array() {
+	private static function _get_additional_attendee_reg_info_array() {
 		return array(
 			EEM_Event::additional_attendee_reg_info_none =>  __("None", "event_espresso"),
 			EEM_Event::additional_attendee_reg_info_personal_info_only => __("Personal Info Only", "event_espresso"),
