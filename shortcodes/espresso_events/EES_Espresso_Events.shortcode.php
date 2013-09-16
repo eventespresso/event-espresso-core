@@ -70,7 +70,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *	@param 	EE_Registry $EE
 	 *  @return 	void
 	 */
-	public function run( EE_Registry $EE = NULL ) {
+	public function run( /*EE_Registry $EE = NULL*/ ) {
 		
 		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}

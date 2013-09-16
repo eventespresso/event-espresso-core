@@ -338,7 +338,7 @@ final class EE_Front_Controller {
 								// and pass the request object to the run method
 								$shortcode = $sc_reflector->newInstance( $this->EE );
 								// fire the shortcode class's run method, so that it can activate resources
-								$shortcode->run( $this->EE );
+								$shortcode->run( /*$this->EE */);
 //								printr( $shortcode, '$shortcode  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 							}
 						}
