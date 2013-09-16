@@ -1108,7 +1108,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->EE->SSN->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
 			$this->EE->SSN->update_espresso_session();
 			//var_dump($)
-			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
+//			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			
 
 //			printr( $this->EE->SSN, '$this->EE->SSN data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
