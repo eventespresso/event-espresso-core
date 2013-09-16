@@ -16,7 +16,7 @@
 get_header();
 ?>
 <div class="maxwidth max-width row">
-	<div id="espresso-event-details-wrap-dv" class="site-content left">
+	<div id="espresso-event-details-wrap-dv" class="site-content">
 		<div id="espresso-event-details-dv" class="" role="main">
 				
 		<?php if ( have_posts() ) { ?>
