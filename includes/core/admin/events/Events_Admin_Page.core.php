@@ -1226,7 +1226,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		if (isset($this->_req_data['month_range'])) {
 			$pieces = explode(' ', $this->_req_data['month_range'], 3);
-			$month_r = !empty($pieces[0]) ? $pieces[0] : '';
+			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
 			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 		}
 
@@ -1260,17 +1260,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$where['Term_Taxonomy.term_id'] = $category;
 		}
 		
-
 		//date where conditions
 		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
-			$where['DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01'), strtotime($year_r . '-' . $month_r . '-31') ) );
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
 		} else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
-			$where['DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
 		} else if ( isset($this->_req_data['status']) && $this->_req_data['status'] == 'month' ) {
 			$this_year_r = date('Y');
 			$this_month_r = date('m');
 			$days_this_month = date('t');
-			$where['DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
 		}
 
 		$where['post_type'] = array( '!=', 'revision' );
@@ -1555,32 +1554,88 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
 	 * espresso_event_months_dropdown			
-	 * This is copied (and slightly modified) from the same named function in EE core legacy.
-	 * 
-	 * @param  string $current_value current month range value
+	 *
+	 * @access public
 	 * @return string                dropdown listing month/year selections for events.
 	 */
-	public function espresso_event_months_dropdown($current_value = '') {
-		global $wpdb;
-		$SQL = "SELECT DTT_EVT_start as e_date FROM " . $wpdb->prefix . "esp_datetime GROUP BY YEAR(FROM_UNIXTIME(DTT_EVT_start)), MONTH(FROM_UNIXTIME(DTT_EVT_start))";
+	public function espresso_event_months_dropdown() {
+		//what we need to do is get all PRIMARY datetimes for all events to filter on. Note we need to include any other filters that are set!
+		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
+		//determine what post_status our condition will have for the query.
+		switch ( $status ) {
+			case 'month' :
+			case 'today' :
+			case NULL :
+			case 'all' :
+				$where['Event.status'] = array( 'NOT IN', array('trash') );
+				break;
 
-		$dates = $wpdb->get_results($SQL);
+			case 'draft' :
+				$where['Event.status'] = array( 'IN', array('draft', 'auto-draft') );
 
-		echo '<select name="month_range" class="wide">';
-			
-
-		if ($wpdb->num_rows > 0) {
-			echo '<option value="">' . __('Select a Month/Year', 'event_espresso') . '</option>';
-			foreach ($dates as $row) {
-				$option_date = date_i18n('M Y', $row->e_date);
-				echo '<option value="' . $option_date . '"';
-				echo $option_date == $current_value ? ' selected="selected=selected"' : '';
-				echo '>' . $option_date . '</option>' . "\n";
-			}
-		} else {
-			echo '<option value="">' . __('No Dates Yet', 'event_espresso') . '</option>';
+			default :
+				$where['Event.status'] = $status;
 		}
-		echo "</select>";
+
+		//categories?
+		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
+
+		if ( !empty ( $category ) ) {
+			$where['Event.Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Event.Term_Taxonomy.term_id'] = $category;
+		}
+
+		//what about active status for the event?
+		if ( isset( $this->_req_data['active_status'] ) ) {
+			switch ( $this->_req_data['active_status'] ) {
+				case 'upcoming' :
+					$where['Event.status'] = 'publish';
+					$where['DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
+					break;
+
+				case 'expired' :
+					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
+					break;
+
+				case 'active' :
+					$where['Event.status'] = 'publish';
+					$where['DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
+					$where['DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
+					break;
+
+				case 'inactive' :
+					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
+					break;
+			}
+		}
+
+
+		$where['DTT_is_primary'] = 1;
+
+		$DTTS = $this->EE->load_model('Datetime')->get_dtt_months_and_years($where);
+
+		//let's setup vals for select input helper
+		$options = array(
+			0 => array(
+				'text' => __('Select a Month/Year', 'event_espresso'),
+				'id' => ""
+				)
+			);
+
+		foreach ( $DTTS as $DTT ) {
+			$date = $DTT->dtt_month . ' ' . $DTT->dtt_year;
+			$options[] = array(
+				'text' => $date,
+				'id' => $date
+				);
+		}
+
+		$cur_date = isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '';
+
+
+		return EE_Form_Fields::select_input( 'month_range', $options, $cur_date, '', 'wide' );
 	}
 
 

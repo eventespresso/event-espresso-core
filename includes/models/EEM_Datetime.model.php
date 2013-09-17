@@ -176,6 +176,23 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	}
 
 
+
+	/**
+	 * This returns a wpdb->results array of all DTT month and years matching the incoming query params and grouped by month and year.
+	 * @param  array  $query_params Array of query_parms as described in the comments for EEM_Base::get_all()
+	 * @return wpdb results array
+	 */
+	public function get_dtt_months_and_years( $where_params ) {
+		$query_params[0] = $where_params;
+		$query_params['group_by'] = array('dtt_year', 'dtt_month');
+		$columns_to_select = array(
+			'dtt_year' => array('YEAR(DTT_EVT_start)', '%s'),
+			'dtt_month' => array('MONTHNAME(DTT_EVT_start)', '%s')
+			);
+		return $this->_get_all_wpdb_results( $query_params, OBJECT, $columns_to_select );
+	}
+
+
 }
 // End of file EEM_Datetime.model.php
 // Location: /includes/models/EEM_Datetime.model.php
