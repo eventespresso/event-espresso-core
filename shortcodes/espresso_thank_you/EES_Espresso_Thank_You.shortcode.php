@@ -111,6 +111,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		}
 		//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
 		$this->_current_txn = $this->EE->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
+		//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$template_args = array();
 		//update the trsansaction, in case we just updated it.
 		$template_args['transaction'] = $this->_current_txn;
@@ -128,7 +129,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['show_try_pay_again_link'] = isset($this->EE->CFG->registration->show_pending_payment_options) && $this->EE->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
 		}
 		
-		$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'2' ), get_permalink( $this->EE->CFG->core->reg_page_id ));
+		$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'2', 'e_reg_url_link'=>$this->EE->REQ->get( 'e_reg_url_link' )), get_permalink( $this->EE->CFG->core->reg_page_id ));
 		$txn_details = $this->_current_txn->details();
 		
 		$template_args['gateway_content'] = '';

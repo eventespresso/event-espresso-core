@@ -213,7 +213,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function wp_enqueue_scripts() {
 		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css' );
 		wp_enqueue_style( 'single_page_checkout' );
-		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('jquery'), '', TRUE );
+		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core'), '', TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
@@ -242,7 +242,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['confirmation_data'] = '';
 
 		// grab what step we're on
-		$step = $this->EE->is_set( 'step' ) ? absint( $this->EE->get( 'step' )) : 1;
+		$step = $this->EE->REQ->is_set( 'step' ) ? absint( $this->EE->REQ->get( 'step' )) : 1;
 
 		// use step to change css classes for displaying how far along the reg process we have gotten
 		switch ($step) {
@@ -709,6 +709,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				unset($valid_data['qstn']['custom_questions']);
 			}
 			
+			$this->EE->load_helper( 'Template' );
+			
 			// now loop through our array of valid post data
 			foreach ($valid_data['qstn'] as $event_id => $event_data) {
 				// continue to drill down through the array and set paramaters
@@ -1001,7 +1003,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$total = $total + $taxes;
 				}
 			}
-
+			
+			$this->EE->load_helper( 'Template' );
 			$template_args['billing'][ __('total due', 'event_espresso') ] = EEH_Template::format_currency( $total );
 
 			$ouput = espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
