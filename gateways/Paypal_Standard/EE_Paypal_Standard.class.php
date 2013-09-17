@@ -424,21 +424,17 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	public function handle_ipn_for_transaction(EE_Transaction $transaction){
 		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".($transaction instanceof EE_Transaction)?$transaction->ID():'unknown');
 		
-		//@todo just for debugging. remove in production
-//		if($_GET['payment_status'] && $_GET['txn_id']){
-//			echo "<br>NOTE! payment_staut and txn_id overridden!!!";
-//			$_POST['payment_status']=$_GET['payment_status'];
-//			$_POST['txn_id']=$_GET['txn_id'];
-//		}
+		
 		//verify there's payment data that's been sent
 		if(empty($_POST['payment_status']) || empty($_POST['txn_id'])){
 			return false;
 		}
-			$this->_debug_log( "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id']);
+		$this->_debug_log( "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id']);
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if(!$this->validateIpn()){
 			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
 			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
+			EE_Error::add_error(__("Paypal IPN Validation failed!", "event_espresso"));
 			return false;
 		}
 		//if the transaction's just an ID, swap it for a real EE_Transaction
@@ -464,7 +460,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		//check if we've already processed this payment
 		
 		$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
-		
 		if(!empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->STS_ID() == $status && $payment->amount() == $_POST['mc_gross']){
@@ -498,7 +493,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				'PAY_details' => $_POST));
 		
 		}
-		
 		$payment->save();
 		return parent::update_transaction_with_payment($transaction,$payment);	
 	}
@@ -530,15 +524,14 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->ipnData=$_POST;
 		$response_post_data=$_POST + array('cmd'=>'_notify-validate');
 		$result= wp_remote_post($this->_gatewayUrl, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
-		//echo "eepaypstandard results:";print_r($result);
 		
 		if (!is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) { 
-			//echo "eepaypalstandard success!";
+//			echo "eepaypalstandard success!";
 			$this->ipnResponse = $result['body'];
 			return true;
 		}else{
 			$this->lastError = "IPN Validation Failed . $this->_gatewayUrl with response:".print_r($result['body'],true);
-			//echo "eepaypalstandard error:".is_wp_error($result).", body equals VERIFIED:".(strcmp($result['body'], "VERIFIED") == 0);
+//			echo "eepaypalstandard error:".is_wp_error($result).", body equals VERIFIED:".(strcmp($result['body'], "VERIFIED") == 0);
 			$this->ipnResponse=$result['body'];
 			if($this->_debug_mode){
 				echo "error!".print_r($this->lastError,true);
