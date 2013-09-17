@@ -48,7 +48,7 @@ Class EEM_Gateways {
 	/**
 	 * 		@singleton method used to instantiate class object
 	 * 		@access public
-	 * 		@return class instance
+	 * 		@return EEM_Gateways
 	 */
 	public static function instance() {
 		// check if class object is instantiated
@@ -979,6 +979,14 @@ Class EEM_Gateways {
 			}
 			
 		}
+	}
+	
+	/**
+	 * Gets all teh gateways which are active
+	 * @return EE_Gateway[]
+	 */
+	public function active_gateways(){
+		return $this->_active_gateways;
 	}
 
 
