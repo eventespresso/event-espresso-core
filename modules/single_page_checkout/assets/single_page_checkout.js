@@ -667,7 +667,7 @@
 	});
 
 
-	function getFunctionName( functionName = '' ) {
+	function getFunctionName( functionName ) {
 		functionName = functionName.substr('function '.length);
 		functionName = functionName.substr(0, functionName.indexOf('('));	
 		return functionName;

@@ -68,6 +68,10 @@ final class EE_Admin {
      */
 	protected function __construct( $main_file ) {
 		$this->main_file = $main_file;
+		//set frontend ajax constant.  This gets set if we have an incoming request var named "ee_frontend_ajax"
+		if ( isset( $_POST['ee_frontend_ajax'] ) && !defined('EE_FRONTEND_DOING_AJAX') )
+			define( 'EE_FRONTEND_DOING_AJAX', TRUE );
+
 		// admin hooks
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
@@ -211,8 +215,9 @@ final class EE_Admin {
 			EE_messages_init::init();
 			
 		}
-		// run the admin page factory
-		$this->EE_Admin_Page_Loader();
+		// run the admin page factory but ONLY if we aren't doing a frontend ajax request
+		if ( !defined('EE_FRONTEND_DOING_AJAX' ) )
+			$this->EE_Admin_Page_Loader();
 		
 	}
 

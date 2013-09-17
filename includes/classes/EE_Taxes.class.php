@@ -163,7 +163,7 @@ class EE_Taxes extends EE_BASE {
 		foreach( $this->_taxes as $order => $taxes ) {
 			foreach( $taxes as $tax ) {
 				// create ticket price object from tax data
-				$tax_object = new EE_Price_Composite( $tax, $this->_PRT_MDL->get_one( array(array('PRT_ID'=>$tax->type()))));
+				$tax_object = new EE_Price_Composite( $tax, $this->_PRT_MDL->get_one_by_ID($tax->type()));
 				$this->_grand_total = new EE_Ticket_Price_Modifier( $this->_grand_total, $tax_object );
 				// template args
 				$this->_calculated_taxes[ $tax->ID() ] = array('name' => $tax->name(), 'percent' => $tax->amount(), 'amount' => $this->_grand_total->mod_amount() );

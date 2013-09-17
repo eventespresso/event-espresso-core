@@ -90,21 +90,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	/**
 	 * 	ajax_process_registration_steps
 	 */
-	public function 	process_reg_step_1() {
+	public static function 	process_reg_step_1() {
 		$SPCO = EED_Single_Page_Checkout::instance();
 		$SPCO->init();
 		$SPCO->process_registration_step_1();
 	}
 	
 	
-	public function 	process_reg_step_2() {
+	public static function 	process_reg_step_2() {
 		$SPCO = EED_Single_Page_Checkout::instance();
 		$SPCO->init();
 		$SPCO->process_registration_step_2();
 	}
 	
 	
-	public function 	process_reg_step_3() {
+	public static function process_reg_step_3() {
 		$SPCO = EED_Single_Page_Checkout::instance();
 		$SPCO->init();
 		$SPCO->process_registration_step_3();
@@ -193,7 +193,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@access 		public
 	 * 		@return 		void
 	 */
-	public function translate_js_strings() {
+	public static function translate_js_strings() {
 		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be vaild. If this is incorrect, please contact the site administrator.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['required_field'] = __(' is a required field. Please enter a value for this field and all other required fields before preceeding.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('An error occured! This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
@@ -210,10 +210,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@access 		public
 	 * 		@return 		void
 	 */
-	public function wp_enqueue_scripts() {
+	public static function wp_enqueue_scripts() {
 		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css' );
 		wp_enqueue_style( 'single_page_checkout' );
-		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('jquery'), '', TRUE );
+		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core'), '', TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
@@ -1111,7 +1111,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->EE->SSN->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
 			$this->EE->SSN->update_espresso_session();
 			//var_dump($)
-			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
+//			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			
 
 //			printr( $this->EE->SSN, '$this->EE->SSN data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
