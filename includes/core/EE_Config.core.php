@@ -78,6 +78,12 @@ final class EE_Config {
 	 */
 	public $organization;
 	
+	/**
+	 *
+	 * @var EE_Registration_Config
+	 */
+	public $registration;
+	
 	
 	/**
 	 * ID of the 'primary' ee user. Mike thinks thinks this will be deprecated in 

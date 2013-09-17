@@ -72,10 +72,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run() {
+		
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {
+			
 			$this->_current_txn = $this->EE->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-			add_action( 'init', array( $this, 'handle_thank_you_page' ), 30 );
+			$this->handle_thank_you_page();
 		}
 	}
 
@@ -85,8 +87,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * performs business logic on page load, like maybe forgetting some session info etc
 	 */
 	function handle_thank_you_page(){
-		$this->EE->LIB->EEM_Gateways->thank_you_page_logic( $this->_current_txn );
-		$this->EE->LIB->EEM_Gateways->reset_session_data();
+		$gateways_model = $this->EE->load_model('Gateways');
+		$gateways_model->thank_you_page_logic( $this->_current_txn );
+		$gateways_model->reset_session_data();
 	}
 
 
@@ -115,7 +118,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$template_args['payments'] = $this->_current_txn->payments();
 		$template_args['primary_registrant'] = $this->_current_txn->primary_registration();
 		$template_args['event_names'] = $event_names;
-
+		
 		// txn status ? 
 		if( $this->_current_txn->is_completed() ){
 			$template_args['show_try_pay_again_link'] = FALSE;
@@ -123,7 +126,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['show_try_pay_again_link'] = TRUE;
 		} else {
 			// its pending
-			$template_args['show_try_pay_again_link'] = $this->EE->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
+			$template_args['show_try_pay_again_link'] = isset($this->EE->CFG->registration->show_pending_payment_options) && $this->EE->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
 		}
 		
 		$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'2', 'e_reg_url_link'=>$this->EE->REQ->get( 'e_reg_url_link' )), get_permalink( $this->EE->CFG->core->reg_page_id ));
