@@ -28,17 +28,17 @@
 
 class Messages_Admin_Page extends EE_Admin_Page {
 
-	private $_active_messengers = array();
-	private $_active_message_types = array();
-	private $_active_messenger;
-	private $_activate_state;
-	private $_activate_meta_box_type;
-	private $_current_message_meta_box;
-	private $_current_message_meta_box_object;
-	private $_context_switcher;
-	private $_shortcodes = array();
-	private $_message_template;
-	private $_m_mt_settings = array();
+	protected $_active_messengers = array();
+	protected $_active_message_types = array();
+	protected $_active_messenger;
+	protected $_activate_state;
+	protected $_activate_meta_box_type;
+	protected $_current_message_meta_box;
+	protected $_current_message_meta_box_object;
+	protected $_context_switcher;
+	protected $_shortcodes = array();
+	protected $_message_template;
+	protected $_m_mt_settings = array();
 
 	
 
@@ -88,10 +88,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
 	 *
-	 * @access  private
+	 * @access  protected
 	 * @return void 
 	 */
-	private function _load_active_messenger_objects() {
+	protected function _load_active_messenger_objects() {
 		foreach ( $this->_active_messengers as $messenger => $values ) {
 			$ref = ucwords( str_replace( '_' , ' ', $messenger) );
 			$ref = str_replace( ' ', '_', $ref );
@@ -111,10 +111,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
 	 *
-	 * @access  private
+	 * @access  protected
 	 * @return void 
 	 */
-	private function _load_active_message_type_objects() {
+	protected function _load_active_message_type_objects() {
 		if ( empty($this->_active_message_types) ) return;
 		foreach ( $this->_active_message_types as $message_type ) {
 			$ref = ucwords( str_replace( '_' , ' ', $message_type) );
@@ -650,7 +650,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * The purpose of this function is to return all installed message objects (messengers and message type regardless of whether they are ACTIVE or not)
 	 * @return array array consisting of installed messenger objects and installed message type objects.
 	 */
-	private function _get_installed_message_objects() {
+	protected function _get_installed_message_objects() {
 		//get all installed messengers and message_types
 		$EE_MSG = new EE_messages();
 		$installed_message_objects = $EE_MSG->get_installed();
@@ -1428,10 +1428,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * used to set the $_shortcodes property for when its needed elsewhere.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _set_shortcodes() {
+	protected function _set_shortcodes() {
 
 		//no need to run this if the property is already set
 		if ( !empty($this->_shortcodes ) ) return;
@@ -1454,10 +1454,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This sets the _message_template property (containing the called message_template object)
 	 *
-	 * @access private
+	 * @access protected
 	 * @return  void 
 	 */
-	private function _set_message_template() {
+	protected function _set_message_template() {
 
 		if ( !empty( $this->_message_template ) )
 			return; //get out if this is already set.
@@ -1481,12 +1481,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * sets up a context switcher for edit forms
 	 *
-	 * @access  private
+	 * @access  protected
 	 * @param  object $template_object the template object being displayed on the form
 	 * @param array $args various things the context switcher needs.
 	 * @return void
 	 */
-	private function _set_context_switcher(EE_Message_Template $template_object, $args) {
+	protected function _set_context_switcher(EE_Message_Template $template_object, $args) {
 		$context_details = $template_object->contexts_config();
 		$context_label = $template_object->context_label();
 		ob_start();
@@ -1738,7 +1738,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * 
 	 * @return void 
 	 */
-	private function _check_template_switch() {
+	protected function _check_template_switch() {
 		if ( defined('DOING_AJAX') && isset($this->_req_data['template_switch']) && $this->_req_data['template_switch'] ) {
 			if ( isset($this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID']) )
 				$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
@@ -1896,11 +1896,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * [_event_name description]
 	 * This just takes a given event_id and will output the name of the event for it.
 	 * @todo: temporary... will need to remove/replace once proper Event models/classes are in place.
-	 * @access private
+	 * @access protected
 	 * @param  int $evt_id event_id
 	 * @return string event_name 
 	 */
-	private function _event_name($evt_id) {
+	protected function _event_name($evt_id) {
 		global $wpdb;
 		$evt_id = absint($evt_id);
 		$tablename = $wpdb->prefix . 'events_detail';
@@ -1919,10 +1919,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * get_active_events
 	 * This just returns an array of event objects for events that are active. (objects contain event_name and ID);
 	 *
-	 * @access private
+	 * @access protected
 	 * @return array array of objects (event_name, event_id);
 	 */
-	private function _get_active_events() {
+	protected function _get_active_events() {
 		global $wpdb;
 		$tablename = $wpdb->prefix . 'events_detail';
 		$msg_table = $wpdb->prefix . 'esp_message_template';
@@ -1962,10 +1962,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This sets the $_m_mt_settings property for when needed (used on the Messages settings page)
 	 *
-	 * @access private
+	 * @access protected
 	 * @return void
 	 */
-	private function _set_m_mt_settings() {
+	protected function _set_m_mt_settings() {
 		//first if this is already set then lets get out no need to regenerate data.
 		if ( !empty($this->_m_mt_settings) )
 			return;
@@ -2019,7 +2019,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param  boolean $active       Whether the message type is active or not
 	 * @return string                html output for the content
 	 */
-	private function _message_type_settings_content( $message_type, $messenger, $active = FALSE ) {
+	protected function _message_type_settings_content( $message_type, $messenger, $active = FALSE ) {
 		//get message type fields
 		$fields = $message_type->get_admin_settings_fields();
 		$settings_template_args['template_form_fields']= '';
@@ -2146,7 +2146,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param  array $tab_array  This is an array of message type tab details used to generate the tabs
 	 * @return string            html formatted tabs
 	 */ 
-	private function _get_mt_tabs( $tab_array ) {
+	protected function _get_mt_tabs( $tab_array ) {
 		$tab_array = (array) $tab_array;
 		$template = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_mt_settings_tab_item.template.php';
 		$tabs = '';
@@ -2166,7 +2166,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param  object $messenger The messenger we're setting up content for
 	 * @return string            html formatted content
 	 */
-	private function _get_messenger_box_content( $messenger ) {
+	protected function _get_messenger_box_content( $messenger ) {
 
 		$fields = $messenger->get_admin_settings_fields();
 		$settings_template_args['template_form_fields'] = '';
@@ -2368,7 +2368,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param  mixed   $message_type if present what message type we're toggling
 	 * @return void
 	 */
-	private function _activate_messenger($messenger, $deactivate = FALSE, $message_type = FALSE) {
+	protected function _activate_messenger($messenger, $deactivate = FALSE, $message_type = FALSE) {
 		global $espresso_wp_user;
 		$success_msg = array();
 		$templates = TRUE;
@@ -2625,7 +2625,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * [event_name description]
 	 * This just takes a given event_id and will output the name of the event for it.
 	 * @todo: temporary... will need to remove/replace once proper Event models/classes are in place.
-	 * @access private
+	 * @access protected
 	 * @param  int $evt_id event_id
 	 * @return string event_name 
 	 */
