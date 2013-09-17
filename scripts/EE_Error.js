@@ -1,5 +1,4 @@
 jQuery(document).ready(function($) {
-
 	$('#espresso-notices').center();
 	$('.espresso-notices').slideDown();
 	$('.espresso-notices.fade-away').delay(10000).slideUp();
@@ -9,7 +8,7 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		$(this).parent().hide();
-	});		
+	});
 
 
 	var message = $('#ee-error-message');
@@ -23,7 +22,7 @@ jQuery(document).ready(function($) {
 			target = $('#screen-meta-links');
 		} else if ( $('#wpbody-content').size() ) {
 			target = $('#wpbody-content');
-		}		
+		}
 		
 		$( target ).after( message );
 		if(ee_settings.wp_debug !='1')//set from wp_localize_script in php

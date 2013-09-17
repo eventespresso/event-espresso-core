@@ -213,7 +213,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function wp_enqueue_scripts() {
 		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css' );
 		wp_enqueue_style( 'single_page_checkout' );
-		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('jquery'), '', TRUE );
+		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core'), '', TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
