@@ -202,7 +202,7 @@ final class EE_Front_Controller {
 		}
 	
 			// display errors
-			add_action('wp_footer', array( $this, 'display_errors' ), 1 );					
+			add_action('wp_footer', array( $this, 'display_errors' ), 100 );			
 
 			//random debug code added by mike.
 //			$this->EE->load_class('Attendee',false,false,false);
@@ -224,6 +224,8 @@ final class EE_Front_Controller {
 
 		
 	}
+
+
 
 
 
@@ -445,25 +447,11 @@ final class EE_Front_Controller {
 
 		// js is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_js', '__return_true' );
 		if ( apply_filters( 'FHEE_load_js', FALSE )) {
-			wp_enqueue_script( 'jquery' );
+
 			// load core js
-			if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'scripts/espresso_core.js' )) {
-				wp_register_script( 'espresso_core', EVENT_ESPRESSO_UPLOAD_DIR . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-			} else {
-				wp_register_script( 'espresso_core', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-			}
+			wp_register_script( 'espresso_core', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
-			// check if required scripts are loaded
-			if ( function_exists( 'wp_script_is' )) {
-				if ( ! wp_script_is( 'jquery' )) {
-					$msg = sprintf( 
-						__( '%sJquery is not loaded!%sEvent Espresso is unable to load Jquery do to a conflict with your theme or another plugin.', 'event_espresso' ),
-						'<em><br />',
-						'</em>'
-					);
-					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				}
-			}
+			
 			if ( ! function_exists( 'wp_head' )) {
 				$msg = sprintf( 
 					__( '%sMissing wp_head() function.%sThe WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
@@ -596,6 +584,20 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function display_errors() {
+
+		//let's make sure that all required scripts have been setup
+		if ( function_exists( 'wp_script_is' )) {
+			if ( ! wp_script_is( 'jquery' )) {
+				$msg = sprintf( 
+					__( '%sJquery is not loaded!%sEvent Espresso is unable to load Jquery due to a conflict with your theme or another plugin.', 'event_espresso' ),
+					'<em><br />',
+					'</em>'
+				);
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+		}/**/
+
+
 		echo EE_Error::get_notices();
 		echo espresso_display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php', array(), TRUE );
 	}
