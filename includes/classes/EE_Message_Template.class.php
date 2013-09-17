@@ -615,6 +615,8 @@ class EE_Message_Template {
 		
 		$sc_objs = array();
 
+		EE_messages_init::set_autoloaders();
+
 		foreach ( $sc_refs as $shortcode_ref ) {
 			$ref = ucwords( str_replace('_', ' ', $shortcode_ref ) );
 			$ref = str_replace( ' ', '_', $ref );
