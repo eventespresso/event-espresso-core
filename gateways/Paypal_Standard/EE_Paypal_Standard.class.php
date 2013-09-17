@@ -346,9 +346,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	}
 
 	public function process_reg_step_3() {
-		global $org_options, $EE_Session;
 
-		$session_data = $EE_Session->get_session_data();
+		$session_data = $this->EE->SSN->get_session_data();
 		$paypal_settings = $this->_payment_settings;
 		$paypal_id = $paypal_settings['paypal_id'];
 		$paypal_cur = $paypal_settings['currency_format'];
@@ -360,7 +359,11 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$transaction = $session_data['transaction'];
 		foreach($transaction->registrations() as $registration){
 			/* @var $registration EE_Registration */
-			$this->addField('item_name_' . $item_num, $registration->attendee()->full_name() . ' attending ' . $registration->event_name()  . ' on ' . $registration->date_obj()->end_date_and_time() .', ' . $registration->price_obj()->name());
+			$ticket_datetimes_for_reg = $registration->ticket()->datetimes();
+			foreach($ticket_datetimes_for_reg as $datetime){
+				$times[] = $datetime->end_date_and_time();
+			}
+			$this->addField('item_name_' . $item_num, $registration->attendee()->full_name() . ' attending ' . $registration->event_name()  . ' on ' . implode(", ",$times).', ' . $registration->ticket()->name());
 			$this->addField('amount_' . $item_num, $registration->price_paid());
 			$this->addField('quantity_' . $item_num, '1');
 			$item_num++;
@@ -381,7 +384,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				$item_num++;
 			}
 		}*/
-
+	 
 		$total = $session_data['_cart_grand_total_amount'];
 		if (isset($session_data['tax_totals'])) {
 			foreach ($session_data['tax_totals'] as $key => $taxes) {
@@ -396,7 +399,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$a_current_registration = current($session_data['registration']);
 		$this->addField('business', $paypal_id);
 		$this->addField('return',  $this->_get_return_url($a_current_registration));
-		$this->addField('cancel_return', home_url() . '/?page_id=' . $org_options['cancel_return']);
+		$this->addField('cancel_return', $this->_get_cancel_url());
 		$this->addField('notify_url', $this->_get_notify_url($a_current_registration));
 		$this->addField('cmd', '_cart');
 		$this->addField('upload', '1');
@@ -405,6 +408,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->addField('no_shipping ', $no_shipping);
 		do_action('AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+		
 		$this->redirect_after_reg_step_3();
 	}
 
@@ -488,8 +492,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				'PAY_gateway' => $this->_gateway_name, 
 				'PAY_gateway_response' => $gateway_response, 
 				'PAY_txn_id_chq_nmbr' => $_POST['txn_id'], 
-				'PAY_po_number' => NULL,
-				'PAY_extra_accounting' => $primary_registration_code, 
+				'PAY_po_number' => NULL, 
+				'PAY_extra_accntng'=>$primary_registration_code,
 				'PAY_via_admin' => false, 
 				'PAY_details' => $_POST));
 		

@@ -59,7 +59,7 @@ EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 							<label><?php _e("Payment Amount: ", 'event_espresso') ?></label>
 						</td>
 						<td>
-							<?php EEH_Template::format_currency( $payment->e( 'PAY_amount' )); ?>
+							<?php  $payment->e( 'PAY_amount' ); ?>
 						</td>
 					</tr>
 					<tr>

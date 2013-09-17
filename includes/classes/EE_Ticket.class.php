@@ -414,7 +414,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	/**
 	 * Gets all the datetimes this ticket can be used for attending
 	 * @param array $query_params see EEM_Base::get_all()
-	 * @return EE_Datetime
+	 * @return EE_Datetime[]
 	 */
 	public function datetimes($query_params = array()){
 		return $this->get_many_related('Datetime', $query_params);
@@ -455,6 +455,265 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	public function get_ticket_subtotal() {
 		return $this->_TKT_taxable ? EE_Taxes::get_subtotal_for_admin($this) : $this->_TKT_price;
 	}
+
+	
+	/**
+	 * Gets name
+	 * @return string
+	 */
+	function name() {
+		return $this->get('TKT_name');
+	}
+
+	/**
+	 * Sets name
+	 * @param string $name
+	 * @return boolean
+	 */
+	function set_name($name) {
+		return $this->set('TKT_name', $name);
+	}
+	/**
+	 * Gets description
+	 * @return string
+	 */
+	function description() {
+		return $this->get('TKT_description');
+	}
+
+	/**
+	 * Sets description
+	 * @param string $description
+	 * @return boolean
+	 */
+	function set_description($description) {
+		return $this->set('TKT_description', $description);
+	}
+	/**
+	 * Gets start_date
+	 * @return string
+	 */
+	function start_date() {
+		return $this->get('TKT_start_date');
+	}
+
+	/**
+	 * Sets start_date
+	 * @param string $start_date
+	 * @return boolean
+	 */
+	function set_start_date($start_date) {
+		return $this->set('TKT_start_date', $start_date);
+	}
+	/**
+	 * Gets end_date
+	 * @return string
+	 */
+	function end_date() {
+		return $this->get('TKT_end_date');
+	}
+
+	/**
+	 * Sets end_date
+	 * @param string $end_date
+	 * @return boolean
+	 */
+	function set_end_date($end_date) {
+		return $this->set('TKT_end_date', $end_date);
+	}
+	/**
+	 * Gets min
+	 * @return int
+	 */
+	function min() {
+		return $this->get('TKT_min');
+	}
+
+	/**
+	 * Sets min
+	 * @param int $min
+	 * @return boolean
+	 */
+	function set_min($min) {
+		return $this->set('TKT_min', $min);
+	}
+	/**
+	 * Gets max
+	 * @return int
+	 */
+	function max() {
+		return $this->get('TKT_max');
+	}
+
+	/**
+	 * Sets max
+	 * @param int $max
+	 * @return boolean
+	 */
+	function set_max($max) {
+		return $this->set('TKT_max', $max);
+	}
+	/**
+	 * Gets price
+	 * @return float
+	 */
+	function price() {
+		return $this->get('TKT_price');
+	}
+
+	/**
+	 * Sets price
+	 * @param float $price
+	 * @return boolean
+	 */
+	function set_price($price) {
+		return $this->set('TKT_price', $price);
+	}
+	/**
+	 * Gets sold
+	 * @return int
+	 */
+	function sold() {
+		return $this->get('TKT_sold');
+	}
+
+	/**
+	 * Sets sold
+	 * @param int $sold
+	 * @return boolean
+	 */
+	function set_sold($sold) {
+		return $this->set('TKT_sold', $sold);
+	}
+	/**
+	 * Gets qty
+	 * @return int
+	 */
+	function qty() {
+		return $this->get('TKT_qty');
+	}
+
+	/**
+	 * Sets qty
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function set_qty($qty) {
+		return $this->set('TKT_qty', $qty);
+	}
+	/**
+	 * Gets uses
+	 * @return int
+	 */
+	function uses() {
+		return $this->get('TKT_uses');
+	}
+
+	/**
+	 * Sets uses
+	 * @param int $uses
+	 * @return boolean
+	 */
+	function set_uses($uses) {
+		return $this->set('TKT_uses', $uses);
+	}
+	/**
+	 * Gets taxable
+	 * @return boolean
+	 */
+	function taxable() {
+		return $this->get('TKT_taxable');
+	}
+
+	/**
+	 * Sets taxable
+	 * @param boolean $taxable
+	 * @return boolean
+	 */
+	function set_taxable($taxable) {
+		return $this->set('TKT_taxable', $taxable);
+	}
+	/**
+	 * Gets is_default
+	 * @return boolean
+	 */
+	function is_default() {
+		return $this->get('TKT_is_default');
+	}
+
+	/**
+	 * Sets is_default
+	 * @param boolean $is_default
+	 * @return boolean
+	 */
+	function set_is_default($is_default) {
+		return $this->set('TKT_is_default', $is_default);
+	}
+	/**
+	 * Gets order
+	 * @return int
+	 */
+	function order() {
+		return $this->get('TKT_order');
+	}
+
+	/**
+	 * Sets order
+	 * @param int $order
+	 * @return boolean
+	 */
+	function set_order($order) {
+		return $this->set('TKT_order', $order);
+	}
+	/**
+	 * Gets row
+	 * @return int
+	 */
+	function row() {
+		return $this->get('TKT_row');
+	}
+
+	/**
+	 * Sets row
+	 * @param int $row
+	 * @return boolean
+	 */
+	function set_row($row) {
+		return $this->set('TKT_row', $row);
+	}
+	/**
+	 * Gets deleted
+	 * @return boolean
+	 */
+	function deleted() {
+		return $this->get('TKT_deleted');
+	}
+
+	/**
+	 * Sets deleted
+	 * @param boolean $deleted
+	 * @return boolean
+	 */
+	function set_deleted($deleted) {
+		return $this->set('TKT_deleted', $deleted);
+	}
+	/**
+	 * Gets parent
+	 * @return int
+	 */
+	function parent_ID() {
+		return $this->get('TKT_parent');
+	}
+
+	/**
+	 * Sets parent
+	 * @param int $parent
+	 * @return boolean
+	 */
+	function set_parent_ID($parent) {
+		return $this->set('TKT_parent', $parent);
+	}
+
 
 
 } //end EE_Ticket class

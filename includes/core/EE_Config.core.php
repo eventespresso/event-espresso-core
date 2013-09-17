@@ -84,7 +84,11 @@ final class EE_Config {
 	 */
 	public $registration;
 	
-	
+	/**
+	 *
+	 * @var EE_Core_Config
+	 */
+	public $core;
 	/**
 	 * ID of the 'primary' ee user. Mike thinks thinks this will be deprecated in 
 	 * 4.2 when we no longer are storing global config stuff in user meta tables
@@ -783,6 +787,23 @@ class EE_Registration_Config extends EE_Config_Base{
 	 
 
 
+}
+
+
+/**
+ * Class for defining what's in the EE_Config relating to registration settings
+ */
+class EE_Core_Config extends EE_Config_Base{
+	public $site_license_key = NULL;
+	public $ee_ueip_optin = NULL;
+	public $post_shortcodes = array();
+	public $module_route_map = array();
+	public $module_forward_map = array();
+	public $module_view_map = array();
+	public $reg_page_id = null;
+	public $txn_page_id = null;
+	public $thank_you_page_id = null;
+	public $cancel_page_id = null;
 }
 // End of file EE_Config.core.php
 // Location: /core/EE_Config.core.php
