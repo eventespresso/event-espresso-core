@@ -1706,7 +1706,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['org_options'] = isset($org_options['org_options']) ? maybe_unserialize($org_options['org_options']) : FALSE;
 
-		$this->_template_args['reg_status_array'] = $this->_get_reg_status_array(array('RCN', 'RNA'));
+		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array('RCN', 'RNA'));
 		$this->_template_args['default_reg_status'] = isset($org_options['default_reg_status']) ? sanitize_text_field($org_options['default_reg_status']) : 'RPN';
 		$this->_template_args['pending_counts_reg_limit'] = isset($org_options['pending_counts_reg_limit']) ? sanitize_text_field($org_options['pending_counts_reg_limit']) : TRUE;
 

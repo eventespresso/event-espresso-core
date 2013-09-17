@@ -161,8 +161,8 @@ class EEM_Registration extends EEM_Base {
 	*		@access private
 	*		@return void
 	*/
-	public static function reg_status_array() {
-		call_user_func( array( EEM_Registration::instance(), '_get_registration_status_array' ));
+	public static function reg_status_array( $exclude = array() ) {
+		call_user_func_array( array( EEM_Registration::instance(), '_get_registration_status_array' ), array($exclude ) );
 		return self::$_reg_status;
 	}
 
@@ -178,7 +178,7 @@ class EEM_Registration extends EEM_Base {
 	*		@access private
 	*		@return void
 	*/
-	private function _get_registration_status_array() {
+	private function _get_registration_status_array( $exclude = array() ) {
 
 		global $wpdb;
 		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
@@ -186,7 +186,9 @@ class EEM_Registration extends EEM_Base {
 
 		self::$_reg_status = array();
 		foreach ( $results as $status ) {
-			self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
+			if ( ! in_array( $status->STS_ID, $exclude )) {
+				self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
+			}
 		}
 	}
 
