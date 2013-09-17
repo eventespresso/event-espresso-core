@@ -36,7 +36,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 * @return void 
 	 */
 	protected function _extend_properties() {
-		define( 'EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND . 'messages/assets/' );
+		define( 'EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
 		$this->_ajax_func = array(
 			'ee_msgs_switch_template' => 'switch_template'
 			);
@@ -54,7 +54,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 			'registers' => array(
 				'events_msg_admin' => array(
 					'url' => EE_MSGS_EXTEND_ASSETS_URL . 'events_messages_admin.js',
-					'depends' => array('jquery', 'ee-parse-uri', 'ee-serialize-full-array')
+					'depends' => array('ee-dialog', 'ee-parse-uri', 'ee-serialize-full-array')
 					),
 				'events_msg_admin_css' => array(
 					'url' => EE_MSGS_EXTEND_ASSETS_URL . 'ee_msg_events_admin.css',
