@@ -98,7 +98,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$filter[] = $this->_admin_page->active_status_dropdown( isset( $this->_req_data['active_status'] ) ? $this->_req_data['active_status'] : '' );
 
 		//category filter
-		//$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? $this->_req_data['category_id'] : '' );
+		$filters[] = $this->_admin_page->category_dropdown();
 		
 		
 		return $filters;	

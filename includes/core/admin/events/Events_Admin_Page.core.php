@@ -1251,6 +1251,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			default :
 				$where['status'] = $status;
 		}
+
+		//categories?
+		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
+
+		if ( !empty ( $category ) ) {
+			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Term_Taxonomy.term_id'] = $category;
+		}
 		
 
 		//date where conditions
@@ -2061,6 +2069,30 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$categories = $count ? EEM_Term_Taxonomy::instance()->count( $query_params, 'term_id' ) :EEM_Term_Taxonomy::instance()->get_all( $query_params );
 
 		return $categories;
+	}
+
+
+
+	public function category_dropdown() {
+		$categories = EEM_Term::get_all_ee_categories(TRUE);
+		$options = array( 
+			'0' => array(
+				'text' => __('All Categories', 'event_espresso'),
+				'id' => -1
+				)
+			);
+
+		//setup categories for dropdown
+		foreach ( $categories as $category ) {
+			$options[] = array(
+				'text' => $category->get('name'),
+				'id' => $category->ID()
+				);
+		}
+
+		$cur_cat = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
+
+		return EE_Form_Fields::select_input( 'EVT_CAT', $options, $cur_cat );
 	}
 
 
