@@ -39,7 +39,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'EE_PAYMENTS_ASSETS_URL', EE_CORE_ADMIN_URL . 'payments/assets/' );
 
 		//check that there are active gateways on all admin page loads. but dont do it just yet
-		add_action('wp_loaded',array($this,'check_payment_gateway_setup'));
+		add_action('admin_notices',array($this,'check_payment_gateway_setup'));
 		parent::__construct();
 	}
 
@@ -60,22 +60,16 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 	}
 	
 	/**
-	 * Checks that there is at least one active gateway. If not, adds an admin notice to the user
+	 * Checks that there is at least one active gateway. If not, add a notice
 	 */
 	public function check_payment_gateway_setup(){
 		$actives = EEM_Gateways::instance()->active_gateways();
 		if( ! $actives || count($actives) < 1){
-			add_action('admin_notices',array($this,'show_no_payment_gateway_selected_notice'));
-		}
-	}
-	/**
-	 * Displays the admin warning stating that there are no active gateways
-	 */
-	public function show_no_payment_gateway_selected_notice(){
-		$url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_PAYMENTS_ADMIN_URL);
-		echo '<div class="error">
-             <p>'.  sprintf(__("There are no Active Payment Methods setup for Event Espresso. Please %s activate at least one.%s", "event_espresso"),"<a href='$url'>","</a>").'</p>
-         </div>';
+			$url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_PAYMENTS_ADMIN_URL);
+			echo '<div class="error">
+				 <p>'.  sprintf(__("There are no Active Payment Methods setup for Event Espresso. Please %s activate at least one.%s", "event_espresso"),"<a href='$url'>","</a>").'</p>
+			 </div>';
+		}	
 	}
 
 } //end class Payments_Admin_Page_Init
