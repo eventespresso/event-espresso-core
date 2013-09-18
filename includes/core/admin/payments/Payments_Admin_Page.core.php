@@ -268,12 +268,12 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	*		@return array
 	*/
 	protected function _update_payment_settings() {	
-		$data = array();
-		$data['show_pending_payment_options'] = isset( $this->_req_data['show_pending_payment_options'] ) ? absint( $this->_req_data['show_pending_payment_options'] ) : FALSE;
-		$data = apply_filters('FHEE_payment_settings_save', $data);	
+		$this->EE->CFG->registration->show_pending_payment_options = isset( $this->_req_data['show_pending_payment_options'] ) ? $this->_req_data['show_pending_payment_options'] : FALSE;
+		$this->EE->CFG = apply_filters('FHEE_payment_settings_save', $this->EE->CFG );	
+
 		
 		$what = __('Payment Settings','event_espresso');
-		$success = $this->_update_espresso_configuration( $what, $data, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, __('updated','event_espresso'), array( 'action' => 'payment_settings' ) );
 				
 	}
