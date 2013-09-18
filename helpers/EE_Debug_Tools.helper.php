@@ -45,17 +45,15 @@
 	 * 		@return void
 	 */
 	function espresso_printr_session() {
-		if ( function_exists( 'wp_get_current_user' ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG )) {	
-			global $EE_Session;
-			echo '<pre style="height:auto;padding:1em;border:2px solid lightblue;">';
-			echo print_r( $EE_Session, TRUE );
+		if ( function_exists( 'wp_get_current_user' ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX')) {	
+			printr( EE_Registry::instance()->SSN );
 			espresso_list_hooked_functions();
-			echo '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 		}
 	}
 	if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
-		//add_action( 'shutdown', 'espresso_printr_session' );
+		add_action( 'shutdown', 'espresso_printr_session' );
 	}
+
 
 
 	/**
