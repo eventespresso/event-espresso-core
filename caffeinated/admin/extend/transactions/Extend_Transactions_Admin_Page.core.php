@@ -61,14 +61,12 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 	public function load_scripts_styles_reports() {
 		//styles
-		wp_enqueue_style('jquery-jqplot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array(), EVENT_ESPRESSO_VERSION);
+		wp_enqueue_style('jquery-jqplot-css');
 
 		//scripts
-		wp_deregister_script( 'jquery' );
-        wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
 		global $is_IE;
 		if ( $is_IE ) {
-			wp_enqueue_script( 'excanvas' , JQPLOT_URL . 'excanvas.min.js', array(), EVENT_ESPRESSO_VERSION, FALSE);
+			wp_enqueue_script( 'excanvas' );
 		}
 		wp_enqueue_script('jqplot-all');
 	}

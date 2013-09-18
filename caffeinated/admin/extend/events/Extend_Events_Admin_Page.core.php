@@ -40,29 +40,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _extend_page_config() {
 
-		//new routes and new configs (or complete route overrides)
-		$new_page_routes = array(
-//			'export_payments' => array(
-//				'func' => '_payment_export',
-//				'noheader' => true
-//				),
-//			'view_report' => '_view_report',
-			);
-
-		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
-
-		$new_page_config = array(
-//			'view_report' => array(
-//				'nav' => array(
-//					'label' => __('Report', 'event_espresso'),
-//					'order' => 20
-//					)
-//				),
-			//)
-		);
-
-		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
-
 		//partial route/config override
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
 		$this->_page_config['create_event']['metaboxes'][] = '_premium_event_editor_meta_boxes';
@@ -71,8 +48,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//add filters and actions
 		//modifying _views
 		add_filter('FHEE_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
-		add_filter('FHEE_event_legend_items', array( $this, 'event_legend_items'), 10 );
-		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'overview_table_action_links' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_add_additional_date_time_template', array( $this, 'add_additional_datetime_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_clone_button_template', array( $this, 'add_datetime_clone_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
@@ -113,6 +88,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		wp_localize_script( 'event_datetime_js', 'eei18n', EE_Registry::$i18n_js_strings );
 		wp_enqueue_script('event_datetime_js');
 	}
+
+
 
 
 
@@ -158,30 +135,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$views['month']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');*/
 		return $views;
 	}
-
-
-
-
-	public function event_legend_items( $items ) {
-		/*$items['event_reports'] =  array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'images/chart_bar.png',
-				'desc' => __('View Event Reports.', 'event_espresso')
-				);*/
-		return $items;
-	}
-
-
-	public function overview_table_action_links( $actions, $item ) {
-		/*$reports_query_args = array(
-				'action' => 'view_report',
-				'event_id' => $item->event_id
-			);
-		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, EVENTS_ADMIN_URL );
-		$actions[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>';*/
-		return $actions;
-	}
-
-
 
 
 
@@ -256,16 +209,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	/**
-	 * _view_report
-	 * Shows the report page for events
-	 * @return string html for the report page
-	 */
-	protected function _view_report() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_event', 'add', array(), 'button add-new-h2');
-		$this->_template_args['admin_page_content'] = 'in here';
-		$this->display_admin_page_with_sidebar();
-	}
+
+
 
 
 	public function wp_terms_radio( $post_id = 0, $args = array() ) {
