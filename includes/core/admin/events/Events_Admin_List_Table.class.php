@@ -237,7 +237,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_start_time($item) {
 		!empty( $this->_dtt ) ? $this->_dtt->e_start_time( get_option( 'time_format' ) ) : _e('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('start_time', get_option('time_format'), 'My Timezone: ' ) : '';
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone( 'DTT_EVT_start', 'get_time', get_option('time_format'), 'My Timezone: ' ) : '';
 	}
 
 
