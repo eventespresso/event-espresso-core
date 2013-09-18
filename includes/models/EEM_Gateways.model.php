@@ -802,7 +802,7 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 		$confirm_info = $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
-		//$confirm_info['gateway'] = $this->display_name();
+		$confirm_info['gateway'] = $this->display_name();
 		$confirm_info[ __('payment method', 'event_espresso') ] = $this->display_name();
 		return $confirm_info;
 	}
@@ -848,17 +848,27 @@ Class EEM_Gateways {
 
 
 	/**
-	 * 		get_return_page_url
+	 * 		get thank you page url
 	 *
 	 * 		@access 		public
 	 * 		@return 		void
 	 */
 	private function _get_return_page_url() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		//get thank you page url
+		$return_page_url = rtrim( get_permalink( $this->EE->CFG->core->thank_you_page_id ), '/' );
 		$session_data = $this->EE->SSN->get_session_data();
-		$a_current_registration=current($session_data['registration']);
-		// to ensure that it ends with a trailing slash, first we remove it (in case it is there) then add it again
-		return add_query_arg( array( 'e_reg_url_link'=>$a_current_registration->reg_url_link() ), rtrim( get_permalink( $this->EE->CFG->core->thank_you_page_id ), '/' ));
+		if ( is_array( $session_data['registration'] )) {
+			// grab first item in registration array
+			$a_current_registration = current( $session_data['registration'] );
+			// is it an EE_Registration object ?
+			if ( ! ( $a_current_registration instanceof EE_Registration )) {
+				// No??? We must go deeper!!!
+				$a_current_registration = current( $a_current_registration );
+			}			
+			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$a_current_registration->reg_url_link() ), $return_page_url );
+		}
+		return $return_page_url;
 	}
 
 
