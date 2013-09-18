@@ -266,7 +266,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'event_id' => $item->ID()
 			);
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );	
-		$registered_attendees = $item->get_number_of_tickets_sold(); 
+		$registered_attendees = EEM_Registration::instance()->get_event_registration_count( $item->ID() ); 
 		return '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>';
 	}
 
