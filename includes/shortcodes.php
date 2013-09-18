@@ -626,12 +626,12 @@ add_shortcode('EVENT_PRICE_DROPDOWN', 'espresso_price_dd_sc');
  */
 if (!function_exists('get_espresso_price_sc')) {
 	function get_espresso_price_sc($atts) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		extract(shortcode_atts(array('event_id' => '0', 'number' => '0'), $atts));
-		$event_id = "{$event_id}";
-		$number = "{$number}";
-
-		return espresso_return_single_price($event_id, $number);
+//		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+//		extract(shortcode_atts(array('event_id' => '0', 'number' => '0'), $atts));
+//		$event_id = "{$event_id}";
+//		$number = "{$number}";
+//
+//		return espresso_return_single_price($event_id, $number);
 	}
 }
 add_shortcode('EVENT_PRICE', 'get_espresso_price_sc');
