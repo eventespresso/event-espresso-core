@@ -2129,7 +2129,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function category_dropdown() {
-		$categories = EEM_Term::get_all_ee_categories(TRUE);
+		$categories = EEM_Term::instance()->get_all_ee_categories(TRUE);
 		$options = array( 
 			'0' => array(
 				'text' => __('All Categories', 'event_espresso'),
