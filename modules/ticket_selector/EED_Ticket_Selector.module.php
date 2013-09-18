@@ -308,7 +308,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						}
 					} else {
 						// nothing added to cart
-						$error_msg = __( 'An error occured. No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+						$error_msg = __( 'No tickets were added for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 						EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 					}
 
@@ -322,13 +322,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			if ( isset( $_POST['tkt-slctr-return-url-'.$valid['id']] )) {
 				EE_Error::get_notices( FALSE, TRUE );
 				$return_url = $_POST['tkt-slctr-return-url-'.$valid['id']];
-				echo '<h4>$return_url : ' . $return_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				wp_safe_redirect( $return_url );
 				exit();
 			} elseif ( isset( $event_to_add['id'] )) {
 				EE_Error::get_notices( FALSE, TRUE );
 				$return_url = get_permalink( $event_to_add['id'] );
-				echo '<h4>$return_url : ' . $return_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';				
 				wp_safe_redirect( $return_url );
 				exit(); 
 			} else {
