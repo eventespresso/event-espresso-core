@@ -48,7 +48,7 @@ Class EEM_Gateways {
 	/**
 	 * 		@singleton method used to instantiate class object
 	 * 		@access public
-	 * 		@return class instance
+	 * 		@return EEM_Gateways
 	 */
 	public static function instance() {
 		// check if class object is instantiated
@@ -507,6 +507,18 @@ Class EEM_Gateways {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		return $this->_selected_gateway;
 	}
+	
+	/**
+	 * Gets teh currently-selected gateway
+	 * @return EE_Gateway
+	 */
+	public function selected_gateway_obj(){
+		$gateway_exists = isset($this->_gateway_instances[$this->selected_gateway()]);
+		if ( ! $gateway_exists ){
+			throw new EE_Error(sprintf(__("Payment Gateway error. Gateway %s is not available. Available gateways are: %s", "event_espresso"),$this->selected_gateway(),implode(array_keys($this->active_gateways()))));
+		}
+		return $this->_gateway_instances[$this->selected_gateway()];
+	}
 
 
 
@@ -837,10 +849,18 @@ Class EEM_Gateways {
 			);
 
 		} else {
-			$response = array(
-					'msg' => $this->_gateway_instances[ $this->_selected_gateway ]->process_reg_step_3(),
+			try{
+				$response = array(
+					'msg' => $this->selected_gateway_obj()->process_reg_step_3(),
 					'forward_url' => $return_page_url
 				);
+			}catch(EE_Error $e){
+				$response = array(
+					'msg'=>array('error'=>$e->getMessage()),
+					'forward_url'=>$return_page_url
+					
+				);
+			}
 		}
 		return $response;
 	}	
@@ -971,7 +991,6 @@ Class EEM_Gateways {
 	 * @return boolean success
 	 */
 	public function handle_ipn_for_transaction($transaction){
-		global $org_options;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$current_gateway=(!empty($this->_selected_gateway))?$this->_gateway_instances[$this->_selected_gateway] : null;
 		//echo "eemgateway, handle ipn for transaction";
@@ -982,13 +1001,20 @@ Class EEM_Gateways {
 			$current_gateway->handle_ipn_for_transaction($transaction);
 			//echo "current gateway in debug mode:";var_dump($current_gateway->debug_mode_active());
 			if($current_gateway->debug_mode_active()){		
-				//echo "in dbeug mode! send eamil! recipient:".$org_options['contact_email'];
 				$debug_output=$current_gateway->get_debug_log();
-				$success=wp_mail($org_options['contact_email'],"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,true)." output is".$debug_output);
+				$success=wp_mail($this->EE->CFG->organization->email,"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,true)." output is".$debug_output);
 				//echo "successful sent email?".$success;
 			}
 			
 		}
+	}
+	
+	/**
+	 * Gets all teh gateways which are active
+	 * @return EE_Gateway[]
+	 */
+	public function active_gateways(){
+		return $this->_active_gateways;
 	}
 
 

@@ -72,6 +72,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run() {
+		
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {			
 			$this->_current_txn = $this->EE->load_model( 'Transaction' )->get_transaction_from_reg_url_link();

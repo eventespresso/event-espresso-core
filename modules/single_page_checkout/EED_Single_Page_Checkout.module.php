@@ -1159,7 +1159,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// attempt to perform transaction via payment gateway
 			$response = $this->EE->LIB->EEM_Gateways->process_reg_step_3();
 			$this->_thank_you_page_url = $response['forward_url'];
-			$success_msg = $response['msg']['success'];
+			if(isset($response['msg']['success'])){
+				$success_msg = $response['msg']['success'];
+			}else{
+				$error_msg = $response['msg']['error'];
+			}
 		}
 		
 		do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__end', $this);

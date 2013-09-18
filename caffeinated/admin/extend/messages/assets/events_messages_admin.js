@@ -1,8 +1,5 @@
 jQuery(document).ready(function($) {
 
-	//prepare dialog
-	var messages_dialog = $( "#messages-change-edit-templates-dv" ).draggable();
-	window.dialog = messages_dialog; //send to global space
 
 	var EE_messages_evt_helper = {
 		
@@ -82,8 +79,8 @@ jQuery(document).ready(function($) {
 		},
 
 		display_modal: function() {
-			position_overlay();
-			position_dialog();
+			var messages_content = $('#messages-change-edit-templates-dv').clone().html();
+			dialogHelper.displayModal().addContent(messages_content);
 			overlay.on('click', function() {
 				EE_messages_evt_helper.close_modal();
 				$('.messages-change-edit-templates-content').html('');
@@ -92,8 +89,7 @@ jQuery(document).ready(function($) {
 
 
 		close_modal: function() {
-			dialog.fadeOut( 'fast' );
-			overlay.fadeOut( 'fast' );
+			dialogHelper.closeModal();
 		},
 
 
@@ -120,7 +116,7 @@ jQuery(document).ready(function($) {
 			if ( ( content === '' || typeof(content) === 'undefined' ) && type != 'notices' )
 				return;
 			
-			var main_container = type == 'content' ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_messages_metabox_metabox') : $('.ee-notices', '#espresso_events_Messages_Hooks_messages_metabox_metabox');
+			var main_container = type == 'content' ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox') : $('.ee-notices', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox');
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content') : $('.ee-notices', '.messages-change-edit-templates-content');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
@@ -137,7 +133,7 @@ jQuery(document).ready(function($) {
 	};
 
 
-	$('#espresso_events_Messages_Hooks_messages_metabox_metabox').on('click', '.template_picker', function(e) {
+	$('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox').on('click', '.template_picker', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this);
 	});

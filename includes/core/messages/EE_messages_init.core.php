@@ -73,17 +73,19 @@ class EE_messages_init extends EE_Base {
 			return;
 
 		//let's setup an array of paths to check (for each subsystem)
-		$root = EE_CORE;		
+		$root = EVENT_ESPRESSO_PLUGINFULLPATH;
+		$core = 'includes/core/';	
 		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 		$dir_ref = array(
-			'messages/' => 'core',
-			'messages/message_type/' => 'class',
-			'messages/messenger/' => 'class',
-			'messages/defaults/' => array('class', 'core'),
-			'messages/defaults/email/' => 'class',
-			'messages/data_class/' => array('core','class'),
-			'messages/validators/' => array('core', 'class'),
-			'messages/validators/email/' => 'class'
+			$core . 'messages/' => 'core',
+			$core . 'messages/message_type/' => 'class',
+			$core . 'messages/messenger/' => 'class',
+			$core . 'messages/defaults/' => array('class', 'core'),
+			$core . 'messages/defaults/email/' => 'class',
+			$core . 'messages/data_class/' => array('core','class'),
+			$core . 'messages/validators/' => array('core', 'class'),
+			$core . 'messages/validators/email/' => 'class',
+			'libraries/shortcodes/' => 'lib'
 		);
 
 		//assemble a list of filenames

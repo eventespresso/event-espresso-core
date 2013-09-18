@@ -117,6 +117,10 @@ abstract class EE_Gateway {
 		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
 	}
 	
+	/**
+	 * 
+	 * @return array with either index 'success' in case of success, 'error' in case of error
+	 */
 	public function process_reg_step_3(){
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		return array('success'=>TRUE);
@@ -232,7 +236,6 @@ abstract class EE_Gateway {
 	 * processed in order to correctly display the payment status. And it gets URL-encoded by default
 	 */
 	protected function _get_return_url( $registration, $urlencode = false ){
-		global $org_options;
 		//if $registration is an ID instead of an EE_Registration, make it an EE_Registration
 		if( ! $registration instanceof EE_Registration){
 			$registration = $this->_REG->get_one_by_ID($registration);
@@ -246,7 +249,7 @@ abstract class EE_Gateway {
 		//get a registration that's currently getting processed
 		/*@var $registration EE_Registration */
 		$url=add_query_arg(array('e_reg_url_link'=>$registration->reg_url_link()),
-				get_permalink($org_options['return_url']));
+				get_permalink($this->EE->CFG->core->thank_you_page_id));
 		if($urlencode){
 			$url=urlencode($url);
 		}
@@ -585,6 +588,14 @@ abstract class EE_Gateway {
 	public function get_payment_overview_content(EE_Payment $payment){
 		//stubb
 		echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
+	}
+	
+	/**
+	 * Gets the cancel URL
+	 * @return string
+	 */
+	protected function _get_cancel_url(){
+		return get_permalink($this->EE->CFG->core->cancel_page_id);
 	}
 } 
 

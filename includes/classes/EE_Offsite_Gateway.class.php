@@ -18,7 +18,6 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * processed in order to correctly display the payment status. And it gets URL-encoded by default
 	 */
 	protected function _get_notify_url( $registration, $urlencode = false ){
-		global $org_options;
 		//if $registration is an ID instead of an EE_Registration, make it an EE_Registration
 		if( ! ($registration instanceof EE_Registration)){
 			$registration = $this->_REG->get_one_by_ID($registration);
@@ -33,7 +32,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		/*@var $registration EE_Registration */
 		$url=add_query_arg(array('e_reg_url_link'=>$registration->reg_url_link(),
 					'ee_gateway'=>$this->_gateway_name),
-				get_permalink($org_options['notify_url']));
+				get_permalink($this->EE->CFG->core->txn_page_id));
 		if($urlencode){
 			$url=urlencode($url);
 		}
