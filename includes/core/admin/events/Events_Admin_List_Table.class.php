@@ -63,6 +63,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'reg_begins' => __('Reg Begins', 'event_espresso'),
 			'status' => __('Status', 'event_espresso'),
 			'attendees' => __('Attendees', 'event_espresso'),
+			'tkts_sold' => __('TKTs sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
 			);
 
@@ -268,6 +269,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );	
 		$registered_attendees = EEM_Registration::instance()->get_event_registration_count( $item->ID() ); 
 		return '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>';
+	}
+
+
+
+	public function column_tkts_sold($item) {
+		return EEM_Ticket::instance()->sum(array( array('Datetime.EVT_ID' => $item->ID() )), 'TKT_sold' );
 	}
 
 
