@@ -73,10 +73,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public function run() {
 		// only do thank you page stuff if we have a REG_url_link in the url
-		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {
+		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {			
 			$this->_current_txn = $this->EE->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-			$this->EE->LIB->EEM_Gateways->thank_you_page_logic( $this->_current_txn );
+			$this->EE->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
 			$this->EE->LIB->EEM_Gateways->reset_session_data();
+			add_filter( 'FHEE_load_css', '__return_true' );
+			add_filter( 'FHEE_load_js', '__return_true' );
 		} else {
 			EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
 		}
