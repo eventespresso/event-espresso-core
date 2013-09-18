@@ -75,19 +75,13 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {
 			$this->_current_txn = $this->EE->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-			add_action( 'init', array( $this, 'handle_thank_you_page' ), 30 );
+			$this->EE->LIB->EEM_Gateways->thank_you_page_logic( $this->_current_txn );
+			$this->EE->LIB->EEM_Gateways->reset_session_data();
+		} else {
+			EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
 		}
 	}
 
-
-
-	/**
-	 * performs business logic on page load, like maybe forgetting some session info etc
-	 */
-	function handle_thank_you_page(){
-		$this->EE->LIB->EEM_Gateways->thank_you_page_logic( $this->_current_txn );
-		$this->EE->LIB->EEM_Gateways->reset_session_data();
-	}
 
 
 
@@ -100,52 +94,57 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public function process_shortcode( $attributes ) {
 
-		//prepare variables for displaying
-		$registrations = $this->_current_txn->registrations();
-		$event_names = array();
-		foreach( $registrations as $registration ){
-			$event_names[ $registration->event_name() ] = $registration->event_name();
-		}
-		//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
-		$this->_current_txn = $this->EE->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
-		//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$template_args = array();
-		//update the trsansaction, in case we just updated it.
-		$template_args['transaction'] = $this->_current_txn;
-		$template_args['payments'] = $this->_current_txn->payments();
-		$template_args['primary_registrant'] = $this->_current_txn->primary_registration();
-		$template_args['event_names'] = $event_names;
+		if ( $this->_current_txn instanceof EE_Transaction ) {
+//			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+//		} else {
+			//prepare variables for displaying
+			$registrations = $this->_current_txn->registrations();
+			$event_names = array();
+			foreach( $registrations as $registration ){
+				$event_names[ $registration->event_name() ] = $registration->event_name();
+			}
+			//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
+			$this->_current_txn = $this->EE->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
+			//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$template_args = array();
+			//update the trsansaction, in case we just updated it.
+			$template_args['transaction'] = $this->_current_txn;
+			$template_args['payments'] = $this->_current_txn->payments();
+			$template_args['primary_registrant'] = $this->_current_txn->primary_registration();
+			$template_args['event_names'] = $event_names;
 
-		// txn status ? 
-		if( $this->_current_txn->is_completed() ){
-			$template_args['show_try_pay_again_link'] = FALSE;
-		} else if ( $this->_current_txn->is_incomplete() ){
-			$template_args['show_try_pay_again_link'] = TRUE;
-		} else {
-			// its pending
-			$template_args['show_try_pay_again_link'] = $this->EE->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
-		}
-		
-		$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'2', 'e_reg_url_link'=>$this->EE->REQ->get( 'e_reg_url_link' )), get_permalink( $this->EE->CFG->core->reg_page_id ));
-		$txn_details = $this->_current_txn->details();
-		
-		$template_args['gateway_content'] = '';
-		if( $txn_details && array_key_exists( 'gateway',$txn_details )){			
-			//create a hackey payment object, but dont save it
-			$gateway_name = $txn_details['gateway'];
-			$payment = EE_Payment::new_instance( array(
-				'TXN_ID'=>$this->_current_txn->ID(), 
-				'STS_ID'=>EEM_Payment::status_id_pending, 
-				'PAY_timestamp'=>current_time('timestamp'), 
-				'PAY_amount'=>$this->_current_txn->total(), 
-				'PAY_gateway'=>$gateway_name
-			));
-		
-			$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
+			// txn status ? 
+			if( $this->_current_txn->is_completed() ){
+				$template_args['show_try_pay_again_link'] = FALSE;
+			} else if ( $this->_current_txn->is_incomplete() ){
+				$template_args['show_try_pay_again_link'] = TRUE;
+			} else {
+				// its pending
+				$template_args['show_try_pay_again_link'] = $this->EE->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
+			}
+			
+			$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'2', 'e_reg_url_link'=>$this->EE->REQ->get( 'e_reg_url_link' )), get_permalink( $this->EE->CFG->core->reg_page_id ));
+			$txn_details = $this->_current_txn->details();
+			
+			$template_args['gateway_content'] = '';
+			if( $txn_details && array_key_exists( 'gateway',$txn_details )){			
+				//create a hackey payment object, but dont save it
+				$gateway_name = $txn_details['gateway'];
+				$payment = EE_Payment::new_instance( array(
+					'TXN_ID'=>$this->_current_txn->ID(), 
+					'STS_ID'=>EEM_Payment::status_id_pending, 
+					'PAY_timestamp'=>current_time('timestamp'), 
+					'PAY_amount'=>$this->_current_txn->total(), 
+					'PAY_gateway'=>$gateway_name
+				));
+			
+				$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
 
-		} 
-		
-		$this->EE->REQ->add_output( espresso_display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));
+			} 
+			
+			$this->EE->REQ->add_output( espresso_display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));			
+		}
+
 		return $this->EE->REQ->get_output();		
 		
 	}
