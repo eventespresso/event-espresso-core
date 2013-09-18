@@ -202,6 +202,19 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 	/**
+	 *			@reset cart from session
+	 *		  	@access public
+	 *			@return void
+	 */	
+	public function reset_cart() {
+		$this->default_cart();
+		$this->initialize_cart();
+	}
+
+
+
+
+	/**
 	 *			@process items for adding to cart
 	 *		  	@access public
 	 *		  	@param string - which_cart
