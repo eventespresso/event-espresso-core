@@ -11,8 +11,9 @@
 
 /** AJAX **/
 
- #espresso-ajax-loading { display:none; position:absolute; top:25%; left:50%; margin-left:-15px; padding:0; z-index:1000; }
-#espresso-ajax-loading img { box-shadow:none; border:none; }
+#espresso-ajax-loading { display:none; position:absolute; top:25%; left:50%; margin-left:-15px; padding:0; z-index:1000; }
+.espresso-unpaid-status-icon-img,
+#espresso-ajax-loading img { box-shadow:none !important; border:none; }
 #espresso-ajax-loading span { display:none; }
 
 

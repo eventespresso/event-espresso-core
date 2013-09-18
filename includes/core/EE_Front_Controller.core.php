@@ -202,7 +202,7 @@ final class EE_Front_Controller {
 		}
 	
 			// display errors
-			add_action('wp_footer', array( $this, 'display_errors' ), 100 );			
+			add_action('wp_footer', array( $this, 'display_errors' ), 2 );			
 
 			//random debug code added by mike.
 //			$this->EE->load_class('Attendee',false,false,false);
@@ -419,8 +419,8 @@ final class EE_Front_Controller {
 	 */
 	public function wp_enqueue_scripts() {
 		
-		// css is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_css', '__return_true' );
-		if ( apply_filters( 'FHEE_load_css', FALSE )) {
+		// css is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_css', '__return_false' );
+		if ( apply_filters( 'FHEE_load_css', TRUE )) {
 			
 			$this->EE->CFG->template_settings->enable_default_style = TRUE;
 			//Load the ThemeRoller styles if enabled
@@ -445,9 +445,10 @@ final class EE_Front_Controller {
 
 		}
 
-		// js is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_js', '__return_true' );
-		if ( apply_filters( 'FHEE_load_js', FALSE )) {
+		// js is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_js', '__return_false' );
+		if ( apply_filters( 'FHEE_load_js', TRUE )) {
 
+			wp_enqueue_script( 'jquery' );
 			// load core js
 			wp_register_script( 'espresso_core', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );

@@ -12,6 +12,7 @@
 
 				<input type="hidden" id="mer-reg-page-step-3-action" name="ajax_action" value="espresso_process_registration_step_3" />		
 				<input type="hidden" id="mer-reg-page-step-3-noheader" name="noheader" value="" />		
+				<input type="hidden" id="mer-reg-page-step-1-reg_url_link" name="e_reg_url_link" value="<?php echo $reg_url_link;?>" />		
 
 	<?php	if ( ! $payment_required ) { ?>
 				<input type="hidden" id="reg-page-no-payment-required-step-3" name="reg-page-no-payment-required" value="1" />

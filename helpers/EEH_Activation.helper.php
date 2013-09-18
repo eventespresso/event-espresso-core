@@ -88,6 +88,8 @@ class EEH_Activation {
 		
 		EEH_Activation::generate_default_message_templates();
 		EEH_Activation::create_no_ticket_prices_array();
+		
+		EE_Error::get_notices( FALSE, TRUE );
 	}
 	
 
@@ -271,6 +273,10 @@ class EEH_Activation {
 					}
 				}
 			}
+			// track post_shortcodes
+			if ( $critical['page'] ) {
+				EEH_Activation::_track_critical_page_post_shortcodes( $critical );
+			}	
 			// check that Post ID matches critical page ID in config
 			if ( isset( $critical['page']->ID ) && $critical['page']->ID != EE_Registry::instance()->CFG->core->$critical['id'] ) {
 				//update Config with post ID
@@ -279,7 +285,7 @@ class EEH_Activation {
 					$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}					
-			}				
+			}
 			
 			$critical_page_problem =  ! isset( $critical['page']->post_status) || $critical['page']->post_status != 'publish' || strpos( $critical['page']->post_content, $critical['code'] ) === FALSE ? TRUE : $critical_page_problem;
 
@@ -294,6 +300,7 @@ class EEH_Activation {
 		}
 
 	}
+
 
 
 
@@ -325,9 +332,8 @@ class EEH_Activation {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 			return $page;
 		}
-		
-		$page['page'] = get_post( $post_id );
-		if ( ! $page['page'] ) {
+		// get newly created post's details
+		if ( ! $page['page'] = get_post( $post_id )) {			
 			$msg = sprintf(
 				__( 'The Event Espresso critical page entitled "%s" could not be retreived.', 'event_espresso' ),
 				$page['name']
@@ -341,16 +347,40 @@ class EEH_Activation {
 
 
 
-	//Function to show an admin message if the main pages are not setup.
-	function espresso_updated_pages() {
-		echo '<div class="updated fade"><p><strong>' . __('In order to function properly Event Espresso has added one or more pages with the corresponding shortcodes. As long as all of the Page Status and Shortcode notices below are OK, then this meassage will dissappear. Please attend to any issues that require attention.', 'event_espresso') . '</strong></p></div>';
+
+
+	/**
+	 * 	This function adds a critical page's shortcode to the post_shortcodes array
+	 *
+	 * 	@access private
+	 * 	@static
+	 * 	@return void
+	 */
+	private static function _track_critical_page_post_shortcodes( $page ) {
+		// check the goods
+		if ( ! $page['page'] instanceof WP_Post ) {
+			$msg = sprintf(
+				__( 'The Event Espresso critical page shortcode for the page %s can not be tracked because it is not a WP_Post object.', 'event_espresso' ),
+				$page['name']
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return;
+		}
+		// map shortcode to post
+		EE_Registry::instance()->CFG->core->post_shortcodes[ $page['page']->post_name ][ $page['code'] ] = $page['page']->ID;
+		// and to frontpage in case it's displaying latest posts
+		$show_on_front = get_option('show_on_front');
+		EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $page['code'] ] = $page['page']->ID;
+		// update post_shortcode CFG
+		if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE )) {
+			$msg = sprintf(
+				__( 'The Event Espresso critical page shortcode for the %s page could not be configured properly.', 'event_espresso' ),
+				$page['name']
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}		
 	}
 
-	function espresso_page_problems() {
-		if ( isset( $_GET['page'] ) && $_GET['page'] != 'espresso_general_settings' ) {
-			echo '<div class="updated"><p><strong>' . __('A potential issue has been detected with one or more of your Event Espresso pages. Go to', 'event_espresso') . ' <a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>  ' . __('to view your Event Espresso pages.', 'event_espresso') . '</strong></p></div>';
-		}
-	}
 
 
 

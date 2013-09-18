@@ -71,9 +71,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'id' => array( 'EVT_ID' => true ),
 			'name' => array( 'EVT_name' => false ),
 			'venue' => array( 'VNU_name' => false ),
-			'start_date' => array('DTT_EVT_start' => false),
-			'start_time' => array('DTT_EVT_start' => false),
-			'reg_begins' => array('DTT_REG_start' => false),
+			'start_date' => array('Datetime.DTT_EVT_start' => false),
+			'start_time' => array('Datetime.DTT_EVT_start' => false),
+			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
 			//'status' => array('Event.status' => false)
 			);
 
@@ -237,17 +237,17 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_start_time($item) {
 		!empty( $this->_dtt ) ? $this->_dtt->e_start_time( get_option( 'time_format' ) ) : _e('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('start_time', get_option('time_format'), 'My Timezone: ' ) : '';
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone( 'DTT_EVT_start', 'get_time', get_option('time_format'), 'My Timezone: ' ) : '';
 	}
 
 
 
 
 	public function column_reg_begins($item) {
-		/*!empty( $this->_dtt ) ? $this->_dtt->e_reg_start_date_and_time('D, M d, Y', 'g:i a') : _e('No Date was saved for this Event', 'event_espresso');
+		$reg_start = $item->get_ticket_with_earliest_start_time();
+		!empty( $reg_start ) ? $reg_start->e_datetime('TKT_start_date', 'D, M d, Y', 'g:i a') : _e('No Tickets have been setup for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('reg_start_date_and_time', array('D, M d, Y', 'g:i a'), 'My Timezone: ' ) : '';/**/
-		echo 'Todo: this needs to be converted to use the earliest price date';
+		echo !empty( $reg_start ) ? $reg_start->display_in_my_timezone('TKT_start_date', 'get_datetime', array('D, M d, Y', 'g:i a'), 'My Timezone: ' ) : '';/**/
 	}
 
 

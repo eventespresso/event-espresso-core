@@ -236,13 +236,32 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		$template_args = array();
 
-		$template_args['currency_symbol'] = $this->EE->CFG->currency->sign;
+		//$template_args['currency_symbol'] = $this->EE->CFG->currency->sign;
 
 		$template_args['css_class'] = '';
 		$template_args['confirmation_data'] = '';
 
 		// grab what step we're on
 		$step = $this->EE->REQ->is_set( 'step' ) ? absint( $this->EE->REQ->get( 'step' )) : 1;
+		$reg_url_link = $this->EE->REQ->is_set( 'e_reg_url_link' ) ? $this->EE->REQ->get( 'e_reg_url_link' ) : FALSE;
+		// if reg_url_link is present in the request, then we are only being sent back to SPCO to retry the payment 
+		if ( $reg_url_link ) {
+			$this->EE->load_model( 'Transaction' );
+			$transaction = $this->EE->LIB->EEM_Transaction->get_transaction_from_reg_url_link();
+			// grab session data from saved TXN record
+			$session = $transaction->session_data();
+			// unset some values that we don't want changing'
+			unset( $session['id'] );
+			unset( $session['user_id'] );
+			unset( $session['ip_address'] );
+			unset( $session['user_agent'] );
+			unset( $session['init_access'] );
+			unset( $session['last_access'] );
+			unset( $session['gateway_data'] );
+			$this->EE->SSN->set_session_data( $session, 'session_data' );
+			$this->EE->CART->reset_cart();
+
+		}
 
 		// use step to change css classes for displaying how far along the reg process we have gotten
 		switch ($step) {
@@ -288,11 +307,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 
 		// has gateway been set by no-js user?
-		if (isset($_GET['payment'])) {
-			if ($this->EE->LIB->EEM_Gateways->selected_gateway() != $_GET['payment']) {
-				$this->EE->LIB->EEM_Gateways->set_selected_gateway(sanitize_text_field($_GET['payment']));
+		if ( $this->EE->REQ->is_set( 'payment' )) {
+			$payment = sanitize_text_field( $this->EE->REQ->get( 'payment' ));
+		}
+		if ( ! empty( $payment )) {			
+			if ($this->EE->LIB->EEM_Gateways->selected_gateway() != $payment ) {
+				$this->EE->LIB->EEM_Gateways->set_selected_gateway( $payment );
 			} else {
-				$this->EE->LIB->EEM_Gateways->unset_selected_gateway(sanitize_text_field($_GET['payment']));
+				$this->EE->LIB->EEM_Gateways->unset_selected_gateway( $payment );
 			}
 		}
 		$template_args['selected_gateway'] = $this->EE->LIB->EEM_Gateways->selected_gateway();
@@ -409,6 +431,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							$event_meta =unserialize( base64_decode( $item['options']['event_meta'] ));
 							$additional_attendee_reg_info = isset( $event_meta['additional_attendee_reg_info'] ) ? absint( $event_meta['additional_attendee_reg_info'] ) : 1;
 						}
+
 					
 //					echo '<h4>$att_nmbr : ' . $att_nmbr . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //					echo '<h4>$additional_attendee_reg_info : ' . $additional_attendee_reg_info . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -423,7 +446,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								'input_name' => $input_name,
 								'input_id' => $input_id,
 								'input_class' => 'ee-reg-page-questions' . $template_args['css_class'],
-								'additional_attendee_reg_info' => $additional_attendee_reg_info
+								'additional_attendee_reg_info' => $additional_attendee_reg_info,
+								'attendee' => isset( $item['attendees'] ) && isset( $item['attendees'][ $att_nmbr ] ) ? $item['attendees'][ $att_nmbr ] : FALSE
 						);
 						//printr( $question_meta, '$question_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -583,15 +607,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['event_queue'] = $event_queue;
 		$template_args['nmbr_of_carts'] = count($event_queue);
 		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
+		$template_args['reg_url_link'] = $reg_url_link;
 
-		$template_args['return_url'] = add_query_arg(array('ee' => 'event_queue'), $this->_reg_page_base_url);
-		$template_args['update_url'] = add_query_arg(array('ee' => 'update_event_queue'), $this->_reg_page_base_url);
-		$template_args['event_queue_url'] = add_query_arg(array('ee' => 'event_queue'), $this->_reg_page_base_url);
-		$template_args['register_url'] = add_query_arg(array('ee' => 'register'), $this->_reg_page_base_url);
-		$template_args['reg_page_step_1_url'] = add_query_arg(array('ee' => 'register', 'step' => 1), $this->_reg_page_base_url);
-		$template_args['reg_page_goto_step_2_url'] = add_query_arg(array('ee' => 'process_reg_step_1'), $this->_reg_page_base_url);
-		$template_args['reg_page_goto_step_3_url'] = add_query_arg(array('ee' => 'process_reg_step_2'), $this->_reg_page_base_url);
-		$template_args['reg_page_complete_reg_url'] = add_query_arg(array('ee' => 'process_reg_step_3'), $this->_reg_page_base_url);
+		$template_args['return_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
+		$template_args['update_url'] = add_query_arg( array('ee' => 'update_event_queue'), $this->_reg_page_base_url );
+		$template_args['event_queue_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
+		$template_args['register_url'] = add_query_arg( array('ee' => 'register'), $this->_reg_page_base_url );
+		// steps
+		$template_args['reg_page_step_1_url'] = add_query_arg( array('ee' => 'register', 'step' => 1), $this->_reg_page_base_url );
+		$template_args['reg_page_goto_step_2_url'] = add_query_arg( array('ee' => 'process_reg_step_1'), $this->_reg_page_base_url );
+		$template_args['reg_page_goto_step_3_url'] = add_query_arg( array('ee' => 'process_reg_step_2'), $this->_reg_page_base_url );
+		$template_args['reg_page_complete_reg_url'] = add_query_arg( array('ee' => 'process_reg_step_3'), $this->_reg_page_base_url );
+		if ( $reg_url_link ) {
+			$template_args['reg_page_step_1_url'] = add_query_arg( array( 'e_reg_url_link' => $reg_url_link ), $template_args['reg_page_step_1_url'] );
+			$template_args['reg_page_goto_step_2_url'] = add_query_arg( array( 'e_reg_url_link' => $reg_url_link ), $template_args['reg_page_goto_step_2_url'] );
+			$template_args['reg_page_goto_step_3_url'] = add_query_arg( array( 'e_reg_url_link' => $reg_url_link ), $template_args['reg_page_goto_step_3_url'] );
+			$template_args['reg_page_complete_reg_url'] = add_query_arg( array( 'e_reg_url_link' => $reg_url_link ), $template_args['reg_page_complete_reg_url'] );			
+		}
 		//echo "reg page complet url:".$template_args['reg_page_complete_reg_url'];
 
 		//Recaptcha
@@ -850,6 +882,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
+			
 			// FREE EVENT !!! YEAH : )
 			if ($this->EE->SSN->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
 				$msg = __( 'Registration Step 2 completed.', 'event_espresso' );
@@ -920,28 +953,29 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public function display_data_for_confirmation() {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		$this->EE->load_helper( 'Template' );
 
 		$session_data = $this->EE->SSN->get_session_data();
 		//printr( $session_data, '$session_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$billing_info = $session_data['billing_info'];
 		$reg_info = $session_data['cart']['REG'];
 		$template_args = array();
-		$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
-		$states = EEM_State::instance()->get_all( array( 
+
+		if ( isset( $reg_info['items'] )) {
+
+			$exclude_attendee_info = array('registration_id', 'price_paid', 'primary_attendee');
+			$states = EEM_State::instance()->get_all( array( 
 				array(
 					'Country.CNT_active'=>true,
 					'STA_active'=>true
 				)));
-			//array( 'CNT_ISO' => array_keys( $countries ), 'STA_active' => 1 ), NULL, 'ASC', array( 'CNT_ISO' => 'IN', 'STA_active' => '=' ));
-
-		if ( isset( $reg_info['items'] )) {
 			
 			foreach ($reg_info['items'] as $line_item_id => $event) {
 	
 				$template_args['events'][$line_item_id]['name'] = stripslashes( trim( $event['name'] ));
 				$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
 				$template_args['events'][$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
-				$template_args['events'][$line_item_id]['ticket-price'] = stripslashes( trim( $event['options']['ticket_desc'] ));
+				$template_args['events'][$line_item_id]['ticket-price'] = stripslashes( trim( $event['options']['ticket_desc'] )) . ': ' . EEH_Template::format_currency( $event['ticket'] );
 	
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 					// if attendee has no name, then use primary attendee's details
@@ -997,14 +1031,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$total = $session_data['_cart_grand_total_amount'];
 
 			// add taxes
-			// add taxes
 			if (isset($session_data['tax_totals'])) {
 				foreach ($session_data['tax_totals'] as $taxes) {
 					$total = $total + $taxes;
 				}
 			}
 			
-			$this->EE->load_helper( 'Template' );
 			$template_args['billing'][ __('total due', 'event_espresso') ] = EEH_Template::format_currency( $total );
 
 			$ouput = espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
@@ -1026,7 +1058,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public function process_registration_step_3() {
 		// Sidney is watching me...   { : \
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -1038,50 +1069,56 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( ! function_exists( 'recaptcha_check_answer' )) {
 				$this->EE->load_file( EVENT_ESPRESSO_PLUGINFULLPATH . DS . 'tpc', 'recaptchalib', '' );
 				$response = recaptcha_check_answer(
-										$this->EE->CFG->registration->recaptcha_privatekey, 
-										$_SERVER["REMOTE_ADDR"], 
-										$_POST["recaptcha_challenge_field"], 
-										$_POST["recaptcha_response_field"]
-								);
+						$this->EE->CFG->registration->recaptcha_privatekey, 
+						$_SERVER["REMOTE_ADDR"], 
+						$_POST["recaptcha_challenge_field"], 
+						$_POST["recaptcha_response_field"]
+				);
 			}
-
+			// ohhh soo sorry... it appears you can't read gibberish chicken scratches !!!
 			if ( ! $response->is_valid ) {
 				$continue_reg = FALSE;
 				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
 			}
 		}
-		// grab session data
-		$session = $this->EE->SSN->get_session_data();
 		
 		if ($continue_reg) {
 
 			do_action('AHEE_begin_reg');
 
 			// load and instantiate models
-			$REG = $this->EE->load_model( 'Registration' );
-			$TXN = $this->EE->load_model( 'Transaction' );
-
-			$reg_items = $session['cart']['REG']['items'];
-
-			$grand_total = $session['_cart_grand_total_amount'];
-			// add taxes
-			if (isset($session['tax_totals'])) {
-				foreach ($session['tax_totals'] as $taxes) {
-					$grand_total += $taxes;
-				}
+			$this->EE->load_model( 'Registration' );
+			$this->EE->load_model( 'Transaction' );
+			
+			// if reg_url_link is present in the request, then we are only being sent back to SPCO to retry the payment 
+			if ( $this->EE->REQ->is_set( 'e_reg_url_link' ) && $this->EE->REQ->get( 'e_reg_url_link' ) != FALSE ) {
+				$transaction = $this->EE->LIB->EEM_Transaction->get_transaction_from_reg_url_link();
+				//printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				// grab session data from saved TXN record
+				$session = $transaction->session_data();
+				$saved_registrations = $session['registration'];
+				$process_registrations = 'none';
+			} else {
+				// grab session data
+				$session = $this->EE->SSN->get_session_data();
+				//check for existing transaction in the session
+				$transaction = isset( $session['transaction'] ) && ! empty( $session['transaction'] ) ? $session['transaction'] : FALSE;
+				$process_registrations = $transaction ? 'dump_and_resave' : 'save';
 			}
-			// start the transaction record
-			$this->EE->load_class( 'Transaction' ); // , FALSE, FALSE, TRUE, TRUE
-			// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
-			$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
-			//check for existing transaction in the session
-			$transaction_exists = array_key_exists('transaction',$session) && !empty($session['transaction']);
-			if($transaction_exists){
-				$transaction = $session['transaction'];
-				//var_dump($transaction);
-				//delete all old registrations on this transaction, because we're going to re-add them according to the updated data in the session now
-				$REG->delete( array( array( 'TXN_ID'=>$transaction->ID() )));
-			}else{
+			
+
+			if ( ! $transaction ) {
+
+				$grand_total = $session['_cart_grand_total_amount'];
+				// add taxes
+				if (isset($session['tax_totals'])) {
+					foreach ($session['tax_totals'] as $taxes) {
+						$grand_total += $taxes;
+					}
+				}
+				// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
+				$txn_status = $grand_total > 0 ? 'TIN' : 'TCM';
+
 				$transaction = EE_Transaction::new_instance( 
 					array(
 						'TXN_timestamp' =>  current_time('mysql'),
@@ -1094,28 +1131,30 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						'TXN_tax_data' => array(
 							'tax_totals'=>$session['tax_totals'],
 							'taxes'=>$session['taxes']
-							) 
+						) 
 					)
 				);
 				$transaction->save();
 			}
-
-			$saved_registrations = self::save_registration_items( $reg_items, $transaction );
 			
-			//$updated_session=$this->EE->SSN->get_session_data();
-			$transaction->set_txn_session_data( $session );
-			$transaction->save();
-			//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
-			$transaction->set_txn_session_data(null);
-			//var_dump($this->EE->SSN->get_session_data());
-			$this->EE->SSN->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
-			$this->EE->SSN->update_espresso_session();
-			//var_dump($)
-//			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
+			switch ( $process_registrations ) {
+				case 'dump_and_resave' :
+					//delete existing registrations on this transaction, because they may have been edited and we're going to re-save them 
+					$this->EE->LIB->EEM_Registration->delete( array( array( 'TXN_ID'=>$transaction->ID() )));
+				case 'save' :
+					$saved_registrations = self::save_registration_items( $session['cart']['REG']['items'], $transaction );
+					//remove the session from the transaction before saving it to the session... otherwise we'll have a recursive relationship! bad!!
+					$transaction->set_txn_session_data(NULL);
+					// save registrations and transaction to the session
+					$this->EE->SSN->set_session_data( array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
+					// save the session to the db
+					$this->EE->SSN->update_espresso_session();			
+					break;
+				case 'none' :
+					//not updating registrations or anything, just going to possibly revisit the payment options
+			}
 			
-
-//			printr( $this->EE->SSN, '$this->EE->SSN data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
-//			die();
+//			printr( $this->EE->SSN, '$this->EE->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			// attempt to perform transaction via payment gateway
 			$response = $this->EE->LIB->EEM_Gateways->process_reg_step_3();
@@ -1157,8 +1196,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	static public function save_registration_items( $reg_items = array(), EE_Transaction $transaction ) {
 		
 		if( empty( $reg_items )) {
-				EE_Error::add_error( __( 'An error occured. No registration items were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
-				return array();			
+			EE_Error::add_error( __( 'No registration items were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
+			return array();			
 		}
 
 		// grab session data
@@ -1235,7 +1274,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 				// now create a new registration for the attendee
 				$reg_url_link=md5($new_reg_code);
-				$saved_registrations[$line_item_id] = EE_Registration::new_instance(
+				$saved_registrations[$line_item_id][$att_nmbr] = EE_Registration::new_instance(
 					// REG_ID, EVT_ID, ATT_ID, TXN_ID, TKT_ID, STS_ID, REG_date, REG_final_price, REG_session, REG_code, REG_url_link, REG_count, REG_group_size, REG_att_is_going
 					array(	
 						'EVT_ID' => $event['id'],
@@ -1255,11 +1294,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				);
 				//printr( $reg[$line_item_id], '$reg[$line_item_id] ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' );die();
 
-				$reg_results = $saved_registrations[$line_item_id]->save();
-				$REG_ID = $saved_registrations[$line_item_id]->ID();
+				$reg_results = $saved_registrations[$line_item_id][$att_nmbr]->save();
+				$REG_ID = $saved_registrations[$line_item_id][$att_nmbr]->ID();
 
 				// add attendee object to attendee info in session
-				$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = base64_encode( serialize( $saved_registrations[$line_item_id] ));
+				$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['reg_obj'] = base64_encode( serialize( $saved_registrations[$line_item_id][$att_nmbr] ));
 
 				// add registration id to session for the primary attendee
 				if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {

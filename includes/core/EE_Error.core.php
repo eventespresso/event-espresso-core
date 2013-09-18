@@ -437,10 +437,7 @@ class EE_Error extends Exception {
 		// add notice if message exists
 		if ( ! empty( $msg )) {
 			self::$_espresso_notices[ $type ][] = $msg . $error_code;
-			add_filter( 'FHEE_load_css', '__return_true' );
-			add_filter( 'FHEE_load_js', '__return_true' );
-			wp_enqueue_script( 'ee_error_js' );
-			wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
 		}
 		
 	}
@@ -512,7 +509,7 @@ class EE_Error extends Exception {
 	*
 	*	@access public
 	* 	@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
-	* 	@param		boolean		$save_to_transient	whether or not to save notices to a transient for retreival on next request
+	* 	@param		boolean		$save_to_transient	whether or not to save notices to the db for retreival on next request - ONLY do this just before redirecting
 	* 	@param		boolean		$remove_empty		whether or not to unset empty messages
 	* 	@return 		array
 	*/
@@ -526,11 +523,23 @@ class EE_Error extends Exception {
 
 		// printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		// grab any notices that have been saved to a transient
+		// either save notices to the db
+		if ( $save_to_transient ) {
+			update_option( 'espresso_notices', self::$_espresso_notices );
+			return;
+		} 
+		// grab any notices that have been previously saved
 		if ( $notices = get_option( 'espresso_notices', FALSE )) {
 			foreach ( $notices as $type => $notice ) {
-				self::$_espresso_notices[ $type ] = $notice;
+				if ( is_array( $notice ) && ! empty( $notice )) {
+					// make sure that existsing notice type is an array
+					self::$_espresso_notices[ $type ] =  is_array( self::$_espresso_notices[ $type ] ) && ! empty( self::$_espresso_notices[ $type ] ) ? self::$_espresso_notices[ $type ] : array();
+					// merge stored notices with any newly created ones
+					self::$_espresso_notices[ $type ] = array_merge( self::$_espresso_notices[ $type ], $notice );
+					$print_scripts = TRUE;
+				}
 			}
+			// now clear any stored notices
 			update_option( 'espresso_notices', FALSE );
 		}
 
@@ -603,15 +612,30 @@ class EE_Error extends Exception {
 			}
 		}
 		
-		if ( $print_scripts ) {
-			wp_enqueue_script( 'ee_error_js' );
-			wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+		if ( $print_scripts ) {			
+			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
 		}
 		
 		return $notices;
 	}
 
 
+
+
+
+
+	/**
+	* 	enqueue_error_scripts
+	*
+	*	@access public
+	* 	@return 		void
+	*/
+	public function enqueue_error_scripts() {
+		add_filter( 'FHEE_load_css', '__return_true' );
+		add_filter( 'FHEE_load_js', '__return_true' );
+		wp_enqueue_script( 'ee_error_js' );
+		wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+	}
 
 
 
@@ -625,7 +649,7 @@ class EE_Error extends Exception {
 	*	@ param string $line
 	*	@ return string
 	*/
-	public static function generate_error_code ( $file, $func, $line ) {
+	public static function generate_error_code ( $file = '', $func = '', $line = '' ) {
 
 	//echo '<h4>$file : ' . $file . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 	//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
@@ -644,9 +668,9 @@ class EE_Error extends Exception {
 					// break filepath up by the /
 					$code_bit = explode ( '/', $code_bit );
 					// filename is the last segment
-					$file = $code_bit[ count($code_bit)-1 ];
+					$file = isset( $code_bit[ count($code_bit)-1 ] ) ? $code_bit[ count($code_bit)-1 ] : '';
 					// folder is the second to the last segment
-					$folder = $code_bit[ count($code_bit)-2 ];
+					$folder = isset( $code_bit[ count($code_bit)-2 ] ) ? $code_bit[ count($code_bit)-2 ] : '';
 					//change all dashes to underscores
 					$folder = str_replace ( '-', '_', $folder );
 					//strip vowels
@@ -776,7 +800,7 @@ function espresso_error_enqueue_scripts() {
 	// js for error handling
 	wp_register_script( 'ee_error_js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/EE_Error.js', array('espresso_core'), EVENT_ESPRESSO_VERSION, FALSE );
 }
-add_action('wp_enqueue_scripts', 'espresso_error_enqueue_scripts', 2 );
+add_action( 'wp_enqueue_scripts', 'espresso_error_enqueue_scripts', 2 );
 
 
 
