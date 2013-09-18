@@ -57,7 +57,7 @@ class EED_Event_Details  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
-		add_filter( 'FHEE_load_org_options', '__return_true' );
+		add_filter( 'FHEE_load_ee_config', '__return_true' );
 		add_filter( 'FHEE_load_css', '__return_true' );
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
