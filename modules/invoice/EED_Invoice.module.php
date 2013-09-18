@@ -56,7 +56,7 @@ class EED_Invoice  extends EED_Module {
 			$msg = __( 'The Invoice.class.php file could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-//		add_filter( 'FHEE_load_org_options', '__return_true' );
+//		add_filter( 'FHEE_load_ee_config', '__return_true' );
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 //		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
