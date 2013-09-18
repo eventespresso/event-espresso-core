@@ -88,7 +88,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		require_once EE_CORE_ADMIN . 'admin_helper.php';
 
 		//first month/year filters
-		$filters[] = $this->_admin_page->espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '' );
+		$filters[] = $this->_admin_page->espresso_event_months_dropdown();
 
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
