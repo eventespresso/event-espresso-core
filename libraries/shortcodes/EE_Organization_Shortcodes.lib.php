@@ -48,48 +48,47 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			'[CO_CITY]' => __('City the organization is in', 'event_espresso'),
 			'[CO_STATE]' => __('State the organization is located in', 'event_espresso'),
 			'[CO_ZIP]' => __('The zip code for the organization', 'event_espresso'),
-			'[CO_LOGO]' => __('The logo for the organization', 'event_espresso'),
+			'[CO_LOGO]' => __('The logo image for the organization', 'event_espresso'),
 			'[CO_LOGO_URL]' => __('Just the link to the image used as the logo for the organization', 'event_espresso')
 			);
 	}
 
 
 	protected function _parser( $shortcode ) {
-		global $org_options;
 
 		switch ( $shortcode ) {
 			
 			case '[COMPANY]' :
-				return $org_options['organization'];
+				return EE_Registry::instance()->CFG->organization->name;
 				break;
 
 			case '[CO_ADD1]' :
-				return $org_options['organization_street1'];
+				return EE_Registry::instance()->CFG->organization->address_1;
 				break;
 
 			case '[CO_ADD2]' :
-				return $org_options['organization_street2'];
+				return EE_Registry::instance()->CFG->organization->address_2;
 				break;
 
 			case '[CO_CITY]' :
-				return $org_options['organization_city'];
+				return EE_Registry::instance()->CFG->organization->city;
 				break;
 
 			case '[CO_STATE]' :
-				return $org_options['organization_state'];
+				$state = $this->EE->load_model( 'State' )->get_one_by_ID( EE_Registry::instance()->CFG->organization->STA_ID );
+				return $state->name();
 				break;
 
 			case '[CO_ZIP]' :
-				return $org_options['organization_zip'];
+				return EE_Registry::instance()->CFG->organization->zip;
 				break;
 
 			case '[CO_LOGO]' :
-				$url = $org_options['default_logo_url'];
-				return '<img src="' . $url . '" style="width:720px;" id="headerImage" />';
+				return '<img src="' . EE_Registry::instance()->CFG->organization->logo_url . '" style="width:720px;" id="headerImage" />';
 				break;
 
 			case '[CO_LOGO_URL]' : 
-				return $org_options['default_logo_url'];
+				return EE_Registry::instance()->CFG->organization->logo_url;
 				break;
 
 		}
