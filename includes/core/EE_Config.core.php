@@ -277,6 +277,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function update_post_shortcodes() {
+		$this->EE->CFG->core->post_shortcodes = isset( $this->EE->CFG->core->post_shortcodes ) && is_array( $this->EE->CFG->core->post_shortcodes ) ? $this->EE->CFG->core->post_shortcodes : array();
 		// cycle thru post_shortcodes
 		foreach( $this->EE->CFG->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it

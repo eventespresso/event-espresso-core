@@ -202,7 +202,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					PRO_default TINYINT(1) NOT NULL DEFAULT 0 ,
 					PRO_order TINYINT UNSIGNED NOT NULL DEFAULT 40 ,
 					PRIMARY KEY  (PRO_ID) ,
-					KEY FK_wp_esp_price_PRC_ID2 (PRC_ID ASC)";
+					KEY PRC_ID (PRC_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 		
 		$table_name = 'esp_promotion_object';
@@ -212,8 +212,8 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			POB_type VARCHAR(45) NULL,
 			POB_used INT NULL,
 			PRIMARY KEY  (POB_ID),
-			INDEX FK_wp_esp_ticket_TKT_ID2 (OBJ_ID ASC),
-			INDEX FK_wp_esp_promotions_PRO_ID3 (PRO_ID ASC)";
+			KEY OBJ_ID (OBJ_ID),
+			KEY PRO_ID (PRO_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 		
 		$table_name = 'esp_promotion_rule';
@@ -223,8 +223,8 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					PRR_order TINYINT UNSIGNED NOT NULL DEFAULT 1,
 					PRR_add_rule_comparison ENUM('AND','OR') NULL DEFAULT 'AND',
 					PRIMARY KEY  (PRR_ID) ,
-					INDEX FK_wp_esp_promotions_PRO_ID2 (PRO_ID ASC),
-					INDEX FK_wp_esp_promo_rule_RUL_ID1 (RUL_ID ASC) ";
+					KEY PRO_ID (PRO_ID),
+					KEY RUL_ID (RUL_ID) ";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 		
 		
