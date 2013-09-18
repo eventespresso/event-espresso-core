@@ -71,9 +71,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'id' => array( 'EVT_ID' => true ),
 			'name' => array( 'EVT_name' => false ),
 			'venue' => array( 'VNU_name' => false ),
-			'start_date' => array('DTT_EVT_start' => false),
-			'start_time' => array('DTT_EVT_start' => false),
-			'reg_begins' => array('DTT_REG_start' => false),
+			'start_date' => array('Datetime.DTT_EVT_start' => false),
+			'start_time' => array('Datetime.DTT_EVT_start' => false),
+			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
 			//'status' => array('Event.status' => false)
 			);
 
