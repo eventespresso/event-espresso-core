@@ -18,7 +18,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 
 			extract( $args );
 
-			global $wpdb, $org_options;
+			global $wpdb;
 			require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
 			/* Our variables from the widget settings. */
 
@@ -34,8 +34,6 @@ if (!class_exists('Event_Espresso_Widget')) {
 				if ($instance['category_name'] != ''){
 					$type = 'category';
 				}
-
-					$event_page_id =$org_options['event_page_id'];
 
 					$show_expired = $instance['show_expired'] == 'false' ? " AND (e.start_date >= '".date ( 'Y-m-d' )."' OR e.event_status = 'O' OR e.registration_end >= '".date ( 'Y-m-d' )."') " : '';
 					$show_secondary = $instance['show_secondary'] == 'false' ? " AND e.event_status != 'S' " : '';
@@ -73,7 +71,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 							$category_name = $event->category_name !=''?$event->category_name:'';
 							$category_desc = $event->category_desc !=''?$event->category_desc:'';
 							$externalURL = $event->externalURL;
-							$ext_url = add_query_arg( array( 'page_id'=>$event_page_id, 'e_reg'=>'register', 'event_id'=>$event_id, 'name_of_event'=>$event_name ), home_url() );
+							$ext_url = add_query_arg( array( 'page_id'=>EE_Registry::instance()->CFG->core->reg_page_id, 'e_reg'=>'register', 'event_id'=>$event_id, 'name_of_event'=>$event_name ), home_url() );
 							$registration_url = $externalURL != '' ? $externalURL :  $ext_url;
 
 							if ( isset( $event->venue_city ) && $event->venue_city != '' )
