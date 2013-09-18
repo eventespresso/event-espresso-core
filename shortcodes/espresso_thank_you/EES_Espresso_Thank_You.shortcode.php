@@ -123,7 +123,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				$template_args['show_try_pay_again_link'] = TRUE;
 			} else {
 				// its pending
-				$template_args['show_try_pay_again_link'] = $this->EE->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
+				$template_args['show_try_pay_again_link'] = isset( $this->EE->CFG->registration->show_pending_payment_options ) && $this->EE->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
 			}
 			
 			$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'2', 'e_reg_url_link'=>$this->EE->REQ->get( 'e_reg_url_link' )), get_permalink( $this->EE->CFG->core->reg_page_id ));
