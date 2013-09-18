@@ -20,7 +20,7 @@
 	$('#mer-reg-page-apply-coupon-btn').on( 'click', function() {
 		var error_msg = eei18n.invalid_coupon;
 		if ( eei18n.wp_debug == 1 ) {
-			error_msg = error_msg + ' (' + getFunctionName( arguments.callee.toString() ) + ' ' + (new Error).lineNumber + ' )';
+			error_msg = error_msg + ' (' + getFunctionName( arguments.callee.toString() ) + ' )';
 		}
 		show_event_queue_ajax_error_msg( error_msg );
 		return false;
@@ -114,7 +114,7 @@
 					// show an error msg
 					var error_msg = lbl_txt + eei18n.required_field;
 					if ( eei18n.wp_debug == 1 ) {
-						error_msg = error_msg + ' ( mer-reg-page-copy-attendee-chk ' + (new Error).lineNumber + ' )';
+						error_msg = error_msg + ' ( mer-reg-page-copy-attendee-chk )';
 					}
 					show_event_queue_ajax_error_msg( error_msg );	
 					// uncheck the checkbox that was clicked
@@ -463,7 +463,7 @@
 					msg = new Object();
 					msg.error = eei18n.reg_step_error;
 					if ( eei18n.wp_debug == 1 ) {
-						msg.error = msg.error + ' ( process_reg_step(' + step + ') ' + (new Error).lineNumber + ' )';
+						msg.error = msg.error + ' ( process_reg_step_' + step + ' )';
 					}
 					show_event_queue_ajax_error_msg( msg );
 					return false;
@@ -545,13 +545,13 @@
 				if ( good_to_go === true ) {
 					good_to_go = eei18n.answer_required_questions;
 					if ( eei18n.wp_debug == 1 ) {
-						good_to_go = good_to_go + ' ( verify_all_questions_answered ' + (new Error).lineNumber + ' )';
+						good_to_go = good_to_go + ' ( verify_all_questions_answered )';
 					}
 					return false;
 				} else if ( good_to_go == eei18n.enter_valid_email ) {
 					good_to_go = eei18n.valid_email_and_questions;
 					if ( eei18n.wp_debug == 1 ) {
-						good_to_go = good_to_go + ' ( verify_all_questions_answered ' + (new Error).lineNumber + ' )';
+						good_to_go = good_to_go + ' ( verify_all_questions_answered )';
 					}
 					return false;
 				} 
@@ -575,13 +575,13 @@
 						if ( good_to_go === true ) {
 							good_to_go = eei18n.enter_valid_email;
 							if ( eei18n.wp_debug == 1 ) {
-								good_to_go = good_to_go + ' ( verify_all_questions_answered ' + (new Error).lineNumber + ' )';
+								good_to_go = good_to_go + ' ( verify_all_questions_answered )';
 							}
 							return false;
 						}  else if ( good_to_go == eei18n.answer_required_questions ) {
 							good_to_go = eei18n.valid_email_and_questions;
 							if ( eei18n.wp_debug == 1 ) {
-								good_to_go = good_to_go + ' ( verify_all_questions_answered ' + (new Error).lineNumber + ' )';
+								good_to_go = good_to_go + ' ( verify_all_questions_answered )';
 							}
 							return false;
 						} 			
