@@ -437,10 +437,7 @@ class EE_Error extends Exception {
 		// add notice if message exists
 		if ( ! empty( $msg )) {
 			self::$_espresso_notices[ $type ][] = $msg . $error_code;
-			add_filter( 'FHEE_load_css', '__return_true' );
-			add_filter( 'FHEE_load_js', '__return_true' );
-			wp_enqueue_script( 'ee_error_js' );
-			wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+			self::_print_scripts();
 		}
 		
 	}
@@ -512,7 +509,7 @@ class EE_Error extends Exception {
 	*
 	*	@access public
 	* 	@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
-	* 	@param		boolean		$save_to_transient	whether or not to save notices to a transient for retreival on next request
+	* 	@param		boolean		$save_to_transient	whether or not to save notices to the db for retreival on next request - ONLY do this just before redirecting
 	* 	@param		boolean		$remove_empty		whether or not to unset empty messages
 	* 	@return 		array
 	*/
@@ -526,11 +523,23 @@ class EE_Error extends Exception {
 
 		// printr( self::$_espresso_notices, 'espresso_notices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		// grab any notices that have been saved to a transient
+		// either save notices to the db
+		if ( $save_to_transient ) {
+			update_option( 'espresso_notices', self::$_espresso_notices );
+			return;
+		} 
+		// grab any notices that have been previously saved
 		if ( $notices = get_option( 'espresso_notices', FALSE )) {
 			foreach ( $notices as $type => $notice ) {
-				self::$_espresso_notices[ $type ] = $notice;
+				if ( is_array( $notice ) && ! empty( $notice )) {
+					// make sure that existsing notice type is an array
+					self::$_espresso_notices[ $type ] =  is_array( self::$_espresso_notices[ $type ] ) && ! empty( self::$_espresso_notices[ $type ] ) ? self::$_espresso_notices[ $type ] : array();
+					// merge stored notices with any newly created ones
+					self::$_espresso_notices[ $type ] = array_merge( self::$_espresso_notices[ $type ], $notice );
+					$print_scripts = TRUE;
+				}
 			}
+			// now clear any stored notices
 			update_option( 'espresso_notices', FALSE );
 		}
 
@@ -604,14 +613,29 @@ class EE_Error extends Exception {
 		}
 		
 		if ( $print_scripts ) {
-			wp_enqueue_script( 'ee_error_js' );
-			wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+			self::_print_scripts();
 		}
 		
 		return $notices;
 	}
 
 
+
+
+
+
+	/**
+	* 	_print_scripts
+	*
+	*	@access public
+	* 	@return 		void
+	*/
+	private static function _print_scripts() {
+		add_filter( 'FHEE_load_css', '__return_true' );
+		add_filter( 'FHEE_load_js', '__return_true' );
+		wp_enqueue_script( 'ee_error_js' );
+		wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+	}
 
 
 
