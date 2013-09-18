@@ -135,17 +135,6 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				</label></th>
 			<td><?php echo EE_Form_Fields::select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
 		</tr>
-		<tr>
-			<th><label for="aim_button_url">
-					<?php _e('Button Image URL', 'event_espresso'); ?>
-					<?php do_action('AHEE_help', 'aim_button_image'); ?>
-				</label></th>
-			<td>
-				<?php $this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
-				<input class="regular-text" type="text" name="button_url" id="aim_button_url" size="34" value="<?php echo $this->_payment_settings['button_url']; ?>" />
-				<a href="media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true&amp;width=640&amp;height=580&amp;rel=button_url" id="add_image" class="thickbox" title="Add an Image"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-			</td>
-		</tr>
 		<?php
 	}
 
