@@ -725,10 +725,11 @@ class EE_Base_Class{
 	 * @return string timestamp
 	 */
 	public function display_in_my_timezone( $field_name, $callback = 'get_datetime', $args = NULL, $prepend = '', $append = '' ) {
-		$timezone = get_option('timezone_string');
+		$timezone = EEH_DTT_helper::get_timezone();
 		
 		if ( $timezone == $this->_timezone )
 			return '';
+		
 		$original_timezone = $this->_timezone;
 		$this->set_timezone( $timezone );
 
