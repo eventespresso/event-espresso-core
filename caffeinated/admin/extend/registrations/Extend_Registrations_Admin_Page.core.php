@@ -33,7 +33,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		parent::__construct( $routing );
 		define( 'REG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/templates/');
 		define( 'REG_CAF_ASSETS', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/assets/');
-		define( 'REG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/assets/');
+		define( 'REG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registrations/assets/');
 	}
 
 
@@ -72,7 +72,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		if ( $is_IE ) {
 			wp_enqueue_script( 'excanvas' );
 		}
-		wp_enqueue_script('jqplot-all');
+		
+		wp_register_script('espresso_reg_admin_regs_per_day', REG_CAF_ASSETS_URL  . 'espresso_reg_admin_regs_per_day_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('espresso_reg_admin_regs_per_event', REG_CAF_ASSETS_URL . 'espresso_reg_admin_regs_per_event_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
@@ -121,7 +123,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_day';
 		
-		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
@@ -145,15 +147,15 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
 			
 			$report_params = array(
-														'title' 	=> __( 'Total Registrations per Day', 'event_espresso' ),
-														'id' 		=> $report_ID,
-														'regs' 	=> $regs,												
-														'xmin' 	=> $xmin,
-														'xmax' 	=> $xmax,
-														'ymax' 	=> ceil($ymax * 1.25),
-														'span' 	=> $span,
-														'width'	=> ceil(900 / $span)												
-													);
+					'title' 	=> __( 'Total Registrations per Day', 'event_espresso' ),
+					'id' 		=> $report_ID,
+					'regs' 	=> $regs,												
+					'xmin' 	=> $xmin,
+					'xmax' 	=> $xmax,
+					'ymax' 	=> ceil($ymax * 1.25),
+					'span' 	=> $span,
+					'width'	=> ceil(900 / $span)												
+				);
 			wp_localize_script( $report_JS, 'regPerDay', $report_params );
 		}
 												
@@ -175,7 +177,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$report_ID = 'reg-admin-registrations-per-event-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_event';
 		
-		wp_enqueue_script( $report_JS, REG_ASSETS_URL . $report_JS . '_report.js', array('jquery', 'jqplot'), '1.0', TRUE);
+		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
@@ -183,7 +185,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		if( $results = $REG->get_registrations_per_event_report( $period ) ) {		
 			//printr( $results, '$registrations_per_event' );
 			$regs = array();
-			$limits = array();
 			$ymax = 0;
 			foreach ( $results as $result ) {
 				$regs[] = array( $result->event_name, (int)$result->total );
@@ -193,14 +194,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			$span = $period == 'week' ? 9 : 33;
 
 			$report_params = array(
-														'title' 	=> __( 'Total Registrations per Event', 'event_espresso' ),
-														'id' 		=> $report_ID,
-														'regs' 	=> $regs,												
-														'limits' => $limits,												
-														'ymax' 	=> ceil($ymax * 1.25),
-														'span' 	=> $span,
-														'width'	=> ceil(900 / $span)								
-													);
+				'title' 	=> __( 'Total Registrations per Event', 'event_espresso' ),
+				'id' 		=> $report_ID,
+				'regs' 	=> $regs,												
+				'ymax' 	=> ceil($ymax * 1.25),
+				'span' 	=> $span,
+				'width'	=> ceil(900 / $span)								
+			);
 			wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
 		}
 

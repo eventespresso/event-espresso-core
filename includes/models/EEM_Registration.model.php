@@ -265,7 +265,7 @@ class EEM_Registration extends EEM_Base {
 				), 
 				OBJECT, 
 				array(
-					'regDate'=>array('DATE(FROM_UNIXTIME(Registration.REG_date))','%d'),
+					'regDate'=>array('DATE(Registration.REG_date)','%s'),
 					'total'=>array('count(REG_ID)','%d')
 				));
 		return $results;
@@ -284,8 +284,7 @@ class EEM_Registration extends EEM_Base {
 		$date_sql = date("Y-m-d H:i:s", strtotime($period));
 		$results = $this->_get_all_wpdb_results(array(
 			array(
-				'REG_date'=>array('>=',$date_sql),
-				'Datetime.DTT_is_primary'=>1
+				'REG_date'=>array('>=',$date_sql)
 			),
 			'group_by'=>'Event.EVT_name',
 			'order_by'=>'Event.EVT_name',
@@ -293,7 +292,6 @@ class EEM_Registration extends EEM_Base {
 			OBJECT, 
 			array(
 				'event_name'=>array('Event_CPT.post_title','%s'),
-				'reg_limit'=>array('Event_Meta.EVT_reg_limit','%s'),
 				'total'=>array('COUNT(REG_ID)','%s')
 			)
 		);
