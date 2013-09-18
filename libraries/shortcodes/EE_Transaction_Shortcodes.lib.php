@@ -54,6 +54,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
+		
+		$this->EE->load_helper( 'Template' );
 
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :
@@ -72,16 +74,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 			case "[TOTAL_COST]" :
-				global $org_options;
-				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
 				$total = $this->_data->txn->total();
-				return !empty($total) ? $currency_symbol . number_format($total, 2) : '';
+				return ! empty($total) ? EEH_Template::format_currency( $total ) : '';
 				break;
 
 			case "[EVENT_PRICE]" :
-				global $org_options;
-				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
-				return isset($this->_data['price']) ? $currency_symbol . number_format($this->_data['price'], 2) : '';
+				return isset($this->_data['price']) ? EEH_Template::format_currency( $this->_data['price'] ) : '';
 				break;
 
 			case "[PAYMENT_STATUS]" :
@@ -94,17 +92,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[AMOUNT_PAID]" :
-				global $org_options;
-				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
 				$amount = isset( $this->_data->payment ) && is_object( $this->_data->payment ) ? $this->_data->payment->amount() : 0;
-				return $currency_symbol . number_format( $amount, 2);
+				return EEH_Template::format_currency( $amount );
 				break;
 
 			case "[TOTAL_OWING]" :
-				global $org_options;
-				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
 				$total_owing = isset( $this->_data->txn ) && is_object($this->_data->txn) ? $this->_data->txn->remaining() : $this->_data->txn->total();
-				return $currency_symbol . number_format( $total_owing, 2);
+				return EEH_Template::format_currency( $total_owing );
 		}
 	}
 
