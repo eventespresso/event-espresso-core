@@ -203,7 +203,11 @@ jQuery(document).ready(function($) {
 				
 			} else {
 				//This displays the title of the event when hovering
-				element.attr( 'title', event.title + " - Event Times: " + event.event_time_no_tags );				
+				if ( event.event_time_no_tags !== undefined && event.event_time_no_tags !== '' ) {
+					element.attr( 'title', event.title + " - Event Times: " + event.event_time_no_tags );									
+				} else {
+					element.attr( 'title', event.title );								
+				}
 			}
 			
 		},
