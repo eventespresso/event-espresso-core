@@ -510,6 +510,10 @@ abstract class EE_Gateway {
 		unset($session_data['transaction']);
 		$transaction->set_txn_session_data($session_data);
 		$transaction->save();
+		//now, restore the session and transaction to exactly how they were beforehand. The transaction might nto be complete
+		$transaction->set_txn_session_data(null);
+		$session_data['transaction'] = $transaction;
+		
 		return true;
 	}
 	
@@ -586,8 +590,12 @@ abstract class EE_Gateway {
 	 * @return string
 	 */
 	public function get_payment_overview_content(EE_Payment $payment){
-		//stubb
-		echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
+		if( ! $payment->is_approved()){
+			echo "<span class='error payment-problem'>".$payment->gateway_response()."</span>";
+		}else{
+			//stubb
+			echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
+		}
 	}
 	
 	/**
