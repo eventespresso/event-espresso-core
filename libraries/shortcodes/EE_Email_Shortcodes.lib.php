@@ -51,7 +51,6 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-		global $org_options;
 
 		switch ( $shortcode ) {
 			
