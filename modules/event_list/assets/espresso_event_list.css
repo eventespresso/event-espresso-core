@@ -117,10 +117,13 @@
 	}
 	
 	#grid-view-event-list-dv  .event-datetimes h4 {
-		display: block; padding:0 0 1px 20px; margin: .25em 0; background: url("../../../images/calendar_year-16x16.png") no-repeat left center transparent;
+		display: block; padding:0 0 1px 24px; margin: .25em 0; background: url("../../../images/calendar_year-16x16.png") no-repeat left center transparent;
 		font-size: 1.3em; color: #ccc;
 	}
-	
+	#grid-view-event-list-dv  .event-datetimes h4 + h4 {
+		padding-left:5px; background: none;
+	}
+		
 	#grid-view-event-list-dv  .ee-event-img-dv { position: relative; width:100%; overflow: hidden; margin:0 0 -4em; }
 	#grid-view-event-list-dv  .ee-event-img { 
 		position: absolute; top: auto; left: auto; width:100%; height: auto; 
@@ -139,7 +142,7 @@
 	#grid-view-event-list-dv #espresso-events-list-wrap-dv a.ee-register-button-lnk { margin:1em 0; }
 
 	#grid-view-event-list-dv .tiny-event-list-grid.espresso-event-list-event { width: 120px; }
-	#grid-view-event-list-dv .tiny-event-list-grid .event-datetimes h4 { font-size:8px; }
+	#grid-view-event-list-dv .tiny-event-list-grid .event-datetimes h4 { font-size:1em; }
 	#grid-view-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv.has-img { margin:0 .5em; }
 	#grid-view-event-list-dv .tiny-event-list-grid .ee-event-img-dv { margin:0 0 -1.9em; }
 	#grid-view-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.55em .55em .55em; }
@@ -149,7 +152,7 @@
 	#grid-view-event-list-dv .tiny-event-list-grid a.ee-register-button-lnk { padding: 3px 1.2em 2px; font-size:10px; line-height:15px; }
 	
 	#grid-view-event-list-dv .small-event-list-grid.espresso-event-list-event { width: 148px; }
-	#grid-view-event-list-dv .small-event-list-grid .event-datetimes h4 { font-size:9px; }
+	#grid-view-event-list-dv .small-event-list-grid .event-datetimes h4 { font-size:1.1em; }
 	#grid-view-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv.has-img { margin:0 .7em; }
 	#grid-view-event-list-dv .small-event-list-grid .ee-event-img-dv { margin:0 0 -2.1em; }
 	#grid-view-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.7em .7em .7em; }
@@ -159,7 +162,7 @@
 	#grid-view-event-list-dv .small-event-list-grid a.ee-register-button-lnk { padding: 4px 1.3em 3px; font-size:11px; line-height:18px; }
 	
 	#grid-view-event-list-dv .med-event-list-grid.espresso-event-list-event { width: 190px; }
-	#grid-view-event-list-dv .med-event-list-grid .event-datetimes h4 { font-size:10px; }
+	#grid-view-event-list-dv .med-event-list-grid .event-datetimes h4 { font-size:1.2em; }
 	#grid-view-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv.has-img { margin:0 .85em; }
 	#grid-view-event-list-dv .med-event-list-grid .ee-event-img-dv { margin:0 0 -2.5em; }
 	#grid-view-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.85em .85em .85em; }
