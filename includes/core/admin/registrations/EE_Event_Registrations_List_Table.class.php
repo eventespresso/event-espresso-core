@@ -166,8 +166,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column_PRC_name(EE_Registration $item){
-		return $item->price_obj()->name();
+	function column_PRC_name(EE_Registration $item){		
+		return $item->ticket() ? $item->ticket()->name() : __("Unknown", "event_espresso");
 	}
 
 

@@ -714,6 +714,14 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		return $this->set('TKT_parent', $parent);
 	}
 
-
-
+	/**
+	 * Gets a string which is handy for showing in gateways etc that describes the ticket.
+	 * @return string
+	 */
+	function name_and_info(){
+		foreach($this->datetimes() as $datetime){
+				$times[] = $datetime->start_date_and_time();
+			}
+		return $this->name()." @ ".implode(", ",$times)." for ".$this->price();
+	}
 } //end EE_Ticket class

@@ -374,7 +374,7 @@ class EEM_Transaction extends EEM_Base {
 		}elseif ( $total_paid == $transaction->total() ) {
 			$transaction->set_status(EEM_Transaction::complete_status_code);
 		} elseif( $total_paid < $transaction->total() ) {
-			$transaction->set_status(EEM_Transaction::open_status_code);
+			$transaction->set_status(EEM_Transaction::incomplete_status_code);
 		}
 		
 		// update transaction and return results

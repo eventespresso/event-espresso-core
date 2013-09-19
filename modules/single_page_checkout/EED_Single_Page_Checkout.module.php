@@ -258,6 +258,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			unset( $session['init_access'] );
 			unset( $session['last_access'] );
 			unset( $session['gateway_data'] );
+			$session['transaction'] = $transaction;
 			$this->EE->SSN->set_session_data( $session, 'session_data' );
 			$this->EE->CART->reset_cart();
 
@@ -358,13 +359,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$additional_attendees = array();
 			$additional_attendee_forms = TRUE;
 			$target_inputs = '';
-
 			if ($cart_contents['total_items'] !== 0) {
 
 				$event_queue[$cart_type]['has_items'] = TRUE;
 
 				$x = 1;
 				$counter = 1;
+				
 				foreach ($cart_contents['items'] as $item) {
 					//printr( $item, '$item  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					$step_1_line_items .= '#mer-reg-page-line-item-' . $item['id'];					

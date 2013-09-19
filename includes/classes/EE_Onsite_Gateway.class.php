@@ -151,7 +151,6 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	public function process_gateway_selection() {
 	
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		global $EE_Session;
 		// set  billing inputs in the individual gateways plz
 		$reg_page_billing_inputs = array();
 		// allow others to edit post input array
@@ -168,7 +167,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
 		if ($reg_page_billing_inputs) {
 			// add billing info to the session
-			if ($EE_Session->set_session_data(array('billing_info' => $reg_page_billing_inputs), 'session_data')) {
+			if ($this->EE->SSN->set_session_data(array('billing_info' => $reg_page_billing_inputs), 'session_data')) {
 				$msg = __( 'Billing information submitted successfully.', 'event_espresso' );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			} 

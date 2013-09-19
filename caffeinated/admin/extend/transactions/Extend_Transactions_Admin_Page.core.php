@@ -22,7 +22,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  *
  * @package		Extend_Transactions_Admin_Page
- * @subpackage	caffeinated/admin/extend/Extend_Transactions_Admin_Page.core.php
+ * @subpackage	caffeinated/admin/extend/transactions/Extend_Transactions_Admin_Page.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------

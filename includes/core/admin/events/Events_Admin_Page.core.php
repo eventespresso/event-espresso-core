@@ -462,26 +462,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 //					'export_payments' => __('Export Payments', 'event_espresso')
 				)
 			),
-			'today' => array(
-				'slug' => 'today',
-				'label' => __('Today', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso'),
-//					'export_payments' => __('Export Payments', 'event_espresso')
-				)
-			),
-			'month' => array(
-				'slug' => 'month',
-				'label' => __('This Month', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso'),
-//					'export_payments' => __('Export Payments', 'event_espresso')
-				)
-			),
 			'draft' => array(
 				'slug' => 'draft',
 				'label' => __('Draft', 'event_espresso'),
@@ -519,10 +499,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'view_attendees' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/group.png',
 				'desc' => __('View Registrations for Event', 'event_espresso')
-			),
-			'event_shortcode' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/tag.png',
-				'desc' => __('Get ShortURL/Shortcode for Event', 'event_espresso')
 			),
 			'excel_export' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/excel_icon.png',
@@ -1224,11 +1200,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 
-		if (isset($this->_req_data['month_range'])) {
-			$pieces = explode(' ', $this->_req_data['month_range'], 3);
-			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
-			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
-		}
 
 		$where = array(
 				//todo add event categories
@@ -1238,8 +1209,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
 		//determine what post_status our condition will have for the query.
 		switch ( $status ) {
-			case 'month' :
-			case 'today' :
 			case NULL :
 			case 'all' :
 				$where['status'] = array( 'NOT IN', array('trash') );
@@ -1252,50 +1221,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$where['status'] = $status;
 		}
 
-		//categories?
-		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
-
-		if ( !empty ( $category ) ) {
-			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
-			$where['Term_Taxonomy.term_id'] = $category;
-		}
-		
-		//date where conditions
-		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
-			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
-		} else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
-			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
-		} else if ( isset($this->_req_data['status']) && $this->_req_data['status'] == 'month' ) {
-			$this_year_r = date('Y');
-			$this_month_r = date('m');
-			$days_this_month = date('t');
-			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
-		}
-
 		$where['post_type'] = array( '!=', 'revision' );
 
 		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
-
-		//let's first check if we have special requests coming in.
-		if ( isset( $this->_req_data['active_status'] ) ) {
-			switch ( $this->_req_data['active_status'] ) {
-				case 'upcoming' :
-					return $EEME->get_upcoming_events( $query_params, $count );
-					break;
-
-				case 'expired' :
-					return $EEME->get_expired_events( $query_params, $count );
-					break;
-
-				case 'active' :
-					return $EEME->get_active_events( $query_params, $count );
-					break;
-
-				case 'inactive' :
-					return $EEME->get_inactive_events( $query_params, $count );
-					break;
-			}
-		}
 
 		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
 
@@ -1548,112 +1476,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		return TRUE;
 	}
 
-
-
-
-
-	/**
-	 * espresso_event_months_dropdown			
-	 *
-	 * @access public
-	 * @return string                dropdown listing month/year selections for events.
-	 */
-	public function espresso_event_months_dropdown() {
-		//what we need to do is get all PRIMARY datetimes for all events to filter on. Note we need to include any other filters that are set!
-		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
-		//determine what post_status our condition will have for the query.
-		switch ( $status ) {
-			case 'month' :
-			case 'today' :
-			case NULL :
-			case 'all' :
-				$where['Event.status'] = array( 'NOT IN', array('trash') );
-				break;
-
-			case 'draft' :
-				$where['Event.status'] = array( 'IN', array('draft', 'auto-draft') );
-
-			default :
-				$where['Event.status'] = $status;
-		}
-
-		//categories?
-		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
-
-		if ( !empty ( $category ) ) {
-			$where['Event.Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
-			$where['Event.Term_Taxonomy.term_id'] = $category;
-		}
-
-		//what about active status for the event?
-		if ( isset( $this->_req_data['active_status'] ) ) {
-			switch ( $this->_req_data['active_status'] ) {
-				case 'upcoming' :
-					$where['Event.status'] = 'publish';
-					$where['DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
-					break;
-
-				case 'expired' :
-					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
-					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
-					break;
-
-				case 'active' :
-					$where['Event.status'] = 'publish';
-					$where['DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
-					$where['DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
-					break;
-
-				case 'inactive' :
-					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
-					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
-					break;
-			}
-		}
-
-
-		$where['DTT_is_primary'] = 1;
-
-		$DTTS = $this->EE->load_model('Datetime')->get_dtt_months_and_years($where);
-
-		//let's setup vals for select input helper
-		$options = array(
-			0 => array(
-				'text' => __('Select a Month/Year', 'event_espresso'),
-				'id' => ""
-				)
-			);
-
-		foreach ( $DTTS as $DTT ) {
-			$date = $DTT->dtt_month . ' ' . $DTT->dtt_year;
-			$options[] = array(
-				'text' => $date,
-				'id' => $date
-				);
-		}
-
-		$cur_date = isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '';
-
-
-		return EE_Form_Fields::select_input( 'month_range', $options, $cur_date, '', 'wide' );
-	}
-
-
-
-
-
-	/**
-	 * returns a list of "active" statuses on the event
-	 * @param  string $current_value whatever the ucrrent active status is
-	 * @return string                html dropdown.
-	 */
-	public function  active_status_dropdown( $current_value = '' ) {
-		$select_name = 'active_status';
-		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_epsresso'), 'upcoming' => __('Upcoming', 'event_espresso'), 'expired' => __('Expired', 'event_espresso'), 'inactive' => __('Inactive', 'event_espresso') );
-		$id = 'id="espresso-active-status-dropdown-filter"';
-		$class = 'wide';
-		echo EE_Form_Fields::select_input( $select_name, $values, $current_value, $id, $class );
-	}
 
 
 
@@ -2126,29 +1948,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		return $categories;
 	}
 
-
-
-	public function category_dropdown() {
-		$categories = EEM_Term::get_all_ee_categories(TRUE);
-		$options = array( 
-			'0' => array(
-				'text' => __('All Categories', 'event_espresso'),
-				'id' => -1
-				)
-			);
-
-		//setup categories for dropdown
-		foreach ( $categories as $category ) {
-			$options[] = array(
-				'text' => $category->get('name'),
-				'id' => $category->ID()
-				);
-		}
-
-		$cur_cat = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
-
-		return EE_Form_Fields::select_input( 'EVT_CAT', $options, $cur_cat );
-	}
 
 
 	/* end category stuff */

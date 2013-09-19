@@ -231,7 +231,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		EE_Registry::instance()->SSN->clear_session();
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	
 		// do we have an event id?
 		if ( isset($_POST['tkt-slctr-event-id'] )) {
 		
@@ -252,7 +251,6 @@ class EED_Ticket_Selector extends  EED_Module {
 				$limit_error_2 = sprintf(_n($singular, $plural, $valid['atndz'], 'event_espresso'), $valid['atndz'], $valid['atndz']);
 				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
 				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-				
 			} else {
 				
 				$tckts_slctd = FALSE;
@@ -286,7 +284,6 @@ class EED_Ticket_Selector extends  EED_Module {
 								)
 						);
 						//printr( $event_to_add, '$event_to_add  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						
 						// then add event
 						if ( self::_add_event_to_cart( $event_to_add )) {
 							$success = TRUE;
@@ -566,6 +563,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// check that an event has been passed
 		if (!$event or !is_array($event) or empty($event)) {
 			$error_msg = 'An error occured. No event details were submitted. Could not add to cart';
+//			echo "couldnt add to cart";
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -587,12 +585,13 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		// get the number of spaces left for this event
 		$available_spaces = self::get_available_spaces( $event );
-
 		// compare availalbe spaces against the number of tickets being purchased
+//		echo "mikeecho:available spaces $available_spaces<br>";
 		if ($available_spaces >= $event['qty']) {
+//			echo "mikeecho:adding to cart because tehres space<br>";
 			// add event to cart
 			if ( EE_Registry::instance()->CART->add_to_cart($which_cart, $add_to_cart_args)) {
-
+//				echo "mikeecho:success in adding!<br>";
 				// retreive event id list
 				//$events_in_cart = self::session->data('events_in_cart');
 				//echo EE_Registry::instance()->CART->session->pre_r(EE_Registry::instance()->CART); die();
@@ -605,11 +604,12 @@ class EED_Ticket_Selector extends  EED_Module {
 
 				return TRUE;
 			} else {
+//				echo "mikeecho:failure in adding<br>";
 				// error adding to cart
 				return FALSE;
 			}
 		} else {
-
+//			echo "mikeecho:event is full<br>";
 			// event is full
 			if ($available_spaces > 0) {
 				// add error messaging - we're using the _n function that will generate the appropriate singular or plural message based on the number of $available_spaces

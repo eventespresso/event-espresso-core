@@ -725,16 +725,22 @@ class EE_Base_Class{
 	 * @return string timestamp
 	 */
 	public function display_in_my_timezone( $field_name, $callback = 'get_datetime', $args = NULL, $prepend = '', $append = '' ) {
-		$timezone = get_option('timezone_string');
+		$timezone = EEH_DTT_helper::get_timezone();
+		
 		if ( $timezone == $this->_timezone )
 			return '';
+		
 		$original_timezone = $this->_timezone;
 		$this->set_timezone( $timezone );
+
+		$fn = (array) $field_name;
+		$args = array_merge( $fn, (array) $args );
 
 		if ( !method_exists( $this, $callback ) )
 			throw EE_Error(sprintf( __('The method named "%s" given as the callback param in "display_in_my_timezone" does not exist.  Please check your spelling', 'event_espresso'), $callback ) );
 		$args = (array) $args;
 		$return =  $prepend . call_user_func_array( array( $this, $callback ), $args ) . $append;
+
 		$this->set_timezone( $original_timezone );
 		return $return;
 	}
