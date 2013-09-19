@@ -575,7 +575,7 @@ class EE_Calendar {
 			if ( $use_categories ) {
 				if ( $enable_cat_classes ) {
 
-					if ( isset( $event_categories[$event->id] ) && ! $event_category_id ) {
+					if ( isset( $event_categories[$event->id] )) {
 						foreach ( $event_categories[$event->id] as $cat ) {
 							//This is the css class name
 							$events[ $cntr ]['className'] .= ' ' . $cat->category_identifier;
