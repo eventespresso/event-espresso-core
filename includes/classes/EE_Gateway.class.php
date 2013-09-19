@@ -590,8 +590,12 @@ abstract class EE_Gateway {
 	 * @return string
 	 */
 	public function get_payment_overview_content(EE_Payment $payment){
-		//stubb
-		echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
+		if( ! $payment->is_approved()){
+			echo "<span class='error payment-problem'>".$payment->gateway_response()."</span>";
+		}else{
+			//stubb
+			echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
+		}
 	}
 	
 	/**
