@@ -361,7 +361,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			/* @var $registration EE_Registration */
 			$ticket_datetimes_for_reg = $registration->ticket()->datetimes();
 			foreach($ticket_datetimes_for_reg as $datetime){
-				$times[] = $datetime->end_date_and_time();
+				$times[] = $datetime->start_date_and_time();
 			}
 			$this->addField('item_name_' . $item_num, $registration->attendee()->full_name() . ' attending ' . $registration->event_name()  . ' on ' . implode(", ",$times).', ' . $registration->ticket()->name());
 			$this->addField('amount_' . $item_num, $registration->price_paid());
@@ -494,7 +494,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		
 		}
 		$payment->save();
-		return parent::update_transaction_with_payment($transaction,$payment);	
+		return $this->update_transaction_with_payment($transaction,$payment);	
 	}
 	
 	

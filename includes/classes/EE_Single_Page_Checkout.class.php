@@ -1190,7 +1190,8 @@ class EE_Single_Page_Checkout {
 			// attempt to perform transaction via payment gateway
 			$response = $this->gateways->process_reg_step_3();
 			$this->_return_page_url = $response['forward_url'];
-			$success_msg = $response['msg']['success'];
+			$success_msg = isset($response['msg']['success']) ? $response['msg']['success'] : null;
+			$error_msg = isset($response['msg']['error']) ?  $response['msg']['error'] : null;
 		}
 		
 		do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__end', $this);
