@@ -555,7 +555,10 @@ final class EE_Front_Controller {
 
 
 
-	/*********************************************** 		UTILITIES		 ***********************************************/
+	/*********************************************** 		WP_FOOTER		 ***********************************************/
+
+
+
 
 
 	/**
@@ -569,26 +572,6 @@ final class EE_Front_Controller {
 		if ( $this->EE->CFG->admin->show_reg_footer ) {
 			return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>';
 		}
-	}
-
-
-
-	/*********************************************** 		UTILITIES		 ***********************************************/
-
-
-	/**
-	 * 	template_include
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function template_include( $template_path = NULL ) {
-		// check if the template file exists in the theme first by calling locate_template()
-		if ( ! empty( $this->_view_template ) && ! $template_path = locate_template( array( basename( $this->_view_template )))) {
-			// otherwise get it from 
-			$template_path = $this->_view_template;
-		}
-		return $template_path;
 	}
 
 
@@ -618,6 +601,31 @@ final class EE_Front_Controller {
 		echo EE_Error::get_notices();
 		echo espresso_display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php', array(), TRUE );
 	}
+
+
+
+
+
+	/*********************************************** 		UTILITIES		 ***********************************************/
+
+
+
+
+	/**
+	 * 	template_include
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function template_include( $template_path = NULL ) {
+		// check if the template file exists in the theme first by calling locate_template()
+		if ( ! empty( $this->_view_template ) && ! $template_path = locate_template( array( basename( $this->_view_template )))) {
+			// otherwise get it from 
+			$template_path = $this->_view_template;
+		}
+		return $template_path;
+	}
+
 
 
 
