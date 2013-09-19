@@ -159,7 +159,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 					'nav' => array(
-							'label' => __('Prices', 'event_espresso'),
+							'label' => __('Default Prices', 'event_espresso'),
 							'order' => 10
 						),
 					'list_table' => 'Prices_List_Table',
@@ -380,7 +380,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 		$query_params = array(
 			array(
-				//'Price_Type.PRT_is_global'=>true,
+				'PRC_is_default' => 1,
 				'PRC_deleted'=>$trashed),
 			'order_by'=>$orderby,
 			'limit'=>$limit,
