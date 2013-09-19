@@ -485,6 +485,110 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
+
+	/**
+	 * _get_events()
+	 * This method simply returns all the events (for the given _view and paging)
+	 *
+	 * @access public
+	 *
+	 * @param int $per_page count of items per page (20 default);
+	 * @param int $current_page what is the current page being viewed.
+	 * @param bool $count if TRUE then we just return a count of ALL events matching the given _view.  If FALSE then we return an array of event objects that match the given _view and paging parameters.
+	 * @return array an array of event objects.
+	 */
+	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
+		global $wpdb, $org_options;
+
+		$EEME = $this->_event_model;
+
+
+
+		$offset = ($current_page - 1) * $per_page;
+		$limit = $count ? '' : $offset . ',' . $per_page;
+		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
+		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
+
+		if (isset($this->_req_data['month_range'])) {
+			$pieces = explode(' ', $this->_req_data['month_range'], 3);
+			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
+		}
+
+		$where = array(
+				//todo add event categories
+				'Datetime.DTT_is_primary' => 1,
+		);
+
+		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
+		//determine what post_status our condition will have for the query.
+		switch ( $status ) {
+			case 'month' :
+			case 'today' :
+			case NULL :
+			case 'all' :
+				$where['status'] = array( 'NOT IN', array('trash') );
+				break;
+
+			case 'draft' :
+				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
+
+			default :
+				$where['status'] = $status;
+		}
+
+		//categories?
+		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
+
+		if ( !empty ( $category ) ) {
+			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Term_Taxonomy.term_id'] = $category;
+		}
+		
+		//date where conditions
+		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
+		} else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
+		} else if ( isset($this->_req_data['status']) && $this->_req_data['status'] == 'month' ) {
+			$this_year_r = date('Y');
+			$this_month_r = date('m');
+			$days_this_month = date('t');
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
+		}
+
+		$where['post_type'] = array( '!=', 'revision' );
+
+		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
+
+		//let's first check if we have special requests coming in.
+		if ( isset( $this->_req_data['active_status'] ) ) {
+			switch ( $this->_req_data['active_status'] ) {
+				case 'upcoming' :
+					return $EEME->get_upcoming_events( $query_params, $count );
+					break;
+
+				case 'expired' :
+					return $EEME->get_expired_events( $query_params, $count );
+					break;
+
+				case 'active' :
+					return $EEME->get_active_events( $query_params, $count );
+					break;
+
+				case 'inactive' :
+					return $EEME->get_inactive_events( $query_params, $count );
+					break;
+			}
+		}
+
+		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
+
+		return $events;
+	}
+
+
+
 } //end class Events_Admin_Page
 
 require_once ABSPATH . 'wp-admin/includes/template.php';
