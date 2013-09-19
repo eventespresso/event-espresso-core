@@ -520,10 +520,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/group.png',
 				'desc' => __('View Registrations for Event', 'event_espresso')
 			),
-			'event_shortcode' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/tag.png',
-				'desc' => __('Get ShortURL/Shortcode for Event', 'event_espresso')
-			),
 			'excel_export' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/excel_icon.png',
 				'desc' => __('Export Event details to excel', 'event_espresso')
