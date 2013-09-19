@@ -75,7 +75,6 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 
 	protected function _setup_data() {
-		global $org_options;
 		
 		$this->reg_info = array();
 
@@ -95,7 +94,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->init_access = $this->last_access = '';
 
 		$this->billing = $this->payment->details();
-		$this->billing['total_due'] = isset( $this->billing['total'] ) ? $org_options['currency_symbol'] . $this->billing['total'] : '';
+		$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
 
 		//let's get all the registrations associated with this txn
 		$this->reg_objs = $this->txn->registrations();
