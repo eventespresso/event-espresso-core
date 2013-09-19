@@ -510,6 +510,10 @@ abstract class EE_Gateway {
 		unset($session_data['transaction']);
 		$transaction->set_txn_session_data($session_data);
 		$transaction->save();
+		//now, restore the session and transaction to exactly how they were beforehand. The transaction might nto be complete
+		$transaction->set_txn_session_data(null);
+		$session_data['transaction'] = $transaction;
+		
 		return true;
 	}
 	
