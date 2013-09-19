@@ -193,4 +193,5 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 	transition:         none!important;
 }
 
-
+.qtip { padding: .5em; }
+.ui-tooltip-tip { position:absolute; }
