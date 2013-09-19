@@ -112,7 +112,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args = array();
 			//update the trsansaction, in case we just updated it.
 			$template_args['transaction'] = $this->_current_txn;
-			$template_args['payments'] = $this->_current_txn->payments();
+			//get payments, but order with newest at teh top, so users see taht first
+			$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
 			$template_args['primary_registrant'] = $this->_current_txn->primary_registration();
 			$template_args['event_names'] = $event_names;
 
