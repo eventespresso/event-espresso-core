@@ -53,10 +53,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('FHEE_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
 		add_filter('FHEE_additional_registration_options_event_edit_page', array( $this, 'additional_registration_options'), 10, 6);
 
+
+		//filters for event list table
+		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
+
 		//event settings
 		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
 
 	}
+
 
 
 
@@ -274,6 +279,179 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		// Then the rest of them
 		$list .= call_user_func_array(array(&$walker, 'walk'), array($categories, 0, $args));
 		return $list;
+	}
+
+
+	/**
+	 * wp_list_table_mods for caf
+	 * ============================
+	 */
+	
+
+	/**
+	 * hook into list table filters and provide filters for caffeinated list table
+	 * @param  array  $oldfilters     any existing filters present
+	 * @param  array  $list_table_obj the list table object
+	 * @return array                  new filters
+	 */
+	public function list_table_filters( $oldfilters, $list_table_obj ) {
+		$filters = array();
+
+		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
+		require_once EE_CORE_ADMIN . 'admin_helper.php';
+
+		//first month/year filters
+		$filters[] = $this->espresso_event_months_dropdown();
+
+
+		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
+
+		//active status dropdown
+		if ( $status !== 'draft' )
+			$filter[] = $this->active_status_dropdown( isset( $this->_req_data['active_status'] ) ? $this->_req_data['active_status'] : '' );
+
+		//category filter
+		$filters[] = $this->category_dropdown();
+		
+		
+		return array_merge($oldfilters, $filters);
+	}
+
+
+
+
+
+	
+	/**
+	 * espresso_event_months_dropdown			
+	 *
+	 * @access public
+	 * @return string                dropdown listing month/year selections for events.
+	 */
+	public function espresso_event_months_dropdown() {
+		//what we need to do is get all PRIMARY datetimes for all events to filter on. Note we need to include any other filters that are set!
+		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
+		//determine what post_status our condition will have for the query.
+		switch ( $status ) {
+			case 'month' :
+			case 'today' :
+			case NULL :
+			case 'all' :
+				$where['Event.status'] = array( 'NOT IN', array('trash') );
+				break;
+
+			case 'draft' :
+				$where['Event.status'] = array( 'IN', array('draft', 'auto-draft') );
+
+			default :
+				$where['Event.status'] = $status;
+		}
+
+		//categories?
+		$category = isset( $this->_req_data['EVT_CAT'] ) && $this->_req_data['EVT_CAT'] > 0 ? $this->_req_data['EVT_CAT'] : NULL;
+
+		if ( !empty ( $category ) ) {
+			$where['Event.Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Event.Term_Taxonomy.term_id'] = $category;
+		}
+
+		//what about active status for the event?
+		if ( isset( $this->_req_data['active_status'] ) ) {
+			switch ( $this->_req_data['active_status'] ) {
+				case 'upcoming' :
+					$where['Event.status'] = 'publish';
+					$where['DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
+					break;
+
+				case 'expired' :
+					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
+					break;
+
+				case 'active' :
+					$where['Event.status'] = 'publish';
+					$where['DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
+					$where['DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
+					break;
+
+				case 'inactive' :
+					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
+					break;
+			}
+		}
+
+
+		$where['DTT_is_primary'] = 1;
+
+		$DTTS = $this->EE->load_model('Datetime')->get_dtt_months_and_years($where);
+
+		//let's setup vals for select input helper
+		$options = array(
+			0 => array(
+				'text' => __('Select a Month/Year', 'event_espresso'),
+				'id' => ""
+				)
+			);
+
+		foreach ( $DTTS as $DTT ) {
+			$date = $DTT->dtt_month . ' ' . $DTT->dtt_year;
+			$options[] = array(
+				'text' => $date,
+				'id' => $date
+				);
+		}
+
+		$cur_date = isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '';
+
+
+		return EE_Form_Fields::select_input( 'month_range', $options, $cur_date, '', 'wide' );
+	}
+
+
+
+
+	/**
+	 * returns a list of "active" statuses on the event
+	 * @param  string $current_value whatever the ucrrent active status is
+	 * @return string                html dropdown.
+	 */
+	public function  active_status_dropdown( $current_value = '' ) {
+		$select_name = 'active_status';
+		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_epsresso'), 'upcoming' => __('Upcoming', 'event_espresso'), 'expired' => __('Expired', 'event_espresso'), 'inactive' => __('Inactive', 'event_espresso') );
+		$id = 'id="espresso-active-status-dropdown-filter"';
+		$class = 'wide';
+		echo EE_Form_Fields::select_input( $select_name, $values, $current_value, $id, $class );
+	}
+
+
+
+	/**
+	 * output a dropdown of the categories for the category filter on the event admin list table
+	 *
+	 * @access  public
+	 * @return string html
+	 */
+	public function category_dropdown() {
+		$categories = EEM_Term::instance()->get_all_ee_categories(TRUE);
+		$options = array( 
+			'0' => array(
+				'text' => __('All Categories', 'event_espresso'),
+				'id' => -1
+				)
+			);
+
+		//setup categories for dropdown
+		foreach ( $categories as $category ) {
+			$options[] = array(
+				'text' => $category->get('name'),
+				'id' => $category->ID()
+				);
+		}
+
+		$cur_cat = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
+
+		return EE_Form_Fields::select_input( 'EVT_CAT', $options, $cur_cat );
 	}
 
 
