@@ -114,7 +114,9 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 	function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', /* $1%s */ $item->ID() );
+		if ( $item->type_obj()->base_type() !== 1 )
+			return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', /* $1%s */ $item->ID() );
+		return '';
 	}
 
 
@@ -131,17 +133,19 @@ class Prices_List_Table extends EE_Admin_List_Table {
 		
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Price', 'event_espresso' ) . '">' . stripslashes( $item->name() ) . '</a>';
 
-		if ($this->_view == 'in_use') {
-			// trash price link
-			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
-			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Price to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
-		} else {
-			// restore price link
-			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
-			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Price', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
-			// delete price link
-			$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
-			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Price Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
+		if ( $item->type_obj()->base_type() !== 1 ) {
+			if ($this->_view == 'all') {
+				// trash price link
+				$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
+				$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Price to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
+			} else {
+				// restore price link
+				$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
+				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Price', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
+				// delete price link
+				$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
+				$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Price Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
+			}
 		}
 
 		//Return the name contents
