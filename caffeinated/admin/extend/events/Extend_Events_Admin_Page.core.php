@@ -320,6 +320,35 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
+	//let's modify the views for caf
+	protected function _set_list_table_views_default() {
+		parent::_set_list_table_views_default();
+
+		$new_views = array(
+			'today' => array(
+				'slug' => 'today',
+				'label' => __('Today', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'export_events' => __('Export Events', 'event_espresso'),
+					'trash_events' => __('Move to Trash', 'event_espresso')
+				)
+			),
+			'month' => array(
+				'slug' => 'month',
+				'label' => __('This Month', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'export_events' => __('Export Events', 'event_espresso'),
+					'trash_events' => __('Move to Trash', 'event_espresso')
+				)
+			)
+		);
+
+		$this->_views = array_merge( $this->_views, $new_views);
+	}
+
+
 
 	
 	/**
