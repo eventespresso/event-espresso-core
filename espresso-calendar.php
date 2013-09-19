@@ -596,14 +596,10 @@ class EE_Calendar {
 //	$this->timer->start();
 
 			if ( $show_tooltips ) {
-				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
+				// gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 				$events[ $cntr ]['description'] = wpautop( stripslashes( do_shortcode( $event->event_desc )));
-				//Supports 3.1 short descriptions
-				if ( isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
-					$events[ $cntr ]['description'] = array_shift( explode( '<!--more-->', $events[ $cntr ]['description'] ));
-				}
-				// and just in case it's still too long, or somebody forgot to use the more tag...
-				$events[ $cntr ]['description'] = $tooltip_word_count ? wp_trim_words( $events[ $cntr ]['description'], $tooltip_word_count ) : $events[ $cntr ]['description'];
+				// use short descriptions
+				$events[ $cntr ]['description'] = reset( explode( '<!--more-->', $events[ $cntr ]['description'] ));
 				// tooltip wrapper
 				$events[ $cntr ]['tooltip'] = '<div class="qtip_info">';
 				// show time ?
