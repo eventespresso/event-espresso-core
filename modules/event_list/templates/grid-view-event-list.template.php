@@ -27,7 +27,7 @@
 			<article id="post-<?php echo $post->ID; ?>" <?php post_class( 'espresso-event-list-event ' . espresso_event_list_grid_size() ); ?>>
 			
 				<div class="event-datetimes">
-					<h4><?php espresso_event_date(); ?></h4>
+					<h4><?php espresso_event_date_range(); ?></h4>
 				</div>				
 				<!-- .event-datetimes -->
 
