@@ -175,9 +175,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 * 		column_TXN_total
 	*/ 
     function column_TXN_total($item){
-		global $org_options;
 		if ( $item['TXN_total'] > 0 ) {
-			return '<span class="txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_total'], 2 ) . '</span>';	
+			return '<span class="txn-pad-rght">' . EEH_Template::format_currency( $item['TXN_total'] ) . '</span>';	
 		} else {
 			return '<span class="txn-overview-free-event-spn">' . __( 'free', 'event_espresso' ) . '</span>';
 		}
@@ -192,26 +191,28 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 * 		column_TXN_paid
 	*/ 
     function column_TXN_paid($item){
-		global $org_options;
 		
 		$item['TXN_total'] = abs( $item['TXN_total'] );
 		$item['TXN_paid'] = abs( $item['TXN_paid'] );
 		
 		if (( $item['TXN_total'] > 0 ) && ( $item['TXN_paid'] >= $item['TXN_total'] )) {
 			// paid in full
-			return '<span class="txn-overview-full-payment-spn txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_paid'], 2 ) . '</span>';
+			$span_class = 'txn-overview-full-payment-spn';
 			
 		} elseif (( $item['TXN_total'] > 0 ) && ( $item['TXN_paid'] > 0 )) {
 			// monies owing
-			return '<span class="txn-overview-part-payment-spn txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_paid'], 2 ) . '</span>';
+			$span_class = 'txn-overview-part-payment-spn';
 			
 		} elseif (( $item['TXN_total'] > 0 ) && ( $item['TXN_paid'] == 0 )) {
 			// no payments made
-			return '<span class="txn-overview-no-payment-spn txn-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item['TXN_paid'], 2 ) . '</span>';
+			$span_class = 'txn-overview-no-payment-spn';
 			
 		} else {
-			return '<span class="txn-overview-free-event-spn">' . $org_options['currency_symbol'] . '0.00</span>';
+			$span_class = 'txn-overview-free-event-spn';
+			$item['TXN_paid'] = 0;
 		}
+		
+		return '<span class="' . $span_class . ' txn-pad-rght">' . EEH_Template::format_currency( $item['TXN_paid'] ) . '</span>';
 		
 	}
 
