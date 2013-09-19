@@ -432,7 +432,6 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Registration
 	 */
 	public function primary_registration( $return_obj = FALSE ){
-		$this->EE->load_model( 'Registration' );
 		$result = $this->get_first_related('Registration', array(array( 'REG_count'=>  EEM_Registration::PRIMARY_REGISTRANT_COUNT )));
 		return $result;//$return_obj ? array_shift($result) : $result;
 	}

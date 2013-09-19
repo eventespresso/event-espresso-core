@@ -219,7 +219,10 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('state', $billing_info['reg-page-billing-state-' . $this->_gateway_name]['value']);
 			$this->setField('zip', $billing_info['reg-page-billing-zip-' . $this->_gateway_name]['value']);
 			$this->setField('cust_id', $primary_attendee['registration_id']);
-			$this->setField('invoice_num', $transaction->ID());
+			//invoice_num would be nice to have itbe unique per SPCO page-load, taht way if users
+			//press back, they don't submit a duplicate. However, we may be keepin gthe user on teh same spco page
+			//in which case, we need to generate teh invoice num per request right here...
+			$this->setField('invoice_num', wp_generate_password(12,false));//$billing_info['reg-page-billing-invoice-'.$this->_gateway_name]['value']);
 
 
 			if ($this->_payment_settings['test_transactions']) {
@@ -253,18 +256,12 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				);
 				$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($txn_id);
 				if (!empty($payment)) {
-					//payment exists. if this has the exact same status and amount, don't bother updating. just return
-					if ($payment->STS_ID() == $payment_status && $payment->amount() == $response->amount) {
-						//echo "duplicated ipn! dont bother updating transaction foo!";
-						$this->_debug_log("<hr>Duplicated IPN! ignore it...");
-						return array('success' => true);
-					} else {
-						$this->_debug_log("<hr>Existing IPN for this paypal trasaction, but its got some new info. Old status:" . $payment->STS_ID() . ", old amount:" . $payment->amount());
-						$payment->set_status($payment_status);
-						$payment->set_amount($response->amount);
-						$payment->set_gateway_response($response->response_reason_text);
-						$payment->set_details((array)$response);
-					}
+					//payment exists. update it
+					$this->_debug_log("<hr>Existing IPN for this AIM trasaction, but its got some new info. Old status:" . $payment->STS_ID() . ", old amount:" . $payment->amount());
+					$payment->set_status($payment_status);
+					$payment->set_amount($response->amount);
+					$payment->set_gateway_response($response->response_reason_text);
+					$payment->set_details((array)$response);
 				} else {
 					$this->_debug_log("<hr>No Previous IPN payment received. Create a new one");
 					//no previous payment exists, create one
@@ -274,7 +271,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					$payment = EE_Payment::new_instance(array(
 								'TXN_ID' => $transaction->ID(),
 								'STS_ID' => $payment_status,
-								'PAY_timestamp' => $transaction->datetime(),
+								'PAY_timestamp' => current_time('mysql',false),
 								'PAY_method' => 'CART',
 								'PAY_amount' => $response->amount,
 								'PAY_gateway' => $this->_gateway_name,
@@ -288,11 +285,10 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				$success = $payment->save();
 				$successful_update_of_transaction = $this->update_transaction_with_payment($transaction, $payment);
 				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
-				if ($payment->is_approved() && $transaction->is_completed()) {
-					$return = array('success' => true);
-				} else {
-					$return = array('error' => $payment->gateway_response());
-				}
+				//we successfully got a response from AIM. the payment might not necessarily have gone through
+				//but we did our job, so return sucess
+				$return = array('success' => true);
+				
 			} else {
 				$return = array('error' => __("Error communicating with Authorize.Net (AIM)", "event_espresso"));
 			}
@@ -429,6 +425,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				<label for="reg-page-billing-card-ccv-code-<?php echo $gw; ?>"><?php _e('CCV Code', 'event_espresso'); ?> <em>*</em></label>
 				<input id="reg-page-billing-card-ccv-code-<?php echo $gw; ?>"  class="required small-txt <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-ccv-code-<?php echo $gw; ?>"/>
 			</p>
+			<input type='hidden' id='reg-page-billing-invoice-<?php echo $gw; ?>' name='reg-page-billing-invoice-<?php echo $gw; ?>' value='<?php echo wp_generate_password(12,false) ?>' />
 
 		</div>
 
@@ -558,6 +555,17 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'validation' => TRUE,
 				'value' => NULL,
 				'format' => '%d'
+			),
+			'reg-page-billing-invoice-' . $this->_gateway_name => array(
+				'db-col' => 'invoice',
+				'label' => __('Invoice Number', 'event_espresso'),
+				'input' => 'hidden',
+				'type' => 'text',
+				'sanitize' => 'no_html',
+				'required' => FALSE,
+				'validation' => TRUE,
+				'value' => NULL,
+				'format' => '%s'
 			)
 		);
 

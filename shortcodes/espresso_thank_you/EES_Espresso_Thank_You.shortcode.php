@@ -81,7 +81,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			add_filter( 'FHEE_load_css', '__return_true' );
 			add_filter( 'FHEE_load_js', '__return_true' );
 		} else {
-			EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
+			//EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
 		}
 	}
 
@@ -97,9 +97,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public function process_shortcode( $attributes ) {
 
-		if ( $this->_current_txn instanceof EE_Transaction ) {
-//			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-//		} else {
+		if ( ! $this->_current_txn instanceof EE_Transaction ) {
+			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+		} else {
 			//prepare variables for displaying
 			$registrations = $this->_current_txn->registrations();
 			$event_names = array();
@@ -112,7 +112,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args = array();
 			//update the trsansaction, in case we just updated it.
 			$template_args['transaction'] = $this->_current_txn;
-			$template_args['payments'] = $this->_current_txn->payments();
+			//get payments, but order with newest at teh top, so users see taht first
+			$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
 			$template_args['primary_registrant'] = $this->_current_txn->primary_registration();
 			$template_args['event_names'] = $event_names;
 

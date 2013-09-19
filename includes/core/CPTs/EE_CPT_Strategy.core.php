@@ -194,11 +194,12 @@ class EE_CPT_Strategy extends EE_BASE {
 		}
 		// if no other module has already set a route
 		if ( ! $this->EE->REQ->is_set( 'ee' )) {
-			if ( is_archive() ) {
+			// check that route exists for CPT archive slug
+			if ( is_archive() && EE_Config::get_route( $this->CPT['plural_slug'] )) {
 				// ie: set "ee" to "events"
 				$this->EE->REQ->set( 'ee', $this->CPT['plural_slug'] );
 			// or does it match a single page CPT like /event/
-			} else if ( is_single() ) {
+			} else if ( is_single() && EE_Config::get_route( $this->CPT['singular_slug'] )) {
 				// ie: set "ee" to "event"
 				$this->EE->REQ->set( 'ee', $this->CPT['singular_slug'] );
 			}
