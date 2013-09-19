@@ -1493,50 +1493,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		return $count;
 	}
 
-	/**
-	 * get total number of events today
-	 *
-	 * @access public
-	 * @return int 
-	 */
-	public function total_events_today() {
-		$start = ' 00:00:00';
-		$end = ' 23:59:59';
-
-		$where = array(
-			'status' => array( '!=', 'trash' ),
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
-			);
-
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
-		return $count;
-	}
-
-	/**
-	 * get total number of events this month
-	 *
-	 * @access public
-	 * @return int 
-	 */
-	public function total_events_this_month() {
-		//Dates
-		$curdate = date('Y-m-d');
-		$this_year_r = date('Y');
-		$this_month_r = date('m');
-		$days_this_month = date('t');
-		$start = ' 00:00:00';
-		$end = ' 23:59:59';
-
-		$where = array(
-			'status' => array( '!=', 'trash' ),
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
-			);
-
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
-		return $count;
-	}
-
-
 
 
 	
