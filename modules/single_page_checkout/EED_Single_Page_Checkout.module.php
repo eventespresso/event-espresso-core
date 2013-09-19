@@ -1158,6 +1158,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			printr( $this->EE->SSN, '$this->EE->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			// attempt to perform transaction via payment gateway
+			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this);
 			$response = $this->EE->LIB->EEM_Gateways->process_reg_step_3();
 			$this->_thank_you_page_url = $response['forward_url'];
 			if(isset($response['msg']['success'])){
