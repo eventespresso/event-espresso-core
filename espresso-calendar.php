@@ -201,17 +201,9 @@ class EE_Calendar {
 		//Load tooltips styles
 		$show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
 		if ( $show_tooltips ) {
-			// load jQuery qtip script from CDN with local fallback
-			$qtip_js_url = 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js';
-			// is the URL accessible ?
-			$test_url = @fopen( $qtip_js_url, 'r' );
-			// use CDN URL or local fallback ?
-			$qtip_js_url = $test_url !== FALSE ? $qtip_js_url : ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.js';
-			// use CDN URL or local fallback ?
-			$qtip_css_url = $test_url !== FALSE ? 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css' : ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/jquery.qtip.min.css';
 			// register jQuery qtip
-			wp_register_style( 'qtip', $qtip_css_url );
-			wp_register_script( 'jquery-qtip', $qtip_js_url, array('jquery'), '2.1.1', TRUE);			
+			wp_register_style( 'qtip', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/jquery.qtip.min.css' );
+			wp_register_script( 'jquery-qtip', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.js', array('jquery'), '2.1.1', TRUE);			
 		}
 		
 		// load base calendar style
