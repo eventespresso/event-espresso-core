@@ -51,7 +51,7 @@
 		}
 	}
 	if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
-		add_action( 'shutdown', 'espresso_printr_session' );
+		//add_action( 'shutdown', 'espresso_printr_session' );
 	}
 
 
