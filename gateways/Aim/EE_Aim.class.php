@@ -285,11 +285,10 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				$success = $payment->save();
 				$successful_update_of_transaction = $this->update_transaction_with_payment($transaction, $payment);
 				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
-				if ($payment->is_approved() && ($transaction->is_completed() || $transaction->is_overpaid())) {
-					$return = array('success' => true);
-				} else {
-					$return = array('error' => $payment->gateway_response());
-				}
+				//we successfully got a response from AIM. the payment might not necessarily have gone through
+				//but we did our job, so return sucess
+				$return = array('success' => true);
+				
 			} else {
 				$return = array('error' => __("Error communicating with Authorize.Net (AIM)", "event_espresso"));
 			}
