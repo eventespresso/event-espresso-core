@@ -168,15 +168,10 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	}
 
 	public function process_reg_step_3() {
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
+		$session_data = $this->EE->SSN->get_session_data();
 		$billing_info = $session_data['billing_info'];
 
 		if ($billing_info != 'no payment required') {
-
-			$authnet_aim_login_id = $this->_payment_settings['authnet_aim_login_id'];
-			$authnet_aim_transaction_key = $this->_payment_settings['authnet_aim_transaction_key'];
-
 			// Enable test mode if needed
 			//4007000000027  <-- test successful visa
 			//4222222222222  <-- test failure card number
@@ -187,20 +182,38 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				define("AUTHORIZENET_SANDBOX", false);
 			}
 
-			$reg_info = $session_data['cart']['REG'];
+//			$reg_info = $session_data['cart']['REG'];
 			$primary_attendee = $session_data['primary_attendee'];
-			$registrations = $session_data['cart']['REG']['items'];
+			
+			$item_num=1;
+			/* @var $transaction EE_Transaction */
+			$transaction = $session_data['transaction'];
+			foreach($transaction->registrations() as $registration){
+				$attendee = $registration->attendee();
+				$attendee_full_name = $attendee ?  $attendee->full_name() : '';
+				$ticket = $registration->ticket();
+				$this->addLineItem(
+						$item_num++, 
+						substr($attendee_full_name,0,31),
+						substr($attendee_full_name." attending ".$registration->event_name()." with ticket ". $ticket->name_and_info(),0,255),
+						1, 
+						$registration->price_paid(), 
+						'N');
 
-			$item_num = 1;
-			require_once( EE_MODELS . 'EEM_Attendee.model.php');
-			foreach ($registrations as $registration) {
-				foreach ($registration['attendees'] as $attendee) {			
-					$item_name = substr( $registration['name'], 0, 31 );
-					$item_desc = substr( $attendee[EEM_Attendee::fname_question_id] . ' ' . $attendee[EEM_Attendee::lname_question_id] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
-					$this->addLineItem( $item_num, $item_name, $item_desc, 1, $attendee['price_paid'], 'N');
-					$item_num++;				
-				}
 			}
+		
+		
+//			$registrations = $session_data['cart']['REG']['items'];
+//
+//			$item_num = 1;
+//			foreach ($registrations as $registration) {
+//				foreach ($registration['attendees'] as $attendee) {			
+//					$item_name = substr( $registration['name'], 0, 31 );
+//					$item_desc = substr( $attendee[EEM_Attendee::fname_question_id] . ' ' . $attendee[EEM_Attendee::lname_question_id] . ' - ' . $registration['name'] . ' - ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc'], 0, 255 );
+//					$this->addLineItem( $item_num, $item_name, $item_desc, 1, $attendee['price_paid'], 'N');
+//					$item_num++;				
+//				}
+//			}
 
 			$grand_total = $session_data['_cart_grand_total_amount'];
 
@@ -225,7 +238,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('state', $billing_info[ 'reg-page-billing-state-' . $this->_gateway_name ]['value']);
 			$this->setField('zip', $billing_info[ 'reg-page-billing-zip-' . $this->_gateway_name ]['value']);
 			$this->setField('cust_id', $primary_attendee['registration_id']);
-			$this->setField('invoice_num',$EE_Session->id()); 
+			$this->setField('invoice_num',$this->EE->SSN->id()); 
 
 	
 			if ($this->_payment_settings['test_transactions']) {
@@ -243,9 +256,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					$txn_id = $response->transaction_id;
 				}
 
-				$payment_status = $response->approved ? 'Approved' : 'Declined';
-			}
-
+				$payment_status = $response->approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined;
 			$txn_results = array(
 					'gateway' => $this->_payment_settings['display_name'],
 					'approved' => $response->approved ? $response->approved : 0,
@@ -260,18 +271,60 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					'invoice_number' => $response->invoice_number,
 					'raw_response' => $response
 			);
+			$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($txn_id);
+			if(!empty($payment)){
+				//payment exists. if this has the exact same status and amount, don't bother updating. just return
+				if($payment->STS_ID() == $payment_status && $payment->amount() == $response->amount){
+					//echo "duplicated ipn! dont bother updating transaction foo!";
+					$this->_debug_log( "<hr>Duplicated IPN! ignore it...");
+					return array('success'=>true);
+				}else{
+					$this->_debug_log( "<hr>Existing IPN for this paypal trasaction, but its got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
+					$payment->set_status($payment_status);
+					$payment->set_amount($response->amount);
+					$payment->set_gateway_response($response->response_reason_text);
+					$payment->set_details($response);
+				}
+			}else{
+				$this->_debug_log( "<hr>No Previous IPN payment received. Create a new one");
+				//no previous payment exists, create one
+				$primary_registrant = $transaction->primary_registration();
+				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 
-			$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				$payment = EE_Payment::new_instance(array('TXN_ID' => $transaction->ID(), 
+					'STS_ID' => $payment_status, 
+					'PAY_timestamp' => $transaction->datetime(), 
+					'PAY_method' => 'CART', 
+					'PAY_amount' => $response->amount, 
+					'PAY_gateway' => $this->_gateway_name, 
+					'PAY_gateway_response' => $response->response_reason_text, 
+					'PAY_txn_id_chq_nmbr' => $txn_id, 
+					'PAY_po_number' => NULL, 
+					'PAY_extra_accntng'=>$primary_registration_code,
+					'PAY_via_admin' => false, 
+					'PAY_details' => (array)$response));
 
-			$success = $payment_status == 'Approved' ? TRUE : FALSE;
-
-			do_action( 'AHEE_after_payment', $EE_Session, $success );
-
+			}
+			$payment->save();
+			$successful_update_of_transaction = $this->update_transaction_with_payment($transaction,$payment);	
+			$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+			if($payment->is_approved() && $transaction->is_completed()){
+				$return = array('success'=>true);
+			}else{
+				$return = array('error'=>$payment->gateway_response());
+				
+			}
+			}else{
+				$return = array('error'=> __("Error communicating with Authorize.Net (AIM)", "event_espresso"));
+			}
 		} else {
+			$return = array('success'=>true);
 			// no payment required
 		}
+		return array('success'=>true);
 
-		return array('success' => TRUE);
+		return $return;
+		
 	}
 	
 		/**
