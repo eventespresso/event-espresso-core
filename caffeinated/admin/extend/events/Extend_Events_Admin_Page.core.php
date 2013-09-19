@@ -56,6 +56,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
+		add_filter('FHEE_views_toplevel_page_espresso_events', array( $this, 'additional_views'), 10 );
 
 		//event settings
 		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
@@ -321,14 +322,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	//let's modify the views for caf
-	protected function _set_list_table_views_default() {
-		parent::_set_list_table_views_default();
-
+	public function additional_views( $views ) {
 		$new_views = array(
 			'today' => array(
 				'slug' => 'today',
 				'label' => __('Today', 'event_espresso'),
-				'count' => 0,
+				'count' => $this->total_events_today(),
 				'bulk_action' => array(
 					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso')
@@ -337,7 +336,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'month' => array(
 				'slug' => 'month',
 				'label' => __('This Month', 'event_espresso'),
-				'count' => 0,
+				'count' => $this->total_events_this_month(),
 				'bulk_action' => array(
 					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso')
@@ -345,7 +344,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			)
 		);
 
-		$this->_views = array_merge( $this->_views, $new_views);
+		return array_merge( $views, $new_views);
 	}
 
 
@@ -481,6 +480,51 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$cur_cat = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
 
 		return EE_Form_Fields::select_input( 'EVT_CAT', $options, $cur_cat );
+	}
+
+
+
+	/**
+	 * get total number of events today
+	 *
+	 * @access public
+	 * @return int 
+	 */
+	public function total_events_today() {
+		$start = ' 00:00:00';
+		$end = ' 23:59:59';
+
+		$where = array(
+			'status' => array( '!=', 'trash' ),
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
+			);
+
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		return $count;
+	}
+
+	/**
+	 * get total number of events this month
+	 *
+	 * @access public
+	 * @return int 
+	 */
+	public function total_events_this_month() {
+		//Dates
+		$curdate = date('Y-m-d');
+		$this_year_r = date('Y');
+		$this_month_r = date('m');
+		$days_this_month = date('t');
+		$start = ' 00:00:00';
+		$end = ' 23:59:59';
+
+		$where = array(
+			'status' => array( '!=', 'trash' ),
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
+			);
+
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		return $count;
 	}
 
 

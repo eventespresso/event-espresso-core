@@ -335,25 +335,12 @@ class EEM_Registration extends EEM_Base {
 		if( $this->EE->CFG->registration->pending_counts_reg_limit ){
 			$query_params[0]['STS_ID']=  EEM_Registration::status_id_pending;
 		}
-		return $this->count($query_params);
-
-//		$SQL = 'SELECT COUNT(reg.EVT_ID) FROM ' . $this->_get_main_table()->get_table_name() . ' reg';
-//		$SQL .= $for_incomplete_payments ? ' JOIN ' . $wpdb->prefix . 'esp_transaction txn ON txn.TXN_ID = reg.TXN_ID' : '';
-//		$SQL .= ' WHERE reg.EVT_ID=%d AND ( reg.STS_ID="RAP"';
-//		$SQL .= $org_options['pending_counts_reg_limit'] ? ' OR reg.STS_ID="RPN")' : ')';		
-//		$SQL .= $for_incomplete_payments ? ' AND txn.STS_ID <> "TCM"' : '';
-//
-//		$reg_count = $wpdb->get_var( $wpdb->prepare( $SQL, $EVT_ID ));
-//		
-//		if ( $reg_count !== FALSE ) {
-//			return $reg_count;
-//		} else {
-//			$user_msg = __('An error occurred. The event registration count could not be calculated because of a database error.', 'event_espresso');
-//			EE_Error::add_error( $user_msg, __FILE__, __FUNCTION__, __LINE__ );
-//			return FALSE;
-//		}		
-//			
+		return $this->count($query_params);	
 	}
+
+
+
+
 }
 // End of file EEM_Registration.model.php
 // Location: /includes/models/EEM_Registration.model.php

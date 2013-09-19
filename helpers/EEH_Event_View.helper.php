@@ -46,6 +46,39 @@
 
 
 	/**
+	 * espresso_event_end_date
+	 *
+	 * @returns the last date for an event
+	 * @uses $wp_query
+	 *
+	 * @return bool
+	 */
+	if ( ! function_exists( 'espresso_event_end_date' )) {
+		function espresso_event_end_date() {
+			EEH_Event_View::the_event_end_date();
+		}		
+	}
+
+	/**
+	 * espresso_event_date_range
+	 *
+	 * @returns the first and last dates for an event (if different)
+	 * @uses $wp_query
+	 *
+	 * @return bool
+	 */
+	if ( ! function_exists( 'espresso_event_date_range' )) {
+		function espresso_event_date_range() {
+			EEH_Event_View::the_event_date();
+			if ( EEH_Event_View::the_event_date( FALSE ) != EEH_Event_View::the_event_end_date( FALSE )) {
+				echo __( ' to ', 'event_espresso' );
+				EEH_Event_View::the_event_end_date();
+			}
+		}		
+	}
+
+
+	/**
 	 * espresso_event_date_as_calendar_page
 	 *
 	 * @returns the primary date for an event
@@ -117,9 +150,31 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function the_event_date() {
+	public static function the_event_date( $echo = TRUE ) {
 		$datetime = EEH_Event_View::get_primary_date_obj();
-		$datetime->e_start_date_and_time( 'l F jS, Y', 'g:i a' );		
+		if ( $echo ) {
+			$datetime->e_start_date_and_time( 'D M jS', 'g:i a' );
+		} else {
+			return $datetime->start_date_and_time( 'D M jS', 'g:i a' );
+		}
+				
+	}
+
+
+
+	/**
+	 * 	the_event_end_date
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function the_event_end_date( $echo = TRUE ) {
+		$datetime = EEH_Event_View::get_last_date_obj();
+		if ( $echo ) {
+			$datetime->e_end_date_and_time( 'D M jS', 'g:i a' );
+		} else {
+			return $datetime->end_date_and_time( 'D M jS', 'g:i a' );
+		}
 	}
 
 
@@ -151,12 +206,20 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function get_primary_date_obj() {
 		global $post;
-		if ( isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes )) {
-			$datetime_values = array_values( $post->datetimes );//seperated array_shift from array_values because it caused a warning
-			$datetime = array_shift($datetime_values );
-			//printr( $datetime, '$datetime  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			return $datetime;		
-		}
+		return isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes ) ? reset( $post->datetimes ) : NULL;	
+	}
+
+
+
+	/**
+	 * 	get_last_date_obj
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function get_last_date_obj() {
+		global $post;
+		return isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes ) ? end( $post->datetimes ) : NULL;
 	}
 
 

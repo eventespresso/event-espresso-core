@@ -171,7 +171,7 @@ class EED_Event_List  extends EED_Module {
 	public function get_post_data() {
 		$this->_elf_month = $this->EE->REQ->is_set( 'elf_month_dd' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_month_dd' )) : '';
 		$this->_elf_category = $this->EE->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_category_dd' )) : '';
-		$display_expired_events = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
+		//$display_expired_events = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
 		$this->_show_expired = $this->EE->REQ->is_set( 'elf_expired_chk' ) ? absint( $this->EE->REQ->get( 'elf_expired_chk' )) : FALSE;
 		$default_view = isset( EE_Registry::instance()->CFG->EED_Event_List['default_view'] ) ? EE_Registry::instance()->CFG->EED_Event_List['default_view'] : 'grid';
 		self::$_default_view = $this->EE->REQ->is_set( 'elf_default_view' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_default_view' )) : $default_view;
@@ -215,16 +215,18 @@ class EED_Event_List  extends EED_Module {
 		global $wpdb, $wp_query;
 		if ( $wp_query->is_main_query() ) {			
 			// Show Expired ?
-			$display_expired_events = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
+			$show_expired = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
 			// override default expired option if set via filter
-			$show_expired = EE_Registry::instance()->REQ->is_set( 'elf_expired_chk' ) ? absint( EE_Registry::instance()->REQ->get( 'elf_expired_chk' )) : FALSE;
-			$SQL .= ! $show_expired ? ' AND ' . EE_DATETIME_TABLE . '.DTT_EVT_start >= "' . date('Y-m-d H:s:i') . '" ' : '';
+			$show_expired = EE_Registry::instance()->REQ->is_set( 'elf_expired_chk' ) ? absint( EE_Registry::instance()->REQ->get( 'elf_expired_chk' )) : $show_expired;
+			$SQL .= ! $show_expired ? ' AND ' . EE_DATETIME_TABLE . '.DTT_EVT_end > "' . date('Y-m-d H:s:i') . '" ' : '';
 			// Category
 			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
 			$SQL .=  ! empty( $elf_category ) ? ' AND ' . $wpdb->terms . '.slug = "' . $elf_category . '" ' : '';
 			// Start Date
 			$elf_month = EE_Registry::instance()->REQ->is_set( 'elf_month_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_month_dd' )) : '';
-			$SQL .= ! empty( $elf_month ) ? ' AND ( ' . EE_DATETIME_TABLE . '.DTT_EVT_start >= "' . date('Y-m-d 0:0:00', strtotime( $elf_month )) . '" AND ' . EE_DATETIME_TABLE . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $elf_month )) . '" ) ' : '';
+
+			$SQL .= ! empty( $elf_month ) ? ' AND ' . EE_DATETIME_TABLE . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $elf_month )) . '" AND ' . EE_DATETIME_TABLE . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $elf_month )) . '" ' : '';
+
 		}
 		return $SQL;
 	}
@@ -366,9 +368,9 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function set_default_settings( $CFG ) {
 		//printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$CFG->display_description = isset( $CFG->display_description ) && ! empty( $CFG->display_description ) ? $CFG->display_description : FALSE;
+		$CFG->display_description = isset( $CFG->display_description ) && ! empty( $CFG->display_description ) ? $CFG->display_description : TRUE;
 		$CFG->display_address = isset( $CFG->display_address ) && ! empty( $CFG->display_address ) ? $CFG->display_address : FALSE;
-		$CFG->display_venue = isset( $CFG->display_venue ) && ! empty( $CFG->display_venue ) ? $CFG->display_address : FALSE;
+		$CFG->display_venue = isset( $CFG->display_venue ) && ! empty( $CFG->display_venue ) ? $CFG->display_venue : FALSE;
 		$CFG->display_expired_events = isset( $CFG->display_expired_events ) && ! empty( $CFG->display_expired_events ) ? $CFG->display_expired_events : FALSE;
 		$CFG->default_view = isset( $CFG->default_view ) && ! empty( $CFG->default_view ) ? $CFG->default_view : 'grid';
 		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'med';

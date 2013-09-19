@@ -203,6 +203,7 @@ final class EE_Front_Controller {
 	
 			// display errors
 			add_action('wp_footer', array( $this, 'display_errors' ), 2 );			
+			add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );			
 
 			//random debug code added by mike.
 //			$this->EE->load_class('Attendee',false,false,false);
@@ -399,10 +400,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp() {
-		// process any content shortcodes
-//		$this->_initialize_shortcodes();
-		// process request with module factory
-//		$this->_process_request();		
+		$this->EE->load_helper( 'Template' );	
 	}
 
 
@@ -554,27 +552,28 @@ final class EE_Front_Controller {
 
 
 
-	/*********************************************** 		UTILITIES		 ***********************************************/
+
+
+
+	/*********************************************** 		WP_FOOTER		 ***********************************************/
+
+
+
 
 
 	/**
-	 * 	template_include
+	 * 	display_registration_footer
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	string
 	 */
-	public function template_include( $template_path = NULL ) {
-		// check if the template file exists in the theme first by calling locate_template()
-		if ( ! empty( $this->_view_template ) && ! $template_path = locate_template( array( basename( $this->_view_template )))) {
-			// otherwise get it from 
-			$template_path = $this->_view_template;
+	public function display_registration_footer() {
+		$url = apply_filters( 'FHEE__registration_footer__url', 'http://eventespresso.com/' );
+		if ( $this->EE->CFG->admin->show_reg_footer ) {
+			return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>';
 		}
-		return $template_path;
 	}
 
-
-
-	/*********************************************** 		UTILITIES		 ***********************************************/
 
 
 
@@ -602,6 +601,31 @@ final class EE_Front_Controller {
 		echo EE_Error::get_notices();
 		echo espresso_display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php', array(), TRUE );
 	}
+
+
+
+
+
+	/*********************************************** 		UTILITIES		 ***********************************************/
+
+
+
+
+	/**
+	 * 	template_include
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function template_include( $template_path = NULL ) {
+		// check if the template file exists in the theme first by calling locate_template()
+		if ( ! empty( $this->_view_template ) && ! $template_path = locate_template( array( basename( $this->_view_template )))) {
+			// otherwise get it from 
+			$template_path = $this->_view_template;
+		}
+		return $template_path;
+	}
+
 
 
 

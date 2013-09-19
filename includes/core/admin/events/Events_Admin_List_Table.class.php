@@ -92,8 +92,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->total_events();
-		$this->_views['today']['count'] = $this->_admin_page->total_events_today();
-		$this->_views['month']['count'] = $this->_admin_page->total_events_this_month();
 		$this->_views['draft']['count'] = $this->_admin_page->total_events_draft();
 		$this->_views['trash']['count'] = $this->_admin_page->total_trashed_events();
 	}

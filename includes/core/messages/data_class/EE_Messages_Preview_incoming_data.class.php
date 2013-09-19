@@ -79,7 +79,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$running_total = 0;
 
 		//include Ticket Prices class for getting price obj for event.
-		require_once( EE_MODELS . 'EEM_Price.model.php' );
+		EE_Registry::instance()->load_model( 'Price' );
 
 		//we'll actually use the generated line_item identifiers for our loop
 		foreach( $line_items as $key => $line_item ) {
@@ -190,7 +190,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$attendees = array();
 		$var_array = array('fname','lname','email','address','address2','city','staid','cntry','zip','phone','social','comments','notes','deleted','attid');
 
-		require_once( EE_CLASSES . 'EE_Attendee.class.php');
+		EE_Registry::instance()->load_class( 'Attendee', array(), FALSE, TRUE, TRUE );
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
@@ -253,17 +253,14 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 
 	protected function _setup_data() {
-		global $org_options;
-		
 
 		//okay we can now calculate the taxes and setup a "grand_total" we'll use in the dummy txn object
-		require_once( EE_CLASSES . 'EE_Taxes.class.php' );
+		EE_Registry::instance()->load_class( 'Taxes', array(), FALSE, TRUE, TRUE );
 		$this->taxes = EE_Taxes::calculate_taxes( $this->_running_total );
 		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $this->_running_total );
 
 		//guess what?  The EE_Session now has the grand total object and other stuff!  Why, because EE_Taxes::_calculate_taxes added the info to it.
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
+		$session_data = EE_Registry::instance()->SSN->get_session_data();
 		$this->grand_total_price_object = $session_data['grand_total_price_object'];
 
 

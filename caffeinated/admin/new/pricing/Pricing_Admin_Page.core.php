@@ -159,7 +159,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 					'nav' => array(
-							'label' => __('Prices', 'event_espresso'),
+							'label' => __('Default Prices', 'event_espresso'),
 							'order' => 10
 						),
 					'list_table' => 'Prices_List_Table',
@@ -380,7 +380,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 		$query_params = array(
 			array(
-				//'Price_Type.PRT_is_global'=>true,
+				'PRC_is_default' => 1,
 				'PRC_deleted'=>$trashed),
 			'order_by'=>$orderby,
 			'limit'=>$limit,
@@ -502,18 +502,16 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		$set_column_values = array(
 				'PRT_ID' => absint($this->_req_data['PRT_ID']),
-				'EVT_ID' => 0,
 				'PRC_amount' => floatval ($this->_req_data['PRC_amount']),
 				'PRC_name' => $this->_req_data['PRC_name'],
 				'PRC_desc' => wp_strip_all_tags($this->_req_data['PRC_desc']),
-				'PRC_start_date' => NULL,
-				'PRC_end_date' => NULL,
+				'PRC_is_default' => 1,
 				'PRC_overrides' => NULL,
 				'PRC_order' => 0,
 				'PRC_is_active' => absint($this->_req_data['PRC_is_active']),
 				'PRC_deleted' => 0,
-				'PRC_reg_limit' => NULL,
-				'PRC_tckts_left' => NULL
+				'PRC_row' => 1,
+				'PRC_parent' => 0
 		);
 		return $set_column_values;
 	}
@@ -890,7 +888,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'PBT_ID' => absint($this->_req_data['PBT_ID']),
 				'PRT_is_member' => absint($this->_req_data['PRT_is_member']),
 				'PRT_is_percent' => absint($this->_req_data['PRT_is_percent']),
-				'PRT_order' => absint($this->_req_data['PRT_order'])
+				'PRT_order' => absint($this->_req_data['PRT_order']),
+				'PRT_deleted' => 0
 		);
 	
 		return $set_column_values;

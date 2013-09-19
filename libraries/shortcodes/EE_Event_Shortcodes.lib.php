@@ -62,7 +62,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-		global $org_options;
+
 		require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
 
 		switch ( $shortcode ) {
@@ -120,9 +120,8 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_PRICE]' :
-				global $org_options;
-				$currency_symbol = isset( $org_options['currency_symbol'] ) ? $org_options['currency_symbol'] : '';
-				return isset($this->_data['price']) ? $currency_symbol . number_format($this->_data['price'], 2) : '';
+				$this->EE->load_helper( 'Template' );
+				return isset( $this->_data['price'] ) ? EEH_Template::format_currency( $this->_data['price'] ) : '';
 				break;
 		}
 	}

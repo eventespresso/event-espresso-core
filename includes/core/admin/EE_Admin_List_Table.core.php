@@ -434,7 +434,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function display_views() {
 		$views = $this->get_views();
-		$views = apply_filters( 'FHEE_views_' . $this->screen->id, $views );
 
 		if ( empty( $views )) {
 			return;

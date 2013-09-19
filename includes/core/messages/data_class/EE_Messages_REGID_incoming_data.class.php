@@ -178,8 +178,6 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 
 
 	protected function _setup_data() {
-		global $org_options;
-
 
 		$this->taxes = $this->txn->tax();
 		$grand_total = $this->txn->total();
