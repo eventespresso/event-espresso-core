@@ -211,6 +211,9 @@ class EE_Calendar_Admin {
 
 
 	public function admin_menu( $espresso_manager ) {
+		if ( ! isset ( $espresso_manager['espresso_manager_calendar'] )) {
+			$espresso_manager['espresso_manager_calendar'] = '';
+		}
 		add_submenu_page(
 			'event_espresso', 
 			__('Event Espresso - Calendar Settings', 'event_espresso'), 
