@@ -381,7 +381,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @return string html showing filters
 	 */
 	private function _filters() {
-		$filters = (array) $this->_get_table_filters();
+		$classname = get_class($this);
+		$filters = apply_filters( "FHEE__{$classname}__filters", (array) $this->_get_table_filters(), $this );
 		
 		if ( empty($filters) )
 			return;
@@ -390,11 +391,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			echo $filter;
 		}
 
-		//add filter button at end
-		echo '<input type="submit" class="button-secondary" value="' . __('Filter', 'event_espresso') . '" id="post-query-submit" />';
+		if ( !empty( $filters ) ) {
 
-		//add reset filters button at end
-		echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters', 'event_espresso') . '</a>';
+			//add filter button at end
+			echo '<input type="submit" class="button-secondary" value="' . __('Filter', 'event_espresso') . '" id="post-query-submit" />';
+
+			//add reset filters button at end
+			echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters', 'event_espresso') . '</a>';
+		}
 	}
 
 
@@ -489,5 +493,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function process_bulk_action() {
 		//this is not used it is handled by the child EE_Admin_Page class (routes).  However, including here for reference in case there is a case where it gets used.
+	}
+
+
+
+	/**
+	 * returns the EE admin page this list table is associated with
+	 * @return EE_Admin_Page
+	 */
+	public function get_admin_page() {
+		return $this->_admin_page;
 	}
 }
