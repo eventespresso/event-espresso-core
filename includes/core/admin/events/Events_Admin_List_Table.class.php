@@ -83,26 +83,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _get_table_filters() {
-		$filters = array();
-
-		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
-		require_once EE_CORE_ADMIN . 'admin_helper.php';
-
-		//first month/year filters
-		$filters[] = $this->_admin_page->espresso_event_months_dropdown();
-
-
-		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
-
-		//active status dropdown
-		if ( $status !== 'draft' )
-			$filter[] = $this->_admin_page->active_status_dropdown( isset( $this->_req_data['active_status'] ) ? $this->_req_data['active_status'] : '' );
-
-		//category filter
-		$filters[] = $this->_admin_page->category_dropdown();
-		
-		
-		return $filters;	
+		return array(); //no filters with decaf
 	}
 
 
