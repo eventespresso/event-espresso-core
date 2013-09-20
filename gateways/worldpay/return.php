@@ -11,10 +11,8 @@ if ($_REQUEST['transStatus'] == 'Y') {
 	$sql .= "WHERE ea.id = '" . $attendee_id . "'";
 	$result = $wpdb->get_row($sql, ARRAY_A);
 	extract($result);
-	$event_link = '<a href="' . home_url() . '/?page_id=';
-	$event_link .= $org_options['event_page_id'] . '&ee=' . $event_id . '">';
-	$event_link .= $event_name . '</a>';
-	$txn_id = $_REQUEST['transId'];
+	$event_link = '<a href="' . add_query_arg( array( 'ee' => $event_id ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )) . '">' . $event_name . '</a>';
+	$txn_id = sanitize_text_field( $_REQUEST['transId'] );
 	$txn_type = 'WorldPay';
 	$payment_date = date("m-d-Y");
 	$SQL = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_id='$txn_id', txn_type='$txn_type', payment_date='$payment_date' WHERE id='$attendee_id'";

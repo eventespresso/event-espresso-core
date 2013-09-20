@@ -1107,8 +1107,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function registration_options_meta_box() {
 
-		global $org_options;
-
 		$yes_no_values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
@@ -1136,7 +1134,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return string form for Event Venue
 	 */
 	public function venue_metabox() {
-		global $org_options;
+
 		$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
@@ -1161,7 +1159,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$venue = !empty( $evnt_id ) ? $this->_cpt_model_obj->venues() : NULL;
 		$venue = empty( $venue ) ? $VNM->create_default_object() : array_shift( $venue );
 		$template_args['_venue'] = $venue;
-		$template_args['org_options'] = $org_options;
 		$template_args['states_dropdown'] = EE_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
 		$template_args['countries_dropdown'] = EE_Form_Fields::select_input('countries', $ctry_ary, $venue->country_ID(), 'id="phys-country"');
 		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
@@ -1189,17 +1186,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return array an array of event objects.
 	 */
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
-		global $wpdb, $org_options;
 
 		$EEME = $this->_event_model;
-
-
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? '' : $offset . ',' . $per_page;
 		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
-
 
 		$where = array(
 				//todo add event categories
@@ -1542,18 +1535,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _default_event_settings() {
 
-		global $org_options;
 		$this->_template_args['values'] = $this->_yes_no_values;
 
-		$this->_template_args['org_options'] = isset($org_options['org_options']) ? maybe_unserialize($org_options['org_options']) : FALSE;
-
 		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array('RCN', 'RNA'));
-		$this->_template_args['default_reg_status'] = isset($org_options['default_reg_status']) ? sanitize_text_field($org_options['default_reg_status']) : 'RPN';
-		$this->_template_args['pending_counts_reg_limit'] = isset($org_options['pending_counts_reg_limit']) ? sanitize_text_field($org_options['pending_counts_reg_limit']) : TRUE;
+		$this->_template_args['default_reg_status'] = isset( $this->EE->CFG->registration->default_STS_ID ) ? sanitize_text_field( $this->EE->CFG->registration->default_STS_ID ) : 'RPN';
+		$this->_template_args['pending_counts_reg_limit'] = isset( $this->EE->CFG->registration->pending_counts_reg_limit ) ? sanitize_text_field( $this->EE->CFG->registration->pending_counts_reg_limit ) : TRUE;
 
-		$this->_template_args['use_attendee_pre_approval'] = isset($org_options['use_attendee_pre_approval']) ? absint($org_options['use_attendee_pre_approval']) : FALSE;
-
-		$this->_template_args['template_args'] = $this->_template_args;
+		$this->_template_args['use_attendee_pre_approval'] = isset( $this->EE->CFG->registration->use_attendee_pre_approval ) ? $this->EE->CFG->registration->use_attendee_pre_approval : FALSE;
 
 		$this->_set_add_edit_form_tags('update_default_event_settings');
 		$this->_set_publish_post_box_vars(NULL, FALSE, FALSE, NULL, FALSE);

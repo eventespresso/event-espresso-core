@@ -1,9 +1,6 @@
 <div class="admin-primary-mbox-dv">
 	<br/>
-<?php 
-//echo printr( $registrations, 'registrations' ); 
-global $org_options;
-?>
+
 	<div class="admin-primary-mbox-tbl-wrap">
 		<table class="admin-primary-mbox-tbl">
 			<thead>
@@ -45,7 +42,7 @@ global $org_options;
 					?>
 					</th>
 					<th class="jst-left"><?php echo $registration->reg_code();?></th>
-					<th class="jst-rght"><?php echo $org_options['currency_symbol'] . $registration->price_paid();?></th>
+					<th class="jst-rght"><?php echo EEH_Template::format_currency( $registration->price_paid() );?></th>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>

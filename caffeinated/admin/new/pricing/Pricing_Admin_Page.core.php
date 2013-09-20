@@ -434,7 +434,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// get price types
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
-		$price_types = $PRT->get_all();
+		$price_types = $PRT->get_all( array( array('PBT_ID' => array('!=', 1 ) ) ) );
 		$price_type_names = array();
 		if (empty($price_types)) {
 			$msg = __( 'You have no price types defined. Please add a price type before adding a price.', 'event_espresso' );
@@ -717,7 +717,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 		$query_params = array(
-			array('PRT_deleted'=>$trashed),
+			array('PRT_deleted'=>$trashed, 'PBT_ID' => array('!=', 1 ) ),
 			'order_by'=>$orderby,
 			'limit'=>$limit);
 		if($count){
@@ -767,11 +767,10 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		// set base type
 		$values = array(
-									array('id' => 'Price', 'text' 			=> __('Base Price', 'event_espresso') . '&nbsp;&nbsp;' ),
-									array('id' => 'Discount', 'text' 	=> __('Discount', 'event_espresso') . '&nbsp;&nbsp;' ),
-									array('id' => 'Surcharge', 'text' 	=> __('Surcharge', 'event_espresso') . '&nbsp;&nbsp;' ),
-									array('id' => 'Tax', 'text' 			=> __('Tax', 'event_espresso') . '&nbsp;&nbsp;' )
-								);
+				array('id' => 'Discount', 'text' 	=> __('Discount', 'event_espresso') . '&nbsp;&nbsp;' ),
+				array('id' => 'Surcharge', 'text' 	=> __('Surcharge', 'event_espresso') . '&nbsp;&nbsp;' ),
+				array('id' => 'Tax', 'text' 		=> __('Tax', 'event_espresso') . '&nbsp;&nbsp;' )
+			);
 		$set_value = 'Price';						
 		foreach ( $values as $value ) {
 			if ( strpos( $price_type->name(), $value['id'] ) !== FALSE ) {

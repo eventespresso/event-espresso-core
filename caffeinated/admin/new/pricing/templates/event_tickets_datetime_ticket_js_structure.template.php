@@ -23,6 +23,13 @@
 	</tbody>
 </table>
 
+<!-- this is retrieved by our js when a brand new ticket is created (not from short-ticket context).  It contains all the default prices available. -->
+<table id="ticket-edit-row-default-price-rows" class="hidden">
+	<tbody>
+		<?php echo $default_price_rows; ?>
+	</tbody>
+</table>
+
 
 <!-- This is the selector and it ONLY lists price-modifiers (i.e. PBT_ID = 2 || 3).  It is used for new price rows added for EXISTING tickets (not new tickets) -->
 <div id="ticket-edit-row-price-modifier-selector" class="hidden">
@@ -72,6 +79,7 @@
  * $default_datetime_edit_row
  * $default_ticket_row
  * $default_price_row
+ * $default_price_rows
  * $default_price_modifier_selector_row
  * $default_available_tickets_for_datetime
  * $default_datetime_display_row

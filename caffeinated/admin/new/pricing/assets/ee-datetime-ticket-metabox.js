@@ -890,13 +890,14 @@ jQuery(document).ready(function($) {
 
 			//edit form stuff
 			var newTKTrow = $('#ticket-row-form-holder').find('tbody').clone().html().replace(/TICKETNUM/g, row ).replace(/TICKETNAMEATTR/g, 'edit_tickets');
-			var initialPRCrow = $('#ticket-edit-row-initial-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row).replace(/PRICENAMEATTR/g, 'edit_prices');
+			var initialPRCrow = incomingcontext == 'short-ticket' ? $('#ticket-edit-row-initial-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row).replace(/PRICENAMEATTR/g, 'edit_prices') : $('#ticket-edit-row-default-price-rows').find('tbody').clone().html().replace(/TICKETNUM/g, row);
 
 
 			//append to existing TKTrows
 			var currow = $('.ticket-table', '.event-tickets-container').find('tbody').first();
 			newTKTrow = $(newTKTrow).appendTo(currow);
-			initialPRCrow = $(initialPRCrow).appendTo(newTKTrow.find('.ticket-price-rows'));
+
+			initialPRCrow = incomingcontext == 'short-ticket' ? $(initialPRCrow).appendTo(newTKTrow.find('.ticket-price-rows')) : $(newTKTrow).find('.ticket-price-rows').html(initialPRCrow);
 
 			//if this is triggered via the "short-ticket" context then we need to get the values from the create ticket form and add to the new row.
 			if ( incomingcontext == 'short-ticket' ) {

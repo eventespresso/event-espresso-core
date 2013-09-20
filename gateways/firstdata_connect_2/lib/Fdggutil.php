@@ -67,7 +67,7 @@ class espresso_Fdggutil {
 	}
 
 	private function submitForm($EE_Session) {
-		global $org_options;
+
 		$session_data = $EE_Session->get_session_data();
 		$out = '<input type="hidden" name="timezone" value="' . $this->timezone . '" />';
 		$out .= '<input type="hidden" name="authenticateTransaction" value="false" />';
@@ -79,8 +79,9 @@ class espresso_Fdggutil {
 		$out .= '<input size="50" type="hidden" name="chargetotal" value="' . $this->chargetotal . '"/>';
 		$out .= '<input size="50" type="hidden" name="subtotal" value="' . $this->chargetotal . '"/>';
 		$out .= '<input size="50" type="hidden" name="trxOrigin" value="ECI"/>';
-		$out .= '<input size="50" type="hidden" name="responseSuccessURL" value="' . home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment"/>';
-		$out .= '<input size="50" type="hidden" name="responseFailURL" value="' . str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['cancel_return']) . '"/>';
+		$SuccessURL = add_query_arg( array( 'form_action' => 'payment', 'attendee_action' => 'post_payment', 'session_id' => $session_data['id'], ), get_permalink( EE_Registry::instance()->CFG->core->txn_page_id ));
+		$out .= '<input size="50" type="hidden" name="responseSuccessURL" value="' . $SuccessURL . '"/>';
+		$out .= '<input size="50" type="hidden" name="responseFailURL" value="' . get_permalink( EE_Registry::instance()->CFG->core->cancel_page_id ) . '"/>';
 		return $out;
 	}
 

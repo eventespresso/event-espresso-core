@@ -1,5 +1,5 @@
 <?php
-global $org_options, $wpdb;
+global $wpdb;
 $payment_settings = get_option('event_espresso_realauth_settings');
 include("Realauth.php");
 $sql = "SELECT amount_pd FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '" . $attendee_id . "'";

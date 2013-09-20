@@ -1,13 +1,15 @@
 <?php
 
 function espresso_display_nab($payor_data, $event_cost, $attendee_id, $event_id) {
+	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+	global $wpdb;
+
 	include_once ('Nab.php');
 	echo '<!-- Event Espresso nab Gateway Version ' . $nab_gateway_version . '-->';
-	$mynab = new nab(); // initiate an instance of the class
-	global $org_options, $wpdb, $this->EE->CFG->wp_user;
+	// initiate an instance of the class
+	$mynab = new nab(); 
 	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-	$nab_result_url = home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment&nab=true';
+	$nab_result_url = add_query_arg( array( 'nab' => 'true', 'form_action' => 'payment', 'attendee_action' => 'post_payment', 'id' => $attendee_id, 'event_id' => $event_id ), get_permalink( EE_Registry::instance()->CFG->core->txn_page_id ));
 	$nab_settings = $payment_settings['nab'];
 	$nab_id = $nab_settings['nab_merchant_id'];
 	$nab_pass = $nab_settings['nab_merchant_password'];

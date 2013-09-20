@@ -376,7 +376,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _espresso_page_settings() {
-	
+		
+		// Check to make sure all of the main pages are setup properly,
+		// if not create the default pages and display an admin notice
+		$this->EE->load_helper( 'Activation' );
+		EEH_Activation::verify_default_pages_exist();
+
 		$this->_transient_garbage_collection();
 		$this->_template_args['values'] = $this->_yes_no_values;
 
@@ -607,7 +612,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _country_settings() {
 	
-		global $org_options;
 		$CNT_ISO = isset( $this->EE->CFG->organization->CNT_ISO ) ? $this->EE->CFG->organization->CNT_ISO : 'US';
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 

@@ -46,18 +46,18 @@ Class EE_Check extends EE_Offline_Gateway {
 	}
 
 	protected function _default_settings() {
-		global $org_options;
-		$default_address = $org_options['organization_street1'] != '' ? $org_options['organization_street1'] . '<br />' : '';
-		$default_address .= $org_options['organization_street2'] != '' ? $org_options['organization_street2'] . '<br />' : '';
-		$default_address .= $org_options['organization_city'] != '' ? $org_options['organization_city'] : '';
-		$default_address .= ($org_options['organization_city'] != '' && $org_options['organization_state'] != '') ? ', ' : '<br />';
-		$default_address .= $org_options['organization_state'] != '' ? $org_options['organization_state'] . '<br />' : '';
-		$default_address .= $org_options['organization_country'] != '' ? getCountryName($org_options['organization_country']) . '<br />' : '';
-		$default_address .= $org_options['organization_zip'] != '' ? $org_options['organization_zip'] : '';
+		$organization = EE_Registry::instance()->CFG->organization;
+		$default_address = $organization->address_1 != '' ? $organization->address_1 . '<br />' : '';
+		$default_address .= $organization->address_2 != '' ? $organization->address_2 . '<br />' : '';
+		$default_address .= $organization->city != '' ? $organization->city : '';
+		$default_address .= ( $organization->city != '' && $organization->STA_ID != '') ? ', ' : '<br />';
+		$default_address .= $organization->STA_ID != '' ? EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID ) . '<br />' : '';
+		$default_address .= $organization->CNT_ISO != '' ? EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $organization->CNT_ISO ) . '<br />' : '';
+		$default_address .= $organization->zip != '' ? $organization->zip : '';
 		$this->_payment_settings = array(
 				'check_title' => __('Check/Money Order Payments', 'event_espresso'),
 				'check_instructions' => __('Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.', 'event_espresso'),
-				'payable_to' => $org_options['organization'],
+				'payable_to' => $organization->name,
 				'payment_address' => $default_address,
 				'display_name' => __('Check','event_espresso'),
 				'type' => 'off-line',

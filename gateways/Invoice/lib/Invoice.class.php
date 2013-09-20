@@ -8,29 +8,27 @@ class Invoice {
 	private $invoice_settings;
 
 	public function __construct($url_link = 0) {
-		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-		require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
-		$REG = EEM_Registration::instance();
-		$TXN = EEM_Transaction::instance();
-		if ( $this->registration = $REG->get_registration_for_reg_url_link( $url_link)) {
+
+		if ( $this->registration = EE_Registry::instance()->load_model( 'Registration' )->get_registration_for_reg_url_link( $url_link)) {
 			$this->transaction = $this->registration->transaction();
 			
 			$payment_settings = get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
 			$this->invoice_settings = $payment_settings['Invoice'];
 		} else {
-			echo "error message";
+			EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
 		}
 
 	}
 
 	public function send_invoice( $download = FALSE ) {
-		global $org_options;
+
 //printr($this->registration);
 //printr($this->transaction);
 //printr($this->session_data);
 //printr($this->invoice_settings);
 //exit;
 		$template_args = array();
+		$EE = EE_Registry::instance();
 
 		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : 1;		
 		$themes = array(
@@ -52,19 +50,6 @@ class Invoice {
 			$template_args['invoice_css'] = 'simple.css';
 		}
 
-		//Create the logo
-/*		if (!empty($this->invoice_settings['invoice_logo_url'])) {
-			$invoice_logo_url = $this->invoice_settings['invoice_logo_url'];
-		} else {
-			$invoice_logo_url = $org_options['default_logo_url'];
-		}
-		if (!empty($invoice_logo_url)) {
-			$image_size = getimagesize($invoice_logo_url);
-			$template_args['invoice_logo_image'] = '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" /> ';
-		} else {
-			$template_args['invoice_logo_image'] = '';
-		}*/
-
 		if (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) {
 			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/';
 		} else {
@@ -72,21 +57,22 @@ class Invoice {
 		}
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		
-		$template_args['organization'] = stripslashes_deep($org_options['organization']);
-		$template_args['street'] = empty($org_options['organization_street2']) ? $org_options['organization_street1'] : $org_options['organization_street1'] . '<br>' . $org_options['organization_street2'];
-		$template_args['city'] = $org_options['organization_city'];
-		$template_args['state'] = $org_options['organization_state'];
-		$template_args['zip'] = $org_options['organization_zip'];
-		$template_args['email'] = $org_options['contact_email'];
+		$template_args['organization'] = stripslashes( $EE->CFG->organization->name );
+		$template_args['street'] = empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2;
+		$template_args['city'] = $EE->CFG->organization->city;
+		$template_args['state'] = $this->EE->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
+		$template_args['country'] = $this->EE->load_model( 'Country' )->get_one_by_ID( $EE->CFG->organization->CNT_ISO );
+		$template_args['zip'] = $EE->CFG->organization->zip;
+		$template_args['email'] = $EE->CFG->organization->email;
 		$template_args['download_link'] = home_url() . '/?invoice_launch=true&amp;id=' . $this->registration->reg_url_link();
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = date_i18n(get_option('date_format'), $this->registration->date());
 		$template_args['name'] = $primary_attendee->full_name();
-		$template_args['attendee_address'] = $primary_attendee->address();//empty($attendee['address']) ? '' : stripslashes_deep($attendee['address']);
-		$template_args['attendee_address2'] = $primary_attendee->address2();//empty($attendee['address2']) ? $template_args['attendee_address'] : $template_args['attendee_address'] . '<br/>' . stripslashes_deep($attendee['address2']);
-		$template_args['attendee_city'] = $primary_attendee->city();// empty($attendee['city']) ? '' : stripslashes_deep($attendee['city']);
-		$template_args['attendee_state'] = $primary_attendee->state_ID();//empty($attendee['state']) ? '' : stripslashes_deep($attendee['state']);
-		$template_args['attendee_zip'] = $primary_attendee->zip();//empty($attendee['zip']) ? '' : stripslashes_deep($attendee['zip']);
+		$template_args['attendee_address'] = $primary_attendee->address();
+		$template_args['attendee_address2'] = $primary_attendee->address2();
+		$template_args['attendee_city'] = $primary_attendee->city();
+		$template_args['attendee_state'] = $primary_attendee->state_ID();
+		$template_args['attendee_zip'] = $primary_attendee->zip();
 		
 		$template_args['ship_name'] = $template_args['name'];
 		$template_args['ship_address'] = $template_args['attendee_address'];
@@ -117,11 +103,11 @@ class Invoice {
 			$template_args['discount'] = $this->espressoInvoiceTotals( $text, $difference );
 		}
 		
-		$template_args['currency_symbol'] = $org_options['currency_symbol'];
+		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
 		//require helpers
-		require_once EE_HELPERS . 'EE_Formatter.helper.php';
+		$EE->load_helper( 'Formatter' );
 		
 		//Get the HTML as an object
 		$template_header = espresso_display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
@@ -161,12 +147,13 @@ class Invoice {
 
 //Perform the shortcode replacement
 	function espresso_replace_invoice_shortcodes( $content ) {
-		global $org_options;
+
+		$EE = EE_Registry::instance();
 		//Create the logo
 		if (!empty($this->invoice_settings['invoice_logo_url'])) {
 			$invoice_logo_url = $this->invoice_settings['invoice_logo_url'];
 		} else {
-			$invoice_logo_url = $org_options['default_logo_url'];
+			$invoice_logo_url = $EE->CFG->organization->logo_url;
 		}
 		if (!empty($invoice_logo_url)) {
 			$image_size = getimagesize($invoice_logo_url);
@@ -190,17 +177,17 @@ class Invoice {
 		);
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		$ReplaceValues = array(
-				stripslashes_deep($org_options['organization']),
+				stripslashes( $EE->CFG->organization->name ),
 				$this->registration->reg_code(),
-				$primary_attendee->full_name(),//stripslashes_deep($this->session_data['primary_attendee']['fname'] . ' ' . $this->session_data['primary_attendee']['lname']),
+				$primary_attendee->full_name(),
 				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/' : EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/lib/templates/',
 				home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
 				$invoice_logo_image,
-				empty($org_options['organization_street2']) ? $org_options['organization_street1'] : $org_options['organization_street1'] . '<br>' . $org_options['organization_street2'],
-				$org_options['organization_city'],
-				$org_options['organization_state'],
-				$org_options['organization_zip'],
-				$org_options['contact_email'],
+				empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2,
+				$EE->CFG->organization->city,
+				$this->EE->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID ),
+				$EE->CFG->organization->zip,
+				$EE->CFG->organization->email,
 				date_i18n(get_option('date_format'), $this->registration->date())
 		);
 
@@ -219,11 +206,9 @@ class Invoice {
 	
 
 	public function espressoInvoiceTotals($text, $total_cost) {
-		global $org_options;
+
 		$html = '';
-		$minus = '';
 		if ($total_cost < 0) {
-			$minus = '-';
 			$total_cost = (-1) * $total_cost;
 		}
 		$find = array( ' ' );
@@ -231,7 +216,7 @@ class Invoice {
 		$row_id = strtolower( str_replace( $find, $replace, $text ));
 		$html .= '<tr id="'.$row_id.'-tr"><td colspan="4">&nbsp;</td>';
 		$html .= '<td class="item_r">' . $text . '</td>';
-		$html .= '<td class="item_r"><span class="crncy-sign">' . $org_options['currency_symbol'] . '</span>' . $minus . number_format($total_cost, 2, '.', '') . '</td>';
+		$html .= '<td class="item_r">' . EEH_Template::format_currency( $total_cost ) . '</td>';
 		$html .= '</tr>';
 		return $html;
 	}
