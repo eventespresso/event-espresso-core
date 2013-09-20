@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_paytrace_payment_settings() {
-	global $espresso_premium, $notices, $this->EE->CFG->wp_user, $org_options;
+	global $espresso_premium;
 	if ($espresso_premium != true)
 		return;
 
@@ -12,9 +12,9 @@ function event_espresso_paytrace_payment_settings() {
 		$payment_settings['paytrace']['paytrace_user_id'] = $_POST['paytrace_user_id'];
 		$payment_settings['paytrace']['paytrace_user_pass'] = $_POST['paytrace_user_pass'];
 		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-			$notices['updates'][] = __('Check Payment Settings Updated!', 'event_espresso');
+			EE_Error::add_success( __('Paytrace Settings Updated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
-			$notices['errors'][] = __('Check Payment Settings were not saved! ', 'event_espresso');
+			EE_Error::add_error( __('Paytrace Settings were not saved', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -49,18 +49,18 @@ function event_espresso_paytrace_payment_settings() {
 					if (!empty($_REQUEST['activate_paytrace'])) {
 						$payment_settings['paytrace']['active'] = true;
 						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('Paytrace Activated', 'event_espresso');
+							EE_Error::add_success( __('Paytrace Activated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 						} else {
-							$notices['errors'][] = __('Unable to Activate Paytrace', 'event_espresso');
+							EE_Error::add_error( __('Unable to Activate Paytrace', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
 
 					if (!empty($_REQUEST['deactivate_paytrace'])) {
 						$payment_settings['paytrace']['active'] = false;
 						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('Paytrace De-activated', 'event_espresso');
+							EE_Error::add_success( __('Paytrace De-activated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 						} else {
-							$notices['errors'][] = __('Unable to De-activate Paytrace', 'event_espresso');
+							EE_Error::add_error( __('Unable to De-activate Paytrace', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
 					echo '<ul>';
