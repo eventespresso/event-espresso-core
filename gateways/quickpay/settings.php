@@ -1,7 +1,7 @@
 <?php
 
 function event_espresso_quickpay_payment_settings() {
-	global $espresso_premium, $notices, $this->EE->CFG->wp_user, $org_options;
+	global $espresso_premium;
 	if ($espresso_premium != true)
 		return;
 
@@ -15,9 +15,9 @@ function event_espresso_quickpay_payment_settings() {
 		$payment_settings['quickpay']['quickpay_currency'] = $_POST['quickpay_currency'];
 		$payment_settings['quickpay']['use_sandbox'] = (empty($_POST['use_sandbox'])) ? '0' : $_POST['use_sandbox'];
 		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-			$notices['updates'][] = __('Quickpay Settings Updated!', 'event_espresso');
+			EE_Error::add_success( __('Quickpay Settings Updated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
-			$notices['errors'][] = __('Quickpay Settings were not saved! ', 'event_espresso');
+			EE_Error::add_error( __('Quickpay Settings were not saved', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -55,18 +55,18 @@ function event_espresso_quickpay_payment_settings() {
 					if (!empty($_REQUEST['activate_quickpay'])) {
 						$payment_settings['quickpay']['active'] = true;
 						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('Quickpay Activated', 'event_espresso');
+							EE_Error::add_success( __('Quickpay Activated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 						} else {
-							$notices['errors'][] = __('Unable to Activate Quickpay', 'event_espresso');
+							EE_Error::add_error( __('Unable to Activate Quickpay', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
 
 					if (!empty($_REQUEST['deactivate_quickpay'])) {
 						$payment_settings['quickpay']['active'] = false;
 						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('Quickpay De-activated', 'event_espresso');
+							EE_Error::add_success( __('Quickpay De-activated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 						} else {
-							$notices['errors'][] = __('Unable to De-activate Quickpay', 'event_espresso');
+							EE_Error::add_error( __('Unable to De-activate Quickpay', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
 					echo '<ul>';

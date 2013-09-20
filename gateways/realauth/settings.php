@@ -99,7 +99,6 @@ function event_espresso_realauth_payment_settings() {
 
 //realauth Settings Form
 function event_espresso_display_realauth_settings() {
-	global $org_options, $this->EE->CFG->wp_user;
 
 	$payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 

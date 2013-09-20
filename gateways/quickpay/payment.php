@@ -54,20 +54,34 @@ $sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET
 				txn_id = '" . md5($transaction_id . $md5secret) . "'
 				WHERE id='" . $attendee_id . "' ";
 $wpdb->query($sql);
-$amount = number_format($amount, 2, '', '');
+$amount = EEH_Template::format_currency( $amount );
 $currency = $quickpay_settings['quickpay_currency'];
 
-$transact_url = home_url() . '/?page_id=' . $org_options['return_url'] . '&id=' . $attendee_id . '&attendee_action=post_payment&form_action=payment';
-$params = array('chronopay_callback' => 'true', 'transaction_id' => $transaction_id, 'sessionid' => $sessionid);
-$continueurl = add_query_arg($params, $transact_url);
+$params = array(
+	'form_action' => 'payment', 
+	'attendee_action' => 'post_payment', 
+	'id' => $attendee_id, 
+	'transaction_id' => $transaction_id, 
+	'sessionid' => $sessionid
+);
+$continueurl = add_query_arg( $params, get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
 
-$transact_url = home_url() . '/?page_id=' . $org_options['cancel_return'];
-$params = array('chronopay_callback' => 'cancel', 'transaction_id' => $transaction_id, 'sessionid' => $sessionid);
-$cancelurl = add_query_arg($params, $transact_url);
+$params = array(
+	'chronopay_callback' => 'cancel', 
+	'transaction_id' => $transaction_id, 
+	'sessionid' => $sessionid
+);
+$cancelurl = add_query_arg( $params, get_permalink( EE_Registry::instance()->CFG->core->cancel_page_id ));
 
-$transact_url = home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&attendee_action=post_payment&form_action=payment';
-$params = array('chronopay_callback' => 'true', 'transaction_id' => $transaction_id, 'sessionid' => $sessionid);
-$callbackurl = add_query_arg($params, $transact_url);
+$params = array(
+	'chronopay_callback' => 'true', 
+	'form_action' => 'payment', 
+	'attendee_action' => 'post_payment', 
+	'id' => $attendee_id, 
+	'transaction_id' => $transaction_id, 
+	'sessionid' => $sessionid
+);
+$callbackurl = add_query_arg( $params, get_permalink( EE_Registry::instance()->CFG->core->txn_page_id ));
 
 $autocapture = $quickpay_settings['quickpay_autocapture'];
 $cardtypelock = 'creditcard';
