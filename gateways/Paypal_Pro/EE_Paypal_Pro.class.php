@@ -336,8 +336,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 //	public function espresso_gateway_process_step_3() {
 	public function process_reg_step_3() {
 
-		global $EE_Session;
-		$session_data = $EE_Session->get_session_data();
+		$session_data = $this->EE->SSN->get_session_data();
 
 		$billing_info = $session_data['billing_info'];
 
@@ -424,25 +423,6 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					'phonenum' => empty($billing_info['reg-page-billing-phone-' . $this->_gateway_name ]['value']) ? '' : $billing_info['reg-page-billing-phone-' . $this->_gateway_name ]['value']
 			);
 
-			$ShippingAddress = array(
-					// Required if shipping is included.  Person's name associated with this address.  32 char max.
-					'shiptoname' => '',
-					// Required if shipping is included.  First street address.  100 char max.
-					'shiptostreet' => '',
-					// Second street address.  100 char max.
-					'shiptostreet2' => '',
-					// Required if shipping is included.  Name of city.  40 char max.
-					'shiptocity' => '',
-					// Required if shipping is included.  Name of state or province.  40 char max.
-					'shiptostate' => '',
-					// Required if shipping is included.  Postal code of shipping address.  20 char max.
-					'shiptozip' => '',
-					// Required if shipping is included.  Country code of shipping address.  2 char max.
-					'shiptocountrycode' => '',
-					// Phone number for shipping address.  20 char max.
-					'shiptophonenum' => ''
-			);
-
 			$PaymentDetails = array(
 					// Required.  Total amount of order, including shipping, handling, and tax.
 					'amt' => $grand_total,
@@ -470,17 +450,50 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 			$OrderItems = array();
 
-			foreach ($reg_info['items'] as $item) {
-				foreach ($item['attendees'] as $attendee) {
-					$Item = array(
+//			foreach ($reg_info['items'] as $item) {
+//				foreach ($item['attendees'] as $attendee) {
+//					$Item = array(
+//							// Item Name.  127 char max.
+//							'l_name' => $attendee['fname'] . ' ' . $attendee['lname'] . ' : ' . stripslashes($item['name']),
+//							// Item description.  127 char max.
+//							'l_desc' => $item['options']['date'] . ' ' . $item['options']['time'] . ', ' . $item['options']['price_desc'],
+//							// Cost of individual item.
+//							'l_amt' => $item['price'],
+//							// Item Number.  127 char max.
+//							'l_number' => $item['line_item'],
+//							// Item quantity.  Must be any positive integer.
+//							'l_qty' => 1,
+//							// Item's sales tax amount.
+//							'l_taxamt' => '',
+//							// eBay auction number of item.
+//							'l_ebayitemnumber' => '',
+//							// eBay transaction ID of purchased item.
+//							'l_ebayitemauctiontxnid' => '',
+//							// eBay order ID for the item.
+//							'l_ebayitemorderid' => ''
+//					);
+//					// add to array of all items
+//					array_push($OrderItems, $Item);
+//				}
+//			}
+			/////////
+			$item_num = 1;
+			/* @var $transaction EE_Transaction */
+			$transaction = $session_data['transaction'];
+			foreach ($transaction->registrations() as $registration) {
+				$attendee = $registration->attendee();
+				$attendee_full_name = $attendee ? $attendee->full_name() : '';
+				$ticket = $registration->ticket();
+				
+				$Item = array(
 							// Item Name.  127 char max.
-							'l_name' => $attendee['fname'] . ' ' . $attendee['lname'] . ' : ' . stripslashes($item['name']),
+							'l_name' => $attendee_full_name . " attending " . $registration->event_name() . " with ticket " . $ticket->name_and_info(),
 							// Item description.  127 char max.
-							'l_desc' => $item['options']['date'] . ' ' . $item['options']['time'] . ', ' . $item['options']['price_desc'],
+							'l_desc' => $ticket->description(),
 							// Cost of individual item.
-							'l_amt' => $item['price'],
+							'l_amt' => $ticket->price(),
 							// Item Number.  127 char max.
-							'l_number' => $item['line_item'],
+							'l_number' => $item_num++,
 							// Item quantity.  Must be any positive integer.
 							'l_qty' => 1,
 							// Item's sales tax amount.
@@ -494,7 +507,9 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					);
 					// add to array of all items
 					array_push($OrderItems, $Item);
-				}
+					
+//				$this->addLineItem(
+//						$item_num++, substr($attendee_full_name, 0, 31), substr($attendee_full_name . " attending " . $registration->event_name() . " with ticket " . $ticket->name_and_info(), 0, 255), 1, $registration->price_paid(), 'N');
 			}
 
 
@@ -510,14 +525,19 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 			// Pass the master array into the PayPal class function
 			$PayPalResult = $this->DoDirectPayment($PayPalRequestData);
-
+			//remove PCI-sensitive data so it doesn't get stored
+			unset($PayPalResult['REQUESTDATA']['CREDITCARDTYPE']);
+			unset($PayPalResult['REQUESTDATA']['ACCT']);
+			unset($PayPalResult['REQUESTDATA']['EXPDATE']);
+			unset($PayPalResult['REQUESTDATA']['CVV2']);
+			unset($PayPalResult['RAWREQUEST']);
 			if ($this->_APICallSuccessful($PayPalResult)) {
-
+				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
 						'approved' => TRUE,
 						'status' => 'Approved',
-						'response_msg' => isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'],
+						'response_msg' => $message,
 						'amount' => $PayPalResult['AMT'],
 						'method' => 'CC',
 						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
@@ -527,20 +547,37 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'invoice_number' => $session_data['primary_attendee']['registration_id'],
 						'raw_response' => $PayPalResult
 				);
-				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				$primary_registrant = $transaction->primary_registration();
+				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 
-				$success = TRUE;
+				$payment = EE_Payment::new_instance(array(
+								'TXN_ID' => $transaction->ID(),
+								'STS_ID' => EEM_Payment::status_id_approved,
+								'PAY_timestamp' => current_time('mysql',false),
+								'PAY_method' => 'CART',
+								'PAY_amount' => $PayPalResult['AMT'],
+								'PAY_gateway' => $this->_gateway_name,
+								'PAY_gateway_response' => $message,
+								'PAY_txn_id_chq_nmbr' => $PayPalResult['TRANSACTIONID'],
+								'PAY_po_number' => NULL,
+								'PAY_extra_accntng' => $primary_registration_code,
+								'PAY_via_admin' => false,
+								'PAY_details' => (array) $PayPalResult));
+				$payment->save();
+				$this->update_transaction_with_payment($transaction, $payment);
+				$return = array('success'=>true);
 
 			} else {
 
 				$Errors = $this->_GetErrors($PayPalResult);
 				//printr( $PayPalResult, '$PayPalResult' );
-
+				$message = $this->_DisplayErrors($Errors);
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
 						'approved' => FALSE,
 						'status' => 'Declined',
-						'response_msg' => $this->_DisplayErrors($Errors),
+						'response_msg' => $message,
 						'amount' => '0.00',
 						'method' => 'CC',
 						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
@@ -550,16 +587,16 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'invoice_number' => $session_data['primary_attendee']['registration_id'],
 						'raw_response' => $PayPalResult
 				);
-				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
-
-				$success = FALSE;
+				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				
+				$return = array('error'=>$message);
 			}
 
-			do_action( 'AHEE_after_payment', $EE_Session, $success );
+		}else{ // end if ($billing_info != 'no payment required')
+			$return = array('success'=>true);
+		}
 
-		} // end if ($billing_info != 'no payment required')
-
-		return array('success' => TRUE);
+		return $return;
 	}
 
 	private function DoDirectPayment($DataArray) {
