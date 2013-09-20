@@ -771,7 +771,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
 				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
 			);		
-		$this->_template_args['recaptcha_language'] = isset( $this->EE->CFG->registration->recaptcha_language ) ? $this->EE->CFG->registration->recaptcha_language ) : 'en';
+		$this->_template_args['recaptcha_language'] = isset( $this->EE->CFG->registration->recaptcha_language ) ? $this->EE->CFG->registration->recaptcha_language : 'en';
 
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
