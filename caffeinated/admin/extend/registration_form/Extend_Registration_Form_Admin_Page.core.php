@@ -790,16 +790,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _reg_form_settings() {
-	
-		global $org_options;
+
 		$this->_template_args['values'] = $this->_yes_no_values;
 		
-		$this->_template_args['use_captcha'] = isset( $org_options['use_captcha'] ) ? absint( $org_options['use_captcha'] ) : FALSE;
+		$this->_template_args['use_captcha'] = isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE;
 		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': ''; 
 		
-		$this->_template_args['recaptcha_publickey'] = isset( $org_options['recaptcha_publickey'] ) ? stripslashes( $org_options['recaptcha_publickey'] ) : '';
-		$this->_template_args['recaptcha_privatekey'] = isset( $org_options['recaptcha_privatekey'] ) ? stripslashes( $org_options['recaptcha_privatekey'] ) : '';
-		$this->_template_args['recaptcha_width'] = isset( $org_options['recaptcha_width'] ) ? absint( $org_options['recaptcha_width'] ) : 500;
+		$this->_template_args['recaptcha_publickey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : '';
+		$this->_template_args['recaptcha_privatekey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : '';
+		$this->_template_args['recaptcha_width'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_width ) ? absint( EE_Registry::instance()->CFG->registration->recaptcha_width ) : 500;
 		
 		$this->_template_args['recaptcha_theme_options'] = array(
 				array('id'  => 'red','text'=> __('Red', 'event_espresso')),
@@ -807,7 +806,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
 				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
 			);
-		$this->_template_args['recaptcha_theme'] = isset( $org_options['recaptcha_theme'] ) ? $this->_display_nice( $org_options['recaptcha_theme'] ) : 'clean';
+		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'clean';
 	
 		$this->_template_args['recaptcha_language_options'] = array(
 				array('id'  => 'en','text'=> __('English', 'event_espresso')),
@@ -819,7 +818,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
 				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
 			);		
-		$this->_template_args['recaptcha_language'] = isset( $org_options['recaptcha_language'] ) ? $this->_display_nice( $org_options['recaptcha_language'] ) : 'en';
+		$this->_template_args['recaptcha_language'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en';
 
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );

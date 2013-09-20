@@ -418,11 +418,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function venue_gmap_metabox() {
-		global $org_options;
 		$template_args = array(
 			'vnu_enable_for_gmap' => EE_Form_Fields::select_input('vnu_enable_for_gmap', $this->get_yes_no_values(), $this->_cpt_model_obj->enable_for_gmap() ),
 			'vnu_google_map_link' => $this->_cpt_model_obj->google_map_link(),
-			'org_options' => $org_options
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_gmap_metabox_content.template.php';
 		espresso_display_template( $template, $template_args );
@@ -432,12 +430,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function venue_address_metabox() {
 
-		//states and countries model
-		require_once( EE_MODELS . 'EEM_State.model.php' );
-		require_once( EE_MODELS . 'EEM_Country.model.php');
-
-		$states = EEM_State::instance()->get_all_active_states();
-		$countries = EEM_Country::instance()->get_all_active_countries();
+		//states and countries 
+		$states = $this->EE->load_model( 'State' )->get_all_active_states();
+		$countries = $this->EE->load_model( 'Country' )->get_all_active_countries();
 
 		//prepare state/country arrays
 		foreach ( $states as $id => $obj ) {
