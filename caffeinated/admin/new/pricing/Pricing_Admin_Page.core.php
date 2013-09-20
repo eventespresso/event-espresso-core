@@ -434,7 +434,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// get price types
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
-		$price_types = $PRT->get_all();
+		$price_types = $PRT->get_all( array( array('PBT_ID' => array('!=', 1 ) ) ) );
 		$price_type_names = array();
 		if (empty($price_types)) {
 			$msg = __( 'You have no price types defined. Please add a price type before adding a price.', 'event_espresso' );
@@ -502,18 +502,16 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		$set_column_values = array(
 				'PRT_ID' => absint($this->_req_data['PRT_ID']),
-				'EVT_ID' => 0,
 				'PRC_amount' => floatval ($this->_req_data['PRC_amount']),
 				'PRC_name' => $this->_req_data['PRC_name'],
 				'PRC_desc' => wp_strip_all_tags($this->_req_data['PRC_desc']),
-				'PRC_start_date' => NULL,
-				'PRC_end_date' => NULL,
+				'PRC_is_default' => 1,
 				'PRC_overrides' => NULL,
 				'PRC_order' => 0,
 				'PRC_is_active' => absint($this->_req_data['PRC_is_active']),
 				'PRC_deleted' => 0,
-				'PRC_reg_limit' => NULL,
-				'PRC_tckts_left' => NULL
+				'PRC_row' => 1,
+				'PRC_parent' => 0
 		);
 		return $set_column_values;
 	}
@@ -719,7 +717,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 		$query_params = array(
-			array('PRT_deleted'=>$trashed),
+			array('PRT_deleted'=>$trashed, 'PBT_ID' => array('!=', 1 ) ),
 			'order_by'=>$orderby,
 			'limit'=>$limit);
 		if($count){
@@ -769,11 +767,10 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		// set base type
 		$values = array(
-									array('id' => 'Price', 'text' 			=> __('Base Price', 'event_espresso') . '&nbsp;&nbsp;' ),
-									array('id' => 'Discount', 'text' 	=> __('Discount', 'event_espresso') . '&nbsp;&nbsp;' ),
-									array('id' => 'Surcharge', 'text' 	=> __('Surcharge', 'event_espresso') . '&nbsp;&nbsp;' ),
-									array('id' => 'Tax', 'text' 			=> __('Tax', 'event_espresso') . '&nbsp;&nbsp;' )
-								);
+				array('id' => 'Discount', 'text' 	=> __('Discount', 'event_espresso') . '&nbsp;&nbsp;' ),
+				array('id' => 'Surcharge', 'text' 	=> __('Surcharge', 'event_espresso') . '&nbsp;&nbsp;' ),
+				array('id' => 'Tax', 'text' 		=> __('Tax', 'event_espresso') . '&nbsp;&nbsp;' )
+			);
 		$set_value = 'Price';						
 		foreach ( $values as $value ) {
 			if ( strpos( $price_type->name(), $value['id'] ) !== FALSE ) {
@@ -890,7 +887,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'PBT_ID' => absint($this->_req_data['PBT_ID']),
 				'PRT_is_member' => absint($this->_req_data['PRT_is_member']),
 				'PRT_is_percent' => absint($this->_req_data['PRT_is_percent']),
-				'PRT_order' => absint($this->_req_data['PRT_order'])
+				'PRT_order' => absint($this->_req_data['PRT_order']),
+				'PRT_deleted' => 0
 		);
 	
 		return $set_column_values;
