@@ -80,7 +80,7 @@ class EE_Calendar_Admin {
 			$host_server_url = 'http://eventespresso.com';
 			$plugin_slug = array(
 				'premium' => array('p' => 'espresso-calendar'),
-				'prerelease' => array('b' => 'espresso-calendar-pr')
+				'prerelease' => array('BETA' => 'espresso-calendar-pr')
 				);
 			$options = array(
 				'apikey' => $api_key,
