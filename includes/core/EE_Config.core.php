@@ -172,7 +172,7 @@ final class EE_Config {
 				'organization',
 				'currency'
 			);
-			// cycle thru critical org_options
+			// cycle thru critical config settings
 			foreach ( $critical_settings as $critical_setting ) {
 				// make sure each one actually exists 
 				if ( ! isset( $this->EE->CFG->$critical_setting )) {
