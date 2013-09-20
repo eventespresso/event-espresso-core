@@ -87,7 +87,6 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 
 	protected function _display_settings() {
 
-		global $org_options;
 		?>
 		<tr>
 			<th><label for="authnet_login_id">
@@ -133,7 +132,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 					<?php _e('Relay Response URL: ', 'event_espresso'); ?>
 					<?php do_action('AHEE_help', 'relay_response') ?>
 				</label></th>
-			<td><span class="display-path" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;"><?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?></span><br />
+			<td><span class="display-path" style="background-color: rgb(255, 251, 204); border:#999 solid 1px; padding:2px;"><?php echo get_permalink( EE_Registry::instance()->CFG->core->txn_page_id ); ?></span><br />
 				<span class="description">
 					<?php _e('URL to the transaction page.', 'event_espresso'); ?>
 				</span></td>
@@ -228,7 +227,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 					</p>
 					<p><strong>
 							<?php _e('Relay Response URL:', 'event_espresso'); ?>
-						</strong> <?php echo home_url() . '/?page_id=' . $org_options['notify_url'] ?><br />
+						</strong> <?php echo get_permalink( EE_Registry::instance()->CFG->core->txn_page_id ); ?><br />
 						<span style="color:red;">
 							<?php _e('Note:', 'event_espresso'); ?>
 						</span>
@@ -351,7 +350,6 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 
 	public function process_reg_step_3() {
 
-		global $org_options, $EE_Session;
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 
@@ -364,7 +362,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 			$this->_gatewayUrl = 'https://test.authorize.net/gateway/transact.dll';
 		}
 
-		$session_data = $EE_Session->get_session_data();
+		$session_data = EE_Registry::instance()->SSN->get_session_data();
 		$registrations = $session_data['cart']['REG']['items'];
 
 		$item_num = 1;
@@ -387,8 +385,9 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 
 		$total = $session_data['_cart_grand_total_amount'];
 		
-		$this->_x_post_fields['x_Relay_URL'] = home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment';
-		$this->_x_post_fields['x_Amount'] = number_format($total, 2);
+		$this->_x_post_fields['x_Relay_URL'] = add_query_arg( array( 'form_action' => 'payment', 'attendee_action' => 'post_payment', 'session_id' => $session_data['id'] ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
+		
+		$this->_x_post_fields['x_Amount'] = EEH_Template::format_currency( $total, TRUE );
 		$this->_x_post_fields['x_Logo_URL'] = $this->_payment_settings['image_url'];
 		$this->_x_post_fields['x_Invoice_num'] = 'au-' . $session_data['id'];
 		$this->_x_post_fields['x_fp_timestamp'] = time();
