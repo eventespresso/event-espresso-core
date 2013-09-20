@@ -254,7 +254,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_add_edit_form_tags( 'update_payment_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 		
 	}

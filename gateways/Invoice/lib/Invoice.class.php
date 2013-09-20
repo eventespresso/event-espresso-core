@@ -110,9 +110,9 @@ class Invoice {
 		$EE->load_helper( 'Formatter' );
 		
 		//Get the HTML as an object
-		$template_header = espresso_display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
-		$template_body = espresso_display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
-		$template_footer = espresso_display_template( dirname(__FILE__) . '/templates/invoice_footer.template.php', $template_args, TRUE );
+		$template_header = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
+		$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
+		$template_footer = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_footer.template.php', $template_args, TRUE );
 		
 		$copies =  ! empty( $_REQUEST['copies'] ) ? $_REQUEST['copies'] : 1;
 

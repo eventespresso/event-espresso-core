@@ -136,7 +136,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
 		require_once(EE_HELPERS . 'EE_Form_Fields.helper.php');
-		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		//localize script stuff
 		wp_localize_script('ee-maintenance', 'ee_maintenance', array(
 			'migrating'=>  __("Migrating...", "event_espresso"),

@@ -1096,7 +1096,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				'help_popup_content' => $help['content']
 				); 
 
-			$content .= espresso_display_template( $template_path, $template_args, TRUE );
+			$content .= EEH_Template::display_template( $template_path, $template_args, TRUE );
 		}
 
 		if ( $display )
@@ -1670,7 +1670,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	public function espresso_links_post_box() {
 		   $templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
-			espresso_display_template( $templatepath );	
+			EEH_Template::display_template( $templatepath );	
 		}
 
 
@@ -1685,7 +1685,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	public function espresso_sponsors_post_box() {
 		$templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_sponsors.template.php';
-		espresso_display_template( $templatepath );
+		EEH_Template::display_template( $templatepath );
 	}
 
 
@@ -1710,7 +1710,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//if we have extra content set let's add it in if not make sure its empty
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_publish_metabox.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -1863,7 +1863,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//if $create_func is true (default) then we automatically create the function for displaying the actual meta box.  If false then we take the $callback reference passed through and use it instead (so callers can define their own callback function/method if they wish)
-		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "AHEE_log", __FILE__, __FUNCTION__, ""); echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
+		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "AHEE_log", __FILE__, __FUNCTION__, ""); echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
 
 		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, $call_back_func, $this->_wp_page_slug, $column, $priority, $callback_args );
 	}
@@ -1878,7 +1878,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function display_admin_page_with_metabox_columns() {
 		$this->_template_args['post_body_content'] = $this->_template_args['admin_page_content'];
-		$this->_template_args['admin_page_content'] = espresso_display_template( $this->_column_template_path, $this->_template_args, TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $this->_column_template_path, $this->_template_args, TRUE);
 
 		//the final wrapper
 		$this->admin_page_wrapper();
@@ -1939,7 +1939,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['post_body_content'] = isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '';
 		$this->_template_args['before_admin_page_content'] = isset($this->_template_args['before_admin_page_content']) ? $this->_template_args['before_admin_page_content'] : '';
 		$this->_template_args['after_admin_page_content'] = isset($this->_template_args['after_admin_page_content']) ? $this->_template_args['after_admin_page_content'] : '';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 
 		// the final template wrapper
@@ -1956,7 +1956,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
 		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		$this->admin_page_wrapper();
 	}
 
@@ -2011,7 +2011,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_template_args['sortable_list_table_form_fields'] = $sortable_list_table_form_fields;
 
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		// the final template wrapper
 		if ( $sidebar )
@@ -2040,7 +2040,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _display_legend( $items ) {
 		$template_args['items'] = (array) $items;
 		$legend_template = EE_CORE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
-		return espresso_display_template($legend_template, $template_args, TRUE);
+		return EEH_Template::display_template($legend_template, $template_args, TRUE);
 	}
 
 
@@ -2148,11 +2148,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		if ( defined( 'DOING_AJAX' ) ) {
-			$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+			$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 			$this->_return_json();
 		} else {
-			espresso_display_template( $template_path, $this->_template_args );
+			EEH_Template::display_template( $template_path, $this->_template_args );
 		}
 
 	}

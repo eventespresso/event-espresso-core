@@ -252,7 +252,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function recaptcha_info_help_tab() {
 		$template = REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
-		espresso_display_template($template, array());
+		EEH_Template::display_template($template, array());
 	}
 
 
@@ -383,7 +383,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_template_args['question_types']=$questionTypes;
 		
 		$this->_set_publish_post_box_vars( 'id', $ID );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
 
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
@@ -581,7 +581,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		
 		$redirect_URL = add_query_arg( array( 'action' => 'question_groups'), $this->_admin_base_url );
 		$this->_set_publish_post_box_vars( 'id', $ID, FALSE, $redirect_URL  );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
 
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
@@ -822,7 +822,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
 

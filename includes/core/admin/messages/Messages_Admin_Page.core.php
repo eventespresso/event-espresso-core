@@ -341,31 +341,31 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function messages_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_help_tab.template.php';
-		espresso_display_template( $templatepath, array());
+		EEH_Template::display_template( $templatepath, array());
 	}
 
 
 	public function messengers_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messenger_help_tab.template.php';
-		espresso_display_template( $templatepath, array());
+		EEH_Template::display_template( $templatepath, array());
 	}
 
 
 	public function message_types_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_type_help_tab.template.php';
-		espresso_display_template( $templatepath, array());
+		EEH_Template::display_template( $templatepath, array());
 	}
 
 
 	public function messages_overview_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_overview_help_tab.template.php';
-		espresso_display_template( $templatepath, array());
+		EEH_Template::display_template( $templatepath, array());
 	}
 
 
 	public function message_templates_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_templates_help_tab.template.php';
-		espresso_display_template( $templatepath, array());
+		EEH_Template::display_template( $templatepath, array());
 	}
 
 
@@ -376,7 +376,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$args['img3'] = '<img class="left" src="' . EE_MSG_ASSETS_URL . 'images/form-fields.png' . '" alt="' . __('Message Template Form Fields', 'event_espresso') . '" />';
 		$args['img4'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/shortcodes-metabox.png' . '" alt="' . __('Shortcodes Metabox', 'event_espresso') . '" />';
 		$args['img5'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/publish-meta-box.png' . '" alt="' . __('Publish Metabox', 'event_espresso') . '" />';
-		espresso_display_template( $templatepath, $args);
+		EEH_Template::display_template( $templatepath, $args);
 	}
 
 
@@ -385,14 +385,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_set_shortcodes();
 		$args['shortcodes'] = $this->_shortcodes;
 		$template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_shortcodes_help_tab.template.php';
-		espresso_display_template( $template_path, $args );
+		EEH_Template::display_template( $template_path, $args );
 	}
 
 
 
 	public function preview_message_help_tab() {
 		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_preview_help_tab.template.php';
-		espresso_display_template( $templatepath, array());
+		EEH_Template::display_template( $templatepath, array());
 	}
 
 
@@ -402,7 +402,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . __('Inactive Email Tab', 'event_espresso') . '" />';
 		$args['img3'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'on-toggle.png' . '" alt="' . __('On Toggle Image', 'event_espresso') . '" />';
 		$args['img4'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'off-toggle.png' . '" alt="' . __('Off Toggle Image', 'event_espresso') . '" />';
-		espresso_display_template( $templatepath, $args);
+		EEH_Template::display_template( $templatepath, $args);
 	}
 
 
@@ -713,7 +713,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
 	
-		$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $this->_template_path, $this->_template_args, TRUE );
 
 
 		//final template wrapper
@@ -1176,12 +1176,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_path = $this->_template_args['GRP_ID'] ? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
 	
-		$this->_template_args['admin_page_content'] = espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $this->_template_path, $this->_template_args, TRUE );
 
 		//sidebar metabox (if we are editing and doing_ajax)
 		if ( $this->_template_args['GRP_ID'] && defined('DOING_AJAX') ) {
 			$this->_template_path = $sidebar_template_path;
-				$this->_template_args['admin_page_content'] .= espresso_display_template( $this->_template_path, $this->_template_args, TRUE );
+				$this->_template_args['admin_page_content'] .= EEH_Template::display_template( $this->_template_path, $this->_template_args, TRUE );
 		}
 
 
@@ -2072,7 +2072,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		$template = EE_MSG_TEMPLATE_PATH . 'ee_msg_mt_settings_content.template.php';
-		$content = espresso_display_template( $template, $settings_template_args, TRUE );
+		$content = EEH_Template::display_template( $template, $settings_template_args, TRUE );
 		return $content;
 	}
 
@@ -2127,7 +2127,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		foreach ( $m_boxes as $box => $label ) {
 			$callback_args = array( 'template_path' => $m_template_path, 'template_args' => $m_template_args[$box] );
 			$msgr = str_replace( '_a_box', '', $box );
-			add_meta_box( 'espresso_' . $msgr . '_settings', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args );
+			add_meta_box( 'espresso_' . $msgr . '_settings', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args );
 		}
 
 		//register message type metaboxes
@@ -2135,7 +2135,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		foreach ( $mt_boxes as $box => $label ) {
 			$callback_args = array( 'template_path' => $mt_template_path, 'template_args' => $mt_template_args[$box] );
 			$mt = str_replace( '_i_box', '', $box );
-			add_meta_box( 'espresso_' . $msgr . '_inactive_mts', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'side', 'high', $callback_args );
+			add_meta_box( 'espresso_' . $msgr . '_inactive_mts', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'side', 'high', $callback_args );
 		}
 
 	}
@@ -2152,7 +2152,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$tabs = '';
 
 		foreach ( $tab_array as $tab ) {
-			$tabs .=  espresso_display_template( $template, $tab, TRUE ); 
+			$tabs .=  EEH_Template::display_template( $template, $tab, TRUE ); 
 		}
 
 		return $tabs;
@@ -2238,7 +2238,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$settings_template_args['nonce'] = wp_create_nonce('activate_' . $messenger->name . '_toggle_nonce');
 		$settings_template_args['on_off_status'] = $active ? 'active' : 'inactive';
 		$template = EE_MSG_TEMPLATE_PATH . 'ee_msg_m_settings_content.template.php';
-		$content = espresso_display_template( $template, $settings_template_args, TRUE);
+		$content = EEH_Template::display_template( $template, $settings_template_args, TRUE);
 		return $content;
 	}
 

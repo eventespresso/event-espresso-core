@@ -310,7 +310,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			'cur_status_label' => array_key_exists($post->post_status, $statuses) ? $statuses[$post->post_status] : ''
 			);
 		$template = EE_CORE_ADMIN_TEMPLATE . 'status_dropdown.template.php';
-		espresso_display_template( $template, $template_args );
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 
@@ -845,7 +845,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//modify the default editor title field with default title.
 		add_filter('enter_title_here', array( $this, 'add_custom_editor_default_title' ), 10 );
 
-		espresso_display_template( $template, $this->_template_args );
+		EEH_Template::display_template( $template, $this->_template_args );
 	}
 
 
@@ -891,7 +891,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		$template = WP_ADMIN_PATH . 'edit-form-advanced.php';
-		espresso_display_template( $template, $this->_template_args );
+		EEH_Template::display_template( $template, $this->_template_args );
 
 	}
 

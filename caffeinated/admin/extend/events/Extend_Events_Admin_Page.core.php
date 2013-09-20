@@ -98,26 +98,26 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function add_additional_datetime_button( $template, $template_args ) {
-		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_add_additional_time.template.php', $template_args, TRUE);
+		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_add_additional_time.template.php', $template_args, TRUE);
 	}
 
 
 
 	public function add_datetime_clone_button( $template, $template_args ) {
-		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_metabox_clone_button.template.php', $template_args, TRUE );
+		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_metabox_clone_button.template.php', $template_args, TRUE );
 	}
 
 
 
 	public function datetime_timezones_template( $template, $template_args ) {
-		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_timezones.template.php', $template_args, TRUE );
+		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_timezones.template.php', $template_args, TRUE );
 	}
 
 
 	public function additional_registration_options( $html, $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values ) {
 		$template_args['use_attendee_pre_approval'] = $this->EE->CFG->registration->use_attendee_pre_approval;
 		$template_args['attendee_pre_approval_required'] = $this->EE->CFG->registration->use_attendee_pre_approval ? EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
-		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
+		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
 	}
 
 
@@ -125,7 +125,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function enable_attendee_pre_approval( $template_args ) {
 		$_args['attendee_pre_approval_select'] = EE_Form_Fields::select_input('use_attendee_pre_approval', $template_args['values'], $template_args['use_attendee_pre_approval'] );
 		$template = EVENTS_CAF_TEMPLATE_PATH . 'event_settings_enable_attendee_pre_approval.template.php';
-		espresso_display_template( $template, $_args );
+		EEH_Template::display_template( $template, $_args );
 	}
 
 
@@ -187,7 +187,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['require_pre_approval'] = EE_Form_Fields::select_input('require_pre_approval', $yes_no_values, $this->_cpt_model_obj->require_pre_approval() );
 		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
-		espresso_display_template($templatepath, $template_args);
+		EEH_Template::display_template($templatepath, $template_args);
 	}
 
 
@@ -202,7 +202,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function event_type_meta_box( $post, $box ) {
 		$template_args['radio_list'] = $this->wp_terms_radio($post->ID, array( 'taxonomy' => 'espresso_event_type' ) );
 		$template = EVENTS_CAF_TEMPLATE_PATH . 'event_type_metabox_contents.template.php';
-		espresso_display_template($template, $template_args);
+		EEH_Template::display_template($template, $template_args);
 	}
 
 

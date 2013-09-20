@@ -481,7 +481,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	public function _edit_price_details_meta_box() {		
-		echo espresso_display_template( PRICING_TEMPLATE_PATH . 'pricing_details_main_meta_box.template.php', $this->_template_args, TRUE );		
+		echo EEH_Template::display_template( PRICING_TEMPLATE_PATH . 'pricing_details_main_meta_box.template.php', $this->_template_args, TRUE );		
 	}
 
 
@@ -811,7 +811,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	public function _edit_price_type_details_meta_box() {		
-		echo espresso_display_template( PRICING_TEMPLATE_PATH . 'pricing_type_details_main_meta_box.template.php', $this->_template_args, TRUE );		
+		echo EEH_Template::display_template( PRICING_TEMPLATE_PATH . 'pricing_type_details_main_meta_box.template.php', $this->_template_args, TRUE );		
 	}
 
 

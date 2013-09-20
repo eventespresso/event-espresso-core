@@ -770,7 +770,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
-			$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+			$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 						
 		} else {
 			
@@ -1126,7 +1126,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['full_session'] = $this->_session;
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_details.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		
 	}
 
@@ -1181,7 +1181,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -1463,7 +1463,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
 		}
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_attendees.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -1498,7 +1498,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['notes'] = $attendee->notes();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -1569,7 +1569,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_box_billing_info.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -1599,7 +1599,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		// grab header
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee.template.php';
-		$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		$this->_set_add_edit_form_tags( 'save_new_registration' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -2361,7 +2361,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// generate metabox - you MUST create a callback named __FUNCTION__ . '_meta_box'  ( see "_edit_attendee_details_meta_box" below )
 		$this->_template_path = REG_TEMPLATE_PATH . 'attendee_details_main_meta_box.template.php';
 		//$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
-		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 
 		$this->_set_publish_post_box_vars( 'ATT_ID', $ATT_ID, 'delete_attendees' );
 

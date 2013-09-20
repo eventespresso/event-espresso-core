@@ -64,7 +64,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 	protected function _faq() {
 
 		$template_path = EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH . 'support_admin_details_faq.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, '', TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, '', TRUE);
 		$this->display_admin_page_with_sidebar();
 
 	}
@@ -73,7 +73,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 
 	protected function _installation_boxes() {
 		$callback_args = array('template_path' => EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH . 'support_admin_details_additional_information.template.php');
-		add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen_id, 'normal', 'high', $callback_args);
+		add_meta_box( 'espresso_additional_information_support', __('Additional Information', 'event_espresso'), create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], "", TRUE);' ), $this->_current_screen_id, 'normal', 'high', $callback_args);
 	}
 
 

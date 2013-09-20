@@ -447,7 +447,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['notices'] = EE_Error::get_notices();
 		// path to template 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_header.template.php';
-		$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -575,7 +575,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		// 'espresso_delete_payment_nonce'
 		
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_txn_details.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -685,7 +685,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  
 
 			$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
-			echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+			echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		}
 	}
@@ -726,7 +726,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -817,7 +817,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_billing_info.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 

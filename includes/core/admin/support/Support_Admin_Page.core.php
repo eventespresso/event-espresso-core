@@ -115,7 +115,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	protected function _installation() {
 		$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_installation.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, '', TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, '', TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
 
@@ -143,7 +143,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 		foreach ( $boxes as $box => $label ) {
 			$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_' . $box . '.template.php';
 			$callback_args = array('template_path' => $template_path);
-			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
+			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], "", TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
 		}
 	}
 
@@ -171,7 +171,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 		foreach ( $boxes as $box => $label ) {
 			$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_' . $box . '.template.php';
 			$callback_args = array('template_path' => $template_path);
-			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], "", TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
+			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], "", TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
 		}
 	}
 
@@ -193,7 +193,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 		foreach ( $boxes as $box => $label ) {
 			$template_path = EE_SUPPORT_ADMIN_TEMPLATE_PATH . 'support_admin_details_' . $box . '.template.php';
 			$callback_args = array('template_path' => $template_path, 'template_args' => $this->_template_args);
-			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
+			add_meta_box( 'espresso_' . $box . '_settings', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args);
 		}
 	}
 
