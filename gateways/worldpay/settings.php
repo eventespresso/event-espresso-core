@@ -2,7 +2,7 @@
 
 function event_espresso_worldpay_payment_settings() {
 
-	global $caffeinated, $notices, $this->EE->CFG->wp_user, $org_options;
+	global $caffeinated, $this->EE->CFG->wp_user;
 	if ($caffeinated != true)
 		return;
 
@@ -17,9 +17,9 @@ function event_espresso_worldpay_payment_settings() {
 		$payment_settings['worldpay']['bypass_payment_page'] = $_POST['bypass_payment_page'];
 		$payment_settings['worldpay']['button_url'] = $_POST['button_url'];
 		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-			$notices['updates'][] = __('Worldpay Settings Updated!', 'event_espresso');
+			EE_Error::add_success( __('Worldpay Settings Updated!', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
-			$notices['errors'][] = __('Worldpay Settings were not saved! ', 'event_espresso');
+			EE_Error::add_error( __('Worldpay Settings were not saved! ', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -62,18 +62,18 @@ function event_espresso_worldpay_payment_settings() {
 					if (!empty($_REQUEST['activate_worldpay'])) {
 						$payment_settings['worldpay']['active'] = true;
 						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('Worldpay Activated', 'event_espresso');
+							EE_Error::add_success( __('Worldpay Activated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 						} else {
-							$notices['errors'][] = __('Unable to Activate Worldpay', 'event_espresso');
+							EE_Error::add_error( __('Unable to Activate Worldpay', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
 
 					if (!empty($_REQUEST['deactivate_worldpay'])) {
 						$payment_settings['worldpay']['active'] = false;
 						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('Worldpay De-activated', 'event_espresso');
+							EE_Error::add_success( __('Worldpay De-activated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 						} else {
-							$notices['errors'][] = __('Unable to De-activate Worldpay', 'event_espresso');
+							EE_Error::add_error( __('Unable to De-activate Worldpay', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
 					echo '<ul>';

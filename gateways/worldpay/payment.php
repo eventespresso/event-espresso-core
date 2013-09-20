@@ -1,7 +1,7 @@
 <?php
 
 function espresso_display_worldpay($attendee_id, $event_id, $event_cost) {
-	global $wpdb, $org_options, $this->EE->CFG->wp_user;
+	global $wpdb, $this->EE->CFG->wp_user;
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	include_once ('Worldpay.php');
 	$myworldpay = new worldpay(); // initiate an instance of the class
@@ -88,9 +88,9 @@ function espresso_display_worldpay($attendee_id, $event_id, $event_cost) {
 	$myworldpay->addField('amount', $total_cost);
 	$myworldpay->addField('currency', $worldpay_settings['currency_format']);
 	/*
-	  $myworldpay->addField('return', home_url() . '/?page_id=' . $org_options['return_url'] . '&id=' . $attendee_id);
-	  $myworldpay->addField('cancel_return', home_url() . '/?page_id=' . $org_options['cancel_return']);
-	  $myworldpay->addField('notify_url', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment');
+	  $myworldpay->addField('return', home_url() . '/?page_id=' . EE_Registry::instance()->CFG->core->reg_page_id . '&id=' . $attendee_id);
+	  $myworldpay->addField('cancel_return', home_url() . '/?page_id=' . EE_Registry::instance()->CFG->core->cancel_page_id);
+	  $myworldpay->addField('notify_url', home_url() . '/?page_id=' . EE_Registry::instance()->CFG->core->txn_page_id . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment');
 	  $event_meta = event_espresso_get_event_meta($event_id);
 	  if (count($attendees) > 0) {
 	  $i = 1;
