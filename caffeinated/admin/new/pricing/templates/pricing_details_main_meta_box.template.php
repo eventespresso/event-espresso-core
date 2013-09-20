@@ -32,16 +32,6 @@
 					<p class="description"><?php _e('The dollar or percentage amount for this Price.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
-			<tr valign="top">
-				<th><label><?php _e('Active', 'event_espresso'); ?></label></th>
-				<td>
-					<?php $yes_checked = $price->is_active() ? ' checked="checked"' : ''; ?>
-					<label style="margin-right:15px;"><input type="radio" name="PRC_is_active" value="1"<?php echo $yes_checked;?> style="margin-right:5px;"><?php _e('Yes', 'event_espresso');?></label>
-					<?php $no_checked = $price->is_active() ? '' : ' checked="checked"'; ?>
-					<label style="margin-right:15px;"><input type="radio" name="PRC_is_active" value="0"<?php echo $no_checked;?> style="margin-right:5px;"><?php _e('No', 'event_espresso');?></label>
-					<p class="description"><?php _e('Whether this Price is currently being used and displayed on the site.', 'event_espresso'); ?></p>
-				</td>
-			</tr>
 		</tbody>
 	</table>
 
