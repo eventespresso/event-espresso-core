@@ -161,6 +161,7 @@ class EEH_Activation {
 		$default_config->registration->show_pending_payment_options = FALSE;
 		$default_config->registration->use_captcha = FALSE;
 		$default_config->registration->recaptcha_theme = 'clean';
+		$default_config->registration->recaptcha_width = 500;
 		$default_config->registration->recaptcha_language = 'en';
 		$default_config->registration->recaptcha_publickey = NULL;
 		$default_config->registration->recaptcha_privatekey = NULL;

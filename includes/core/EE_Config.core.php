@@ -775,6 +775,12 @@ class EE_Registration_Config extends EE_Config_Base{
       public $recaptcha_language = 'en';
 	 
 	  /**
+	   * ReCaptcha width
+	   * @var $recaptcha_width int
+	   */
+      public $recaptcha_width = 500;
+	 
+	  /**
 	   * ReCaptcha public key
 	   * @var $recaptcha_publickey string
 	   */
