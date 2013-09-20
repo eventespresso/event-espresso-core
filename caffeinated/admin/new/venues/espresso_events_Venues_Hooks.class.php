@@ -99,13 +99,12 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 
 	public function venue_metabox() {
-		global $org_options;
+
 		$values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
 
-		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$evt_obj = $this->_adminpage_obj->get_event_object();
 		$evt_id = $evt_obj->ID();
 
@@ -114,19 +113,18 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		$evt_venue = !empty( $evt_venues ) ? array_shift( $evt_venues ) : NULL;
 		$evt_venue_id = !empty( $evt_venue ) ? $evt_venue->ID() : NULL;
 		//all venues!
-		$wheres = array( 'status' => 'publish' );
-		$venues = EEM_Venue::instance()->get_all(array($wheres));
+		$venues = EE_Registry::instance()->load_model( 'Venue' )->get_all( array( array( 'status' => 'publish' )));
 
-		$ven_sel[0] = __('Select a Venue', 'event_espresso');
+		$ven_select = array();
+		$ven_select[0] = __('Select a Venue', 'event_espresso');
 		//setup venues for selector
 		foreach ( $venues as $venue ) {
-			$ven_sel[$venue->ID()] = $venue->name();
+			$ven_select[$venue->ID()] = $venue->name();
 		}
 
 		$template_args['venues'] = $venues;
 		$template_args['evt_venue_id'] = $evt_venue_id;
-		$template_args['venue_selector'] = EE_Form_Fields::select_input('venue_id', $ven_sel, $evt_venue_id, 'id="venue_id"' );
-		$template_args['org_options'] = $org_options;
+		$template_args['venue_selector'] = EE_Form_Fields::select_input('venue_id', $ven_select, $evt_venue_id, 'id="venue_id"' );
 		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, is_object( $evt_venue ) ? $evt_venue->enable_for_gmap() : NULL, 'id="enable_for_gmap"');
 		$template_path = empty( $venues ) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php' : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
 		espresso_display_template( $template_path, $template_args );
