@@ -487,7 +487,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				
 				$Item = array(
 							// Item Name.  127 char max.
-							'l_name' => substr($attendee_full_name . " attending " . $registration->event_name() . " with ticket " . $ticket->name_and_info()),
+							'l_name' => $attendee_full_name . " attending " . $registration->event_name() . " with ticket " . $ticket->name_and_info(),
 							// Item description.  127 char max.
 							'l_desc' => $ticket->description(),
 							// Cost of individual item.
@@ -525,15 +525,19 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 			// Pass the master array into the PayPal class function
 			$PayPalResult = $this->DoDirectPayment($PayPalRequestData);
-
+			//remove PCI-sensitive data so it doesn't get stored
+			unset($PayPalResult['REQUESTDATA']['CREDITCARDTYPE']);
+			unset($PayPalResult['REQUESTDATA']['ACCT']);
+			unset($PayPalResult['REQUESTDATA']['EXPDATE']);
+			unset($PayPalResult['REQUESTDATA']['CVV2']);
+			unset($PayPalResult['RAWREQUEST']);
 			if ($this->_APICallSuccessful($PayPalResult)) {
-				echo 'echodump of $PayPalResult';
-				var_dump($PayPalResult);die;
+				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
 						'approved' => TRUE,
 						'status' => 'Approved',
-						'response_msg' => isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'],
+						'response_msg' => $message,
 						'amount' => $PayPalResult['AMT'],
 						'method' => 'CC',
 						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
@@ -544,19 +548,36 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'raw_response' => $PayPalResult
 				);
 				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				$primary_registrant = $transaction->primary_registration();
+				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 
-				$success = TRUE;
+				$payment = EE_Payment::new_instance(array(
+								'TXN_ID' => $transaction->ID(),
+								'STS_ID' => EEM_Payment::status_id_approved,
+								'PAY_timestamp' => current_time('mysql',false),
+								'PAY_method' => 'CART',
+								'PAY_amount' => $PayPalResult['AMT'],
+								'PAY_gateway' => $this->_gateway_name,
+								'PAY_gateway_response' => $message,
+								'PAY_txn_id_chq_nmbr' => $PayPalResult['TRANSACTIONID'],
+								'PAY_po_number' => NULL,
+								'PAY_extra_accntng' => $primary_registration_code,
+								'PAY_via_admin' => false,
+								'PAY_details' => (array) $PayPalResult));
+				$payment->save();
+				$this->update_transaction_with_payment($transaction, $payment);
+				$return = array('success'=>true);
 
 			} else {
 
 				$Errors = $this->_GetErrors($PayPalResult);
 				//printr( $PayPalResult, '$PayPalResult' );
-
+				$message = $this->_DisplayErrors($Errors);
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
 						'approved' => FALSE,
 						'status' => 'Declined',
-						'response_msg' => $this->_DisplayErrors($Errors),
+						'response_msg' => $message,
 						'amount' => '0.00',
 						'method' => 'CC',
 						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
@@ -567,15 +588,15 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'raw_response' => $PayPalResult
 				);
 				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
-
-				$success = FALSE;
+				
+				$return = array('error'=>$message);
 			}
 
-			do_action( 'AHEE_after_payment', $EE_Session, $success );
+		}else{ // end if ($billing_info != 'no payment required')
+			$return = array('success'=>true);
+		}
 
-		} // end if ($billing_info != 'no payment required')
-
-		return array('success' => TRUE);
+		return $return;
 	}
 
 	private function DoDirectPayment($DataArray) {
