@@ -5,8 +5,14 @@
 			<tr valign="top">
 				<th><label for="PRT_ID"><?php _e('Type', 'event_espresso'); ?></label></th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('PRT_ID', $price_types, $price->type(), 'id="PRT_ID"'); ?>
-					<p class="description"><?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax. Default items will apply to ALL new events you create.', 'event_espresso'); ?></p>
+					<?php if ( $price->type_obj()->base_type() === 1 ) : ?>
+						<input type="hidden" name="PRT_ID" id="PRT_ID" value="<?php echo $price->type(); ?>" />
+						<p><strong><?php _e('Base Price', 'event_espresso'); ?></strong></p>
+						<p class="description"><?php _e('This is the default base price. Every new ticket created will start off with this base price.', 'event_espresso'); ?></p>
+					<?php else : ?>
+						<?php echo EE_Form_Fields::select_input('PRT_ID', $price_types, $price->type(), 'id="PRT_ID"'); ?>
+						<p class="description"><?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax. Default items will apply to ALL new events you create.', 'event_espresso'); ?></p>
+					<?php endif; ?>
 				</td>
 			</tr>
 			<tr valign="top">

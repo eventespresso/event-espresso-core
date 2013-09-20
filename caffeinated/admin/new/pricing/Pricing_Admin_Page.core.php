@@ -434,7 +434,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// get price types
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
-		$price_types = $PRT->get_all();
+		$price_types = $PRT->get_all( array( array('PBT_ID' => array('!=', 1 ) ) ) );
 		$price_type_names = array();
 		if (empty($price_types)) {
 			$msg = __( 'You have no price types defined. Please add a price type before adding a price.', 'event_espresso' );
