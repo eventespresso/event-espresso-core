@@ -583,6 +583,20 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'invoice_number' => $session_data['primary_attendee']['registration_id'],
 						'raw_response' => $e
 				);
+				$payment = EE_Payment::new_instance(array(
+								'TXN_ID' => $transaction->ID(),
+								'STS_ID' => EEM_Payment::status_id_failed,
+								'PAY_timestamp' => current_time('mysql',false),
+								'PAY_method' => 'CART',
+								'PAY_amount' => $transaction->total(),
+								'PAY_gateway' => $this->_gateway_name,
+								'PAY_gateway_response' => $e->getMessage(),
+								'PAY_txn_id_chq_nmbr' => null,
+								'PAY_po_number' => NULL,
+								'PAY_extra_accntng' => null,
+								'PAY_via_admin' => false,
+								'PAY_details' => $e));
+				$payment->save();
 				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 				
 				$return = array('error'=>$e->getMessage());
