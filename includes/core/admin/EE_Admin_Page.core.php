@@ -32,6 +32,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//set in _init_page_props()
 	public $page_slug;
 	public $page_label;
+	public $page_folder;
 
 	//set in define_page_props()
 	protected $_admin_base_url;
@@ -439,6 +440,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//next verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
+		$this->page_folder = strtolower( str_replace( '_Admin_Page', '', str_replace( 'Extend_', '', get_class($this) ) ) );
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
 
