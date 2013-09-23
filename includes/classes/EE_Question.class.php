@@ -392,6 +392,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question_Option[]
 	 */
 	public function options($notDeletedOptionsOnly=true){
+		if ( empty( $this->_QST_ID ) )
+			return false;
+
 		if($notDeletedOptionsOnly){
 			return  $this->get_many_related('Question_Option', array(array('QSO_deleted'=>false)));
 		}else{
