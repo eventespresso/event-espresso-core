@@ -374,8 +374,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		$questionTypes=array();
 		$count=0;
-		foreach($this->_question_model->allowed_question_types() as $type){
-			$questionTypes[$count]=array('id'=>$type,'text'=>$type);
+		foreach($this->_question_model->allowed_question_types() as $type => $label ){
+			$questionTypes[$count]=array('id'=>$type,'text'=>$label);
 			$count++;
 		}
 		$this->_template_args['QST_ID']=$ID;
