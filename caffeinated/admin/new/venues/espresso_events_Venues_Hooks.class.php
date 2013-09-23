@@ -127,7 +127,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		$template_args['venue_selector'] = EE_Form_Fields::select_input('venue_id', $ven_select, $evt_venue_id, 'id="venue_id"' );
 		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, is_object( $evt_venue ) ? $evt_venue->enable_for_gmap() : NULL, 'id="enable_for_gmap"');
 		$template_path = empty( $venues ) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php' : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
-		espresso_display_template( $template_path, $template_args );
+		EEH_Template::display_template( $template_path, $template_args );
 	}
 
 

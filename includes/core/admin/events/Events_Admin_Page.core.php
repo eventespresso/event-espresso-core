@@ -328,7 +328,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function default_event_settings_help_tab($tab_name) {
 		require_once( EVENTS_TEMPLATE_PATH . 'default_event_settings_help_tab.template.php' );
 		$template = call_user_func($tab_name . '_html');
-		espresso_display_template($template, array());
+		EEH_Template::display_template($template, array());
 	}
 
 	public function events_expire_on_reg_end_date_help_tab() {
@@ -347,7 +347,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function event_edit_help_tab($tab_name) {
 		require_once EVENTS_TEMPLATE_PATH . 'event_edit_help_tab.template.php';
 		$template = call_user_func($tab_name . '_html');
-		espresso_display_template($template, array());
+		EEH_Template::display_template($template, array());
 	}
 
 	public function event_date_info_help_tab() {
@@ -954,7 +954,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_cpt_model_obj->id), 'admin.php?page=espresso_registrations');
 		$publish_box_extra_args['event_editor_overview_add'] = do_action('AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj);
 		// load template
-		espresso_display_template( EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args );
+		EEH_Template::display_template( EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args );
 	}
 
 
@@ -1062,7 +1062,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
 		$template_args['ticket_js_structure'] = $this->_get_ticket_row( $this->EE->load_model('Ticket')->create_default_object(), TRUE );
 		$template = apply_filters( 'FHEE__Events_Admin_Page__ticket_metabox__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php' );
-		espresso_display_template($template, $template_args);
+		EEH_Template::display_template($template, $template_args);
 	}
 
 
@@ -1100,7 +1100,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$template_args = array_merge( $template_args, $price_args );
 		$template = apply_filters('FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
-		return espresso_display_template($template, $template_args, TRUE);
+		return EEH_Template::display_template($template, $template_args, TRUE);
 	}
 
 
@@ -1124,7 +1124,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
 		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
-		espresso_display_template($templatepath, $template_args);
+		EEH_Template::display_template($templatepath, $template_args);
 	}
 
 
@@ -1163,7 +1163,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['countries_dropdown'] = EE_Form_Fields::select_input('countries', $ctry_ary, $venue->country_ID(), 'id="phys-country"');
 		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
 		$template_path = EVENTS_TEMPLATE_PATH . 'event_venues_metabox_content.template.php';
-		espresso_display_template( $template_path, $template_args );
+		EEH_Template::display_template( $template_path, $template_args );
 	}
 
 		
@@ -1545,7 +1545,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_set_add_edit_form_tags('update_default_event_settings');
 		$this->_set_publish_post_box_vars(NULL, FALSE, FALSE, NULL, FALSE);
-		$this->_template_args['admin_page_content'] = espresso_display_template(EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
 
@@ -1759,7 +1759,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
 			);
 		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
-		return espresso_display_template($template, $template_args, TRUE );
+		return EEH_Template::display_template($template, $template_args, TRUE );
 	}
 
 

@@ -99,7 +99,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 //		$page_args['admin_reports'][] = 'chart1';
 		
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_reports.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $page_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
 		
 //		printr( $page_args, '$page_args' );
 		

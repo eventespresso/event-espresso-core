@@ -599,7 +599,7 @@ final class EE_Front_Controller {
 
 
 		echo EE_Error::get_notices();
-		echo espresso_display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php', array(), TRUE );
+		EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php' );
 	}
 
 

@@ -195,14 +195,17 @@ jQuery(document).ready(function($) {
 			}
 
 			var fadeaway = true;
+			var existing_message = $('#message');
 
 			if ( response.success != undefined && response.success != '' ) {
-				msg = '<div id="message" class="updated hidden"><p>' + response.success + '</p></div>';
+				msg = '<p>' + response.success + '</p>';
+				msg = existing_message.length > 0 ? msg : '<div id="message" class="updated hidden">'+msg+'</div>';
 				//closeModal = true;
 			}
 		
 			if ( response.errors != undefined && response.errors != '' ) {
-				msg = '<div id="message" class="error hidden"><p>' + response.errors + '</p></div>';
+				msg = '<p>' + response.errors + '</p>';
+				msg = existing_message.length > 0 ? msg : '<div id="message" class="error hidden">'+msg+'</div>';
 				//closeModal = false;
 				fadeaway = false;
 			}
@@ -212,24 +215,18 @@ jQuery(document).ready(function($) {
 			}
 			
 			// display message
-			$( beforeWhat ).before( msg );
+			if ( existing_message.length > 0 ) {
+				existing_message.html(msg);
+			}else {
+				$( beforeWhat ).before( msg );
+			}
 			if ( fadeaway == true ) {
 				$('#message').removeClass('hidden').show().delay(8000).fadeOut();
-//				$('#message').removeClass('hidden').show().delay(8000).fadeOut( function(){
-//						if ( closeModal ) {
-//							overlay.trigger('click');
-//						}
-//				});
 			} else {
 				$('#message').removeClass('hidden').show();
-//				$('#message').removeClass('hidden').show().delay(8000).queue( function() {
-//						if ( closeModal ) {
-//							overlay.trigger('click');
-//						}
-//				});
 			}
 
-		} 
+		}
 
 	}
 

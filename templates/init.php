@@ -2,10 +2,10 @@
 $espresso_template_version = "1.0";
 
 if ( espresso_template_version() != $espresso_template_version && is_admin()){
-	add_action( 'admin_notices', 'espresso_display_template_error' );
+	add_action( 'admin_notices', 'EEH_Template::display_template_error' );
 }
 
-function espresso_display_template_error() {
+function EEH_Template::display_template_error() {
 	echo '<div class="error fade"><p><strong>' . __('Your Event Espresso templates are outdated. Please update your templates ASAP!', 'event_espresso') . '</strong></p></div>';
 }
 

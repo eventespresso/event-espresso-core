@@ -402,7 +402,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'vnu_phone' => $this->_cpt_model_obj->phone()
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_publish_box_extras.template.php';
-		espresso_display_template( $template, $extra_rows );
+		EEH_Template::display_template( $template, $extra_rows );
 	}
 
 
@@ -423,7 +423,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'vnu_google_map_link' => $this->_cpt_model_obj->google_map_link(),
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_gmap_metabox_content.template.php';
-		espresso_display_template( $template, $template_args );
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 
@@ -451,7 +451,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_address_metabox_content.template.php';
-		espresso_display_template( $template, $template_args );
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 
@@ -464,7 +464,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'_venue' => $this->_cpt_model_obj
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_virtual_location_metabox_content.template.php';
-		espresso_display_template( $template, $template_args );
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 
@@ -923,7 +923,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
 			);
 		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
-		return espresso_display_template($template, $template_args, TRUE );
+		return EEH_Template::display_template($template, $template_args, TRUE );
 	}
 
 

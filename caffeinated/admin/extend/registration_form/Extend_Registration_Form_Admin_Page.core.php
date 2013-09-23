@@ -252,7 +252,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function recaptcha_info_help_tab() {
 		$template = REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
-		espresso_display_template($template, array());
+		EEH_Template::display_template($template, array());
 	}
 
 
@@ -328,7 +328,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	protected function _set_column_values_for(EEM_Base $model){
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
-		foreach($model->fields_settings() as $fieldName=>$settings){
+		foreach($model->field_settings() as $fieldName=>$settings){
 			// basically if QSG_identifier is empty or not set
 			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) || ! isset( $this->_req_data['QSG_identifier'] ) )) {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
@@ -369,13 +369,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$additional_hidden_fields=array('QST_ID'=>array('type'=>'hidden','value'=>$ID));
 			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
 		}else{
-			$question=new EE_Question();
+			$question= $this->EE->load_model('Question')->create_default_object();
 			$this->_set_add_edit_form_tags('insert_question');
 		}
 		$questionTypes=array();
 		$count=0;
-		foreach($this->_question_model->allowed_question_types() as $type){
-			$questionTypes[$count]=array('id'=>$type,'text'=>$type);
+		foreach($this->_question_model->allowed_question_types() as $type => $label ){
+			$questionTypes[$count]=array('id'=>$type,'text'=>$label);
 			$count++;
 		}
 		$this->_template_args['QST_ID']=$ID;
@@ -383,7 +383,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_template_args['question_types']=$questionTypes;
 		
 		$this->_set_publish_post_box_vars( 'id', $ID );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
 
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
@@ -448,12 +448,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
-		require_once('EE_Question.class.php');
 		if($new_question){
 			$results=$this->_question_model->insert($set_column_values);
 			if($results){
 				$success=1;
-				$ID=$results['new-ID'];
+				$ID=$results;
 			}else{
 				$success=0;
 				$ID=false;
@@ -464,7 +463,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$pk=$this->_question_model->primary_key_name();
 			$wheres=array($pk=>$ID);
 			unset($set_column_values[$pk]);
-			$success= $this->_question_model->update($set_column_values,$wheres);
+			$success= $this->_question_model->update($set_column_values,array($wheres));
 			$action_desc='updated';
 		}
 		//save the related options
@@ -492,9 +491,22 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				if(empty($option_req_data['QSO_name'])){
 					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
 				}
-				$new_option=new EE_Question_Option($option_req_data['QSO_name'], $option_req_data['QSO_value'], $question->ID());
-				$new_option->save();
-			}
+
+				//set a default option object
+				$option = $this->EE->load_model('Question_Option')->create_default_object();
+
+				//add the new data
+				foreach ( $option_req_data as $column => $value ) {
+					$option->set($column, $value);
+				}
+				//because this is in a loop.  Make sure we set the QSO_ID to zero (cause EE_Base_Classes are singletons).
+				$option->set('QSO_ID', NULL); 
+				//SAVE the option
+				$option->save();
+				//add to question
+				$option->_add_relation_to($question, 'Question');
+			}			
+
 		}
 		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
@@ -581,7 +593,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		
 		$redirect_URL = add_query_arg( array( 'action' => 'question_groups'), $this->_admin_base_url );
 		$this->_set_publish_post_box_vars( 'id', $ID, FALSE, $redirect_URL  );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
 
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
@@ -693,7 +705,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		
 
-		$action = $model instanceof EEM_Question ? 'questions' : 'question_groups';//strtolower( $model->item_name(2) );
+		$action = $model instanceof EEM_Question ? 'default' : 'question_groups';//strtolower( $model->item_name(2) );
 		//echo "action :$action";
 		//$action = 'questions' ? 'default' : $action;
 		if($trash){
@@ -822,7 +834,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
 

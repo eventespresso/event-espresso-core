@@ -525,7 +525,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		$main_template_args['ticket_js_structure'] = $this->_get_ticket_js_structure($times, $all_tickets);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php';
-		espresso_display_template( $template, $main_template_args );
+		EEH_Template::display_template( $template, $main_template_args );
 		return;
 	}
 
@@ -540,7 +540,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_row_wrapper.template.php';
-		return espresso_display_template( $template, $dtt_display_template_args, TRUE);
+		return EEH_Template::display_template( $template, $dtt_display_template_args, TRUE);
 	}	
 
 
@@ -553,7 +553,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? 'lock-icon' : 'trash-icon clickable'
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_display_row.template.php';
-		return espresso_display_template( $template, $template_args, TRUE);
+		return EEH_Template::display_template( $template, $template_args, TRUE);
 	}
 
 
@@ -570,7 +570,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
@@ -591,7 +591,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		}
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_attached_tickets_row.template.php';
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
@@ -609,7 +609,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_dtt_tickets_list.template.php';
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
@@ -681,7 +681,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		}
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_row.template.php';
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
@@ -703,7 +703,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'tax_added_display' => EEH_Template::format_currency($tax_added, FALSE, FALSE ),
 				'tax_amount' => $tax->get('PRC_amount')
 				);
-			$tax_rows .= espresso_display_template( $template, $template_args, TRUE );
+			$tax_rows .= EEH_Template::display_template( $template, $template_args, TRUE );
 		}
 
 		return $tax_rows;
@@ -741,7 +741,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_price_row.template.php';
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
@@ -766,7 +766,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_type_base.template.php';
 
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
@@ -791,7 +791,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'PRT_operator' => $price_type->is_discount() ? '-' : '+',
 				'PRT_is_percent' => $price_type->get('PRT_is_percent') ? 1 : 0
 				);
-			$price_option_spans .= espresso_display_template($price_option_span_template, $spanargs, TRUE );
+			$price_option_spans .= EEH_Template::display_template($price_option_span_template, $spanargs, TRUE );
 		}
 
 
@@ -806,7 +806,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_modifier_selector.template.php';
 
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
@@ -824,7 +824,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_datetimes_list_item.template.php';
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
@@ -868,14 +868,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_js_structure.template.php';
-		return espresso_display_template( $template, $template_args, TRUE );
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
 	/** experiemental box
 	public function pricing_metabox() {
 		$template = EVENTS_TEMPLATE_PATH . 'new_price_layout.template.php';
-		espresso_display_template($template);
+		EEH_Template::display_template($template);
 	} /**/
 
 
