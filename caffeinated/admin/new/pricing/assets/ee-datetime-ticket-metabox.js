@@ -833,8 +833,6 @@ jQuery(document).ready(function($) {
 				singleDTTTKTs = [],
 				activeTKTs = $('.ticket-selected', '#event-datetime-' + row);
 
-			console.log(activeTKTs);
-
 			//foreach of these tickets lets check if this datetime is the ONLY dtt active.
 			activeTKTs.each( function() {
 				tktdata = $(this).data();
@@ -842,8 +840,6 @@ jQuery(document).ready(function($) {
 				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 )
 					singleDTTTKTs[tktrow] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).val();
 				});
-
-			console.log(singleDTTTKTs);
 
 			if ( singleDTTTKTs.length === 0 )
 				return true; //we're okay
