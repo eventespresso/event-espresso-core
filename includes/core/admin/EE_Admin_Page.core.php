@@ -1449,6 +1449,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _set_list_table_object() {
 		if ( isset($this->_route_config['list_table'] ) ) {
+			if ( !class_exists( $this->_route_config['list_table'] ) )
+				throw new EE_Error( sprintf( __('The %s class defined for the list table does not exist.  Please check the spelling of the class ref in the $_page_config property on %s.', 'event_espresso'), $this->_route_config['list_table'], get_class($this) ) );
 			$a = new ReflectionClass($this->_route_config['list_table']);
 			$this->_list_table_object = $a->newInstance($this);
 		}
