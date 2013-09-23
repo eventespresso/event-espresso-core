@@ -452,7 +452,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$results=$this->_question_model->insert($set_column_values);
 			if($results){
 				$success=1;
-				$ID=$results['new-ID'];
+				$ID=$results;
 			}else{
 				$success=0;
 				$ID=false;
