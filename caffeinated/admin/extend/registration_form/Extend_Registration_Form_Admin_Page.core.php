@@ -328,7 +328,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	protected function _set_column_values_for(EEM_Base $model){
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
-		foreach($model->fields_settings() as $fieldName=>$settings){
+		foreach($model->field_settings() as $fieldName=>$settings){
 			// basically if QSG_identifier is empty or not set
 			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) || ! isset( $this->_req_data['QSG_identifier'] ) )) {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
