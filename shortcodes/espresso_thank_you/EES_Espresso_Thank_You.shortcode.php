@@ -146,7 +146,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 			} 
 			
-			$this->EE->REQ->add_output( espresso_display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));			
+			$this->EE->REQ->add_output( EEH_Template::display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));			
 		}
 
 		return $this->EE->REQ->get_output();		

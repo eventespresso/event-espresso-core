@@ -90,9 +90,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
 
-		wp_register_script('event_datetime_js', EVENTS_CAF_ASSETS_URL . 'js/ee_events_datetime.js', array('event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_localize_script( 'event_datetime_js', 'eei18n', EE_Registry::$i18n_js_strings );
-		wp_enqueue_script('event_datetime_js');
 	}
 
 
@@ -101,27 +98,26 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function add_additional_datetime_button( $template, $template_args ) {
-		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_add_additional_time.template.php', $template_args, TRUE);
+		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_add_additional_time.template.php', $template_args, TRUE);
 	}
 
 
 
 	public function add_datetime_clone_button( $template, $template_args ) {
-		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_metabox_clone_button.template.php', $template_args, TRUE );
+		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_metabox_clone_button.template.php', $template_args, TRUE );
 	}
 
 
 
 	public function datetime_timezones_template( $template, $template_args ) {
-		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_timezones.template.php', $template_args, TRUE );
+		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_timezones.template.php', $template_args, TRUE );
 	}
 
 
 	public function additional_registration_options( $html, $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values ) {
-		global $org_options;
-		$template_args['use_attendee_pre_approval'] = $org_options['use_attendee_pre_approval'];
-		$template_args['attendee_pre_approval_required'] = $org_options['use_attendee_pre_approval'] ? EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
-		return espresso_display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
+		$template_args['use_attendee_pre_approval'] = $this->EE->CFG->registration->use_attendee_pre_approval;
+		$template_args['attendee_pre_approval_required'] = $this->EE->CFG->registration->use_attendee_pre_approval ? EE_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
+		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
 	}
 
 
@@ -129,7 +125,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function enable_attendee_pre_approval( $template_args ) {
 		$_args['attendee_pre_approval_select'] = EE_Form_Fields::select_input('use_attendee_pre_approval', $template_args['values'], $template_args['use_attendee_pre_approval'] );
 		$template = EVENTS_CAF_TEMPLATE_PATH . 'event_settings_enable_attendee_pre_approval.template.php';
-		espresso_display_template( $template, $_args );
+		EEH_Template::display_template( $template, $_args );
 	}
 
 
@@ -152,18 +148,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return void 
 	 */
 	protected function _premium_event_editor_meta_boxes() {
-		global $org_options;
-
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->page_slug, 'side', 'default');
-
 		add_meta_box('espresso_event_types', __('Event Type', 'event_espresso'), array( $this, 'event_type_meta_box' ), $this->page_slug, 'side', 'core' );
 
 		//todo feature in progress
 		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
 		//todo, this will morph into the "Person" metabox once events are converted to cpts and we have the persons cpt in place.
-		if ($org_options['use_personnel_manager']) {
+		if ( $this->EE->CFG->admin->use_personnel_manager ) {
 			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array( $this, 'personnel_metabox' ), $this->page_slug, 'side', 'default');
 		}
 	}
@@ -176,7 +169,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 */
 	public function registration_options_meta_box() {
 
-		global $org_options;
 		$yes_no_values = array(
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
@@ -195,7 +187,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['require_pre_approval'] = EE_Form_Fields::select_input('require_pre_approval', $yes_no_values, $this->_cpt_model_obj->require_pre_approval() );
 		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
-		espresso_display_template($templatepath, $template_args);
+		EEH_Template::display_template($templatepath, $template_args);
 	}
 
 
@@ -210,7 +202,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function event_type_meta_box( $post, $box ) {
 		$template_args['radio_list'] = $this->wp_terms_radio($post->ID, array( 'taxonomy' => 'espresso_event_type' ) );
 		$template = EVENTS_CAF_TEMPLATE_PATH . 'event_type_metabox_contents.template.php';
-		espresso_display_template($template, $template_args);
+		EEH_Template::display_template($template, $template_args);
 	}
 
 
@@ -542,11 +534,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return array an array of event objects.
 	 */
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
-		global $wpdb, $org_options;
+		global $wpdb;
 
 		$EEME = $this->_event_model;
-
-
 
 		$offset = ($current_page - 1) * $per_page;
 		$limit = $count ? '' : $offset . ',' . $per_page;

@@ -2,7 +2,7 @@
 	<tr>
 		<td valign="top">
 			<fieldset>
-				<?php if( isset( $org_options['map_settings'] ) && isset( $org_options['map_settings']['use_google_maps'] ) && $org_options['map_settings']['use_google_maps'] ) { ?>
+				<?php if( isset( EE_Registry::instance()->CFG->map_settings ) && isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) && EE_Registry::instance()->CFG->map_settings->use_google_maps ) { ?>
 				<p>
 					<label for="enable_for_gmap">
 						<?php _e('Display Google Map for this venue? ', 'event_espresso') ?>
@@ -14,7 +14,7 @@
 					<input type="text" name="vnu_google_map_link" value="<?php echo $vnu_google_map_link; ?>" class="all-options" /> 
 				</p>
 				<?php } ?>
-				<?php if( ! isset( $org_options['map_settings'] ) || ! isset( $org_options['map_settings']['use_google_maps'] ) || ! $org_options['map_settings']['use_google_maps'] ) { ?>
+				<?php if( ! isset( EE_Registry::instance()->CFG->map_settings ) || ! isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) || ! EE_Registry::instance()->CFG->map_settings->use_google_maps ) { ?>
 					<p class="ee-notice">
 						<?php
 							echo sprintf( 

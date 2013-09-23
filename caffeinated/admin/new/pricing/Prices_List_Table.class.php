@@ -177,11 +177,10 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 	function column_amount($item) {
-		global $org_options;
 		if ($this->_price_types[$item->type()]->is_percent()) {
 			return '<div class="pad-amnt-rght">' . number_format($item->amount(), 1) . '%</div>';
 		} else {
-			return '<div class="pad-amnt-rght">' . $org_options['currency_symbol'] . number_format($item->amount(), 2) . '</div>';
+			return '<div class="pad-amnt-rght">' . EEH_Template::format_currency( $item->amount() ) . '</div>';
 		}
 	}
 

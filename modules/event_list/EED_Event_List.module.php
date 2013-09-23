@@ -353,7 +353,7 @@ class EED_Event_List  extends EED_Module {
 		$EE = EE_Registry::instance();
 		$EE->CFG->template_settings->EED_Event_List = isset( $EE->CFG->template_settings->EED_Event_List ) ? $EE->CFG->template_settings->EED_Event_List : new stdClass();
 		$EE->CFG->template_settings->EED_Event_List = apply_filters( 'FHEE__Event_List__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Event_List );
-		espresso_display_template( EVENT_LIST_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $EE->CFG->template_settings->EED_Event_List );
+		EEH_Template::display_template( EVENT_LIST_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $EE->CFG->template_settings->EED_Event_List );
 	}
 
 
@@ -458,7 +458,7 @@ class EED_Event_List  extends EED_Module {
 			'elf_show_expired' => $this->_show_expired,
 			'elf_default_view' => $this->_default_view
 		);
-		espresso_display_template( EVENT_LIST_TEMPLATES_PATH . 'event-list-template-filters.template.php', $args );		
+		EEH_Template::display_template( EVENT_LIST_TEMPLATES_PATH . 'event-list-template-filters.template.php', $args );		
 	}
 
 

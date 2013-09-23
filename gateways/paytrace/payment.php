@@ -6,7 +6,7 @@ $paytrace_settings = $payment_settings['paytrace'];
 <div class="event-display-boxes">
 	<p class="section-title"><?php _e('Billing Information', 'event_espresso') ?></p>
 	<div class = "event_espresso_form_wrapper">
-		<form id="paytrace_payment_form" name="paytrace_payment_form" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?>">
+		<form id="paytrace_payment_form" name="paytrace_payment_form" method="post" action="<?php echo get_permalink( EE_Registry::instance()->CFG->core->txn_page_id ); ?>">
 			<p>
 				<label for="first_name"><?php _e('First Name', 'event_espresso'); ?></label>
 				<input name="first_name" type="text" id="first_name" class="required" value="<?php echo $fname ?>" />

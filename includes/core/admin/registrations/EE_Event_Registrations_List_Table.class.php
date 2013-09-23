@@ -179,17 +179,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_REG_final_price
 	*/
 	function column_REG_final_price(EE_Registration $item){
-		return '<span class="reg-pad-rght">' .  ' ' . $item->pretty_price_paid() . '</span>';
-		/*
-		global $org_options;
-		$item->REG_final_price = abs( $item->REG_final_price );
-		
-		if ( $item->REG_final_price > 0 ) {
-			return '<span class="reg-pad-rght">' . $org_options['currency_symbol'] . ' ' . number_format( $item->REG_final_price, 2 ) . '</span>';
-		} else {
-			return '<span class="reg-pad-rght">' . $org_options['currency_symbol'] . '0.00</span>';
-		}*/
-		
+		return '<span class="reg-pad-rght">' .  ' ' . $item->pretty_price_paid() . '</span>';	
 	}
 
 
@@ -202,7 +192,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_TXN_paid(EE_Registration $item){
 	
 		if ( $item->count() == 1 ) {
-			global $org_options;
 			
 			if ( $item->transaction()->paid() >= $item->transaction()->total() ) {
 				return '<span class="reg-pad-rght"><img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
@@ -227,10 +216,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_TXN_total
 	*/
-	function column_TXN_total($item){	
+	function column_TXN_total(EE_Registration $item){	
 		if ( $item->REG_count == 1 ) {
-			global $org_options;
-			return '<span class="reg-pad-rght">'. $org_options['currency_symbol'] . abs( $item->TXN_total )  .'</span>';
+			return '<span class="reg-pad-rght">'. $item->transaction()->pretty_paid()  .'</span>';
 		} else {
 			return '<span class="reg-pad-rght"></span>';
 		}		

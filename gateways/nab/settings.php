@@ -2,7 +2,7 @@
 
 function event_espresso_nab_settings() {
 
-	global $espresso_premium, $notices, $this->EE->CFG->wp_user, $org_options;
+	global $espresso_premium;
 	if ($espresso_premium != true)
 		return;
 
@@ -13,9 +13,10 @@ function event_espresso_nab_settings() {
 		$payment_settings['nab']['nab_merchant_password'] = $_POST['nab_merchant_password'];
 		$payment_settings['nab']['nab_use_sandbox'] = isset($_POST['nab_use_sandbox']) ? 1 : 0;
 		if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-			$notices['updates'][] = __('NAB Transact Direct Post Settings Updated!', 'event_espresso');
+			EE_Error::add_success( __('NAB Transact Direct Post Settings Updated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+
 		} else {
-			$notices['errors'][] = __('NAB Transact Direct Post Settings were not saved! ', 'event_espresso');
+			EE_Error::add_error( __('NAB Transact Direct Post Settings were not saved', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -50,18 +51,21 @@ function event_espresso_nab_settings() {
 					if (!empty($_REQUEST['activate_nab'])) {
 						$payment_settings['nab']['active'] = true;
 						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('NAB Transact Direct Post Activated', 'event_espresso');
+							EE_Error::add_success( __('NAB Transact Direct Post Activated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+
 						} else {
-							$notices['errors'][] = __('Unable to Activate NAB Transact Direct Post', 'event_espresso');
+							EE_Error::add_error( __('Unable to Activate NAB Transact Direct Post', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
 
 					if (!empty($_REQUEST['deactivate_nab'])) {
 						$payment_settings['nab']['active'] = false;
 						if (update_option('payment_data_' . $this->EE->CFG->wp_user, $payment_settings) == true) {
-							$notices['updates'][] = __('NAB Transact Direct Post De-activated', 'event_espresso');
+
+							EE_Error::add_success( __('NAB Transact Direct Post De-activated', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+
 						} else {
-							$notices['errors'][] = __('Unable to De-activate NAB Transact Direct Post', 'event_espresso');
+							EE_Error::add_error( __('Unable to De-activate NAB Transact Direct Post', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
 					echo '<ul>';

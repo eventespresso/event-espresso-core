@@ -736,8 +736,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _registration_details() {
-
-		global $wpdb, $org_options;
 		
 		$this->_template_args = array();
 
@@ -766,13 +764,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 			$this->_template_args['grand_total'] = $transaction->total();
 
-			$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 			// link back to overview
 			$this->_template_args['reg_overview_url'] = REG_ADMIN_URL;	
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
-			$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+			$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 						
 		} else {
 			
@@ -1033,9 +1031,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	public function _reg_details_meta_box() {
-
-		global $wpdb, $org_options;
-
 		//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// process items in cart
@@ -1077,9 +1072,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['taxes'] = FALSE;
 		}
 
-		$this->_template_args['grand_total'] = $transaction->total();
+		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 
-		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$reg_status_class = 'status-' . $this->_registration->status_ID();
 		$reg_details = maybe_unserialize( $transaction->details() );
 
@@ -1131,7 +1126,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['full_session'] = $this->_session;
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_details.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		
 	}
 
@@ -1147,7 +1142,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	public function _reg_questions_meta_box() {
 
-		global $wpdb, $org_options;	
+		global $wpdb;	
 		// event question groups
 		$SQL = 'SELECT QSG.*, EQG.EVT_ID FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
 		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
@@ -1186,7 +1181,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -1314,8 +1309,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// check if fname, lname, and email were set (and possibly changed)
 		if ( $QST_fname && $QST_lname && $QST_email ) {		
 			// load REG model
-		    require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-		    $REG = EEM_Registration::instance();
+		    $REG = EE_Registry::instance()->load_model( 'Registration' ); 
 			// get registration
 			$registration = $REG->get_one_by_ID( $REG_ID );
 			// and then get this registration's attendee details
@@ -1332,8 +1326,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				$QST_zip 				= isset( $qstns['zip'] ) && ! empty( $qstns['zip'] ) ? array_shift( array_values( $qstns['zip'] )) : NULL;
 				$QST_phone 		= isset( $qstns['phone'] ) && ! empty( $qstns['phone'] ) ? array_shift( array_values( $qstns['phone'] )) : NULL;	
 				// load attendee model
-				require_once ( EE_MODELS . 'EEM_Attendee.model.php' );
-				$ATT = EEM_Attendee::instance();
+				$ATT = EE_Registry::instance()->load_model( 'Attendee' );
 				// create array for query where statement
 				$where_cols_n_values = array('ATT_fname' => $QST_fname, 'ATT_lname' => $QST_lname, 'ATT_email' => $QST_email);
 				// do we already have an existing record for this "new" attendee ?
@@ -1426,7 +1419,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	public function _reg_attendees_meta_box() {
 
-		global $wpdb, $org_options;
+		global $wpdb;
 
 	    $REG = EEM_Registration::instance();
 		//get all other registrations on this transaction, and cache 
@@ -1465,12 +1458,12 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 
 			$this->_template_args['event_name'] = stripslashes( $this->_registration->event_obj()->name() );
-			$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 
 	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
 		}
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_attendees.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -1505,7 +1498,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['notes'] = $attendee->notes();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -1576,7 +1569,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_box_billing_info.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -1606,7 +1599,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		// grab header
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee.template.php';
-		$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		$this->_set_add_edit_form_tags( 'save_new_registration' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -1686,29 +1679,26 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	public function _reg_new_att_tickets_meta_box( $post, $metabox = array( 'args' => array()) ) {
 		
-		global $wpdb, $org_options;	
 		extract( $metabox['args'] );		
 		
 		if ( ! $this->_set_reg_event() ) {
 			return FALSE;
 		}
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'functions/event_details.helper.php');
-		require_once(EE_MODELS . 'EEM_Datetime.model.php');
-		$this->_reg_event->datetimes = EEM_Datetime::instance()->get_all_event_dates( $EVT_ID );
+		$this->_reg_event->datetimes = EE_Registry::instance()->load_model( 'Datetime' )->get_all_event_dates( $EVT_ID );
 
-		require_once ( EE_CLASSES . 'EE_Ticket_Prices.class.php' );
+		EE_Registry::instance()->load_class( 'Ticket_Prices', array(), FALSE, TRUE, TRUE );
 		$TKT_PRCs = new EE_Ticket_Prices( $EVT_ID );
 		$this->_reg_event->prices = $TKT_PRCs->get_all_final_event_prices();
 
-		$this->_reg_event->currency_symbol = $org_options['currency_symbol'];
+		$this->_reg_event->currency_symbol = EE_Registry::instance()->CFG->currency->sign;
 
 		$this->_reg_event->available_spaces = get_number_of_attendees_reg_limit( $EVT_ID, 'available_spaces' );
 		$this->_reg_event->allow_multiple = FALSE;
 		$this->_template_args['event'] = $this->_reg_event;
 		
 		// ticket selector
-		require_once(EE_CLASSES . 'EE_Ticket_Selector.class.php');
+		EE_Registry::instance()->load_class( 'Ticket_Selector', array(), FALSE, TRUE, TRUE );
 		echo EE_Ticket_Selector::init( $this->_reg_event, TRUE ); 
 		echo '<br />';
 
@@ -1725,7 +1715,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*/
 	public function _reg_new_att_questions_meta_box( $post, $metabox = array( 'args' => array()) ) {
 		
-		global $wpdb, $org_options;	
+		global $wpdb;	
 		extract( $metabox['args'] );		
 
 		// event question groups
@@ -1830,7 +1820,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 		
 		// process Ticket Option
-		require_once(EE_CLASSES . 'EE_Ticket_Selector.class.php');
+		EE_Registry::instance()->load_class( 'Ticket_Selector', array(), FALSE, TRUE, TRUE );
 		// get ticket option added to cart, which adds it to session, etc, etc
 		if ( ! EE_Ticket_Selector::process_ticket_selections( FALSE, TRUE )) {
 			$error_msg = __( 'An error occured. The ticket option could not be processed for the registration.', 'event_espresso' );
@@ -1843,26 +1833,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			);
 		}
 		
-		if ( ! defined( 'ESPRESSO_CART' )) {
-			require_once( EE_CLASSES . 'EE_Cart.class.php' );
-		}
+		EE_Registry::instance()->load_class( 'Cart', array(), FALSE, TRUE, TRUE );
 		// grab cart item
-		$cart = EE_Cart::instance()->whats_in_the_cart();
+		$cart = EE_Registry::instance()->CART->whats_in_the_cart();
 		//grab first (and only) item
 		$item = array_pop( $cart['items'] );
 		// grab line item id
 		$line_item_id = $item['line_item'];
 		
 		//grab session
-		global $EE_Session;
-		$EE_Session->set_session_data( array( 'fill' => TRUE ), 'billing_info' );
-			
+		EE_Registry::instance()->SSN->set_session_data( array( 'fill' => TRUE ), 'billing_info' );			
 		// load gateways
-		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
-			require_once(EE_MODELS . 'EEM_Gateways.model.php');
-		}
-		$EEM_Gateways = EEM_Gateways::instance();
-		
+		$EEM_Gateways = EE_Registry::instance()->load_model( 'Gateways' );		
 
 		// set some defaults
 		$attendees = array();
@@ -1906,7 +1888,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			}
 			
 			// now save the attendee data
-			if ( ! EE_Cart::instance()->set_line_item_details( $attendees, $line_item_id )) {
+			if ( ! EE_Registry::instance()->CART->set_line_item_details( $attendees, $line_item_id )) {
 				$notices = EE_Error::get_notices(FALSE);
 				$error_msg = $notices['errors'];
 			}
@@ -1916,26 +1898,26 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$primary_attendee['fname'] = $qstns['fname'];
 			$primary_attendee['lname'] = $qstns['lname'];
 			$primary_attendee['email'] = $qstns['email'];
-			$EE_Session->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+			EE_Registry::instance()->SSN->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
 
 		}
 		// update attendee details
-		EE_Cart::instance()->_save_cart();
+		EE_Registry::instance()->CART->_save_cart();
 		// grab cart item
-		$cart = EE_Cart::instance()->whats_in_the_cart();
+		$cart = EE_Registry::instance()->CART->whats_in_the_cart();
 		//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 		// taxes ?
-		require_once ( EE_CLASSES . 'EE_Taxes.class.php' );
+		EE_Registry::instance()->load_class( 'Taxes', array(), FALSE, TRUE, TRUE );
 		$taxes = EE_Taxes::calculate_taxes( $grand_total );
 		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
 		// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
 		$txn_status = $grand_total > 0 ? 'TPN' : 'TCM';
 
 		// grab session data
-		$session = $EE_Session->get_session_data();
+		$session = EE_Registry::instance()->SSN->get_session_data();
 		// start the transaction record
-		require_once ( EE_CLASSES . 'EE_Transaction.class.php' );
+		EE_Registry::instance()->load_class( 'Transaction', array(), FALSE, TRUE, TRUE );
 		// create TXN object
 		$transaction = EE_Transaction::new_instance(
 			array( 
@@ -1966,11 +1948,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
 //		$transaction->set_txn_session_data(null);
-//		//var_dump($EE_Session->get_session_data());
-//		$EE_Session->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
-//		$EE_Session->update_espresso_session();
+//		//var_dump(EE_Registry::instance()->SSN->get_session_data());
+//		EE_Registry::instance()->SSN->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
+//		EE_Registry::instance()->SSN->update_espresso_session();
 			
-//		printr( $EE_Session, '$EE_Session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( EE_Registry::instance()->SSN, 'EE_Registry::instance()->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		die();
 //		$this->_req_data = array();
 //		
@@ -2379,7 +2361,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// generate metabox - you MUST create a callback named __FUNCTION__ . '_meta_box'  ( see "_edit_attendee_details_meta_box" below )
 		$this->_template_path = REG_TEMPLATE_PATH . 'attendee_details_main_meta_box.template.php';
 		//$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
-		$this->_template_args['admin_page_content'] = espresso_display_template($this->_template_path, $this->_template_args, TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 
 		$this->_set_publish_post_box_vars( 'ATT_ID', $ATT_ID, 'delete_attendees' );
 

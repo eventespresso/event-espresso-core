@@ -200,7 +200,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 	}
 
 	public function process_reg_step_3() {
-		global $org_options;
+
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 
 		$total = $session_data['_cart_grand_total_amount'];
@@ -230,13 +230,13 @@ Class EE_Eway extends EE_Offsite_Gateway {
 			$this->addField('UserName', $this->_payment_settings['eway_username']);
 		}
 
-		$this->addField('Amount', number_format($total, 2, '.', ''));
+		$this->addField('Amount', EEH_Template::format_currency( $total, TRUE ));
 		$this->addField('Currency', $this->_payment_settings['currency_format']);
 		$this->addField('PageTitle', '');
 		$this->addField('PageDescription', '');
 		$this->addField('PageFooter', '');
 		$this->addField('Language', '');
-		$this->addField('CompanyName', str_replace("&", "%26", $org_options['organization']));
+		$this->addField('CompanyName', EE_Registry::instance()->CFG->organization->name );
 		$registrations = $session_data['cart']['REG']['items'];
 		$description = '';
 		foreach ($registrations as $registration) {
@@ -244,8 +244,9 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		}
 		$description = rtrim($description, ', ');
 		$this->addField('InvoiceDescription', $description);
-		$this->addField('CancelURL', str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['cancel_return']));
-		$this->addField('ReturnURL', str_replace("&", "%26", home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment'));
+		$this->addField('CancelURL', get_permalink( EE_Registry::instance()->CFG->core->cancel_page_id ));
+		$ReturnURL = add_query_arg( array( 'form_action' => 'payment', 'attendee_action' => 'post_payment', 'session_id' => $session_data['id'] ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
+		$this->addField('ReturnURL', $ReturnURL );
 		$this->addField('CompanyLogo', $this->_payment_settings['image_url']);
 		$this->addField('PageBanner', '');
 		$this->addField('MerchantReference', '');

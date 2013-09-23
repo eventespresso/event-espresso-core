@@ -494,10 +494,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 				if ( method_exists( $this, 'admin_init_' . $this->_current_view )) {
 					add_action( 'admin_init', array( $this, 'admin_init_' . $this->_current_view ), 15 );
 				}
-				
-				// Check to make sure all of the main pages are setup properly,
-				// if not create the default pages and display an admin notice
-				$this->_verify_default_pages_exist();
 							
 			} else {
 				//hijack regular WP loading and route admin request immediately
@@ -1102,7 +1098,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				'help_popup_content' => $help['content']
 				); 
 
-			$content .= espresso_display_template( $template_path, $template_args, TRUE );
+			$content .= EEH_Template::display_template( $template_path, $template_args, TRUE );
 		}
 
 		if ( $display )
@@ -1678,7 +1674,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	public function espresso_links_post_box() {
 		   $templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
-			espresso_display_template( $templatepath );	
+			EEH_Template::display_template( $templatepath );	
 		}
 
 
@@ -1693,7 +1689,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	public function espresso_sponsors_post_box() {
 		$templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_sponsors.template.php';
-		espresso_display_template( $templatepath );
+		EEH_Template::display_template( $templatepath );
 	}
 
 
@@ -1718,7 +1714,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//if we have extra content set let's add it in if not make sure its empty
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_publish_metabox.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -1871,7 +1867,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//if $create_func is true (default) then we automatically create the function for displaying the actual meta box.  If false then we take the $callback reference passed through and use it instead (so callers can define their own callback function/method if they wish)
-		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "AHEE_log", __FILE__, __FUNCTION__, ""); echo espresso_display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
+		$call_back_func = $create_func ? create_function('$post, $metabox', 'do_action( "AHEE_log", __FILE__, __FUNCTION__, ""); echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );') : $callback;
 
 		add_meta_box( str_replace( '_', '-', $action ) . '-mbox', $title, $call_back_func, $this->_wp_page_slug, $column, $priority, $callback_args );
 	}
@@ -1886,7 +1882,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function display_admin_page_with_metabox_columns() {
 		$this->_template_args['post_body_content'] = $this->_template_args['admin_page_content'];
-		$this->_template_args['admin_page_content'] = espresso_display_template( $this->_column_template_path, $this->_template_args, TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $this->_column_template_path, $this->_template_args, TRUE);
 
 		//the final wrapper
 		$this->admin_page_wrapper();
@@ -1947,7 +1943,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['post_body_content'] = isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '';
 		$this->_template_args['before_admin_page_content'] = isset($this->_template_args['before_admin_page_content']) ? $this->_template_args['before_admin_page_content'] : '';
 		$this->_template_args['after_admin_page_content'] = isset($this->_template_args['after_admin_page_content']) ? $this->_template_args['after_admin_page_content'] : '';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 
 		// the final template wrapper
@@ -1964,7 +1960,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
 		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		$this->admin_page_wrapper();
 	}
 
@@ -2019,7 +2015,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_template_args['sortable_list_table_form_fields'] = $sortable_list_table_form_fields;
 
-		$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		// the final template wrapper
 		if ( $sidebar )
@@ -2048,7 +2044,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _display_legend( $items ) {
 		$template_args['items'] = (array) $items;
 		$legend_template = EE_CORE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
-		return espresso_display_template($legend_template, $template_args, TRUE);
+		return EEH_Template::display_template($legend_template, $template_args, TRUE);
 	}
 
 
@@ -2156,11 +2152,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		if ( defined( 'DOING_AJAX' ) ) {
-			$this->_template_args['admin_page_content'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+			$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 			$this->_return_json();
 		} else {
-			espresso_display_template( $template_path, $this->_template_args );
+			EEH_Template::display_template( $template_path, $this->_template_args );
 		}
 
 	}
@@ -2705,7 +2701,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _update_espresso_configuration( $tab, $config, $file = '', $func = '', $line = '' ) {
 
-		//remove any options that are NOT going to be saved with org_options.
+		//remove any options that are NOT going to be saved with the config settings.
 		if ( isset( $config->core->ee_ueip_optin ) ) {
 			update_option( 'ee_ueip_optin', $config->core->ee_ueip_optin);
 			update_option( 'ee_ueip_has_notified', TRUE );
@@ -2738,117 +2734,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-
-
-
-
-	private function _verify_default_pages_exist() {
-				
-		if ( has_action('admin_notices', 'espresso_page_problems')) {
-			$this->_create_default_pages(); 
-		}
-
-
-	}
-
-
-
-
-
-	//This function installs the required pages
-	private function _create_default_pages() {
-
-		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		global $wpdb, $org_options, $espresso_wp_user;
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		
-		$required_pages = array( 
-				'event_page_id' 	=> __( 'Event Registration', 'event_espresso' ), 
-				'return_url' 			=> __( 'Thank You', 'event_espresso' ), 
-				'cancel_return'	=> __( 'Registration Cancelled', 'event_espresso' ), 
-				'notify_url'			=> __( 'Transactions', 'event_espresso' ) 
-			);
-					
-		$existing_pages = get_pages();
-		//printr( $existing_pages, '$existing_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		foreach ( $existing_pages as $page ) {
-			// does page already exist ?
-			if ( in_array( $page->post_title, $required_pages )) {
-				//make sure it's ID is set properlly, but first we'll need the right org_option key
-				$key = array_search( $page->post_title, $required_pages );
-				$org_options[ $key ] = $page->ID;
-				// now remove it from required pages list since we already have it
-				unset( $required_pages[ $key ] );
-			} 
-		}
-		
-		$event_reg = __( 'Event Registration', 'event_espresso' );
-		$thank_you = __( 'Thank You', 'event_espresso' );
-		$reg_cancelled = __( 'Registration Cancelled', 'event_espresso' );
-		$transactions = __( 'Transactions', 'event_espresso' );
-		
-		
-		$updated_flag = false;
-		$page_ids = get_all_page_ids();
-		foreach ( $required_pages as $new_page_title ) {
-
-			// Create post object
-			$my_post = array();
-			$my_post['post_title'] = $new_page_title;
-			$my_post['post_status'] = 'publish';
-			$my_post['post_type'] = 'page';
-			$my_post['comment_status'] = 'closed';
-			
-			//echo '<h4>$new_page_title : ' . $new_page_title . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-			switch ( $new_page_title ) {
-			
-				case $event_reg :
-					//if ( empty( $org_options['event_page_id'] ) || ! in_array( $org_options['event_page_id'], $page_ids )) {
-						$my_post['post_content'] = '[ESPRESSO_EVENTS]';
-						$event_page_id = wp_insert_post($my_post);
-						$org_options['event_page_id'] = $event_page_id;
-						$updated_flag = true;
-					//}
-					break;
-					
-				case $thank_you :
-					//if ( empty( $org_options['return_url'] ) || ! in_array( $org_options['return_url'], $page_ids )) {
-						$my_post['post_content'] = '[ESPRESSO_PAYMENTS]';
-						$return_url = wp_insert_post($my_post);
-						$org_options['return_url'] = $return_url;
-						$updated_flag = true;
-					//}
-					break;
-					
-				case $reg_cancelled :
-					//if ( empty( $org_options['cancel_return'] ) || ! in_array( $org_options['cancel_return'], $page_ids )) {
-						$my_post['post_content'] = 'You have cancelled your registration.<br />[ESPRESSO_CANCELLED]';
-						$cancel_return = wp_insert_post($my_post);
-						$org_options['cancel_return'] = $cancel_return;
-						$updated_flag = true;
-					//}
-					break;
-					
-				case $transactions :
-					//if ( empty( $org_options['notify_url'] ) || ! in_array( $org_options['notify_url'], $page_ids )) {
-						$my_post['post_content'] = '[ESPRESSO_TXN_PAGE]';
-						$notify_url = wp_insert_post($my_post);
-						$org_options['notify_url'] = $notify_url;
-						$updated_flag = true;
-					//}
-					break;
-			}
-		}
-		
-		update_user_meta( $espresso_wp_user, 'events_organization_settings', $org_options );
-		if ( $updated_flag ) {
-			require_once( EE_CORE . 'admin/admin_helper.php' );
-			add_action('admin_notices', 'espresso_updated_pages');
-		}
-			
-	}
 
 
 

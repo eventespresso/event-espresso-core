@@ -74,7 +74,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 	public function use_venue_and_staff_manager_settings( $template_args ) {
 		$_args['use_personnel_manager_select'] = EE_Form_Fields::select_input('use_personnel_manager', $template_args['values'], $template_args['use_personnel_manager'] );
 		$template = GEN_SET_CAF_TEMPLATE_PATH . 'use_venue_and_staff_manager_settings.template.php';
-		espresso_display_template( $template, $_args );
+		EEH_Template::display_template( $template, $_args );
 	}
 
 
@@ -111,7 +111,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 		$this->_set_add_edit_form_tags( 'update_google_map_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_CAF_TEMPLATE_PATH . 'google_map.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_CAF_TEMPLATE_PATH . 'google_map.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
 

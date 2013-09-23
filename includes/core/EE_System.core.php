@@ -377,15 +377,10 @@ final class EE_System {
 		$this->EE->load_core( 'Config' );
 		// register Custom Post Types
 		$this->EE->load_core( 'Register_CPTs' );
-		// load this for now until something better can be done with it
-		require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'functions/main.php' );
-
 		// session loading is turned OFF by default, but prior to the init hook, can be turned back on again via: add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		if ( apply_filters( 'FHEE_load_EE_Session', FALSE ) || is_admin() ) {
 			$this->load_EE_Session();
 		}
-
-
 		//$this->create_event_slug_rewrite_rule();
 
 	}

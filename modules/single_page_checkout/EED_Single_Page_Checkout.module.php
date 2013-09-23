@@ -654,15 +654,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//End use captcha
 
 
-		$registration_page_step_1 = espresso_display_template($this->_templates['registration_page_step_1'], $template_args, TRUE);
-		$registration_page_step_2 = espresso_display_template($this->_templates['registration_page_step_2'], $template_args, TRUE);
-		$registration_page_step_3 = espresso_display_template($this->_templates['registration_page_step_3'], $template_args, TRUE);
+		$registration_page_step_1 = EEH_Template::display_template($this->_templates['registration_page_step_1'], $template_args, TRUE);
+		$registration_page_step_2 = EEH_Template::display_template($this->_templates['registration_page_step_2'], $template_args, TRUE);
+		$registration_page_step_3 = EEH_Template::display_template($this->_templates['registration_page_step_3'], $template_args, TRUE);
 
 		$template_args['registration_steps'] = $registration_page_step_1 . $registration_page_step_2 . $registration_page_step_3;
 
 		//printr( $this->EE->SSN->get_session_data(), '$this->EE->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		$this->EE->REQ->add_output( espresso_display_template( $this->_templates['registration_page_wrapper'], $template_args, TRUE ));
+		$this->EE->REQ->add_output( EEH_Template::display_template( $this->_templates['registration_page_wrapper'], $template_args, TRUE ));
 	}
 
 
@@ -1040,7 +1040,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			
 			$template_args['billing'][ __('total due', 'event_espresso') ] = EEH_Template::format_currency( $total );
 
-			$ouput = espresso_display_template($this->_templates['confirmation_page'], $template_args, TRUE);
+			$ouput = EEH_Template::display_template($this->_templates['confirmation_page'], $template_args, TRUE);
 		}		
 		return $ouput;		
 	}

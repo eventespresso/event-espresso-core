@@ -242,7 +242,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function general_settings_critical_pages_help_tabs( $tab ) {
 		require_once GEN_SET_TEMPLATE_PATH . 'general_settings_critical_pages_help_tabs.template.php';
 		$template = call_user_func( $tab . '_html' );
-		espresso_display_template($template);
+		EEH_Template::display_template($template);
 	}
 	public function registration_page_info_help_tab(){
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
@@ -271,7 +271,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function template_settings_help_tabs( $tab ) {
 		require_once GEN_SET_TEMPLATE_PATH . 'template_settings_help_tabs.template.php';
 		$template = call_user_func( $tab . '_html' );
-		espresso_display_template( $template );
+		EEH_Template::display_template( $template );
 	}
 	public function enable_styles_info_help_tab() {
 		$this->template_settings_help_tabs( __FUNCTION__ );
@@ -287,7 +287,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	public function gmaps_info_help_tab() {
 		$template = GEN_SET_TEMPLATE_PATH . 'map_confg_help.php';
-		espresso_display_template( $template );
+		EEH_Template::display_template( $template );
 	}
 
 
@@ -300,7 +300,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function admin_options_help_tabs( $tab ) {
 		require_once GEN_SET_TEMPLATE_PATH . 'admin_options_help_tabs.template.php';
 		$template = call_user_func( $tab . '_html' );
-		espresso_display_template( $template );
+		EEH_Template::display_template( $template );
 	}
 	public function full_logging_info_help_tab() {
 		$this->admin_options_help_tabs( __FUNCTION__ );
@@ -376,7 +376,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _espresso_page_settings() {
-	
+		
+		// Check to make sure all of the main pages are setup properly,
+		// if not create the default pages and display an admin notice
+		$this->EE->load_helper( 'Activation' );
+		EEH_Activation::verify_default_pages_exist();
+
 		$this->_transient_garbage_collection();
 		$this->_template_args['values'] = $this->_yes_no_values;
 
@@ -394,7 +399,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'espresso_page_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 		
 	}
@@ -437,7 +442,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'template_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
 
@@ -528,7 +533,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'your_organization_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'your_organization_settings.template.php', $this->_template_args, TRUE );
 
 		$this->display_admin_page_with_sidebar();	
 	}
@@ -575,7 +580,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_set_add_edit_form_tags( 'update_admin_option_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['template_args'] = $this->_template_args;
-		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'admin_option_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'admin_option_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
 
@@ -607,7 +612,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _country_settings() {
 	
-		global $org_options;
 		$CNT_ISO = isset( $this->EE->CFG->organization->CNT_ISO ) ? $this->EE->CFG->organization->CNT_ISO : 'US';
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 
@@ -642,7 +646,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_add_edit_form_tags( 'update_country_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'countries_settings.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'countries_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();
 	}
 
@@ -690,7 +694,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'CNT_active' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values )
 		);
 		$this->_template_args['inputs'] = EE_Question_Form_Input::generate_question_form_inputs_for_object( $country, $country_input_types );
-		$country_details_settings = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'country_details_settings.template.php', $this->_template_args, TRUE );
+		$country_details_settings = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'country_details_settings.template.php', $this->_template_args, TRUE );
 
 		if ( defined( 'DOING_AJAX' )) {
 			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
@@ -750,7 +754,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 //		printr( $this->_template_args['states'], 'XXXXXXX  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$this->_template_args['add_new_state_url'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'add_new_state' ),  GEN_SET_ADMIN_URL );
 
-		$state_details_settings = espresso_display_template( GEN_SET_TEMPLATE_PATH . 'state_details_settings.template.php', $this->_template_args, TRUE );
+		$state_details_settings = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'state_details_settings.template.php', $this->_template_args, TRUE );
 		
 		if ( defined( 'DOING_AJAX' )) {
 			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 

@@ -9,7 +9,6 @@
 	/**
 	 * Coupon/Promo Code Help Box
 	 */
-	global $org_options;
 	?>
 	<div id="coupon_code_info" class="pop-help" >
 		<div class="TB-ee-frame">
@@ -21,11 +20,11 @@
 			</p>
 			<p>
 				<?php _e('A coupon or promo code could can be anything you want. For example: Say you have an event that costs', 'event_espresso'); ?>
-				<?php echo $org_options['currency_symbol'] ?>200.
+				<?php echo EEH_Template::format_currency( 200 ) ?>.
 				<?php _e('If you supplied a promo like "PROMO50" and entered 50.00 into the "Discount w/Promo Code" field your event will be discounted', 'event_espresso'); ?>
-				<?php echo $org_options['currency_symbol'] ?>50.00,
+				<?php echo EEH_Template::format_currency( 50 ) ?>,
 				<?php _e('Bringing the cost of the event to', 'event_espresso'); ?>
-				<?php echo $org_options['currency_symbol'] ?>150.</p>
+				<?php echo EEH_Template::format_currency( 150 ) ?>.</p>
 		</div>
 	</div>
 	<?php

@@ -2,10 +2,10 @@
 $espresso_template_version = "1.0";
 
 if ( espresso_template_version() != $espresso_template_version && is_admin()){
-	add_action( 'admin_notices', 'espresso_display_template_error' );
+	add_action( 'admin_notices', 'EEH_Template::display_template_error' );
 }
 
-function espresso_display_template_error() {
+function EEH_Template::display_template_error() {
 	echo '<div class="error fade"><p><strong>' . __('Your Event Espresso templates are outdated. Please update your templates ASAP!', 'event_espresso') . '</strong></p></div>';
 }
 
@@ -45,13 +45,13 @@ function espresso_get_query_template( $type, $templates = array() ) {
  * @return string The template filename if one is located.
  */
 function espresso_locate_template( $template_names ) {
-	global $org_options;
+
 	$located = '';
 
 	foreach ( (array) $template_names as $template_name ) {
 		if ( !$template_name )
 			continue;
-		if ( file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $template_name) && $org_options['template_settings']['use_custom_templates']) {
+		if ( file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . $template_name) && EE_Registry::instance()->CFG->template_settings->use_custom_templates ) {
 			$located = EVENT_ESPRESSO_TEMPLATE_DIR . $template_name;
 			break;
 		} else if ( file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/' . $template_name) ) {

@@ -581,8 +581,7 @@ class EE_Registration extends EE_Base_Class {
 	 * @return string
 	 */
 	public function payment_overview_url(){
-		global $org_options;
-		return add_query_arg(array('e_reg_url_link'=>$this->reg_url_link()),get_permalink($org_options['return_url']));
+		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link() ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
 	}
 
 

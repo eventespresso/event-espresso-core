@@ -304,7 +304,7 @@ class EE_Error extends Exception {
 //		$template = 'error_msg.php';
 //		$path_to_template = EE_TEMPLATES_PATH;
 //		$template_vars = array( 'error_msg' => $ouput );
-//		espresso_display_template( $template . $path_to_template, $template_args );
+//		EEH_Template::display_template( $template . $path_to_template, $template_args );
 		
 	}
 

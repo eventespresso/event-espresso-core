@@ -233,8 +233,6 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 
 	public function process_reg_step_3() {
 
-		global $org_options;
-
 		$this->_gatewayUrl = 'https://www.2checkout.com/checkout/purchase';
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 
@@ -269,8 +267,8 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		}
 		$this->addField('sid', $this->_payment_settings['2checkout_id']);
 		$this->addField('cart_order_id', $session_data['transaction']->ID());
-		$this->addField('x_Receipt_Link_URL', home_url() . '/?page_id=' . $org_options['return_url'] . '&session_id=' . $session_data['id'] . '&attendee_action=post_payment&form_action=payment');
-		$this->addField('total', number_format($total, 2, '.', ''));
+		$this->addField('x_Receipt_Link_URL', add_query_arg( array( 'form_action' => 'payment', 'attendee_action' => 'post_payment', 'session_id' => $session_data['id'] ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id )));
+		$this->addField('total', EEH_Template::format_currency( $total, TRUE ));
 		$this->addField('tco_currency', $this->_payment_settings['currency_format']);
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 		$this->redirect_after_reg_step_3();

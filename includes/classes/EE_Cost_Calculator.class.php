@@ -593,7 +593,6 @@ class EE_Ticket_Price_Modifier extends EE_Price_Modifier {
 	* 	@return 		array
 	*/
 	protected function _set_price_history() {
-		global $org_options;
 		$plus_or_minus = $this->_price_mod->base_type() == 3 ? ' +' : ' ';
 		$this->_price_history[] = $this->_price_mod->name() . ':' . $plus_or_minus . $this->_mod_amount . ' = ' . EEH_Template::format_currency( $this->price() );
 	}

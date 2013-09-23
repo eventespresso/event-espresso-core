@@ -1,5 +1,5 @@
 <?php
-global $org_options, $wpdb, $this->EE->CFG->wp_user;
+global $wpdb;
 do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 $payment_settings = get_option('payment_data_' . $this->EE->CFG->wp_user);
 $ideal_mollie_settings = $payment_settings['ideal'];
@@ -10,8 +10,12 @@ if (!isset($attendee_id))
 
 $partner_id = $ideal_mollie_settings['ideal_mollie_partner_id']; // Uw mollie partner ID
 
-$return_url = home_url() . '/?page_id=' . $org_options['return_url'] . '&id=' . $attendee_id; // URL waarnaar de consument teruggestuurd wordt na de betaling
-$report_url = home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment&ideal=1'; // URL die Mollie aanvraagt (op de achtergrond) na de betaling om de status naar op te sturen
+// TODO need to use $attendee_id to get reg_url link
+$reg_url_link = EE_Registry::instance()->load_model( 'Registration' );
+$return_url = add_query_arg( array( 'e_reg_url_link' => $reg_url_link ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
+
+$report_url = add_query_arg( array( 'ideal' => TRUE, 'form_action' => 'payment', 'attendee_action' => 'post_payment', 'id' => $attendee_id, 'event_id' => $event_id ), get_permalink( EE_Registry::instance()->CFG->core->txn_page_id ));
+
 //Find the correct amount so that unsavory characters don't change it in the previous form
 $sql = "SELECT ea.amount_pd, ed.event_name FROM " . EVENTS_ATTENDEE_TABLE . " ea ";
 $sql .= "JOIN " . EVENTS_DETAIL_TABLE . " ed ";
@@ -22,8 +26,7 @@ $sql .= " ORDER BY ea.id ASC LIMIT 1";
 $r = $wpdb->get_row($sql);
 
 if (!$r || $wpdb->num_rows == 0) {
-
-	exit("Looks like something went wrong.  Please try again or notify the website administrator.");
+	throw EE_Error( __( 'Looks like something went wrong.  Please try again or notify the website administrator.', 'event_espresso' ),  );
 }
 //amount needs to be in cents
 $amount = (int) ($r->amount_pd * 100); // Het af te rekenen bedrag in centen (!!!)
@@ -76,7 +79,7 @@ if ($bank_array == false) {
 }
 ?>
 <div class="event-display-boxes">
-	<form id="ideal-mollie-form" class="ee-forms" method="post" action="<?php echo home_url() . '/?page_id=' . $org_options['notify_url']; ?>">
+	<form id="ideal-mollie-form" class="ee-forms" method="post" action="<?php echo get_permalink( EE_Registry::instance()->CFG->core->txn_page_id ); ?>">
 		<select name="bank_id" class="required">
 			<option value=''>Kies uw bank</option>
 

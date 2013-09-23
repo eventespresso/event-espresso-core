@@ -51,8 +51,6 @@ class EE_PUE {
 //		throw new EE_Error('error');
 		$this->EE = EE_Registry::instance();
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-//		global $org_options;
-
 
 		$ueip_optin = get_option('ee_ueip_optin');
 		$ueip_has_notified = isset($_POST['ueip_optin']) ? TRUE : get_option('ee_ueip_has_notified');
@@ -93,9 +91,6 @@ class EE_PUE {
 		// PUE Auto Upgrades stuff
 		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php')) { //include the file 
 			require(EVENT_ESPRESSO_PLUGINFULLPATH . 'libraries/pue/pue-client.php' );
-//			if ( empty( $org_options ) ) {
-//				$org_options = get_user_meta( get_current_user_id(), 'events_organization_settings', true);
-//			}
 
 			$api_key = isset( $this->EE->CFG->site_license_key ) ? $this->EE->CFG->site_license_key : '';
 			$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.

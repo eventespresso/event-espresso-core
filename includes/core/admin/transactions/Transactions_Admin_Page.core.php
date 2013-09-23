@@ -388,7 +388,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _transaction_details() {
 
-		global $wpdb, $org_options;
+		global $wpdb;
 		
 		$this->_get_transaction_status_array();
 
@@ -412,7 +412,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['total_paid'] = $this->_transaction->TXN_paid;
 		
 		$amount_due = number_format(( $this->_transaction->TXN_total - $this->_transaction->TXN_paid ), 2 );
-		$this->_template_args['amount_due'] =  $org_options['currency_symbol'] . ' <span id="txn-admin-total-amount-due">' . $amount_due . '</span>';
+		$this->_template_args['amount_due'] =  ' <span id="txn-admin-total-amount-due">' . EEH_Template::format_currency( $amount_due, TRUE ) . '</span>';
+		if ( EE_Registry::instance()->CFG->currency->sign_b4 ) {
+			$this->_template_args['amount_due'] = EE_Registry::instance()->CFG->currency->sign . $this->_template_args['amount_due'];
+		} else {
+			$this->_template_args['amount_due'] = $this->_template_args['amount_due'] . EE_Registry::instance()->CFG->currency->sign;
+		}
 		$this->_template_args['amount_due_class'] =  '';	
 		
 		if ( $this->_transaction->TXN_paid == $this->_transaction->TXN_total ) {
@@ -433,7 +438,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		}
 
 		$this->_template_args['method_of_payment'] = isset( $this->_transaction->TXN_details['gateway'] ) && ! empty( $this->_transaction->TXN_details['gateway'] ) ? $this->_transaction->TXN_details['gateway'] : FALSE;
-		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		// link back to overview
 		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;  
 		
@@ -442,7 +447,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['notices'] = EE_Error::get_notices();
 		// path to template 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_header.template.php';
-		$this->_template_args['admin_page_header'] = espresso_display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();
@@ -480,7 +485,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	function _txn_details_meta_box() {
 	
-		global $wpdb, $org_options;
+		global $wpdb;
 		$this->_set_transaction_object();
 
 		// process items in cart
@@ -527,7 +532,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['TXN_status'] = $this->_transaction->STS_ID;
 
 
-		$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$txn_status_class = 'status-' . $this->_transaction->STS_ID;
 		
 		// process payment details
@@ -570,7 +575,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		// 'espresso_delete_payment_nonce'
 		
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_txn_details.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 	}
 
@@ -628,7 +633,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	function _txn_attendees_meta_box(  $post, $metabox = array( 'args' => array()) ) {
 	
-		global $wpdb, $org_options;
+		global $wpdb;
 		
 		extract( $metabox['args'] );		
 		
@@ -639,7 +644,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
-				$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['price_desc'];
+				$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['ticket_desc'];
 				//printr( $item, '$item' );
 				foreach ( $item['attendees'] as $att_nmbr => $attendee ) {
 					// check for attendee object
@@ -676,11 +681,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			}
 			//printr( $this->_template_args['event_attendees'], 'event_attendees' );
 
-			$this->_template_args['currency_sign'] = $org_options['currency_symbol'];
+			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 			$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  
 
 			$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
-			echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+			echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		}
 	}
@@ -721,7 +726,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 
@@ -812,7 +817,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_billing_info.template.php';
-		echo espresso_display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
 

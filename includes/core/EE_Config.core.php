@@ -172,7 +172,7 @@ final class EE_Config {
 				'organization',
 				'currency'
 			);
-			// cycle thru critical org_options
+			// cycle thru critical config settings
 			foreach ( $critical_settings as $critical_setting ) {
 				// make sure each one actually exists 
 				if ( ! isset( $this->EE->CFG->$critical_setting )) {
@@ -773,6 +773,12 @@ class EE_Registration_Config extends EE_Config_Base{
 	   * eg 'en'
 	   */
       public $recaptcha_language = 'en';
+	 
+	  /**
+	   * ReCaptcha width
+	   * @var $recaptcha_width int
+	   */
+      public $recaptcha_width = 500;
 	 
 	  /**
 	   * ReCaptcha public key

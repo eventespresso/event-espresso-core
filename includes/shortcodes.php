@@ -859,7 +859,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 
 				//Build the description
 				if ($show_description != false) {
-					$html .= $meta['description'] != '' ? espresso_format_content($meta['description']) : '';
+					$html .= $meta['description'] != '' ? wpautop(stripslashes_deep(html_entity_decode(do_shortcode($meta['description']), ENT_QUOTES, "UTF-8"))) : '';
 				}
 
 				//Build the address details

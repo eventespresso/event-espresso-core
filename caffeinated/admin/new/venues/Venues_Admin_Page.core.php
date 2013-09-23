@@ -402,7 +402,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'vnu_phone' => $this->_cpt_model_obj->phone()
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_publish_box_extras.template.php';
-		espresso_display_template( $template, $extra_rows );
+		EEH_Template::display_template( $template, $extra_rows );
 	}
 
 
@@ -418,26 +418,21 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function venue_gmap_metabox() {
-		global $org_options;
 		$template_args = array(
 			'vnu_enable_for_gmap' => EE_Form_Fields::select_input('vnu_enable_for_gmap', $this->get_yes_no_values(), $this->_cpt_model_obj->enable_for_gmap() ),
 			'vnu_google_map_link' => $this->_cpt_model_obj->google_map_link(),
-			'org_options' => $org_options
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_gmap_metabox_content.template.php';
-		espresso_display_template( $template, $template_args );
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 
 
 	public function venue_address_metabox() {
 
-		//states and countries model
-		require_once( EE_MODELS . 'EEM_State.model.php' );
-		require_once( EE_MODELS . 'EEM_Country.model.php');
-
-		$states = EEM_State::instance()->get_all_active_states();
-		$countries = EEM_Country::instance()->get_all_active_countries();
+		//states and countries 
+		$states = $this->EE->load_model( 'State' )->get_all_active_states();
+		$countries = $this->EE->load_model( 'Country' )->get_all_active_countries();
 
 		//prepare state/country arrays
 		foreach ( $states as $id => $obj ) {
@@ -456,7 +451,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_address_metabox_content.template.php';
-		espresso_display_template( $template, $template_args );
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 
@@ -469,7 +464,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'_venue' => $this->_cpt_model_obj
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_virtual_location_metabox_content.template.php';
-		espresso_display_template( $template, $template_args );
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 
@@ -928,7 +923,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
 			);
 		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
-		return espresso_display_template($template, $template_args, TRUE );
+		return EEH_Template::display_template($template, $template_args, TRUE );
 	}
 
 

@@ -141,7 +141,7 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 
 
 	function column_member($item) {
-		return '<div class="jst-cntr">' . (($item->is_member()) ? 'Yes' : '') . '</div>';
+		return '<div class="jst-cntr">' . ( $item->is_member() ? 'Yes' : '' ) . '</div>';
 	}
 
 
@@ -156,8 +156,7 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 
 
 	function column_percent($item) {
-		global $org_options;
-		return '<div class="jst-cntr">' . (($item->is_percent()) ? '%' : $org_options['currency_symbol']) . '</div>';
+		return '<div class="jst-cntr">' . ( $item->is_percent() ? '%' : EE_Registry::instance()->CFG->currency->sign ) . '</div>';
 	}
 
 

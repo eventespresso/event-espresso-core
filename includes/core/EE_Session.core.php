@@ -54,17 +54,16 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 	// array for defining default session vars
 	private $_default_session_vars = array ( 
-																		'id' => NULL,
-																		'user_id' => NULL,
-																		'ip_address' => NULL,
-																		'user_agent' => NULL,
-																		'init_access' => NULL,
-																		'last_access' => NULL,
-																		'pages_visited' => array()
-																	);
+		'id' => NULL,
+		'user_id' => NULL,
+		'ip_address' => NULL,
+		'user_agent' => NULL,
+		'init_access' => NULL,
+		'last_access' => NULL,
+		'pages_visited' => array()
+	);
 
-	// global error notices
-	private $_notices;
+
 
 
 
@@ -99,12 +98,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		define( 'ESPRESSO_SESSION', TRUE );
-		global $EE_Session, $org_options, $notices;
 
 		// remove the default espresso session init
 		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
-
-		$this->_notices = $notices;
 
 		// retreive session options from db
 		if ( $session_settings = get_option( 'espresso_session_settings' ) !== FALSE ) {
@@ -120,9 +116,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// are we using encryption?
 		if ( $this->_use_encryption ) {
-			EE_Registry::instance()->load_core( 'Encryption' );
 			// instantiate the class object making all properties and methods accessible via $this->encryption ex: $this->encryption->encrypt();
-			$this->encryption = EE_Encryption::instance();
+			$this->encryption = EE_Registry::instance()->load_core( 'Encryption' );
 		}
 
 		$extra_default_session_vars = array();
@@ -183,9 +178,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 
-	public function get_notices() {
-		return $this->_notices;
-	}
 
 
 	/**
@@ -233,7 +225,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// nothing ??? go home!
 		if ( empty( $data )) {
-			$this->_notices['errors'][] = 'An error occured. No session data was provided.';
+			EE_Error::add_error( __( 'No session data was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -657,7 +649,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// nothing ??? go home!
 		if ( ! $data_to_reset ) {
-			$this->_notices['errors'][] = 'An error occured. No session data could be reset, because no session var name was provided.';
+			EE_Error::add_error( __( 'No session data could be reset, because no session var name was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// if $data_to_reset is not in an array, then put it in one
@@ -675,18 +667,18 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				if ( ! in_array( $reset, $this->_default_session_vars )) {
 					// set var to NULL
 					$this->_session_data[ $reset ] = NULL;
-					$this->_notices['updates'][] = 'The session variable '.$reset.' was reset.';
+					EE_Error::add_success( sprintf( __( 'The session variable %s was reset.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
 					$return_value = !isset($return_value) ? TRUE : $return_value;
 
 				} else {
 					// yeeeeeeeeerrrrrrrrrrr OUT !!!!
-					$this->_notices['errors'][] = 'Sorry! '.$reset.' is a default session datum and can not be reset.';
+					EE_Error::add_error( sprintf( __( 'Sorry! %s is a default session datum and can not be reset.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
 					$return_value = FALSE;
 				}
 
 			} else {
 				// opps! that session var does not exist!
-				$this->_notices['errors'][] = 'An error occured. The session item provided, '.$reset.', is invalid or does not exist.';
+				EE_Error::add_error( sprintf( __( 'The session item provided, %s, is invalid or does not exist.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
 				$return_value = FALSE;
 			}
 

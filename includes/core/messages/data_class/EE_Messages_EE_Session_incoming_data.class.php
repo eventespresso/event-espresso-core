@@ -37,7 +37,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
 
 	protected function _setup_data() {
-		global $org_options;
+
 		$session_stuff = $this->_data->get_session_data();
 		$this->_data = $session_stuff;
 
@@ -95,7 +95,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
 				$this->taxes = $this->_data['taxes'];
 
-				$this->billing['total_due'] = $org_options['currency_symbol'] . number_format($total, 2);
+				$this->billing['total_due'] = EEH_Template::format_currency( $total );
 			}
 		}
 
@@ -108,9 +108,9 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 				$this->events[$line_item_id]['line_ref'] = $line_item_id;
 				$this->events[$line_item_id]['name'] = $event['name'];
 				$this->events[$line_item_id]['daytime_id'] = $event['options']['dtt_id'];
-				$this->events[$line_item_id]['price'] = $event['price'];
-				$this->events[$line_item_id]['price_obj'] = unserialize( base64_decode( $event['price_obj'] ));
-				$this->events[$line_item_id]['price_desc'] = $event['options']['price_desc'];
+				$this->events[$line_item_id]['ticket'] = $event['ticket'];
+				$this->events[$line_item_id]['ticket_obj'] = unserialize( base64_decode( $event['ticket_obj'] ));
+				$this->events[$line_item_id]['ticket_desc'] = $event['options']['ticket_desc'];
 				$this->events[$line_item_id]['pre_approval'] = $event['options']['pre_approval'];
 				$this->events[$line_item_id]['price_id'] = $event['options']['price_id'];
 				$meta = unserialize( base64_decode( $event['options']['event_meta'] ) );
