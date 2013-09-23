@@ -10,21 +10,15 @@ echo EE_Form_Fields::hidden_input('QST_system', $question->system_ID());
 echo EE_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EE_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 $QST_system = $question->system_ID();
-$fields = $question->get_fields_settings();
+$fields = $question->get_model()->field_settings();
 ?>
 
 <div class="padding">
 	<table class="form-table">
 		<tbody>
-			<?php require_once( EE_MODELS . 'EEM_Question.model.php');
-			foreach(EEM_Question::instance()->field_settings() as $fieldName=>$settings){
-				if( in_array( $fieldName, array( 'QST_ID', 'QST_system','QST_wp_user','QST_deleted', 'QST_order' ))) {
-					continue;
-				}
-			?>
 			<tr>
 				<th>
-					<label for="<?php echo $fieldName; ?>"><?php echo $settings->get_nicename();?></label>
+					<label for="QST_display_text"><?php echo $fields['QST_display_text']->get_nicename();?></label>
 				</th>
 				<td>
 					<input type="text" class="regular-text" id="QST_display_text" name="QST_display_text" value="<?php echo $question->display_text()?>"/>
@@ -37,7 +31,7 @@ $fields = $question->get_fields_settings();
 			
 			<tr>
 				<th>
-					<label for="QST_admin_label"><?php echo $fields['QST_admin_label']->nicename();?></label>
+					<label for="QST_admin_label"><?php echo $fields['QST_admin_label']->get_nicename();?></label>
 				</th>
 				<td>
 					<?php 
@@ -62,7 +56,7 @@ $fields = $question->get_fields_settings();
 			
 			<tr>
 				<th>
-					<label for="QST_type"><?php echo $fields['QST_type']->nicename();?></label>
+					<label for="QST_type"><?php echo $fields['QST_type']->get_nicename();?></label>
 				</th>
 				<td>
 					<?php 
@@ -190,7 +184,7 @@ $fields = $question->get_fields_settings();
 			
 			<tr>
 				<th>
-					<label for="QST_required"><?php echo $fields['QST_required']->nicename();?></label>
+					<label for="QST_required"><?php echo $fields['QST_required']->get_nicename();?></label>
 				</th>
 				<td>
 					<?php 
@@ -214,7 +208,7 @@ $fields = $question->get_fields_settings();
 			
 			<tr>
 				<th>
-					<label for="QST_required_text"><?php echo $fields['QST_required_text']->nicename();?></label>
+					<label for="QST_required_text"><?php echo $fields['QST_required_text']->get_nicename();?></label>
 				</th>
 				<td>
 					<input type="text" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php echo $question->required_text()?>"/>
