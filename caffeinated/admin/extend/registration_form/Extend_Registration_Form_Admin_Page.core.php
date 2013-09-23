@@ -491,9 +491,22 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				if(empty($option_req_data['QSO_name'])){
 					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
 				}
-				$new_option=new EE_Question_Option($option_req_data['QSO_name'], $option_req_data['QSO_value'], $question->ID());
-				$new_option->save();
-			}
+
+				//set a default option object
+				$option = $this->EE->load_model('Question_Option')->create_default_object();
+
+				//add the new data
+				foreach ( $option_req_data as $column => $value ) {
+					$option->set($column, $value);
+				}
+				//because this is in a loop.  Make sure we set the QSO_ID to zero (cause EE_Base_Classes are singletons).
+				$option->set('QSO_ID', NULL); 
+				//SAVE the option
+				$option->save();
+				//add to question
+				$option->_add_relation_to($question, 'Question');
+			}			
+
 		}
 		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
