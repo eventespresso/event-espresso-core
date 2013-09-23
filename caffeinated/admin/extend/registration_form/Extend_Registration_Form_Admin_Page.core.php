@@ -463,7 +463,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$pk=$this->_question_model->primary_key_name();
 			$wheres=array($pk=>$ID);
 			unset($set_column_values[$pk]);
-			$success= $this->_question_model->update($set_column_values,$wheres);
+			$success= $this->_question_model->update($set_column_values,array($wheres));
 			$action_desc='updated';
 		}
 		//save the related options
