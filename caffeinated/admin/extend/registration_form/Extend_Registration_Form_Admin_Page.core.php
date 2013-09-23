@@ -705,7 +705,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		
 
-		$action = $model instanceof EEM_Question ? 'questions' : 'question_groups';//strtolower( $model->item_name(2) );
+		$action = $model instanceof EEM_Question ? 'default' : 'question_groups';//strtolower( $model->item_name(2) );
 		//echo "action :$action";
 		//$action = 'questions' ? 'default' : $action;
 		if($trash){
