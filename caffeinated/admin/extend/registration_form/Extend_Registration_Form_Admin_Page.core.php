@@ -369,7 +369,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$additional_hidden_fields=array('QST_ID'=>array('type'=>'hidden','value'=>$ID));
 			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
 		}else{
-			$question=new EE_Question();
+			$question= $this->EE->load_model('Question')->create_default_object();
 			$this->_set_add_edit_form_tags('insert_question');
 		}
 		$questionTypes=array();
