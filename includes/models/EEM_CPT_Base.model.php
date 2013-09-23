@@ -211,6 +211,15 @@ class EEM_CPT_Base extends EEM_Base{
 		}
 		return $new_stati;
 	}
+	
+	/**
+	 * Gets all the trashed CTPs
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return int
+	 */
+	public function count_deleted($query_params = array()){
+		return $this->count(array(array('status'=>array('=','trash'))));
+	}
 
 	
 }
