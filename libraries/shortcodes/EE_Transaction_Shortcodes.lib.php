@@ -79,7 +79,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[EVENT_PRICE]" :
-				return isset($this->_data['price']) ? EEH_Template::format_currency( $this->_data['price'] ) : '';
+				return isset($this->_data['ticket']) ? EEH_Template::format_currency( $this->_data['ticket'] ) : '';
 				break;
 
 			case "[PAYMENT_STATUS]" :
