@@ -106,6 +106,17 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+		//create basic transactionand payment meta
+//		$pay = EE_Payment::new_instance(array('PAY_amount'=>100));
+//		$pay->save();
+//		$meta = EE_Extra_Meta::new_instance(array('OBJ_ID'=>$pay->ID(),'EXM_type'=>'Payment','EXM_key'=>'numMonkeys','EXM_value'=>'19'));
+//		$meta->save();
+//		echo 'echodump of $meta';
+//		var_dump($meta);
+//		echo 'echodump of $pay->extra_meta()';
+//		var_dump($pay->extra_meta());
+		
+		
 		//create basic promotion
 //		$pro =  EE_Promotion::new_instance(array('PRO_scope'=>'Event'));				
 //		$pro->save();

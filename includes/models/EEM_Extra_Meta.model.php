@@ -67,7 +67,7 @@ class EEM_Extra_Meta extends EEM_Base {
 			));
 		$this->_model_relations = array();
 		foreach($models_this_can_attach_to as $model){
-			$this->_model_relations[$model] = new EE_Has_Many_Any_Relation();
+			$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 		}
 		
 		parent::__construct();
