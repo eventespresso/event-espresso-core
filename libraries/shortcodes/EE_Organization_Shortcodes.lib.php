@@ -75,7 +75,7 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[CO_STATE]' :
-				$state = $this->EE->load_model( 'State' )->get_one_by_ID( EE_Registry::instance()->CFG->organization->STA_ID );
+				$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( EE_Registry::instance()->CFG->organization->STA_ID );
 				return $state->name();
 				break;
 
