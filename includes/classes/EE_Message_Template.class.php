@@ -382,10 +382,8 @@ class EE_Message_Template {
 
 		global $wpdb;
 		$evt_id = absint($this->_EVT_ID);
-		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
-		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
-		return $event_name;
+		$event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($this->_EVT_ID);
+		return $event->get('EVT_name');
 	}
 
 	/**
