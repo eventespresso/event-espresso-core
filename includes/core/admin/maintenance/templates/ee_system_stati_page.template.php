@@ -35,7 +35,7 @@ function ee_resurse_into_array($data){
 <h1><?php _e("System Status", "event_espresso");?></h1>
 <div class='main'>
 	<h3><?php _e("Raw System Data", "event_espresso");?></h3>
-	<textarea style='width:100%;height:100px;overflow-y:scroll'><?php print_r($system_stati)?></textarea>
+	<textarea class="system_status_info"><?php print_r($system_stati)?></textarea>
 	<table class='widefat'>
 <?php	
 	foreach($system_stati as $status_category_slug => $data){

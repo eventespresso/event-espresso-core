@@ -95,6 +95,7 @@ class EEM_System_Status{
 	function get_wp_settings(){
 		
 		return array(
+			'name'=>get_bloginfo('name','display'),
 			'is_multisite'=>is_multisite(),
 			'version'=>  get_bloginfo( 'version', 'display' ),
 			'home_url'=>home_url(),
@@ -102,7 +103,10 @@ class EEM_System_Status{
 			'WP_DEBUG'=>WP_DEBUG,
 			'permalink_structure'=>get_option('permalink_structure'),
 			'theme'=>wp_get_theme(),
-			
+			'gmt_offset'=>get_option('gmt_offset'),
+			'timezone_string'=>get_option('timezone_string'),
+			'admin_email'=>  get_bloginfo('admin_email', 'display'),
+			'language'=>get_bloginfo('language','display')
 			);
 	}
 	
@@ -173,7 +177,8 @@ class EEM_System_Status{
 		  '#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#',
 			$section, $askapache, PREG_SET_ORDER);
 		  foreach($askapache as $m)
-			  $pi[$n][$m[1]]=(!isset($m[3])||$m[2]==$m[3])?$m[2]:array_slice($m,2);
+			  $m2 = isset($m[2]) ? $m[2] : null;
+			  $pi[$n][$m[1]]=(!isset($m[3])||$m2==$m[3]) ? $m2 : array_slice($m,2);
 		}
 
 		return $pi;

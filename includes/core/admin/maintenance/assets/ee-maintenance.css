@@ -56,3 +56,9 @@ figure div:last-child {
 table.widefat tbody>tr>td:first-child{
 	width:20%;
 }
+
+textarea.system_status_info{
+	width:80%;
+	height:100px;
+	overflow-y:scroll;
+}
