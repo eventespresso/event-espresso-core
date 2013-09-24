@@ -524,26 +524,27 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			);
 
 			// Pass the master array into the PayPal class function
-			$PayPalResult = $this->DoDirectPayment($PayPalRequestData);
-			//remove PCI-sensitive data so it doesn't get stored
-			unset($PayPalResult['REQUESTDATA']['CREDITCARDTYPE']);
-			unset($PayPalResult['REQUESTDATA']['ACCT']);
-			unset($PayPalResult['REQUESTDATA']['EXPDATE']);
-			unset($PayPalResult['REQUESTDATA']['CVV2']);
-			unset($PayPalResult['RAWREQUEST']);
-			if ($this->_APICallSuccessful($PayPalResult)) {
+			try{
+				$PayPalResult = $this->DoDirectPayment($PayPalRequestData);
+				//remove PCI-sensitive data so it doesn't get stored
+				unset($PayPalResult['REQUESTDATA']['CREDITCARDTYPE']);
+				unset($PayPalResult['REQUESTDATA']['ACCT']);
+				unset($PayPalResult['REQUESTDATA']['EXPDATE']);
+				unset($PayPalResult['REQUESTDATA']['CVV2']);
+				unset($PayPalResult['RAWREQUEST']);
 				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
+				$approved = $this->_APICallSuccessful($PayPalResult);
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
-						'approved' => TRUE,
-						'status' => 'Approved',
+						'approved' => $approved,
+						'status' => $approved ? 'Approved' : 'Declined',
 						'response_msg' => $message,
-						'amount' => $PayPalResult['AMT'],
+						'amount' => isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0,
 						'method' => 'CC',
 						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
 						'auth_code' => '',
 						'md5_hash' => $PayPalResult['CORRELATIONID'],
-						'transaction_id' => $PayPalResult['TRANSACTIONID'],
+						'transaction_id' => isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : '',
 						'invoice_number' => $session_data['primary_attendee']['registration_id'],
 						'raw_response' => $PayPalResult
 				);
@@ -553,13 +554,13 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 				$payment = EE_Payment::new_instance(array(
 								'TXN_ID' => $transaction->ID(),
-								'STS_ID' => EEM_Payment::status_id_approved,
+								'STS_ID' => $approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined,
 								'PAY_timestamp' => current_time('mysql',false),
 								'PAY_method' => 'CART',
-								'PAY_amount' => $PayPalResult['AMT'],
+								'PAY_amount' => isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0,
 								'PAY_gateway' => $this->_gateway_name,
 								'PAY_gateway_response' => $message,
-								'PAY_txn_id_chq_nmbr' => $PayPalResult['TRANSACTIONID'],
+								'PAY_txn_id_chq_nmbr' => isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null,
 								'PAY_po_number' => NULL,
 								'PAY_extra_accntng' => $primary_registration_code,
 								'PAY_via_admin' => false,
@@ -567,17 +568,12 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				$payment->save();
 				$this->update_transaction_with_payment($transaction, $payment);
 				$return = array('success'=>true);
-
-			} else {
-
-				$Errors = $this->_GetErrors($PayPalResult);
-				//printr( $PayPalResult, '$PayPalResult' );
-				$message = $this->_DisplayErrors($Errors);
+			}catch(Exception $e){
 				$txn_results = array(
 						'gateway' => $this->_payment_settings['display_name'],
 						'approved' => FALSE,
 						'status' => 'Declined',
-						'response_msg' => $message,
+						'response_msg' => $e->getMessage(),
 						'amount' => '0.00',
 						'method' => 'CC',
 						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
@@ -585,13 +581,26 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'md5_hash' => '',
 						'transaction_id' => '',
 						'invoice_number' => $session_data['primary_attendee']['registration_id'],
-						'raw_response' => $PayPalResult
+						'raw_response' => $e
 				);
+				$payment = EE_Payment::new_instance(array(
+								'TXN_ID' => $transaction->ID(),
+								'STS_ID' => EEM_Payment::status_id_failed,
+								'PAY_timestamp' => current_time('mysql',false),
+								'PAY_method' => 'CART',
+								'PAY_amount' => 0,
+								'PAY_gateway' => $this->_gateway_name,
+								'PAY_gateway_response' => $e->getMessage(),
+								'PAY_txn_id_chq_nmbr' => null,
+								'PAY_po_number' => NULL,
+								'PAY_extra_accntng' => null,
+								'PAY_via_admin' => false,
+								'PAY_details' => $e));
+				$payment->save();
 				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 				
-				$return = array('error'=>$message);
+				$return = array('error'=>$e->getMessage());
 			}
-
 		}else{ // end if ($billing_info != 'no payment required')
 			$return = array('success'=>true);
 		}
@@ -721,7 +730,6 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 // End function NVPToArray()
 
 	private function _APICallSuccessful($PayPalResult) {
-
 		// check main response message from PayPal
 		if (isset($PayPalResult['ACK']) && !empty($PayPalResult['ACK'])) {
 			$ack = strtoupper($PayPalResult['ACK']);

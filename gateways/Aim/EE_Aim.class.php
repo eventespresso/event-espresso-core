@@ -231,14 +231,12 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			//Capture response
 			$response = $this->authorizeAndCapture();
-			if (!empty($response)) {
-
+			if (!empty($response)){
 				if ($this->_payment_settings['use_sandbox']) {
 					$txn_id = $response->invoice_number;
 				} else {
 					$txn_id = $response->transaction_id;
 				}
-
 				$payment_status = $response->approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined;
 				$txn_results = array(
 					'gateway' => $this->_payment_settings['display_name'],
@@ -254,34 +252,25 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					'invoice_number' => $response->invoice_number,
 					'raw_response' => $response
 				);
-				$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($txn_id);
-				if (!empty($payment)) {
-					//payment exists. update it
-					$this->_debug_log("<hr>Existing IPN for this AIM trasaction, but its got some new info. Old status:" . $payment->STS_ID() . ", old amount:" . $payment->amount());
-					$payment->set_status($payment_status);
-					$payment->set_amount($response->amount);
-					$payment->set_gateway_response($response->response_reason_text);
-					$payment->set_details((array)$response);
-				} else {
-					$this->_debug_log("<hr>No Previous IPN payment received. Create a new one");
-					//no previous payment exists, create one
-					$primary_registrant = $transaction->primary_registration();
-					$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
+				$this->_debug_log("<hr>No Previous IPN payment received. Create a new one");
+				//no previous payment exists, create one
+				$primary_registrant = $transaction->primary_registration();
+				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 
-					$payment = EE_Payment::new_instance(array(
-								'TXN_ID' => $transaction->ID(),
-								'STS_ID' => $payment_status,
-								'PAY_timestamp' => current_time('mysql',false),
-								'PAY_method' => 'CART',
-								'PAY_amount' => $response->amount,
-								'PAY_gateway' => $this->_gateway_name,
-								'PAY_gateway_response' => $response->response_reason_text,
-								'PAY_txn_id_chq_nmbr' => $txn_id,
-								'PAY_po_number' => NULL,
-								'PAY_extra_accntng' => $primary_registration_code,
-								'PAY_via_admin' => false,
-								'PAY_details' => (array) $response));
-				}
+				$payment = EE_Payment::new_instance(array(
+							'TXN_ID' => $transaction->ID(),
+							'STS_ID' => $payment_status,
+							'PAY_timestamp' => current_time('mysql',false),
+							'PAY_method' => 'CART',
+							'PAY_amount' => $response->amount,
+							'PAY_gateway' => $this->_gateway_name,
+							'PAY_gateway_response' => $response->response_reason_text,
+							'PAY_txn_id_chq_nmbr' => $txn_id,
+							'PAY_po_number' => NULL,
+							'PAY_extra_accntng' => $primary_registration_code,
+							'PAY_via_admin' => false,
+							'PAY_details' => (array) $response));
+				
 				$success = $payment->save();
 				$successful_update_of_transaction = $this->update_transaction_with_payment($transaction, $payment);
 				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
@@ -290,6 +279,20 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				$return = array('success' => true);
 				
 			} else {
+				$payment = EE_Payment::new_instance(array(
+								'TXN_ID' => $transaction->ID(),
+								'STS_ID' => EEM_Payment::status_id_failed,
+								'PAY_timestamp' => current_time('mysql',false),
+								'PAY_method' => 'CART',
+								'PAY_amount' => 0,
+								'PAY_gateway' => $this->_gateway_name,
+								'PAY_gateway_response' => $response->response_reason_text,
+								'PAY_txn_id_chq_nmbr' => null,
+								'PAY_po_number' => NULL,
+								'PAY_extra_accntng' => $primary_registration_code,
+								'PAY_via_admin' => false,
+								'PAY_details' => (array) $response));
+				$payment->save();
 				$return = array('error' => __("Error communicating with Authorize.Net (AIM)", "event_espresso"));
 			}
 		} else {
