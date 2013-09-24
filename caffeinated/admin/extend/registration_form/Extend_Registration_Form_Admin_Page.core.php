@@ -539,11 +539,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 * @return array results array
 	 */	
 	public function update_question_order() {
-
 		$success = __( 'Question order was updated successfully.', 'event_espresso' );
 		
 		// grab our row IDs
-		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', wp_strip_all_tags( $this->_req_data['row_ids'] )) : FALSE;
+		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
+
 
 		if ( is_array( $row_ids )) {
 			global $wpdb;
