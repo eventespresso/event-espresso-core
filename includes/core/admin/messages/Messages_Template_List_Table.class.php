@@ -251,13 +251,13 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		if ( empty( $event_id ) ) 
 			return __('Global', 'event_espresso');
 
-		$get_event_name = $this->_event_name($item->event());
+		$get_event_name = $item->event_name();
 		$event_name = empty($get_event_name) ? __('Cannot find Event', 'event_espresso') : $get_event_name;
 
 		$base_event_admin_url = admin_url( 'admin.php?page=espresso_events' );
 		$query_args = array(
-			'action' => 'edit_event',
-			'event_id' => $item->event()
+			'action' => 'edit',
+			'post' => $item->event()
 			);
 		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, $base_event_admin_url );
 		$event_link = '<a href="'.$edit_event_url.'" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a>';
@@ -278,25 +278,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	function column_messages_sent($item) {
 		//todo: we need to obtain the messages sent and the link to the messages report table and output
 		return __('feature in progress', 'event_espresso');
-	}
-
-
-
-	/**
-	 * [_event_name description]
-	 * This just takes a given event_id and will output the name of the event for it.
-	 * @todo: temporary... will need to remove/replace once proper Event models/classes are in place.
-	 * @access private
-	 * @param  int $evt_id event_id
-	 * @return string event_name 
-	 */
-	private function _event_name($evt_id) {
-		global $wpdb;
-		$evt_id = absint($evt_id);
-		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
-		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
-		return $event_name;
 	}
 
 }

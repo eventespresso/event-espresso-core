@@ -219,7 +219,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Question[]
 	 */
 	public function questions(){
-		return $this->get_many_related('Question');
+		return !empty($this->_QSG_ID) ? $this->get_many_related('Question') : array();
 		}
 	
 	/**
