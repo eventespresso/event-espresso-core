@@ -53,18 +53,13 @@ class EE_Event_Meta_Shortcodes extends EE_Shortcodes {
 	 */
 	public function parser( $shortcode, $data ) {
 		
-		//we simply have to loop through the event_meta if it exists and return the value.
-		if ( !empty($data['meta']) ) {
-			foreach ($data['meta'] as $k => $v) {
-				if (!empty($k) && !is_array($v)) {
-					$s_to_match = '[' . $k . ']';
-					if ( $shortcode == $s_to_match )
-						return stripslashes_deep($v);
-				}
-			}
-		}
-		
-		return FALSE;
+		//all shortcodes will be checked in the post_meta table (assuming the shortcode matches the post_meta key);
+		if ( empty( $this->_data['ID'] ) )
+			return ''; //need the event id to do anything!
+
+		$meta = get_post_meta($this->_data['ID'], $shortcode, true);
+
+		return !empty( $meta ) ? $meta : '';
 	}
 
 
