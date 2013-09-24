@@ -549,7 +549,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			global $wpdb;
 			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
 				//Update the questions when re-ordering
-				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( 'QST_ID' => $row_ids[$i] ) )) {
+				$id = absint($row_ids[$i]);
+				if ( EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( array( 'QST_ID' => $id ) ) ) === FALSE ) {
 					$success = FALSE;
 				} 
 			}
