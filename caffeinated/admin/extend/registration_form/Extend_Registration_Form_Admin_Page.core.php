@@ -621,7 +621,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_group_model);
-		require_once('EE_Question_Group.class.php');
+		
 		if($new_question_group){
 			$ID=$this->_question_group_model->insert($set_column_values);
 			if($ID){
