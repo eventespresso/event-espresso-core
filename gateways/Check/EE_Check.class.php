@@ -51,8 +51,11 @@ Class EE_Check extends EE_Offline_Gateway {
 		$default_address .= $organization->address_2 != '' ? $organization->address_2 . '<br />' : '';
 		$default_address .= $organization->city != '' ? $organization->city : '';
 		$default_address .= ( $organization->city != '' && $organization->STA_ID != '') ? ', ' : '<br />';
-		$default_address .= $organization->STA_ID != '' ? EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID ) . '<br />' : '';
-		$default_address .= $organization->CNT_ISO != '' ? EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $organization->CNT_ISO ) . '<br />' : '';
+		
+		$state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $organization->STA_ID );
+		$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $organization->CNT_ISO ) ;
+		$default_address .=  $state ? $state->name() . '<br />' : '';
+		$default_address .= $country ? $country->name(). '<br />' : '';
 		$default_address .= $organization->zip != '' ? $organization->zip : '';
 		$this->_payment_settings = array(
 				'check_title' => __('Check/Money Order Payments', 'event_espresso'),
