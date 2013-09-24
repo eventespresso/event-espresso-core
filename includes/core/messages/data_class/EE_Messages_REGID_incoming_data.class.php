@@ -67,8 +67,6 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		if ( empty( $this->_reg_id ) ) return FALSE;
 
 		//require the models we need;
-		require_once 'EEM_Attendee.model.php';
-		require_once 'EEM_Registration.model.php';
 		$this->_EEM_att = EEM_Attendee::instance();	
 		$this->_EEM_reg = EEM_Registration::instance();
 
@@ -89,10 +87,6 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 
 
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
-		
-		//first let's setup some dummy line_item identifiers.  We'll base this on the number of events?
-		$line_items = array_fill( 1, count( $events ), 'dummy' );
-		$line_items = array_keys( $line_items );
 
 		//a variable for tracking totals
 		$running_total = 0;
@@ -103,36 +97,24 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		//get reg_objs for txn
 		$this->reg_objs = $this->txn->registrations();
 
-		//include Ticket Prices class for getting price obj for event.
-		require_once( EE_MODELS . 'EEM_Price.model.php' );
-
 		//we'll actually use the generated line_item identifiers for our loop
-		foreach( $line_items as $key => $line_item ) {
-			$this->_events[$line_item]['ID'] = $events[$key]->id;
+		foreach( $events as $id => $event ) {
+			$line_item = $id . '_reg';
+			$this->_events[$line_item]['ID'] = $id;
 			$this->_events[$line_item]['line_ref'] = $line_item;
-			$this->_events[$line_item]['name'] = $events[$key]->event_name;
+			$this->_events[$line_item]['name'] = $event->get('EVT_name');
 
-			$daytime_id = isset($events[$key]->daytime_id) ? $events[$key]->daytime_id : '';
-			$daytime_id = empty($daytime_id) && isset($this->reg_obj) && isset($this->reg_obj->event_obj()) && isset($this->reg_obj->event_obj()->first_datetime()) ? $this->reg_obj->event_obj()->first_datetime()->ID() : $daytime_id;
+			$daytime_id = $event->get_first_related('datetime')->ID();
 			$this->_events[$line_item]['daytime_id'] = $daytime_id;
 			
-			//we need to get the price details for this event (including the price objects etc);
-			//first get all Price Objects for given event
-			$TKT = new EE_Ticket_Prices( $events[$key]->id );
-			$final_tkt_prices = $TKT->get_all_final_event_prices();
+			$TKT = $this->reg_obj->get_first_related('Ticket');
 
-			//get the key of the first index in the ticket prices array.
-			$tkt_key = key($final_tkt_prices);
-
-			$id_list = $final_tkt_prices[$tkt_key]->ID_list();
-
-			//for the purpose of our example we're just going select the first price object as the one we'll use.
-			$this->_events[$line_item]['price_obj'] = $final_tkt_prices[$tkt_key];
-			$this->_events[$line_item]['price'] = $final_tkt_prices[$tkt_key]->price();
-			$this->_events[$line_item]['price_id'] = $id_list[0];
-			$this->_events[$line_item]['price_desc'] = $final_tkt_prices[$tkt_key]->name();
-			$this->_events[$line_item]['pre_approval'] = $events[$key]->require_pre_approval; 
-			$this->_events[$line_item]['meta'] = unserialize( $events[$key]->event_meta );
+			$this->_events[$line_item]['ticket_obj'] = $TKT;
+			$this->_events[$line_item]['ticket'] = $TKT->get_ticket_subtotal();
+			$this->_events[$line_item]['ticket_id'] = $TKT->ID();
+			$this->_events[$line_item]['ticket_desc'] = $TKT->get('TKT_description');
+			$this->_events[$line_item]['pre_approval'] = $event->get('EVT_require_pre_approval'); 
+			$this->_events[$line_item]['meta'] = array();
 
 			
 			$att_count = 0;
@@ -140,12 +122,12 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 				foreach ( $this->reg_objs as $reg ) {
 					$this->_attendees[$att_count]['line_ref'][] = $line_item;
 					$this->_attendees[$att_count]['att_obj'] = $this->_EEM_att->get_one_by_ID( $reg->attendee_ID() );
-					$this->_attendees[$att_count]['reg_objs'][$events[$key]->id] = $reg;
+					$this->_attendees[$att_count]['reg_objs'][$event->id] = $reg;
 					$att_count++;
 				}
 			}
 
-			$line_total = $att_count * $final_tkt_prices[$tkt_key]->price();
+			$line_total = $att_count * $TKT->get_ticket_subtotal() ;
 			$this->_events[$line_item]['line_total'] = $line_total;
 			$running_total = $running_total + $line_total;
 
@@ -167,7 +149,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		$events = array();
 
 		$this->reg_obj = $this->_EEM_reg->get_one_by_ID( $this->_reg_id );
-		$events[] = $this->reg_obj->event();
+		$events = $this->reg_obj->get_many_related('Event');
 		
 		return $events;
 	}

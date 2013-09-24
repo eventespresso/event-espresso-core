@@ -87,7 +87,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
 				$total = $this->_data['_cart_grand_total_amount'];
 				// add taxes
-				if (isset($this->_data['tax_totals'])) {
+				if (!empty($this->_data['tax_totals'])) {
 					foreach ($this->_data['tax_totals'] as $taxes) {
 						$total = $total + $taxes;
 					}
@@ -108,13 +108,11 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 				$this->events[$line_item_id]['line_ref'] = $line_item_id;
 				$this->events[$line_item_id]['name'] = $event['name'];
 				$this->events[$line_item_id]['daytime_id'] = $event['options']['dtt_id'];
+				$this->events[$line_item_id]['ticket_id'] = $event['ticket_id'];
 				$this->events[$line_item_id]['ticket'] = $event['ticket'];
 				$this->events[$line_item_id]['ticket_obj'] = unserialize( base64_decode( $event['ticket_obj'] ));
 				$this->events[$line_item_id]['ticket_desc'] = $event['options']['ticket_desc'];
 				$this->events[$line_item_id]['pre_approval'] = $event['options']['pre_approval'];
-				$this->events[$line_item_id]['price_id'] = $event['options']['price_id'];
-				$meta = unserialize( base64_decode( $event['options']['event_meta'] ) );
-				$this->events[$line_item_id]['meta'] = $meta;
 				$this->events[$line_item_id]['line_total'] = $event['line_total'];
 
 				$this->events[$line_item_id]['total_attendees'] = count( $event['attendees'] );

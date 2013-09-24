@@ -65,10 +65,12 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 		require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
 
+		$event = !empty( $this->_data['ID'] ) ? EE_Registry::instance()->load_model('Event')->get_one_by_ID($this->_data['ID'] ) : EE_Registry::instance()->load_model('Event')->create_default_object();
+
 		switch ( $shortcode ) {
 			
 			case '[EVENT_ID]' :
-				return isset($this->_data['ID']) ? $this->_data['ID'] : '';
+				return $event->ID();
 				break;
 
 			case '[EVENT_IDENTIFIER]' :
@@ -77,15 +79,15 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT]' :
 			case '[EVENT_NAME]' :
-				return isset($this->_data['name']) ? $this->_data['name'] : '';
+				return $event->get('EVT_name');
 				break;
 
 			case '[EVENT_PHONE]' :
-				return isset($this->_data['meta']['phone']) ? $this->_data['meta']['phone'] : '';
+				return $event->get('EVT_phone');
 				break;
 
 			case '[EVENT_DESCRIPTION]' :
-				return $this->_event('desc');
+				return $event->get('EVT_desc');
 				break;
 
 			case '[EVENT_LINK]' :
@@ -97,10 +99,12 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[VIRTUAL_URL]' :
-				return isset($this->_data['meta']['virtual_url']) ? $this->_data['meta']['virtual_url'] : '';
+				$venue = $this->_venue($event);
+				return $venue->get('VNU_virtual_url');
 
 			case '[VIRTUAL_PHONE]' :
-				return isset($this->_data['meta']['virtual_phone']) ? $this->_data['meta']['virtual_phone'] : '';
+				$venue = $this->_venue($event);
+				return $venue->get('VNU_virtual_phone');
 				break;
 
 			case '[EVENT_START_DATE]' :
@@ -108,7 +112,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_END_DATE]' :
-				return $this->_event_date( 'event_end_date' );
+				return $this->_event_date(  'event_end_date' );
 				break;
 
 			case '[EVENT_START_TIME]' :
@@ -120,8 +124,8 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_PRICE]' :
-				$this->EE->load_helper( 'Template' );
-				return isset( $this->_data['price'] ) ? EEH_Template::format_currency( $this->_data['price'] ) : '';
+				EE_Registry::instance()->load_helper( 'Template' );
+				return isset( $this->_data['ticket'] ) ? EEH_Template::format_currency( $this->_data['ticket'] ) : '';
 				break;
 		}
 	}
@@ -142,28 +146,37 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			return '';
 
 		//let's get the DTT Model and retrieve the Date Time object
-		require_once( EE_MODELS . 'EEM_Datetime.model.php' );
-		$DTTM = EEM_Datetime::instance();
-		$DTT = $DTTM-> $this->get_one_by_ID( $this->_data['daytime_id'] );
+		$DTT = EE_Registry::instance()->load_model('Datetime')->get_one_by_ID( $this->_data['daytime_id'] );
 
 		//if empty|false let's get out
 		if ( empty( $DTT ) || !is_object( $DTT ) ) return '';
 
 		switch ( $type ) {
 			case 'event_start_date' :
-				return $DTT->start_date( get_option('date_format') );
+				return $DTT->start_date();
 				break;
 			case 'event_end_date' :
-				return $DTT->end_date( get_option('date_format') );
+				return $DTT->end_date();
 				break;
 			case 'event_end_time' :
-				return $DTT->end_time( get_option('time_format') );
+				return $DTT->end_time();
 				break;
 			case 'event_start_time' :
-				return $DTT->start_time( get_option('time_format') );
+				return $DTT->start_time();
 				break;
 		}
 
+	}
+
+
+	/**
+	 * Return a venue object
+	 * @param  EE_Event $event 
+	 * @return EE_Venue        
+	 */
+	private function _venue( $event ) {
+		$venue = !empty( $this->_data['ID'] ) ? $event->get_first_related('Venue') : NULL;
+		$venue = empty( $venue ) ? EE_Registry::instance()->load_model('Venue')->create_default_object() : $venue;
 	}
 
 
@@ -176,21 +189,19 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 	private function _event( $type ) {
 		$what = '';
 		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
-		global $wpdb;
+		
+		//FIRST get the event
+		$event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($this->_data['ID']);
 
 		//we're using a switch here because I anticipate there will eventually be more types coming in here!
 		switch ( $type ) {
 			case 'desc' :
-				$what = 'e.event_desc';
+				$result = $event->get('EVT_desc');
 				break;
 			case 'slug' :
-				$what = 'e.slug';
+				$result = $event->get('EVT_slug');
 				break;
 		}
-
-		$select = "SELECT $what FROM " . EVENTS_DETAIL_TABLE . " AS e WHERE e.id = %s";
-
-		$result = $wpdb->get_var( $wpdb->prepare( $select, $this->_data['ID'] ) );
 
 		return $result;
 
@@ -206,9 +217,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_event_link( $full_link = TRUE ) {
 		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
-		//get event slug
-		$slug = $this->_event('slug');
-		$url = espresso_reg_url($this->_data['ID'], $slug);
+		$url = get_permalink($this->_data['ID']);
 
 		return $full_link ? '<a href="' . $url . '">' . $this->_data['name'] . '</a>' : $url;
 	}

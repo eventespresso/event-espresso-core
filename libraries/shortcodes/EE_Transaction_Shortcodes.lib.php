@@ -55,7 +55,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 		
-		$this->EE->load_helper( 'Template' );
+		EE_Registry::instance()->load_helper( 'Template' );
 
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :
@@ -79,7 +79,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[EVENT_PRICE]" :
-				return isset($this->_data['price']) ? EEH_Template::format_currency( $this->_data['price'] ) : '';
+				return isset($this->_data['ticket']) ? EEH_Template::format_currency( $this->_data['ticket'] ) : '';
 				break;
 
 			case "[PAYMENT_STATUS]" :

@@ -71,41 +71,30 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
 		
-		//first let's setup some dummy line_item identifiers.  We'll base this on the number of events?
-		$line_items = array_fill( 1, count( $events ), 'dummy' );
-		$line_items = array_keys( $line_items );
 
 		//some variable for tracking things we can use later;
 		$running_total = 0;
 
-		//include Ticket Prices class for getting price obj for event.
-		EE_Registry::instance()->load_model( 'Price' );
-
 		//we'll actually use the generated line_item identifiers for our loop
-		foreach( $line_items as $key => $line_item ) {
-			$this->_events[$line_item]['ID'] = $events[$key]->ID;
+		foreach( $events as $id => $event ) {
+			$line_item = $id . '_dummy';
+			$this->_events[$line_item]['ID'] = $id;
 			$this->_events[$line_item]['line_ref'] = $line_item;
-			$this->_events[$line_item]['name'] = $events[$key]->name;
-			$this->_events[$line_item]['daytime_id'] = $events[$key]->daytime_id;
+			$this->_events[$line_item]['name'] = $event->get('EVT_name');
+			$this->_events[$line_item]['daytime_id'] = $event->primary_datetime()->ID();
 			
 			//we need to get the price details for this event (including the price objects etc);
-			//first get all Price Objects for given event
-			$TKT = new EE_Ticket_Prices( $events[$key]->ID );
-			$final_tkt_prices = $TKT->get_all_final_event_prices();
-
-			//get the key of the first index in the ticket prices array.
-			$tkt_key = key($final_tkt_prices);
-
-			$id_list = $final_tkt_prices[$tkt_key]->ID_list();
+			//first get all Ticket Objects for given event and pick the first ticket as the one we'll use.
+			$TKT = $event->get_first_related('Datetime')->get_first_related('Ticket');
 
 			//for the purpose of our example we're just going select the first price object as the one we'll use.
-			$this->_events[$line_item]['price_obj'] = $final_tkt_prices[$tkt_key];
-			$this->_events[$line_item]['price'] = $final_tkt_prices[$tkt_key]->price();
-			$this->_events[$line_item]['price_id'] = $id_list[0];
-			$this->_events[$line_item]['price_desc'] = $final_tkt_prices[$tkt_key]->name();
+			$this->_events[$line_item]['ticket_obj'] = $TKT;
+			$this->_events[$line_item]['ticket'] = $TKT->get_ticket_subtotal();
+			$this->_events[$line_item]['ticket_id'] = $TKT->ID();
+			$this->_events[$line_item]['ticket_desc'] = $TKT->get('TKT_description');
 			$this->_events[$line_item]['pre_approval'] = 0; //we're going to ignore the event settings for this.
-			$this->_events[$line_item]['meta'] = unserialize( $events[$key]->meta );
-			$line_total = count( $attendees ) * $final_tkt_prices[$tkt_key]->price();
+			$this->_events[$line_item]['meta'] = array(); //for now leaving as blank... we'll have the shortcode parser using the get_post_meta function.
+			$line_total = count( $attendees ) * $TKT->get_ticket_subtotal();
 			$this->_events[$line_item]['line_total'] = $line_total;
 			$this->_events[$line_item]['total_attendees'] = count( $attendees );
 
@@ -209,7 +198,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 					'ATT_social' => $social,
 					'ATT_comments' => $comments,
 					'ATT_notes' => $notes,
-					'ATT_deleted' => $deleted,
 					'ATT_ID' => $attid
 				)
 			);
@@ -233,16 +221,11 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//HEY, if we have an evt_id then we want to make sure we use that for the preview (because a specific event template is being viewed);
 		$event_ids = isset( $_REQUEST['evt_id'] ) && !empty($_REQUEST['evt_id'] ) ? array( $_REQUEST['evt_id'] ) : array();
 
-		$limit = !empty( $event_ids ) ? '' : apply_filters( 'FHEE_EE_Messages_Preview_incoming_data_get_some_events_limit', ' LIMIT 0,1' );
+		$limit = !empty( $event_ids ) ? '' : apply_filters( 'FHEE_EE_Messages_Preview_incoming_data_get_some_events_limit', '0,1' );
 
-		$SQL = "SELECT e.id AS ID, e.event_name AS name, e.event_meta AS meta, e.event_status AS status, e.require_pre_approval AS pre_approval, dtt.DTT_ID AS daytime_id FROM " . EVENTS_DETAIL_TABLE . " AS e LEFT JOIN " . EE_DATETIME_TABLE . " AS dtt ON dtt.EVT_ID = e.id WHERE dtt.DTT_is_primary = '1' AND";
+		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ) ) : array();
 
-		$where = !empty( $event_ids ) ?  " e.id IN ('" . implode(",'", $event_ids ) . "')" : " e.is_active = '1'";
-
-		//make sure we get only active events!
-		$where .= " AND e.event_status = 'A'";
-
-		$events = $wpdb->get_results( $SQL . $where . $limit );
+		$events = EE_Registry::instance()->load_model('Event')->get_all(array($where, 'limit' => $limit ) );
 		
 		return $events;
 	}
@@ -287,7 +270,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//setup txn property
 		$this->txn = EE_Transaction::new_instance(
 			array(
-				'TXN_timestamp' => current_time(), //unix timestamp
+				'TXN_timestamp' => current_time('mysql'), //unix timestamp
 				'TXN_total' => $grand_total, //txn_total
 				'TXN_paid' => $grand_total, //txn_paid
 				'STS_ID' => 'PAP', //sts_id
@@ -309,18 +292,16 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 					'EVT_ID' => $this->_events[$line_ref]['ID'],
 					'ATT_ID' => $attendee['att_obj']->ID(),
 					'TXN_ID' => $this->txn->ID(),
-					'DTT_ID' => $this->_events[$line_ref]['daytime_id'],
-					'PRC_ID' => $this->_events[$line_ref]['price_id'],
+					'TKT_ID' => $this->_events[$line_ref]['ticket_id'],
 					'STS_ID' => 'RAP',
-					'REG_date' => current_time(),
-					'REG_final_price' => $this->_events[$line_ref]['price'],
+					'REG_date' => current_time('mysql'),
+					'REG_final_price' => $this->_events[$line_ref]['ticket'],
 					'REG_session' => 'dummy_session_id',
 					'REG_code' => '1-dummy_generated_reg_code',
 					'REG_url_link' => 'http://dummyregurllink.com',
 					'REG_count' => $key,
 					'REG_group_size' => $this->_events[$line_ref]['total_attendees'],
 					'REG_att_is_going' => TRUE,
-					'REG_att_checked_in' => FALSE,
 					'REG_ID' => 9999990 + (int) $line_ref
 					);
 				$REG_OBJ =  EE_Registration::new_instance( $reg_array );
@@ -349,8 +330,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->user_id = 1;
 		$this->ip_address = '192.0.2.1';
 		$this->user_agent = '';
-		$this->init_access = current_time();
-		$this->last_access = current_time();
+		$this->init_access = current_time('mysql');
+		$this->last_access = current_time('mysql');
 
 	}
 
