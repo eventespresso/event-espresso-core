@@ -171,7 +171,11 @@ class EE_Transaction extends EE_Base_Class{
 	protected $_Promotion_Object;
 
 
-
+	/**
+	 * 
+	 * $var EE_Extra_Meta[]
+	 */
+	protected $_Extra_Meta = NULL;
 
 
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
