@@ -8,6 +8,11 @@ class EEM_System_Status{
 	// private instance of the EEM_Price object
 	private static $_instance = NULL;
 
+	/**
+	 *
+	 * @var EE_Registry
+	 */
+	private $EE;
 
 
 	/**
@@ -26,7 +31,9 @@ class EEM_System_Status{
 		}
 		return self::$_instance;
 	}
-
+	private function __construct(){
+		$this->EE = EE_Registry::instance();
+	}
 	/**
 	 * 
 	 * @return array where each key is a function name on this class, and each value is SOMETHING--
@@ -34,15 +41,16 @@ class EEM_System_Status{
 	 */
 	function get_system_stati(){
 		return array(
-			'active_plugins'=>$this->get_active_plugins(),
+			'ee_version'=>$this->get_ee_version(),
 			'ee_activation_history'=>$this->get_ee_activation_history(),
 			'ee_config'=>$this->get_ee_config(),
 			'ee_gateway_settings'=>$this->get_ee_gateway_settings(),
 			'ee_migration_history'=>$this->get_ee_migration_history(),
-			'ee_version'=>$this->get_ee_version(),
+			'active_plugins'=>$this->get_active_plugins(),
+			'wp_settings'=>$this->get_wp_settings(),
 			'https_enabled'=>$this->get_https_enabled(),
 			'php_info'=>$this->get_php_info(),
-			'wp_settings'=>$this->get_wp_settings()
+			
 		);
 	}
 	/**
@@ -108,14 +116,14 @@ class EEM_System_Status{
 	
 	/**
 	 * Gets information about gateways
-	 * return array 
+	 * return EEM_Gateways 
 	 */
 	function get_ee_gateway_settings(){
-		return EEM_Gateways::instance();
+		return get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
 	}
 	
 	/**
-	 * 
+	 * Gets an array where keys are ee versions, and their values are arrays indicating all the different times that version was installed
 	 * @return EE_Data_Migration_Script_Base[]
 	 */
 	function get_ee_migration_history(){

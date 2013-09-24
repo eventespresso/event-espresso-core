@@ -53,3 +53,6 @@ figure div:last-child {
   color: #fff;
 }
 
+table.widefat tbody>tr>td:first-child{
+	width:20%;
+}

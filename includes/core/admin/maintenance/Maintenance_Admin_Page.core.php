@@ -62,7 +62,28 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'change_maintenance_level'=>array(
 				'func'=>'_change_maintenance_level',
 				'noheader'=>true
-			));
+			),
+			'system_status'=>'_system_status');
+	}
+	protected function _set_page_config() {
+		$this->_page_config = array(
+			'default' => array(
+				'nav' => array(
+					'label' => __('Maintenance', 'event_espresso'),
+					'order' => 10
+					),
+				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				////'help_tabs' => $this->_get_maintenance_help_tabs(),
+				),
+			'system_status'=>array(
+				'nav'=>array(
+					'label'=>  __("System Status", "event_espresso"),
+					'order'=>20
+					
+				),
+				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+			)
+			);
 	}
 
 	/**
@@ -154,20 +175,17 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EE_Maintenance_Mode::instance()->set_maintenance_level($new_level);
 		$this->_redirect_after_action(true, 'Maintenance Mode', __("Updated", "event_espresso"));
 	}
-
-
-	protected function _set_page_config() {
-		$this->_page_config = array(
-			'default' => array(
-				'nav' => array(
-					'label' => __('Maintenance Methods', 'event_espresso'),
-					'order' => 10
-					),
-				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				////'help_tabs' => $this->_get_maintenance_help_tabs(),
-				)
-			);
+	
+	public function _system_status(){
+		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
+		$this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
+		$this->EE->load_helper('Array');
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
+		$this->display_admin_page_with_sidebar();
 	}
+	
+
+	
 	
 	
 
