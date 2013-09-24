@@ -55,7 +55,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 		
-		$this->EE->load_helper( 'Template' );
+		EE_Registry::instance()->load_helper( 'Template' );
 
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :

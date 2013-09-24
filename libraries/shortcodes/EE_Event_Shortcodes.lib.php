@@ -87,7 +87,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_DESCRIPTION]' :
-				return $event->get('EVT_description');
+				return $event->get('EVT_desc');
 				break;
 
 			case '[EVENT_LINK]' :
@@ -124,7 +124,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_PRICE]' :
-				$this->EE->load_helper( 'Template' );
+				EE_Registry::instance()->load_helper( 'Template' );
 				return isset( $this->_data['ticket'] ) ? EEH_Template::format_currency( $this->_data['ticket'] ) : '';
 				break;
 		}
