@@ -104,7 +104,7 @@ final class EE_Config {
 	/**
 	 *		@singleton method used to instantiate class object
 	 *		@access public
-	 *		@return class instance
+	 *		@return EE_Config instance
 	 */
 	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
@@ -159,7 +159,7 @@ final class EE_Config {
 	 */
 	private function _load_config() {
 
-		$this->EE->CFG = $this->_get_espresso_config();
+		$this->EE->CFG = $this->get_espresso_config();
 		
 		// do settings for this blog exist ?
 		if ( empty( $this->EE->CFG )) {
@@ -206,9 +206,9 @@ final class EE_Config {
 	 * 	_get_espresso_config
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	array of espresso config stuff
 	 */
-	private function _get_espresso_config() {
+	public function get_espresso_config() {
 		// grab espresso configuration
 		if ( is_multisite() ) {
 			// look for blog specific config
@@ -254,7 +254,7 @@ final class EE_Config {
 			$saved = update_option( 'espresso_config', $this->EE->CFG );
 		}
 		// if config remains the same or was updated successfully
-		if ( $this->EE->CFG == $this->_get_espresso_config() || $saved ) {
+		if ( $this->EE->CFG == $this->get_espresso_config() || $saved ) {
 			if ( $add_succes ) {
 				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
 				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );

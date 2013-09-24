@@ -39,7 +39,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'EE_MAINTENANCE_ADMIN', EE_CORE_ADMIN . 'maintenance' . DS );	
 		define( 'EE_MAINTENANCE_TEMPLATE_PATH', EE_MAINTENANCE_ADMIN . 'templates' . DS );	
 		define( 'EE_MAINTENANCE_ASSETS_URL', EE_CORE_ADMIN_URL . 'maintenance/assets/' );
-
+		define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 
 		parent::__construct();
 	}

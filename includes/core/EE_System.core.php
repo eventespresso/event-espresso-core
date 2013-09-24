@@ -235,16 +235,19 @@ final class EE_System {
 			case EE_System::req_type_reactivation:
 				EEH_Activation::initialize_db_and_folders();
 				EEH_Activation::initialize_db_content();
+				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_upgrade:
 				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+				$this->update_list_of_installed_versions($espresso_db_update);
+				break;
+			case EE_System::req_type_downgrade:
+				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_normal:
-			case EE_System::req_type_downgrade:
 			default:
 				break;
 		}
-		$this->update_list_of_installed_versions($espresso_db_update);
 	}
 
 	
