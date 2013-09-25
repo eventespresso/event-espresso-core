@@ -94,6 +94,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->init_access = $this->last_access = '';
 
 		$this->billing = $this->payment->details();
+		EE_Registry::instance()->load_helper('Template');
 		$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
 
 		//let's get all the registrations associated with this txn

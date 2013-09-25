@@ -67,8 +67,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 		//transaction stuff
 		if ( isset( $this->_data['transaction'] ) ) {
 			$this->txn = $this->_data['transaction'];
-			require_once EE_MODELS . 'EEM_Transaction.model.php';
-			$status_array = EEM_Transaction::instance()->status_array();
+			$status_array = EE_Registry::instance()->load_model('Transaction')->status_array();
 			$this->txn_status = $status_array[$this->txn->status_ID()];
 		}
 
@@ -76,8 +75,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 		if ( isset( $this->_data['billing_info'] ) ) {
 			$this->billing_info = $this->_data['billing_info'];
 			// load gateways
-			require_once EE_MODELS . 'EEM_Gateways.model.php';
-			$gateways = EEM_Gateways::instance();
+			$gateways = EE_Registry::instance()->load_model('Gateways');
 
 			if ($this->billing_info == 'no payment required') {
 			$this->billing = null;
@@ -95,6 +93,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
 				$this->taxes = $this->_data['taxes'];
 
+				EE_Registry::instance()->load_helper('Template');
 				$this->billing['total_due'] = EEH_Template::format_currency( $total );
 			}
 		}
