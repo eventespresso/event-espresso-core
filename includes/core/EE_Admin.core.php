@@ -210,9 +210,7 @@ final class EE_Admin {
 			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 
 			// bring out the pidgeons!!!
-			//require_once( EE_CORE . 'messages' . DS . 'EE_messages_init.core.php' );
 			$this->EE->load_core( 'messages_init' );
-			EE_messages_init::init();
 			
 		}
 		// run the admin page factory but ONLY if we aren't doing a frontend ajax request

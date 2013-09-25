@@ -136,9 +136,20 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			$ids[] = $event['ID'];
 		}
 
-		//k we've got our list of ids now let's do the query.
-		$sql = "SELECT e.wp_user, u.user_email as email, uma.meta_value as first_name, umb.meta_value as last_name FROM " . EVENTS_DETAIL_TABLE . " as e LEFT JOIN $wpdb->users as u ON u.ID = e.wp_user LEFT JOIN $wpdb->usermeta as uma ON uma.user_id = u.ID AND uma.meta_key = 'first_name' LEFT JOIN $wpdb->usermeta as umb ON umb.user_id = u.ID AND umb.meta_key = 'last_name' WHERE e.id IN (%s) GROUP BY e.wp_user";
-		$admin_details = $wpdb->get_results( $wpdb->prepare( $sql, implode(',', $ids) ) );
+		//get all the events
+		$events = EE_Registry::instance()->load_model('Event')->get_all( array(array('EVT_ID' => array('IN', $ids ) ) ) );
+
+		//now loop through each event and setup the details
+		$admin_details = array();
+		$cnt = 0;
+		foreach ( $events as $event ) {
+			$user = get_userdata($event->get('EVT_wp_user') );
+			$admin_details[$cnt] = new stdClass();
+			$admin_details[$cnt]->email = $user->user_email;
+			$admin_details[$cnt]->first_name = $user->user_firstname;
+			$admin_details[$cnt]->last_name = $user->user_lastname;
+			$cnt++;
+		}
 
 		//results?
 		if ( empty($admin_details) || !is_array($admin_details) ) {
