@@ -159,6 +159,12 @@ class EE_Payment extends EE_Base_Class{
 	 */
 	protected $_Status = NULL;
 
+	
+	/**
+	 * 
+	 * $var EE_Extra_Meta[]
+	 */
+	protected $_Extra_Meta = NULL;
 
 
 
@@ -643,6 +649,15 @@ class EE_Payment extends EE_Base_Class{
 	}
 
 
+	/**
+	 * Gets all the extra meta info on this payment
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Extra_Meta
+	 */
+	public function extra_meta($query_params = array()){
+		return $this->get_many_related('Extra_Meta', $query_params);
+	}
+	
 
 }
 

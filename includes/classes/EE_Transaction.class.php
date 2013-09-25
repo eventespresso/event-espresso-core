@@ -171,7 +171,11 @@ class EE_Transaction extends EE_Base_Class{
 	protected $_Promotion_Object;
 
 
-
+	/**
+	 * 
+	 * $var EE_Extra_Meta[]
+	 */
+	protected $_Extra_Meta = NULL;
 
 
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
@@ -609,7 +613,15 @@ class EE_Transaction extends EE_Base_Class{
 	public function status_obj(){
 		return $this->get_first_related('Status');
 	}
-
+	
+	/**
+	 * Gets all the extra meta info on this payment
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Extra_Meta
+	 */
+	public function extra_meta($query_params = array()){
+		return $this->get_many_related('Extra_Meta', $query_params);
+	}
 
 }
 

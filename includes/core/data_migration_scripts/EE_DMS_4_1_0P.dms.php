@@ -137,6 +137,16 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 
 
+		
+		$table_name='esp_extra_meta';
+		$sql="EXM_ID int(11) NOT NULL AUTO_INCREMENT,
+				OBJ_ID int(11) DEFAULT NULL,
+				EXM_type varchar(45) DEFAULT NULL,
+				EXM_key varchar(45) DEFAULT NULL,
+				EXM_value text,
+				PRIMARY KEY  (EXM_ID)";
+		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
+
 
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
