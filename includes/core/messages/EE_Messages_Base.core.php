@@ -209,6 +209,7 @@ abstract class EE_Messages_Base extends EE_Base {
 		$active_messengers = get_option('ee_active_messengers', true);
 		$active_message_types = !empty( $messenger ) ? $active_messengers[$messenger]['settings'][$messenger . '-message_types'] : array();
 
+
 		$actives = $this->_messages_item_type == 'messenger' ? $active_messengers : $active_message_types;
 
 		$this->_existing_admin_settings = isset($actives[$this->name]['settings'] ) ? $actives[$this->name]['settings'] : null;
@@ -228,7 +229,7 @@ abstract class EE_Messages_Base extends EE_Base {
 	 */
 	public function get_existing_admin_settings( $messenger = NULL ) {
 		// if admin_settings property empty lets try setting it.
-		if ( method_exists($this, '_set_existing_admin_settings()') && empty( $this->_existing_admin_settings ) )
+		if ( method_exists($this, '_set_existing_admin_settings') && empty( $this->_existing_admin_settings ) )
 			$this->_set_existing_admin_settings( $messenger );
 
 		return property_exists($this, '_existing_admin_settings') ? $this->_existing_admin_settings : null;
