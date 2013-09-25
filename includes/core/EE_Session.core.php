@@ -606,7 +606,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function clear_session( $class = '', $func = '' ) {
+	public function clear_session( $class = '', $func = '', $show_all_notices = FALSE ) {
 
 		$this->reset_data( 
 			array(
@@ -620,7 +620,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				'billing_info',
 				'txn_results',
 				'grand_total_price_object'
-			));
+			),
+			$show_all_notices
+		);
 																
 		$this->set_session_data(
 			array(
@@ -642,7 +644,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		  @access public
 	 *			@return TRUE on success, FALSE on fail
 	 */
-	public function reset_data( $data_to_reset = FALSE ) {
+	public function reset_data( $data_to_reset = FALSE, $show_all_notices = FALSE ) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
@@ -667,16 +669,20 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				if ( ! in_array( $reset, $this->_default_session_vars )) {
 					// set var to NULL
 					$this->_session_data[ $reset ] = NULL;
-					EE_Error::add_success( sprintf( __( 'The session variable %s was reset.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
+					if ( $show_all_notices ) {
+						EE_Error::add_success( sprintf( __( 'The session variable %s was reset.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
+					}
 					$return_value = !isset($return_value) ? TRUE : $return_value;
 
 				} else {
 					// yeeeeeeeeerrrrrrrrrrr OUT !!!!
-					EE_Error::add_error( sprintf( __( 'Sorry! %s is a default session datum and can not be reset.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
+					if ( $show_all_notices ) {
+						EE_Error::add_error( sprintf( __( 'Sorry! %s is a default session datum and can not be reset.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
+					}
 					$return_value = FALSE;
 				}
 
-			} else {
+			} else if ( $show_all_notices ) {
 				// opps! that session var does not exist!
 				EE_Error::add_error( sprintf( __( 'The session item provided, %s, is invalid or does not exist.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
 				$return_value = FALSE;
