@@ -41,130 +41,100 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 		$session_stuff = $this->_data->get_session_data();
 		$this->_data = $session_stuff;
 
+		//basically ALL we're going to get from this is the transaction object and use it to build the majority of our info.
+		
+		$this->txn = !empty( $this->_data['transaction'] ) ? $this->_data['transaction'] : NULL;
 
-		$this->reg_info = isset( $this->_data['cart']['REG']) ? $this->_data['cart']['REG'] : array();
-		$this->reg_objs = isset( $this->_data['registration'] ) ? $this->_data['registration'] : array();
-		$this->grand_total_price_object = isset( $this->_data['grand_total_price_object'] ) ? $this->_data['grand_total_price_object'] : '';
+		if ( empty( $this->txn ) || ! $this->txn instanceof EE_Transaction )
+			throw new EE_Error( __('Incomding data for the EE_Session data handler must have a valid EE_Transaction object in order to setup the data') );
 
-		//browser id stuff
-		$browser_keys = array(
-			'user_id',
-			'ip_address',
-			'user_agent',
-			'init_access',
-			'last_access'
-		);
+		$this->reg_info = array();
+		$this->incoming_data = $this->_data;
+		$this->taxes = $this->txn->tax();
+
+		$this->grand_total_price_object = '';
+		$session = $this->txn->session_data();
+
+		//other data from the session (if possible)
+		$this->user_id = isset( $session['user_id'] ) ? $session['user_id'] : '';
+		$this->ip_address = isset( $session['ip_address'] ) ? $session['ip_address'] : '';
+		$this->user_agent = isset( $session['user_agent'] ) ? $session['user_agent'] : '';
+		$this->init_access = $this->last_access = '';
+
+		$this->payment = $this->txn->get_first_related('Payment');
+		$this->payment = empty( $this->payment ) ? EE_Payment::new_instance( array(
+			'STS_ID' => EEM_Payment::status_id_pending,
+			'PAY_timestamp' => (int) current_time('timestamp'),
+			'PAY_gateway' => $txn->selected_gateway(),
+			'PAY_gateway_response' => $txn->gateway_response_on_transaction(),
+			)
+		 ) : $this->payment; //if there is no payments associated with the transaction then we just create a default payment object for potential parsing.
+
+		$this->billing = $this->payment->details();
+
+		EE_Registry::instance()->load_helper('Template');
+		$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
+
+		//let's get all the registrations associated with this txn
+		$this->reg_objs = $this->txn->registrations();
+
+		//let's get just the primary_attendee_data!  First we get the primary registration object.
+		$primary_reg = $this->txn->primary_registration(TRUE);
+
+		$primary_att = $primary_reg->attendee();
+
+		//now we can setup the primary_attendee_data array
+		$this->primary_attendee_data = array(
+			'fname' => $primary_att->fname(),
+			'lname' => $primary_att->lname(),
+			'email' => $primary_att->email(),
+			'primary_attendee_email' => $primary_att->email(),
+			'registration_id' => $primary_reg->ID()
+			);
+
+		//get all attendee and events associated with the registrations in this transaction
+		$events = array();
+		$attendees = array();
+		if ( !empty( $this->reg_objs ) ) {
+			$event_attendee_count = array(); 
+			foreach ( $this->reg_objs as $reg ) {
+				$events[$reg->event_ID()] = $reg;
+				$event_attendee_count[$reg->event_ID()] = isset( $event_attendee_count[$reg->event_ID()] ) ? $event_attendee_count[$reg->event_ID()] + 1 : 0;
+				$attendees[$reg->attendee_ID()]['line_ref'][] = $reg->event_ID();
+				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
+				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->event_ID()] = $reg;
+			}
+
+			//let's loop through the unique event=>reg items and setup data on them
 
 
-		//primary attendee data
-		$this->_add_primary_attendee_data();
-
-
-		foreach ( $browser_keys as $index ) {
-			$this->$index = isset($this->_data[$index]) ? $this->_data[$index] : '';
-		}
-
-		//transaction stuff
-		if ( isset( $this->_data['transaction'] ) ) {
-			$this->txn = $this->_data['transaction'];
-			$status_array = EE_Registry::instance()->load_model('Transaction')->status_array();
-			$this->txn_status = $status_array[$this->txn->status_ID()];
-		}
-
-		//billing stuff
-		if ( isset( $this->_data['billing_info'] ) ) {
-			$this->billing_info = $this->_data['billing_info'];
-			// load gateways
-			$gateways = EE_Registry::instance()->load_model('Gateways');
-
-			if ($this->billing_info == 'no payment required') {
-			$this->billing = null;
-			} else {
-				// get billing info fields
-				$this->billing = $gateways->set_billing_info_for_confirmation( $this->billing_info );
-
-				$total = $this->_data['_cart_grand_total_amount'];
-				// add taxes
-				if (!empty($this->_data['tax_totals'])) {
-					foreach ($this->_data['tax_totals'] as $taxes) {
-						$total = $total + $taxes;
-					}
+			if ( !empty( $events) ) {
+				foreach ( $events as $eid => $reg ) {
+					/*@var $reg EE_Registration */
+					$event = $reg->event_obj();
+					$first_datetime = $event->first_datetime();
+					$tkt = $reg->get_first_related('Ticket');
+					$events[$eid] = array(
+						'ID' => $reg->event_ID(),
+						'line_ref' => $reg->event_ID(),
+						'name' => $event->name(),
+						'daytime_id' => $first_datetime  ? $first_datetime->ID() : 0,
+						'ticket' => $tkt->get_ticket_subtotal(),
+						'ticket_obj' => $tkt,
+						'ticket_desc' => $tkt->get('TKT_description'),
+						'pre_approval' => $event->require_pre_approval(),// $event->require_pre_approval,
+						'ticket_id' => $tkt->ID(),
+						'meta' => null, //used to be maybe_unserialize( $event->event_meta ), but htere is now NO event meta column
+						'line_total' => $this->txn->total(),
+						'total_attendees' => $event_attendee_count[$eid]
+					);
 				}
-
-				$this->taxes = $this->_data['taxes'];
-
-				EE_Registry::instance()->load_helper('Template');
-				$this->billing['total_due'] = EEH_Template::format_currency( $total );
-			}
+			}	
 		}
 
-
-		//events and attendees
-		//let's loop through the events and setup a referenced event_data array (indexed by event_id?)
-		if ( isset( $this->reg_info['items'] ) && is_array($this->reg_info['items'] ) ) {
-			foreach ( $this->reg_info['items'] as $line_item_id => $event ) {
-				$this->events[$line_item_id]['ID'] = $event['id'];
-				$this->events[$line_item_id]['line_ref'] = $line_item_id;
-				$this->events[$line_item_id]['name'] = $event['name'];
-				$this->events[$line_item_id]['daytime_id'] = $event['options']['dtt_id'];
-				$this->events[$line_item_id]['ticket_id'] = $event['ticket_id'];
-				$this->events[$line_item_id]['ticket'] = $event['ticket'];
-				$this->events[$line_item_id]['ticket_obj'] = unserialize( base64_decode( $event['ticket_obj'] ));
-				$this->events[$line_item_id]['ticket_desc'] = $event['options']['ticket_desc'];
-				$this->events[$line_item_id]['pre_approval'] = $event['options']['pre_approval'];
-				$this->events[$line_item_id]['line_total'] = $event['line_total'];
-
-				$this->events[$line_item_id]['total_attendees'] = count( $event['attendees'] );
-
-				foreach ($event['attendees'] as $att_nmbr => $attendee) {
-
-					$this->attendees[$att_nmbr]['line_ref'][] = $line_item_id; //so we can retrieve events later this attendee registered for!
-					$this->attendees[$att_nmbr]['att_obj'] = unserialize( base64_decode( $attendee['att_obj'] ) );
-					$this->attendees[$att_nmbr]['reg_objs'][$event['id']] = $this->reg_objs[$line_item_id];
-				}
-			}
-		}
-
-		//if we don't have any primary attendee data let's get some from the attendee list.
-		if ( empty( $this->_primary_attendee_data ) ) {
-			foreach ( $this->attendees as $attnum => $details ) {
-				$att_obj = $details['att_obj'];
-				$this->_primary_attendee_data['fname'] = $att_obj->fname();
-				$this->_primary_attendee_data['lname'] = $att_obj->lname();
-				$this->_primary_attendee_data['email'] = $att_obj->email();
-			}
-		}
-	}
-
-
-
-	/**
-	 * This just gets the _primary_attendee_data from the data array. 
-	 *
-	 * @access protected
-	 * @return array array of primary attendee data
-	 */
-	protected function _add_primary_attendee_data() {
-
-		//sigh. it appears there are some times where primary_attendee is not set.
-		if ( !isset( $this->_data['primary_attendee'] ) ) {
-			$this->primary_attendee_data = NULL;
-			return;
-		}
-
-		foreach ( $this->_data['primary_attendee'] as $key => $val ) {
-			if ( $key == 'email') {
-				$this->primary_attendee_data['primary_attendee_email'] = $val;
-				continue;
-			}
-
-			if ( $key == 'registration_id' ) {
-				$this->primary_attendee_data['primary_registration_id'] = $val;
-				continue;
-			}
-
-			$this->primary_attendee_data[$key] = $val;
-		}
+		//lets set the attendees and events properties
+		$this->attendees = $attendees;
+		$this->events = $events;
 	}
 
 } //end EE_Messages_EE_Session_incoming_data class
