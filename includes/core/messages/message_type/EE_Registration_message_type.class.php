@@ -90,9 +90,6 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	protected function _set_data_handler() {
-		//this message type might be delayed for payment, so let's get what is set.
-		$message_settings = $this->get_existing_admin_settings( $this->_active_messenger->name );
-
 		$this->_data_handler = ! $this->_data instanceof EE_Session ? 'Gateways' : 'EE_Session';
 	}
 
