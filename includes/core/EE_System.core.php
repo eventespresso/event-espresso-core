@@ -98,7 +98,6 @@ final class EE_System {
 	 */
 	private function __construct( $activation ) {
 		
-		// handy dandy object for holding shtuff
 		$this->_activation = $activation;
 		$this->_load_registry();
 		$this->_register_custom_autoloaders();
@@ -233,6 +232,8 @@ final class EE_System {
 		switch($this->detect_req_type($espresso_db_update)){
 			case EE_System::req_type_new_activation:
 			case EE_System::req_type_reactivation:
+				EEH_Activation::system_initialization();
+				EEH_Activation::CPT_initialization();
 				EEH_Activation::initialize_db_and_folders();
 				EEH_Activation::initialize_db_content();
 				$this->update_list_of_installed_versions($espresso_db_update);
