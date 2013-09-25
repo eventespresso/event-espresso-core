@@ -196,7 +196,7 @@ jQuery(document).ready(function($) {
 				if ( ct.indexOf('json') > -1 ) {
 					var resp = xhr.responseText;
 					resp = $.parseJSON(resp);
-					console.log(resp);
+
 					//let's handle toggling all the elements if we had a successful switch!
 					if ( resp.success ) {
 						$('.mt-settings-content', '.'+messenger+'-content #'+mt+'-messagetype-'+messenger).replaceWith(resp.data.template_args.content).slideToggle();
@@ -280,9 +280,15 @@ jQuery(document).ready(function($) {
 
 					if (ct.indexOf('json') > -1 ) {
 						var resp = response,
-						wht = resp.data.what === 'undefined' ? setup.what : resp.data.what,
-						whr = resp.data.where === 'undefined' ? setup.where : resp.data.where,
+						wht = typeof(resp.data.what) === 'undefined' ? setup.what : resp.data.what,
+						whr = typeof(resp.data.where) === 'undefined' ? setup.where : resp.data.where,
 						display_content = resp.error ? resp.error : resp.content;
+                        
+                        display_content = resp.error ? resp.error : resp.content;
+                        
+						if ( whr == '#ajax-notices-container' && resp.notices !== '' ) {
+							wht = 'append';
+						}
 
 						MSG_helper.display_notices(resp.notices);
 						MSG_helper.display_content(display_content, whr, wht);
@@ -421,7 +427,6 @@ jQuery(document).ready(function($) {
 
 	$(document).on('submit', '.mt-settings-form', function(e) {
 		e.preventDefault();
-		console.log('here');
 		MSG_helper.submit_form('message_type', this);
 	});
 
