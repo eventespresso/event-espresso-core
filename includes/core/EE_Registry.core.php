@@ -26,38 +26,38 @@
  */
 final class EE_Registry {
 
-   /**
-     * 	EE_Registry Object
-     * 	@var EE_Registry $_instance
-	 * 	@access 	private 	
-     */
+	/**
+	* 	EE_Registry Object
+	* 	@var EE_Registry $_instance
+	* 	@access 	private 	
+	*/
 	private static $_instance = NULL;
 
-   /**
-     * 	$_autoloaders 
-     * 	@var array $_autoloaders
-	 * 	@access 	private 	
-     */
+	/**
+	* 	$_autoloaders 
+	* 	@var array $_autoloaders
+	* 	@access 	private 	
+	*/
 	private static $_autoloaders = array();
 
-   /**
-     * 	EE_Cart Object
-	 * 	@access 	public
-	 *	@var 	EE_Cart $CART
-     */
+	/**
+	* 	EE_Cart Object
+	* 	@access 	public
+	*	@var 	EE_Cart $CART
+	*/
 	public $CART = NULL;
 
-   /**
-     * 	EE_Config Object
-	 * 	@access 	public
-	 *	@var 	EE_Config $CFG
-     */
+	/**
+	* 	EE_Config Object
+	* 	@access 	public
+	*	@var 	EE_Config $CFG
+	*/
 	public $CFG = NULL;
 
-    /**
-     * array for storing library classes in
-     * @public LIB
-     */
+	/**
+	* 	array for storing library classes in
+	* 	@public LIB
+	*/
 	public $LIB = NULL;
 
 	/**
@@ -67,11 +67,11 @@ final class EE_Registry {
 	 */
 	public $REQ = NULL;
 
-   /**
-     * 	EE_Session Object
-	 * 	@access 	public
-	 *	@var 	EE_Session	 $SSN
-     */
+	/**
+	* 	EE_Session Object
+	* 	@access 	public
+	* 	@var 	EE_Session	 $SSN
+	*/
 	public $SSN = NULL;
 
 	/**
@@ -88,22 +88,22 @@ final class EE_Registry {
 	 */
 	public $modules = array();
 
-   /**
-     * 	$i18n_js_strings - internationalization for JS strings
-     *  usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
-     *  in js file:  var translatedString = eei18n.string_key;
-     * 	
-	 * 	@access 	public
-	 *	@var 	array	
-     */
+	/**
+	* 	$i18n_js_strings - internationalization for JS strings
+	*  	usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
+	*  	in js file:  var translatedString = eei18n.string_key;
+	* 	
+	* 	@access 	public
+	*	@var 	array	
+	*/
 	public static $i18n_js_strings = array();
 
-   /**
-     * 	$main_file - path to espresso.php
-     * 	
-	 * 	@access 	public
-	 *	@var 	array	
-     */
+	/**
+	* 	$main_file - path to espresso.php
+	* 	
+	* 	@access 	public
+	*	@var 	array	
+	*/
 	public $main_file;
 
 

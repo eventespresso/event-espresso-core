@@ -33,6 +33,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function plugin_activation() {
+		
 	    if ( ! current_user_can( 'activate_plugins' )) {
 			 return;
 		}
@@ -49,13 +50,13 @@ class EEH_Activation {
 		//ee system takes care of running db install function from EEH_Activation
 		//if necessary.
 		EE_System::instance( TRUE );
-		// load EE_Config
-		EE_Registry::instance()->load_core( 'Config' );
-		
+	
 		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
 			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
 			espresso_caffeinated_activation();
 		}
+		// grab notices and save to db for display after activation finishes
+		EE_Error::get_notices( FALSE, TRUE );
 
 	}
 	
@@ -64,6 +65,8 @@ class EEH_Activation {
 	 * be called on plugin activation and reactivation
 	 */
 	public static function initialize_db_and_folders(){
+		// load EE_Config
+		EE_Registry::instance()->load_core( 'Config' );
 		EEH_Activation::create_upload_directories();
 		EEH_Activation::create_database_tables();
 	}
@@ -75,9 +78,6 @@ class EEH_Activation {
 	 * of running migration scripts
 	 */
 	public static function initialize_db_content(){
-		EEH_Activation::configuration_initialization();
-		EEH_Activation::verify_default_pages_exist();
-		// default data
 		EEH_Activation::initialize_system_questions();
 		EEH_Activation::insert_default_prices();
 		EEH_Activation::insert_default_price_types();
@@ -85,11 +85,8 @@ class EEH_Activation {
 		EEH_Activation::insert_default_status_codes();
 		EEH_Activation::insert_default_countries();
 		EEH_Activation::insert_default_states();
-		
 		EEH_Activation::generate_default_message_templates();
 		EEH_Activation::create_no_ticket_prices_array();
-		
-		EE_Error::get_notices( FALSE, TRUE );
 	}
 	
 
@@ -107,6 +104,36 @@ class EEH_Activation {
 		$active_plugins = array_flip( get_option( 'active_plugins' ));
 		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
 		update_option( 'active_plugins', array_flip( $active_plugins ));	
+	}
+
+
+	/**
+	 * 	system_initialization
+	 * 	ensures the EE configuration settings are loaded with at least default options set
+	 * 	and that all critical EE pages have been generated with the appropriate shortcodes in place
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function system_initialization() {
+		EEH_Activation::configuration_initialization();
+		EEH_Activation::verify_default_pages_exist();
+	}
+
+
+	/**
+	 * 	CPT_initialization
+	 *	registers all EE CPTs ( Custom Post Types ) then flushes rewrite rules so that all endpoints exist
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function CPT_initialization() {
+		// register Custom Post Types
+		EE_Registry::instance()->load_core( 'Register_CPTs' );
+		flush_rewrite_rules();
 	}
 
 

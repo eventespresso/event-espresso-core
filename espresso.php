@@ -95,21 +95,26 @@ load_plugin_textdomain( 'event_espresso', FALSE, EVENT_ESPRESSO_PLUGINFULLPATH .
 if ( WP_DEBUG === TRUE ) {
 	require_once( EE_HELPERS . 'EE_Debug_Tools.helper.php' );
 }
-require_once( EE_CORE . 'EE_Error.core.php' );
+
+if ( is_readable( EE_CORE . 'EE_Error.core.php' )) {
+	require_once( EE_CORE . 'EE_Error.core.php' );		
+} else {
+	wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ));
+}
 
 // let's get it started		
 if ( is_admin() ) {
-	require_once( EE_CORE . 'EE_Admin.core.php' );
+	espresso_load_required( 'EE_Admin', EE_CORE . 'EE_Admin.core.php' );
 	EE_Admin::instance( EVENT_ESPRESSO_MAIN_FILE );
 } else {
-	require_once( EE_CORE . 'EE_Front_Controller.core.php' );
+	espresso_load_required( 'EE_Front_Controller', EE_CORE . 'EE_Front_Controller.core.php' );
 	new EE_Front_Controller( EVENT_ESPRESSO_MAIN_FILE );
 }
 
 
 
 function espresso_plugin_activation() {
-	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_activation();
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
@@ -117,7 +122,7 @@ register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation'
 
 
 function espresso_plugin_deactivation() {
-	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_deactivation();
 }
 register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
@@ -125,7 +130,21 @@ register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivat
 
 
 function espresso_plugin_uninstall() {
-	require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
+	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_uninstall();
 }
 register_uninstall_hook(    EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_uninstall' );
+
+
+
+function espresso_load_required( $classname, $full_path_to_file ) {
+	if ( is_readable( $full_path_to_file )) {
+		require_once( $full_path_to_file );		
+	} else {
+		throw new EE_Error ( sprintf ( 
+			__( 'The %s class file could not be located or is not readable due to file permissions.', 'event_espresso' ),
+			$classname
+		));
+	}
+}
+

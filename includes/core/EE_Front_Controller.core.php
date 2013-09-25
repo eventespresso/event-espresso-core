@@ -66,7 +66,6 @@ final class EE_Front_Controller {
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
-		// load EE_Request_Handler
 	}
 
 
@@ -210,11 +209,11 @@ final class EE_Front_Controller {
 			add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
 			// the content
 			add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-		}
-	
 			// display errors
 			add_action('wp_footer', array( $this, 'display_errors' ), 2 );			
 			add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );			
+		}
+	
 
 			//random debug code added by mike.
 //			$this->EE->load_class('Attendee',false,false,false);
@@ -458,6 +457,17 @@ final class EE_Front_Controller {
 		if ( apply_filters( 'FHEE_load_js', TRUE )) {
 
 			wp_enqueue_script( 'jquery' );
+			//let's make sure that all required scripts have been setup
+			if ( function_exists( 'wp_script_is' )) {
+				if ( ! wp_script_is( 'jquery' )) {
+					$msg = sprintf( 
+						__( '%sJquery is not loaded!%sEvent Espresso is unable to load Jquery due to a conflict with your theme or another plugin.', 'event_espresso' ),
+						'<em><br />',
+						'</em>'
+					);
+					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				}
+			}
 			// load core js
 			wp_register_script( 'espresso_core', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
@@ -595,20 +605,6 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function display_errors() {
-
-		//let's make sure that all required scripts have been setup
-		if ( function_exists( 'wp_script_is' )) {
-			if ( ! wp_script_is( 'jquery' )) {
-				$msg = sprintf( 
-					__( '%sJquery is not loaded!%sEvent Espresso is unable to load Jquery due to a conflict with your theme or another plugin.', 'event_espresso' ),
-					'<em><br />',
-					'</em>'
-				);
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			}
-		}/**/
-
-
 		echo EE_Error::get_notices();
 		EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php' );
 	}
