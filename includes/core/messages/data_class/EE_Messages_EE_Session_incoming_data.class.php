@@ -65,8 +65,8 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 		$this->payment = empty( $this->payment ) ? EE_Payment::new_instance( array(
 			'STS_ID' => EEM_Payment::status_id_pending,
 			'PAY_timestamp' => (int) current_time('timestamp'),
-			'PAY_gateway' => $txn->selected_gateway(),
-			'PAY_gateway_response' => $txn->gateway_response_on_transaction(),
+			'PAY_gateway' => $this->txn->selected_gateway(),
+			'PAY_gateway_response' => $this->txn->gateway_response_on_transaction(),
 			)
 		 ) : $this->payment; //if there is no payments associated with the transaction then we just create a default payment object for potential parsing.
 
