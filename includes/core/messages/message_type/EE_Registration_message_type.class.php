@@ -44,13 +44,13 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	protected function _trigger_exit() {
-
 		//first is this a preview?
 		if ( empty( $this->_data ) )
 			return FALSE;
 
 		//if email_on_payment is set then we'll trigger an exit when incoming data is an EE_Session object.
 		$settings = $this->get_existing_admin_settings($this->_active_messenger->name);
+		
 		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)! 
 
 
@@ -92,9 +92,8 @@ class EE_Registration_message_type extends EE_message_type {
 	protected function _set_data_handler() {
 		//this message type might be delayed for payment, so let's get what is set.
 		$message_settings = $this->get_existing_admin_settings( $this->_active_messenger->name );
-		$delay = isset($message_settings['email_before_payment']) && $message_settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)!
 
-		$this->_data_handler = $delay && empty( $this->_data_handler ) ? 'Gateways' : 'EE_Session';
+		$this->_data_handler = ! $this->_data instanceof EE_Session ? 'Gateways' : 'EE_Session';
 	}
 
 
