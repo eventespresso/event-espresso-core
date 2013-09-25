@@ -597,6 +597,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 								'PAY_via_admin' => false,
 								'PAY_details' => $e));
 				$payment->save();
+				$this->update_transaction_with_payment($transaction, $payment);
 				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
 				
 				$return = array('error'=>$e->getMessage());
