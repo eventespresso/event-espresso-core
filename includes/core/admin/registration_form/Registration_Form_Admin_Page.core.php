@@ -303,8 +303,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 		if ( is_array( $row_ids )) {
 			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
+				$id = absint($row_ids[$i]);
 				//Update the questions when re-ordering
-				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array(array( 'QST_ID' => $row_ids[$i] ) ))) {
+				if ( EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array(array( 'QST_ID' => $id ) )) === FALSE ) {
 					$success = FALSE;
 				} 
 			}
