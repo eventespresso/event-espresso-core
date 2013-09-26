@@ -32,13 +32,6 @@ final class EE_System {
 	private static $_instance = NULL;
 
 	/**
-	 * 	EE_Registry Object
-	 *	@var 	EE_Registry	$EE	
-	 * 	@access 	protected
-	 */
-	protected $EE = NULL;
-
-	/**
 	 * Whether this request was from activating EE or if it was already activated
 	 * @var boolean
 	 */
@@ -66,6 +59,7 @@ final class EE_System {
 	 * TODO: will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
 	 */
 	const req_type_downgrade = 4;
+	
 	/**
 	 * Stores which type of request this is, options being one of the consts on EE_System starting with
 	 * req_type_*. It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
@@ -73,6 +67,12 @@ final class EE_System {
 	 */
 	private $_req_type;
 
+	/**
+	* 	$_autoloaders 
+	* 	@var array $_autoloaders
+	* 	@access 	private 	
+	*/
+	private static $_autoloaders = array();
 
 
 	/**
@@ -97,18 +97,22 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct( $activation ) {
-		
+
 		$this->_activation = $activation;
 		$this->_load_registry();
+		// load EE_Config
+		EE_Registry::instance()->load_core( 'Config' );
+		EE_Config::instance()->update_espresso_config();
 		$this->_register_custom_autoloaders();
+		spl_autoload_register( array( $this, 'espresso_autoloader' ));
 		$this->_define_table_names();
-		$this->EE->load_core( 'Maintenance_Mode' );
+		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		$this->handle_new_install_or_upgrade_etc();
 
-		if ( ! $activation ) {
+		if ( $this->_req_type == EE_System::req_type_normal ) {
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 			add_action( 'init', array( $this, 'init' ), 3 );
-			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
+			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		}
 	}
 
@@ -124,13 +128,60 @@ final class EE_System {
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
-			$this->EE = EE_Registry::instance();
 		} else {
 			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
+
+
+	/**
+	 * 		espresso_autoloader
+	 *
+	 * 	@access 	public
+	 *	@param string $class_name - simple class name ie: session
+	 * 	@return 		void
+	 */
+	public function espresso_autoloader( $className ) {
+		if ( isset( self::$_autoloaders[ $className ] ) && is_readable( self::$_autoloaders[ $className ] )) {
+			require_once( self::$_autoloaders[ $className ] );
+		} 
+	}
+
+
+
+	/**
+	 * 		register_autoloader
+	 *
+	 * 	@access 	public
+	 *	@param string $class_paths - array of key => value pairings between classnames and paths
+	 * 	@return 		void
+	 */
+	public static function register_autoloader( $class_paths = array() ) {
+		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
+		foreach ( $class_paths as $class => $path ) {
+			// don't give up! you gotta...
+			try {
+				// get some class
+				if ( empty( $class )) {					
+					throw new EE_Error ( __( 'An error occured. No Class name was specified while registering an autoloader.','event_espresso' ));					
+				}
+				// one day you will find the path young grasshopper 
+				if ( empty( $path )) {					
+					throw new EE_Error ( sprintf( __( 'An error occured. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));					
+				}
+				// is file readable ?
+				if ( ! is_readable( $path )) {
+					throw new EE_Error ( sprintf( __( 'An error occured. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));					
+				}				 
+			} catch ( EE_Error $e ) {
+				$e->get_error();
+			}
+			// add autoloader
+			self::$_autoloaders[ $class ] = $path;			
+		}
+	}
 
 
 
@@ -169,8 +220,7 @@ final class EE_System {
 		foreach($filepaths as $filepath){
 			$class_to_filepath_map [ $this->_get_classname_from_filepath_with_standard_filename( $filepath ) ] = $filepath;
 		}
-		//printr( $class_to_filepath_map, '$class_to_filepath_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		EE_Registry::register_autoloader($class_to_filepath_map);
+		self::register_autoloader($class_to_filepath_map);
 	}
 
 	/**
@@ -203,9 +253,9 @@ final class EE_System {
 			// check for define_table_name() then call it
 			if ( method_exists( $classname, 'define_table_name' )) {
 				call_user_func( array( $classname, 'define_table_name' ));
+
 			}
 		}
-
 		// because there's no model for the status table...
 		if ( ! defined( 'ESP_STATUS_TABLE' )) {
 			global $wpdb;
@@ -232,6 +282,7 @@ final class EE_System {
 		switch($this->detect_req_type($espresso_db_update)){
 			case EE_System::req_type_new_activation:
 			case EE_System::req_type_reactivation:
+				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
 				EEH_Activation::CPT_initialization();
 				EEH_Activation::initialize_db_and_folders();
@@ -366,6 +417,12 @@ final class EE_System {
 			EE_Error::add_error( $activation_errors );
 			update_option( 'espresso_plugin_activation_errors', FALSE );
 		}
+		// let's get it started		
+		if ( is_admin() ) {
+			EE_Registry::instance()->load_core( 'Admin' );
+		} else {
+			EE_Registry::instance()->load_core( 'Front_Controller' );
+		}
 	}
 
 
@@ -377,75 +434,15 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	public function init() {
-		// load EE_Config
-		$this->EE->load_core( 'Config' );
 		// register Custom Post Types
-		$this->EE->load_core( 'Register_CPTs' );
-		// session loading is turned OFF by default, but prior to the init hook, can be turned back on again via: add_filter( 'FHEE_load_EE_Session', '__return_true' );
-		if ( apply_filters( 'FHEE_load_EE_Session', FALSE ) || is_admin() ) {
-			$this->load_EE_Session();
+		EE_Registry::instance()->load_core( 'Register_CPTs' );
+		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
+		if ( apply_filters( 'FHEE_load_EE_Session', TRUE )) {
+			EE_Registry::instance()->load_core( 'Session' );
 		}
-		//$this->create_event_slug_rewrite_rule();
-
 	}
 
 
-	/**
-	 * 		load and instantiate EE_Session class
-	 *
-	 * 		@access public
-	 * 		@return void
-	 */
-	public function load_EE_Session() {
-		// instantiate !!!
-		$this->EE->load_core( 'Session' );
-	}
-
-
-
-
-	/**
-	 * 	create_event_slug_rewrite_rule
-	 *
-	 *  @access 	public
-	 *  @param 	boolean 	$to_flush_or_not_to_flush reset rules ?
-	 *  @return 	void
-	 */
-	private function create_event_slug_rewrite_rule( $to_flush_or_not_to_flush = FALSE ) {
-//		global $wpdb;		
-//		// grab slug for event reg page
-//		$SQL = 'SELECT post_name  FROM ' . $wpdb->prefix . 'posts WHERE ID = %d';
-//		$reg_page_url_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $this->EE->CFG->events_page ));
-//		$this->_add_rewrite_rules( $reg_page_url_slug, 'event_slug', $to_flush_or_not_to_flush );
-	}
-
-
-
-	/**
-	 * 	_add_rewrite_rules
-	 *
-	 *  @access 	private
-	 *  @param 	string 		$url_slug 	the slug you want to appear in the URL
-	 *  @param 	string 		$slug_key	the key you will use to obtain the slug
-	 *  @param 	boolean 	$to_flush_or_not_to_flush reset rules ?
-	 *  @return 	void
-	 */
-	private function _add_rewrite_rules( $url_slug = FALSE, $slug_key = FALSE, $to_flush_or_not_to_flush = FALSE ) {	
-		// you don't get something for nothing !!!'
-		if ( ! $url_slug || ! $slug_key ) {
-			return FALSE;
-		}
-		$to_flush_or_not_to_flush = apply_filters( 'FHEE_flush_rewrite_rules', $to_flush_or_not_to_flush );
-		// create pretty permalinks
-		if ( get_option( 'permalink_structure' ) != '' ) {
-			// rules for url slug pretty links
-			add_rewrite_rule( $url_slug . '/([^/]+)/?$', 'index.php?pagename=' . $url_slug . '&'. $slug_key .'=$matches[1]', 'top');
-			// whether tis nobler on the server to suffer the pings and errors of outrageous flushing
-			if ( $to_flush_or_not_to_flush ) {
-				flush_rewrite_rules();
-			}
-		}		
-	}
 
 
 
