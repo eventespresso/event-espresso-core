@@ -53,13 +53,6 @@ final class EE_Config {
 	private static $_module_view_map = array();
 
 	/**
-	 * 	EE_Registry Object
-	 *	@var 	EE_Registry	$EE	
-	 * 	@access 	protected
-	 */
-	protected $EE = NULL;
-
-	/**
 	 * 	current_blog_id
 	 *	@var 	int	$current_blog_id	
 	 * 	@access 	public
@@ -67,10 +60,10 @@ final class EE_Config {
 	public $current_blog_id = NULL;
 	
 	/**
-	 * 
-	 * @var EE_Currency_Config 
+	 *
+	 * @var EE_Core_Config
 	 */
-	public $currency;
+	public $core;
 
 	/**
 	 *
@@ -79,22 +72,17 @@ final class EE_Config {
 	public $organization;
 	
 	/**
+	 * 
+	 * @var EE_Currency_Config 
+	 */
+	public $currency;
+	
+	/**
 	 *
 	 * @var EE_Registration_Config
 	 */
 	public $registration;
-	
-	/**
-	 *
-	 * @var EE_Core_Config
-	 */
-	public $core;
-	/**
-	 * ID of the 'primary' ee user. Mike thinks thinks this will be deprecated in 
-	 * 4.2 when we no longer are storing global config stuff in user meta tables
-	 * @var int
-	 */
-	public $wp_user;
+
 
 	
 
@@ -116,6 +104,7 @@ final class EE_Config {
 
 
 
+
 	/**
 	 * 	class constructor
 	 *
@@ -123,30 +112,29 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	private function __construct( $activation ) {
+		
 		$this->current_blog_id = get_current_blog_id();
-		$this->EE = EE_Registry::instance();
-		// get EE site settings
-		if ( ! $activation ) {
-			$this->_load_config();
-		}
-		$this->_register_shortcodes_and_modules();
-		//add_action( 'init', array( $this, 'init' ), 5 );
-		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 3 );
+		//set defaults
+		$this->core = new EE_Core_Config();
+		$this->organization = new EE_Organization_Config();
+		$this->currency = new EE_Currency_Config();
+		$this->registration = new EE_Registration_Config();
+		$this->admin = new EE_Admin_Config();
+		$this->template_settings = new EE_Admin_Config();
+		$this->map_settings = new EE_Map_Config();
+		// set _module_route_map
+		EE_Config::$_module_route_map = array();
+		// set _module_forward_map
+		EE_Config::$_module_forward_map = array();
+		// set _module_view_map
+		EE_Config::$_module_view_map = array();
+
+		// load existing EE site settings
+		$this->_load_config();
+		add_action( 'init', array( $this, 'init' ), 10 );
 		
 	}
 
- 
-
-
-	/**
-	 * 	wp_loaded
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp_loaded() {
-
-	}
 
 
 
@@ -158,52 +146,17 @@ final class EE_Config {
 	 * 		@return void
 	 */
 	private function _load_config() {
-
-		$this->EE->CFG = $this->get_espresso_config();
-		
-		// do settings for this blog exist ?
-		if ( empty( $this->EE->CFG )) {
-			$this->EE->load_helper( 'Activation' );
-			EEH_Activation::configuration_initialization();
-		} else {
-			// list of critical settings
-			$critical_settings = array( 
-				'core',
-				'organization',
-				'currency'
-			);
-			// cycle thru critical config settings
-			foreach ( $critical_settings as $critical_setting ) {
-				// make sure each one actually exists 
-				if ( ! isset( $this->EE->CFG->$critical_setting )) {
-					// reinitialize the org options
-					$this->EE->load_helper( 'Activation' );
-					$this->EE->CFG = EEH_Activation::configuration_initialization( TRUE );		
-					break;	
-				}
-			}
+		$espresso_config = $this->get_espresso_config();
+		foreach ( $espresso_config as $config => $settings ) {
+			$this->$config = $settings;
 		}
-		
-		// add current_user_id
-		$this->EE->CFG->wp_user = get_current_user_id();	
-
-//		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		
-		// set _module_route_map
-		EE_Config::$_module_route_map = isset( $this->EE->CFG->core->module_route_map ) ? $this->EE->CFG->core->module_route_map : array();
-		// set _module_forward_map
-		EE_Config::$_module_forward_map = isset( $this->EE->CFG->core->module_forward_map ) ? $this->EE->CFG->core->module_forward_map : array();
-		// set _module_view_map
-		EE_Config::$_module_view_map = isset( $this->EE->CFG->core->module_view_map ) ? $this->EE->CFG->core->module_view_map : array();
-
-		
-		do_action('AHEE_debug_file');
 	}
 
 
 
+
 	/**
-	 * 	_get_espresso_config
+	 * 	get_espresso_config
 	 *
 	 *  @access 	public
 	 *  @return 	array of espresso config stuff
@@ -227,6 +180,7 @@ final class EE_Config {
 	}
 
 
+
 	/**
 	 * 	update_espresso_config'
 	 *
@@ -234,27 +188,30 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
-		// map... the maps ?!?!?
-		$this->EE->CFG->core->module_route_map = EE_Config::$_module_route_map;
-		$this->EE->CFG->core->module_forward_map = EE_Config::$_module_forward_map;
-		$this->EE->CFG->core->module_view_map = EE_Config::$_module_view_map;
-		// filter config before saving
-		$this->EE->CFG = apply_filters( 'FHEE__Config__update_espresso_config__CFG', $this->EE->CFG );
+		// compare existing settings with what's already saved'
+		$no_change = TRUE;
+		$espresso_config = $this->get_espresso_config();
+		foreach ( $espresso_config as $config => $settings ) {
+			if ( $this->$config != $settings ) {
+				$no_change = FALSE;
+				break;
+			}
+		}		
 		// update
 		if ( is_multisite() ) {
 			// look for blog specific config
-			if ( ! $saved = update_blog_option( $this->current_blog_id, 'espresso_config', $this->EE->CFG )) {
+			if ( ! $saved = update_blog_option( $this->current_blog_id, 'espresso_config', $this )) {
 				// if not, then look for network config
-				if ( ! $saved = update_site_option( 'espresso_config', $this->EE->CFG )) {
+				if ( ! $saved = update_site_option( 'espresso_config', $this )) {
 				    // if not, then look for generic config
-					$saved = update_option( 'espresso_config', $this->EE->CFG );
+					$saved = update_option( 'espresso_config', $this );
 				}						
 			}
 		} else {
-			$saved = update_option( 'espresso_config', $this->EE->CFG );
+			$saved = update_option( 'espresso_config', $this );
 		}
 		// if config remains the same or was updated successfully
-		if ( $this->EE->CFG == $this->get_espresso_config() || $saved ) {
+		if ( $no_change || $saved ) {
 			if ( $add_succes ) {
 				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
 				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -270,6 +227,7 @@ final class EE_Config {
 	}
 
 
+
 	/**
 	 * 	update_post_shortcodes
 	 *
@@ -277,9 +235,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function update_post_shortcodes() {
-		$this->EE->CFG->core->post_shortcodes = isset( $this->EE->CFG->core->post_shortcodes ) && is_array( $this->EE->CFG->core->post_shortcodes ) ? $this->EE->CFG->core->post_shortcodes : array();
+		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
 		// cycle thru post_shortcodes
-		foreach( $this->EE->CFG->core->post_shortcodes as $post_name => $shortcodes ){
+		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it
 			if ( $post_name != 'posts' ) {
 				foreach( $shortcodes as $shortcode => $post_id ){
@@ -289,7 +247,7 @@ final class EE_Config {
 							break;
 						}
 					}
-					unset( $this->EE->CFG->core->post_shortcodes[ $post_name ] );
+					unset( $this->core->post_shortcodes[ $post_name ] );
 				}
 			}
 		}
@@ -299,20 +257,19 @@ final class EE_Config {
 
 
 
-
-
 	/**
-	 * 	_register_shortcodes_and_modules
+	 * 	init
 	 *
-	 *  @access 	private
+	 *  @access 	public
 	 *  @return 	void
 	 */
-	private function _register_shortcodes_and_modules() {
+	public function init() {
 		// allow shortcodes to register with WP and to set hooks for the rest of the system
 		$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
 		$this->_register_modules();
 	}
+
 
 
 
@@ -335,7 +292,7 @@ final class EE_Config {
 			EE_Config::register_shortcode( $shortcode_path );
 		}
 		// filter list of installed modules
-		$this->EE->shortcodes = apply_filters( 'FHEE__Front_Controller__register_shortcodes__installed_shortcodes', $this->EE->shortcodes );
+		EE_Registry::instance()->shortcodes = apply_filters( 'FHEE__Front_Controller__register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
 	}
 
 
@@ -409,7 +366,7 @@ final class EE_Config {
 			}
 		}
 		// filter list of installed modules
-		$this->EE->modules = apply_filters( 'FHEE__Front_Controller__register_modules__installed_modules', $this->EE->modules );
+		EE_Registry::instance()->modules = apply_filters( 'FHEE__Front_Controller__register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
 
 
@@ -594,6 +551,8 @@ final class EE_Config {
 
 
 
+
+
 	/**
 	 * 	get_view - get view for route and status
 	 *
@@ -610,6 +569,25 @@ final class EE_Config {
 	}
 
 
+
+
+	/**
+	 * 	__sleep
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public function __sleep() {
+		return array(
+			'core',
+			'organization',
+			'currency',
+			'registration',
+			'admin',
+			'template_settings',
+			'map_settings'		
+		);
+	}
 
 
 
@@ -641,27 +619,121 @@ class EE_Config_Base{
 
 
 /**
+ * Class for defining what's in the EE_Config relating to registration settings
+ */
+class EE_Core_Config extends EE_Config_Base {
+	
+	public $site_license_key;
+	public $ee_ueip_optin;
+	public $post_shortcodes;
+	public $module_route_map;
+	public $module_forward_map;
+	public $module_view_map;
+	public $reg_page_id;
+	public $txn_page_id;
+	public $thank_you_page_id;
+	public $cancel_page_id;
+
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function __construct() {
+		// set default organization settings
+		$this->site_license_key = NULL;
+		$this->ee_ueip_optin = TRUE;
+		$this->post_shortcodes = array();
+		$this->module_route_map = array();
+		$this->module_forward_map = array();
+		$this->module_view_map = array();
+		$this->reg_page_id = FALSE;
+		$this->txn_page_id = FALSE;
+		$this->thank_you_page_id = FALSE;
+		$this->cancel_page_id = FALSE;
+	}	
+
+}
+
+/**
  * Config class for storing info on the Organization
  */
-class EE_Organization_Config extends EE_Config_Base{
-	 /** @var $name eg EE4.1*/ 
-	var $name;
-      /** @var $address_1 eg 123 Onna Road*/ 
-	var $address_1;
-      /** @var $address_2 eg PO Box 123*/ 
-	var $address_2;
-      /** @var $city eg Inna City*/ 
-	var $city;
-      /** @var $STA_ID eg 4*/ 
-	var $STA_ID;
-      /** @var $CNT_ISO eg US*/ 
-	var $CNT_ISO;
-      /** @var $zip eg 12345*/ 
-	var $zip;
-      /** @var $email eg michael@eventespresso.com*/ 
-	var $email;
-      /** @var $logo_url eg */ 
-	var $logo_url;
+class EE_Organization_Config extends EE_Config_Base {
+	
+	/** 
+	* @var string  $name
+	* eg EE4.1
+	*/ 
+	public $name;
+	
+	/** 
+	* @var string $address_1
+	* eg 123 Onna Road
+	*/ 
+	public $address_1;
+	
+	/** 
+	* @var string $address_2
+	* eg PO Box 123
+	*/ 
+	public $address_2;
+	
+	/** 
+	* @var string $city
+	* eg Inna City
+	*/ 
+	public $city;
+	
+	/** 
+	* @var int $STA_ID
+	* eg 4
+	*/ 
+	public $STA_ID;
+	
+	/** 
+	* @var string  $CNT_ISO 
+	* eg US
+	*/ 
+	public $CNT_ISO;
+	
+	/** 
+	* @var string $zip 
+	* eg 12345  or V1A 2B3
+	*/ 
+	public $zip;
+	
+	/** 
+	* @var string  $email 
+	* eg support@eventespresso.com
+	*/ 
+	public $email;
+	
+	/** 
+	* @var string  $logo_url 
+	* eg http://www.somedomain.com/wp-content/uploads/kittehs.jpg
+	*/ 
+	public $logo_url;
+
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function __construct() {
+		// set default organization settings
+		$this->name = get_bloginfo('name');
+		$this->address_1 = '123 Onna Road';
+		$this->address_2 = 'PO Box 123';
+		$this->city = 'Inna City';
+		$this->STA_ID = 4;
+		$this->CNT_ISO = 'US';
+		$this->zip = '12345';
+		$this->email = get_bloginfo('admin_email');
+		$this->logo_url = '';	
+	}
+	
 }
 
 
@@ -670,55 +742,78 @@ class EE_Organization_Config extends EE_Config_Base{
 /**
  * Class for defining what's in the EE_Config relating to currency
  */
-class EE_Currency_Config extends EE_Config_Base{
-	 
+class EE_Currency_Config extends EE_Config_Base {
+
 	/**
-	 * @var $code string
-	 * eg 'US'
-	 */
+	* @var string  $code
+	* eg 'US'
+	*/
 	public $code;
+	
 	/**
-	 * @var $name string
-	 * eg 'Dollar'
+	* @var string $name
+	* eg 'Dollar'
+	*/
+	public $name;
+
+	/**
+	* plural name
+	* @var string $plural
+	* eg 'Dollars'
+	*/
+	public $plural;
+
+	/**
+	* currency sign
+	* @var string  $sign
+	* eg '$'
+	*/
+	public $sign;
+	
+	/**
+	* Whether the currency sign shoudl come before the number or not
+	* @var boolean $sign_b4
+	*/
+	public $sign_b4;
+
+	/**
+	* How many digits should come after the decimal place
+	* @var int $dec_plc
+	*/
+	public $dec_plc;
+	
+	/**
+	* Symbol to use for decimal mark
+	* @var string $dec_mrk
+	* eg '.'
+	*/
+	public $dec_mrk;
+	
+	/**
+	* Symbol to use for thousands
+	* @var string $thsnds
+	* eg ','
+	*/
+	public $thsnds;
+
+
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	public
+	 *  @return 	void
 	 */
-      public $name;
-	  
-	  /**
-	   * PLural name
-	   * @var $plural string
-	   * eg 'Dollars'
-	   */
-      public $plural;
-	  
-	  /**
-	   * currency sign
-	   * @var $sign string
-	   * eg '$'
-	   */
-      public $sign;
-	  /**
-	   * Whether the currency sign shoudl come before the number or not
-	   * @var $sign_b4 boolean
-	   */
-      public $sign_b4;
-	  
-	  /**
-	   * How many digits should come after the decimal place
-	   * @var $dec_plc int
-	   */
-      public $dec_plc;
-	  /**
-	   * Symbol to use for decimal mark
-	   * @var $dec_mrk string
-	   * eg '.'
-	   */
-      public $dec_mrk;
-	  /**
-	   * Symbol to use for thousands
-	   * @var $thsnds string
-	   * eg ','
-	   */
-      public $thsnds;
+	public function __construct() {
+		// set default currency settings
+		$this->code = 'USD'; 	// currency code: USD, CAD, EUR
+		$this->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
+		$this->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
+		$this->sign =  '$'; 	// currency sign: $
+		$this->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
+		$this->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
+		$this->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+		$this->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+	}
 }
 
 
@@ -727,90 +822,326 @@ class EE_Currency_Config extends EE_Config_Base{
 /**
  * Class for defining what's in the EE_Config relating to registration settings
  */
-class EE_Registration_Config extends EE_Config_Base{
+class EE_Registration_Config extends EE_Config_Base {
 	 
 	/**
-	 * 	Default registration status
-	 * @var $default_STS_ID string
+	 * Default registration status
+	 * @var string $default_STS_ID
 	 * eg 'RPN'
 	 */
-	public $default_STS_ID = 'RPN';
+	public $default_STS_ID;
 	  
 	  /**
 	   * Whether attendees need admin approval before their registration is approved
-	   * @var $use_attendee_pre_approval boolean
+	   * @var boolean $use_attendee_pre_approval
 	   */
-      public $use_attendee_pre_approval = FALSE;
+      public $use_attendee_pre_approval;
 	  
 	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
-	 * @var $pending_counts_reg_limit boolean
+	 * @var boolean $pending_counts_reg_limit
 	 */
-      public $show_pending_payment_options = FALSE;
+      public $show_pending_payment_options;
 	
 	/**
-	 * 	Whether pending registration status counts toward reg limits
-	 * @var $pending_counts_reg_limit boolean
+	 * Whether pending registration status counts toward reg limits
+	 * @var boolean $pending_counts_reg_limit
 	 */
-      public $pending_counts_reg_limit = TRUE;
+      public $pending_counts_reg_limit;
 	  
 	  /**
 	   * Whether or not to use ReCaptcha
-	   * @var $use_captcha boolean
+	   * @var boolean $use_captcha
 	   */
-      public $use_captcha = FALSE;
+      public $use_captcha;
 	  
 	  /**
 	   * ReCaptcha Theme
-	   * @var $recaptcha_theme string
+	   * @var string $recaptcha_theme
 	   * eg 'clean', 'red'
 	   */
-      public $recaptcha_theme = 'clean';
+      public $recaptcha_theme;
 	  
 	  /**
 	   * ReCaptcha language
-	   * @var $recaptcha_language string
+	   * @var string $recaptcha_language
 	   * eg 'en'
 	   */
-      public $recaptcha_language = 'en';
+      public $recaptcha_language;
 	 
 	  /**
 	   * ReCaptcha width
-	   * @var $recaptcha_width int
+	   * @var int $recaptcha_width
 	   */
-      public $recaptcha_width = 500;
+      public $recaptcha_width;
 	 
 	  /**
 	   * ReCaptcha public key
-	   * @var $recaptcha_publickey string
+	   * @var string $recaptcha_publickey
 	   */
-      public $recaptcha_publickey = NULL;
+      public $recaptcha_publickey;
 	  
 	  /**
 	   * ReCaptcha private key
-	   * @var $recaptcha_privatekey string
+	   * @var string $recaptcha_privatekey
 	   */
-      public $recaptcha_privatekey = NULL;
-	 
+      public $recaptcha_privatekey;
 
+
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function __construct() {
+		// set default registration settings
+		$this->default_STS_ID = 'RPN'; 	// default reg status
+		$this->use_attendee_pre_approval = FALSE;
+		$this->show_pending_payment_options = FALSE;
+		$this->pending_counts_reg_limit = TRUE;
+		$this->use_captcha = FALSE;
+		$this->recaptcha_theme = 'clean';
+		$this->recaptcha_language = 'en';
+		$this->recaptcha_width = 500;
+		$this->recaptcha_publickey = NULL;
+		$this->recaptcha_privatekey = NULL;
+	}
 
 }
+
 
 
 /**
- * Class for defining what's in the EE_Config relating to registration settings
+ * Class for defining what's in the EE_Config relating to admin settings
  */
-class EE_Core_Config extends EE_Config_Base{
-	public $site_license_key = NULL;
-	public $ee_ueip_optin = NULL;
-	public $post_shortcodes = array();
-	public $module_route_map = array();
-	public $module_forward_map = array();
-	public $module_view_map = array();
-	public $reg_page_id = null;
-	public $txn_page_id = null;
-	public $thank_you_page_id = null;
-	public $cancel_page_id = null;
+class EE_Admin_Config extends EE_Config_Base {
+
+	/**
+	* @var boolean $use_personnel_manager
+	*/
+	public $use_personnel_manager;
+
+	/**
+	* @var boolean $use_dashboard_widget
+	*/
+	public $use_dashboard_widget;
+
+	/**
+	* @var int $events_in_dasboard
+	*/
+	public $events_in_dasboard;
+
+	/**
+	* @var boolean $use_event_timezones
+	*/
+	public $use_event_timezones;
+
+	/**
+	* @var boolean $use_full_logging
+	*/
+	public $use_full_logging;
+
+	/**
+	* @var boolean $use_remote_logging
+	*/
+	public $use_remote_logging;
+
+	/**
+	* @var string $remote_logging_url
+	*/
+	public $remote_logging_url;
+
+	/**
+	* @var boolean $show_reg_footer
+	*/
+	public $show_reg_footer;
+
+	/**
+	* @var string $affiliate_id
+	*/
+	public $affiliate_id;
+
+
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function __construct() {
+		// set default general admin settings
+		$this->use_personnel_manager = TRUE;
+		$this->use_dashboard_widget = TRUE;
+		$this->events_in_dasboard = 30;
+		$this->use_event_timezones = FALSE;
+		$this->use_full_logging = FALSE;
+		$this->use_remote_logging = FALSE;
+		$this->remote_logging_url = NULL;
+		$this->show_reg_footer = TRUE;
+		$this->affiliate_id = NULL;
+	}
+
 }
+
+
+
+/**
+ * Class for defining what's in the EE_Config relating to template settings
+ */
+class EE_Template_Config extends EE_Config_Base {
+
+	/**
+	* @var boolean $enable_default_style
+	*/
+	public $enable_default_style;
+
+	/**
+	* @var boolean $display_address_in_regform
+	*/
+	public $display_address_in_regform;
+
+	/**
+	* @var int $display_description_on_multi_reg_page
+	*/
+	public $display_description_on_multi_reg_page;
+
+	/**
+	* @var boolean $use_custom_templates
+	*/
+	public $use_custom_templates;
+
+
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function __construct() {
+		// set default template settings
+		$this->enable_default_style = TRUE;
+		$this->display_address_in_regform = TRUE;
+		$this->display_description_on_multi_reg_page = FALSE;
+		$this->use_custom_templates = FALSE;
+	}
+
+}
+
+
+
+/**
+ * Class for defining what's in the EE_Config relating to map settings
+ */
+class EE_Map_Config extends EE_Config_Base {
+
+	/**
+	* @var boolean $use_google_maps
+	*/
+	public $use_google_maps;
+
+	/**
+	* @var int $event_details_map_width
+	*/
+	public $event_details_map_width;
+
+	/**
+	* @var int $event_details_map_height
+	*/
+	public $event_details_map_height;
+
+	/**
+	* @var int $event_details_map_zoom
+	*/
+	public $event_details_map_zoom;
+
+	/**
+	* @var boolean $event_details_display_nav
+	*/
+	public $event_details_display_nav;
+
+	/**
+	* @var boolean $event_details_nav_size
+	*/
+	public $event_details_nav_size;
+
+	/**
+	* @var string $event_details_control_type
+	*/
+	public $event_details_control_type;
+
+	/**
+	* @var string $event_details_map_align
+	*/
+	public $event_details_map_align;
+
+	/**
+	* @var int $event_list_map_width
+	*/
+	public $event_list_map_width;
+
+	/**
+	* @var int $event_list_map_height
+	*/
+	public $event_list_map_height;
+
+	/**
+	* @var int $event_list_map_zoom
+	*/
+	public $event_list_map_zoom;
+
+	/**
+	* @var boolean $event_list_display_nav
+	*/
+	public $event_list_display_nav;
+
+	/**
+	* @var boolean $event_list_nav_size
+	*/
+	public $event_list_nav_size;
+
+	/**
+	* @var string $event_list_control_type
+	*/
+	public $event_list_control_type;
+
+	/**
+	* @var string $event_list_map_align
+	*/
+	public $event_list_map_align;
+
+
+
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function __construct() {
+		// set default map settings
+		$this->use_google_maps = TRUE;
+		// for event details pages (reg page)
+		$this->event_details_map_width = 585; 			// ee_map_width_single
+		$this->event_details_map_height = 362; 			// ee_map_height_single
+		$this->event_details_map_zoom = 14; 			// ee_map_zoom_single
+		$this->event_details_display_nav = TRUE; 			// ee_map_nav_display_single
+		$this->event_details_nav_size = FALSE; 			// ee_map_nav_size_single
+		$this->event_details_control_type = 'default'; 		// ee_map_type_control_single
+		$this->event_details_map_align = 'center'; 			// ee_map_align_single
+		// for event list pages
+		$this->event_list_map_width = 300; 			// ee_map_width
+		$this->event_list_map_height = 185; 		// ee_map_height
+		$this->event_list_map_zoom = 12; 			// ee_map_zoom
+		$this->event_list_display_nav = FALSE; 		// ee_map_nav_display
+		$this->event_list_nav_size = TRUE; 			// ee_map_nav_size
+		$this->event_list_control_type = 'dropdown'; 		// ee_map_type_control
+		$this->event_list_map_align = 'center'; 			// ee_map_align
+	}
+
+}
+
+
+
 // End of file EE_Config.core.php
 // Location: /core/EE_Config.core.php
