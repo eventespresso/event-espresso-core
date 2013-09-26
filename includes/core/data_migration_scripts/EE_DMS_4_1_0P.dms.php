@@ -21,6 +21,8 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		return __("Core Data Migration to version 4.1.0", "event_espresso");
 	}
 	public function schema_changes_before_migration() {
+		//relies on 4.1's EEH_Activation::create_table
+		require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
 		
 		$table_name='esp_answer';
 		$sql=" ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
