@@ -43,13 +43,6 @@ class EEH_Activation {
 
 		// don't need JS when we load the system files, so turn it off
 		add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-		// turn rewrite rule flushing on
-		add_filter( 'FHEE_flush_rewrite_rules', '__return_true' );
-		// load core system files
-		require_once( EE_CORE . 'EE_System.core.php' );
-		//ee system takes care of running db install function from EEH_Activation
-		//if necessary.
-		EE_System::instance( TRUE );
 	
 		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
 			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
@@ -65,8 +58,6 @@ class EEH_Activation {
 	 * be called on plugin activation and reactivation
 	 */
 	public static function initialize_db_and_folders(){
-		// load EE_Config
-		EE_Registry::instance()->load_core( 'Config' );
 		EEH_Activation::create_upload_directories();
 		EEH_Activation::create_database_tables();
 	}
@@ -117,7 +108,6 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function system_initialization() {
-		EEH_Activation::configuration_initialization();
 		EEH_Activation::verify_default_pages_exist();
 	}
 
@@ -136,108 +126,6 @@ class EEH_Activation {
 		flush_rewrite_rules();
 	}
 
-
-	/**
-	 * configuration_initialization
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function configuration_initialization( $missing_options = FALSE ) {
-		
-		$default_config = new stdClass();
-		// core configuration
-		$default_config->core = new stdClass();
-		$default_config->core->site_license_key = NULL;
-		$default_config->core->ee_ueip_optin = TRUE;
-		$default_config->core->post_shortcodes = array();
-		$default_config->core->module_route_map = array();
-		$default_config->core->module_forward_map = array();
-		$default_config->core->module_view_map = array();
-		$default_config->core->reg_page_id = FALSE;
-		$default_config->core->txn_page_id = FALSE;
-		$default_config->core->thank_you_page_id = FALSE;
-		$default_config->core->cancel_page_id = FALSE;
-		// organization settings
-		$default_config->organization = new stdClass();
-		$default_config->organization->name = get_bloginfo('name');
-		$default_config->organization->address_1 = '123 Onna Road';
-		$default_config->organization->address_2 = 'PO Box 123';
-		$default_config->organization->city = 'Inna City';
-		$default_config->organization->STA_ID = 4;
-		$default_config->organization->CNT_ISO = 'US';
-		$default_config->organization->zip = '12345';
-		$default_config->organization->email = get_bloginfo('admin_email');
-		$default_config->organization->logo_url = '';
-		// currency settings
-		$default_config->currency = new stdClass();
-		$default_config->currency->code = 'USD'; 	// currency code: USD, CAD, EUR
-		$default_config->currency->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
-		$default_config->currency->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
-		$default_config->currency->sign =  '$'; 	// currency sign: $
-		$default_config->currency->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
-		$default_config->currency->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
-		$default_config->currency->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-		$default_config->currency->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
-		// registration settings
-		$default_config->registration = new stdClass();
-		$default_config->registration->default_STS_ID = 'RPN'; 	// default reg status
-		$default_config->registration->pending_counts_reg_limit = TRUE;
-		$default_config->registration->use_attendee_pre_approval = FALSE;
-		$default_config->registration->show_pending_payment_options = FALSE;
-		$default_config->registration->use_captcha = FALSE;
-		$default_config->registration->recaptcha_theme = 'clean';
-		$default_config->registration->recaptcha_width = 500;
-		$default_config->registration->recaptcha_language = 'en';
-		$default_config->registration->recaptcha_publickey = NULL;
-		$default_config->registration->recaptcha_privatekey = NULL;
-		// general admin settings
-		$default_config->admin = new stdClass();
-		$default_config->admin->use_personnel_manager = TRUE;
-		$default_config->admin->use_dashboard_widget = TRUE;
-		$default_config->admin->events_in_dasboard = 30;
-		$default_config->admin->use_event_timezones = FALSE;
-		$default_config->admin->use_full_logging = FALSE;
-		$default_config->admin->use_remote_logging = FALSE;
-		$default_config->admin->remote_logging_url = NULL;
-		$default_config->admin->show_reg_footer = TRUE;
-		$default_config->admin->affiliate_id = NULL;
-		// template settings
-		$default_config->template_settings = new stdClass();
-		$default_config->template_settings->enable_default_style = TRUE;
-		$default_config->template_settings->display_address_in_regform = TRUE;
-		$default_config->template_settings->display_description_on_multi_reg_page = FALSE;
-		$default_config->template_settings->use_custom_templates = FALSE;
-		// map settings
-		$default_config->map_settings = new stdClass();
-		$default_config->map_settings->use_google_maps = TRUE;
-		// for event details pages (reg page)
-		$default_config->map_settings->event_details_map_width = 585; 			// ee_map_width_single
-		$default_config->map_settings->event_details_map_height = 362; 			// ee_map_height_single
-		$default_config->map_settings->event_details_map_zoom = 14; 			// ee_map_zoom_single
-		$default_config->map_settings->event_details_display_nav = TRUE; 			// ee_map_nav_display_single
-		$default_config->map_settings->event_details_nav_size = FALSE; 			// ee_map_nav_size_single
-		$default_config->map_settings->event_details_control_type = 'default'; 		// ee_map_type_control_single
-		$default_config->map_settings->event_details_map_align = 'center'; 			// ee_map_align_single
-		// for event list pages
-		$default_config->map_settings->event_list_map_width = 300; 			// ee_map_width
-		$default_config->map_settings->event_list_map_height = 185; 		// ee_map_height
-		$default_config->map_settings->event_list_map_zoom = 12; 			// ee_map_zoom
-		$default_config->map_settings->event_list_display_nav = FALSE; 		// ee_map_nav_display
-		$default_config->map_settings->event_list_nav_size = TRUE; 			// ee_map_nav_size
-		$default_config->map_settings->event_list_control_type = 'dropdown'; 		// ee_map_type_control
-		$default_config->map_settings->event_list_map_align = 'center'; 			// ee_map_align
-
-		// if we are only missing config items then let's merge with what we do have'
-		EE_Registry::instance()->CFG = $missing_options ? (object) array_merge( (array)$default_config, (array)EE_Registry::instance()->CFG ) : (object)$default_config;
-		// and then save it
-		if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE ) ) {
-			$msg = __( 'The Event Espresso Configuration Settings could not be initialized.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}	
-
-	}
 
 
 
