@@ -341,8 +341,8 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 */
 	public function _order_by_array_for_get_all_method(){
 		return array(
-				'Price_Type.PRT_order'=>'ASC',
 				'PRC_order'=>'ASC',
+				'Price_Type.PRT_order'=>'ASC',
 				'PRC_ID'=>'ASC');
 	}
 

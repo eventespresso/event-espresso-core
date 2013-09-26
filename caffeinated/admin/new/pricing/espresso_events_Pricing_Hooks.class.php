@@ -59,7 +59,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					),
 				'ee-dtt-ticket-metabox' => array(
 					'url' => PRICING_ASSETS_URL . 'ee-datetime-ticket-metabox.js',
-					'depends' => array('ee-datepicker', 'ee-dialog')
+					'depends' => array('ee-datepicker', 'ee-dialog', 'underscore')
 					)
 				),
 			'deregisters' => array(

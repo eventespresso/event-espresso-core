@@ -449,6 +449,43 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		echo "</ul>";
 	}
 
+
+	/**
+	 * Generates content for a single row of the table
+	 *
+	 * @since 4.1
+	 * @access public
+	 *
+	 * @param object $item The current item
+	 */
+	public function single_row( $item ) {
+		$row_class = $this->_get_row_class( $item );
+		echo '<tr' . $row_class . '>';
+		$this->single_row_columns( $item );
+		echo '</tr>';
+	}
+
+
+	/**
+	 * This simply sets up the row class for the table rows.
+	 * Allows for easier overriding of child methods for setting up sorting.
+	 * @param  object $item the current item
+	 * @return string
+	 */
+	protected function _get_row_class( $item ) {
+		static $row_class = '';
+		$row_class = ( $row_class == '' ? 'alternate' : '' );
+
+		$new_row = $row_class;
+
+		if ( !empty($this->_ajax_sorting_callback) )
+			$new_row .= ' rowsortable';
+
+		return ' class="' . $new_row . '"';
+	}
+
+
+
 	public function get_sortable_columns() {
 		return (array) $this->_sortable_columns;
 	}
