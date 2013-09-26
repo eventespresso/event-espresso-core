@@ -299,10 +299,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$success = __( 'Question order was updated successfully.', 'event_espresso' );
 		
 		// grab our row IDs
-		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', wp_strip_all_tags( $this->_req_data['row_ids'] )) : FALSE;
+		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
 
 		if ( is_array( $row_ids )) {
-			global $wpdb;
 			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
 				//Update the questions when re-ordering
 				if ( ! EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array(array( 'QST_ID' => $row_ids[$i] ) ))) {
