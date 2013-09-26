@@ -37,12 +37,6 @@ final class EE_Admin {
 	 */
 	protected $EE = NULL;
 
-	/**
-	 * 	path to main espresso.php file
-	 *	@var 	$main_file
-	 * 	@access 	public
-	 */
-	public $main_file;
 
 
 
@@ -53,10 +47,10 @@ final class EE_Admin {
 	 *@ access public
 	 *@ return class instance
 	 */	
-	public static function instance(  $main_file  ) {
+	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Admin )) {
-			self::$_instance = new self(  $main_file  );
+			self::$_instance = new self();
 		}
 		return self::$_instance;
 	}
@@ -66,14 +60,15 @@ final class EE_Admin {
    /**
      * class constructor
      */
-	protected function __construct( $main_file ) {
-		$this->main_file = $main_file;
+	protected function __construct() {
+		// grab registry
+		$this->EE = EE_Registry::instance();
+		// define global EE_Admin constants
+		$this->_define_all_constants();
 		//set frontend ajax constant.  This gets set if we have an incoming request var named "ee_frontend_ajax"
-		if ( isset( $_POST['ee_frontend_ajax'] ) && !defined('EE_FRONTEND_DOING_AJAX') )
-			define( 'EE_FRONTEND_DOING_AJAX', TRUE );
-
+		$ee_frontend_ajax = isset( $_POST['ee_frontend_ajax'] ) ? TRUE : FALSE;
+		define( 'EE_FRONTEND_DOING_AJAX', $ee_frontend_ajax );
 		// admin hooks
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
 		// load EE_Request_Handler early
 		add_action( 'init', array( $this, 'get_request' ), 4 );
@@ -87,26 +82,6 @@ final class EE_Admin {
 		
 	}
 
-
-
-	/**
-	 * 		plugins_loaded
-	 *
-	 * 		@access 	public
-	 * 		@return 		void
-	 */
-	public function plugins_loaded() {
-		//first define global EE_Admin constants
-		$this->_define_all_constants();
-		// registry, settings, autoloaders, and other config stuff
-		$this->_load_system_files();
-		// path to espresso.php
-		$this->EE->main_file = $this->main_file;
-	}
-	
-	public function hide_admin_pages_except_maintenance_mode($admin_page_folder_names = array()){
-		return array('maintenance');
-	}
 
 
 
@@ -130,23 +105,6 @@ final class EE_Admin {
 
 
 	/**
-	 * 		_load_system_files
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _load_system_files() {
-		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
-			require_once( EE_CORE . 'EE_System.core.php' );
-			EE_System::instance();
-			$this->EE = EE_Registry::instance();
-		} else {
-			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
-		}
-	}
-
-
-	/**
 	 * 	filter_plugin_actions - adds links to the Plugins page listing
 	 *
 	 *  @access 	public
@@ -157,7 +115,7 @@ final class EE_Admin {
 		static $main_file;
 		// if $main_file is not set yet
 		if ( ! $main_file ) {
-			$main_file = plugin_basename( $this->EE->main_file );
+			$main_file = plugin_basename( EVENT_ESPRESSO_MAIN_FILE );
 		}
 		// compare current plugin to this one
 		if ( $plugin == $main_file ) {
@@ -186,6 +144,18 @@ final class EE_Admin {
 
 
 	/**
+	 *	hide_admin_pages_except_maintenance_mode
+	 * 
+	 *	@access public
+	 *	@return array
+	 */	
+	public function hide_admin_pages_except_maintenance_mode( $admin_page_folder_names = array() ){
+		return array('maintenance');
+	}
+
+
+
+	/**
 	* init- should fire after shortcode, module,  addon, other plugin (default priority), and even EE_Front_Controller's init phases have run
 	* 
 	* @access public
@@ -197,8 +167,7 @@ final class EE_Admin {
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter('FHEE_admin_pages_array',array($this,'hide_admin_pages_except_maintenance_mode'));
-			
+			add_filter( 'FHEE_admin_pages_array', array( $this, 'hide_admin_pages_except_maintenance_mode' ));			
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
@@ -212,7 +181,7 @@ final class EE_Admin {
 			
 		}
 		// run the admin page factory but ONLY if we aren't doing a frontend ajax request
-		if ( ! defined( 'EE_FRONTEND_DOING_AJAX'  )) {
+		if ( ! EE_FRONTEND_DOING_AJAX ) {
 			try {
 				//this loads the controller for the admin pages which will setup routing etc
 				$this->EE->load_core( 'Admin_Page_Loader' );
