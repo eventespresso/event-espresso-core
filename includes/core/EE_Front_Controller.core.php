@@ -37,12 +37,6 @@ final class EE_Front_Controller {
 	 */
 	private $_view_template = NULL;
 
-	/**
-	 * 	path to main espresso.php file
-	 *	@var 	$main_file
-	 * 	@access 	public
-	 */
-	public $main_file;
 
 	/**
 	 * static copy of registry that modules can use until they get instantiated
@@ -59,33 +53,15 @@ final class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( $main_file ) {
-		// bootstrap
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
+	public function __construct() {
+		// grab registry
+		$this->EE = EE_Registry::instance();
 		// early init
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
 	}
 
-
-
-	/**
-	 * 		plugins_loaded
-	 *
-	 * 		@access 	public
-	 * 		@return 		void
-	 */
-	public function plugins_loaded() {
-		// registry, settings, autoloaders, and other config stuff
-		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
-			require_once( EE_CORE . 'EE_System.core.php' );		
-			EE_System::instance();
-			$this->EE = EE_Registry::instance();
-		} else {
-			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
-		}
-	}
 
 
 
