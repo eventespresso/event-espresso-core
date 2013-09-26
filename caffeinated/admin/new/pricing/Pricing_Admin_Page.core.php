@@ -45,7 +45,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		//todo: all hooks for event_categories ajax goes in here.
+		add_action('wp_ajax_espresso_update_prices_order', array( $this, 'update_price_order' ));
 	}
 
 
@@ -114,6 +114,10 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			'delete_price'	=> array( 
 					'func' => '_delete_price',
 					'noheader' => TRUE 
+				),
+			'espresso_update_price_order' => array(
+				'func' => 'update_price_order',
+				'noheader' => TRUE
 				),
 			// price types
 			'price_types'	=> array( 
@@ -257,6 +261,14 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 
+	public function load_scripts_styles_default() {
+		wp_enqueue_script( 'espresso_ajax_table_sorting' );
+	}
+
+
+
+
+
 	public function admin_footer_scripts() {}
 	public function admin_init() {}
 	public function admin_notices() {}
@@ -370,7 +382,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				$orderby = array('PRC_amount'=>$order);
 				break;
 			default:
-				$orderby = array( 'Price_Type.PRT_order'=>$order, 'PRC_order'=>$order, 'PRC_ID'=>$order);
+				$orderby = array( 'PRC_order'=>$order, 'Price_Type.PRT_order'=>$order, 'PRC_ID'=>$order);
 		}		
 
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
@@ -652,6 +664,33 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		
 		$this->_redirect_after_action( $success, 'Prices', 'deleted', array() );
 		
+	}
+
+
+
+
+	public function update_price_order() {
+		$success = __( 'Price order was updated successfully.', 'event_espresso' );
+		
+		// grab our row IDs
+		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
+
+		if ( is_array( $row_ids )) {
+			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
+				//Update the prices when re-ordering
+				$id = absint($row_ids[$i]);
+				if ( EEM_Price::instance()->update ( array( 'PRC_order' => $i+1 ), array(array( 'PRC_ID' => $id ) )) === FALSE ) {
+					$success = FALSE;
+				} 
+			}
+		} else {
+			$success = FALSE;
+		}
+		
+		$errors = ! $success ? __( 'An error occured. The price order was not updated.', 'event_espresso' ) : FALSE;
+		
+		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
+		die();
 	}
 
 

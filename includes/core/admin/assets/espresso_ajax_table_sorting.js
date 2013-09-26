@@ -3,6 +3,8 @@ jQuery(document).ready(function($) {
 	$('#the-list').sortable({
 		
 		cursor: 'move',
+
+		items: '.rowsortable',
 		
 		update: function(event, ui) {
 			

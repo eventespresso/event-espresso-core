@@ -538,6 +538,14 @@ label.error  { display: block; color: #FE2A00 !important; }
 
 
 /**
+ * sortable table rows class
+ */
+.rowsortable {
+	cursor: move;
+}
+
+
+/**
  * ee-dialog helper css
  */
 .ee-admin-dialog-container {

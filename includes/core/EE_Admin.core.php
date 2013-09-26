@@ -102,8 +102,6 @@ final class EE_Admin {
 		$this->_load_system_files();
 		// path to espresso.php
 		$this->EE->main_file = $this->main_file;
-		// pew pew pew
-		$this->EE->load_core( 'PUE' );		
 	}
 	
 	public function hide_admin_pages_except_maintenance_mode($admin_page_folder_names = array()){
@@ -214,28 +212,17 @@ final class EE_Admin {
 			
 		}
 		// run the admin page factory but ONLY if we aren't doing a frontend ajax request
-		if ( !defined('EE_FRONTEND_DOING_AJAX' ) )
-			$this->EE_Admin_Page_Loader();
-		
-	}
-
-
-
-
-	/**
-	 * 		loads and instantiates files and objects for EE admin pages
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function EE_Admin_Page_Loader() {
-		try {
-			//this loads the controller for the admin pages which will setup routing etc
-			$this->EE->load_core( 'Admin_Page_Loader' );
-		} catch ( EE_Error $e ) {
-			$e->get_error();
+		if ( ! defined( 'EE_FRONTEND_DOING_AJAX'  )) {
+			try {
+				//this loads the controller for the admin pages which will setup routing etc
+				$this->EE->load_core( 'Admin_Page_Loader' );
+			} catch ( EE_Error $e ) {
+				$e->get_error();
+			}			
 		}
 		
 	}
+
 
 
 
@@ -246,7 +233,8 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function admin_init() {
-//		espresso_verify_default_pages_exist();
+		// pew pew pew
+		$this->EE->load_core( 'PUE' );		
 	}
 
 
