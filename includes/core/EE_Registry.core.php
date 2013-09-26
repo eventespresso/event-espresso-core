@@ -33,12 +33,6 @@ final class EE_Registry {
 	*/
 	private static $_instance = NULL;
 
-	/**
-	* 	$_autoloaders 
-	* 	@var array $_autoloaders
-	* 	@access 	private 	
-	*/
-	private static $_autoloaders = array();
 
 	/**
 	* 	EE_Cart Object
@@ -132,10 +126,9 @@ final class EE_Registry {
 	 *@return void
 	 */	
 	private function __construct() {
-		// setup object for adding configuration settings to
-		$this->CFG = new StdClass();
+		$this->load_core( 'Base' );
+		// class library
 		$this->LIB = new StdClass();
-		spl_autoload_register( array( $this, 'espresso_autoloader' ));
 		add_action( 'init', array( $this, 'init' ), 1 );
 	}
 
@@ -155,54 +148,6 @@ final class EE_Registry {
 		self::$i18n_js_strings['wp_debug'] = WP_DEBUG;
 	}
 
-
-
-	/**
-	 * 		espresso_autoloader
-	 *
-	 * 	@access 	public
-	 *	@param string $class_name - simple class name ie: session
-	 * 	@return 		void
-	 */
-	public function espresso_autoloader( $className ) {
-		if ( isset( self::$_autoloaders[ $className ] ) && is_readable( self::$_autoloaders[ $className ] )) {
-			require_once( self::$_autoloaders[ $className ] );
-		} 
-	}
-
-
-
-	/**
-	 * 		register_autoloader
-	 *
-	 * 	@access 	public
-	 *	@param string $class_paths - array of key => value pairings between classnames and paths
-	 * 	@return 		void
-	 */
-	public static function register_autoloader( $class_paths = array() ) {
-		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
-		foreach ( $class_paths as $class => $path ) {
-			// don't give up! you gotta...
-			try {
-				// get some class
-				if ( empty( $class )) {					
-					throw new EE_Error ( __( 'An error occured. No Class name was specified while registering an autoloader.','event_espresso' ));					
-				}
-				// one day you will find the path young grasshopper 
-				if ( empty( $path )) {					
-					throw new EE_Error ( sprintf( __( 'An error occured. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));					
-				}
-				// is file readable ?
-				if ( ! is_readable( $path )) {
-					throw new EE_Error ( sprintf( __( 'An error occured. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));					
-				}				 
-			} catch ( EE_Error $e ) {
-				$e->get_error();
-			}
-			// add autoloader
-			self::$_autoloaders[ $class ] = $path;			
-		}
-	}
 
 
 
@@ -380,6 +325,7 @@ final class EE_Registry {
 		$class_name = $class_prefix . str_replace( $class_prefix, '', trim( $class_name ));
 
 		$class_abbreviations = array(
+			'EE_Config' => 'CFG',
 			'EE_Request_Handler' => 'REQ',
 			'EE_Session' => 'SSN',
 			'EE_Cart' => 'CART',
