@@ -138,12 +138,14 @@ final class EE_Config {
 		$this->current_blog_id = get_current_blog_id();
 		$this->EE = EE_Registry::instance();
 		// get EE site settings
-		if ( ! $activation ) {
+		if ( ! $activation && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance) {
 			$this->_load_config();
+			$this->_register_shortcodes_and_modules();
+			//add_action( 'init', array( $this, 'init' ), 5 );
+			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 3 );
 		}
-		$this->_register_shortcodes_and_modules();
-		//add_action( 'init', array( $this, 'init' ), 5 );
-		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 3 );
+		
+		
 		
 	}
 
@@ -197,9 +199,7 @@ final class EE_Config {
 		}
 		
 		// add current_user_id
-		if(EE_System::instance()->detect_req_type() !== EE_System::req_type_normal){
-			$this->EE->CFG->wp_user = get_current_user_id();	
-		}
+		$this->EE->CFG->wp_user = get_current_user_id();	
 
 //		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
