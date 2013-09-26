@@ -229,7 +229,8 @@ class EEH_Activation {
 		$default_config->map_settings->event_list_control_type = 'dropdown'; 		// ee_map_type_control
 		$default_config->map_settings->event_list_map_align = 'center'; 			// ee_map_align
 		//default gateway
-		$default_config->active_gateways = array('Check');
+		$default_config->active_gateways = array('Check'=>false);
+		
 		// if we are only missing config items then let's merge with what we do have'
 		EE_Registry::instance()->CFG = $missing_options ? (object) array_merge( (array)$default_config, (array)EE_Registry::instance()->CFG ) : (object)$default_config;
 		// and then save it
