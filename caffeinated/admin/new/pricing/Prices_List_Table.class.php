@@ -83,6 +83,8 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
         $this->_hidden_columns = array(
 			);
+
+        $this->_ajax_sorting_callback = 'update_prices_order';
 			
 	}
 
@@ -105,6 +107,27 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 
+	/**
+	 * overriding parent method so that we can make sure the row isn't sortable for certain items
+	 * @param  object $item the current item
+	 * @return string
+	 */
+	protected function _get_row_class( $item ) {
+		static $row_class = '';
+		$row_class = ( $row_class == '' ? 'alternate' : '' );
+
+		$new_row = $row_class;
+
+		if ( $item->type_obj()->base_type() !== 1 && $item->type_obj()->base_type() !== 4 )
+			$new_row .= ' rowsortable';
+
+		return ' class="' . $new_row . '"';
+	}
+
+
+
+
+
 
 	function column_default($item) {
 		return isset( $item->$column_name ) ? $item->$column_name : '';
@@ -113,9 +136,10 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 
+
 	function column_cb($item) {
 		if ( $item->type_obj()->base_type() !== 1 )
-			return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', /* $1%s */ $item->ID() );
+			return sprintf( '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', /* $1%s */ $item->ID() );
 		return '';
 	}
 
