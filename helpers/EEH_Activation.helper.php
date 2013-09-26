@@ -238,7 +238,8 @@ class EEH_Activation {
 			$msg = __( 'The Event Espresso Configuration Settings could not be initialized.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}	
-
+		//load gateways and set their default settings as a side-effect
+		EEM_Gateways::instance()->load_all_gateways();
 	}
 
 

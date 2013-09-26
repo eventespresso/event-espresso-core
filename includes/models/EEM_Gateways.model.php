@@ -173,7 +173,14 @@ Class EEM_Gateways {
 		//echo printr( $this->_payment_settings, __CLASS__ . ' ->' . __FUNCTION__ . ' ( line #' .  __LINE__ . ' )' );
 	}
 
-
+	/**
+	 * Instantiates all gateways. A side-effect of this is that if gateways dont have any
+	 * default settings set before this, they do now.
+	 * @return void
+	 */
+	public function load_all_gateways(){
+		$this->_load_all_gateway_files();
+	}
 
 
 	/**
@@ -189,7 +196,6 @@ Class EEM_Gateways {
 		} else {
 			// if something went wrong, fail gracefully
 			if ( ! is_array($this->_active_gateways)) {	
-				echo "there are appparently no gateways???";
 				$msg = __( 'There are no active payment gateways. Please configure at least one gateway in the Event Espresso Payment settings page.', 'event_espresso'); 
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return;
