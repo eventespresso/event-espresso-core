@@ -677,8 +677,9 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		if ( is_array( $row_ids )) {
 			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
-				//Update the questions when re-ordering
-				if ( ! EEM_Price::instance()->update ( array( 'PRC_order' => $i+1 ), array(array( 'PRC_ID' => $row_ids[$i] ) ))) {
+				//Update the prices when re-ordering
+				$id = absint($row_ids[$i]);
+				if ( EEM_Price::instance()->update ( array( 'PRC_order' => $i+1 ), array(array( 'PRC_ID' => $id ) )) === FALSE ) {
 					$success = FALSE;
 				} 
 			}
