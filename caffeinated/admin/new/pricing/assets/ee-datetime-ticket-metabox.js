@@ -10,6 +10,18 @@ jQuery(document).ready(function($) {
 		currentDOMElement: {},
 
 		/**
+		 * this property is used to indicate whether editing is being done after a "create" so that if cancel is pushed we remove the row that was created in the UI.  Otherwise cancel button just toggles the edit view.
+		 * @type {Boolean}
+		 */
+		creating: false,
+
+		/**
+		 * used to hold the items that are currently being created so if other dom elements are interacted with that typically do different stuff with created items we ONLY apply that if the current item is in the created array (rows)
+		 * @type {Array}
+		 */
+		createdItems: [],
+
+		/**
 		 * sets the context property on this object (by default context is 'datetime')
 		 * @param  {string} context what context the event is being initiated in
 		 * @return {tktHelper} tktHelper object for chaining
@@ -17,6 +29,18 @@ jQuery(document).ready(function($) {
 		setcontext : function(context) {
 			if ( typeof(context) !== 'undefined' )
 				this.context = context;
+			return this;
+		},
+
+
+
+
+		/**
+		 * sets the creating property (defaults to true if no value is included (or value is not boolean))
+		 * @param {boolean} val
+		 */
+		setCreating: function(val) {
+			this.creating = typeof(val) !== 'undefined' && _.isBoolean(val) ? val : true;
 			return this;
 		},
 
@@ -658,6 +682,9 @@ jQuery(document).ready(function($) {
 			//apply total price
 			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + this.getTotalPrice());
 
+			//if we're updating then let's make sure this ticket is removed from the createdItems property
+			this.createdItems = _.without(this.createdItems, this.ticketRow);
+
 			this.TicketEditToggle();
 			return this;
 		},
@@ -795,13 +822,14 @@ jQuery(document).ready(function($) {
 
 				case 'ticket' :
 					$('#edit-ticketrow-' + row).remove();
-					$('#display-ticket-row' + row).remove();
+					$('#display-ticketrow-' + row).remove();
 					this.dateTimeRow = 0; //set to 0 so we remove tkts for all datetimes.
 					this.ticketRow = row;
 					//if we've only got one row then we need to remove trash on that row.
 					if ( $('.ticket-row', '.event-tickets-container').length === 1 )
 						$('.trash-icon', '.event-tickets-container .ticket-row').hide();
 					this.toggleActiveDTTorTicket(this.context, true);
+					this.createdItems = _.without(this.createdItems, this.ticketRow);
 					break;
 
 				case 'price' :
@@ -876,14 +904,17 @@ jQuery(document).ready(function($) {
 
 
 
-		
+		/**
+		 * generates a new ticketRow
+		 * @return {object} this object (for chainability)
+		 */
 		newTicketRow: function() {
 			var idref, curval, newval, price_amount, pricename;
 			var incomingcontext = this.context;
 			//replace all instances of TICKETNUM with new generated row number
 			this.context = 'ticket';
 			var row = this.increaserowcount();
-
+			this.createdItems.push(row);
 			//edit form stuff
 			var newTKTrow = $('#ticket-row-form-holder').find('tbody').clone().html().replace(/TICKETNUM/g, row ).replace(/TICKETNAMEATTR/g, 'edit_tickets');
 			var initialPRCrow = incomingcontext == 'short-ticket' ? $('#ticket-edit-row-initial-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row).replace(/PRICENAMEATTR/g, 'edit_prices') : $('#ticket-edit-row-default-price-rows').find('tbody').clone().html().replace(/TICKETNUM/g, row);
@@ -1293,10 +1324,22 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This toggles the display of the edit form for a Ticket row.
+		 *
+		 * @param {bool} trash default is false This property combined with the value of the "creating" property determine whether we also trash the ticket item when toggled (typically by a "cancel" button trigger)
 		 */
-		TicketEditToggle: function() {
+		TicketEditToggle: function( trash ) {
+			trash = typeof(trash) === 'undefined' ? false : trash;
 			this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
 			this.selector.slideToggle(1000);
+
+			/**
+			 * if creating is true, then we need to remove the existing row and related items from the dom.
+			 */
+			if ( this.creating && trash &&  _.indexOf(this.createdItems, this.ticketRow) > -1 )
+				this.setcontext('ticket').trash(this.ticketRow);
+
+			//reset creating
+			this.creating = false;
 			return this;
 		},
 
@@ -1316,7 +1359,7 @@ jQuery(document).ready(function($) {
 		/**
 		 * This helper method simply removes any matching items from a js array.
 		 * @param  {array} arr js array to remove items from
-		 * @param  {string}   itm value of what element is being removed
+		 * @param  {string}   ind value of what element is being removed
 		 * @return {array}    new array with removed items
 		 */
 		removeFromArray: function( arr, ind ) {
@@ -1366,10 +1409,10 @@ jQuery(document).ready(function($) {
 				tktHelper.newDTTrow().setcontext('ticket').DateTimeEditToggle().scrollTo();
 				break;
 			case 'short-ticket' :
-				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow();
+				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow().setCreating();
 				break;
 			case 'ticket' :
-				tktHelper.setcontext('ticket').newTicketRow().TicketEditToggle().scrollTo();
+				tktHelper.setcontext('ticket').newTicketRow().TicketEditToggle().setCreating().scrollTo();
 				break;
 			case 'price' :
 				tktHelper.setcontext('price').setitemdata(data).newPriceRow();
@@ -1408,7 +1451,7 @@ jQuery(document).ready(function($) {
 
 		switch ( data.context ) {
 			case 'ticket' :
-				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
+				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle(true);
 				break;
 			case 'short-ticket' :
 				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
