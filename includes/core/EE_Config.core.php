@@ -95,6 +95,18 @@ final class EE_Config {
 	 * @var int
 	 */
 	public $wp_user;
+	
+	/**
+	 * Array of all active gateways. Key sare gateway slugs, values are... basically junk
+	 * @var array of strings
+	 */
+	public $active_gateways;
+	
+	/**
+	 * Array where keys are gateway slugs, and values are arrays full of whatever settings gateways want to store
+	 * @var array
+	 */
+	public $payment_settings;
 
 	
 
@@ -185,7 +197,9 @@ final class EE_Config {
 		}
 		
 		// add current_user_id
-		$this->EE->CFG->wp_user = get_current_user_id();	
+		if(EE_System::instance()->detect_req_type() !== EE_System::req_type_normal){
+			$this->EE->CFG->wp_user = get_current_user_id();	
+		}
 
 //		printr( $this->EE->CFG, '$this->EE->CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
@@ -231,7 +245,7 @@ final class EE_Config {
 	 * 	update_espresso_config'
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	boolean success 
 	 */
 	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
 		// map... the maps ?!?!?
