@@ -931,6 +931,10 @@ jQuery(document).ready(function($) {
 				// inputs
 				$('.add-datetime-ticket-container','#edit-event-datetime-tickets-' + this.dateTimeRow ).find('input').each( function() {
 					idref = $(this).attr('class').replace('add-new-', '.edit-');
+					//we also need to strip out any datepicker classes that might have got added
+					idref = idref.replace('ee-datepicker', '');
+					idref = idref.replace('hasDatepicker', '');
+					idref = $.trim(idref);
 					curval = $(this).val();
 					newTKTrow.find(idref).val(curval);
 					if ( $(this).hasClass('add-new-ticket-PRC_amount') ) {
