@@ -1012,7 +1012,7 @@ class EEH_Form_Fields {
 	 * @return string HTML
 	 */
 	static function hidden_input( $name, $value ){
-		return '<input type="hidden" name="'.$name.'" value="' . prep_option_value( $value ) . '"/>';
+		return '<input type="hidden" name="'.$name.'" value="' .  $value . '"/>';
 	}
 
 
