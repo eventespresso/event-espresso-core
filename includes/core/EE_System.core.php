@@ -420,6 +420,9 @@ final class EE_System {
 		// let's get it started		
 		if ( is_admin() ) {
 			EE_Registry::instance()->load_core( 'Admin' );
+		} else if ( EE_Maintenance_Mode::instance()->level() ) {
+			// shut 'er down down for maintenance ?
+			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
 		} else {
 			EE_Registry::instance()->load_core( 'Front_Controller' );
 		}
