@@ -337,7 +337,7 @@ Class EEM_Gateways {
 		$this->_payment_settings = $old_payment_settings;
 		$this->EE->CFG->gateway->payment_settings = $this->_payment_settings;
 
-		if ($this->EE->CFG->update_espresso_config()) {
+		if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
 
 			$msg = __('Payment Settings Updated!', 'event_espresso');
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -405,7 +405,7 @@ Class EEM_Gateways {
 		if (array_key_exists($gateway, $this->_all_gateways)) {
 			$this->_active_gateways[$gateway] = $this->_all_gateways[$gateway];
 			$this->EE->CFG->gateway->active_gateways = $this->_active_gateways;
-			if ($this->EE->CFG->update_espresso_config()) {
+			if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
 				$msg = $gateway . __(' Gateway Activated!', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
@@ -435,7 +435,7 @@ Class EEM_Gateways {
 		if (array_key_exists($gateway, $this->_active_gateways)) {
 			unset($this->_active_gateways[$gateway]);
 			$this->EE->CFG->gateway->active_gateways = $this->_active_gateways;
-			if ($this->EE->CFG->update_espresso_config()) {
+			if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
 				$msg =$gateway .  __('Gateway Deactivated!', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
