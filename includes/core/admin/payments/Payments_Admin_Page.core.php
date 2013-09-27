@@ -177,7 +177,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$EEM_Gateways = EEM_Gateways::instance();
 		$EEM_Gateways->set_active_gateways();
 		
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		
 		$gateway_data = $this->EE->SSN->get_session_data(FALSE, 'gateway_data');
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
@@ -240,7 +240,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//$gateways = isset( $gateways ) ? $gateways : array();
 		//printr( $gateways, '$gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $selected_gateway_name );
+		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $selected_gateway_name );
 		$this->display_admin_page_with_sidebar();
 
 	}
