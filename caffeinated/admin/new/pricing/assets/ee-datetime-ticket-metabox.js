@@ -1001,8 +1001,14 @@ jQuery(document).ready(function($) {
 			if ( incomingcontext == 'short-ticket' ) {
 				this.toggleActiveDTTorTicket('datetime');
 			} else {
-				this.dateTimeRow = 0;
-				this.toggleActiveDTTorTicket('datetime');
+				//we need to toggle ALL the datetimes
+				this.context = 'datetime';
+				var rowcount = this.getrowcount() + 1;
+				this.context = 'ticket';
+				for ( i=1; i<rowcount; i++ ) {
+					tktHelper.setdateTimeRow(i);
+					tktHelper.toggleActiveDTTorTicket('datetime');
+				}
 			}
 
 			return this;
