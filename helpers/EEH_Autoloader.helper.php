@@ -32,6 +32,141 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class EEH_Autoloader {
 
+	/**
+	 * 	instance of the EEH_Autoloader object
+	 *	@var 	$_instance
+	 * 	@access 	private
+	 */
+	private static $_instance = NULL;
+
+	/**
+	* 	$_autoloaders 
+	* 	@var array $_autoloaders
+	* 	@access 	private 	
+	*/
+	private static $_autoloaders;	
+
+	/**
+	 *	@singleton method used to instantiate class object
+	 *	@access public
+	 *	@return EEH_Autoloader
+	 */
+	public static function instance( $activation = FALSE ) {
+		// check if class object is instantiated, and instantiated properly
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EEH_Autoloader )) {
+			self::$_instance = new self( $activation );
+		}
+		return self::$_instance;
+	}
+
+
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	private
+	 *  @return 	void
+	 */
+	private function __construct() {
+		self::$_autoloaders = array();
+		$this->_register_custom_autoloaders();			
+	}
+
+
+
+
+
+	/**
+	 * 	espresso_autoloader
+	 *
+	 * 	@access 	public
+	 *	@param string $class_name - simple class name ie: session
+	 * 	@return 		void
+	 */
+	public static function espresso_autoloader( $className ) {
+		if ( isset( self::$_autoloaders[ $className ] ) && is_readable( self::$_autoloaders[ $className ] )) {
+			require_once( self::$_autoloaders[ $className ] );
+		} 
+	}
+
+
+
+
+	/**
+	 * 	register_autoloader
+	 *
+	 * 	@access 	public
+	 *	@param string $class_paths - array of key => value pairings between classnames and paths
+	 * 	@return 		void
+	 */
+	public static function register_autoloader( $class_paths = array() ) {
+		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
+		foreach ( $class_paths as $class => $path ) {
+			// don't give up! you gotta...
+			try {
+				// get some class
+				if ( empty( $class )) {					
+					throw new EE_Error ( __( 'An error occured. No Class name was specified while registering an autoloader.','event_espresso' ));					
+				}
+				// one day you will find the path young grasshopper 
+				if ( empty( $path )) {					
+					throw new EE_Error ( sprintf( __( 'An error occured. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));					
+				}
+				// is file readable ?
+				if ( ! is_readable( $path )) {
+					throw new EE_Error ( sprintf( __( 'An error occured. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));					
+				}				 
+			} catch ( EE_Error $e ) {
+				$e->get_error();
+			}
+			// add autoloader
+			self::$_autoloaders[ $class ] = $path;			
+		}
+	}
+
+
+
+
+	/**
+	 * 	register core, model and class 'autoloaders'
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	private function _register_custom_autoloaders() {
+		$this->_register_autoloaders_for_each_file_in_folder( EE_CORE );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'fields' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'helpers' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'relations' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'strategies' );
+		$this->_register_autoloaders_for_each_file_in_folder( EE_CLASSES );
+	}
+
+
+
+
+	/**
+	 * Assumes all the files in this folder have the normal naming scheme (namely that their classname
+	 * is the file's name, plus ".whatever.php".) and adds each of them to the autoloader list.
+	 * If that's not the case, you'll need to improve this function or just use EEH_File::get_classname_from_filepath_with_standard_filename() directly.
+	 * Yes this has to scan the directory for files, but it only does it once -- not on EACH
+	 * time the autoloader is used
+	 * @param string $folder name, with or without trailing /, doesn't matter
+	 * @return void
+	 */
+	private function _register_autoloaders_for_each_file_in_folder($folder){
+		// make sure last char is a /
+		$folder .= $folder[strlen($folder)-1] != DS ? DS : '';
+		$class_to_filepath_map = array();
+		//get all the files in that folder that end in php
+		$filepaths = glob( $folder.'*.php');
+		foreach($filepaths as $filepath){
+			$class_to_filepath_map [ EEH_File::get_classname_from_filepath_with_standard_filename( $filepath ) ] = $filepath;
+		}
+		self::register_autoloader($class_to_filepath_map);
+	}
+
+
 
 
 	/**
@@ -79,5 +214,9 @@ class EEH_Autoloader {
 			require_once( EE_CORE_ADMIN . $folder . DS . $classfile );
 		}			
 	}
+
+
+
+
 
 }
