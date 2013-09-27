@@ -100,15 +100,18 @@ final class EE_System {
 
 		$this->_activation = $activation;
 		$this->_load_registry();
-		// load EE_Config
+		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		EE_Config::instance()->update_espresso_config();
+		// setup autoloaders
 		$this->_register_custom_autoloaders();
 		spl_autoload_register( array( $this, 'espresso_autoloader' ));
+		// get tablenames from models
 		$this->_define_table_names();
+		// load maintenance mode and decide whether the door is open for business
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
-		$this->handle_new_install_or_upgrade_etc();
-
+		add_action( 'plugins_loaded', array( $this, 'handle_new_install_or_upgrade_etc' ), 4 );
+		// no maintence mode ?
 		if ( $this->_req_type == EE_System::req_type_normal ) {
 			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 			add_action( 'init', array( $this, 'init' ), 3 );
