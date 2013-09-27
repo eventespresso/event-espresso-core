@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
  * Event Espresso
@@ -14,7 +14,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE_Template_Validator
+ * EEH_Template_Validator
  *
  * This is a helper static class for helping to validate templates. It should be
  * used to verify all the variabels required by a template file are present
@@ -24,18 +24,18 @@
  * An example of how to use this class at the top of an EE template file:
  * 
  * //@var EE_Group_Type[] $group_types 
-	EE_Template_Validator::verify_is_array_of($group_types,'group_types','EE_Group_Type');
-	EE_Template_Validator::verify_is_array($attending_options, 'attending_options');
-	EE_Template_Validator::verify_is_array($yes_no_values, 'yes_no_values');
+	EEH_Template_Validator::verify_is_array_of($group_types,'group_types','EE_Group_Type');
+	EEH_Template_Validator::verify_is_array($attending_options, 'attending_options');
+	EEH_Template_Validator::verify_is_array($yes_no_values, 'yes_no_values');
 ?>
  *
  * @package		Event Espresso
- * @subpackage	/helper/EE_Template_Validator.helper.php
+ * @subpackage	/helper/EEH_Template_Validator.helper.php
  * @author		Michael Nelson
  *
  * ------------------------------------------------------------------------
  */
-class EE_Template_Validator {
+class EEH_Template_Validator {
 	
 	
 	
@@ -171,6 +171,6 @@ class EE_Template_Validator {
 			throw new EE_Error(sprintf(implode("||",$msg),$variable_name,$variable_to_test, implode("', '",$string_options)));
 		}
 	}
-}
 
-?>
+
+}

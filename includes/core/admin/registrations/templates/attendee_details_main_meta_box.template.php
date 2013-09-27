@@ -1,5 +1,5 @@
 <?php
-EE_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee');
+EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee');
 /*
  * @var $attendee EE_Attendee 
  * @var $state_html html for displaying the attendee's state
