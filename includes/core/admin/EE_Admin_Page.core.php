@@ -2168,9 +2168,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string html
 	 */
 	protected function _get_main_nav_tabs() {
-		//let's generate the html using the EE_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
-		return EE_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
+		//let's generate the html using the EEH_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
+		return EEH_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
 	}
 
 

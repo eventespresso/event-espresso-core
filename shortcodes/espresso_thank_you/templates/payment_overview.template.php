@@ -1,11 +1,11 @@
 <?php
-EE_Template_Validator::verify_instanceof($transaction, '$transaction', 'EE_Transaction');
-EE_Template_Validator::verify_instanceof($primary_registrant, '$primary_registrant', 'EE_Registration');
-EE_Template_Validator::verify_is_array_of($payments, '$payments', 'EE_Payment');
-EE_Template_Validator::verify_is_array($event_names, '$event_names');
-EE_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
-EE_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay_again_link');
-EE_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
+EEH_Template_Validator::verify_instanceof($transaction, '$transaction', 'EE_Transaction');
+EEH_Template_Validator::verify_instanceof($primary_registrant, '$primary_registrant', 'EE_Registration');
+EEH_Template_Validator::verify_is_array_of($payments, '$payments', 'EE_Payment');
+EEH_Template_Validator::verify_is_array($event_names, '$event_names');
+EEH_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
+EEH_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay_again_link');
+EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 /**
  * @var $transaction EE_Transaction
  * @var $primary_registrant EE_Registration

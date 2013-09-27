@@ -16,13 +16,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Tabbed_Content
+ * EEH_Tabbed_Content
  *
  * This is a helper class for displaying tabbed content
  *
  * requires that the ee-admin-page.js and jquery-ui-tabs be loaded.
  * 
- * @package		EE_Tabbed_Content
+ * @package		EEH_Tabbed_Content
  * @subpackage	helpers/
  * @author		Darren Ethier
  *
@@ -31,7 +31,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 
 
-class EE_Tabbed_Content {
+class EEH_Tabbed_Content {
 
 
 
@@ -217,4 +217,4 @@ class EE_Tabbed_Content {
 	}
 
 
-}// end EE_Tabbed_Content helper class
+}// end EEH_Tabbed_Content helper class
