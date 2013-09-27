@@ -76,9 +76,9 @@ final class EE_System {
 
 
 	/**
-	 *		@singleton method used to instantiate class object
-	 *		@access public
-	 *		@return EE_System
+	 *	@singleton method used to instantiate class object
+	 *	@access public
+	 *	@return EE_System
 	 */
 	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
@@ -111,24 +111,20 @@ final class EE_System {
 		// load maintenance mode and decide whether the door is open for business
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		add_action( 'plugins_loaded', array( $this, 'handle_new_install_or_upgrade_etc' ), 4 );
-		// no maintence mode ?
-		if ( $this->_req_type == EE_System::req_type_normal ) {
-			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-			add_action( 'init', array( $this, 'init' ), 3 );
-			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
-		}
+		// continue with regular request
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+
 	}
 
 
 
 	/**
-	 * 		_load_registry
+	 * 	_load_registry
 	 *
-	 * 		@access private
-	 * 		@return void
+	 * 	@access private
+	 * 	@return void
 	 */
 	private function _load_registry() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
 		} else {
@@ -140,7 +136,7 @@ final class EE_System {
 
 
 	/**
-	 * 		espresso_autoloader
+	 * 	espresso_autoloader
 	 *
 	 * 	@access 	public
 	 *	@param string $class_name - simple class name ie: session
@@ -155,7 +151,7 @@ final class EE_System {
 
 
 	/**
-	 * 		register_autoloader
+	 * 	register_autoloader
 	 *
 	 * 	@access 	public
 	 *	@param string $class_paths - array of key => value pairings between classnames and paths
@@ -189,10 +185,10 @@ final class EE_System {
 
 
 	/**
-	 * 		register core, model and class 'autoloaders'
+	 * 	register core, model and class 'autoloaders'
 	 *
-	 * 		@access private
-	 * 		@return void
+	 * 	@access private
+	 * 	@return void
 	 */
 	private function _register_custom_autoloaders() {
 		$this->_register_autoloaders_for_each_file_in_folder( EE_CORE );
@@ -410,25 +406,32 @@ final class EE_System {
 
 
 	/**
-	 * 		plugins_loaded
+	 * 	plugins_loaded
 	 *
-	 * 		@access 	public
-	 * 		@return 		void
+	 * 	@access 	public
+	 * 	@return 		void
 	 */
 	public function plugins_loaded() {
-		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
-			EE_Error::add_error( $activation_errors );
-			update_option( 'espresso_plugin_activation_errors', FALSE );
-		}
-		// let's get it started		
-		if ( is_admin() ) {
-			EE_Registry::instance()->load_core( 'Admin' );
-		} else if ( EE_Maintenance_Mode::instance()->level() ) {
-			// shut 'er down down for maintenance ?
-			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
-		} else {
-			EE_Registry::instance()->load_core( 'Front_Controller' );
-		}
+		// no maintence mode ?
+		if ( $this->_req_type == EE_System::req_type_normal ) {
+			// check for activation errors
+			if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
+				EE_Error::add_error( $activation_errors );
+				update_option( 'espresso_plugin_activation_errors', FALSE );
+			}
+			// let's get it started		
+			if ( is_admin() ) {
+				EE_Registry::instance()->load_core( 'Admin' );
+			} else if ( EE_Maintenance_Mode::instance()->level() ) {
+				// shut 'er down down for maintenance ?
+				add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
+			} else {
+				EE_Registry::instance()->load_core( 'Front_Controller' );
+			}
+			// load additional common resources
+			add_action( 'init', array( $this, 'init' ), 3 );
+			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
+		}		
 	}
 
 
@@ -436,8 +439,8 @@ final class EE_System {
 	/**
 	 * 	init
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *  	@access public
+	 *  	@return 	void
 	 */
 	public function init() {
 		// register Custom Post Types
@@ -461,8 +464,8 @@ final class EE_System {
 	/**
 	 * 	wp_enqueue_scripts
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *  	@access 	public
+	 *  	@return 	void
 	 */
 	public function wp_enqueue_scripts() {
 		// unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );

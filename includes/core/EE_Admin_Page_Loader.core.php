@@ -283,8 +283,8 @@ class EE_Admin_Page_Loader {
 	private function _load_admin_page( $page ) {
 		$classpage = str_replace('_', ' ', strtolower( $page ) );
 		$class_name = str_replace(' ', '_', ucwords($classpage) ) . '_Admin_Page_Init';
- 		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
- 		EE_Autoloader::load_admin_core($page, $class_name);
+ 		EE_Registry::instance()->load_helper( 'Autoloader' );
+ 		EEH_Autoloader::load_admin_core($page, $class_name);
 		if ( !class_exists($class_name )) {
 			$error_msg[] = sprintf( __('Something went wrong with loading the %s admin page.', 'event_espresso' ), $page);
 			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no Init class in place for the %s admin page.', 'event_espresso') . '<br />' . __( 'Make sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $class_name );
@@ -519,8 +519,8 @@ class EE_Admin_Page_Loader {
 		$dir_ref = array(
 			$root => array('core', 'class') // 'controller', 
 			);
-		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
-		EE_Autoloader::try_autoload($dir_ref, $className );
+		EE_Registry::instance()->load_helper( 'Autoloader' );
+		EEH_Autoloader::try_autoload($dir_ref, $className );
 	}
 
 
@@ -543,8 +543,8 @@ class EE_Admin_Page_Loader {
 			$dir_ref[$root . $pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
 		}
 
-		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
-		EE_Autoloader::try_autoload($dir_ref, $className );
+		EE_Registry::instance()->load_helper( 'Autoloader' );
+		EEH_Autoloader::try_autoload($dir_ref, $className );
 	}
 
 

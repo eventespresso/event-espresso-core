@@ -16,12 +16,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Autoloader
+ * EEH_Autoloader
  *
  * This is a helper utility class for setting up autoloaders.
  *
  * @package		Event Espresso
- * @subpackage	/helper/EE_Autoloader.helper.php
+ * @subpackage	/helpers/EEH_Autoloader.helper.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 
 
-class EE_Autoloader {
+class EEH_Autoloader {
 
 
 
