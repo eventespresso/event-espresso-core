@@ -152,7 +152,9 @@ final class EE_Config {
 	private function _load_config() {
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
-			$this->$config = $settings;
+			if ( ! empty( $settings )) {
+				$this->$config = $settings;
+			}
 		}
 	}
 
@@ -1164,7 +1166,7 @@ class EE_Gateway_Config extends EE_Config_Base{
 	public $active_gateways;
 	
 	public function __construct(){
-		$this->payment_settings = 
+		$this->payment_settings = array();
 		$this->active_gateways = array('Invoice'=>false);
 	}
 }
