@@ -931,6 +931,10 @@ jQuery(document).ready(function($) {
 				// inputs
 				$('.add-datetime-ticket-container','#edit-event-datetime-tickets-' + this.dateTimeRow ).find('input').each( function() {
 					idref = $(this).attr('class').replace('add-new-', '.edit-');
+					//we also need to strip out any datepicker classes that might have got added
+					idref = idref.replace('ee-datepicker', '');
+					idref = idref.replace('hasDatepicker', '');
+					idref = $.trim(idref);
 					curval = $(this).val();
 					newTKTrow.find(idref).val(curval);
 					if ( $(this).hasClass('add-new-ticket-PRC_amount') ) {
@@ -1001,8 +1005,14 @@ jQuery(document).ready(function($) {
 			if ( incomingcontext == 'short-ticket' ) {
 				this.toggleActiveDTTorTicket('datetime');
 			} else {
-				this.dateTimeRow = 0;
-				this.toggleActiveDTTorTicket('datetime');
+				//we need to toggle ALL the datetimes
+				this.context = 'datetime';
+				var rowcount = this.getrowcount() + 1;
+				this.context = 'ticket';
+				for ( i=1; i<rowcount; i++ ) {
+					tktHelper.setdateTimeRow(i);
+					tktHelper.toggleActiveDTTorTicket('datetime');
+				}
 			}
 
 			return this;

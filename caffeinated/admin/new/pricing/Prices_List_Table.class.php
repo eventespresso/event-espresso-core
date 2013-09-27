@@ -70,8 +70,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 				'name' => 'Name',
 				'type' => 'Price Type',
 				'description' => 'Description',
-				'amount' => 'Amount',
-				'active' => 'Active?'
+				'amount' => 'Amount'
 			);
 
         $this->_sortable_columns = array(
@@ -207,20 +206,6 @@ class Prices_List_Table extends EE_Admin_List_Table {
 			return '<div class="pad-amnt-rght">' . EEH_Template::format_currency( $item->amount() ) . '</div>';
 		}
 	}
-
-
-
-
-
-
-	function column_active($item) {
-		$active = $item->is_active() ? 'Yes' : '';
-		return '<div class="jst-cntr">' . $active . '</div>';
-	}
-
-
-
-
 
 
 

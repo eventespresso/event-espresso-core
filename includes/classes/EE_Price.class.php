@@ -74,16 +74,6 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 
 
 
-	/**
-	*	Price globally active?
-	*
-	*	@access	protected
-	*	@var boolean
-	*/
-	protected $_PRC_is_active = NULL;
-
-
-
 
 	/**
 	 * Whether price is a default price or not
@@ -229,23 +219,6 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 
 
 
-
-
-
-	/**
-	*		Set Price Globally Active boolean flag
-	*
-	* 		@access		public
-	*		@param		bool		$PRC_is_active
-	*/
-	public function set_globally_active( $PRC_is_active = NULL ) {
-		$this->set('PRC_is_active',$PRC_is_active);
-	}
-
-
-
-
-
 	/**
 	*		set deleted
 	* 
@@ -304,17 +277,6 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 		return $this->_PRC_desc;
 	}
 
-
-
-
-	/**
-	*	get is Price globally active?
-	* @access		public
-	* @return 		bool
-	*/
-	public function is_active() {
-		return $this->get('PRC_is_active');
-	}
 
 
 	/**
