@@ -112,7 +112,7 @@ abstract class EE_Gateway {
 		}
 
 		//load formatter helper and form fields helper
-		require_once EE_HELPERS . 'EE_Formatter.helper.php';
+		EE_Registry::instance()->load_helper( 'Formatter' );
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 	}
 	

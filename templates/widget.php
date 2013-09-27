@@ -19,7 +19,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 			extract( $args );
 
 			global $wpdb;
-			require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
+			EE_Registry::instance()->load_helper( 'Formatter' );
 			/* Our variables from the widget settings. */
 
 			$title = apply_filters('widget_title', $instance['title'] );
@@ -116,7 +116,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 										?>
 							<li class="upcmng-evnt-wdgt-li-item">
 								<h6 class="upcmng-evnt-wdgt-hdr-link"><a href="<?php echo $registration_url;?>"><?php echo $event_name?></a></h6>
-								<span class="upcmng-evnt-wdgt-date"><?php echo $event_city . $event_state; ?><em><?php echo EE_Formatter::event_date_display($start_date)?></em></span>
+								<span class="upcmng-evnt-wdgt-date"><?php echo $event_city . $event_state; ?><em><?php echo EEH_Formatter::event_date_display($start_date)?></em></span>
 								<?php /* These are custom messages that can be displayed based on the event status. Just comment the one you want to use. */?>
 								<?php //echo $status_display; //Turn this on to display the overall status of the event. ?>
 								<?php //echo $status_display_ongoing; //Turn this on to display the ongoing message. ?>

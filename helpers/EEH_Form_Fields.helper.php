@@ -351,13 +351,13 @@ class EEH_Form_Fields {
 			$values=$converted_values;
 		}
 		//load formatter helper
-		require_once ( EE_HELPERS . 'EE_Formatter.helper.php' );
+		EE_Registry::instance()->load_helper( 'Formatter' );
 		//EE_Registry::instance()->load_helper( 'Formatter' );
 
-		$field = '<select name="' . EE_Formatter::ee_tep_output_string($name) . '"';
+		$field = '<select name="' . EEH_Formatter::ee_tep_output_string($name) . '"';
 		//Debug
 		//printr( $values, '$values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		if ( EE_Formatter::ee_tep_not_null($parameters))
+		if ( EEH_Formatter::ee_tep_not_null($parameters))
 			$field .= ' ' . $parameters;
 		if ($autosize) {
 			$size = 'med';

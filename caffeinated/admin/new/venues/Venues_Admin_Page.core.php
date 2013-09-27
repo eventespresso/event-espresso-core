@@ -110,8 +110,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _set_page_routes() {
 
 		//load formatter helper
-		require_once EE_HELPERS . 'EE_Formatter.helper.php';
-
+		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
@@ -885,7 +884,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_details($view) {
 
 		//load formatter helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
+		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
@@ -911,7 +910,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_details_content() {
 		$editor_args['category_desc'] = array(
 			'type' => 'wp_editor',
-			'value' => EE_Formatter::admin_format_content($this->_category->category_desc),
+			'value' => EEH_Formatter::admin_format_content($this->_category->category_desc),
 			'class' => 'my_editor_custom'
 		);
 		$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );

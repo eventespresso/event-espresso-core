@@ -322,8 +322,8 @@ if (!function_exists('espresso_reg_form_sc')) {
 						'registration_end' => $event->registration_end,
 						'is_active' => $is_active,
 						'event_country' => $event_country,
-						'start_date' => EE_Formatter::event_date_display($start_date, get_option('date_format')),
-						'end_date' => EE_Formatter::event_date_display($end_date, get_option('date_format')),
+						'start_date' => EEH_Formatter::event_date_display($start_date, get_option('date_format')),
+						'end_date' => EEH_Formatter::event_date_display($end_date, get_option('date_format')),
 						'time' => $event->start_time,
 						'google_map_link' => $google_map_link,
 						'price' => $event->event_cost,
@@ -440,7 +440,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 									</span>
 									<?php
 								}
-								echo EE_Formatter::event_date_display($start_date, get_option('date_format'));
+								echo EEH_Formatter::event_date_display($start_date, get_option('date_format'));
 
 								if ($end_date !== $start_date) {
 									echo '<br />';
@@ -448,7 +448,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 									<span class="section-title">
 										<?php _e('End Date: ', 'event_espresso'); ?>
 									</span> <?php
-						echo EE_Formatter::event_date_display($end_date, get_option('date_format'));
+						echo EEH_Formatter::event_date_display($end_date, get_option('date_format'));
 					}
 									?>
 							</p>
