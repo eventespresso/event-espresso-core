@@ -315,7 +315,6 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					  PRC_amount decimal(10,3) NOT NULL DEFAULT '0.00',
 					  PRC_name varchar(45) NOT NULL,
 					  PRC_desc text,
-					  PRC_is_active tinyint(1) unsigned NOT NULL DEFAULT '1',
 					  PRC_is_default tinyint(1) unsigned NOT NULL DEFAULT '1',
 					  PRC_overrides int(10) unsigned DEFAULT NULL,
 					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',

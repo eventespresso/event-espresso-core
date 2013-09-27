@@ -79,8 +79,8 @@ class EEM_Ticket_Price extends EEM_Base {
 			)
 		);
 		$this->_model_relations = array(
-			'Ticket'=>new EE_Belongs_To_Relation('Ticket'),
-			'Price'=>new EE_Belongs_To_Relation('Price')
+			'Ticket'=>new EE_Belongs_To_Relation(),
+			'Price'=>new EE_Belongs_To_Relation()
 		);
 		parent::__construct( $timezone );
 

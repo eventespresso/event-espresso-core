@@ -520,7 +520,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'PRC_is_default' => 1,
 				'PRC_overrides' => NULL,
 				'PRC_order' => 0,
-				'PRC_is_active' => absint($this->_req_data['PRC_is_active']),
 				'PRC_deleted' => 0,
 				'PRC_row' => 1,
 				'PRC_parent' => 0
