@@ -364,8 +364,8 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$dir_ref = array(
 			$this->_folder_path => array('core','class')
 			);
-		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
-		EE_Autoloader::try_autoload($dir_ref, $className );
+		EE_Registry::instance()->load_helper( 'Autoloader' );
+		EEH_Autoloader::try_autoload($dir_ref, $className );
 	}
 
 
