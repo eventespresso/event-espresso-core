@@ -162,8 +162,7 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function init() {
-		// initialize teh systen, which also checks for db changes
-		EE_System::instance();
+		
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
@@ -175,11 +174,10 @@ final class EE_Admin {
 			add_action( 'action_hook_espresso_help', array( $this, 'help_tab_links' ), 10, 4 );
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
-
 			// bring out the pidgeons!!!
 			$this->EE->load_core( 'messages_init' );
-			
 		}
+		
 		// run the admin page factory but ONLY if we aren't doing a frontend ajax request
 		if ( ! EE_FRONTEND_DOING_AJAX ) {
 			try {

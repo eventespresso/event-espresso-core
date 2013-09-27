@@ -401,7 +401,7 @@ class EE_Data_Migration_Manager{
 				}
 
 			}
-			$this->EE->register_autoloader($this->_data_migration_class_to_filepath_map);
+			EE_System::instance()->register_autoloader($this->_data_migration_class_to_filepath_map);
 		}
 		return $this->_data_migration_class_to_filepath_map;
 	}
