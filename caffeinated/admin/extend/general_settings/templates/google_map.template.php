@@ -10,7 +10,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('use_google_maps', $values, $map_settings->use_google_maps, 'id="ee-display-map-no-shortcodes"'); ?>
+					<?php echo EEH_Form_Fields::select_input('use_google_maps', $values, $map_settings->use_google_maps, 'id="ee-display-map-no-shortcodes"'); ?>
 				</td>
 			</tr>
 
@@ -65,7 +65,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('event_details_display_nav', $values, $map_settings->event_details_display_nav, 'id="event_details_display_nav" '); ?>
+					<?php echo EEH_Form_Fields::select_input('event_details_display_nav', $values, $map_settings->event_details_display_nav, 'id="event_details_display_nav" '); ?>
 				</td>
 			</tr>
 
@@ -76,7 +76,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('event_details_nav_size', $values, $map_settings->event_details_nav_size, 'id="event_details_nav_size"'); ?>
+					<?php echo EEH_Form_Fields::select_input('event_details_nav_size', $values, $map_settings->event_details_nav_size, 'id="event_details_nav_size"'); ?>
 				</td>
 			</tr>
 
@@ -183,7 +183,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('event_list_display_nav', $values, $map_settings->event_list_display_nav, 'id="event_list_display_nav"'); ?>
+					<?php echo EEH_Form_Fields::select_input('event_list_display_nav', $values, $map_settings->event_list_display_nav, 'id="event_list_display_nav"'); ?>
 				</td>
 			</tr>
 
@@ -194,7 +194,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('event_list_nav_size', $values, $map_settings->event_list_nav_size, 'id="event_list_nav_size"'); ?>
+					<?php echo EEH_Form_Fields::select_input('event_list_nav_size', $values, $map_settings->event_list_nav_size, 'id="event_list_nav_size"'); ?>
 				</td>
 			</tr>
 

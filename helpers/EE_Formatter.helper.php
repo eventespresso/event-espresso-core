@@ -128,4 +128,4 @@ class EE_Formatter {
 	}
 
 
-}//end class EE_Form_Fields
+}//end class EEH_Form_Fields

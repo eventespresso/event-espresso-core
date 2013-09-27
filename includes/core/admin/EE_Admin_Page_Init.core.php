@@ -79,10 +79,6 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//load initial stuff.
 		$this->_set_file_and_folder_name();
 
-
-		//some global constants
-		if ( !defined('EE_FF_HELPER') )
-			define( 'EE_FF_HELPER', EE_HELPERS . 'EE_Form_Fields.helper.php');
 	}
 
 

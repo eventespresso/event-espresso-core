@@ -173,7 +173,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 					<?php _e('Turn on Debugging Using the 2checkout Sandbox', 'event_espresso'); ?>
 					<?php do_action('AHEE_help', '2co_sandbox_info'); ?>
 				</label></th>
-			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+			<td><?php echo EEH_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
 		
 		<tr>

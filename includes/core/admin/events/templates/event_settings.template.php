@@ -10,7 +10,7 @@
 					</label>
 				</th>
 				<td>
-					<p><?php echo EE_Form_Fields::select_input('default_reg_status', $reg_status_array, $default_reg_status ) ?></p>
+					<p><?php echo EEH_Form_Fields::select_input('default_reg_status', $reg_status_array, $default_reg_status ) ?></p>
 					<p class="description">
 						<?php _e('This value will be automatically filled in for each person\'s registration status, until payment is made, for each event.', 'event_espresso'); ?>
 					</p>
@@ -25,7 +25,7 @@
 					</label>
 				</th>
 				<td>
-					<p><?php echo EE_Form_Fields::select_input('pending_counts_reg_limit', $values, $pending_counts_reg_limit) ?></p>
+					<p><?php echo EEH_Form_Fields::select_input('pending_counts_reg_limit', $values, $pending_counts_reg_limit) ?></p>
 					<p class="description">
 						<?php _e('If set to "Yes", then attendee\'s whose registration status is set to "Pending" will still count towards an Event\'s registration limit, and therefore also affect the number of spaces available, tickets left, and seating options (if applicable).', 'event_espresso'); ?>
 					</p>

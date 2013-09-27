@@ -95,7 +95,7 @@
 	<?php }
 	if ($show_maintenance_switch){?>
 	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
-		<?php echo EE_Form_Fields::radio(__("Maintenance Mode Level", "event_espresso"), EE_Maintenance_Mode::instance()->level(), 
+		<?php echo EEH_Form_Fields::radio(__("Maintenance Mode Level", "event_espresso"), EE_Maintenance_Mode::instance()->level(), 
 				array(EE_Maintenance_Mode::level_0_not_in_maintenance=>  __("Not In Maintenance (normal)", "event_espresso"),
 			EE_Maintenance_Mode::level_1_frontend_only_maintenance=>  __("Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)", "event_espresso")), 
 				'maintenance_model_level'); ?>

@@ -816,7 +816,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		
-		$this->_template_args['base_type_select'] = EE_Form_Fields::select_input('base_type', $values, $set_value, 'id="price-type-base-type-slct"'); 		
+		$this->_template_args['base_type_select'] = EEH_Form_Fields::select_input('base_type', $values, $set_value, 'id="price-type-base-type-slct"'); 		
 		$this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
 		$redirect_URL = add_query_arg( array( 'action' => 'price_types'), $this->_admin_base_url );
 		$this->_set_publish_post_box_vars( 'id', $PRT_ID, FALSE, $redirect_URL );

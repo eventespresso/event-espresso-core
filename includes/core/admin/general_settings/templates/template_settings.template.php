@@ -18,7 +18,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('display_address_in_regform', $values, $display_address_in_regform, 'id="display_address_in_regform"'); ?>
+					<?php echo EEH_Form_Fields::select_input('display_address_in_regform', $values, $display_address_in_regform, 'id="display_address_in_regform"'); ?>
 					<p class="description">
 						<?php _e('Do not use this if you are using the venue shortcodes in your event description.', 'event_espresso'); ?>
 					</p>

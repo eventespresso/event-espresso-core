@@ -15,7 +15,7 @@
 					</label>
 				</th>
 				<td>
-					<p><?php echo EE_Form_Fields::select_input( 'use_captcha', $values, $use_captcha, 'id="admin-recaptcha-settings-slct"' ); ?></p>
+					<p><?php echo EEH_Form_Fields::select_input( 'use_captcha', $values, $use_captcha, 'id="admin-recaptcha-settings-slct"' ); ?></p>
 					<p class="description">
 						<?php 
 							echo sprintf( 
@@ -72,7 +72,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input( 'recaptcha_theme', $recaptcha_theme_options, $recaptcha_theme ); ?>
+					<?php echo EEH_Form_Fields::select_input( 'recaptcha_theme', $recaptcha_theme_options, $recaptcha_theme ); ?>
 				</td>
 			</tr>
 			
@@ -83,7 +83,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input( 'recaptcha_language', $recaptcha_language_options, $recaptcha_language ); ?>
+					<?php echo EEH_Form_Fields::select_input( 'recaptcha_language', $recaptcha_language_options, $recaptcha_language ); ?>
 				</td>
 			</tr>
 			

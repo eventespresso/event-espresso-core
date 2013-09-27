@@ -113,7 +113,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 
 		//load field generator helper
-		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$this->_page_routes = array(
 			'default' => '_overview_list_table',
@@ -419,7 +419,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function venue_gmap_metabox() {
 		$template_args = array(
-			'vnu_enable_for_gmap' => EE_Form_Fields::select_input('vnu_enable_for_gmap', $this->get_yes_no_values(), $this->_cpt_model_obj->enable_for_gmap() ),
+			'vnu_enable_for_gmap' => EEH_Form_Fields::select_input('vnu_enable_for_gmap', $this->get_yes_no_values(), $this->_cpt_model_obj->enable_for_gmap() ),
 			'vnu_google_map_link' => $this->_cpt_model_obj->google_map_link(),
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_gmap_metabox_content.template.php';
@@ -446,8 +446,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$template_args = array(
 			'_venue' => $this->_cpt_model_obj,
-			'states_dropdown' => EE_Form_Fields::select_input('sta_id', $st_ary, $this->_cpt_model_obj->state_ID(), 'id="sat_id"'),
-			'countries_dropdown' => EE_Form_Fields::select_input('cnt_iso', $ctry_ary, $this->_cpt_model_obj->country_ID(), 'id="cnt_iso"')
+			'states_dropdown' => EEH_Form_Fields::select_input('sta_id', $st_ary, $this->_cpt_model_obj->state_ID(), 'id="sat_id"'),
+			'countries_dropdown' => EEH_Form_Fields::select_input('cnt_iso', $ctry_ary, $this->_cpt_model_obj->country_ID(), 'id="cnt_iso"')
 			);
 
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_address_metabox_content.template.php';
@@ -887,7 +887,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		//load formatter helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
 		//load field generator helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$route = $view == 'edit' ? 'update_category' : 'insert_category';
 		$this->_set_add_edit_form_tags($route);

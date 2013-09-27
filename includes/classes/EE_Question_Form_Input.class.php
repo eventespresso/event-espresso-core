@@ -16,7 +16,7 @@
  * EE_Question_Form_Input class
  *	 
  *	a conglomerate type object that combines an EE_Question object with an EE_Answer object 
- *	as well as some of it's own class properties to facilitate use within the EE_Form_Fields.helper class
+ *	as well as some of it's own class properties to facilitate use within the EEH_Form_Fields.helper class
  *	access to the EE_Question and EE_Answer objects properties are done indirectly via a super getter and setter
  *
  * @package		Event Espresso

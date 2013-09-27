@@ -2204,12 +2204,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@param	array $id - used for defining unique identifiers for the form.
 	 * 	@param string $generator (options are 'string' or 'array', basically use this to indicate which generator to use)
 	 * 	@return string
-	 * 	@uses EE_Form_Fields::get_form_fields (/helper/EE_Form_Fields.helper.php)
-	 * 	@uses EE_Form_Fields::get_form_fields_array (/helper/EE_Form_Fields.helper.php)
+	 * 	@uses EEH_Form_Fields::get_form_fields (/helper/EEH_Form_Fields.helper.php)
+	 * 	@uses EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
 	 */
 	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
-		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
-		$content = $generator == 'string' ? EE_Form_Fields::get_form_fields($input_vars, $id) : EE_Form_Fields::get_form_fields_array($input_vars);
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
+		$content = $generator == 'string' ? EEH_Form_Fields::get_form_fields($input_vars, $id) : EEH_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
 	}
 

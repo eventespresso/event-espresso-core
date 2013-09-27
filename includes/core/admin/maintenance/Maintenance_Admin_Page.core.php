@@ -162,7 +162,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
-		require_once(EE_HELPERS . 'EE_Form_Fields.helper.php');
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		//localize script stuff
 		wp_localize_script('ee-maintenance', 'ee_maintenance', array(
 			'migrating'=>  __("Migrating...", "event_espresso"),

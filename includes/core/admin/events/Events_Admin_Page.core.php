@@ -92,7 +92,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		require_once EE_HELPERS . 'EE_Formatter.helper.php';
 
 		//load field generator helper
-		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		//the model is used a lot so let's just require it.
 		require_once( EE_MODELS . $this->_cpt_model_name . '.model.php' );
@@ -1114,14 +1114,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		
-		//$template_args['is_active_select'] = EE_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
+		//$template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
-		$template_args['allow_group_reg_select'] = EE_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
+		$template_args['allow_group_reg_select'] = EEH_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
-		$template_args['default_registration_status'] = EE_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
-		$template_args['display_description'] = EE_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
-		$template_args['display_registration_form'] = EE_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
+		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
+		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
+		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
 		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
@@ -1159,9 +1159,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$venue = !empty( $evnt_id ) ? $this->_cpt_model_obj->venues() : NULL;
 		$venue = empty( $venue ) ? $VNM->create_default_object() : array_shift( $venue );
 		$template_args['_venue'] = $venue;
-		$template_args['states_dropdown'] = EE_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
-		$template_args['countries_dropdown'] = EE_Form_Fields::select_input('countries', $ctry_ary, $venue->country_ID(), 'id="phys-country"');
-		$template_args['enable_for_gmap'] = EE_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
+		$template_args['states_dropdown'] = EEH_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
+		$template_args['countries_dropdown'] = EEH_Form_Fields::select_input('countries', $ctry_ary, $venue->country_ID(), 'id="phys-country"');
+		$template_args['enable_for_gmap'] = EEH_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
 		$template_path = EVENTS_TEMPLATE_PATH . 'event_venues_metabox_content.template.php';
 		EEH_Template::display_template( $template_path, $template_args );
 	}
@@ -1722,7 +1722,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//load formatter helper
 		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Formatter.helper.php';
 		//load field generator helper
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . '/helpers/EE_Form_Fields.helper.php';
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$route = $view == 'edit' ? 'update_category' : 'insert_category';
 		$this->_set_add_edit_form_tags($route);

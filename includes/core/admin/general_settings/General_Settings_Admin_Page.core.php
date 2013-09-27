@@ -666,9 +666,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			return '';
 		}
 		// for ajax
-//		if ( ! class_exists( 'EE_Form_Fields' )) {
-//			require_once ( EE_HELPERS . 'EE_Form_Fields.helper.php' );
-//		}
 		$this->EE->load_helper( 'Form_Fields' );
 		remove_all_filters( 'FHEE_form_field_label_html' );
 		remove_all_filters( 'FHEE_form_field_input_html' );

@@ -17,7 +17,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('use_dashboard_widget', $values, $use_dashboard_widget ); ?>
+					<?php echo EEH_Form_Fields::select_input('use_dashboard_widget', $values, $use_dashboard_widget ); ?>
 					<p class="description">
 						<?php _e('Activates the Upcoming Events Widget in the WordPress Dashboard so that you can see a list of upcoming events as soon as you log in.', 'event_espresso'); ?>
 					</p>
@@ -55,7 +55,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('use_event_timezones', $values, $use_event_timezones ); ?>
+					<?php echo EEH_Form_Fields::select_input('use_event_timezones', $values, $use_event_timezones ); ?>
 					<p class="description">
 					<?php _e('This allows you to set a custom time zone for each event. Modificatiosn to your site may be required for this to work properly.', 'event_espresso'); ?>
 					</p>
@@ -76,7 +76,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 					<?php echo EEH_Template::get_help_tab_link('full_logging_info'); ?>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('use_full_logging', $values, $use_full_logging ); ?>
+					<?php echo EEH_Form_Fields::select_input('use_full_logging', $values, $use_full_logging ); ?>
 					<p class="description">
 						<span class="reminder-spn">
 							<?php _e('Please use caution when using this feature. These files may be publicly available.', 'event_espresso'); ?>
@@ -93,7 +93,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 					<?php echo EEH_Template::get_help_tab_link('remote_logging_info'); ?>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('use_remote_logging', $values, $use_remote_logging ); ?>
+					<?php echo EEH_Form_Fields::select_input('use_remote_logging', $values, $use_remote_logging ); ?>
 					<p class="description">
 						<?php _e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
 					</p>
@@ -132,7 +132,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('show_reg_footer', $values, $show_reg_footer ); ?>
+					<?php echo EEH_Form_Fields::select_input('show_reg_footer', $values, $show_reg_footer ); ?>
 				</td>
 			</tr>
 

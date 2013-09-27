@@ -119,7 +119,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
 		require_once EE_CORE_ADMIN . 'admin_helper.php';
-		require_once EE_FF_HELPER;
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$filters[] = espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? sanitize_key($this->_req_data['month_range']) : '' );
 		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? sanitize_key( $this->_req_data['category_id'] ) : '' );
@@ -128,7 +128,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		foreach ( $this->_status as $key => $value ) {
                 $status[] = array( 'id' => $key, 'text' => $value );
             }
-		$filters[] = EE_Form_Fields::select_input('reg_status', $status, isset($this->_req_data['reg_status']) ? strtoupper(sanitize_key( $this->_req_data['reg_status'] ) ): '');
+		$filters[] = EEH_Form_Fields::select_input('reg_status', $status, isset($this->_req_data['reg_status']) ? strtoupper(sanitize_key( $this->_req_data['reg_status'] ) ): '');
 
 		return $filters;
 	}
