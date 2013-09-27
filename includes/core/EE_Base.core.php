@@ -32,8 +32,8 @@ class EE_BASE {
 	public function __isset($a) { return FALSE; }
 	public function __unset($a) { return FALSE; }
 	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }	
-	public function __destruct() { return FALSE; }		
+	public function __wakeup() { return FALSE; }
+	public function __destruct() { return FALSE; }
 
 }
 // End of file EE_BASE.core.php

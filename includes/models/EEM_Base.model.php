@@ -197,6 +197,12 @@ abstract class EEM_Base extends EE_Base{
 	 * do something similar.
 	 */
 	protected function __construct( $timezone = NULL ){
+		//if we're in maintenance mode level 2, DON'T run any queries
+		//because level 2 indicates the database needs updating and 
+		//is probably out of sync with the code
+		if(EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance){
+			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
+		}
 		// load registry
 		$this->EE = EE_Registry::instance();
 		foreach($this->_tables as $table_alias => $table_obj){

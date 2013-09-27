@@ -102,18 +102,16 @@ if ( is_readable( EE_CORE . 'EE_Error.core.php' )) {
 	wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ));
 }
 
-// let's get it started		
-if ( is_admin() ) {
-	espresso_load_required( 'EE_Admin', EE_CORE . 'EE_Admin.core.php' );
-	EE_Admin::instance( EVENT_ESPRESSO_MAIN_FILE );
-} else {
-	espresso_load_required( 'EE_Front_Controller', EE_CORE . 'EE_Front_Controller.core.php' );
-	new EE_Front_Controller( EVENT_ESPRESSO_MAIN_FILE );
+
+if ( ! isset( $_REQUEST['plugin'] )) {
+	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
+	EE_System::instance();
 }
 
 
-
 function espresso_plugin_activation() {
+	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
+	EE_System::instance( TRUE );
 	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_activation();
 }

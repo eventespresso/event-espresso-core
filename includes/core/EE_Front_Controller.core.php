@@ -37,12 +37,6 @@ final class EE_Front_Controller {
 	 */
 	private $_view_template = NULL;
 
-	/**
-	 * 	path to main espresso.php file
-	 *	@var 	$main_file
-	 * 	@access 	public
-	 */
-	public $main_file;
 
 	/**
 	 * static copy of registry that modules can use until they get instantiated
@@ -59,33 +53,15 @@ final class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( $main_file ) {
-		// bootstrap
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 1 );
+	public function __construct() {
+		// grab registry
+		$this->EE = EE_Registry::instance();
 		// early init
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
 	}
 
-
-
-	/**
-	 * 		plugins_loaded
-	 *
-	 * 		@access 	public
-	 * 		@return 		void
-	 */
-	public function plugins_loaded() {
-		// registry, settings, autoloaders, and other config stuff
-		if ( is_readable( EE_CORE . 'EE_System.core.php' )) {
-			require_once( EE_CORE . 'EE_System.core.php' );		
-			EE_System::instance();
-			$this->EE = EE_Registry::instance();
-		} else {
-			wp_die( __( 'The EE_System files could not be loaded.', 'event_espresso' ));
-		}
-	}
 
 
 
@@ -189,30 +165,25 @@ final class EE_Front_Controller {
 //		echo 'echodump of $answers_for_r';
 //		var_dump($answers_for_r);
 		
-		// shut 'er down down for maintenance ?
-		if ( EE_Maintenance_Mode::instance()->level() ) {
-			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
-		} else {
-			add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
-			// additional hooks get added in the init phase
-			// load other resources and begin to actually run shortcodes and modules
-			add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
-			// process any content shortcodes
-			add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
-			// process request with module factory
-			add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );
-			// before headers sent
-			add_action( 'wp', array( $this, 'wp' ), 5 );
-			// load css and js
-			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
-			// header
-			add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
-			// the content
-			add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-			// display errors
-			add_action('wp_footer', array( $this, 'display_errors' ), 2 );			
-			add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );			
-		}
+		add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
+		// additional hooks get added in the init phase
+		// load other resources and begin to actually run shortcodes and modules
+		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
+		// process any content shortcodes
+		add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
+		// process request with module factory
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );
+		// before headers sent
+		add_action( 'wp', array( $this, 'wp' ), 5 );
+		// load css and js
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
+		// header
+		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
+		// the content
+		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
+		// display errors
+		add_action('wp_footer', array( $this, 'display_errors' ), 2 );			
+		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );			
 	
 
 			//random debug code added by mike.
@@ -247,9 +218,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function employ_CPT_Strategy() {
-		if ( ! EE_Maintenance_Mode::instance()->level() ) {
-			$this->EE->load_core( 'CPT_Strategy' );
-		}
+		$this->EE->load_core( 'CPT_Strategy' );
 	}
 
 

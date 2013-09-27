@@ -59,7 +59,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					),
 				'ee-dtt-ticket-metabox' => array(
 					'url' => PRICING_ASSETS_URL . 'ee-datetime-ticket-metabox.js',
-					'depends' => array('ee-datepicker', 'ee-dialog')
+					'depends' => array('ee-datepicker', 'ee-dialog', 'underscore')
 					)
 				),
 			'deregisters' => array(
@@ -246,7 +246,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//we actually do our saves a head of doing any add_relations to because its entirely possible that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
 			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
 			
-			if ( !empty( $tkt['TKT_ID'] ) ) {
+			if ( !empty( $TKT_values['TKT_ID'] ) ) {
 				$TKT = $this->EE->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
 
 				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
@@ -346,26 +346,33 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		//now we need to handle tickets actually "deleted permanently".  There are cases where we'd want this to happen (i.e. autosaves are happening and then in between autosaves the user trashes a ticket).  Or a draft event was saved and in the process of editing a ticket is trashed.  No sense in keeping all the related data in the db!
 		$old_tickets = $old_tickets[0] == '' ? array() : $old_tickets;
 		$tickets_removed = array_diff( $old_tickets, array_keys($saved_tickets) );
+		/*var_dump($old_tickets);
+		var_dump($saved_tickets);
+		var_dump($tickets_removed);*/
 
 		foreach ( $tickets_removed as $id ) {
 			$id = absint( $id );
 
+			//get the ticket for this id
+			$tkt_to_remove = $this->EE->load_model('Ticket')->get_one_by_ID($id);
+
+			//if this tkt is a default tkt we leave it alone cause it won't be attached to the datetime
+			if ( $tkt_to_remove->get('TKT_is_default') )
+				continue;
+
 			//need to get all the related datetimes on this ticket and remove from every single one of them (remember this process can ONLY kick off if there are NO tkts_sold)
-			$dtts = $saved_tickets[$id]->get_many_related('Datetime');
+			$dtts = $tkt_to_remove->get_many_related('Datetime');
 
 			foreach( $dtts as $dtt ) {
-				$saved_tickets[$id]->_remove_relation_to($dtt, 'Datetime');
+				$tkt_to_remove->_remove_relation_to($dtt, 'Datetime');
 			}
 
 			//need to do the same for prices (except these prices can also be deleted because again, tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
-			$prcs = $saved_tickets[$id]->get_may_related('Ticket');
-
-			foreach( $prcs as $prc ) {
-				$saved_tickets[$id]->delete_related_permanently($prc, 'Price');
-			}
+			$tkt_to_remove->delete_related_permanently('Price');
+			
 
 			//finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
-			$saved_tickets[$id]->delete_permanently();
+			$tkt_to_remove->delete_permanently();
 		}
 	}
 
@@ -507,6 +514,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		}
 
 		$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
+		$main_template_args['existing_ticket_ids'] = implode( ',', $existing_ticket_ids );
 		$main_template_args['show_tickets_container'] = '';
 
 		//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.

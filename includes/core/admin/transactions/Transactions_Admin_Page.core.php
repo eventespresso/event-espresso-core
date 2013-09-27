@@ -591,9 +591,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	private function _get_active_gateways() {
 		global $espresso_wp_user;
 		$this->_template_args['active_gateways'] = array();
-		$payment_options = $this->EE->CFG->payment_settings;//get_user_meta($espresso_wp_user, 'payment_settings', true);
+		$payment_options = $this->EE->CFG->gateway->payment_settings;//get_user_meta($espresso_wp_user, 'payment_settings', true);
 		//echo printr( $payment_options, '$payment_options' );
-		if ( $gateways = $this->EE->CFG->active_gateways){//get_user_meta($espresso_wp_user, 'active_gateways', true)) {
+		if ( $gateways = $this->EE->CFG->gateway->active_gateways){//get_user_meta($espresso_wp_user, 'active_gateways', true)) {
 			//echo printr( $gateways, '$gateways' );
 			foreach ( $gateways as $gw_key => $gateway ) {
 				if ( isset( $payment_options[ $gw_key ]['type'] ) && $payment_options[ $gw_key ]['type'] != 'off-line' && $gw_key != 'paypal' ) {
