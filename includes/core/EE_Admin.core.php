@@ -609,7 +609,7 @@ final class EE_Admin {
 //			printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			if ( $update_post_shortcodes ) {
-				$this->EE->LIB->EE_Config->update_post_shortcodes();
+				$this->EE->CFG->update_post_shortcodes();
 			}			
 		}
 	}
