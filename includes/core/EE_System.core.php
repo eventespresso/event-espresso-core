@@ -110,7 +110,6 @@ final class EE_System {
 		$this->_define_table_names();
 		// load maintenance mode and decide whether the door is open for business
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
-		add_action( 'plugins_loaded', array( $this, 'handle_new_install_or_upgrade_etc' ), 4 );
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 
@@ -412,6 +411,7 @@ final class EE_System {
 	 * 	@return 		void
 	 */
 	public function plugins_loaded() {
+		$this->handle_new_install_or_upgrade_etc();
 		// no maintence mode ?
 		if ( $this->_req_type == EE_System::req_type_normal ) {
 			// check for activation errors
