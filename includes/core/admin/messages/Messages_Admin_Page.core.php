@@ -1767,9 +1767,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _generate_new_templates($messenger, $message_types, $evt_id = NULL, $global = FALSE) {
 
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_MSG_Template.helper.php');
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
-		return EE_MSG_Template::generate_new_templates($messenger, $message_types, $evt_id, $global);
+		return EEH_MSG_Template::generate_new_templates($messenger, $message_types, $evt_id, $global);
 
 	}
 

@@ -1274,10 +1274,10 @@ class EEH_Activation {
 		if ( empty( $def_ms ) ) return false;
 
 		//include our helper
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_MSG_Template.helper.php');
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get all installed messenger objects
-		$installed = EE_MSG_Template::get_installed_message_objects();
+		$installed = EEH_MSG_Template::get_installed_message_objects();
 
 		$inst_msgrs = $installed['messengers'];
 		$inst_mts = $installed['message_types'];
@@ -1328,7 +1328,7 @@ class EEH_Activation {
 
 
 			//let's generate all the templates
-			$templates = EE_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+			$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
 
 		}
 
