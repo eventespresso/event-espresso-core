@@ -21,8 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once( EE_HELPERS . 'EEH_Base.helper.php' );
-class EEH_URL extends EEH_Base {
+class EEH_URL {
 
 	/**
 	 * 	@var 	array	$uri_segment_array 	URL segments

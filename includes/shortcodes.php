@@ -423,7 +423,8 @@ if (!function_exists('espresso_reg_form_sc')) {
 							}
 
 							if ($show_ee_gmap_no_shortcode && $event_meta['enable_for_gmap']) {
-								echo ee_gmap_display($ee_gmap_location, $event_id);
+								EE_Registry::instance()->load_helper( 'Maps' );
+								echo EEH_Maps::google_map( $ee_gmap_location, $event_id );
 							}
 
 							//Meta example
