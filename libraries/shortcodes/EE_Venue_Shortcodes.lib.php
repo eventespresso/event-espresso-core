@@ -179,7 +179,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 
 			case 'gmap_link':
 			case 'gmap_link_img':
-				EE_Registry::instance()->load_helper('EE_Maps');
+				EE_Registry::instance()->load_helper( 'Maps' );
 				$state = $venue->state_obj();
 				$country = $venue->country_obj();
 				$atts = array(
@@ -194,7 +194,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 					'map_h' => 200
 					);
 
-				return EE_Maps::google_map_link($atts);
+				return EEH_Maps::google_map_link($atts);
 				break;
 		}
 

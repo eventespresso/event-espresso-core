@@ -282,7 +282,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 				$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
 
 				//Google map link creation
-				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				EE_Registry::instance()->load_helper( 'Maps' );
 				$atts = array( 
 					'address' => $event_address,
 					'city' 		=> $event_city,
@@ -292,7 +292,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 					'text' 		=> 'Map and Directions',
 					'type' 		=> 'text'
 				);
-				$google_map_link = EE_Maps::google_map_link( $atts );
+				$google_map_link = EEH_Maps::google_map_link( $atts );
 
 				$reg_start_date = $event->registration_start;
 				$reg_end_date = $event->registration_end;
@@ -835,7 +835,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 				$meta = unserialize($venue->meta);
 
 				//Google map link creation
-				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				EE_Registry::instance()->load_helper( 'Maps' );
 				$atts = array( 
 					'address' => $venue->address,
 					'city' 		=> $venue->city,
@@ -845,7 +845,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 					'text' 		=> $map_link_text,
 					'type' 		=> 'text'
 				);
-				$google_map_link = EE_Maps::google_map_link( $atts );
+				$google_map_link = EEH_Maps::google_map_link( $atts );
 
 				//Build the venue title
 				if ($show_title != false) {

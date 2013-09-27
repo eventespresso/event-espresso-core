@@ -15,18 +15,18 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  *
- * EE_Maps	
+ * EEH_Maps	
  *
  * This is a helper utility class that provides different helpers related to mapping and displaying location related data.
  *
  * @package		Event Espresso
- * @subpackage	/helpers/EE_Maps.helper.php
+ * @subpackage	/helpers/EEH_Maps.helper.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class EE_Maps {
+class EEH_Maps {
 
 
 	/**
@@ -72,4 +72,4 @@ class EE_Maps {
 		$google_map_link = '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
 		return $google_map_link;
 	}
-} //end clas EE_Maps
+} //end clas EEH_Maps
