@@ -78,6 +78,12 @@ class EEH_Activation {
 		EEH_Activation::insert_default_states();
 		EEH_Activation::generate_default_message_templates();
 		EEH_Activation::create_no_ticket_prices_array();
+		//also initialize payment settings, which is a side-effect of calling
+		//EEM_Gateway::load_all_gateways()
+		EEM_Gateways::instance()->load_all_gateways();
+		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
+		//which users really won't care about on initial activation
+		EE_Error::overwrite_success();
 	}
 	
 
@@ -125,9 +131,6 @@ class EEH_Activation {
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
 		flush_rewrite_rules();
 	}
-
-
-
 
 
 	/**

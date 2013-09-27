@@ -149,7 +149,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//we only really need to generate help tabs for the given gateways
 		
 		if ( empty( $gateway_data['payment_settings']) ){
-			$payment_settings = get_user_meta( $current_user->ID, 'payment_settings', TRUE );
+			$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
 		}
 
 	
@@ -186,7 +186,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		 * of the payment admin page, the gateways info wouldn't show because payment_settings was always blank.
 		 * To reproduce that error, clear your cookies and delete the entry for 'payment_settings' in the usermeta table */
 		if (  empty($gateway_data['payment_settings']) ){
-			$payment_settings = get_user_meta($current_user->ID, 'payment_settings', true);
+			$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($current_user->ID, 'payment_settings', true);
 			$this->EE->SSN->set_session_data($payment_settings,'payment_settings');
 		}
 		//lets add all the metaboxes

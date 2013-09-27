@@ -117,8 +117,7 @@ abstract class EE_Model_Relation_Base{
 	 * Deletes the related model objects which meet the query parameters. If no 
 	 * parameters are specified, then all related model objects will be deleted.
 	 * Note: If the related model is extends EEM_Soft_Delete_Base, then the related
-	 * model objects will only be soft-deleted.  Note: regardless of whether the related model obejcts
-	 * are blcoked from being deleted, the relation between them and this model object will be removed
+	 * model objects will only be soft-deleted.
 	 * @param EE_Base_Class|int|string $model_object_or_id
 	 * @param array $query_params
 	 * @return int of how many related models got deleted
@@ -129,12 +128,10 @@ abstract class EE_Model_Relation_Base{
 		//determine if it's blocked by anything else before it can be deletedx
 		$deleted_count = 0;
 		foreach($related_model_objects as $related_model_object){
-			//first remove teh relation at least, which is especially important
-			//if the related thing we're trying to delete is across a HABTM relation
-			$this->remove_relation_to($model_object_or_id, $related_model_object);
 			$delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models($related_model_object, $model_object_or_id);
 			/* @var $model_object_or_id EE_Base_Class */
 			if( ! $delete_is_blocked ){
+				$this->remove_relation_to($model_object_or_id, $related_model_object);
 				$related_model_object->delete();
 				$deleted_count++;
 			}
@@ -146,8 +143,7 @@ abstract class EE_Model_Relation_Base{
 	 * Deletes the related model objects which meet the query parameters. If no 
 	 * parameters are specified, then all related model objects will be deleted.
 	 * Note: If the related model is extends EEM_Soft_Delete_Base, then the related
-	 * model objects will only be soft-deleted. Note: regardless of whether the related model obejcts
-	 * are blcoked from being deleted, the relation between them and this model object will be removed
+	 * model objects will only be soft-deleted.
 	 * @param EE_Base_Class|int|string $model_object_or_id
 	 * @param array $query_params
 	 * @return int of how many related models got deleted
@@ -158,10 +154,10 @@ abstract class EE_Model_Relation_Base{
 		//determine if it's blocked by anything else before it can be deletedx
 		$deleted_count = 0;
 		foreach($related_model_objects as $related_model_object){
-			$this->remove_relation_to($model_object_or_id, $related_model_object);
 			$delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models($related_model_object, $model_object_or_id);
 			/* @var $model_object_or_id EE_Base_Class */
 			if( $related_model_object instanceof EE_Soft_Delete_Base_Class ){
+				$this->remove_relation_to($model_object_or_id, $related_model_object);
 				$deleted_count++;
 				if( ! $delete_is_blocked ){
 					$related_model_object->delete_permanently();
@@ -173,6 +169,7 @@ abstract class EE_Model_Relation_Base{
 			}else{
 				//its not a soft-deletable thing anyways. do the normal logic.
 				if( ! $delete_is_blocked ){
+					$this->remove_relation_to($model_object_or_id, $related_model_object);
 					$related_model_object->delete();
 					$deleted_count++;
 				}

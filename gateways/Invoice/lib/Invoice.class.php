@@ -12,7 +12,7 @@ class Invoice {
 		if ( $this->registration = EE_Registry::instance()->load_model( 'Registration' )->get_registration_for_reg_url_link( $url_link)) {
 			$this->transaction = $this->registration->transaction();
 			
-			$payment_settings = get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
+			$payment_settings = EE_Config::instance()->gateway->payment_settings;//get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
 			$this->invoice_settings = $payment_settings['Invoice'];
 		} else {
 			EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
