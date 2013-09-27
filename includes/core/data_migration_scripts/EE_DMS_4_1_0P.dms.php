@@ -21,6 +21,8 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		return __("Core Data Migration to version 4.1.0", "event_espresso");
 	}
 	public function schema_changes_before_migration() {
+		//relies on 4.1's EEH_Activation::create_table
+		require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
 		
 		$table_name='esp_answer';
 		$sql=" ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -690,7 +692,7 @@ function espresso_update_active_gateways() {
 		if (!empty($worldpay_settings)) {
 			$payment_settings['worldpay'] = $worldpay_settings;
 		}
-		update_user_meta(1, 'payment_settings', $payment_settings);
+		$this->EE->CFG->gateway->payment_settings =  $payment_settings;
 		$users[0] = 1;
 	}
 
@@ -700,7 +702,7 @@ function espresso_update_active_gateways() {
 	// delete the old ee folder, advise them to use the media uploader.
 
 	foreach ($users as $user) {
-		$payment_settings = get_user_meta($user, 'payment_settings', true);
+		$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($user, 'payment_settings', true);
 		if (!empty($payment_settings['2checkout']) && strpos($payment_settings['2checkout']['button_url'], "/2checkout/lib/logo.png")) {
 			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/2checkout/lib/logo.png")) {
 				$payment_settings['2checkout']['button_url'] = EVENT_ESPRESSO_GATEWAY_URL . "/2checkout/lib/logo.png";
@@ -789,7 +791,7 @@ function espresso_update_active_gateways() {
 			}
 		}
 
-		update_user_meta($user, 'payment_settings', $payment_settings);
+		$this->EE->CFG->gateway->payment_settings = $payment_settings;
 	}
 	// This one has to cover three senarios:
 	// 1. If they are upgrading from 4.0 or later, just update the paths stored in the active gateways
@@ -799,7 +801,7 @@ function espresso_update_active_gateways() {
 
 	$dir = dirname(__FILE__);
 	foreach ($users as $user) {
-		$active_gateways = get_user_meta($user, 'active_gateways', true);
+		$active_gateways = $this->EE->CFG->gateway->active_gateways;//get_user_meta($user, 'active_gateways', true);
 		if (empty($active_gateways)) {
 			$active_gateways = get_option('event_espresso_active_gateways', array());
 			if (empty($active_gateways)) {
@@ -933,6 +935,6 @@ function espresso_update_active_gateways() {
 				$active_gateways['worldpay'] = $dir . "/worldpay";
 			}
 		}
-		update_user_meta($user, 'active_gateways', $active_gateways);
+		$this->EE->CFG->gateway->active_gateways = $active_gateways;
 	}
 }

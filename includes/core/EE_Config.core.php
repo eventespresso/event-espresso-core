@@ -169,15 +169,15 @@ final class EE_Config {
 		// grab espresso configuration
 		if ( is_multisite() ) {
 			// look for blog specific config
-			if ( ! $CFG = get_blog_option( $this->current_blog_id, 'espresso_config', NULL )) {
+			if ( ! $CFG = get_blog_option( $this->current_blog_id, 'espresso_config', array() )) {
 				// if not, then look for network config
-				if ( ! $CFG = get_site_option( 'espresso_config', NULL )) {
+				if ( ! $CFG = get_site_option( 'espresso_config', array() )) {
 				    // if not, then look for generic config
-					$CFG = get_option( 'espresso_config', NULL );
+					$CFG = get_option( 'espresso_config', array() );
 				}						
 			}
 		} else {
-			$CFG = get_option( 'espresso_config', NULL );
+			$CFG = get_option( 'espresso_config', array() );
 		}
 		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
 		return $CFG;
@@ -189,7 +189,7 @@ final class EE_Config {
 	 * 	update_espresso_config'
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	boolean success 
 	 */
 	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
 		// compare existing settings with what's already saved'
@@ -589,7 +589,8 @@ final class EE_Config {
 			'registration',
 			'admin',
 			'template_settings',
-			'map_settings'		
+			'map_settings',
+			'gateway'
 		);
 	}
 
