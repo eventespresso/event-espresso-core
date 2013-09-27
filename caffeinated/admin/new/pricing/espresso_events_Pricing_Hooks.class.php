@@ -252,7 +252,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
+				$create_new_TKT = $ticket_sold && $ticket_price != $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {
