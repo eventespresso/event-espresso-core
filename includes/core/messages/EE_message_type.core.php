@@ -179,9 +179,9 @@ abstract class EE_message_type extends EE_Messages_Base {
 		if ( $exit && !$context ) return FALSE;
 
 		//todo: need to move require into registration hook but for now we'll require here.
-		require_once EE_HELPERS . 'EE_Parse_Shortcodes.helper.php';
+		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		//get shortcode_replace instance- set when _get_messages is called in child...
-		$this->_shortcode_replace = new EE_Parse_Shortcodes();
+		$this->_shortcode_replace = new EEH_Parse_Shortcodes();
 		
 
 		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler

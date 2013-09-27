@@ -77,7 +77,7 @@ abstract class EE_Shortcodes extends EE_Base {
 
 
 	/**
-	 * This will hold an instance of the EE_Parse_Shortcodes helper that will be used when handling list type shortcodes
+	 * This will hold an instance of the EEH_Parse_Shortcodes helper that will be used when handling list type shortcodes
 	 * @var object
 	 */
 	protected $_shortcode_helper;
@@ -106,9 +106,9 @@ abstract class EE_Shortcodes extends EE_Base {
 	 */
 	protected function _set_shortcode_helper() {	
 		//shortcode helper
-		require_once EE_HELPERS . 'EE_Parse_Shortcodes.helper.php';
+		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		//get shortcode_replace instance- set when _get_messages is called in child...
-		$this->_shortcode_helper = new EE_Parse_Shortcodes();
+		$this->_shortcode_helper = new EEH_Parse_Shortcodes();
 	}
 
 
@@ -163,7 +163,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	 * @abstract
 	 * @access protected
 	 * @param string $shortcode the shortcode to be parsed.
-	 * @param mixed (object|array) $data incoming data for the parser.  The data could be either an object or array because there are some shortcodes that might be replaced by prepared data that has multiple items in a list (i.e. list of attendees in an event and we're showing fname/lname for each attendee).  In this case data will be in an array.  Otherwise the data shoudl be in a properly formatted object.  The EE_Parse_Shortcodes.helper.php describes the data object we're expecting.
+	 * @param mixed (object|array) $data incoming data for the parser.  The data could be either an object or array because there are some shortcodes that might be replaced by prepared data that has multiple items in a list (i.e. list of attendees in an event and we're showing fname/lname for each attendee).  In this case data will be in an array.  Otherwise the data shoudl be in a properly formatted object.  The EEH_Parse_Shortcodes.helper.php describes the data object we're expecting.
 	 * @return string parsed shortcode
 	 */
 	abstract protected function _parser( $shortcode );
