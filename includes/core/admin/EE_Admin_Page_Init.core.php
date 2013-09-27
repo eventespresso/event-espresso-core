@@ -126,7 +126,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public function load_wp_global_scripts_styles() {
 		/** STYLES **/
 		//register
-		wp_register_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
+		wp_register_style('espresso_menu', EE_CORE_ADMIN_URL . 'assets/admin-menu-styles.css');
 
 
 
