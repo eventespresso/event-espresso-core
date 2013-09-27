@@ -78,7 +78,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
 				'PRC_desc'=>new EE_Simple_HTML_Field('PRC_desc', 'Price Description', false, ''),
-				'PRC_is_active'=>new EE_Boolean_Field('PRC_is_active', 'Flag indicating whether price is active', false, true),
 				'PRC_is_default'=>new EE_Boolean_Field('PRC_is_default', 'Flag indicating whether price is a default price', false, true),
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
@@ -147,7 +146,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		return $this->get_all(array(
 			array(
 				'EVT_ID'=>$EVT_ID,
-				'PRC_is_active'=>true,
 				'Price_Type.PBT_ID'=>array('!=',  EEM_Price_Type::base_type_tax)
 			),
 			'order_by'=>$this->_order_by_array_for_get_all_method()
@@ -166,7 +164,9 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		return $this->get_all(array(
 			array(
 				'Price_Type.PBT_ID'=>array('!=',4),
-				'PRC_is_active'=>true),
+				'PRC_deleted' => 0,
+				'PRC_is_default' => 1
+				),
 			'order_by'=>$this->_order_by_array_for_get_all_method()
 		));
 	}
@@ -216,10 +216,10 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		$all_taxes = $this->get_all(array(
 			array(
 				'Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_tax,
-				'PRC_is_active'=> true)
+				)
 		));
 //		$all_taxes = $this->_select_all_prices_where( 
-//				array( 'prt.PBT_ID' => 4, 'prc.PRC_is_active' => TRUE, 'prc.PRC_deleted' => FALSE )	
+//				array( 'prt.PBT_ID' => 4, 'prc.PRC_deleted' => FALSE )	
 //		);
 		foreach ( $all_taxes as $tax ) {
 			$taxes[ $tax->order() ][ $tax->ID() ] = $tax;
