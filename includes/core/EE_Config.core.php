@@ -83,8 +83,11 @@ final class EE_Config {
 	 */
 	public $registration;
 
-
-	
+	/**
+	 *
+	 * @var EE_Gateway_Config
+	 */
+	public $gateway;
 
 
 
@@ -122,6 +125,7 @@ final class EE_Config {
 		$this->admin = new EE_Admin_Config();
 		$this->template_settings = new EE_Admin_Config();
 		$this->map_settings = new EE_Map_Config();
+		$this->gateway = new EE_Gateway_Config();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
 		// set _module_forward_map
@@ -1141,6 +1145,28 @@ class EE_Map_Config extends EE_Config_Base {
 
 }
 
+/**
+ * stores payment gateway info
+ */
+class EE_Gateway_Config extends EE_Config_Base{
+	/**
+	 * Array with keys that are payment gateways slugs, and values are arrays 
+	 * with any config info the gateway wants to store 
+	 * @var array
+	 */
+	public $payment_settings;
+	/**
+	 * Where keys are gateway slugs, and values are booleans indicating whether or not
+	 * the gateway is stored in the uploads directory
+	 * @var array
+	 */
+	public $active_gateways;
+	
+	public function __construct(){
+		$this->payment_settings = 
+		$this->active_gateways = array('Invoice'=>false);
+	}
+}
 
 
 // End of file EE_Config.core.php
