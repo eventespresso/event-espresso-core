@@ -83,6 +83,13 @@ final class EE_Registry {
 	public $modules = array();
 
 	/**
+	 * 	$models
+	 * 	@access 	public
+	 *	@var 	array	$models
+	 */
+	public $models = array();
+
+	/**
 	* 	$i18n_js_strings - internationalization for JS strings
 	*  	usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
 	*  	in js file:  var translatedString = eei18n.string_key;
@@ -253,56 +260,19 @@ final class EE_Registry {
 		return $this->_load( $path_to_file, '', $class_name, $type, $arguments, FALSE, TRUE, $load_only );
 	}
 
+
+
+
+
 	/**
 	 * Determines if $model_name is the name of an actual EE model.
 	 * @param string $model_name like Event, Attendee, Question_Group_Question, etc.
 	 * @return boolean
 	 */
-	public function is_model_name($model_name){
-		return true;
-		$real_model_names = $this->all_model_names();
-		return in_array($model_name,$real_model_names);
+	public function is_model_name( $model_name ){
+		return isset( $this->models[ $model_name ] ) ? TRUE : FALSE;
 	}
-	/**
-	 * Gets the list of all model names (and uses a filter so addons can add to this list).
-	 * Useful anywhere we might want to know all the models that exist...
-	 * @return array where each value is a model name, eg 'Answer','Attendee', etc.
-	 */
-	public function all_model_names(){
-		return apply_filters('FHEE__EE_Registry__all_model_names',array(
-			'Answer',
-			'Attendee',
-			'Checkin',
-			'Country',
-			'Datetime',
-			'Event',
-			'Event_Question_Group',
-			'Event_Venue',
-			'Message_Template', //doesn't play nicely because it's not a child of EE_Base_Class
-			'Payment',
-			'Price',
-			'Price_Type',
-			'Promotion',
-			'Promotion_Object',
-			'Promotion_Rule',
-			'Question',
-			'Question_Group',
-			'Question_Group_Question',
-			'Question_Option',
-			'Registration',
-			'Rule',
-			'State',
-			'Status',
-			'Term',
-			'Term_Relationship',
-			'Term_Taxonomy',
-			'Ticket',
-			'Ticket_Price',
-			'Ticket_Template',
-			'Transaction',
-			'Venue'
-		));
-	}
+
 
 
 
@@ -325,10 +295,10 @@ final class EE_Registry {
 		$class_name = $class_prefix . str_replace( $class_prefix, '', trim( $class_name ));
 
 		$class_abbreviations = array(
+			'EE_Cart' => 'CART',
 			'EE_Config' => 'CFG',
 			'EE_Request_Handler' => 'REQ',
-			'EE_Session' => 'SSN',
-			'EE_Cart' => 'CART',
+			'EE_Session' => 'SSN'
 		);
 
 		// check if class has already been loaded, and return it if it has been

@@ -97,13 +97,10 @@ final class EE_System {
 		$this->_load_registry();
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
-		//EE_Config::instance()->update_espresso_config();
 		// setup autoloaders
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		spl_autoload_register( array( 'EEH_Autoloader', 'espresso_autoloader' ));
-		// get tablenames from models
-		$this->_define_table_names();
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 
@@ -126,30 +123,6 @@ final class EE_System {
 		}
 	}
 
-	
-	
-	/**
-	 * cycles through all of the models/*.model.php files, then checks for and calls define_table_name()
-	 * 
-	 * @return void
-	 */
-	private function _define_table_names(){
-		//get all the files in the EE_MODELS folder that end in .model.php
-		$models = glob( EE_MODELS.'*.model.php');
-		foreach( $models as $model ){
-			// get model classname
-			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
-			// check for define_table_name() then call it
-			if ( method_exists( $classname, 'define_table_name' )) {
-				call_user_func( array( $classname, 'define_table_name' ));
-			}
-		}
-		// because there's no model for the status table...
-		if ( ! defined( 'ESP_STATUS_TABLE' )) {
-			global $wpdb;
-			define( 'ESP_STATUS_TABLE', $wpdb->prefix . 'esp_status' );
-		}
-	}
 
 
 
@@ -170,6 +143,8 @@ final class EE_System {
 				EE_Error::add_error( $activation_errors );
 				update_option( 'espresso_plugin_activation_errors', FALSE );
 			}
+			// get model names
+			$this->_parse_model_names();
 			// let's get it started		
 			if ( is_admin() ) {
 				EE_Registry::instance()->load_core( 'Admin' );
@@ -324,6 +299,24 @@ final class EE_System {
 		return update_option( 'espresso_db_update', $espresso_db_update );
 	}
 
+	
+	
+	/**
+	 * cycles through all of the models/*.model.php files, and assembles an array of model names
+	 * 
+	 * @return void
+	 */
+	private function _parse_model_names(){
+		//get all the files in the EE_MODELS folder that end in .model.php
+		$models = glob( EE_MODELS.'*.model.php');
+		foreach( $models as $model ){
+			// get model classname
+			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
+			$shortname = str_replace( 'EEM_', '', $classname );
+			$model_names[ $shortname ] = $classname;
+		}
+		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
+	}
 
 
 
