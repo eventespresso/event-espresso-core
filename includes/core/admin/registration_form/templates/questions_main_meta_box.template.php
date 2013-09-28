@@ -62,7 +62,7 @@ $fields = $question->get_model()->field_settings();
 					<?php 
 						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
 						$id =  ! empty( $QST_system ) ? '_disabled' : '';
-						echo EE_Form_fields::select_input( 'QST_type' . $id, $question_types, $question->type(), 'id="QST_type' . $id . '"' . $disabled );
+						echo EEH_Form_Fields::select_input( 'QST_type' . $id, $question_types, $question->type(), 'id="QST_type' . $id . '"' . $disabled );
 						if ( ! empty( $QST_system )) { ?>
 						<input type="hidden"  id="QST_type" name="QST_type" value="<?php echo $question->type()?>"/>
 					<?php } ?>

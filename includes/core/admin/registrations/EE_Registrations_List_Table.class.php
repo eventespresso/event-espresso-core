@@ -227,7 +227,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_default
 	*/
    	function column_DTT_EVT_start(EE_Registration $item){
-		return $item->date_obj()->start_date_and_time('D M j, Y',' g:i a');//date( 'D M j, Y  g:i a',	$item->DTT_EVT_start );
+		$datetime_strings = array();
+		$datetimes = $item->ticket()->datetimes();
+		foreach($datetimes as $datetime){
+			$datetime_strings[] = $datetime->start_date_and_time('D M j, Y',' g:i a');
+		}
+		return implode("; ",$datetime_strings);
+//		return $item->date_obj()->start_date_and_time('D M j, Y',' g:i a');//date( 'D M j, Y  g:i a',	$item->DTT_EVT_start );
     }
 
 
