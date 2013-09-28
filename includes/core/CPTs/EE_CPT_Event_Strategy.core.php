@@ -68,7 +68,7 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function posts_fields( $SQL ) {
 		// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
-		$SQL .= ', ' . EE_DATETIME_TABLE . '.* ' ;
+		$SQL .= ', ' . EEM_Datetime::table() . '.* ' ;
 		return $SQL;
 	}
 
@@ -83,7 +83,7 @@ class EE_CPT_Event_Strategy {
 	public function posts_join( $SQL ) {
 		global $wpdb;
 		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
-		$SQL .= ' LEFT JOIN ' . EE_DATETIME_TABLE . ' ON ( ' . EE_DATETIME_TABLE . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+		$SQL .= ' LEFT JOIN ' . EEM_Datetime::table() . ' ON ( ' . EEM_Datetime::table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
 		return $SQL;
 	}
 
@@ -98,7 +98,7 @@ class EE_CPT_Event_Strategy {
 	public function posts_where( $SQL ) {
 		global $wpdb;
 		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
-		$SQL .= ' AND ' . EE_DATETIME_TABLE . '.DTT_is_primary = 1 ';
+		$SQL .= ' AND ' . EEM_Datetime::table() . '.DTT_is_primary = 1 ';
 		return $SQL;
 	}
 
