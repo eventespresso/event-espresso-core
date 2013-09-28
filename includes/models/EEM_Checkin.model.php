@@ -91,13 +91,4 @@ class EEM_Checkin extends EEM_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'ESP_CHECKIN', $wpdb->prefix . 'esp_checkin' );
-	}
-
 }

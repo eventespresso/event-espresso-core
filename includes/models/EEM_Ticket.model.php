@@ -78,16 +78,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_TICKET_TABLE', $wpdb->prefix . 'esp_ticket' );
-	}
-
-
 
 
 	/**
@@ -144,4 +134,5 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 
 
 
-} //end EEM_Ticket model
+} 
+//end EEM_Ticket model

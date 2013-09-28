@@ -77,16 +77,6 @@ class EEM_State extends EEM_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'ESP_STATE_TABLE', $wpdb->prefix . 'esp_state' );
-	}
-
-
 
 	/**
 	*		_get_states

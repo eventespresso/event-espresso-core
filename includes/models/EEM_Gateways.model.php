@@ -87,13 +87,6 @@ Class EEM_Gateways {
 
 
 	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() { }
-
-
-	/**
 	 * 		load_session_gateway_data
 	 * 		try to pull data from session b4 hitting db
 	 * 		@access private

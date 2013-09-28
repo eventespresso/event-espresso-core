@@ -5,7 +5,7 @@
  */
 class EEM_System_Status{
 	
-	// private instance of the EEM_Price object
+	// private instance of the EEM_System_Status object
 	private static $_instance = NULL;
 
 	/**
@@ -24,9 +24,9 @@ class EEM_System_Status{
 	 */
 	public static function instance() {
 
-		// check if instance of EEM_Price already exists
+		// check if instance of EEM_System_Status already exists
 		if (self::$_instance === NULL) {
-			// instantiate Price_model
+			// instantiate EEM_System_Status
 			self::$_instance = new self();
 		}
 		return self::$_instance;

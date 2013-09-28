@@ -60,16 +60,6 @@ class EEM_Datetime_Ticket extends EEM_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_DATETIME_TICKET_TABLE', $wpdb->prefix . 'esp_datetime_ticket' );
-	}
-
-
 
 
 	/**

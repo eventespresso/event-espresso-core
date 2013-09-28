@@ -70,5 +70,5 @@ class EEM_Promotion_Rule extends EEM_Base {
 
 
 }
-// End of file EEM_Answer.model.php
-// Location: /includes/models/EEM_Answer.model.php
+// End of file EEM_Promotion_Rule.model.php
+// Location: /includes/models/EEM_Promotion_Rule.model.php

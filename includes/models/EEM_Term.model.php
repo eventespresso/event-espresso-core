@@ -67,13 +67,6 @@ class EEM_Term extends EEM_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() { }
-
-
 
 	/**
 	 * retreives a list of all EE event categories
@@ -100,5 +93,5 @@ class EEM_Term extends EEM_Base {
 	}
 
 }
-// End of file EEM_Answer.model.php
-// Location: /includes/models/EEM_Answer.model.php
+// End of file EEM_Term.model.php
+// Location: /includes/models/EEM_Term.model.php

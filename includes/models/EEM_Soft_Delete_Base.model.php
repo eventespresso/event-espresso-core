@@ -365,13 +365,6 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 		return parent::update($fields_n_values,$query_params);
 	}
 
-
-
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() { }
 	
 	
 }

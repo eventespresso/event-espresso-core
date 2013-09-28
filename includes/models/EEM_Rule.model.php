@@ -81,4 +81,4 @@ class EEM_Rule extends EEM_Soft_Delete_Base {
 
 }
 // End of file EEM_Rule.model.php
-// Location: /includes/models/EEM_Answer.model.php
+// Location: /includes/models/EEM_Rule.model.php

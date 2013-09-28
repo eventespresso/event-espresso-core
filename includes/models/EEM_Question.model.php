@@ -99,16 +99,6 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	}
 
 
-
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_QUESTION_TABLE', $wpdb->prefix . 'esp_question' );
-	}
-
 	
 	/**
 	 * Gets an array for converting between QST_system and QST_IDs for system questions. Eg, if you want to know 

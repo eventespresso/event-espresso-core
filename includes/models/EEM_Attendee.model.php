@@ -102,16 +102,6 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_ATTENDEE_TABLE', $wpdb->prefix . 'esp_attendee' );
-	}
-
-
-	/**
 	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public

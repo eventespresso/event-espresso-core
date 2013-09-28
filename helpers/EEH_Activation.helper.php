@@ -713,13 +713,13 @@ class EEH_Activation {
 
 		global $wpdb;
 
-		if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TYPE_TABLE . "'") == ESP_PRICE_TYPE_TABLE) {
+		if ($wpdb->get_var("SHOW TABLES LIKE '" . EEM_Price_Type::table() . "'") == EEM_Price_Type::table()) {
 
-			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . ESP_PRICE_TYPE_TABLE;
+			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . EEM_Price_Type::table();
 			$price_types_exist = $wpdb->get_var( $SQL );
 			
 			if ( ! $price_types_exist ) {
-				$SQL = "INSERT INTO " . ESP_PRICE_TYPE_TABLE . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
+				$SQL = "INSERT INTO " . EEM_Price_Type::table() . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
 							(1, '" . __('Base Price', 'event_espresso') . "', 1, 0, 0, 0, 0),
 							(2, '" . __('Member % Discount', 'event_espresso') . "', 2, 1, 1, 10, 0),
 							(3, '" . __('Member Dollar Discount', 'event_espresso') . "', 2, 1, 0, 10, 0),
@@ -748,13 +748,13 @@ class EEH_Activation {
 
 		global $wpdb;
 		
-		if ($wpdb->get_var("SHOW TABLES LIKE '" . ESP_PRICE_TABLE . "'") == ESP_PRICE_TABLE) {
+		if ($wpdb->get_var("SHOW TABLES LIKE '" . EEM_Price::table() . "'") == EEM_Price::table()) {
 			
-			$SQL = 'SELECT COUNT(PRC_ID) FROM ' . ESP_PRICE_TABLE;
+			$SQL = 'SELECT COUNT(PRC_ID) FROM ' . EEM_Price::table();
 			$prices_exist = $wpdb->get_var( $SQL );
 			
 			if ( ! $prices_exist ) {
-				$SQL = "INSERT INTO " . ESP_PRICE_TABLE . "
+				$SQL = "INSERT INTO " . EEM_Price::table() . "
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_row, PRC_parent ) VALUES
 							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 1, 0),
 							(2, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 1, NULL, 10, 0, 2, 0),
@@ -781,13 +781,13 @@ class EEH_Activation {
 
 		global $wpdb;
 
-		if ( $wpdb->get_var("SHOW TABLES LIKE'" . EE_TICKET_TABLE . "'") == EE_TICKET_TABLE ) {
+		if ( $wpdb->get_var("SHOW TABLES LIKE'" . EEM_Ticket::table() . "'") == EEM_Ticket::table() ) {
 
-			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . EE_TICKET_TABLE;
+			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . EEM_Ticket::table();
 			$tickets_exist = $wpdb->get_var($SQL);
 
 			if ( ! $tickets_exist ) {
-				$SQL = "INSERT INTO " . EE_TICKET_TABLE . "
+				$SQL = "INSERT INTO " . EEM_Ticket::table() . "
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
 					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
 				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
@@ -795,14 +795,14 @@ class EEH_Activation {
 			}
 		}
 
-		if ( $wpdb->get_var("SHOW TABLES LIKE'" . EE_TICKET_PRICE_TABLE . "'") == EE_TICKET_PRICE_TABLE ) {
+		if ( $wpdb->get_var("SHOW TABLES LIKE'" . EEM_Ticket_Price::table() . "'") == EEM_Ticket_Price::table() ) {
 
-			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . EE_TICKET_PRICE_TABLE;
+			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . EEM_Ticket_Price::table();
 			$ticket_prc_exist = $wpdb->get_var($SQL);
 
 			if ( ! $ticket_prc_exist ) {
 
-				$SQL = "INSERT INTO " . EE_TICKET_PRICE_TABLE . "
+				$SQL = "INSERT INTO " . EEM_Ticket_Price::table() . "
 				( TKP_ID, TKT_ID, PRC_ID ) VALUES 
 				( 1, 1, 1 )
 				";
@@ -825,14 +825,14 @@ class EEH_Activation {
 	public static function insert_default_status_codes() {
 
 		global $wpdb;
-		$table = $wpdb->get_var("SHOW TABLES LIKE '" . ESP_STATUS_TABLE . "'");
+		$table = $wpdb->get_var("SHOW TABLES LIKE '" . EEM_Status::table() . "'");
 
-		if ( $table == ESP_STATUS_TABLE) {
+		if ( $table == EEM_Status::table()) {
 
-			$SQL = "DELETE FROM " . ESP_STATUS_TABLE . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
+			$SQL = "DELETE FROM " . EEM_Status::table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 			$wpdb->query($SQL);
 
-			$SQL = "INSERT INTO " . ESP_STATUS_TABLE . " 
+			$SQL = "INSERT INTO " . EEM_Status::table() . " 
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
 					('ACT', 'ACTIVE', 'event', 0, NULL, 1),
 					('NAC', 'NOT_ACTIVE', 'event', 0, NULL, 0),
@@ -879,12 +879,12 @@ class EEH_Activation {
 	public static function insert_default_states() {
 
 		global $wpdb;
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . ESP_STATE_TABLE . "'") == ESP_STATE_TABLE ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . EEM_State::table() . "'") == EEM_State::table() ) {
 			
-			$SQL = "SELECT COUNT('STA_ID') FROM " . ESP_STATE_TABLE;
+			$SQL = "SELECT COUNT('STA_ID') FROM " . EEM_State::table();
 			$states = $wpdb->get_var($SQL);
 			if ( ! $states ) {
-				$SQL = "INSERT INTO " . ESP_STATE_TABLE . " 
+				$SQL = "INSERT INTO " . EEM_State::table() . " 
 				(STA_ID, CNT_ISO, STA_abbrev, STA_name, STA_active) VALUES
 				(1, 'US', 'AK', 'Alaska', 1),
 				(2, 'US', 'AL', 'Alabama', 1),

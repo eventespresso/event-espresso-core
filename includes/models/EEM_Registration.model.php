@@ -116,16 +116,6 @@ class EEM_Registration extends EEM_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_REGISTRATION_TABLE', $wpdb->prefix . 'esp_registration' );
-	}
-
-
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object

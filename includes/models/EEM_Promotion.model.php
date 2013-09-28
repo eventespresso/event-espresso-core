@@ -79,4 +79,4 @@ class EEM_Promotion extends EEM_Base {
 	}
 }
 // End of file EEM_Promotion.model.php
-// Location: /includes/models/EEM_Answer.model.php
+// Location: /includes/models/EEM_Promotion.model.php
