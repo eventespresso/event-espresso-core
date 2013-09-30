@@ -77,4 +77,17 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	}
 
 
+
+	/**
+	 * get_all_trashed_message_templates_by_event
+	 * @access public
+	 * @param int $EVT_ID specific event id
+	 * @return array   message template objects that are attached to a specific event.
+	 */
+	public function get_all_trashed_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
+		$query_params = array( array('EVT_ID' => $EVT_ID), 'orderby' => array($orderby, $order), 'limit' => $limit );
+		return $count ? $this->count_deleted( $query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted( $query_params );
+	}
+
+
 } //end EEM_Message_Template_Group model.
