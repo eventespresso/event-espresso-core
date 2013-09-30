@@ -242,7 +242,7 @@ class EEH_Event_View extends EEH_Base {
 			// generate nonce
 			$nonce = wp_create_nonce( 'edit_nonce' );
 			// generate url to event editor for this event
-			$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'id' => $EVT_ID, 'edit_nonce' => $nonce ), admin_url() );
+			$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'post' => $EVT_ID, 'edit_nonce' => $nonce ), admin_url() );
 			// get edit CPT text
 			$post_type_obj = get_post_type_object( $post->post_type );
 			// build final link html
