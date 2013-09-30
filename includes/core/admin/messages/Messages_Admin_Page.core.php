@@ -1232,7 +1232,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		if ( $success ) {
 			//first we need to delete the existing templates
-			require_once 'EEM_Message_Template.model.php';
 			$EEM = EEM_Message_Template::instance();
 
 			$success = isset( $this->_req_data['GRP_ID'] ) ? $EEM->delete_by_id( absint($this->_req_data['GRP_ID']) ) : FALSE;
@@ -1607,7 +1606,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 			$action_desc = 'created';
 		} else {
-			require_once(EE_MODELS . 'EEM_Message_Template.model.php');
 			$MTP = EEM_Message_Template::instance();
 
 			
