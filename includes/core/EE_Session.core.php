@@ -658,6 +658,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		if ( ! is_array( $data_to_reset ) ) {
 			$data_to_reset = array ( $data_to_reset );
 		}
+		
+		$return_value = TRUE;
 
 		// since $data_to_reset is an array, cycle through the values
 		foreach ( $data_to_reset as $reset ) {
