@@ -10,7 +10,7 @@
  * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
  * @license		@link http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing * *
  * @link		http://www.eventespresso.com
- * @version		3.2
+ * @version		4.1
  *
  * ------------------------------------------------------------------------
  *
@@ -22,15 +22,10 @@
  * @subpackage	includes/models/EEM_Message_Template.model.php
  * @author		Darren Ethier
  *
- * //DARREN IS WORKING ON//
- *
- * //todo - what we want to do is try to do the primary/secondary table thing here because it looks like it already sets up the joins!!!
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
-
-class EEM_Message_Template extends EEM_Soft_Delete_Base {
+class EEM_Message_Template extends EEM_Base {
 	//private instance of the EEM_Message_Template object
 	private static $_instance = NULL;
 
@@ -53,10 +48,6 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 	
 	
 
-
-
-
-
 	/**
 	 * 		private constructor to prevent direct creation
 	 * 		@Constructor
@@ -68,8 +59,7 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 		$this->plural_item = __('Message Templates','event_espresso');		
 		
 		$this->_tables = array(
-			'Message_Template_Group'=> new EE_Primary_Table('esp_message_template_group', 'GRP_ID' ),
-			'Message_Template' => new EE_Secondary_Table('esp_message_template', 'MTP_ID', 'GRP_ID' )
+			'Message_Template' => new EE_Primary_Table('esp_message_template', 'MTP_ID' )
 		);
 		$this->_fields = array(
 			'Message_Template'=> array(
@@ -78,77 +68,15 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 				'MTP_template_field'=>new EE_Plain_Text_Field('MTP_template_field', __('Field Name for this Template', 'event_espresso'), false, 'default' ),
 				'MTP_context'=>new EE_Plain_Text_Field('MTP_context', __('Message Type Context for this field', 'event_espresso'),false,'admin' ),
 				'MTP_content'=>new EE_Serialized_Text_Field('MTP_content', __('The field content for the template', 'event_espresso'), false, ''),
-				),
-			'Message_Template_Group' => array(
-				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso'), FALSE, 0), 
-				'EVT_ID'=> new EE_Foreign_Key_Int_Field('EVT_ID',__('Event ID', 'event_espresso'),FALSE,0, 'Event' ),
-				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, 1 ),
-				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email' ),
-				'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'),false,'registration'),
-				'MTP_is_global'=>new EE_Boolean_Field('MTP_is_global', __('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
-				'MTP_is_override'=>new EE_Boolean_Field('MTP_is_override', __('Flag indicating if Template Group overrides any other Templates for the messenger/messagetype combination', 'event_espresso'), false, false),
-				'MTP_deleted'=>new EE_Trashed_Flag_Field('MTP_deleted', __('Flag indicating whether this has been trashed', 'event_espresso'), false, false),
-				'MTP_is_active'=>new EE_Boolean_Field('MTP_is_active', __('Flag indicating whether template group is active', 'event_espresso'), false, true)
 				)
 		);
-		$this->_model_relations = array();
-		parent::__construct();
-		require_once( EE_CLASSES . 'EE_Message_Template.class.php' );
 
+		$this->_model_relations = array(
+			'Message_Template_Group' => new EE_Belongs_To_Relation()
+			);
+		parent::__construct();
 	}
 
-	/**
-	 * 		cycle though array of message_templates and create objects out of each item.  This overrides the _create_objects for EEM_Base
-	 *
-	 * 	@access	protected
-	 * 	@param	array $prices
-	 * 	@return mixed array on success, FALSE on fail
-	 */
-	protected function _create_objects($templates = FALSE) {
-
-		//init $a_temp value
-		$a_temp = array();
-
-		if (!$templates) {
-			return FALSE;
-		}
-
-		if (is_object($templates)) {
-			$templates = array($templates);
-		}
-
-		//first we have to assemble the grouped array of templates.
-		foreach ( $templates as $template ) {
-			$template_keys = array_map(create_function('$item', '$item = str_replace("Message_Template.", "", $item); $item = str_replace("Message_Template_Group.","",$item); return $item;'), array_keys($template) );
-			$template_values = array_values( $template );
-			$template = array_combine( $template_keys, $template_values );
-			$template = (object) $template;
-
-			//below will be items common to all templates in a template group.  Templates are grouped by messenger AND message type.  So all templates within a group will have the same messenger and message type and user_id and event_id (and of course group_id);
-			$a_temp[$template->GRP_ID]['GRP_ID'] = $template->GRP_ID;
-			$a_temp[$template->GRP_ID]['MTP_messenger'] = $template->MTP_messenger;
-			$a_temp[$template->GRP_ID]['MTP_message_type'] = $template->MTP_message_type;
-			$a_temp[$template->GRP_ID]['MTP_user_id'] = $template->MTP_user_id;
-			$a_temp[$template->GRP_ID]['EVT_ID'] = $template->EVT_ID;
-			$a_temp[$template->GRP_ID]['MTP_is_global'] = $template->MTP_is_global;
-			$a_temp[$template->GRP_ID]['MTP_is_active'] = $template->MTP_is_active;
-			
-			//within the template group templates are grouped by contexts.  below are items common to template types within a context (i.e. "is_active").  We also have an array of template_ids attached to a context to make it easier to update all the templates in this context with the new values.
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_is_global'] = $template->MTP_is_global;
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_is_override'] = $template->MTP_is_override;
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context]['MTP_deleted'] = $template->MTP_deleted;
-
-			//now also within the template group->context groups we have the various template_types and the actual template as represented below.
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_field]['MTP_ID'] = $template->MTP_ID;
-			$a_temp[$template->GRP_ID]['templates'][$template->MTP_context][$template->MTP_template_field]['content'] = maybe_unserialize($template->MTP_content);
-		}
-
-		//now let's setup the template objects
-		foreach ( $a_temp as $group_id => $template_group ) {
-			$array_of_objects[$group_id] = new EE_Message_Template($template_group);
-		}
-		return $array_of_objects;
-	}/**/
 
 	/**
 	 * 	instantiate a new message_template object with blank/empty properties

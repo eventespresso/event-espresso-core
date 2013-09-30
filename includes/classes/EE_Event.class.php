@@ -66,6 +66,15 @@ class EE_Event extends EE_CPT_Base{
 	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
 	 */
 	protected $_Promotion_Object;
+
+
+
+	/**
+	 * If this event has any related Message Template Groups attached to it, they will be added to this property.
+	 * @var EE_Message_Template_Group[]
+	 */
+	protected $_Message_Template_Group;
+
 	
 	/**
 	 * ID of event (post id)
