@@ -305,6 +305,26 @@ class EE_Message_Template_Group extends EE_Base_Class {
 
 
 
+	/**
+	 * This returns an array of EE_Message_Template objects indexed by context
+	 * @return EE_Message_Template[]
+	 */
+	public function context_templates() {
+		$mtps_arr = array();
+		$mtps = $this->get_many_related('EE_Message_Template');
+
+		if ( empty( $mtps ) ) return array();
+
+		//note contexts could have MULTIPLE fields per context. So we return the objects indexed by context AND field.
+		foreach ( $mtps as $mtp ) {
+			$mtps_arr[$mtp->get('MTP_context')][$mtp->get('MTP_template_field')] = $mtp;
+		}
+
+		return $mtps_arr;
+	}
+
+
+
 
 
 	/**
