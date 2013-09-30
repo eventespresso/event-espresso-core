@@ -322,7 +322,7 @@ class EE_Message_Template_Group extends EE_Base_Class {
 	 * @return boolean true if it is, false if it isn't
 	 */
 	public function is_active() {
-		return $this->('MTP_is_active');
+		return $this->get('MTP_is_active');
 	}
 
 
