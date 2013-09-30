@@ -431,7 +431,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 	/**
-	 * This sets the active templates for the messenger.  
+	 * This sets the active template groups for the messenger.  
 	 * @access protected
 	 */
 	protected function _set_templates() {
