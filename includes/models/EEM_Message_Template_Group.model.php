@@ -90,4 +90,17 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	}
 
 
+
+
+	/**
+	 * get_all_active_message_templates_by_messenger
+	 * @access  public
+	 * @return  array all active (non trashed, active) message template group objects for the given messenger
+	 */
+	public function get_all_active_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC') {	
+		$query_params = array(array('MTP_messenger' => $messenger, 'MTP_is_active' => true), 'orderby' => array($orderby, $order ) );
+		return $this->get_all($query_params);
+	}
+
+
 } //end EEM_Message_Template_Group model.
