@@ -67,18 +67,12 @@ final class EE_System {
 	 */
 	private $_req_type;
 
-	/**
-	* 	$_autoloaders 
-	* 	@var array $_autoloaders
-	* 	@access 	private 	
-	*/
-	private static $_autoloaders = array();
 
 
 	/**
-	 *		@singleton method used to instantiate class object
-	 *		@access public
-	 *		@return EE_System
+	 *	@singleton method used to instantiate class object
+	 *	@access public
+	 *	@return EE_System
 	 */
 	public static function instance( $activation = FALSE ) {
 		// check if class object is instantiated, and instantiated properly
@@ -87,6 +81,7 @@ final class EE_System {
 		}
 		return self::$_instance;
 	}
+
 
 
 
@@ -100,32 +95,26 @@ final class EE_System {
 
 		$this->_activation = $activation;
 		$this->_load_registry();
-		// load EE_Config
+		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
-		EE_Config::instance()->update_espresso_config();
-		$this->_register_custom_autoloaders();
-		spl_autoload_register( array( $this, 'espresso_autoloader' ));
-		$this->_define_table_names();
-		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
-		$this->handle_new_install_or_upgrade_etc();
+		// setup autoloaders
+		EE_Registry::instance()->load_helper( 'File' );
+		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		spl_autoload_register( array( 'EEH_Autoloader', 'espresso_autoloader' ));
+		// continue with regular request
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 
-		if ( $this->_req_type == EE_System::req_type_normal ) {
-			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-			add_action( 'init', array( $this, 'init' ), 3 );
-			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
-		}
 	}
 
 
 
 	/**
-	 * 		_load_registry
+	 * 	_load_registry
 	 *
-	 * 		@access private
-	 * 		@return void
+	 * 	@access private
+	 * 	@return void
 	 */
 	private function _load_registry() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
 		} else {
@@ -136,147 +125,53 @@ final class EE_System {
 
 
 
+
 	/**
-	 * 		espresso_autoloader
+	 * 	plugins_loaded
 	 *
 	 * 	@access 	public
-	 *	@param string $class_name - simple class name ie: session
 	 * 	@return 		void
 	 */
-	public function espresso_autoloader( $className ) {
-		if ( isset( self::$_autoloaders[ $className ] ) && is_readable( self::$_autoloaders[ $className ] )) {
-			require_once( self::$_autoloaders[ $className ] );
-		} 
-	}
-
-
-
-	/**
-	 * 		register_autoloader
-	 *
-	 * 	@access 	public
-	 *	@param string $class_paths - array of key => value pairings between classnames and paths
-	 * 	@return 		void
-	 */
-	public static function register_autoloader( $class_paths = array() ) {
-		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
-		foreach ( $class_paths as $class => $path ) {
-			// don't give up! you gotta...
-			try {
-				// get some class
-				if ( empty( $class )) {					
-					throw new EE_Error ( __( 'An error occured. No Class name was specified while registering an autoloader.','event_espresso' ));					
-				}
-				// one day you will find the path young grasshopper 
-				if ( empty( $path )) {					
-					throw new EE_Error ( sprintf( __( 'An error occured. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));					
-				}
-				// is file readable ?
-				if ( ! is_readable( $path )) {
-					throw new EE_Error ( sprintf( __( 'An error occured. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));					
-				}				 
-			} catch ( EE_Error $e ) {
-				$e->get_error();
+	public function plugins_loaded() {
+		// load maintenance mode and decide whether the door is open for business
+		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
+		$this->_detect_request_type();
+		// no maintence mode ?
+		if ( $this->_req_type == EE_System::req_type_normal ) {
+			// check for activation errors
+			if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
+				EE_Error::add_error( $activation_errors );
+				update_option( 'espresso_plugin_activation_errors', FALSE );
 			}
-			// add autoloader
-			self::$_autoloaders[ $class ] = $path;			
-		}
-	}
-
-
-
-	/**
-	 * 		register core, model and class 'autoloaders'
-	 *
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function _register_custom_autoloaders() {
-		$this->_register_autoloaders_for_each_file_in_folder( EE_CORE );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'fields' );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'helpers' );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'relations' );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'strategies' );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_CLASSES );
-	}
-	
-	
-	/**
-	 * Assumes all the files in this folder have the normal naming scheme (namely that their classname
-	 * is the file's name, plus ".whatever.php".) and adds each of them to the autoloader list.
-	 * If that's not the case, you'll need to improve this function or just use _get_classname_from_filepath_with_standard_filename() directly.
-	 * Yes this has to scan the directory for files, but it only does it once -- not on EACH
-	 * time the autoloader is used
-	 * @param string $folder name, with or without trailing /, doesn't matter
-	 * @return void
-	 */
-	private function _register_autoloaders_for_each_file_in_folder($folder){
-		// make sure last char is a /
-		$folder .= $folder[strlen($folder)-1] != DS ? DS : '';
-		$class_to_filepath_map = array();
-		//get all the files in that folder that end in php
-		$filepaths = glob( $folder.'*.php');
-		foreach($filepaths as $filepath){
-			$class_to_filepath_map [ $this->_get_classname_from_filepath_with_standard_filename( $filepath ) ] = $filepath;
-		}
-		self::register_autoloader($class_to_filepath_map);
-	}
-
-	/**
-	 * Given that the file in $filepath has the normal name, (ie, CLASSNAME.whatever.php),
-	 * extract that classname.
-	 * @param string $filepath
-	 * @return string
-	 */
-	private function _get_classname_from_filepath_with_standard_filename($filepath){
-		//extract file from path
-		$filename = basename( $filepath );
-		//now remove the first period and everything after
-		$pos_of_first_period = strpos( $filename,'.' );
-		$classname = substr($filename, 0, $pos_of_first_period);
-		return $classname;
-	}
-	
-	
-	/**
-	 * cycles through all of the models/*.model.php files, then checks for and calls define_table_name()
-	 * 
-	 * @return void
-	 */
-	private function _define_table_names(){
-		//get all the files in the EE_MODELS folder that end in .model.php
-		$models = glob( EE_MODELS.'*.model.php');
-		foreach( $models as $model ){
-			// get model classname
-			$classname = $this->_get_classname_from_filepath_with_standard_filename( $model );
-			// check for define_table_name() then call it
-			if ( method_exists( $classname, 'define_table_name' )) {
-				call_user_func( array( $classname, 'define_table_name' ));
-
+			// get model names
+			$this->_parse_model_names();
+			// let's get it started		
+			if ( is_admin() ) {
+				EE_Registry::instance()->load_core( 'Admin' );
+			} else if ( EE_Maintenance_Mode::instance()->level() ) {
+				// shut 'er down down for maintenance ?
+				add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
+			} else {
+				EE_Registry::instance()->load_core( 'Front_Controller' );
 			}
-		}
-		// because there's no model for the status table...
-		if ( ! defined( 'ESP_STATUS_TABLE' )) {
-			global $wpdb;
-			define( 'ESP_STATUS_TABLE', $wpdb->prefix . 'esp_status' );
-		}
+			// load additional common resources
+			add_action( 'init', array( $this, 'init' ), 3 );
+			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
+		}		
 	}
 
 
 
-
 	/**
-	* handle_new_install_or_upgrade_etc
+	* _detect_request_type
 	* 
 	* Takes care of detecting whether this is a brand new install or code upgrade,
 	* and either setting up the DB or setting up maintenance mode etc.
 	* 
-	* @access public
-	* @since 3.1.28
+	* @access private
 	* @return void
 	*/
-	private function handle_new_install_or_upgrade_etc() {
+	private function _detect_request_type() {
 		// check if db has been updated, or if its a brand-new installation
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		switch($this->detect_req_type($espresso_db_update)){
@@ -404,28 +299,23 @@ final class EE_System {
 		return update_option( 'espresso_db_update', $espresso_db_update );
 	}
 
-
-
+	
+	
 	/**
-	 * 		plugins_loaded
-	 *
-	 * 		@access 	public
-	 * 		@return 		void
+	 * cycles through all of the models/*.model.php files, and assembles an array of model names
+	 * 
+	 * @return void
 	 */
-	public function plugins_loaded() {
-		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
-			EE_Error::add_error( $activation_errors );
-			update_option( 'espresso_plugin_activation_errors', FALSE );
+	private function _parse_model_names(){
+		//get all the files in the EE_MODELS folder that end in .model.php
+		$models = glob( EE_MODELS.'*.model.php');
+		foreach( $models as $model ){
+			// get model classname
+			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
+			$shortname = str_replace( 'EEM_', '', $classname );
+			$model_names[ $shortname ] = $classname;
 		}
-		// let's get it started		
-		if ( is_admin() ) {
-			EE_Registry::instance()->load_core( 'Admin' );
-		} else if ( EE_Maintenance_Mode::instance()->level() ) {
-			// shut 'er down down for maintenance ?
-			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
-		} else {
-			EE_Registry::instance()->load_core( 'Front_Controller' );
-		}
+		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
 	}
 
 
@@ -433,8 +323,8 @@ final class EE_System {
 	/**
 	 * 	init
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *  	@access public
+	 *  	@return 	void
 	 */
 	public function init() {
 		// register Custom Post Types
@@ -458,8 +348,8 @@ final class EE_System {
 	/**
 	 * 	wp_enqueue_scripts
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *  	@access 	public
+	 *  	@return 	void
 	 */
 	public function wp_enqueue_scripts() {
 		// unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );

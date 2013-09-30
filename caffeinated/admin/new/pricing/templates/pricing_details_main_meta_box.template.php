@@ -10,7 +10,7 @@
 						<p><strong><?php _e('Base Price', 'event_espresso'); ?></strong></p>
 						<p class="description"><?php _e('This is the default base price. Every new ticket created will start off with this base price.', 'event_espresso'); ?></p>
 					<?php else : ?>
-						<?php echo EE_Form_Fields::select_input('PRT_ID', $price_types, $price->type(), 'id="PRT_ID"'); ?>
+						<?php echo EEH_Form_Fields::select_input('PRT_ID', $price_types, $price->type(), 'id="PRT_ID"'); ?>
 						<p class="description"><?php _e('Whether this is an Event Price, Discount, Surcharge, or Tax. Default items will apply to ALL new events you create.', 'event_espresso'); ?></p>
 					<?php endif; ?>
 				</td>

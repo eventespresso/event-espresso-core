@@ -276,7 +276,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
 					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
 				</label></th>
-			<td><?php echo EE_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
+			<td><?php echo EEH_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
 		
 		<tr>
@@ -293,7 +293,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 						array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
 						array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso'))
 					);
-				echo EE_Form_Fields::select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
+				echo EEH_Form_Fields::select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
 			?>
 			</td>
 		</tr>
@@ -368,23 +368,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$this->addField('quantity_' . $item_num, '1');
 			$item_num++;
 		}
-		/*
-		 * //this code actually worked fine, except for some reason weird characters were showing up
-		 * //I tried encoding it in different formats etc etc and it never quite worked. Whatever
-		 * $registrations = $session_data['cart']['REG']['items'];
-		require_once( EE_MODELS . 'EEM_Attendee.model.php');
-		foreach ($registrations as $registration) {
-			foreach ($registration['attendees'] as $attendee) {
-				//echo "paypal standard, attendee<br>\r\n";
-				//var_dump($attendee);
-				$this->addField('item_name_' . $item_num, $attendee[EEM_Attendee::fname_question_id] . ' ' 
-						. $attendee[EEM_Attendee::lname_question_id] . ' attending ' . $registration['name'] . ' on ' . $registration['options']['date'] . ' ' . $registration['options']['time'] . ', ' . $registration['options']['price_desc']);
-				$this->addField('amount_' . $item_num, $attendee['price_paid']);
-				$this->addField('quantity_' . $item_num, '1');
-				$item_num++;
-			}
-		}*/
-	 
+		
 		$total = $session_data['_cart_grand_total_amount'];
 		if (isset($session_data['tax_totals'])) {
 			foreach ($session_data['tax_totals'] as $key => $taxes) {

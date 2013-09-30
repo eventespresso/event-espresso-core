@@ -71,7 +71,7 @@ assert(is_array($values));
 					<label for="QSG_show_group_name">
 						<!--<input type="checkbox" name="QSG_show_group_name" value="<?php echo $question_group->show_group_name()?>"> &nbsp;-->
 						<?php _e('Show Group Name on Registration Page?','event_espresso');?>
-						<?php echo EE_Form_Fields::select_input( 'QSG_show_group_name', $values, $question_group->show_group_name() ); ?>						
+						<?php echo EEH_Form_Fields::select_input( 'QSG_show_group_name', $values, $question_group->show_group_name() ); ?>						
 					</label>
 				</td>
 			</tr>
@@ -86,7 +86,7 @@ assert(is_array($values));
 					<label for="QSG_show_group_order">
 						<!--<input type="checkbox" name="QSG_show_group_desc" value="<?php echo $question_group->show_group_desc()?>"> &nbsp;-->
 						<?php _e(' Show Group Description on Registration Page?','event_espresso');?>
-						<?php echo EE_Form_Fields::select_input( 'QSG_show_group_desc', $values, $question_group->show_group_desc() ); ?>
+						<?php echo EEH_Form_Fields::select_input( 'QSG_show_group_desc', $values, $question_group->show_group_desc() ); ?>
 						
 						
 					</label>

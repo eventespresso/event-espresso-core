@@ -99,5 +99,5 @@ class EEM_Venue extends EEM_CPT_Base {
 	}
 
 }
-// End of file EEM_Answer.model.php
-// Location: /includes/models/EEM_Answer.model.php
+// End of file EEM_Venue.model.php
+// Location: /includes/models/EEM_Venue.model.php

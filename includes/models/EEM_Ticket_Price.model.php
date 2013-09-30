@@ -87,14 +87,5 @@ class EEM_Ticket_Price extends EEM_Base {
 	}
 
 
-
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_TICKET_PRICE_TABLE', $wpdb->prefix . 'esp_ticket_price' );
-	}
-
-} //end EEM_Ticket_Price class
+} 
+//end EEM_Ticket_Price class

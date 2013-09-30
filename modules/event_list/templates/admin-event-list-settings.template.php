@@ -36,7 +36,7 @@ $grid_sizes = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('default_view', $event_list_views, $default_view, 'id="default_view"'); ?>
+					<?php echo EEH_Form_Fields::select_input('default_view', $event_list_views, $default_view, 'id="default_view"'); ?>
 				</td>
 			</tr>
 
@@ -47,7 +47,7 @@ $grid_sizes = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('event_list_grid_size', $grid_sizes, $event_list_grid_size, 'id="event_list_grid_size"'); ?>
+					<?php echo EEH_Form_Fields::select_input('event_list_grid_size', $grid_sizes, $event_list_grid_size, 'id="event_list_grid_size"'); ?>
 				</td>
 			</tr>
 
@@ -58,7 +58,7 @@ $grid_sizes = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('display_description_in_event_list', $description, $display_description, 'id="display_description_in_event_list"'); ?>
+					<?php echo EEH_Form_Fields::select_input('display_description_in_event_list', $description, $display_description, 'id="display_description_in_event_list"'); ?>
 				</td>
 			</tr>
 
@@ -69,7 +69,7 @@ $grid_sizes = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('display_address_in_event_list', $values, $display_address, 'id="display_address_in_event_list"'); ?>
+					<?php echo EEH_Form_Fields::select_input('display_address_in_event_list', $values, $display_address, 'id="display_address_in_event_list"'); ?>
 				</td>
 			</tr>
 
@@ -80,7 +80,7 @@ $grid_sizes = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('display_venue_in_event_list', $values, $display_venue, 'id="display_venue_in_event_list"'); ?>
+					<?php echo EEH_Form_Fields::select_input('display_venue_in_event_list', $values, $display_venue, 'id="display_venue_in_event_list"'); ?>
 				</td>
 			</tr>
 
@@ -91,7 +91,7 @@ $grid_sizes = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EE_Form_Fields::select_input('display_expired_events', $values, $display_expired_events, 'id="display_expired_events"'); ?>
+					<?php echo EEH_Form_Fields::select_input('display_expired_events', $values, $display_expired_events, 'id="display_expired_events"'); ?>
 				</td>
 			</tr>
 

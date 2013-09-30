@@ -143,16 +143,6 @@ class EEM_Event  extends EEM_CPT_Base{
 		parent::__construct( $timezone );
 	}
 
-
-
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_EVENT_META_TABLE', $wpdb->prefix . 'esp_event_meta' );
-	}
 	
 	
 	

@@ -17,6 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
+ * EEH_Parse_Shortcodes
  * Utility class for parsing EE shortcodes in given data.
  *
  * @package		Event Espresso
@@ -25,7 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EE_Parse_Shortcodes {
+class EEH_Parse_Shortcodes {
 
 
 	/**
@@ -199,6 +200,6 @@ class EE_Parse_Shortcodes {
 
 
 
-} //end EE_Parse_Shortcodes
+} //end EEH_Parse_Shortcodes
 
-// end of file:	includes/classes/EE_Parse_Shortcodes.class.php
+// end of file:	includes/classes/EEH_Parse_Shortcodes.class.php

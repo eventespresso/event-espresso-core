@@ -282,7 +282,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 				$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
 
 				//Google map link creation
-				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				EE_Registry::instance()->load_helper( 'Maps' );
 				$atts = array( 
 					'address' => $event_address,
 					'city' 		=> $event_city,
@@ -292,7 +292,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 					'text' 		=> 'Map and Directions',
 					'type' 		=> 'text'
 				);
-				$google_map_link = EE_Maps::google_map_link( $atts );
+				$google_map_link = EEH_Maps::google_map_link( $atts );
 
 				$reg_start_date = $event->registration_start;
 				$reg_end_date = $event->registration_end;
@@ -322,8 +322,8 @@ if (!function_exists('espresso_reg_form_sc')) {
 						'registration_end' => $event->registration_end,
 						'is_active' => $is_active,
 						'event_country' => $event_country,
-						'start_date' => EE_Formatter::event_date_display($start_date, get_option('date_format')),
-						'end_date' => EE_Formatter::event_date_display($end_date, get_option('date_format')),
+						'start_date' => EEH_Formatter::event_date_display($start_date, get_option('date_format')),
+						'end_date' => EEH_Formatter::event_date_display($end_date, get_option('date_format')),
 						'time' => $event->start_time,
 						'google_map_link' => $google_map_link,
 						'price' => $event->event_cost,
@@ -423,7 +423,8 @@ if (!function_exists('espresso_reg_form_sc')) {
 							}
 
 							if ($show_ee_gmap_no_shortcode && $event_meta['enable_for_gmap']) {
-								echo ee_gmap_display($ee_gmap_location, $event_id);
+								EE_Registry::instance()->load_helper( 'Maps' );
+								echo EEH_Maps::google_map( $ee_gmap_location, $event_id );
 							}
 
 							//Meta example
@@ -440,7 +441,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 									</span>
 									<?php
 								}
-								echo EE_Formatter::event_date_display($start_date, get_option('date_format'));
+								echo EEH_Formatter::event_date_display($start_date, get_option('date_format'));
 
 								if ($end_date !== $start_date) {
 									echo '<br />';
@@ -448,7 +449,7 @@ if (!function_exists('espresso_reg_form_sc')) {
 									<span class="section-title">
 										<?php _e('End Date: ', 'event_espresso'); ?>
 									</span> <?php
-						echo EE_Formatter::event_date_display($end_date, get_option('date_format'));
+						echo EEH_Formatter::event_date_display($end_date, get_option('date_format'));
 					}
 									?>
 							</p>
@@ -835,7 +836,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 				$meta = unserialize($venue->meta);
 
 				//Google map link creation
-				require_once EE_HELPERS . 'EE_Maps.helper.php';
+				EE_Registry::instance()->load_helper( 'Maps' );
 				$atts = array( 
 					'address' => $venue->address,
 					'city' 		=> $venue->city,
@@ -845,7 +846,7 @@ if (!function_exists('espresso_venue_details_sc')) {
 					'text' 		=> $map_link_text,
 					'type' 		=> 'text'
 				);
-				$google_map_link = EE_Maps::google_map_link( $atts );
+				$google_map_link = EEH_Maps::google_map_link( $atts );
 
 				//Build the venue title
 				if ($show_title != false) {

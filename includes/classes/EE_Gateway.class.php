@@ -84,7 +84,6 @@ abstract class EE_Gateway {
 	abstract public function espresso_display_payment_gateways();
 	
 	protected function __construct(EEM_Gateways &$model) {
-
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//echo '<h4>$this->_gateway_name : ' . $this->_gateway_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
@@ -113,8 +112,8 @@ abstract class EE_Gateway {
 		}
 
 		//load formatter helper and form fields helper
-		require_once EE_HELPERS . 'EE_Formatter.helper.php';
-		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
+		EE_Registry::instance()->load_helper( 'Formatter' );
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 	}
 	
 	/**

@@ -9,7 +9,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author				Seth Shoultes
+ * @ author			Seth Shoultes
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link				http://www.eventespresso.com
@@ -17,6 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
+ * EEH_MSG_Template
  * Utility class containing a variety of helpers related to message templates.
  *
  * @package		Event Espresso
@@ -25,7 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EE_MSG_Template {
+class EEH_MSG_Template {
 
 
 	private static function _set_autoloader() {

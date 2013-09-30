@@ -1234,7 +1234,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		//register all styles
 		wp_register_style('jquery-ui-style', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
-		//wp_register_style('event_espresso', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-styles.css', array(), EVENT_ESPRESSO_VERSION);
 		wp_register_style('jquery-ui-style-datepicker-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('jquery-jq-plot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array('jquery'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
@@ -2168,9 +2167,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string html
 	 */
 	protected function _get_main_nav_tabs() {
-		//let's generate the html using the EE_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
-		return EE_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
+		//let's generate the html using the EEH_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
+		return EEH_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
 	}
 
 
@@ -2204,12 +2203,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@param	array $id - used for defining unique identifiers for the form.
 	 * 	@param string $generator (options are 'string' or 'array', basically use this to indicate which generator to use)
 	 * 	@return string
-	 * 	@uses EE_Form_Fields::get_form_fields (/helper/EE_Form_Fields.helper.php)
-	 * 	@uses EE_Form_Fields::get_form_fields_array (/helper/EE_Form_Fields.helper.php)
+	 * 	@uses EEH_Form_Fields::get_form_fields (/helper/EEH_Form_Fields.helper.php)
+	 * 	@uses EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
 	 */
 	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
-		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
-		$content = $generator == 'string' ? EE_Form_Fields::get_form_fields($input_vars, $id) : EE_Form_Fields::get_form_fields_array($input_vars);
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
+		$content = $generator == 'string' ? EEH_Form_Fields::get_form_fields($input_vars, $id) : EEH_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
 	}
 

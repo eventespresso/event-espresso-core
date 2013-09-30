@@ -1174,8 +1174,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
-		$this->_template_args['att_questions'] = EE_Form_Fields::generate_question_groups_html( $question_groups );
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
+		$this->_template_args['att_questions'] = EEH_Form_Fields::generate_question_groups_html( $question_groups );
 
 		$this->_template_args['reg_questions_form_action'] = 'update_attendee_registration_form';
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
@@ -1752,8 +1752,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		require_once EE_HELPERS . 'EE_Form_Fields.helper.php';
-		echo EE_Form_Fields::generate_question_groups_html( $question_groups );
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
+		echo EEH_Form_Fields::generate_question_groups_html( $question_groups );
 
 	}
 
@@ -2332,7 +2332,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		
 		$this->_template_args['attendee']= $attendee;
-		$this->_template_args['state_html'] = EE_Form_Fields::generate_form_input(
+		$this->_template_args['state_html'] = EEH_Form_Fields::generate_form_input(
 				array(
 					'QST_display_text'=>' ',
 					'ANS_value'=>$attendee->state_ID(),
@@ -2340,7 +2340,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'QST_input_name'=>'STA_ID',
 					'QST_system'=>'state'
 				));
-		$this->_template_args['country_html'] = EE_Form_Fields::generate_form_input(
+		$this->_template_args['country_html'] = EEH_Form_Fields::generate_form_input(
 				array(
 					'QST_display_text'=>' ',
 					'ANS_value'=>$attendee->country_ISO(),

@@ -82,7 +82,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	
 	protected function _get_table_filters() {
 		$filters = array();
-		require_once EE_FF_HELPER;
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$messengers = $this->_admin_page->get_active_messengers();
 		$message_types = $this->_admin_page->get_installed_message_types();
 
@@ -133,8 +133,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			$msgr_filters = array_values( $msgr_filters ); //reindex keys
 		}
 		
-		$filters[] = EE_Form_Fields::select_input('ee_messenger_filter_by', $msgr_filters, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
-		$filters[] = EE_Form_Fields::select_input('ee_message_type_filter_by', $mt_filters, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
+		$filters[] = EEH_Form_Fields::select_input('ee_messenger_filter_by', $msgr_filters, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
+		$filters[] = EEH_Form_Fields::select_input('ee_message_type_filter_by', $mt_filters, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
 		return $filters;
 	}
 

@@ -79,10 +79,6 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//load initial stuff.
 		$this->_set_file_and_folder_name();
 
-
-		//some global constants
-		if ( !defined('EE_FF_HELPER') )
-			define( 'EE_FF_HELPER', EE_HELPERS . 'EE_Form_Fields.helper.php');
 	}
 
 
@@ -130,7 +126,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public function load_wp_global_scripts_styles() {
 		/** STYLES **/
 		//register
-		wp_register_style('espresso_menu', EVENT_ESPRESSO_PLUGINFULLURL . 'css/admin-menu-styles.css');
+		wp_register_style('espresso_menu', EE_CORE_ADMIN_URL . 'assets/admin-menu-styles.css');
 
 
 
@@ -364,8 +360,8 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$dir_ref = array(
 			$this->_folder_path => array('core','class')
 			);
-		require_once( EE_HELPERS . 'EE_Autoloader.helper.php' );
-		EE_Autoloader::try_autoload($dir_ref, $className );
+		EE_Registry::instance()->load_helper( 'Autoloader' );
+		EEH_Autoloader::try_autoload($dir_ref, $className );
 	}
 
 

@@ -75,16 +75,6 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_QUESTION_GROUP_TABLE', $wpdb->prefix . 'esp_question_group' );
-	}
-
-
 }
-// End of file EEM_Question.model.php
-// Location: /includes/models/EEM_Question.model.php
+// End of file EEM_Question_Group.model.php
+// Location: /includes/models/EEM_Question_Group.model.php

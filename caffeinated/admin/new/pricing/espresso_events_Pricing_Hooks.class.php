@@ -806,7 +806,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 			'prc_row' => $default && empty( $price ) ? 'PRICENUM' : $prcrow,
-			'price_modifier_selector' => EE_Form_Fields::select_input( $select_name, $all_price_types, $selected_price_type_id, 'style="width:auto;"', 'edit-price-PRT_ID' ),
+			'price_modifier_selector' => EEH_Form_Fields::select_input( $select_name, $all_price_types, $selected_price_type_id, 'style="width:auto;"', 'edit-price-PRT_ID' ),
 			'price_option_spans' => $price_option_spans,
 			'price_selected_operator' => $default && empty( $price ) ? '' : ( $price->is_discount() ? '-' : '+' ),
 			'price_selected_is_percent' => $default && empty( $price ) ? '' : ( $price->is_percent() ? 1 : 0 )

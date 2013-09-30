@@ -16,12 +16,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Formatter
+ * EEH_Formatter
  *
  * This is a helper utility class containging a variety for formatting helpers for Event Espresso.
  *
  * @package		Event Espresso
- * @subpackage	/helper/EE_Formatter.helper.php
+ * @subpackage	/helper/EEH_Formatter.helper.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 
 
-class EE_Formatter {
+class EEH_Formatter {
 
 	/**
 	 * _admin_format_content
@@ -128,4 +128,4 @@ class EE_Formatter {
 	}
 
 
-}//end class EE_Form_Fields
+}//end class EEH_Form_Fields

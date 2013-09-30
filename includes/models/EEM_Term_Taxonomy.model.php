@@ -73,13 +73,7 @@ class EEM_Term_Taxonomy extends EEM_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() { }
-
 
 }
-// End of file EEM_Answer.model.php
-// Location: /includes/models/EEM_Answer.model.php
+// End of file EEM_Term_Taxonomy.model.php
+// Location: /includes/models/EEM_Term_Taxonomy.model.php

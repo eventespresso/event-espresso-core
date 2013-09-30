@@ -149,7 +149,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//we only really need to generate help tabs for the given gateways
 		
 		if ( empty( $gateway_data['payment_settings']) ){
-			$payment_settings = get_user_meta( $current_user->ID, 'payment_settings', TRUE );
+			$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
 		}
 
 	
@@ -177,7 +177,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$EEM_Gateways = EEM_Gateways::instance();
 		$EEM_Gateways->set_active_gateways();
 		
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EE_Tabbed_Content.helper.php' ;
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		
 		$gateway_data = $this->EE->SSN->get_session_data(FALSE, 'gateway_data');
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
@@ -186,7 +186,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		 * of the payment admin page, the gateways info wouldn't show because payment_settings was always blank.
 		 * To reproduce that error, clear your cookies and delete the entry for 'payment_settings' in the usermeta table */
 		if (  empty($gateway_data['payment_settings']) ){
-			$payment_settings = get_user_meta($current_user->ID, 'payment_settings', true);
+			$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($current_user->ID, 'payment_settings', true);
 			$this->EE->SSN->set_session_data($payment_settings,'payment_settings');
 		}
 		//lets add all the metaboxes
@@ -240,7 +240,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//$gateways = isset( $gateways ) ? $gateways : array();
 		//printr( $gateways, '$gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		$this->_template_args['admin_page_header'] = EE_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $selected_gateway_name );
+		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $gateways, 'gateway_links', '|', $selected_gateway_name );
 		$this->display_admin_page_with_sidebar();
 
 	}

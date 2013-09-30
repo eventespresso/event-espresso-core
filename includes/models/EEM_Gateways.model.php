@@ -66,7 +66,6 @@ Class EEM_Gateways {
 	 * 		@return void
 	 */
 	private function __construct() {
-		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$this->EE = EE_Registry::instance();
@@ -85,13 +84,6 @@ Class EEM_Gateways {
 		$this->_scan_and_load_all_gateways();
 	}
 
-
-
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() { }
 
 
 	/**
@@ -142,14 +134,14 @@ Class EEM_Gateways {
 			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
 			
 		} else {
-			
-			$this->_active_gateways = get_user_meta($this->EE->CFG->wp_user, 'active_gateways', TRUE);
+			$this->_active_gateways = $this->EE->CFG->gateway->active_gateways;//get_user_meta($this->EE->CFG->wp_user, 'active_gateways', TRUE);
 			if (!is_array($this->_active_gateways)) {
 				$this->_active_gateways = array();
 			}
 			$this->EE->SSN->set_session_data(array('active_gateways' => $this->_active_gateways), 'gateway_data');
 		}
 	}
+	
 
 
 
@@ -164,7 +156,7 @@ Class EEM_Gateways {
 //			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
 //		} else {
 			
-			$this->_payment_settings = get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
+			$this->_payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
 			if (!is_array($this->_payment_settings)) {
 				$this->_payment_settings = array();
 			}
@@ -174,7 +166,14 @@ Class EEM_Gateways {
 		//echo printr( $this->_payment_settings, __CLASS__ . ' ->' . __FUNCTION__ . ' ( line #' .  __LINE__ . ' )' );
 	}
 
-
+	/**
+	 * Instantiates all gateways. A side-effect of this is that if gateways dont have any
+	 * default settings set before this, they do now.
+	 * @return void
+	 */
+	public function load_all_gateways(){
+		$this->_load_all_gateway_files();
+	}
 
 
 	/**
@@ -326,10 +325,12 @@ Class EEM_Gateways {
 		//$this->_payment_settings[$gateway] = $new_gateway_settings;
 		
 		//echo "updateing usermeta with paymetn settings";var_dump($this->_payment_settings);
-		$old_payment_settings = get_user_meta($this->EE->CFG->wp_user, 'payment_settings',true);
+		$old_payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($this->EE->CFG->wp_user, 'payment_settings',true);
 		$old_payment_settings[$gateway] = $new_gateway_settings;
 		$this->_payment_settings = $old_payment_settings;
-		if (update_user_meta($this->EE->CFG->wp_user, 'payment_settings', $this->_payment_settings)) {
+		$this->EE->CFG->gateway->payment_settings = $this->_payment_settings;
+
+		if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
 
 			$msg = __('Payment Settings Updated!', 'event_espresso');
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -396,8 +397,8 @@ Class EEM_Gateways {
 		}
 		if (array_key_exists($gateway, $this->_all_gateways)) {
 			$this->_active_gateways[$gateway] = $this->_all_gateways[$gateway];
-			
-			if (update_user_meta($this->EE->CFG->wp_user, 'active_gateways', $this->_active_gateways)) {
+			$this->EE->CFG->gateway->active_gateways = $this->_active_gateways;
+			if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
 				$msg = $gateway . __(' Gateway Activated!', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
@@ -426,8 +427,8 @@ Class EEM_Gateways {
 		}
 		if (array_key_exists($gateway, $this->_active_gateways)) {
 			unset($this->_active_gateways[$gateway]);
-			
-			if (update_user_meta($this->EE->CFG->wp_user, 'active_gateways', $this->_active_gateways)) {
+			$this->EE->CFG->gateway->active_gateways = $this->_active_gateways;
+			if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
 				$msg =$gateway .  __('Gateway Deactivated!', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
@@ -814,7 +815,7 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 		$confirm_info = $this->_gateway_instances[ $this->_selected_gateway ]->set_billing_info_for_confirmation( $billing_info );
-		$confirm_info['gateway'] = $this->display_name();
+//		$confirm_info['gateway'] = $this->display_name();
 		$confirm_info[ __('payment method', 'event_espresso') ] = $this->display_name();
 		return $confirm_info;
 	}

@@ -239,15 +239,6 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * forces models to define their table name as a constant
-	 * @access public
-	 */
-//	abstract public static function define_table_name();
-
-
-
-
-	/**
 	 * This sets the _timezone property after model object has been instantiated.
 	 * @param string $timezone valid PHP DateTimeZone timezone string
 	 */
@@ -1072,6 +1063,7 @@ abstract class EEM_Base extends EE_Base{
 			return $value;
 		}
 	}
+
 	/**
 	 * Returns the main table on this model
 	 * @return EE_Primary_Table
@@ -1083,8 +1075,19 @@ abstract class EEM_Base extends EE_Base{
 				return $table;
 			}
 		}
-		throw new EE_Error(sprintf(__("THere are no main tables on %s. They should be added to _tables array in the constructor",'event_espresso'),get_class($this)));
+		throw new EE_Error(sprintf(__('There are no main tables on %s. They should be added to _tables array in the constructor','event_espresso'),get_class($this)));
 	}
+
+	/**
+	 * table
+	 * returns EE_Primary_Table table name
+	 * @return string
+	 */
+	public static function table(){
+		return static::instance()->_get_main_table()->get_table_name();
+		
+	}	
+
 	/**
 	 * Gets all the tables of type EE_Other_Table from EEMerimental_Model::_tables
 	 * @return EE_Secondary_Table[]
@@ -1098,6 +1101,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $other_tables;
 	}
+	
 	/**
 	 * Finds all the fields that correspond to the given table
 	 * @param string $table_alias, array key in EEMerimental_Base::_tables

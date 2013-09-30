@@ -5,7 +5,7 @@
  */
 class EEM_System_Status{
 	
-	// private instance of the EEM_Price object
+	// private instance of the EEM_System_Status object
 	private static $_instance = NULL;
 
 	/**
@@ -24,9 +24,9 @@ class EEM_System_Status{
 	 */
 	public static function instance() {
 
-		// check if instance of EEM_Price already exists
+		// check if instance of EEM_System_Status already exists
 		if (self::$_instance === NULL) {
-			// instantiate Price_model
+			// instantiate EEM_System_Status
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -44,7 +44,6 @@ class EEM_System_Status{
 			'ee_version'=>$this->get_ee_version(),
 			'ee_activation_history'=>$this->get_ee_activation_history(),
 			'ee_config'=>$this->get_ee_config(),
-			'ee_gateway_settings'=>$this->get_ee_gateway_settings(),
 			'ee_migration_history'=>$this->get_ee_migration_history(),
 			'active_plugins'=>$this->get_active_plugins(),
 			'wp_settings'=>$this->get_wp_settings(),
@@ -118,13 +117,6 @@ class EEM_System_Status{
 		return get_option('espresso_db_update');
 	}
 	
-	/**
-	 * Gets information about gateways
-	 * return EEM_Gateways 
-	 */
-	function get_ee_gateway_settings(){
-		return get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
-	}
 	
 	/**
 	 * Gets an array where keys are ee versions, and their values are arrays indicating all the different times that version was installed

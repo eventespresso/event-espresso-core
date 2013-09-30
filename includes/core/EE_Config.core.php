@@ -83,8 +83,11 @@ final class EE_Config {
 	 */
 	public $registration;
 
-
-	
+	/**
+	 *
+	 * @var EE_Gateway_Config
+	 */
+	public $gateway;
 
 
 
@@ -122,6 +125,7 @@ final class EE_Config {
 		$this->admin = new EE_Admin_Config();
 		$this->template_settings = new EE_Admin_Config();
 		$this->map_settings = new EE_Map_Config();
+		$this->gateway = new EE_Gateway_Config();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
 		// set _module_forward_map
@@ -148,7 +152,9 @@ final class EE_Config {
 	private function _load_config() {
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
-			$this->$config = $settings;
+			if ( ! empty( $settings )) {
+				$this->$config = $settings;
+			}
 		}
 	}
 
@@ -165,15 +171,15 @@ final class EE_Config {
 		// grab espresso configuration
 		if ( is_multisite() ) {
 			// look for blog specific config
-			if ( ! $CFG = get_blog_option( $this->current_blog_id, 'espresso_config', NULL )) {
+			if ( ! $CFG = get_blog_option( $this->current_blog_id, 'espresso_config', array() )) {
 				// if not, then look for network config
-				if ( ! $CFG = get_site_option( 'espresso_config', NULL )) {
+				if ( ! $CFG = get_site_option( 'espresso_config', array() )) {
 				    // if not, then look for generic config
-					$CFG = get_option( 'espresso_config', NULL );
+					$CFG = get_option( 'espresso_config', array() );
 				}						
 			}
 		} else {
-			$CFG = get_option( 'espresso_config', NULL );
+			$CFG = get_option( 'espresso_config', array() );
 		}
 		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
 		return $CFG;
@@ -185,7 +191,7 @@ final class EE_Config {
 	 * 	update_espresso_config'
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	boolean success 
 	 */
 	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
 		// compare existing settings with what's already saved'
@@ -585,7 +591,8 @@ final class EE_Config {
 			'registration',
 			'admin',
 			'template_settings',
-			'map_settings'		
+			'map_settings',
+			'gateway'
 		);
 	}
 
@@ -1141,6 +1148,28 @@ class EE_Map_Config extends EE_Config_Base {
 
 }
 
+/**
+ * stores payment gateway info
+ */
+class EE_Gateway_Config extends EE_Config_Base{
+	/**
+	 * Array with keys that are payment gateways slugs, and values are arrays 
+	 * with any config info the gateway wants to store 
+	 * @var array
+	 */
+	public $payment_settings;
+	/**
+	 * Where keys are gateway slugs, and values are booleans indicating whether or not
+	 * the gateway is stored in the uploads directory
+	 * @var array
+	 */
+	public $active_gateways;
+	
+	public function __construct(){
+		$this->payment_settings = array();
+		$this->active_gateways = array('Invoice'=>false);
+	}
+}
 
 
 // End of file EE_Config.core.php

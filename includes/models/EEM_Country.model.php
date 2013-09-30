@@ -84,16 +84,6 @@ class EEM_Country extends EEM_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'ESP_COUNTRY_TABLE', $wpdb->prefix . 'esp_country' );
-	}
-
-
 
 	/**
 	*		_get_countries

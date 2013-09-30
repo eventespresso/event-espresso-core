@@ -93,7 +93,7 @@ load_plugin_textdomain( 'event_espresso', FALSE, EVENT_ESPRESSO_PLUGINFULLPATH .
 
 // load Error handling and debugging tools
 if ( WP_DEBUG === TRUE ) {
-	require_once( EE_HELPERS . 'EE_Debug_Tools.helper.php' );
+	require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
 }
 
 if ( is_readable( EE_CORE . 'EE_Error.core.php' )) {

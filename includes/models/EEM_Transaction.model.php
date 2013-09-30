@@ -105,16 +105,6 @@ class EEM_Transaction extends EEM_Base {
 
 
 
-	/**
-	 * defines  table name as a constant
-	 * @access public
-	 */
-	public static function define_table_name() {
-		global $wpdb;
-		define( 'EE_TRANSACTION_TABLE', $wpdb->prefix . 'esp_transaction' );
-	}
-
-
 
 	/**
 	 *		This funtion is a singleton method used to instantiate the Espresso_model object
