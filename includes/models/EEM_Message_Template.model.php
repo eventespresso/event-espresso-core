@@ -526,9 +526,9 @@ class EEM_Message_Template extends EEM_Soft_Delete_Base {
 			if ( is_array($value['content']) ) {
 				$assembled_fields[$value['name']] = $value['content']['main'];
 				//loop through the content and get the other fields.
-				foreach ( $value['content'] as $name => $value ) {
+				foreach ( $value['content'] as $name => $val ) {
 					if ( $name == 'main' ) continue;
-					$assembled_fields[$name] = $value;
+					$assembled_fields[$name] = $val;
 				}
 				continue;
 			}
