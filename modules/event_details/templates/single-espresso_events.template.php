@@ -67,7 +67,7 @@ get_header();
 				<!-- .event-content -->
 				<footer class="event-meta">
 					<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>
-					<?php edit_post_link( __( 'edit this event', 'event_espresso' ), '<p class="edit-event-lnk small-txt clear">', '</p>' ); ?>
+					<?php espresso_edit_event_link(); ?>
 					<?php do_action( 'AHEE_event_details_footer_bottom', $post ); ?>
 				</footer>
 				<!-- .entry-meta -->
