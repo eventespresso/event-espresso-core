@@ -185,8 +185,7 @@ final class EE_System {
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
 				EEH_Activation::initialize_db_content();
-				EEH_Activation::get_caffeinated_activation();
-				add_action( 'init', array( 'EEH_Activation', 'CPT_initialization' ));
+				EEH_Activation::get_caffeinated_activation();				
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_upgrade:
