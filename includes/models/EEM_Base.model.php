@@ -1109,7 +1109,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Finds all the fields that correspond to the given table
 	 * @param string $table_alias, array key in EEMerimental_Base::_tables
-	 * @return EE_Model_Field[]
+	 * @return EE_Model_Field_Base[]
 	 */
 	function _get_fields_for_table($table_alias){
 		return $this->_fields[$table_alias];
@@ -2058,7 +2058,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets the actual table for the table alias
 	 * @param string $table_alias eg Event, Event_Meta, Registration, Transaction
-	 * @return string
+	 * @return EE_Table_Base
 	 */
 	function get_table_for_alias($table_alias){
 		return $this->_tables[$table_alias]->get_table_name();
@@ -2168,11 +2168,13 @@ abstract class EEM_Base extends EE_Base{
 		$this_model_fields_n_values = array();
 		foreach($cols_n_values as $col => $val){
 			foreach($this->field_settings() as $field_name => $field_obj){
-				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
-				$field_qualified_column = $field_obj->get_qualified_column();
+				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"				
 				//does the field on the model relate to this column retrieved from teh db? 
 				//or is it a db-only field? (not relating to the model)
-				if($field_qualified_column == $col && !$field_obj->is_db_only_field()){
+				if( ($field_obj->get_qualified_column() == $col
+						|| $field_obj->get_table_column() == $col
+						) 
+						&& !$field_obj->is_db_only_field()){
 					//OK, this field apparently relates to this model.
 					//now we can add it to the array
 					$this_model_fields_n_values[$field_name] = $val;
