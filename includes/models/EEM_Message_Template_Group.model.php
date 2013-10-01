@@ -116,6 +116,75 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 
 
+	/**
+	 * get_all_active_message_templates groups
+	 * @access public
+	 * @return array  all active (non_trashed, active) message template objects
+	 */
+	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
+		$query_params = array( array('MTP_is_active' => true), 'orderby' => array($orderby, $order), 'limit' => $limit );
+		return $count ? $this->count($query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
+	}
+
+
+
+
+	/**
+	 * 	retrieve ALL message_template groups from db regardless of wht
+	 *
+	 * 	@access	public
+	 * 	@return	mixed array on success, FALSE on fail
+	 */
+	public function get_all_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
+		
+		$query_params = array( array(), 'orderby' => array($orderby, $order), 'limit' => $limit );
+
+		$r_templates = $count ? $this->count_deleted_and_undeleted($query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted_and_undeleted( $query_params );
+		
+		return $r_templates;
+	}
+
+
+
+
+	/**
+	 * get_all_global_message_template groups
+	 * @access public
+	 * @return EE_Message_Template_Group[] all message template groups that are global (i.e. non-event)
+	 */
+	public function get_all_global_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
+		$query_params = array( array('MTP_is_global' => TRUE), 'orderby' => array($orderby, $order), 'limit' => $limit );
+		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
+	}
+
+
+
+
+	/**
+	 * get_all_event_message_templates 
+	 * @access public
+	 * @return EE_Message_Template_Group[] all message template groups that are non-global and are event specific
+	 */
+	public function get_all_event_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
+		$query_params = array( array( 'EVT_ID' => array('>', 0) ), 'orderby' => array($orderby, $order), 'limit' => $limit );
+		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
+	}
+
+
+
+
+	/**
+	 * get_all_trashed_grouped_message_templates
+	 * this returns ONLY the template groups where ALL contexts are trashed and none of the group are non-trashed
+	 * 
+	 * @access public
+	 * @return EE_Message_Template_Group[] message template groups.
+	 */
+	public function get_all_trashed_grouped_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
+		$query_params = array( array('MTP_is_active' => true), 'orderby' => array($orderby, $order), 'limit' => $limit );
+		
+		return $count ? $this->count_deleted($query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted( $query_params );
+	}
 
 
 
