@@ -31,26 +31,26 @@
 			<tbody>
 		<?php foreach ( $items as $item ) : ?>
 			<tr>
-				<td class="jst-left"><?php echo $item['line_item'];?></td>
+				<td class="jst-left"><?php echo $item['line_item_id'];?></td>
 				<td class="jst-left"><?php echo $item['name'];?></td>
 				<td class="jst-left"><?php echo date( 'D M j, Y', $item['date'] ) . ',    ' . date( 'g:i a', $item['time'] );?></td>
-				<td class="jst-left"><?php echo $item['price_desc'];?></td>
-				<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $item['price'], 2 );?></td>
+				<td class="jst-left"><?php echo $item['ticket_desc'];?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket'] );?></td>
 				<td class="jst-rght"><?php echo $item['qty'];?></td>
-				<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $item['line_total'], 2 );?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency($item['line_total']);?></td>
 			</tr>
 		<?php endforeach; // $items?>
 		<?php if ( $taxes ) : ?>
 			<?php foreach ( $taxes as $tax ) : ?>
 				<tr>
 					<th class=" jst-rght" colspan="6"><?php echo $tax['name'];?></th>
-					<th class=" jst-rght"><?php echo $currency_sign . ' ' . number_format( $tax['amount'], 2 );?></th>
+					<th class=" jst-rght"><?php echo EEH_Template::format_currency( $tax['amount']);?></th>
 				</tr>
 			<?php endforeach; // $taxes?>
 		<?php endif; // $taxes?>
 				<tr class="admin-primary-mbox-total-tr">
 					<th class=" jst-rght" colspan="6"><?php _e( 'Grand Total', 'event_espresso' );?></th>
-					<th class=" jst-rght"><?php echo $currency_sign . ' ' . number_format( $grand_total, 2 );?></th>
+					<th class=" jst-rght"><?php echo $grand_total; ?></th>
 				</tr>
 			</tbody>	
 		</table>

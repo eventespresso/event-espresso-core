@@ -85,6 +85,10 @@ class EEH_Template {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
+
+		//ensure amount is float
+		$amount = (float) $amount;
+
 		// load registray
 		$EE = EE_Registry::instance();
 		$mny = new EE_Currency_Config();

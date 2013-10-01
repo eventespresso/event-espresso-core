@@ -389,19 +389,21 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		if ( isset($current_templates) ) {
 
-			foreach ( $current_templates as $template_object ) {
-				if ( $this->name == $template_object->message_type() ) {
-					$templates = $template_object->context_templates();
+			foreach ( $current_templates as $group_object ) {
+				if ( $this->name == $group_object->message_type() ) {
+					$templates = $group_object->context_templates();
+
+					if ( $group_object->get('MTP_is_override') )
+						$global_override[$context] = TRUE;
+
 					foreach ( $templates as $context => $template_fields ) {
-						foreach ( $template_fields as $template_field => $value ) {
-								if ( $template_object->is_global() ) {
-									$global_templates[$template_field][$context] = $value['content'];
-									if ( $template_fields['MTP_is_override'] )
-										$global_override[$context] = TRUE;
+						foreach ( $template_fields as $template_field => $template_obj ) {
+								if ( $group_object->is_global() ) {
+									$global_templates[$template_field][$context] = $template_obj->get('MTP_content');
 								}
 
-								if ( $template_object->event() == $event_id && !empty( $event_id )) {
-									$event_templates[$template_field][$context] = $value['content'];
+								if ( $group_object->event() == $event_id && !empty( $event_id )) {
+									$event_templates[$template_field][$context] = $template_obj->get('MTP_content');
 								}
 						}
 					}

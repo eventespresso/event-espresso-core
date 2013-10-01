@@ -138,7 +138,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		$this->_EE_MSG = $messages;
 
 		//set the model object
-		$this->_EEM_data = EEM_Message_Template::instance();
+		$this->_EEM_data = EEM_Message_Template_Group::instance();
 		
 		$this->_set_props();
 
@@ -214,7 +214,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 					foreach ( $this->_contexts as $context => $details ) {
 						foreach ( $this->_fields as $field => $field_type ) {
 							if ( $field !== 'extra' ) {
-								$this->_templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field]['content'] : '';
+								$this->_templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field]->get('MTP_content') : '';
 							}
 						}
 					}
@@ -327,11 +327,11 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 
 		//let's insert the above and get our GRP_ID, then reset the template data array to just include the GRP_ID
-		$results = $this->_EEM_data->insert( $main_template_data );
+		$grp_id = $this->_EEM_data->insert( $main_template_data );
 		
-		$template_data = $results ? array( 'GRP_ID' => $results ) : FALSE;
+		$template_data = $grp_id ? array( 'GRP_ID' => $grp_id ) : FALSE;
 
-		if ( ! $template_data ) return $results;
+		if ( ! $template_data ) return $grp_id;
 
 		foreach ( $this->_contexts as $context => $details ) {
 			foreach ( $this->_fields as $field => $field_type ) {
@@ -339,7 +339,8 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 					$template_data['MTP_context'] = $context;
 					$template_data['MTP_template_field'] = $field;
 					$template_data['MTP_content'] = $this->_templates[$context][$field];
-					$MTP = $this->_EEM_data->insert($template_data);
+
+					$MTP = EEM_Message_Template::instance()->insert($template_data);
 					if ( !$MTP ) {
 						EE_Error::add_error( sprintf(__('There was an error in saving new template data for %s messenger, %s message type, %s context and %s template field.', 'event_espresso'), $this->_messenger->name, $this->_message_type->name, $context, $field), __FILE__, __FUNCTION__, __LINE__  );
 						return false;
@@ -349,7 +350,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		}
 
 		$success_array = array(
-			'GRP_ID' => $results,
+			'GRP_ID' => $grp_id,
 			'EVT_ID' => $main_template_data['EVT_ID'],
 			'MTP_context' => key($this->_contexts)
 		);	

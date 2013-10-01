@@ -559,7 +559,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			return TRUE; 			
 		}
 
-	    require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
 
 		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
@@ -584,7 +583,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @param  boolean $count   return the count or objects
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function get_registrations( $per_page = 10, $count = FALSE ) {
+	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
@@ -594,6 +593,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
 		$start_date = FALSE;
 		$end_date = FALSE;
+		$_where = array();
 
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -626,13 +626,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$limit = array( $offset, $per_page );
 		$query_params = array();
 		if($EVT_ID){
-			$query_params[0]['EVT_ID']=$EVT_ID;
+			$_where['EVT_ID']=$EVT_ID;
 		}
 		if($CAT_ID){
 			throw new EE_Error("not sure how to handle filtering event categories here");
 		}
 		if($reg_status){
-			$query_params[0]['STS_ID'] = $reg_status;
+			$_where['STS_ID'] = $reg_status;
 		}
 		
 		
@@ -643,17 +643,17 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$time_start = ' 00:00:00';
 		$time_end = ' 23:59:59';
 		
-		if($today_a){
+		if($today_a || $today ){
 			$curdate = date('Y-m-d', current_time('timestamp'));
-			$query_params[0]['REG_date']= array('BETWEEN',
+			$_where['REG_date']= array('BETWEEN',
 				array(
 					strtotime($curdate . $time_start),
 					strtotime($curdate . $time_end)
 			));
-		}elseif($this_month_a){
+		}elseif($this_month_a || $this_month){
 			$this_month_r = date('m', current_time('timestamp'));
 			$days_this_month = date( 't', current_time('timestamp') );
-			$query_params[0]['REG_date']= array('BETWEEN',
+			$_where['REG_date']= array('BETWEEN',
 				array(
 					strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ),
 					strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) 
@@ -662,7 +662,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$pieces = explode('-', $month_range, 3);
 			$year_r = $pieces[0];
 			$month_r = $pieces[1];
-			$query_params[0]['REG_date']= array('BETWEEN',
+			$_where['REG_date']= array('BETWEEN',
 				array(
 					$month_r . ' 01 ' . $this_year_r . ' ' . $time_start ,
 					$month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end 
@@ -676,13 +676,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 		
 		if($count){
-			return EEM_Registration::instance()->count($query_params);
+			return EEM_Registration::instance()->count(array($_where));
 		}else{
+			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
 			$registrations = EEM_Registration::instance()->get_all($query_params);
-	//		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
-	//		global $wpdb;
-	//		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			//printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	
 
 			if ( $EVT_ID && isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration &&  $registrations[0]->event_obj()) {
 				$first_registration = $registrations[0];
@@ -1037,7 +1035,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$cart_items = $this->_session['cart']['REG']['items'];
 		$this->_template_args['items'] = array();
 		$exclude = array( 'attendees' );
-		
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
 				foreach ( $item as $key => $value ) {
@@ -1064,6 +1061,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
+
 		// process taxes
 		if ( $transaction ) {
 			$taxes = $transaction->tax();
