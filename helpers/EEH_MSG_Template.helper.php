@@ -96,7 +96,7 @@ class EEH_MSG_Template {
 	 */
 	public static function already_generated( $messenger, $message_type, $evt_id = NULL ) {
 		self::_set_autoloader();
-		$MTP = EEM_Message_Template::instance();
+		$MTP = EEM_Message_Template_Group::instance();
 
 
 		//what method we use depends on whether we have an evt_id or not

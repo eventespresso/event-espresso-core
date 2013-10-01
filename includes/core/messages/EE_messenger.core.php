@@ -115,7 +115,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 	public function __construct() {
-		$this->_EEM_data = EEM_Message_Template::instance();
+		$this->_EEM_data = EEM_Message_Template_Group::instance();
 		$this->_messages_item_type = 'messenger';
 		
 		parent::__construct();
@@ -431,7 +431,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 	/**
-	 * This sets the active templates for the messenger.  
+	 * This sets the active template groups for the messenger.  
 	 * @access protected
 	 */
 	protected function _set_templates() {

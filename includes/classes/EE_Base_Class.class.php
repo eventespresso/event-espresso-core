@@ -1055,7 +1055,6 @@ class EE_Base_Class{
 		return $count;
 	}
 
-		/**
 
 	
 
