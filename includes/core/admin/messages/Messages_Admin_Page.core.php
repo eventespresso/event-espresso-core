@@ -1653,7 +1653,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'MTP_content' => $set_column_values['MTP_content']
 							);
 						if ( $updated = $MTP->update( $message_template_fields, array( $where_cols_n_values ) ) ) {
-							if ( !$updated ) {
+							if ( $updated === FALSE ) {
 								$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso'), $template_field );
 								EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
 							} else {
@@ -1676,8 +1676,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						);
 					$mtpg_where = array('GRP_ID' => $set_column_values['GRP_ID'] );
 					$updated = $MTPG->update( $mtpg_fields, array($mtpg_where) );
-					if ( !$updated ) {
-						$msg = sprintf( __('The Message Tempalte Group (%d) was NOT updated for some reason', 'event_espresso'), $set_column_values['GRP_ID'] );
+					
+					if ( $updated === FALSE ) {
+						$msg = sprintf( __('The Message Template Group (%d) was NOT updated for some reason', 'event_espresso'), $set_column_values['GRP_ID'] );
 						EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
 					} else {
 						$success = 1;
