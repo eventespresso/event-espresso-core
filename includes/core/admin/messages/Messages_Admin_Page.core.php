@@ -1601,6 +1601,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 			$action_desc = 'created';
 		} else {
+			$MTPG = EEM_Message_Template_Group::instance();
 			$MTP = EEM_Message_Template::instance();
 
 			
@@ -1612,7 +1613,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				
 			} else {
 				//first validate all fields!
-				$validates = $MTP->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
+				$validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
 
 				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response.
 				if ( is_array($validates) ) {
@@ -1642,18 +1643,45 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				} else {
 					foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
 						$set_column_values = $this->_set_message_template_column_values($template_field);
+
 						$where_cols_n_values = array( 'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']);
-						if ( $updated = $MTP->update( $set_column_values, array( $where_cols_n_values ) ) ) {
+
+						$message_template_fields = array(
+							'GRP_ID' => $set_column_values['GRP_ID'],
+							'MTP_template_field' => $set_column_values['MTP_template_field'],
+							'MTP_context' => $set_column_values['MTP_context'],
+							'MTP_content' => $set_column_values['MTP_content']
+							);
+						if ( $updated = $MTP->update( $message_template_fields, array( $where_cols_n_values ) ) ) {
 							if ( !$updated ) {
-								$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso') );
+								$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso'), $template_field );
 								EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
-						} else {
-							$success = 1;
+							} else {
+								$success = 1;
+							}
 						}
+						$action_desc = 'updated';
 					}
-					$action_desc = 'updated';
-				}
-				
+
+					//we can use the last set_column_values for the MTPG update (because its the same for all of these specific MTPs)
+					$mtpg_fields = array(
+						'EVT_ID' => $set_column_values['EVT_ID'],
+						'MTP_user_id' => $set_column_values['MTP_user_id'],
+						'MTP_messenger' => $set_column_values['MTP_messenger'],
+						'MTP_message_type' => $set_column_values['MTP_message_type'],
+						'MTP_is_global' => $set_column_values['MTP_is_global'],
+						'MTP_is_override' => $set_column_values['MTP_is_override'],
+						'MTP_deleted' => $set_column_values['MTP_deleted'],
+						'MTP_is_active' => $set_column_values['MTP_is_active']
+						);
+					$mtpg_where = array('GRP_ID' => $set_column_values['GRP_ID'] );
+					$updated = $MTPG->update( $mtpg_fields, array($mtpg_where) );
+					if ( !$updated ) {
+						$msg = sprintf( __('The Message Tempalte Group (%d) was NOT updated for some reason', 'event_espresso'), $set_column_values['GRP_ID'] );
+						EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
+					} else {
+						$success = 1;
+					}
 				}
 			}
 
