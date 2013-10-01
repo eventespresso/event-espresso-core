@@ -1932,50 +1932,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-
-	/**
-	 * [_event_name description]
-	 * This just takes a given event_id and will output the name of the event for it.
-	 * @todo: temporary... will need to remove/replace once proper Event models/classes are in place.
-	 * @access protected
-	 * @param  int $evt_id event_id
-	 * @return string event_name 
-	 */
-	protected function _event_name($evt_id) {
-		global $wpdb;
-		$evt_id = absint($evt_id);
-		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
-		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
-		return $event_name;
-	}
-
-
-
-
-
-
-
-	/**
-	 * get_active_events
-	 * This just returns an array of event objects for events that are active. (objects contain event_name and ID);
-	 *
-	 * @access protected
-	 * @return array array of objects (event_name, event_id);
-	 */
-	protected function _get_active_events() {
-		global $wpdb;
-		$tablename = $wpdb->prefix . 'events_detail';
-		$msg_table = $wpdb->prefix . 'esp_message_template';
-		$sub_query = "SELECT EVT_ID FROM {$msg_table} GROUP BY EVT_ID";
-		$query = "SELECT event_name, id as event_id FROM {$tablename} WHERE is_active = '1' AND id NOT IN ({$sub_query})";
-		$events = $wpdb->get_results( $query );
-		return $events;
-	}
-
-
-
-
 	/**
 	 * Used for setting up messenger/message type activation.  This loads up the initial view.  The rest is handled by ajax and other routes.
 	 * @return void
@@ -2471,8 +2427,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			//we're deactivating
 			
-			require_once(EE_MODELS . 'EEM_Message_Template.model.php');
-			$MTP = EEM_Message_Template::instance();
+			$MTP = EEM_Message_Template_Group::instance();
 
 			//first lets make sure that there are NO existing event templates for the given messenger.  If there ARE then we need to drop out with an error message, prevent deactivation and display warning.
 			$where_col = 'MTP_messenger';
@@ -2497,7 +2452,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				//output list of events
 				$base_event_admin_url = admin_url( 'admin.php?page=espresso_events' );
 				foreach ( $event_templates as $template ) {
-					$event_name = $this->event_name($template->event());
+					$event_name = $template->event_name();
 					$query_args = array(
 						'action' => 'edit_event',
 						'EVT_ID' => $template->event()
