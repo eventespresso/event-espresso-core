@@ -834,7 +834,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
 							$css_class = isset( $extra_array['css_class'] ) ? $extra_array['css_class'] : '';
 							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
-							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$reference_field]['content'][$extra_field]) ? stripslashes($message_templates[$context][$reference_field]['content'][$extra_field]) : '';
+							$content = $message_templates[$context][$reference_field]->get('MTP_content');
+							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field]) ? stripslashes($content[$extra_field]) : '';
 
 							//do we have a validation error?  if we do then let's use that value instead
 							$template_form_fields[$field_id]['value'] = isset($validators[$extra_field]) ? $validators[$extra_field]['value'] : $template_form_fields[$field_id]['value'];
@@ -865,7 +866,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'type' => 'int',
 							'required' => FALSE,
 							'validation' => FALSE,
-							'value' => !empty($message_templates) ? $message_templates[$context][$reference_field]['MTP_ID'] : '',
+							'value' => !empty($message_templates) ? $message_templates[$context][$reference_field]->ID() : '',
 							'css_class' => '',
 							'format' => '%d',
 							'db-col' => 'MTP_ID'
@@ -889,7 +890,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$field_id = $template_field . '-content';
 					$template_form_fields[$field_id] = $field_setup_array;
 					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
-					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]['content']) ? stripslashes($message_templates[$context][$template_field]['content']) : '';
+					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]) ?$message_templates[$context][$template_field]->get('MTP_content') : '';
 
 					//do we have a validator error for this field?  if we do then we'll use that value instead
 					$template_form_fields[$field_id]['value'] = isset($validators[$template_field]) ? $validators[$template_field]['value'] : $template_form_fields[$field_id]['value'];
@@ -925,7 +926,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => !empty($message_templates) ? $message_templates[$context][$template_field]['MTP_ID'] : '',
+					'value' => !empty($message_templates) ? $message_templates[$context][$template_field]->ID() : '',
 					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'MTP_ID'
@@ -1018,7 +1019,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_templates[$context]['MTP_is_global'],
+					'value' => $message_template_group->get('MTP_is_global'),
 					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'MTP_is_global'
@@ -1031,7 +1032,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_templates[$context]['MTP_is_override'],
+					'value' => $message_template_group->get('MTP_is_override'),
 					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'MTP_is_override'
@@ -1057,7 +1058,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_templates[$context]['MTP_deleted'],
+					'value' => $message_template_group->get('MTP_deleted'),
 					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'MTP_deleted'
@@ -1069,7 +1070,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'type'=> 'int',
 				'required' => FALSE,
 				'validation' => FALSE,
-				'value' => !empty($message_templates[$context]['MTP_user_id']) ? $message_templates[$context]['MTP_user_id'] : get_current_user_id(),
+				'value' => $message_template_group->user(),
 				'format' => '%d',
 				'db-col' => 'MTP_user_id'
 			);
