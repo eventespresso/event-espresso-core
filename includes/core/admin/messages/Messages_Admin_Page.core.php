@@ -2442,7 +2442,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$_where['MTP_message_type'] = $message_type;
 			}
 
-			$event_templates = $MTP->get_all_message_templates_where( $_where );
+			$event_templates = $MTP->get_all( array($_where) );
 
 			if ( $event_templates && count($event_templates) > 0 ) {
 				$m_label_pl = __('Messengers', 'event_espresso');
