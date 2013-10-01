@@ -28,7 +28,7 @@
  */
 require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 
-class EEM_Message_Template extends EEM_Soft_Delete_Base {
+class EEM_Message_Template_OLD extends EEM_Soft_Delete_Base {
 	//private instance of the EEM_Message_Template object
 	private static $_instance = NULL;
 

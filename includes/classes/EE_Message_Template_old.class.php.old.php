@@ -23,7 +23,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Message_Template {
+class EE_Message_Template_old {
 
 	/**
 	 * Template ID
