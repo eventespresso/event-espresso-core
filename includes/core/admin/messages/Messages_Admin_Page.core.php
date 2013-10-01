@@ -742,9 +742,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		$this->_set_shortcodes(); //this also sets the _message_template property.
-		$message_template = $this->_message_template_group;
-		$c_label = $message_template->context_label();
-		$c_config = $message_template->contexts_config();
+		$message_template_group = $this->_message_template_group;
+		$c_label = $message_template_group->context_label();
+		$c_config = $message_template_group->contexts_config();
 
 		reset( $c_config );
 		$context = isset( $this->_req_data['context']) && !empty($this->_req_data['context'] ) ? strtolower($this->_req_data['context']) : key($c_config);
@@ -760,7 +760,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$action = 'update_message_template';
 			$button_both = !defined( 'DOING_AJAX' ) ? TRUE : FALSE;
-			$event_name = $message_template->event_name();
+			$event_name = $message_template_group->event_name();
 			$button_text = array();
 			$button_actions = array();
 			$referrer = $this->_admin_base_url;
@@ -768,7 +768,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		//set active messenger for this view
-		$this->_active_messenger = $this->_active_messengers[$message_template->messenger()]['obj'];
+		$this->_active_messenger = $this->_active_messengers[$message_template_group->messenger()]['obj'];
 
 		//add in special css for tiny_mce
 		add_filter( 'mce_css', array( $this, 'wp_editor_css' ) );
@@ -784,16 +784,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//we should eventually display the event title instead of ID.
 		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
-		$title = sprintf( __(' %s %s Template %s %s', 'event_espresso'), ucwords(str_replace('_', ' ', $message_template->messenger()) ), ucwords(str_replace('_', ' ', $message_template->message_type()) ), $context_label, $event_label );
+		$title = sprintf( __(' %s %s Template %s %s', 'event_espresso'), ucwords(str_replace('_', ' ', $message_template_group->messenger()) ), ucwords(str_replace('_', ' ', $message_template_group->message_type()) ), $context_label, $event_label );
 
 		$this->_template_args['GRP_ID'] = $GRP_ID;
-		$this->_template_args['message_template'] = $message_template;
+		$this->_template_args['message_template'] = $message_template_group;
 		$this->_template_args['is_extra_fields'] = FALSE;
 
 
 		//let's get the EE_messages_controller so we can get template form fields
 		$MSG = new EE_messages();
-		$template_field_structure = $MSG->get_fields($message_template->messenger(), $message_template->message_type());
+		$template_field_structure = $MSG->get_fields($message_template_group->messenger(), $message_template_group->message_type());
 		
 		if ( !$template_field_structure ) {
 			$template_field_structure = FALSE;
@@ -801,7 +801,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 
-		$message_templates = $message_template->context_templates();
+		$message_templates = $message_template_group->context_templates();
 
 		//if we have the extra key.. then we need to remove the content index from the template_field_structure as it will get handled in the "extra" array.
 		if ( isset( $template_field_structure[$context]['extra']) ) {
@@ -992,7 +992,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'type' => 'string',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_template->messenger(),
+					'value' => $message_template_group->messenger(),
 					'css_class' => '',
 					'format' => '%s',
 					'db-col' => 'MTP_messenger'
@@ -1005,7 +1005,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'type' => 'string',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_template->message_type(),
+					'value' => $message_template_group->message_type(),
 					'css_class' => '',
 					'format' => '%s',
 					'db-col' => 'MTP_message_type'
@@ -1027,7 +1027,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$sidebar_form_fields['ee-msg-is-override'] = array(
 					'name' => 'MTP_is_override',
 					'label' => __('Override all custom', 'event_espresso'),
-					'input' => $message_template->is_global() ? 'checkbox' : 'hidden',
+					'input' => $message_template_group->is_global() ? 'checkbox' : 'hidden',
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
@@ -1044,7 +1044,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'type' => 'int',
 					'required' => FALSE,
 					'validation' => TRUE,
-					'value' => $message_template->is_active(),
+					'value' => $message_template_group->is_active(),
 					'css_class' => '',
 					'format' => '%d',
 					'db-col' => 'MTP_is_active'
@@ -1128,7 +1128,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
 
 		//add preview button
-		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template->message_type(), 'messenger' => $message_template->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'evt_id' => $EVT_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
+		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'evt_id' => $EVT_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
 		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
 
 
@@ -1141,7 +1141,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'context' => $context,
 			'extra' => $preview_button
 		);
-		$this->_set_context_switcher($message_template, $context_switcher_args);
+		$this->_set_context_switcher($message_template_group, $context_switcher_args);
 
 		//sidebar box
 		if ( defined( 'DOING_AJAX' ) ) {
@@ -1462,9 +1462,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$MTP = EEM_Message_Template_Group::instance();
 
 		if ( empty($GRP_ID) )
-			$this->_message_template_group = $MTP->get_new_template();
+			$this->_message_template_group = $MTP->create_default_object();
 		else
-			$this->_message_template_group = $MTP->get_message_template_by_ID( $GRP_ID );
+			$this->_message_template_group = $MTP->get_one_by_ID( $GRP_ID );
 
 	}
 
