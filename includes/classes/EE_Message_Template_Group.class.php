@@ -23,7 +23,8 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Message_Template_Group extends EE_Base_Class {
+require_once( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php');
+class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Message Template Group id
