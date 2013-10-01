@@ -45,7 +45,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Datetime'=>array(
-				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso'), false, 0),
+				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso')),
 				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),

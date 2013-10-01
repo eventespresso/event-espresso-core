@@ -53,7 +53,7 @@ class EEM_Term_Taxonomy extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Term_Taxonomy'=>array(
-				'term_taxonomy_id'=> new EE_Primary_Key_Int_Field('term_taxonomy_id', __('Term-Taxonomy ID','event_espresso'), false),
+				'term_taxonomy_id'=> new EE_Primary_Key_Int_Field('term_taxonomy_id', __('Term-Taxonomy ID','event_espresso')),
 				'term_id'=>new EE_Foreign_Key_Int_Field('term_id',  __("Term Id", "event_espresso"), false, 0, 'Term'), //EE_Foreign_Key_Int_Field('term_taxonomy_id', __('Term (in context of a taxonomy) ID','event_espresso'), false, 0, 'Term_Taxonomy'),
 				'taxonomy'=>new EE_Plain_Text_Field('taxonomy', __('Taxonomy Name','event_espresso'), false, 'category'),
 				'description'=>new EE_Simple_HTML_Field('description', __("Description of Term", "event_espresso"), false,''),

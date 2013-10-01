@@ -54,7 +54,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Question_Group'=>array(
-				'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', __('Question Group ID','event_espresso'), false, 0),
+				'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', __('Question Group ID','event_espresso')),
 				'QSG_name'=>new EE_Plain_Text_Field('QSG_name', __('Question Group Name','event_espresso'), false, ''),
 				'QSG_identifier'=>new EE_Plain_Text_Field('QSG_identifier', __('Text ID for question Group','event_espresso'), false, ''),
 				'QSG_desc'=>new EE_Full_HTML_Field('QSG_desc', __('Description of Question Group','event_espresso'), true, ''),

@@ -757,6 +757,15 @@ class EE_Registration extends EE_Base_Class {
 	public function status_obj(){
 		return $this->get_first_related('Status');
 	}
+	
+	/**
+	 * Returns the number of times this registration has checked into any of the datetimes
+	 * its available for
+	 * @return int
+	 */
+	public function count_checkins(){
+		return $this->get_model()->count_related($this,'Checkin');
+	}
 }
 
 

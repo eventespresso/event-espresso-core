@@ -97,7 +97,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Price_Type'=>array(
-				'PRT_ID'=>new EE_Primary_Key_Int_Field('PRT_ID', __('Price Type ID','event_espresso'), false, 0),
+				'PRT_ID'=>new EE_Primary_Key_Int_Field('PRT_ID', __('Price Type ID','event_espresso')),
 				'PRT_name'=>new EE_Plain_Text_Field('PRT_name', __('Price Type Name','event_espresso'), false, ''),
 				'PBT_ID'=>new EE_Enum_Integer_Field('PBT_ID', __('Price Base type ID, 1 = Base Price , 2 = Discount , 3 = Surcharge , 4 = Tax','event_espresso'), false, 1, $this->base_types),
 				'PRT_is_member'=>new EE_Boolean_Field('PRT_is_member', __('Flag indicating price is only for members','event_espresso'), false, false),

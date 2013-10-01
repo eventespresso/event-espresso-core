@@ -63,7 +63,7 @@ class EEM_Message_Template extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Message_Template'=> array(
-				'MTP_ID'=> new EE_Primary_Key_Int_Field('MTP_ID', __('Message Template ID', 'event_espresso'), FALSE, 0),
+				'MTP_ID'=> new EE_Primary_Key_Int_Field('MTP_ID', __('Message Template ID', 'event_espresso')),
 				'GRP_ID' => new EE_Foreign_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso'), FALSE, 0, 'Message_Template_Group' ),
 				'MTP_template_field'=>new EE_Plain_Text_Field('MTP_template_field', __('Field Name for this Template', 'event_espresso'), false, 'default' ),
 				'MTP_context'=>new EE_Plain_Text_Field('MTP_context', __('Message Type Context for this field', 'event_espresso'),false,'admin' ),
