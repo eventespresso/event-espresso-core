@@ -680,10 +680,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}else{
 			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
 			$registrations = EEM_Registration::instance()->get_all($query_params);
-	//		$registrations = EEM_Registration::instance()->get_registrations_for_admin_page( $EVT_ID, $CAT_ID, $reg_status, $month_range, $today_a, $this_month_a, $start_date, $end_date, $orderby, $sort, $limit, $count );
-	//		global $wpdb;
-	//		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			//printr( $registrations, '$registrations  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	
 
 			if ( $EVT_ID && isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration &&  $registrations[0]->event_obj()) {
 				$first_registration = $registrations[0];
@@ -1038,7 +1035,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$cart_items = $this->_session['cart']['REG']['items'];
 		$this->_template_args['items'] = array();
 		$exclude = array( 'attendees' );
-		
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
 				foreach ( $item as $key => $value ) {
@@ -1065,6 +1061,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}
 
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
+
 		// process taxes
 		if ( $transaction ) {
 			$taxes = $transaction->tax();
