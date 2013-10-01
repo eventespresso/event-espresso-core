@@ -1476,13 +1476,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * sets up a context switcher for edit forms
 	 *
 	 * @access  protected
-	 * @param  object $template_object the template object being displayed on the form
+	 * @param  EE_Message_Template_Group $template_object the template group object being displayed on the form
 	 * @param array $args various things the context switcher needs.
 	 * @return void
 	 */
-	protected function _set_context_switcher(EE_Message_Template $template_object, $args) {
-		$context_details = $template_object->contexts_config();
-		$context_label = $template_object->context_label();
+	protected function _set_context_switcher(EE_Message_Template_Group $template_group_object, $args) {
+		$context_details = $template_group_object->contexts_config();
+		$context_label = $template_group_object->context_label();
 		ob_start();
 		?>
 		<div class="ee-msg-switcher-container">
@@ -1499,7 +1499,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				?>
 				<select name="context">
 					<?php 
-					$context_templates = $template_object->context_templates();
+					$context_templates = $template_group_object->context_templates();
 					if ( is_array($context_templates) ) :
 							foreach ( $context_templates as $context => $template_fields ) :
 								$checked = ($context == $args['context']) ? 'selected="selected"' : '';
