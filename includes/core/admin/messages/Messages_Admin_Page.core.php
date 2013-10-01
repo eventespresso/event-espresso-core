@@ -37,7 +37,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected $_current_message_meta_box_object;
 	protected $_context_switcher;
 	protected $_shortcodes = array();
-	protected $_message_template;
+	protected $_message_template_group;
 	protected $_m_mt_settings = array();
 
 	
@@ -437,7 +437,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_edit_message_template() {
 		;
 		$this->_set_shortcodes();
-		EE_Registry::$i18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template->messenger_obj()->label['singular'], $this->_message_template->message_type_obj()->label['singular'] );
+		EE_Registry::$i18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template_group->messenger_obj()->label['singular'], $this->_message_template_group->message_type_obj()->label['singular'] );
 
 
 		wp_register_script('ee_msgs_edit_js', EE_MSG_ASSETS_URL . 'ee_message_editor.js', array('jquery'), EVENT_ESPRESSO_VERSION );
@@ -742,7 +742,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		$this->_set_shortcodes(); //this also sets the _message_template property.
-		$message_template = $this->_message_template;
+		$message_template = $this->_message_template_group;
 		$c_label = $message_template->context_label();
 		$c_config = $message_template->contexts_config();
 
@@ -1334,10 +1334,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$template_form_fields = array();
 
 		$extra_args = array(
-			'msgr' => $this->_message_template->messenger(),
-			'mt' => $this->_message_template->message_type(),
-			'GRP_ID' => $this->_message_template->GRP_ID(),
-			'EVT_ID' => $this->_message_template->event()
+			'msgr' => $this->_message_template_group->messenger(),
+			'mt' => $this->_message_template_group->message_type(),
+			'GRP_ID' => $this->_message_template_group->GRP_ID(),
+			'EVT_ID' => $this->_message_template_group->event()
 			);
 
 		$button = $this->get_action_link_or_button( 'reset_to_default', 'reset', $extra_args, 'button-primary reset-default-button' );
@@ -1345,12 +1345,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//test button
 		//first we need to see if there are any fields
-		$fields = $this->_message_template->messenger_obj()->get_test_settings_fields();
+		$fields = $this->_message_template_group->messenger_obj()->get_test_settings_fields();
 		if ( !empty( $fields ) ) {
 			//yup there be fields
 			foreach ( $fields as $field => $config ) {
-				$field_id = $this->_message_template->messenger() . '_' . $field;
-				$existing = $this->_message_template->messenger_obj()->get_existing_test_settings();
+				$field_id = $this->_message_template_group->messenger() . '_' . $field;
+				$existing = $this->_message_template_group->messenger_obj()->get_existing_test_settings();
 				$default = isset( $config['default'] ) ? $config['default'] : '';
 				$default = isset( $config['value'] ) ? $config['value'] : $default;
 
@@ -1434,10 +1434,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//we need the messenger and message template to retrieve the valid shortcodes array.
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
-		$context = isset( $this->_req_data['context'] ) ? $this->_req_data['context'] : key( $this->_message_template->contexts_config() );
+		$context = isset( $this->_req_data['context'] ) ? $this->_req_data['context'] : key( $this->_message_template_group->contexts_config() );
 
 		if ( !empty($GRP_ID) ) {
-			$this->_shortcodes = $this->_message_template->get_shortcodes( $context );
+			$this->_shortcodes = $this->_message_template_group->get_shortcodes( $context );
 		} else {
 			$this->_shortcodes = array();
 		}
@@ -1453,19 +1453,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _set_message_template() {
 
-		if ( !empty( $this->_message_template ) )
+		if ( !empty( $this->_message_template_group ) )
 			return; //get out if this is already set.
 
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
 		//let's get the message templates
-		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
-		$MTP = EEM_Message_Template::instance();
+		$MTP = EEM_Message_Template_Group::instance();
 
 		if ( empty($GRP_ID) )
-			$this->_message_template = $MTP->get_new_template();
+			$this->_message_template_group = $MTP->get_new_template();
 		else
-			$this->_message_template = $MTP->get_message_template_by_ID( $GRP_ID );
+			$this->_message_template_group = $MTP->get_message_template_by_ID( $GRP_ID );
 
 	}
 
