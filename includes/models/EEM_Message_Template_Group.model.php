@@ -210,7 +210,9 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			'MTP_is_active' => $active
 			);
 
-		return $count ? $this->count(array(array($_where), 'order_by' => array($orderby => $order), 'limit' => $limit ), 'GRP_ID', TRUE ) : $this->get_all( array( array($_where), 'order_by' => array($orderby => $order), 'limit' => $limit) );
+		$query_params = array( $_where, 'order_by' => array($orderby=>$order), 'limit' => $limit );
+
+		return $count ? $this->count($query_params, 'GRP_ID', TRUE ) : $this->get_all( $query_params );
 	}
 
 
