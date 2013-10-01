@@ -58,7 +58,7 @@ class EEM_Extra_Meta extends EEM_Base {
 		$models_this_can_attach_to = array('Transaction','Payment');
 		$this->_fields = array(
 			'Extra_Meta'=>array(
-				'EXM_ID'=>new EE_Primary_Key_Int_Field('EXM_ID', __("Extra Meta ID", "event_espresso"), false),
+				'EXM_ID'=>new EE_Primary_Key_Int_Field('EXM_ID', __("Extra Meta ID", "event_espresso")),
 				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("Primary Key of Attached Thing", "event_espresso"), false, 0, $models_this_can_attach_to),
 				'EXM_type'=>new EE_Any_Foreign_Model_Name_Field('EXM_type', __("Model of Attached Thing", "event_espresso"), false, 'Transaction', $models_this_can_attach_to),
 				'EXM_key'=>new EE_Plain_Text_Field('EXM_key', __("Meta Key", "event_espresso"), false, ''),

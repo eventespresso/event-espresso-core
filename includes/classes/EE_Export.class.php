@@ -288,26 +288,18 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */
 	function report_registrations_for_event(){
 		$event_id = $this->_req_data['EVT_ID'];
-		$fields_to_include = array(
-			'Registration'=>array(
+		$reg_fields_to_include = array(
 				'REG_ID',
 				'REG_date',
-				'STS_ID',
 				'REG_code',
 				'REG_count',
-				'REG_att_is_going',
-				'REG_att_checked_in'
-			),
-			'Datetime'=>array(
-				'DTT_EVT_start'
-			),
-			'Price'=>array(
-				'PRC_name'
-			)
+				'REG_att_is_going'
+			
 		);
 		
 		$registrations_csv_ready_array = array();
-		$registrations = EEM_Registration::instance()->get_all(array(array('EVT_ID'=>$event_id),'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc')));
+		$reg_model = $this->EE->load_model('Registration');
+		$registrations = $reg_model->get_all(array(array('EVT_ID'=>$event_id),'order_by'=>array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc')));
 		
 		//get all questions which relate to someone in this group
 		$registration_ids = array_keys($registrations);
@@ -316,61 +308,47 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		foreach($registrations as $registration){
 			$reg_csv_array = array();
 			/*@var $registration EE_Registration */
-			foreach($fields_to_include as $model_name => $field_list){
-				$model = $this->EE->load_model($model_name);
-				
-				if($model_name == 'Registration'){
-					$model_object = $registration;
-				}else{
-					//must be a related thing
-					$model_object = $registration->get_first_related($model_name);
-					if( ! $model_object ) continue;
-				}
-				foreach($field_list as $field_name){
-					$field = $model->field_settings_for($field_name);
-					//if it's the STS_ID column, show a hard-coded pretty version (because theres no Status model right now)
-					if($model_name == 'Registration' && $field_name == 'STS_ID'){
-						//in this case, we're assuming we want the registration's status and so we use EE_Registration::pretty_status()
-						$value = $model_object->pretty_status();
-					}else{
-						$value = $model_object->get_pretty($field->get_name());
-					}
-					$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
-				}	
+			foreach($reg_fields_to_include as $field_name){
+				$field = $reg_model->field_settings_for($field_name);
+				$value = $registration->get_pretty($field->get_name());
+				$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
+			}	
+			//get pretty status
+			$status = $registration->status_obj();
+			$status_model = $this->EE->load_model('Status');
+			$reg_csv_array[$status_model->field_settings_for('STS_code')->get_nicename()] = $status->code();
+			//get whether or not the user has checked in 
+			$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
+			//get ticket of registration and its price
+			$ticket_model = $this->EE->load_model('Ticket');
+			$ticket = $registration->ticket();
+			$reg_csv_array[$ticket_model->field_settings_for('TKT_name')->get_nicename()] = $ticket->name();
+			//get datetime(s) of registration
+			$datetimes_strings = array();
+			foreach($ticket->datetimes() as $datetime){
+				$datetimes_strings[] = $datetime->start_date_and_time();
 			}
+			$reg_csv_array[__("Datetimes of Ticket", "event_espresso")] = implode(", ", $datetimes_strings);
 			
-//			$reg_csv_array = array();
-//			foreach($fields_to_include as $reg_field_name){
-//				$field = EEM_Registration::instance()->field_settings_for($reg_field_name);
-//				$reg_csv_array[$this->_get_column_name_for_field($field)] = $registration->get($field->get_name());
-//			}
-//			//add their choice of datetime
-//			$reg_csv_array[$this->_get_column_name_for_field(EEM_Datetime::instance()->field_settings_for('DTT_EVT_start'))] = $registration->date_obj() ? $registration->date_obj()->start_date_and_time() : 'Unknown';
-//			//add their choice of price
-//			$reg_csv_array[$this->_get_column_name_for_field(EEM_Price::instance()->field_settings_for('PRC_name'))] = $registration->price_obj() ? $registration->price_obj()->name() : 'Unknown';
-			
+					
 			//make sure each registration has the same questions in the same order
 			foreach($questions_for_these_registrations as $question){
 				if( ! isset($reg_csv_array[$question->admin_label()])){
 					$reg_csv_array[$question->admin_label()] = null;
 				}
 			}
-			
 			//now fill out the questions THEY answered
 			foreach($registration->answers() as $answer){
 				/* @var $answer EE_Answer */
 				$reg_csv_array[$answer->question()->admin_label()] = $answer->value();
 			}
-			
-			
-			
 			$registrations_csv_ready_array[] = $reg_csv_array;
 		}
 		
 		//if we couldn't export anything, we want to at least show the column headers
 		if(empty($registrations_csv_ready_array)){
 			$reg_csv_array = array();
-			foreach($fields_to_include as $model_name => $field_list){
+			foreach($reg_fields_to_include as $model_name => $field_list){
 				$model = $this->EE->load_model($model_name);
 				foreach($field_list as $field_name){
 					$field = $model->field_settings_for($field_name);

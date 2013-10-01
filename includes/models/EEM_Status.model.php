@@ -53,7 +53,7 @@ class EEM_Status extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Status'=>array(
-				'STS_ID'=> new EE_Primary_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false),
+				'STS_ID'=> new EE_Primary_Key_String_Field('STS_ID', __('Status ID','event_espresso')),
 				'STS_code'=>new EE_Plain_Text_Field('STS_code',__('Status Code','event_espresso'),false, ''),
 				'STS_type'=>new EE_Enum_Text_Field('STS_type', __("Type", "event_espresso"), false, 'event', 
 						array(

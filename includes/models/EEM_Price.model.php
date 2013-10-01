@@ -73,7 +73,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Price'=> array(
-				'PRC_ID'=>new EE_Primary_Key_Int_Field('PRC_ID', 'Price ID', false, 0),
+				'PRC_ID'=>new EE_Primary_Key_Int_Field('PRC_ID', 'Price ID'),
 				'PRT_ID'=>new EE_Foreign_Key_Int_Field('PRT_ID', 'Price type Id', false, 1, 'Price_Type'),
 				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),

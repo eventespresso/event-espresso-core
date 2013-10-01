@@ -53,7 +53,7 @@ class EEM_Promotion extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Promotion'=>array(
-				'PRO_ID'=>new EE_Primary_Key_Int_Field('PRO_ID', __("ID", "event_espresso"), false),
+				'PRO_ID'=>new EE_Primary_Key_Int_Field('PRO_ID', __("ID", "event_espresso")),
 				'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', __("Price ID", "event_espresso"), false, 0, 'Price'),
 				'PRO_scope'=>new EE_Plain_Text_Field('PRO_scope', __("Scope", "event_espresso"), false, ''),
 				'PRO_start'=>new EE_Datetime_Field('PRO_start', __("Start Date/Time", "event_espresso"), true, null),

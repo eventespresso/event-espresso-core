@@ -73,7 +73,7 @@ class EEM_Ticket_Price extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Ticket_Price'=> array(
-				'TKP_ID'=>new EE_Primary_Key_Int_Field('TKP_ID', 'Ticket Price ID', false, 0),
+				'TKP_ID'=>new EE_Primary_Key_Int_Field('TKP_ID', 'Ticket Price ID'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', 'Ticket Id', false, 0, 'Ticket'),
 				'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', 'Price ID', false, 0, 'Price'),
 			)

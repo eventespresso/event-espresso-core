@@ -216,7 +216,11 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error(sprintf(__("Table alias %s does not exist in EEM_Base child's _tables array. Only tables defined are %s",'event_espresso'),$table_alias,implode(",",$this->_fields)));
 			}
 			foreach($fields_for_table as $field_name => $field_obj){
+				//primary key field base has a slightly different _construct_finalize
 				$field_obj->_construct_finalize($table_alis,$field_name);
+				if($field_obj instanceof EE_Primary_Key_Field_Base){
+					$field_obj->_construct_finalize_set_model_name($this->get_this_model_name());
+				}
 			}
 		}
 
@@ -899,7 +903,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $field_to_count name of field to count by. By default, uses primary key
 	 * @return int
 	 */
-	function count_related($id_or_obj,$model_name,$query_params,$field_to_count = null){
+	function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null){
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use teh query params on the related model's normal get_all query,
 		//except add a condition to say to match the curren't mod
