@@ -373,55 +373,71 @@ class EEM_Event  extends EEM_CPT_Base{
 	*		_get_question_target_db_column
 	* 
 	* 		@access		public
-	* 		@param		array		$QSGs 		array of question groups	
-	* 		@param		array		$QSTs 			array of questions
-	* 		@param		array		$QSOs 		array of question options	
-	*		@return 		array
+	* 		@param      EE_Answer[]             $ANS 		array of answers
+	*		@return 	array
 	*/	
-	public function assemble_array_of_groups_questions_and_options( $QSGs = array(), $QSTs = array(), $QSOs = array(), $q_meta = array() ) {		
+	public function assemble_array_of_groups_questions_and_options( $ANS = array() ) {		
 
-		if ( empty( $QSGs ) || empty( $QSTs ) /*|| empty( $q_meta )*/) {
+		if ( empty( $ANS ) ) {
 			EE_Error::add_error( __( 'An error occured. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
+		//let's make sure we have questions ans question groups setup correctly.
+		$QSTs = $QSGs = array();
+		foreach ( $ANS as $answer ) {
+			$question = $answer->get_first_related('Question');
+			$qs_id = $question->ID();
+			if ( !isset( $QSTs[$qs_id] ) ) {
+				$QSTs[$qs_id]['obj'] = $question;
+				$QSTs[$qs_id]['ans_obj'] = $answer;
+			}
+
+			$question_group = $question->get_first_related('Question_Group');
+			$qsg_id = $question_group->ID();
+			if ( !isset( $QSGs[$qsg_id] ) ) {
+				$QSGs[$qsg_id] = $question_group;
+			}
+		} 
+
 		$questions = array();
 		// now interlace everything into one big array where quetions groups have questions and questions have options
+		
 		if ( is_array( $QSGs )) {
 			foreach ( $QSGs as $QSG_ID => $QSG ) {
-				$questions[ $QSG_ID ] = (array)$QSG;
+				$questions[ $QSG_ID ] = $QSG->model_field_array();
 				$questions[ $QSG_ID ]['QSG_questions'] = array();
 				
 				if ( is_array( $QSTs )) {
 					foreach ( $QSTs as $QST ) {
+						$ANS = $QST['ans_obj'];
+						$QST = $QST['obj'];
+						$ans_id = $ANS->ID();
 						if ( $QST->get_first_related( 'Question_Group' )->ID() == $QSG_ID ) {
 							
 							$qst_name = $qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST->ID();
 							//echo '<h4>$qst_name : ' . $qst_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-							$qst_name = isset( $QST->ANS_ID ) && ! empty( $QST->ANS_ID ) ? '[' . $qst_name . '][' . $QST->ANS_ID . ']' : '[' . $qst_name . ']';
+							
+							$qst_name = ! empty( $ans_id ) ? '[' . $qst_name . '][' . $ans_id . ']' : '[' . $qst_name . ']';
 							//echo '<h4>$qst_name : ' . $qst_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-							$input_name = isset( $q_meta['input_name'] ) ? $q_meta['input_name']  : '';
-							$input_id = isset( $q_meta['input_id'] ) ? $q_meta['input_id'] : sanitize_key( $QST->display_text() );
-							$input_class = isset( $q_meta['input_class'] ) ? $q_meta['input_class'] : '';
+							$input_name = '';
+							$input_id = sanitize_key( $QST->display_text() );
+							$input_class = '';
 							
 							//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );	
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ] = (array)$QST;
+							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ] = $QST->model_field_array();
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_input_name'] = 'qstn' . $input_name . $qst_name;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_input_id'] = $input_id . '-' . $qstn_id;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_input_class'] = $input_class;
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_options'] = array();
-							// check for answer in $_GET in case we are reprocessing a form after an error
-							if ( isset( $q_meta['EVT_ID'] ) && isset( $q_meta['att_nmbr'] ) && isset( $q_meta['date'] ) && isset( $q_meta['time'] ) && isset( $q_meta['price_id'] )) {
-								$answer = isset( $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] ) ? $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] : '';
-								$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['ANS_value'] = $answer;
-							}
+							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['qst_obj'] = $QST;
+							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['ans_obj'] = $ANS;
 							
-							if ( $QST->type() == 'SINGLE' ||$QST->type() == 'MULTIPLE' || $QST->type() == 'DROPDOWN' ) {
-								if ( is_array( $QSOs )) {
+							if ( $QST->type() == 'SINGLE' || $QST->type() == 'MULTIPLE' || $QST->type() == 'DROPDOWN' ) {
+								$QSOs = $QST->get_many_related('Question_Option');
+								if ( is_array( $QSOs ) ) {
 									foreach ( $QSOs as $QSO_ID => $QSO ) {					
-										if ( $QSO->ID() == $QST->ID() ) {
-											$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_options'][ $QSO_ID ] = (array)$QSO;
-										}
+										$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_options'][ $QSO_ID ] = $QSO->model_field_array();
 									}
 								}
 							}
