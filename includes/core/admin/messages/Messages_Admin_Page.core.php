@@ -548,10 +548,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		// start with an empty array
 		$message_templates = array();
 
-		/** todo: is this even needed?
-		//require_once( EE_MSG_ADMIN . 'EE_Message_Template_List_Table.class.php' ); /**/
-		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
-		$MTP = EEM_Message_Template::instance();
+		$MTP = EEM_Message_Template_Group::instance();
 		
 		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
 
@@ -602,8 +599,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$templates = $MTP->get_all_trashed_grouped_message_templates($orderby, $order, $limit, $count);	
 
 		}
-
-		global $wpdb;
 
 		return $templates;
 	}
