@@ -1550,7 +1550,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'MTP_message_type' => strtolower($this->_req_data['MTP_message_type']),
 			'MTP_template_field' => strtolower($this->_req_data['MTP_template_fields'][$index]['name']),
 			'MTP_context' => strtolower($this->_req_data['MTP_context']),
-			'MTP_content' => maybe_serialize($this->_req_data['MTP_template_fields'][$index]['content']),
+			'MTP_content' => $this->_req_data['MTP_template_fields'][$index]['content'],
 			'MTP_is_global' => isset($this->_req_data['MTP_is_global']) ? absint($this->_req_data['MTP_is_global']) : 0,
 			'MTP_is_override' => isset($this->_req_data['MTP_is_override']) ? absint($this->_req_data['MTP_is_override']) : 0,
 			'MTP_deleted' => absint($this->_req_data['MTP_deleted']),
