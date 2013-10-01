@@ -188,6 +188,61 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 
 
+
+	/**
+	 * this returns the message template group for a given event, messenger, and message template
+	 * @param  string  $messenger    
+	 * @param  string  $message_type 
+	 * @param  string  $orderby      pointless at this point but still included
+	 * @param  string  $order        
+	 * @param  mixed (array|null) $limit array($offset, $num)
+	 * @param  bool   $count        true = just return count, false = objects
+	 * @param  bool   $active  		ignore "active" or not. (default only return active)
+	 * @return mixed (int|array)                depending on $count.
+	 */
+	public function get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
+
+		$_where = array(
+			'MTP_messenger' => $messenger,
+			'MTP_message_type' => $message_type,
+			'EVT_ID' => $evt_id,
+			'MTP_is_global' => TRUE,
+			'MTP_is_active' => $active
+			);
+
+		return $count ? $this->count(array(array($_where), 'orderby' => array($orderby, $order), 'limit' => $limit ), 'GRP_ID', TRUE ) : $this->get_all( array( array($_where), 'orderby' => array($orderby, $order), 'limit' => $limit) );
+	}
+
+
+
+
+	/**
+	 * get all GLOBAL message template groups for the given messenger and message type
+	 * @param  string $messenger    slug for messenger
+	 * @param  string $message_type slug for message type
+	 * @param  string $orderby      what column to orderby
+	 * @param  string $order        ASC or DESC
+	 * @param  mixed (array|null) $limit array($offset, $num)
+	 * @param  bool   $count        true = just return count, false = objects
+	 * @param  bool   $active  		ignore "active" or not. (default only return active) - 'all' means return both inactive AND inactive.
+	 * @return ARRAY               message template objects that are global (i.e. non-event)
+	 */
+	public function get_global_message_template_by_m_and_mt($messenger, $message_type, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
+		$_where = array(
+			'MTP_messenger' => $messenger,
+			'MTP_message_type' => $message_type,
+			'MTP_is_global' => TRUE,
+			'MTP_is_active' => $active
+			);
+
+		$query_params = array( $_where, 'orderby' => array( $orderby, $order ), 'limit' => $limit );
+
+		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all( $query_params );
+	}
+
+
+
+
 	/**
 	 * This sends things to the validator for the given messenger and message type.
 	 *
