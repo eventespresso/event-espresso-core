@@ -1407,7 +1407,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'TXN_ID'=>$this->_registration->transaction_ID(),
 				'REG_ID'=>array('!=',$this->_registration->ID())
 			),
-			'force_join'=>array('Attendee')));//get_registrations_for_transaction( $this->_registration->transaction_ID(), $this->_registration->ID() );
+			'force_join'=>array('Attendee')));
 
 		$this->_template_args['attendees'] = array();
 		$this->_template_args['attendee_notice'] = '';
@@ -1420,7 +1420,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$att_nmbr = 1;
 			foreach ( $registrations as $registration ) {
 				/* @var $registration EE_Registration */
-				$attendee = $registration->attendee() ? $registration->attendee() : EE_Attendee::new_instance();
+				$attendee = $registration->attendee() ? $registration->attendee() : EEM_Attendee::instance()->create_default_object();
 				$this->_template_args['attendees'][ $att_nmbr ]['fname'] = $attendee->fname();//( isset( $registration->ATT_fname ) & ! empty( $registration->ATT_fname ) ) ? $registration->ATT_fname : '';
 				$this->_template_args['attendees'][ $att_nmbr ]['lname'] = $attendee->lname();//( isset( $registration->ATT_lname ) & ! empty( $registration->ATT_lname ) ) ? $registration->ATT_lname : '';
 				$this->_template_args['attendees'][ $att_nmbr ]['email'] = $attendee->email();//( isset( $registration->ATT_email ) & ! empty( $registration->ATT_email ) ) ? $registration->ATT_email : '';
@@ -1435,7 +1435,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 
-			$this->_template_args['event_name'] = stripslashes( $this->_registration->event_obj()->name() );
+			$this->_template_args['event_name'] = $this->_registration->event_obj()->name();
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 
 	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
