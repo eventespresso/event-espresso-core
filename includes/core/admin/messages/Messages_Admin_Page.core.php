@@ -1228,7 +1228,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		if ( $success ) {
 			//first we need to delete the existing templates
-			$EEM = EEM_Message_Template::instance();
+			$EEM = EEM_Message_Template_Group::instance();
 
 			$success = isset( $this->_req_data['GRP_ID'] ) ? $EEM->delete_by_id( absint($this->_req_data['GRP_ID']) ) : FALSE;
 
