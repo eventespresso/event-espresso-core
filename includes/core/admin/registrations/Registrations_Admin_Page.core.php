@@ -1282,7 +1282,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_error( __('An error occured. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$success = TRUE;
-		global $wpdb;
 		// grab values for fname, lname, and email from qstns
 		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? array_shift( array_values( $qstns['fname'] )) : FALSE;
 		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? array_shift( array_values( $qstns['lname'] )) : FALSE;
@@ -1321,15 +1320,16 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					$attendee->set( 'ATT_city', $QST_city );
 					// is state a string or a foreign key ?
 					if ( ! is_numeric( $QST_state )) {
-						if ( $STA_ID = $wpdb->get_var( $wpdb-> prepare( 'SELECT STA_ID FROM ' . $wpdb->prefix . 'esp_state WHERE STA_name = %s', $QST_state ))) {
-							$QST_state = $STA_ID;
-						}
+						$state = EEM_State::instance()->get_one( array( array('STA_name' => $QST_state ) ) );
+						if ( !empty( $state ) )
+							$QST_state = $state->ID();
 					}
 					$attendee->set( 'STA_ID', $QST_state );
 					// is country a string or a foreign key ?
 					if ( ! is_numeric( $QST_country )) {
-						if ( $CNT_ISO = $wpdb->get_var( $wpdb-> prepare( 'SELECT CNT_ISO FROM ' . $wpdb->prefix . 'esp_country WHERE CNT_name = %s', $QST_country ))) {
-							$QST_country = $CNT_ISO;
+						$country = EEM_Country::instance()->get_one( array( array('CNT_name' => $QST_country ) ) );
+						if ( !empty( $country ) ) {
+							$QST_country = $country->ID();
 						}
 					}
 					$attendee->set( 'CNT_ISO', $QST_country );
@@ -1339,17 +1339,19 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					$attendee->save();
 				} else {
 					// no existing attendee exists so create a new one
-					$attendee = new EE_Attendee( 
-						$QST_fname,
-						$QST_lname,
-						$QST_email,
-						$QST_address,
-						$QST_address2,
-						$QST_city,
-						$QST_state,
-						$QST_country,
-						$QST_zip,
-						$QST_phone
+					$attendee = new EE_Attendee( array(
+						'ATT_full_name' => $QST_fname . ' ' . $QST_lname,
+						'ATT_fname' => $Qst_fname,
+						'ATT_lname' => $QST_lname,
+						'ATT_email' => $QST_email,
+						'ATT_address' => $QST_address,
+						'ATT_address2' => $QST_address2,
+						'ATT_city' => $QST_city,
+						'STA_ID' => $QST_state,
+						'CNT_ISO' => $QST_country,
+						'ATT_zip' => $QST_zip,
+						'ATT_phone' => $QST_phone
+						)
 					);
 					// save to db
 					$new_id = $attendee->save();
@@ -1375,15 +1377,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// loop thru questions... FINALLY!!!
 		foreach ( $qstns as $QST_ID => $qstn ) {
 			foreach ( $qstn as $ANS_ID => $ANS_value ) {
-				if ( ! $wpdb->update(
-					$wpdb->prefix . 'esp_answer',
-					array( 'ANS_value' => sanitize_text_field( $ANS_value )),
-					array( 'ANS_ID' => absint( $ANS_ID )),
-					array( '%s' ),
-					array( '%d' )
-				)) {
-					$success = FALSE;
-				}
+				//get answer 
+				$answer = EEM_Answer::instance()->get_one_by_ID($ANS_ID);
+				$answer->set('ANS_value');
+				$success = $answer->save();
 			}
 		}
 		return $success;
