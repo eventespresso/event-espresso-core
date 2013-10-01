@@ -329,7 +329,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		//let's insert the above and get our GRP_ID, then reset the template data array to just include the GRP_ID
 		$grp_id = $this->_EEM_data->insert( $main_template_data );
 		
-		$template_data = $results ? array( 'GRP_ID' => $grp_id ) : FALSE;
+		$template_data = $grp_id ? array( 'GRP_ID' => $grp_id ) : FALSE;
 
 		if ( ! $template_data ) return $grp_id;
 
