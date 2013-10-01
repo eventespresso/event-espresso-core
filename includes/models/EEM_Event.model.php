@@ -144,64 +144,6 @@ class EEM_Event  extends EEM_CPT_Base{
 		parent::__construct( $timezone );
 	}
 
-	
-	
-	
-
-	/**
-	*		retrieve all active Questions and Groups for an Event via the Event's ID
-	* 
-	* 		@access		public
-	* 		@param		array 		$question_meta		additional question details petaining to the form	
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-	public function get_event_questions_and_groups( $q_meta = array() ) {
-		
-		if ( ! isset( $q_meta['EVT_ID'] ) || ! absint( $q_meta['EVT_ID'] )) {
-			EE_Error::add_error( __( 'An error occured. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
-		}
-		
-		$QSGs = $QSTs = $QSOs = array();
-
-		$default_q_meta = array(
-				'att_nmbr' => 1,
-				'price_id' => '',
-				'date' => '',
-				'time' => '',
-				'input_name' => '',
-				'input_id' => '',
-				'input_class' => ''
-		);		
-		$q_meta = array_merge( $default_q_meta, $q_meta );
-
-		// set System Groups for the additional attendees
-		$system_ID = $q_meta['att_nmbr'] > 1 ? $q_meta['additional_attendee_reg_info'] : 0;
-		// get Question Groups		
-		$QSGs = $this->get_question_groups_for_event( $q_meta['EVT_ID'], $system_ID, $q_meta['att_nmbr'] );
-		if ( ! empty( $QSGs )) {
-			// csv list of QSG IDs
-			$QSG_IDs = array_keys( $QSGs );
-			// get Questions
-			$QSTs = $this->get_questions_in_groups( $QSG_IDs );
-			if ( ! empty( $QSTs )) {
-				// csv list of QST IDs
-				$QST_IDs = array_keys( $QSTs );
-				// get Question Options
-				$QSOs = $this->get_options_for_question( $QST_IDs );
-				// package it all up and send it off
-			}
-		}
-		
-//		printr( $QSGs, '$QSGs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $QSTs, '$QSTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $QSOs, '$QSOs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		return $this->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs, $q_meta );
-
-	}
-
-
 
 
 
