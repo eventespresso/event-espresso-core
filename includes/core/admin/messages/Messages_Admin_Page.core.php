@@ -2612,27 +2612,5 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['admin_page_content'] = "Feature coming soon man,  sit back, relax, and enjoy the fireworks.";
 		$this->display_admin_page_with_no_sidebar();
 	}
-
-
-
-
-
-	/**
-	 * [event_name description]
-	 * This just takes a given event_id and will output the name of the event for it.
-	 * @todo: temporary... will need to remove/replace once proper Event models/classes are in place.
-	 * @access protected
-	 * @param  int $evt_id event_id
-	 * @return string event_name 
-	 */
-	public function event_name($evt_id) {
-		global $wpdb;
-		$evt_id = absint($evt_id);
-		$tablename = $wpdb->prefix . 'events_detail';
-		$query = "SELECT event_name FROM {$tablename} WHERE id = %d";
-		$event_name = $wpdb->get_var( $wpdb->prepare($query, $evt_id) );
-		return $event_name;
-	}
-
 	
 }
