@@ -1858,13 +1858,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * [_delete_message_template]
-	 * NOTE: at this point only entire message template GROUPS can be deleted because it 
+	 * NOTE: this handles not only the deletion of the groups but also all the templates belonging to that group.
 	 * @return void
 	 */
 	protected function _delete_message_template() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
-			$MTP = EEM_Message_Template::instance();
 
 		$success = 1;
 
@@ -1875,20 +1873,43 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//cycle through bulk action checkboxes
 			while ( list( $GRP_ID, $value ) = each($this->_req_data['checkbox'] ) ) {
-				if ( ! $MTP->delete_by_id($GRP_ID) ) {
-					$success = 0;
-				}
+				$success = $this->_delete_mtp_permanently( $GRP_ID );
 			}
 		} else {
 			//grab single grp_id and delete
 			$GRP_ID = absint($this->_req_data['id'] );
-			if ( ! $MTP->delete_by_id($GRP_ID) ) {
-				$success = 0;
-			}
+			$success = $this->_delete_mtp_permanently( $GRP_ID );
 		}
 
 		$this->_redirect_after_action( $success, 'Message Templates', 'deleted', array() );
 
+	}
+
+
+
+
+	/**
+	 * helper for permanently deleting a mtP group and all related message_templates
+	 * @param  int    $GRP_ID The group being deleted
+	 * @return success        boolean to indicate the success of the deletes or not.
+	 */
+	private function _delete_mtp_permanently( $GRP_ID ) {
+		$success = 1;
+		$MTPG = EEM_Message_Template_Group::instance();
+		//first let's GET this group
+		$MTG = $MTPG->get_one_by_ID( $GRP_ID );
+		//then delete permanently all the related Message Tempaltes
+		$deleted = $MTG->delete_related_permanently( 'Message_Template' );
+
+		if ( $deleted === 0 )
+			$success = 0;
+
+		//now delete permanently this particular group
+		
+		if ( ! $MTG->delete_permanently() ) {
+			$success = 0;
+		}
+		return $success;
 	}
 
 
