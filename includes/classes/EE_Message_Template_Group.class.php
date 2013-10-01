@@ -289,7 +289,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	public function contexts_config() {
-		return $this->message_type_obj()->get_context();
+		return $this->message_type_obj()->get_contexts();
 	}
 
 
@@ -313,7 +313,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 */
 	public function context_templates() {
 		$mtps_arr = array();
-		$mtps = $this->get_many_related('EE_Message_Template');
+		$mtps = $this->get_many_related('Message_Template');
 
 		if ( empty( $mtps ) ) return array();
 
