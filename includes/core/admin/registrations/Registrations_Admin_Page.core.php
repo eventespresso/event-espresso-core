@@ -1458,7 +1458,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	public function _reg_registrant_side_meta_box() {
 		
 		/*@var $attendee EE_Attendee */
-		$attendee = $this->_registration->attendee() ? $this->_registration->attendee() : EE_Attendee::new_instance();
+		$attendee = $this->_registration->attendee() ? $this->_registration->attendee() : EEM_Attendee::instance()->create_default_object();
 		
 		$this->_template_args['ATT_ID'] = $attendee->ID();
 		$this->_template_args['fname'] = $attendee->fname();//$this->_registration->ATT_fname;
