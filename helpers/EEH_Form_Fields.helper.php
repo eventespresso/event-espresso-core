@@ -406,7 +406,6 @@ class EEH_Form_Fields {
 		$before_question_group_questions = apply_filters( 'FHEE_form_before_question_group_questions', '' );
 		$after_question_group_questions = apply_filters( 'FHEE_form_after_question_group_questions', '' );		
 
-			
 		if ( ! empty( $question_groups )) {
 			//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru question groups
@@ -425,13 +424,9 @@ class EEH_Form_Fields {
 					foreach ( $QSG['QSG_questions'] as $question ) {
 //						printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						$QFI = new EE_Question_Form_Input(
-							EE_Question::new_instance ( $question ),
-							EE_Answer::new_instance ( array( 
-								'ANS_ID'=> 0,
-								'QST_ID'=> 0,
-								'REG_ID'=> 0,
-								'ANS_value'=> ''
-							 ))
+							$question['qst_obj'],
+							$question['ans_obj'],
+							$question
 						);						
 						$html .= self::generate_form_input( $QFI );						
 					}
