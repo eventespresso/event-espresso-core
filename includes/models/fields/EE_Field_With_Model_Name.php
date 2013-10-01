@@ -31,4 +31,11 @@ abstract class EE_Field_With_Model_Name extends EE_Model_Field_Base{
 	function get_model_name_pointed_to(){
 		return $this->_model_name;
 	}
+	/**
+	 * Returns the model's classname (eg EE_Event instead of just Event)
+	 * @return string
+	 */
+	function get_model_class_name_pointed_to(){
+		return "EE_".$this->_model_name;
+	}
 }

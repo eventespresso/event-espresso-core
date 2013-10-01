@@ -55,7 +55,7 @@ class EEM_Venue extends EEM_CPT_Base {
 		);
 		$this->_fields = array(
 			'Venue_CPT'=>array(
-				'VNU_ID'=>new EE_Primary_Key_Int_Field('ID', __("Venue ID", "event_espresso"), false),
+				'VNU_ID'=>new EE_Primary_Key_Int_Field('ID', __("Venue ID", "event_espresso")),
 				'VNU_name'=>new EE_Plain_Text_Field('post_title', __("Venue Name", "event_espresso"), false, ''),
 				'VNU_desc'=>new EE_Simple_HTML_Field('post_content', __("Venue Description", "event_espresso"), true),
 				'VNU_identifier'=>new EE_Slug_Field('post_name', __("Venue Identifier", "event_espresso"), false,''),

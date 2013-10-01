@@ -31,19 +31,11 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.008';
+	return '4.1.009';
 }
 //Returns the template version
 function espresso_template_version() {
 	return '1.0';
-}
-
-// define versions
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
-	define("EVENT_ESPRESSO_VERSION", espresso_version());
-	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);	
-} else {
-	wp_die('Can not run multiple versions of Event Espresso.');
 }
 
 define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
@@ -91,6 +83,15 @@ define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' 
 //Get language files
 load_plugin_textdomain( 'event_espresso', FALSE, EVENT_ESPRESSO_PLUGINFULLPATH . '/languages/' );
 
+// define versions
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
+	define("EVENT_ESPRESSO_VERSION", espresso_version());
+	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);	
+} else {
+	wp_die( __( 'Can not run multiple versions of Event Espresso.', 'event_espresso' ));
+}
+
+
 // load Error handling and debugging tools
 if ( WP_DEBUG === TRUE ) {
 	require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
@@ -112,8 +113,6 @@ if ( ! isset( $_REQUEST['plugin'] )) {
 function espresso_plugin_activation() {
 	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 	EE_System::instance( TRUE );
-	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
-	EEH_Activation::plugin_activation();
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
 

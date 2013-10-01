@@ -227,5 +227,33 @@ class EEM_CPT_Base extends EEM_Base{
 		return $this->count(array(array('status'=>array('=','trash'))));
 	}
 
+	/**
+	 * Creates a child of EE_CPT_Base given a WP_Post or array of wpdb results which 
+	 * are a row from teh posts table. If we're missing any fields required for the model,
+	 * we just fetch the entire entry from the DB (ie, if you want to use this to save DB queries,
+	 * make sure you are attaching all the model's fields onto the post)
+	 * @param WP_Post|array $post
+	 * @return EE_CPT_Base
+	 */
+	public function instantiate_class_from_post_object($post){
+		$post = (array)$post;
+		$has_all_necessary_fields_for_table = true;
+		//check if the post has fields on the meta table already 
+		foreach($this->_get_other_tables() as $table_obj){
+			$fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
+			foreach($fields_for_that_table as $field_name => $field_obj){
+				if( ! isset($post[$field_obj->get_table_column()]) 
+					&& ! isset($post[$field_obj->get_qualified_column()])){
+					$has_all_necessary_fields_for_table = false;
+				}
+			}
+		}
+		//if we don't have all the fields we need, then just fetch the proper model from teh DB
+		if( ! $has_all_necessary_fields_for_table){
+			return $this->get_one_by_ID($post->ID);
+		}else{
+			return $this->instantiate_class_from_array_or_object($post);
+		}
+	}
 	
 }

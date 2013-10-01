@@ -94,6 +94,10 @@ final class EE_System {
 	private function __construct( $activation ) {
 
 		$this->_activation = $activation;
+		if ( $activation && ! current_user_can( 'activate_plugins' )) {
+			throw new EE_Error( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
+			wp_die();
+		}		
 		$this->_load_registry();
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
@@ -179,9 +183,9 @@ final class EE_System {
 			case EE_System::req_type_reactivation:
 				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
-				EEH_Activation::CPT_initialization();
 				EEH_Activation::initialize_db_and_folders();
 				EEH_Activation::initialize_db_content();
+				EEH_Activation::get_caffeinated_activation();				
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_upgrade:

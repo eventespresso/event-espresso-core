@@ -21,36 +21,24 @@
  *
  * ------------------------------------------------------------------------
  */
+if ( ! current_user_can( 'activate_plugins' )) {
+	wp_die( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
+}
 class EEH_Activation {
 
 
-
 	/**
-	 * 	plugin_activation
+	 * 	system_initialization
+	 * 	ensures the EE configuration settings are loaded with at least default options set
+	 * 	and that all critical EE pages have been generated with the appropriate shortcodes in place
 	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function plugin_activation() {
-		
-	    if ( ! current_user_can( 'activate_plugins' )) {
-			 return;
-		}
-	       
-//	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-//	    check_admin_referer( "activate-plugin_{$plugin}" );		
-
-		// don't need JS when we load the system files, so turn it off
-		add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-	
-		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
-			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
-			espresso_caffeinated_activation();
-		}
-		// grab notices and save to db for display after activation finishes
-		EE_Error::get_notices( FALSE, TRUE );
-
+	public static function system_initialization() {
+		add_action( 'init', array( 'EEH_Activation', 'verify_default_pages_exist' ));		
+		add_action( 'init', array( 'EEH_Activation', 'CPT_initialization' ));		
 	}
 	
 	/**
@@ -85,37 +73,7 @@ class EEH_Activation {
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
 	}
-	
 
-
-
-
-	/**
-	 * deactivate_event_espresso
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function deactivate_event_espresso() {
-		$active_plugins = array_flip( get_option( 'active_plugins' ));
-		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
-		update_option( 'active_plugins', array_flip( $active_plugins ));	
-	}
-
-
-	/**
-	 * 	system_initialization
-	 * 	ensures the EE configuration settings are loaded with at least default options set
-	 * 	and that all critical EE pages have been generated with the appropriate shortcodes in place
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function system_initialization() {
-		EEH_Activation::verify_default_pages_exist();
-	}
 
 
 	/**
@@ -134,6 +92,44 @@ class EEH_Activation {
 
 
 	/**
+	 * 	get_caffeinated_activation
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function get_caffeinated_activation() {
+	
+		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
+			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
+			espresso_caffeinated_activation();
+		}
+		// grab notices and save to db for display after activation finishes
+		EE_Error::get_notices( FALSE, TRUE );
+
+	}	
+
+
+
+
+	/**
+	 * deactivate_event_espresso
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function deactivate_event_espresso() {
+		$active_plugins = array_flip( get_option( 'active_plugins' ));
+		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
+		update_option( 'active_plugins', array_flip( $active_plugins ));	
+	}
+
+
+
+
+
+	/**
 	 * verify_default_pages_exist
 	 *
 	 * 	@access public
@@ -148,44 +144,44 @@ class EEH_Activation {
 			array( 
 				'id' =>'reg_page_id',
 				'name' => __( 'Registration Checkout', 'event_espresso' ),
-				'page' => NULL,
+				'post' => NULL,
 				'code' => 'ESPRESSO_CHECKOUT'
 			),
 			array( 
 				'id' => 'txn_page_id',
 				'name' => __( 'Transactions', 'event_espresso' ),
-				'page' => NULL,
+				'post' => NULL,
 				'code' => 'ESPRESSO_TXN_PAGE'
 			),
 			array( 
 				'id' => 'thank_you_page_id',
 				'name' => __( 'Thank You', 'event_espresso' ),
-				'page' => NULL,
+				'post' => NULL,
 				'code' => 'ESPRESSO_THANK_YOU'
 			),
 			array( 
 				'id' => 'cancel_page_id',
 				'name' => __( 'Registration Cancelled', 'event_espresso' ),
-				'page' => NULL,
+				'post' => NULL,
 				'code' => 'ESPRESSO_CANCELLED'
 			),
 		);
 
-		foreach ( $critical_pages as $critical ) {
+		foreach ( $critical_pages as $critical_page ) {
 			// is critical page ID set in config ?
-			if ( EE_Registry::instance()->CFG->core->$critical['id'] !== FALSE ) {
+			if ( EE_Registry::instance()->CFG->core->$critical_page['id'] !== FALSE ) {
 				// attempt to find post by ID
-				$critical['page'] = get_post( EE_Registry::instance()->CFG->core->$critical['id'] );
+				$critical_page['post'] = get_post( EE_Registry::instance()->CFG->core->$critical_page['id'] );
 			}
 			// no dice?
-			if ( $critical['page'] == NULL ) {
+			if ( $critical_page['post'] == NULL ) {
 				// attempt to find post by title
-				$critical['page'] = get_page_by_title( $critical['name'] );
+				$critical_page['post'] = get_page_by_title( $critical_page['name'] );
 				// still nothing?
-				if ( $critical['page'] == NULL ) {
-					$critical = EEH_Activation::create_critical_page( $critical );
+				if ( $critical_page['post'] == NULL ) {
+					$critical_page = EEH_Activation::create_critical_page( $critical_page );
 					// REALLY? Still nothing ??!?!?
-					if ( $critical['page'] == NULL ) {
+					if ( $critical_page['post'] == NULL ) {
 						$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 						EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 						break;				
@@ -193,20 +189,20 @@ class EEH_Activation {
 				}
 			}
 			// track post_shortcodes
-			if ( $critical['page'] ) {
-				EEH_Activation::_track_critical_page_post_shortcodes( $critical );
+			if ( $critical_page['post'] ) {
+				EEH_Activation::_track_critical_page_post_shortcodes( $critical_page );
 			}	
 			// check that Post ID matches critical page ID in config
-			if ( isset( $critical['page']->ID ) && $critical['page']->ID != EE_Registry::instance()->CFG->core->$critical['id'] ) {
+			if ( isset( $critical_page['post']->ID ) && $critical_page['post']->ID != EE_Registry::instance()->CFG->core->$critical_page['id'] ) {
 				//update Config with post ID
-				EE_Registry::instance()->CFG->core->$critical['id'] = $critical['page']->ID;
+				EE_Registry::instance()->CFG->core->$critical_page['id'] = $critical_page['post']->ID;
 				if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE ) ) {
 					$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}					
 			}
 			
-			$critical_page_problem =  ! isset( $critical['page']->post_status) || $critical['page']->post_status != 'publish' || strpos( $critical['page']->post_content, $critical['code'] ) === FALSE ? TRUE : $critical_page_problem;
+			$critical_page_problem =  ! isset( $critical_page['post']->post_status ) || $critical_page['post']->post_status != 'publish' || strpos( $critical_page['post']->post_content, $critical_page['code'] ) === FALSE ? TRUE : $critical_page_problem;
 
 		}
 						
@@ -232,35 +228,38 @@ class EEH_Activation {
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function create_critical_page( $page ) {
+	public static function create_critical_page( $critical_page ) {
+		
+		printr( $critical_page, '$critical_page  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		wp_die();
 
 		$post_args = array(
-			'post_title' => $page['name'],
+			'post_title' => $critical_page['name'],
 			'post_status' => 'publish',
 			'post_type' => 'page',
 			'comment_status' => 'closed',
-			'post_content' => '[' . $page['code'] . ']'
+			'post_content' => '[' . $critical_page['code'] . ']'
 		);
 		
 		$post_id = wp_insert_post( $post_args );
 		if ( ! $post_id ) {
 			$msg = sprintf(
 				__( 'The Event Espresso  critical page entitled "%s" could not be created.', 'event_espresso' ),
-				$page['name']
+				$critical_page['name']
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
-			return $page;
+			return $critical_page;
 		}
 		// get newly created post's details
-		if ( ! $page['page'] = get_post( $post_id )) {			
+		if ( ! $critical_page['post'] = get_post( $post_id )) {			
 			$msg = sprintf(
 				__( 'The Event Espresso critical page entitled "%s" could not be retreived.', 'event_espresso' ),
-				$page['name']
+				$critical_page['name']
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		
-		return $page;				
+		return $critical_page;				
 
 	}
 
@@ -275,26 +274,26 @@ class EEH_Activation {
 	 * 	@static
 	 * 	@return void
 	 */
-	private static function _track_critical_page_post_shortcodes( $page ) {
+	private static function _track_critical_page_post_shortcodes( $critical_page ) {
 		// check the goods
-		if ( ! $page['page'] instanceof WP_Post ) {
+		if ( ! $critical_page['post'] instanceof WP_Post ) {
 			$msg = sprintf(
 				__( 'The Event Espresso critical page shortcode for the page %s can not be tracked because it is not a WP_Post object.', 'event_espresso' ),
-				$page['name']
+				$critical_page['name']
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
 		// map shortcode to post
-		EE_Registry::instance()->CFG->core->post_shortcodes[ $page['page']->post_name ][ $page['code'] ] = $page['page']->ID;
+		EE_Registry::instance()->CFG->core->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
 		// and to frontpage in case it's displaying latest posts
 		$show_on_front = get_option('show_on_front');
-		EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $page['code'] ] = $page['page']->ID;
+		EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $critical_page['code'] ] = $critical_page['post']->ID;
 		// update post_shortcode CFG
 		if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE )) {
 			$msg = sprintf(
 				__( 'The Event Espresso critical page shortcode for the %s page could not be configured properly.', 'event_espresso' ),
-				$page['name']
+				$critical_page['name']
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}		

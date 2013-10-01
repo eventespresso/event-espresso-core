@@ -56,7 +56,7 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		);
 		$this->_fields = array(
 			'Question_Option'=>array(
-					'QSO_ID'=>new EE_Primary_Key_Int_Field('QSO_ID', __('Question Option ID','event_espresso'), false, 0),
+					'QSO_ID'=>new EE_Primary_Key_Int_Field('QSO_ID', __('Question Option ID','event_espresso')),
 					'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
 					'QSO_name'=>new EE_Simple_HTML_Field('QSO_name', __('Question Option Name','event_espresso'), false, ''),
 					'QSO_value'=>new EE_Simple_HTML_Field('QSO_value','Question Option Value',false,''),
