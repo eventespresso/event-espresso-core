@@ -1808,8 +1808,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _trash_or_restore_message_template($trash = TRUE, $all = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		require_once(EE_MODELS . 'EEM_Message_Template.model.php');
-			$MTP = EEM_Message_Template::instance();
+		$MTP = EEM_Message_Template_Group::instance();
 
 		$success = 1;
 
@@ -1823,7 +1822,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 				//cycle through checkboxes
 				while ( list( $GRP_ID, $value ) = each ($this->_req_data['checkbox']) ) {
-					$trashed_or_restored = $trash ? $MTP->trash_mtp_by_id( $GRP_ID ) : $MTP->restore_mtp_by_id( $GRP_ID );
+					$trashed_or_restored = $trash ? $MTP->delete_by_ID( $GRP_ID ) : $MTP->restore_by_ID( $GRP_ID );
 					if ( ! $trashed_or_restored ) {
 						$success = 0;
 					}
@@ -1831,7 +1830,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			} else {
 				//grab single GRP_ID and handle
 				$GRP_ID = absint($this->_req_data['id']);
-				$trashed_or_restored = $trash ? $MTP->trash_mtp_by_id( $GRP_ID ) : $MTP->restore_mtp_by_id( $GRP_ID );
+				$trashed_or_restored = $trash ? $MTP->delete_by_ID( $GRP_ID ) : $MTP->restore_by_ID( $GRP_ID );
 				if ( ! $trashed_or_restored ) {
 					$success = 0;
 				}
