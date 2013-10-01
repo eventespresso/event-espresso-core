@@ -137,10 +137,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-//		require_once( EE_CORE_ADMIN . 'total_count_queries.php' );
-//		$this->_views['all']['count'] = espresso_total_all_attendees();
-//		$this->_views['month']['count'] = espresso_total_attendees_this_month();
-//		$this->_views['today']['count'] = espresso_total_attendees_today();
+		$this->_views['all']['count'] = $this->_admin_page->get_registrations( -1, TRUE );
+		$this->_views['month']['count'] = $this->_admin_page->get_registrations( -1, TRUE, TRUE );
+		$this->_views['today']['count'] = $this->_admin_page->get_registrations( -1, TRUE, FALSE, TRUE );
 	}
 
 

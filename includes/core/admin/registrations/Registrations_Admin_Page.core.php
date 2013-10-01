@@ -583,7 +583,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @param  boolean $count   return the count or objects
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function get_registrations( $per_page = 10, $count = FALSE ) {
+	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
@@ -643,14 +643,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$time_start = ' 00:00:00';
 		$time_end = ' 23:59:59';
 		
-		if($today_a){
+		if($today_a || $today ){
 			$curdate = date('Y-m-d', current_time('timestamp'));
 			$_where['REG_date']= array('BETWEEN',
 				array(
 					strtotime($curdate . $time_start),
 					strtotime($curdate . $time_end)
 			));
-		}elseif($this_month_a){
+		}elseif($this_month_a || $this_month){
 			$this_month_r = date('m', current_time('timestamp'));
 			$days_this_month = date( 't', current_time('timestamp') );
 			$_where['REG_date']= array('BETWEEN',
