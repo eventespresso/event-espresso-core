@@ -1569,9 +1569,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['event_name'] = '' ;
 		// event name
 		if ( $this->_reg_event ) {
-			$this->_template_args['event_name'] = stripslashes(  $this->_reg_event->event_name );
-			$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$this->_reg_event->id ), EVENTS_ADMIN_URL );	
-			$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . stripslashes( $this->_reg_event->event_name ) . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+			$this->_template_args['event_name'] = $this->_reg_event->name();
+			$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$this->_reg_event->ID() ), EVENTS_ADMIN_URL );	
+			$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $this->_reg_event->name() . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
 			$this->_template_args['event_name'] .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 		}
 
@@ -1602,10 +1602,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( ! $EVT_ID ) {
 			return FALSE;
 		}
-		global $wpdb;
-		$SQL = 'SELECT * FROM ' . EVENTS_DETAIL_TABLE . ' ';
-		$SQL .= 'WHERE id = %d';
-		$this->_reg_event = $wpdb->get_row(  $wpdb->prepare( $SQL, $EVT_ID ));
+
+		$this->_reg_event = EEM_Event::instance()->get_one_by_ID($EVT_ID);
 		return TRUE;
 	}
 
