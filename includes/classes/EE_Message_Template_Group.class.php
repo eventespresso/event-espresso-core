@@ -206,7 +206,8 @@ class EE_Message_Template_Group extends EE_Base_Class {
 	 * @return int
 	 */
 	public function user() {
-		return $this->get('MTP_user_id');
+		$user_id = $this->get('MTP_user_id');
+		return empty( $user_id ) ? get_current_user_id() : $user_id;
 	}
 
 
