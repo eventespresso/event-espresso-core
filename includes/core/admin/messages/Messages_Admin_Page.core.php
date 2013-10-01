@@ -1430,7 +1430,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//no need to run this if the property is already set
 		if ( !empty($this->_shortcodes ) ) return;
 
-		$this->_set_message_template();
+		$this->_set_message_template_group();
 
 		//we need the messenger and message template to retrieve the valid shortcodes array.
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
@@ -1451,7 +1451,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @access protected
 	 * @return  void 
 	 */
-	protected function _set_message_template() {
+	protected function _set_message_template_group() {
 
 		if ( !empty( $this->_message_template_group ) )
 			return; //get out if this is already set.
