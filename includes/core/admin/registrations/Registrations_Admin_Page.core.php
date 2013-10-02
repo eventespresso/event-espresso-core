@@ -1661,7 +1661,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			return FALSE;
 		}
 
-		$this->_reg_event->datetimes = EE_Registry::instance()->load_model( 'Datetime' )->get_all_event_dates( $EVT_ID );
+		$datetimes = $this->_reg_event->get_many_related('Datetime');
+
+		//TODO finish when br3nt gets the ticket selector all worked out.
 
 		EE_Registry::instance()->load_class( 'Ticket_Prices', array(), FALSE, TRUE, TRUE );
 		$TKT_PRCs = new EE_Ticket_Prices( $EVT_ID );
@@ -1690,42 +1692,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	public function _reg_new_att_questions_meta_box( $post, $metabox = array( 'args' => array()) ) {
-		
-		global $wpdb;	
-		extract( $metabox['args'] );		
 
-		// event question groups
-		$SQL = 'SELECT QSG.*, EQG.EVT_ID FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
-		$SQL .= 'WHERE EQG.EVT_ID = %d AND QSG.QSG_deleted = 0 '; 
-		$SQL .= 'ORDER BY QSG.QSG_order'; 
-		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID ), 'OBJECT_K' );
-		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//printr( $QSGs, '$QSGs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$QSG_IDs = implode( array_keys( $QSGs ), ',' );
-		//echo '<h4>$QSG_IDs : ' . $QSG_IDs . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		extract( $metabox['args'] );
 
-		// attendee questions
-		$SQL = 'SELECT QST.*, QGQ.QSG_ID FROM ' . $wpdb->prefix . 'esp_question_group_question QGQ '; 
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question QST ON QGQ.QST_ID = QST.QST_ID '; 
-		$SQL .= 'WHERE QGQ.QSG_ID IN (' . $QSG_IDs . ') '; 
-		$SQL .= 'ORDER BY QST.QST_order'; 
-		$QSTs = $wpdb->get_results( $SQL, 'OBJECT_K' );
-		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//printr( $QSTs, '$QSTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		// csv list of QST IDs
-		$QST_IDs = implode( array_keys( $QSTs ), ',' );
-		// get Question Options
-		$QSOs = EEM_Event::instance()->get_options_for_question( $QST_IDs );
-		//printr( $QSOs, '$QSOs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//get question groups for event
+		$QSGs = EEM_Event::instance()->get_one_by_ID($EVT_ID)->get_many_related('Question_Group');		
 
 		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
 		add_filter( 'FHEE_form_after_question_group_questions', array( $this, 'form_after_question_group_new_reg' ), 10, 1 );	
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
 		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input_wrap_new_reg' ), 10, 1 );
 
-		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
+		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( array(), $QSGs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
