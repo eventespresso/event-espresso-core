@@ -137,22 +137,7 @@ class EEH_Debug_Tools{
 			update_option( 'espresso_plugin_activation_errors', $errors );
 		}	
 	}
-	
 
-	public static function dump_wp_query(){
-		global $wp_query;
-		d($wp_query);
-	}
-
-	public static function dump_wp(){
-		global $wp;
-		d($wp);
-	}
-
-	public static function dump_post(){
-		global $post;
-		d($post);
-	}
 
 	
 	
@@ -160,6 +145,31 @@ class EEH_Debug_Tools{
 	
 }
 
+
+
+if ( !function_exists( 'dump_wp_query' ) ) {
+	function dump_wp_query(){
+		global $wp_query;
+		d($wp_query);
+	}
+}
+
+if ( !function_exists( 'dump_wp' ) ) {
+	function dump_wp(){
+		global $wp;
+		d($wp);
+	}
+}
+
+if ( !function_exists( 'dump_post' ) ) {
+	function dump_post(){
+		global $post;
+		d($post);
+	}
+}
+
+
+	
 	
 
 /**
