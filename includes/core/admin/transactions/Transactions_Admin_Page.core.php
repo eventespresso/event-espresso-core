@@ -294,30 +294,16 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( is_object( $this->_transaction) )
 			return; //get out we've already set the object
 
-	    require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 
-	    $TXN_ID = ( ! empty( $_REQUEST['TXN_ID'] )) ? absint( $_REQUEST['TXN_ID'] ) : FALSE;
+	    $TXN_ID = ( ! empty( $this->_req_data['TXN_ID'] )) ? absint( $this->_req_data['TXN_ID'] ) : FALSE;
 
-	    if ( $transaction = $TXN->get_transaction_for_admin_page( $TXN_ID ) ) {
-	    	$this->_transaction = array_shift( $transaction ); 
-			$this->_session = maybe_unserialize( $this->_transaction ->TXN_session_data );
-			//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			if ( ! is_array( $this->_session )) {
-				//$this->_session = maybe_unserialize( base64_decode( $this->_session ));
-				$this->_session = EE_Ticket_Prices::unobfuscate( $this->_session );
-				//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			}			
-			
-			$this->_session = maybe_unserialize( $this->_session );
-			//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-	    	return;
-	    } else {
+	    //get transaction object
+	    $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
+	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
+	 	if ( empty( $transaction ) ) {
 	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-			$this->_transaction = NULL;
-			$this->_session = NULL;
 	    }
 	}
 
