@@ -76,7 +76,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->get_event_attendees( $this->_per_page, TRUE );
-		//$this->_views['trash']['count'] = $this->_admin_page->get_event_attendees( $this->_per_page, TRUE, TRUE );
 	}
 
 
@@ -106,7 +105,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_REG_att_checked_in
 	*/
 	function column_REG_att_checked_in(EE_Registration $item){		
-		if ( $item->att_checked_in() ) {
+		/*if ( $item->att_checked_in() ) {
 			$chk_out_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_out', 'id'=>$item->ID(), '_REG_ID'=>$item->reg_url_link(), 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
 			return '
 			<a class="attendee-check-in-lnk" href="'.$chk_out_url.'" title="' . __( 'Click here to toggle the Check In status of this attendee for this event', 'event_espresso' ) . '">
@@ -118,7 +117,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			<a class="attendee-check-in-lnk" href="'.$chk_in_url.'" title="' . __( 'Click here to toggle the Check In status of this attendee for this event', 'event_espresso' ) . '">
 				<img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-out-16x16.png" width="16" height="16" alt="' . __( 'Checked In Status', 'event_espresso' ) . '"/>
 			</a>';
-		}		
+		}/**/
+		//todo see https://events.codebasehq.com/projects/event-espresso/tickets/3715
+		return 'todo';		
 	}
 
 
@@ -128,7 +129,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_ATT_name(EE_Registration $item) {
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->attendee_ID() ), REG_ADMIN_URL );
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->attendee()->full_name() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
+		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>';
 		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 		return $name_link;
 	}
@@ -220,17 +221,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_TXN_total
 	*/
 	function column_TXN_total(EE_Registration $item){	
-		if ( $item->REG_count == 1 ) {
+		if ( $item->get('REG_count') == 1 ) {
 			return '<span class="reg-pad-rght">'. $item->transaction()->pretty_paid()  .'</span>';
 		} else {
 			return '<span class="reg-pad-rght"></span>';
 		}		
 	}
-
-
-
-
-// group-reg-16x16.png
 
 
 }
