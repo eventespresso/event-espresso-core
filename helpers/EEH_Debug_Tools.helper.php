@@ -2,39 +2,45 @@
 
 		
 		
-
-
+class EEH_Debug_Tools{
 	/**
-	 * 		@ print_r an array
-	 * 		@ access public
-	 * 		@ return void
+	 * 	instance of the EEH_Autoloader object
+	 *	@var 	$_instance
+	 * 	@access 	private
 	 */
-	function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
-		
-		if( ! $var_name ) {
-		
-			if ( is_object( $var )) {
-				$var_name = 'object';
-			} else if ( is_array( $var )) {
-				$var_name = 'array';
-			} else if ( is_numeric( $var )) {
-				$var_name = 'numeric';
-			} else {
-				$var_name = 'string';
-			}  
-			
+	private static $_instance = NULL;
+	
+	/**
+	 * float containing the start time for the timer
+	 */
+	private $_starttime;
+	/**
+	 * array containing all the timer'd times, which can be outputted via show_times()
+	 */
+	private $_times = array();
+	/**
+	 *	@singleton method used to instantiate class object
+	 *	@access public
+	 *	@return EEH_Debug_Tools
+	 */
+	public static function instance() {
+		// check if class object is instantiated, and instantiated properly
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EEH_Debug_Tools )) {
+			self::$_instance = new self();
 		}
-		$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
-		$var_name = ucwords( $var_name );
-		
-		echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
-		echo '<h3><b>' . $var_name . '</b></h3>';
-		echo print_r($var);
-		echo '</pre>';
-		
-		if( $die ) {
-			die();
+		return self::$_instance;
+	}
+	/**
+	 * 	class constructor
+	 *
+	 *  @access 	private
+	 *  @return 	void
+	 */
+	private function __construct() {	
+		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
+			add_action( 'shutdown', array($this,'espresso_printr_session') );
 		}
+		add_action( 'activated_plugin',array($this,'espresso_plugin_activation_errors') );
 	}
 
 
@@ -47,12 +53,9 @@
 	function espresso_printr_session() {
 		if ( function_exists( 'wp_get_current_user' ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX')) {	
 			printr( EE_Registry::instance()->SSN );
-			espresso_list_hooked_functions();
-			EE_System::instance()->show_times();
+			$this->espresso_list_hooked_functions();
+			$this->show_times();
 		}
-	}
-	if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
-		add_action( 'shutdown', 'espresso_printr_session' );
 	}
 
 
@@ -89,6 +92,33 @@
 		}
 		return;
 	}
+	
+	
+	/**
+	 *	
+	 */
+	public function start_timer(){
+		$mtime = microtime(); 
+		$mtime = explode(" ",$mtime); 
+		$mtime = $mtime[1] + $mtime[0]; 
+		$this->_starttime = $mtime; 
+	}
+	
+	public function stop_timer($string_to_display){
+		$mtime = microtime(); 
+		$mtime = explode(" ",$mtime); 
+		$mtime = $mtime[1] + $mtime[0]; 
+		$endtime = $mtime; 
+		$totaltime = ($endtime - $this->_starttime); 
+		$this->_times[] = $string_to_display.": $totaltime<br>";
+	 }
+	 public function show_times($output_now=true){
+		 if($output_now){
+			 echo implode("<br>",$this->_times);
+		 }else{
+			 return implode("<br>",$this->_times);
+		 }
+	 }
 
 
 
@@ -104,4 +134,39 @@
 			update_option( 'espresso_plugin_activation_errors', $errors );
 		}	
 	}
-	add_action( 'activated_plugin', 'espresso_plugin_activation_errors' );
+}
+
+	
+
+/**
+	 * 		@ print_r an array
+	 * 		@ access public
+	 * 		@ return void
+	 */
+function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
+
+	if( ! $var_name ) {
+
+		if ( is_object( $var )) {
+			$var_name = 'object';
+		} else if ( is_array( $var )) {
+			$var_name = 'array';
+		} else if ( is_numeric( $var )) {
+			$var_name = 'numeric';
+		} else {
+			$var_name = 'string';
+		}  
+
+	}
+	$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
+	$var_name = ucwords( $var_name );
+
+	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
+	echo '<h3><b>' . $var_name . '</b></h3>';
+	echo print_r($var);
+	echo '</pre>';
+
+	if( $die ) {
+		die();
+	}
+}

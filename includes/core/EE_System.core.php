@@ -380,40 +380,6 @@ final class EE_System {
 			
 		}
 	}
-
-
-	private $_starttime;
-	private $_times = array();
-	/**
-	 *	
-	 */
-	public function start_timer(){
-		$mtime = microtime(); 
-		$mtime = explode(" ",$mtime); 
-		$mtime = $mtime[1] + $mtime[0]; 
-		$this->_starttime = $mtime; 
-	}
-	
-	public function stop_timer($string_to_display){
-		$mtime = microtime(); 
-		$mtime = explode(" ",$mtime); 
-		$mtime = $mtime[1] + $mtime[0]; 
-		$endtime = $mtime; 
-		$totaltime = ($endtime - $this->_starttime); 
-		$this->_times[] = $string_to_display.": $totaltime<br>";
-	 }
-	 public function show_times($output_now=true){
-		 if($output_now){
-			 echo implode("<br>",$this->_times);
-		 }else{
-			 return implode("<br>",$this->_times);
-		 }
-	 }
-
-
-	
-
-
 }
 //EE_System::instance();
 
