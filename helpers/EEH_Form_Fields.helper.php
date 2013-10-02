@@ -1351,5 +1351,33 @@ class EEH_Form_Fields {
 
 
 
+	/**
+	 * generates the dropdown selector for event categories
+	 * typically used as a filter on list tables.
+	 * @param  integer $current_cat currently selected category
+	 * @return string               html for dropdown
+	 */
+	public static function generate_event_category_dropdown( $current_cat = -1 ) {
+		$categories = EEM_Term::instance()->get_all_ee_categories(TRUE);
+		$options = array( 
+			'0' => array(
+				'text' => __('All Categories', 'event_espresso'),
+				'id' => -1
+				)
+			);
+
+		//setup categories for dropdown
+		foreach ( $categories as $category ) {
+			$options[] = array(
+				'text' => $category->get('name'),
+				'id' => $category->ID()
+				);
+		}
+
+		return self::select_input( 'EVT_CAT', $options, $current_cat );
+	}
+
+
+
 
 }//end class EEH_Form_Fields 

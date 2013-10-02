@@ -388,25 +388,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return string html
 	 */
 	public function category_dropdown() {
-		$categories = EEM_Term::instance()->get_all_ee_categories(TRUE);
-		$options = array( 
-			'0' => array(
-				'text' => __('All Categories', 'event_espresso'),
-				'id' => -1
-				)
-			);
-
-		//setup categories for dropdown
-		foreach ( $categories as $category ) {
-			$options[] = array(
-				'text' => $category->get('name'),
-				'id' => $category->ID()
-				);
-		}
-
 		$cur_cat = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
 
-		return EEH_Form_Fields::select_input( 'EVT_CAT', $options, $cur_cat );
+		return EEH_Form_Fields::generate_event_category_dropdown( $cur_cat );
 	}
 
 
