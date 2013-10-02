@@ -95,10 +95,24 @@
 	<?php }
 	if ($show_maintenance_switch){?>
 	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
-		<?php echo EEH_Form_Fields::radio(__("Maintenance Mode Level", "event_espresso"), EE_Maintenance_Mode::instance()->level(), 
-				array(EE_Maintenance_Mode::level_0_not_in_maintenance=>  __("Not In Maintenance (normal)", "event_espresso"),
-			EE_Maintenance_Mode::level_1_frontend_only_maintenance=>  __("Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)", "event_espresso")), 
-				'maintenance_model_level'); ?>
+	<?php 
+		echo EEH_Form_Fields::radio(
+			__("Maintenance Mode Level", "event_espresso"), 
+			EE_Maintenance_Mode::instance()->level(), 
+			array(
+				EE_Question_Option::new_instance( array( 
+					'QSO_name' => EE_Maintenance_Mode::level_0_not_in_maintenance, 
+					'QSO_value' => __('Not In Maintenance (normal)', 'event_espresso')
+				)),
+				EE_Question_Option::new_instance( array( 
+					'QSO_name' => EE_Maintenance_Mode::level_1_frontend_only_maintenance, 
+					'QSO_value' => __('Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)', 'event_espresso')
+				))
+			), 
+			'maintenance_model_level',
+			'maintenance_model_level'
+		); 
+	?>
 		<p class='description'><?php _e("Frontend Maintenance might be handy if you want to debug something on the frontend of your website before allowing non-administrators to see.", "event_espresso");?></p>
 		<input type='submit' value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
 	</form>
