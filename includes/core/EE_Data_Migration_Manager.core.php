@@ -260,9 +260,11 @@ class EE_Data_Migration_Manager{
 	 * item is a string describing what was done
 	 */
 	public function migration_step(){
+		
 		//first: add all dms scripts to the autoloader
 		$this->get_all_data_migration_scripts_available();
 		$currently_executing_script = $this->get_last_ran_script();
+		
 		if( ! $currently_executing_script){
 			//Find the next script that needs to execute
 			$scripts = $this->check_for_applicable_data_migration_scripts();
@@ -270,9 +272,10 @@ class EE_Data_Migration_Manager{
 				//huh, no more scripts to run... apparently we're done!
 				//but dont forget to make sure intial data is there
 				$this->EE->load_helper('Activation');
-				EEH_Activation::initialize_db_content();
 				//we should be good to allow them to exit maintenance mode now
 				EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
+				EEH_Activation::initialize_db_content();
+				
 				return array(
 					'records_to_migrate'=>1,
 					'records_migrated'=>1,
@@ -311,12 +314,12 @@ class EE_Data_Migration_Manager{
 				//check if there are any more after this one. 
 				$scripts_remaining = $this->check_for_applicable_data_migration_scripts();
 				if( ! $scripts_remaining ){
-					//huh, no more scripts to run... apparently we're done!
+					//we should be good to allow them to exit maintenance mode now
+					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
+					////huh, no more scripts to run... apparently we're done!
 					//but dont forget to make sure intial data is there
 					$this->EE->load_helper('Activation');
 					EEH_Activation::initialize_db_content();
-					//we should be good to allow them to exit maintenance mode now
-					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 					$response_array['status'] = self::status_no_more_migration_scripts;
 				}
 				
@@ -424,4 +427,13 @@ class EE_Data_Migration_Manager{
 		}
 		return self::$_instance;
 	}	
+	
+	/**
+	 * Once we have an addon that works with EE4.1, we will actually want to fetch the PUE slugs
+	 * from each addon, and check if they need updating,
+	 * @return boolean
+	 */
+	public function addons_need_updating(){
+		return false;
+	}
 }

@@ -401,7 +401,9 @@ final class EE_Config {
 			return FALSE;
 		}
 		// load the module class file
+		EEH_Debug_Tools::instance()->start_timer();
 		require_once( $module_path . DS . $module_class . $module_ext );
+		EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class");
 		// verfiy that class exists
 		if ( ! class_exists( $module_class )) {
 			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );

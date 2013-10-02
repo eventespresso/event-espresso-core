@@ -106,6 +106,12 @@ final class EE_Registry {
 	*	@var 	array	
 	*/
 	public $main_file;
+	
+	/**
+	 *
+	 * @var type 
+	 */
+	public $addons;
 
 
 
@@ -441,7 +447,11 @@ final class EE_Registry {
 	final function __clone() {}
 	final static function __callStatic($a,$b) {}
 
-
+	public function addons(){
+		foreach($this->modules as $module){
+			
+		}
+	}
  
 }
 // End of file EE_Registry.core.php

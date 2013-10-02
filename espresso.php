@@ -95,6 +95,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 // load Error handling and debugging tools
 if ( WP_DEBUG === TRUE ) {
 	require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
+	EEH_Debug_Tools::instance();
 }
 
 if ( is_readable( EE_CORE . 'EE_Error.core.php' )) {

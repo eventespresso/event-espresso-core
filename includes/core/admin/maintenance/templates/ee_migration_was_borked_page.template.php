@@ -1,9 +1,5 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 ?>
 <h1><?php _e("Data Migration Error", "event_espresso");?></h1>
 <p class='error'><?php printf(__("Your last data migration had a %s FATAL ERROR, and CANNOT be continued%s.", "event_espresso"),"<b>","</b>");?></p>

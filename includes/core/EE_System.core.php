@@ -67,6 +67,11 @@ final class EE_System {
 	 */
 	private $_req_type;
 
+	/**
+	 * List of all addons which have registered themselves to work with EE core
+	 * @var EE_Addon[]
+	 */
+	protected $_addons;
 
 
 	/**
@@ -137,6 +142,8 @@ final class EE_System {
 	 * 	@return 		void
 	 */
 	public function plugins_loaded() {
+		//give addons a chance to register themselves
+		
 		// load maintenance mode and decide whether the door is open for business
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		$this->_detect_request_type();
@@ -373,15 +380,6 @@ final class EE_System {
 			
 		}
 	}
-
-
-
-
-
-
-	
-
-
 }
 //EE_System::instance();
 
