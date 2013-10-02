@@ -2187,7 +2187,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _toggle_attendee_check_in_status( $REG_att_checked_in = FALSE ) {
-		//todo we have to work out a ui for checking in an attendee.  When they check the box they'll have to check in for a specific datetime.  Then we need to update the check in table to record the checkin status.  So this means all of this is pretty much going to be rewritten.
+		//todo we have to work out a ui for checking in an attendee.  When they check the box they'll have to check in for a specific datetime.  Then we need to update the check in table to record the checkin status.  So this means all of this is pretty much going to be rewritten. (see https://events.codebasehq.com/projects/event-espresso/tickets/3715)
 
 
 		// bulk action check in toggle
@@ -2272,7 +2272,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$title = $ATT_ID ? $title . ' # ' . $ATT_ID : $title;
 
 		// get attendees
-		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 
 		if ( $ATT_ID ) {
@@ -2281,7 +2280,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$action = 'update_attendee';
 			
 		} else {
-			$attendee = EE_Attendee::new_instance();
+			$attendee = $ATT_MDL->create_default_object();
 			$action = 'insert_attendee';
 		}
 
@@ -2305,10 +2304,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'QST_input_name'=>'CNT_ISO',
 					'QST_system'=>'country'
 				));
-		//get list of all registrations for this attendee
-		require_once(EE_MODELS . 'EEM_Registration.model.php');
-		$REG_MDL = EEM_Registration::instance();		
-		if ( $this->_template_args['registrations'] = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID )) {
+		//get list of all registrations for this attendee	
+		if ( $this->_template_args['registrations'] = $ATT_MDL->get_many_related('Registraiton') ) {
 			$this->_template_path = REG_TEMPLATE_PATH . 'attendee_registrations_main_meta_box.template.php';
 			$meta_box_args['template_path'] = $this->_template_path;
 			$meta_box_args['template_args'] = $this->_template_args;
