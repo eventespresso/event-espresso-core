@@ -573,32 +573,33 @@ class EEH_Form_Fields {
 		$QST_options = $QFI->options(); 
 		$options = $QST_options ? self::prep_answer_options( $QST_options ) : array();
 		$system_ID = $QFI->get('QST_system');
+		$use_html_entities = $QFI->get_meta( 'htmlentities' );
 		
 		switch ( $QFI->get('QST_type') ){
 			
 			case 'TEXTAREA' :
-					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'DROPDOWN' :
-					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'SINGLE' :
-					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'MULTIPLE' :
-					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'DATE' :
-					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'TEXT' :
 			default:
-					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 		}
@@ -624,13 +625,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
+	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -669,13 +670,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
+	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// make sure $dimensions is an array
@@ -719,7 +720,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
+	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 				
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
@@ -727,7 +728,7 @@ class EEH_Form_Fields {
 		}
 
 		// prep the answer
-		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -820,13 +821,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST, $label_b4 = FALSE ) {
+	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE, $label_b4 = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -889,7 +890,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE, $QST ) {
+	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -962,13 +963,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
+	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -1031,9 +1032,9 @@ class EEH_Form_Fields {
 	 * @param string $answer
 	 * @return string 
 	 */
-	static function prep_answer( $answer, $htmlentities = TRUE ){
+	static function prep_answer( $answer, $use_html_entities = TRUE ){
 		$answer = trim( stripslashes( str_replace( '&#039;', "'", $answer )));
-		return $htmlentities ? htmlentities( $answer, ENT_QUOTES, 'UTF-8' ) : $answer;
+		return $use_html_entities ? htmlentities( $answer, ENT_QUOTES, 'UTF-8' ) : $answer;
 	}
 
 
