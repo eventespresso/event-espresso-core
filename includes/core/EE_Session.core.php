@@ -742,7 +742,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *   @return	 string
 	 */
 	public function wp_loaded() {
-		if ( EE_Registry::instance()->REQ->is_set( 'clear_session' )) {
+		if ( isset(  EE_Registry::instance()->REQ ) && EE_Registry::instance()->REQ->is_set( 'clear_session' )) {
 			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
 	}
