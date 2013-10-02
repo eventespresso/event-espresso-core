@@ -2446,7 +2446,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 				
 		$success = 1;
@@ -2456,7 +2455,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while ( list( $ATT_ID, $value ) = each( $this->_req_data['checkbox'] )) {
-				if ( ! $ATT_MDL->delete_by_ID( absint( $ATT_ID ))) {
+				if ( ! $ATT_MDL->delete_by_ID( $ATT_ID ) ) {
 					$success = 0;
 				}
 			}
