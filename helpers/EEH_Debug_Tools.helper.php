@@ -36,7 +36,10 @@ class EEH_Debug_Tools{
 	 *  @access 	private
 	 *  @return 	void
 	 */
-	private function __construct() {	
+	private function __construct() {
+		// load Kint PHP debugging library
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'kint' . DS . 'Kint.class.php' );
+		
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			add_action( 'shutdown', array($this,'espresso_printr_session') );
 		}
@@ -50,9 +53,9 @@ class EEH_Debug_Tools{
 	 *
 	 * 		@return void
 	 */
-	function espresso_printr_session() {
+	public function espresso_printr_session() {
 		if ( function_exists( 'wp_get_current_user' ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX')) {	
-			printr( EE_Registry::instance()->SSN );
+			Kint::dump( EE_Registry::instance()->SSN );
 			$this->espresso_list_hooked_functions();
 			$this->show_times();
 		}
@@ -67,7 +70,7 @@ class EEH_Debug_Tools{
 	 *
 	 * 		@return void
 	 */
-	function espresso_list_hooked_functions( $tag=FALSE ){
+	public function espresso_list_hooked_functions( $tag=FALSE ){
 		global $wp_filter;
 		echo '<br/><br/><br/><h3>Hooked Functions</h3>';
 		if ( $tag ) {
@@ -127,15 +130,46 @@ class EEH_Debug_Tools{
 	 *
 	 * 		@return void
 	 */
-	function espresso_plugin_activation_errors() {
+	public function espresso_plugin_activation_errors() {
 		if ( WP_DEBUG === TRUE ) {
 			$errors = ob_get_contents();
 			file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', $errors );
 			update_option( 'espresso_plugin_activation_errors', $errors );
 		}	
 	}
+
+
+	
+	
+	
+	
 }
 
+
+
+if ( !function_exists( 'dump_wp_query' ) ) {
+	function dump_wp_query(){
+		global $wp_query;
+		d($wp_query);
+	}
+}
+
+if ( !function_exists( 'dump_wp' ) ) {
+	function dump_wp(){
+		global $wp;
+		d($wp);
+	}
+}
+
+if ( !function_exists( 'dump_post' ) ) {
+	function dump_post(){
+		global $post;
+		d($post);
+	}
+}
+
+
+	
 	
 
 /**
