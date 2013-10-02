@@ -48,6 +48,7 @@
 		if ( function_exists( 'wp_get_current_user' ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX')) {	
 			printr( EE_Registry::instance()->SSN );
 			espresso_list_hooked_functions();
+			EE_System::instance()->show_times();
 		}
 	}
 	if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
