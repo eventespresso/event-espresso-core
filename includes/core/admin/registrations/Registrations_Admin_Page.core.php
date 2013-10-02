@@ -1759,6 +1759,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		string
 	 */
 	public function _save_new_registration() {	
+
+		//TODO needs to be completed after Brent gets the ticket selector stuff done.
 			
 		// grab event id
 		$EVT_ID = isset( $this->_req_data['tkt-slctr-event-id'] ) ? absint( $this->_req_data['tkt-slctr-event-id'] ) : FALSE;		
@@ -2082,7 +2084,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$attendees = array();
 		
 		require_once( REG_ADMIN . 'EE_Attendee_Contact_List_Table.class.php' );
-		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 		
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -2186,7 +2187,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _toggle_attendee_check_in_status( $REG_att_checked_in = FALSE ) {
-		
+		//todo we have to work out a ui for checking in an attendee.  When they check the box they'll have to check in for a specific datetime.  Then we need to update the check in table to record the checkin status.  So this means all of this is pretty much going to be rewritten.
+
+
 		// bulk action check in toggle
 		if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
 			
