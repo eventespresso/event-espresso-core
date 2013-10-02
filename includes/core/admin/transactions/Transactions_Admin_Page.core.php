@@ -183,16 +183,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _get_transaction_status_array() {
-	
-		global $wpdb;
-		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "transaction"';
-		$results = $wpdb->get_results( $SQL );
-
-		self::$_txn_status = array();
-		foreach ( $results as $status ) {
-			self::$_txn_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
-		}
-
+		self::$_txn_status = EEM_Transaction::instance()->status_array();
 	}
 
 
@@ -218,16 +209,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _get_payment_status_array() {
-	
-		global $wpdb;
-		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "payment" ORDER BY STS_code';
-		$results = $wpdb->get_results( $SQL );	
-
-		self::$_pay_status = array();
-		foreach ( $results as $status ) {
-			self::$_pay_status[ $status->STS_ID ] = __( $status->STS_code, 'event_espresso' );
-		}
-		//printr( self::$_pay_status, 'self::$_pay_status  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		self::$_pay_status = EEM_Payment::instance()->status_array();
 		$this->_template_args['payment_status'] = self::$_pay_status;
 			
 	}
