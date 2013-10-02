@@ -2401,7 +2401,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 	
 		$success = 1;
@@ -2421,7 +2420,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			// grab single id and delete
 			//@todo verifywe actually want to delete by 'id', not 'ATT_ID'. This was different between 4.0-BETA and 4.1-DEV
 			$ATT_ID = absint($this->_req_data['id']);
-			if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array(array('ATT_ID' => absint($ATT_ID))))) {
+			if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array(array('ATT_ID' => $ATT_ID)))) {
 				$success = 0;
 			}
 			
