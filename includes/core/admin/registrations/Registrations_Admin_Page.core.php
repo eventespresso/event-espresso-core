@@ -2343,7 +2343,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 		
 		//printr( $this->_req_data ); die();
