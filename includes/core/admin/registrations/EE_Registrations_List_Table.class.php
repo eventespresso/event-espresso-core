@@ -87,7 +87,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'REG_date' => __( 'Registration Date', 'event_espresso' ),
 				'event_name' => __( 'Event Title', 'event_espresso' ),
 	   	       	'DTT_EVT_start' => __( 'Event Date & Time', 'event_espresso' ),
-//	   	       	'DTT_reg_limit' => __( 'Reg Limit', 'event_espresso' ),
 				'REG_count' => __('Att #', 'event_espresso'),
 	           	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
 				'REG_code' => __( 'Registration Code', 'event_espresso' ),
@@ -209,11 +208,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		
 		// page=espresso_events&action=edit_event&EVT_ID=2&edit_event_nonce=cf3a7e5b62
 		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$item->event_ID() ), EVENTS_ADMIN_URL );
-		$event_name = stripslashes( html_entity_decode( $item->event_obj()->name(), ENT_QUOTES, 'UTF-8' ));
+		$event_name = $item->event_obj()->name();
 		$edit_event = '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $item->event_obj()->name() ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
 		
 		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-		$event_name = stripslashes( html_entity_decode( $item->event_obj()->name(), ENT_QUOTES, 'UTF-8' ));
 		$actions['event_filter'] = '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Filter this list to only show registrations for %s', 'event_espresso' ), $event_name ) .'">' .  __( 'Only Show Registrations For This Event', 'event_espresso' ) . '</a>';
 		
 		return sprintf('%1$s %2$s', $edit_event, $this->row_actions($actions) );		
@@ -236,24 +234,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$datetime_strings[] = $datetime->start_date_and_time('D M j, Y',' g:i a');
 		}
 		return implode("; ",$datetime_strings);
-//		return $item->date_obj()->start_date_and_time('D M j, Y',' g:i a');//date( 'D M j, Y  g:i a',	$item->DTT_EVT_start );
     }
 
 
-
-
-
-	/**
-	 * 		DTT_reg_limit
-	*/
-	function column_DTT_reg_limit(EE_Registration $item){ 
-	
-		if ( ! $item->date_obj() || ! is_int( $item->date_obj()->reg_limit() )) {
-			return  '<span class="big-text">&infin;</span>';
-		}else{
-			return $item->date_obj()->reg_limit();
-		}
-	}
 
 
 
@@ -263,7 +246,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	*/
    	function column_ATT_fname(EE_Registration $item){
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->attendee_ID() ), REG_ADMIN_URL );
-		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . ucwords( $item->attendee() ? $item->attendee()->full_name() : '') . '</a>';
+		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . $item->attendee() ? $item->attendee()->full_name() : '' . '</a>';
 		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 		return $link;
 	}
@@ -277,6 +260,17 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	*/
 	function column_REG_count(EE_Registration $item){
 		return  sprintf(__( '%1$s of %2$s', 'event_espresso' ), $item->count(), $item->group_size());
+	}
+
+
+
+	/**
+	 * REG code column
+	 * @param  EE_Registration $item registration object
+	 * @return string                column contents
+	 */
+	function column_REG_code( EE_Registration $item) {
+		return $item->get('REG_code');
 	}
 
 
@@ -428,7 +422,5 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			return $actions;
 				
 	}
-
-//UPDATE `wp_esp_registration` SET `REG_count`=2,`REG_group_size`=2 WHERE `REG_count` = 0
 
 }
