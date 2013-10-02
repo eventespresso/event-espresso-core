@@ -118,11 +118,15 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$filters = array();
 
 		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
-		require_once EE_CORE_ADMIN . 'admin_helper.php';
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
-		$filters[] = espresso_event_months_dropdown( isset($this->_req_data['month_range']) ? sanitize_key($this->_req_data['month_range']) : '' );
-		$filters[] = espresso_category_dropdown( isset($this->_req_data['category_id']) ? sanitize_key( $this->_req_data['category_id'] ) : '' );
+		$curstatus = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
+		$cur_date = isset( $this->_req_data['month_range'] ) ? sanitize_key($this->_req_data['month_range'] ) : '';
+		$cur_category = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
+
+		$filters[] = EEH_Form_Fields::generate_event_months_dropdown( $cur_date, $curstatus );
+		$filters[] = EEH_Form_Fields::generate_event_category_dropdown( $cur_category );
+		
 		$status = array();
 		$status[] = array( 'id' => 0, 'text' => __('Select Status', 'event_espresso') );
 		foreach ( $this->_status as $key => $value ) {
