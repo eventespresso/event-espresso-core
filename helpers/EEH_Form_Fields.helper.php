@@ -1262,6 +1262,93 @@ class EEH_Form_Fields {
 
 
 
+	/**
+	 * generates a month/year dropdown selector for all events matching the given criteria
+	 * Typically used for list table filter
+	 * @param  string $cur_data          any currently selected date can be entered here.
+	 * @param  string $status            "view" (i.e. all, today, month, draft)
+	 * @param  int    $evt_category      category event belongs to
+	 * @param  string $evt_active_status "upcoming", "expired", "active", or "inactive"
+	 * @return string                    html
+	 */
+	public static function generate_event_months_dropdown( $cur_date = '', $status = NULL, $evt_category = NULL, $evt_active_status = NULL ) {
+		//what we need to do is get all PRIMARY datetimes for all events to filter on. Note we need to include any other filters that are set!
+		
+		//determine what post_status our condition will have for the query.
+		switch ( $status ) {
+			case 'month' :
+			case 'today' :
+			case NULL :
+			case 'all' :
+				$where['Event.status'] = array( 'NOT IN', array('trash') );
+				break;
+
+			case 'draft' :
+				$where['Event.status'] = array( 'IN', array('draft', 'auto-draft') );
+
+			default :
+				$where['Event.status'] = $status;
+		}
+
+		//categories?
+
+
+		if ( !empty ( $category ) ) {
+			$where['Event.Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Event.Term_Taxonomy.term_id'] = $category;
+		}
+
+		//what about active status for the event?
+		if ( !empty( $evt_active_status ) ) {
+			switch ( $evt_active_status ) {
+				case 'upcoming' :
+					$where['Event.status'] = 'publish';
+					$where['DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
+					break;
+
+				case 'expired' :
+					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
+					break;
+
+				case 'active' :
+					$where['Event.status'] = 'publish';
+					$where['DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
+					$where['DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
+					break;
+
+				case 'inactive' :
+					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
+					break;
+			}
+		}
+
+
+		$where['DTT_is_primary'] = 1;
+
+		$DTTS = EE_Registry::instance()->load_model('Datetime')->get_dtt_months_and_years($where);
+
+		//let's setup vals for select input helper
+		$options = array(
+			0 => array(
+				'text' => __('Select a Month/Year', 'event_espresso'),
+				'id' => ""
+				)
+			);
+
+		foreach ( $DTTS as $DTT ) {
+			$date = $DTT->dtt_month . ' ' . $DTT->dtt_year;
+			$options[] = array(
+				'text' => $date,
+				'id' => $date
+				);
+		}
+
+
+		return self::select_input( 'month_range', $options, $cur_date, '', 'wide' );
+	}
+
 
 
 
