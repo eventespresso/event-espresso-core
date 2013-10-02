@@ -316,33 +316,45 @@ class EEM_Event  extends EEM_CPT_Base{
 	* 
 	* 		@access		public
 	* 		@param      EE_Answer[]             $ANS 		array of answers
+	* 		@param 		EE_Question_Group[] 	$QSGs 		array of question group objects
 	*		@return 	array
 	*/	
-	public function assemble_array_of_groups_questions_and_options( $ANS = array() ) {		
+	public function assemble_array_of_groups_questions_and_options( $ANS = array(), $QSGs = array() ) {		
 
-		if ( empty( $ANS ) ) {
+		if ( empty( $ANS ) && empty( $QSGs ) ) {
 			EE_Error::add_error( __( 'An error occured. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
+		$QSTs = $questions = array();
+
 		//let's make sure we have questions ans question groups setup correctly.
-		$QSTs = $QSGs = array();
-		foreach ( $ANS as $answer ) {
-			$question = $answer->get_first_related('Question');
-			$qs_id = $question->ID();
-			if ( !isset( $QSTs[$qs_id] ) ) {
-				$QSTs[$qs_id]['obj'] = $question;
-				$QSTs[$qs_id]['ans_obj'] = $answer;
-			}
+		if ( !empty( $ANS ) ) {
+			foreach ( $ANS as $answer ) {
+				$question = $answer->get_first_related('Question');
+				$qs_id = $question->ID();
+				if ( !isset( $QSTs[$qs_id] ) ) {
+					$QSTs[$qs_id]['obj'] = $question;
+					$QSTs[$qs_id]['ans_obj'] = $answer;
+				}
 
-			$question_group = $question->get_first_related('Question_Group');
-			$qsg_id = $question_group->ID();
-			if ( !isset( $QSGs[$qsg_id] ) ) {
-				$QSGs[$qsg_id] = $question_group;
+				$question_group = $question->get_first_related('Question_Group');
+				$qsg_id = $question_group->ID();
+				if ( !isset( $QSGs[$qsg_id] ) ) {
+					$QSGs[$qsg_id] = $question_group;
+				}
+			} 
+		} else {
+			//starting from question groups not answers
+			foreach ( $QSGs as $question_group ) {
+				$questions = $question_group->get_many_related('Question');
+				foreach ( $questions as $question ) {
+					$QSTs[$question->ID()]['obj'] = $question;
+					$QSTs[$question->ID()]['ans_obj'] = EEM_Answer::instance()->create_default_object();
+				}
 			}
-		} 
+		}
 
-		$questions = array();
 		// now interlace everything into one big array where quetions groups have questions and questions have options
 		
 		if ( is_array( $QSGs )) {
