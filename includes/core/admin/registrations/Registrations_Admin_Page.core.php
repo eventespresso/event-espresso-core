@@ -1282,7 +1282,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_error( __('An error occured. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$success = TRUE;
-		global $wpdb;
 		// grab values for fname, lname, and email from qstns
 		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? array_shift( array_values( $qstns['fname'] )) : FALSE;
 		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? array_shift( array_values( $qstns['lname'] )) : FALSE;
@@ -1321,15 +1320,16 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					$attendee->set( 'ATT_city', $QST_city );
 					// is state a string or a foreign key ?
 					if ( ! is_numeric( $QST_state )) {
-						if ( $STA_ID = $wpdb->get_var( $wpdb-> prepare( 'SELECT STA_ID FROM ' . $wpdb->prefix . 'esp_state WHERE STA_name = %s', $QST_state ))) {
-							$QST_state = $STA_ID;
-						}
+						$state = EEM_State::instance()->get_one( array( array('STA_name' => $QST_state ) ) );
+						if ( !empty( $state ) )
+							$QST_state = $state->ID();
 					}
 					$attendee->set( 'STA_ID', $QST_state );
 					// is country a string or a foreign key ?
 					if ( ! is_numeric( $QST_country )) {
-						if ( $CNT_ISO = $wpdb->get_var( $wpdb-> prepare( 'SELECT CNT_ISO FROM ' . $wpdb->prefix . 'esp_country WHERE CNT_name = %s', $QST_country ))) {
-							$QST_country = $CNT_ISO;
+						$country = EEM_Country::instance()->get_one( array( array('CNT_name' => $QST_country ) ) );
+						if ( !empty( $country ) ) {
+							$QST_country = $country->ID();
 						}
 					}
 					$attendee->set( 'CNT_ISO', $QST_country );
@@ -1339,17 +1339,19 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					$attendee->save();
 				} else {
 					// no existing attendee exists so create a new one
-					$attendee = new EE_Attendee( 
-						$QST_fname,
-						$QST_lname,
-						$QST_email,
-						$QST_address,
-						$QST_address2,
-						$QST_city,
-						$QST_state,
-						$QST_country,
-						$QST_zip,
-						$QST_phone
+					$attendee = new EE_Attendee( array(
+						'ATT_full_name' => $QST_fname . ' ' . $QST_lname,
+						'ATT_fname' => $Qst_fname,
+						'ATT_lname' => $QST_lname,
+						'ATT_email' => $QST_email,
+						'ATT_address' => $QST_address,
+						'ATT_address2' => $QST_address2,
+						'ATT_city' => $QST_city,
+						'STA_ID' => $QST_state,
+						'CNT_ISO' => $QST_country,
+						'ATT_zip' => $QST_zip,
+						'ATT_phone' => $QST_phone
+						)
 					);
 					// save to db
 					$new_id = $attendee->save();
@@ -1375,15 +1377,10 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// loop thru questions... FINALLY!!!
 		foreach ( $qstns as $QST_ID => $qstn ) {
 			foreach ( $qstn as $ANS_ID => $ANS_value ) {
-				if ( ! $wpdb->update(
-					$wpdb->prefix . 'esp_answer',
-					array( 'ANS_value' => sanitize_text_field( $ANS_value )),
-					array( 'ANS_ID' => absint( $ANS_ID )),
-					array( '%s' ),
-					array( '%d' )
-				)) {
-					$success = FALSE;
-				}
+				//get answer 
+				$answer = EEM_Answer::instance()->get_one_by_ID($ANS_ID);
+				$answer->set('ANS_value');
+				$success = $answer->save();
 			}
 		}
 		return $success;
@@ -1410,7 +1407,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'TXN_ID'=>$this->_registration->transaction_ID(),
 				'REG_ID'=>array('!=',$this->_registration->ID())
 			),
-			'force_join'=>array('Attendee')));//get_registrations_for_transaction( $this->_registration->transaction_ID(), $this->_registration->ID() );
+			'force_join'=>array('Attendee')));
 
 		$this->_template_args['attendees'] = array();
 		$this->_template_args['attendee_notice'] = '';
@@ -1423,7 +1420,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$att_nmbr = 1;
 			foreach ( $registrations as $registration ) {
 				/* @var $registration EE_Registration */
-				$attendee = $registration->attendee() ? $registration->attendee() : EE_Attendee::new_instance();
+				$attendee = $registration->attendee() ? $registration->attendee() : EEM_Attendee::instance()->create_default_object();
 				$this->_template_args['attendees'][ $att_nmbr ]['fname'] = $attendee->fname();//( isset( $registration->ATT_fname ) & ! empty( $registration->ATT_fname ) ) ? $registration->ATT_fname : '';
 				$this->_template_args['attendees'][ $att_nmbr ]['lname'] = $attendee->lname();//( isset( $registration->ATT_lname ) & ! empty( $registration->ATT_lname ) ) ? $registration->ATT_lname : '';
 				$this->_template_args['attendees'][ $att_nmbr ]['email'] = $attendee->email();//( isset( $registration->ATT_email ) & ! empty( $registration->ATT_email ) ) ? $registration->ATT_email : '';
@@ -1438,7 +1435,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
 
-			$this->_template_args['event_name'] = stripslashes( $this->_registration->event_obj()->name() );
+			$this->_template_args['event_name'] = $this->_registration->event_obj()->name();
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 
 	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
@@ -1461,7 +1458,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	public function _reg_registrant_side_meta_box() {
 		
 		/*@var $attendee EE_Attendee */
-		$attendee = $this->_registration->attendee() ? $this->_registration->attendee() : EE_Attendee::new_instance();
+		$attendee = $this->_registration->attendee() ? $this->_registration->attendee() : EEM_Attendee::instance()->create_default_object();
 		
 		$this->_template_args['ATT_ID'] = $attendee->ID();
 		$this->_template_args['fname'] = $attendee->fname();//$this->_registration->ATT_fname;
@@ -1572,9 +1569,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['event_name'] = '' ;
 		// event name
 		if ( $this->_reg_event ) {
-			$this->_template_args['event_name'] = stripslashes(  $this->_reg_event->event_name );
-			$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$this->_reg_event->id ), EVENTS_ADMIN_URL );	
-			$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . stripslashes( $this->_reg_event->event_name ) . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+			$this->_template_args['event_name'] = $this->_reg_event->name();
+			$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$this->_reg_event->ID() ), EVENTS_ADMIN_URL );	
+			$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $this->_reg_event->name() . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
 			$this->_template_args['event_name'] .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 		}
 
@@ -1605,10 +1602,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if ( ! $EVT_ID ) {
 			return FALSE;
 		}
-		global $wpdb;
-		$SQL = 'SELECT * FROM ' . EVENTS_DETAIL_TABLE . ' ';
-		$SQL .= 'WHERE id = %d';
-		$this->_reg_event = $wpdb->get_row(  $wpdb->prepare( $SQL, $EVT_ID ));
+
+		$this->_reg_event = EEM_Event::instance()->get_one_by_ID($EVT_ID);
 		return TRUE;
 	}
 
@@ -1666,7 +1661,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			return FALSE;
 		}
 
-		$this->_reg_event->datetimes = EE_Registry::instance()->load_model( 'Datetime' )->get_all_event_dates( $EVT_ID );
+		$datetimes = $this->_reg_event->get_many_related('Datetime');
+
+		//TODO finish when br3nt gets the ticket selector all worked out.
 
 		EE_Registry::instance()->load_class( 'Ticket_Prices', array(), FALSE, TRUE, TRUE );
 		$TKT_PRCs = new EE_Ticket_Prices( $EVT_ID );
@@ -1695,42 +1692,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	public function _reg_new_att_questions_meta_box( $post, $metabox = array( 'args' => array()) ) {
-		
-		global $wpdb;	
-		extract( $metabox['args'] );		
 
-		// event question groups
-		$SQL = 'SELECT QSG.*, EQG.EVT_ID FROM ' . $wpdb->prefix . 'esp_event_question_group EQG '; 
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question_group QSG ON  EQG.QSG_ID = QSG.QSG_ID ';
-		$SQL .= 'WHERE EQG.EVT_ID = %d AND QSG.QSG_deleted = 0 '; 
-		$SQL .= 'ORDER BY QSG.QSG_order'; 
-		$QSGs = $wpdb->get_results( $wpdb->prepare( $SQL, $EVT_ID ), 'OBJECT_K' );
-		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//printr( $QSGs, '$QSGs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$QSG_IDs = implode( array_keys( $QSGs ), ',' );
-		//echo '<h4>$QSG_IDs : ' . $QSG_IDs . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		extract( $metabox['args'] );
 
-		// attendee questions
-		$SQL = 'SELECT QST.*, QGQ.QSG_ID FROM ' . $wpdb->prefix . 'esp_question_group_question QGQ '; 
-		$SQL .= 'INNER JOIN ' . $wpdb->prefix . 'esp_question QST ON QGQ.QST_ID = QST.QST_ID '; 
-		$SQL .= 'WHERE QGQ.QSG_ID IN (' . $QSG_IDs . ') '; 
-		$SQL .= 'ORDER BY QST.QST_order'; 
-		$QSTs = $wpdb->get_results( $SQL, 'OBJECT_K' );
-		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//printr( $QSTs, '$QSTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		// csv list of QST IDs
-		$QST_IDs = implode( array_keys( $QSTs ), ',' );
-		// get Question Options
-		$QSOs = EEM_Event::instance()->get_options_for_question( $QST_IDs );
-		//printr( $QSOs, '$QSOs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//get question groups for event
+		$QSGs = EEM_Event::instance()->get_one_by_ID($EVT_ID)->get_many_related('Question_Group');		
 
 		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
 		add_filter( 'FHEE_form_after_question_group_questions', array( $this, 'form_after_question_group_new_reg' ), 10, 1 );	
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
 		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input_wrap_new_reg' ), 10, 1 );
 
-		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $QSGs, $QSTs, $QSOs );
+		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( array(), $QSGs );
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
@@ -1786,6 +1759,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		string
 	 */
 	public function _save_new_registration() {	
+
+		//TODO needs to be completed after Brent gets the ticket selector stuff done.
 			
 		// grab event id
 		$EVT_ID = isset( $this->_req_data['tkt-slctr-event-id'] ) ? absint( $this->_req_data['tkt-slctr-event-id'] ) : FALSE;		
@@ -2109,7 +2084,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$attendees = array();
 		
 		require_once( REG_ADMIN . 'EE_Attendee_Contact_List_Table.class.php' );
-		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		$ATT_MDL = EEM_Attendee::instance();
 		
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -2213,7 +2187,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _toggle_attendee_check_in_status( $REG_att_checked_in = FALSE ) {
-		
+		//todo we have to work out a ui for checking in an attendee.  When they check the box they'll have to check in for a specific datetime.  Then we need to update the check in table to record the checkin status.  So this means all of this is pretty much going to be rewritten.
+
+
 		// bulk action check in toggle
 		if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
 			
