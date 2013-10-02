@@ -230,9 +230,6 @@ class EEH_Activation {
 	 */
 	public static function create_critical_page( $critical_page ) {
 		
-		printr( $critical_page, '$critical_page  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		wp_die();
-
 		$post_args = array(
 			'post_title' => $critical_page['name'],
 			'post_status' => 'publish',
