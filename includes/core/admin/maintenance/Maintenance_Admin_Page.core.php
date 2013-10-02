@@ -105,6 +105,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				$show_backup_db_text = false;
 				$show_migration_progress = false;
 				$script_names = array();
+				$addons_should_be_upgraded_first = false;
 				break;
 			case EE_Maintenance_Mode::level_2_complete_maintenance:
 				$show_maintenance_switch = false;
@@ -115,6 +116,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					$show_backup_db_text = true;
 				}
 				$scripts_needing_to_run = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
+				$addons_should_be_upgraded_first = EE_Data_Migration_Manager::instance()->addons_need_updating();
 				$script_names = array();
 				foreach($scripts_needing_to_run as $script){
 					if($script instanceof EE_Data_Migration_Script_Base)
@@ -124,32 +126,27 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				break;
 		}
 		$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
+		
 		if($most_recent_migration && 
 				$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
-				$most_recent_migration->can_continue()){
-			$show_backup_db_text = false;
-			$show_continue_current_migration_script = true;
-			$show_most_recent_migration = true;
-			$last_migration_was_borked = false;
-		}elseif($most_recent_migration && 
-				$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
 				$most_recent_migration->is_borked()){
-			$show_most_recent_migration = true;
-			$show_backup_db_text = false;
-			$show_migration_progress = false;
-			$last_migration_was_borked = true;
-		}elseif(isset($this->_req_data['continue_migration'])){
-			$show_most_recent_migration = true;
-			$show_continue_current_migration_script = false;
-			$last_migration_was_borked = false;
-		}else{
-			$show_most_recent_migration = false;
-			$show_continue_current_migration_script = false;
-			$last_migration_was_borked = false;
-		}
-		if($last_migration_was_borked ){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
+		}elseif($addons_should_be_upgraded_first){
+			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';
 		}else{
+			if($most_recent_migration && 
+					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
+					$most_recent_migration->can_continue()){
+				$show_backup_db_text = false;
+				$show_continue_current_migration_script = true;
+				$show_most_recent_migration = true;
+			}elseif(isset($this->_req_data['continue_migration'])){
+				$show_most_recent_migration = true;
+				$show_continue_current_migration_script = false;
+			}else{
+				$show_most_recent_migration = false;
+				$show_continue_current_migration_script = false;
+			}
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
 			$this->_template_args = array_merge($this->_template_args,array(
 			'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
@@ -173,16 +170,30 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
+	/**
+	 * returns JSON and executes anotehr step of teh currently-executing data migration (called via ajax)
+	 */
 	public function migration_step(){
 		$this->_template_args['data'] = EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
 		$this->_return_json();
 	}
+	/**
+	 * changes teh maintenane level, provided there are still no migration scripts that shoudl run
+	 */
 	public function _change_maintenance_level(){
 		$new_level = intval($this->_req_data['maintenance_model_level']);
-		EE_Maintenance_Mode::instance()->set_maintenance_level($new_level);
-		$this->_redirect_after_action(true, 'Maintenance Mode', __("Updated", "event_espresso"));
+		if( ! EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()){
+			EE_Maintenance_Mode::instance()->set_maintenance_level($new_level);
+			$success = true;
+		}else{
+			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			$success= false;
+		}
+		$this->_redirect_after_action($success, 'Maintenance Mode', __("Updated", "event_espresso"));
 	}
-	
+	/**
+	 * shows the big ol' system status page
+	 */
 	public function _system_status(){
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
 		$this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
