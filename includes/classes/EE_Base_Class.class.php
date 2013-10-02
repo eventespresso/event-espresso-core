@@ -1092,6 +1092,23 @@ class EE_Base_Class{
 
 
 
+
+	/**
+	 * This simply returns an array of model fields for this object
+	 * @return array 
+	 */
+	public function model_field_array() {
+		$fields = $this->get_model()->field_settings(FALSE);
+		$properties = array();
+		//remove prepended underscore
+		foreach ( $fields as $field_name => $settings ) {
+			$properties[$field_name] = $this->get($field_name);
+		}
+		return $properties;
+	}
+
+
+
 	
 	/**
 	 * Very handy general function to allow for plugins to extend any child of EE_Base_Class.

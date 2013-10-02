@@ -406,7 +406,6 @@ class EEH_Form_Fields {
 		$before_question_group_questions = apply_filters( 'FHEE_form_before_question_group_questions', '' );
 		$after_question_group_questions = apply_filters( 'FHEE_form_after_question_group_questions', '' );		
 
-			
 		if ( ! empty( $question_groups )) {
 			//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru question groups
@@ -425,13 +424,9 @@ class EEH_Form_Fields {
 					foreach ( $QSG['QSG_questions'] as $question ) {
 //						printr( $question, '$question  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						$QFI = new EE_Question_Form_Input(
-							EE_Question::new_instance ( $question ),
-							EE_Answer::new_instance ( array( 
-								'ANS_ID'=> 0,
-								'QST_ID'=> 0,
-								'REG_ID'=> 0,
-								'ANS_value'=> ''
-							 ))
+							$question['qst_obj'],
+							$question['ans_obj'],
+							$question
 						);						
 						$html .= self::generate_form_input( $QFI );						
 					}
@@ -578,32 +573,33 @@ class EEH_Form_Fields {
 		$QST_options = $QFI->options(); 
 		$options = $QST_options ? self::prep_answer_options( $QST_options ) : array();
 		$system_ID = $QFI->get('QST_system');
+		$use_html_entities = $QFI->get_meta( 'htmlentities' );
 		
 		switch ( $QFI->get('QST_type') ){
 			
 			case 'TEXTAREA' :
-					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'DROPDOWN' :
-					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'SINGLE' :
-					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'MULTIPLE' :
-					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'DATE' :
-					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'TEXT' :
 			default:
-					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $QFI );
+					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 		}
@@ -629,13 +625,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
+	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -674,13 +670,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
+	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// make sure $dimensions is an array
@@ -724,7 +720,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
+	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 				
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
@@ -732,7 +728,7 @@ class EEH_Form_Fields {
 		}
 
 		// prep the answer
-		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -825,13 +821,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST, $label_b4 = FALSE ) {
+	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE, $label_b4 = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -894,7 +890,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE, $QST ) {
+	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -967,13 +963,13 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $QST ) {
+	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $QST->get_meta('htmlentities') );
+		$answer = is_array( $answer ) ? '' : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -1036,9 +1032,9 @@ class EEH_Form_Fields {
 	 * @param string $answer
 	 * @return string 
 	 */
-	static function prep_answer( $answer, $htmlentities = TRUE ){
+	static function prep_answer( $answer, $use_html_entities = TRUE ){
 		$answer = trim( stripslashes( str_replace( '&#039;', "'", $answer )));
-		return $htmlentities ? htmlentities( $answer, ENT_QUOTES, 'UTF-8' ) : $answer;
+		return $use_html_entities ? htmlentities( $answer, ENT_QUOTES, 'UTF-8' ) : $answer;
 	}
 
 
@@ -1266,6 +1262,121 @@ class EEH_Form_Fields {
 
 
 
+
+	/**
+	 * generates a month/year dropdown selector for all events matching the given criteria
+	 * Typically used for list table filter
+	 * @param  string $cur_data          any currently selected date can be entered here.
+	 * @param  string $status            "view" (i.e. all, today, month, draft)
+	 * @param  int    $evt_category      category event belongs to
+	 * @param  string $evt_active_status "upcoming", "expired", "active", or "inactive"
+	 * @return string                    html
+	 */
+	public static function generate_event_months_dropdown( $cur_date = '', $status = NULL, $evt_category = NULL, $evt_active_status = NULL ) {
+		//what we need to do is get all PRIMARY datetimes for all events to filter on. Note we need to include any other filters that are set!
+		
+		//determine what post_status our condition will have for the query.
+		switch ( $status ) {
+			case 'month' :
+			case 'today' :
+			case NULL :
+			case 'all' :
+				$where['Event.status'] = array( 'NOT IN', array('trash') );
+				break;
+
+			case 'draft' :
+				$where['Event.status'] = array( 'IN', array('draft', 'auto-draft') );
+
+			default :
+				$where['Event.status'] = $status;
+		}
+
+		//categories?
+
+
+		if ( !empty ( $category ) ) {
+			$where['Event.Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Event.Term_Taxonomy.term_id'] = $category;
+		}
+
+		//what about active status for the event?
+		if ( !empty( $evt_active_status ) ) {
+			switch ( $evt_active_status ) {
+				case 'upcoming' :
+					$where['Event.status'] = 'publish';
+					$where['DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
+					break;
+
+				case 'expired' :
+					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
+					break;
+
+				case 'active' :
+					$where['Event.status'] = 'publish';
+					$where['DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
+					$where['DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
+					break;
+
+				case 'inactive' :
+					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
+					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
+					break;
+			}
+		}
+
+
+		$where['DTT_is_primary'] = 1;
+
+		$DTTS = EE_Registry::instance()->load_model('Datetime')->get_dtt_months_and_years($where);
+
+		//let's setup vals for select input helper
+		$options = array(
+			0 => array(
+				'text' => __('Select a Month/Year', 'event_espresso'),
+				'id' => ""
+				)
+			);
+
+		foreach ( $DTTS as $DTT ) {
+			$date = $DTT->dtt_month . ' ' . $DTT->dtt_year;
+			$options[] = array(
+				'text' => $date,
+				'id' => $date
+				);
+		}
+
+
+		return self::select_input( 'month_range', $options, $cur_date, '', 'wide' );
+	}
+
+
+
+	/**
+	 * generates the dropdown selector for event categories
+	 * typically used as a filter on list tables.
+	 * @param  integer $current_cat currently selected category
+	 * @return string               html for dropdown
+	 */
+	public static function generate_event_category_dropdown( $current_cat = -1 ) {
+		$categories = EEM_Term::instance()->get_all_ee_categories(TRUE);
+		$options = array( 
+			'0' => array(
+				'text' => __('All Categories', 'event_espresso'),
+				'id' => -1
+				)
+			);
+
+		//setup categories for dropdown
+		foreach ( $categories as $category ) {
+			$options[] = array(
+				'text' => $category->get('name'),
+				'id' => $category->ID()
+				);
+		}
+
+		return self::select_input( 'EVT_CAT', $options, $current_cat );
+	}
 
 
 

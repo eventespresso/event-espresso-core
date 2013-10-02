@@ -345,7 +345,7 @@ final class EE_Registry {
 				// so sorry, can't find the file'
 				throw new EE_Error (
 					sprintf (
-						__('An error occured. The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath is correct: %s','event_espresso'),
+						__('The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath is correct: %s','event_espresso'),
 						$type,
 						$class_name,
 						$file_paths[0]
@@ -359,7 +359,7 @@ final class EE_Registry {
 				// so sorry, not a class
 				throw new EE_Error(
 					sprintf(
-						__('An error occured. The %s file %s does not appear to contain the %s Class.','event_espresso'),
+						__('The %s file %s does not appear to contain the %s Class.','event_espresso'),
 						$type, 
 						$class_name, 
 						$class_name 

@@ -102,7 +102,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->lname() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
+		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . $item->lname() . '</a>';
 		return $name_link;
 
 	}
@@ -132,7 +132,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 		}
 
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . html_entity_decode( stripslashes( $item->fname() ), ENT_QUOTES, 'UTF-8' ) . '</a>';
+		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . $item->fname() . '</a>';
 
 		//Return the name contents
 		return sprintf('%1$s %2$s', $name_link, $this->row_actions($actions) );		
@@ -150,13 +150,13 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	function column_ATT_address($item) {
-		return html_entity_decode( stripslashes( $item->address() ), ENT_QUOTES, 'UTF-8' );
+		return $item->address();
 	}
 
 
 
 	function column_ATT_city($item) {
-		return html_entity_decode( stripslashes( $item->city() ), ENT_QUOTES, 'UTF-8' );
+		return $item->city();
 	}
 
 

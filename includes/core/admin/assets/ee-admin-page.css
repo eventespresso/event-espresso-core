@@ -105,31 +105,37 @@ table .ee-admin-radio-long-lbl input,
 .espresso-form-input-lbl input,
 .ee-admin-radio-lbl:hover { cursor: pointer; }
 
+.espresso-radio-btn-options-ul .nano-lbl,
 table .espresso-radio-btn-options-ul .nano-lbl,
 .inside table .espresso-radio-btn-options-ul .nano-lbl {
     display: inline-block; width: 5.8%; min-width:50px;  max-width:60px;
 }
 
+.espresso-radio-btn-options-ul .micro-lbl,
 table .espresso-radio-btn-options-ul .micro-lbl,
 .inside table .espresso-radio-btn-options-ul .micro-lbl {
     display: inline-block; width: 5.8%; min-width:66px;  max-width:80px;
 }
 
+.espresso-radio-btn-options-ul .tiny-lbl,
 table .espresso-radio-btn-options-ul .tiny-lbl,
 .inside table .espresso-radio-btn-options-ul .tiny-lbl {
     display: inline-block; width: 12%; min-width:100px;  max-width:120px;
 }
 
+.espresso-radio-btn-options-ul .small-lbl,
 table .espresso-radio-btn-options-ul .small-lbl,
 .inside table .espresso-radio-btn-options-ul .small-lbl {
     display: inline-block; width: 24.4%; min-width:200px;  max-width:243px;
 }
 
+.espresso-radio-btn-options-ul .medium-lbl,
 table .espresso-radio-btn-options-ul .medium-lbl,
 .inside table .espresso-radio-btn-options-ul .medium-lbl {
     display: inline-block; width: 49%; min-width:400px;  max-width:486px;
 }
 
+.espresso-radio-btn-options-ul .big-lbl,
 table .espresso-radio-btn-options-ul .big-lbl,
 .inside table .espresso-radio-btn-options-ul .big-lbl {
     display: inline-block; width:99%; min-width:486px;
