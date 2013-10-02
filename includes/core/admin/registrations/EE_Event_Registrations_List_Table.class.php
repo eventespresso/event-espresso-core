@@ -55,7 +55,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_hidden_columns = array();
 		
 		$this->_bottom_buttons = array(
-			'report'=>'registrations_report'
+			'report'=> array(
+				'route' => 'registrations_report',
+				'extra_request' => isset( $this->_req_data['event_id'] ) ? array('EVT_ID'=>$this->_req_data['event_id']) : NULL
+				)
 		);
 	}
 
