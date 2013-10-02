@@ -266,6 +266,24 @@ abstract class EEM_Base extends EE_Base{
 
 
 
+	/**
+	 * retrieve the status details from esp_status table as an array IF this model has the status table as a relation.
+	 * @return array 
+	 */
+	 public function status_array() {
+	 	if ( !array_key_exists('Status', $this->_model_relations ) )
+	 		return array();
+	 	$model_name = $this->get_this_model_name();
+	 	$status_type = str_replace(' ', '_', strtolower( str_replace('_', ' ', $model_name) ) );
+	 	$stati = EEM_Status::instance()->get_all(array(array('STS_type' => $status_type) ) );
+	 	$status_array = array();
+	 	foreach ( $stati as $status ) {
+            $status_array[ $status->ID() ] = $status->get('STS_code');
+        }
+        return $status_array;
+    }
+
+
 
 	/**
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
