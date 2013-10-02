@@ -23,7 +23,20 @@
 		<div id="espresso-events-list-dv" class="column columns" role="main">
 				
 		<?php if ( have_posts() ) { ?>
-			<?php while ( have_posts() ) { the_post(); ?>
+			<?php while ( have_posts() ) { the_post();
+//			$partial_post = get_post($post->ID);
+//			$partial_post = (array)$partial_post;
+//			unset($partial_post['EVT_visible_on']);
+//			EE_System::instance()->start_timer();
+//			EEM_Event::instance()->instantiate_class_from_post_object_orig($partial_post);
+//			EE_System::instance()->stop_timer("instantiate from PARTIAL post and metadata ORIGINAL");
+//			
+//			
+//			EE_System::instance()->start_timer();
+//			EEM_Event::instance()->instantiate_class_from_post_object($partial_post);
+//			EE_System::instance()->stop_timer("instantiate from PARTIAL post and metadata NEW");
+
+			?>
 			<article id="post-<?php echo $post->ID; ?>" <?php post_class( 'espresso-event-list-event ' . espresso_event_list_grid_size() ); ?>>
 			
 				<div class="event-datetimes">

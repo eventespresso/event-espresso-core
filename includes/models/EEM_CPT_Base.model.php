@@ -235,7 +235,7 @@ class EEM_CPT_Base extends EEM_Base{
 	 * @param WP_Post|array $post
 	 * @return EE_CPT_Base
 	 */
-	public function instantiate_class_from_post_object($post){
+	public function instantiate_class_from_post_object_orig($post){
 		$post = (array)$post;
 		$has_all_necessary_fields_for_table = true;
 		//check if the post has fields on the meta table already 
@@ -250,10 +250,39 @@ class EEM_CPT_Base extends EEM_Base{
 		}
 		//if we don't have all the fields we need, then just fetch the proper model from teh DB
 		if( ! $has_all_necessary_fields_for_table){
-			return $this->get_one_by_ID($post->ID);
+			
+			return $this->get_one_by_ID($post['ID']);
 		}else{
 			return $this->instantiate_class_from_array_or_object($post);
 		}
+	}
+	public function instantiate_class_from_post_object($post){
+		$post = (array)$post;
+		$tables_needing_to_be_queried = array();
+		//check if the post has fields on the meta table already 
+		foreach($this->get_tables() as $table_obj){
+			$fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
+			foreach($fields_for_that_table as $field_name => $field_obj){
+				if( ! isset($post[$field_obj->get_table_column()]) 
+					&& ! isset($post[$field_obj->get_qualified_column()])){
+					$tables_needing_to_be_queried[$table_obj->get_table_alias()] = $table_obj;
+				}
+			}
+		}
+		//if we don't have all the fields we need, then just fetch the proper model from teh DB
+		if( $tables_needing_to_be_queried){
+			if(count($tables_needing_to_be_queried) == 1 && reset($tables_needing_to_be_queried) instanceof EE_Secondary_Table){
+				//so we're only missing data from a secondary table. Well thats not too hard to query for
+				global $wpdb; 
+				$table_to_query = reset($tables_needing_to_be_queried);
+				$missing_data = $wpdb->get_row("SELECT * FROM ".$table_to_query->get_table_name()." WHERE ".$table_to_query->get_fk_on_table()."=".$post['ID'],ARRAY_A );
+				array_merge($post,$missing_data);
+			}else{
+				return $this->get_one_by_ID($post['ID']);
+			}
+		}
+		return $this->instantiate_class_from_array_or_object($post);
+		
 	}
 	
 }
