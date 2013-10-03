@@ -666,27 +666,27 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	function _txn_registrant_side_meta_box() {
+
+		$primary_att = $this->_transaction->primary_registration()->get_first_related('Attendee');
+
+		if ( empty( $primary_att ) )
+			throw new EE_Error(__("For some reason, the primary attendee cannot be retrieved for this transaction.  It is possible there is an error in the database", 'event_espresso') );
 	
-		$this->_template_args['ATT_ID'] = $this->_transaction->ATT_ID;
-		$this->_template_args['prime_reg_fname'] = $this->_transaction->ATT_fname;
-		$this->_template_args['prime_reg_lname'] = $this->_transaction->ATT_lname;
-		$this->_template_args['prime_reg_email'] = $this->_transaction->ATT_email;
-		$this->_template_args['prime_reg_address'] = $this->_transaction->ATT_address;
-		$this->_template_args['prime_reg_address2'] = ( ! empty ( $this->_transaction->ATT_address2 )) ? '<br />' . $this->_transaction->ATT_address2 : '';
-		$this->_template_args['prime_reg_city'] = ( ! empty ( $this->_transaction->ATT_city )) ? '<br />' . $this->_transaction->ATT_city : '';
-		$STA_ID = ! empty ( $this->_transaction->STA_ID ) ? $this->_transaction->STA_ID : FALSE;
-		if ( $STA_ID ) {
-			$state = EEM_State::instance()->get_one_by_ID( $STA_ID );
-			$this->_template_args['prime_reg_state'] = '<br />' . $state->get( 'STA_name' ) . ', ';
-		} else {
-			$this->_template_args['prime_reg_state'] = '<br />';
-		}
-		$this->_template_args['prime_reg_country'] = ( ! empty ( $this->_transaction->CNT_ISO )) ? $this->_transaction->CNT_ISO : '';
-		$this->_template_args['prime_reg_zip'] = ( ! empty ( $this->_transaction->ATT_zip )) ? '<br />' . $this->_transaction->ATT_zip : '';
-		$this->_template_args['prime_reg_phone'] = $this->_transaction->ATT_phone;
-		$this->_template_args['prime_reg_social'] = $this->_transaction->ATT_social;
-		$this->_template_args['prime_reg_comments'] = $this->_transaction->ATT_comments;
-		$this->_template_args['prime_reg_notes'] = $this->_transaction->ATT_notes;
+		$this->_template_args['ATT_ID'] = $primary_att->get('ATT_ID');
+		$this->_template_args['prime_reg_fname'] = $primary_att->get('ATT_fname');
+		$this->_template_args['prime_reg_lname'] = $primary_att->get('ATT_lname');
+		$this->_template_args['prime_reg_email'] = $primary_att->get('ATT_email');
+		$this->_template_args['prime_reg_address'] = $primary_att->get('ATT_address');
+		$this->_template_args['prime_reg_address2'] = $primary_att->get('ATT_address2');
+		$this->_template_args['prime_reg_city'] = $primary_att->get('ATT_city');
+		$state = $primary_att->state_obj();
+		$this->_template_args['prime_reg_state'] = !empty( $state ) ? $state->get('STA_name' ) : '';
+		$this->_template_args['prime_reg_country'] = $primary_att->get('CNT_ISO');
+		$this->_template_args['prime_reg_zip'] = $primary_att->get('ATT_zip');
+		$this->_template_args['prime_reg_phone'] = $primary_att->get('ATT_phone');
+		$this->_template_args['prime_reg_social'] = $primary_att->get('ATT_social');
+		$this->_template_args['prime_reg_comments'] = $primary_att->get('ATT_comments');
+		$this->_template_args['prime_reg_notes'] = $primary_att->get('ATT_notes');
 		
 		$this->_template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
 
