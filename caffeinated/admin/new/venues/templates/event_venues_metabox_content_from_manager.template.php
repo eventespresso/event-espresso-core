@@ -5,7 +5,7 @@
 		<?php echo $venue_selector; ?>
 		<?php foreach ( $venues as $venue ) :
 			$selected = $evt_venue_id == $venue->ID() ? '' : ' style="display:none;"';
-			$edit_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit', 'id' => $venue->ID() ), EE_VENUES_ADMIN_URL );
+			$edit_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit', 'post' => $venue->ID() ), EE_VENUES_ADMIN_URL );
 			$state_name = is_object( $venue->state_obj() ) ? $venue->state_obj()->name() : NULL;
 			$country_name = is_object( $venue->country_obj() ) ? $venue->country_obj()->name() : NULL;
 			?>
