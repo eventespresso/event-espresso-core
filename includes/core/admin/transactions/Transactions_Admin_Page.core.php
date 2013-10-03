@@ -801,9 +801,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		if ( isset( $this->_req_data['txn_admin_payment'] )) {
 		
 			$payment = $this->_req_data['txn_admin_payment'];
-			//printr( $payment, '$payment' );
-
-			require_once(EE_CLASSES . 'EE_Payment.class.php');
 			
 			$payment['PAY_ID'] = $payment['PAY_ID'];
 			
