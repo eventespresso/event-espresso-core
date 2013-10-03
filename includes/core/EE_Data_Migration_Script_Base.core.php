@@ -285,10 +285,25 @@ abstract class EE_Data_Migration_Class_Base{
 	 * _records_to_migrate and _records_migrated, but that might nto be accurate
 	 * @var string one of status_completed, status_continue, or status_error
 	 */
-	protected $_status;
+	protected $_status = null;
 	
+	protected $_pretty_name = null;
+	/**
+	 * Just initializes the status of the migration
+	 * @throws EE_Error
+	 */
 	public function __construct(){
 		$this->set_status(EE_Data_Migration_Manager::status_continue);
+	}
+	/**
+	 * Just gets the pretty name for this migration script or stage
+	 * @return string
+	 */
+	public function pretty_name(){
+		if($this->_pretty_name === null){
+			throw new EE_Error(sprintf(__("Please give a pretty name to the migration script stage %s by assigning the property _pretty_name in the constructor", "event_espresso"),get_class($this)));
+		}
+		return $this->_pretty_name;
 	}
 	public function count_records_to_migrate(){
 		if( $this->_records_to_migrate == null){
@@ -303,13 +318,10 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @return int
 	 */
 	abstract protected function _count_records_to_migrate();
-	/**
-	 * Returns a pretty, internationalized name of the script which can be used on
-	 * the frontend
-	 * @return string
-	 */
-	abstract public function pretty_name();
 	public function get_status(){
+		if($this->_status === null){
+			throw new EE_Error(sprintf(__("Trying to get status of Migration class %s, but it has not been initialized yet. It should be set in the constructor.", "event_espresso"),get_class($this)));
+		}
 		return $this->_status;
 	}
 	protected function set_status($status){
