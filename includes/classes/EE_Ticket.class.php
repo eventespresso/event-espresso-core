@@ -337,12 +337,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 				'Datetime',
 				array( array( 'DTT_ID' => $DTT_ID ))
 			);
-			// get the registration limit
-			$DTT_reg_limit = ! empty( $datetime ) ? $datetime->get( 'DTT_reg_limit' ) : 0;
-			// get the tickets sold
-			$DTT_sold = ! empty( $datetime ) ? $datetime->get( 'DTT_sold' ) : 0;
-			// if there is a reg limit and ticket sales for this datetime have exceeded the reg limit...
-			if ( $DTT_reg_limit != 0 && $DTT_sold >= $DTT_reg_limit ) {
+			// if  ticket sales for this datetime have exceeded the reg limit...
+			if ( ! empty( $datetime ) && $datetime->sold_out() ) {
 				return FALSE;
 			}
 		}
