@@ -619,24 +619,22 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					if ( ! $attendee['att_obj'] ) {
 						if ( isset( $attendee['fname'] ) && isset( $attendee['lname'] ) && isset( $attendee['email'] )) {
 							$where_fields_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
-							require_once ( EE_MODELS . 'EEM_Attendee.model.php' );
 							$ATT_MDL = EEM_Attendee::instance();
 							if ( ! $attendee['att_obj'] = $ATT_MDL->get_one( array( $where_fields_n_values ) )) {
 							} else {
 								$attendee['att_obj'] = FALSE;
 							}
 							if ( ! $attendee['att_obj'] ) {
-								$attendee['att_obj'] = EE_Attendee::new_instance();
+								$attendee['att_obj'] = EEM_Attendee::instance()->create_default_object();
 							}	 
 						}
 						// check for reg object
 						$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
 						if ( ! $attendee['reg_obj'] ) {
 							$where_fields_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
-							require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 							$REG_MDL = EEM_Registration::instance();
 							if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
-								$attendee['reg_obj'] = EE_Registration::new_instance();
+								$attendee['reg_obj'] = EEM_Registration::instance()->create_default_object();
 							}	 
 						}
 					
