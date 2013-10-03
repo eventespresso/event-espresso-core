@@ -167,7 +167,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 10
 						),
 					'list_table' => 'Prices_List_Table',
-					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
+					'help_tabs' => array(
+						'price_type_info' => array(
+							'title' => __('About Price Types', 'event_espresso'),
+							'callback' => 'price_type_info_help_tab'
+							)
+						)
 				),
 			'add_new_price' => array(
 					'nav' => array(
@@ -325,6 +331,14 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						)
 				)
 		);
+	}
+
+
+
+
+	public function price_type_info_help_tab() {
+		$template = PRICING_TEMPLATE_PATH . 'price_type_info_help_tab.template.php';
+		EEH_Template::display_template( $template, array() );
 	}
 
 
