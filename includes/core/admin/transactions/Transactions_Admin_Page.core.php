@@ -364,22 +364,21 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['transactions_page'] = $this->wp_page_slug;  
 
 	    $this->_set_transaction_object();
-	 	$this->_transaction->TXN_details = maybe_unserialize( $this->_transaction ->TXN_details );
 	
-		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->TXN_ID;
+		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->ID();
 		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
 		
-		$this->_template_args['txn_datetime']['value'] = date( 'l F j, Y,    g:i:s a', $this->_transaction->TXN_timestamp );
+		$this->_template_args['txn_datetime']['value'] = $this->_transaction->get_datetime('TXN_timestamp', 'l F j, Y', 'g:i:s a' );
 		$this->_template_args['txn_datetime']['label'] = __( 'Date', 'event_espresso' );
 
-		$this->_template_args['txn_status']['value'] = self::$_txn_status[ $this->_transaction->STS_ID ];
+		$this->_template_args['txn_status']['value'] = self::$_txn_status[ $this->_transaction->get('STS_ID') ];
 		$this->_template_args['txn_status']['label'] = __( 'Transaction Status', 'event_espresso' );	
-		$this->_template_args['txn_status']['class'] = 'status-' . $this->_transaction->STS_ID;
+		$this->_template_args['txn_status']['class'] = 'status-' . $this->_transaction->get('STS_ID');
 
-		$this->_template_args['grand_total'] = $this->_transaction->TXN_total;
-		$this->_template_args['total_paid'] = $this->_transaction->TXN_paid;
+		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
+		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
 		
-		$amount_due = number_format(( $this->_transaction->TXN_total - $this->_transaction->TXN_paid ), 2 );
+		$amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
 		$this->_template_args['amount_due'] =  ' <span id="txn-admin-total-amount-due">' . EEH_Template::format_currency( $amount_due, TRUE ) . '</span>';
 		if ( EE_Registry::instance()->CFG->currency->sign_b4 ) {
 			$this->_template_args['amount_due'] = EE_Registry::instance()->CFG->currency->sign . $this->_template_args['amount_due'];
@@ -388,24 +387,26 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		}
 		$this->_template_args['amount_due_class'] =  '';	
 		
-		if ( $this->_transaction->TXN_paid == $this->_transaction->TXN_total ) {
+		if ( $this->_transaction->get('TXN_paid') == $this->_transaction->get('TXN_total') ) {
 			// paid in full
 			$this->_template_args['amount_due'] =  FALSE;
-		} elseif ( $this->_transaction->TXN_paid > $this->_transaction->TXN_total ) {
+		} elseif ( $this->_transaction->get('TXN_paid') > $this->_transaction->get('TXN_total') ) {
 			// overpaid
 			$this->_template_args['amount_due_class'] =  'txn-overview-no-payment-spn';			
-		} elseif (( $this->_transaction->TXN_total > 0 ) && ( $this->_transaction->TXN_paid > 0 )) {
+		} elseif (( $this->_transaction->get('TXN_total') > 0 ) && ( $this->_transaction->get('TXN_paid') > 0 )) {
 			// monies owing
 			$this->_template_args['amount_due_class'] =  'txn-overview-part-payment-spn';			
-		} elseif (( $this->_transaction->TXN_total > 0 ) && ( $this->_transaction->TXN_paid == 0 )) {
+		} elseif (( $this->_transaction->get('TXN_total') > 0 ) && ( $this->_transaction->get('TXN_paid') == 0 )) {
 			// no payments made yet
 			$this->_template_args['amount_due_class'] =  'txn-overview-no-payment-spn';			
-		} elseif ( $this->_transaction->TXN_total == 0 ) {
+		} elseif ( $this->_transaction->get('TXN_total') == 0 ) {
 			// free event 
 			$this->_template_args['amount_due'] =  FALSE;
 		}
 
-		$this->_template_args['method_of_payment'] = isset( $this->_transaction->TXN_details['gateway'] ) && ! empty( $this->_transaction->TXN_details['gateway'] ) ? $this->_transaction->TXN_details['gateway'] : FALSE;
+		$txn_details = $this->_transaction->get('TXN_details');
+
+		$this->_template_args['method_of_payment'] = ! empty( $txn_details['gateway'] ) ? $txn_details['gateway'] : FALSE;
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		// link back to overview
 		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;  
