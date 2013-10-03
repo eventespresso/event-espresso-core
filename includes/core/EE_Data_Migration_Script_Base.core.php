@@ -378,7 +378,7 @@ abstract class EE_Data_Migration_Class_Base{
 	 * Adds an error to the array of errors on this class.
 	 * @param string $error a string describing the error that will be useful for debugging. Consider including all the data that led to the error, and a stack trace etc.
 	 */
-	protected function add_error($error){
+	public function add_error($error){
 		$this->_errors[] = $error;
 	}
 	

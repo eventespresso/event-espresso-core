@@ -45,6 +45,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 	protected function _ajax_hooks() {
 		add_action('wp_ajax_migration_step',array($this,'migration_step'));
+		add_action('wp_ajax_add_error_to_migrations_ran',array($this,'add_error_to_migrations_ran'));
 	}
 
 
@@ -175,6 +176,15 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 */
 	public function migration_step(){
 		$this->_template_args['data'] = EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
+		$this->_return_json();
+	}
+	/**
+	 * Can be used by js when it notices a response with HTML in it in order
+	 * to log the malformed response
+	 */
+	public function add_error_to_migrations_ran(){
+		EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($this->_req_data['message']);
+		$this->_template_args['data'] = array('ok'=>true);
 		$this->_return_json();
 	}
 	/**
