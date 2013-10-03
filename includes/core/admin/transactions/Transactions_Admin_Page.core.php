@@ -916,18 +916,16 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$return_data = array();
 		
 		if ( isset( $this->_req_data['ID'] )) {
-			if ( $PAY_ID = absint( $this->_req_data['ID'] )) {
-				if ( $payment = EEM_Payment::instance()->get_one_by_ID( absint( $PAY_ID ))) {
-					if ( $transaction = EEM_Payment::instance()->delete_by_ID( $PAY_ID )) {
-						$return_data = array( 
-							'amount' => $payment->amount(), 
-							'total_paid' => $transaction->paid(), 
-							'txn_status' => $transaction->status_ID(),
-							'pay_status' => $payment->STS_ID(),
-							'PAY_ID' => $PAY_ID
-						); 						
-					}						
-				}
+			if ( $payment = EEM_Payment::instance()->get_one_by_ID( $this->_req_data['ID'] )) {
+				if ( $transaction = EEM_Payment::instance()->delete_by_ID( $this->_req_data['ID'] )) {
+					$return_data = array( 
+						'amount' => $payment->amount(), 
+						'total_paid' => $transaction->paid(), 
+						'txn_status' => $transaction->status_ID(),
+						'pay_status' => $payment->STS_ID(),
+						'PAY_ID' => $PAY_ID
+					); 						
+				}						
 			}
 		} else {
 			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
