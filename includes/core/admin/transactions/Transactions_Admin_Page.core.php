@@ -964,11 +964,22 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * @return mixed (int|array)           int = count || array of transaction objects
 	 */
 	public function get_transactions( $perpage, $count = FALSE ) {
-	    require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 
 	    $start_date = isset( $this->_req_data['txn-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-start-date'] ) : date( 'D M j, Y', strtotime( '-10 year' ));
 	    $end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
+
+	    //make sure our timestampes start and end right at the boundaries for each day
+	    $start_date = date( 'Y-m-d', strtotime( $start_date ) . ' 00:00:00' );
+	    $end_date = date( 'Y-m-d', strtotime( $start_date ) . ' 00:00:00' );
+
+	    //convert to timestamps
+	    $start_date = strtotime( $start_date );
+	    $end_date = strtotime( $end_date );
+
+	    //makes sure start date is the lowest value and vice versa
+	    $start_date = min( $start_date, $end_date );
+	    $end_date = max( $start_date, $end_date );
 
 	    //set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -978,10 +989,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$orderby = 'TXN_ID';
 				break;
 			case 'ATT_fname':
-				$orderby = 'TXN_att_name';
+				$orderby = 'Registration.Attendee.ATT_fname';
 				break;
 			case 'event_name':
-				$orderby = 'event_name';
+				$orderby = 'Registration.Event.EVT_name';
 				break;
 			default: //'TXN_timestamp'
 				$orderby = 'TXN_timestamp';
@@ -995,7 +1006,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 
-		$transactions =   $TXN->get_transactions_for_admin_page( $start_date, $end_date, $orderby, $sort, $limit, $count );
+		$_where = array(
+			'TXN_timestamp' => array('BETWEEN', array($start_date, $end_date) ),
+			'Registration.REG_count' => 1
+			);
+		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
+
+		$transactions = $count ? $TXN->count( array($_where), 'TXN_ID', TRUE ) : $TXN->get_all($query_params);
+
 		return $transactions;
 
 	}
