@@ -180,6 +180,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .espresso-help-tab-lnk.help_img {
 	display: inline-block; position: relative; top:3px; width: 16px; height: 16px; margin: 0 0 0 .25em;
 	background: transparent url(../../../../images/help.png) bottom left no-repeat; text-indent:-999em; overflow: hidden;
+    padding: 0px;
 }
 .espresso-help-tab-lnk.help_img:hover { background-position: top left; }
 .espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../../images/help2.png); }
