@@ -970,8 +970,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $end_date = isset( $this->_req_data['txn-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['txn-filter-end-date'] ) : date( 'D M j, Y' );
 
 	    //make sure our timestampes start and end right at the boundaries for each day
-	    $start_date = date( 'Y-m-d', strtotime( $start_date ) . ' 00:00:00' );
-	    $end_date = date( 'Y-m-d', strtotime( $start_date ) . ' 00:00:00' );
+	    $start_date = date( 'Y-m-d', strtotime( $start_date ) ) . ' 00:00:00';
+	    $end_date = date( 'Y-m-d', strtotime( $end_date ) ) . ' 00:00:00';
 
 	    //convert to timestamps
 	    $start_date = strtotime( $start_date );
@@ -1010,7 +1010,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'TXN_timestamp' => array('BETWEEN', array($start_date, $end_date) ),
 			'Registration.REG_count' => 1
 			);
-		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
+
+		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit, 'force_join' => array('Registration.Attendee') );
 
 		$transactions = $count ? $TXN->count( array($_where), 'TXN_ID', TRUE ) : $TXN->get_all($query_params);
 
