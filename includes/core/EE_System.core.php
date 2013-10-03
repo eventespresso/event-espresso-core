@@ -112,7 +112,6 @@ final class EE_System {
 		spl_autoload_register( array( 'EEH_Autoloader', 'espresso_autoloader' ));
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-
 	}
 
 
@@ -142,39 +141,35 @@ final class EE_System {
 	 * 	@return 		void
 	 */
 	public function plugins_loaded() {
-		//give addons a chance to register themselves
-		
-		// load maintenance mode and decide whether the door is open for business
-		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
-		$this->_detect_request_type();
-		// no maintence mode ?
-		if ( $this->_req_type == EE_System::req_type_normal ) {
-			// check for activation errors
-			if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
-				EE_Error::add_error( $activation_errors );
-				update_option( 'espresso_plugin_activation_errors', FALSE );
-			}
-			// get model names
-			$this->_parse_model_names();
-			// let's get it started		
-			if ( is_admin() ) {
-				EE_Registry::instance()->load_core( 'Admin' );
-			} else if ( EE_Maintenance_Mode::instance()->level() ) {
-				// shut 'er down down for maintenance ?
-				add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
-			} else {
-				EE_Registry::instance()->load_core( 'Front_Controller' );
-			}
-			// load additional common resources
-			add_action( 'init', array( $this, 'init' ), 3 );
-			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
-		}		
+		//we gave addons a chance to register themselves before detecting the request type
+		//and deciding whether or nto to set maintenance mode
+		$this->_manage_activation_process();
+		// check for activation errors
+		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
+			EE_Error::add_error( $activation_errors );
+			update_option( 'espresso_plugin_activation_errors', FALSE );
+		}
+		// get model names
+		$this->_parse_model_names();
+		// let's get it started		
+		if ( is_admin() ) {
+			EE_Registry::instance()->load_core( 'Admin' );
+		} else if ( EE_Maintenance_Mode::instance()->level() ) {
+			// shut 'er down down for maintenance ?
+			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
+		} else {
+			EE_Registry::instance()->load_core( 'Front_Controller' );
+		}
+		// load additional common resources
+		add_action( 'init', array( $this, 'init' ), 3 );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
+	
 	}
 
 
 
 	/**
-	* _detect_request_type
+	* _manage_activation_process
 	* 
 	* Takes care of detecting whether this is a brand new install or code upgrade,
 	* and either setting up the DB or setting up maintenance mode etc.
@@ -182,7 +177,7 @@ final class EE_System {
 	* @access private
 	* @return void
 	*/
-	private function _detect_request_type() {
+	private function _manage_activation_process() {
 		// check if db has been updated, or if its a brand-new installation
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		switch($this->detect_req_type($espresso_db_update)){
@@ -266,6 +261,7 @@ final class EE_System {
 	 * Also, caches its result so later parts of the code can also know whether there's been an
 	 * update or not. This way we can add the current version to espresso_db_update,
 	 * but still know if this is a new install or not
+	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	public function detect_req_type($espresso_db_update = null){
