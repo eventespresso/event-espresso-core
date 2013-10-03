@@ -1015,6 +1015,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$transactions = $count ? $TXN->count( array($_where), 'TXN_ID', TRUE ) : $TXN->get_all($query_params);
 
+
 		return $transactions;
 
 	}
@@ -1022,7 +1023,3 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	
 
 }
-
-
-	
-// end of file:  includes/core/admin/transactions/Transactions_Admin_Page.core.php
