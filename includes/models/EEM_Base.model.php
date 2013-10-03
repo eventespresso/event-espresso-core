@@ -310,6 +310,9 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	eg: array( 'DTT_reg_limit' => array('>', 'DTT_sold', TRUE) )
 	 *					|	becomes
 	 *					|	SQL >> "...WHERE DTT_reg_limit > DTT_sold"
+	 *					|	Note: you can also use related model field names like you would any other field name. 
+	 *					|	eg: array('Datetime.DTT_reg_limit'=>array('=','Datetime.DTT_sold',TRUE)
+	 *					|	could be used if you were querying EEM_Tickets (because Datetime is directly related to tickets)
 	 *					|	
 	 *					|	Also, by default all the where conditions are AND'd together. 
 	 *					|	To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together. 
