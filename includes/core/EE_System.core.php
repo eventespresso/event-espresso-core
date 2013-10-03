@@ -112,7 +112,6 @@ final class EE_System {
 		spl_autoload_register( array( 'EEH_Autoloader', 'espresso_autoloader' ));
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-
 	}
 
 

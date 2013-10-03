@@ -77,7 +77,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'label' => __('Maintenance', 'event_espresso'),
 					'order' => 10
 					),
-				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+//				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				////'help_tabs' => $this->_get_maintenance_help_tabs(),
 				),
 			'system_status'=>array(
@@ -86,7 +86,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'order'=>20
 					
 				),
-				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+//				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 			)
 			);
 	}
