@@ -3,6 +3,9 @@
  * meant to convert DBs between 3.1.26 and 4.0.0 to 4.1.0
  */
 //make sure we have all the stages loaded too
+//unfortunately, this needs to be done upon INCLUSION of this file,
+//instead of construction, because it only gets constructed on first page load 
+//(all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE.'data_migration_scripts/4_1_0P_stages/*');
 $class_to_filepath = array();
 foreach($stages as $filepath){
@@ -11,6 +14,13 @@ foreach($stages as $filepath){
 	$class_to_filepath[$matches[1]] = $filepath;
 }
 EEH_Autoloader::register_autoloader($class_to_filepath);
+
+/**
+ * Organizes all the various stages of the migration from 3.1 (but only versions above 3.1.26, 
+ * lower versions need to eb upgraded to 3.1.26 normally) to 4.1.0.P. 
+ * It adds the database tables on some of the first migration_steps, then migrates the data within
+ * each stage.
+ */
 class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	public function can_migrate_from_version($version_string) {
 		if($version_string < '4.0.0' && $version_string > '3.1.26' ){
@@ -529,7 +539,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	
 	
 	public function __construct() {
-		
+		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_migration_stages = array(
 			10=>new EE_DMS_4_1_0P_attendees(),
 			20=>new EE_DMS_4_1_0P_events(),

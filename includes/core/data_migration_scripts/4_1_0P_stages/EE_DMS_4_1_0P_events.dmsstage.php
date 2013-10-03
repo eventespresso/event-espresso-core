@@ -4,6 +4,10 @@
  * this is run BEFORE migrating prices), and datetimes.
  */
 class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
+	function __construct() {
+		$this->_pretty_name = __("Events", "event_espresso");
+		parent::__construct();
+	}
 	function _count_records_to_migrate() {
 		global $wpdb;
 		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."events_detail");
@@ -21,8 +25,5 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			$this->set_status(EE_Data_Migration_Manager::status_completed);
 		}
 		return count($events);
-	}
-	function pretty_name() {
-		return "events stage";
 	}
 }

@@ -1,4 +1,16 @@
 <?php
+class EE_DMS_4_1_0P_gateways extends EE_Data_Migration_Script_Stage{
+	
+function _migration_step($num_items=50){
+	
+}
+function count_records_to_migrate() {
+	parent::count_records_to_migrate();
+}
+function __construct() {
+	$this->_pretty_name = __("Gateways", "event_espresso");
+	parent::__construct();
+}
 function espresso_update_active_gateways() {
 	//upgrade script for those updating from versions prior to 3.1.16.P
 	//hooked to plugin activation
@@ -355,4 +367,29 @@ function espresso_update_active_gateways() {
 		}
 		$this->EE->CFG->gateway->active_gateways = $active_gateways;
 	}
+}
+	
+	protected $gateways_we_know_how_to_migrate = array(
+		'2checkout',
+		'aim',
+		'alipay',
+		'authnet',
+		'bank',
+		'check',
+		'eway',
+		'eway_rapid_3',
+		'exact',
+		'firstdata',
+		'ideal',
+		'invoice',  
+		'mwarrior',
+		'nab',
+		'paypal',
+		'paypal_pro',
+		'paytrace',
+		'quickpay',
+		'realauth',
+		'stripe',
+		'worldpay'
+	);
 }

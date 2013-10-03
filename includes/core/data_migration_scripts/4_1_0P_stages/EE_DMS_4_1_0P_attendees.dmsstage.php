@@ -3,6 +3,10 @@
  * migrates 3.1 attendee rows into 4.1 registrations, attendees, transactions, and payments
  */
 class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage{
+	function __construct() {
+		$this->_pretty_name = __("Attendees", "event_espresso");
+		parent::__construct();
+	}
 	function _count_records_to_migrate() {
 		global $wpdb;
 		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."events_attendee");
@@ -22,8 +26,5 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage{
 		}
 		return count($attendees);
 		
-	}
-	function pretty_name(){
-		return "Attendee Stage";
 	}
 }
