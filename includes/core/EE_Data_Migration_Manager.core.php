@@ -66,7 +66,7 @@ class EE_Data_Migration_Manager{
 	 * of this EE installation. Keys should be the name of the version the script upgraded to
 	 * @var EE_Data_Migration_Script_Base[]
 	 */
-	private $_data_migrations_ran;
+	private $_data_migrations_ran =null;
 	/**
 	 * array where keys are classnames, and values are filepaths of all teh known migration scripts
 	 * @var array
@@ -282,7 +282,7 @@ class EE_Data_Migration_Manager{
 			$message =  sprintf(__("Error Message: %s<br>Stack Trace:%s", "event_espresso"),$e->getMessage(),$e->getTraceAsString());
 			//record it on the array of data mgiration scripts ran. This will be overwritten next time we try and try to run data migrations
 			//but thats ok-- it's just an FYI to support that we coudln't even run any data migrations
-			$this->_data_migration_class_to_filepath_map[espresso_version()] = array(__("Could not run data migrations because: %s", "event_espresso"),$message);
+			$this->add_error_to_migrations_ran(__("Could not run data migrations because: %s", "event_espresso"),$message);
 			return array(
 				'records_to_migrate'=>1,
 				'records_migrated'=>0,
@@ -345,7 +345,7 @@ class EE_Data_Migration_Manager{
 				$script_name = __("Error getting Migration Script", "event_espresso");
 			}
 			$response_array = array(
-				'records_to_migrate'=>0,
+				'records_to_migrate'=>1,
 				'records_migrated'=>0,
 				'status'=>self::status_fatal_error,
 				'message'=>  sprintf(__("A fatal error occurred during the migration: %s", "event_espresso"),$e->getMessage()),
@@ -451,5 +451,31 @@ class EE_Data_Migration_Manager{
 	 */
 	public function addons_need_updating(){
 		return false;
+	}
+	/**
+	 * Adds this error string to the data_migrations_ran array, but we dont necessarily know
+	 * where to put it, so we just throw it in there... better than nothing...
+	 * @param type $error_message
+	 * @throws EE_Error
+	 */
+	public function add_error_to_migrations_ran($error_message){
+		$this->_data_migrations_ran = get_option(self::data_migrations_option_name);
+		if(isset($this->_data_migrations_ran ['Unknown'])){
+			$this->_data_migrations_ran['Unknown'][] = $error_message;
+
+		}else{
+			$this->_data_migrations_ran['Unknown'] = array($error_message);
+		}
+		
+		$this->_save_migrations_ran();
+	}
+	/**
+	 * saves what data migrations have ran to teh database
+	 */
+	protected function _save_migrations_ran(){
+		if($this->_data_migrations_ran == null){
+			$this->get_data_migrations_ran();
+		}
+		update_option(self::data_migrations_option_name, $this->_data_migrations_ran);
 	}
 }

@@ -100,11 +100,14 @@ var Maintenance_helper = {
 			Maintenance_helper.continue_migration();
 		}
 	},
+	//handles what to do once we're done the current migration script
 	finish: function(){
 		//change button 
 		//show after-migration options
 		document.location.href = document.location.href + '&continue_migration=true';
 	},
+	//performs the ajax request, and if successful, calls setup.callback;
+	//on failure with HTML response, calls report_general_migration_error with the content and loads that content to the screen
 	do_ajax: function(data, setup) {
 
 			if ( typeof(setup) === 'undefined' ) {
@@ -120,11 +123,13 @@ var Maintenance_helper = {
 				url: ajaxurl,
 				data: data,
 				success: function(response, status, xhr) {
-//					/alert('response:');
+//					alert('response:'+response);
 					var ct = xhr.getResponseHeader("content-type") || "";
 					if (ct.indexOf('html') > -1) {
-						alert('its html response');
 						Maintenance_helper.display_content(response,setup.where,setup.what);
+						if( typeof(setup.dont_report)=='undefined'){
+							Maintenance_helper.report_general_migration_error(response);
+						}
 					}
 
 					if (ct.indexOf('json') > -1 ) {
@@ -144,26 +149,35 @@ var Maintenance_helper = {
 			});
 			return false;
 		},
+	//sends an ajax message to the backend for logging
+	report_general_migration_error: function(message){
+		var data = {
+			action: 'add_error_to_migrations_ran',
+			page: 'espresso_maintenance_settings',
+			message:message
+		};
+		Maintenance_helper.do_ajax(data,{'where':'#ajax-notices-container', 'what':'prepend','dont_report':true});	
+	},
 
 
-		display_notices: function(content) {
-			jQuery('.ajax-loader-grey').hide();
-			jQuery('#ajax-notices-container').html(content);
-		},
+	display_notices: function(content) {
+		jQuery('.ajax-loader-grey').hide();
+		jQuery('#ajax-notices-container').html(content);
+	},
 
-		display_content: function(content, where, what) {
-			if ( typeof(where) === 'undefined' || typeof(what) === 'undefined' ) {
-				console.log('content is not displayed because we need where or what');
-				return false;
-			}
-			if ( what == 'clear' ) {
-				jQuery(where).html(content);
-			} else if ( what == 'append' ) {
-				jQuery(where).append(content);
-			} else if ( what == 'prepend' ) {
-				jQuery(where).prepend(content);
-			}
+	display_content: function(content, where, what) {
+		if ( typeof(where) === 'undefined' || typeof(what) === 'undefined' ) {
+			console.log('content is not displayed because we need where or what');
+			return false;
 		}
+		if ( what == 'clear' ) {
+			jQuery(where).html(content);
+		} else if ( what == 'append' ) {
+			jQuery(where).append(content);
+		} else if ( what == 'prepend' ) {
+			jQuery(where).prepend(content);
+		}
+	}
 };
 
 jQuery(function() {
