@@ -337,7 +337,7 @@ class EE_Register_CPTs {
 	 * @param string $term_slug The slug of the term that will be the default.
 	 */
 	function set_default_term( $taxonomy, $term_slug, $cpt_slugs = array() ) {
-		$this->_default_terms[$term_slug] = new EE_Default_Term( $taxonomy, $term_slug, $cpt_slugs );
+		$this->_default_terms[][$term_slug] = new EE_Default_Term( $taxonomy, $term_slug, $cpt_slugs );
 	}
 
 
@@ -353,15 +353,17 @@ class EE_Register_CPTs {
 		if ( empty( $this->_default_terms ) )
 			return; //no default terms set so lets just exit.
 
-		foreach ( $this->_default_terms as $term_slug => $default_obj ) {
-			if ( $post->post_status == 'publish' && in_array( $post->post_type, $default_obj->cpt_slugs ) ) {
+		foreach ( $this->_default_terms as $defaults ) {
+			foreach ( $defaults as $term_slug => $default_obj ) {
+				if ( $post->post_status == 'publish' && in_array( $post->post_type, $default_obj->cpt_slugs ) ) {
 
-				//note some error proofing going on here to save unnecessary db queries
-				$taxonomies = get_object_taxonomies( $post->post_type );
-				foreach ( (array) $taxonomies as $taxonomy ) {
-					$terms = wp_get_post_terms( $post_id, $taxonomy);
-					if ( empty( $terms ) && $taxonomy == $default_obj->taxonomy ) {
-						wp_set_object_terms( $post_id, array( $default_obj->term_slug ), $taxonomy );
+					//note some error proofing going on here to save unnecessary db queries
+					$taxonomies = get_object_taxonomies( $post->post_type );
+					foreach ( (array) $taxonomies as $taxonomy ) {
+						$terms = wp_get_post_terms( $post_id, $taxonomy);
+						if ( empty( $terms ) && $taxonomy == $default_obj->taxonomy ) {
+							wp_set_object_terms( $post_id, array( $default_obj->term_slug ), $taxonomy );
+						}
 					}
 				}
 			}
