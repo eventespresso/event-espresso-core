@@ -232,8 +232,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 
-
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 
 
