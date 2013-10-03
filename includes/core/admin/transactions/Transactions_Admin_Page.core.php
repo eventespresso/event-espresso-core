@@ -491,36 +491,34 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		
 		// process taxes
-		if ( $taxes = maybe_unserialize( $this->_transaction->TXN_tax_data )) {
+		if ( $taxes = $this->_transaction->get('TXN_tax_data') ) {
 			$this->_template_args['taxes'] = $taxes['taxes'];
 		} else {
 			$this->_template_args['taxes'] = FALSE;
 		}
 
-		$this->_template_args['grand_total'] = $this->_transaction->TXN_total;
-		$this->_template_args['TXN_status'] = $this->_transaction->STS_ID;
+		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
+		$this->_template_args['TXN_status'] = $this->_transaction->get('STS_ID');
 
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
-		$txn_status_class = 'status-' . $this->_transaction->STS_ID;
+		$txn_status_class = 'status-' . $this->_transaction->get('STS_ID');
 		
 		// process payment details
-	    require_once ( EE_MODELS . 'EEM_Payment.model.php' );
-	    $PAY = EEM_Payment::instance();
-		if ( ! $this->_template_args['payments'] = $PAY->get_payments_for_transaction( $this->_transaction->TXN_ID )) {
+		if ( ! $this->_template_args['payments'] = $this->_transaction->get_many_related('Payment') ) {
 			$this->_template_args['payments'] = FALSE;
 		}
 		
 		$this->_template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
 		$this->_template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
 
-		if ( isset( $this->_transaction->TXN_details['invoice_number'] )) {
-			$this->_template_args['txn_details']['invoice_number']['value'] = $this->_transaction->TXN_details['invoice_number'];
+		if ( isset( $txn_details['invoice_number'] )) {
+			$this->_template_args['txn_details']['invoice_number']['value'] = $txn_details['invoice_number'];
 			$this->_template_args['txn_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
 			$this->_template_args['txn_details']['invoice_number']['class'] = 'regular-text';
 		} 
 
-		$this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction->REG_session;
+		$this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction->get('REG_session');
 		$this->_template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
 		$this->_template_args['txn_details']['registration_session']['class'] = 'regular-text';
 		
