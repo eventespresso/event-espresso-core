@@ -4,7 +4,7 @@
  */
 class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage{
 	function __construct() {
-		$this->_pretty_name = __("Attendees Migration", "event_espresso");
+		$this->_pretty_name = __("Attendees", "event_espresso");
 		parent::__construct();
 	}
 	function _count_records_to_migrate() {
@@ -26,8 +26,5 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage{
 		}
 		return count($attendees);
 		
-	}
-	function pretty_name(){
-		return "Attendee Stage";
 	}
 }

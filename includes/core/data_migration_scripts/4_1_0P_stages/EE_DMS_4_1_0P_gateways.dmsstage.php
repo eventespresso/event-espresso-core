@@ -8,7 +8,7 @@ function count_records_to_migrate() {
 	parent::count_records_to_migrate();
 }
 function __construct() {
-	$this->_pretty_name = __("Gateways Migration", "event_espresso");
+	$this->_pretty_name = __("Gateways", "event_espresso");
 	parent::__construct();
 }
 function espresso_update_active_gateways() {
