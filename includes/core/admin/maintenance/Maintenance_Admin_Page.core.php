@@ -166,6 +166,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'migrating'=>  __("Migrating...", "event_espresso"),
 			'next'=>  __("Next", "event_espresso"),
 			'fatal_error'=>  __("A Fatal Error Has Occurred", "event_espresso"),
+			'click_next_when_ready'=>  __("The current Migration has ended. Click 'next' when ready to proceed", "event_espresso"),
 			'status_no_more_migration_scripts'=>  EE_Data_Migration_Manager::status_no_more_migration_scripts,
 			'status_fatal_error'=>  EE_Data_Migration_Manager::status_fatal_error,
 			'status_completed'=>  EE_Data_Migration_Manager::status_completed));

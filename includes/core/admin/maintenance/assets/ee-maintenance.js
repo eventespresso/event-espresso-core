@@ -111,6 +111,7 @@ var Maintenance_helper = {
 		kickoff_button.click(function(){
 			document.location.href = document.location.href + '&continue_migration=true';
 		});		
+		alert(ee_maintenance.click_next_when_ready);
 	},
 	//performs the ajax request, and if successful, calls setup.callback;
 	//on failure with HTML response, calls report_general_migration_error with the content and loads that content to the screen
