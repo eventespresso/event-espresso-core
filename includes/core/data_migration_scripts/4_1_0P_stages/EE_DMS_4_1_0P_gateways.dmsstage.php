@@ -2,10 +2,33 @@
 class EE_DMS_4_1_0P_gateways extends EE_Data_Migration_Script_Stage{
 	
 function _migration_step($num_items=50){
-	
+	$gateways_to_migrate = array('bank'=>'Bank');// $this->_gateways_we_know_how_to_migrate;
+	$new_gateway_config_obj = EE_Config::instance()->gateway;
+	$items_actually_migrated = 0;
+	foreach($gateways_to_migrate as $old_gateway_slug => $new_gateway_slug){
+		//convert settings
+		switch($new_gateway_slug){
+			case 'Bank':
+				$old_gateway_slug_for_option = 'bank_deposit';
+				break;
+			default:
+				$old_gateway_slug_for_option = $old_gateway_slug;
+		}
+		$old_gateway_settings = get_option('event_espresso_'.$old_gateway_slug_for_option.'_settings');
+		d($old_gateway_settings);
+		$new_gateway_config_obj->payment_settings[$new_gateway_slug] = $old_gateway_settings;
+		
+		$items_actually_migrated++;
+	}
+	EE_Config::instance()->update_espresso_config(false,false);
+	d(EE_Config::instance());
+	if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
+		$this->set_completed();
+	}
+	return $items_actually_migrated;
 }
-function count_records_to_migrate() {
-	parent::count_records_to_migrate();
+function _count_records_to_migrate() {
+	return 1;
 }
 function __construct() {
 	$this->_pretty_name = __("Gateways", "event_espresso");
@@ -369,27 +392,43 @@ function espresso_update_active_gateways() {
 	}
 }
 	
-	protected $gateways_we_know_how_to_migrate = array(
-		'2checkout',
-		'aim',
-		'alipay',
-		'authnet',
-		'bank',
-		'check',
-		'eway',
-		'eway_rapid_3',
-		'exact',
-		'firstdata',
-		'ideal',
-		'invoice',  
-		'mwarrior',
-		'nab',
-		'paypal',
-		'paypal_pro',
-		'paytrace',
-		'quickpay',
-		'realauth',
-		'stripe',
-		'worldpay'
+	protected $_gateways_we_know_how_to_migrate = array(
+		'2checkout'=>'2checkout',
+		'aim'=>'Aim',
+		'anz'=>'Anz',
+		'atos'=>'Atos',
+		'authnet'=>'Authnet',
+		'bank'=>'Bank',
+		'beanstream'=>'Beanstream',
+		'check'=>'Check',
+		'evertec'=>'Evertec',
+		'eway'=>'Eway',
+		'eway_rapid3'=>'Eway_Rapid3',
+		'exact'=>'Exact',
+		'firstdata'=>'Firstdata',
+		'firstdat_e4'=>'Firstdata_E4',
+		'ideal'=>'Ideal',
+		'infusion_payment'=>'InfusionSoft',
+		'invoice'=>'Invoice',  
+		'luottokunta'=>'Luottokunta',
+		'megasoft'=>'Megasoft',
+		'moneris_hpp'=>'Moneris_HPP',
+		'mwarrior'=>'Mwarrior',
+		'nab'=>'NAB',
+		'paychoice'=>'Paychoice',
+		'paypal'=>'Paypal_Standard',
+		'paypal_pro'=>'Paypal_Pro',
+		'paytrace'=>'Paytrace',
+		'psigate'=>'Psigate',
+		'purchase_order'=>'Purchase_Order',
+		'qbms'=>'QBMS',
+		'quickpay'=>'Quickpay',
+		'realauth'=>'Realauth',
+		'securepay_aus'=>'Securepay_Aus',
+		'stripe'=>'Stripe',
+		'usaepay_offsite'=>'USAePay_Offsite',
+		'usaepay_onsite'=>'USAePay_Onsite',
+		'wepay'=>'Wepay',
+		'worldpay'=>'Worldpay'
 	);
 }
