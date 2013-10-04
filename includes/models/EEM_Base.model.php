@@ -315,7 +315,7 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	could be used if you were querying EEM_Tickets (because Datetime is directly related to tickets)
 	 *					|	
 	 *					|	Also, by default all the where conditions are AND'd together. 
-	 *					|	To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together. 
+	 *					|	To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together 
 	 *					|	eg: array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912))
 	 *					|	becomes 
 	 *					|	SQL >> "...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". 
@@ -324,6 +324,12 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	eg: array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)
 	 *					|	becomes 
 	 *					|	SQL >> "...where ! (TXN_total =50 AND TXN_paid =23) 
+	 *					|	Note: the 'glue' used to join each condition will continue to be what you last specified. IE, "AND"s by default,
+	 *					|	but if you had previously specified to use ORs to join, ORs will continue to be used. So, if you specify to use an "OR"
+	 *					|	to join conditions, it will continue to "stick" until you specify an AND.
+	 *					|	eg array('OR'=>array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)),AND=>array('TXN_ID'=>1,'STS_ID'=>'TIN')
+	 *					|	becomes
+	 *					|	SQL >> "...where ! (TXN_total =50 OR TXN_paid =23) AND TXN_ID=1 AND STS_ID='TIN'"
 	 * 
 	 *					|	They can be nested indefinetely. 
 	 *					|	eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN))))
