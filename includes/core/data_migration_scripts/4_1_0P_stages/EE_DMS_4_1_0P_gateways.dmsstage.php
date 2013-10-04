@@ -2,37 +2,84 @@
 class EE_DMS_4_1_0P_gateways extends EE_Data_Migration_Script_Stage{
 	
 function _migration_step($num_items=50){
-	$gateways_to_migrate = array('bank'=>'Bank');// $this->_gateways_we_know_how_to_migrate;
+	$gateways_to_migrate = array_slice($this->_gateways_we_know_how_to_migrate,$this->count_records_migrated(),$num_items);// $this->_gateways_we_know_how_to_migrate;
+	
 	$new_gateway_config_obj = EE_Config::instance()->gateway;
 	$items_actually_migrated = 0;
+	//convert settings
 	foreach($gateways_to_migrate as $old_gateway_slug => $new_gateway_slug){
-		//convert settings
-		switch($new_gateway_slug){
-			case 'Bank':
-				$old_gateway_slug_for_option = 'bank_deposit';
-				break;
-			default:
-				$old_gateway_slug_for_option = $old_gateway_slug;
+		//determine the old option's name
+		$old_gateway_settings = $this->_get_old_gateway_option($new_gateway_slug);
+		if( ! $old_gateway_settings){
+			//no setings existed for this gateway anyways... weird...
+			$items_actually_migrated++;
+			continue;
 		}
-		$old_gateway_settings = get_option('event_espresso_'.$old_gateway_slug_for_option.'_settings');
-		d($old_gateway_settings);
+		//now prepare the settings to make sure they're in the 4.1 format
+		switch($new_gateway_slug){
+			case 'Invoice':
+				$old_gateway_settings['invoice_logo_url'] = $old_gateway_settings['image_url'];
+				unset($old_gateway_settings['image_url']);
+		}
 		$new_gateway_config_obj->payment_settings[$new_gateway_slug] = $old_gateway_settings;
 		
 		$items_actually_migrated++;
 	}
 	EE_Config::instance()->update_espresso_config(false,false);
-	d(EE_Config::instance());
 	if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
 		$this->set_completed();
 	}
 	return $items_actually_migrated;
 }
 function _count_records_to_migrate() {
-	return 1;
+	$settings_to_convert = $this->_gateways_we_know_how_to_migrate;
+//	$button_images_to_update = 
+	return count($settings_to_convert);
 }
 function __construct() {
 	$this->_pretty_name = __("Gateways", "event_espresso");
 	parent::__construct();
+}
+
+private function _get_old_gateway_option($new_gateway_slug){
+	$new_gateway_slugs_to_new = array_flip($this->_gateways_we_know_how_to_migrate);
+	$old_gateway_slug = $new_gateway_slugs_to_new[$new_gateway_slug];
+	$normal_option_prefix = 'event_espresso_';
+	$normal_option_postfix = '_settings';
+	switch($new_gateway_slug){
+		case 'Bank':
+			$option_name = $normal_option_prefix.'bank_deposit'.$normal_option_postfix;
+			break;
+		case 'Aim':
+			$option_name = $normal_option_prefix.'authnet_aim'.$normal_option_postfix;
+			break;
+		case 'Check':
+			$option_name = $normal_option_prefix.'check_payment'.$normal_option_postfix;
+			break;
+		case 'Ideal':
+			$option_name = $normal_option_prefix.'ideal_mollie'.$normal_option_postfix;
+			break;
+		case 'Invoice':
+			$option_name = $normal_option_prefix.'invoice_payment'.$normal_option_postfix;
+			break;
+		case 'Purchase_Order':
+			$option_name = $normal_option_prefix.'purchase_order_payment'.$normal_option_postfix;
+			break;
+		case 'USAePay_Offsite':
+			$option_name = 'espresso_usaepay_offsite'.$normal_option_postfix;
+			break;
+		case 'USAePay_Onsite':
+			$option_name = 'espresso_usaepay_onsite'.$normal_option_postfix;
+			break;
+		default:
+			$option_name = apply_filters('FHEE__EE_DMS_4_1_0P_gateways__get_old_gateway_option',$normal_option_prefix.$old_gateway_slug.$normal_option_postfix);
+	}
+	$settings =  get_option($option_name);
+	if( ! $settings){
+		$this->add_error(sprintf(__("There is no wordpress option named %s for gateway %s", "event_espresso"),$old_gateway_slug,$option_name));
+	}
+	return $settings;
+		
 }
 function espresso_update_active_gateways() {
 	//upgrade script for those updating from versions prior to 3.1.16.P
