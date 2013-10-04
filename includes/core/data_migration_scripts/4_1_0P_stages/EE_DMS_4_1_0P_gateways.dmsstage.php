@@ -16,12 +16,8 @@ function _migration_step($num_items=50){
 			continue;
 		}
 		//now prepare the settings to make sure they're in the 4.1 format
-		switch($new_gateway_slug){
-			case 'Invoice':
-				$old_gateway_settings['invoice_logo_url'] = $old_gateway_settings['image_url'];
-				unset($old_gateway_settings['image_url']);
-		}
-		$new_gateway_config_obj->payment_settings[$new_gateway_slug] = $old_gateway_settings;
+		$new_gateway_settings = $this->_convert_gateway_settings($old_gateway_settings,$new_gateway_slug);
+		$new_gateway_config_obj->payment_settings[$new_gateway_slug] = $new_gateway_settings;
 		
 		$items_actually_migrated++;
 	}
@@ -41,6 +37,36 @@ function __construct() {
 	parent::__construct();
 }
 
+/**
+ * Takes the old array of 3.1 gateway settings for this gateway and converts it
+ * into an array with all the 4.1 gateway setting array keys (often the keys were
+ * changed from 3.1 to 4.1)
+ * @param array $old_gateway_settings
+ * @param string $new_gateway_slug
+ * @return array
+ */
+private function _convert_gateway_settings($old_gateway_settings,$new_gateway_slug){
+	$new_gateway_settings = $old_gateway_settings;
+	switch($new_gateway_slug){
+			case 'Invoice':
+				$new_gateway_settings['invoice_logo_url'] = $old_gateway_settings['image_url'];
+				break;
+			case 'Paypal_Pro':
+				$new_gateway_settings['email'] = $old_gateway_settings['paypal_pro_email'];
+				$new_gateway_settings['username'] = $old_gateway_settings['paypal_api_username'];
+				$new_gateway_settings['password'] = $old_gateway_settings['paypal_api_password'];
+				$new_gateway_settings['signature'] = $old_gateway_settings['paypal_api_signature'];
+				$new_gateway_settings['credit_cards'] = explode(",",$old_gateway_settings['paypal_api_credit_cards']);
+				$new_gateway_settings['use_sandbox'] = $old_gateway_settings['paypal_pro_use_sandbox'];
+				break;
+		}
+	return $new_gateway_settings;
+}
+/**
+ * Figures out the correct 3.1 gateway settings option name for the given 4.1 gateway
+ * @param string $new_gateway_slug
+ * @return string
+ */
 private function _get_old_gateway_option($new_gateway_slug){
 	$new_gateway_slugs_to_new = array_flip($this->_gateways_we_know_how_to_migrate);
 	$old_gateway_slug = $new_gateway_slugs_to_new[$new_gateway_slug];
