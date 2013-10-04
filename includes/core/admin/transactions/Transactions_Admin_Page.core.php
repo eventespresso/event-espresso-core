@@ -1011,7 +1011,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'Registration.REG_count' => 1
 			);
 
-		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit, 'force_join' => array('Registration.Attendee') );
+		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
 
 		$transactions = $count ? $TXN->count( array($_where), 'TXN_ID', TRUE ) : $TXN->get_all($query_params);
 
