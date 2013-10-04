@@ -847,7 +847,22 @@ jQuery(document).ready(function($) {
 		},
 
 
+		/**
+		 * This simply verfies that there is not only ONE active dtt on the row and if there is then we halt the deactivation of that DTT.
+		 * @return {bool} true if DTT can be deacivated. False if its the only DTT on the ticket.
+		 */
+		verifyLastDTT: function() {
+			var dtt_items = $('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow ).find('li.ticket-selected');
+			if ( dtt_items.length > 1 ) {
+				return true;
+			} else {
+				var htmlcontent = '<p>' + DTT_TRASH_BLOCK.single_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.dismiss_button + '</div>';
 
+			
+				dialogHelper.displayModal().addContent(htmlcontent);
+				return false;
+			}
+		},
 
 
 		/**
@@ -1064,27 +1079,35 @@ jQuery(document).ready(function($) {
 		toggleTicketSelect: function(itm, trash) {
 			this.itemdata = $(itm).data();
 			trash = typeof(trash) === 'undefined' ? false : trash;
+			var toggle = true;
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
 			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.datetimeRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
 			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]') : $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' );
 
-			if ( !selecting || trash ) {
-				$(itm).removeClass('ticket-selected');
-				$('input', itm).prop('checked',false);
-				relateditm.removeClass('ticket-selected');
-				$('input', relateditm).prop('checked',false);
-				this.removeTicket();
-				if ( trash ) {
-					$(itm).remove();
-					available_list_row.remove();
+			if ( !selecting && this.itemdata.context == 'ticket-datetime' ) {
+				toggle = tktHelper.verifyLastDTT();
+			}
+
+			if ( toggle ) {
+
+				if ( !selecting || trash ) {
+					$(itm).removeClass('ticket-selected');
+					$('input', itm).prop('checked',false);
+					relateditm.removeClass('ticket-selected');
+					$('input', relateditm).prop('checked',false);
+					this.removeTicket();
+					if ( trash ) {
+						$(itm).remove();
+						available_list_row.remove();
+					}
+				} else  {
+					$(itm).addClass('ticket-selected');
+					$('input', itm).prop('checked',true);
+					relateditm.addClass('ticket-selected');
+					$('input', relateditm).prop('checked',true);
+					//update selected tracking in various contexts
+					this.addTicket();
 				}
-			} else  {
-				$(itm).addClass('ticket-selected');
-				$('input', itm).prop('checked',true);
-				relateditm.addClass('ticket-selected');
-				$('input', relateditm).prop('checked',true);
-				//update selected tracking in various contexts
-				this.addTicket();
 			}
 			return this;
 		},

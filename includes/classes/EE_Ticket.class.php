@@ -325,11 +325,25 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * return if a ticket is no longer available cause its available dates have expired.
+	 * return if a ticket has quantities availalbe for purchase
+	 * @param  int    $DTT_ID the primary key for a particular datetime
 	 * @return boolean
 	 */
-	public function available() {
-		return $this->_TKT_qty == 0 || $this->_TKT_qty > $this->_TKT_sold ? TRUE : FALSE;
+	public function available( $DTT_ID = FALSE ) {
+		// are we checking availablity for a particular datetime ?
+		if ( $DTT_ID ) {
+			// get that datetime object
+			$datetime = $this->get_first_related( 
+				'Datetime',
+				array( array( 'DTT_ID' => $DTT_ID ))
+			);
+			// if  ticket sales for this datetime have exceeded the reg limit...
+			if ( ! empty( $datetime ) && $datetime->sold_out() ) {
+				return FALSE;
+			}
+		}
+		// datetime is still open for registration, but is this ticket sold out ?
+		return $this->_TKT_qty < 1 || $this->_TKT_qty > $this->_TKT_sold ? TRUE : FALSE;
 	}
 
 

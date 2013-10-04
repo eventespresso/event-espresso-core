@@ -147,6 +147,10 @@ class EEH_Debug_Tools{
 
 
 
+/**
+ * borrowed from Kint Debugger
+ * Plugin URI: http://upthemes.com/plugins/kint-debugger/
+ */
 if ( !function_exists( 'dump_wp_query' ) ) {
 	function dump_wp_query(){
 		global $wp_query;
@@ -154,6 +158,10 @@ if ( !function_exists( 'dump_wp_query' ) ) {
 	}
 }
 
+/**
+ * borrowed from Kint Debugger
+ * Plugin URI: http://upthemes.com/plugins/kint-debugger/
+ */
 if ( !function_exists( 'dump_wp' ) ) {
 	function dump_wp(){
 		global $wp;
@@ -161,6 +169,10 @@ if ( !function_exists( 'dump_wp' ) ) {
 	}
 }
 
+/**
+ * borrowed from Kint Debugger
+ * Plugin URI: http://upthemes.com/plugins/kint-debugger/
+ */
 if ( !function_exists( 'dump_post' ) ) {
 	function dump_post(){
 		global $post;
@@ -173,10 +185,10 @@ if ( !function_exists( 'dump_post' ) ) {
 	
 
 /**
-	 * 		@ print_r an array
-	 * 		@ access public
-	 * 		@ return void
-	 */
+ * 	@ print_r an array
+ * 	@ access public
+ * 	@ return void
+ */
 function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 
 	if( ! $var_name ) {

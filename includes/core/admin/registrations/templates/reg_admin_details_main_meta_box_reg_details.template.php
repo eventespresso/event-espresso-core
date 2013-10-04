@@ -35,7 +35,7 @@
 				<td class="jst-left"><?php echo $item['name'];?></td>
 				<td class="jst-left"><?php echo date( 'D M j, Y', $item['date'] ) . ',    ' . date( 'g:i a', $item['time'] );?></td>
 				<td class="jst-left"><?php echo $item['ticket_desc'];?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket'] );?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket_price'] );?></td>
 				<td class="jst-rght"><?php echo $item['qty'];?></td>
 				<td class="jst-rght"><?php echo EEH_Template::format_currency($item['line_total']);?></td>
 			</tr>
