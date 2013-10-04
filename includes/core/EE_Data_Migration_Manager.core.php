@@ -248,8 +248,6 @@ class EE_Data_Migration_Manager{
 	 */
 	public function migration_step(){
 		try{
-			//first: add all dms scripts to the autoloader
-			$this->get_all_data_migration_scripts_available();
 			$currently_executing_script = $this->get_last_ran_script();
 
 			if( ! $currently_executing_script){
