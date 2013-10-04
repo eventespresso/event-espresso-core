@@ -14,6 +14,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		return intval($count);
 	}
 	protected function _migration_step($num_items_to_migrate = 50) {
+		$jabba->wacky();
 		global $wpdb;
 		$events = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$wpdb->prefix."events_detail LIMIT %d,%d",$this->count_records_migrated(),$num_items_to_migrate));
 		if($events){
