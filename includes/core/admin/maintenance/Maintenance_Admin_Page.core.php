@@ -45,6 +45,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 	protected function _ajax_hooks() {
 		add_action('wp_ajax_migration_step',array($this,'migration_step'));
+		add_action('wp_ajax_add_error_to_migrations_ran',array($this,'add_error_to_migrations_ran'));
 	}
 
 
@@ -77,7 +78,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'label' => __('Maintenance', 'event_espresso'),
 					'order' => 10
 					),
-				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+//				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				////'help_tabs' => $this->_get_maintenance_help_tabs(),
 				),
 			'system_status'=>array(
@@ -86,7 +87,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'order'=>20
 					
 				),
-				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+//				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 			)
 			);
 	}
@@ -163,6 +164,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		//localize script stuff
 		wp_localize_script('ee-maintenance', 'ee_maintenance', array(
 			'migrating'=>  __("Migrating...", "event_espresso"),
+			'report_error'=>  __("Report Error", "event_espresso"),
 			'status_no_more_migration_scripts'=>  EE_Data_Migration_Manager::status_no_more_migration_scripts,
 			'status_fatal_error'=>  EE_Data_Migration_Manager::status_fatal_error,
 			'status_completed'=>  EE_Data_Migration_Manager::status_completed));
@@ -175,6 +177,15 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 */
 	public function migration_step(){
 		$this->_template_args['data'] = EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
+		$this->_return_json();
+	}
+	/**
+	 * Can be used by js when it notices a response with HTML in it in order
+	 * to log the malformed response
+	 */
+	public function add_error_to_migrations_ran(){
+		EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($this->_req_data['message']);
+		$this->_template_args['data'] = array('ok'=>true);
 		$this->_return_json();
 	}
 	/**

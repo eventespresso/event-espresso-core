@@ -67,10 +67,10 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
 				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-				'name' => 'Name',
-				'type' => 'Price Type',
-				'description' => 'Description',
-				'amount' => 'Amount'
+				'name' => __('Name', 'event_espresso'),
+				'type' => __('Price Type', 'event_espresso'),
+				'description' => __('Description', 'event_espresso'),
+				'amount' => __('Amount', 'event_espresso')
 			);
 
         $this->_sortable_columns = array(

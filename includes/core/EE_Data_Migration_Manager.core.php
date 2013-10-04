@@ -18,7 +18,7 @@
  * data migration script and calls its function also named migration_step(), which migrates a few records
  * over to the new database structure, and returns either: EE_Data_Migration_Manager::status_continue to indicate that
  * it's successfully migrated some data, but has more to do on the subsequent ajax request;  EE_Data_Migration_Manager::status_completed
- * to indicate it succesfully migrate some data, and has nothing left to do; or EE_Data_Migration_Manager::status_error to indicate
+ * to indicate it succesfully migrate some data, and has nothing left to do; or EE_Data_Migration_Manager::status_fatal_error to indicate
  * an error occured which means the ajax script should probably stop executing. 
  */
 class EE_Data_Migration_Manager{
@@ -58,10 +58,6 @@ class EE_Data_Migration_Manager{
 	 */
 	const status_completed = 'status_completed';
 	/**
-	 * string indicating the migration had an ERROR but it was non-fatal
-	 */
-	const status_error = 'status_error';
-	/**
 	 * string indicating a fatal error occured and the data migration should be completedly aborted
 	 */
 	const status_fatal_error = 'status_fatal_error';
@@ -70,7 +66,7 @@ class EE_Data_Migration_Manager{
 	 * of this EE installation. Keys should be the name of the version the script upgraded to
 	 * @var EE_Data_Migration_Script_Base[]
 	 */
-	private $_data_migrations_ran;
+	private $_data_migrations_ran =null;
 	/**
 	 * array where keys are classnames, and values are filepaths of all teh known migration scripts
 	 * @var array
@@ -89,9 +85,9 @@ class EE_Data_Migration_Manager{
 	var $stati_that_indicate_to_stop_single_migration_script = array();
 	private function __construct(){
 		$this->EE = EE_Registry::instance();
-		$this->stati_that_indicate_to_continue_migrations = array(self::status_continue,self::status_error,self::status_completed);
+		$this->stati_that_indicate_to_continue_migrations = array(self::status_continue,self::status_completed);
 		$this->stati_that_indicate_to_stop_migrations = array(self::status_fatal_error,self::status_no_more_migration_scripts);
-		$this->stati_that_indicate_to_continue_single_migration_script = array(self::status_continue,self::status_error);
+		$this->stati_that_indicate_to_continue_single_migration_script = array(self::status_continue);
 		$this->stati_that_indicate_to_stop_single_migration_script = array(self::status_completed,self::status_fatal_error);//note: status_no_more_migration_scripts doesn't apply
 	}
 	/**
@@ -120,11 +116,9 @@ class EE_Data_Migration_Manager{
 	}
 	
 	/**
-	 * Gets the version (with a ".core" or ".addon_slug") that this data migration file should update to.
-	 * If $incldue_slug_suffix is false, just returns the version (eg "4.1.0" instead of "4.1.0.core")
-	 * @param string $migration_script_name eg 'EE_DMS_4_1_0_core'
-	 * @param boolean $include_slug_suffix
-	 * @return string
+	 * Gets the version the migration script upgrades to
+	 * @param string $migration_script_name eg 'EE_DMS_4_1_0P'
+	 * @return stringeg 4.1.0P
 	 * @throws EE_Error
 	 */
 	private function _migrates_to_version($migration_script_name){
@@ -198,11 +192,9 @@ class EE_Data_Migration_Manager{
 				}
 			} elseif($scripts_ran[$script_converts_to] instanceof EE_Data_Migration_Script_Base){
 				$script = $scripts_ran[$script_converts_to];
-				if(in_array($script->get_status(),$this->stati_that_indicate_to_continue_single_migration_script)){
+				if( $script->get_status() != self::status_completed){
 					//this script is already underway... keep going with it
 					$script_classes_that_should_run[$classname] = $script;
-				}elseif($script->get_status() == self::status_fatal_error){
-					throw new EE_Error(sprintf(__("Script %s had a fatal error and cannot be run. You should revert your database", "event_espresso"),$script->pretty_name()));
 				}else{
 					//it must have a status that indicates it has finished, so we don't want to try and run it again
 				}
@@ -212,14 +204,12 @@ class EE_Data_Migration_Manager{
 			}
 		}
 		ksort($script_classes_that_should_run);
-		//NOTE: scripts should be listed in alphabetic order... meaning
-		//if two scripts apply to 4.1.0, one called 4.1.0.core and another called 4.1.0.groups,
-		//4.1.0.core will run first.
 		return $script_classes_that_should_run;
 	}
 	
 	/**
-	 * Gets the script which is currently being ran, if thereis one.
+	 * Gets the script which is currently being ran, if thereis one. If $include_completed_scripts is set to TRUE
+	 * it will return the last ran script even if its complete
 	 * @return EE_Data_Migration_Script_Base
 	 * @throws EE_Error
 	 */
@@ -232,16 +222,13 @@ class EE_Data_Migration_Manager{
 		//get the LAST one, and see if it's marked for continuing, or just a minor error
 		$last_ran_script = end($scripts_ran);
 		if( $last_ran_script instanceof EE_Data_Migration_Script_Base ){
-			if( in_array($last_ran_script->get_status(),array(self::status_continue,self::status_error))){
+			if($include_completed_scripts){
 				return $last_ran_script;
-			}elseif($last_ran_script->get_status() == self::status_fatal_error){
-				throw new EE_Error(sprintf(__("Last script ran had a fatal error. You must revert your database to where it was BEFORE the migration", "event_espresso")));
 			}else{
-				//it must be marked as complete.
-				if($include_completed_scripts){
+				//in this case, we only want to show a script that isn't complete
+				if( $last_ran_script->get_status() != self::status_completed){
 					return $last_ran_script;
 				}else{
-					//in this case, we only want to show a script that isn't complete
 					return null;
 				}
 			}
@@ -260,81 +247,110 @@ class EE_Data_Migration_Manager{
 	 * item is a string describing what was done
 	 */
 	public function migration_step(){
-		
-		//first: add all dms scripts to the autoloader
-		$this->get_all_data_migration_scripts_available();
-		$currently_executing_script = $this->get_last_ran_script();
-		
-		if( ! $currently_executing_script){
-			//Find the next script that needs to execute
-			$scripts = $this->check_for_applicable_data_migration_scripts();
-			if( ! $scripts ){
-				//huh, no more scripts to run... apparently we're done!
-				//but dont forget to make sure intial data is there
-				$this->EE->load_helper('Activation');
-				//we should be good to allow them to exit maintenance mode now
-				EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
-				EEH_Activation::initialize_db_content();
-				
-				return array(
-					'records_to_migrate'=>1,
-					'records_migrated'=>1,
-					'status'=>self::status_no_more_migration_scripts,  
-					'script'=>__("Data Migration Completed Successfully", "event_espresso"),
-					'message'=>'');
-			}
-			$currently_executing_script = array_shift($scripts);
-			//and add to the array/wp option showing the scripts ran
-			$this->_data_migrations_ran[$this->_migrates_to_version(get_class($currently_executing_script))] = $currently_executing_script;
-		}
-		$current_script_class = $currently_executing_script;
-		$current_script_name = get_class($current_script_class);
+		try{
+			//first: add all dms scripts to the autoloader
+			$this->get_all_data_migration_scripts_available();
+			$currently_executing_script = $this->get_last_ran_script();
 
-		/* @var $current_script_class EE_Data_Migration_Script_Base */
-		$current_script_class->migration_step(1);
-		switch($current_script_class->get_status()){
-			case EE_Data_Migration_Manager::status_continue:
-				$response_array = array(
-					'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
-					'records_migrated'=>$current_script_class->count_records_migrated(),
-					'status'=>EE_Data_Migration_Manager::status_continue,
-					'message'=>$current_script_class->get_feedback_message(),
-					'script'=>$current_script_class->pretty_name());
-				break;
-			case EE_Data_Migration_Manager::status_completed:
-				//ok so THAT script has completed
-				$this->_update_current_database_state_to($this->_migrates_to_version($current_script_name, false));
-				$response_array =  array(
-						'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
-						'records_migrated'=>$current_script_class->count_records_to_migrate(),//so we're done, so just assume we've finished ALL records
-						'status'=> EE_Data_Migration_Manager::status_completed,
-						'message'=>$current_script_class->get_feedback_message(),
-						'script'=> $current_script_class->pretty_name()
-					);
-				//check if there are any more after this one. 
-				$scripts_remaining = $this->check_for_applicable_data_migration_scripts();
-				if( ! $scripts_remaining ){
-					//we should be good to allow them to exit maintenance mode now
-					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
-					////huh, no more scripts to run... apparently we're done!
+			if( ! $currently_executing_script){
+				//Find the next script that needs to execute
+				$scripts = $this->check_for_applicable_data_migration_scripts();
+				if( ! $scripts ){
+					//huh, no more scripts to run... apparently we're done!
 					//but dont forget to make sure intial data is there
 					$this->EE->load_helper('Activation');
+					//we should be good to allow them to exit maintenance mode now
+					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 					EEH_Activation::initialize_db_content();
-					$response_array['status'] = self::status_no_more_migration_scripts;
+
+					return array(
+						'records_to_migrate'=>1,
+						'records_migrated'=>1,
+						'status'=>self::status_no_more_migration_scripts,  
+						'script'=>__("Data Migration Completed Successfully", "event_espresso"),
+						'message'=>  __("All done!", "event_espresso"));
 				}
-				
-				
-				break;
-			case EE_Data_Migration_Manager::status_error:
-			default:
-				$response_array = array(
-					'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
-					'records_migrated'=>$current_script_class->count_records_migrated(),
-					'status'=> $current_script_class->get_status(),
-					'message'=>  sprintf(__("Minor errors occured during %s: %s", "event_espresso"), $current_script_class->pretty_name(), implode(", ",$current_script_class->get_errors())),
-					'script'=>$current_script_class->pretty_name()
-				);
-				break;
+				$currently_executing_script = array_shift($scripts);
+				//and add to the array/wp option showing the scripts ran
+				$this->_data_migrations_ran[$this->_migrates_to_version(get_class($currently_executing_script))] = $currently_executing_script;
+			}
+			$current_script_class = $currently_executing_script;
+			$current_script_name = get_class($current_script_class);
+		}catch(Exception $e){
+			//an exception occurred while trying to get migration scripts
+			
+			$message =  sprintf(__("Error Message: %s<br>Stack Trace:%s", "event_espresso"),$e->getMessage(),$e->getTraceAsString());
+			//record it on the array of data mgiration scripts ran. This will be overwritten next time we try and try to run data migrations
+			//but thats ok-- it's just an FYI to support that we coudln't even run any data migrations
+			$this->add_error_to_migrations_ran(__("Could not run data migrations because: %s", "event_espresso"),$message);
+			return array(
+				'records_to_migrate'=>1,
+				'records_migrated'=>0,
+				'status'=>self::status_fatal_error,
+				'script'=>  __("Error loading data migration scripts", "event_espresso"),
+				'message'=> $message
+			);
+		}
+		//ok so we definitely have a data migration script
+		try{
+			//do what we came to do!
+			$current_script_class->migration_step(1);
+			switch($current_script_class->get_status()){
+				case EE_Data_Migration_Manager::status_continue:
+					$response_array = array(
+						'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
+						'records_migrated'=>$current_script_class->count_records_migrated(),
+						'status'=>EE_Data_Migration_Manager::status_continue,
+						'message'=>$current_script_class->get_feedback_message(),
+						'script'=>$current_script_class->pretty_name());
+					break;
+				case EE_Data_Migration_Manager::status_completed:
+					//ok so THAT script has completed
+					$this->_update_current_database_state_to($this->_migrates_to_version($current_script_name, false));
+					$response_array =  array(
+							'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
+							'records_migrated'=>$current_script_class->count_records_to_migrate(),//so we're done, so just assume we've finished ALL records
+							'status'=> EE_Data_Migration_Manager::status_completed,
+							'message'=>$current_script_class->get_feedback_message(),
+							'script'=> $current_script_class->pretty_name()
+						);
+					//check if there are any more after this one. 
+					$scripts_remaining = $this->check_for_applicable_data_migration_scripts();
+					if( ! $scripts_remaining ){
+						//we should be good to allow them to exit maintenance mode now
+						EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
+						////huh, no more scripts to run... apparently we're done!
+						//but dont forget to make sure intial data is there
+						$this->EE->load_helper('Activation');
+						EEH_Activation::initialize_db_content();
+						$response_array['status'] = self::status_no_more_migration_scripts;
+					}
+					break;
+				default:
+					$response_array = array(
+						'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
+						'records_migrated'=>$current_script_class->count_records_migrated(),
+						'status'=> $current_script_class->get_status(),
+						'message'=>  sprintf(__("Minor errors occured during %s: %s", "event_espresso"), $current_script_class->pretty_name(), implode(", ",$current_script_class->get_errors())),
+						'script'=>$current_script_class->pretty_name()
+					);
+					break;
+			}
+		}catch(Exception $e){
+			//ok so some exception was thrown which killed the data migration script
+			//double-check we have a real script
+			if($current_script_class instanceof EE_Data_Migration_Script_Base){
+				$script_name = $current_script_class->pretty_name();
+			}else{
+				$script_name = __("Error getting Migration Script", "event_espresso");
+			}
+			$response_array = array(
+				'records_to_migrate'=>1,
+				'records_migrated'=>0,
+				'status'=>self::status_fatal_error,
+				'message'=>  sprintf(__("A fatal error occurred during the migration: %s", "event_espresso"),$e->getMessage()),
+				'script'=>$script_name
+			);
 		}
 		update_option(self::data_migrations_option_name, $this->_data_migrations_ran);
 		return $response_array;
@@ -435,5 +451,31 @@ class EE_Data_Migration_Manager{
 	 */
 	public function addons_need_updating(){
 		return false;
+	}
+	/**
+	 * Adds this error string to the data_migrations_ran array, but we dont necessarily know
+	 * where to put it, so we just throw it in there... better than nothing...
+	 * @param type $error_message
+	 * @throws EE_Error
+	 */
+	public function add_error_to_migrations_ran($error_message){
+		$this->_data_migrations_ran = get_option(self::data_migrations_option_name);
+		if(isset($this->_data_migrations_ran ['Unknown'])){
+			$this->_data_migrations_ran['Unknown'][] = $error_message;
+
+		}else{
+			$this->_data_migrations_ran['Unknown'] = array($error_message);
+		}
+		
+		$this->_save_migrations_ran();
+	}
+	/**
+	 * saves what data migrations have ran to teh database
+	 */
+	protected function _save_migrations_ran(){
+		if($this->_data_migrations_ran == null){
+			$this->get_data_migrations_ran();
+		}
+		update_option(self::data_migrations_option_name, $this->_data_migrations_ran);
 	}
 }

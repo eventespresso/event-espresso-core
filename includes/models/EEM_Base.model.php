@@ -16,19 +16,6 @@
  * If your values are already in teh database values domain, you'll either way to convert them into the model object domain by creating model objects
  * from those raw db values (ie,using EEM_Base::_create_objects), or just use $wpdb directly.
  */
-//define('SP',' ');
-////require all field, relation, and helper files, because we'll want 90% of them on every request using EEM_Base anyways.
-//$field_files = glob( EE_MODELS . '/fields/*.php');
-//$helper_files = glob( EE_MODELS . '/helpers/*.php');
-//$relation_files = glob( EE_MODELS . '/relations/*.php');
-//$files =  array_merge( array_merge($field_files, $relation_files), $helper_files) ;
-//require_once( EE_MODELS . 'strategies/EE_Default_Where_Conditions.strategy.php' );
-//foreach ( $files as $file ){
-//    require_once( $file );   
-//}
-//make sure EE_Registry is available
-require_once( EE_REGISTRY );
-
 
 
 abstract class EEM_Base extends EE_Base{
@@ -295,16 +282,40 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	eg: array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob')
 	 *					|	becomes 
 	 *					|	SQL >> "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
-	 *					|	however, to change the operator (from the default of '='), change the value to an numerically-indexed array, where the
+	 *			
+	 *					|	To add WHERE conditions based on related models (and even models-related-to-related-models) prepend the model's name
+	 *					|	onto the field name. Eg, EEM_Event::instance()->get_all(array(array('Venue.VNU_ID'=>12)));
+	 *					|	becomes
+	 *					|	SQL >> "SELECT * FROM wp_posts AS Event_CPT 
+	 *					|						LEFT JOIN wp_esp_event_meta AS Event_Meta ON Event_CPT.ID = Event_Meta.EVT_ID 
+	 *					|						LEFT JOIN wp_esp_event_venue AS Event_Venue ON Event_Venue.EVT_ID=Event_CPT.ID 
+	 *					|						LEFT JOIN wp_posts AS Venue_CPT ON Venue_CPT.ID=Event_Venue.VNU_ID 
+	 *					|						LEFT JOIN wp_esp_venue_meta AS Venue_Meta ON Venue_CPT.ID = Venue_Meta.VNU_ID 
+	 *					|						WHERE Venue_CPT.ID = 12
+	 *					|	Notice that automatically took care of joining Events to Venues (even when each of those models actually consisted of two tables).
+	 *					|	Also, you may chain the model relations together. Eg insetad of just having "Venue.VNU_ID", you could have
+	 *					|	"Registration.Attendee.ATT_ID" as a field on a query for events (because events are related to Registrations, which are related to Attendees).
+	 *					|	You can take it even further with "Registration.Transaction.Payment.PAY_amount" etc. 
+	 * 
+	 *					|	To change the operator (from the default of '='), change the value to an numerically-indexed array, where the
 	 *					|	first item in the list is the operator. 
 	 *					|	eg: array( 'QST_display_text' => array('LIKE','%bob%'), 'QST_ID' => array('<',34), 'QST_wp_user' => array('in',array(1,2,7,23))) 
 	 *					|	becomes
 	 *					|	SQL >> "...WHERE QST_display_text LIKE '%bob%' AND QST_ID < 34 AND QST_wp_user IN (1,2,7,23)...".
 	 * 
-	 *					|	Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN (followed by numeric-indexed array), NOT IN (dido), others?
- 	 * 
+	 *					|	Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN (followed by numeric-indexed array), NOT IN (dido), BETWEEN, IS NULL, IS NOT NULL, others?
+	 * 
+	 *					|	Values can be a string, int, or float. They can also be arrays IFF the operator is IN. 
+	 *					|	Also, values can actually be field names. To indicate the value is a field, simply provide a third array item (true) to the operator-value array like so:
+	 *					|	eg: array( 'DTT_reg_limit' => array('>', 'DTT_sold', TRUE) )
+	 *					|	becomes
+	 *					|	SQL >> "...WHERE DTT_reg_limit > DTT_sold"
+	 *					|	Note: you can also use related model field names like you would any other field name. 
+	 *					|	eg: array('Datetime.DTT_reg_limit'=>array('=','Datetime.DTT_sold',TRUE)
+	 *					|	could be used if you were querying EEM_Tickets (because Datetime is directly related to tickets)
+	 *					|	
 	 *					|	Also, by default all the where conditions are AND'd together. 
-	 *					|	To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together. 
+	 *					|	To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together 
 	 *					|	eg: array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912))
 	 *					|	becomes 
 	 *					|	SQL >> "...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". 
@@ -313,12 +324,19 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	eg: array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)
 	 *					|	becomes 
 	 *					|	SQL >> "...where ! (TXN_total =50 AND TXN_paid =23) 
+	 *					|	Note: the 'glue' used to join each condition will continue to be what you last specified. IE, "AND"s by default,
+	 *					|	but if you had previously specified to use ORs to join, ORs will continue to be used. So, if you specify to use an "OR"
+	 *					|	to join conditions, it will continue to "stick" until you specify an AND.
+	 *					|	eg array('OR'=>array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)),AND=>array('TXN_ID'=>1,'STS_ID'=>'TIN')
+	 *					|	becomes
+	 *					|	SQL >> "...where ! (TXN_total =50 OR TXN_paid =23) AND TXN_ID=1 AND STS_ID='TIN'"
 	 * 
 	 *					|	They can be nested indefinetely. 
 	 *					|	eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN'))))
 	 *					|	becomes 
 	 *					|	SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestmap = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
 	 * 
+	 *					
 	 *					|	GOTCHA: 
 	 *					|	because this is an array, array keys must be unique, making it impossible to place two or more where conditions applying to the same field. 
 	 *					|	eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
@@ -1192,6 +1210,17 @@ abstract class EEM_Base extends EE_Base{
 					}else{
 						$this->_extract_related_models_from_sub_params_array_keys($possibly_array_of_params, $model_query_info_carrier,$query_param_type);
 					}
+				}elseif($query_param_type === 0 //ie WHERE
+						&& is_array($possibly_array_of_params) 
+						&& isset($possibly_array_of_params[2])
+						&& $possibly_array_of_params[2] == true){
+					//then $possible_array_of_params looks something like array('<','DTT_sold',true)
+					//indicating that $possible_array_of_params[1] is actually a field name,
+					//from which we shoudl extract query parameters!
+					if(! isset($possibly_array_of_params[0]) || ! isset($possibly_array_of_params[1])){
+						throw new EE_Error(sprintf(__("Improperly formed query parameter %s. It should be numerically indexed like array('<','DTT_sold',true); but you provided %s", "event_espresso"),$query_param_type,implode(",",$possibly_array_of_params)));
+					}
+					$this->_extract_related_model_info_from_query_param($possibly_array_of_params[1], $model_query_info_carrier, $query_param_type);
 				}
 			}
 		}
@@ -1448,6 +1477,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param boolean $look_for_field_names. if true (default), we're working with strings like 'Event.Venue.VNU_ID' or 'Registration.REG_ID'
 	 * @param boolean $allow_logic_query_params whether or not to allow logic_query_params like 'NOT','OR', or 'AND'
 	 * or 'PAY_ID'. Otherwise, we don't expect there to be a column name. We only want model names, eg 'Event.Venue' or 'Registration's
+	 * @param string $original_query_param what it originally was (eg Registration.Transaction.TXN_ID). If null, we assume it matches $query_param
 	 * @return void only modifies the EEM_Related_Model_Info_Carrier passed into it
 	 */	
 	private function _extract_related_model_info_from_query_param($query_param, EE_Model_Query_Info_Carrier $passed_in_query_info, $query_param_type, $original_query_param = null){
@@ -1716,13 +1746,16 @@ abstract class EEM_Base extends EE_Base{
 			$operator = '=';
 			$value = $op_and_value;
 		}
-
-		if(in_array($operator, $this->_in_style_operators) && is_array($value)){
-				//in this case, the value should be an array, or at least a comma-seperated list
-				//it will need to handle a little differently
-				$cleaned_value = $this->_construct_in_value($value, $field_obj);
-				//note: $cleaned_value has already been run through $wpdb->prepare()
-				return $operator.SP.$cleaned_value;
+		
+		//check to see if the value is actually another field
+		if(is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true){
+			return $operator.SP.$this->_deduce_column_name_from_query_param($value);
+		}elseif(in_array($operator, $this->_in_style_operators) && is_array($value)){
+			//in this case, the value should be an array, or at least a comma-seperated list
+			//it will need to handle a little differently
+			$cleaned_value = $this->_construct_in_value($value, $field_obj);
+			//note: $cleaned_value has already been run through $wpdb->prepare()
+			return $operator.SP.$cleaned_value;
 		} elseif( in_array( $operator, $this->_between_style_operators ) && is_array( $value ) ) {
 			//the value should be an array with count of two.
 			if ( count($value) !== 2 )
