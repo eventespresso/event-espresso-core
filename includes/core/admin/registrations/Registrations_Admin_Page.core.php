@@ -1795,7 +1795,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		//grab first (and only) item
 		$item = array_pop( $cart['items'] );
 		// grab line item id
-		$line_item_id = $item['line_item'];
+		$line_item_id = $item['line_item_id'];
 		
 		//grab session
 		EE_Registry::instance()->SSN->set_session_data( array( 'fill' => TRUE ), 'billing_info' );			
@@ -1822,9 +1822,9 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		// time string
 		$event_time = isset( $this->_req_data['tkt-slctr-time-id-' . $EVT_ID][ $ts_row ] ) ? date( 'Gi', absint( $this->_req_data['tkt-slctr-time-id-' . $EVT_ID][ $ts_row ] )) : FALSE;
 		// price string
-		$tckt_price = isset( $this->_req_data['tkt-slctr-price-id-' . $EVT_ID][ $ts_row ] ) ? sanitize_text_field( $this->_req_data['tkt-slctr-price-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
+		$tckt_price = isset( $this->_req_data['tkt-slctr-ticket-id-' . $EVT_ID][ $ts_row ] ) ? sanitize_text_field( $this->_req_data['tkt-slctr-ticket-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
 		// total ticket cost
-		$grand_total = isset( $this->_req_data['tkt-slctr-price-' . $EVT_ID][ $ts_row ] ) ? ( $this->_req_data['tkt-slctr-price-' . $EVT_ID][ $ts_row ] ) : FALSE;		
+		$grand_total = isset( $this->_req_data['tkt-slctr-ticket-price-' . $EVT_ID][ $ts_row ] ) ? ( $this->_req_data['tkt-slctr-ticket-price-' . $EVT_ID][ $ts_row ] ) : FALSE;		
 				
 //		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 

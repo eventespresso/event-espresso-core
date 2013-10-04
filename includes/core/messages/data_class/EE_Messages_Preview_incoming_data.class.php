@@ -89,7 +89,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 			//for the purpose of our example we're just going select the first price object as the one we'll use.
 			$this->_events[$line_item]['ticket_obj'] = $TKT;
-			$this->_events[$line_item]['ticket'] = $TKT->get_ticket_subtotal();
+			$this->_events[$line_item]['ticket_price'] = $TKT->get_ticket_subtotal();
 			$this->_events[$line_item]['ticket_id'] = $TKT->ID();
 			$this->_events[$line_item]['ticket_desc'] = $TKT->get('TKT_description');
 			$this->_events[$line_item]['pre_approval'] = 0; //we're going to ignore the event settings for this.
@@ -295,7 +295,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 					'TKT_ID' => $this->_events[$line_ref]['ticket_id'],
 					'STS_ID' => 'RAP',
 					'REG_date' => current_time('mysql'),
-					'REG_final_price' => $this->_events[$line_ref]['ticket'],
+					'REG_final_price' => $this->_events[$line_ref]['ticket_price'],
 					'REG_session' => 'dummy_session_id',
 					'REG_code' => '1-dummy_generated_reg_code',
 					'REG_url_link' => 'http://dummyregurllink.com',

@@ -288,10 +288,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 						$item['qty'] = (int) trim( preg_replace('/[^0-9+$]/', '', $item['qty']) ); 					
 				break;
 				
-				case 'ticket' : 
+				case 'ticket_price' : 
 						// filter ticket as numbers and decimals only 
-						$item['ticket'] = trim( preg_replace('/[^0-9.+$]/', '', $item['ticket']) ); 						
-						$item['ticket'] = EEH_Template::format_currency( $item['ticket'], TRUE );							
+						$item['ticket_price'] = trim( preg_replace('/[^0-9.+$]/', '', $item['ticket_price']) ); 						
+						$item['ticket_price'] = EEH_Template::format_currency( $item['ticket_price'], TRUE );							
 				break;
 				
 				case 'name' : 
@@ -317,9 +317,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// each line item in the cart requires a unique identifier
 		if ( isset( $item['options'] ) && ! empty( $item['options'] ) ) { 
 			// add item options to accomodate adding multiples of same item to cart that have different options
-			$line_item_id = md5( $which_cart . $item['id'] . $item['ticket'] . implode( '', $item['options'] ) );
+			$line_item_id = md5( $which_cart . $item['id'] . $item['ticket_price'] . implode( '', $item['options'] ) );
 		} else {
-			$line_item_id = md5( $which_cart . $item['id'] . $item['ticket'] );
+			$line_item_id = md5( $which_cart . $item['id'] . $item['ticket_price'] );
 		}
 		
 		$item = array_merge( array( 'line_item_id' => $line_item_id ), $item );
@@ -371,7 +371,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 					// add qty of this item to total
 					$total_items = $total_items + $item['qty'];
 					// calculate price of item multiplied by qty 
-					$this->cart[ $which_cart ]['items'][ $item['line_item_id'] ]['line_total'] = $item['qty'] * $item['ticket'];
+					$this->cart[ $which_cart ]['items'][ $item['line_item_id'] ]['line_total'] = $item['qty'] * $item['ticket_price'];
 					// and add that to subtotal
 					$sub_total = $sub_total + $this->cart[ $which_cart ]['items'][ $item['line_item_id'] ]['line_total'];
 					
@@ -924,7 +924,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				
 				case 'item' :
 						// we will require each item to have values for the following
-						$required_keys = array( 'id', 'name', 'ticket', 'qty' );
+						$required_keys = array( 'id', 'name', 'ticket_price', 'qty' );
 						
 						foreach ( $required_keys as $required_key ) {
 							// check that item has required property

@@ -510,7 +510,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 								}
 								$this->_template_args['items'][ $item['name'] ][ $opt ] = $option;
 							}
-						} elseif ( $key == 'line_item' ) {
+						} elseif ( $key == 'line_item_id' ) {
 							$this->_template_args['items'][ $item['name'] ][ $key ] = '<a title="' . $value . '" style="color:#333;">' . substr( $value, 0, 6 ) . '...</a>';
 						} else {
 							$this->_template_args['items'][ $item['name'] ][ $key ] = $value;
