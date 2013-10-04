@@ -315,7 +315,7 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	SQL >> "...where ! (TXN_total =50 AND TXN_paid =23) 
 	 * 
 	 *					|	They can be nested indefinetely. 
-	 *					|	eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN))))
+	 *					|	eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN'))))
 	 *					|	becomes 
 	 *					|	SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestmap = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
 	 * 
