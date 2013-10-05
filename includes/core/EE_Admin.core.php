@@ -65,9 +65,7 @@ final class EE_Admin {
 		$this->EE = EE_Registry::instance();
 		// define global EE_Admin constants
 		$this->_define_all_constants();
-		//set frontend ajax constant.  This gets set if we have an incoming request var named "ee_frontend_ajax"
-		$ee_frontend_ajax = isset( $_POST['ee_frontend_ajax'] ) ? TRUE : FALSE;
-		define( 'EE_FRONTEND_DOING_AJAX', $ee_frontend_ajax );
+		
 		// admin hooks
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
 		// load EE_Request_Handler early
