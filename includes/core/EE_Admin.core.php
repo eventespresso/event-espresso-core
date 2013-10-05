@@ -176,8 +176,8 @@ final class EE_Admin {
 			$this->EE->load_core( 'messages_init' );
 		}
 		
-		// run the admin page factory but ONLY if we aren't doing a frontend ajax request
-		if ( ! EE_FRONTEND_DOING_AJAX ) {
+		// run the admin page factory but ONLY if we are doing an ee admin ajax request
+		if ( EE_ADMIN_AJAX ) {
 			try {
 				//this loads the controller for the admin pages which will setup routing etc
 				$this->EE->load_core( 'Admin_Page_Loader' );
