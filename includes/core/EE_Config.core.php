@@ -193,7 +193,7 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @return 	boolean success 
 	 */
-	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
+	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
 		// compare existing settings with what's already saved'
 		$no_change = TRUE;
 		$espresso_config = $this->get_espresso_config();
@@ -218,7 +218,7 @@ final class EE_Config {
 		}
 		// if config remains the same or was updated successfully
 		if ( $no_change || $saved ) {
-			if ( $add_succes ) {
+			if ( $add_success ) {
 				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
 				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
@@ -400,10 +400,10 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
+		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
 		// load the module class file
-		EEH_Debug_Tools::instance()->start_timer();
 		require_once( $module_path . DS . $module_class . $module_ext );
-		EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class");
+		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class"); }
 		// verfiy that class exists
 		if ( ! class_exists( $module_class )) {
 			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );

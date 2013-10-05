@@ -397,6 +397,23 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
+	*		get date_range - meaning the start AND end date
+	* 
+	* 		@access		public	
+	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+	* 		@param		string		$conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
+		return $this->_show_datetime( 'D', 'start', $dt_frmt ) . $conjunction . $this->_show_datetime( 'D', 'end', $dt_frmt );
+	}
+	public function e_date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
+		echo $this->date_range( $dt_frmt, $conjunction );
+	}
+
+
+
+	/**
 	*		get start time
 	* 
 	* 		@access		public	
@@ -498,13 +515,27 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	*		get the registration limit for this datetime slot
+	*	get the registration limit for this datetime slot
 	* 
-	* 		@access		public		
-	*		@return 		mixed		int on success, FALSE on fail
+	* 	@access		public		
+	*	@return 		mixed		int on success, FALSE on fail
 	*/	
 	public function reg_limit() {
 		return $this->_DTT_reg_limit;
+	}
+
+
+
+
+
+	/**
+	*	have the tickets sold for this datetime, met or exceed the registration limit ?
+	* 
+	* 	@access		public		
+	*	@return 		mixed		int on success, FALSE on fail
+	*/	
+	public function sold_out() {
+		return $this->_DTT_reg_limit != 0 && $this->_DTT_sold >= $this->_DTT_reg_limit ? TRUE : FALSE ;
 	}
 
 

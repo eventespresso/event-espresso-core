@@ -372,7 +372,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$event_queue[$cart_type]['items'][$item['line_item_id']]['id'] = $item['id'];
 					$event_queue[$cart_type]['items'][$item['line_item_id']]['name'] = stripslashes( $item['name'] );
 					$event_queue[$cart_type]['items'][$item['line_item_id']]['ticket_desc'] = stripslashes( $item['options']['ticket_desc'] );
-					$event_queue[$cart_type]['items'][$item['line_item_id']]['ticket'] = $item['ticket'];
+					$event_queue[$cart_type]['items'][$item['line_item_id']]['ticket_price'] = $item['ticket_price'];
 					$event_queue[$cart_type]['items'][$item['line_item_id']]['qty'] = $item['qty'];
 					$event_queue[$cart_type]['items'][$item['line_item_id']]['line_total'] = EEH_Template::format_currency( $item['line_total'], TRUE );
 
@@ -388,15 +388,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //					 echo '<h2>use groupon code : ' . $event_reg_details->use_groupon_code . '</h2>';
 
 //					if ($event_reg_details->require_pre_approval == 1) {
-//						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
+//						$events_requiring_pre_approval[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket_price' => $item['ticket_price'], 'qty' => $item['qty']);
 //					}
 
 //					if ($event_reg_details->use_coupon_code) {
-//						$events_that_use_coupon_codes[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
+//						$events_that_use_coupon_codes[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket_price' => $item['ticket_price'], 'qty' => $item['qty']);
 //					}
 //
 //					if (defined('EVENTS_GROUPON_CODES_TABLE') && $event_reg_details->use_groupon_code) {
-//						$events_that_use_groupon_codes[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket' => $item['ticket'], 'qty' => $item['qty']);
+//						$events_that_use_groupon_codes[$cart_type]['items'][$item['line_item_id']] = array('id' => $item['id'], 'name' => $item['name'], 'ticket_price' => $item['ticket_price'], 'qty' => $item['qty']);
 //					}
 
 					// $additional_event_registration_info = apply_filters( 'FHEE_additional_event_registration_info', $additional_event_registration_info );
@@ -412,7 +412,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 					$attendee_questions = array();
 					
-					$price_id = $item['ticket'] * 100;
+					$price_id = $item['ticket_price'] * 100;
 					$tckt_date = $item['options']['date'];
 					$find = array("\xC2\xA0", "\x20", "&#160;", "&nbsp;", ' ');
 					$tckt_date = str_replace($find, '_', $tckt_date);
@@ -558,7 +558,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //					foreach ($items as $line_item_id => $item) {
 //						// we will subtract events that require pre-approval from the event queue totals since these will not be getting purchased right now
 //						//$total_items = $total_items - $item['qty'];
-//						$grand_total = $grand_total - $item['ticket'];
+//						$grand_total = $grand_total - $item['ticket_price'];
 //						$template_args['events_requiring_pre_approval'] .= '<li>' . $item['name'] . '</li>';
 //					}
 //				}
@@ -976,7 +976,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$template_args['events'][$line_item_id]['name'] = stripslashes( trim( $event['name'] ));
 				$template_args['events'][$line_item_id]['date'] = $event['options']['date'];
 				$template_args['events'][$line_item_id]['time'] = date('g:i a', strtotime($event['options']['time']));
-				$template_args['events'][$line_item_id]['ticket-price'] = stripslashes( trim( $event['options']['ticket_desc'] )) . ': ' . EEH_Template::format_currency( $event['ticket'] );
+				$template_args['events'][$line_item_id]['ticket_price'] = stripslashes( trim( $event['options']['ticket_desc'] )) . ': ' . EEH_Template::format_currency( $event['ticket_price'] );
 	
 				foreach ($event['attendees'] as $att_nmbr => $attendee) {
 					// if attendee has no name, then use primary attendee's details
@@ -1262,16 +1262,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$session['cart']['REG']['items'][$line_item_id]['attendees'][$att_nmbr]['att_obj'] = base64_encode( serialize( $att[$att_nmbr] ));
 
 				$TKT_ID = $event['options']['ticket_id'];
-				$price_paid = $attendee['price_paid'];
+				$DTT_ID = $event['options']['dtt_id'];
 
 				$session_snip =  substr( $session['id'], 0, 3 ) . substr( $session['id'], -3 );				
-				$new_reg_code = $transaction->ID() . '-' . $event['id'] . $TKT_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));				
+				$new_reg_code = $transaction->ID() . '-' . $DTT_ID . $TKT_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 ));				
 				$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code );
 				
 				if ( has_filter( 'FHEE_new_registration_code' ) ) {
 					$prev_reg_code = $new_reg_code;
 				} else {
-					$prev_reg_code = '%-' . $event['id'] . $TKT_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
+					$prev_reg_code = '%-' . $DTT_ID . $TKT_ID . $att_nmbr . '-' . $session_snip . ( absint( date( 'i' ) / 2 )) . '%';
 				}					
 
 				// now create a new registration for the attendee
@@ -1285,7 +1285,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						'TKT_ID' => $TKT_ID,
 						'STS_ID' => EE_Registry::instance()->CFG->registration->default_STS_ID,
 						'REG_date' => current_time('timestamp'),
-						'REG_final_price' => $price_paid,
+						'REG_final_price' => $attendee['price_paid'],
 						'REG_session' => $session['id'],
 						'REG_code' => $new_reg_code,
 						'REG_url_link' => $reg_url_link,

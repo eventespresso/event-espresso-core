@@ -110,7 +110,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 			$TKT = $this->reg_obj->get_first_related('Ticket');
 
 			$this->_events[$line_item]['ticket_obj'] = $TKT;
-			$this->_events[$line_item]['ticket'] = $TKT->get_ticket_subtotal();
+			$this->_events[$line_item]['ticket_price'] = $TKT->get_ticket_subtotal();
 			$this->_events[$line_item]['ticket_id'] = $TKT->ID();
 			$this->_events[$line_item]['ticket_desc'] = $TKT->get('TKT_description');
 			$this->_events[$line_item]['pre_approval'] = $event->get('EVT_require_pre_approval'); 

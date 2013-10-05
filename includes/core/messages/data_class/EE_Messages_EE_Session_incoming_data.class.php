@@ -119,7 +119,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 						'line_ref' => $reg->event_ID(),
 						'name' => $event->name(),
 						'daytime_id' => $first_datetime  ? $first_datetime->ID() : 0,
-						'ticket' => $tkt->get_ticket_subtotal(),
+						'ticket_price' => $tkt->get_ticket_subtotal(),
 						'ticket_obj' => $tkt,
 						'ticket_desc' => $tkt->get('TKT_description'),
 						'pre_approval' => $event->require_pre_approval(),// $event->require_pre_approval,

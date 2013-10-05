@@ -93,7 +93,7 @@
 	}
 	#espresso-events-list-wrap-dv a.ee-button-lnk { /*padding: .55em 1.15em;*/ }
 	#espresso-events-list-wrap-dv a.ee-register-button-lnk {
-		padding: 6px 1.5em 5px; margin:0; background: #70CC50; border-color:#70CC50; 
+		padding: 6px 1.5em 5px; margin:0; background: #7DBD29; border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
 		font-size:14px; line-height:24px; color:#fff; font-weight: bold; text-shadow:1px 1px 0px rgba(0,0,0,.3); 
 		box-shadow:0px 1px 1px rgba(0,0,0,.5), 0px 1px 7px -1px rgba(0,0,0,.3);
 	}

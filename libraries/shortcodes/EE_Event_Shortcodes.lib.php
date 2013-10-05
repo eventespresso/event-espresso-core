@@ -125,7 +125,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT_PRICE]' :
 				EE_Registry::instance()->load_helper( 'Template' );
-				return isset( $this->_data['ticket'] ) ? EEH_Template::format_currency( $this->_data['ticket'] ) : '';
+				return isset( $this->_data['ticket_price'] ) ? EEH_Template::format_currency( $this->_data['ticket_price'] ) : '';
 				break;
 		}
 	}

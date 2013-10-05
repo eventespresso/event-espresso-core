@@ -107,7 +107,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	creates buttons for selecting number of attendees for an event
 	*
 	*	@access public
-	* 	@param	object 			$event  
+	* 	@param	object 		$event  
 	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	string	
 	*/
@@ -141,8 +141,31 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 		
 		$template_args['event_id'] = self::$_event->ID;
+		$template_args['event'] = self::$_event;
 		$template_args['event_name'] = self::$_event->post_title;
 		$template_args['require_pre_approval'] = self::$_event->EVT_require_pre_approval;
+		
+		
+		// get 
+		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
+			array(
+				'Datetime.EVT_ID' => self::$_event->ID,
+//				'OR' => array(
+//					'Datetime.DTT_sold' => array( '<', 'Datetime.DTT_reg_limit', TRUE ),
+//					'Datetime.DTT_reg_limit' => 0
+//				),		
+//				 'OR' => array(
+//					'TKT_sold' =>array( '<', 'TKT_qty', TRUE ),
+//					'TKT_qty' => 0			
+//				)
+			),
+			'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC', 'TKT_order' => 'DESC' )
+		));
+
+//		d( $template_args['tickets'] );
+		
+		
+
 		$template_args['datetimes'] = self::$_event->datetimes;
 		$template_args['datetimes'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__datetimes', self::$_event->datetimes, self::$_event );
 		
@@ -169,11 +192,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function ticket_selector_form_open( $post ) {
 		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), get_permalink( $post->ID ));
 		if ( ! $checkout_url ) {
-			$msg = __('The URL for the event registration checkout page could not be retreived.', 'event_espresso' );
+			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 		echo '
 		<form id="" method="POST" action="' . $checkout_url . '">';
+		wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce' );
 	}
 
 
@@ -188,10 +212,11 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		string
 	*/	
 	public static function display_ticket_selector_submit() {
-		echo '
-		<input id="" class="ee-register-button-lnk" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
-		';
-
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE )) {
+			echo '
+			<input id="" class="ee-register-button-lnk" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
+			';
+		}
 	}
 
 
@@ -223,6 +248,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/	
 	public function process_ticket_selections() {
 		
+		if ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
+			$error_msg = __( 'We\'re sorry but your request failed to pass a security check.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			return;
+		}
+		
 		$return = FALSE;
 		//we should really only have 1 registration in the works now (ie, no MER)
 		//so clear any previosu items in the cart. When MER happens this will probably need to be tweaked, 
@@ -232,7 +263,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// do we have an event id?
-		if ( isset($_POST['tkt-slctr-event-id'] )) {
+		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' )) {
 		
 			// validate/sanitize data
 			$valid = self::_validate_post_data('add_event_to_cart');
@@ -267,20 +298,16 @@ class EED_Ticket_Selector extends  EED_Module {
 						$event_to_add = array(
 								'id' => $valid['id'],
 								'name' => $valid['name'],
-								'ticket' => $valid['ticket'][$x],
+								'ticket_price' => $valid['ticket_price'][$x],
 								'ticket_id' => $valid['ticket_id'][$x],
 								'ticket_obj' => $valid['ticket_obj'][$x],
 								'qty' => $valid['qty'][$x],
-//								'meta_keys' => $valid['meta_keys'],
-//								'meta_values' => $valid['meta_values'],
-								
 								'options' => array(
-										'date' => $valid['date'][$x],
-										'time' => $valid['time'][$x],
-										'dtt_id' => $valid['dtt_id'][$x],
-										'ticket_desc' => $valid['ticket_desc'][$x],
-//										'event_meta' => $valid['event_meta'],
-										'pre_approval' => $valid['pre_approval']
+									'date' => $valid['date'][$x],
+									'time' => $valid['time'][$x],
+									'dtt_id' => $valid['dtt_id'][$x],
+									'ticket_desc' => $valid['ticket_desc'][$x],
+									'pre_approval' => $valid['pre_approval']
 								)
 						);
 						//printr( $event_to_add, '$event_to_add  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -316,33 +343,30 @@ class EED_Ticket_Selector extends  EED_Module {
 				}				
 			}
 //die();
-			if ( isset( $_POST['tkt-slctr-return-url-'.$valid['id']] )) {
+			if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-return-url-'.$valid['id'] )) {
 				EE_Error::get_notices( FALSE, TRUE );
-				$return_url = $_POST['tkt-slctr-return-url-'.$valid['id']];
-				wp_safe_redirect( $return_url );
+				wp_safe_redirect( EE_Registry::instance()->REQ->get( 'tkt-slctr-return-url-'.$valid['id'] ) );
 				exit();
 			} elseif ( isset( $event_to_add['id'] )) {
 				EE_Error::get_notices( FALSE, TRUE );
-				$return_url = get_permalink( $event_to_add['id'] );
-				wp_safe_redirect( $return_url );
+				wp_safe_redirect( get_permalink( $event_to_add['id'] ) );
 				exit(); 
 			} else {
 				echo EE_Error::get_notices();			
 			}
 			
 			
-		} /*else {
+		} else {
 			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
 			$error_msg = __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-			
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}	
 
-		if ( isset( $_SERVER['HTTP_REFERER'] )) {
-			$return_url = add_query_arg(  EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
-			wp_safe_redirect( $return_url );
-			exit();
-		}	*/
+//		if ( isset( $_SERVER['HTTP_REFERER'] )) {
+//			$return_url = add_query_arg(  EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
+//			wp_safe_redirect( $return_url );
+//			exit();
+//		}	
 
 	}
 
@@ -365,173 +389,168 @@ class EED_Ticket_Selector extends  EED_Module {
 		$valid_data = array();
 
 		//if event id is valid
-		if ( $id = absint( $_POST['tkt-slctr-event-id'] )) {
+		if ( $id = absint( EE_Registry::instance()->REQ->get( 'tkt-slctr-event-id' ))) {
 
 			$valid_data['id'] = $id;
 			// grab and sanatize return-url
-			$return_url = esc_url_raw($_POST['tkt-slctr-return-url-' . $id]);
+			$return_url = esc_url_raw( EE_Registry::instance()->REQ->get( 'tkt-slctr-return-url-' . $id ));
 			// array of other form names
 			$inputs_to_clean = array(
-					'name' => 'tkt-slctr-event-name-',
-					'atndz' => 'tkt-slctr-max-atndz-',
-					'rows' => 'tkt-slctr-rows-',
-					'qty' => 'tkt-slctr-qty-',
-					'ticket' => 'tkt-slctr-ticket-',
-					'ticket_id' => 'tkt-slctr-ticket-id-',
-					'date' => 'tkt-slctr-date-',
-					'dtt_id' => 'tkt-slctr-dtt-id-',
-					'time' => 'tkt-slctr-time-',
-					'ticket_desc' => 'tkt-slctr-ticket-desc-',
-					'ticket_obj' => 'tkt-slctr-ticket-obj-',
-//					'event_meta' => 'tkt-slctr-event-meta-',
-//					'meta_keys' => 'tkt-slctr-meta-keys-',
-//					'meta_values' => 'tkt-slctr-meta-values-',
-					'pre_approval' => 'tkt-slctr-pre-approval-'
+				'name' => 'tkt-slctr-event-name-',
+				'atndz' => 'tkt-slctr-max-atndz-',
+				'rows' => 'tkt-slctr-rows-',
+				'qty' => 'tkt-slctr-qty-',
+				'ticket_price' => 'tkt-slctr-ticket-price-',
+				'ticket_id' => 'tkt-slctr-ticket-id-',
+				'date' => 'tkt-slctr-date-',
+				'dtt_id' => 'tkt-slctr-dtt-id-',
+				'time' => 'tkt-slctr-time-',
+				'ticket_desc' => 'tkt-slctr-ticket-desc-',
+				'ticket_obj' => 'tkt-slctr-ticket-obj-',
+				'pre_approval' => 'tkt-slctr-pre-approval-'
 			);
 			// let's track the total number of tickets ordered.'
 			$valid_data['total_tickets'] = 0;
 			// cycle through $inputs_to_clean array
 			foreach ($inputs_to_clean as $what => $input_to_clean) {
 
-//				echo '<h4>what : ' . $what . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//				printr( $_POST[ $input_to_clean . $id ], '$input_to_clean  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				if ( EE_Registry::instance()->REQ->is_set( $input_to_clean . $id )) {
+					switch ($what) {
 
-				switch ($what) {
+						// integers
+						case 'atndz':
+						case 'rows':
+						case 'pre_approval':
+							$valid_data[$what] = absint( EE_Registry::instance()->REQ->get( $input_to_clean . $id ));
+							break;
 
-					// integers
-					case 'atndz':
-					case 'rows':
-					case 'pre_approval':
-						$valid_data[$what] = absint($_POST[$input_to_clean . $id]);
-						break;
-
-					// arrays of integers
-					case 'qty':
-						// grab the array
-						$row_qty =$_POST[$input_to_clean . $id];						
-//						$ints = is_array( $_POST[$input_to_clean . $id] ) ? $_POST[$input_to_clean . $id] : array( $_POST[$input_to_clean . $id] );						
-						// if qty is coming from a radio button input, then we need to assemble an array of rows
-						if( ! is_array( $_POST[$input_to_clean . $id] )) {
-							// get number of rows
-							$rows = isset( $_POST['tkt-slctr-rows-' . $id] ) ? absint( $_POST['tkt-slctr-rows-' . $id] ) : 1;
-							//echo '<h4>$rows : ' . $rows . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-							// explode ints by the dash
-							$row_qty = explode( '-', $row_qty );
-							$row = isset( $row_qty[0] ) ? ( absint( $row_qty[0] )+1 ) : 1;
-							$qty = isset( $row_qty[1] ) ? absint( $row_qty[1] ) : 0;
-							$row_qty = array( $row => $qty );
-							//printr( $row_qty, '$row_qty  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-							for( $x = 1; $x <= $rows; $x++ ) {
-								if ( ! isset( $row_qty[$x] )) {
-									$row_qty[$x] = 0;
+						// arrays of integers
+						case 'qty':
+							// grab the array
+							$row_qty = EE_Registry::instance()->REQ->get( $input_to_clean . $id );						
+							// if qty is coming from a radio button input, then we need to assemble an array of rows
+							if( ! is_array( EE_Registry::instance()->REQ->get( $input_to_clean . $id ) )) {
+								// get number of rows
+								$rows = EE_Registry::instance()->REQ->is_set( 'tkt-slctr-rows-' . $id ) ? absint( EE_Registry::instance()->REQ->get( 'tkt-slctr-rows-' . $id )) : 1;
+								//echo '<h4>$rows : ' . $rows . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+								// explode ints by the dash
+								$row_qty = explode( '-', $row_qty );
+								$row = isset( $row_qty[0] ) ? ( absint( $row_qty[0] )+1 ) : 1;
+								$qty = isset( $row_qty[1] ) ? absint( $row_qty[1] ) : 0;
+								$row_qty = array( $row => $qty );
+								//printr( $row_qty, '$row_qty  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+								for( $x = 1; $x <= $rows; $x++ ) {
+									if ( ! isset( $row_qty[$x] )) {
+										$row_qty[$x] = 0;
+									}
 								}
 							}
-						}
-						ksort( $row_qty );
-						//printr( $row_qty, '$row_qty  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						// cycle thru values
-						foreach ($row_qty as $qty) {
-							// sanitize as integers
-							$valid_data[$what][] = absint($qty);
-							$valid_data['total_tickets'] = $valid_data['total_tickets'] + absint($qty);
-						}
-						break;
-						
-					case 'dtt_id':
-					case 'time':
-						// grab the array
-						$ints =$_POST[$input_to_clean . $id];						
-						// cycle thru values
-						foreach ($ints as $int) {
-							switch ($what ) {
-																	
-								case 'time' :
-									$time = absint($int);
-									$valid_data[$what][] = date( 'g:i a', $time);
-									break;
-									
-								default :
+							ksort( $row_qty );
+							//printr( $row_qty, '$row_qty  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							// cycle thru values
+							foreach ($row_qty as $qty) {
 								// sanitize as integers
-								$valid_data[$what][] = absint($int);								
+								$valid_data[$what][] = absint($qty);
+								$valid_data['total_tickets'] = $valid_data['total_tickets'] + absint($qty);
 							}
-						}
-						break;
-
-					// floats
-					case 'ticket':
-						// grab the array
-						$floats = $_POST[$input_to_clean . $id];
-						// cycle thru values
-						foreach ($floats as $float) {
-							// sanitize as float
-							$valid_var = trim(preg_replace('/[^0-9.+$]/', '', $float));
-							$valid_data[$what][] = $valid_var = number_format((float) $valid_var, 2, '.', '');
-						}
-						break;
-
-					// string
-					case 'date':
-						// grab the array
-						$dates = $_POST[$input_to_clean . $id];
-						// cycle thru values
-						foreach ($dates as $date) {
-							// allow only numbers, letters,  spaces, commas and dashes
-							$valid_var = trim(preg_replace('/[^a-zA-Z0-9,-\s\s++$]/', '', $date));
-							// can it convert to a date?
-							if ($valid_var = date('Y-m-d', strtotime($date))) {
-								$valid_data[$what][] = $date;
+							break;
+							
+						case 'dtt_id':
+						case 'time':
+							// grab the array
+							$ints =EE_Registry::instance()->REQ->get( $input_to_clean . $id );						
+							// cycle thru values
+							foreach ($ints as $int) {
+								switch ($what ) {
+																		
+									case 'time' :
+										$time = absint($int);
+										$valid_data[$what][] = date( 'g:i a', $time);
+										break;
+										
+									default :
+									// sanitize as integers
+									$valid_data[$what][] = absint($int);								
+								}
 							}
-						}
-						break;
+							break;
 
-					// string
-					case 'name':
-						// allow only numbers, letters,  spaces, commas and dashes
-						$valid_data[$what] = sanitize_text_field( $_POST[$input_to_clean . $id] );
-						break;
-					case 'event_meta':
-						$valid_data[$what] = $_POST[$input_to_clean . $id];
-						break;
+						// floats
+						case 'ticket_price':
+							// grab the array
+							$floats = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
+							// cycle thru values
+							foreach ($floats as $float) {
+								// sanitize as float
+								$valid_var = trim(preg_replace('/[^0-9.+$]/', '', $float));
+								$valid_data[$what][] = $valid_var = number_format((float) $valid_var, 2, '.', '');
+							}
+							break;
 
-					// arrays of string
-					case 'ticket_id':
-					case 'meta_keys':
-					case 'meta_values':
-						$value_array = array();
-						// grab the array
-						$values = $_POST[$input_to_clean . $id];
-						// cycle thru values
-						foreach ($values as $key=>$value) {
+						// string
+						case 'date':
+							// grab the array
+							$dates = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
+							// cycle thru values
+							foreach ($dates as $date) {
+								// allow only numbers, letters,  spaces, commas and dashes
+								$valid_var = trim(preg_replace('/[^a-zA-Z0-9,-\s\s++$]/', '', $date));
+								// can it convert to a date?
+								if ($valid_var = date('Y-m-d', strtotime($date))) {
+									$valid_data[$what][] = $date;
+								}
+							}
+							break;
+
+						// string
+						case 'name':
 							// allow only numbers, letters,  spaces, commas and dashes
-							$value_array[$key] = wp_strip_all_tags($value);
-						}
-						$valid_data[$what] = $value_array;
-						break;
-						
-					case 'ticket_desc':
-						// grab the array
-						$descs = maybe_unserialize($_POST[$input_to_clean . $id]);
-						// cycle thru values
-						foreach ($descs as $desc) {
-							// allow safe html
-							$valid_data[ $what ][] = wp_kses_data( $desc );
-						}
-						break;
-						
-					case 'ticket_obj':
-						// grab the array
-						$values = $_POST[$input_to_clean . $id];
-						// cycle thru values
-						foreach ($values as $key=>$value) {
-							// allow only numbers, letters,  spaces, commas and dashes
-							$valid_data[$what][] = $value;
-						}
-						break;
-						
-					case 'return-url' :
-						break;
-						
-				} 	// end switch $what
+							$valid_data[$what] = sanitize_text_field( EE_Registry::instance()->REQ->get( $input_to_clean . $id ) );
+							break;
+						case 'event_meta':
+							$valid_data[$what] = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
+							break;
+
+						// arrays of string
+						case 'ticket_id':
+						case 'meta_keys':
+						case 'meta_values':
+							$value_array = array();
+							// grab the array
+							$values = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
+							// cycle thru values
+							foreach ($values as $key=>$value) {
+								// allow only numbers, letters,  spaces, commas and dashes
+								$value_array[$key] = wp_strip_all_tags($value);
+							}
+							$valid_data[$what] = $value_array;
+							break;
+							
+						case 'ticket_desc':
+							// grab the array
+							$descs = maybe_unserialize(EE_Registry::instance()->REQ->get( $input_to_clean . $id ));
+							// cycle thru values
+							foreach ($descs as $desc) {
+								// allow safe html
+								$valid_data[ $what ][] = wp_kses_data( $desc );
+							}
+							break;
+							
+						case 'ticket_obj':
+							// grab the array
+							$values = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
+							// cycle thru values
+							foreach ($values as $key=>$value) {
+								// allow only numbers, letters,  spaces, commas and dashes
+								$valid_data[$what][] = $value;
+							}
+							break;
+							
+						case 'return-url' :
+							break;
+							
+					} 	// end switch $what					
+				}
 			} 	// end foreach $inputs_to_clean 
 			
 		} else {
@@ -571,16 +590,13 @@ class EED_Ticket_Selector extends  EED_Module {
 		$event['options'] = isset($event['options']) ? $event['options'] : '';
 
 		$add_to_cart_args = array(
-				'id' => $event['id'],
-				'name' => $event['name'],
-				'ticket' => $event['ticket'],
-				'ticket_id' => $event['ticket_id'],
-				'ticket_obj' => $event['ticket_obj'],
-				'qty' => $event['qty'],
-				'options' => $event['options'],
-//				'meta_keys' => $event['meta_keys'],
-//				'meta_values' => $event['meta_values']
-//				'event_meta' => $event['event_meta'] 
+			'id' => $event['id'],
+			'name' => $event['name'],
+			'ticket_price' => $event['ticket_price'],
+			'ticket_id' => $event['ticket_id'],
+			'ticket_obj' => $event['ticket_obj'],
+			'qty' => $event['qty'],
+			'options' => $event['options'],
 		);
 
 		// get the number of spaces left for this event

@@ -102,7 +102,10 @@ final class EE_System {
 		if ( $activation && ! current_user_can( 'activate_plugins' )) {
 			throw new EE_Error( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
 			wp_die();
-		}		
+		}
+		if ( WP_DEBUG === TRUE && ! class_exists( 'EEH_Debug_Tools' )) { 
+			espresso_load_required( 'EEH_Debug_Tools', EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
+		}
 		$this->_load_registry();
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );

@@ -65,7 +65,7 @@ var Maintenance_helper = {
 			action: 'migration_step',
 			page: 'espresso_maintenance_settings'
 		};
-		Maintenance_helper.do_ajax(data,{'where':'#ajax-notices-container', 'what':'prepend','callback':Maintenance_helper.update_progress});	
+		Maintenance_helper.do_ajax(data,{'where':'#migration-messages', 'what':'prepend','callback':Maintenance_helper.update_progress});	
 		
 	},
 	/**
@@ -95,7 +95,7 @@ var Maintenance_helper = {
 			migration_data.status === ee_maintenance.status_no_more_migration_scripts){
 			Maintenance_helper.finish();
 		}else if(migration_data.status === ee_maintenance.status_fatal_error){
-			//
+			Maintenance_helper.finish();
 		}else{
 			Maintenance_helper.continue_migration();
 		}
@@ -104,7 +104,14 @@ var Maintenance_helper = {
 	finish: function(){
 		//change button 
 		//show after-migration options
-		document.location.href = document.location.href + '&continue_migration=true';
+		var kickoff_button = jQuery('#start-migration');
+		kickoff_button.attr('disabled',false);
+		kickoff_button.text(ee_maintenance.next);
+		kickoff_button.unbind('click');
+		kickoff_button.click(function(){
+			document.location.href = document.location.href + '&continue_migration=true';
+		});		
+		alert(ee_maintenance.click_next_when_ready);
 	},
 	//performs the ajax request, and if successful, calls setup.callback;
 	//on failure with HTML response, calls report_general_migration_error with the content and loads that content to the screen
@@ -112,7 +119,7 @@ var Maintenance_helper = {
 
 			if ( typeof(setup) === 'undefined' ) {
 				setup = {
-					where: '#ajax-notices-container',
+					where: '#migration-messages',
 					what: 'clear',
 					callback: undefined
 				};
@@ -131,6 +138,8 @@ var Maintenance_helper = {
 						Maintenance_helper.display_content(response,setup.where,setup.what);
 						if( typeof(setup.dont_report)=='undefined'){
 							Maintenance_helper.report_general_migration_error(response);
+							Maintenance_helper.display_content(ee_maintenance.fatal_error, '#main-message', 'clear');
+							Maintenance_helper.finish();
 						}
 					}
 
@@ -158,13 +167,13 @@ var Maintenance_helper = {
 			page: 'espresso_maintenance_settings',
 			message:message
 		};
-		Maintenance_helper.do_ajax(data,{'where':'#ajax-notices-container', 'what':'prepend','dont_report':true});
+		Maintenance_helper.do_ajax(data,{'where':'#migration-messages', 'what':'prepend','dont_report':true});	
 	},
 
-
+//we actually want to display notices in the same place as all normal ajax messages appear
 	display_notices: function(content) {
-		jQuery('.ajax-loader-grey').hide();
-		jQuery('#ajax-notices-container').html(content);
+		jQuery('#migration-messages').prepend(content);
+//		jQuery('#ajax-notices-container').prepend(content);
 	},
 
 	display_content: function(content, where, what) {
