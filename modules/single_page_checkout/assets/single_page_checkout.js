@@ -434,6 +434,7 @@
 			$('#mer-reg-page-step-'+step+'-noheader').val('true');
 			$('#mer-reg-page-step-'+step+'-action').attr( 'name', 'action' );		
 			var form_data = $('#mer-registration-frm-'+step).serialize();
+			form_data.ee_front_ajax = true;
 //alert	(form_data);
 //alert( '#mer-reg-page-step-'+step+'-action = ' + $('#mer-reg-page-step-'+step+'-action').val() );
 //alert( 'eei18n.ajax_url = ' + eei18n.ajax_url );
