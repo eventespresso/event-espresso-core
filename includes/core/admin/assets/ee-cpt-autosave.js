@@ -13,7 +13,7 @@ jQuery(document).ajaxSend( function( e, x, a ) {
 
 		//console.log(dump(ee_autosave_data));
 		//console.log(ee_autosave_data);
-		a.data += '&' + jQuery.param( {ee_autosave_data : ee_autosave_data } );
+		a.data += '&' + jQuery.param( {ee_autosave_data : ee_autosave_data, ee_admin_ajax : true } );
 	}
 });
 
@@ -76,7 +76,8 @@ EE_do_cpt_autosave_extras = function( postid ) {
 		autosavenonce: jQuery('#autosavenonce').val(),
 		route: jQuery('#current_route').val(),
 		current_page: jQuery('#current_page').val(),
-		iswpsave: true
+		iswpsave: true,
+		ee_admin_ajax : true
 	};
 
 	//do extra ajax post

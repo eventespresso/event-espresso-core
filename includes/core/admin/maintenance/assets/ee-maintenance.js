@@ -118,6 +118,8 @@ var Maintenance_helper = {
 				};
 			}
 
+			data.ee_admin_ajax = true;
+
 			jQuery.ajax({
 				type: "POST",
 				url: ajaxurl,
@@ -156,7 +158,7 @@ var Maintenance_helper = {
 			page: 'espresso_maintenance_settings',
 			message:message
 		};
-		Maintenance_helper.do_ajax(data,{'where':'#ajax-notices-container', 'what':'prepend','dont_report':true});	
+		Maintenance_helper.do_ajax(data,{'where':'#ajax-notices-container', 'what':'prepend','dont_report':true});
 	},
 
 
