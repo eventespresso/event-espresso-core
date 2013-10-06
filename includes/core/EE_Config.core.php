@@ -51,13 +51,6 @@ final class EE_Config {
 	 * 	@access 	private
 	 */
 	private static $_module_view_map = array();
-
-	/**
-	 * 	current_blog_id
-	 *	@var 	int	$current_blog_id	
-	 * 	@access 	public
-	 */
-	public $current_blog_id = NULL;
 	
 	/**
 	 *
@@ -97,10 +90,10 @@ final class EE_Config {
 	 *		@access public
 	 *		@return EE_Config instance
 	 */
-	public static function instance( $activation = FALSE ) {
+	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Config )) {
-			self::$_instance = new self( $activation );
+			self::$_instance = new self();
 		}
 		return self::$_instance;
 	}
@@ -114,16 +107,15 @@ final class EE_Config {
 	 *  @access 	private
 	 *  @return 	void
 	 */
-	private function __construct( $activation ) {
+	private function __construct() {
 		
-		$this->current_blog_id = get_current_blog_id();
 		//set defaults
 		$this->core = new EE_Core_Config();
 		$this->organization = new EE_Organization_Config();
 		$this->currency = new EE_Currency_Config();
 		$this->registration = new EE_Registration_Config();
 		$this->admin = new EE_Admin_Config();
-		$this->template_settings = new EE_Admin_Config();
+		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
 		// set _module_route_map
@@ -144,7 +136,7 @@ final class EE_Config {
 
 
 	/**
-	 * 		load EE organization options and begin EE logging
+	 * 		load EE organization options
 	 *
 	 * 		@access private
 	 * 		@return void
@@ -152,7 +144,8 @@ final class EE_Config {
 	private function _load_config() {
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
-			if ( ! empty( $settings )) {
+			$config_class = is_object( $settings ) ? get_class( $this->$config ) : FALSE;
+			if ( ! empty( $settings ) && ( ! $config_class || ( $settings instanceof $config_class ))) {
 				$this->$config = $settings;
 			}
 		}
@@ -171,7 +164,7 @@ final class EE_Config {
 		// grab espresso configuration
 		if ( is_multisite() ) {
 			// look for blog specific config
-			if ( ! $CFG = get_blog_option( $this->current_blog_id, 'espresso_config', array() )) {
+			if ( ! $CFG = get_blog_option( $this->core->current_blog_id, 'espresso_config', array() )) {
 				// if not, then look for network config
 				if ( ! $CFG = get_site_option( 'espresso_config', array() )) {
 				    // if not, then look for generic config
@@ -195,18 +188,12 @@ final class EE_Config {
 	 */
 	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
 		// compare existing settings with what's already saved'
-		$no_change = TRUE;
-		$espresso_config = $this->get_espresso_config();
-		foreach ( $espresso_config as $config => $settings ) {
-			if ( $this->$config != $settings ) {
-				$no_change = FALSE;
-				break;
-			}
-		}		
+		$saved_config = $this->get_espresso_config();
+		$no_change = $saved_config == $this ? TRUE : FALSE;
 		// update
 		if ( is_multisite() ) {
 			// look for blog specific config
-			if ( ! $saved = update_blog_option( $this->current_blog_id, 'espresso_config', $this )) {
+			if ( ! $saved = update_blog_option( $this->core->current_blog_id, 'espresso_config', $this )) {
 				// if not, then look for network config
 				if ( ! $saved = update_site_option( 'espresso_config', $this )) {
 				    // if not, then look for generic config
@@ -216,6 +203,7 @@ final class EE_Config {
 		} else {
 			$saved = update_option( 'espresso_config', $this );
 		}
+		
 		// if config remains the same or was updated successfully
 		if ( $no_change || $saved ) {
 			if ( $add_succes ) {
@@ -632,6 +620,7 @@ class EE_Config_Base{
  */
 class EE_Core_Config extends EE_Config_Base {
 	
+	public $current_blog_id;
 	public $site_license_key;
 	public $ee_ueip_optin;
 	public $post_shortcodes;
@@ -651,6 +640,8 @@ class EE_Core_Config extends EE_Config_Base {
 	 */
 	public function __construct() {
 		// set default organization settings
+		$this->current_blog_id = get_current_blog_id();
+		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
 		$this->site_license_key = NULL;
 		$this->ee_ueip_optin = TRUE;
 		$this->post_shortcodes = array();
