@@ -3,5 +3,6 @@
 		<?php echo $sortable_list_table_form_fields; ?>
     	<?php echo $list_table->search_box($search['btn_label'], $current_page); ?>
 		<?php echo $list_table->display(); ?>
+		<?php echo $list_table_hidden_fields; ?>
     </form>
     <?php echo isset($after_list_table) ? $after_list_table : ''; ?>
