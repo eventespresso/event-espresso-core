@@ -779,10 +779,16 @@ class EE_Registration extends EE_Base_Class {
 
 	/**
 	 * This method simply returns the check in status for this registration and the given datetime.
-	 * @param  int    $DTT_ID The ID of the datetime we're checking against
+	 * @param  int    $DTT_ID The ID of the datetime we're checking against (if empty we'll get the primary datetime for this registration (via event) and use it's ID);
 	 * @return int            Integer representing checkin status.
 	 */
-	public function check_in_status_for_datetime( $DTT_ID ) {
+	public function check_in_status_for_datetime( $DTT_ID = NULL ) {
+
+		if ( empty( $DTT_ID ) ) {
+			$datetime = $this->get_first_related( 'Event' )->primary_datetime();
+			$DTT_ID = $datetime->ID();
+		}
+
 		//first get checkin object (if exists)
 		$checkedin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
 		if ( empty( $checkedin ) ) {
