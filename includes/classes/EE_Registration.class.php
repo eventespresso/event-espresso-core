@@ -766,6 +766,33 @@ class EE_Registration extends EE_Base_Class {
 	public function count_checkins(){
 		return $this->get_model()->count_related($this,'Checkin');
 	}
+
+
+	/**
+	 * Returns the number of current checkins this registration is checked into for any of the datetimes the registration is for.  Note, this is ONLY checked in (does not include checkedout)
+	 * @return int
+	 */
+	public function count_checkins_not_checkedout() {
+		return $this->get_model()->count_related($this, 'Checkin', array( array('CHK_in' => 1 ) ) );
+	}
+
+
+	/**
+	 * This method simply returns the check in status for this registration and the given datetime.
+	 * @param  int    $DTT_ID The ID of the datetime we're checking against
+	 * @return int            Integer representing checkin status.
+	 */
+	public function check_in_status_for_datetime( $DTT_ID ) {
+		//first get checkin object (if exists)
+		$checkedin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
+		if ( empty( $checkedin ) ) {
+			return 0; //never been checked in
+		} else if ( $checkedin->get('CHK_in' ) ) {
+			return 1; //checked in
+		} else {
+			return 2; //had checked in but is now checked out.
+		}
+	}
 }
 
 
