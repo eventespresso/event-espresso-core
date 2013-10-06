@@ -1952,8 +1952,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				)
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
+
+		$event_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null;
+		$this->_template_args['list_table_hidden_fields'] = !empty( $event_id ) ? '<input type="hidden" name="event_id" value="' . $event_id . '">' : '';
+
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
+
 
 
 
