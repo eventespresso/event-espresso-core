@@ -3,6 +3,12 @@
 
 class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
+	/**
+	 * This property will hold the related Datetimes on an event IF the event id is included in the request.
+	 * @var EE_Datetime[]
+	 */
+	protected $_dtts_for_event = array();
+
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
@@ -22,6 +28,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _set_properties() {
+		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL;
+
 		$this->_wp_list_args = array(
 			'singular' => __('attendee', 'event_espresso'),
 			'plural' => __('attendees', 'event_espresso'),
@@ -57,9 +65,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_bottom_buttons = array(
 			'report'=> array(
 				'route' => 'registrations_report',
-				'extra_request' => isset( $this->_req_data['event_id'] ) ? array('EVT_ID'=>$this->_req_data['event_id']) : NULL
+				'extra_request' => !empty($evt_id) ? array('EVT_ID'=>$evt_id) : NULL
 				)
 		);
+
+		$this->_dtts_for_event = !empty($evt_id) ? EEM_Event::instance()->get_one_by_ID($evt_id)->get_many_related('Datetime') : array();
 
 	}
 
@@ -71,15 +81,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
-		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL;
-		if ( empty( $evt_id ) )
-			return array();  //get out for now cause we can't get the dates if we don't have an event.
+		if ( empty( $this->_dtts_for_event ) )
+			return array();  //get out.  If there are no datetimes available there's currently no filters available.
 
 		//DTT datetimes filter
 		$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
-		$dtts_for_evt = EEM_Event::instance()->get_one_by_ID($evt_id)->get_many_related('Datetime');
 		$dtts = array();
-		foreach ( $dtts_for_evt as $dtt ) {
+		foreach ( $this->_dtts_for_event as $dtt ) {
 			$datetime_string = $dtt->start_date_and_time('D M j, Y', ' g:i a') . ' - ' . $dtt->end_date_and_time('D M j, Y', ' g:i a');
 			$dtts[] = array('id' => $dtt->ID(), 'text' => $datetime_string );
 			$cur_dtt = empty( $cur_dtt ) && $dtt->get('DTT_is_primary') ? $dtt->ID() : $cur_dtt;
@@ -123,22 +131,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_REG_att_checked_in
 	*/
-	function column_REG_att_checked_in(EE_Registration $item){		
-		/*if ( $item->att_checked_in() ) {
-			$chk_out_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_out', 'id'=>$item->ID(), '_REG_ID'=>$item->reg_url_link(), 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-			return '
-			<a class="attendee-check-in-lnk" href="'.$chk_out_url.'" title="' . __( 'Click here to toggle the Check In status of this attendee for this event', 'event_espresso' ) . '">
-				<img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-in-16x16.png" width="16" height="16" alt="' . __( 'Checked In', 'event_espresso' ) . '"/>
-			</a>';
-		} else {
-			$chk_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_in', 'id'=>$item->ID(), '_REG_ID'=>$item->reg_url_link(), 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-			return '
-			<a class="attendee-check-in-lnk" href="'.$chk_in_url.'" title="' . __( 'Click here to toggle the Check In status of this attendee for this event', 'event_espresso' ) . '">
-				<img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-out-16x16.png" width="16" height="16" alt="' . __( 'Checked In Status', 'event_espresso' ) . '"/>
-			</a>';
-		}/**/
-		//todo see https://events.codebasehq.com/projects/event-espresso/tickets/3715
-		return 'todo';		
+	function column_REG_att_checked_in(EE_Registration $item){
+		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0;
+		$checkinstatus = $item->check_in_status_for_datetime($DTT_ID);
+
+		return '<span class="clickable trigger-checkin checkedin-status-' . $checkinstatus . '" data-regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '"></span>';	
 	}
 
 
