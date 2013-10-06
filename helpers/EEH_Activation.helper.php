@@ -37,8 +37,8 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function system_initialization() {
-		add_action( 'init', array( 'EEH_Activation', 'verify_default_pages_exist' ));		
-		add_action( 'init', array( 'EEH_Activation', 'CPT_initialization' ));		
+		EEH_Activation::CPT_initialization();
+		EEH_Activation::verify_default_pages_exist();
 	}
 	
 	/**
@@ -137,7 +137,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function verify_default_pages_exist() {
-		
+
 		$critical_page_problem = FALSE;
 		
 		$critical_pages = array(
@@ -196,7 +196,7 @@ class EEH_Activation {
 			if ( isset( $critical_page['post']->ID ) && $critical_page['post']->ID != EE_Registry::instance()->CFG->core->$critical_page['id'] ) {
 				//update Config with post ID
 				EE_Registry::instance()->CFG->core->$critical_page['id'] = $critical_page['post']->ID;
-				if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE ) ) {
+				if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE ) ) {
 					$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}					
@@ -287,7 +287,7 @@ class EEH_Activation {
 		$show_on_front = get_option('show_on_front');
 		EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $critical_page['code'] ] = $critical_page['post']->ID;
 		// update post_shortcode CFG
-		if ( ! EE_Config::instance( TRUE )->update_espresso_config( FALSE, FALSE )) {
+		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
 			$msg = sprintf(
 				__( 'The Event Espresso critical page shortcode for the %s page could not be configured properly.', 'event_espresso' ),
 				$critical_page['name']
