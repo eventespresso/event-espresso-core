@@ -22,6 +22,7 @@ jQuery(document).ready(function($) {
 			queryobj.route = queryobj.action !== 'undefined' ? queryobj.action : '';
 			queryobj.action = 'ee_msgs_switch_template';
 			queryobj.page = 'espresso_events';
+			queryobj.ee_admin_ajax = true;
 
 			
 		

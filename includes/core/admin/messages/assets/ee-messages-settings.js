@@ -48,6 +48,7 @@ jQuery(document).ready(function($) {
 				status: status,
 				action: 'activate_mt',
 				page: 'espresso_messages',
+				ee_admin_ajax: true,
 				mt_nonce: $('.mt_nonce', $item).text()
 			};
 
@@ -152,6 +153,7 @@ jQuery(document).ready(function($) {
 				status: status,
 				action: 'activate_messenger',
 				page: 'espresso_messages',
+				ee_admin_ajax: true,
 				activate_nonce: $('#on-off-nonce').text()
 			};
 
@@ -187,6 +189,7 @@ jQuery(document).ready(function($) {
 				messenger: messenger,
 				message_type: mt,
 				action: 'ee_msgs_update_mt_form',
+				ee_admin_ajax: true,
 				page: 'espresso_messages'
 			};
 

@@ -1952,8 +1952,13 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				)
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
+
+		$event_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null;
+		$this->_template_args['list_table_hidden_fields'] = !empty( $event_id ) ? '<input type="hidden" name="event_id" value="' . $event_id . '">' : '';
+
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
+
 
 
 
@@ -1975,6 +1980,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		
 		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$reg_status = isset($this->_req_data['reg_status']) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
 		
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
@@ -2003,6 +2009,14 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if($CAT_ID){
 			throw new EE_Error("You specified a Cateogry Id for this query. Thats odd because we are now using terms and taxonomies. So did you mean the term taxonomy id o rthe term id?");
 		}
+
+		//if DTT is included we do multiple datetimes.  Otherwise we just do primary datetime
+		if ( $DTT_ID ) {
+			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
+		} else {
+			$query_params[0]['Ticket.Datetime.DTT_is_primary'] = 1;
+		}
+
 		if($reg_status){
 			$query_params[0]['STS_ID']=$reg_status;
 		}

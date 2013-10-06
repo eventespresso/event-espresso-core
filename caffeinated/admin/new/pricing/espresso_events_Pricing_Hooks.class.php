@@ -329,12 +329,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			
 			
 			//first let's do the add_relation_to()
-			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && $dtts_added[0] == '' ) ? array() : $dtts_added;
+			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && ( isset( $dtts_added[0] ) && $dtts_added[0] == '' ) ) ? array() : $dtts_added;
 			foreach ( $dtts_added as $dttrow ) {
 				$saved_dtts[$dttrow]->_add_relation_to( $TKT, 'Ticket' );
 			}
 
-			$dtts_removed = empty( $dtts_added ) || ( is_array( $dtts_removed ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
+			$dtts_removed = empty( $dtts_added ) || ( is_array( $dtts_removed ) && isset( $dtts_removed[0] ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
 				$saved_dtts[$dttrow]->_remove_relation_to( $TKT, 'Ticket' );
@@ -346,7 +346,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		}
 
 		//now we need to handle tickets actually "deleted permanently".  There are cases where we'd want this to happen (i.e. autosaves are happening and then in between autosaves the user trashes a ticket).  Or a draft event was saved and in the process of editing a ticket is trashed.  No sense in keeping all the related data in the db!
-		$old_tickets = $old_tickets[0] == '' ? array() : $old_tickets;
+		$old_tickets = isset( $old_tickets[0] ) && $old_tickets[0] == '' ? array() : $old_tickets;
 		$tickets_removed = array_diff( $old_tickets, array_keys($saved_tickets) );
 		/*var_dump($old_tickets);
 		var_dump($saved_tickets);

@@ -248,8 +248,6 @@ class EE_Data_Migration_Manager{
 	 */
 	public function migration_step(){
 		try{
-			//first: add all dms scripts to the autoloader
-			$this->get_all_data_migration_scripts_available();
 			$currently_executing_script = $this->get_last_ran_script();
 
 			if( ! $currently_executing_script){
@@ -312,7 +310,7 @@ class EE_Data_Migration_Manager{
 							'records_migrated'=>$current_script_class->count_records_to_migrate(),//so we're done, so just assume we've finished ALL records
 							'status'=> EE_Data_Migration_Manager::status_completed,
 							'message'=>$current_script_class->get_feedback_message(),
-							'script'=> $current_script_class->pretty_name()
+							'script'=> sprintf(__("%s Completed",'event_espresso'),$current_script_class->pretty_name())
 						);
 					//check if there are any more after this one. 
 					$scripts_remaining = $this->check_for_applicable_data_migration_scripts();

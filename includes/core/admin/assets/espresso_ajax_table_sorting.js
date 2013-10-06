@@ -26,6 +26,7 @@ jQuery(document).ready(function($) {
 					row_ids : row_ids,
 					espresso_ajax : 1,
 					noheader : 'true',
+					ee_admin_ajax : true,
 					_wpnonce : ajax_table_sort_nonce
 				},
 				dataType: "json",

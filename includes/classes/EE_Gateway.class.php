@@ -154,9 +154,29 @@ abstract class EE_Gateway {
 
 	private function _handle_payment_settings() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-		if (!$this->_payment_settings = $this->_EEM_Gateways->payment_settings($this->_gateway_name)) {
-			$this->_default_settings();
+		//handle merging settings if we introduce new settings in the future
+		$all_payment_settings = $this->EE->CFG->gateway->payment_settings;
+		$saved_settings = isset($all_payment_settings[$this->_gateway_name]) ? $all_payment_settings[$this->_gateway_name] : array();//$this->_EEM_Gateways->payment_settings($this->_gateway_name);
+		//get default settings
+		$this->_default_settings();
+		$default_settings = $this->_payment_settings;
+		if(is_array($saved_settings)){
+			$saved_settings_has_all_needed_settings = true;
+			foreach($default_settings as $key=> $value){
+				if( ! isset($saved_settings[$key])){
+					$saved_settings_has_all_needed_settings = false;
+					break;
+				}
+			}
+		}else{
+			$saved_settings_has_all_needed_settings = false;
+			$saved_settings = array();
+		}
+		//if we're missing some settings,set them and save the settings right away
+		if ( ! $saved_settings_has_all_needed_settings) {
+			
+			$this->_payment_settings = array_merge($default_settings, $saved_settings);
+			
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings initialized.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -165,6 +185,10 @@ abstract class EE_Gateway {
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}else{
+			//ok so we didn't need to update gateway settings
+			//...but when we fetched teh default gateway settings, they set them!
+			//so unset them to what they're saved to
+			$this->_payment_settings = $saved_settings;
 			$this->_debug_mode = array_key_exists('use_sandbox',$this->_payment_settings)?intval($this->_payment_settings['use_sandbox']):false;
 		}
 	}

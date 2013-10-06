@@ -22,6 +22,17 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  * each stage.
  */
 class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
+	
+	public function __construct() {
+		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
+		$this->_migration_stages = array(
+//			10=>new EE_DMS_4_1_0P_attendees(),
+//			20=>new EE_DMS_4_1_0P_events(),
+			//important: this one should be ran AFTER the general settings
+			30=>new EE_DMS_4_1_0P_gateways(),
+		);
+		parent::__construct();
+	}
 	public function can_migrate_from_version($version_string) {
 		if($version_string < '4.0.0' && $version_string > '3.1.26' ){
 //			echo "$version_string can be mgirated fro";
@@ -529,6 +540,8 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			KEY CNT_ISO (CNT_ISO)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');		
 
+		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
+		EE_Config::instance()->update_espresso_config(false, true);
 		return true;
 	}
 	public function schema_changes_after_migration() {
@@ -538,14 +551,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	
 	
 	
-	public function __construct() {
-		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
-		$this->_migration_stages = array(
-			10=>new EE_DMS_4_1_0P_attendees(),
-			20=>new EE_DMS_4_1_0P_events(),
-		);
-		parent::__construct();
-	}
+	
 }
 
 

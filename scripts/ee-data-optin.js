@@ -6,7 +6,8 @@ jQuery(document).ready(function($) {
 		$.post(ajaxurl, {
 			action: 'espresso_data_optin',
 			nonce: nonce,
-			selection: selection
+			selection: selection,
+			ee_admin_ajax: true
 		}, function(response) {
 			return;
 		});

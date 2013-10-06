@@ -186,7 +186,7 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @return 	boolean success 
 	 */
-	public function update_espresso_config( $add_succes = FALSE, $add_error = TRUE ) {
+	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
 		// compare existing settings with what's already saved'
 		$saved_config = $this->get_espresso_config();
 		$no_change = $saved_config == $this ? TRUE : FALSE;
@@ -206,7 +206,7 @@ final class EE_Config {
 		
 		// if config remains the same or was updated successfully
 		if ( $no_change || $saved ) {
-			if ( $add_succes ) {
+			if ( $add_success ) {
 				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
 				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}

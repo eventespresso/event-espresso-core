@@ -395,4 +395,17 @@ abstract class EE_Data_Migration_Class_Base{
 	public function set_borked(){
 		$this->_status = EE_Data_Migration_Manager::status_fatal_error;
 	}
+	/**
+	 * Checks if this thing believes it is completed
+	 * @return boolean
+	 */
+	public function is_completed(){
+		return $this->get_status() == EE_Data_Migration_Manager::status_completed;
+	}
+	/**
+	 * Marks that we believe this migration thing is completed
+	 */
+	public function set_completed(){
+		$this->_status = EE_Data_Migration_Manager::status_completed;
+	}
 }

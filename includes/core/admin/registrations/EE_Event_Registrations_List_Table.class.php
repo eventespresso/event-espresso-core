@@ -60,6 +60,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				'extra_request' => isset( $this->_req_data['event_id'] ) ? array('EVT_ID'=>$this->_req_data['event_id']) : NULL
 				)
 		);
+
 	}
 
 
@@ -67,7 +68,25 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _get_table_filters() {
-		return array();
+		$filters = array();
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
+
+		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL;
+		if ( empty( $evt_id ) )
+			return array();  //get out for now cause we can't get the dates if we don't have an event.
+
+		//DTT datetimes filter
+		$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+		$dtts_for_evt = EEM_Event::instance()->get_one_by_ID($evt_id)->get_many_related('Datetime');
+		$dtts = array();
+		foreach ( $dtts_for_evt as $dtt ) {
+			$datetime_string = $dtt->start_date_and_time('D M j, Y', ' g:i a') . ' - ' . $dtt->end_date_and_time('D M j, Y', ' g:i a');
+			$dtts[] = array('id' => $dtt->ID(), 'text' => $datetime_string );
+			$cur_dtt = empty( $cur_dtt ) && $dtt->get('DTT_is_primary') ? $dtt->ID() : $cur_dtt;
+		}
+		$filters[] = EEH_Form_Fields::select_input('DTT_ID', $dtts, $cur_dtt);
+
+		return $filters;
 	}
 
 
