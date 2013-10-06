@@ -35,7 +35,7 @@ final class EE_System {
 	 * Whether this request was from activating EE or if it was already activated
 	 * @var boolean
 	 */
-	private $_activation = false;
+	private static $_activation = FALSE;
 	
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation. So examples of this
@@ -80,9 +80,10 @@ final class EE_System {
 	 *	@return EE_System
 	 */
 	public static function instance( $activation = FALSE ) {
+		self::$_activation = $activation;
 		// check if class object is instantiated, and instantiated properly
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EE_System )) {
-			self::$_instance = new self( $activation );
+			self::$_instance = new self();
 		}
 		return self::$_instance;
 	}
@@ -96,13 +97,8 @@ final class EE_System {
 	 *  @access 	private
 	 *  @return 	void
 	 */
-	private function __construct( $activation ) {
+	private function __construct() {
 
-		$this->_activation = $activation;
-		if ( $activation && ! current_user_can( 'activate_plugins' )) {
-			throw new EE_Error( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
-			wp_die();
-		}
 		if ( WP_DEBUG === TRUE && ! class_exists( 'EEH_Debug_Tools' )) { 
 			espresso_load_required( 'EEH_Debug_Tools', EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
 		}
@@ -113,6 +109,8 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		spl_autoload_register( array( 'EEH_Autoloader', 'espresso_autoloader' ));
+		// check for plugin activation/upgrade/installation
+		$this->_manage_activation_process();
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 	}
@@ -144,9 +142,6 @@ final class EE_System {
 	 * 	@return 		void
 	 */
 	public function plugins_loaded() {
-		//we gave addons a chance to register themselves before detecting the request type
-		//and deciding whether or nto to set maintenance mode
-		$this->_manage_activation_process();
 		// check for activation errors
 		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
 			EE_Error::add_error( $activation_errors );
@@ -155,6 +150,8 @@ final class EE_System {
 		// get model names
 		$this->_parse_model_names();
 		// let's get it started		
+		//we gave addons a chance to register themselves before detecting the request type
+		//and deciding whether or nto to set maintenance mode
 		if ( is_admin() ) {
 			EE_Registry::instance()->load_core( 'Admin' );
 		} else if ( EE_Maintenance_Mode::instance()->level() ) {
@@ -269,30 +266,29 @@ final class EE_System {
 	 */
 	public function detect_req_type($espresso_db_update = null){
 		
-		if ($this->_req_type === null){
-			$espresso_db_update = $this->fix_espresso_db_upgrade_option($espresso_db_update);
-			if($espresso_db_update){
+		if ( $this->_req_type === NULL ){
+			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
+			if( $espresso_db_update ){
 				//it exists, so this isn't a completely new install
 				//check if this version already in that list of previously installed versions
 				if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
 					//its a new version!
 					$this->_req_type = EE_System::req_type_upgrade;
-				}else{
-					//its not an update. maybe a reactivation?
-					if($this->_activation){
+				} else {
+					// its not an update. maybe a reactivation?
+					if( self::$_activation ){
 						$this->_req_type = EE_System::req_type_reactivation;
-					}else{
+					} else {
 						//its not a new install, not an upgrade, and not even a reactivation. its nothing special
 						$this->_req_type = EE_System::req_type_normal;
 					}
 				}
-			}else{
+			} else {
 				//it doesn't exist. It's a completely new install
 				$this->_req_type = EE_System::req_type_new_activation;
 			}
 		}
 		return $this->_req_type;
-		
 	}
 	
 	/**
