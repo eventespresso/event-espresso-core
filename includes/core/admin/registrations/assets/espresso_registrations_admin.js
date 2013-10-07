@@ -73,6 +73,52 @@ jQuery(document).ready(function($) {
 	
 	
 
+	/**
+	 * catch the checkin status triggers
+	 * @return string (new html for checkin)
+	 */
+	$('.trigger-checkin', '#the-list').on('click', function() {
+		var content;
+		var itemdata = $(this).data();
+		var thisitem = $(this);
+		var data = {
+			regid : itemdata.regid,
+			dttid : itemdata.dttid,
+			checkinnonce : itemdata.nonce,
+			ee_admin_ajax : true,
+			action : 'toggle_checkin_status',
+			page : 'espresso_registrations'
+		};
+
+		var setup = {
+			where: '#ajax-notices',
+			what: 'clear'
+		};
+
+		$.ajax({
+			type: "POST",
+			url: ajaxurl,
+			data: data,
+			success: function( response, status, xhr ) {
+				var ct = xhr.getResponseHeader("content-type") || "";
+					if (ct.indexOf('html') > -1) {
+						$(setup.where).html(response);
+					}
+
+					if (ct.indexOf('json') > -1 ) {
+						var resp = response,
+						content = resp.error ? resp.error : resp.content;
+						if ( resp.error ) {
+							$(setup.where).html(content);
+						} else {
+							$(setup.where).html(resp.notices);
+							thisitem.attr('class', content);
+						}
+					}
+			}
+		});
+		return false;
+	});
 
 });
 
