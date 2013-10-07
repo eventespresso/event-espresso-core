@@ -91,7 +91,7 @@ jQuery(document).ready(function($) {
 		};
 
 		var setup = {
-			where: '#ajax-notices',
+			where: '#ajax-notices-container',
 			what: 'clear'
 		};
 

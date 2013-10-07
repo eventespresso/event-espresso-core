@@ -1,4 +1,3 @@
-	<div id="ajax-notices"></div>
 	<?php $list_table->display_views(); ?>
     <form id="<?php echo $current_page; ?>-table-frm" action="<?php echo $table_url;?>" method="post">
 		<?php echo $sortable_list_table_form_fields; ?>
