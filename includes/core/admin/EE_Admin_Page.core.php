@@ -2022,6 +2022,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$hidden_form_fields .= '<input type="hidden" name="' . $nonce_ref . '" value="' . wp_create_nonce( $nonce_ref ) . '">';
 		$this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
 
+		//display message about search results?
+		$this->_template_args['before_list_table'] .= isset( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '';
+
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		// the final template wrapper
