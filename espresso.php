@@ -96,27 +96,38 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 	wp_die( __( 'Can not run multiple versions of Event Espresso.', 'event_espresso' ));
 }
 
-
-// load Error handling and debugging tools
-if ( WP_DEBUG === TRUE ) {
-	require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
-	EEH_Debug_Tools::instance();
-}
-
-if ( is_readable( EE_CORE . 'EE_Error.core.php' )) {
-	require_once( EE_CORE . 'EE_Error.core.php' );		
-} else {
-	wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ));
+function espresso_load_error_handling() {
+	// loaddebugging tools
+	if ( WP_DEBUG === TRUE ) {
+		require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
+		EEH_Debug_Tools::instance();
+	}
+	// load error handling
+	if ( is_readable( EE_CORE . 'EE_Error.core.php' )) {
+		 require_once( EE_CORE . 'EE_Error.core.php' );
+	} else {
+		wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ));
+	}
 }
 
 
 if ( ! isset( $_REQUEST['plugin'] )) {
+	espresso_load_error_handling();
 	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 	EE_System::instance();
 }
 
 
 function espresso_plugin_activation() {
+	espresso_load_error_handling();
+	// check permissions
+	if ( ! current_user_can( 'activate_plugins' )) {
+		throw new EE_Error( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
+		return;
+	}
+	// and referer
+	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	check_admin_referer( "activate-plugin_{$plugin}" );
 	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 	EE_System::instance( TRUE );
 }

@@ -44,19 +44,25 @@
 
 //d( $event );
 			
-//			foreach ( $tickets as $TKT_ID => $TKT ) {
+//			foreach ( $tickets as $TKT_ID => $ticket ) {
+
+				//printr( $ticket, '$ticket  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			foreach ( $datetimes as $DTT_ID => $datetime ) {
 				foreach ( $datetime->tickets() as $TKT_ID => $ticket ) {
 //					global $wpdb;
 //					echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					$datetime = $ticket->get_first_related( 'Datetime' );
+//					$DTT_ID = $datetime->ID();
+//					$datetime = $ticket->datetimes();
+//					d( $datetime );
 										
 					if ( $row == 0 ) {
-						$date_display = $prev_date = $datetime->date_range('D M jS',  __( ' to ', 'event_espresso' ));
-					} elseif ( $datetime->date_range('D M jS',  __( ' to ', 'event_espresso' )) == $prev_date ) { 
+						$date_display = $prev_date = $datetime->date_range('D M jS',  __( '<br/>to ', 'event_espresso' ));
+					} elseif ( $datetime->date_range('D M jS',  __( '<br/>to ', 'event_espresso' )) == $prev_date ) { 
 						// add styling to duplicate dates
-						$date_display = '<span class="lt-grey-text">' . $datetime->date_range('D M jS',  __( ' to ', 'event_espresso' )) . '</span>';
+						$date_display = '<span class="lt-grey-text">' . $datetime->date_range('D M jS',  __( '<br/>to ', 'event_espresso' )) . '</span>';
 					} else {
-						$date_display = $prev_date = $datetime->date_range('D M jS',  __( ' to ', 'event_espresso' ));
+						$date_display = $prev_date = $datetime->date_range('D M jS',  __( '<br/>to ', 'event_espresso' ));
 					}				
 						
 					if ( $row == 0 ) {
@@ -144,7 +150,6 @@
 
 						} 
 					}
-//					}
 
 ?>				
 				<input type="hidden"
