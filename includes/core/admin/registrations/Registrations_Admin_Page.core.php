@@ -453,7 +453,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'slug' => 'all',
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
-				'bulk_action' => array(
+				'bulk_action' => !isset( $this->_req_data['event_id'] ) ? array() : array(
 					'toggle_checkin_status' => __('Toggle Attendees Check In', 'event_espresso'),
 					)
 				)
@@ -1934,7 +1934,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	protected function _event_registrations_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array(), 'button add-new-h2');
-		
+
 		$legend_items = array(
 			'star-icon' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
@@ -2175,7 +2175,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$new_status = $this->_toggle_checkin_status();
 
 		//setup new class to return via ajax
-		$this->_template_args['admin_page_content'] = 'clickable trigger-checkin checkedin-status-' . $new_status;
+		$this->_template_args['admin_page_content'] = 'clickable trigger-checkin checkin-icons checkedin-status-' . $new_status;
 		$this->_template_args['success'] = TRUE;
 		$this->_return_json();
 	}

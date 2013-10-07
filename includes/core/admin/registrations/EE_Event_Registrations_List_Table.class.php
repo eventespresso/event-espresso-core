@@ -135,8 +135,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0;
 		$checkinstatus = $item->check_in_status_for_datetime($DTT_ID);
 		$nonce = wp_create_nonce('checkin_nonce');
+		$toggle_active = isset ( $this->_req_data['event_id'] ) ? ' clickable trigger-checkin' : '';
 
-		 return '<span class="clickable trigger-checkin checkedin-status-' . $checkinstatus . '" data-regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>';
+		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>';
 	}
 
 
