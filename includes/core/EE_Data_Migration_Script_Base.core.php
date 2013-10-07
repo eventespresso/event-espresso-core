@@ -239,13 +239,29 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		foreach($stages as $stage_priority => $stage_properties_array){
 			$stage_class_name = $stage_properties_array['class'];
-			if( ! class_exists($stage_class_name)){
-				throw new EE_Error(sprintf(__("Huh, the migration stage '%s' doesnt exist anymore...", "event_espresso"),$stage_class_name));
+			//if the script is done, we just want to preserve old data because it wont run again
+			//but if it isn't done, then we want to only have valid migration stages on this script
+			if($this->is_borked() || $this->is_completed()){
+				$include_invalid_stages = true;
+			}else{
+				$include_invalid_stages = false;
+			}
+			if( ! class_exists($stage_class_name) ){
+				if($include_invalid_stages){
+					$this->_migration_stages[$stage_priority] = $stage_properties_array;
+				}
+				//ie, if we're not leaving ivnalid stages alone, we drop it
+				continue;
 			}
 			$stage = new $stage_class_name;
 			if( ! $stage instanceof EE_Data_Migration_Script_Stage){
-				throw new EE_Error(sprintf(__("Migration stage '%s' isnt actually a migration stage. Its a '%s'", "event_espresso"),$stage_class_name,get_class($stage)));
+				if($include_invalid_stages){
+					$this->_migration_stages[$stage_priority] = $stage;
+				}
+				//ie, if we're not leaving invalid srtages alone, we drop it
+				continue;
 			}
+			
 			$stage->instantiate_from_array_of_properties($stage_properties_array);
 			$this->_migration_stages[$stage_priority] = $stage;
 		}
