@@ -2134,6 +2134,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	protected function _attendee_contact_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
+		$this->_search_btn_label = __('Contacts', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -2187,14 +2188,38 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$per_page = isset( $per_page ) && !empty( $per_page ) ? $per_page : 10;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
+		$_where = array();
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$_where['OR'] = array(
+				'Registration.Event.EVT_name' => array( 'LIKE', $sstr),
+				'Registration.Event.EVT_desc' => array( 'LIKE', $sstr ),
+				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'ATT_fname' => array( 'LIKE', $sstr ),
+				'ATT_lname' => array( 'LIKE', $sstr ),
+				'ATT_short_bio' => array( 'LIKE', $sstr ),
+				'ATT_email' => array('LIKE', $sstr ),
+				'ATT_address' => array( 'LIKE', $sstr ),
+				'ATT_address2' => array( 'LIKE', $sstr ),
+				'ATT_city' => array( 'LIKE', $sstr ),
+				'ATT_comments' => array( 'LIKE', $sstr ),
+				'ATT_notes' => array( 'LIKE', $sstr ),
+				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
+				'Registration.REG_code' => array( 'LIKE', $sstr ),
+				'Registration.REG_count' => array( 'LIKE' , $sstr ),
+				'Registration.REG_group_size' => array( 'LIKE' , $sstr )		
+				);
+		}
+
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 
 		if ( $trash )
-			$all_attendees = $count ? $ATT_MDL->count_deleted( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit));
+			$all_attendees = $count ? $ATT_MDL->count_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
 		else
-			$all_attendees = $count ? $ATT_MDL->count( array('order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
+			$all_attendees = $count ? $ATT_MDL->count( array($_where, 'order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array($_where, 'order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
 
 		return $all_attendees;
 	}
