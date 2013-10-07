@@ -650,6 +650,18 @@ class EE_Event extends EE_CPT_Base{
 
 
 
+
+	/**
+	 * This just returns a count of all the registrations for this event
+	 * @access  public
+	 * @return int
+	 */
+	public function get_count_of_all_registrations() {
+		return EEM_Event::instance()->count_related($this, 'Registration');
+	}
+
+
+
 	//todo needs reworking an may get dropped.
 	public function get_number_of_attendees_reg_limit( $type = 'NULL' ) {
 
