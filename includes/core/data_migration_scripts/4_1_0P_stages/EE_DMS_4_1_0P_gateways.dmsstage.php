@@ -126,7 +126,6 @@ private function _get_old_gateway_option($new_gateway_slug){
 private function _convert_active_gateways(){
 	//just does it all one big swoop
 	$old_active_gateways = get_option('event_espresso_active_gateways');
-	d($old_active_gateways);
 	$new_active_gateways = EE_Config::instance()->gateway->active_gateways;
 	foreach($old_active_gateways as $old_gateway_slug => $filepath){
 		if( ! isset($this->_gateways_we_know_how_to_migrate[$old_gateway_slug])){

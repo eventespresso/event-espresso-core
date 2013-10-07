@@ -7,6 +7,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	
 	
 	
+	
 	/**
 	 * numerically-indexed array where each value is EE_Data_Migration_Script_Stage object
 	 * @var EE_Data_Migration_Script_Stage[] $migration_functions 
@@ -207,6 +208,48 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function get_feedback_message(){
 		return $this->_feedback_message;
 	}
+	
+	/**
+	 * A lot like "__sleep()" magic method in purpose, this is meant for persisting this class'
+	 * properties to the DB. However, we don't want to use __sleep() because its quite
+	 * possible that this class is defined when it goes to sleep, but NOT available when it
+	 * awakes (eg, this class is part of an addon that is deactivated at some point). 
+	 */
+	public function properties_as_array(){
+		$properties = parent::properties_as_array();
+		$properties['_migration_stages'] = array();
+		foreach($this->_migration_stages as $migration_stage_priority => $migration_stage_class){
+			$properties['_migration_stages'][$migration_stage_priority] = $migration_stage_class->properties_as_array();
+		}
+		return $properties;
+	}
+	
+	/**
+	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
+	 * to ahve been made from the properties_as_array() function.
+	 * @param array $array_of_properties like what's produced from properties_as_array() method
+	 * @return void
+	 */
+	public function instantiate_from_array_of_properties($array_of_properties){
+		$stages = $array_of_properties['_migration_stages'];
+		unset($array_of_properties['_migration_stages']);
+		unset($array_of_properties['class']);
+		foreach($array_of_properties as $property_name => $property_value){
+			$this->$property_name = $property_value;
+		}
+		foreach($stages as $stage_priority => $stage_properties_array){
+			$stage_class_name = $stage_properties_array['class'];
+			if( ! class_exists($stage_class_name)){
+				throw new EE_Error(sprintf(__("Huh, the migration stage '%s' doesnt exist anymore...", "event_espresso"),$stage_class_name));
+			}
+			$stage = new $stage_class_name;
+			if( ! $stage instanceof EE_Data_Migration_Script_Stage){
+				throw new EE_Error(sprintf(__("Migration stage '%s' isnt actually a migration stage. Its a '%s'", "event_espresso"),$stage_class_name,get_class($stage)));
+			}
+			$stage->instantiate_from_array_of_properties($stage_properties_array);
+			$this->_migration_stages[$stage_priority] = $stage;
+		}
+	}
 }
 
 /**
@@ -267,6 +310,18 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 		return $this->_errors;
 	}
 	
+	
+	/**
+	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
+	 * to ahve been made from the properties_as_array() function.
+	 * @param array $array_of_properties like what's produced from properties_as_array() method
+	 */
+	public function instantiate_from_array_of_properties($array_of_properties){
+		unset($array_of_properties['class']);
+		foreach($array_of_properties as $property_name => $property_value){
+			$this->$property_name = $property_value;
+		}
+	}
 }
 
 /**
@@ -407,5 +462,46 @@ abstract class EE_Data_Migration_Class_Base{
 	 */
 	public function set_completed(){
 		$this->_status = EE_Data_Migration_Manager::status_completed;
+	}
+	
+	/**
+	 * A lot like "__sleep()" magic method in purpose, this is meant for persisting this class'
+	 * properties to the DB. However, we don't want to use __sleep() because its quite
+	 * possible that this class is defined when it goes to sleep, but NOT available when it
+	 * awakes (eg, this class is part of an addon that is deactivated at some point). 
+	 */
+	public function properties_as_array(){
+		$properties =  get_object_vars($this);
+		$properties['class'] = get_class($this);
+		return $properties;
+	}
+	/**
+	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
+	 * to ahve been made from the properties_as_array() function.
+	 * @param array $array_of_properties like what's produced from properties_as_array() method
+	 */
+	abstract public function instantiate_from_array_of_properties($array_of_properties);
+}
+
+/**
+ * This is a stub data migraiton that we can put in the array of data migrations when we have an aerror
+ * finding the next data migration script.
+ */
+class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
+	public function can_migrate_from_version($version_string) {
+		return false;
+	}
+	public function schema_changes_after_migration() {
+		return;
+	}
+	public function schema_changes_before_migration() {
+		return;
+	}
+	public function __construct() {
+		
+		$this->_migration_stages = array();
+		$this->_pretty_name = __("Fatal Error Occurred", "event_espresso");
+//		dd($this);
+		parent::__construct();
 	}
 }

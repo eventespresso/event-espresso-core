@@ -89,17 +89,40 @@ class EE_Data_Migration_Manager{
 		$this->stati_that_indicate_to_stop_migrations = array(self::status_fatal_error,self::status_no_more_migration_scripts);
 		$this->stati_that_indicate_to_continue_single_migration_script = array(self::status_continue);
 		$this->stati_that_indicate_to_stop_single_migration_script = array(self::status_completed,self::status_fatal_error);//note: status_no_more_migration_scripts doesn't apply
+		//make sure we've included teh base migration script, because we may need the EE_Data_Migration_Script_Error class
+		//to be defined, because right now it doesn't get autoloaded on its own
+		$this->EE->load_core('Data_Migration_Script_Base');
 	}
 	/**
 	 * Gets the array describing what data migrations have run
-	 * @return EE_Data_Migration_Script_Base[]
+	 * @return EE_Data_Migration_Script_Base[] (but also has a few legacy arrays in there - which should probalby be ignored)
 	 */
 	public function get_data_migrations_ran(){
 		if( ! $this->_data_migrations_ran ){
 			//setup autoloaders for each of the scripts in there
 			$this->get_all_data_migration_scripts_available();
-			$this->_data_migrations_ran = get_option(EE_Data_Migration_Manager::data_migrations_option_name);
-			if ( ! $this->_data_migrations_ran || ! is_array($this->_data_migrations_ran) ){
+			 $data_migrations_data = get_option(EE_Data_Migration_Manager::data_migrations_option_name);
+			 $data_migrations_ran = array();
+			 //convert into data migration script classes where possible
+			 foreach($data_migrations_data as $version_string => $data_migration_data){
+				 if(isset($data_migration_data['class']) && class_exists($data_migration_data['class'])){
+					 $class = new $data_migration_data['class'];
+					 if($class instanceof EE_Data_Migration_Script_Base){
+						 $class->instantiate_from_array_of_properties($data_migration_data);
+						 $data_migrations_ran[$version_string] = $class;
+					 }else{
+						 //huh, so its an object but not a data migration script?? that shouldn't happen
+						 //just leave it as an array (which'll probably just get ignored)
+						 $data_migrations_ran[$version_string] = $data_migration_data;
+					 }
+				 }else{
+					 //so the data doesn't specify a class. So it must either be a legacy array of info or some array (which we'll probabl yjust ignore)
+					 $data_migrations_ran[$version_string] = $data_migration_data;
+				 }
+			 }
+			 //so here the array of $data_migrations_ran is actually a mix of classes and a few legacy arrays
+			$this->_data_migrations_ran = $data_migrations_ran;
+			 if ( ! $this->_data_migrations_ran || ! is_array($this->_data_migrations_ran) ){
 				$this->_data_migrations_ran = array();
 			}
 		}
@@ -219,7 +242,7 @@ class EE_Data_Migration_Manager{
 		if( ! $scripts_ran ){
 			return null;
 		}
-		//get the LAST one, and see if it's marked for continuing, or just a minor error
+		//get the LAST one, and see if it's marked for continuing
 		$last_ran_script = end($scripts_ran);
 		if( $last_ran_script instanceof EE_Data_Migration_Script_Base ){
 			if($include_completed_scripts){
@@ -235,6 +258,7 @@ class EE_Data_Migration_Manager{
 		}else{
 			//its not a data migration script class, so it must be a 3.1 legacy array. That's ok
 			//but because thsi is 4.0 code we can be pretty certain it's done running
+			//(and we don't know how to run it anyways)
 			return null;
 		}
 		
@@ -280,7 +304,7 @@ class EE_Data_Migration_Manager{
 			$message =  sprintf(__("Error Message: %s<br>Stack Trace:%s", "event_espresso"),$e->getMessage(),$e->getTraceAsString());
 			//record it on the array of data mgiration scripts ran. This will be overwritten next time we try and try to run data migrations
 			//but thats ok-- it's just an FYI to support that we coudln't even run any data migrations
-			$this->add_error_to_migrations_ran(__("Could not run data migrations because: %s", "event_espresso"),$message);
+			$this->add_error_to_migrations_ran(sprintf(__("Could not run data migrations because: %s", "event_espresso"),$message));
 			return array(
 				'records_to_migrate'=>1,
 				'records_migrated'=>0,
@@ -350,7 +374,7 @@ class EE_Data_Migration_Manager{
 				'script'=>$script_name
 			);
 		}
-		update_option(self::data_migrations_option_name, $this->_data_migrations_ran);
+		$this->_save_migrations_ran();
 		return $response_array;
 	}
 	
@@ -376,6 +400,7 @@ class EE_Data_Migration_Manager{
 				'status'=> EE_Data_Migration_Manager::status_fatal_error,
 				'message'=> sprintf(__("Unknown fatal error occurred: %s", "event_espresso"),$e->getMessage()),
 				'script'=>'Unknown');
+			$this->add_error_to_migrations_ran($e->getMessage."; Stack trace:".$e->getTraceAsString());
 		}
 		$warnings_etc = '';
 		$warnings_etc = @ob_get_contents();
@@ -457,15 +482,35 @@ class EE_Data_Migration_Manager{
 	 * @throws EE_Error
 	 */
 	public function add_error_to_migrations_ran($error_message){
-		$this->_data_migrations_ran = get_option(self::data_migrations_option_name);
-		if(isset($this->_data_migrations_ran ['Unknown'])){
-			$this->_data_migrations_ran['Unknown'][] = $error_message;
-
+		$data_migrations_ran_data = get_option(self::data_migrations_option_name);
+		//now, tread lightly because we're here because a FATAL non-catchable error
+		//was thrown last time when we were tryign to run a data migration script
+		//so the fatal error could have happened while getting the mgiration script
+		//or doing running it...
+		if( is_array($data_migrations_ran_data)){
+			$versions_migrated_to = array_keys($data_migrations_ran_data);
+			$last_version_migrated_to = end($versions_migrated_to);
 		}else{
-			$this->_data_migrations_ran['Unknown'] = array($error_message);
+			$last_version_migrated_to = null;
 		}
+		//check if it THINKS its a data migration script
+		if(isset($data_migrations_ran_data[$last_version_migrated_to]['class'])){
+			//ok then just add this error to its list of errors
+			$data_migrations_ran_data[$last_version_migrated_to]['_errors'] = $error_message;
+			$data_migrations_ran_data[$last_version_migrated_to]['_status'] = self::status_fatal_error;
+		}else{
+			//so we don't even know which script was last running
+			//use the data migration error stub, which is designed specifically for this type of thing
+			//require the migration script base class file, which also has teh error class
+
+			$general_migration_error = new EE_Data_Migration_Script_Error();
+			$general_migration_error->add_error($error_message);
+			$general_migration_error->set_borked();
+			$general_migration_error_data = $general_migration_error->properties_as_array();
+			$data_migrations_ran_data['Unknown'] = $general_migration_error_data;
+		}
+		update_option(self::data_migrations_option_name,$data_migrations_ran_data);
 		
-		$this->_save_migrations_ran();
 	}
 	/**
 	 * saves what data migrations have ran to teh database
@@ -474,6 +519,38 @@ class EE_Data_Migration_Manager{
 		if($this->_data_migrations_ran == null){
 			$this->get_data_migrations_ran();
 		}
-		update_option(self::data_migrations_option_name, $this->_data_migrations_ran);
+		$array_of_migrations = array();
+		//now, we don't want to save actual classes to the DB because that's messy
+		foreach($this->_data_migrations_ran as $version_string => $array_or_migration_obj){
+			if($array_or_migration_obj instanceof EE_Data_Migration_Script_Base){
+				$array_of_migrations[$version_string] = $array_or_migration_obj->properties_as_array();
+			}else{
+				$array_of_migrations[$version_string] = $array_or_migration_obj;
+			}
+		}
+		update_option(self::data_migrations_option_name, $array_of_migrations);
+	}
+	
+	/**
+	 * Takes an array of data migration script properties and re-creates the class from
+	 * them. The argumetn $propertis_array is assumed to have been made by EE_Data_MIgration_Script_Base::properties_as_array()
+	 * @param array $properties_array
+	 * @return EE_Data_Migration_Script_Base
+	 * @throws EE_Error
+	 */
+	function _instantiate_script_from_properties_array($properties_array){
+		if( ! isset($properties_array['class'])){
+			throw new EE_Error(sprintf(__("Properties array  has no 'class' properties. Here's what it has: %s", "event_espresso"),implode(",",$properties_array)));
+		}
+		$class_name = $properties_array['class'];
+		if( ! class_exists($class_name)){
+			throw new EE_Error(sprintf(__("There is no migration script named %s", "event_espresso"),$class_name));
+		}
+		$class = new $class_name;
+		if( ! $class instanceof EE_Data_Migration_Script_Base){
+			throw new EE_Error(sprintf(__("Class '%s' is supposed to be a migration script. Its not, its a '%s'", "event_espresso"),$class_name,get_class($class)));
+		}
+		$class->instantiate_from_array_of_properties($properties_array);
+		return $class;
 	}
 }
