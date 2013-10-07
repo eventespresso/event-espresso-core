@@ -389,6 +389,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_search_btn_label = __('Venues', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -811,6 +812,29 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : 'publish'
 			//todo add filter by category
 			);
+
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$where['OR'] = array(
+				'VNU_name' => array('LIKE',$sstr ),
+				'VNU_desc' => array('LIKE',$sstr ),
+				'VNU_short_desc' => array( 'LIKE',$sstr ),
+				'VNU_address' => array( 'LIKE', $sstr ),
+				'VNU_address2' => array( 'LIKE', $sstr ),
+				'VNU_city' => array( 'LIKE', $sstr ),
+				'VNU_zip' => array( 'LIKE', $sstr ),
+				'VNU_phone' => array( 'LIKE', $sstr ),
+				'VNU_url' => array( 'LIKE', $sstr ),
+				'VNU_virtual_phone' => array( 'LIKE', $sstr ),
+				'VNU_virtual_url' => array( 'LIKE', $sstr ),
+				'VNU_google_map_link' => array( 'LIKE', $sstr ),
+				'Event.EVT_name' => array('LIKE', $sstr ),
+				'Event.EVT_desc' => array('LIKE', $sstr ),
+				'Event.EVT_phone' => array('LIKE', $sstr ),
+				'Event.EVT_external_URL' => array('LIKE', $sstr ),
+				);
+		}
 
 		$venues = $count ? $this->_venue_model->count( array($where), 'VNU_ID' ) : $this->_venue_model->get_all( array( $where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $sort ) );
 
