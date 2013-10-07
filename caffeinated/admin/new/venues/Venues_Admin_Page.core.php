@@ -901,6 +901,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->_search_btn_label = __('Venue Categories', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -1066,10 +1067,17 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$orderby = isset( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : 'Term.term_id';
 		$order = isset( $this->_req_data['order'] ) ? $this->_req_data['order'] : 'DESC';
 		$limit = ($current_page-1)*$per_page;
-
+		$where = array( 'taxonomy' => 'espresso_venue_categories' );
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$where['OR'] = array(
+				'Term.name' => array( 'LIKE', $sstr),
+				'description' => array( 'LIKE', $sstr )
+				);
+		}
 
 		$query_params = array(
-			0 => array( 'taxonomy' => 'espresso_venue_categories' ),
+			$where,
 			'order_by' => array( $orderby => $order ),
 			'limit' => $limit . ',' . $per_page,
 			'force_join' => array('Term')
