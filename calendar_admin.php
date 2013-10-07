@@ -153,11 +153,11 @@ class EE_Calendar_Admin {
 		);
 
 		// get saved settings
-		$calendar_settings = get_option( 'espresso_calendar_settings', array() );
+		$calendar_settings = get_option( 'espresso_calendar_options', array() );
 		// override defaults
 		$calendar_settings = array_merge( $calendar_default_settings, $calendar_settings );
 		// resave
-		update_option('espresso_calendar_settings', $calendar_settings);
+		update_option('espresso_calendar_options', $calendar_settings);
 	}
 
 
@@ -304,11 +304,11 @@ class EE_Calendar_Admin {
 			$espresso_calendar['columnFormat_week'] = $_POST['columnFormat_week'];
 			$espresso_calendar['columnFormat_day'] = $_POST['columnFormat_day'];
 			
-			$existing_settings = get_option( 'espresso_calendar_settings', array() );
+			$existing_settings = get_option( 'espresso_calendar_options', array() );
 			$differences = array_diff_assoc( $espresso_calendar, $existing_settings );
 			
 			if ( ! empty( $differences )) {
-				if ( update_option('espresso_calendar_settings', $espresso_calendar)) {
+				if ( update_option('espresso_calendar_options', $espresso_calendar)) {
 					$notices['updates'][] = __('The calendar settings were successfully saved ', 'event_espresso');
 				} else {
 					$notices['errors'][] = __('An error occured. The calendar settings were not saved ', 'event_espresso');
@@ -320,12 +320,12 @@ class EE_Calendar_Admin {
 			
 		}
 		if ( ! empty($_REQUEST['reset_calendar']) && check_admin_referer('espresso_form_check', 'reset_calendar_nonce' )) {
-			delete_option( 'espresso_calendar_settings' );
+			delete_option( 'espresso_calendar_options' );
 			EE_Calendar_Admin::activation();
 			$notices['updates'] = array();
 			$notices['updates'][] = __('The calendar settings were successfully reset ', 'event_espresso');
 		}
-		$espresso_calendar = get_option( 'espresso_calendar_settings', array() );
+		$espresso_calendar = get_option( 'espresso_calendar_options', array() );
 
 		$values = array(
 				array('id' => false, 'text' => __('No', 'event_espresso')),

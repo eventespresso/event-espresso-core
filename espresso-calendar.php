@@ -179,7 +179,7 @@ class EE_Calendar {
 	 */
 	private function _get_calendar_options() {
 		if ( empty( $this->_calendar_options ) || ! is_array( $this->_calendar_options )) {
-			$this->_calendar_options = get_option( 'espresso_calendar_settings', array() );
+			$this->_calendar_options = get_option( 'espresso_calendar_options', array() );
 		}
 		return $this->_calendar_options;
 	}
