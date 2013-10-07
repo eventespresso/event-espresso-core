@@ -242,7 +242,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$checkin_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, REG_ADMIN_URL );
 			$datetime_strings[] = '<a href="' . $checkin_url . '">' . $datetime->start_date_and_time('D M j, Y',' g:i a') . '</a>';
 		}
-		return implode("; <br />",$datetime_strings);
+		return implode("<br />",$datetime_strings);
     }
 
 
