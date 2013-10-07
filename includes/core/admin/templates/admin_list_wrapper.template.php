@@ -1,3 +1,4 @@
+	<?php echo $before_list_table; ?>
 	<?php $list_table->display_views(); ?>
     <form id="<?php echo $current_page; ?>-table-frm" action="<?php echo $table_url;?>" method="post">
 		<?php echo $sortable_list_table_form_fields; ?>
@@ -5,4 +6,4 @@
 		<?php echo $list_table->display(); ?>
 		<?php echo $list_table_hidden_fields; ?>
     </form>
-    <?php echo isset($after_list_table) ? $after_list_table : ''; ?>
+    <?php echo $after_list_table; ?>

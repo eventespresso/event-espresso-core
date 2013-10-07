@@ -629,7 +629,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args = array(
 			'admin_page_header' => '',
 			'admin_page_content' => '',
-			'post_body_content' => ''
+			'post_body_content' => '',
+			'before_list_table' => '',
+			'after_list_table' => ''
 		);
 	}
 
