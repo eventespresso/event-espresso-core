@@ -37,8 +37,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
+		$columns = array();
+		if ( isset( $this->_req_data['event_id'] ) )
+			$columns['cb'] =  '<input type="checkbox" />'; //Render a checkbox instead of text
+
 		$this->_columns = array(
-				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 				'REG_att_checked_in' => __('Check In', 'event_espresso'),
 				'REG_count' => __('Att #', 'event_espresso'),
 				'ATT_name' =>  __('Attendee', 'event_espresso'),
@@ -51,6 +54,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				'TXN_total' => __('Total', 'event_espresso'),
 				'PRC_name' => __('Ticket Option', 'event_espresso')
 			);
+
+		$this->_columns = array_merge( $columns, $this->_columns);
 
 
 		$this->_sortable_columns = array(
