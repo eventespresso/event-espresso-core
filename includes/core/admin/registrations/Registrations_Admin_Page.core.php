@@ -62,7 +62,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	protected function _ajax_hooks() {
 		//todo: all hooks for registrations ajax goes in here
-		add_action( 'AHEE_attendee_check_in', array( $this, '_attendee_check_in' ));
+		add_action( 'wp_ajax_toggle_checkin_status', array( $this, 'toggle_checkin_status' ));
 	}
 
 
@@ -200,19 +200,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'noheader' => TRUE 
 				),
 				
-				'attendee_check_in'	=> array( 
-					'func' => '_attendee_check_in', 
-					'args' => array( 
-						'check_in' => TRUE 
-					), 
-					'noheader' => TRUE 
-				),
-				
-				'attendee_check_out'	=> array( 
-					'func' => '_attendee_check_out', 
-					'args' => array( 
-						'check_in' => FALSE 
-					), 
+				'toggle_checkin_status'	=> array( 
+					'func' => '_toggle_checkin_status',
 					'noheader' => TRUE 
 				),
 				
@@ -465,7 +454,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'attendee_check_in' => __('Toggle Attendees Check In', 'event_espresso'),
+					'toggle_checkin_status' => __('Toggle Attendees Check In', 'event_espresso'),
 					)
 				)
 			);
@@ -2148,13 +2137,77 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
+	
 	/**
-	 * 		_attendee_check_in
-	*		@access public
+	 * toggle the checkin status for the given registration (coming from ajax)
+	 * @return json
+	 */
+	public function toggle_checkin_status() {
+		//first make sure we have the necessary data
+		if ( !isset( $this->_req_data['regid'] ) ) {
+			EE_Error::add_error( __('There must be somethign broken with the html structure because the required data for toggling the checkin status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_template_args['success'] = FALSE;
+			$this->_template_args['error'] = TRUE;
+			$this->_return_json();
+		};
+
+		//do a nonce check cause we're not coming in from an normal route here.
+		$nonce = isset( $this->_req_data['checkinnonce'] ) ? sanitize_text_field( $this->_req_data['checkinnonce'] ) : '';
+		$nonce_ref = 'checkin_nonce';
+
+		$this->_verify_nonce( $nonce, $nonce_ref );
+
+		//beautiful! Made it this far so let's get the status.
+		$new_status = $this->_toggle_checkin_status();
+
+		//setup new class to return via ajax
+		$this->_template_args['admin_page_content'] = 'clickable trigger-checkin checkedin-status-' . $new_status;
+		$this->_template_args['success'] = TRUE;
+		$this->_return_json();
+	}
+
+
+
+
+
+
+	/**
+	 * 		handles toggleing the checkin status for the registration,
+	*		@access protected
+	*		@param boolean 	$check_in
 	*		@return void
 	*/
-	public function _attendee_check_in( ) {	
-		 $this->_toggle_attendee_check_in_status( TRUE );
+	protected function _toggle_checkin_status() {
+		//first let's get the query args out of the way for the redirect
+		$query_args = array(
+			'action' => 'event_registrations',
+			'event_id' => isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL,
+			'DTT_ID' => isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL
+			);
+		$new_status = FALSE;
+
+		// bulk action check in toggle
+		if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
+			// cycle thru checkboxes 
+			while ( list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
+				$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+				$new_status = $this->_toggle_checkin($REG_ID, $DTT_ID);
+			}
+			
+		} elseif ( isset( $this->_req_data['regid'] ) ) {
+			//coming from ajax request
+			$DTT_ID = isset( $this->_req_data['dttid'] ) ? $this->_req_data['dttid'] : NULL;
+			$query_args['DTT_ID'] = $DTT_ID;
+			$new_status = $this->_toggle_checkin($this->_req_data['regid'], $DTT_ID);		
+		} else {
+			EE_Error::add_error(__('Missing some required data to toggle the checkin', 'event_espresso') );
+		}
+
+		if ( defined('DOING_AJAX' ) )
+			return $new_status;
+
+		$this->_redirect_after_action( FALSE,'', '', $query_args, TRUE );
+		
 	}
 
 
@@ -2162,14 +2215,22 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * 		_attendee_check_out
-	*		@access public
-	*		@return void
-	*/
-	public function _attendee_check_out( ) {	
-		 $this->_toggle_attendee_check_in_status( FALSE );
+	 * This is toggles a single checkin for the given registration and datetime.
+	 * @param  int    $REG_ID The registration we're toggling
+	 * @param  int    $DTT_ID The datetime we're toggling
+	 * @return int            The new status toggled to.
+	 */
+	private function _toggle_checkin($REG_ID, $DTT_ID) {
+		$REG = EEM_Registration::instance()->get_one_by_ID($REG_ID);
+		$new_status = $REG->toggle_checkin_status( $DTT_ID );
+		if ( $new_status !== FALSE ) {
+			EE_Error::add_success($REG->get_checkin_msg($DTT_ID) );
+		} else {
+			EE_Error::add_error($REG->get_checkin_msg($DTT_ID, TRUE), __FILE__, __FUNCTION__, __LINE__ );
+			$new_status = FALSE;
+		}
+		return $new_status;
 	}
-
 
 
 
@@ -2190,58 +2251,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-
-
-	/**
-	 * 		_attendee_check_in
-	*		@access protected
-	*		@param boolean 	$check_in
-	*		@return void
-	*/
-	private function _toggle_attendee_check_in_status( $REG_att_checked_in = FALSE ) {
-		//todo we have to work out a ui for checking in an attendee.  When they check the box they'll have to check in for a specific datetime.  Then we need to update the check in table to record the checkin status.  So this means all of this is pretty much going to be rewritten. (see https://events.codebasehq.com/projects/event-espresso/tickets/3715)
-
-
-		// bulk action check in toggle
-		if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
-			
-			$success = TRUE;
-			// if array has more than one element than success message should be plural
-			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
-			// cycle thru checkboxes 
-			while ( list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! EEM_Registration::instance()->update( array( 'REG_att_checked_in' => $REG_att_checked_in ), array(array( 'REG_ID' => absint( $REG_ID ))))) {
-					$success = FALSE;
-				}
-			}
-			
-		} elseif ( $REG_ID = ! empty($this->_req_data['id']) ? $this->_req_data['id'] : FALSE ) {
-			
-			$success = FALSE;
-			//echo '<h4>$REG_ID : ' . $REG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			$REG_url_link = ! empty($this->_req_data['_REG_ID']) ? sanitize_text_field( $this->_req_data['_REG_ID'] ) : FALSE;
-			//$REG_att_checked_in = ! empty($this->_req_data['check_in']) ? absint( $this->_req_data['check_in'] ) : 0;
-			
-			if ( $reg_obj = EEM_Registration::instance()->get_one( array( 'REG_ID' => absint( $REG_ID ), 'REG_url_link' => $REG_url_link ))) {
-				//echo '<h4>$REG ID : ' . $REG->ID() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				if ( $reg_obj->set_att_checked_in( $REG_att_checked_in )) {
-					//echo '<h1>set_att_checked_in<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-					$success = $reg_obj->save();
-				}
-			}		
-				
-		} else {
-			$success = FALSE;
-		}
-
-		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
-
-		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		$this->_redirect_after_action( $success, __( 'Attendee Check In Status', 'event_espresso' ), __( 'updated', 'event_espresso' ), array( 'action' => 'event_registrations', 'event_id' => $EVT_ID ));
-		
-	}
+	
 	
 	
 	public function _registrations_report(){
@@ -2265,8 +2275,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	/***************************************		ATTENDEE DETAILS 		***************************************/
-
-
 
 
 
