@@ -2054,6 +2054,31 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if($trash){
 			$query_params[0]['Attendee.ATT_status']=  EEM_CPT_Base::post_status_trashed;
 		}
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$query_params[0]['OR'] = array(
+				'Event.EVT_name' => array( 'LIKE', $sstr),
+				'Event.EVT_desc' => array( 'LIKE', $sstr ),
+				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_email' => array('LIKE', $sstr ),
+				'Attendee.ATT_address' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_address2' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_city' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_comments' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_notes' => array( 'LIKE', $sstr ),
+				'REG_final_price' => array( 'LIKE', $sstr ),
+				'REG_code' => array( 'LIKE', $sstr ),
+				'REG_count' => array( 'LIKE' , $sstr ),
+				'REG_group_size' => array( 'LIKE' , $sstr ),
+				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
+				'Ticket.TKT_description' => array( 'LIKE', $sstr )		
+				);
+		}
+
 		$query_params['order_by'][$orderby] = $sort;
 		$query_params['limit'] = $limit;
 		$query_params['force_join'] = array('Attendee');//force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
