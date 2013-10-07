@@ -562,9 +562,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//setup list table properties
 		$this->_set_list_table();
-		
-		//setup search attributes
-		$this->_set_search_attributes();
 
 		// child classes can "register" a metabox to be automatically handled via the _page_config array property.  However in some cases the metaboxes will need to be added within a route handling callback.
 		$this->_add_registered_meta_boxes();
@@ -1546,7 +1543,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return 		void
 	*/
 	public function _set_search_attributes() {
-		$this->_template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), $this->page_label );
+		$this->_template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), empty( $this->_search_btn_label ) ? $this->page_label : $this->_search_btn_label );
 		$this->_template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
 
@@ -1999,6 +1996,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return html
 	 */
 	private function _display_admin_list_table_page( $sidebar = false ) {
+		//setup search attributes
+		$this->_set_search_attributes();
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
 
