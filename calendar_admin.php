@@ -671,7 +671,7 @@ class EE_Calendar_Admin {
 										array('id'  => 'right','text'=> __('Right', 'event_espresso'))
 									);
 									?>
-									<tr class="tooltip-position-selections">
+									<tr class="tooltip-position-selections tooltip_settings">
 										<th class="tooltip-positions">
 											<label for="tooltips_pos_my_1">
 												<?php _e('Tooltip Position', 'event_espresso'); ?>
@@ -707,7 +707,7 @@ class EE_Calendar_Admin {
 									);
 									?>
 
-									<tr class="tooltip_style-selections">
+									<tr class="tooltip_style-selections tooltip_settings">
 										<th class="tooltip_style">
 											<label for="tooltip_style">
 												<?php _e('Tooltip Style', 'event_espresso'); ?>
@@ -977,16 +977,16 @@ class EE_Calendar_Admin {
 				if(window.ectt == ''){
 					$('input#show_tooltips').attr('disabled', true);
 					$('.tooltip-positions').attr('style', "opacity: .3");
-					$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').attr('style', "opacity: .3");
+					$('tr.tooltip_settings th, tr.tooltip_settings td').attr('style', "opacity: .3");
 				}
 				$('select#show_tooltips').change(function(){
 						window.ectt = $('select#show_tooltips option:selected').val();
 						if(window.ectt == ''){
 							$('input#event-background, input#event-text').attr('disabled', true);
-							$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').attr('style', "opacity: .3");
+							$('tr.tooltip_settings th, tr.tooltip_settings td').attr('style', "opacity: .3");
 						}else {
 							$('input#tooltips_pos_my_1, input#tooltips_pos_my_2, input#tooltips_pos_at_1, input#tooltips_pos_at_2').removeAttr('disabled', true);
-							$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').removeAttr('style');
+							$('tr.tooltip_settings th, tr.tooltip_settings td').removeAttr('style');
 						}
 					});
 <?php } ?>
