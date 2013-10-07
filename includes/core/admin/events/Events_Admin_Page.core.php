@@ -1213,6 +1213,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$where['post_type'] = array( '!=', 'revision' );
 
+		//search query handling
+		if ( isset( $this->_req_data['s'] ) ) {
+			$search_string = '%' . $this->_req_data['s'] . '%';
+			$where['OR'] = array(
+				'EVT_name' => array('LIKE', $search_string),
+				'EVT_desc' => array('LIKE', $search_string),
+				'EVT_short_desc' => array('LIKE', $search_string)
+				);
+		}
+
+
 		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
 
 		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
