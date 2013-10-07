@@ -81,18 +81,29 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
-		if ( empty( $this->_dtts_for_event ) )
-			return array();  //get out.  If there are no datetimes available there's currently no filters available.
-
-		//DTT datetimes filter
-		$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
-		$dtts = array();
-		foreach ( $this->_dtts_for_event as $dtt ) {
-			$datetime_string = $dtt->start_date_and_time('D M j, Y', ' g:i a') . ' - ' . $dtt->end_date_and_time('D M j, Y', ' g:i a');
-			$dtts[] = array('id' => $dtt->ID(), 'text' => $datetime_string );
-			$cur_dtt = empty( $cur_dtt ) && $dtt->get('DTT_is_primary') ? $dtt->ID() : $cur_dtt;
+		if ( empty( $this->_dtts_for_event ) ) {
+			//this means we don't have an event so let's setup a filter dropdown for all the events to select
+			$events = EEM_Event::instance()->get_all(array(array(), 'order_by' => array( 'EVT_name' => 'asc' ) ) );
+			$evts[] = array('id' => 0, 'text' => __('To toggle checkin status for attendees, select an event', 'event_espresso') );
+			foreach ( $events as $evt ) {
+				//any registrations for this event?
+				if ( ! $evt->get_count_of_all_registrations() )
+					continue;
+				$evts[] = array( 'id' => $evt->ID(), 'text' => $evt->get('EVT_name') );
+			}
+			$filters[] = EEH_Form_Fields::select_input( 'event_id', $evts );
+			
+		} else {
+			//DTT datetimes filter
+			$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+			$dtts = array();
+			foreach ( $this->_dtts_for_event as $dtt ) {
+				$datetime_string = $dtt->start_date_and_time('D M j, Y', ' g:i a') . ' - ' . $dtt->end_date_and_time('D M j, Y', ' g:i a');
+				$dtts[] = array('id' => $dtt->ID(), 'text' => $datetime_string );
+				$cur_dtt = empty( $cur_dtt ) && $dtt->get('DTT_is_primary') ? $dtt->ID() : $cur_dtt;
+			}
+			$filters[] = EEH_Form_Fields::select_input('DTT_ID', $dtts, $cur_dtt);
 		}
-		$filters[] = EEH_Form_Fields::select_input('DTT_ID', $dtts, $cur_dtt);
 
 		return $filters;
 	}
