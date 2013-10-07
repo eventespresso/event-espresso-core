@@ -663,12 +663,39 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}elseif($end_date){
 			throw new EE_Error("not yet supported");
 		}
+
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$_where['OR'] = array(
+				'Event.EVT_name' => array( 'LIKE', $sstr),
+				'Event.EVT_desc' => array( 'LIKE', $sstr ),
+				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_email' => array('LIKE', $sstr ),
+				'Attendee.ATT_address' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_address2' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_city' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_comments' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_notes' => array( 'LIKE', $sstr ),
+				'REG_final_price' => array( 'LIKE', $sstr ),
+				'REG_code' => array( 'LIKE', $sstr ),
+				'REG_count' => array( 'LIKE' , $sstr ),
+				'REG_group_size' => array( 'LIKE' , $sstr ),
+				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
+				'Ticket.TKT_description' => array( 'LIKE', $sstr )		
+				);
+		}
+
 		
 		if($count){
 			return EEM_Registration::instance()->count(array($_where));
 		}else{
 			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
 			$registrations = EEM_Registration::instance()->get_all($query_params);
+			global $wpdb;
 	
 
 			if ( $EVT_ID && isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration &&  $registrations[0]->event_obj()) {
