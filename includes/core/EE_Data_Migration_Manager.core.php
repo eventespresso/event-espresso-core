@@ -316,7 +316,7 @@ class EE_Data_Migration_Manager{
 		//ok so we definitely have a data migration script
 		try{
 			//do what we came to do!
-			$current_script_class->migration_step(1);
+			$current_script_class->migration_step(10);
 			switch($current_script_class->get_status()){
 				case EE_Data_Migration_Manager::status_continue:
 					$response_array = array(
