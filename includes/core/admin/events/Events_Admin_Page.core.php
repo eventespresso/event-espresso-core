@@ -1888,9 +1888,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$order = isset( $this->_req_data['order'] ) ? $this->_req_data['order'] : 'DESC';
 		$limit = ($current_page-1)*$per_page;
 
+		$where = array( 'taxonomy' => 'espresso_event_categories' );
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$where['OR'] = array(
+				'Term.name' => array( 'LIKE', $sstr),
+				'description' => array( 'LIKE', $sstr )
+				);
+		}
 
 		$query_params = array(
-			0 => array( 'taxonomy' => 'espresso_event_categories' ),
+			$where ,
 			'order_by' => array( $orderby => $order ),
 			'limit' => $limit . ',' . $per_page,
 			'force_join' => array('Term')
