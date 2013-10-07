@@ -741,6 +741,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _price_types_overview_list_table() {
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price_type', 'add', array(), 'button add-new-h2');
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
+		$this->_search_btn_label = __('Price Types', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -781,8 +782,17 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
+
+		$_where = array('PRT_deleted'=>$trashed, 'PBT_ID' => array('!=', 1 ) );
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$_where['OR'] = array(
+				'PRT_name' => array( 'LIKE', $sstr )
+				);
+		}
 		$query_params = array(
-			array('PRT_deleted'=>$trashed, 'PBT_ID' => array('!=', 1 ) ),
+			$_where,
 			'order_by'=>$orderby,
 			'limit'=>$limit);
 		if($count){
