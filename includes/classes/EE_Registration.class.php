@@ -793,7 +793,7 @@ class EE_Registration extends EE_Base_Class {
 
 		if ( empty( $checkin ) )
 			//get checkin object (if exists)
-			$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
+			$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array('CHK_timestamp' => 'DESC' ) ) );
 		if ( empty( $checkin ) ) {
 			return 0; //never been checked in
 		} else if ( $checkin->get('CHK_in' ) ) {
