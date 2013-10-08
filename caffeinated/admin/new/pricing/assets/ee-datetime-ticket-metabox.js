@@ -1678,9 +1678,8 @@ jQuery(document).ready(function($) {
 	 * Datepicker functionality
 	 */
 	
-	$('#event-and-ticket-form-content').on('focus', '.ee-datepicker', function(e) {
+	$('#event-and-ticket-form-content').on('focusin', '.ee-datepicker', function(e) {
 		e.preventDefault();
-		e.stopPropagation();
 		var data = $(this).data();
 		var start = data.context == 'start-dtt' || data.context == 'start-ticket' ? $(this, data.dateFieldContext ) : $(data.relatedField, data.dateFieldContext);
 		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.relatedField, data.dateFieldContext);
@@ -1689,6 +1688,6 @@ jQuery(document).ready(function($) {
 
 		//@todo: intelligently create min and max values for the ticket dates according to any attached dtts.  This will be tricky tho so leaving for a future iteration.
 
-		dttPickerHelper.picker(start, end, next, doingstart);
+		dttPickerHelper.resetpicker().picker(start, end, next, doingstart);
 	});
 });
