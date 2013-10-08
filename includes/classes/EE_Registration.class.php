@@ -793,7 +793,7 @@ class EE_Registration extends EE_Base_Class {
 
 		if ( empty( $checkin ) )
 			//get checkin object (if exists)
-			$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
+			$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array('CHK_timestamp' => 'DESC' ) ) );
 		if ( empty( $checkin ) ) {
 			return 0; //never been checked in
 		} else if ( $checkin->get('CHK_in' ) ) {
@@ -827,32 +827,26 @@ class EE_Registration extends EE_Base_Class {
 		$status_paths = array(
 			0 => 1,
 			1 => 2,
-			2 => 0
+			2 => 1
 			);
 
 		//start by getting the current status so we know what status we'll be changing to.
-		$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
+		$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array('CHK_timestamp' => 'DESC') ) );
 		$cur_status = $this->check_in_status_for_datetime( NULL, $checkin );
 		$status_to = $status_paths[$cur_status];
 
-		//update relation
-		if ( $status_to === 0 ) {
-			$updated = $this->delete_related_permanently( 'Checkin', array( array('CHK_ID' => $checkin->ID() ) ) );
-		} else {
-			if ( empty( $checkin ) ) {
-				$chk_data = array(
-					'REG_ID' => $this->ID(),
-					'DTT_ID' => $DTT_ID,
-					'CHK_in' => 1
-					);
-				$checkin = EE_Checkin::new_instance( $chk_data );
-				$updated = $checkin->save();
-			} else {
-				$new_status = $status_to == 2 ? 0 : $status_to; //make sure we set appropriately.
-				$checkin->set( 'CHK_in', $new_status );
-				$updated = $checkin->save();
-			}
-		}
+		//add relation - note checkins are always creating new rows because we are keeping track of checkins over time.  Eventually we'll probably want to show a list table for the individual checkins so that can be managed.
+		
+		
+		$new_status = $status_to == 2 ? 0 : $status_to;
+		$chk_data = array(
+			'REG_ID' => $this->ID(),
+			'DTT_ID' => $DTT_ID,
+			'CHK_in' => $new_status
+			);
+		$checkin = EE_Checkin::new_instance( $chk_data );
+		$updated = $checkin->save();
+		
 
 		if ( $updated == 0 )
 			$status_to = FALSE;

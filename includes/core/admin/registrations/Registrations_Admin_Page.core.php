@@ -149,6 +149,17 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					),
 
 				'event_registrations'	=> '_event_registrations_list_table',
+				'registration_checkins' => '_registration_checkin_list_table',
+
+				'delete_checkin_rows' => array(
+						'func' => '_delete_checkin_rows',
+						'noheader' => TRUE
+					),
+
+				'delete_checkin_row' => array(
+						'func' => '_delete_checkin_row',
+						'noheader' => TRUE
+					),
 				
 				'contact_list'	=> '_attendee_contact_list_table',
 				
@@ -234,12 +245,22 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 			'event_registrations' => array(
 				'nav' => array(
-					'label' => __('Check In List', 'event_espresso'),
+					'label' => __('Event Check In', 'event_espresso'),
 					'order' => 10,
 					'persistent' => true
 					),
 					'list_table' => 'EE_Event_Registrations_List_Table',
 					'metaboxes' => array()
+				),
+
+			'registration_checkins' => array(
+				'nav' => array(
+					'label' => __('Attendee Check In Records', 'event_espresso'),
+					'order' => 15,
+					'persistent' => FALSE
+					),
+				'list_table' => 'EE_Registration_CheckIn_List_Table',
+				'metaboxes' => array()
 				),
 								
 			'view_registration' => array(
@@ -340,6 +361,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _add_screen_options_default() {
+		$this->_per_page_screen_option();
+	}
+
+	protected function _add_screen_options_event_registrations() {
+		$this->_per_page_screen_option();
+	}
+
+	protected function _add_screen_options_contact_list() {
+		$this->_per_page_screen_option();
+	}
+
+	protected function _add_screen_options_registration_checkins() {
 		$this->_per_page_screen_option();
 	}
 
@@ -482,6 +515,20 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					)
 				)
 				
+			);
+	}
+
+
+
+
+	protected function _set_list_table_views_registration_checkins() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('All', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array( 'delete_checkin_rows' => __('Delete Check In Rows', 'event_espresso') )
+				),
 			);
 	}
 
@@ -1967,7 +2014,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
 				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
 				),
-			
 			'checkin' => array(
 				'icon' => REG_ASSETS_URL . 'images/check-in-16x16.png',
 				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
@@ -1979,7 +2025,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			'nocheckinrecord' => array(
 				'icon' => REG_ASSETS_URL . 'images/delete-grey-16x16.png',
 				'desc' => __('This indicates that no checkin record has been created for this attendee', 'event_espresso')
-				)
+				),
+			'view_details' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png',
+				'desc' => __('View All checkin records for this attendee', 'event_espresso')
+				),
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 
@@ -1989,6 +2039,45 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
+
+
+
+
+
+
+	/**
+	 * generates HTML for the Registration Checkin list table (showing all checkins for a specific registration)
+	 * @access protected
+	 * @return void
+	 */
+	protected function _registration_checkin_list_table() {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array(), 'button add-new-h2');
+
+		$legend_items = array(
+			'checkin' => array(
+				'icon' => REG_ASSETS_URL . 'images/check-in-16x16.png',
+				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
+				),
+			'checkout' => array(
+				'icon' => REG_ASSETS_URL . 'images/check-out-16x16.png',
+				'desc' => __('This indicates the attendee has been checked out', 'event_espresso')
+				)
+			);
+		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
+
+		$reg_id = isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : null;
+		$dtt_id = isset(  $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+		$go_back_url = !empty( $reg_id )  ? EE_Admin_Page::add_query_args_and_nonce(array('action' => 'event_registrations', 'event_id' => EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Event')->ID(), 'DTT_ID' => $dtt_id ), $this->_admin_base_url ) : '';
+		
+		$this->_template_args['before_list_table'] = !empty( $reg_id ) && !empty( $dtt_id ) ? '<h2>' . sprintf(__("%s's check in records for %s at the event, %s", 'event_espresso'), EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Attendee')->full_name(), '<a href="' . $go_back_url . '">' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->start_date_and_time() . ' - ' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->end_date_and_time() . '</a>', EEM_Datetime::instance()->get_one_by_ID($dtt_id)->get_first_related('Event')->get('EVT_name') ) . '</h2>' : '';
+		$this->_template_args['list_table_hidden_fields'] = !empty( $reg_id ) ? '<input type="hidden" name="REGID" value="' . $reg_id . '">' : '';
+		$this->_template_args['list_table_hidden_fields'] .= !empty( $dtt_id ) ? '<input type="hidden" name="DTT_ID" value="' . $dtt_id . '">' : '';
+
+		$this->display_admin_list_table_page_with_no_sidebar();
+	}
+
+
 
 
 
@@ -2038,7 +2127,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			$query_params[0]['EVT_ID']=$EVT_ID;
 		}
 		if($CAT_ID){
-			throw new EE_Error("You specified a Cateogry Id for this query. Thats odd because we are now using terms and taxonomies. So did you mean the term taxonomy id o rthe term id?");
+			throw new EE_Error("You specified a Category Id for this query. Thats odd because we are now using terms and taxonomies. So did you mean the term taxonomy id o rthe term id?");
 		}
 
 		//if DTT is included we do multiple datetimes.  Otherwise we just do primary datetime
@@ -2325,6 +2414,63 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	}
 
 
+	/**
+	 * Takes care of deleting multiple EE_Checkin table rows
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _delete_checkin_rows() {
+		$query_args = array(
+			'action' => 'registration_checkins',
+			'DTT_ID' => isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0,
+			'REGID' => isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : 0
+			);
+		if ( !empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] ) ) {
+			while ( list( $CHK_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {
+				$errors = 0;
+				if ( ! EEM_Checkin::instance()->delete_by_ID($CHK_ID ) ) {
+					$errors++;
+				}
+			}
+		} else {
+			EE_Error::add_error(__('So, something went wrong with the bulk delete because there was no data received for instructions on WHAT to delete!', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+		}
+
+		if ( $errors > 0 ) {
+			EE_Error::add_error( sprintf( __('There were %d records that did not delete successfully', 'event_espresso'), $errors ), __FILE__, __FUNCTION__, __LINE__ );
+		} else {
+			EE_Error::add_success( __('Records were successfully deleted', 'event_espresso') );
+		}
+
+		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+	}
+
+
+
+	/**
+	 * Deletes a single EE_Checkin row
+	 * @return void
+	 */
+	protected function _delete_checkin_row() {
+		$query_args = array(
+			'action' => 'registration_checkins',
+			'DTT_ID' => isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0,
+			'REGID' => isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : 0
+			);
+
+		if ( !empty( $this->_req_data['CHK_ID'] ) ) {
+			if ( ! EEM_Checkin::instance()->delete_by_ID($this->_req_data['CHK_ID'] ) ) {
+				EE_Error::add_error(__('Something went wrong and this check in record was not deleted', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			} else {
+				EE_Error::add_success( __('Check In record successfully deleted', 'event_espresso') );
+			}
+		} else {
+			EE_Error::add_error(__('In order to delete a checkin record, there must be a Check In ID available. There is not. It is not your fault, there is just a gremlin living in the code', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+	}
 
 
 	/**
