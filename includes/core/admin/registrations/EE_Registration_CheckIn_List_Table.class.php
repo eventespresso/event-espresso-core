@@ -95,7 +95,11 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 
 	function column_CHK_timestamp( EE_Checkin $item ) {
-		$item->e_datetime('CHK_timestamp');
+		$actions = array();
+		$delete_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'delete_checkin_row', 'DTT_ID' => $this->_req_data['DTT_ID'], 'REGID' => $this->_req_data['REGID'], 'CHK_ID' => $item->ID() ) );
+		$actions['delete_checkin'] = '<a href="' . $delete_url . '" title="' . __('Click here to delete this check in record', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
+
+		return sprintf( '%1$s %2$s', $item->get_datetime('CHK_timestamp'), $this->row_actions($actions) );
 	}
 
 
