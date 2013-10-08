@@ -165,7 +165,17 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->attendee_ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>';
 		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
-		return $name_link;
+
+		$actions = array();
+		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+		$DTT_ID = !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : NULL;
+		
+		if ( !empty($DTT_ID) ) {
+			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
+			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('Click here to view all the checkins and checkouts for this attendee', 'event_espresso' ) . '">' . __('View Attendee Checkins and Checkouts', 'event_espresso') . '</a>';
+		}
+
+		return !empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions($actions) ) : $name_link;
 	}
 
 
