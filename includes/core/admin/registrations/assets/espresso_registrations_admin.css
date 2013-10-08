@@ -50,7 +50,8 @@
 
 .reg-pad-rght { display:block; padding-right:1em; }
 
-.wp-list-table .column-actions { width:8.5%;  }
+.wp-list-table .column-actions,
+.wp-list-table .column-CHK_in { width:8.5%;  }
 
 .reg-overview-free-event-spn { display: block; text-align:center; }
 
