@@ -38,7 +38,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			);
 
 		$columns = array();
-		if ( isset( $this->_req_data['event_id'] ) )
+		if ( !empty( $evt_id ) )
 			$columns['cb'] =  '<input type="checkbox" />'; //Render a checkbox instead of text
 
 		$this->_columns = array(
@@ -57,6 +57,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array_merge( $columns, $this->_columns);
 
+		if ( !empty( $evt_id ) ) {
+			$this->_columns['actions'] = __('Actions', 'event_espresso');
+		}
 
 		$this->_sortable_columns = array(
 			 //true means its already sorted
@@ -167,7 +170,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 
 		$actions = array();
-		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$DTT_ID = !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : NULL;
 		
 		if ( !empty($DTT_ID) ) {
@@ -284,4 +286,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	}
 
 
+
+	function column_actions( EE_Registration $item ) {
+		$view_link_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID()));
+
+		$view_lnk = '<li><a href="' . $view_link_url . '" title="' . __('View Attendee Checkin Records', 'event_espresso' ) . '"><img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png"></a></li>';
+
+		return '<ul class="reg-overview-actions-ul">' . $view_lnk . '</ul>';
+	}
 }
