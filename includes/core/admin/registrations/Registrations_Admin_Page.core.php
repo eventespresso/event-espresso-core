@@ -2002,7 +2002,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
 				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
 				),
-			
 			'checkin' => array(
 				'icon' => REG_ASSETS_URL . 'images/check-in-16x16.png',
 				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
@@ -2014,7 +2013,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			'nocheckinrecord' => array(
 				'icon' => REG_ASSETS_URL . 'images/delete-grey-16x16.png',
 				'desc' => __('This indicates that no checkin record has been created for this attendee', 'event_espresso')
-				)
+				),
+			'view_details' => array(
+				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png',
+				'desc' => __('View All checkin records for this attendee', 'event_espresso')
+				),
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 
