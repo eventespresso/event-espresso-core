@@ -29,7 +29,8 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 //			10=>new EE_DMS_4_1_0P_attendees(),
 //			20=>new EE_DMS_4_1_0P_events(),
 			//important: this one should be ran AFTER the general settings
-			30=>new EE_DMS_4_1_0P_gateways(),
+//			30=>new EE_DMS_4_1_0P_gateways(),
+			40=>new EE_DMS_4_1_0P_category_details(),
 		);
 		parent::__construct();
 	}

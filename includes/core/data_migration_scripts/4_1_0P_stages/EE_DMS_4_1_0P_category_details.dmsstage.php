@@ -11,7 +11,7 @@ class EE_DMS_4_1_0P_category_details extends EE_Data_Migration_Script_Stage{
 function _migration_step($num_items=50){
 	global $wpdb;
 	$start_at_record = $this->count_records_migrated();
-	$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$wpdb->prefix."events_category_detail LIMIT %d,%s",$start_at_record,$num_items),ARRAY_A);
+	$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$wpdb->prefix."events_category_detail LIMIT %d,%d",$start_at_record,$num_items),ARRAY_A);
 	$items_actually_migrated = 0;
 	foreach($rows as $category_detail_row){
 		$term_and_taxonomy_ids = wp_insert_term(
