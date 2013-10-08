@@ -2062,10 +2062,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			'checkout' => array(
 				'icon' => REG_ASSETS_URL . 'images/check-out-16x16.png',
 				'desc' => __('This indicates the attendee has been checked out', 'event_espresso')
-				),
-			'nocheckinrecord' => array(
-				'icon' => REG_ASSETS_URL . 'images/delete-grey-16x16.png',
-				'desc' => __('This indicates that no checkin record has been created for this attendee', 'event_espresso')
 				)
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
