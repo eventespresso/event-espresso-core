@@ -454,8 +454,9 @@ class EEH_Activation {
 		$QSG_systems = array( 1, 2 );
 		// loop thru what we should have and compare to what we have
 		foreach ( $QSG_systems as $QSG_system ) {
-			// if we don't have what we should have
-			if ( ! in_array( $QSG_system, $question_groups )) {
+			
+			// if we don't have what we should have (but use $QST_system as as string because thats what we got fromteh db)
+			if ( ! in_array( "$QSG_system", $question_groups )) {
 				// add it
 				switch ( $QSG_system ) {
 					
