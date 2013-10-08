@@ -77,7 +77,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_get_checkins();
+		$this->_views['all']['count'] = $this->_get_checkins(NULL);
 	}
 
 
@@ -88,6 +88,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 	function column_CHK_in( EE_Checkin $item ) {
 		$checkinstatus = $item->get('CHK_in');
+		$checkinstatus = $checkinstatus ? 1 : 2;
 		return '<span class="checkin-icons checkedin-status-' . $checkinstatus . '"></span>';
 	}
 
@@ -109,7 +110,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 	 * @param bool    $count        Whether to return a count or not
 	 * @return EE_Checkin[]|int
 	 */
-	protected function _get_checkins( $per_page = NULL, $count = FALSE ) {
+	protected function _get_checkins( $per_page = 10, $count = FALSE ) {
 		$REG_ID = isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : FALSE;
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : FALSE;
 
