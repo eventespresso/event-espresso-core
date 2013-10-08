@@ -34,7 +34,7 @@ function _migration_step($num_items=50){
 }
 function _count_records_to_migrate() {
 	global $wpdb;
-	$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(id) FROM ".$wpdb->prefix."events_category_detail"));
+	$count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."events_category_detail");
 	return $count;
 }
 function __construct() {
