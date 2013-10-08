@@ -81,6 +81,11 @@ function _migration_step($num_items=50){
 			continue;
 		}
 		$this->get_migration_script()->set_mapping($this->_old_table, $old_venue['id'], $this->_new_meta_table, $new_meta_id);
+		//lastly, save the 'contact' as post meta, because it doesn't exist anywhere else but someone may still want it
+		$venue_meta = maybe_unserialize($old_venue['meta']);
+		if(isset($venue_meta['contact']) && $venue_meta['contact']){
+			add_post_meta($new_id,'contact',$venue_meta['contact']);
+		}
 		$items_actually_migrated++;
 	}
 	if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
@@ -109,12 +114,13 @@ function __construct() {
 	 */
 	private function _insert_into_posts($old_venue){
 		global $wpdb;
+		$meta = maybe_unserialize($old_venue['meta']);
 		$insertion_array = array(
 					'post_title'=>$old_venue['name'],//VNU_name
-					'post_content'=>null,//VNU_desc
+					'post_content'=>isset($meta['description']) ? $meta['description'] : '',//VNU_desc
 					'post_name'=>$old_venue['identifier'],//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
-					'post_excerpt'=>null,//VNU_short_desc
+					'post_excerpt'=>wp_trim_words($meta['description'] ? $meta['description'] : '',50),//VNU_short_desc arbitraty only 50 characters
 					'post_modified'=>current_time('mysql'),//VNU_modified
 					'post_author'=>$old_venue['wp_user'],//VNU_wp_user
 					'post_parent'=>null,//parent
@@ -167,7 +173,7 @@ function __construct() {
 			$this->add_error($e->getMessage());
 			$state_id = 0;
 		}
-
+		$meta = maybe_unserialize($old_venue['meta']);
 		//now insert into meta table
 		$insertion_array = array(
 			'VNU_ID'=>$cpt_id,//VNU_ID_fk
@@ -177,13 +183,13 @@ function __construct() {
 			'STA_ID'=>$state_id,//STA_ID
 			'CNT_ISO'=>$country_iso,//CNT_ISO
 			'VNU_zip'=>$old_venue['zip'],//VNU_zip
-			'VNU_phone'=>'',// @todo: maybe we can extrac this off the associated events?
-			'VNU_capacity'=>-1,
-			'VNU_url'=>'',//@todo: maybe this can alos be extracted off the associated events?
-			'VNU_virtual_phone'=>'',//@todo: dido
-			'VNU_virtual_url'=>'',//@todo: dido
-			'VNU_google_map_link'=>'',//@todo: dido
-			'VNU_enable_for_gmap'=>true//@todo: dido			
+			'VNU_phone'=>isset($meta['phone']) ? $meta['phone'] : '',//VNU_phone
+			'VNU_capacity'=>-1,//VNU_capacity
+			'VNU_url'=>isset($meta['website']) ? $meta['website'] : '',//VNU_url
+			'VNU_virtual_phone'=>'',//VNU_virtual_phone
+			'VNU_virtual_url'=>'',//VNU_virtual_url
+			'VNU_google_map_link'=>'',//VNU_google_map_link
+			'VNU_enable_for_gmap'=>true	//VNU_enable_for_gmap
 		);
 		$datatypes = array(
 			'%d',//VNU_ID_fk

@@ -914,11 +914,14 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	 * @return array where keys are columns, values are column values
 	 */
 	public function get_or_create_country($country_name){
+		if( ! $country_name ){
+			throw new EE_Error(__("Could not get a country because country name is blank", "event_espresso"));
+		}
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
 		
 		$country = $wpdb->get_row($wpdb->prepare("SELECT * FROM $country_table WHERE 
-			CNT_name LIKE %s LIMIT 1",$country_name),ARRAY_A);
+			CNT_ISO3 LIKE %s OR CNT_name LIKE %s LIMIT 1",$country_name,$country_name),ARRAY_A);
 		if( ! $country ){
 			//insert a new one then
 			$cols_n_values = array(
@@ -974,7 +977,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
 		do{
-			$current_iso = wp_generate_password(2, false);
+			$current_iso = strtoupper(wp_generate_password(2, false));
 			$country_with_that_iso = $wpdb->get_var($wpdb->prepare("SELECT count(CNT_ISO) FROM ".$country_table." WHERE CNT_ISO=%s",$current_iso));
 		}while(intval($country_with_that_iso));
 		return $current_iso;
@@ -988,17 +991,25 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	 * @return array where keys are columns, values are column values
 	 */
 	public function get_or_create_state($state_name,$country_name){
-		$country = $this->get_or_create_country($country_name);
+		if( ! $state_name ){
+			throw new EE_Error(__("Could not get-or-create state because no state name was provided", "event_espresso"));
+		}
+		try{
+			$country = $this->get_or_create_country($country_name);
+			$country_iso = $country['CNT_ISO'];
+		}catch(EE_Error $e){
+			$country_iso = '';
+		}
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
 		$state = $wpdb->get_row($wpdb->prepare("SELECT * FROM $state_table WHERE 
 			(STA_abbrev LIKE %s OR
 			STA_name LIKE %s) AND
-			CNT_ISO LIKE %s LIMIT 1",$state_name,$state_name,$country['CNT_ISO']),ARRAY_A);
+			CNT_ISO LIKE %s LIMIT 1",$state_name,$state_name,$country_iso),ARRAY_A);
 		if ( ! $state){
 			//insert a new one then
 			$cols_n_values = array(
-				'CNT_ISO'=>$country['CNT_ISO'],
+				'CNT_ISO'=>$country_iso,
 				'STA_abbrev'=>substr($state_name,0,6),
 				'STA_name'=>$state_name,
 				'STA_active'=>true
