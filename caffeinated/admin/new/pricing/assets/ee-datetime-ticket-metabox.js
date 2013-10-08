@@ -275,11 +275,13 @@ jQuery(document).ready(function($) {
 
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
+						DTT_start_time = DTT_start_time == '' ? moment().add('weeks', 1).hours(8).minutes(0).format('YYYY-MM-DD h:mm a') : DTT_start_time;
 						$(this).val(DTT_start_time);
 						break;
 
 					case 'event-datetime-DTT_EVT_end' :
 						DTT_end_time = $('#add-new-' + inputid, '#add-event-datetime').val();
+						DTT_end_time = DTT_end_time == '' ? moment(DTT_start_time, 'YYYY-MM-DD h:mm a').add('hours', 4 ).format('YYYY-MM-DD h:mm a') : DTT_end_time;
 						$(this).val(DTT_end_time);
 						break;
 
