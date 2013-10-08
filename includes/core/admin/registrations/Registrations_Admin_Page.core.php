@@ -364,6 +364,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$this->_per_page_screen_option();
 	}
 
+	protected function _add_screen_options_event_registrations() {
+		$this->_per_page_screen_option();
+	}
+
+	protected function _add_screen_options_contact_list() {
+		$this->_per_page_screen_option();
+	}
+
+	protected function _add_screen_options_registration_checkins() {
+		$this->_per_page_screen_option();
+	}
+
 
 
 
