@@ -170,7 +170,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 
 		$actions = array();
-		$DTT_ID = !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : NULL;
+		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+		$DTT_ID = empty( $DTT_ID ) && !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : $DTT_ID;
 		
 		if ( !empty($DTT_ID) ) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
