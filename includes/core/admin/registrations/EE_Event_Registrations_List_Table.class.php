@@ -170,7 +170,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-
+	function column_ATT_email( EE_Registration $item ) {
+		return $item->get_first_related('Attendee')->email();
+	}
 
 
 	/**
@@ -180,6 +182,15 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		return sprintf(__( '%s of %s', 'event_espresso' ),$item->count(), $item->group_size());
 	}
 
+
+	/**
+	 * REG_code
+	 * @param  EE_Registration $item EE_Registration object
+	 * @return string                Registration code
+	 */
+	function column_REG_code(EE_Registration $item){
+		return $item->get('REG_code');
+	}
 
 
 
