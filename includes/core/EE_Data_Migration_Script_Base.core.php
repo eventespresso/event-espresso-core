@@ -7,6 +7,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	
 	
 	
+	
 	/**
 	 * numerically-indexed array where each value is EE_Data_Migration_Script_Stage object
 	 * @var EE_Data_Migration_Script_Stage[] $migration_functions 
@@ -53,6 +54,93 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean of success
 	 */
 	abstract public function schema_changes_after_migration();
+	
+	/**
+	 * Multi-dimensional array that defines teh mapping from OLD table Primary Keys
+	 * to NEW table Primary Keys.
+	 * Top-level array keys are OLD table names (minus the "wp_" part),
+	 * 2nd-level array skeys are NEW table names (again, minus the "wp_" part),
+	 * 3rd-level array keys are the OLD table primary keys
+	 * and 3rd-level array values are the NEW table primary keys
+	 * @var array
+	 */
+	protected $_mappings = array();
+	
+	/**
+	 * All chidlren of this must call parent::__construct() or suffer teh consequences!
+	 */
+	public function __construct() {
+		foreach($this->_migration_stages as $migration_stage){
+			$migration_stage->_construct_finalize($this);
+		}
+		parent::__construct();
+	}
+	
+	/**
+	 * Sets the mapping from old table primary keys to new table primary keys.
+	 * This mapping is automatically persisted as a property on the migration
+	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
+	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @param int|string $new_pk eg posts.ID
+	 * @return void
+	 */
+	public function set_mapping($old_table,$old_pk,$new_table,$new_pk){
+		if( ! $this->_mappings ){
+			$this->_mappings = get_option(get_class($this)."_mappings");
+		}
+		//if it still doesn't exist, just initialize it to an array
+		if ( ! $this->_mappings){
+			$this->_mappings = array();
+		}
+		//make sure it has the needed keys
+		if( ! isset($this->_mappings[$old_table])){
+			$this->_mappings[$old_table] = array();
+		}
+		if( ! isset($this->_mappings[$old_table][$new_table])){
+			$this->_mappings[$old_table][$new_table] = array();
+		}
+		$this->_mappings[$old_table][$new_table][$old_pk] = $new_pk;
+	}
+	
+	/**
+	 * Gets the new primary key, if provided with the OLD table and the primary key
+	 * of an item in the old table, and the new table
+	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
+	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @return mixed the primary key on the new table
+	 */
+	public function get_mapping_new_pk($old_table,$old_pk,$new_table){
+		if( ! $this->_mappings ){
+			$this->_mappings = get_option(get_class($this)."_mappings");
+		}
+		if(is_array($this->_mappings) && isset($this->_mappings[$old_table][$new_table][$old_pk])){
+			return $this->_mappings[$old_table][$new_table][$old_pk];
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the old primary key, if provided with the OLD table,
+	 * and the new table and the primary key of an item in teh new table
+	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
+	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
+	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
+	 * @return mixed the primary key on the new table
+	 */
+	public function get_mapping_old_pk($old_table,$new_table,$new_pk){
+		if( ! $this->_mappings ){
+			$this->_mappings = get_option(get_class($this)."_mappings");
+		}
+		if(is_array($this->_mappings) && isset($this->_mappings[$old_table][$new_table])){
+			$new_pk_to_old_pk = array_flip($this->_mappings[$old_table][$new_table]);
+			if(isset($new_pk_to_old_pk[$new_pk])){
+				return $new_pk_to_old_pk[$new_pk];
+			}
+		}
+		return null;
+	}
 	/**
 	 * Counts all the records that will be migrated during this data migration.
 	 * For example, if we were changing old user passwords from plaintext to encoded versions, 
@@ -207,6 +295,64 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function get_feedback_message(){
 		return $this->_feedback_message;
 	}
+	
+	/**
+	 * A lot like "__sleep()" magic method in purpose, this is meant for persisting this class'
+	 * properties to the DB. However, we don't want to use __sleep() because its quite
+	 * possible that this class is defined when it goes to sleep, but NOT available when it
+	 * awakes (eg, this class is part of an addon that is deactivated at some point). 
+	 */
+	public function properties_as_array(){
+		$properties = parent::properties_as_array();
+		$properties['_migration_stages'] = array();
+		foreach($this->_migration_stages as $migration_stage_priority => $migration_stage_class){
+			$properties['_migration_stages'][$migration_stage_priority] = $migration_stage_class->properties_as_array();
+		}
+		return $properties;
+	}
+	
+	/**
+	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
+	 * to ahve been made from the properties_as_array() function.
+	 * @param array $array_of_properties like what's produced from properties_as_array() method
+	 * @return void
+	 */
+	public function instantiate_from_array_of_properties($array_of_properties){
+		$stages = $array_of_properties['_migration_stages'];
+		unset($array_of_properties['_migration_stages']);
+		unset($array_of_properties['class']);
+		foreach($array_of_properties as $property_name => $property_value){
+			$this->$property_name = $property_value;
+		}
+		foreach($stages as $stage_priority => $stage_properties_array){
+			$stage_class_name = $stage_properties_array['class'];
+			//if the script is done, we just want to preserve old data because it wont run again
+			//but if it isn't done, then we want to only have valid migration stages on this script
+			if($this->is_borked() || $this->is_completed()){
+				$include_invalid_stages = true;
+			}else{
+				$include_invalid_stages = false;
+			}
+			if( ! class_exists($stage_class_name) ){
+				if($include_invalid_stages){
+					$this->_migration_stages[$stage_priority] = $stage_properties_array;
+				}
+				//ie, if we're not leaving ivnalid stages alone, we drop it
+				continue;
+			}
+			$stage = new $stage_class_name;
+			if( ! $stage instanceof EE_Data_Migration_Script_Stage){
+				if($include_invalid_stages){
+					$this->_migration_stages[$stage_priority] = $stage;
+				}
+				//ie, if we're not leaving invalid srtages alone, we drop it
+				continue;
+			}
+			
+			$stage->instantiate_from_array_of_properties($stage_properties_array);
+			$this->_migration_stages[$stage_priority] = $stage;
+		}
+	}
 }
 
 /**
@@ -221,7 +367,22 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
  * on each call to _migration_step(). 
  */
 abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Base{
+	/**
+	 * The migration script this is a stage of
+	 * @var EE_Data_Migration_Script_Base
+	 */
+	protected $_migration_script;
 	
+	/**
+	 * This should eb called to essentially 'finalize' construction of the stage.
+	 * This isnt done on the main constructor in order to avoid repetitive code. Instead, this is 
+	 * called by EE_Data_Migration_Script_Base's __construct() method so children don't have to
+	 * @param EE_Data_Migration_Script_Base $migration_script
+	 */
+	public function _construct_finalize($migration_script){
+		$this->_migration_script = $migration_script;
+	}
+		
 	/**
 	 * Migrates X old records to the new format. If a fatal error is encountered it is NOT caught here,
 	 * but is propagated upwards for catching. So basically, the _migration_step() function implemented by children
@@ -267,6 +428,26 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 		return $this->_errors;
 	}
 	
+	
+	/**
+	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
+	 * to ahve been made from the properties_as_array() function.
+	 * @param array $array_of_properties like what's produced from properties_as_array() method
+	 */
+	public function instantiate_from_array_of_properties($array_of_properties){
+		unset($array_of_properties['class']);
+		foreach($array_of_properties as $property_name => $property_value){
+			$this->$property_name = $property_value;
+		}
+	}
+	
+	/**
+	 * Gets the script this is a stage of
+	 * @return EE_Data_Migration_Script_Base
+	 */
+	protected function get_migration_script(){
+		return $this->_migration_script;
+	}
 }
 
 /**
@@ -407,5 +588,47 @@ abstract class EE_Data_Migration_Class_Base{
 	 */
 	public function set_completed(){
 		$this->_status = EE_Data_Migration_Manager::status_completed;
+	}
+	
+	/**
+	 * A lot like "__sleep()" magic method in purpose, this is meant for persisting this class'
+	 * properties to the DB. However, we don't want to use __sleep() because its quite
+	 * possible that this class is defined when it goes to sleep, but NOT available when it
+	 * awakes (eg, this class is part of an addon that is deactivated at some point). 
+	 */
+	public function properties_as_array(){
+		$properties =  get_object_vars($this);
+		$properties['class'] = get_class($this);
+		unset($properties['_migration_script']);
+		return $properties;
+	}
+	/**
+	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
+	 * to ahve been made from the properties_as_array() function.
+	 * @param array $array_of_properties like what's produced from properties_as_array() method
+	 */
+	abstract public function instantiate_from_array_of_properties($array_of_properties);
+}
+
+/**
+ * This is a stub data migraiton that we can put in the array of data migrations when we have an aerror
+ * finding the next data migration script.
+ */
+class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
+	public function can_migrate_from_version($version_string) {
+		return false;
+	}
+	public function schema_changes_after_migration() {
+		return;
+	}
+	public function schema_changes_before_migration() {
+		return;
+	}
+	public function __construct() {
+		
+		$this->_migration_stages = array();
+		$this->_pretty_name = __("Fatal Error Occurred", "event_espresso");
+//		dd($this);
+		parent::__construct();
 	}
 }

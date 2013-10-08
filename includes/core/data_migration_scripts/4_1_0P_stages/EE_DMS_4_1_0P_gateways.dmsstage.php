@@ -4,27 +4,47 @@
  * Converts gateway settings from 3.1 format to 4.1, and sets active gateways.
  * At the time of writing this, however, the only gateways created for 4.1 were
  * Authorize.net AIM, Bank, Check, Invoice, Paypal Pro and Paypal Standard.
+ * NOTE: this is dependent on the current definition of the EE_Config class. Specifically,
+ * it requires the class to be defined (or available from autoloader), and that it have teh following atttributes and fucntions:
+ * -static function instance() which returns the instance of EE_Config
+ * -that the instance of EE_Config have an property named 'gateway' which is a class with properties '-'payment_settings' and 'active_gateways'
+ * which are both arrays
+ * -a function named update_espresso_config() which saves the EE_Config object to teh database
  */
 class EE_DMS_4_1_0P_gateways extends EE_Data_Migration_Script_Stage{
 
 private $_converted_active_gateways = false;
 
 function _migration_step($num_items=50){
-	$gateways_to_migrate = array_slice($this->_gateways_we_know_how_to_migrate,$this->count_records_migrated(),$num_items);// $this->_gateways_we_know_how_to_migrate;
+	
 	$new_gateway_config_obj = EE_Config::instance()->gateway;
 	$items_actually_migrated = 0;
 	//convert settings
-	foreach($gateways_to_migrate as $old_gateway_slug => $new_gateway_slug){
-		//determine the old option's name
-		$old_gateway_settings = $this->_get_old_gateway_option($new_gateway_slug);
-		if( ! $old_gateway_settings){
-			//no setings existed for this gateway anyways... weird...
-			$items_actually_migrated++;
-			continue;
+	$gateways_to_deal_with = array_merge($this->_gateways_we_know_how_to_migrate,$this->_gateways_we_leave_alone);
+	//just do a part of them on this request
+	$gateways_to_deal_with = array_slice($gateways_to_deal_with,$this->count_records_migrated(),$num_items);// $this->_gateways_we_know_how_to_migrate;
+	foreach($gateways_to_deal_with as $old_gateway_slug => $new_gateway_slug){
+		$old_gateway_wp_option_name = $this->_get_old_gateway_option_name($new_gateway_slug);
+		if(isset($this->_gateways_we_know_how_to_migrate[$old_gateway_slug])){
+			//determine the old option's name
+			$old_gateway_settings = $this->_get_old_gateway_option($new_gateway_slug);
+			if( ! $old_gateway_settings){
+				//no setings existed for this gateway anyways... weird...
+				$items_actually_migrated++;
+				continue;
+			}
+			//now prepare the settings to make sure they're in the 4.1 format
+			$new_gateway_settings = $this->_convert_gateway_settings($old_gateway_settings,$new_gateway_slug);
+			$new_gateway_config_obj->payment_settings[$new_gateway_slug] = $new_gateway_settings;
+			//and when we're done, remove the old option. Sometimes we'd prefer to do this in a different stage, but
+			//I think it's ok to do right away this time (we wont need gateway settings elsewhere)
+			delete_option($old_gateway_wp_option_name);
+		}else{//it must be one of the ones we mostly leave alone
+			global $wpdb;
+			//yeah we could do this all in one query... and if you're reading this and would liek to, go ahead. Although you'll
+			//only be saving users 50 milliseconds teh one time this runs...
+			$wpdb->query($wpdb->prepare("UPDATE ".$wpdb->options." SET autoload='no' WHERE option_name=%s",$old_gateway_wp_option_name));
 		}
-		//now prepare the settings to make sure they're in the 4.1 format
-		$new_gateway_settings = $this->_convert_gateway_settings($old_gateway_settings,$new_gateway_slug);
-		$new_gateway_config_obj->payment_settings[$new_gateway_slug] = $new_gateway_settings;
 		
 		$items_actually_migrated++;
 	}
@@ -44,8 +64,9 @@ function _migration_step($num_items=50){
 function _count_records_to_migrate() {
 	$count_of_gateways_to_convert = count($this->_gateways_we_know_how_to_migrate);
 	$step_of_setting_active_gateways = 1;
+	$count_of_gateways_to_leave_alone = count($this->_gateways_we_leave_alone);
 //	$button_images_to_update = 
-	return $count_of_gateways_to_convert +  $step_of_setting_active_gateways;
+	return $count_of_gateways_to_convert +  $step_of_setting_active_gateways + $count_of_gateways_to_leave_alone;
 }
 function __construct() {
 	$this->_pretty_name = __("Gateways", "event_espresso");
@@ -83,7 +104,21 @@ private function _convert_gateway_settings($old_gateway_settings,$new_gateway_sl
  * @return string
  */
 private function _get_old_gateway_option($new_gateway_slug){
-	$new_gateway_slugs_to_new = array_flip($this->_gateways_we_know_how_to_migrate);
+	$option_name = $this->_get_old_gateway_option_name($new_gateway_slug);
+	$settings =  get_option($option_name);
+	if( ! $settings){
+		$this->add_error(sprintf(__("There is no wordpress option named %s for gateway %s", "event_espresso"),$old_gateway_slug,$option_name));
+	}
+	return $settings;
+}
+
+/**
+ * Just gets the old gateways slug
+ * @param string $new_gateway_slug
+ * @return string
+ */
+private function _get_old_gateway_option_name($new_gateway_slug){
+	$new_gateway_slugs_to_new = array_flip(array_merge($this->_gateways_we_know_how_to_migrate,$this->_gateways_we_leave_alone));
 	$old_gateway_slug = $new_gateway_slugs_to_new[$new_gateway_slug];
 	$normal_option_prefix = 'event_espresso_';
 	$normal_option_postfix = '_settings';
@@ -115,18 +150,12 @@ private function _get_old_gateway_option($new_gateway_slug){
 		default:
 			$option_name = apply_filters('FHEE__EE_DMS_4_1_0P_gateways__get_old_gateway_option',$normal_option_prefix.$old_gateway_slug.$normal_option_postfix);
 	}
-	$settings =  get_option($option_name);
-	if( ! $settings){
-		$this->add_error(sprintf(__("There is no wordpress option named %s for gateway %s", "event_espresso"),$old_gateway_slug,$option_name));
-	}
-	return $settings;
-		
+	return $option_name;
 }
 
 private function _convert_active_gateways(){
 	//just does it all one big swoop
 	$old_active_gateways = get_option('event_espresso_active_gateways');
-	d($old_active_gateways);
 	$new_active_gateways = EE_Config::instance()->gateway->active_gateways;
 	foreach($old_active_gateways as $old_gateway_slug => $filepath){
 		if( ! isset($this->_gateways_we_know_how_to_migrate[$old_gateway_slug])){
@@ -142,42 +171,46 @@ private function _convert_active_gateways(){
 }
 	
 	protected $_gateways_we_know_how_to_migrate = array(
-//		'2checkout'=>'2checkout',
 		'aim'=>'Aim',
-//		'anz'=>'Anz',
-//		'atos'=>'Atos',
-//		'authnet'=>'Authnet',
 		'bank'=>'Bank',
-//		'beanstream'=>'Beanstream',
 		'check'=>'Check',
-//		'evertec'=>'Evertec',
-//		'eway'=>'Eway',
-//		'eway_rapid3'=>'Eway_Rapid3',
-//		'exact'=>'Exact',
-//		'firstdata'=>'Firstdata',
-//		'firstdat_e4'=>'Firstdata_E4',
-//		'ideal'=>'Ideal',
-//		'infusion_payment'=>'InfusionSoft',
 		'invoice'=>'Invoice',  
-//		'luottokunta'=>'Luottokunta',
-//		'megasoft'=>'Megasoft',
-//		'moneris_hpp'=>'Moneris_HPP',
-//		'mwarrior'=>'Mwarrior',
-//		'nab'=>'NAB',
-//		'paychoice'=>'Paychoice',
 		'paypal'=>'Paypal_Standard',
 		'paypal_pro'=>'Paypal_Pro',
-//		'paytrace'=>'Paytrace',
-//		'psigate'=>'Psigate',
-//		'purchase_order'=>'Purchase_Order',
-//		'qbms'=>'QBMS',
-//		'quickpay'=>'Quickpay',
-//		'realauth'=>'Realauth',
-//		'securepay_aus'=>'Securepay_Aus',
-//		'stripe'=>'Stripe',
-//		'usaepay_offsite'=>'USAePay_Offsite',
-//		'usaepay_onsite'=>'USAePay_Onsite',
-//		'wepay'=>'Wepay',
-//		'worldpay'=>'Worldpay'
+
+	);
+	
+	protected $_gateways_we_leave_alone = array(
+		'2checkout'=>'2checkout',
+		'anz'=>'Anz',
+		'atos'=>'Atos',
+		'authnet'=>'Authnet',
+		'beanstream'=>'Beanstream',
+		'evertec'=>'Evertec',
+		'eway'=>'Eway',
+		'eway_rapid3'=>'Eway_Rapid3',
+		'exact'=>'Exact',
+		'firstdata'=>'Firstdata',
+		'firstdat_e4'=>'Firstdata_E4',
+		'ideal'=>'Ideal',
+		'infusion_payment'=>'InfusionSoft',
+		'luottokunta'=>'Luottokunta',
+		'megasoft'=>'Megasoft',
+		'moneris_hpp'=>'Moneris_HPP',
+		'mwarrior'=>'Mwarrior',
+		'nab'=>'NAB',
+		'paychoice'=>'Paychoice',
+		'paytrace'=>'Paytrace',
+		'psigate'=>'Psigate',
+		'purchase_order'=>'Purchase_Order',
+		'qbms'=>'QBMS',
+		'quickpay'=>'Quickpay',
+		'realauth'=>'Realauth',
+		'securepay_aus'=>'Securepay_Aus',
+		'stripe'=>'Stripe',
+		'usaepay_offsite'=>'USAePay_Offsite',
+		'usaepay_onsite'=>'USAePay_Onsite',
+		'wepay'=>'Wepay',
+		'worldpay'=>'Worldpay'
 	);
 }
