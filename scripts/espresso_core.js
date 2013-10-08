@@ -121,13 +121,5 @@ jQuery(document).ready(function($) {
 		this.css({ 'left' : element_left + 'px' });
 		return this;
 	};
-
-
-	/**
-	 * hook into ajax send to make sure all frontend ajax sends the 'ee_frontend_ajax' param.
-	 */
-	$(document).ajaxSend( function( e, x, a ) {
-		a.data += '&' + jQuery.param( {ee_frontend_ajax : true } );
-	});/**/
 	
 });

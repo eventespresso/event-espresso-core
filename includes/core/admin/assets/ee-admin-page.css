@@ -552,6 +552,11 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 
+.clickable {
+	cursor: pointer;
+}
+
+
 /**
  * ee-dialog helper css
  */

@@ -62,7 +62,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	protected function _ajax_hooks() {
 		//todo: all hooks for registrations ajax goes in here
-		add_action( 'AHEE_attendee_check_in', array( $this, '_attendee_check_in' ));
+		add_action( 'wp_ajax_toggle_checkin_status', array( $this, 'toggle_checkin_status' ));
 	}
 
 
@@ -200,19 +200,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'noheader' => TRUE 
 				),
 				
-				'attendee_check_in'	=> array( 
-					'func' => '_attendee_check_in', 
-					'args' => array( 
-						'check_in' => TRUE 
-					), 
-					'noheader' => TRUE 
-				),
-				
-				'attendee_check_out'	=> array( 
-					'func' => '_attendee_check_out', 
-					'args' => array( 
-						'check_in' => FALSE 
-					), 
+				'toggle_checkin_status'	=> array( 
+					'func' => '_toggle_checkin_status',
 					'noheader' => TRUE 
 				),
 				
@@ -464,8 +453,8 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 				'slug' => 'all',
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
-				'bulk_action' => array(
-					'attendee_check_in' => __('Toggle Attendees Check In', 'event_espresso'),
+				'bulk_action' => !isset( $this->_req_data['event_id'] ) ? array() : array(
+					'toggle_checkin_status' => __('Toggle Attendees Check In', 'event_espresso'),
 					)
 				)
 			);
@@ -674,12 +663,39 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		}elseif($end_date){
 			throw new EE_Error("not yet supported");
 		}
+
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$_where['OR'] = array(
+				'Event.EVT_name' => array( 'LIKE', $sstr),
+				'Event.EVT_desc' => array( 'LIKE', $sstr ),
+				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_email' => array('LIKE', $sstr ),
+				'Attendee.ATT_address' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_address2' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_city' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_comments' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_notes' => array( 'LIKE', $sstr ),
+				'REG_final_price' => array( 'LIKE', $sstr ),
+				'REG_code' => array( 'LIKE', $sstr ),
+				'REG_count' => array( 'LIKE' , $sstr ),
+				'REG_group_size' => array( 'LIKE' , $sstr ),
+				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
+				'Ticket.TKT_description' => array( 'LIKE', $sstr )		
+				);
+		}
+
 		
 		if($count){
 			return EEM_Registration::instance()->count(array($_where));
 		}else{
 			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
 			$registrations = EEM_Registration::instance()->get_all($query_params);
+			global $wpdb;
 	
 
 			if ( $EVT_ID && isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration &&  $registrations[0]->event_obj()) {
@@ -1945,15 +1961,35 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	protected function _event_registrations_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array(), 'button add-new-h2');
+
 		$legend_items = array(
 			'star-icon' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png',
 				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				),
+			
+			'checkin' => array(
+				'icon' => REG_ASSETS_URL . 'images/check-in-16x16.png',
+				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
+				),
+			'checkout' => array(
+				'icon' => REG_ASSETS_URL . 'images/check-out-16x16.png',
+				'desc' => __('This indicates the attendee has been checked out', 'event_espresso')
+				),
+			'nocheckinrecord' => array(
+				'icon' => REG_ASSETS_URL . 'images/delete-grey-16x16.png',
+				'desc' => __('This indicates that no checkin record has been created for this attendee', 'event_espresso')
 				)
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
+
+		$event_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null;
+		$this->_template_args['before_list_table'] = !empty( $event_id ) ? '<h2>' . sprintf(__('Viewing Registrations for Event: %s', 'event_espresso'), EEM_Event::instance()->get_one_by_ID($event_id)->get('EVT_name') ) . '</h2>' : '';
+		$this->_template_args['list_table_hidden_fields'] = !empty( $event_id ) ? '<input type="hidden" name="event_id" value="' . $event_id . '">' : '';
+
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
+
 
 
 
@@ -1975,6 +2011,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		
 		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$reg_status = isset($this->_req_data['reg_status']) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
 		
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
@@ -2003,12 +2040,45 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		if($CAT_ID){
 			throw new EE_Error("You specified a Cateogry Id for this query. Thats odd because we are now using terms and taxonomies. So did you mean the term taxonomy id o rthe term id?");
 		}
+
+		//if DTT is included we do multiple datetimes.  Otherwise we just do primary datetime
+		if ( $DTT_ID ) {
+			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
+		} else {
+			$query_params[0]['Ticket.Datetime.DTT_is_primary'] = 1;
+		}
+
 		if($reg_status){
 			$query_params[0]['STS_ID']=$reg_status;
 		}
 		if($trash){
 			$query_params[0]['Attendee.ATT_status']=  EEM_CPT_Base::post_status_trashed;
 		}
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$query_params[0]['OR'] = array(
+				'Event.EVT_name' => array( 'LIKE', $sstr),
+				'Event.EVT_desc' => array( 'LIKE', $sstr ),
+				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_email' => array('LIKE', $sstr ),
+				'Attendee.ATT_address' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_address2' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_city' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_comments' => array( 'LIKE', $sstr ),
+				'Attendee.ATT_notes' => array( 'LIKE', $sstr ),
+				'REG_final_price' => array( 'LIKE', $sstr ),
+				'REG_code' => array( 'LIKE', $sstr ),
+				'REG_count' => array( 'LIKE' , $sstr ),
+				'REG_group_size' => array( 'LIKE' , $sstr ),
+				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
+				'Ticket.TKT_description' => array( 'LIKE', $sstr )		
+				);
+		}
+
 		$query_params['order_by'][$orderby] = $sort;
 		$query_params['limit'] = $limit;
 		$query_params['force_join'] = array('Attendee');//force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
@@ -2064,6 +2134,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	protected function _attendee_contact_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
+		$this->_search_btn_label = __('Contacts', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -2117,14 +2188,38 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 		$per_page = isset( $per_page ) && !empty( $per_page ) ? $per_page : 10;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
+		$_where = array();
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$_where['OR'] = array(
+				'Registration.Event.EVT_name' => array( 'LIKE', $sstr),
+				'Registration.Event.EVT_desc' => array( 'LIKE', $sstr ),
+				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'ATT_fname' => array( 'LIKE', $sstr ),
+				'ATT_lname' => array( 'LIKE', $sstr ),
+				'ATT_short_bio' => array( 'LIKE', $sstr ),
+				'ATT_email' => array('LIKE', $sstr ),
+				'ATT_address' => array( 'LIKE', $sstr ),
+				'ATT_address2' => array( 'LIKE', $sstr ),
+				'ATT_city' => array( 'LIKE', $sstr ),
+				'ATT_comments' => array( 'LIKE', $sstr ),
+				'ATT_notes' => array( 'LIKE', $sstr ),
+				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
+				'Registration.REG_code' => array( 'LIKE', $sstr ),
+				'Registration.REG_count' => array( 'LIKE' , $sstr ),
+				'Registration.REG_group_size' => array( 'LIKE' , $sstr )		
+				);
+		}
+
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
 
 		if ( $trash )
-			$all_attendees = $count ? $ATT_MDL->count_deleted( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit));
+			$all_attendees = $count ? $ATT_MDL->count_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
 		else
-			$all_attendees = $count ? $ATT_MDL->count( array('order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array('order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
+			$all_attendees = $count ? $ATT_MDL->count( array($_where, 'order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array($_where, 'order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
 
 		return $all_attendees;
 	}
@@ -2134,13 +2229,77 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
+	
 	/**
-	 * 		_attendee_check_in
-	*		@access public
+	 * toggle the checkin status for the given registration (coming from ajax)
+	 * @return json
+	 */
+	public function toggle_checkin_status() {
+		//first make sure we have the necessary data
+		if ( !isset( $this->_req_data['regid'] ) ) {
+			EE_Error::add_error( __('There must be somethign broken with the html structure because the required data for toggling the checkin status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_template_args['success'] = FALSE;
+			$this->_template_args['error'] = TRUE;
+			$this->_return_json();
+		};
+
+		//do a nonce check cause we're not coming in from an normal route here.
+		$nonce = isset( $this->_req_data['checkinnonce'] ) ? sanitize_text_field( $this->_req_data['checkinnonce'] ) : '';
+		$nonce_ref = 'checkin_nonce';
+
+		$this->_verify_nonce( $nonce, $nonce_ref );
+
+		//beautiful! Made it this far so let's get the status.
+		$new_status = $this->_toggle_checkin_status();
+
+		//setup new class to return via ajax
+		$this->_template_args['admin_page_content'] = 'clickable trigger-checkin checkin-icons checkedin-status-' . $new_status;
+		$this->_template_args['success'] = TRUE;
+		$this->_return_json();
+	}
+
+
+
+
+
+
+	/**
+	 * 		handles toggleing the checkin status for the registration,
+	*		@access protected
+	*		@param boolean 	$check_in
 	*		@return void
 	*/
-	public function _attendee_check_in( ) {	
-		 $this->_toggle_attendee_check_in_status( TRUE );
+	protected function _toggle_checkin_status() {
+		//first let's get the query args out of the way for the redirect
+		$query_args = array(
+			'action' => 'event_registrations',
+			'event_id' => isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL,
+			'DTT_ID' => isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL
+			);
+		$new_status = FALSE;
+
+		// bulk action check in toggle
+		if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
+			// cycle thru checkboxes 
+			while ( list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
+				$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+				$new_status = $this->_toggle_checkin($REG_ID, $DTT_ID);
+			}
+			
+		} elseif ( isset( $this->_req_data['regid'] ) ) {
+			//coming from ajax request
+			$DTT_ID = isset( $this->_req_data['dttid'] ) ? $this->_req_data['dttid'] : NULL;
+			$query_args['DTT_ID'] = $DTT_ID;
+			$new_status = $this->_toggle_checkin($this->_req_data['regid'], $DTT_ID);		
+		} else {
+			EE_Error::add_error(__('Missing some required data to toggle the checkin', 'event_espresso') );
+		}
+
+		if ( defined('DOING_AJAX' ) )
+			return $new_status;
+
+		$this->_redirect_after_action( FALSE,'', '', $query_args, TRUE );
+		
 	}
 
 
@@ -2148,14 +2307,22 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * 		_attendee_check_out
-	*		@access public
-	*		@return void
-	*/
-	public function _attendee_check_out( ) {	
-		 $this->_toggle_attendee_check_in_status( FALSE );
+	 * This is toggles a single checkin for the given registration and datetime.
+	 * @param  int    $REG_ID The registration we're toggling
+	 * @param  int    $DTT_ID The datetime we're toggling
+	 * @return int            The new status toggled to.
+	 */
+	private function _toggle_checkin($REG_ID, $DTT_ID) {
+		$REG = EEM_Registration::instance()->get_one_by_ID($REG_ID);
+		$new_status = $REG->toggle_checkin_status( $DTT_ID );
+		if ( $new_status !== FALSE ) {
+			EE_Error::add_success($REG->get_checkin_msg($DTT_ID) );
+		} else {
+			EE_Error::add_error($REG->get_checkin_msg($DTT_ID, TRUE), __FILE__, __FUNCTION__, __LINE__ );
+			$new_status = FALSE;
+		}
+		return $new_status;
 	}
-
 
 
 
@@ -2176,58 +2343,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-
-
-	/**
-	 * 		_attendee_check_in
-	*		@access protected
-	*		@param boolean 	$check_in
-	*		@return void
-	*/
-	private function _toggle_attendee_check_in_status( $REG_att_checked_in = FALSE ) {
-		//todo we have to work out a ui for checking in an attendee.  When they check the box they'll have to check in for a specific datetime.  Then we need to update the check in table to record the checkin status.  So this means all of this is pretty much going to be rewritten. (see https://events.codebasehq.com/projects/event-espresso/tickets/3715)
-
-
-		// bulk action check in toggle
-		if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
-			
-			$success = TRUE;
-			// if array has more than one element than success message should be plural
-			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
-			// cycle thru checkboxes 
-			while ( list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! EEM_Registration::instance()->update( array( 'REG_att_checked_in' => $REG_att_checked_in ), array(array( 'REG_ID' => absint( $REG_ID ))))) {
-					$success = FALSE;
-				}
-			}
-			
-		} elseif ( $REG_ID = ! empty($this->_req_data['id']) ? $this->_req_data['id'] : FALSE ) {
-			
-			$success = FALSE;
-			//echo '<h4>$REG_ID : ' . $REG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			$REG_url_link = ! empty($this->_req_data['_REG_ID']) ? sanitize_text_field( $this->_req_data['_REG_ID'] ) : FALSE;
-			//$REG_att_checked_in = ! empty($this->_req_data['check_in']) ? absint( $this->_req_data['check_in'] ) : 0;
-			
-			if ( $reg_obj = EEM_Registration::instance()->get_one( array( 'REG_ID' => absint( $REG_ID ), 'REG_url_link' => $REG_url_link ))) {
-				//echo '<h4>$REG ID : ' . $REG->ID() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				if ( $reg_obj->set_att_checked_in( $REG_att_checked_in )) {
-					//echo '<h1>set_att_checked_in<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
-					$success = $reg_obj->save();
-				}
-			}		
-				
-		} else {
-			$success = FALSE;
-		}
-
-		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
-
-		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		$this->_redirect_after_action( $success, __( 'Attendee Check In Status', 'event_espresso' ), __( 'updated', 'event_espresso' ), array( 'action' => 'event_registrations', 'event_id' => $EVT_ID ));
-		
-	}
+	
 	
 	
 	public function _registrations_report(){
@@ -2251,8 +2367,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	/***************************************		ATTENDEE DETAILS 		***************************************/
-
-
 
 
 

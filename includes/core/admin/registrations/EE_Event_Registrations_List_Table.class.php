@@ -3,6 +3,12 @@
 
 class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
+	/**
+	 * This property will hold the related Datetimes on an event IF the event id is included in the request.
+	 * @var EE_Datetime[]
+	 */
+	protected $_dtts_for_event = array();
+
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
@@ -22,6 +28,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _set_properties() {
+		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL;
+
 		$this->_wp_list_args = array(
 			'singular' => __('attendee', 'event_espresso'),
 			'plural' => __('attendees', 'event_espresso'),
@@ -29,8 +37,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
+		$columns = array();
+		if ( isset( $this->_req_data['event_id'] ) )
+			$columns['cb'] =  '<input type="checkbox" />'; //Render a checkbox instead of text
+
 		$this->_columns = array(
-				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 				'REG_att_checked_in' => __('Check In', 'event_espresso'),
 				'REG_count' => __('Att #', 'event_espresso'),
 				'ATT_name' =>  __('Attendee', 'event_espresso'),
@@ -43,6 +54,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				'TXN_total' => __('Total', 'event_espresso'),
 				'PRC_name' => __('Ticket Option', 'event_espresso')
 			);
+
+		$this->_columns = array_merge( $columns, $this->_columns);
 
 
 		$this->_sortable_columns = array(
@@ -57,9 +70,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_bottom_buttons = array(
 			'report'=> array(
 				'route' => 'registrations_report',
-				'extra_request' => isset( $this->_req_data['event_id'] ) ? array('EVT_ID'=>$this->_req_data['event_id']) : NULL
+				'extra_request' => !empty($evt_id) ? array('EVT_ID'=>$evt_id) : NULL
 				)
 		);
+
+		$this->_dtts_for_event = !empty($evt_id) ? EEM_Event::instance()->get_one_by_ID($evt_id)->get_many_related('Datetime') : array();
+
 	}
 
 
@@ -67,7 +83,34 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _get_table_filters() {
-		return array();
+		$filters = array();
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
+
+		if ( empty( $this->_dtts_for_event ) ) {
+			//this means we don't have an event so let's setup a filter dropdown for all the events to select
+			$events = EEM_Event::instance()->get_all(array(array(), 'order_by' => array( 'EVT_name' => 'asc' ) ) );
+			$evts[] = array('id' => 0, 'text' => __('To toggle checkin status for attendees, select an event', 'event_espresso') );
+			foreach ( $events as $evt ) {
+				//any registrations for this event?
+				if ( ! $evt->get_count_of_all_registrations() )
+					continue;
+				$evts[] = array( 'id' => $evt->ID(), 'text' => $evt->get('EVT_name') );
+			}
+			$filters[] = EEH_Form_Fields::select_input( 'event_id', $evts );
+			
+		} else {
+			//DTT datetimes filter
+			$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+			$dtts = array();
+			foreach ( $this->_dtts_for_event as $dtt ) {
+				$datetime_string = $dtt->start_date_and_time('D M j, Y', ' g:i a') . ' - ' . $dtt->end_date_and_time('D M j, Y', ' g:i a');
+				$dtts[] = array('id' => $dtt->ID(), 'text' => $datetime_string );
+				$cur_dtt = empty( $cur_dtt ) && $dtt->get('DTT_is_primary') ? $dtt->ID() : $cur_dtt;
+			}
+			$filters[] = EEH_Form_Fields::select_input('DTT_ID', $dtts, $cur_dtt);
+		}
+
+		return $filters;
 	}
 
 
@@ -104,22 +147,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_REG_att_checked_in
 	*/
-	function column_REG_att_checked_in(EE_Registration $item){		
-		/*if ( $item->att_checked_in() ) {
-			$chk_out_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_out', 'id'=>$item->ID(), '_REG_ID'=>$item->reg_url_link(), 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-			return '
-			<a class="attendee-check-in-lnk" href="'.$chk_out_url.'" title="' . __( 'Click here to toggle the Check In status of this attendee for this event', 'event_espresso' ) . '">
-				<img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-in-16x16.png" width="16" height="16" alt="' . __( 'Checked In', 'event_espresso' ) . '"/>
-			</a>';
-		} else {
-			$chk_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'attendee_check_in', 'id'=>$item->ID(), '_REG_ID'=>$item->reg_url_link(), 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-			return '
-			<a class="attendee-check-in-lnk" href="'.$chk_in_url.'" title="' . __( 'Click here to toggle the Check In status of this attendee for this event', 'event_espresso' ) . '">
-				<img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-out-16x16.png" width="16" height="16" alt="' . __( 'Checked In Status', 'event_espresso' ) . '"/>
-			</a>';
-		}/**/
-		//todo see https://events.codebasehq.com/projects/event-espresso/tickets/3715
-		return 'todo';		
+	function column_REG_att_checked_in(EE_Registration $item){
+		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0;
+		$checkinstatus = $item->check_in_status_for_datetime($DTT_ID);
+		$nonce = wp_create_nonce('checkin_nonce');
+		$toggle_active = isset ( $this->_req_data['event_id'] ) ? ' clickable trigger-checkin' : '';
+
+		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>';
 	}
 
 

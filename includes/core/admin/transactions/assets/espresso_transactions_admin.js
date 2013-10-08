@@ -179,6 +179,7 @@ jQuery(document).ready(function($) {
 		$('#espresso-ajax').val(1);
 		$('#txn-admin-noheader-inp').val('true');
 		var formData = $('#txn-admin-apply-payment-frm').serialize();
+		formData.ee_admin_ajax = true;
 		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
 //		console.log(formData);
 //		response = new Object();
@@ -230,7 +231,7 @@ jQuery(document).ready(function($) {
 		$.ajax({
 					type: "POST",
 					url:  formURL,
-					data: { ID : PAY_ID, espresso_ajax : 1, noheader : 'true' },
+					data: { ID : PAY_ID, espresso_ajax : 1, noheader : 'true', ee_admin_ajax: true },
 					dataType: "json",
 					beforeSend: function() {
 						do_before_admin_page_ajax();

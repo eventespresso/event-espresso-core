@@ -125,6 +125,8 @@ var Maintenance_helper = {
 				};
 			}
 
+			data.ee_admin_ajax = true;
+
 			jQuery.ajax({
 				type: "POST",
 				url: ajaxurl,

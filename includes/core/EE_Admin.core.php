@@ -65,9 +65,7 @@ final class EE_Admin {
 		$this->EE = EE_Registry::instance();
 		// define global EE_Admin constants
 		$this->_define_all_constants();
-		//set frontend ajax constant.  This gets set if we have an incoming request var named "ee_frontend_ajax"
-		$ee_frontend_ajax = isset( $_POST['ee_frontend_ajax'] ) ? TRUE : FALSE;
-		define( 'EE_FRONTEND_DOING_AJAX', $ee_frontend_ajax );
+		
 		// admin hooks
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
 		// load EE_Request_Handler early
@@ -178,8 +176,8 @@ final class EE_Admin {
 			$this->EE->load_core( 'messages_init' );
 		}
 		
-		// run the admin page factory but ONLY if we aren't doing a frontend ajax request
-		if ( ! EE_FRONTEND_DOING_AJAX ) {
+		// run the admin page factory but ONLY if we are doing an ee admin ajax request
+		if ( !defined('DOING_AJAX') || EE_ADMIN_AJAX ) {
 			try {
 				//this loads the controller for the admin pages which will setup routing etc
 				$this->EE->load_core( 'Admin_Page_Loader' );

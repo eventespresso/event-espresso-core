@@ -245,6 +245,7 @@ class EE_Registration extends EE_Base_Class {
 
 
 
+
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
@@ -635,16 +636,7 @@ class EE_Registration extends EE_Base_Class {
 		return $this->get_datetime('REG_date', $date_format, $time_format);
 	}
 	
-	/**
-	 * get datetime object for this registration
-	 *
-	 * @access public
-	 * @return EE_Datetime
-	 */
-	public function date_obj() {	
-		// @todo: function deprecated because relation no longer exists
-		return $this->get_first_related('Datetime');
-	}
+	
 
 	/**
 	 * Gets the ticket this registration is for
@@ -757,6 +749,15 @@ class EE_Registration extends EE_Base_Class {
 	public function status_obj(){
 		return $this->get_first_related('Status');
 	}
+
+
+	/**
+	 * Gets the primary datetime related to this registration via the related Event to this registration
+	 * @return EE_Datetime 
+	 */
+	public function get_related_primary_datetime() {
+		return $this->get_first_related('Event')->primary_datetime();
+	}
 	
 	/**
 	 * Returns the number of times this registration has checked into any of the datetimes
@@ -766,6 +767,139 @@ class EE_Registration extends EE_Base_Class {
 	public function count_checkins(){
 		return $this->get_model()->count_related($this,'Checkin');
 	}
+
+
+	/**
+	 * Returns the number of current checkins this registration is checked into for any of the datetimes the registration is for.  Note, this is ONLY checked in (does not include checkedout)
+	 * @return int
+	 */
+	public function count_checkins_not_checkedout() {
+		return $this->get_model()->count_related($this, 'Checkin', array( array('CHK_in' => 1 ) ) );
+	}
+
+
+	/**
+	 * This method simply returns the check in status for this registration and the given datetime.
+	 * @param  int         $DTT_ID  The ID of the datetime we're checking against (if empty we'll get the primary datetime for this registration (via event) and use it's ID);
+	 * @param 	EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
+	 * @return int            Integer representing checkin status.
+	 */
+	public function check_in_status_for_datetime( $DTT_ID = 0, $checkin = NULL ) {
+
+		if ( empty( $DTT_ID ) && empty( $checkin ) ) {
+			$datetime = $this->get_related_primary_datetime();
+			$DTT_ID = $datetime->ID();
+		}
+
+		if ( empty( $checkin ) )
+			//get checkin object (if exists)
+			$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
+		if ( empty( $checkin ) ) {
+			return 0; //never been checked in
+		} else if ( $checkin->get('CHK_in' ) ) {
+			return 1; //checked in
+		} else {
+			return 2; //had checked in but is now checked out.
+		}
+	}
+
+
+
+
+	/**
+	 * toggle checkin status for this registration
+	 *
+	 * Checkins are toggled in the followin order:
+	 * never checked in -> checkedin
+	 * checked in -> checked out
+	 * checked out -> never checked in
+	 * @param  int    $DTT_ID include specific datetime to toggle checkin for.  If not included or null, then it is assumed primary datetime is being toggled.
+	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
+	 */
+	public function toggle_checkin_status( $DTT_ID = NULL ) {
+		if ( empty( $DTT_ID ) ) {
+			$datetime = $this->get_related_primary_datetime();
+			$DTT_ID = $datetime->ID();
+		}
+
+		$updated = 0;
+
+		$status_paths = array(
+			0 => 1,
+			1 => 2,
+			2 => 0
+			);
+
+		//start by getting the current status so we know what status we'll be changing to.
+		$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ) ) );
+		$cur_status = $this->check_in_status_for_datetime( NULL, $checkin );
+		$status_to = $status_paths[$cur_status];
+
+		//update relation
+		if ( $status_to === 0 ) {
+			$updated = $this->delete_related_permanently( 'Checkin', array( array('CHK_ID' => $checkin->ID() ) ) );
+		} else {
+			if ( empty( $checkin ) ) {
+				$chk_data = array(
+					'REG_ID' => $this->ID(),
+					'DTT_ID' => $DTT_ID,
+					'CHK_in' => 1
+					);
+				$checkin = EE_Checkin::new_instance( $chk_data );
+				$updated = $checkin->save();
+			} else {
+				$new_status = $status_to == 2 ? 0 : $status_to; //make sure we set appropriately.
+				$checkin->set( 'CHK_in', $new_status );
+				$updated = $checkin->save();
+			}
+		}
+
+		if ( $updated == 0 )
+			$status_to = FALSE;
+
+		return $status_to;
+	}
+
+
+
+
+	/**
+	 * This method returns a localized message for the toggled checkin message.
+	 * @param  int    $DTT_ID include specific datetime to get the correct checkin message.  If not included or null, then it is assumed checkin for primary datetime was toggled.
+	 * @param bool $error This just flags that you want an error message returned. This is put in so that the error message can be customized with the attendee name.
+	 * @return string         internationalized message
+	 */
+	public function get_checkin_msg( $DTT_ID, $error = FALSE ) {
+		if ( empty( $DTT_ID ) ) {
+			$datetime = $this->get_related_primary_datetime();
+			$DTT_ID = $datetime->ID();
+		}
+
+		$cur_status = $this->check_in_status_for_datetime($DTT_ID);
+
+		//let's get the attendee as well so we can include the name of the attendee
+		$attendee = $this->get_first_related('Attendee');
+
+		if ( $error ) {
+			return sprintf( __("%s's check in status was not changed.", "event_espresso"), $attendee->full_name() );
+		}
+
+		//what is the status message going to be?
+		switch ( $cur_status ) {
+			case 0 :
+				$msg = sprintf( __("%s has been removed from checkin records", "event_espresso"), $attendee->full_name()  );
+				break;
+			case 1 :
+				$msg = sprintf( __('%s has been checked in', 'event_espresso'), $attendee->full_name() );
+				break;
+			case 2 :
+				$msg = sprintf( __('%s has been checked out', 'event_espresso'), $attendee->full_name() );
+				break;
+		}
+		return $msg;
+	}
+
+
 }
 
 

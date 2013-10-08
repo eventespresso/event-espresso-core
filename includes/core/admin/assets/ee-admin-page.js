@@ -294,7 +294,7 @@ jQuery(document).ready(function($) {
 				p = e.parent();
 				var u = $('#' + id + '_url').text();
 				setTimeout( function(){
-					p.load( ajaxurl + '?action=espresso-ajax-content&contentid=' + id + '&contenturl=' + u, '', function() {
+					p.load( ajaxurl + '?action=espresso-ajax-content&ee_admin_ajax=1&contentid=' + id + '&contenturl=' + u, '', function() {
 						p.hide().slideDown('normal', function(){
 							$(this).css('display', '');
 						});

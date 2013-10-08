@@ -124,3 +124,30 @@
 .tkt-slctr-tbl td { padding:.5em 1em .5em 0; border:none; border-top: 1px solid #EDEDED; font-size:1em; line-height:1em; }
 .tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding-right:0; }
 
+
+/** checkin status manipulation **/
+.checkin-icons{
+	display: block;
+	min-width: 18px;
+	min-height: 18px;
+}
+
+/**never checked in**/
+.wp-list-table .REG_att_checked_in {
+    padding-left: 20px;
+}
+
+.checkedin-status-0 {
+	background: transparent url('images/delete-grey-16x16.png') no-repeat;
+	margin: auto;
+}
+
+/**checked in**/
+.checkedin-status-1 {
+	background: transparent url('images/check-in-16x16.png') no-repeat;
+}
+
+/**check in but now checked out**/
+.checkedin-status-2 {
+	background: transparent url('images/check-out-16x16.png') no-repeat;
+}

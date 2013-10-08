@@ -1011,6 +1011,34 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'Registration.REG_count' => 1
 			);
 
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$_where['OR'] = array(
+				'Registration.Event.EVT_name' => array( 'LIKE', $sstr),
+				'Registration.Event.EVT_desc' => array( 'LIKE', $sstr ),
+				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Registration.Attendee.ATT_fname' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_lname' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_email' => array('LIKE', $sstr ),
+				'Registration.Attendee.ATT_address' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_address2' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_city' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_comments' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_notes' => array( 'LIKE', $sstr ),
+				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
+				'Registration.REG_code' => array( 'LIKE', $sstr ),
+				'Registration.REG_count' => array( 'LIKE' , $sstr ),
+				'Registration.REG_group_size' => array( 'LIKE' , $sstr ),
+				'Registration.Ticket.TKT_name' => array( 'LIKE', $sstr ),
+				'Registration.Ticket.TKT_description' => array( 'LIKE', $sstr ),
+				'Payment.PAY_method' => array('LIKE', $sstr),
+				'Payment.PAY_gateway' => array('LIKE', $sstr),
+				'TXN_details' => array( 'LIKE', $sstr ),
+				'TXN_session_data' => array( 'LIKE', $sstr )
+				);
+		}
+
 		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
 
 		$transactions = $count ? $TXN->count( array($_where), 'TXN_ID', TRUE ) : $TXN->get_all($query_params);

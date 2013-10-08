@@ -15,7 +15,8 @@ jQuery(document).ready(function($) {
 			var formData = {
 				action: 'espresso_display_country_settings',
 				country: CNT_ISO,
-				noheader : 'true'
+				noheader : 'true',
+				ee_admin_ajax : true
 			};			
 			// console.log( JSON.stringify( formData, null, 4 ));
 			$.ajax({
@@ -60,6 +61,7 @@ jQuery(document).ready(function($) {
 			var formData = {
 				action: 'espresso_display_country_states',
 				country: CNT_ISO,
+				ee_admin_ajax : true,
 				noheader : 'true'
 			};
 			
@@ -110,6 +112,7 @@ jQuery(document).ready(function($) {
 				CNT_ISO: $('#country').val(),
 				STA_abbrev: $('#STA_abbrev-XXX').val(),
 				STA_name: $('#STA_name-XXX').val(),
+				ee_admin_ajax: true,
 				noheader : 'true'				
 			};			
 			//console.log( JSON.stringify( formData, null, 4 ));
@@ -157,6 +160,7 @@ jQuery(document).ready(function($) {
 			var formData = {
 				action: 'espresso_delete_state',
 				STA_ID: STA_ID,
+				ee_admin_ajax : true,
 				noheader : 'true'				
 			};			
 			//console.log( JSON.stringify( formData, null, 4 ));

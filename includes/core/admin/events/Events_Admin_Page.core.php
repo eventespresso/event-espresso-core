@@ -1213,6 +1213,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$where['post_type'] = array( '!=', 'revision' );
 
+		//search query handling
+		if ( isset( $this->_req_data['s'] ) ) {
+			$search_string = '%' . $this->_req_data['s'] . '%';
+			$where['OR'] = array(
+				'EVT_name' => array('LIKE', $search_string),
+				'EVT_desc' => array('LIKE', $search_string),
+				'EVT_short_desc' => array('LIKE', $search_string)
+				);
+		}
+
+
 		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
 
 		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
@@ -1709,6 +1720,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$this->_search_btn_label = __('Categories', 'event_espresso');
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
@@ -1876,9 +1888,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$order = isset( $this->_req_data['order'] ) ? $this->_req_data['order'] : 'DESC';
 		$limit = ($current_page-1)*$per_page;
 
+		$where = array( 'taxonomy' => 'espresso_event_categories' );
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$where['OR'] = array(
+				'Term.name' => array( 'LIKE', $sstr),
+				'description' => array( 'LIKE', $sstr )
+				);
+		}
 
 		$query_params = array(
-			0 => array( 'taxonomy' => 'espresso_event_categories' ),
+			$where ,
 			'order_by' => array( $orderby => $order ),
 			'limit' => $limit . ',' . $per_page,
 			'force_join' => array('Term')

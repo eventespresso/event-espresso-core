@@ -128,6 +128,7 @@ jQuery(document).ready(function($) {
 		row_data.rownum = $('#next_price_row').val();
 		row_data.page = 'espresso_events';
 		row_data.action = 'ee_price_add_new_editor_row';
+		row_data.ee_admin_ajax = true;
 
 
 		//todo this can be reworked once we get common ajax handling for all EE stuff in place (displays etc!)

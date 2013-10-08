@@ -147,9 +147,9 @@ class EED_Ticket_Selector extends  EED_Module {
 		
 		
 		// get 
-		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
-			array(
-				'Datetime.EVT_ID' => self::$_event->ID,
+//		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
+//			array(
+//				'Datetime.EVT_ID' => self::$_event->ID,
 //				'OR' => array(
 //					'Datetime.DTT_sold' => array( '<', 'Datetime.DTT_reg_limit', TRUE ),
 //					'Datetime.DTT_reg_limit' => 0
@@ -158,10 +158,11 @@ class EED_Ticket_Selector extends  EED_Module {
 //					'TKT_sold' =>array( '<', 'TKT_qty', TRUE ),
 //					'TKT_qty' => 0			
 //				)
-			),
-			'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC', 'TKT_order' => 'DESC' )
-		));
-
+//			),
+//			'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC', 'TKT_order' => 'DESC' )
+//		));
+//		global $wpdb;
+//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		d( $template_args['tickets'] );
 		
 		

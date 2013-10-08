@@ -455,6 +455,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		// then set blank or -1 action values to 'default'
 		$this->_req_action = isset( $this->_req_data['action'] ) && ! empty( $this->_req_data['action'] ) && $this->_req_data['action'] != -1 ? sanitize_key( $this->_req_data['action'] ) : 'default';
+
+		//if action is 'default' after the above BUT we have  'route' var set, then let's use the route as the action.  This covers cases where we're coming in from a list table that isn't on the default route.
+		$this->_req_action = $this->_req_action == 'default' && isset( $this->_req_data['route'] ) ? $this->_req_data['route'] : $this->_req_action;
 		
 		//however if we are doing_ajax and we've got a 'route' set then that's what the req_action will be
 		$this->_req_action = defined('DOING_AJAX') && isset($this->_req_data['route']) ? $this->_req_data['route'] : $this->_req_action;
@@ -559,9 +562,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//setup list table properties
 		$this->_set_list_table();
-		
-		//setup search attributes
-		$this->_set_search_attributes();
 
 		// child classes can "register" a metabox to be automatically handled via the _page_config array property.  However in some cases the metaboxes will need to be added within a route handling callback.
 		$this->_add_registered_meta_boxes();
@@ -626,7 +626,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args = array(
 			'admin_page_header' => '',
 			'admin_page_content' => '',
-			'post_body_content' => ''
+			'post_body_content' => '',
+			'before_list_table' => '',
+			'after_list_table' => ''
 		);
 	}
 
@@ -771,7 +773,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _route_admin_request() {
-
 		$this->_verify_routes();
 
 		$nonce_check = isset( $this->_route_config['require_nonce'] ) ? $this->_route_config['require_nonce'] : TRUE; 
@@ -1542,7 +1543,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return 		void
 	*/
 	public function _set_search_attributes() {
-		$this->_template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), $this->page_label );
+		$this->_template_args['search']['btn_label'] = sprintf( __( 'Search %s', 'event_espresso' ), empty( $this->_search_btn_label ) ? $this->page_label : $this->_search_btn_label );
 		$this->_template_args['search']['callback'] = 'search_' . $this->page_slug;
 	}
 
@@ -1995,10 +1996,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return html
 	 */
 	private function _display_admin_list_table_page( $sidebar = false ) {
+		//setup search attributes
+		$this->_set_search_attributes();
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
 
-		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true'), $this->_admin_base_url ) : $this->_admin_base_url;
+		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true', 'route' => $this->_req_action), $this->_admin_base_url ) : add_query_arg( array( 'route' => $this->_req_action), $this->_admin_base_url);
 		$this->_template_args['list_table'] = $this->_list_table_object;
 		
 		$ajax_sorting_callback = $this->_list_table_object->get_ajax_sorting_callback();	
@@ -2013,6 +2016,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		$this->_template_args['sortable_list_table_form_fields'] = $sortable_list_table_form_fields;
+		$hidden_form_fields = isset( $this->_template_args['list_table_hidden_fields'] ) ? $this->_template_args['list_table_hidden_fields'] : '';
+		$nonce_ref = $this->_req_action . '_nonce';
+		$hidden_form_fields .= '<input type="hidden" name="' . $nonce_ref . '" value="' . wp_create_nonce( $nonce_ref ) . '">';
+		$this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
+
+		//display message about search results?
+		$this->_template_args['before_list_table'] .= isset( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '';
 
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 

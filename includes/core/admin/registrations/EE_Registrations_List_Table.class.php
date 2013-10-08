@@ -233,10 +233,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
    	function column_DTT_EVT_start(EE_Registration $item){
 		$datetime_strings = array();
 		$datetimes = $item->ticket()->datetimes();
+		$query_args = array(
+			'action'=>'event_registrations',
+			'event_id'=>$item->event_ID()
+			);
 		foreach($datetimes as $datetime){
-			$datetime_strings[] = $datetime->start_date_and_time('D M j, Y',' g:i a');
+			$query_args['DTT_ID'] = $datetime->ID();
+			$checkin_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, REG_ADMIN_URL );
+			$datetime_strings[] = '<a href="' . $checkin_url . '">' . $datetime->start_date_and_time('D M j, Y',' g:i a') . '</a>';
 		}
-		return implode("; ",$datetime_strings);
+		return implode("<br />",$datetime_strings);
     }
 
 
