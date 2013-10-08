@@ -41,7 +41,7 @@ class EEH_Debug_Tools{
 		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'kint' . DS . 'Kint.class.php' );
 		
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
-			add_action( 'shutdown', array($this,'espresso_printr_session') );
+			//add_action( 'shutdown', array($this,'espresso_printr_session') );
 		}
 		add_action( 'activated_plugin',array($this,'espresso_plugin_activation_errors') );
 	}
