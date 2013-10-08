@@ -608,6 +608,35 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @param array $array_of_properties like what's produced from properties_as_array() method
 	 */
 	abstract public function instantiate_from_array_of_properties($array_of_properties);
+	
+	/**
+	 * Convenience method for showing a database insertion error
+	 * @param string $old_table
+	 * @param array $old_row_as_array
+	 * @param string $new_table
+	 * @param array $new_row_as_array columsn=>values like used in wpdb->insert
+	 * @param array $datatypes numerically indexed
+	 * @return string
+	 */
+	protected function _create_error_message_for_db_insertion($old_table, $old_row_as_array, $new_table, $new_row_as_array, $datatypes){
+		global $wpdb;
+		$old_columns_and_values_for_string = array();
+		foreach($old_row_as_array as $column => $value){
+			$old_columns_and_values_for_string[] = "$column => $value";
+		}
+		$new_columns_and_values_for_string = array();
+		$count = 0;
+		foreach($new_row_as_array as $column => $value){
+			$new_columns_and_values_for_string[] = " $column => $value (".$datatypes[$count++].")";
+		}
+		return sprintf(__('Received error "%6$s" inserting row %5$s %1$s %5$s into table %2$s.%5$s Data used was %5$s %3$s %5$s from table %4%s.', "event_espresso"),
+				implode(", ",$new_columns_and_values_for_string),
+				$new_table,
+				implode(", ",$old_columns_and_values_for_string),
+				$old_table,
+				'<br/>',
+				$wpdb->last_error);
+	}
 }
 
 /**
@@ -627,7 +656,7 @@ class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
 	public function __construct() {
 		
 		$this->_migration_stages = array();
-		$this->_pretty_name = __("Fatal Error Occurred", "event_espresso");
+		$this->_pretty_name = __("Fatal Uncatchable Error Occurred", "event_espresso");
 //		dd($this);
 		parent::__construct();
 	}
