@@ -685,7 +685,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		if ( empty( $template_args['TKT_end_date'] ) ) {
 			//get the earliest datetime (if present);
-			$earliest_dtt = $this->_adminpage_obj->get_cpt_model_obj()->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) );
+			$earliest_dtt = $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? $this->_adminpage_obj->get_cpt_model_obj()->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
 
 			if ( !empty( $earliest_dtt ) )
 				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
