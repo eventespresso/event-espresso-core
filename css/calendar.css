@@ -2,7 +2,6 @@
  * Espresso Events Calendar Stylesheet
  * (c) 2013 Espresso Events
  * -------------------------------------------------------------------------*/
-@import url(jquery.qtip.min.css);
 
 #espresso_calendar { 
 	position: relative !important; 
@@ -21,8 +20,7 @@
 	background-color:#fff; 
 }
 #espresso_calendar table.fc-header, 
-#espresso_calendar table.fc-border-separate, 
-.fc-header th, .fc-header td { 
+#espresso_calendar table.fc-border-separate { 
 	border: none; 
 	margin-bottom: 0;
 }
@@ -297,7 +295,9 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 	position:absolute; top:-16px; left:50%; margin:0 0 0 -33px;
 	box-shadow: none !important;
 }
-
+.fc-header td {
+	border: none;
+}
 /* prevent transitions from getting applied to calendar links as some themes are known to do this */
 
 #espresso_calendar a {
@@ -308,3 +308,54 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 	transition:         none!important;
 }
 .ui-tooltip-tip { position:absolute; }
+
+@media 
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+	/* Force table to not be like tables anymore */
+	table.fc-header, thead.fc-header, table.fc-header tbody, table td.fc-header-left, table td.fc-header-center, table td.fc-header-right, table.fc-header tr { 
+		display: block; 
+		border:none;
+	}
+	.fc-button.fc-button-prev.fc-state-default.fc-corner-left.fc-corner-right {
+		position: absolute;
+		top:55px;
+	}
+	table.fc-header td.fc-header-left{
+		/* Behave  like a "row" */
+		border: none;
+		position: relative; 
+		height:0;
+	}
+	td.fc-header-center,
+	td.fc-header-right {
+		width:100%;
+	}
+	table.fc-header td.fc-header-center,
+	table.fc-header td.fc-header-right { 
+		/* Behave  like a "row" */
+		border: none;
+		position: relative; 
+		height:55px;
+	}
+	table.fc-header td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+	}
+	.qtip_info {
+		display:block;
+	}
+	#espresso_calendar .fc-event-title,
+	#espresso_calendar .time-display-block,
+	#espresso_calendar .thumb-wrap,
+	.ui-tooltip-content p:first-child {
+		display:none;
+	}
+	}
