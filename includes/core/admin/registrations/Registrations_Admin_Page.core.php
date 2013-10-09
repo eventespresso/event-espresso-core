@@ -2480,11 +2480,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _resend_registration() {
-		$this->_process_resend_registration();
+		$success = $this->_process_resend_registration();
 		$query_args = array(
 			'action' => 'default'
 		);
-		$this->_redirect_after_action();
+		$this->_redirect_after_action(FALSE, '', '', array(), TRUE );
 	}
 
 
