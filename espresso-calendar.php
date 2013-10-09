@@ -536,7 +536,7 @@ class EE_Calendar {
 				$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
 				// check that thumbnail dimesions are not already included in filename
 				$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
-				$path_to_thumbnail = $dirname . $filename . $thumbnail_size . '.' . $ext;
+				$path_to_thumbnail = $dirname . $filename . '.' . $ext;
 				
 				$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
 				$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
