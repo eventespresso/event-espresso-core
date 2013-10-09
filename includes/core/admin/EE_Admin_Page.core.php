@@ -487,7 +487,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//filter routes and page_config so addons can add their stuff. Filtering done per class
 		$this->_page_routes = apply_filters('FHEE__' . get_class($this) . '__page_setup__page_routes', $this->_page_routes, $this );
-		$this->_page_config = apply_filters('FHH__' . get_class($this) . '__page_setup__page_config', $this->_page_config, $this );
+		$this->_page_config = apply_filters('FHEE__' . get_class($this) . '__page_setup__page_config', $this->_page_config, $this );
 
 
 		//next route only if routing enabled
