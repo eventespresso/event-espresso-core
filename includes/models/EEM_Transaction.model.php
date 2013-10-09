@@ -287,14 +287,14 @@ class EEM_Transaction extends EEM_Base {
 	* 		@access		public
 	*/
 	public function get_revenue_per_event_report( $period = 'month' ) {
-
 		global $wpdb;
 		$date_mod = strtotime( '-1 ' . $period );
 
-		$SQL = 'SELECT event_name, SUM(TXN_paid) AS revenue';
+
+		$SQL = 'SELECT post_name as event_name, SUM(TXN_paid) AS revenue';
 		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' txn';
 		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
-		$SQL .= ' LEFT JOIN ' . EVENTS_DETAIL_TABLE . ' evt ON evt.id = reg.EVT_ID';
+		$SQL .= ' LEFT JOIN ' . $wpdb->posts . ' evt ON evt.ID = reg.EVT_ID';
 		$SQL .= ' WHERE REG_date >= %d';
 		$SQL .= ' GROUP BY event_name';
 		$SQL .= ' ORDER BY event_name';
