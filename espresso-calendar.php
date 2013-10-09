@@ -48,25 +48,25 @@ class EE_Calendar {
 
    /**
      * 	EE_Calendar Object
-     * 	@var EE_Calendar $_instance
+     * 	@var 		EE_Calendar $_instance
 	 * 	@access 	private 	
      */
 	private static $_instance = NULL;
 
 	/**
-	 * 	@var 	array	$_calendar_options
+	 * 	@var 		array	$_calendar_options
 	 *  @access 	private
 	 */
 	private $_calendar_options = array();
 
 	/**
-	 * 	@var 	INT	$_event_category_id
+	 * 	@var 		INT	$_event_category_id
 	 *  @access 	private
 	 */
 	private $_event_category_id = 0;
 
 	/**
-	 * 	@var 	boolean	$_show_expired
+	 * 	@var 		boolean	$_show_expired
 	 *  @access 	private
 	 */
 	private $_show_expired = TRUE;
