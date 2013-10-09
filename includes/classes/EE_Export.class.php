@@ -116,13 +116,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 					case 'categories':
 						$this->export_categories();
 					break;
-					
-					case 'groupons':
-						$this->export_groupons();
-					break;
 
 					default:
-						// set the error message which is stored within the EE_CSV class
 						EE_Error::add_error(__('An error occured! The requested export report could not be found.','event_espresso')) ;
 						return FALSE;
 					break;
@@ -293,7 +288,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				'REG_date',
 				'REG_code',
 				'REG_count',
-				'REG_att_is_going'
+				'REG_att_is_going',
+				'REG_final_price'
 			
 		);
 		

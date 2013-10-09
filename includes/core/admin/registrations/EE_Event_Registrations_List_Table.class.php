@@ -59,6 +59,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		if ( !empty( $evt_id ) ) {
 			$this->_columns['actions'] = __('Actions', 'event_espresso');
+			$this->_bottom_buttons = array(
+			'report'=> array(
+				'route' => 'registrations_report',
+				'extra_request' => !empty($evt_id) ? array('EVT_ID'=>$evt_id) : NULL
+				)
+		);
 		}
 
 		$this->_sortable_columns = array(
@@ -70,12 +76,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$this->_hidden_columns = array();
 		
-		$this->_bottom_buttons = array(
-			'report'=> array(
-				'route' => 'registrations_report',
-				'extra_request' => !empty($evt_id) ? array('EVT_ID'=>$evt_id) : NULL
-				)
-		);
+		
 
 		$this->_dtts_for_event = !empty($evt_id) ? EEM_Event::instance()->get_one_by_ID($evt_id)->get_many_related('Datetime') : array();
 
