@@ -485,6 +485,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, '_extend_page_config_for_cpt' ) )
 			$this->_extend_page_config_for_cpt();
 
+		//filter routes and page_config so addons can add their stuff. Filtering done per class
+		$this->_page_routes = apply_filters('FHEE__' . get_class($this) . '__page_setup__page_routes', $this->_page_routes, $this );
+		$this->_page_config = apply_filters('FHH__' . get_class($this) . '__page_setup__page_config', $this->_page_config, $this );
+
 
 		//next route only if routing enabled
 		if ( $this->_routing && !defined('DOING_AJAX') ) {
@@ -788,16 +792,28 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$func = is_array( $this->_route ) ? $this->_route['func'] : $this->_route;
 		// check if callback has args
 		$args = is_array( $this->_route ) && isset( $this->_route['args'] ) ? $this->_route['args'] : array();
-			
+
+		$error_msg = '';
+
 		if ( ! empty( $func )) {
-			// and finally,  try to access page route
+			//try to access page route via this class
 			if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
 				// user error msg
 				$error_msg =  __( 'An error occured. The  requested page route could not be found.', 'event_espresso' );
 				// developer error msg
-				$error_msg .= '||' . sprintf( __( 'Page route "%s" could not be called. Check that the spelling for method names and actions in the "_page_routes" array are all correct.', 'event_espresso' ), $func );
-				throw new EE_Error( $error_msg );
-			}				
+				$error_msg .= '||' . sprintf( __( 'Page route "%s" could not be called. Check that the spelling for method names and actions in the "_page_routes" array are all correct.', 'event_espresso' ), $func );	
+			} 
+
+			//for pluggability by addons first let's see if just the function exists (this will also work in the case where $func is an array indicating class/method)
+			$args['admin_page_object'] = $this; //send along this admin page object for access by addons.
+			if ( call_user_func_array( $func, $args ) === FALSE ) {
+				$error_msg = __('An error occured. The requested page route could not be found', 'event_espresso' );
+				$error_msg .= '||' . sprintf( __('Page route "%s" could not be called.  Check that the spelling for the function name and action in the "_page_routes" array filtered by your plugin is correct.', 'event_espresso'), $fund );
+			}
+
+
+			if ( !empty( $error_msg ) )
+				throw new EE_Error( $error_msg );				
 		}
 	}
 
