@@ -77,7 +77,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'add-registrant' => __('Register New Attendee', 'event_espresso'),
 					'add-attendee' => __('Add New Attendee Contact Info', 'event_espresso'),
 					'edit' => __('Edit Attendee', 'event_espresso'),
-					'delete' => __('Delete Attendee', 'event_espresso'),
+					'delete_attendees' => __('Delete Attendee', 'event_espresso'),
 					'report'=>  __("Registrations CSV Report", "event_espresso")
 				)
 			);
@@ -2548,24 +2548,46 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		
 		$this->_template_args['attendee']= $attendee;
+		
+
 		$this->_template_args['state_html'] = EEH_Form_Fields::generate_form_input(
+				new EE_Question_Form_Input(
+				EE_Question::new_instance( array(
+					'QST_ID' => 0,
+					'QST_display_text' => __('State/Province', 'event_espresso'),
+					'QST_system' => 'admin-state'
+					)),
+				EE_Answer::new_instance( array(
+					'ANS_ID' => 0,
+					'ANS_value' => $attendee->state_ID()
+					)),
 				array(
-					'QST_display_text'=>' ',
-					'ANS_value'=>$attendee->state_ID(),
-					'QST_input_name'=>'STA_ID',
-					'QST_input_name'=>'STA_ID',
-					'QST_system'=>'state'
-				));
+					'input_id' => 'STA_ID',
+					'input_name' => 'STA_ID',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE 
+					)
+			));
 		$this->_template_args['country_html'] = EEH_Form_Fields::generate_form_input(
+				new EE_Question_Form_Input(
+				EE_Question::new_instance( array(
+					'QST_ID' => 0,
+					'QST_display_text' => __('Country', 'event_espresso'),
+					'QST_system' => 'admin-country'
+					)),
+				EE_Answer::new_instance( array(
+					'ANS_ID' => 0,
+					'ANS_value' => $attendee->country_ISO()
+					)),
 				array(
-					'QST_display_text'=>' ',
-					'ANS_value'=>$attendee->country_ISO(),
-					'QST_input_name'=>'CNT_ISO',
-					'QST_input_name'=>'CNT_ISO',
-					'QST_system'=>'country'
+					'input_id' => 'CNT_ISO',
+					'input_name' => 'CNT_ISO',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE 
+					)
 				));
 		//get list of all registrations for this attendee	
-		if ( $this->_template_args['registrations'] = $ATT_MDL->get_many_related('Registraiton') ) {
+		if ( $this->_template_args['registrations'] = $attendee->get_many_related('Registration') ) {
 			$this->_template_path = REG_TEMPLATE_PATH . 'attendee_registrations_main_meta_box.template.php';
 			$meta_box_args['template_path'] = $this->_template_path;
 			$meta_box_args['template_args'] = $this->_template_args;
