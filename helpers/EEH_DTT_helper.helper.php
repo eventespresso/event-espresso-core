@@ -191,4 +191,78 @@ class EEH_DTT_Helper {
 	}
 
 
+	/**
+	 * helper for doing simple datetime calculations on a given datetime from EE_Base_Class and modifying it IN the EE_Base_Class so you don't have to do anything else.
+	 * @param  EE_Base_Class $obj      EE_Base_Class object
+	 * @param  string        $dttfield What field in the class has the date to manipulate
+	 * @param  string        $what     what you are adding. The options are (years, months, days, hours, minutes, seconds) defaults to years	
+	 * @param  integer       $value    what you want to increment the time by
+	 * @return EE_Base_Class		   return the EE_Base_Class object so right away you can do something with it (chaining)
+	 */
+	public static function date_time_add( EE_Base_Class $obj, $dttfield, $what = 'years', $value = 1 ) {
+		//get the raw UTC date.
+		$dtt = $obj->get_raw($dttfield);
+		$new_date = self::calc_date($dtt, $what, $value);
+		//set the new date value!
+		$obj->set($dttfield, $dtt);
+		return $obj;
+	}
+
+	//same as date_time_add except subtracting value instead of adding.
+	public static function date_time_subtract( EE_Base_Class $obj, $dttfield, $what = 'years', $value = 1 ) {
+		//get the raw UTC date
+		$dtt = $obj->get_raw($dttfield);
+		$new_date = self::calc_date($dtt, $what, $value, '-');
+		$obj->set($dttfield, $dtt);
+		return $obj;
+	}
+
+
+
+
+	/**
+	 * Simply takes an incoming UTC timestamp and does calcs on it based on the incoming parameters and returns the new timestamp.
+	 * @param  string  $utcdtt UTC timestamp
+	 * @param  string  $what   a value to indicate what interval is being used in the calculation. The options are 'years', 'months', 'days', 'hours', 'minutes', 'seconds'. Defaults to years.
+	 * @param  integer $value  What you want to increment the date by
+	 * @param  string  $operand What operand you wish to use for the calculation
+	 * @return string          new UTC timestamp
+	 */
+	public static function calc_date( $utcdtt, $what = 'years', $value = 1, $operand = '+' ) {
+		$newdtt = '';
+
+		switch ( $what ) {
+			case 'years' :
+				$value = (60*60*24*364.5) * $value;
+				break;
+			case 'months' :
+				$value = (60*60*24*30.375) * $value;
+				break;
+			case 'days' :
+				$value = (60*60*24) * $value;
+				break;
+			case 'hours' :
+				$value = (60*60) * $value;
+				break;
+			case 'minutes' :
+				$value = 60 * $value;
+				break;
+			case 'seconds' :
+				$value;
+				break;
+		}
+
+		switch ( $operand ) {
+			case '+':
+				$newdtt = $utcdtt + $value;
+				break;
+			case '-':
+				$newdtt = $utcdtt - $value;
+				break;
+		}
+
+		return $newdtt;
+	}
+
+
 }// end class EEH_DTT_Helper

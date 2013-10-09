@@ -677,6 +677,22 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'clone_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? '' : 'clone-icon clickable'
 			);
 
+		//handle rows that should NOT be empty
+		if ( empty( $template_args['TKT_start_date'] ) ) {
+			//if empty then the start date will be now.
+			$template_args['TKT_start_date'] = date('Y-m-d h:i a', current_time('timestamp'));
+		}
+
+		if ( empty( $template_args['TKT_end_date'] ) ) {
+			//get the earliest datetime (if present);
+			$earliest_dtt = $this->_adminpage_obj->get_cpt_model_obj()->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) );
+
+			if ( !empty( $earliest_dtt ) )
+				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
+			else
+				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(0, 0, 0, date("m"), date("d")+7, date("Y") ) );
+		}
+
 		//generate ticket_datetime items
 		if ( ! $default ) {
 			$dttrow = 1;

@@ -47,21 +47,6 @@
 	height: 100%;
 }
 
-.message-type-text {
-	margin-left: 5px;
-	margin-right: 5px;
-	padding: 5px;
-	-webkit-border-radius: 3px;
-	-webkit-appearance: none;
-	border-radius: 3px;
-	white-space: nowrap;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing:    border-box;
-	box-sizing:         border-box;
-	background: #f3f3f3;
-	font-weight: bold;
-}
-
 #post-body .postbox { background: #fff; }
 #post-body-content li.current a {
 	color: black;
@@ -239,22 +224,7 @@ input.error,
 .requires-value { border:1px solid #FE2A00 !important; }
 
 label.error  { display: block; color: #FE2A00 !important; }
-.ticket-price-quick-edit-tbl label.error  { position: absolute; }
 
-
-
-.espresso-button-red {
-    background-color: #A32615 !important;
-    background-image: linear-gradient(to bottom, #D22C1A, #A32615) !important;
-    border-color: #A32615 #A32615 #8E2112 !important;
-	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.5) inset !important;
-}
-.espresso-button-red:hover {
-    background-color: #B82818 !important;
-    background-image: linear-gradient(to bottom, #DB2E1B, #A32615) !important;
-    border-color: #7E1D10 !important;
-	box-shadow: 0 1px 0 rgba(230, 116, 103, 0.6) inset !important;
-}
 
 
 .espresso-button-green {
