@@ -41,7 +41,8 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			40=>new EE_DMS_4_1_0P_category_details(),
 			50=>new EE_DMS_4_1_0P_venues(),
 			60=>new EE_DMS_4_1_0P_question_groups(),
-			70=>new EE_DMS_4_1_0P_questions()
+			70=>new EE_DMS_4_1_0P_questions(),
+			80=>new EE_DMS_4_1_0P_question_group_question()
 		);
 		parent::__construct();
 	}
