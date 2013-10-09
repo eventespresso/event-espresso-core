@@ -64,6 +64,13 @@ class EE_Calendar {
 	 *  @access 	private
 	 */
 	private $_event_category_id = 0;
+	
+	/**
+	 * 	@var 	INT	$_event_venue_id
+	 *  @access 	private
+	 */
+	private $_event_venue_id = 0;
+
 
 	/**
 	 * 	@var 	boolean	$_show_expired
@@ -253,6 +260,47 @@ class EE_Calendar {
 		if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 			return '';
 		}
+
+		global $wpdb, $org_options;
+
+		$c_sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
+		$temp_cats = $wpdb->get_results($c_sql);
+		
+		$v_sql = "SELECT * FROM " . EVENTS_VENUE_TABLE;
+		$temp_venue = $wpdb->get_results($v_sql);
+		
+		if (!empty($temp_venue) || !empty($temp_cats)){
+			?>
+	
+			<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+			<label><?php echo __('Filter by Category ', 'event_espresso'); ?></label>
+			
+			<select class="submit-this" name="event_category_id">
+				<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+				<?php
+					foreach($temp_cats as $cat) {
+						
+						echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
+					}
+				?>
+			</select>
+			
+			<label><?php echo __('Filter by Venue ', 'event_espresso'); ?></label>
+			
+			<select class="submit-this" name="event_venue_id">
+				<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+				<?php
+					foreach($temp_venue as $venue) {
+						echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
+					}
+				?>
+			</select>
+			</form>
+			
+			<?php
+		}
+
+
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
 		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE, 'show_tooltips' => FALSE ), $this->_calendar_options );
@@ -262,6 +310,7 @@ class EE_Calendar {
 		$atts = shortcode_atts( $defaults, $atts );
 		// grab some request vars
 		$this->_event_category_id = $atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
+		$atts['event_venue_id'] = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : '';
 		$this->_show_expired = $atts['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $atts['show_expired'];
 		// loop thru atts and add to js options
 		foreach ( $atts as $att_name => $att_value ) {
@@ -320,7 +369,6 @@ class EE_Calendar {
 				__('Sat', 'event_espresso')
 			);
 			
-		global $org_options;
 		$ee_calendar_js_options['theme'] = ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
 		
 //		echo '<h3>$ee_calendar_js_options</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $ee_calendar_js_options, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
@@ -373,21 +421,34 @@ class EE_Calendar {
 		// set boolean for categories 
 		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
 		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
-
+		
+		//Get venue id
+		$event_venue_id = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : $this->_event_venue_id;
+		
 		//Build the SQL to run
 		$SQL = "SELECT e.*, ese.start_time, ese.end_time ";
+		
 		//Get the categories
 		$SQL .= $event_category_id ? ", c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc " : '';
+		
+		//Get the venues
+		$SQL .= $event_venue_id ? ", v.meta venue_meta, v.id venue_id, v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state " : '';
+		
 		$SQL .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$SQL .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+		
 		//Get the categories
 		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id " : '';
 		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id " : '';
 		
+		//Get the venues
+		$SQL .= $event_venue_id ? "JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id " : '';
+		$SQL .= $event_venue_id ? "JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id " : '';
+		
 		$SQL .= "WHERE e.is_active != 'N' ";
 		$SQL .= " AND e.event_status NOT IN ( 'D', 'S', 'P', 'X', 'R' ) "; //Deleted, Secondary/Waitlist, Pending, X?,  Draft
 		$SQL .= $event_category_id ?  " AND c.category_identifier = '$event_category_id' " : '';
-		
+		$SQL .= $event_venue_id ?  " AND v.id = '$event_venue_id' " : '';
 //		$SQL .= " AND (( e.start_date >= %s AND e.start_date <= %s ) OR e.event_status != 'O' ) ";		
 		$SQL .= " AND ( e.start_date >= %s AND e.start_date <= %s ) ";		
 		
