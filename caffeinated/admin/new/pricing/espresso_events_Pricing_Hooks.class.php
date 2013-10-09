@@ -78,6 +78,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 						'cancel_button' => '<button class="button-secondary ee-modal-cancel">' . __('Cancel', 'event_espresso') . '</button>',
 						'single_warning' => __('The Datetime you are attempting to unattach from this ticket is the only remaining datetime for this ticket. Tickets must always have at least one datetime active on them', 'event_espresso'),
 						'dismiss_button' => '<button class="button-secondary ee-modal-cancel">' . __('Dismiss', 'event_espresso') . '</button>'
+						),
+					'DTT_ERROR_MSG' => array(
+						'no_ticket_name' => __('The No Name Ticket', 'event_espresso'),
+						'dismiss_button' => '<div class="save-cancel-button-container"><button class="button-secondary ee-modal-cancel">' . __('Dismiss', 'event_espresso') . '</button></div>'
 						)
 					)
 				)
