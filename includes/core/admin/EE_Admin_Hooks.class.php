@@ -315,8 +315,9 @@ abstract class EE_Admin_Hooks extends EE_Base {
 					$this->_scripts_styles['registers'][$ref]['type'] == 'js' ? wp_enqueue_script($ref) : wp_enqueue_style($ref);
 					//if we have a localization for the script let's do that too.
 					if ( isset( $this->_scripts_styles['localize'][$ref] ) ) {
-						$object_name = key($this->_scripts_styles['localize'][$ref]);
-						wp_localize_script($ref, $object_name , $this->_scripts_styles['localize'][$ref][$object_name] );
+						foreach ( $this->_scripts_styles['localize'][$ref] as $object_name => $indexes ) {
+							wp_localize_script($ref, $object_name , $this->_scripts_styles['localize'][$ref][$object_name] );
+						}
 					}
 				}
 			}
