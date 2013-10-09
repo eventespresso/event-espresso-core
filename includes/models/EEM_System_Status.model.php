@@ -123,7 +123,7 @@ class EEM_System_Status{
 	 * @return EE_Data_Migration_Script_Base[]
 	 */
 	function get_ee_migration_history(){
-		return EE_Data_Migration_Manager::instance()->get_data_migrations_ran();
+		return get_option(EE_Data_Migration_Manager::data_migrations_option_name);//EE_Data_Migration_Manager::instance()->get_data_migrations_ran();
 	}
 	
 	/**
