@@ -197,8 +197,8 @@ jQuery(document).ready(function($) {
 					hide: "unfocus",
 					style: {
 						classes: event.tooltip_style, 
-					},
-					widget: true
+						widget: true
+					}
 				});
 				
 			} else {
