@@ -1586,12 +1586,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return file 
 	 */
 	protected function _events_export() {
-
+		$event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : $this->_req_data['EVT_IDs'];
 		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'all_event_data',
-			'event_id' => $this->_req_data['EVT_ID'],
+			'event_id' => $event_ids ,
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 

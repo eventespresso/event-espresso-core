@@ -34,11 +34,6 @@ class EE_Data_Migration_Manager{
 	const data_migrations_option_name = 'espresso_data_migrations';
 	
 	/**
-	 * name of the wordpress option which stores the name of the currently-executing data migration script
-	 */
-	const currently_executing_script_option_name = 'espresso_data_migration_currenctly_executing_migration_script';
-	
-	/**
 	 * name of the wordpress option which stores the database' current version. IE, the code may be at version 4.2.0,
 	 * but as migrations are performed the database will progress from 3.1.35 to 4.1.0 etc.
 	 */

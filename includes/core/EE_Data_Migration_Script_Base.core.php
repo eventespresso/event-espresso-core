@@ -318,42 +318,69 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return void
 	 */
 	public function instantiate_from_array_of_properties($array_of_properties){
-		$stages = $array_of_properties['_migration_stages'];
+		$stages_properties_arrays = $array_of_properties['_migration_stages'];
 		unset($array_of_properties['_migration_stages']);
 		unset($array_of_properties['class']);
 		foreach($array_of_properties as $property_name => $property_value){
 			$this->$property_name = $property_value;
 		}
-		foreach($stages as $stage_priority => $stage_properties_array){
-			$stage_class_name = $stage_properties_array['class'];
-			//if the script is done, we just want to preserve old data because it wont run again
-			//but if it isn't done, then we want to only have valid migration stages on this script
-			if($this->is_borked() || $this->is_completed()){
-				$include_invalid_stages = true;
-			}else{
-				$include_invalid_stages = false;
+		//_migration_stages are already instantiated, but have only default data
+		foreach($this->_migration_stages as $priority => $stage){
+			$stage_data = $this->_find_migration_stage_data_with_classname(get_class($stage),$stages_properties_arrays);
+			//SO, if we found the stage data that was saved, use it. Otherwise, I guess the stage is new? (maybe added by
+			//an addon? Unlikely... not sure why it wouldn't exist, but if it doesn't just treat it like it was never started yet)
+			if($stage_data){
+				$stage->instantiate_from_array_of_properties($stage_data);
 			}
-			if( ! class_exists($stage_class_name) ){
-				if($include_invalid_stages){
-					$this->_migration_stages[$stage_priority] = $stage_properties_array;
-				}
-				//ie, if we're not leaving ivnalid stages alone, we drop it
-				continue;
-			}
-			$stage = new $stage_class_name;
-			if( ! $stage instanceof EE_Data_Migration_Script_Stage){
-				if($include_invalid_stages){
-					$this->_migration_stages[$stage_priority] = $stage;
-				}
-				//ie, if we're not leaving invalid srtages alone, we drop it
-				continue;
-			}
-			
-			$stage->instantiate_from_array_of_properties($stage_properties_array);
-			$this->_migration_stages[$stage_priority] = $stage;
 		}
+//		foreach($stages as $stage_priority => $stage_properties_array){
+//			$stage_class_name = $stage_properties_array['class'];
+//			//if the script is done, we just want to preserve old data because it wont run again
+//			//but if it isn't done, then we want to only have valid migration stages on this script
+//			if($this->is_borked() || $this->is_completed()){
+//				$include_invalid_stages = true;
+//			}else{
+//				$include_invalid_stages = false;
+//			}
+//			if( ! class_exists($stage_class_name) ){
+//				if($include_invalid_stages){
+//					$this->_migration_stages[$stage_priority] = $stage_properties_array;
+//				}
+//				//ie, if we're not leaving ivnalid stages alone, we drop it
+//				continue;
+//			}
+//			$stage = new $stage_class_name;
+//			if( ! $stage instanceof EE_Data_Migration_Script_Stage){
+//				if($include_invalid_stages){
+//					$this->_migration_stages[$stage_priority] = $stage;
+//				}
+//				//ie, if we're not leaving invalid srtages alone, we drop it
+//				continue;
+//			}
+//			
+//			$stage->instantiate_from_array_of_properties($stage_properties_array);
+//			$this->_migration_stages[$stage_priority] = $stage;
+//		}
+	}
+	/**
+	 * Gets the migration data from the array $migration_stage_data_arrays (which is an array of arrays, each of which
+	 * is pretty well identical to EE_Data_Migration_Stage objects except all their properties are array indexes)
+	 * for the given classname
+	 * @param type $classname
+	 * @param type $migration_stage_data_arrays
+	 * @return null
+	 */
+	private function _find_migration_stage_data_with_classname($classname,$migration_stage_data_arrays){
+		foreach($migration_stage_data_arrays as $priority => $migration_dstage_data_array){
+			if(isset($migration_dstage_data_array['class']) && $migration_dstage_data_array['class'] == $classname){
+				return $migration_dstage_data_array;
+			}
+		}
+		return null;
 	}
 }
+
+
 
 /**
  * Each migration script is meant to be composed of different stages. Often, each stage corresponds
