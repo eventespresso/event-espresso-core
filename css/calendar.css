@@ -2,6 +2,7 @@
  * Espresso Events Calendar Stylesheet
  * (c) 2013 Espresso Events
  * -------------------------------------------------------------------------*/
+@import url(jquery.qtip.min.css);
 
 #espresso_calendar { 
 	position: relative !important; 
@@ -11,7 +12,6 @@
 }
 #espresso_calendar:not(.ui-widget) .fc-header-title h2 {
 	font-size:1.3rem;
-	color: #777;
 	margin:0; 
 	font-weight: 400; 
 	line-height: 1;
@@ -27,9 +27,7 @@
 	margin-bottom: 0;
 }
 #espresso_calendar .fc-day-header {
-	padding:5px 0; 
-	background:#eee; 
-	color: #777; 
+	padding:5px 0;  
 	font-weight: 400;
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button { 
@@ -44,9 +42,8 @@
 	word-wrap: normal; 
 	font-weight: 400; 
 	font-size:.8rem; 
-	color: #777; 
 	opacity: 1;
-	margin-right:5px;
+	margin-right:1px;
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev, 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next { padding: 10px 0.6em; 
@@ -120,7 +117,6 @@
 }	
 #espresso_calendar:not(.ui-widget) .fc-event { 
 	margin:0 1.5px 3px;
-	padding:5px; 
 	border: none; 
 	border-radius:0; 
 	background-color:#007BAE; 
@@ -144,17 +140,17 @@
 }
 
 #espresso_calendar .fc-event-title { 
-	display: inline-block; 
-	margin-right:1em; 
-	padding: 0 0 2px; 
+	display: block; 
+	padding: 0 4px; 
 }
 #espresso_calendar .fc-event-time { 
-	display: inline-block; 
-	padding: 0 0 2px; 
+	display: block; 
+	padding: 0 0 4px; 
 }
-#espresso_calendar .time-display-block { 
+#espresso_calendar .time-display-block,
+#espresso_calendar .event-end-time { 
 	margin:0;
-	padding: 0;	 
+	padding: 0 4px;	 
 	font-size: .85rem;
 }
 #espresso_calendar .thumb-wrap { 
@@ -181,17 +177,25 @@
 #espresso_calendar .fc-widget-header {
 	font-weight: 400;
 }
-.qtip { 
+.qtip, .ui-helper-reset { 
 	border: 1px solid #ccc;
 	padding: 10px; 
 }
 .ui-tooltip-title {
 	font-size:1rem;
 	font-weight: 600;
-	margin-bottom:10px;
+	margin:10px;
 }
 .ui-tooltip-content p {
-	line-height: 1.5;
+	font-size:.85rem;
+	line-height: 1.2;
+	padding:10px 10px 0 10px;
+}
+p.time_cal_qtip {
+	padding:10px;
+	margin: 10px;
+	border-top:1px dashed #ccc;
+	border-bottom:1px dashed #ccc;
 }
 .qtip-close .ui-icon {
 	margin:0 !important;
@@ -205,7 +209,7 @@
 .reg-now-btn {
 	display: inline-block; 
 	float: right; 
-	margin:1em 0 1em 1em; 
+	margin:10px; 
 	padding: .5em 1em .5em; 
 	border-radius: 2px; 
 	color: #777; 
