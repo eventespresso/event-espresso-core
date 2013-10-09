@@ -301,7 +301,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    //get transaction object
 	    $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
-	 	if ( empty( $transaction ) ) {
+	 	if ( empty( $this->_transaction ) ) {
 	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 	    }
@@ -439,7 +439,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->wp_page_slug,
 			'normal',
 			'high',
-			array( 'TXN_ID' => $this->_transaction->TXN_ID )
+			array( 'TXN_ID' => $this->_transaction->ID() )
 		);
 		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Registrant', 'event_espresso' ), array( $this, '_txn_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
 		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_txn_billing_info_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
@@ -462,7 +462,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['items'] = array();
 		$exclude = array( 'attendees' );
 		
-		$this->_template_args['REG_code'] = $this->_transaction->REG_code;
+		$this->_template_args['REG_code'] = $this->_transaction->get_first_related('Registration')->get('REG_code');
 		
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
@@ -518,7 +518,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['txn_details']['invoice_number']['class'] = 'regular-text';
 		} 
 
-		$this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction->get('REG_session');
+		$this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction->get_first_related('Registration')->get('REG_session');
 		$this->_template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
 		$this->_template_args['txn_details']['registration_session']['class'] = 'regular-text';
 		
