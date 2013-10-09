@@ -271,12 +271,11 @@ class EE_Calendar {
 		
 		if (!empty($temp_venue) || !empty($temp_cats)){
 			?>
-	
+	<?php _e('Filter by', 'event_espresso'); ?> 
 			<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
-			<label><?php echo __('Filter by Category ', 'event_espresso'); ?></label>
 			
 			<select class="submit-this" name="event_category_id">
-				<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+				<option class="ee_filter_show_all" value=""><?php echo __('Category (all)', 'event_espresso'); ?></option>
 				<?php
 					foreach($temp_cats as $cat) {
 						
@@ -285,10 +284,9 @@ class EE_Calendar {
 				?>
 			</select>
 			
-			<label><?php echo __('Filter by Venue ', 'event_espresso'); ?></label>
 			
 			<select class="submit-this" name="event_venue_id">
-				<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+				<option class="ee_filter_show_all" value=""><?php echo __('Venue (all)', 'event_espresso'); ?></option>
 				<?php
 					foreach($temp_venue as $venue) {
 						echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
