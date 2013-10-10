@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class Registrations_Admin_Page extends EE_Admin_Page {
+class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
 	 *
@@ -54,6 +54,18 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	protected function _init_page_props() {
 		$this->page_slug = REG_PG_SLUG;
 		$this->page_label = __('Registrations', 'event_espresso');
+		$this->_cpt_routes = array(
+			'add_new_attendee' => 'espresso_attendees',
+			'edit_attendee' => 'espresso_attendees',
+			'insert_attendee' => 'espresso_attendees',
+			);
+		$this->_cpt_model_names = array(
+			'add_new_attendee' => 'EEM_Attendee',
+			'edit_attendee' => 'EEM_Attendee'
+			);
+		$this->_cpt_edit_routes = array(
+			'espresso_attendees' => 'edit_attendee'
+			);
 	}
 
 
@@ -162,16 +174,17 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					),
 				
 				'contact_list'	=> '_attendee_contact_list_table',
+
 				
 				'add_new_attendee'	=> array( 
-					'func' => '_edit_attendee_details', 
+					'func' => '_create_new_cpt_item', 
 					'args' => array( 
 						'new_attendee' => TRUE 
 					)
 				),
 				
 				'edit_attendee'	=> array( 
-					'func' => '_edit_attendee_details'
+					'func' => '_edit_cpt_item'
 				),
 				
 				'insert_attendee'	=> array( 
@@ -352,10 +365,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
 		}
 	}
-
-
-
-
 
 
 
@@ -2514,8 +2523,12 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 	/***************************************		ATTENDEE DETAILS 		***************************************/
 
-
-
+	//related to cpt routes
+	protected function _insert_update_cpt_item($post_id, $post) {}
+	public function trash_cpt_item($post_id) {}
+	public function delete_cpt_item($post_id) {}
+	public function restore_cpt_item($post_id) {}
+	protected function _restore_cpt_item($post_id, $revision_id) {}
 	/**
 	 * 		_attendee_details
 	*		@access protected
