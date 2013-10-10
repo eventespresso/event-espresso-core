@@ -66,6 +66,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_cpt_edit_routes = array(
 			'espresso_attendees' => 'edit_attendee'
 			);
+
+		add_action('edit_form_after_title', array($this, 'after_title_form_fields'), 10 );
 	}
 
 
@@ -2533,6 +2535,32 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function delete_cpt_item($post_id) {}
 	public function restore_cpt_item($post_id) {}
 	protected function _restore_cpt_item($post_id, $revision_id) {}
+
+
+
+	/**
+	 * add in the form fields for the attendee edit
+	 * @param  WP_Post $post wp post object
+	 * @return string        html for new form.
+	 */
+	public function after_title_form_fields($post) {
+		if ( $post->post_type == 'espresso_attendees' ) {
+			?>
+			<div id="titlediv">
+				<div id="titlewrap">
+					<label class="hidden" id="attendee-first-name-text" for="ATT_fname">First Name:</label>
+					<input type="text" class="main-text-field" name="ATT_fname" value="<?php echo $this->_cpt_model_obj->get('ATT_fname'); ?>" id="ATT_fname" class="smaller-text-field" placeholder="<?php _e('First Name', 'event_espresso'); ?>">
+					<label class="hidden" id="attendee-first-name-text" for="ATT_lname">Last Name:</label>
+					<input type="text" class="main-text-field" name="ATT_lname" value="<?php echo $this->_cpt_model_obj->get('ATT_lname'); ?>" id="ATT_lname" class="smaller-text-field" placeholder="<?php _e('Last Name', 'event_espresso'); ?>">
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<?php
+		}
+	}
+
+
+
 	/**
 	 * 		_attendee_details
 	*		@access protected
