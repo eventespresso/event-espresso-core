@@ -669,7 +669,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @param string $title The new title (or existing if there is no editor_title defined)
 	 */
 	public function add_custom_editor_default_title( $title ) {
-		return isset( $this->_labels['editor_title'] ) ? $this->_labels['editor_title'] : $title;
+		return isset( $this->_labels['editor_title'][$this->_cpt_routes[$this->_req_action]] ) ? $this->_labels['editor_title'][$this->_cpt_routes[$this->_req_action]] : $title;
 	}
 
 
