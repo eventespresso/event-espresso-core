@@ -190,6 +190,18 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 				PRIMARY KEY  (EXM_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 
+		$table_name='esp_line_item';
+		$sql="LIN_ID int(11) NOT NULL AUTO_INCREMENT,
+				TXN_ID int(11) DEFAULT NULL,
+				LIN_name varchar(245) NOT NULL DEFAULT '',
+				LIN_desc varchar(245) DEFAULT NULL,
+				LIN_amount decimal(10,3) DEFAULT NULL,
+				LIN_quantity int(10) DEFAULT NULL,
+				LIN_taxable tinyint(1) DEFAULT NULL,
+				LIN_item_id varchar(10) DEFAULT NULL,
+				LIN_item_type varchar(45)DEFAULT NULL,
+				PRIMARY KEY  (LIN_ID)";
+		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
