@@ -30,7 +30,10 @@ class EED_Invoice  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+		EE_Config::register_route( 'download_invoice', 'EED_Invoice', 'download_invoice' );
+		EE_Config::register_route( 'launch_invoice', 'EED_Invoice', 'launch_invoice' );
 	}
+	
 
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
@@ -74,6 +77,7 @@ class EED_Invoice  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function invoice_launch() {
+		$this->run(null);
 		if ( $this->EE->REQ->is_set( 'id' )) {
 			$id = sanitize_key( $this->EE->REQ->get( 'id' ));
 			$invoice = new Invoice( $id );
@@ -90,6 +94,7 @@ class EED_Invoice  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function download_invoice() {
+		$this->run(null);
 		if ( $this->EE->REQ->is_set( 'id' )) {
 			$id = sanitize_key( $this->EE->REQ->get( 'id' ));
 			$invoice = new Invoice($_REQUEST['id']);

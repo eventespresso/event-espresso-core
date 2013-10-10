@@ -6,9 +6,9 @@ class Invoice {
 	private $registration;
 	private $transaction;
 	private $invoice_settings;
-
+	private $EE;
 	public function __construct($url_link = 0) {
-
+		$this->EE = EE_Registry::instance();
 		if ( $this->registration = EE_Registry::instance()->load_model( 'Registration' )->get_registration_for_reg_url_link( $url_link)) {
 			$this->transaction = $this->registration->transaction();
 			
@@ -66,7 +66,7 @@ class Invoice {
 		$template_args['email'] = $EE->CFG->organization->email;
 		$template_args['download_link'] = home_url() . '/?invoice_launch=true&amp;id=' . $this->registration->reg_url_link();
 		$template_args['registration_code'] = $this->registration->reg_code();
-		$template_args['registration_date'] = date_i18n(get_option('date_format'), $this->registration->date());
+		$template_args['registration_date'] = $this->registration->date();
 		$template_args['name'] = $primary_attendee->full_name();
 		$template_args['attendee_address'] = $primary_attendee->address();
 		$template_args['attendee_address2'] = $primary_attendee->address2();
@@ -110,6 +110,7 @@ class Invoice {
 		$EE->load_helper( 'Formatter' );
 		
 		//Get the HTML as an object
+		$this->EE->load_helper('Template');
 		$template_header = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
 		$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
 		$template_footer = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_footer.template.php', $template_args, TRUE );
@@ -176,6 +177,12 @@ class Invoice {
 				"[registration_date]"
 		);
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
+		$org_state = $this->EE->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
+		if($org_state){
+			$org_state_name = $org_state->name();
+		}else{
+			$org_state_name = 'Unknown';
+		}
 		$ReplaceValues = array(
 				stripslashes( $EE->CFG->organization->name ),
 				$this->registration->reg_code(),
@@ -185,10 +192,10 @@ class Invoice {
 				$invoice_logo_image,
 				empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2,
 				$EE->CFG->organization->city,
-				$this->EE->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID ),
+				$org_state_name,
 				$EE->CFG->organization->zip,
 				$EE->CFG->organization->email,
-				date_i18n(get_option('date_format'), $this->registration->date())
+				$this->registration->date()
 		);
 
 		return str_replace($SearchValues, $ReplaceValues, $content);
@@ -216,7 +223,7 @@ class Invoice {
 		$row_id = strtolower( str_replace( $find, $replace, $text ));
 		$html .= '<tr id="'.$row_id.'-tr"><td colspan="4">&nbsp;</td>';
 		$html .= '<td class="item_r">' . $text . '</td>';
-		$html .= '<td class="item_r">' . EEH_Template::format_currency( $total_cost ) . '</td>';
+		$html .= '<td class="item_r">' . $total_cost . '</td>';
 		$html .= '</tr>';
 		return $html;
 	}

@@ -557,7 +557,8 @@ class EE_Registration extends EE_Base_Class {
 	 * @return string
 	 */
 	public function invoice_url(){
-		return home_url() . '/?invoice_launch=true&amp;id=' . $this->reg_url_link();
+		return add_query_arg(array('ee'=>'download_invoice','id'=>$this->reg_url_link()),get_permalink($this->EE->CFG->core->thank_you_page_id));
+//		return home_url() . '/?invoice_launch=true&amp;id=' . $this->reg_url_link();
 	}
 
 	
