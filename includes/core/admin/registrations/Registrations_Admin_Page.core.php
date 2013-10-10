@@ -68,10 +68,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		add_action('edit_form_after_title', array($this, 'after_title_form_fields'), 10 );
+		//add filters so that the comment urls don't take users to a confusing 404 page
+		add_filter('get_comment_link', array( $this, 'clear_comment_link' ), 10, 3 );
 	}
 
 
-
+	public function clear_comment_link( $link, $comment, $args ) {
+		//gotta make sure this only happens on this route
+		$post_type = get_post_type( $comment->comment_post_ID);
+		if ( $post_type == 'espresso_attendees' )
+			return '#commentsdiv';
+		return $link;
+	}
 
 
 	protected function _ajax_hooks() {
