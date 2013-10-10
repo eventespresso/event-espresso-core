@@ -57,11 +57,11 @@ class EE_CPT_Strategy extends EE_BASE {
 	protected $_CPT_endpoints = array();
 
 	/**
-	 * $model_objects - array of objects instantiated via EE models
-	 *	@var 	array	
+	 * $CPT_model
+	 *	@var 	object	
 	 * 	@access 	protected
 	 */
-	protected $model_objects = array();
+	protected $CPT_model = NULL;
 
 
 
@@ -156,11 +156,9 @@ class EE_CPT_Strategy extends EE_BASE {
 			//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// make sure CPT name is set or things is gonna break
 			if ( isset( $this->CPT['singular_name'] )) {
-				// CPT model name, ie: EEM_Event
-				$CPT_Model = 'EEM_' . $this->CPT['singular_name'];
 				// get CPT table data via CPT Model
-				$CPTM = $this->EE->load_model( $this->CPT['singular_name'] );
-				$this->CPT['tables'] = $CPTM->get_tables();
+				$this->CPT_model = $this->EE->load_model( $this->CPT['singular_name'] );
+				$this->CPT['tables'] = $this->CPT_model->get_tables();
 				// is there a Meta Table for this CPT?
 				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
 				// creates classname like:  EE_CPT_Event_Strategy
@@ -173,6 +171,7 @@ class EE_CPT_Strategy extends EE_BASE {
 				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 				add_filter( 'posts_join',	array( $this, 'posts_join' ));
 				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
+				add_action( 'loop_start',	array( $this, 'loop_start' ), 1 );
 
 			}				
 		}
@@ -204,8 +203,8 @@ class EE_CPT_Strategy extends EE_BASE {
 				$this->EE->REQ->set( 'ee', $this->CPT['singular_slug'] );
 			}
 		}
-
-//		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
+		//d( $this->EE->REQ );
 
 		return $WP_Query;
 		
@@ -226,7 +225,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
-//		echo '<h4>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//d( $SQL );
 		return $SQL;
 	}
 
@@ -245,8 +244,29 @@ class EE_CPT_Strategy extends EE_BASE {
 			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON ( ' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID ) ';
 		}
-//		echo '<h4>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//d( $SQL );
 		return $SQL;
+	}
+
+
+
+	/**
+	 * 	loop_start
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function loop_start( WP_Query $wp_query ) {
+//		d( $wp_query );
+		$CPT_class = 'EE_' . $this->CPT['singular_name'];
+		// loop thru posts
+		if ( isset( $wp_query->posts )) {
+			foreach( $wp_query->posts as $key => $post ) {
+				if ( isset( $this->_CPTs[ $post->post_type ] )) {
+					$post->$CPT_class = $this->CPT_model->instantiate_class_from_post_object( $post );
+				}
+			}
+		}		
 	}
 
 
