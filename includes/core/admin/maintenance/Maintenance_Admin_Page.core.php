@@ -96,7 +96,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * default maintenance page. If we're in maintenance mode level 2, then we need to show
 	 * the migration scripts and all that UI.
 	 */
-	public function _maintenance(){
+	public function _maintenance(){		
+//		$migration_scripts = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
+//		$migration_script = end($migration_scripts);
+//		d($migration_script);
+//		$p = $migration_script->properties_as_array();
+//		d($p);
+//		$dm = EE_Data_Migration_Manager::instance()->_instantiate_script_from_properties_array($p);
+//		dd($dm);
 		//it all depends if we're in maintenance model level 1 (frontend-only) or
 		//level 2 (everything except maintenance page)
 		switch(EE_Maintenance_Mode::instance()->level()){
@@ -127,10 +134,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				break;
 		}
 		$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
-		
 		if($most_recent_migration && 
 				$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
-				$most_recent_migration->is_borked()){
+				$most_recent_migration->is_borked()
+				){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
 		}elseif($addons_should_be_upgraded_first){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';

@@ -213,6 +213,7 @@ class EE_messages_init extends EE_Base {
 		}
 
 		if ( $success ) {
+			EE_Error::overwrite_success();
 			EE_Error::add_success( __('The registration confirmation has been sent', 'event_espresso') );
 		} else {
 			EE_Error::add_error( __('Something went wrong and the registration confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );

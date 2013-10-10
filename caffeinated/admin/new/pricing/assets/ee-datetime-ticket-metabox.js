@@ -275,11 +275,13 @@ jQuery(document).ready(function($) {
 
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
+						DTT_start_time = DTT_start_time === '' ? moment().add('weeks', 1).hours(8).minutes(0).format('YYYY-MM-DD h:mm a') : DTT_start_time;
 						$(this).val(DTT_start_time);
 						break;
 
 					case 'event-datetime-DTT_EVT_end' :
 						DTT_end_time = $('#add-new-' + inputid, '#add-event-datetime').val();
+						DTT_end_time = DTT_end_time === '' ? moment(DTT_start_time, 'YYYY-MM-DD h:mm a').add('hours', 4 ).format('YYYY-MM-DD h:mm a') : DTT_end_time;
 						$(this).val(DTT_end_time);
 						break;
 
@@ -924,10 +926,11 @@ jQuery(document).ready(function($) {
 		 * @return {object} this object (for chainability)
 		 */
 		newTicketRow: function() {
-			var idref, curval, newval, price_amount, pricename;
+			var idref, curval, newval, price_amount, pricename, errormsg;
 			var incomingcontext = this.context;
 			//replace all instances of TICKETNUM with new generated row number
 			this.context = 'ticket';
+
 			var row = this.increaserowcount();
 			this.createdItems.push(row);
 			//edit form stuff
@@ -945,21 +948,39 @@ jQuery(document).ready(function($) {
 			if ( incomingcontext == 'short-ticket' ) {
 				// inputs
 				$('.add-datetime-ticket-container','#edit-event-datetime-tickets-' + this.dateTimeRow ).find('input').each( function() {
-					idref = $(this).attr('class').replace('add-new-', '.edit-');
-					//we also need to strip out any datepicker classes that might have got added
-					idref = idref.replace('ee-datepicker', '');
-					idref = idref.replace('hasDatepicker', '');
-					idref = $.trim(idref);
-					curval = $(this).val();
-					newTKTrow.find(idref).val(curval);
+					curval='';
 					if ( $(this).hasClass('add-new-ticket-PRC_amount') ) {
-						price_amount = parseFloat(curval);
+						price_amount = $(this).val();
+						price_amount = price_amount !== '' ? parseFloat(price_amount) : 0;
 						price_amount = price_amount.toFixed(2);
 					}
 
 					if ( $(this).hasClass('add-new-ticket-TKT_name') ) {
 						pricename = $(this).val();
+						if ( pricename === '' ) {
+							pricename = curval = DTT_ERROR_MSG.no_ticket_name;
+						}
 					}
+
+					if ( $(this).hasClass('add-new-ticket-TKT_start_date') ) {
+						if ( $(this).val() === '' ) {
+							curval = moment().add('hours', 2).format('YYYY-MM-DD h:mm a');
+						}
+					}
+
+					if ( $(this).hasClass('add-new-ticket-TKT_end_date') ) {
+						if ( $(this).val() === '' ) {
+							curval = $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + tktHelper.dateTimeRow).val();
+						}
+					}
+
+					idref = $(this).attr('class').replace('add-new-', '.edit-');
+					//we also need to strip out any datepicker classes that might have got added
+					idref = idref.replace('ee-datepicker', '');
+					idref = idref.replace('hasDatepicker', '');
+					idref = $.trim(idref);
+					curval = curval === '' ? $(this).val() : curval;
+					newTKTrow.find(idref).val(curval);
 
 					$(this).val('');
 				});
@@ -1678,9 +1699,8 @@ jQuery(document).ready(function($) {
 	 * Datepicker functionality
 	 */
 	
-	$('#event-and-ticket-form-content').on('focus', '.ee-datepicker', function(e) {
+	$('#event-and-ticket-form-content').on('focusin', '.ee-datepicker', function(e) {
 		e.preventDefault();
-		e.stopPropagation();
 		var data = $(this).data();
 		var start = data.context == 'start-dtt' || data.context == 'start-ticket' ? $(this, data.dateFieldContext ) : $(data.relatedField, data.dateFieldContext);
 		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.relatedField, data.dateFieldContext);
@@ -1689,6 +1709,6 @@ jQuery(document).ready(function($) {
 
 		//@todo: intelligently create min and max values for the ticket dates according to any attached dtts.  This will be tricky tho so leaving for a future iteration.
 
-		dttPickerHelper.picker(start, end, next, doingstart);
+		dttPickerHelper.resetpicker().picker(start, end, next, doingstart);
 	});
 });

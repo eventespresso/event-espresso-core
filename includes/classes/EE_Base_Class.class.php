@@ -497,6 +497,21 @@ class EE_Base_Class{
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		return $this->_get_cached_property( $privateAttributeName, FALSE, $extra_cache_ref );
 	}
+
+
+	/**
+	 * This method simply returns the RAW unprocessed value for the given property in this class
+	 * @param  string $field_name A valid fieldname
+	 * @return mixed              Whatever the raw value stored on the property is.
+	 * @throws EE_Error if fieldSettings is misconfigured or the field doesn't exist.
+	 */
+	public function get_raw($field_name) {
+		$privateAttributeName = $this->_get_private_attribute_name($field_name);
+		$this->_property_exists( $privateAttributeName );
+		return $this->$privateAttributeName;
+	}
+
+
 	
 	/**
 	 * To be used in template to immediately echo out the value, and format it for output.

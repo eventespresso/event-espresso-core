@@ -734,10 +734,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
 				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
-				'TKT_qty' => isset( $tkt['TKT_qty'] ) ? $tkt['TKT_qty'] : -1,
-				'TKT_uses' => isset( $tkt['TKT_uses'] ) ? $tkt['TKT_uses'] : -1,
-				'TKT_min' => isset( $tkt['TKT_min'] ) ? $tkt['TKT_min'] : 1,
-				'TKT_max' => isset( $tkt['TKT_max'] ) ? $tkt['TKT_max'] : -1,
+				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? -1 : $tkt['TKT_qty'],
+				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? -1 : $tkt['TKT_uses'],
+				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
+				'TKT_max' => empty( $tkt['TKT_max'] ) ? -1 : $tkt['TKT_max'],
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
 				'TKT_price' => $ticket_price
@@ -1080,7 +1080,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'TKT_start_date' => $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
 			'TKT_end_date' => $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
 			'TKT_is_default' => $ticket->get('TKT_is_default'),
-			'TKT_qty' => $ticket->get('TKT_qty'),
+			'TKT_qty' => $ticket->get('TKT_qty') === -1 ? '' : $ticket->get('TKT_qty'),
 			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets'
 			);
 
@@ -1586,12 +1586,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return file 
 	 */
 	protected function _events_export() {
-
+		$event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : $this->_req_data['EVT_IDs'];
 		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'all_event_data',
-			'event_id' => $this->_req_data['EVT_ID'],
+			'event_id' => $event_ids ,
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 

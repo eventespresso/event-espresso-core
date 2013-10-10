@@ -301,7 +301,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    //get transaction object
 	    $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
-	 	if ( empty( $transaction ) ) {
+	 	if ( empty( $this->_transaction ) ) {
 	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 	    }
@@ -439,7 +439,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->wp_page_slug,
 			'normal',
 			'high',
-			array( 'TXN_ID' => $this->_transaction->TXN_ID )
+			array( 'TXN_ID' => $this->_transaction->ID() )
 		);
 		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Registrant', 'event_espresso' ), array( $this, '_txn_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
 		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_txn_billing_info_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
@@ -462,7 +462,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['items'] = array();
 		$exclude = array( 'attendees' );
 		
-		$this->_template_args['REG_code'] = $this->_transaction->REG_code;
+		$this->_template_args['REG_code'] = $this->_transaction->get_first_related('Registration')->get('REG_code');
 		
 		if ( ! empty( $cart_items )) {
 			foreach ( $cart_items as $line_item_ID => $item ) {
@@ -518,7 +518,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['txn_details']['invoice_number']['class'] = 'regular-text';
 		} 
 
-		$this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction->get('REG_session');
+		$this->_template_args['txn_details']['registration_session']['value'] = $this->_transaction->get_first_related('Registration')->get('REG_session');
 		$this->_template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
 		$this->_template_args['txn_details']['registration_session']['class'] = 'regular-text';
 		
@@ -1010,6 +1010,34 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'TXN_timestamp' => array('BETWEEN', array($start_date, $end_date) ),
 			'Registration.REG_count' => 1
 			);
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$_where['OR'] = array(
+				'Registration.Event.EVT_name' => array( 'LIKE', $sstr),
+				'Registration.Event.EVT_desc' => array( 'LIKE', $sstr ),
+				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Registration.Attendee.ATT_fname' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_lname' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_email' => array('LIKE', $sstr ),
+				'Registration.Attendee.ATT_address' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_address2' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_city' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_comments' => array( 'LIKE', $sstr ),
+				'Registration.Attendee.ATT_notes' => array( 'LIKE', $sstr ),
+				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
+				'Registration.REG_code' => array( 'LIKE', $sstr ),
+				'Registration.REG_count' => array( 'LIKE' , $sstr ),
+				'Registration.REG_group_size' => array( 'LIKE' , $sstr ),
+				'Registration.Ticket.TKT_name' => array( 'LIKE', $sstr ),
+				'Registration.Ticket.TKT_description' => array( 'LIKE', $sstr ),
+				'Payment.PAY_method' => array('LIKE', $sstr),
+				'Payment.PAY_gateway' => array('LIKE', $sstr),
+				'TXN_details' => array( 'LIKE', $sstr ),
+				'TXN_session_data' => array( 'LIKE', $sstr )
+				);
+		}
 
 		$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
 

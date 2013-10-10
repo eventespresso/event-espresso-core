@@ -156,9 +156,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
 		//todo, this will morph into the "Person" metabox once events are converted to cpts and we have the persons cpt in place.
-		if ( $this->EE->CFG->admin->use_personnel_manager ) {
+		/*if ( $this->EE->CFG->admin->use_personnel_manager ) {
 			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array( $this, 'personnel_metabox' ), $this->page_slug, 'side', 'default');
-		}
+		}/**/
 	}
 
 

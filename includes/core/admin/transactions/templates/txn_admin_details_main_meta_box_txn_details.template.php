@@ -23,7 +23,7 @@
 				<td class="jst-left"><?php echo $item['line_item_id'];?></td>
 				<td class="jst-left"><?php echo $item['name'];?></td>
 				<td class="jst-left"><?php echo date( 'D M j, Y', $item['date'] ) . ',    ' . date( 'g:i a', $item['time'] );?></td>
-				<td class="jst-left"><?php echo stripslashes( $item['price_desc'] );?></td>
+				<td class="jst-left"><?php echo stripslashes( $item['ticket_desc'] );?></td>
 				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['ticket_price'], 2 );?></td>
 				<td class="jst-rght"><?php echo $item['qty'];?></td>
 				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['line_total'], 2 );?></td>

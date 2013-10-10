@@ -78,6 +78,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 						'cancel_button' => '<button class="button-secondary ee-modal-cancel">' . __('Cancel', 'event_espresso') . '</button>',
 						'single_warning' => __('The Datetime you are attempting to unattach from this ticket is the only remaining datetime for this ticket. Tickets must always have at least one datetime active on them', 'event_espresso'),
 						'dismiss_button' => '<button class="button-secondary ee-modal-cancel">' . __('Dismiss', 'event_espresso') . '</button>'
+						),
+					'DTT_ERROR_MSG' => array(
+						'no_ticket_name' => __('The No Name Ticket', 'event_espresso'),
+						'dismiss_button' => '<div class="save-cancel-button-container"><button class="button-secondary ee-modal-cancel">' . __('Dismiss', 'event_espresso') . '</button></div>'
 						)
 					)
 				)
@@ -222,13 +226,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
 				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 1,
 				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
-				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
+				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
 				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
-				'TKT_qty' => isset( $tkt['TKT_qty'] ) ? $tkt['TKT_qty'] : -1,
-				'TKT_uses' => isset( $tkt['TKT_uses'] ) ? $tkt['TKT_uses'] : -1,
-				'TKT_min' => isset( $tkt['TKT_min'] ) ? $tkt['TKT_min'] : 1,
-				'TKT_max' => isset( $tkt['TKT_max'] ) ? $tkt['TKT_max'] : -1,
+				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? -1 : $tkt['TKT_qty'],
+				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? -1 : $tkt['TKT_uses'],
+				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
+				'TKT_max' => empty( $tkt['TKT_max'] ) ? -1 : $tkt['TKT_max'],
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
 				'TKT_taxable' => isset( $tkt['TKT_taxable'] ) ? 1 : 0
@@ -645,9 +649,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_status' => $default ? '' : $ticket->ticket_status(TRUE),
 			'TKT_price' => $default ? '' : $ticket->get_pretty('TKT_price'),
 			'TKT_price_amount' => $default ? 0 : $ticket->get('TKT_price'),
-			'TKT_qty' => $default ? '' : $ticket->get('TKT_qty'),
-			'TKT_uses' => $default ? '' : $ticket->get('TKT_uses'),
-			'TKT_min' => $default ? '' : $ticket->get('TKT_min'),
+			'TKT_qty' => $default ? '' : ( $ticket->get('TKT_qty') === -1 ? '' : $ticket->get('TKT_qty') ),
+			'TKT_uses' => $default ? '' : ( $ticket->get('TKT_uses') === -1 ? '' : $ticket->get('TKT_uses') ),
+			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 ? '' : $ticket->get('TKT_min') ),
 			'TKT_max' => $default ? '' : ( $ticket->get('TKT_max') === -1 ? '' : $ticket->get('TKT_max') ),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
@@ -672,6 +676,22 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'trash_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? 'lock-icon ' : 'trash-icon clickable',
 			'clone_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? '' : 'clone-icon clickable'
 			);
+
+		//handle rows that should NOT be empty
+		if ( empty( $template_args['TKT_start_date'] ) ) {
+			//if empty then the start date will be now.
+			$template_args['TKT_start_date'] = date('Y-m-d h:i a', current_time('timestamp'));
+		}
+
+		if ( empty( $template_args['TKT_end_date'] ) ) {
+			//get the earliest datetime (if present);
+			$earliest_dtt = $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? $this->_adminpage_obj->get_cpt_model_obj()->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
+
+			if ( !empty( $earliest_dtt ) )
+				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
+			else
+				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(0, 0, 0, date("m"), date("d")+7, date("Y") ) );
+		}
 
 		//generate ticket_datetime items
 		if ( ! $default ) {

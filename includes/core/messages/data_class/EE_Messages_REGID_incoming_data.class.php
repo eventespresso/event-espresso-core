@@ -104,7 +104,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 			$this->_events[$line_item]['line_ref'] = $line_item;
 			$this->_events[$line_item]['name'] = $event->get('EVT_name');
 
-			$daytime_id = $event->get_first_related('datetime')->ID();
+			$daytime_id = $event->get_first_related('Datetime')->ID();
 			$this->_events[$line_item]['daytime_id'] = $daytime_id;
 			
 			$TKT = $this->reg_obj->get_first_related('Ticket');
@@ -122,7 +122,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 				foreach ( $this->reg_objs as $reg ) {
 					$this->_attendees[$att_count]['line_ref'][] = $line_item;
 					$this->_attendees[$att_count]['att_obj'] = $this->_EEM_att->get_one_by_ID( $reg->attendee_ID() );
-					$this->_attendees[$att_count]['reg_objs'][$event->id] = $reg;
+					$this->_attendees[$att_count]['reg_objs'][$id] = $reg;
 					$att_count++;
 				}
 			}
