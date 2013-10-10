@@ -516,18 +516,18 @@ class EE_Calendar {
 				// and extension
 				$ext = $pathinfo['extension'];
 				// generate thumbnail size string ie: -150x150
-				$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
+				//$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
 				// check that thumbnail dimesions are not already included in filename
-				$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
+				//$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
 				$path_to_thumbnail = $dirname . $filename . '.' . $ext;
 				
-				$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
-				$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
+				//$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
+				//$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
 				
 				// check if file exists
 				if ( $pathinfo['dirname'] == $upload_dir['baseurl'] ) {
 					// since the above is true we know the file is in the uploads so we can use file_exists() to verify it
-					if ( ! file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . $thumbnail_size . '.' . $ext )) {
+					if ( ! file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext )) {
 						// hmmm...  the scaled thumbnail doesn't exist, so better check that the original is still there, or set path to FALSE
 						$path_to_thumbnail = file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext ) ? $event_meta['event_thumbnail_url'] : FALSE;
 					}			
