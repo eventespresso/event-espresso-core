@@ -1358,7 +1358,8 @@ abstract class EEM_Base extends EE_Base{
 						__("You passed %s as a query parameter to %s, which is illegal! The allowed query parameters are %s",'event_espresso'),
 						$query_key,
 						get_class($this),
-						print_r( $this->_allowed_query_params, TRUE )
+//						print_r( $this->_allowed_query_params, TRUE )
+						implode( ',', $this->_allowed_query_params )
 					)
 				);
 			}

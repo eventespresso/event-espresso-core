@@ -1,15 +1,15 @@
 jQuery(document).ready(function($) {
+	
 	$('#espresso-notices').center();
 	$('.espresso-notices').slideDown();
 	$('.espresso-notices.fade-away').delay(10000).slideUp();
 
 	//close btn for notifications
 	$('#espresso-notices').on( 'click', '.close-espresso-notice', function(e){
+		$(this).parent().hide();
 		e.preventDefault();
 		e.stopPropagation();
-		$(this).parent().hide();
 	});
-
 
 	var message = $('#ee-error-message');
 	var target;

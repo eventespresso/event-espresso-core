@@ -111,68 +111,48 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	string	
 	*/
-	public static function display_ticket_selector( $event = FALSE, $added_by_admin = FALSE ) {
+	public static function display_ticket_selector( $event = NULL, $added_by_admin = FALSE ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
 
-		if ( ! $event ) {
-			$user_msg = __( 'No Event was not supplied.', 'event_espresso' );
-			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing an event object to the EE_Ticket_Selector class constructor.', 'event_espresso' );
+//		d( $event );
+		if ( $event instanceof EE_Event ) {
+			self::$_event = $event;
+		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
+			self::$_event = $event->EE_Event;
+		} else if ( $event instanceof WP_Post && ( ! isset( $event->EE_Event ) || ! $event->EE_Event instanceof EE_Event )) {
+			$event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
+			self::$_event = $event->EE_Event;
+		} else {
+			$user_msg = __( 'No Event object or an invalid Event object was supplied.', 'event_espresso' );
+			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.', 'event_espresso' );
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );	
 			return FALSE;
 		}
-
-//		EE_Registry::instance()->load_class( 'Cost_Calculator' );
-
-		self::$_event = $event;
-
+		
 		$template_args = array();
 		
-		if ( self::$_event->EVT_allow_multiple ) {
+		if ( self::$_event->allow_multiple() ) {
 			// make sure additional_limit is set
-			if ( ! isset( self::$_event->EVT_additional_limit ) or self::$_event->EVT_additional_limit == '' ) {
-				self::$_event->EVT_additional_limit = self::$_event->reg_limit;
-			}
+			$additional_limit = self::$_event->additional_limit() ? self::$_event->additional_limit() : self::$_event->reg_limit();
 			// then make it at least 1
-			self::$_event->EVT_additional_limit = ( self::$_event->EVT_additional_limit == 0 ) ? 1 : self::$_event->EVT_additional_limit;
+			$additional_limit = $additional_limit == 0 ? 1 : $additional_limit;
+			self::$_event->set_additional_limit( $additional_limit );
 			// let's make the max amount of attendees somebody can select a little more reasonable
-			$template_args['max_atndz'] = self::$_event->EVT_additional_limit > 16 ? 16 : self::$_event->EVT_additional_limit;	
+			$template_args['max_atndz'] = $additional_limit > 16 ? 16 : $additional_limit;	
 		} else {
 			$template_args['max_atndz'] = 1;
 		}
 		
-		$template_args['event_id'] = self::$_event->ID;
+		$template_args['EVT_ID'] = self::$_event->ID();
 		$template_args['event'] = self::$_event;
-		$template_args['event_name'] = self::$_event->post_title;
-		$template_args['require_pre_approval'] = self::$_event->EVT_require_pre_approval;
 		
-		
-		// get 
-//		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
-//			array(
-//				'Datetime.EVT_ID' => self::$_event->ID,
-//				'OR' => array(
-//					'Datetime.DTT_sold' => array( '<', 'Datetime.DTT_reg_limit', TRUE ),
-//					'Datetime.DTT_reg_limit' => 0
-//				),		
-//				 'OR' => array(
-//					'TKT_sold' =>array( '<', 'TKT_qty', TRUE ),
-//					'TKT_qty' => 0			
-//				)
-//			),
-//			'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC', 'TKT_order' => 'DESC' )
-//		));
-//		global $wpdb;
-//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		d( $template_args['tickets'] );
-		
-		
-
-		$template_args['datetimes'] = self::$_event->datetimes;
-		$template_args['datetimes'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__datetimes', self::$_event->datetimes, self::$_event );
-		
+		// get all tickets for this event ordered by the datetime
+		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
+			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
+			'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC', 'TKT_start_date' => 'ASC' )
+		));
+	
 		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
-//		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_multi_selects.template.php';
-//		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_threaded_chart.template.php';
 		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
 		EEH_Template::display_template($templates['ticket_selector'], $template_args);
@@ -339,7 +319,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 				} else {
 					// no ticket quantities were selected
-					$error_msg = __( 'You need to select a ticket quantity before you can proceed.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+					$error_msg = __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' );
 					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				}				
 			}
@@ -359,7 +339,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			
 		} else {
 			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
-			$error_msg = __( 'An error occured. An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+			$error_msg = __( 'An event id was not provided or was not received.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}	
 
@@ -555,7 +535,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			} 	// end foreach $inputs_to_clean 
 			
 		} else {
-			$error_msg = 'An error occured. The event id provided was not valid';
+			$error_msg = 'The event id provided was not valid';
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -582,7 +562,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		EE_Registry::instance()->load_core( 'Cart' );
 		// check that an event has been passed
 		if (!$event or !is_array($event) or empty($event)) {
-			$error_msg = 'An error occured. No event details were submitted. Could not add to cart';
+			$error_msg = 'No event details were submitted. Could not add to cart';
 //			echo "couldnt add to cart";
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
