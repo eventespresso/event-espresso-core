@@ -65,14 +65,14 @@ jQuery(document).ready(function($) {
 		},
 		// Text that will be displayed on buttons of the header.
 		buttonText: {
-			next: eeCAL.buttonText_next, 	// default '&lsaquo;' <
-			prev: eeCAL.buttonText_prev, 	// default '&rsaquo;'  >
+			next: eeCAL.buttonText_next, 			// default '&lsaquo;' <
+			prev: eeCAL.buttonText_prev, 			// default '&rsaquo;'  >
 			prevYear: eeCAL.buttonText_prevYear, 	// default '&laquo;'  <<
 			nextYear:eeCAL.buttonText_nextYear, 	// default '&raquo;'  >>
-			today: eeCAL.buttonText_today, 	// default 'today'
-			month: eeCAL.buttonText_month, 	// default 'month'
-			week: eeCAL.buttonText_week, 	// default 'week'
-			day: eeCAL.buttonText_day, 	// default 'day'
+			today: eeCAL.buttonText_today, 			// default 'today'
+			month: eeCAL.buttonText_month, 			// default 'month'
+			week: eeCAL.buttonText_week, 			// default 'week'
+			day: eeCAL.buttonText_day, 				// default 'day'
 		},
 
 		// Sets the background and border colors for all events on the calendar.
@@ -197,8 +197,8 @@ jQuery(document).ready(function($) {
 					hide: "unfocus",
 					style: {
 						classes: event.tooltip_style, 
-					},
-					widget: true
+						widget: true
+					}
 				});
 				
 			} else {
