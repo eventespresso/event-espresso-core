@@ -206,7 +206,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function get_primary_date_obj() {
 		global $post;
-		return isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes ) ? reset( $post->datetimes ) : NULL;	
+//		d( $post );
+		return  isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ? $post->EE_Event->get_first_related('Datetime') : FALSE;
 	}
 
 
@@ -219,7 +220,10 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function get_last_date_obj() {
 		global $post;
-		return isset( $post->datetimes ) && is_array( $post->datetimes ) && ! empty( $post->datetimes ) ? end( $post->datetimes ) : NULL;
+		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
+			$datetimes = $post->EE_Event->get_many_related('Datetime');
+			return end( $datetimes );
+		}
 	}
 
 
