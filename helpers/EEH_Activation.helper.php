@@ -37,7 +37,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function system_initialization() {
-		EEH_Activation::CPT_initialization();
+//		EEH_Activation::CPT_initialization();
 		EEH_Activation::verify_default_pages_exist();
 	}
 	

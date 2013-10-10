@@ -129,7 +129,8 @@ function espresso_plugin_activation() {
 	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
 	check_admin_referer( "activate-plugin_{$plugin}" );
 	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
-	EE_System::instance( TRUE );
+	$system = EE_System::instance( TRUE );
+	$system->plugins_loaded();
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
 
