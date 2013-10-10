@@ -109,8 +109,6 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		spl_autoload_register( array( 'EEH_Autoloader', 'espresso_autoloader' ));
-		// check for plugin activation/upgrade/installation
-		$this->_manage_activation_process();
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 	}
@@ -149,10 +147,12 @@ final class EE_System {
 		}
 		// get model names
 		$this->_parse_model_names();
-		// let's get it started		
 		//we gave addons a chance to register themselves before detecting the request type
 		//and deciding whether or nto to set maintenance mode
-		if ( is_admin() ) {
+		// check for plugin activation/upgrade/installation
+		$this->_manage_activation_process();
+		// let's get it started		
+		if ( is_admin() && ! EE_FRONT_AJAX ) {
 			EE_Registry::instance()->load_core( 'Admin' );
 		} else if ( EE_Maintenance_Mode::instance()->level() ) {
 			// shut 'er down down for maintenance ?
