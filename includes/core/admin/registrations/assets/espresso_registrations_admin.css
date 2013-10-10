@@ -173,7 +173,7 @@
 	padding: 5px 8px;
 }
 
-#titlediv .main-text-field {
+#titlediv .smaller-text-field, #titlediv .main-text-field {
 	padding: 3px 8px;
 	font-size: 1.7em;
 	line-height: 100%;
@@ -183,4 +183,9 @@
 	margin: 1px 0;
 	margin-right: 6px;
 	float:left;
+}
+
+#titlediv .main-text-field {
+	width: 100%;
+	float: none;
 }
