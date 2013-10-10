@@ -252,7 +252,13 @@ a.reg-now-btn {
 .sold-out-dv {
 	background: #E44064; 
 }
-
+.ui-state-active.reg-now-btn:hover {
+	color: #fff;
+	text-decoration:underline;
+}
+.fc, .fc table .ui-widget-header {
+	font-size: .85em;
+}
 
 /* Calendar Widget CSS */
 /* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
