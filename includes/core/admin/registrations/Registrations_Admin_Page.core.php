@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class Registrations_Admin_Page extends EE_Admin_Page {
+class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
 	 *
@@ -54,6 +54,20 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	protected function _init_page_props() {
 		$this->page_slug = REG_PG_SLUG;
 		$this->page_label = __('Registrations', 'event_espresso');
+		$this->_cpt_routes = array(
+			'add_new_attendee' => 'espresso_attendees',
+			'edit_attendee' => 'espresso_attendees',
+			'insert_attendee' => 'espresso_attendees',
+			);
+		$this->_cpt_model_names = array(
+			'add_new_attendee' => 'EEM_Attendee',
+			'edit_attendee' => 'EEM_Attendee'
+			);
+		$this->_cpt_edit_routes = array(
+			'espresso_attendees' => 'edit_attendee'
+			);
+
+		add_action('edit_form_after_title', array($this, 'after_title_form_fields'), 10 );
 	}
 
 
@@ -77,8 +91,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'add-registrant' => __('Register New Attendee', 'event_espresso'),
 					'add-attendee' => __('Add New Attendee Contact Info', 'event_espresso'),
 					'edit' => __('Edit Attendee', 'event_espresso'),
-					'delete' => __('Delete Attendee', 'event_espresso'),
+					'delete_attendees' => __('Delete Attendee', 'event_espresso'),
 					'report'=>  __("Registrations CSV Report", "event_espresso")
+				),
+			'publishbox' => array(
+				'edit_attendee' => __("Update Attendee Record", 'event_espresso')
 				)
 			);
 	}
@@ -162,16 +179,17 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					),
 				
 				'contact_list'	=> '_attendee_contact_list_table',
+
 				
 				'add_new_attendee'	=> array( 
-					'func' => '_edit_attendee_details', 
+					'func' => '_create_new_cpt_item', 
 					'args' => array( 
 						'new_attendee' => TRUE 
 					)
 				),
 				
 				'edit_attendee'	=> array( 
-					'func' => '_edit_attendee_details'
+					'func' => '_edit_cpt_item'
 				),
 				
 				'insert_attendee'	=> array( 
@@ -301,7 +319,7 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['ATT_ID']) ? add_query_arg(array('ATT_ID' => $this->_req_data['ATT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
+					'metaboxes' => array('attendee_editor_metaboxes')
 				),
 				
 			'contact_list' => array(
@@ -311,7 +329,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 					),
 					'list_table' => 'EE_Attendee_Contact_List_Table',
 					'metaboxes' => array()
-				)
+				),
+
+			//override default cpt routes
+			'create_new' => '',
+			'edit' => ''
 				
 			);
 	}
@@ -352,10 +374,6 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 			self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
 		}
 	}
-
-
-
-
 
 
 
@@ -2480,11 +2498,11 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _resend_registration() {
-		$this->_process_resend_registration();
+		$success = $this->_process_resend_registration();
 		$query_args = array(
 			'action' => 'default'
 		);
-		$this->_redirect_after_action();
+		$this->_redirect_after_action(FALSE, '', '', array(), TRUE );
 	}
 
 
@@ -2513,6 +2531,44 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 
 	/***************************************		ATTENDEE DETAILS 		***************************************/
+
+	//related to cpt routes
+	protected function _insert_update_cpt_item($post_id, $post) {}
+	public function trash_cpt_item($post_id) {}
+	public function delete_cpt_item($post_id) {}
+	public function restore_cpt_item($post_id) {}
+	protected function _restore_cpt_item($post_id, $revision_id) {}
+
+
+	public function attendee_editor_metaboxes() {
+		remove_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+		add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core' );
+		add_meta_box('commentsdiv', __('Notes on the Attendee', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+	}
+	
+
+
+
+	/**
+	 * add in the form fields for the attendee edit
+	 * @param  WP_Post $post wp post object
+	 * @return string        html for new form.
+	 */
+	public function after_title_form_fields($post) {
+		if ( $post->post_type == 'espresso_attendees' ) {
+			?>
+			<div id="titlediv">
+				<div id="titlewrap">
+					<label class="hidden" id="attendee-first-name-text" for="ATT_fname">First Name:</label>
+					<input type="text" class="main-text-field" name="ATT_fname" value="<?php echo $this->_cpt_model_obj->get('ATT_fname'); ?>" id="ATT_fname" class="smaller-text-field" placeholder="<?php _e('First Name', 'event_espresso'); ?>">
+					<label class="hidden" id="attendee-first-name-text" for="ATT_lname">Last Name:</label>
+					<input type="text" class="main-text-field" name="ATT_lname" value="<?php echo $this->_cpt_model_obj->get('ATT_lname'); ?>" id="ATT_lname" class="smaller-text-field" placeholder="<?php _e('Last Name', 'event_espresso'); ?>">
+					<div style="clear:both"></div>
+				</div>
+			</div>
+			<?php
+		}
+	}
 
 
 
@@ -2548,24 +2604,46 @@ class Registrations_Admin_Page extends EE_Admin_Page {
 
 		
 		$this->_template_args['attendee']= $attendee;
+		
+
 		$this->_template_args['state_html'] = EEH_Form_Fields::generate_form_input(
+				new EE_Question_Form_Input(
+				EE_Question::new_instance( array(
+					'QST_ID' => 0,
+					'QST_display_text' => __('State/Province', 'event_espresso'),
+					'QST_system' => 'admin-state'
+					)),
+				EE_Answer::new_instance( array(
+					'ANS_ID' => 0,
+					'ANS_value' => $attendee->state_ID()
+					)),
 				array(
-					'QST_display_text'=>' ',
-					'ANS_value'=>$attendee->state_ID(),
-					'QST_input_name'=>'STA_ID',
-					'QST_input_name'=>'STA_ID',
-					'QST_system'=>'state'
-				));
+					'input_id' => 'STA_ID',
+					'input_name' => 'STA_ID',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE 
+					)
+			));
 		$this->_template_args['country_html'] = EEH_Form_Fields::generate_form_input(
+				new EE_Question_Form_Input(
+				EE_Question::new_instance( array(
+					'QST_ID' => 0,
+					'QST_display_text' => __('Country', 'event_espresso'),
+					'QST_system' => 'admin-country'
+					)),
+				EE_Answer::new_instance( array(
+					'ANS_ID' => 0,
+					'ANS_value' => $attendee->country_ISO()
+					)),
 				array(
-					'QST_display_text'=>' ',
-					'ANS_value'=>$attendee->country_ISO(),
-					'QST_input_name'=>'CNT_ISO',
-					'QST_input_name'=>'CNT_ISO',
-					'QST_system'=>'country'
+					'input_id' => 'CNT_ISO',
+					'input_name' => 'CNT_ISO',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE 
+					)
 				));
 		//get list of all registrations for this attendee	
-		if ( $this->_template_args['registrations'] = $ATT_MDL->get_many_related('Registraiton') ) {
+		if ( $this->_template_args['registrations'] = $attendee->get_many_related('Registration') ) {
 			$this->_template_path = REG_TEMPLATE_PATH . 'attendee_registrations_main_meta_box.template.php';
 			$meta_box_args['template_path'] = $this->_template_path;
 			$meta_box_args['template_args'] = $this->_template_args;

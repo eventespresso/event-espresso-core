@@ -447,6 +447,26 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
+	/**
+	*		get time_range
+	* 
+	* 		@access		public	
+	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
+	* 		@param		string		$conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
+	*		@return 		mixed		string on success, FALSE on fail
+	*/	
+	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
+		return $this->_show_datetime( 'T', 'start', NULL, $tm_format ) . $conjunction . $this->_show_datetime( 'T', 'end', NULL, $tm_format );
+	}
+	public function e_time_range( $tm_format = NULL, $conjunction = ' - ' ) {		
+		echo $this->time_range( $tm_format, $conjunction );
+	}
+
+
+
+
+
+
 
 	/**
 	*		get start date and start time
@@ -522,6 +542,21 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*/	
 	public function reg_limit() {
 		return $this->_DTT_reg_limit;
+	}
+
+
+
+
+
+
+	/**
+	*	get the number of tickets sold for this datetime slot
+	* 
+	* 	@access		public		
+	*	@return 		mixed		int on success, FALSE on fail
+	*/	
+	public function sold() {
+		return $this->_DTT_sold;
 	}
 
 

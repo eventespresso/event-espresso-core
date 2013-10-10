@@ -166,7 +166,8 @@ class EE_Register_CPTs {
 					'public'=> FALSE,
 					'publicly_queryable'=> FALSE,
 					'hierarchical'=> FALSE,
-					'has_archive' => FALSE
+					'has_archive' => FALSE,
+					'supports' => array( 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
 				))
 			);
 	}

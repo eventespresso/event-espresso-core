@@ -57,15 +57,15 @@ class EED_Event_Details  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
-		add_filter( 'FHEE_load_ee_config', '__return_true' );
-		add_filter( 'FHEE_load_css', '__return_true' );
+//		add_filter( 'FHEE_load_ee_config', '__return_true' );
+//		add_filter( 'FHEE_load_css', '__return_true' );
 //		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 //		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 //		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
 //		add_action( 'wp', array( $this, 'wp' ));
 //		add_filter( 'the_content', array( $this, 'the_content' ));
 		// parse_request
-		add_filter( 'request', array( $this, 'filter_request' )); 
+//		add_filter( 'request', array( $this, 'filter_request' )); 
 //		remove_all_filters( 'excerpt_length' );
 //		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 //		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 10 );
@@ -155,15 +155,15 @@ class EED_Event_Details  extends EED_Module {
 	public function wp_enqueue_scripts() {
 
 		// get some style
-		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE )) {
+		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE )) {
 			if ( is_single() ) {
 				// first check uploads folder
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'templates/event_details.css' )) {
 					wp_register_style( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.js', array('jquery'), '1.0', TRUE  );
+					wp_register_script( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.js', array('espresso_core'), '1.0', TRUE  );
 				} else {
 					wp_register_style( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.js', array('jquery'), '1.0', TRUE );
+					wp_register_script( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.js', array('espresso_core'), '1.0', TRUE );
 				}
 				wp_enqueue_style( 'espresso_event_details' );
 				wp_enqueue_script( 'espresso_event_details' );

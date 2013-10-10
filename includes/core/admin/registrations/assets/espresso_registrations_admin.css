@@ -152,3 +152,35 @@
 .checkedin-status-2 {
 	background: transparent url('images/check-out-16x16.png') no-repeat;
 }
+
+
+
+/**
+ * attendee edit page stuff
+ *
+ */
+
+
+#titlediv .title-prompt-text {
+	color: #bbb;
+	position: absolute;
+	font-size: 1.7em;
+	padding: 11px 10px;
+}
+
+#title-wrap .title-prompt-text {
+	font-size: 1.3em;
+	padding: 5px 8px;
+}
+
+#titlediv .main-text-field {
+	padding: 3px 8px;
+	font-size: 1.7em;
+	line-height: 100%;
+	height: 1.7em;
+	width: 49.3%;
+	outline: none;
+	margin: 1px 0;
+	margin-right: 6px;
+	float:left;
+}

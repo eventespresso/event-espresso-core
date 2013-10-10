@@ -613,7 +613,8 @@ class EE_Error extends Exception {
 		}
 		
 		if ( $print_scripts ) {			
-			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
+			wp_enqueue_script( 'ee_error_js' );
+			wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
 		}
 		
 		return $notices;

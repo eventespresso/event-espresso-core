@@ -83,7 +83,7 @@ class EE_CPT_Event_Strategy {
 	public function posts_join( $SQL ) {
 		global $wpdb;
 		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
-		$SQL .= ' LEFT JOIN ' . EEM_Datetime::table() . ' ON ( ' . EEM_Datetime::table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+		$SQL .= ' JOIN ' . EEM_Datetime::table() . ' ON ( ' . EEM_Datetime::table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
 		return $SQL;
 	}
 
@@ -97,7 +97,8 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function posts_where( $SQL ) {
 		global $wpdb;
-		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
+		// adds something like " AND wp_esp_datetime.DTT_is_primary = 1 " to WP Query WHERE statement
+		// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
 		$SQL .= ' AND ' . EEM_Datetime::table() . '.DTT_is_primary = 1 ';
 		return $SQL;
 	}
@@ -105,14 +106,14 @@ class EE_CPT_Event_Strategy {
 
 
 	/**
-	 * 	wp
+	 * 	loop_start
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public function loop_start( WP_Query $wp_query ) {
 		$this->EE->load_helper('Event_View');
-		$wp_query = EEH_Event_View::get_event_datetimes_and_tickets_for_WP_Query( $wp_query );
+//		$wp_query = EEH_Event_View::get_event_datetimes_and_tickets_for_WP_Query( $wp_query );
 	}
 
 
