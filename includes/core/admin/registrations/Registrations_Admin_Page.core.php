@@ -324,7 +324,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 					'list_table' => 'EE_Attendee_Contact_List_Table',
 					'metaboxes' => array()
-				)
+				),
+
+			//override default cpt routes
+			'create_new' => '',
+			'edit' => ''
 				
 			);
 	}
