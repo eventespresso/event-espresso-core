@@ -20,14 +20,14 @@
 			<tr>
 				<th>
 					<label for="pending_counts_reg_limit">
-						<?php _e('Pending Registrations Count Towards Registration Limits', 'event_espresso'); ?>
+						<?php _e('Pending Registrations Count Towards Registration Limits and Ticket Sales', 'event_espresso'); ?>
 						<?php //echo EEH_Template::get_help_tab_link('payment_status_info'); ?>
 					</label>
 				</th>
 				<td>
 					<p><?php echo EEH_Form_Fields::select_input('pending_counts_reg_limit', $values, $pending_counts_reg_limit) ?></p>
 					<p class="description">
-						<?php _e('If set to "Yes", then attendee\'s whose registration status is set to "Pending" will still count towards an Event\'s registration limit, and therefore also affect the number of spaces available, tickets left, and seating options (if applicable).', 'event_espresso'); ?>
+						<?php _e('If set to "Yes", then attendee\'s whose registration status is set to "Pending" will still count towards an Event\'s registration limit, and therefore also affect the number of spaces available, ticket sales calculations, and seating options (if applicable).', 'event_espresso'); ?>
 					</p>
 				</td>
 			</tr>
