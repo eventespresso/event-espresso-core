@@ -9,12 +9,24 @@
 	margin:1em 0 0; 
 	width: 100% !important; 
 }
-#espresso_calendar:not(.ui-widget) .fc-header-title h2 {
+#espresso_calendar:not(.ui-widget) .fc-header-title h2,
+.fc-header-title h2 {
+	font-family:"Helvetica Neue", "Helvetica", Arial, sans-serif;
 	font-size:1.3rem;
 	margin:0; 
 	font-weight: 400; 
 	line-height: 1;
 	vertical-align: bottom !important;
+}
+#espresso_calendar .ui-widget .fc-header-title h2 {
+	font-family:"Helvetica Neue", "Helvetica", Arial, sans-serif;
+	font-size:1rem;
+	letter-spacing: -1px;
+	margin:0; 
+	font-weight: 400; 
+	line-height: 1;
+	vertical-align: bottom !important;
+
 }
 #espresso_calendar .fc-content table { 
 	background-color:#fff; 
@@ -27,6 +39,10 @@
 #espresso_calendar .fc-day-header {
 	padding:5px 0;  
 	font-weight: 400;
+}
+#espresso_calendar .fc .fc-header-space,
+.fc .fc-header-space {
+	padding-left:3px;
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button { 
 	-moz-box-sizing: content-box !important; 
