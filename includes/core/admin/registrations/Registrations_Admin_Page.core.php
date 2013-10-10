@@ -2556,17 +2556,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function after_title_form_fields($post) {
 		if ( $post->post_type == 'espresso_attendees' ) {
-			?>
-			<div id="titlediv">
-				<div id="titlewrap">
-					<label class="hidden" id="attendee-first-name-text" for="ATT_fname">First Name:</label>
-					<input type="text" class="main-text-field" name="ATT_fname" value="<?php echo $this->_cpt_model_obj->get('ATT_fname'); ?>" id="ATT_fname" class="smaller-text-field" placeholder="<?php _e('First Name', 'event_espresso'); ?>">
-					<label class="hidden" id="attendee-first-name-text" for="ATT_lname">Last Name:</label>
-					<input type="text" class="main-text-field" name="ATT_lname" value="<?php echo $this->_cpt_model_obj->get('ATT_lname'); ?>" id="ATT_lname" class="smaller-text-field" placeholder="<?php _e('Last Name', 'event_espresso'); ?>">
-					<div style="clear:both"></div>
-				</div>
-			</div>
-			<?php
+			$template = REG_TEMPLATE_PATH . 'attendee_details_after_title_form_fields.template.php';
+			$template_args['attendee'] = $this->_cpt_model_obj;
+			EEH_Template::display_template($template, $template_args);
 		}
 	}
 
