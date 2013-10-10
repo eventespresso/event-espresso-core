@@ -93,6 +93,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'edit' => __('Edit Attendee', 'event_espresso'),
 					'delete_attendees' => __('Delete Attendee', 'event_espresso'),
 					'report'=>  __("Registrations CSV Report", "event_espresso")
+				),
+			'publishbox' => array(
+				'edit_attendee' => __("Update Attendee Record", 'event_espresso')
 				)
 			);
 	}
@@ -316,7 +319,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['ATT_ID']) ? add_query_arg(array('ATT_ID' => $this->_req_data['ATT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
+					'metaboxes' => array('attendee_editor_metaboxes')
 				),
 				
 			'contact_list' => array(
@@ -2535,6 +2538,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function delete_cpt_item($post_id) {}
 	public function restore_cpt_item($post_id) {}
 	protected function _restore_cpt_item($post_id, $revision_id) {}
+
+
+	public function attendee_editor_metaboxes() {
+		remove_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+		add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core' );
+		add_meta_box('commentsdiv', __('Notes on the Attendee', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+	}
+	
 
 
 
