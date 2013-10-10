@@ -270,29 +270,30 @@ class EE_Calendar {
 		$temp_venue = $wpdb->get_results($v_sql);
 		
 		if (!empty($temp_venue) || !empty($temp_cats)){
-			?>
-	<?php _e('Filter by', 'event_espresso'); ?> 
+			_e('Filter by', 'event_espresso'); ?> 
 			<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+			<?php if(!empty($temp_cats)){?>
+				<select class="submit-this" name="event_category_id">
+					<option class="ee_filter_show_all" value=""><?php echo __('Category (all)', 'event_espresso'); ?></option>
+					<?php
+						foreach($temp_cats as $cat) {
+							
+							echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
+						}
+					?>
+				</select>
+			<?php }?>
 			
-			<select class="submit-this" name="event_category_id">
-				<option class="ee_filter_show_all" value=""><?php echo __('Category (all)', 'event_espresso'); ?></option>
-				<?php
-					foreach($temp_cats as $cat) {
-						
-						echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
-					}
-				?>
-			</select>
-			
-			
-			<select class="submit-this" name="event_venue_id">
-				<option class="ee_filter_show_all" value=""><?php echo __('Venue (all)', 'event_espresso'); ?></option>
-				<?php
-					foreach($temp_venue as $venue) {
-						echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
-					}
-				?>
-			</select>
+			<?php if(!empty($temp_venue)){?>
+				<select class="submit-this" name="event_venue_id">
+					<option class="ee_filter_show_all" value=""><?php echo __('Venue (all)', 'event_espresso'); ?></option>
+					<?php
+						foreach($temp_venue as $venue) {
+							echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
+						}
+					?>
+				</select>
+			<?php }?>
 			</form>
 			
 			<?php
