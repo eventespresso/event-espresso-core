@@ -6,7 +6,7 @@
   Version: 2.1.1.BETA
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
-  Copyright 2012 Event Espresso (email : support@eventespresso.com)
+  Copyright 2013 Event Espresso (email : support@eventespresso.com)
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as
@@ -29,7 +29,7 @@
  *
  * @ package			Event Espresso
  * @ author				Seth Shoultes
- * @ copyright			(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ copyright			(c) 2008-2013 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link				http://www.eventespresso.com
  * @ version		 	3.1
