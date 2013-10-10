@@ -535,6 +535,21 @@ class EE_Registration extends EE_Base_Class {
 		return $this->get('REG_url_link');
 	}
 	
+	/**
+	 * Gets the string which represents the URL for the invoice PDF for this registration (according to EED_Invoice)
+	 * Dependant on code in ee/includes/functions/init espresso_export_invoice
+	 * @return string
+	 */
+	public function invoice_url($force_download = false){
+		if($force_download){
+			$route = 'download_invoice';
+		}else{
+			$route = 'launch_invoice';
+		}
+		return add_query_arg(array('ee'=>$route,'id'=>$this->reg_url_link()),get_permalink($this->EE->CFG->core->thank_you_page_id));
+	}
+	
+	
 	
 	
 	
@@ -543,23 +558,14 @@ class EE_Registration extends EE_Base_Class {
 	 * Echoes out invoice_url()
 	 * @return void
 	 */
-	public function e_invoice_url(){
-		echo $this->invoice_url();
+	public function e_invoice_url($force_download = false){
+		echo $this->invoice_url($force_download);
 	}
 	
 	
 	
 	
 	
-	/**
-	 * Gets the string which represents the URL for the invoice PDF for this registration.
-	 * Dependant on code in ee/includes/functions/init espresso_export_invoice
-	 * @return string
-	 */
-	public function invoice_url(){
-		return add_query_arg(array('ee'=>'download_invoice','id'=>$this->reg_url_link()),get_permalink($this->EE->CFG->core->thank_you_page_id));
-//		return home_url() . '/?invoice_launch=true&amp;id=' . $this->reg_url_link();
-	}
 
 	
 	

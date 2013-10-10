@@ -64,7 +64,7 @@ class Invoice {
 		$template_args['country'] = $this->EE->load_model( 'Country' )->get_one_by_ID( $EE->CFG->organization->CNT_ISO );
 		$template_args['zip'] = $EE->CFG->organization->zip;
 		$template_args['email'] = $EE->CFG->organization->email;
-		$template_args['download_link'] = home_url() . '/?invoice_launch=true&amp;id=' . $this->registration->reg_url_link();
+		$template_args['download_link'] = $this->registration->invoice_url();
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = $this->registration->date();
 		$template_args['name'] = $primary_attendee->full_name();
@@ -188,7 +188,7 @@ class Invoice {
 				$this->registration->reg_code(),
 				$primary_attendee->full_name(),
 				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/' : EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/lib/templates/',
-				home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
+				$this->registration->invoice_url(),//home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
 				$invoice_logo_image,
 				empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2,
 				$EE->CFG->organization->city,

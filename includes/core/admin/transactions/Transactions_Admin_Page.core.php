@@ -125,10 +125,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'func' => 'delete_payment',
 					'noheader' => TRUE
 					),
-				'view_pdf_invoice'=>array(
-					'func'=>'_view_pdf_invoice',
-					'noheader'=>TRUE
-					),
 					
 		);
 		
@@ -592,17 +588,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		);
 	}
 
-	public function _view_pdf_invoice(){
-		if ( is_readable( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/Invoice/lib/Invoice.class.php' )) {
-			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/Invoice/lib/Invoice.class.php' );
-			$invoice = new Invoice( $this->_req_data['id'] );
-			$invoice->send_invoice();
-		} else {
-			$msg = __( 'The Invoice.class.php file could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
-		
-	}
 
 
 

@@ -13,7 +13,8 @@
  *
  * ------------------------------------------------------------------------
  *
- * Promotion-to-almost-anything Model
+ * Promotion-to-almost-anything Model. Establishes that a certain promotion
+ * CAN BE USED on certain objects
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
