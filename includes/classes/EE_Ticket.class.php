@@ -324,6 +324,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 
+
 	/**
 	 * return if a ticket has quantities availalbe for purchase
 	 * @param  int    $DTT_ID the primary key for a particular datetime
@@ -379,6 +380,33 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		$tickets_sold['ticket'] = $this->_TKT_sold;
 
 		return $tickets_sold;
+	}
+
+
+	/**
+	 * This returns the chronologically first datetime that this ticket is associated with
+	 * @return array
+	 */
+	public function first_datetime() {
+		$datetimes = $this->get_many_related('Datetime');
+		return reset( $datetimes );
+	}
+
+	/**
+	 * This returns the chronologically last datetime that this ticket is associated with
+	 * @return array
+	 */
+	public function last_datetime() {
+		$datetimes = $this->get_many_related('Datetime');
+		return end( $datetimes );
+	}
+
+	/**
+	 * This returns the chronologically last datetime that this ticket is associated with
+	 * @return array
+	 */
+	public function date_range( $dt_frmt = NULL ) {
+		return $this->first_datetime()->start_date( $dt_frmt ) . ' - ' . $this->last_datetime()->end_date( $dt_frmt );
 	}
 
 
@@ -517,8 +545,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * Gets start_date
 	 * @return string
 	 */
-	function start_date() {
-		return $this->get('TKT_start_date');
+	function start_date( $dt_frmt = NULL, $tm_frmt = NULL ) {
+		return $this->_get_datetime( 'TKT_start_date', $dt_frmt, $tm_frmt );
 	}
 
 	/**
@@ -533,8 +561,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * Gets end_date
 	 * @return string
 	 */
-	function end_date() {
-		return $this->get('TKT_end_date');
+	function end_date( $dt_frmt = NULL, $tm_frmt = NULL ) {
+		return $this->_get_datetime( 'TKT_end_date', $dt_frmt, $tm_frmt );
 	}
 
 	/**
