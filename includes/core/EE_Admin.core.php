@@ -72,6 +72,7 @@ final class EE_Admin {
 		add_action( 'init', array( $this, 'get_request' ), 4 );
 		add_action( 'init', array( $this, 'init' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10 );
 		
 //		add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
@@ -200,6 +201,18 @@ final class EE_Admin {
 	public function admin_init() {
 		// pew pew pew
 		$this->EE->load_core( 'PUE' );		
+	}
+
+
+	/**
+	 * enqueue all admin scripts that need loaded for admin pages
+	 *
+	 * @accee public
+	 * @return void
+	 */
+	public function enqueue_admin_scripts() {
+		//this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.  Note the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script calls.
+		wp_enqueue_script('ee-inject-wp', EE_CORE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 	}
 
 
