@@ -2549,11 +2549,77 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function attendee_editor_metaboxes() {
+
 		remove_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core' );
 		add_meta_box('commentsdiv', __('Notes on the Attendee', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+		add_meta_box('attendee_contact_info', __('Contact Info', 'event_espresso'), array( $this, 'attendee_contact_info'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
+		add_meta_box('attendee_details_address', __('Address Details', 'event_espresso'), array($this, 'attendee_address_details'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 	}
+
 	
+	/**
+	 * Metabox for attendee contact info
+	 * @param  WP_Post $post wp post object
+	 * @return string        attendee contact info ( and form )
+	 */
+	public function attendee_contact_info( $post ) {
+		//get attendee object ( should already have it )
+		$this->_template_args['attendee'] = $this->_cpt_model_obj;
+		$template = REG_TEMPLATE_PATH . 'attendee_contact_info_metabox_content.template.php';
+		EEH_Template::display_template($template, $this->_template_args);
+	}
+
+
+	/**
+	 * Metabox for attendee details
+	 * @param  WP_Post $post wp post object
+	 * @return string        attendee address detials (and form)
+	 */
+	public function attendee_address_details($post) {
+		//get attendee object (should already have it)
+		$this->_template_args['attendee'] = $this->_cpt_model_obj;
+		$this->_template_args['state_html'] = EEH_Form_Fields::generate_form_input(
+				new EE_Question_Form_Input(
+				EE_Question::new_instance( array(
+					'QST_ID' => 0,
+					'QST_display_text' => __('State/Province', 'event_espresso'),
+					'QST_system' => 'admin-state'
+					)),
+				EE_Answer::new_instance( array(
+					'ANS_ID' => 0,
+					'ANS_value' => $this->_cpt_model_obj->state_ID()
+					)),
+				array(
+					'input_id' => 'STA_ID',
+					'input_name' => 'STA_ID',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE 
+					)
+			));
+		$this->_template_args['country_html'] = EEH_Form_Fields::generate_form_input(
+				new EE_Question_Form_Input(
+				EE_Question::new_instance( array(
+					'QST_ID' => 0,
+					'QST_display_text' => __('Country', 'event_espresso'),
+					'QST_system' => 'admin-country'
+					)),
+				EE_Answer::new_instance( array(
+					'ANS_ID' => 0,
+					'ANS_value' => $this->_cpt_model_obj->country_ISO()
+					)),
+				array(
+					'input_id' => 'CNT_ISO',
+					'input_name' => 'CNT_ISO',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE 
+					)
+				));
+		$template = REG_TEMPLATE_PATH . 'attendee_address_details_metabox_content.template.php';
+		EEH_Template::display_template($template, $this->_template_args );
+
+	}
+
 
 
 
