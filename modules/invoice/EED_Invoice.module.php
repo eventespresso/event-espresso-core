@@ -76,7 +76,7 @@ class EED_Invoice  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function invoice_launch() {
+	public function launch_invoice() {
 		$this->run(null);
 		if ( $this->EE->REQ->is_set( 'id' )) {
 			$id = sanitize_key( $this->EE->REQ->get( 'id' ));
