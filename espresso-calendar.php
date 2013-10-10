@@ -584,7 +584,7 @@ class EE_Calendar {
 				// use short descriptions
 				$events[ $cntr ]['description'] = reset( explode( '<!--more-->', $events[ $cntr ]['description'] ));
 				// tooltip wrapper
-				$events[ $cntr ]['tooltip'] = '<div class="qtip_info">';
+				$events[ $cntr ]['tooltip'] = '<div class="ui-tooltip-content qtip_info">';
 				// show time ?
 				$events[ $cntr ]['tooltip'] .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 				// check attendee reg limit
@@ -606,7 +606,7 @@ class EE_Calendar {
 				$regButtonText = $event->display_reg_form == 'Y' ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
 				// reg open
 				if ( $num_completed < $reg_limit && ! $expired ) {
-					$events[ $cntr ]['tooltip'] .= '<a class="reg-now-btn" href="' . $events[ $cntr ]['url'] . '">' . $regButtonText . '</a>';				
+					$events[ $cntr ]['tooltip'] .= '<a class="ui-state-active reg-now-btn" href="' . $events[ $cntr ]['url'] . '">' . $regButtonText . '</a>';				
 				} else if ( $num_completed >= $reg_limit && ! $expired ) {
 					$events[ $cntr ]['tooltip'] .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';				
 				} else {
