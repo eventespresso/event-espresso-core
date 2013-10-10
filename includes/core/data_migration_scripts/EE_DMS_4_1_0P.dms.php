@@ -281,6 +281,16 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			KEY PRO_ID (PRO_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
 		
+		$table_name = 'esp_promotion_applied';
+		$sql = "PRA_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			PRO_ID INT UNSIGNED NOT NULL,
+			OBJ_ID INT UNSIGNED NOT NULL,
+			POB_type VARCHAR(45) NULL,
+			PRIMARY KEY  (PRA_ID),
+			KEY OBJ_ID (OBJ_ID),
+			KEY PRO_ID (PRO_ID)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
 		$table_name = 'esp_promotion_rule';
 		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					PRO_ID INT UNSIGNED NOT NULL ,
