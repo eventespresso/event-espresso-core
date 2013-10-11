@@ -2584,7 +2584,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			}
 		}
 
-		if ( !$success )
+		if ( $success === FALSE )
 			EE_Error::add_error(__('Something went wrong with updating the meta table data for the attendee', 'event_espresso'));
 
 	}
