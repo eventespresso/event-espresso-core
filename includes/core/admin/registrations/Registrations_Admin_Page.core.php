@@ -2557,7 +2557,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$updated_fields = array(
 				'ATT_fname' => $this->_req_data['ATT_fname'],
 				'ATT_lname' => $this->_req_data['ATT_lname'],
-				'ATT_fname'=> $this->_req_data['ATT_fname'] . ' ' . $this->_req_data['ATT_lname'],
+				'ATT_full_name'=> $this->_req_data['ATT_fname'] . ' ' . $this->_req_data['ATT_lname'],
 				'ATT_address' => isset($this->_req_data['ATT_address']) ? $this->_req_data['ATT_address'] : '',
 				'ATT_address2' => isset($this->_req_data['ATT_address2']) ? $this->_req_data['ATT_address2'] : '',
 				'ATT_city' => isset( $this->_req_data['ATT_city'] ) ? $this->_req_data['ATT_city'] : '',
