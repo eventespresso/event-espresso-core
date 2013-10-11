@@ -186,6 +186,24 @@ class EEM_Registration extends EEM_Base {
 
 
 	/**
+	 * This returns a wpdb->results array of all registration date month and years matching the incoming query params and grouped by month and year.
+	 * @param  array  $query_params Array of query_parms as described in the comments for EEM_Base::get_all()
+	 * @return wpdb results array
+	 */
+	public function get_reg_months_and_years( $where_params ) {
+		$query_params[0] = $where_params;
+		$query_params['group_by'] = array('reg_year', 'reg_month');
+		$columns_to_select = array(
+			'reg_year' => array('YEAR(REG_date)', '%s'),
+			'reg_month' => array('MONTHNAME(REG_date)', '%s')
+			);
+		return $this->_get_all_wpdb_results( $query_params, OBJECT, $columns_to_select );
+	}
+
+
+
+
+	/**
 	*		retreive ALL registrations for a particular Attendee from db
 	* 		@access		public
 	* 		@param		int		$ATT_ID
