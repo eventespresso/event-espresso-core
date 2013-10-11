@@ -210,7 +210,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_event_name(EE_Registration $item){
 		
 		// page=espresso_events&action=edit_event&EVT_ID=2&edit_event_nonce=cf3a7e5b62
-		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$item->event_ID() ), EVENTS_ADMIN_URL );
+		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit', 'post'=>$item->event_ID() ), EVENTS_ADMIN_URL );
 		$event_name = $item->event_obj()->name();
 		$edit_event = '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $item->event_obj()->name() ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
 		
