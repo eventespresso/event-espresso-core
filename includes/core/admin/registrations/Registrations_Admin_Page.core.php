@@ -697,8 +697,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
+		
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
+
 		$query_params = array();
 		if($EVT_ID){
 			$_where['EVT_ID']=$EVT_ID;
@@ -730,8 +732,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$days_this_month = date( 't', current_time('timestamp') );
 			$_where['REG_date']= array('BETWEEN',
 				array(
-					strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ),
-					strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) 
+					strtotime( $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start ),
+					strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end ) 
 			));
 		}elseif($month_range){
 			$pieces = explode(' ', $this->_req_data['month_range'], 3);
@@ -776,7 +778,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if($count){
 			return $all ? EEM_Registration::instance()->count() : EEM_Registration::instance()->count(array($_where));
 		}else{
-			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
+			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ) );
+			if ( $per_page !== -1 ) {
+				$query_params['limit'] = $limit;
+			}
 			$registrations =  $all ? EEM_Registration::instance()->get_all() : EEM_Registration::instance()->get_all($query_params);
 			global $wpdb;
 	
