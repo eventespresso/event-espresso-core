@@ -556,10 +556,10 @@ class EE_Transaction extends EE_Base_Class{
 	 * @access public
 	 * @return string
 	 */
-	public function invoice_url() {
+	public function invoice_url($force_download = false) {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) return false;
-		return $REG->invoice_url();
+		return $REG->invoice_url($force_download);
 	}
 
 
