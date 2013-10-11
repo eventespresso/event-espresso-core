@@ -808,6 +808,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$message = 4;
 		}
 
+		//change the message if the post type is not viewable on the frontend
+		$this->_cpt_object = get_post_type_object($post->post_type);
+		$message = $message === 1 && !$this->_cpt_object->publicly_queryable ? 4 : $message;
+
 		$query_args = array_merge( array( 'message' => $message ), $query_args );
 
 		$this->_process_notices( $query_args, TRUE );
