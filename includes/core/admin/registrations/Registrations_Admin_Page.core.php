@@ -653,9 +653,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * get registrations for given parameters (used by list table)
 	 * @param  int  $per_page    how many registrations displayed per page
 	 * @param  boolean $count   return the count or objects
+	 * @param  boolean $this_month whether to return for just this month
+	 * @param  boolean $today    whether to return results for just today
+	 * @param  boolean $all      whether to ignore all query params and just return ALL registrations (or count if count is set)
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
+	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE, $all = FALSE ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
@@ -771,10 +774,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		
 		if($count){
-			return EEM_Registration::instance()->count(array($_where));
+			return $all ? EEM_Registration::instance()->count() : EEM_Registration::instance()->count(array($_where));
 		}else{
 			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
-			$registrations = EEM_Registration::instance()->get_all($query_params);
+			$registrations =  $all ? EEM_Registration::instance()->get_all() : EEM_Registration::instance()->get_all($query_params);
 			global $wpdb;
 	
 
