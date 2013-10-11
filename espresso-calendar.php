@@ -263,7 +263,7 @@ class EE_Calendar {
 		
 		$v_sql = "SELECT * FROM " . EVENTS_VENUE_TABLE;
 		$temp_venue = $wpdb->get_results($v_sql);
-		
+		$output_filter = '';
 		if (isset($this->_calendar_options['enable_calendar_filters']) && $this->_calendar_options['enable_calendar_filters'] == TRUE ){
 			if (!empty($temp_venue) || !empty($temp_cats)){
 				ob_start();
