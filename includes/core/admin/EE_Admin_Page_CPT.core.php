@@ -56,12 +56,43 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+	/**
+	 * This property allows cpt classes to define multiple routes as cpt routes.
+	 * //in this array we define what the custom post type for this route is.
+	 * array(
+	 * 'route_name' => 'custom_post_type_slug'
+	 * )
+	 * @var array
+	 */
+	protected $_cpt_routes = array();
+
+
+
 
 	/**
-	 * If child classes set the name of their main model via the $_cpt_obj_model property, EE_Admin_Page_CPT will attempt to retrieve the related object model for the edit pages and assign it to _cpt_page_object.
+	 * This simply defines what the corresponding routes WP will be redirected to after completeing a post save/update.
+	 *
+	 * in this format:
+	 * array(
+	 * 'post_type_slug' => 'edit_route'
+	 * )
+	 * 
+	 * @var array
+	 */
+	protected $_cpt_edit_routes = array();
+
+
+
+
+	/**
+	 * If child classes set the name of their main model via the $_cpt_obj_models property, EE_Admin_Page_CPT will attempt to retrieve the related object model for the edit pages and assign it to _cpt_page_object.
+	 * the _cpt_model_names property should be in the following format:
+	 * array(
+	 * 'route_defined_by_action_param' => 'Model_Name')
+	 * 
 	 * @var boolean
 	 */
-	protected $_cpt_model_name = FALSE;
+	protected $_cpt_model_names = array();
 	protected $_cpt_model_obj = FALSE;
 
 
@@ -138,8 +169,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	protected function _before_page_setup() {
 
 		$page = isset( $this->_req_data['page'] ) ? $this->_req_data['page'] : $this->page_slug;
-		$this->_cpt_object = get_post_type_object( $page );
 
+		$this->_cpt_routes = array_merge(array('create_new'=>$this->page_slug, 'edit' => $this->page_slug), $this->_cpt_routes );
+
+		//let's see if the current route has a value for cpt_object_slug if it does we use that instead of the page
+		$this->_cpt_object = isset($this->_req_data['action']) && isset( $this->_cpt_routes[$this->_req_data['action']] ) ? get_post_type_object($this->_cpt_routes[$this->_req_data['action']]) : get_post_type_object( $page );
+
+		//TODO the below will need to be reworked to account for the cpt routes that are NOT based off of page but action param.
 		//get current page from autosave
 		$current_page = isset( $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] ) ? $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] : NULL;
 		$this->_current_page = isset( $this->_req_data['current_page'] ) ? $this->_req_data['current_page'] : $current_page;
@@ -261,10 +297,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//This basically allows us to change the title of the "publish" metabox area on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
 		if ( !empty($this->_labels['publishbox'] ) ) {
 
-			$box_label = is_array( $this->_labels['publishbox'] ) ? $this->_labels['publishbox'][$this->_req_action] : $this->_labels['publishbox'];
+			$box_label = is_array( $this->_labels['publishbox'] ) && isset( $this->_labels['publishbox'][$this->_req_action]) ? $this->_labels['publishbox'][$this->_req_action] : $this->_labels['publishbox'];
 
-			remove_meta_box( 'submitdiv', __( 'Publish' ), 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
-			add_meta_box( 'submitdiv', $box_label, 'post_submit_meta_box', $this->page_slug, 'side', 'core' );
+			remove_meta_box( 'submitdiv', __( 'Publish' ), 'post_submit_meta_box', $this->_cpt_routes[$this->_req_action], 'side', 'core' );
+			add_meta_box( 'submitdiv', $box_label, 'post_submit_meta_box', $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 		}
 
 		//this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
@@ -382,48 +418,53 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _extend_page_config_for_cpt() {
-
 		//before doing anything we need to make sure this runs ONLY when the loaded page matches the set page_slug
-		if ( isset( $this->_req_data['page'] ) && $this->_req_data['page'] != $this->page_slug ) 
+		if ( ( isset( $this->_req_data['page'] ) && $this->_req_data['page'] != $this->page_slug ) )
 			return;
+
+		//set page routes and page config but ONLY if we're not viewing a custom setup cpt route as defined in _cpt_routes
+		if ( !empty( $this->_cpt_object ) ) {
+			$this->_page_routes = array_merge( array(
+				'create_new' => '_create_new_cpt_item',
+				'edit' => '_edit_cpt_item'
+				), $this->_page_routes );
+
+
+			$this->_page_config = array_merge( array(
+				'create_new' => array(
+					'nav' => array(
+						'label' => $this->_cpt_object->labels->add_new_item,
+						'order' => 5
+						),
+					),
+				'edit' => array(
+					'nav' => array(
+						'label' => $this->_cpt_object->labels->edit_item,
+						'order' => 5,
+						'persistent' => false,
+						'url' => ''
+						)
+					) ),
+				$this->_page_config
+			);
+		}
+
+		//load the next section only if this is a matching cpt route as set in the cpt routes array.
+		if ( !isset( $this->_cpt_routes[$this->_req_action] ) ) 
+			return;
+
 				
-		$this->_cpt_route = $this->_req_action == 'create_new' || $this->_req_action == 'edit' ? TRUE : FALSE;
+		$this->_cpt_route = isset( $this->_cpt_routes[$this->_req_action] ) ? TRUE : FALSE;
 		//add_action('FHEE_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
 
 
 		if ( empty( $this->_cpt_object ) ) {
-			$msg = sprintf( __('This page has been set as being related to a registered custom post type, however, the custom post type object could not be retrieved because the slug for the page does NOT match the reference for the registered custome post type.  The slug used, "%s" must be what you use to register the associated custom post type'), $this->page_slug );
+			$msg = sprintf( __('This page has been set as being related to a registered custom post type, however, the custom post type object could not be retrieved. There are two possible reasons for this:  1. The "%s" does not match a registered post type. or 2. The custom post type is not registered for the "%s" action as indexed in the "$_cpt_routes" property on this class (%s).'), $this->page_slug, $this->_req_action, get_class($this) );
 			throw new EE_Error( $msg );
 		}
-		
-
-		$this->_page_routes = array_merge( array(
-			'create_new' => '_create_new_cpt_item',
-			'edit' => '_edit_cpt_item'
-			), $this->_page_routes );
 
 
-		$this->_page_config = array_merge( array(
-			'create_new' => array(
-				'nav' => array(
-					'label' => $this->_cpt_object->labels->add_new_item,
-					'order' => 5
-					),
-				),
-			'edit' => array(
-				'nav' => array(
-					'label' => $this->_cpt_object->labels->edit_item,
-					'order' => 5,
-					'persistent' => false,
-					'url' => ''
-					)
-				) ),
-			$this->_page_config
-		);
-
-
-
-		if ( $this->_cpt_route  && ( $this->_req_action == 'create_new' || $this->_req_action == 'edit'  ) ) {
+		if ( $this->_cpt_route ) {
 			$id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 			$this->_set_model_object( $id );
 		}
@@ -443,11 +484,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	protected function _set_model_object( $id = NULL ) {
 
-		if ( empty( $this->_cpt_model_name ) || ( is_object( $this->_cpt_model_obj ) && $this->_cpt_model_obj->ID() == $id ) ) 
-			return; //get out we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
+		if ( empty( $this->_cpt_model_names ) || !isset( $this->_cpt_routes[$this->_req_action] ) || ( is_object( $this->_cpt_model_obj ) && $this->_cpt_model_obj->ID() == $id ) ) 
+			return; //get out we either don't have a model name OR the object has already been set and it has the same id as what has been sent. 
 
-		require_once( EE_MODELS . $this->_cpt_model_name . '.model.php' );
-		$model = call_user_func( array( $this->_cpt_model_name, 'instance' ) );
+		require_once( EE_MODELS . $this->_cpt_model_names[$this->_req_action] . '.model.php' );
+		$model = call_user_func( array( $this->_cpt_model_names[$this->_req_action] , 'instance' ) );
 		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
 	}
 
@@ -466,9 +507,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//its possible this is a new save so let's catch that instead
 		$post = isset( $this->_req_data['post_ID'] ) ? get_post( $this->_req_data['post_ID'] ) : $post;
+		$post_type = $post ? $post->post_type : false;
+
+		$current_route = isset($this->_req_data['current_route']) ? $this->_req_data['current_route'] : 'shouldneverwork';
+
+		$route_to_check = $post_type && isset( $this->_cpt_routes[$current_route]) ? $this->_cpt_routes[$current_route] : '';
 
 
-		if ( $post && $post->post_type == $this->page_slug )
+		if ( $post_type === $route_to_check )
 			add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
 
 		//now let's filter redirect if we're on a revision page and the revision is for an event CPT.
@@ -498,10 +544,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		//NOTE we ONLY want to run these hooks if we're on the right class for the given post type.  Otherwise we could see some really freaky things happen!
-		//try to get post type from $_POST data
-		$post_type = isset( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : FALSE;
 
-		if ( $post_type && $post_type == $this->page_slug ) {
+
+		if ( $post_type && $post_type === $route_to_check ) {
 			//$post_id, $post
 			add_action('save_post', array( $this, 'insert_update'), 10, 2 );
 
@@ -606,8 +651,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//ONLY do this if the current page_route IS a cpt route
 		if ( !$this->_cpt_route ) return;
 		//routeing things REALLY early b/c this is a cpt admin page
-		
-		set_current_screen( $this->page_slug );
+		set_current_screen( $this->_cpt_routes[$this->_req_action]);
 		$this->_current_screen = get_current_screen();
 		$this->_current_screen->base = 'event-espresso'; 
 		$this->_add_help_tabs(); //we make sure we add any help tabs back in!
@@ -628,7 +672,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @param string $title The new title (or existing if there is no editor_title defined)
 	 */
 	public function add_custom_editor_default_title( $title ) {
-		return isset( $this->_labels['editor_title'] ) ? $this->_labels['editor_title'] : $title;
+		return isset( $this->_labels['editor_title'][$this->_cpt_routes[$this->_req_action]] ) ? $this->_labels['editor_title'][$this->_cpt_routes[$this->_req_action]] : $title;
 	}
 
 
@@ -725,10 +769,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function cpt_post_location_redirect( $location, $post_id ) {
 		//we DO have a match so let's setup the url
-	
+		
+		//we have to get the post to determine our route
+		$post = get_post($post_id);
+		$edit_route = $this->_cpt_edit_routes[$post->post_type];
 
 		//shared query_args
-		$query_args = array( 'action' => 'edit', 'post' => $post_id );
+		$query_args = array( 'action' => $edit_route, 'post' => $post_id );
 		$admin_url = $this->_admin_base_url;
 		$message = '';
 		$append = '';
@@ -760,6 +807,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		} else {
 			$message = 4;
 		}
+
+		//change the message if the post type is not viewable on the frontend
+		$this->_cpt_object = get_post_type_object($post->post_type);
+		$message = $message === 1 && !$this->_cpt_object->publicly_queryable ? 4 : $message;
 
 		$query_args = array_merge( array( 'message' => $message ), $query_args );
 
@@ -801,7 +852,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$id = empty( $id ) && is_object( $post ) ? $post->ID : NULL;
 
-		$messages[$this->page_slug] = array(
+		$post_type = $post ? $post->post_type : false;
+
+		/*$current_route = isset($this->_req_data['current_route']) ? $this->_req_data['current_route'] : 'shouldneverwork';
+
+		$route_to_check = $post_type && isset( $this->_cpt_routes[$current_route]) ? $this->_cpt_routes[$current_route] : '';/**/
+
+		$messages[$post->post_type] = array(
 			0 => '', //Unused. Messages start at index 1.
 			1 => sprintf( __( '%1$s updated. <a href="%2$s">View %1$s</a>', 'event_espresso'), $this->_cpt_object->labels->singular_name, esc_url( get_permalink( $id ) ) ),
 			2 => __('Custom field updated'),
@@ -833,12 +890,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	protected function _create_new_cpt_item() {
 		global $post, $title;
-		$this->_template_args['post_type'] = $this->page_slug;
+		$this->_template_args['post_type'] = $this->_cpt_routes[$this->_req_action];
 		$this->_template_args['post_type_object'] = $this->_cpt_object;
 		$title = $this->_template_args['post_type_object']->labels->add_new_item;
 		$this->_template_args['editing'] = TRUE;
 		wp_enqueue_script( 'autosave' );
-		$this->_template_args['post'] = $post = get_default_post_to_edit( $this->page_slug, TRUE );
+		$this->_template_args['post'] = $post = get_default_post_to_edit( $this->_cpt_routes[$this->_req_action], TRUE );
 		$this->_template_args['post_ID'] = $this->_template_args['post']->ID;
 		$template = WP_ADMIN_PATH . 'edit-form-advanced.php';
 
@@ -873,7 +930,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$this->_template_args['editing'] = TRUE;
 		$this->_template_args['post_ID'] = $post_id;
 		$this->_template_args['post'] = $post;
-		$this->_template_args['post_type'] = $this->page_slug;
+		$this->_template_args['post_type'] = $this->_cpt_routes[$this->_req_action];
 		$this->_template_args['post_type_object'] = $this->_cpt_object;
 		if ( $last = wp_check_post_lock( $post->ID ) ) {
 			add_action('admin_notices', '_admin_notice_post_locked' );
@@ -883,9 +940,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		$title = $this->_cpt_object->labels->edit_item;
-		$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new'), $this->_admin_base_url );
 
-		if ( post_type_supports($this->page_slug, 'comments') ) {
+		if ( isset( $this->_cpt_routes[$this->_req_data['action']] ) && !isset( $this->_labels['hide_add_button_on_cpt_route']['edit_attendee'] ) ) {
+
+			$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new'), $this->_admin_base_url );
+		}
+
+		if ( post_type_supports($this->_cpt_routes[$this->_req_action], 'comments') ) {
 			wp_enqueue_script('admin-comments');
 			enqueue_comment_hotkeys_js();
 		}

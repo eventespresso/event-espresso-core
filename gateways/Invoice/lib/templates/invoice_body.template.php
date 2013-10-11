@@ -78,12 +78,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php $c=false; foreach($transaction->registrations() as $registration){?>
+				<?php $c=false; foreach($transaction->registrations() as $registration){
+					/*@var $registration EE_Registration */ ?>
 					<tr class="item <?php echo ($c = !$c) ? ' odd' : ''; ?>">
 						<td class="item_l">1</td>
 						<td class="item_l"><?php echo $registration->event_name() ?></td>
-						<td class="item_l"><?php echo $registration->price_obj()->name() ?></td>
-						<td class="item_l"><?php echo $registration->date_obj()->start_date_and_time() ?></td>
+						<td class="item_l"><?php echo $registration->ticket()->name() ?></td>
+						<td class="item_l"><?php $datetimes = $registration->ticket()->datetimes(); $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?></td>
 						<td class="item_l"><?php echo $registration->attendee()->full_name() ?></td>
 						<td class="item_r"><?php echo EEH_Template::format_currency($registration->price_paid())?></td>
 					</tr>

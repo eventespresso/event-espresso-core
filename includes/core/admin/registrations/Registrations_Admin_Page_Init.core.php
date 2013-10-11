@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class Registrations_Admin_Page_Init extends EE_Admin_Page_Init  {
+class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init  {
 
 
 
@@ -44,11 +44,9 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_Init  {
 		define( 'REG_ASSETS_URL', EE_CORE_ADMIN_URL . 'registrations/assets/' );	
 		define( 'REG_TEMPLATE_PATH', REG_ADMIN . 'templates' . DS );	
 		define( 'REG_TEMPLATE_URL', EE_CORE_ADMIN_URL . 'registrations/templates/' );
-
+		
 		parent::__construct();
 	}
-
-
 
 
 

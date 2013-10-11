@@ -35,7 +35,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_migration_stages = array(
 //			10=>new EE_DMS_4_1_0P_attendees(),
-//			20=>new EE_DMS_4_1_0P_events(),
+			20=>new EE_DMS_4_1_0P_events(),
 			//important: this one should be ran AFTER the general settings
 //			30=>new EE_DMS_4_1_0P_gateways(),
 			40=>new EE_DMS_4_1_0P_category_details(),
@@ -190,6 +190,18 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 				PRIMARY KEY  (EXM_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 
+		$table_name='esp_line_item';
+		$sql="LIN_ID int(11) NOT NULL AUTO_INCREMENT,
+				TXN_ID int(11) DEFAULT NULL,
+				LIN_name varchar(245) NOT NULL DEFAULT '',
+				LIN_desc varchar(245) DEFAULT NULL,
+				LIN_amount decimal(10,3) DEFAULT NULL,
+				LIN_quantity int(10) DEFAULT NULL,
+				LIN_taxable tinyint(1) DEFAULT NULL,
+				LIN_item_id varchar(10) DEFAULT NULL,
+				LIN_item_type varchar(45)DEFAULT NULL,
+				PRIMARY KEY  (LIN_ID)";
+		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -265,6 +277,16 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			POB_type VARCHAR(45) NULL,
 			POB_used INT NULL,
 			PRIMARY KEY  (POB_ID),
+			KEY OBJ_ID (OBJ_ID),
+			KEY PRO_ID (PRO_ID)";
+		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');
+		
+		$table_name = 'esp_promotion_applied';
+		$sql = "PRA_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			PRO_ID INT UNSIGNED NOT NULL,
+			OBJ_ID INT UNSIGNED NOT NULL,
+			POB_type VARCHAR(45) NULL,
+			PRIMARY KEY  (PRA_ID),
 			KEY OBJ_ID (OBJ_ID),
 			KEY PRO_ID (PRO_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ');

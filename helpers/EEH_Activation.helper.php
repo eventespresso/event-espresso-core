@@ -37,7 +37,8 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function system_initialization() {
-		EEH_Activation::CPT_initialization();
+//		EEH_Activation::CPT_initialization();//dont register taxonomies on activation because they need to happen on INIT hook anyways
+		//which is fired BEFORE activation of plugin anyways
 		EEH_Activation::verify_default_pages_exist();
 	}
 	

@@ -66,7 +66,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->page_slug = EE_VENUES_PG_SLUG;
 		$this->_admin_base_url = EE_VENUES_ADMIN_URL;
 		$this->page_label = __('Event Venues', 'event_espresso');
-		$this->_cpt_model_name = 'EEM_Venue';
+		$this->_cpt_model_names = array(
+			'create_new' => 'EEM_Venue',
+			'edit' => 'EEM_Venue'
+			);
+		$this->_cpt_edit_routes = array(
+			'espresso_venues' => 'edit'
+			);
 		$this->_venue_model = EEM_Venue::instance();
 	}
 
@@ -93,7 +99,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'edit_category' => __('Edit Category', 'event_espresso'),
 				'delete_category' => __('Delete Category', 'event_espresso')
 			),
-			'editor_title' => __('Enter Venue name here'),
+			'editor_title' => array(
+				'espresso_venues' => __('Enter Venue name here')
+				),
 			'publishbox' => array( 
 				'create_new' => __('Save New Venue', 'event_espresso'),
 				'edit' => __('Update Venue', 'event_espresso'),

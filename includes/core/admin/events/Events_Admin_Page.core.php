@@ -58,7 +58,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_admin_base_url = EVENTS_ADMIN_URL;
-		$this->_cpt_model_name = 'EEM_Event';
+		$this->_cpt_model_names = array(
+			'create_new' => 'EEM_Event',
+			'edit' => 'EEM_Event'
+			);
+		$this->_cpt_edit_routes = array(
+			'espresso_events' => 'edit'
+			);
+		
 		$this->_event_model = EEM_Event::instance();
 	}
 
@@ -77,7 +84,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'edit_category' => __('Edit Category', 'event_espresso'),
 				'delete_category' => __('Delete Category', 'event_espresso')
 			),
-			'editor_title' => __('Enter event title here', 'event_espresso'),
+			'editor_title' => array(
+				'espresso_events' => __('Enter event title here', 'event_espresso')
+				),
 			'publishbox' => array( 
 				'create_new' => __('Save New Event', 'event_espresso'),
 				'edit' => __('Update Event', 'event_espresso'),
@@ -92,9 +101,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-
-		//the model is used a lot so let's just require it.
-		require_once( EE_MODELS . $this->_cpt_model_name . '.model.php' );
 
 		$this->_page_routes = array(
 			'default' => '_events_overview_list_table',
@@ -600,7 +606,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//any errors?
-		if ( $success && !$att_success ) {
+		if ( $success && FALSE === $att_success ) {
 			EE_Error::add_error( __('Event Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		} else if ( $success === FALSE ) {
 			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
