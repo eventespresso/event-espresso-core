@@ -127,5 +127,9 @@ jQuery(document).ready(function($) {
 	$('#visibility').hide();
 	$('#timestamp').html(ATTENDEE_DETAILS.att_publish_text);
 });
-
-
+/**
+ * hide unnecessary ui elements when viewing attendee details cpt route.
+ */
+jQuery('#post-status-display').parent().hide();
+jQuery('#visibility').hide();
+jQuery('#timestamp').html(ATTENDEE_DETAILS.att_publish_text);
