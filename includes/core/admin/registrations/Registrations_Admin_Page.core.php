@@ -104,6 +104,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'publishbox' => array(
 				'edit_attendee' => __("Update Attendee Record", 'event_espresso')
+				),
+			'hide_add_button_on_cpt_route' => array(
+				'edit_attendee' => true
 				)
 			);
 	}
