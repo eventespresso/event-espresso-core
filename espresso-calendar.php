@@ -263,43 +263,6 @@ class EE_Calendar {
 
 		global $wpdb, $org_options;
 
-		$c_sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
-		$temp_cats = $wpdb->get_results($c_sql);
-		
-		$v_sql = "SELECT * FROM " . EVENTS_VENUE_TABLE;
-		$temp_venue = $wpdb->get_results($v_sql);
-		
-		if (!empty($temp_venue) || !empty($temp_cats)){
-			_e('Filter by', 'event_espresso'); ?> 
-			<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
-			<?php if(!empty($temp_cats)){?>
-				<select class="submit-this" name="event_category_id">
-					<option class="ee_filter_show_all" value=""><?php echo __('Category (all)', 'event_espresso'); ?></option>
-					<?php
-						foreach($temp_cats as $cat) {
-							
-							echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
-						}
-					?>
-				</select>
-			<?php }?>
-			
-			<?php if(!empty($temp_venue)){?>
-				<select class="submit-this" name="event_venue_id">
-					<option class="ee_filter_show_all" value=""><?php echo __('Venue (all)', 'event_espresso'); ?></option>
-					<?php
-						foreach($temp_venue as $venue) {
-							echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
-						}
-					?>
-				</select>
-			<?php }?>
-			</form>
-			
-			<?php
-		}
-
-
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
 		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE, 'show_tooltips' => FALSE ), $this->_calendar_options );
@@ -307,6 +270,50 @@ class EE_Calendar {
 		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
 		$atts = shortcode_atts( $defaults, $atts );
+		
+		
+		$c_sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
+		$temp_cats = $wpdb->get_results($c_sql);
+		
+		$v_sql = "SELECT * FROM " . EVENTS_VENUE_TABLE;
+		$temp_venue = $wpdb->get_results($v_sql);
+		
+		if (isset($this->_calendar_options['enable_calendar_filters']) && $this->_calendar_options['enable_calendar_filters'] == TRUE ){
+			if (!empty($temp_venue) || !empty($temp_cats)){
+				ob_start();
+				_e('Filter by', 'event_espresso'); ?> 
+				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+				<?php if(!empty($temp_cats)){?>
+					<select class="submit-this" name="event_category_id">
+						<option class="ee_filter_show_all" value=""><?php echo __('Category (all)', 'event_espresso'); ?></option>
+						<?php
+							foreach($temp_cats as $cat) {
+								
+								echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
+							}
+						?>
+					</select>
+				<?php }?>
+				
+				<?php if(!empty($temp_venue)){?>
+					<select class="submit-this" name="event_venue_id">
+						<option class="ee_filter_show_all" value=""><?php echo __('Venue (all)', 'event_espresso'); ?></option>
+						<?php
+							foreach($temp_venue as $venue) {
+								echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
+							}
+						?>
+					</select>
+				<?php }?>
+				</form>
+				
+				<?php
+				$output_filter = ob_get_contents();
+				ob_end_clean();
+			}
+		}
+
+
 		// grab some request vars
 		$this->_event_category_id = $atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
 		$atts['event_venue_id'] = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : '';
@@ -380,7 +387,7 @@ class EE_Calendar {
 		
 		$calendar_class = $atts['widget'] ? 'calendar_widget' : 'calendar_fullsize';
 
-		return '
+		return $output_filter.'
 	<div id="espresso_calendar" class="'. $calendar_class . '">
 		<div id="ee-calendar-ajax-loader-dv">
 			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif">

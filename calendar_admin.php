@@ -124,6 +124,7 @@ class EE_Calendar_Admin {
 				'weekMode' => 'liquid', // 'fixed', 'liquid', 'variable'
 				'espresso_calendar_height' => '',
 				'enable_calendar_thumbs' => false,
+				'enable_calendar_filters' => false,
 				
 				'show_tooltips' => true,
 				'tooltips_pos_my_1' => 'bottom',
@@ -279,6 +280,7 @@ class EE_Calendar_Admin {
 			$espresso_calendar['weekMode'] = sanitize_text_field( $_POST['weekMode'] ); 
 			$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
 			$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
+			$espresso_calendar['enable_calendar_filters'] = isset( $_POST['enable_calendar_filters'] ) ? $_POST['enable_calendar_filters'] : false;
 			$espresso_calendar['show_tooltips'] = $_POST['show_tooltips'];
 			$espresso_calendar['tooltips_pos_my_1'] = isset( $_POST['tooltips_pos_my_1'] ) ? $_POST['tooltips_pos_my_1'] : 'bottom';
 			$espresso_calendar['tooltips_pos_my_2'] = isset( $_POST['tooltips_pos_my_2'] ) ? $_POST['tooltips_pos_my_2'] : 'center';
@@ -580,6 +582,20 @@ class EE_Calendar_Admin {
 											<br />
 											<span class="description">
 												<?php _e('The "Featured Image" box in the event editor handles the thumbnail image URLs for each event. After setting the "Enable Calendar images" option to "Yes" in the calendar settings, upload an event image in the built-in WordPress media uploader, then click the Insert into post button on the media uploader.', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<label for="enable-calendar-filters">
+												<?php _e('Enable Filters in Calendar', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td>
+											<?php echo select_input('enable_calendar_filters', $values, isset($espresso_calendar['enable_calendar_filters']) && !empty($espresso_calendar['enable_calendar_filters']) ?  $espresso_calendar['enable_calendar_filters']: 0, 'id="enable-calendar-filters"'); ?>
+											<br />
+											<span class="description">
+												<?php _e('Filters allow users to filter events based on category and/or venue.', 'event_espresso'); ?>
 											</span>
 										</td>
 									</tr>
