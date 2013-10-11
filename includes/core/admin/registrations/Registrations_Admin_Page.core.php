@@ -869,6 +869,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 			// link back to overview
 			$this->_template_args['reg_overview_url'] = REG_ADMIN_URL;	
+			$this->_template_args['registration'] = $this->_registration;
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
