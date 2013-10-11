@@ -127,6 +127,11 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_donations'=>new EE_Boolean_Field('EVT_donations', __("Accept Donations?", "event_espresso"), false, false)
 				
 			));
+ * 
+ * @todo: calculate new CPT event status
+ * @todo: how to handle posts attached to events?
+ * @todo: how ot handle recurring events?
+ * 
  */
 class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
@@ -151,6 +156,8 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		if($events){
 			foreach($events as $event_row){
 				//insert new 4.1 Attendee object using $wpdb
+				$post_id = $this->_insert_cpt($event_row);
+				$meta_id = $this->_insert_event_meta($old_event, $post_id);
 			}
 			$this->set_status(EE_Data_Migration_Manager::status_continue);
 		}else{
@@ -160,19 +167,51 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	}
 	
 	private function _insert_cpt($old_event){
-		$post_status = 'draft';//calculating this can be complicated
+		global $wpdb;
+		//convert 3.1 event status to 4.1 CPT status
+		//for refrence, 3.1 event stati available for setting are:  
+//		$status = array(array('id' => 'A', 'text' => __('Public', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
+//		and the json api uses teh following to convert from 3.1 to 4.0
+//		'S'=>'secondary/waitlist',
+//		'A'=>'active',
+//		'X'=>'denied',
+//		'IA'=>'inactive',
+//		'O'=>'ongoing',
+//		'P'=>'pending',
+//		'R'=>'draft',x
+//		'D'=>'deleted');
+//		4.1 Event Post stati are the normal post statis 
+//		(publish,future,draft,pending,private,trash,auto-draft,inherit)
+//		and 3 custom ones: cancelled,postponed,sold_out
+		$status_conversions = array(
+			'R'=>'draft',
+			'X'=>'draft',//4.1 doesn't have a "not approved for publishing" status
+			'P'=>'pending',
+			'IA'=>'publish',//IA=inactive in 3.1: events were switched to this when they expired. in 4.1 that's just calculated
+			'O'=>'publish',//@todo: there is no ongoing events in 4.1 right?
+			'A'=>'publish',
+			'S'=>'publish',//@todo: what DO we do with secondary events?
+			'D'=>'trash',
+		);
+		if($old_event['event_status']=='IA'){//its ineactive eh? well is it sold_out, postponed, expired, or cancelled?
+			//check if we're ahead or behind the start time
+			
+			
+		}
+		$post_status = $status_conversions[$old_event['event_status']];
+		$event_meta = maybe_unserialize($old_event['event_meta']);
 		$cols_n_values = array(
 			'post_title'=>$old_event['event_name'],//EVT_name
 			'post_content'=>$old_event['event_desc'],//EVT_desc
 			'post_name'=>$old_event['event_identifier'],//EVT_slug
-			'post_date'=>$old_event['submitted'],//EVT_created
+			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
 			'post_excerpt'=>wp_trim_words($old_event['event_desc'],50),//EVT_short_desc
 			'post_modified'=>$old_event['submitted'],//EVT_modified
 			'post_author'=>$old_event['wp_user'],//EVT_wp_user
 			'post_parent'=>null,//parent maybe get this from some REM field?
 			'menu_order'=>null,//EVT_order
 			'post_type'=>'espresso_events',//post_type
-			'post_status'=>null,//status
+			'post_status'=>$post_status,//status
 		);
 		$datatypes = array(
 			'%s',//EVT_name
@@ -186,6 +225,75 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'%d',//EVT_order
 			'%s',//post_type
 			'%s',//status
-		);		
+		);	
+		$success = $wpdb->insert($this->_new_table,
+				$cols_n_values,
+				$datatypes);
+		if( ! $success ){
+			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_table, $cols_n_values, $datatypes));
+			return 0;
+		}
+		return $wpdb->insert_id;
 	}
+	
+	private function _insert_event_meta($old_event,$new_cpt_id){
+		global $wpdb;
+		$event_meta = maybe_unserialize($old_event['event_meta']);
+//		for reference, 3.1 'default_payment_status' are: $default_payment_status = array(
+//	array('id' => "", 'text' => 'No Change'),
+//	array('id' => 'Incomplete', 'text' => 'Incomplete'),
+//	array('id' => 'Pending', 'text' => 'Pending'),
+//	//array('id' => 'Completed', 'text' => 'Completed')
+//);
+		$old_default_reg_stati_conversions = array(
+			''=>'RNA',
+			'Incomplete'=>'RNA',
+			'Pending'=>'RPN'
+		);
+		$cols_n_values = array(
+			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
+			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
+			'EVT_display_reg_form'=> 'Y'== $old_event['display_reg_form'],
+			'EVT_visible_on'=> $old_event['visible_on'],
+			'EVT_allow_multiple'=> 'Y' == $old_event['allow_multiple'],
+			'EVT_additional_limit'=> $old_event['additional_limit'],
+			'EVT_additional_attendee_reg_info' => $event_meta['additional_attendee_reg_info'],
+			'EVT_default_registration_status' => isset($old_default_reg_stati_conversions[$event_meta['default_payment_status']]) ? $old_default_reg_stati_conversions[$event_meta['default_payment_status']] : 'RNA',
+			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
+			'EVT_member_only'=>$old_event['member_only'],
+			'EVT_phone'=> $old_event['phone'],
+			'EVT_allow_overflow' => 'Y' == $old_event['allow_overflow'],
+			'EVT_timezone_string'=> $old_event['timezone_string'],
+			'EVT_external_URL'=>$old_event['externalURL'],
+			'EVT_donations'=>false//doesnt exist in 3.1
+			
+		);
+		$datatypes = array(
+			'%s',//EVT_ID
+			'%d',//EVT_display_desc
+			'%d',//EVT_display_reg_form
+			'%s',//EVT_visible_on
+			'%d',//EVT_allow_mutliple
+			'%d',//EVT_additional_limit
+			'%d',//EVT_additional_attendee_reg_info
+			'%d',//EVT_default_registration_status
+			'%d',//EVT_rqeuire_pre_approval
+			'%d',//EVT_member_only
+			'%s',//EVT_phone
+			'%d',//EVT_allow_overflow
+			'%s',//EVT_timezone_string
+			'%s',//EVT_external_URL
+			'%d',//EVT_donations
+		);
+		$success = $wpdb->insert($this->_new_table,
+				$cols_n_values,
+				$datatypes);
+		if( ! $success ){
+			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_table, $cols_n_values, $datatypes));
+			return 0;
+		}
+		return $wpdb->insert_id;
+	}
+	
+	
 }
