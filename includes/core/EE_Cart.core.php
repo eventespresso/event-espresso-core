@@ -91,7 +91,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@access private
 	 *	@return void
 	 */	
-  private function __construct() {
+  	private function __construct() {
  
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
@@ -100,9 +100,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		}
 		
 		// are we using encryption?
-		if ( ! defined( 'ESPRESSO_ENCRYPT' )) {
-			EE_Registry::instance()->load_core( 'Encryption' );
-		}
+//		if ( ! defined( 'ESPRESSO_ENCRYPT' )) {
+//			EE_Registry::instance()->load_core( 'Encryption' );
+//		}
 
 		// grab any session data carried over from the previous page access
 		$this->_items = EE_Registry::instance()->SSN->get_session_data( FALSE, 'cart' );	
@@ -197,7 +197,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	public function get_cart_total_before_tax() {
-		return $this->_calculate_cart_total_before_tax();
+		return $this->_total_before_tax == 0 ? $this->_calculate_cart_total_before_tax() : $this->_total_before_tax;
 	}
 
 
@@ -262,7 +262,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		// check if only a single line_item_id was passed
-		if ( ! is_array( $line_item_ids )) {
+		if ( ! empty( $line_item_ids ) && ! is_array( $line_item_ids )) {
 			// place single line_item_id in an array to appear as multiple line_item_ids
 			$line_item_ids = array ( $line_item_ids );			
 		}
@@ -457,11 +457,16 @@ abstract class EE_Cart_Item {
 
 	/**
 	 * 	sets the unique identifier for this item
-	 * 	@access 	protected
+	 * 	@access 	public
+	 * 	@param string 	$classname
+	 * 	@param int 		$ID
 	 */
-	protected function set_line_item_ID( $classname, $ID ) {
-		// each line item in the cart requires a unique identifier
-		$this->_line_item_ID = md5( $classname . $ID . now() );
+	public function set_line_item_ID( $classname, $ID ) {
+		// only allow _line_item_ID to be set if it has not been set already
+		if ( $this->_line_item_ID == NULL ) {
+			// each line item in the cart requires a unique identifier
+			$this->_line_item_ID = md5( $classname . $ID . now() );
+		}
 	}
 
 	/**
@@ -469,15 +474,16 @@ abstract class EE_Cart_Item {
 	 * 	@access 	public
 	 *	@return string
 	 */
-	protected function get_line_item_ID() {
+	public function get_line_item_ID() {
 		return $this->_line_item_ID;
 	}
+	
 	/**
 	 * 	sets the number of items of this type
-	 * 	@access 	protected
+	 * 	@access 	public
 	 *	@param int $qty
 	 */
-	protected function set_qty( $qty ) {
+	public function set_qty( $qty ) {
 		$this->_qty = $qty;
 	}
 
