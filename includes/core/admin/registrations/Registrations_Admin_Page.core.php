@@ -104,6 +104,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'publishbox' => array(
 				'edit_attendee' => __("Update Attendee Record", 'event_espresso')
+				),
+			'hide_add_button_on_cpt_route' => array(
+				'edit_attendee' => true
 				)
 			);
 	}
@@ -2548,7 +2551,50 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/***************************************		ATTENDEE DETAILS 		***************************************/
 
 	//related to cpt routes
-	protected function _insert_update_cpt_item($post_id, $post) {}
+	protected function _insert_update_cpt_item($post_id, $post) {
+		$success = true;
+		$attendee = EEM_Attendee::instance()->get_one_by_ID( $post_id );
+		//for attendee updates
+		if ( $post->post_type = 'espresso_attendees' && !empty( $attendee ) ) {
+			//note we should only be UPDATING attendees at this point.
+			$updated_fields = array(
+				'ATT_fname' => $this->_req_data['ATT_fname'],
+				'ATT_lname' => $this->_req_data['ATT_lname'],
+				'ATT_full_name'=> $this->_req_data['ATT_fname'] . ' ' . $this->_req_data['ATT_lname'],
+				'ATT_address' => isset($this->_req_data['ATT_address']) ? $this->_req_data['ATT_address'] : '',
+				'ATT_address2' => isset($this->_req_data['ATT_address2']) ? $this->_req_data['ATT_address2'] : '',
+				'ATT_city' => isset( $this->_req_data['ATT_city'] ) ? $this->_req_data['ATT_city'] : '',
+				'STA_ID' => isset( $this->_req_data['STA_ID'] ) ? $this->_req_data['STA_ID'] : '',
+				'CNT_ISO' => isset( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['STA_ID'] : '',
+				'ATT_zip' => isset( $this->_req_data['ATT_zip'] ) ? $this->_req_data['ATT_zip'] : '',
+				'ATT_email' => isset( $this->_req_data['ATT_email'] ) ? $this->_req_data['ATT_email'] : '',
+				'ATT_phone' => isset( $this->_req_data['ATT_phone'] ) ? $this->_req_data['ATT_phone'] : '',
+				'ATT_social' => isset( $this->_req_data['ATT_social'] ) ? $this->_req_data['ATT_social'] : '',
+				'ATT_comments' => isset( $this->_req_data['ATT_comments'] ) ? $this->_req_data['ATT_comments'] : '',
+				'ATT_notes' => isset( $this->_req_data['ATT_notes'] ) ? $this->_req_data['ATT_notes'] : '',
+				);
+			foreach ( $updated_fields as $field => $value ) {
+				$attendee->set($field, $value);
+			}
+
+			$success = $attendee->save();
+
+			$attendee_update_callbacks = apply_filters( 'FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update', array() );
+			foreach ( $attendee_update_callbacks as $a_callback ) {
+				if ( FALSE === call_user_func_array( $a_callback, array($attendee, $this->_req_data ) ) ) {
+					throw new EE_Error( sprintf( __('The %s callback given for the "FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update" filter is not a valid callback.  Please check the spelling.', 'event_espresso'), $a_callback ) );
+				}
+			}
+		}
+
+		if ( $success === FALSE )
+			EE_Error::add_error(__('Something went wrong with updating the meta table data for the attendee', 'event_espresso'));
+
+	}
+	
+
+
+
 	public function trash_cpt_item($post_id) {}
 	public function delete_cpt_item($post_id) {}
 	public function restore_cpt_item($post_id) {}

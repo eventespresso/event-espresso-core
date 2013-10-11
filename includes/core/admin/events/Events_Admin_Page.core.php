@@ -606,7 +606,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//any errors?
-		if ( $success && !$att_success ) {
+		if ( $success && FALSE === $att_success ) {
 			EE_Error::add_error( __('Event Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		} else if ( $success === FALSE ) {
 			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );

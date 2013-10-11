@@ -808,6 +808,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$message = 4;
 		}
 
+		//change the message if the post type is not viewable on the frontend
+		$this->_cpt_object = get_post_type_object($post->post_type);
+		$message = $message === 1 && !$this->_cpt_object->publicly_queryable ? 4 : $message;
+
 		$query_args = array_merge( array( 'message' => $message ), $query_args );
 
 		$this->_process_notices( $query_args, TRUE );
@@ -936,7 +940,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		$title = $this->_cpt_object->labels->edit_item;
-		$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new'), $this->_admin_base_url );
+
+		if ( isset( $this->_cpt_routes[$this->_req_data['action']] ) && !isset( $this->_labels['hide_add_button_on_cpt_route']['edit_attendee'] ) ) {
+
+			$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new'), $this->_admin_base_url );
+		}
 
 		if ( post_type_supports($this->_cpt_routes[$this->_req_action], 'comments') ) {
 			wp_enqueue_script('admin-comments');
