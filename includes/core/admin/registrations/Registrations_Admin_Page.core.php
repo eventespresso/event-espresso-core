@@ -53,6 +53,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _init_page_props() {
 		$this->page_slug = REG_PG_SLUG;
+		$this->_admin_base_url = REG_ADMIN_URL;
 		$this->page_label = __('Registrations', 'event_espresso');
 		$this->_cpt_routes = array(
 			'add_new_attendee' => 'espresso_attendees',
@@ -68,10 +69,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		add_action('edit_form_after_title', array($this, 'after_title_form_fields'), 10 );
+		//add filters so that the comment urls don't take users to a confusing 404 page
+		add_filter('get_comment_link', array( $this, 'clear_comment_link' ), 10, 3 );
 	}
 
 
-
+	public function clear_comment_link( $link, $comment, $args ) {
+		//gotta make sure this only happens on this route
+		$post_type = get_post_type( $comment->comment_post_ID);
+		if ( $post_type == 'espresso_attendees' )
+			return '#commentsdiv';
+		return $link;
+	}
 
 
 	protected function _ajax_hooks() {
@@ -84,7 +93,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function  _define_page_props() {
-		$this->_admin_base_url = REG_ADMIN_URL;
 		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
@@ -413,7 +421,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
+	public function load_scripts_styles_edit_attendee() {
+		//stuff to only show up on our attendee edit details page.
+		$attendee_details_translations = array(
+			'att_publish_text' => sprintf( __('Created on: <b>%1$s</b>', 'event_espresso'), $this->_cpt_model_obj->get_datetime('ATT_created') )
+			);
+		wp_localize_script( 'espresso_reg', 'ATTENDEE_DETAILS', $attendee_details_translations );
+		wp_enqueue_script('jquery-validate');
+	}
 
 
 	public function load_scripts_styles_view_registration() {
@@ -2541,71 +2556,54 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function attendee_editor_metaboxes() {
+
 		remove_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core' );
 		add_meta_box('commentsdiv', __('Notes on the Attendee', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+		add_meta_box('attendee_contact_info', __('Contact Info', 'event_espresso'), array( $this, 'attendee_contact_info'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
+		add_meta_box('attendee_details_address', __('Address Details', 'event_espresso'), array($this, 'attendee_address_details'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
+		add_meta_box('attendee_details_social', __('Social Info', 'event_espresso'), array( $this, 'attendee_social_details'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
+		add_meta_box('attendee_notes_comments', __('Alternative Notes/Comments', 'event_espresso'), array( $this, 'attendee_old_notes_comments'), $this->_cpt_routes[$this->_req_action], 'side', 'core');
+		add_meta_box('attendee_registrations', __('Registrations for this Attendee', 'event_espresso'), array( $this, 'attendee_registrations_meta_box'), $this->_cpt_routes[$this->_req_action], 'normal', 'high');
 	}
+
 	
-
-
-
 	/**
-	 * add in the form fields for the attendee edit
+	 * Metabox for attendee contact info
 	 * @param  WP_Post $post wp post object
-	 * @return string        html for new form.
+	 * @return string        attendee contact info ( and form )
 	 */
-	public function after_title_form_fields($post) {
-		if ( $post->post_type == 'espresso_attendees' ) {
-			?>
-			<div id="titlediv">
-				<div id="titlewrap">
-					<label class="hidden" id="attendee-first-name-text" for="ATT_fname">First Name:</label>
-					<input type="text" class="main-text-field" name="ATT_fname" value="<?php echo $this->_cpt_model_obj->get('ATT_fname'); ?>" id="ATT_fname" class="smaller-text-field" placeholder="<?php _e('First Name', 'event_espresso'); ?>">
-					<label class="hidden" id="attendee-first-name-text" for="ATT_lname">Last Name:</label>
-					<input type="text" class="main-text-field" name="ATT_lname" value="<?php echo $this->_cpt_model_obj->get('ATT_lname'); ?>" id="ATT_lname" class="smaller-text-field" placeholder="<?php _e('Last Name', 'event_espresso'); ?>">
-					<div style="clear:both"></div>
-				</div>
-			</div>
-			<?php
-		}
+	public function attendee_contact_info( $post ) {
+		//get attendee object ( should already have it )
+		$this->_template_args['attendee'] = $this->_cpt_model_obj;
+		$template = REG_TEMPLATE_PATH . 'attendee_contact_info_metabox_content.template.php';
+		EEH_Template::display_template($template, $this->_template_args);
 	}
 
 
 
+	public function attendee_social_details( $post ) {
+		$this->_template_args['attendee'] = $this->_cpt_model_obj;
+		$template = REG_TEMPLATE_PATH . 'attendee_social_contacts_metabox_content.template.php';
+		EEH_Template::display_template($template, $this->_template_args);
+	}
+
+
+	public function attendee_old_notes_comments( $post ) {
+		$this->_template_args['attendee'] = $this->_cpt_model_obj;
+		$template = REG_TEMPLATE_PATH . 'attendee_old_notes_comments_metabox_content.template.php';
+		EEH_Template::display_template($template, $this->_template_args);
+	}
+
+
 	/**
-	 * 		_attendee_details
-	*		@access protected
-	*		@return void
-	*/
-	protected function _edit_attendee_details( $new = FALSE ) {		
-	
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		
-		$ATT_ID = isset( $this->_req_data['ATT_ID'] ) && ! empty( $this->_req_data['ATT_ID'] ) ? absint( $this->_req_data['ATT_ID'] ) : FALSE;
-
-		$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
-		// add ATT_ID to title if editing 
-		$title = $ATT_ID ? $title . ' # ' . $ATT_ID : $title;
-
-		// get attendees
-		$ATT_MDL = EEM_Attendee::instance();
-
-		if ( $ATT_ID ) {
-		
-			$attendee = $ATT_MDL->get_one_by_ID( $ATT_ID );
-			$action = 'update_attendee';
-			
-		} else {
-			$attendee = $ATT_MDL->create_default_object();
-			$action = 'insert_attendee';
-		}
-
-		$this->_set_add_edit_form_tags($action);
-
-		
-		$this->_template_args['attendee']= $attendee;
-		
-
+	 * Metabox for attendee details
+	 * @param  WP_Post $post wp post object
+	 * @return string        attendee address detials (and form)
+	 */
+	public function attendee_address_details($post) {
+		//get attendee object (should already have it)
+		$this->_template_args['attendee'] = $this->_cpt_model_obj;
 		$this->_template_args['state_html'] = EEH_Form_Fields::generate_form_input(
 				new EE_Question_Form_Input(
 				EE_Question::new_instance( array(
@@ -2615,7 +2613,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					)),
 				EE_Answer::new_instance( array(
 					'ANS_ID' => 0,
-					'ANS_value' => $attendee->state_ID()
+					'ANS_value' => $this->_cpt_model_obj->state_ID()
 					)),
 				array(
 					'input_id' => 'STA_ID',
@@ -2633,7 +2631,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					)),
 				EE_Answer::new_instance( array(
 					'ANS_ID' => 0,
-					'ANS_value' => $attendee->country_ISO()
+					'ANS_value' => $this->_cpt_model_obj->country_ISO()
 					)),
 				array(
 					'input_id' => 'CNT_ISO',
@@ -2642,28 +2640,41 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'append_qstn_id' => FALSE 
 					)
 				));
-		//get list of all registrations for this attendee	
-		if ( $this->_template_args['registrations'] = $attendee->get_many_related('Registration') ) {
-			$this->_template_path = REG_TEMPLATE_PATH . 'attendee_registrations_main_meta_box.template.php';
-			$meta_box_args['template_path'] = $this->_template_path;
-			$meta_box_args['template_args'] = $this->_template_args;
-			$this->_add_admin_page_meta_box( 'attendee_registrations_meta_', __( 'Event Registrations for this Attendee', 'event_espresso' ), 'attendee_registrations', $meta_box_args );
-		}
-		
-		// generate metabox - you MUST create a callback named __FUNCTION__ . '_meta_box'  ( see "_edit_attendee_details_meta_box" below )
-		$this->_template_path = REG_TEMPLATE_PATH . 'attendee_details_main_meta_box.template.php';
-		//$this->_add_admin_page_meta_box( $action, $title, 'edit_attendee_details', NULL );
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
+		$template = REG_TEMPLATE_PATH . 'attendee_address_details_metabox_content.template.php';
+		EEH_Template::display_template($template, $this->_template_args );
 
-		$this->_set_publish_post_box_vars( 'ATT_ID', $ATT_ID, 'delete_attendees' );
+	}
 
-		// the final template wrapper
-		$this->display_admin_page_with_sidebar();
+
+	/**
+	 * 		_attendee_details
+	*		@access protected
+	*		@return void
+	*/
+	public function attendee_registrations_meta_box( $post ) {		
+	
+		$this->_template_args['attendee'] = $this->_cpt_model_obj;
+		$this->_template_args['registrations'] = $this->_cpt_model_obj->get_many_related('Registration');
+		$template = REG_TEMPLATE_PATH . 'attendee_registrations_main_meta_box.template.php';
+		EEH_Template::display_template($template, $this->_template_args);
 		
 	}
 
 
 
+
+	/**
+	 * add in the form fields for the attendee edit
+	 * @param  WP_Post $post wp post object
+	 * @return string        html for new form.
+	 */
+	public function after_title_form_fields($post) {
+		if ( $post->post_type == 'espresso_attendees' ) {
+			$template = REG_TEMPLATE_PATH . 'attendee_details_after_title_form_fields.template.php';
+			$template_args['attendee'] = $this->_cpt_model_obj;
+			EEH_Template::display_template($template, $template_args);
+		}
+	}
 
 
 

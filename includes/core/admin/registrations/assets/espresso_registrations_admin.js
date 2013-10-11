@@ -120,6 +120,19 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
+	//validation
+	$('#post').validate({
+		invalidHandler: function( event, validator ) {
+			//toggle the wpjs indicators
+			$('.spinner').hide();
+			$('#publish').removeClass('button-primary-disabled');
+		}
+	});/**/
 });
 
-
+/**
+ * hide unnecessary ui elements when viewing attendee details cpt route.
+ */
+jQuery('#post-status-display').parent().hide();
+jQuery('#visibility').hide();
+jQuery('#timestamp').html(ATTENDEE_DETAILS.att_publish_text);
