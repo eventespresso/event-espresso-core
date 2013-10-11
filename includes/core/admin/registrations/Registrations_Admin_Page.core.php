@@ -427,6 +427,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'att_publish_text' => sprintf( __('Created on: <b>%1$s</b>', 'event_espresso'), $this->_cpt_model_obj->get_datetime('ATT_created') )
 			);
 		wp_localize_script( 'espresso_reg', 'ATTENDEE_DETAILS', $attendee_details_translations );
+		wp_enqueue_script('jquery-validate');
 	}
 
 

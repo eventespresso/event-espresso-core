@@ -120,13 +120,16 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
-	/**
-	 * hide unnecessary ui elements when viewing attendee details cpt route.
-	 */
-	$('#post-status-display').parent().hide();
-	$('#visibility').hide();
-	$('#timestamp').html(ATTENDEE_DETAILS.att_publish_text);
+	//validation
+	$('#post').validate({
+		invalidHandler: function( event, validator ) {
+			//toggle the wpjs indicators
+			$('.spinner').hide();
+			$('#publish').removeClass('button-primary-disabled');
+		}
+	});/**/
 });
+
 /**
  * hide unnecessary ui elements when viewing attendee details cpt route.
  */
