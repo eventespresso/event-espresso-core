@@ -507,9 +507,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//its possible this is a new save so let's catch that instead
 		$post = isset( $this->_req_data['post_ID'] ) ? get_post( $this->_req_data['post_ID'] ) : $post;
+		$post_type = $post ? $post->post_type : false;
+
+		$current_route = isset($this->_req_data['current_route']) ? $this->_req_data['current_route'] : 'shouldneverwork';
+
+		$route_to_check = $post_type && isset( $this->_cpt_routes[$current_route]) ? $this->_cpt_routes[$current_route] : '';
 
 
-		if ( $post && $post->post_type == $this->page_slug )
+		if ( $post_type === $route_to_check )
 			add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
 
 		//now let's filter redirect if we're on a revision page and the revision is for an event CPT.
@@ -539,11 +544,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		//NOTE we ONLY want to run these hooks if we're on the right class for the given post type.  Otherwise we could see some really freaky things happen!
-		//try to get post type from $_POST data
-		$post_type = isset( $this->_req_data['post_type'] ) ? $this->_req_data['post_type'] : FALSE;
 
 
-		if ( $post_type && $post_type == $this->_cpt_routes[$this->_req_data['current_route']] ) {
+		if ( $post_type && $post_type === $route_to_check ) {
 			//$post_id, $post
 			add_action('save_post', array( $this, 'insert_update'), 10, 2 );
 
@@ -845,7 +848,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$id = empty( $id ) && is_object( $post ) ? $post->ID : NULL;
 
-		$messages[$this->page_slug] = array(
+		$post_type = $post ? $post->post_type : false;
+
+		/*$current_route = isset($this->_req_data['current_route']) ? $this->_req_data['current_route'] : 'shouldneverwork';
+
+		$route_to_check = $post_type && isset( $this->_cpt_routes[$current_route]) ? $this->_cpt_routes[$current_route] : '';/**/
+
+		$messages[$post->post_type] = array(
 			0 => '', //Unused. Messages start at index 1.
 			1 => sprintf( __( '%1$s updated. <a href="%2$s">View %1$s</a>', 'event_espresso'), $this->_cpt_object->labels->singular_name, esc_url( get_permalink( $id ) ) ),
 			2 => __('Custom field updated'),
