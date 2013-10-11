@@ -48,7 +48,7 @@ class EES_Espresso_Cancelled  extends EES_Shortcode {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function run() {
+	public function run( WP $WP ) {
 		$this->EE->load_core( 'Session' ); 
 		$this->EE->SSN->clear_session(); 
 	}

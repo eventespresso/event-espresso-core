@@ -143,28 +143,32 @@ class EEH_URL {
 	 * 		@access public
 	 * 		@return mixed
 	 */
-	public static function test_for_espresso_page() {
+	public static function test_for_espresso_page( $current_request = FALSE ) {
 		self::$_is_espresso_page = FALSE;
-		// ensure _uri_segment_array is set
-		if ( empty(  self::$uri_segment_array )) {
-			self::_generate_uri_segment_aray();
-		}
-//		printr( self::$uri_segment_array, 'self::$uri_segment_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// load espresso CPT endpoints
 		$espresso_CPT_endpoints = EE_CPT_Strategy::instance()->get_CPT_endpoints();
 		// load all pages using espresso shortcodes
 		$post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
 		// make sure core pages are included 
 		$espresso_pages = array_merge( $espresso_CPT_endpoints, $post_shortcodes );
-//		printr( $espresso_pages, '$espresso_pages  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		// cycle thru segments till we find a post
-		foreach(  self::$uri_segment_array as $uri_segment ) {
-			// can we get a page_id ?
-			if ( isset( $espresso_pages[ $uri_segment ] )) {
-				self::$_is_espresso_page = $uri_segment;
-				break;
+		// was a post name passed ?
+		if ( ! $current_request || empty( $current_request )) {
+			// ensure _uri_segment_array is set
+			if ( empty(  self::$uri_segment_array )) {
+				self::_generate_uri_segment_aray();
 			}
+			// cycle thru segments till we find a post
+			foreach(  self::$uri_segment_array as $uri_segment ) {
+				// can we get a page_id ?
+				if ( isset( $espresso_pages[ $uri_segment ] )) {
+					self::$_is_espresso_page = $uri_segment;
+					break;
+				}
+			}		
+		} else if ( in_array( $current_request, $espresso_pages )) {
+			 self::$_is_espresso_page = $current_request;
 		}
+
 		return self::$_is_espresso_page;
 	}
 

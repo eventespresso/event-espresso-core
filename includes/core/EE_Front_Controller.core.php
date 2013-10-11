@@ -165,10 +165,11 @@ final class EE_Front_Controller {
 //		echo 'echodump of $answers_for_r';
 //		var_dump($answers_for_r);
 		
-		add_action( 'wp_loaded', array( $this, 'get_request' ), 2 );
 		// additional hooks get added in the init phase
 		// load other resources and begin to actually run shortcodes and modules
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
+		// analyse the incoming WP request
+		add_action( 'parse_request', array( $this, 'get_request' ), 1 );
 		// process any content shortcodes
 		add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
 		// process request with module factory
@@ -230,21 +231,6 @@ final class EE_Front_Controller {
 
 
 
-	/**
-	 *	_get_request
-	 * 
-	 *	@access public
-	 *	@return void
-	 */
-	public function get_request() {
-		do_action( 'AHEE__Front_Controller__get_request__before_Request_Handler_loaded' );
-		$this->EE->load_helper( 'URL' );	
-		$this->EE->load_core( 'Request_Handler' );	
-		do_action( 'AHEE__Front_Controller__get_request__after_Request_Handler_loaded' );
-	}
-
-
-
 
 	/**
 	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's have been registered and their default priority init phases have run
@@ -269,34 +255,78 @@ final class EE_Front_Controller {
 
 
 
+	/**
+	 *	_get_request
+	 * 
+	 *	@access public
+	 *	@return void
+	 */
+	public function get_request( WP $WP ) {
+//		d( $WP );
+		do_action( 'AHEE__Front_Controller__get_request__before_Request_Handler_loaded' );
+		$this->EE->load_core( 'Request_Handler', $WP );	
+		do_action( 'AHEE__Front_Controller__get_request__after_Request_Handler_loaded' );
+	}
+
+
+
 
 	/**
-	 * 	_initialize_shortcodes - calls init method on shortcodes that have been determined to be in the_content for the requested page
+	 * 	_initialize_shortcodes - calls init method on shortcodes that have been determined to be in the_content for the currently requested page
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function _initialize_shortcodes( $WP ) {
+	public function _initialize_shortcodes( WP $WP ) {
 		// make sure post_name is set on REQ
 		if ( $this->EE->REQ->is_set( 'post_name' )) {
 			// grab post_name from request
 			$current_post = $this->EE->REQ->get( 'post_name' );
+//			d( $current_post );
 			// if it's not set, then check if frontpage is blog
-			$current_post = ! empty( $current_post ) ? $current_post : get_option('show_on_front');
+			if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
+				// yup.. this is the posts page, prepare to load all shortcode modules
+				$current_post = 'posts';
+//				d( $current_post );
+			} else if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'page' ) {
+				// some other page is set as the homepage
+				if ( $page_on_front = get_option( 'page_on_front' )) {
+					// k now we need to find the slug for this page
+					global $wpdb;
+					$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
+					if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
+						// set the current post slug to what it actually is
+						$current_post = $post_slug;
+//						d( $current_post );								
+					}					
+				}
+			} else if ( get_option( 'show_on_front' ) == 'page' ) {
+				// we're not on the homepage, but some "other" page is set as the posts page... 
+				if ( $page_for_posts = get_option( 'page_for_posts' )) {
+					// better get the ID for the current post
+					global $wpdb;
+					$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND post_name=%s';
+					$current_post_id = $wpdb->get_var( $wpdb->prepare( $SQL, $current_post ));
+					// is the current post the "page_for_posts" ???
+					if ( $current_post_id === $page_for_posts ) {
+						$current_post = 'posts';
+//						d( $current_post );
+					}					
+				}
+			}
 			// make sure shortcodes are set
 			if ( isset( $this->EE->CFG->core->post_shortcodes )) {
-//				printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//				d( $this->EE->CFG->core->post_shortcodes );
 				// cycle thru all posts with shortcodes set
 				foreach ( $this->EE->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
-//					echo '<h4>$post_name : ' . $post_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 					// are we on this page ?
 					$term_exists = is_array( term_exists( $current_post, 'category' ));
 					// if on the current page, or the current page is a category
 					if ( $current_post == $post_name || $term_exists ) {
-//						echo '<h4>$post_name : ' . $post_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//						d( $post_name );
 						// filter shortcodes so 
 						$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
-//						printr( $post_shortcodes, '$post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//						d( $post_shortcodes );
 						// now cycle thru shortcodes
 						foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 							// verify shortcode is in list of registered shortcodes
@@ -320,8 +350,8 @@ final class EE_Front_Controller {
 								// and pass the request object to the run method
 								$shortcode = $sc_reflector->newInstance( $this->EE );
 								// fire the shortcode class's run method, so that it can activate resources
-								$shortcode->run();
-//								printr( $shortcode, '$shortcode  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+								$shortcode->run( $WP );
+//								d( $shortcode );
 							}
 						}
 					}
@@ -345,10 +375,9 @@ final class EE_Front_Controller {
 		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
 		while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
-//			echo '<h4>$route : ' . $route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			d( $route );
 			// determine module and method for route
 			$module = $Module_Request_Router->resolve_route( $route );
-//			printr( $module, '$module  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// get registered view for route
 			$this->_view_template = $Module_Request_Router->get_view( $route );
 		}
@@ -356,8 +385,6 @@ final class EE_Front_Controller {
 		if ( ! empty( $this->_view_template )) {
 			add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		}
-//		printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( EE_Config::instance(), 'EE_Config::instance()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 	}
 

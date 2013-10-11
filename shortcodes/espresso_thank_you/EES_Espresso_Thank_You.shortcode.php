@@ -68,10 +68,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
-	 *	@param 	EE_Registry $EE
+	 *  @param  	WP $WP 
 	 *  @return 	void
 	 */
-	public function run() {
+	public function run( WP $WP ) {
 		
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {			
