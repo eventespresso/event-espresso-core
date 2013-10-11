@@ -731,14 +731,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) 
 			));
 		}elseif($month_range){
-			$pieces = explode('-', $month_range, 3);
-			$year_r = $pieces[0];
-			$month_r = $pieces[1];
+			$pieces = explode(' ', $this->_req_data['month_range'], 3);
+			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 			$_where['REG_date']= array('BETWEEN',
-				array(
-					$month_r . ' 01 ' . $this_year_r . ' ' . $time_start ,
-					$month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end 
-			));	
+				array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ));	
 		}elseif($start_date && $end_date){
 			throw new EE_Error("not yet supported");
 		}elseif($start_date){
