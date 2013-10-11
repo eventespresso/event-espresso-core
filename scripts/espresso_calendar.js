@@ -13,6 +13,13 @@ jQuery(document).ready(function($) {
 	}
 	// padding and margin between event and day cell (this could be calculated via js)
 	var day_padding = 16;
+	
+	if ( eeCAL.espresso_use_pickers){
+		// Sets the background and border colors for all events on the calendar.
+		var ee_eventColor = eeCAL.ee_event_background;
+		// Sets the text color for all events on the calendar.
+		var ee_eventTextColor = eeCAL.ee_event_text_color;
+	}
 
 	$('#espresso_calendar').fullCalendar({
 		
@@ -65,20 +72,20 @@ jQuery(document).ready(function($) {
 		},
 		// Text that will be displayed on buttons of the header.
 		buttonText: {
-			next: eeCAL.buttonText_next, 	// default '&lsaquo;' <
-			prev: eeCAL.buttonText_prev, 	// default '&rsaquo;'  >
+			next: eeCAL.buttonText_next, 			// default '&lsaquo;' <
+			prev: eeCAL.buttonText_prev, 			// default '&rsaquo;'  >
 			prevYear: eeCAL.buttonText_prevYear, 	// default '&laquo;'  <<
 			nextYear:eeCAL.buttonText_nextYear, 	// default '&raquo;'  >>
-			today: eeCAL.buttonText_today, 	// default 'today'
-			month: eeCAL.buttonText_month, 	// default 'month'
-			week: eeCAL.buttonText_week, 	// default 'week'
-			day: eeCAL.buttonText_day, 	// default 'day'
+			today: eeCAL.buttonText_today, 			// default 'today'
+			month: eeCAL.buttonText_month, 			// default 'month'
+			week: eeCAL.buttonText_week, 			// default 'week'
+			day: eeCAL.buttonText_day, 				// default 'day'
 		},
-
+		
 		// Sets the background and border colors for all events on the calendar.
-		eventColor: eeCAL.ee_event_background,
+		eventColor: ee_eventColor,
 		// Sets the text color for all events on the calendar.
-		eventTextColor: eeCAL.ee_event_text_color,
+		eventTextColor: ee_eventTextColor,
 
 
 		//Full names of months.
@@ -213,8 +220,8 @@ jQuery(document).ready(function($) {
 					hide: "unfocus",
 					style: {
 						classes: event.tooltip_style, 
-					},
-					widget: true
+						widget: true
+					}
 				});
 				
 			} else {

@@ -293,9 +293,9 @@ class EE_Calendar_Admin {
 			$espresso_calendar['disable_categories'] = $_POST['disable_categories'];
 			$espresso_calendar['show_attendee_limit'] = $_POST['show_attendee_limit'];
 			$espresso_calendar['time_format'] = $_POST['time_format_custom'];
-			$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
-			$espresso_calendar['ee_event_background'] = ( ! empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : '007BAE';
-			$espresso_calendar['ee_event_text_color'] = ( ! empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : 'FFFFFF';
+			$espresso_calendar['espresso_use_pickers'] = ( !empty($_POST['espresso_use_pickers']) ) ? $_POST['espresso_use_pickers'] : false;
+			$espresso_calendar['ee_event_background'] = ( !empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : '007BAE';
+			$espresso_calendar['ee_event_text_color'] = ( !empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : 'FFFFFF';
 			$espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
 
 			$espresso_calendar['titleFormat_month'] = $_POST['titleFormat_month'];

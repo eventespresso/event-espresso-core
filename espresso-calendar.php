@@ -6,7 +6,7 @@
   Version: 2.1.1.BETA
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
-  Copyright 2012 Event Espresso (email : support@eventespresso.com)
+  Copyright 2013 Event Espresso (email : support@eventespresso.com)
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as
@@ -29,7 +29,7 @@
  *
  * @ package			Event Espresso
  * @ author				Seth Shoultes
- * @ copyright			(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ copyright			(c) 2008-2013 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link				http://www.eventespresso.com
  * @ version		 	3.1
@@ -48,19 +48,19 @@ class EE_Calendar {
 
    /**
      * 	EE_Calendar Object
-     * 	@var EE_Calendar $_instance
+     * 	@var 		EE_Calendar $_instance
 	 * 	@access 	private 	
      */
 	private static $_instance = NULL;
 
 	/**
-	 * 	@var 	array	$_calendar_options
+	 * 	@var 		array	$_calendar_options
 	 *  @access 	private
 	 */
 	private $_calendar_options = array();
 
 	/**
-	 * 	@var 	INT	$_event_category_id
+	 * 	@var 		INT	$_event_category_id
 	 *  @access 	private
 	 */
 	private $_event_category_id = 0;
@@ -73,7 +73,7 @@ class EE_Calendar {
 
 
 	/**
-	 * 	@var 	boolean	$_show_expired
+	 * 	@var 		boolean	$_show_expired
 	 *  @access 	private
 	 */
 	private $_show_expired = TRUE;
@@ -94,10 +94,6 @@ class EE_Calendar {
 		}
 		return self::$_instance;
 	}
-
-
-
-
 
 	/**
 	 * 	class constructor
@@ -131,8 +127,6 @@ class EE_Calendar {
 		
 	}
 
-
-
 	/**
 	 * 	calendar_version - Define the version of the plugin
 	 *
@@ -142,8 +136,6 @@ class EE_Calendar {
 	public function calendar_version() {
 		return '2.1.1.BETA';
 	}
-
-
 
 	/**
 	 * 	activation
@@ -160,8 +152,6 @@ class EE_Calendar {
 		EE_Calendar_Admin::activation();
 	}
 
-
-
 	/**
 	 * 	plugin_file
 	 *
@@ -176,8 +166,6 @@ class EE_Calendar {
 		return $plugin_file;
 	}
 	
-
-
 	/**
 	 * 	get_calendar_options
 	 *
@@ -190,8 +178,6 @@ class EE_Calendar {
 		}
 		return $this->_calendar_options;
 	}
-
-
 
 	/**
 	 * 	calendar_scripts - Load the scripts and css
@@ -394,12 +380,9 @@ class EE_Calendar {
 		</div>
 	</div>
 	<div style="clear:both;" ></div>
-	<div id="espresso_calendar_images" ></div>
-	'; 
+	<div id="espresso_calendar_images" ></div>'; 
 	
 	}
-
-
 
 	/**
 	 * 	get_calendar_events
@@ -466,9 +449,9 @@ class EE_Calendar {
 		// grab event data with event IDs as the array keys
 		$events_data = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), OBJECT_K );
 		
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
-//	$this->timer->start();
+//		$this->timer->stop();
+//		echo $this->timer->get_elapse( __LINE__ );
+//		$this->timer->start();
 
 //		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h3>$events_data</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
@@ -510,14 +493,14 @@ class EE_Calendar {
 			$upload_dir = wp_upload_dir();
 		}
 
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
+//		$this->timer->stop();
+//		echo $this->timer->get_elapse( __LINE__ );
 		
 		$events = array();
 		$cntr = 0;
 		foreach ( $events_data as $event ) {
 
-//	$this->timer->start();
+//		$this->timer->start();
 
 			//Reset category colors
 			$events[ $cntr ]['color'] = '';
@@ -569,9 +552,9 @@ class EE_Calendar {
 				$events[ $cntr ]['className'] = '';
 			}
 			
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
-//	$this->timer->start();
+//			$this->timer->stop();
+//			echo $this->timer->get_elapse( __LINE__ );
+//			$this->timer->start();
 
 			$startTime = ! empty($event->start_time) ? '<span class="event-start-time">' . event_date_display($event->start_time, $this->_calendar_options['time_format']) . '</span>' : FALSE;
 			$endTime = ! empty($event->end_time) ? '<span class="event-end-time">' . event_date_display($event->end_time, $this->_calendar_options['time_format']) . '</span>' : FALSE;
@@ -600,18 +583,18 @@ class EE_Calendar {
 				// and extension
 				$ext = $pathinfo['extension'];
 				// generate thumbnail size string ie: -150x150
-				$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
+				//$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
 				// check that thumbnail dimesions are not already included in filename
-				$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
-				$path_to_thumbnail = $dirname . $filename . $thumbnail_size . '.' . $ext;
+				//$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
+				$path_to_thumbnail = $dirname . $filename . '.' . $ext;
 				
-				$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
-				$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
+				//$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
+				//$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
 				
 				// check if file exists
 				if ( $pathinfo['dirname'] == $upload_dir['baseurl'] ) {
 					// since the above is true we know the file is in the uploads so we can use file_exists() to verify it
-					if ( ! file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . $thumbnail_size . '.' . $ext )) {
+					if ( ! file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext )) {
 						// hmmm...  the scaled thumbnail doesn't exist, so better check that the original is still there, or set path to FALSE
 						$path_to_thumbnail = file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext ) ? $event_meta['event_thumbnail_url'] : FALSE;
 					}			
@@ -658,9 +641,9 @@ class EE_Calendar {
 				}
 			}
 
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
-//	$this->timer->start();
+//			$this->timer->stop();
+//			echo $this->timer->get_elapse( __LINE__ );
+//			$this->timer->start();
 
 			if ( $show_tooltips ) {
 				// gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
@@ -668,7 +651,7 @@ class EE_Calendar {
 				// use short descriptions
 				$events[ $cntr ]['description'] = reset( explode( '<!--more-->', $events[ $cntr ]['description'] ));
 				// tooltip wrapper
-				$events[ $cntr ]['tooltip'] = '<div class="qtip_info">';
+				$events[ $cntr ]['tooltip'] = '<div class="ui-tooltip-content qtip_info">';
 				// show time ?
 				$events[ $cntr ]['tooltip'] .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 				// check attendee reg limit
@@ -690,7 +673,7 @@ class EE_Calendar {
 				$regButtonText = $event->display_reg_form == 'Y' ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
 				// reg open
 				if ( $num_completed < $reg_limit && ! $expired ) {
-					$events[ $cntr ]['tooltip'] .= '<a class="reg-now-btn" href="' . $events[ $cntr ]['url'] . '">' . $regButtonText . '</a>';				
+					$events[ $cntr ]['tooltip'] .= '<a class="ui-state-active reg-now-btn" href="' . $events[ $cntr ]['url'] . '">' . $regButtonText . '</a>';				
 				} else if ( $num_completed >= $reg_limit && ! $expired ) {
 					$events[ $cntr ]['tooltip'] .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';				
 				} else {
@@ -713,8 +696,8 @@ class EE_Calendar {
 			$events[ $cntr ]['allDay'] = FALSE;
 			$cntr++;
 			
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
+//			$this->timer->stop();
+//			echo $this->timer->get_elapse( __LINE__ );
 
 		}
 //		echo '<h3>$events</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
@@ -760,11 +743,6 @@ class EE_Calendar {
 
 }
 EE_Calendar::instance();
-
-
-
-
-
 
 // http://uniapple.net/blog/?p=274
 /*class Elapse_time {
