@@ -131,7 +131,7 @@ CREATE TABLE `wp_events_detail` (
  * @todo: calculate new CPT event status
  * @todo: how to handle posts attached to events?
  * @todo: how ot handle recurring events?
- * 
+ * @todo: convert post image
  */
 class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
@@ -153,17 +153,24 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	protected function _migration_step($num_items_to_migrate = 50) {
 		global $wpdb;
 		$events = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$this->count_records_migrated(),$num_items_to_migrate),ARRAY_A);
-		if($events){
-			foreach($events as $event_row){
-				//insert new 4.1 Attendee object using $wpdb
-				$post_id = $this->_insert_cpt($event_row);
-				$meta_id = $this->_insert_event_meta($old_event, $post_id);
+		$items_migrated_this_step = 0;
+
+		foreach($events as $event_row){
+			//insert new 4.1 Attendee object using $wpdb
+			$post_id = $this->_insert_cpt($event_row);
+			if($post_id){
+				$this->get_migration_script()->set_mapping($this->_old_table, $event_row['id'], $this->_new_table, $post_id);
+				$meta_id = $this->_insert_event_meta($event_row, $post_id);
+				if($meta_id){
+					$this->get_migration_script()->set_mapping($this->_old_table, $event_row['id'], $this->_new_meta_table, $meta_id);
+				}
 			}
-			$this->set_status(EE_Data_Migration_Manager::status_continue);
-		}else{
+			$items_migrated_this_step++;
+		}
+		if($this->count_records_migrated() + $items_migrated_this_step >= $this->count_records_to_migrate()){
 			$this->set_status(EE_Data_Migration_Manager::status_completed);
 		}
-		return count($events);
+		return $items_migrated_this_step;
 	}
 	
 	private function _insert_cpt($old_event){
@@ -285,7 +292,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'%s',//EVT_external_URL
 			'%d',//EVT_donations
 		);
-		$success = $wpdb->insert($this->_new_table,
+		$success = $wpdb->insert($this->_new_meta_table,
 				$cols_n_values,
 				$datatypes);
 		if( ! $success ){
