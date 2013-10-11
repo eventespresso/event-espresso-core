@@ -421,7 +421,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
+	public function load_scripts_styles_edit_attendee() {
+		//stuff to only show up on our attendee edit details page.
+		$attendee_details_translations = array(
+			'att_publish_text' => sprintf( __('Created on: <b>%1$s</b>', 'event_espresso'), $this->_cpt_model_obj->get_datetime('ATT_created') )
+			);
+		wp_localize_script( 'espresso_reg', 'ATTENDEE_DETAILS', $attendee_details_translations );
+	}
 
 
 	public function load_scripts_styles_view_registration() {

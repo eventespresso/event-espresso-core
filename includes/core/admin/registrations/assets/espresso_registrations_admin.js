@@ -125,7 +125,7 @@ jQuery(document).ready(function($) {
 	 */
 	$('#post-status-display').parent().hide();
 	$('#visibility').hide();
-
+	$('#timestamp').html(ATTENDEE_DETAILS.att_publish_text);
 });
 
 
