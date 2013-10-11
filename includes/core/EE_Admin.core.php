@@ -73,8 +73,6 @@ final class EE_Admin {
 		add_action( 'init', array( $this, 'init' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10 );
-		
-//		add_action( 'admin_enqueue_scripts', 'espresso_load_scripts_styles' );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 		
@@ -213,6 +211,18 @@ final class EE_Admin {
 	public function enqueue_admin_scripts() {
 		//this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.  Note the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script calls.
 		wp_enqueue_script('ee-inject-wp', EE_CORE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
+		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
+			// load jQuery Validate script from CDN with local fallback
+			$jquery_validate_url = 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'; 
+			// is the URL accessible ?
+			$test_url = @fopen( $jquery_validate_url, 'r' );
+			// use CDN URL or local fallback ?
+			$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.validate.min.js';
+			// register jQuery Validate
+			wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);			
+		}
 	}
 
 
