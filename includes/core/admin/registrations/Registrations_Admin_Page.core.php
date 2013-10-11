@@ -53,6 +53,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _init_page_props() {
 		$this->page_slug = REG_PG_SLUG;
+		$this->_admin_base_url = REG_ADMIN_URL;
 		$this->page_label = __('Registrations', 'event_espresso');
 		$this->_cpt_routes = array(
 			'add_new_attendee' => 'espresso_attendees',
@@ -92,7 +93,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function  _define_page_props() {
-		$this->_admin_base_url = REG_ADMIN_URL;
 		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
