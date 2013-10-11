@@ -735,7 +735,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
 			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 			$_where['REG_date']= array('BETWEEN',
-				array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ));	
+				array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );	
 		}elseif($start_date && $end_date){
 			throw new EE_Error("not yet supported");
 		}elseif($start_date){
