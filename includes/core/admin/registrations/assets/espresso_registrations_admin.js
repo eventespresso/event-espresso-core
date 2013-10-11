@@ -120,6 +120,12 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
+	/**
+	 * hide unnecessary ui elements when viewing attendee details cpt route.
+	 */
+	$('#post-status-display').parent().hide();
+	$('#visibility').hide();
+
 });
 
 
