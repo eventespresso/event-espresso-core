@@ -48,7 +48,7 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function run( $WP ) {
+	public function run( WP $WP ) {
 		// SPCO is large and resource intensive, so it's better to do a double check before loading it up, so let's grab the post_content for the requested post
 		global $wpdb;
 		$SQL = 'SELECT post_content from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND post_name=%d';

@@ -68,10 +68,10 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
-	 *	@param 	EE_Registry $EE
+	 *  @param 	 WP $WP
 	 *  @return 	void
 	 */
-	public function run() {
+	public function run( WP $WP ) {
 		
 
 	}

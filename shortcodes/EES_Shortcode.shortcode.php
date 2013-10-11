@@ -37,7 +37,7 @@ abstract class EES_Shortcode extends EE_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public abstract function run();
+	public abstract function run( WP $WP );
 
 	/**
 	 * 	process_shortcode
