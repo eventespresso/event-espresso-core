@@ -648,6 +648,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function modify_current_screen() {
+		global $pagenow;
 		//ONLY do this if the current page_route IS a cpt route
 		if ( !$this->_cpt_route ) return;
 		//routeing things REALLY early b/c this is a cpt admin page
@@ -660,6 +661,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}/**/
+
+		//we tweak the $pagenow global so anyone checking if a page is 'post.php' or 'post-new.php' for their metaboxes (which they *should* be doing) will still work with our cpt routes
+		$pagenow = 'post.php';
 	}
 
 

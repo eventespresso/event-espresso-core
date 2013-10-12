@@ -93,7 +93,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
 		// load EE_Request_Handler
-		add_action( 'parse_request', array( $this, 'apply_CPT_Strategy' ), 1 );
+		add_action( 'parse_request', array( $this, 'apply_CPT_Strategy' ), 2 );
 		
 	}
 

@@ -653,9 +653,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * get registrations for given parameters (used by list table)
 	 * @param  int  $per_page    how many registrations displayed per page
 	 * @param  boolean $count   return the count or objects
+	 * @param  boolean $this_month whether to return for just this month
+	 * @param  boolean $today    whether to return results for just today
+	 * @param  boolean $all      whether to ignore all query params and just return ALL registrations (or count if count is set)
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
+	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE, $all = FALSE ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
@@ -684,7 +687,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$orderby = 'Event.EVT_name';
 				break;
 			case 'DTT_EVT_start':
-				$orderby = 'Datetime.DTT_EVT_start';
+				$orderby = 'Event.Datetime.DTT_EVT_start';
 				break;
 			default: //'REG_date'
 				$orderby = 'REG_date';
@@ -694,8 +697,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
+		
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
+
 		$query_params = array();
 		if($EVT_ID){
 			$_where['EVT_ID']=$EVT_ID;
@@ -727,18 +732,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$days_this_month = date( 't', current_time('timestamp') );
 			$_where['REG_date']= array('BETWEEN',
 				array(
-					strtotime( $this_month_r . ' 01 ' . $this_year_r . ' ' . $time_start ),
-					strtotime( $this_month_r . ' ' . $days_this_month . ' ' . $this_year_r . ' ' . $time_end ) 
+					strtotime( $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start ),
+					strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end ) 
 			));
 		}elseif($month_range){
-			$pieces = explode('-', $month_range, 3);
-			$year_r = $pieces[0];
-			$month_r = $pieces[1];
+			$pieces = explode(' ', $this->_req_data['month_range'], 3);
+			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 			$_where['REG_date']= array('BETWEEN',
-				array(
-					$month_r . ' 01 ' . $this_year_r . ' ' . $time_start ,
-					$month_r . ' ' . date( 't', strtotime( $year_r . ' ' . $month_r )) . ' ' . $year_r . ' ' . $time_end 
-			));	
+				array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );	
 		}elseif($start_date && $end_date){
 			throw new EE_Error("not yet supported");
 		}elseif($start_date){
@@ -774,10 +776,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		
 		if($count){
-			return EEM_Registration::instance()->count(array($_where));
+			return $all ? EEM_Registration::instance()->count() : EEM_Registration::instance()->count(array($_where));
 		}else{
-			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'limit' => $limit );
-			$registrations = EEM_Registration::instance()->get_all($query_params);
+			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ) );
+			if ( $per_page !== -1 ) {
+				$query_params['limit'] = $limit;
+			}
+			$registrations =  $all ? EEM_Registration::instance()->get_all() : EEM_Registration::instance()->get_all($query_params);
 			global $wpdb;
 	
 
@@ -864,6 +869,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 			// link back to overview
 			$this->_template_args['reg_overview_url'] = REG_ADMIN_URL;	
+			$this->_template_args['registration'] = $this->_registration;
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';

@@ -58,15 +58,17 @@ final class EE_Request_Handler {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct() {
+	public function __construct( $WP ) {
 		// AJAX ???
 		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
 		// grab request vars
 		$this->_params = $_REQUEST;
-		// get current post name from URL
-		$this->set( 'post_name', EEH_URL::get_current_post_name() );		
-		$this->set_espresso_page( EEH_URL::test_for_espresso_page() );
-		//echo '<br /><br /><h1>is_espresso_page : ' . $this->is_espresso_page() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
+		if ( ! is_admin() ) {
+			// get current post name from URL
+			EE_Registry::instance()->load_helper( 'URL' );	
+			$this->set( 'post_name', $WP->request );		
+			$this->set_espresso_page( EEH_URL::test_for_espresso_page( $WP->request ) );			
+		}
 	}
 
 

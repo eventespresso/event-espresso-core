@@ -1263,10 +1263,51 @@ class EEH_Form_Fields {
 
 
 
+
+	/**
+	 * generates a month/year dropdown selector for all registrations matching the given criteria.  Typically used for list table filter.
+	 * @param  string  $cur_date     any currently selected date can be entered here.
+	 * @param  string  $status       Registration status
+	 * @param  integer $evt_category Event Category ID if the Event Category filter is selected
+	 * @return string                html
+	 */
+	public static function generate_registration_months_dropdown( $cur_date = '', $status = '', $evt_category = 0 ) {
+		$_where = array();
+		if ( !empty( $status ) ) {
+			$_where['STS_ID'] = $status;
+		}
+
+		if ( $evt_category > 0 ) {
+			$_where['Event.Term_Taxonomy.term_id'] = $evt_category;
+		}
+
+		$regdtts = EEM_Registration::instance()->get_reg_months_and_years( $_where );
+
+		//setup vals for select input helper
+		$options = array(
+			0 => array(
+				'text' => __('Select a Month/Year', 'event_espresso'),
+				'id' => ''
+				)
+			);
+
+		foreach ( $regdtts as $regdtt ) {
+			$date = $regdtt->reg_month. ' ' . $regdtt->reg_year;
+			$options[] = array(
+				'text' => $date,
+				'id' => $date
+				);
+		}
+		
+		return self::select_input('month_range', $options, $cur_date, '', 'wide' );
+	}
+
+
+
 	/**
 	 * generates a month/year dropdown selector for all events matching the given criteria
 	 * Typically used for list table filter
-	 * @param  string $cur_data          any currently selected date can be entered here.
+	 * @param  string $cur_date          any currently selected date can be entered here.
 	 * @param  string $status            "view" (i.e. all, today, month, draft)
 	 * @param  int    $evt_category      category event belongs to
 	 * @param  string $evt_active_status "upcoming", "expired", "active", or "inactive"
@@ -1294,9 +1335,9 @@ class EEH_Form_Fields {
 		//categories?
 
 
-		if ( !empty ( $category ) ) {
-			$where['Event.Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
-			$where['Event.Term_Taxonomy.term_id'] = $category;
+		if ( !empty ( $evt_category ) ) {
+			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Term_Taxonomy.term_id'] = $category;
 		}
 
 		//what about active status for the event?
