@@ -69,20 +69,20 @@ class EE_DMS_4_1_0P_event_venue extends EE_Data_Migration_Script_Stage{
 	 */
 	private function _insert_new_event_to_venue_rel($old_event_venue_rel){
 		global $wpdb;
-		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_event_venue_rel['event_id'], $wpdb->prefix."esp_posts");
-		$new_venue_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_venue", $old_event_venue_rel['venue_id'], $wpdb->prefix."esp_posts");
+		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_event_venue_rel['event_id'], $wpdb->prefix."posts");
+		$new_venue_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_venue", $old_event_venue_rel['venue_id'], $wpdb->prefix."posts");
 		if( ! $new_event_id){
-			$this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"),$old_event_venue_rel['question_id']));
+			$this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"),$old_event_venue_rel['event_id']));
 			return 0;
 		}
 		if( ! $new_venue_id){
-			$this->add_error(sprintf(__("Could not find 4.1 venue id for 3.1 venue #%d.", "event_espresso"),$old_event_venue_rel['group_id']));
+			$this->add_error(sprintf(__("Could not find 4.1 venue id for 3.1 venue #%d.", "event_espresso"),$old_event_venue_rel['venue_id']));
 			return 0;
 		}
 		$cols_n_values = array(
 			'EVT_ID'=>$new_venue_id,
 			'VNU_ID'=>$new_event_id,
-			'EVT_primary'=>true
+			'EVV_primary'=>true
 		);
 		$datatypes = array(
 			'%d',//EVT_ID

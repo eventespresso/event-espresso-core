@@ -201,9 +201,11 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		unset($event_meta['additional_attendee_reg_info']);//facotred into event meta table 
 		unset($event_meta['default_payment_status']);//dido
 		foreach($event_meta as $meta_key => $meta_value){
-			$success = add_post_meta($post_id,$meta_key,$meta_value,true);
-			if( ! $success ){
-				$this->add_error(sprintf(__("Could not add post meta for CPT with ID #%d. Meta key: '%s',meta value:'%d' for 3.1 event: %s", "event_espresso"),$post_id,$meta_key,$meta_value,implode(",",$event_row)));
+			if ($meta_key){//if th emeta key is just an empty string, ignore it
+				$success = add_post_meta($post_id,$meta_key,$meta_value,true);
+				if( ! $success ){
+					$this->add_error(sprintf(__("Could not add post meta for CPT with ID #%d. Meta key: '%s',meta value:'%d' for 3.1 event: %s", "event_espresso"),$post_id,$meta_key,$meta_value,implode(",",$old_event)));
+				}
 			}
 		}
 	}
