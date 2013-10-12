@@ -335,9 +335,7 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 }
 .ui-tooltip-tip { position:absolute; }
 
-@media 
-only screen and (max-width: 760px),
-(min-device-width: 768px) and (max-device-width: 1024px)  {
+@media only screen and (max-width: 767px)  {
 
 	/* Force table to not be like tables anymore */
 	table.fc-header, thead.fc-header, table.fc-header tbody, table td.fc-header-left, table td.fc-header-center, table td.fc-header-right, table.fc-header tr { 
@@ -348,7 +346,7 @@ only screen and (max-width: 760px),
 		position: absolute;
 		top:55px;
 	}
-	table.fc-header td.fc-header-left{
+	table.fc-header td.fc-header-left {
 		/* Behave  like a "row" */
 		border: none;
 		position: relative; 
@@ -364,6 +362,16 @@ only screen and (max-width: 760px),
 		border: none;
 		position: relative; 
 		height:55px;
+	}
+	#espresso_calendar:not(.ui-widget) .fc-header-title h2 {
+		margin:20px 0 0 0;
+	}
+	#espresso_calendar .fc-day-header {
+		font-size:.85em;
+		padding:0 1px;
+	}
+	#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number {
+		padding: 0 2px 0 0;
 	}
 	table.fc-header td:before { 
 		/* Now like a table header */
