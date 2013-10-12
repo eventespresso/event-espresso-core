@@ -2,9 +2,35 @@
 
 /**
  * Links up 4.1 events to venues
+ * 3.1 events_venue_rel table:
+
+CREATE TABLE `wp_events_venue_rel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `event_id` int(11) DEFAULT NULL,
+  `venue_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `event_id` (`event_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+ * 
+ * 4.1 EVent_VEnue model's tables and fields:
+ * $this->_tables = array(
+			'Event_Venue'=>new EE_Primary_Table('esp_event_venue','EVV_ID')
+		);
+		$this->_fields = array(
+			'Event_Venue'=>array(
+				'EVV_ID'=>new EE_Primary_Key_Int_Field('EVV_ID', __('Event to Venue Link ID','event_espresso')),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
+				'VNU_ID'=>new EE_Foreign_Key_Int_Field('VNU_ID', __('Venue ID','event_espresso'), false, 0, 'Venue'),
+				'EVV_primary'=>new EE_Boolean_Field('EVV_primary', __("Flag indicating venue is primary one for event", "event_espresso"), false,true)
+				
+			)
+		);
+
+
+
  * 
  */
-class EE_DMS_4_1_0P_question_group_question extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0P_event_venue extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
 	private $_new_table;
 	function _migration_step($num_items=50){
