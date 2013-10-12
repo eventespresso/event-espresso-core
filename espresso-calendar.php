@@ -270,7 +270,7 @@ class EE_Calendar {
 				_e('Filter by', 'event_espresso'); ?> 
 				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
 				<?php if(!empty($temp_cats)){?>
-					<select class="submit-this" name="event_category_id">
+					<select class="ee-category-select" name="event_category_id">
 						<option class="ee_filter_show_all" value=""><?php echo __('Category (all)', 'event_espresso'); ?></option>
 						<?php
 							foreach($temp_cats as $cat) {
@@ -282,7 +282,7 @@ class EE_Calendar {
 				<?php }?>
 				
 				<?php if(!empty($temp_venue)){?>
-					<select class="submit-this" name="event_venue_id">
+					<select class="ee-venue-select" name="event_venue_id">
 						<option class="ee_filter_show_all" value=""><?php echo __('Venue (all)', 'event_espresso'); ?></option>
 						<?php
 							foreach($temp_venue as $venue) {
