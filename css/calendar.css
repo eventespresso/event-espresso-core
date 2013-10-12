@@ -2,16 +2,31 @@
  * Espresso Events Calendar Stylesheet
  * (c) 2013 Espresso Events
  * -------------------------------------------------------------------------*/
+
+ /*
+ * Prettify the fonts (especially) in webkit browsers
+ */
+
 *{
 	text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+  	-webkit-font-smoothing: antialiased;
   }
+
+ /*
+ * General Styles
+ */
+
 #espresso_calendar { 
 	position: relative !important; 
 	z-index:100; 
 	margin:1em 0 0; 
 	width: 100% !important; 
 }
+
+ /*
+ * Calendar Specific Styles
+ */
+
 #espresso_calendar:not(.ui-widget) .fc-header-title h2,
 .fc-header-title h2 {
 	font-family:"Helvetica Neue", "Helvetica", Arial, sans-serif;
@@ -24,8 +39,8 @@
 #espresso_calendar .ui-widget .fc-header-title h2 {
 	font-family:"Helvetica Neue", "Helvetica", Arial, sans-serif;
 	font-size:1em;
-	letter-spacing: -1px;
-	margin:0; 
+	letter-spacing: -1px; /* tighter letter spacing is for the Week and Day views */
+	margin: 0; 
 	font-weight: 400; 
 	line-height: 1;
 	vertical-align: bottom !important;
@@ -45,8 +60,32 @@
 }
 #espresso_calendar .fc .fc-header-space,
 .fc .fc-header-space {
-	padding-left:3px;
+	padding-left: 3px;
 }
+ /*
+ * Category Sorting Buttons
+ */
+
+ul.ee-category-filter {
+ 	display: block;
+ }
+ ul.ee-category-filter li.ee-category-button {
+ 	list-style: none;
+ 	float:left;
+ 	display:inline-block;
+ 	padding: 1em;
+ 	margin: 0 1em 1em 0;
+ 	border: 1px solid #ededed;
+ }
+ p.ee-category-filter{
+ 	float:left;
+ 	margin: 0 1em 1em 0;
+ 	padding: 1em 0;
+ }
+ /*
+ * The Buttons and related paraphenalia
+ */
+
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button { 
 	-moz-box-sizing: content-box !important; 
 	box-sizing: content-box !important; 
@@ -63,8 +102,9 @@
 	margin-right:1px;
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev, 
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next { padding: 10px 0.6em; 
-	color:#fff; 
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next { 
+	padding: 10px 0.6em; 
+	color: #fff; 
 	text-shadow: 0px 0px 0px #fff; 
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev,
@@ -103,6 +143,11 @@
 	color:#777A80; 
 	text-shadow:.5px .5px 0px #fff; 
 }
+
+ /*
+ * Miscellaneous Calendar Styles
+ */
+
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-other-month {  
 	background:#fcfcfc; 
 }
@@ -112,7 +157,7 @@
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number { 
 	color: #777;
 	font-size: 1em; 
-	line-height:2; 
+	line-height: 2; 
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-view-agendaDay .fc-agenda-body td div {
 	min-height:50px;
@@ -120,7 +165,7 @@
 #espresso_calendar:not(.ui-widget) .fc-state-active,
 #espresso_calendar:not(.ui-widget) .fc-state-hover,
 #espresso_calendar:not(.ui-widget) .fc-state-hover .fc-text-arrow { 
-	color:#2F3334 !important; 
+	color: #2F3334 !important; 
 }
 #espresso_calendar:not(.ui-widget) .fc-state-disabled { 
 	display: none; 
@@ -155,6 +200,10 @@
 	background:#EEEEE6 !important; 
 	color:#999 !important; 
 }
+
+ /*
+ * Event Styles
+ */
 
 #espresso_calendar .fc-event-title { 
 	display: block; 
@@ -194,6 +243,11 @@
 #espresso_calendar .fc-widget-header {
 	font-weight: 400;
 }
+
+ /*
+ * Tooltip Styles
+ */
+
 .qtip, .ui-helper-reset { 
 	border: 1px solid #ccc;
 	padding: 10px; 
@@ -335,6 +389,10 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 }
 .ui-tooltip-tip { position:absolute; }
 
+ /*
+ * Media Query for screens smaller then 768px (iPad portrait)
+ */
+
 @media only screen and (max-width: 767px)  {
 
 	/* Force table to not be like tables anymore */
@@ -392,4 +450,4 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block { font-weight: norm
 	.ui-tooltip-content p:first-child {
 		display:none;
 	}
-	}
+}
