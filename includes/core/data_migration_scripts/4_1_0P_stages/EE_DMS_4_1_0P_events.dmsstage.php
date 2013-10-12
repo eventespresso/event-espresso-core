@@ -128,10 +128,25 @@ CREATE TABLE `wp_events_detail` (
 				
 			));
  * 
- * @todo: calculate new CPT event status
+ * @todo: calculate new CPT event stati
  * @todo: how to handle posts attached to events?
  * @todo: how ot handle recurring events?
  * @todo: convert post image
+ * @todo: how to handle venue info on event row?
+ * @todo: realized we're not handling post created/modified GMTs
+ * @todo: what to do with these 3.1 columsn:  -`use_coupon_code` varchar(1) DEFAULT 'N',
+  -`use_groupon_code` varchar(1) DEFAULT 'N',
+  -`category_id` text,
+  -`coupon_id` text,
+  -`tax_percentage` float DEFAULT NULL,
+  -`tax_mode` int(11) DEFAULT NULL,
+  -`early_disc` varchar(10) DEFAULT NULL,
+  -`early_disc_date` varchar(15) DEFAULT NULL,
+  -item_groups` longtext,
+  -`event_type` varchar(250) DEFAULT NULL,
+  -`alt_email` text,
+  -`likes` int(22) DEFAULT NULL,
+  -`ticket_id` int(22) DEFAULT '0',
  */
 class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
@@ -164,6 +179,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 				if($meta_id){
 					$this->get_migration_script()->set_mapping($this->_old_table, $event_row['id'], $this->_new_meta_table, $meta_id);
 				}
+				$this->_add_post_metas($event_row, $post_id);
 			}
 			$items_migrated_this_step++;
 		}
@@ -173,6 +189,24 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		return $items_migrated_this_step;
 	}
 	
+	/**
+	 * Stores any extra 3.1 "event_meta" column things as post meta
+	 * @param type $old_event
+	 * @param type $post_id
+	 * @return void
+	 */
+	private function _add_post_metas($old_event,$post_id){
+		$event_meta = maybe_unserialize($old_event['event_meta']);
+		unset($event_meta['date_submitted']);//factored into CPT
+		unset($event_meta['additional_attendee_reg_info']);//facotred into event meta table 
+		unset($event_meta['default_payment_status']);//dido
+		foreach($event_meta as $meta_key => $meta_value){
+			$success = add_post_meta($post_id,$meta_key,$meta_value,true);
+			if( ! $success ){
+				$this->add_error(sprintf(__("Could not add post meta for CPT with ID #%d. Meta key: '%s',meta value:'%d' for 3.1 event: %s", "event_espresso"),$post_id,$meta_key,$meta_value,implode(",",$event_row)));
+			}
+		}
+	}
 	private function _insert_cpt($old_event){
 		global $wpdb;
 		//convert 3.1 event status to 4.1 CPT status
