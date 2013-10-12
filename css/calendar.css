@@ -12,7 +12,7 @@
 #espresso_calendar:not(.ui-widget) .fc-header-title h2,
 .fc-header-title h2 {
 	font-family:"Helvetica Neue", "Helvetica", Arial, sans-serif;
-	font-size:1.3rem;
+	font-size:1.3em;
 	margin:0; 
 	font-weight: 400; 
 	line-height: 1;
@@ -20,7 +20,7 @@
 }
 #espresso_calendar .ui-widget .fc-header-title h2 {
 	font-family:"Helvetica Neue", "Helvetica", Arial, sans-serif;
-	font-size:1rem;
+	font-size:1em;
 	letter-spacing: -1px;
 	margin:0; 
 	font-weight: 400; 
@@ -55,7 +55,7 @@
 	text-shadow: 0px 0px 0px #fff; 
 	word-wrap: normal; 
 	font-weight: 400; 
-	font-size:.8rem; 
+	font-size:.8em; 
 	opacity: 1;
 	margin-right:1px;
 }
@@ -66,7 +66,7 @@
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev,
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-month {  
-	font-size:.8rem; 
+	font-size:.8em; 
 	padding: 5px 10px;
 	color: #777;
 	border-top-left-radius: 1px; 
@@ -74,7 +74,7 @@
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next,
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-today  {  
-	font-size:.8rem; 
+	font-size:.8em; 
 	padding: 5px 10px;
 	color: #777;
 	border-top-right-radius: 1px; 
@@ -108,7 +108,7 @@
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number { 
 	color: #777;
-	font-size: 1rem; 
+	font-size: 1em; 
 	line-height:2; 
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-view-agendaDay .fc-agenda-body td div {
@@ -134,7 +134,7 @@
 	border: none; 
 	border-radius:0; 
 	background-color:#007BAE; 
-	font-size:1rem; 
+	font-size:1em; 
 	line-height:1; 
 }
 #espresso_calendar.calendar_widget .fc-event { 
@@ -165,7 +165,7 @@
 #espresso_calendar .event-end-time { 
 	margin:0;
 	padding: 0 4px;	 
-	font-size: .85rem;
+	font-size: .85em;
 }
 #espresso_calendar .thumb-wrap { 
 	display: block; 
@@ -196,12 +196,12 @@
 	padding: 10px; 
 }
 .ui-tooltip-title {
-	font-size:1rem;
+	font-size:1em;
 	font-weight: 600;
 	margin:10px;
 }
 .ui-tooltip-content p {
-	font-size:.85rem;
+	font-size:.85em;
 	line-height: 1.2;
 	padding:10px 10px 0 10px;
 }
@@ -229,7 +229,7 @@ p.time_cal_qtip {
 	color: #777; 
 	text-decoration: none; 
 	font-weight: 400; 
-	font-size: 1rem; 
+	font-size: 1em; 
 	line-height: 2;
 }
 a.reg-now-btn:hover { 
@@ -246,7 +246,7 @@ a.reg-now-btn {
 	text-shadow: 0px 0px 0px #fff; 
 	word-wrap: normal; 
 	font-weight: 400; 
-	font-size:.8rem; 
+	font-size:.8em; 
 	color: #777; 
 }
 .sold-out-dv {
@@ -282,7 +282,7 @@ a.reg-now-btn {
 .espresso_calendar_widget .fc-header h2 { font-weight: normal; font-size: 1.2em; } /* resets the height of the month name */
 .espresso_calendar_widget th.fc-widget-header { font-weight: normal; } /* resets the weight of the days */
 .espresso_calendar_widget .fc-button-content { padding: 0 5px; height: 16px; font-size: 0.8em; line-height: 16px; } /* resets the button styles */
-.espresso_calendar_widget table.fc-header { margin-bottom: 0; } /* removes any padding under the header table (might be built into the theme's style.css) */
+.espresso_calendar_widget table.fc-header { margin-bottom: 0; } /* emoves any padding under the header table (might be built into the theme's style.css) */
 
 /* resets the font size of the dates */
 .espresso_calendar_widget table.fc-border-separate tbody { 
