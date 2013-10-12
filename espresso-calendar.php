@@ -266,12 +266,13 @@ class EE_Calendar {
 		
 		if (isset($this->_calendar_options['enable_calendar_filters']) && $this->_calendar_options['enable_calendar_filters'] == TRUE ){
 			if (!empty($temp_venue) || !empty($temp_cats)){
-				ob_start();
-				_e('Filter by', 'event_espresso'); ?> 
+				ob_start();?>
+				<div class="ee-filter-form">
 				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
 				<?php if(!empty($temp_cats)){?>
-					<select class="ee-category-select" name="event_category_id">
-						<option class="ee_filter_show_all" value=""><?php echo __('Category (all)', 'event_espresso'); ?></option>
+					<select class="submit-this ee-category-select" name="event_category_id">
+						<option class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
+						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
 						<?php
 							foreach($temp_cats as $cat) {
 								
@@ -282,8 +283,9 @@ class EE_Calendar {
 				<?php }?>
 				
 				<?php if(!empty($temp_venue)){?>
-					<select class="ee-venue-select" name="event_venue_id">
-						<option class="ee_filter_show_all" value=""><?php echo __('Venue (all)', 'event_espresso'); ?></option>
+					<select class="submit-this ee-venue-select" name="event_venue_id">
+						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
+						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
 						<?php
 							foreach($temp_venue as $venue) {
 								echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
@@ -292,6 +294,7 @@ class EE_Calendar {
 					</select>
 				<?php }?>
 				</form>
+				</div>
 				
 				<?php
 				$output_filter = ob_get_contents();
