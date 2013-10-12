@@ -35,15 +35,16 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_migration_stages = array(
 //			10=>new EE_DMS_4_1_0P_attendees(),
-			20=>new EE_DMS_4_1_0P_events(),
+			new EE_DMS_4_1_0P_events(),
 			//important: this one should be ran AFTER the general settings
 //			30=>new EE_DMS_4_1_0P_gateways(),
-			40=>new EE_DMS_4_1_0P_category_details(),
-			50=>new EE_DMS_4_1_0P_venues(),
-			55=>new EE_DMS_4_1_0P_event_venue(),
-			60=>new EE_DMS_4_1_0P_question_groups(),
-			70=>new EE_DMS_4_1_0P_questions(),
-			80=>new EE_DMS_4_1_0P_question_group_question()
+			new EE_DMS_4_1_0P_category_details(),
+			new EE_DMS_4_1_0P_venues(),
+			new EE_DMS_4_1_0P_event_venue(),
+			new EE_DMS_4_1_0P_question_groups(),
+			new EE_DMS_4_1_0P_questions(),
+			new EE_DMS_4_1_0P_question_group_question(),
+			new EE_DMS_4_1_0P_event_question_group(),
 		);
 		parent::__construct();
 	}
