@@ -131,20 +131,21 @@ class EED_Ticket_Selector extends  EED_Module {
 		
 		$template_args = array();
 		
+		$template_args['EVT_ID'] = self::$_event->ID();
+		$template_args['event'] = self::$_event;
+
 		if ( self::$_event->allow_multiple() ) {
 			// make sure additional_limit is set
 			$additional_limit = self::$_event->additional_limit() ? self::$_event->additional_limit() : self::$_event->reg_limit();
 			// then make it at least 1
-			$additional_limit = $additional_limit == 0 ? 1 : $additional_limit;
-			self::$_event->set_additional_limit( $additional_limit );
+			$additional_limit = $additional_limit < 1 ? 1 : $additional_limit;
+			//self::$_event->set_additional_limit( $additional_limit );
+			$max_tickets = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', 16 );
 			// let's make the max amount of attendees somebody can select a little more reasonable
-			$template_args['max_atndz'] = $additional_limit > 16 ? 16 : $additional_limit;	
+			$template_args['max_atndz'] = $additional_limit > $max_tickets ? $max_tickets : $additional_limit;	
 		} else {
 			$template_args['max_atndz'] = 1;
 		}
-		
-		$template_args['EVT_ID'] = self::$_event->ID();
-		$template_args['event'] = self::$_event;
 		
 		// get all tickets for this event ordered by the datetime
 		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
@@ -229,11 +230,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/	
 	public function process_ticket_selections() {
 		
-		if ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
+		if ( !EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || !wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
 			$error_msg = __( 'We\'re sorry but your request failed to pass a security check.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
-		}
+		}	
+//		d( EE_Registry::instance()->REQ );
 		
 		$return = FALSE;
 		//we should really only have 1 registration in the works now (ie, no MER)
@@ -248,19 +250,19 @@ class EED_Ticket_Selector extends  EED_Module {
 		
 			// validate/sanitize data
 			$valid = self::_validate_post_data('add_event_to_cart');
-			//printr( $valid, '$valid  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// d( $valid );
 		
 			//check total tickets oredered vs max number of attendees that can register
-			if ($valid['total_tickets'] > $valid['atndz']) {
+			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
 		
 				// ordering too many tickets !!!
 				$singular = 'You have attempted to purchase %s ticket.';
 				$plural = 'You have attempted to purchase %s tickets.';
-				$limit_error_1 = sprintf(_n($singular, $plural, $valid['total_tickets'], 'event_espresso'), $valid['total_tickets'], $valid['total_tickets']);
+				$limit_error_1 = sprintf( _n( $singular, $plural, $valid['total_tickets'], 'event_espresso' ), $valid['total_tickets'], $valid['total_tickets'] );
 		
 				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
-				$limit_error_2 = sprintf(_n($singular, $plural, $valid['atndz'], 'event_espresso'), $valid['atndz'], $valid['atndz']);
+				$limit_error_2 = sprintf( _n( $singular, $plural, $valid['max_atndz'], 'event_espresso' ), $valid['max_atndz'], $valid['max_atndz'] );
 				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
 				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
@@ -269,33 +271,22 @@ class EED_Ticket_Selector extends  EED_Module {
 				$success = FALSE;
 				// all data appears to be valid
 				// cycle thru the number of data rows sent from the event listsing
-				for ( $x = 0; $x < $valid['rows']; $x++ ) {
-		
+				for ( $x = 0; $x < $valid['rows']; $x++ ) {		
 					// does this row actually contain a ticket quantity?
 					if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {		
 						// YES we have a ticket quantity				
 						$tckts_slctd = TRUE;
-						// throw valid data into a new array
-						$event_to_add = array(
-								'id' => $valid['id'],
-								'name' => $valid['name'],
-								'ticket_price' => $valid['ticket_price'][$x],
-								'ticket_id' => $valid['ticket_id'][$x],
-								'ticket_obj' => $valid['ticket_obj'][$x],
-								'qty' => $valid['qty'][$x],
-								'options' => array(
-									'date' => $valid['date'][$x],
-									'time' => $valid['time'][$x],
-									'dtt_id' => $valid['dtt_id'][$x],
-									'ticket_desc' => $valid['ticket_desc'][$x],
-									'pre_approval' => $valid['pre_approval']
-								)
-						);
-						//printr( $event_to_add, '$event_to_add  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						// then add event
-						if ( self::_add_event_to_cart( $event_to_add )) {
-							$success = TRUE;
-						}
+//						d( $valid['ticket_obj'][$x] );
+						if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
+							// then add ticket to cart
+							if ( self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] )) {
+								$success = TRUE;
+							}							
+						} else {
+							// nothing added to cart
+							$error_msg = __( 'A valid ticket could not be retreived for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+							EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+						}						
 					} 
 				}
 				
@@ -377,18 +368,12 @@ class EED_Ticket_Selector extends  EED_Module {
 			$return_url = esc_url_raw( EE_Registry::instance()->REQ->get( 'tkt-slctr-return-url-' . $id ));
 			// array of other form names
 			$inputs_to_clean = array(
-				'name' => 'tkt-slctr-event-name-',
-				'atndz' => 'tkt-slctr-max-atndz-',
+				'event' => 'tkt-slctr-event-',
+				'max_atndz' => 'tkt-slctr-max-atndz-',
 				'rows' => 'tkt-slctr-rows-',
 				'qty' => 'tkt-slctr-qty-',
-				'ticket_price' => 'tkt-slctr-ticket-price-',
 				'ticket_id' => 'tkt-slctr-ticket-id-',
-				'date' => 'tkt-slctr-date-',
-				'dtt_id' => 'tkt-slctr-dtt-id-',
-				'time' => 'tkt-slctr-time-',
-				'ticket_desc' => 'tkt-slctr-ticket-desc-',
 				'ticket_obj' => 'tkt-slctr-ticket-obj-',
-				'pre_approval' => 'tkt-slctr-pre-approval-'
 			);
 			// let's track the total number of tickets ordered.'
 			$valid_data['total_tickets'] = 0;
@@ -396,30 +381,30 @@ class EED_Ticket_Selector extends  EED_Module {
 			foreach ($inputs_to_clean as $what => $input_to_clean) {
 
 				if ( EE_Registry::instance()->REQ->is_set( $input_to_clean . $id )) {
+					// grab value
+					$input_value = EE_Registry::instance()->REQ->get( $input_to_clean . $id );							
 					switch ($what) {
 
 						// integers
-						case 'atndz':
 						case 'rows':
-						case 'pre_approval':
-							$valid_data[$what] = absint( EE_Registry::instance()->REQ->get( $input_to_clean . $id ));
+						case 'max_atndz':
+							$valid_data[$what] = absint( $input_value );
 							break;
 
 						// arrays of integers
 						case 'qty':
-							// grab the array
-							$row_qty = EE_Registry::instance()->REQ->get( $input_to_clean . $id );						
+							$row_qty = $input_value;
 							// if qty is coming from a radio button input, then we need to assemble an array of rows
-							if( ! is_array( EE_Registry::instance()->REQ->get( $input_to_clean . $id ) )) {
+							if( ! is_array( $row_qty )) {
 								// get number of rows
 								$rows = EE_Registry::instance()->REQ->is_set( 'tkt-slctr-rows-' . $id ) ? absint( EE_Registry::instance()->REQ->get( 'tkt-slctr-rows-' . $id )) : 1;
-								//echo '<h4>$rows : ' . $rows . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+								//d( $rows );
 								// explode ints by the dash
 								$row_qty = explode( '-', $row_qty );
 								$row = isset( $row_qty[0] ) ? ( absint( $row_qty[0] )+1 ) : 1;
 								$qty = isset( $row_qty[1] ) ? absint( $row_qty[1] ) : 0;
 								$row_qty = array( $row => $qty );
-								//printr( $row_qty, '$row_qty  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+								// d( $row_qty );
 								for( $x = 1; $x <= $rows; $x++ ) {
 									if ( ! isset( $row_qty[$x] )) {
 										$row_qty[$x] = 0;
@@ -427,103 +412,46 @@ class EED_Ticket_Selector extends  EED_Module {
 								}
 							}
 							ksort( $row_qty );
-							//printr( $row_qty, '$row_qty  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							// d( $row_qty );
 							// cycle thru values
-							foreach ($row_qty as $qty) {
+							foreach ( $row_qty as $qty ) {
+								$qty = absint( $qty );
 								// sanitize as integers
-								$valid_data[$what][] = absint($qty);
-								$valid_data['total_tickets'] = $valid_data['total_tickets'] + absint($qty);
-							}
-							break;
-							
-						case 'dtt_id':
-						case 'time':
-							// grab the array
-							$ints =EE_Registry::instance()->REQ->get( $input_to_clean . $id );						
-							// cycle thru values
-							foreach ($ints as $int) {
-								switch ($what ) {
-																		
-									case 'time' :
-										$time = absint($int);
-										$valid_data[$what][] = date( 'g:i a', $time);
-										break;
-										
-									default :
-									// sanitize as integers
-									$valid_data[$what][] = absint($int);								
-								}
+								$valid_data[$what][] = $qty;
+								$valid_data['total_tickets'] += $qty;
 							}
 							break;
 
-						// floats
-						case 'ticket_price':
-							// grab the array
-							$floats = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
-							// cycle thru values
-							foreach ($floats as $float) {
-								// sanitize as float
-								$valid_var = trim(preg_replace('/[^0-9.+$]/', '', $float));
-								$valid_data[$what][] = $valid_var = number_format((float) $valid_var, 2, '.', '');
-							}
-							break;
-
-						// string
-						case 'date':
-							// grab the array
-							$dates = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
-							// cycle thru values
-							foreach ($dates as $date) {
-								// allow only numbers, letters,  spaces, commas and dashes
-								$valid_var = trim(preg_replace('/[^a-zA-Z0-9,-\s\s++$]/', '', $date));
-								// can it convert to a date?
-								if ($valid_var = date('Y-m-d', strtotime($date))) {
-									$valid_data[$what][] = $date;
-								}
-							}
-							break;
-
-						// string
-						case 'name':
-							// allow only numbers, letters,  spaces, commas and dashes
-							$valid_data[$what] = sanitize_text_field( EE_Registry::instance()->REQ->get( $input_to_clean . $id ) );
-							break;
-						case 'event_meta':
-							$valid_data[$what] = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
-							break;
-
-						// arrays of string
+						// array of serialized and encoded objects
 						case 'ticket_id':
-						case 'meta_keys':
-						case 'meta_values':
 							$value_array = array();
-							// grab the array
-							$values = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
 							// cycle thru values
-							foreach ($values as $key=>$value) {
+							foreach ( $input_value as $key=>$value ) {
 								// allow only numbers, letters,  spaces, commas and dashes
 								$value_array[$key] = wp_strip_all_tags($value);
 							}
 							$valid_data[$what] = $value_array;
 							break;
 							
-						case 'ticket_desc':
+						case 'event':
 							// grab the array
-							$descs = maybe_unserialize(EE_Registry::instance()->REQ->get( $input_to_clean . $id ));
-							// cycle thru values
-							foreach ($descs as $desc) {
-								// allow safe html
-								$valid_data[ $what ][] = wp_kses_data( $desc );
-							}
+							// allow only numbers, letters,  spaces, commas and dashes
+							$valid_data[$what] = unserialize( base64_decode( $input_value ));
 							break;
 							
 						case 'ticket_obj':
-							// grab the array
-							$values = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
+							// ensure that $input_value is an array
+							$input_value = is_array( $input_value ) ? $input_value : array( $input_value );
 							// cycle thru values
-							foreach ($values as $key=>$value) {
-								// allow only numbers, letters,  spaces, commas and dashes
-								$valid_data[$what][] = $value;
+							foreach ( $input_value as $key=>$value ) {
+								// decode and unserialize the ticket object
+								$ticket_obj = unserialize( base64_decode( $value ));
+								// vat is dis? i ask for TICKET !!!
+								if ( ! $ticket_obj instanceof EE_Ticket ) {
+									// get ticket via the ticket id we put in the form
+									$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( $valid['ticket_id'][$x] );
+								}
+								$valid_data[$what][] = $ticket_obj;
 							}
 							break;
 							
@@ -540,7 +468,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-		//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' ); die();
+		//d( $valid_data );
 		return $valid_data;
 	}
 
@@ -549,70 +477,35 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	* 	adds an event to the cart
+	* 	adds a ticket to the cart
 	* 	@access private
 	* 	@param string - which_cart
 	* 	@param array - items
 	* 	@return TRUE on success, FALSE on fail
 	*/
-	private static function _add_event_to_cart( $event = FALSE, $qty = 1, $which_cart = 'REG' ) {
+	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1 ) {
 	
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		
+		// load cart
 		EE_Registry::instance()->load_core( 'Cart' );
-		// check that an event has been passed
-		if (!$event or !is_array($event) or empty($event)) {
-			$error_msg = 'No event details were submitted. Could not add to cart';
-//			echo "couldnt add to cart";
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
-
-		$event['options'] = isset($event['options']) ? $event['options'] : '';
-
-		$add_to_cart_args = array(
-			'id' => $event['id'],
-			'name' => $event['name'],
-			'ticket_price' => $event['ticket_price'],
-			'ticket_id' => $event['ticket_id'],
-			'ticket_obj' => $event['ticket_obj'],
-			'qty' => $event['qty'],
-			'options' => $event['options'],
-		);
-
 		// get the number of spaces left for this event
-		$available_spaces = self::get_available_spaces( $event );
+		$available_spaces = self::get_available_spaces( $ticket );
 		// compare availalbe spaces against the number of tickets being purchased
-//		echo "mikeecho:available spaces $available_spaces<br>";
-		if ($available_spaces >= $event['qty']) {
-//			echo "mikeecho:adding to cart because tehres space<br>";
+		if ( $available_spaces >= $qty ) {
 			// add event to cart
-			if ( EE_Registry::instance()->CART->add_to_cart($which_cart, $add_to_cart_args)) {
-//				echo "mikeecho:success in adding!<br>";
-				// retreive event id list
-				//$events_in_cart = self::session->data('events_in_cart');
-				//echo EE_Registry::instance()->CART->session->pre_r(EE_Registry::instance()->CART); die();
-				// add this event to list
-				EE_Registry::instance()->CART->set_events_in_cart_list($event['id']);
-				// send event id list back to session
-				//EE_Registry::instance()->CART->session->set_session_data( EE_Registry::instance()->CART->get_events_in_cart_list(), 'events_in_cart' );
-				// add event id to list of events in cart within individual cart
-				EE_Registry::instance()->CART->add_to_cart_event_id_list($which_cart, $event['id']);
-
-				return TRUE;
-			} else {
-//				echo "mikeecho:failure in adding<br>";
-				// error adding to cart
-				return FALSE;
-			}
+			return EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty ) ? TRUE : FALSE;
 		} else {
-//			echo "mikeecho:event is full<br>";
 			// event is full
-			if ($available_spaces > 0) {
+			if ( $available_spaces > 0 ) {
 				// add error messaging - we're using the _n function that will generate the appropriate singular or plural message based on the number of $available_spaces
-				$error_msg = sprintf(_n(
-												'We\'re sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets.', 'We\'re sorry, but there are only %s available spaces left for this event. Please go back and select a different number of tickets.', $available_spaces, 'event_espresso'
-								), $available_spaces
+				$error_msg = sprintf(
+					_n( 
+						'We\'re sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets.', 
+						 'We\'re sorry, but there are only %s available spaces left for this event. Please go back and select a different number of tickets.', 
+						$available_spaces, 
+						'event_espresso'
+					), 
+					$available_spaces
 				);
 				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
@@ -631,21 +524,25 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	get number of available spaces for event
 	*
 	*	@access 		public
-	*	@param 		string 		$event_id
+	*	@param 		EE_Ticket 	$ticket
 	* 	@return 		int
 	*/
-	public static function get_available_spaces( $event ) {
-		// first get the number of attendees already registered
-		$nmbr_attendees = EE_Registry::instance()->LIB->EEM_Registration->get_event_registration_count( $event['id']  );
-		EE_Registry::instance()->load_model( 'Datetime' );
-		// now get the reg limit for the event
-		$reg_limit = EE_Registry::instance()->LIB->EEM_Datetime->get_one_by_ID( $event['options']['dtt_id'] )->get( 'DTT_reg_limit' );
-		if ( $reg_limit == 0 ) {
-			// infinite spaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaces
-			return 1000;
-		} 
-		// determine how many spaces are left
-		return max(( $reg_limit - $nmbr_attendees ), 0 );
+	public static function get_available_spaces( EE_Ticket $ticket ) {
+		
+		// one meeeeeeellion spaces
+		$available_spaces = 1000000;
+		// get all datetimes associated with this ticket, then loop thru them 
+		if ( $datetimes = $ticket->get_many_related( 'Datetime' )) {
+			foreach ( $datetimes as $datetime ) {
+				// if a reg limit has been set for this datetime
+				if ( $datetime->reg_limit() > 0 ) {
+					// calculate the spaces left, then compare that with the previous results (or the initial), and take the lesser value
+					$available_spaces = min( $datetime->reg_limit() - $datetime->sold(), $available_spaces );
+				}
+			}
+		}
+		// final result should be the lowest number of available spaces for any of the datetimes
+		return $available_spaces;
 	}
 
 
