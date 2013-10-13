@@ -293,6 +293,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'Incomplete'=>'RNA',
 			'Pending'=>'RPN'
 		);
+		$default_payment_status = isset($old_default_reg_stati_conversions[$event_meta['default_payment_status']]) && $old_default_reg_stati_conversions[$event_meta['default_payment_status']] ? $old_default_reg_stati_conversions[$event_meta['default_payment_status']] : 'RNA';
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
@@ -301,7 +302,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'EVT_allow_multiple'=> 'Y' == $old_event['allow_multiple'],
 			'EVT_additional_limit'=> $old_event['additional_limit'],
 			'EVT_additional_attendee_reg_info' => $event_meta['additional_attendee_reg_info'],
-			'EVT_default_registration_status' => isset($old_default_reg_stati_conversions[$event_meta['default_payment_status']]) ? $old_default_reg_stati_conversions[$event_meta['default_payment_status']] : 'RNA',
+			'EVT_default_registration_status' => $default_payment_status,
 			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
 			'EVT_member_only'=>$old_event['member_only'],
 			'EVT_phone'=> $old_event['phone'],

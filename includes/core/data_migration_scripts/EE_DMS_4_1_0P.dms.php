@@ -39,6 +39,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			//important: this one should be ran AFTER the general settings
 //			30=>new EE_DMS_4_1_0P_gateways(),
 			new EE_DMS_4_1_0P_category_details(),
+			new EE_DMS_4_1_0P_event_category(),
 			new EE_DMS_4_1_0P_venues(),
 			new EE_DMS_4_1_0P_event_venue(),
 			new EE_DMS_4_1_0P_question_groups(),
