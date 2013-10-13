@@ -194,7 +194,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .hide-the-displayed { position:absolute; top:-.25em; right:0; cursor:pointer; }
 
 
-.reg-page-form-field-wrap-pg input[type="text"] { display:inline-block; width:68%; margin:0 0 .5em; }
+.reg-page-form-field-wrap-pg input[type="text"] { display:inline-block; width:65%; margin:0 0 .5em; }
 .reg-page-form-field-wrap-pg select { display:inline-block; margin:0 0 .5em; }
 .reg-page-form-field-wrap-pg input.medium-txt { width:35%; }
 .reg-page-form-field-wrap-pg input.small-txt { width:20%; }
