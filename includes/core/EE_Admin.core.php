@@ -223,6 +223,24 @@ final class EE_Admin {
 			// register jQuery Validate
 			wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);			
 		}
+
+		//joyride is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
+		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
+			$joyride_js = EVENT_ESPRESSO_PLUGINFULLURL . 'tpc/joyride/jquery.joyride-2.1.js';
+			$joyride_cookie_js = EVENT_ESPRESSO_PLUGINFULLURL . 'tpc/joyride/jquery.cookie.js';
+			$joyride_modenizr_js = EVENT_ESPRESSO_PLUGINFULLURL . 'tpc/joyride/modernizr.mq.js';
+			$joyride_css = EVENT_ESPRESSO_PLUGINFULLURL . 'tpc/joyride/joyride-2.1.css';
+
+			//joyride style
+			wp_register_style('jquery-joyride-css', $joyride_css , array(), '2.1');
+
+			//joyride dependencies
+			wp_register_script('jquery-cookie', $joyride_cookie_js, array('jquery'), '2.1', TRUE );
+			wp_register_script('joyride-modenizr', $joyride_modenizr_js, array(), '2.1', TRUE );
+
+			//joyride
+			wp_register_script('jquery-joyride', $joyride_js, array('jquery-cookie', 'joyride-modenizr'), '2.1', TRUE );
+		}
 	}
 
 
