@@ -510,6 +510,14 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	
 	/**
+	 * Gets ID
+	 * @return string
+	 */
+	function ID() {
+		return $this->get('TKT_ID');
+	}
+	
+	/**
 	 * Gets name
 	 * @return string
 	 */
