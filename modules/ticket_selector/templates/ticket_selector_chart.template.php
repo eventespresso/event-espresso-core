@@ -12,44 +12,32 @@
 <?php 
 
 		$row = 0;
-		$prev_date = '';
-		$prev_time = '';
-
-//d( $event );
-		
 		foreach ( $tickets as $TKT_ID => $ticket ) {
 			
-				//d( $ticket );
-				
-				switch ( $ticket->ticket_status() ) {
-					// expired
-					case -1 :
-						$quick_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( TRUE ) . '</span>';
-						$ticket_status = '<span class="ticket-sales-expired">' . sprintf( __( 'Sale%1$sEnded', 'event_espresso' ), '&nbsp;' ) . '</span>';
-						$ticket_status .= $ticket->get_date('TKT_end_date', 'M d, Y');
-						$status_class = 'ticket-sales-expired lt-grey-text';
-					break;
-					// archived
-					case 0 :
-						$quick_status = '<span class="archived-ticket">' . $ticket->ticket_status( TRUE ) . '</span>';
-						$ticket_status = '<span class="archived-ticket">' . sprintf( __( 'Not%1$sfor%1$sSale', 'event_espresso' ), '&nbsp;' ) . '</span>';
-						$status_class = 'archived-ticket hidden';
-					break;
-					// pending
-					case 1 :
-						$quick_status = '<span class="ticket-pending">' . $ticket->ticket_status( TRUE ) . '</span>';
-						$ticket_status = '<span class="ticket-pending">' . sprintf( __( 'Goes%1$son%1$sSale', 'event_espresso' ), '&nbsp;' ) . '</span>';
-						$ticket_status .= $ticket->get_date( 'TKT_start_date', 'M d, Y' );
-						$status_class = 'ticket-pending';	
-					break;
-					// onsale
-					case 2 :
-						$quick_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( TRUE ) . '</span>';
-						$ticket_status = '<span class="ticket-on-sale">' . sprintf( __( 'On%1$sSale%1$sUntill', 'event_espresso' ), '&nbsp;' ) . '</span>';
-						$ticket_status .= $ticket->get_date( 'TKT_end_date', 'M d, Y' );
-						$status_class = 'ticket-on-sale';
-					break;
-				}
+			//d( $ticket );
+			
+			switch ( $ticket->ticket_status() ) {
+				// expired
+				case -1 :
+					$ticket_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( TRUE ) . '</span>';
+					$status_class = 'ticket-sales-expired lt-grey-text';
+				break;
+				// archived
+				case 0 :
+					$ticket_status = '<span class="archived-ticket">' . $ticket->ticket_status( TRUE ) . '</span>';
+					$status_class = 'archived-ticket hidden';
+				break;
+				// pending
+				case 1 :
+					$ticket_status = '<span class="ticket-pending">' . $ticket->ticket_status( TRUE ) . '</span>';
+					$status_class = 'ticket-pending';	
+				break;
+				// onsale
+				case 2 :
+					$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( TRUE ) . '</span>';
+					$status_class = 'ticket-on-sale';
+				break;
+			}
 
 
 ?>
@@ -77,7 +65,7 @@
 					<?php } ?>
 				</td>	
 				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
-				<td class="tckt-slctr-tbl-td-status"><?php echo $quick_status; ?></td>
+				<td class="tckt-slctr-tbl-td-status"><?php echo $ticket_status; ?></td>
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
 				if ( $ticket->is_on_sale() && $ticket->available() ) {
@@ -100,12 +88,13 @@
 					} else { 
 				?>
 					<label>
-						<input type="radio" 
-									name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" 
-									id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
-									class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all"
-									value="<?php echo $row . '-'; ?>1"
-									<?php echo $row == 0 ? ' checked="checked"' : ''; ?>
+						<input 
+							type="radio" 
+							name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" 
+							id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
+							class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all"
+							value="<?php echo $row . '-'; ?>1"
+							<?php echo $row == 0 ? ' checked="checked"' : ''; ?>
 						/>
 					</label>
 			<?php
@@ -126,41 +115,13 @@
 					</select>
 					<?php
 					}
-					
+				?>	
+					<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="0" />					
+				<?php
 				}
-			?>											
-					<input type="hidden"
-								name="tkt-slctr-date-<?php echo $EVT_ID; ?>[]"
-								value="<?php //echo $datetime->start_date('D M jS'); ?>"
-						/>	
-					<input type="hidden"
-								name="tkt-slctr-time-<?php echo $EVT_ID; ?>[]"
-								value="<?php //echo $datetime->start_time('g:ia'); ?>"
-						/>	
-					<input type="hidden"
-								name="tkt-slctr-dtt-id-<?php echo $EVT_ID; ?>[]"
-								value="<?php //echo $DTT_ID; ?>"
-						/>	
-					<input type="hidden"
-								name="tkt-slctr-ticket-price-<?php echo $EVT_ID; ?>[]"
-								value="<?php echo $ticket->get('TKT_price'); ?>"
-						/>
-					<input type="hidden"
-								name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]"
-								value="<?php echo $TKT_ID; ?>"
-						/>
-					<input type="hidden"
-								name="tkt-slctr-ticket-desc-<?php echo $EVT_ID; ?>[]"
-								value="<?php echo esc_attr( $ticket->get('TKT_name') ); ?>"
-						/>
-					<input type="hidden"
-								name="tkt-slctr-datetime-obj-<?php echo $EVT_ID; ?>[]"
-								value="<?php //echo base64_encode( serialize( $datetime )); ?>"
-						/>
-					<input type="hidden"
-								name="tkt-slctr-ticket-obj-<?php echo $EVT_ID; ?>[]"
-								value="<?php echo base64_encode( serialize( $ticket )); ?>"
-						/>
+			?>	
+					<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>" />
+					<input type="hidden" name="tkt-slctr-ticket-obj-<?php echo $EVT_ID; ?>[]" value="<?php echo base64_encode( serialize( $ticket )); ?>" />
 
 				</td>
 			</tr>
@@ -221,42 +182,20 @@
 				</td>
 			</tr>
 <?php
-						$row++;
+					$row++;
 
 				}
 
 ?>				
-			<input type="hidden"
-						name="tkt-slctr-rows-<?php echo $EVT_ID; ?>"
-						value="<?php echo $row; ?>"
-				/>
 						
-		</tbody>
-	
+		</tbody>	
 	</table>
 
 	<input type="hidden" name="noheader" value="true" />
-	
+	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo $_SERVER['REQUEST_URI']?>" />
+	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row; ?>" />
+	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
-
-	<input type="hidden"
-				id="tkt-slctr-max-atndz-<?php echo $EVT_ID ?>"
-				name="tkt-slctr-max-atndz-<?php echo $EVT_ID ?>"
-				value="<?php echo $max_atndz; ?>"
-		/>	
-			
-	<input type="hidden"
-				name="tkt-slctr-event-name-<?php echo $EVT_ID ?>"
-				value="<?php echo $event->name(); ?>"
-		/>
-
-	<input type="hidden"
-				name="tkt-slctr-return-url-<?php echo $EVT_ID ?>"
-				value="<?php echo $_SERVER['REQUEST_URI']?>"
-		/>
-
-	<input type="hidden"
-				name="tkt-slctr-pre-approval-<?php echo $EVT_ID ?>"
-				value="<?php echo $event->require_pre_approval(); ?>"
-		/>
+	<input type="hidden" name="tkt-slctr-event-<?php echo $EVT_ID; ?>" value="<?php echo base64_encode( serialize( $event )); ?>" />
+		
 </div>	
