@@ -47,6 +47,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_nav_tabs;
 	protected $_default_nav_tab_name;
 
+	//helptourstops
+	protected $_help_tour_stops;
+
 
 	//template variables (used by templates)
 	protected $_template_path;
@@ -273,6 +276,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			 	'title' => 'tab2 title',
 	 *     			 	'callback' => 'callback_method_for_content',
 	 *     			 ),
+	 *     		'help_tour' => array(
+	 *     			'id' => 'id_of_main_container', //this is the main container that contains all our tour stops (CSS ID).
+	 *				'stop_callback' => '_stop_callback', //this is the method that gets called to return our stops setup array for the tour. (see the sample callback in this class)
+	 *				'options_callback' => '_help_tour_options_callback' //this is the method that gets called to return the global options setup for the tour. (optional).  If not included then default options are used.  (see the sample callback in this class for the format of the array returned)
+	 *     		)
 	 *     		'require_nonce' => TRUE //this is used if you want to set a route to NOT require a nonce (default is true if it isn't present).  To remove the requirement for a nonce check when this route is visited just set 'require_nonce' to FALSE
 	 *     		)
 	 * 			
@@ -287,7 +295,73 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * below are sample methods used for the help_tour
+	 */
+	/**
+	 * sample method for the help_tour stop callback
+	 *
+	 * see the sample array below for what gets returned for stops.
+	 * @return array 
+	 */
+	protected function _stop_callback() {
+		//an array indexed numerically containing info on each stop.
+		return array(
+			0 => array(
+				'id' => 'id_element', //if attached to an css id for an element then use this param. id's will take precendence even if you also set class.
+				'class' => 'class_element', //if attached to a css class for an element anchoring the stop then use this param. The first element for that class is the anchor. If the class or the id are empty then the stop will be a modal on the page anchored to the main body.
+				'custom_class' => 'some_custom_class', //optional custom class to add for this stop.
+				'button_text' => 'custom text for button', //optional
+				'content' => 'The content for the stop', //required
+				'pause_after' => false, //indicate if you want the tour to pause after this stop and it will get added to the pauseAfter global option array setup for the joyride instance.
+				'options' => array(
+					//override any of the global options set via the help_tour "option_callback" for the joyride instance on this specific stop.
+					);
+				)
+			);
+	}
 
+
+
+
+	/**
+	 * method for the help_tour global options callback
+	 * see the sample array below for what gets returned for global options.  Basically the array matches the available options for when a joyride is instantiated.
+	 *
+	 * NOTE:  if the page_config does not define an options callback, this method is called to setup the default options.
+	 *
+	 * @link http://zurb.com/playground/jquery-joyride-feature-tour-plugin 
+	 * @return array
+	 */
+	protected function _help_tour_options_callback() {
+		return array(
+			'tipLocation' => 'bottom',         // 'top' or 'bottom' in relation to parent
+		  	'nubPosition' => 'auto',           // override on a per tooltip bases. can be "auto", "right", "top", "bottom", "left"
+		  	'scroll' => true, //whether to scrollTo the next step or not
+		  	'scrollSpeed' => 300,              // Page scrolling speed in ms
+		  	'timer' => 0,	                // 0 = off, all other numbers = time(ms) 
+		  	'autoStart' => false,			// true or false - false tour starts when restart called 
+		  	'startTimerOnClick' => true,       // true/false to start timer on first click
+		  	'nextButton' => true,              // true/false for next button visibility
+		  	'tipAnimation' => 'fade',           // 'pop' or 'fade' in each tip
+		  	'pauseAfter' => [],                // array of indexes where to pause the tour after
+		  	'tipAnimationFadeSpeed' => 300,    // if 'fade'- speed in ms of transition
+		  	'cookieMonster' => true,           // true/false for whether cookies are used
+		  	'cookieName' => 'joyride',         // choose your own cookie name (setup will add the prefix for the specific page joyride)
+	  		'cookieDomain' => false,           // set to false or yoursite.com
+		  	'tipContainer' => body,            // Where the tip be attached if not inline
+		  	'modal' => false, 					// Whether to cover page with modal during the tour
+		  	'expose' => false,					// Whether to expose the elements at each step in the tour (requires modal:true),
+		  	'postExposeCallback' => '$.noop',    // A method to call after an element has been exposed
+		  	'preRideCallback' => '$.noop',    // A method to call before the tour starts (passed index, tip, and cloned exposed element)
+		  	'postRideCallback' => '$.noop',       // a method to call once the tour closes.  This will correspond to the name of a js method that will have to be defined in loaded js.
+		  	'preStepCallback' => '$.noop',    // A method to call before each step
+		  	'postStepCallback' => '$.noop',        // A method to call after each step (remember this will correspond with a js method that you will have to define in the loaded js)
+			);
+	}
+
+
+	/** end sample help_tour methods **/
 
 
 	/**
@@ -579,6 +653,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//add help tab(s) - set via page_config.
 		$this->_add_help_tabs();
+		$this->_add_help_tour();
 
 
 		//add feature_pointers - global, page child class, and view specific
@@ -912,6 +987,83 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * This basically checks loaded $_page_config property to see if there are any help_tours defined.  "help_tours" is an array with properties for setting up usage of the joyride plugin
+	 *
+	 * @link http://zurb.com/playground/jquery-joyride-feature-tour-plugin
+	 * @see instructions regarding the format and construction of the "help_tour" array element is found in the _set_page_config() comments
+	 * @access protected
+	 * @return void
+	 */
+	protected function _add_help_tour() {
+		$tours = array();
+		$this->_help_tour_stops = array();
+		//loop through _page_config to find any help_tour defined
+		foreach ( $this->_page_config as $route => $config ) {
+			//we're only going to set things up for this route
+			if ( $route !== $this->_req_action )
+				continue;
+
+			if ( isset( $config['help_tour'] ) ) {
+				//HELP TOUR!
+				$has_help_tour = true;
+				if ( !isset($config['help_tour']['id'] ) )
+					throw new EE_Error( sprintf( __('A help tour is defined in the $_page_config for the %s route but is missing the "id" element defined in the configuration array. Double check and make sure its added', 'event_espresso'), $route ) );
+
+				if ( !isset( $config['help_tour']['stop_callback'] ) )
+					throw new EE_Error( sprintf( __('A helper tour is defined in the $_page_config for the %s route, but is missing the "string" indicating the "stop_callback".  Double check and make sure it is added', 'event_espresso'), $route ) );
+
+
+				//let's setup our vars to send to the tour builder
+				$id = $config['help_tour']['id'];
+				if ( !method_exists( $this, $config['help_tour']['stop_callback'] ) ) {
+					throw new EE_Error( sprintf( __('The callback (%s) set for the help tour "stop_callback" config for the "%s" route is not valid. Doublecheck the spelling and make sure this method is defined in the %s class', 'event_espresso'), $config['help_tour']['stop_callback'], $route, get_class($this) ) );
+				}
+				$stops = apply_filters('FHEE__' . get_class($this) . '__add_help_tour__' . $route . '__stops', call_user_func(array( $this, $config['help_tour']['stop_callback'] ) );
+
+				if ( !isset( $config['help_tour']['options_callback'] ) || ( isset( $config['help_tour']['options_callback'] ) && !method_exists( $this, $config['help_tour']['options_callback'] ) ) ) {
+					$options = $this->_help_tour_options_callback();
+				} else {
+					$options = call_user_func( array( $this, $config['help_tour']['options_callback'] ) );
+				}
+
+				$options = apply_filters('FHEE__' . get_class($this) . '__add_help_tour__' . $route . '__options', $options );
+
+				//just before we do the options. We need to loop through the stops and make sure there are no pause elements
+				$pauses = array();
+				foreach ( $stops as $ind => $stop ) {
+					if ( isset( $stop['pause_after'] ) && $stop['pause_after'] )
+						$pauses[] = $ind;
+				}
+
+				$options['pauseAfter'] = $pauses;
+
+				$tours[] = array(
+					'id' => $id,
+					'options' => $options,
+					);
+				$this->_help_tour_stops[$route] = EEH_Template::help_tour_stops_generator( $id, $stops );
+			}
+		}
+
+		//if we have tours then let's enqueue the js and setup the inline js object
+		if ( !empty( $tours ) ) {
+			wp_enqueue_style('jquery-joyride-css');
+			wp_enqueue_script('jquery-joyride');
+
+
+			//register the js for kicking things off
+			wp_enqueue_script('ee-help-tour', EE_CORE_ADMIN_URL . 'assets/ee-help-tour.js', array('jquery-joyride'), EVENT_ESPRESSO_VERSION, TRUE );
+
+			wp_localize_script('ee-help-tour', 'EE_HELP_TOUR', array('tours' => $tours) );
+
+			//admin_footer_global will take care of making sure our help_tour skeleton gets printed via the info stored in $this->_help_tour_stops
+			
+		}
+	}
+
+
+
 
 	/**
 	 * _set_nav_tabs
@@ -1071,6 +1223,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
 		$d_cont .= '</div>';
 		echo $d_cont;
+
+		//help tour stuff?
+		if ( isset( $this->_help_tour_stops[$this->_req_action] ) ) {
+			echo implode("<br>\n", $this->_help_tour_stops[$this->_req_action] );
+		}
 	}
 
 
@@ -1269,6 +1426,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
+
 		//script for sorting tables
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
