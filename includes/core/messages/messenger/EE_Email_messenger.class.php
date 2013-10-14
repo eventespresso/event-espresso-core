@@ -103,8 +103,12 @@ class EE_Email_messenger extends EE_messenger  {
 				'shortcodes' => $this->_valid_shortcodes['from'],
 				'type' => 'email'
 				),
-			'subject' => array(),
-			'content' => array(),
+			'subject' => array(
+				'shortcodes' => array('organization')
+				),
+			'content' => array(
+				'shortcodes' => array('event_list','attendee_list')
+				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'registration')
 				),
