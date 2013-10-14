@@ -191,7 +191,7 @@ class EEH_Template {
 	 * @return string         html
 	 */
 	public static function help_tour_stops_generator( $id, $stops ) {
-		$content = '<ol id="' . $id . '">';
+		$content = '<ol style="display:none" id="' . $id . '">';
 
 		foreach ( $stops as $stop ) {
 			$data_id = !empty( $stop['id'] ) ? ' data-id="' . $stop['id'] . '"' : '';
@@ -205,7 +205,7 @@ class EEH_Template {
 
 			$custom_class = !empty( $stop['custom_class'] ) ? ' class="' . $stop['custom_class'] . '"' : '';
 			$button_text = !empty( $stop['button_text'] ) ? ' data-button="' . $stop['button_text'] . '"' : '';
-			$content = isset($stop['content']) ? $stop['content'] : '';
+			$innercontent = isset($stop['content']) ? $stop['content'] : '';
 
 			//options
 			if ( isset( $stop['options'] ) && is_array( $stop['options'] ) ) {
@@ -219,7 +219,7 @@ class EEH_Template {
 			}
 
 			//let's put all together
-			$content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $content . '</li>';
+			$content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $innercontent . '</li>';
 		}
 
 		$content .= '</ol>';
