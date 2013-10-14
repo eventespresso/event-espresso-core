@@ -48,7 +48,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_default_nav_tab_name;
 
 	//helptourstops
-	protected $_help_tour_stops;
+	protected $_help_tour;
 
 
 	//template variables (used by templates)
@@ -277,7 +277,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			 	'callback' => 'callback_method_for_content',
 	 *     			 ),
 	 *     		'help_tour' => array(
-	 *     			'id' => 'id_of_main_container', //this is the main container that contains all our tour stops (CSS ID).
+	 *     			'id' => 'id_of_joyride_skeleton', //this is a unique id for the joyride skeleton containing the content for the stops.  Just provide an id, The generator will take care of the rest.
 	 *				'stop_callback' => '_stop_callback', //this is the method that gets called to return our stops setup array for the tour. (see the sample callback in this class)
 	 *				'options_callback' => '_help_tour_options_callback' //this is the method that gets called to return the global options setup for the tour. (optional).  If not included then default options are used.  (see the sample callback in this class for the format of the array returned)
 	 *     		)
@@ -316,7 +316,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				'pause_after' => false, //indicate if you want the tour to pause after this stop and it will get added to the pauseAfter global option array setup for the joyride instance.
 				'options' => array(
 					//override any of the global options set via the help_tour "option_callback" for the joyride instance on this specific stop.
-					);
+					)
 				)
 			);
 	}
@@ -340,23 +340,23 @@ abstract class EE_Admin_Page extends EE_BASE {
 		  	'scroll' => true, //whether to scrollTo the next step or not
 		  	'scrollSpeed' => 300,              // Page scrolling speed in ms
 		  	'timer' => 0,	                // 0 = off, all other numbers = time(ms) 
-		  	'autoStart' => false,			// true or false - false tour starts when restart called 
+		  	'autoStart' => true,			// true or false - false tour starts when restart called 
 		  	'startTimerOnClick' => true,       // true/false to start timer on first click
 		  	'nextButton' => true,              // true/false for next button visibility
 		  	'tipAnimation' => 'fade',           // 'pop' or 'fade' in each tip
-		  	'pauseAfter' => [],                // array of indexes where to pause the tour after
+		  	'pauseAfter' => array(),                // array of indexes where to pause the tour after
 		  	'tipAnimationFadeSpeed' => 300,    // if 'fade'- speed in ms of transition
-		  	'cookieMonster' => true,           // true/false for whether cookies are used
+		  	'cookieMonster' => false,           // true/false for whether cookies are used
 		  	'cookieName' => 'joyride',         // choose your own cookie name (setup will add the prefix for the specific page joyride)
 	  		'cookieDomain' => false,           // set to false or yoursite.com
-		  	'tipContainer' => body,            // Where the tip be attached if not inline
+		  	//'tipContainer' => 'body',            // Where the tip be attached if not inline
 		  	'modal' => false, 					// Whether to cover page with modal during the tour
 		  	'expose' => false,					// Whether to expose the elements at each step in the tour (requires modal:true),
-		  	'postExposeCallback' => '$.noop',    // A method to call after an element has been exposed
-		  	'preRideCallback' => '$.noop',    // A method to call before the tour starts (passed index, tip, and cloned exposed element)
-		  	'postRideCallback' => '$.noop',       // a method to call once the tour closes.  This will correspond to the name of a js method that will have to be defined in loaded js.
-		  	'preStepCallback' => '$.noop',    // A method to call before each step
-		  	'postStepCallback' => '$.noop',        // A method to call after each step (remember this will correspond with a js method that you will have to define in the loaded js)
+		  	'postExposeCallback' => 'EEHelpTour.postExposeCallback',    // A method to call after an element has been exposed
+		  	'preRideCallback' => 'EEHelpTour_preRideCallback',    // A method to call before the tour starts (passed index, tip, and cloned exposed element)
+		  	'postRideCallback' => 'EEHelpTour_postRideCallback',       // a method to call once the tour closes.  This will correspond to the name of a js method that will have to be defined in loaded js.
+		  	'preStepCallback' => 'EEHelpTour_preStepCallback',    // A method to call before each step
+		  	'postStepCallback' => 'EEHelpTour_postStepCallback',        // A method to call after each step (remember this will correspond with a js method that you will have to define in a js file BEFORE ee-help-tour.js loads, if the default methods do not exist, then ee-help-tour.js just substitues empty functions $.noop)/**/
 			);
 	}
 
@@ -997,8 +997,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _add_help_tour() {
 		$tours = array();
-		$this->_help_tour_stops = array();
+		$this->_help_tour = array();
 		//loop through _page_config to find any help_tour defined
+		
 		foreach ( $this->_page_config as $route => $config ) {
 			//we're only going to set things up for this route
 			if ( $route !== $this->_req_action )
@@ -1019,7 +1020,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				if ( !method_exists( $this, $config['help_tour']['stop_callback'] ) ) {
 					throw new EE_Error( sprintf( __('The callback (%s) set for the help tour "stop_callback" config for the "%s" route is not valid. Doublecheck the spelling and make sure this method is defined in the %s class', 'event_espresso'), $config['help_tour']['stop_callback'], $route, get_class($this) ) );
 				}
-				$stops = apply_filters('FHEE__' . get_class($this) . '__add_help_tour__' . $route . '__stops', call_user_func(array( $this, $config['help_tour']['stop_callback'] ) );
+				$stops = apply_filters('FHEE__' . get_class($this) . '__add_help_tour__' . $route . '__stops', call_user_func(array( $this, $config['help_tour']['stop_callback'] ) ) );
 
 				if ( !isset( $config['help_tour']['options_callback'] ) || ( isset( $config['help_tour']['options_callback'] ) && !method_exists( $this, $config['help_tour']['options_callback'] ) ) ) {
 					$options = $this->_help_tour_options_callback();
@@ -1042,24 +1043,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 					'id' => $id,
 					'options' => $options,
 					);
-				$this->_help_tour_stops[$route] = EEH_Template::help_tour_stops_generator( $id, $stops );
+				$this->_help_tour[$route] = EEH_Template::help_tour_stops_generator( $id, $stops );
 			}
 		}
 
-		//if we have tours then let's enqueue the js and setup the inline js object
-		if ( !empty( $tours ) ) {
-			wp_enqueue_style('jquery-joyride-css');
-			wp_enqueue_script('jquery-joyride');
+		if ( !empty( $tours ) )
+			$this->_help_tour['tours'] = $tours;
 
-
-			//register the js for kicking things off
-			wp_enqueue_script('ee-help-tour', EE_CORE_ADMIN_URL . 'assets/ee-help-tour.js', array('jquery-joyride'), EVENT_ESPRESSO_VERSION, TRUE );
-
-			wp_localize_script('ee-help-tour', 'EE_HELP_TOUR', array('tours' => $tours) );
-
-			//admin_footer_global will take care of making sure our help_tour skeleton gets printed via the info stored in $this->_help_tour_stops
-			
-		}
+		//thats it!  Now that the $_help_tours property is set (or not) the scripts and html should be taken care of automatically.
 	}
 
 
@@ -1225,8 +1216,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		echo $d_cont;
 
 		//help tour stuff?
-		if ( isset( $this->_help_tour_stops[$this->_req_action] ) ) {
-			echo implode("<br>\n", $this->_help_tour_stops[$this->_req_action] );
+		if ( isset( $this->_help_tour[$this->_req_action] ) ) {
+			echo $this->_help_tour[$this->_req_action];
 		}
 	}
 
@@ -1426,6 +1417,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
+		add_filter('FHEE_load_joyride', '__return_true');
 
 		//script for sorting tables
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
@@ -1474,6 +1466,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		/** remove filters **/
 		remove_all_filters('mce_external_plugins');
+
+
+		/**
+		 * help tour stuff
+		 */
+		if ( !empty( $this->_help_tour ) ) {
+
+			//register the js for kicking things off
+			wp_enqueue_script('ee-help-tour', EE_CORE_ADMIN_URL . 'assets/ee-help-tour.js', array('jquery-joyride'), EVENT_ESPRESSO_VERSION, TRUE );
+
+			wp_localize_script('ee-help-tour', 'EE_HELP_TOUR', array('tours' => $this->_help_tour['tours']) );
+
+			//admin_footer_global will take care of making sure our help_tour skeleton gets printed via the info stored in $this->_help_tour
+		}
 	}
 
 
