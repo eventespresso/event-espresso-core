@@ -322,7 +322,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _events_help_tour_steps() {
 		return array(
 			0 => array(
-				'content' => '<p>This is just a test</p>'
+				'content' => '<div style="width: 400px; margin: auto; padding: 10px"><iframe width="250" height="140" src="//www.youtube.com/embed/BQ4yd2W50No" frameborder="0" allowfullscreen></iframe></div>'
+				),
+			1 => array(
+				'id' => 'title',
+				'content' => '<p>Enter the event title here.</p>'
 				)
 			);
 	}

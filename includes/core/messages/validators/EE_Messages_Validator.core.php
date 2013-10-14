@@ -210,7 +210,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 			if ( class_exists( $classname ) ) {
 				$a = new ReflectionClass( $classname );
 				$obj = $a->newInstance();
-				$codes_from_objs[$group] = array_keys($obj->get_shortcodes());
+				$codes_from_objs[$group] = $obj->get_shortcodes();
 			}
 		}
 
@@ -248,6 +248,17 @@ abstract class EE_Messages_Validator extends EE_Base {
 			//hey! don't forget to include the type if present!
 			$this->_validators[$field]['type'] = isset( $config['type'] ) ? $config['type'] : NULL;
 		}
+	}
+
+
+	/**
+	 * This just returns the validators property that contains information about the various shortcodes and their availablility with each field
+	 *
+	 * 
+	 * @return array
+	 */
+	public function get_validators() {
+		return $this->_validators;
 	}
 
 
@@ -361,7 +372,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$incoming_shortcodes = (array) $matches[0];
 
 		//get a diff of the shortcodes in the string vs the valid shortcodes
-		$diff = array_diff( $incoming_shortcodes, $valid_shortcodes );
+		$diff = array_diff( $incoming_shortcodes, array_keys($valid_shortcodes) );
 
 		if ( empty( $diff ) ) return FALSE; //there is no diff, we have no invalid shortcodes, so return
 

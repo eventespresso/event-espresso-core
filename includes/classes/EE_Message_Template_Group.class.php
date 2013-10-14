@@ -356,46 +356,97 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 * 
 	 * @access public
 	 * @param string $context what context we're going to return shortcodes for
-	 * @param array $fields what fields we're returning valid shortcodes for.  If empty then we assume all fields are to be merged and returned.
+	 * @param array $fields what fields we're returning valid shortcodes for.  If empty then we assume all fields are to be returned.
+	 * @param bool  $merged If TRUE then we don't return shortcodes indexed by field but instead an array of the unique shortcodes for all the given (or all) fields.
 	 * @return mixed (array|bool) an array of shortcodes in the format array( '[shortcode] => 'label') OR FALSE if no shortcodes found.
 	 */
-	public function get_shortcodes( $context, $fields = array() ) {
-		$shortcodes = array();
+	public function get_shortcodes( $context, $fields = array(), $merged = FALSE ) {
+		$valid_shortcodes = array();
 
 		$messenger = $this->messenger_obj();
 		$message_type = $this->message_type_obj();
 
-		$m_shortcodes = $messenger->get_valid_shortcodes();
-		$mt_shortcodes = $message_type->get_valid_shortcodes();
+		//validate class for getting our list of shortcodes
+		$classname = 'EE_Messages_' . $messenger->name . '_' . $message_type->name . '_Validator';
+		if ( !class_exists( $classname ) ) {
+			$msg[] = __( 'The Validator class was unable to load', 'event_espresso');
+			$msg[] = sprintf( __('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
 
-		//let's make sure only the valid shortcodes for the given context are returned.  We will merge that with all shortcodes for the given fields.  If $field is empty then we'll just return the shortcodes for all fields
-		$valid_shortcodes = isset($mt_shortcodes[$context]) ? $mt_shortcodes[$context] : array();
+		$a = new ReflectionClass( $classname );
+		$_VLD = $a->newInstance( array(), $context );
+		$valid_shortcodes = $_VLD->get_validators();
 
-		if ( empty( $fields ) ) {
-			foreach ( $m_shortcodes as $ms ) {
-				$valid_shortcodes = array_merge( $valid_shortcodes, $ms );
-			}
-		} else {
+		//let's make sure we're only getting the shortcode part of the validators
+		$shortcodes = array();
+		foreach( $valid_shortcodes as $field => $validators ) {
+			$shortcodes[$field] = $validators['shortcodes'];
+		}
+		$valid_shortcodes = $shortcodes;
+
+
+		//if not all fields let's make sure we ONLY include the shortcodes for the specified fields.
+		if ( !empty( $fields ) ) {
+			$specified_shortcodes = array();
 			foreach ( $fields as $field ) {
-				$valid_shortcodes = isset( $m_shortcodes[$field] ) ? array_merge( $valid_shortcodes, $m_shortcodes[$field] ) : $valid_shortcodes;
+				if ( isset( $valid_shortcodes[$field] ) )
+					$specified_shortcodes[$field] = $valid_shortcodes[$field];
 			}
+			$valid_shortcodes = $specified_shortcodes;
 		}
 
 
-		//let's merge shortcodes and make sure we've got unique refs
-		$all_scs = array_unique( $valid_shortcodes );
-
-		//now we can use the assembled array to instantiate the relevant shortcode objects
-		$sc_objs = $this->_get_shortcode_objects( $all_scs );
-
-		//great! check to see if sc_objs is empty.  If it is return FALSE. Otherwise we'll go ahead and merge the array of shortcodes and send back.
-		if ( empty( $sc_objs ) ) return FALSE;
-
-		foreach ( $sc_objs as $obj ) {
-			$shortcodes = array_merge( $shortcodes, $obj->get_shortcodes() );
+		//if not merged then let's replace the fields with the localized fields
+		if ( !$merged ) {
+			//let's get all the fields for the set messenger so that we can get the localized label and use that in the returned array.
+			$field_settings = $messenger->get_template_fields();
+			$localized = array();
+			foreach ( $valid_shortcodes as $field => $shortcodes ) {
+				//get localized field label
+				if ( isset( $field_settings[$field] ) ) {
+					//possible that this is used as a main field.
+					if ( empty( $field_settings[$field] ) ) {
+						if ( isset( $field_settings[$field]['extra'][$field] ) ) {
+							$_field = $field_settings[$field]['extra'][$field]['main']['label'];
+						} else {
+							$_field = $field;
+						}
+					} else {
+						$_field = $field_settings[$field]['label'];
+					}
+				} else if ( isset( $field_settings['extra'] ) ) {
+					//loop through extra "main fields" and see if any of their children have our field
+					foreach ( $field_settings['extra'] as $main_field => $fields ) {
+						if ( isset( $fields[$field] ) )
+							$_field = $fields[$field]['label'];
+						else
+							$_field = $field;
+					}
+				} else {
+					$_field = $field;
+				}
+				$localized[$_field] = $shortcodes;
+			}
+			$valid_shortcodes = $localized;
 		}
 
-		return $shortcodes;
+
+		//if $merged then let's merge all the shortcodes into one list NOT indexed by field.
+		if ( $merged ) {
+			$merged_codes = array();
+			foreach ( $valid_shortcodes as $field => $shortcode ) {
+				foreach ( $shortcode as $code => $label ) {
+					if ( isset( $merged_codes[$code] ) )
+						continue;
+					else
+						$merged_codes[$code] = $label;
+				}
+			}
+			$valid_shortcodes = $merged_codes;
+		}
+
+		return $valid_shortcodes;
 	}
 
 
