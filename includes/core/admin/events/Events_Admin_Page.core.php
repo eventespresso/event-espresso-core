@@ -232,7 +232,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Ticket Options', 'event_espresso'),
 						'callback' => 'ticket_options_info_help_tab'
 					)
-				)
+				),
+				'help_tour' => array(
+					'id' => 'event-editor-joyride',
+					'stop_callback' => '_events_help_tour_steps',
+					//'options_callback' => '_events_help_tour_options'
+					),
 			),
 			'edit' => array(
 				'nav' => array(
@@ -311,6 +316,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 		);
+	}
+
+
+	protected function _events_help_tour_steps() {
+		return array(
+			0 => array(
+				'content' => 'This is just a test'
+				)
+			);
 	}
 
 	protected function _add_screen_options() {
