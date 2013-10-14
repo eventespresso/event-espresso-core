@@ -322,7 +322,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _events_help_tour_steps() {
 		return array(
 			0 => array(
-				'content' => 'This is just a test'
+				'content' => '<p>This is just a test</p>'
 				)
 			);
 	}
