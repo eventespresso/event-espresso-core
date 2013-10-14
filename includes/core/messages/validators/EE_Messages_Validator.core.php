@@ -313,8 +313,9 @@ abstract class EE_Messages_Validator extends EE_Base {
 				$invalid_shortcodes = $this->_invalid_shortcodes( $value, $this->_validators[$field]['shortcodes'] );
 				//if true then that means there is a returned error message that we'll need to add to the _errors array for this field.
 				if ( $invalid_shortcodes ) {
+					$v_s = array_keys($this->_validators[$field]['shortcodes']);
 					$err_msg = sprintf( __('<p>The following shortcodes were found in the "%s" field that ARE not valid: %s</p>', 'event_espresso'), '<strong>' . $field_label . '</strong>', $invalid_shortcodes );
-					$err_msg .= sprintf( __('<p>Valid shortcodes for this field are: %s', 'event_espresso'), implode(', ', $this->_validators[$field]['shortcodes'] ) );
+					$err_msg .= sprintf( __('<p>Valid shortcodes for this field are: %s', 'event_espresso'), implode(', ', $v_s ) );
 				}
 			}
 
