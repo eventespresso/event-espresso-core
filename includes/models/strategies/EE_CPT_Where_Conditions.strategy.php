@@ -42,7 +42,7 @@ class EE_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 		
 		return array(
 			$model_relation_chain.$status_field->get_name()=>array('!=','auto-draft'),
-			'OR*'.$this->_post_type."-or-".$this->_meta_field."-query-clause" => array($model_relation_chain.$post_type_field->get_name()=>$this->_post_type, $model_relation_chain.$this->_meta_field => array( 'IS NOT NULL'))
+			'AND*'.$this->_post_type."-and-".$this->_meta_field."-query-clause" => array($model_relation_chain.$post_type_field->get_name()=>$this->_post_type, $model_relation_chain.$this->_meta_field => array( 'IS NOT NULL'))
 		);
 	}
 }
