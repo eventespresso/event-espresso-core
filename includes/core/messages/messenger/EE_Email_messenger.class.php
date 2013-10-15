@@ -306,7 +306,8 @@ class EE_Email_messenger extends EE_messenger  {
 			'payment',
 			'registration',
 			'resend_registration',
-			'payment_reminder'
+			'payment_reminder',
+			'payment_declined'
 			);
 	}
 
