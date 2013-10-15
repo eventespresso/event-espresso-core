@@ -296,6 +296,8 @@ class EE_Register_CPTs {
 
 			'recurring-event' => array( __('Recurring Event', 'event_espresso'), __('Multiple events that occur over multiple non-consecutive days. Attendee\'s can register for any of the date-times.', 'event_espresso') ), //example: a yoga class
 
+			'ongoing' => array( __('Ongoing Event', 'event_espresso'), __('An "event" that people can purchase tickets to gain access for anytime for this event regardless of date times on the event', 'event_espresso') ) //example: access to a museum
+
 			//'walk-in' => array( __('Walk In', 'event_espresso'), __('Single datetime and single entry recurring events. Attendees register for one or multiple datetimes individually.', 'event_espresso') ),
 			//'reservation' => array( __('Reservation', 'event_espresso'), __('Reservations are created by specifying available datetimes and quantities. Attendees choose from the available datetimes and specify the quantity available (if the maximum is greater than 1)') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
 			// 'multiple-session' => array( __('Multiple Session', 'event_espresso'), __('Multiple event, multiple datetime, hierarchically organized, custom entry events. Attendees may be required to register for a parent event before being allowed to register for child events. Attendees can register for any combination of child events as long as the datetimes do not conflict. Parent and child events may have additional fees or registration questions.') ), //@TODO to avoid confusion we'll implement this in a later iteration > EE4.1
