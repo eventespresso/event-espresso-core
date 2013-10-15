@@ -62,10 +62,13 @@ var dttPickerHelper = {
 		this.dttOptions.defaultDate = doingstart ? this.startDate.toDate() : this.endDate.toDate();
 
 		//set min and max if necessary
-		/*if ( !doingstart ) {
+		if ( !doingstart ) {
 			var minDate = this.startDate;
 			this.dttOptions.minDate = this.dttOptions.minDate === null ? minDate.toDate() : this.dttOptions.minDate;
 			this.dttOptions.maxDate = this.dttOptions.maxDate === null ? minDate.clone().add('years', 100).toDate() : this.dttOptions.maxDate;
+		} else {
+			this.dttOptions.minDate = null;
+			this.dttOptions.maxDate = null;
 		}/**/
 
 
