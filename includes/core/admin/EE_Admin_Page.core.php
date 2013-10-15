@@ -330,6 +330,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * NOTE:  if the page_config does not define an options callback, this method is called to setup the default options.
 	 *
+	 * Also Note: Currently not every option here can be overriden by the options param for the stop.
+	 *
 	 * @link http://zurb.com/playground/jquery-joyride-feature-tour-plugin 
 	 * @return array
 	 */
