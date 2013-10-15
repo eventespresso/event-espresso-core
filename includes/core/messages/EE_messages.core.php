@@ -426,7 +426,7 @@ class EE_messages {
 	public function get_active_message_types() {
 		$message_types = array();
 		foreach ( $this->_active_message_types as $messenger => $mtvalues ) {
-			foreach ( $mt_values as $mt => $config ) {
+			foreach ( $mtvalues as $mt => $config ) {
 				if ( !in_array( $mt, $message_types ) )
 					$message_types[] = $mt;
 			}
