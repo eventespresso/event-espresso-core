@@ -416,6 +416,25 @@ class EE_messages {
 		return $this->_active_messengers;
 	}
 
+
+	/**
+	 * This does NOT return the _active_message_types property but simply returns an array of active message types from that property.  (The _active_message_types property is indexed by messenger and active message_types per messenger).
+	 *
+	 * @access public
+	 * @return array array of message_type references
+	 */
+	public function get_active_message_types() {
+		$message_types = array();
+		foreach ( $this->_active_message_types as $messenger => $mtvalues ) {
+			foreach ( $mt_values as $mt => $config ) {
+				if ( !in_array( $mt, $message_types ) )
+					$message_types[] = $mt;
+			}
+		}
+
+		return $message_types;
+	}
+
 	public function get_installed_message_types() {
 		return $this->_installed_message_types;
 	}
