@@ -737,6 +737,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
+			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
+			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
+				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
+				$DTT = EEH_DTT_helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
+				$DTT->save();
+			}
+
 			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtt = $DTT;
 
@@ -826,6 +833,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			//update ticket.
 			$TKT->save();
+
+			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
+			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
+				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
+				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
+				$TKT->save();
+			}
+
+			
 			$saved_tickets[$TKT->ID()] = $TKT;
 
 			//add prices to ticket
