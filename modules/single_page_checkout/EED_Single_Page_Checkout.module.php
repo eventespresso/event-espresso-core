@@ -91,7 +91,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::setup_reg_steps_array();
 		// set ajax hooks
 		foreach ( self::$_reg_steps as $reg_step => $reg_step_details ) {
-			EE_Config::register_route( $reg_step, 'EED_Single_Page_Checkout', $reg_step_details['process_func'] );
 			add_action( 'wp_ajax_espresso_process_' . $reg_step, array( 'EED_Single_Page_Checkout', $reg_step ));
 			add_action( 'wp_ajax_nopriv_espresso_process_' . $reg_step, array( 'EED_Single_Page_Checkout', $reg_step ));
 		}
