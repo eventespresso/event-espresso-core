@@ -3,12 +3,30 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
 /**
- * This contains the template functions for all the decaf editor help tour steps in one file to make it easier to edit. Wrapped in a class simply for namespace.
+ * Event Espresso
  *
- * This file is used in /
+ * Event Registration and Management Plugin for Wordpress
+ *
+ * @package		Event Espresso
+ * @author		Seth Shoultes
+ * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
+ * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
+ * @link		http://www.eventespresso.com
+ * @version		4.0
+ *
+ * ------------------------------------------------------------------------
+ *
+ * Event_Editor_Help_Tour
+ *
+ * This is the help tour object for the decaf Event Editor
+ *
+ *
+ * @package		Event_Editor_Help_Tour
+ * @subpackage	includes/core/admin/Event_Editor_Help_Tour.core.php
+ * @author		Darren Ethier
+ *
+ * ------------------------------------------------------------------------
  */
-
-
 class Event_Editor_Help_Tour extends EE_Help_Tour {
 
 	public function __construct() {
