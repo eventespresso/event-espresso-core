@@ -41,7 +41,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	private $_time;
 
 	// whether to encrypt session data
-	private $_use_encryption = TRUE;
+	private $_use_encryption = FALSE;
 
 	// EE_Encryption object stored by reference
 	public $encryption = NULL;
@@ -204,8 +204,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			//echo  '3 key : ' . $key . '<br />section : ' . $section . '<br />';
 			return $this->_session_data;
 		}
-		
-		return FALSE;
 
 	}
 
@@ -283,7 +281,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		if ( $session_data = get_transient( $this->_sid ) ) {
 
 			// un-encrypt the data
-			$session_data = $this->encryption->decrypt( $session_data );
+			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
 
 			// unserialize
 			$this->_session_data = maybe_unserialize( $session_data );
@@ -440,12 +438,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
-
 		// encrypt it if we are using encryption
-		if ( $this->_use_encryption ) {
-			$session_data = $this->encryption->encrypt( $session_data );
-		}
-
+		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
 		set_transient( $this->_sid, $session_data, $this->_expiration );
 		//die();
@@ -549,9 +543,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			//echo '<h1>$page_id   ' . $page_id . '</h1>';
 
 			// check for $e_reg in SERVER REQUEST
-			if ( isset( $_REQUEST['e_reg'] )) {
+			if ( isset( $_REQUEST['ee'] )) {
 				// rebuild $e_reg without any of the extra paramaters
-				$e_reg = 'e_reg=' . esc_attr( $_REQUEST['e_reg'] );
+				$e_reg = 'ee=' . esc_attr( $_REQUEST['ee'] );
 			} else {
 				$e_reg = '';
 			}
@@ -724,7 +718,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			// set it to EST
 			$timezone_string = 'America/New_York';
 		}
-		date_default_timezone_set($timezone_string);
+		//date_default_timezone_set($timezone_string);
 
 		// generate the user time, taking the gmt offset into consideration
 		$time = mktime(gmdate("H", $now)+$offset, gmdate("i", $now), gmdate("s", $now), gmdate("m", $now), gmdate("d", $now), gmdate("Y", $now));

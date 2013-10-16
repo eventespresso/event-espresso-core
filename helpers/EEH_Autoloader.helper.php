@@ -51,10 +51,10 @@ class EEH_Autoloader {
 	 *	@access public
 	 *	@return EEH_Autoloader
 	 */
-	public static function instance( $activation = FALSE ) {
+	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EEH_Autoloader )) {
-			self::$_instance = new self( $activation );
+			self::$_instance = new self();
 		}
 		return self::$_instance;
 	}
@@ -69,6 +69,7 @@ class EEH_Autoloader {
 	private function __construct() {
 		self::$_autoloaders = array();
 		$this->_register_custom_autoloaders();			
+		spl_autoload_register( array( $this, 'espresso_autoloader' ));
 	}
 
 
@@ -82,7 +83,7 @@ class EEH_Autoloader {
 	 *	@param string $class_name - simple class name ie: session
 	 * 	@return 		void
 	 */
-	public static function espresso_autoloader( $className ) {
+	public function espresso_autoloader( $className ) {
 		if ( isset( self::$_autoloaders[ $className ] ) && is_readable( self::$_autoloaders[ $className ] )) {
 			require_once( self::$_autoloaders[ $className ] );
 		} 
@@ -119,7 +120,7 @@ class EEH_Autoloader {
 				$e->get_error();
 			}
 			// add autoloader
-			self::$_autoloaders[ $class ] = $path;			
+			self::$_autoloaders[ $class ] = str_replace( array( '\/', '/' ), DS, $path );			
 		}
 	}
 
@@ -161,7 +162,7 @@ class EEH_Autoloader {
 		//get all the files in that folder that end in php
 		$filepaths = glob( $folder.'*.php');
 		foreach($filepaths as $filepath){
-			$class_to_filepath_map [ EEH_File::get_classname_from_filepath_with_standard_filename( $filepath ) ] = $filepath;
+			$class_to_filepath_map [ EEH_File::get_classname_from_filepath_with_standard_filename( $filepath ) ] = str_replace( array( '\/', '/' ), DS, $filepath );
 		}
 		self::register_autoloader($class_to_filepath_map);
 	}

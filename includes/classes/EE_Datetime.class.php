@@ -567,10 +567,29 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	have the tickets sold for this datetime, met or exceed the registration limit ?
 	* 
 	* 	@access		public		
-	*	@return 		mixed		int on success, FALSE on fail
+	*	@return 		boolean
 	*/	
 	public function sold_out() {
-		return $this->_DTT_reg_limit != 0 && $this->_DTT_sold >= $this->_DTT_reg_limit ? TRUE : FALSE ;
+		return $this->_DTT_reg_limit > 0 && $this->_DTT_sold >= $this->_DTT_reg_limit ? TRUE : FALSE ;
+	}
+
+
+
+
+	/**
+	*	return the total number of tickets available for purchase for this datetime
+	* 
+	* 	@access		public		
+	*	@return 		int
+	*/	
+	public function tickets_remaining() {
+		// is there a reg limit set ?
+		if ( $this->_DTT_reg_limit < 0 ) {
+			// unlimited tickets available
+			return -1;
+		}
+		// tickets remaining availalbe for purchase
+		return $this->_DTT_reg_limit > $this->_DTT_sold ? $this->_DTT_reg_limit - $this->_DTT_sold : 0 ;
 	}
 
 

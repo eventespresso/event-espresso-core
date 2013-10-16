@@ -646,6 +646,15 @@ class EE_Registration extends EE_Base_Class {
 	
 
 	/**
+	 * Gets the event this registration is for
+	 * @return EE_Event
+	 */
+	public function event(){
+		return $this->get_first_related('Event');
+	}	
+	
+
+	/**
 	 * Gets the ticket this registration is for
 	 * @return EE_Ticket
 	 */

@@ -17,7 +17,7 @@
 
 
 	// apply coupon button
-	$('#mer-reg-page-apply-coupon-btn').on( 'click', function() {
+	$('#spco-apply-coupon-btn').on( 'click', function() {
 		var error_msg = eei18n.invalid_coupon;
 		if ( eei18n.wp_debug == 1 ) {
 			error_msg = error_msg + ' (' + getFunctionName( arguments.callee.toString() ) + ' )';
@@ -30,7 +30,7 @@
 
 	// Step 1 - "more options" link in the "Use Attendee #1's information for ALL attendees" box
 	$('#display-more-attendee-copy-options').on( 'click', function() {
-		$('#mer-reg-page-copy-all-attendee-chk').prop('checked', false);
+		$('#spco-copy-all-attendee-chk').prop('checked', false);
 	});
 
 
@@ -38,9 +38,9 @@
 	/**
 	*		trigger click event on all checkboxes if the Copy All option is selected
 	*/
-	$('#mer-reg-page-copy-all-attendee-chk').on( 'click', function() {
-		$('.mer-reg-page-copy-attendee-chk').each(function(index) {
-			if ( $(this).prop('checked') != $('#mer-reg-page-copy-all-attendee-chk').prop('checked') ) {
+	$('#spco-copy-all-attendee-chk').on( 'click', function() {
+		$('.spco-copy-attendee-chk').each(function(index) {
+			if ( $(this).prop('checked') != $('#spco-copy-all-attendee-chk').prop('checked') ) {
 				$(this).trigger('click');
 			}
 		});
@@ -54,7 +54,7 @@
 	
 	
 	// in
-	$('.mer-reg-page-copy-attendee-chk').on( 'click', function() { 
+	$('.spco-copy-attendee-chk').on( 'click', function() { 
 
 		// the checkbox that was clicked
 		var clicked_checkbox = $(this);
@@ -63,8 +63,8 @@
 		var prmry_att_qstn_grp = $(this).val();
 //		console.log( JSON.stringify( 'prmry_att_qstn_grp: ' + prmry_att_qstn_grp, null, 4 ));
 		// find all of the primaray attendee's questions for this event
-		var prmry_att_questions = $( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input');		
-		//$( '#mer-reg-page-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');		
+		var prmry_att_questions = $( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input');		
+		//$( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');		
 
 		// the targeted attendee question group
 		var trgt_att_qstn_grp = $(this).attr('rel');
@@ -114,7 +114,7 @@
 					// show an error msg
 					var error_msg = lbl_txt + eei18n.required_field;
 					if ( eei18n.wp_debug == 1 ) {
-						error_msg = error_msg + ' ( mer-reg-page-copy-attendee-chk )';
+						error_msg = error_msg + ' ( spco-copy-attendee-chk )';
 					}
 					show_event_queue_ajax_error_msg( error_msg );	
 					// uncheck the checkbox that was clicked
@@ -219,7 +219,7 @@
 
 	function scroll_to_top_of_form( msg ) {
 		//alert('scroll_to_top_of_form');
-		var top_of_form = $('#mer-reg-page-steps-display-dv').offset();
+		var top_of_form = $('#spco-steps-display-dv').offset();
 		top_of_form = top_of_form.top - 10;		
 		$("html, body").animate({ scrollTop: top_of_form }, 'normal', function() {
 			if ( msg.success ) {
@@ -237,9 +237,9 @@
 	 * @return void
 	 **/
 	function hide_step(step_to_hide){
-		$('#mer-reg-page-step-'+step_to_hide+'-dv').slideUp( function() {				
-			$('#mer-reg-page-step-'+step_to_hide+'-dv').height(0);
-			$('#mer-reg-page-edit-step-'+step_to_hide+'-lnk').removeClass('hidden');		
+		$('#spco-step-'+step_to_hide+'-dv').slideUp( function() {				
+			$('#spco-step-'+step_to_hide+'-dv').height(0);
+			$('#spco-edit-step-'+step_to_hide+'-lnk').removeClass('hidden');		
 			
 		});	
 	}
@@ -252,11 +252,11 @@
 	 * @return void
 	 **/
 	function go_to_step(step_to_show,msg){
-		$('.mer-reg-page-step-display-dv').removeClass('active-step').addClass('inactive-step');	
-		$('#mer-reg-page-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
-		$('#mer-reg-page-edit-step-'+step_to_show+'-lnk').addClass('hidden');	
+		$('.spco-step-display-dv').removeClass('active-step').addClass('inactive-step');	
+		$('#spco-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
+		$('#spco-edit-step-'+step_to_show+'-lnk').addClass('hidden');	
 		$('#espresso-ajax-loading').fadeOut('fast');
-		$('#mer-reg-page-step-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
+		$('#spco-step-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
 			scroll_to_top_of_form( msg );
 		});
 	}
@@ -270,7 +270,7 @@
 			msg ='';
 		}
 		// set step 1 back to auto height 
-		$('#mer-reg-page-step-1-dv').css( 'height', 'auto' );
+		$('#spco-step-1-dv').css( 'height', 'auto' );
 		hide_step(2);
 		hide_step(3);
 		go_to_step(1,msg);
@@ -286,10 +286,10 @@
 		}
 		$('.reg-page-billing-info-dv').addClass('hidden');
 		$('.reg-page-payment-option-dv').removeClass('hidden');
-		//	$('.mer-reg-page-go-to-step-2').on( 'click', function() {
-		$('#mer-reg-page-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
+		//	$('.spco-go-to-step-2').on( 'click', function() {
+		$('#spco-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
 		// set step 2 back to auto height 
-		$('#mer-reg-page-step-2-dv').css( 'height', 'auto' );
+		$('#spco-step-2-dv').css( 'height', 'auto' );
 		hide_step(1);
 		hide_step(3);
 		go_to_step(2,msg);
@@ -304,9 +304,9 @@
 			msg ='';
 		}
 
-		$('#mer-reg-page-step-3-dv').css({ 'display' : 'none' }).removeClass('hidden');		
+		$('#spco-step-3-dv').css({ 'display' : 'none' }).removeClass('hidden');		
 		// set step 3 back to auto height 
-		$('#mer-reg-page-step-3-dv').css( 'height', 'auto' );	
+		$('#spco-step-3-dv').css( 'height', 'auto' );	
 		hide_step(1);
 		hide_step(2);
 		go_to_step(3,msg);
@@ -323,7 +323,7 @@
 
 
 	// go to step 1 via edit link
-	$('.mer-reg-page-go-to-step-1').on( 'click', function(e) {
+	$('.spco-go-to-step-1').on( 'click', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		mer_reg_page_go_to_step_1('');
@@ -331,7 +331,7 @@
 	});
 	
 	// go to step 2 via edit link
-	$('.mer-reg-page-go-to-step-2').on( 'click', function(e) {
+	$('.spco-go-to-step-2').on( 'click', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		mer_reg_page_go_to_step_2('');
@@ -339,7 +339,7 @@
 	});
 
 	// go to step 3 via edit link
-	$('.mer-reg-page-go-to-step-3').on( 'click', function(e) {
+	$('.spco-go-to-step-3').on( 'click', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		selected_gateway_dv = process_selected_gateway();		
@@ -349,7 +349,7 @@
 
 	
 	// submit Step 1 of registraion form
-	$('#mer-reg-page-go-to-step-2-btn').on( 'click', function(e) {	
+	$('#spco-go-to-step-2-btn').on( 'click', function(e) {	
 		e.preventDefault();
 		e.stopPropagation();
 		process_reg_step ( 1 );
@@ -357,7 +357,7 @@
 		
 	
 	// submit Step 2 of registraion form
-	$('#mer-reg-page-go-to-step-3-btn').on( 'click', function(e) {	
+	$('#spco-go-to-step-3-btn').on( 'click', function(e) {	
 		e.preventDefault();
 		e.stopPropagation();
 		selected_gateway_dv = process_selected_gateway();
@@ -366,7 +366,7 @@
 		
 	
 	// submit Step 3 of registraion form
-	$('#mer-reg-page-confirm-reg-btn').on( 'click', function(e) {	
+	$('#spco-confirm-reg-btn').on( 'click', function(e) {	
 		e.preventDefault();
 		e.stopPropagation();
 		off_site_payment = $('#reg-page-off-site-gateway').val();
@@ -430,13 +430,13 @@
 
 		if ( good_to_go === true ) {
 
-			$('#mer-reg-page-step-'+step+'-ajax').val(1);
-			$('#mer-reg-page-step-'+step+'-noheader').val('true');
-			$('#mer-reg-page-step-'+step+'-action').attr( 'name', 'action' );		
+			$('#spco-step-'+step+'-ajax').val(1);
+			$('#spco-step-'+step+'-noheader').val('true');
+			$('#spco-step-'+step+'-action').attr( 'name', 'action' );		
 			var form_data = $('#mer-registration-frm-'+step).serialize();
 			form_data.ee_front_ajax = true;
 //alert	(form_data);
-//alert( '#mer-reg-page-step-'+step+'-action = ' + $('#mer-reg-page-step-'+step+'-action').val() );
+//alert( '#spco-step-'+step+'-action = ' + $('#spco-step-'+step+'-action').val() );
 //alert( 'eei18n.ajax_url = ' + eei18n.ajax_url );
 
 			$.ajax({
@@ -597,9 +597,9 @@
 		
 			
 		// does copy all attendees checkbox exist ?
-		if ( $('#mer-reg-page-copy-all-attendee-chk').size() ) {
+		if ( $('#spco-copy-all-attendee-chk').size() ) {
 			// get value of copy all attendees checkbox
-			var allAttendeesChk = $('#mer-reg-page-copy-all-attendee-chk').prop('checked');
+			var allAttendeesChk = $('#spco-copy-all-attendee-chk').prop('checked');
 		} else {
 			// only one attendee, so let's say this is checked
 			var allAttendeesChk = true;
@@ -607,8 +607,8 @@
 		
 		if ( good_to_go === true && allAttendeesChk ) {
 			$('.espresso-question-group-wrap').slideUp(); 
-			$('#mer-reg-page-copy-attendee-dv').slideUp();
-			$('#mer-reg-page-display-event-questions-lnk').removeClass('hidden');
+			$('#spco-copy-attendee-dv').slideUp();
+			$('#spco-display-event-questions-lnk').removeClass('hidden');
 		} else if ( good_to_go != '' && good_to_go != true ) {
 			msg = new Object();
 			msg.error = good_to_go;
@@ -622,9 +622,9 @@
 
 
 	// show event questions
-	$('#mer-reg-page-display-event-questions-lnk').on( 'click', function() {
+	$('#spco-display-event-questions-lnk').on( 'click', function() {
 		$('.espresso-question-group-wrap').slideDown();
-		$('#mer-reg-page-copy-attendee-dv').slideDown();
+		$('#spco-copy-attendee-dv').slideDown();
 		$(this).addClass('hidden');
 	});
 

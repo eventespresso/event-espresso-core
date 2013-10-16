@@ -1,31 +1,37 @@
-<div id="multi-event-registration" class="ui-widget">
+<div id="single-page-checkout" class="ui-widget">
 
-<?php if ( ! $empty_cart ) : ?>
+<?php if ( ! $empty_cart ) { ?>
 
-	<h2 id="mer-reg-page-steps-big-hdr" class="mer-reg-page-steps-big-hdr"><?php _e(' Steps', 'event_espresso'); ?></h2>
-	<div id="mer-reg-page-steps-display-dv">
-		<div id="mer-reg-page-step-1-display-dv" class="mer-reg-page-step-display-dv <?php echo $step_display_dv_1_class; ?>">
-			<a class="mer-reg-page-step-big-nmbr">1</a> <h2 id="mer-reg-page-step-1-display-hdr" class="mer-reg-page-steps-display-hdr">&nbsp;<?php _e('Attendee<br/>&nbsp;Information', 'event_espresso'); ?></h2>
+	<h2 id="spco-steps-big-hdr" class="spco-steps-big-hdr"><?php _e(' Steps', 'event_espresso'); ?></h2>
+	
+	<div id="spco-steps-display-dv">
+		<?php 
+		$step_nmbr = 1;
+		foreach ( $reg_steps as $reg_step => $reg_step_details ) {
+			$step_display_dv_class = $step == $reg_step ? 'active-step' : 'inactive-step';
+		?>
+		<div id="spco-step-<?php echo $step_nmbr; ?>-display-dv" class="spco-step-display-dv <?php echo $step_display_dv_class; ?> steps-<?php echo count( $reg_steps ); ?>">
+			<a class="spco-step-big-nmbr"><?php echo $step_nmbr; ?></a>
+			<h2 id="spco-step-<?php echo $step_nmbr; ?>-display-hdr" class="spco-steps-display-hdr">
+				&nbsp;<?php echo str_replace( '&nbsp;', '<br/>&nbsp;', $reg_step_details['name'] ); ?>				
+			</h2>
 		</div>
-		<div class="mer-reg-page-step-arrow-dv">&raquo;</div>
-		<div id="mer-reg-page-step-2-display-dv" class="mer-reg-page-step-display-dv <?php echo $step_display_dv_2_class; ?>">
-			<a class="mer-reg-page-step-big-nmbr">2</a> 
-			<h2 id="mer-reg-page-step-2-display-hdr" class="mer-reg-page-steps-display-hdr">&nbsp;<?php _e('Payment<br/>&nbsp;Options', 'event_espresso'); ?></h2>
-		</div>
-		<div class="mer-reg-page-step-arrow-dv">&raquo;</div>
-		<div id="mer-reg-page-step-3-display-dv" class="mer-reg-page-step-display-dv <?php echo $step_display_dv_3_class; ?>">
-			<a class="mer-reg-page-step-big-nmbr">3</a> <h2 id="mer-reg-page-step-3-display-hdr" class="mer-reg-page-steps-display-hdr">&nbsp;<?php _e('Registration<br/>&nbsp;Confirmation', 'event_espresso'); ?></h2>
-		</div>
+			
+			<?php if ( $step_nmbr < count( $reg_steps )) { ?>
+		<div class="spco-step-arrow-dv">&raquo;</div>
+			<?php } ?>
+			<?php $step_nmbr++; ?>
+		<?php } ?>
 		<div class="clear-float"></div>
 	</div>
 	
 	<?php do_action('before_reg-page-steps'); ?>
 	<?php echo $registration_steps; ?>
 
-<?php	 else :  ?>
-	<h2 id="mer-reg-page-empty-cart-hdr" class="mer-reg-page-step-title-hdr"><?php _e('There is currently nothing in the Event Queue', 'event_espresso'); ?></h2>
+<?php } else { ?>
+	<h2 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php _e('There is currently nothing in the Event Queue', 'event_espresso'); ?></h2>
 	<p><?php _e('You need to select at least one event before you can proceed with the registration process', 'event_espresso'); ?></p>
-<?php	 endif; // $! empty_cart ?>
+<?php } // $! empty_cart ?>
 	
 </div>
 

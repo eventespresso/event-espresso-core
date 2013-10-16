@@ -1,16 +1,16 @@
 <!--**********************************  STEP 2 	**********************************-->
 
-	<h2 id="mer-reg-page-step-title-2-hdr" class="mer-reg-page-step-title-hdr">
+	<h2 id="spco-step-title-2-hdr" class="spco-step-title-hdr">
 		<?php _e('Step 2 - Payment Options', 'event_espresso'); ?>
-		<a id="mer-reg-page-edit-step-2-lnk" class="mer-reg-page-go-to-step-2 mer-reg-page-edit-step-lnk <?php echo $step_2_edit_lnk_class; ?>" ><?php _e('edit', 'event_espresso'); ?></a>
+		<a id="spco-edit-step-2-lnk" class="spco-go-to-step-2 spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 
-	<div id="mer-reg-page-step-2-dv" class="mer-reg-page-step-dv <?php echo $step_2_dv_class; ?>">
+	<div id="spco-step-2-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
 
-		<form id="mer-registration-frm-2" action="<?php echo $reg_page_goto_step_3_url;?>" method="post">
+		<form id="mer-registration-frm-2" action="<?php echo $reg_step_form_url;?>" method="post">
 
-			<input type="hidden" id="mer-reg-page-step-2-action" name="ajax_action" value="espresso_process_registration_step_2" />
-			<input type="hidden" id="mer-reg-page-step-2-noheader" name="noheader" value="" />		
+			<input type="hidden" id="spco-step-2-action" name="ajax_action" value="espresso_process_registration_step_2" />
+			<input type="hidden" id="spco-step-2-noheader" name="noheader" value="" />		
 
 <?php
 		if ( $events_requiring_pre_approval != '' ) { ?>
@@ -29,25 +29,25 @@
 
 			<h5><strong><?php _e('Discount Codes', 'event_espresso'); ?></strong></h5>
 
-			<p id="mer-reg-page-coupon-code-input-pg" class="event_form_field">
+			<p id="spco-coupon-code-input-pg" class="event_form_field">
 				<label><?php _e('Enter discount code', 'event_espresso'); ?></label>
-				<input type="text" id="mer-reg-page-coupon_codes-txt" class="mer-reg-page-coupon_codes-txt medium-txt <?php echo $css_class;?>"  value="" />
-				<a id="mer-reg-page-apply-coupon-btn" class="ui-button ui-priority-secondary ui-state-default ui-corner-all add-hover-fx hide-if-no-js" href="<?php echo $mer_reg_page_ajax_coupons_url;?>" >
+				<input type="text" id="spco-coupon_codes-txt" class="spco-coupon_codes-txt medium-txt <?php echo $css_class;?>"  value="" />
+				<a id="spco-apply-coupon-btn" class="ui-button ui-priority-secondary ui-state-default ui-corner-all add-hover-fx hide-if-no-js" href="<?php echo $mer_reg_page_ajax_coupons_url;?>" >
 					<span class="ui-icon ui-icon-tag"></span><?php _e('apply&nbsp;coupon&nbsp;', 'event_espresso'); ?>
 				</a>
 			</p>
 
-			<p id="mer-reg-page-coupon-codes-pg" class="smaller-text lt-grey-text hide-if-no-js">
+			<p id="spco-coupon-codes-pg" class="smaller-text lt-grey-text hide-if-no-js">
 				<?php _e('Enter any coupon codes (including Groupons) you have into the above text field and then click apply coupon. Additional coupon codes can be entered one at a time.', 'event_espresso'); ?>
 			</p>
 
-			<input type="hidden" id="mer-reg-page-events-that-use-coupon-codes" name="mer-reg-page-events-that-use-coupon-codes" value="<?php echo $events_that_use_coupon_codes;?>" />
-			<input type="hidden" id="mer-reg-page-events-that-use-groupon-codes" name="mer-reg-page-events-that-use-groupon-codes" value="<?php echo $events_that_use_groupon_codes;?>"/>
+			<input type="hidden" id="spco-events-that-use-coupon-codes" name="spco-events-that-use-coupon-codes" value="<?php echo $events_that_use_coupon_codes;?>" />
+			<input type="hidden" id="spco-events-that-use-groupon-codes" name="spco-events-that-use-groupon-codes" value="<?php echo $events_that_use_groupon_codes;?>"/>
 
 	<?php } // end if $use_coupon_codes ?>
 
-		<div id="mer-reg-page-discounts-dv" class="<?php echo $reg_page_discounts_dv_class;?>">
-			<h4 class="mer-reg-page-discounts-hdr"><?php _e('Discounts:', 'event_espresso'); ?></h4>
+		<div id="spco-discounts-dv" class="<?php echo $reg_page_discounts_dv_class;?>">
+			<h4 class="spco-discounts-hdr"><?php _e('Discounts:', 'event_espresso'); ?></h4>
 		</div>
 
 		<h4 id="reg-page-totals-hdr" class="overline-hdr">
@@ -90,19 +90,19 @@
 			<?php _e('This is a free event, so no billing will occur.', 'event_espresso'); ?>
 <?php }  ?>
 
-		<div id="mer-reg-page-whats-next-buttons" class="mer-whats-next-buttons">
+		<div id="spco-whats-next-buttons" class="mer-whats-next-buttons">
 
-		<!--<a href="" onclick="return false" id="mer-reg-page-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >-->
-			<a href="" id="mer-reg-page-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big hide-if-no-js" >
-				<?php _e('Registration&nbsp;Step&nbsp;3&nbsp;', 'event_espresso'); ?><span class="ui-icon ui-icon-carat-1-e"></span>
+		<!--<a href="" onclick="return false" id="spco-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >-->
+			<a href="" id="spco-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big hide-if-no-js" >
+				<?php echo $next_step; ?><span class="ui-icon ui-icon-carat-1-e"></span>
 			</a>
 
 			<noscript>
 				<input type="submit"
-							id="mer-reg-page-go-to-step-3-sbmt-btn"
+							id="spco-go-to-step-3-sbmt-btn"
 							class="mer-register-btn no-js-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx"
-							name="mer-reg-page-go-to-step-3-sbmt-btn"
-							value="&nbsp;<?php  _e('Registration&nbsp;Step&nbsp;3&nbsp;', 'event_espresso'); ?>&nbsp;&raquo;"
+							name="spco-go-to-step-3-sbmt-btn"
+							value="&nbsp;<?php echo $next_step; ?>&nbsp;&raquo;"
 					/>
 			</noscript>
 
