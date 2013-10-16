@@ -991,9 +991,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			}
 			
 
-			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) ) continue; //no help tabs for this config
+			if ( !isset( $config['help_tabs'] ) ) return; //no help tabs for this route
 
-			foreach ( $config['help_tabs'] as $tab_id => $cfg ) {
+			foreach ( (array) $config['help_tabs'] as $tab_id => $cfg ) {
 				//we're here so there ARE help tabs!
 				
 				//make sure we've got what we need
