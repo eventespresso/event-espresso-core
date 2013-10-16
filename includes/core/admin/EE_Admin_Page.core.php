@@ -276,6 +276,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			 	'title' => 'tab2 title',
 	 *     			 	'callback' => 'callback_method_for_content',
 	 *     			 ),
+	 *     	   	'help_sidebar' => 'callback_for_sidebar_content', //this is used for setting up the sidebar in the help tab area on an admin page. @link http://make.wordpress.org/core/2011/12/06/help-and-screen-api-changes-in-3-3/ 
 	 *     		'help_tour' => array(
 	 *     			'id' => 'id_of_joyride_skeleton', //this is a unique id for the joyride skeleton containing the content for the stops.  Just provide an id, The generator will take care of the rest.
 	 *				'stop_callback' => '_stop_callback', //this is the method that gets called to return our stops setup array for the tour. (see the sample callback in this class)
@@ -955,9 +956,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _add_help_tabs() {
+		if ( isset( $this->_page_config[$this->_req_action] ) ) {
+			$config = $this->_page_config[$this->_req_action];
+			// let's see if there is a help_sidebar set for the current route and we'll set that up for usage as well.
+			if ( is_array( $config) && isset( $config['help_sidebar'] ) ) {
+				//check that the callback given is valid
+				if ( !method_exists($this, $config['help_sidebar'] ) )
+					throw new EE_Error( sprintf( __('The _page_config array has a callback set for the "help_sidebar" option.  However the callback given (%s) is not a valid callback.  Doublecheck the spelling and make sure this method exists for the class %s', 'event_espresso'), $config['help_sidebar'], get_class($this) ) );
 
-		foreach ( $this->_page_config as $slug => $config ) {
-			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) || $slug != $this->_req_action ) continue; //no help tabs for this config
+				$content = apply_filters('FHEE__' . get_class($this) . '__add_help_tabs__help_sidebar', call_user_func( array( $this, $config['help_sidebar'] ) ) );
+				$this->_current_screen->set_help_sidebar($content);
+			}
+			
+
+			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) ) continue; //no help tabs for this config
 
 			foreach ( $config['help_tabs'] as $tab_id => $cfg ) {
 				//we're here so there ARE help tabs!
@@ -974,7 +986,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 					throw new EE_Error( sprintf( __('The callback given for the %s help tab does not have a corresponding method.  Check the spelling or make sure the method is present.  This method is used to get the content for the tab.', 'event_espresso'), $cfg['title'] ) );
 					
 				//setup config array for help tab method
-				$id = $this->page_slug . '-' . $slug . '-' . $tab_id;
+				$id = $this->page_slug . '-' . $this->_req_action . '-' . $tab_id;
 				$_ht = array(
 					'id' => $id,
 					'title' => $cfg['title'],
