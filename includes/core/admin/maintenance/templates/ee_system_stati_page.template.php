@@ -14,7 +14,7 @@ function ee_resurse_into_array($data){
 			?>
 <table class='widefat'><tbody>
 	<?php foreach($data as $data_key => $data_values){
-		?><tr><td><?php echo $data_key?></td><td><?php ee_resurse_into_array($data_values);?></td></tr>
+		?><tr><td><?php echo $data_key;?></td><td><?php ee_resurse_into_array($data_values);?></td></tr>
 	<?php }?>
 	</tbody></table>
 <?php

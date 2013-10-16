@@ -7,11 +7,13 @@
  * 
  */
 class EE_DMS_4_1_0P_category_details extends EE_Data_Migration_Script_Stage{
-
+private $_old_table;
+private $_new_table;
+private $_new_term_table;
 function _migration_step($num_items=50){
 	global $wpdb;
 	$start_at_record = $this->count_records_migrated();
-	$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$wpdb->prefix."events_category_detail LIMIT %d,%d",$start_at_record,$num_items),ARRAY_A);
+	$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$start_at_record,$num_items),ARRAY_A);
 	$items_actually_migrated = 0;
 	foreach($rows as $category_detail_row){
 		$term_and_taxonomy_ids = wp_insert_term(
@@ -23,8 +25,8 @@ function _migration_step($num_items=50){
 				));
 		$term_id = $term_and_taxonomy_ids['term_id'];
 		$term_taxonomy_id = $term_and_taxonomy_ids['term_taxonomy_id'];
-		$this->get_migration_script()->set_mapping('events_category', $category_detail_row['id'], 'terms', $term_id);
-		$this->get_migration_script()->set_mapping('events_category', $category_detail_row['id'], 'term_taxonomy', $term_taxonomy_id);
+		$this->get_migration_script()->set_mapping($this->_old_table, $category_detail_row['id'], $this->_new_term_table, $term_id);
+		$this->get_migration_script()->set_mapping($this->_old_table, $category_detail_row['id'], $this->_new_table, $term_taxonomy_id);
 		$items_actually_migrated++;
 	}
 	if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
@@ -34,11 +36,15 @@ function _migration_step($num_items=50){
 }
 function _count_records_to_migrate() {
 	global $wpdb;
-	$count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."events_category_detail");
+	$count = $wpdb->get_var("SELECT COUNT(id) FROM $this->_old_table");
 	return $count;
 }
 function __construct() {
 	$this->_pretty_name = __("Category Details", "event_espresso");
+	global $wpdb;
+	$this->_old_table = $wpdb->prefix."events_category_detail";
+	$this->_new_table = $wpdb->prefix."term_taxonomy";
+	$this->_new_term_table = $wpdb->prefix."terms";
 	parent::__construct();
 }
 

@@ -17,22 +17,22 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Messages_Email_Payment_Validator class
+ * EE_Messages_Email_Payment_Declined_Validator class
  *
- * Holds any special validation rules for template fields with Email messenger and Payment message type.
+ * Holds any special validation rules for template fields with Email messenger and Payment Declined message type.
  *
  * @package		Event Espresso
- * @subpackage	includes/core/messages/validators/email/EE_Messages_Email_Payment_Validator.class.php
+ * @subpackage	includes/core/messages/validators/email/EE_Messages_Email_Payment_Declined_Validator.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class EE_Messages_Email_Payment_Validator extends EE_Messages_Validator {
+class EE_Messages_Email_Payment_Declined_Validator extends EE_Messages_Validator {
 
 
 	public function __construct( $fields, $context ) {
 		$this->_m_name = 'email';
-		$this->_mt_name = 'payment';
+		$this->_mt_name = 'payment_declined';
 
 		parent::__construct( $fields, $context );
 	}

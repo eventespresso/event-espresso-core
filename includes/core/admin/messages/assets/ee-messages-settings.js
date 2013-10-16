@@ -92,22 +92,27 @@ jQuery(document).ready(function($) {
 				status = status == 'activate' ? 'deactivate' : 'activate';
 			}
 
-			$item.fadeOut(function() {
-				var $list = status == 'activate' ? $( "ul", $active_mts ) : $( "ul", $inactive_mts),
-				css_width = status == 'activate' ? '25%' : '50%',
-				list_width = status == 'deactivate' ? $( $list ).width(): '';
+			var $list = status == 'activate' ? $( "ul.messenger-activation", $active_mts ) : $( "ul", $inactive_mts),
+				css_width = status == 'activate' ? '25%' : '75%',
+				list_width = $list.width();
 
-				$item
-					.css("width", css_width)
+			$item.fadeOut(function() {
+				$(this)
 					.appendTo( $list )
-					.fadeIn( function() {
-						if ( status == 'deactivate' )
-							$item.animate({width: list_width});
-					});
+					.css("width", css_width);
 			});
+
+			$item.fadeIn( function() {
+						if ( status == 'deactivate' ) {
+							$(this).animate({width: list_width});
+						} else {
+							$(this).animate({width: css_width});
+						}
+					});
 
 			//unbind any existing ajax success handler so we don't get repeat fires
 			$(document).unbind('ajaxSuccess');
+			return this;
 		},
 
 

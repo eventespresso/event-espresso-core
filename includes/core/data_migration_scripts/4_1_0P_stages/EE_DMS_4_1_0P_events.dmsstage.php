@@ -128,10 +128,25 @@ CREATE TABLE `wp_events_detail` (
 				
 			));
  * 
- * @todo: calculate new CPT event status
+ * @todo: calculate new CPT event stati
  * @todo: how to handle posts attached to events?
  * @todo: how ot handle recurring events?
  * @todo: convert post image
+ * @todo: how to handle venue info on event row?
+ * @todo: realized we're not handling post created/modified GMTs
+ * @todo: what to do with these 3.1 columsn:  -`use_coupon_code` varchar(1) DEFAULT 'N',
+  -`use_groupon_code` varchar(1) DEFAULT 'N',
+  -`category_id` text,
+  -`coupon_id` text,
+  -`tax_percentage` float DEFAULT NULL,
+  -`tax_mode` int(11) DEFAULT NULL,
+  -`early_disc` varchar(10) DEFAULT NULL,
+  -`early_disc_date` varchar(15) DEFAULT NULL,
+  -item_groups` longtext,
+  -`event_type` varchar(250) DEFAULT NULL,
+  -`alt_email` text,
+  -`likes` int(22) DEFAULT NULL,
+  -`ticket_id` int(22) DEFAULT '0',
  */
 class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
@@ -164,6 +179,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 				if($meta_id){
 					$this->get_migration_script()->set_mapping($this->_old_table, $event_row['id'], $this->_new_meta_table, $meta_id);
 				}
+				$this->_add_post_metas($event_row, $post_id);
 			}
 			$items_migrated_this_step++;
 		}
@@ -173,6 +189,26 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		return $items_migrated_this_step;
 	}
 	
+	/**
+	 * Stores any extra 3.1 "event_meta" column things as post meta
+	 * @param type $old_event
+	 * @param type $post_id
+	 * @return void
+	 */
+	private function _add_post_metas($old_event,$post_id){
+		$event_meta = maybe_unserialize($old_event['event_meta']);
+		unset($event_meta['date_submitted']);//factored into CPT
+		unset($event_meta['additional_attendee_reg_info']);//facotred into event meta table 
+		unset($event_meta['default_payment_status']);//dido
+		foreach($event_meta as $meta_key => $meta_value){
+			if ($meta_key){//if th emeta key is just an empty string, ignore it
+				$success = add_post_meta($post_id,$meta_key,$meta_value,true);
+				if( ! $success ){
+					$this->add_error(sprintf(__("Could not add post meta for CPT with ID #%d. Meta key: '%s',meta value:'%d' for 3.1 event: %s", "event_espresso"),$post_id,$meta_key,$meta_value,implode(",",$old_event)));
+				}
+			}
+		}
+	}
 	private function _insert_cpt($old_event){
 		global $wpdb;
 		//convert 3.1 event status to 4.1 CPT status
@@ -185,17 +221,18 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 //		'IA'=>'inactive',
 //		'O'=>'ongoing',
 //		'P'=>'pending',
-//		'R'=>'draft',x
+//		'R'=>'draft',
 //		'D'=>'deleted');
 //		4.1 Event Post stati are the normal post statis 
 //		(publish,future,draft,pending,private,trash,auto-draft,inherit)
 //		and 3 custom ones: cancelled,postponed,sold_out
 		$status_conversions = array(
 			'R'=>'draft',
-			'X'=>'draft',//4.1 doesn't have a "not approved for publishing" status
+			'X'=>'draft',//4.1 doesn't have a "not approved for publishing" status. this is what posts are set to that aren't approved
 			'P'=>'pending',
-			'IA'=>'publish',//IA=inactive in 3.1: events were switched to this when they expired. in 4.1 that's just calculated
-			'O'=>'publish',//@todo: there is no ongoing events in 4.1 right?
+			'IA'=>'draft',//draft and in the past
+//IA=inactive in 3.1: events were switched to this when they expired. in 4.1 that's just calculated
+			'O'=>'publish',//@todo: will be an event type later; if this is the status, set the end date WAAAY later; and add term for 'ongoing'
 			'A'=>'publish',
 			'S'=>'publish',//@todo: what DO we do with secondary events?
 			'D'=>'trash',
@@ -257,6 +294,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'Incomplete'=>'RNA',
 			'Pending'=>'RPN'
 		);
+		$default_reg_status = isset($old_default_reg_stati_conversions[$event_meta['default_payment_status']]) && $old_default_reg_stati_conversions[$event_meta['default_payment_status']] ? $old_default_reg_stati_conversions[$event_meta['default_payment_status']] : 'RNA';
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
@@ -265,7 +303,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'EVT_allow_multiple'=> 'Y' == $old_event['allow_multiple'],
 			'EVT_additional_limit'=> $old_event['additional_limit'],
 			'EVT_additional_attendee_reg_info' => $event_meta['additional_attendee_reg_info'],
-			'EVT_default_registration_status' => isset($old_default_reg_stati_conversions[$event_meta['default_payment_status']]) ? $old_default_reg_stati_conversions[$event_meta['default_payment_status']] : 'RNA',
+			'EVT_default_registration_status' => $default_reg_status,
 			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
 			'EVT_member_only'=>$old_event['member_only'],
 			'EVT_phone'=> $old_event['phone'],

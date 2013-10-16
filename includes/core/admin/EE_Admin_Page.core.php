@@ -36,6 +36,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//set in define_page_props()
 	protected $_admin_base_url;
+	protected $_admin_base_path;
 	protected $_admin_page_title;
 	protected $_labels;
 
@@ -46,6 +47,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//navtabs
 	protected $_nav_tabs;
 	protected $_default_nav_tab_name;
+
+	//helptourstops
+	protected $_help_tour = array();
 
 
 	//template variables (used by templates)
@@ -273,7 +277,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     			 	'title' => 'tab2 title',
 	 *     			 	'callback' => 'callback_method_for_content',
 	 *     			 ),
-	 *     		'require_nonce' => TRUE //this is used if you want to set a route to NOT require a nonce (default is true if it isn't present).  To remove the requirement for a nonce check when this route is visited just set 'require_nonce' to FALSE
+	 *     	   	'help_sidebar' => 'callback_for_sidebar_content', //this is used for setting up the sidebar in the help tab area on an admin page. @link http://make.wordpress.org/core/2011/12/06/help-and-screen-api-changes-in-3-3/ 
+	 *     		'help_tour' => array(
+	 *     			'name_of_help_tour_class', //all help tours shoudl be a child class of EE_Help_Tour and located in a folder for this admin page named "help_tours", a file name matching the key given here (name_of_help_tour_class.class.php), and class matching key given here (name_of_help_tour_class)
+	 *     		),
+	 *     		'require_nonce' => TRUE //this is used if you want to set a route to NOT require a nonce (default is true if it isn't present).  To remove the requirement for a nonce check when this route is visited just set 'require_nonce' to FALSE 
 	 *     		)
 	 * 			
 	 * )
@@ -288,6 +296,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+	/** end sample help_tour methods **/
 
 
 	/**
@@ -579,6 +589,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//add help tab(s) - set via page_config.
 		$this->_add_help_tabs();
+		$this->_add_help_tour();
 
 
 		//add feature_pointers - global, page child class, and view specific
@@ -878,11 +889,43 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _add_help_tabs() {
+		$tour_buttons = '';
+		if ( isset( $this->_page_config[$this->_req_action] ) ) {
+			$config = $this->_page_config[$this->_req_action];
 
-		foreach ( $this->_page_config as $slug => $config ) {
-			if ( !is_array( $config ) || ( is_array( $config ) && !isset( $config['help_tabs'] ) ) || $slug != $this->_req_action ) continue; //no help tabs for this config
+			//is there a help tour for the current route?  if there is let's setup the tour buttons
+			if ( isset( $this->_help_tour[$this->_req_action]) ) {
+				$tour_buttons = '<div class="ee-abs-container"><div class="ee-help-tour-restart-buttons">';
+				foreach ( $this->_help_tour['tours'] as $tour ) {
+					$tour_buttons .= '<button id="trigger-tour-' . $tour->get_slug() . '" class="button-primary trigger-ee-help-tour">' . $tour->get_label() . '</button>';
+				}
+				$tour_buttons .= '</div></div>';
+			}
 
-			foreach ( $config['help_tabs'] as $tab_id => $cfg ) {
+			// let's see if there is a help_sidebar set for the current route and we'll set that up for usage as well.
+			if ( is_array( $config) && isset( $config['help_sidebar'] ) ) {
+				//check that the callback given is valid
+				if ( !method_exists($this, $config['help_sidebar'] ) )
+					throw new EE_Error( sprintf( __('The _page_config array has a callback set for the "help_sidebar" option.  However the callback given (%s) is not a valid callback.  Doublecheck the spelling and make sure this method exists for the class %s', 'event_espresso'), $config['help_sidebar'], get_class($this) ) );
+
+				$content = apply_filters('FHEE__' . get_class($this) . '__add_help_tabs__help_sidebar', call_user_func( array( $this, $config['help_sidebar'] ) ) );
+
+				$content .= $tour_buttons; //add help tour buttons.
+
+				//do we have any help tours setup?  Cause if we do we want to add the buttons
+
+				$this->_current_screen->set_help_sidebar($content);
+			}
+
+			//if we DON'T have config help sidebar and there ARE toure buttons then we'll just add the tour buttons to the sidebar.
+			if ( !isset( $config['help_sidebar'] ) && !empty( $tour_buttons ) ) {
+				$this->_current_screen->set_help_sidebar($tour_buttons);
+			}
+			
+
+			if ( !isset( $config['help_tabs'] ) ) return; //no help tabs for this route
+
+			foreach ( (array) $config['help_tabs'] as $tab_id => $cfg ) {
 				//we're here so there ARE help tabs!
 				
 				//make sure we've got what we need
@@ -897,7 +940,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 					throw new EE_Error( sprintf( __('The callback given for the %s help tab does not have a corresponding method.  Check the spelling or make sure the method is present.  This method is used to get the content for the tab.', 'event_espresso'), $cfg['title'] ) );
 					
 				//setup config array for help tab method
-				$id = $this->page_slug . '-' . $slug . '-' . $tab_id;
+				$id = $this->page_slug . '-' . $this->_req_action . '-' . $tab_id;
 				$_ht = array(
 					'id' => $id,
 					'title' => $cfg['title'],
@@ -908,6 +951,49 @@ abstract class EE_Admin_Page extends EE_BASE {
 				$this->_current_screen->add_help_tab( $_ht );
 			}
 		}
+	}
+
+
+
+	/**
+	 * This basically checks loaded $_page_config property to see if there are any help_tours defined.  "help_tours" is an array with properties for setting up usage of the joyride plugin
+	 *
+	 * @link http://zurb.com/playground/jquery-joyride-feature-tour-plugin
+	 * @see instructions regarding the format and construction of the "help_tour" array element is found in the _set_page_config() comments
+	 * @access protected
+	 * @return void
+	 */
+	protected function _add_help_tour() {
+		$tours = array();
+		$this->_help_tour = array();
+		//loop through _page_config to find any help_tour defined
+		
+		foreach ( $this->_page_config as $route => $config ) {
+			//we're only going to set things up for this route
+			if ( $route !== $this->_req_action )
+				continue;
+
+			if ( isset( $config['help_tour'] ) ) {
+
+				foreach( $config['help_tour'] as $tour ) {
+					require_once( $this->_admin_base_path . 'help_tours/' . $tour . '.class.php');
+					if ( !class_exists( $tour ) ) {
+						$error_msg[] = sprintf( __('Something went wrong with loading the %s Help Tour Class.', 'event_espresso' ), $tour);
+						$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no class in place for the %s help tour.%s Make sure you have <strong>%s</strong> defined in the "help_tour" array for the %s route of the % admin page.', 'event_espresso'), $tour, '<br />', $tour, $this->_req_action, get_class($this) );
+						throw new EE_Error( implode( '||', $error_msg ));
+					}
+					$a = new ReflectionClass($tour);
+					$tour_obj = $a->newInstance();
+					$tours[] = $tour_obj;
+					$this->_help_tour[$route][] = EEH_Template::help_tour_stops_generator( $tour_obj );
+				}
+			}
+		}
+
+		if ( !empty( $tours ) )
+			$this->_help_tour['tours'] = $tours;
+
+		//thats it!  Now that the $_help_tours property is set (or not) the scripts and html should be taken care of automatically.
 	}
 
 
@@ -1071,6 +1157,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
 		$d_cont .= '</div>';
 		echo $d_cont;
+
+		//help tour stuff?
+		if ( isset( $this->_help_tour[$this->_req_action] ) ) {
+			echo implode('<br />', $this->_help_tour[$this->_req_action]);
+		}
 	}
 
 
@@ -1269,6 +1360,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
+		add_filter('FHEE_load_joyride', '__return_true');
+
 		//script for sorting tables
 		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
@@ -1316,6 +1409,28 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		/** remove filters **/
 		remove_all_filters('mce_external_plugins');
+
+
+		/**
+		 * help tour stuff
+		 */
+		if ( !empty( $this->_help_tour ) ) {
+
+			//register the js for kicking things off
+			wp_enqueue_script('ee-help-tour', EE_CORE_ADMIN_URL . 'assets/ee-help-tour.js', array('jquery-joyride'), EVENT_ESPRESSO_VERSION, TRUE );
+
+			//setup tours for the js tour object
+			foreach ( $this->_help_tour['tours'] as $tour ) {
+				$tours[] = array(
+					'id' => $tour->get_slug(),
+					'options' => $tour->get_options()
+					);
+			}
+
+			wp_localize_script('ee-help-tour', 'EE_HELP_TOUR', array('tours' => $tours ) );
+
+			//admin_footer_global will take care of making sure our help_tour skeleton gets printed via the info stored in $this->_help_tour
+		}
 	}
 
 
@@ -2038,7 +2153,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
 
 		//display message about search results?
-		$this->_template_args['before_list_table'] .= isset( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '';
+		$this->_template_args['before_list_table'] .= !empty( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '';
 
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 

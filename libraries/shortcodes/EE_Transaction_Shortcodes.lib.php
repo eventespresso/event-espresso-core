@@ -42,7 +42,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[TXN_ID]' => __('The transaction id for the purchase.', 'event_espresso'),
 			'[PAYMENT_URL]' => __('This is a link to make a payment for the event', 'event_espresso'),
-			'[INVOICE_LINK]' => __('This is a link to the invoice', 'event_espresso'),
+			'[INVOICE_LINK]' => __('This is a full html link to the invoice', 'event_espresso'),
+			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
 			'[TOTAL_COST]' => __('The total cost for the registration', 'event_espresso'),
 			'[EVENT_PRICE]' => __('The price of the given event', 'event_espresso'),
 			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
@@ -68,9 +69,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[INVOICE_LINK]' :
-				$invoice_link = $this->_data->txn->invoice_url();
-				return empty( $invoice_link ) ? __('http://dummyinvoicelinkforpreview.com', 'event_espresso') : $invoice_link;
+				$invoice_url = $this->_data->txn->invoice_url();
+				$invoice_url = empty( $invoice_url ) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
+				return sprintf( __('%sClick here for Invoice%s', 'event_espresso'), '<a href="' . $invoice_url . '">', '</a>' );
 				break; /**/
+
+			case '[INVOICE_URL]' :
+				$invoice_url = $this->_data->txn->invoice_url();
+				return empty( $invoice_url ) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
+				break;
 
 
 			case "[TOTAL_COST]" :

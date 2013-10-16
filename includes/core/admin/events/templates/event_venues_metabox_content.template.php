@@ -57,7 +57,7 @@
 					<?php echo $_venue->google_map_link(); ?> 
 				</p>
 
-				<?php if( isset( $this->EE->CFG->map_settings->use_google_maps ) && $this->EE->CFG->map_settings->use_google_maps ) { ?>
+				<?php if( isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) && EE_Registry::instance()->CFG->map_settings->use_google_maps ) { ?>
 				<p>
 					<label for="enable_for_gmap">
 						<?php _e('Display Google Map for this venue? ', 'event_espresso') ?>
@@ -90,8 +90,7 @@
 		
 	</tr>
 </table>
-
-<?php if( $this->EE->CFG->map_settings ) || ! isset( $this->EE->CFG->map_settings->use_google_maps ) || ! $this->EE->CFG->map_settings->use_google_maps ) { ?>
+<?php if( EE_Registry::instance()->CFG->map_settings || ! isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) || ! EE_Registry::instance()->CFG->map_settings->use_google_maps ) { ?>
 <p class="ee-notice">
 	<?php
 		echo sprintf( 

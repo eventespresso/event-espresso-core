@@ -46,7 +46,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_admin_page->get_registrations( $this->_per_page );
-		$this->_all_data_count = $this->_admin_page->get_registrations( $this->_per_page, TRUE );
+		$this->_all_data_count = $this->_admin_page->get_registrations( $this->_per_page, TRUE, FALSE, FALSE, TRUE );
 	}
 
 
@@ -123,10 +123,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$curstatus = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
-		$cur_date = isset( $this->_req_data['month_range'] ) ? sanitize_key($this->_req_data['month_range'] ) : '';
+		$cur_date = isset( $this->_req_data['month_range'] ) ? $this->_req_data['month_range'] : '';
 		$cur_category = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
+		$reg_status = isset( $this->_req_data['reg_status'] ) ? $this->_req_data['reg_status'] : '';
 
-		$filters[] = EEH_Form_Fields::generate_event_months_dropdown( $cur_date, $curstatus );
+		$filters[] = EEH_Form_Fields::generate_registration_months_dropdown( $cur_date, $reg_status, $cur_category );
 		$filters[] = EEH_Form_Fields::generate_event_category_dropdown( $cur_category );
 		
 		$status = array();
@@ -143,7 +144,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_admin_page->get_registrations( -1, TRUE );
+		$this->_views['all']['count'] = $this->_all_data_count;
 		$this->_views['month']['count'] = $this->_admin_page->get_registrations( -1, TRUE, TRUE );
 		$this->_views['today']['count'] = $this->_admin_page->get_registrations( -1, TRUE, FALSE, TRUE );
 	}

@@ -65,6 +65,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		global $espresso_wp_user;
 		$this->page_slug = EE_MSG_PG_SLUG;
 		$this->page_label = __('Messages System', 'event_espresso');
+		$this->_admin_base_url = EE_MSG_ADMIN_URL;
+		$this->_admin_base_path = EE_MSG_ADMIN;
+		$this->_admin_page_title = $this->page_label;
 
 		$this->_activate_state = isset($this->_req_data['activate_state']) ? (array) $this->_req_data['activate_state'] : array();
 
@@ -144,8 +147,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
-		$this->_admin_base_url = EE_MSG_ADMIN_URL;
-		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
 				'add' => __('Add New Message Template', 'event_espresso'),
@@ -797,7 +798,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		
 		if ( !$template_field_structure ) {
 			$template_field_structure = FALSE;
-			$template_fields = 'There was an error in assembling the fields for this display (you should see an error message';
+			$template_fields = __('There was an error in assembling the fields for this display (you should see an error message)', 'event_espresso');
 		}
 
 
@@ -1392,24 +1393,34 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void 
 	 */
 	public function shortcode_meta_box() {
-		$this->_set_shortcodes(); //just make sure shortcodes property is set
+		$shortcodes = $this->_get_shortcodes(array(), FALSE); //just make sure shortcodes property is set
 		
-
 		//now let's set the content depending on the status of the shortcodes array
-		if ( empty( $this->_shortcodes ) ) {
+		if ( empty( $shortcodes ) ) {
 			$content = '<p>' . __('There are no valid shortcodes available', 'event_espresso') . '</p>';
 			echo $content;
 		} else {
 			$alt = 0;
 			?>
 			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('These are the shortcodes you can use in the templates: ', 'event_espresso' ); ?></p>
-			<table class="widefat ee-shortcode-table">
-			<?php foreach ( $this->_shortcodes as $code => $label ) : ?>
-				<?php $alt_class = !($alt%2) ? 'class="alternate"' : ''; ?>
-				<tr <?php echo $alt_class; ?>>
-					<td><?php echo $code; ?></td>
-				</tr>
-			<?php $alt++; endforeach; ?>
+			
+			<?php foreach ( $shortcodes as $field => $allshortcodes ) : ?>
+				<div class="shortcode-field-table">
+					<h3 class="shortcode-field-title"><?php echo $field; ?>:</h3>
+					<div class="ee-shortcode-table-scroll">
+						<table class="widefat ee-shortcode-table">
+							<tbody>
+					<?php foreach ( $allshortcodes as $code => $label ) : ?>
+						<?php $alt_class = !($alt%2) ? 'class="alternate"' : ''; ?>
+						<tr <?php echo $alt_class; ?>>
+							<td><?php echo $code; ?></td>
+						</tr>
+					<?php $alt++; endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			<?php endforeach; ?>
 			</table> <!-- end .ee-shortcode-table -->
 			<?php
 		}
@@ -1429,17 +1440,29 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//no need to run this if the property is already set
 		if ( !empty($this->_shortcodes ) ) return;
 
+		$this->_shortcodes = $this->_get_shortcodes();
+	}
+
+
+
+
+
+	/**
+	 * get's all shortcodes for a given template group. (typically used by _set_shortcodes to set the $_shortcodes property)
+	 *
+	 * @access  protected
+	 * @param  array   $fields include an array of specific field name sthat you want to be used to get the shortcodes for. Defaults to all (for the given context)
+	 * @param  boolean $merged Whether to merge all the shortcodes into one list of unique shortcodes
+	 * @return array          Shortcodes indexed by fieldname and the an array of shortcode/label pairs OR if merged is true just an array of shortcode/label pairs.
+	 */
+	protected function _get_shortcodes( $fields = array(), $merged = TRUE ) {
 		$this->_set_message_template_group();
 
 		//we need the messenger and message template to retrieve the valid shortcodes array.
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		$context = isset( $this->_req_data['context'] ) ? $this->_req_data['context'] : key( $this->_message_template_group->contexts_config() );
 
-		if ( !empty($GRP_ID) ) {
-			$this->_shortcodes = $this->_message_template_group->get_shortcodes( $context );
-		} else {
-			$this->_shortcodes = array();
-		}
+		return !empty($GRP_ID) ? $this->_message_template_group->get_shortcodes( $context, $fields, $merged ) : array();
 	}
 
 

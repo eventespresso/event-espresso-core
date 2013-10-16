@@ -119,6 +119,7 @@ if ( ! isset( $_REQUEST['plugin'] )) {
 
 
 function espresso_plugin_activation() {
+
 	espresso_load_error_handling();
 	// check permissions
 	if ( ! current_user_can( 'activate_plugins' )) {
@@ -127,7 +128,7 @@ function espresso_plugin_activation() {
 	}
 	// and referer
 	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	check_admin_referer( "activate-plugin_{$plugin}" );
+//	check_admin_referer( "activate-plugin_{$plugin}" );
 	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 	$system = EE_System::instance( TRUE );
 	$system->plugins_loaded();

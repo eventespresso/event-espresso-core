@@ -160,6 +160,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			
 			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
 
+			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
+			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
+				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
+				$DTT = EEH_DTT_helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
+				$DTT->save();
+			}
+
 			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtts[$DTT->ID()] = $DTT;
 			$saved_dtt_objs[$DTT->get('DTT_order')] = $DTT;
@@ -301,6 +308,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//update ticket.
 			$TKT->save();
+
+
+			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
+			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
+				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
+				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
+				$TKT->save();
+			}
 
 			//possible this is a new ticket because of edited prices when ticket was sold, so let's make sure we attache the datetimes from the archived ticket
 			foreach ( $dtts_on_existing as $adddtt ) {
@@ -647,7 +662,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_start_date' => $default ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
 			'TKT_end_date' => $default ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ),
 			'TKT_status' => $default ? '' : $ticket->ticket_status(TRUE),
-			'TKT_price' => $default ? '' : $ticket->get_pretty('TKT_price'),
+			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get('TKT_price'), FALSE, FALSE ),
 			'TKT_price_amount' => $default ? 0 : $ticket->get('TKT_price'),
 			'TKT_qty' => $default ? '' : ( $ticket->get('TKT_qty') === -1 ? '' : $ticket->get('TKT_qty') ),
 			'TKT_uses' => $default ? '' : ( $ticket->get('TKT_uses') === -1 ? '' : $ticket->get('TKT_uses') ),
