@@ -354,7 +354,7 @@ class EEH_Form_Fields {
 		EE_Registry::instance()->load_helper( 'Formatter' );
 		//EE_Registry::instance()->load_helper( 'Formatter' );
 
-		$field = '<select name="' . EEH_Formatter::ee_tep_output_string($name) . '"';
+		$field = '<select id="' . EEH_Formatter::ee_tep_output_string($name) . '" name="' . EEH_Formatter::ee_tep_output_string($name) . '"';
 		//Debug
 		//printr( $values, '$values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( EEH_Formatter::ee_tep_not_null($parameters))
