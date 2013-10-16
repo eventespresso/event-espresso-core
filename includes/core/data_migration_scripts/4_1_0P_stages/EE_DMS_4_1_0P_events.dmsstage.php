@@ -180,6 +180,12 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 					$this->get_migration_script()->set_mapping($this->_old_table, $event_row['id'], $this->_new_meta_table, $meta_id);
 				}
 				$this->_add_post_metas($event_row, $post_id);
+				//maybe create a venue from info on the event?
+				$new_venue_id = $this->_maybe_create_venue($event_row);
+				if($new_venue_id){
+					$this->_insert_new_venue_to_event($post_id,$new_venue_id);
+				}
+						
 			}
 			$items_migrated_this_step++;
 		}
@@ -208,6 +214,9 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 				}
 			}
 		}
+		if($old_event['alt_email']){
+			add_post_meta($post_id,'alt_email',$old_event['alt_email']);
+		}
 	}
 	private function _insert_cpt($old_event){
 		global $wpdb;
@@ -234,23 +243,26 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 //IA=inactive in 3.1: events were switched to this when they expired. in 4.1 that's just calculated
 			'O'=>'publish',//@todo: will be an event type later; if this is the status, set the end date WAAAY later; and add term for 'ongoing'
 			'A'=>'publish',
-			'S'=>'publish',//@todo: what DO we do with secondary events?
+			'S'=>'draft',//@todo: is it ok to just mark secondary/waitlist events as DRAFTS?
 			'D'=>'trash',
 		);
-		if($old_event['event_status']=='IA'){//its ineactive eh? well is it sold_out, postponed, expired, or cancelled?
-			//check if we're ahead or behind the start time
-			
-			
-		}
 		$post_status = $status_conversions[$old_event['event_status']];
+		//check if we've sold out
+		if (intval($old_event['reg_limit']) <= $this->_count_registrations($old_event['id'])){
+			$post_status = 'sold_out';
+		}
+//		FYI postponed and cancelled don't exist in 3.1
+		
 		$event_meta = maybe_unserialize($old_event['event_meta']);
 		$cols_n_values = array(
 			'post_title'=>$old_event['event_name'],//EVT_name
 			'post_content'=>$old_event['event_desc'],//EVT_desc
 			'post_name'=>$old_event['event_identifier'],//EVT_slug
 			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
+			'post_date_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
 			'post_excerpt'=>wp_trim_words($old_event['event_desc'],50),//EVT_short_desc
-			'post_modified'=>$old_event['submitted'],//EVT_modified
+			'post_modified'=>$event_meta['date_submitted'],//EVT_modified
+			'post_modified_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
 			'post_author'=>$old_event['wp_user'],//EVT_wp_user
 			'post_parent'=>null,//parent maybe get this from some REM field?
 			'menu_order'=>null,//EVT_order
@@ -262,8 +274,10 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'%s',//EVT_desc
 			'%s',//EVT_slug
 			'%s',//EVT_created
+			'%s',
 			'%s',//EVT_short_desc
 			'%s',//EVT_modified
+			'%s',
 			'%s',//EVT_wp_user
 			'%d',//post_parent
 			'%d',//EVT_order
@@ -278,6 +292,18 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			return 0;
 		}
 		return $wpdb->insert_id;
+	}
+	
+	/**
+	 * Counts all the registrations for the event in teh 3.1 DB. (takes into account attendee rows which represent various registrations)
+	 * @global type $wpdb
+	 * @param type $event_id
+	 * @return int
+	 */
+	private function _count_registrations($event_id){
+		global $wpdb;
+		$count = $wpdb->get_var($wpdb->prepare("SELECT sum(quantity) FROM {$wpdb->prefix}events_attendee WHERE event_id=%d",$event_id));
+		return intval($count);
 	}
 	
 	private function _insert_event_meta($old_event,$new_cpt_id){
@@ -340,5 +366,173 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		return $wpdb->insert_id;
 	}
 	
+	private function _maybe_create_venue($old_event){
+		if(		$old_event['address'] ||
+				$old_event['address2'] ||
+				$old_event['city'] ||
+				$old_event['state'] ||
+				$old_event['zip'] ||
+				$old_event['venue_title'] ||
+				$old_event['venue_url'] ||
+				$old_event['venue_image'] ||
+				$old_event['venue_phone'] ||
+				$old_event['virtual_url'] ||
+				$old_event['virtual_phone']
+				){
+			$id = $this->_insert_venue_into_posts($old_event);
+			if($id){
+				$this->_insert_venue_into_meta_table($id, $old_event);
+			}
+			//we don't bother recording the conversion from old events to venues as that
+			//will complicate finding the conversion from old venues to new events
+			return $id;
+		}else{
+			return 0;
+		}
+	}
+	
+	/**
+	 * Inserts the CPT
+	 * @param array $old_venue keys are cols, values are col values
+	 * @return int
+	 */
+	private function _insert_venue_into_posts($old_event){		
+		global $wpdb;
+		$insertion_array = array(
+					'post_title'=>$old_event['venue_title'],//VNU_name
+					'post_content'=>'',//VNU_desc
+					'post_name'=>sanitize_title($old_event['venue_title']),//VNU_identifier
+					'post_date'=>current_time('mysql'),//VNU_created
+					'post_date_gmt'=>get_gmt_from_date(current_time('mysql')),
+					'post_excerpt'=>'',//VNU_short_desc arbitraty only 50 characters
+					'post_modified'=>current_time('mysql'),//VNU_modified
+					'post_modified_gmt'=>get_gmt_from_date(current_time('mysql')),
+					'post_author'=>$old_event['wp_user'],//VNU_wp_user
+					'post_parent'=>null,//parent
+					'menu_order'=>0,//VNU_order
+					'post_type'=>'espresso_venues'//post_type
+				);
+		$datatypes_array = array(
+					'%s',//VNU_name
+					'%s',//VNU_desc
+					'%s',//VNU_identifier
+					'%s',//VNU_created
+					'%s',
+					'%s',//VNU_short_desc
+					'%s',//VNU_modified
+					'%s',
+					'%d',//VNU_wp_user
+					'%d',//parent
+					'%d',//VNU_order
+					'%s',//post_type
+				);
+		$success = $wpdb->insert($wpdb->posts,
+				$insertion_array,
+				$datatypes_array);
+		if( ! $success ){
+			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_venue, $this->_new_table, $insertion_array, $datatypes_array));
+			return 0;
+		}
+		return $wpdb->insert_id;
+	}
+
+	/**
+	 * Inserts into the venue_meta table
+	 * @param type $cpt_id
+	 * @param type $old_event
+	 * @return int
+	 */
+	private function _insert_venue_into_meta_table($cpt_id,$old_event){
+		global $wpdb;
+
+		//assume the country is the same as the organization's old settings
+		$country_iso3 = 'USA';
+		//find the state from the venue, or the organization, or just guess california
+		if( ! $old_event['state']){
+			$old_org_options = get_option('events_organization_settings');
+			$state_name = $old_org_options['organization_state'];
+		}else{
+			$state_name = $old_event['state'];
+		}
+		if ( ! $state_name ){
+			$state_name = 'CA';
+		}
+		//get a state ID with the same name, if possible
+		try{
+			$state = $this->get_migration_script()->get_or_create_state($state_name,$country_iso3);
+			$state_id = $state['STA_ID'];
+		}catch(EE_Error $e){
+			$this->add_error($e->getMessage());
+			$state_id = 0;
+		}
+		//now insert into meta table
+		$insertion_array = array(
+			'VNU_ID'=>$cpt_id,//VNU_ID_fk
+			'VNU_address'=>$old_event['address'],//VNU_address
+			'VNU_address2'=>$old_event['address2'],//VNU_address2
+			'VNU_city'=>$old_event['city'],//VNU_city
+			'STA_ID'=>$state_id,//STA_ID
+			'CNT_ISO'=>$country_iso3,//CNT_ISO
+			'VNU_zip'=>$old_event['zip'],//VNU_zip
+			'VNU_phone'=>$old_event['venue_phone'],//VNU_phone
+			'VNU_capacity'=>-1,//VNU_capacity
+			'VNU_url'=>$old_event['venue_url'],//VNU_url
+			'VNU_virtual_phone'=>$old_event['virtual_phone'],//VNU_virtual_phone
+			'VNU_virtual_url'=>$old_event['virtual_url'],//VNU_virtual_url
+			'VNU_google_map_link'=>'',//VNU_google_map_link
+			'VNU_enable_for_gmap'=>true	//VNU_enable_for_gmap
+		);
+		$datatypes = array(
+			'%d',//VNU_ID_fk
+			'%s',//VNU_address
+			'%s',//VNU_address2
+			'%s',//VNU_city
+			'%d',//STA_ID
+			'%s',//CNT_ISO
+			'%s',//VNU_zip
+			'%s',//VNU_phone
+			'%d',//VNU_capacity
+			'%s',//VNU_url
+			'%s',//VNU_virtual_phone
+			'%s',//VNU_virtual_url
+			'%s',//VNU_google_map_link
+			'%d',//VNU_enable_for_gmap
+		);
+		$success = $wpdb->insert($wpdb->prefix."esp_venue_meta",$insertion_array,$datatypes);
+		if( ! $success ){
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_meta_table, $insertion_array, $datatypes));
+			return 0;
+		}
+		return $wpdb->insert_id;
+	}
+	
+	private function _insert_new_venue_to_event($new_event_id,$new_venue_id){
+		global $wpdb;
+		if( ! $new_event_id){
+			$this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"),$new_event_id));
+			return 0;
+		}
+		if( ! $new_venue_id){
+			$this->add_error(sprintf(__("Could not find 4.1 venue id for 3.1 venue #%d.", "event_espresso"),$new_venue_id));
+			return 0;
+		}
+		$cols_n_values = array(
+			'EVT_ID'=>$new_event_id,
+			'VNU_ID'=>$new_venue_id,
+			'EVV_primary'=>true
+		);
+		$datatypes = array(
+			'%d',//EVT_ID
+			'%d',//VNU_ID
+			'%d',//EVT_primary
+		);
+		$success = $wpdb->insert($wpdb->prefix."esp_event_venue",$cols_n_values,$datatypes);
+		if ( ! $success){
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_event_venue_rel, $this->_new_table, $cols_n_values, $datatypes));
+			return 0;
+		}
+		return $wpdb->insert_id;
+	
+	}
 	
 }
