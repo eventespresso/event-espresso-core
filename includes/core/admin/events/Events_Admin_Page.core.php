@@ -269,6 +269,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 				),
+				'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
 				'help_tabs' => array(
 					'events_expire_on_reg_end_date_help_tab' => array(
 						'title' => __('Events Expire on Reg End Date', 'event_espresso'),
