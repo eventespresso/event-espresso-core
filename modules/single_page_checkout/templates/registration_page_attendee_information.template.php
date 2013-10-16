@@ -1,16 +1,17 @@
 <!--**********************************  STEP 1 	**********************************-->		
 <?php echo do_action('AHEE_registration_page_step_1_start',$event_queue);?>
+
 	<h2 id="mer-reg-page-step-title-1-hdr" class="mer-reg-page-step-title-hdr">
 		<?php _e('Step 1 -  Attendee Information', 'event_espresso'); ?>
-		<a id="mer-reg-page-edit-step-1-lnk" class="mer-reg-page-go-to-step-1 mer-reg-page-edit-step-lnk <?php echo $step_1_edit_lnk_class; ?>"  href="<?php echo $reg_page_step_1_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
+		<a id="mer-reg-page-edit-step-1-lnk" class="mer-reg-page-go-to-step-1 mer-reg-page-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 	<?php do_action('after_mer-reg-page-step-title-1-hdr')?>
-	<div id="mer-reg-page-step-1-dv" class="mer-reg-page-step-dv <?php echo $step_1_dv_class; ?>">
+	<div id="mer-reg-page-step-1-dv" class="mer-reg-page-step-dv <?php echo $step_dv_class; ?>">
 		
 		<p id="mer-reg-page-step-1-pg" class="mer-reg-page-steps-pg small-text drk-grey-text"><?php _e(' In order to process your registration, we ask you to provide the following information.<br/>
 		Please note that all fields marked with an asterisk (<span class="asterisk">*</span>) are required.', 'event_espresso'); ?></p>
 
-		<form id="mer-registration-frm-1" action="<?php echo $reg_page_goto_step_2_url;?>" method="post">
+		<form id="mer-registration-frm-1" action="<?php echo $reg_step_form_url;?>" method="post">
 	
 			<input type="hidden" id="mer-reg-page-step-1-action" name="ajax_action" value="espresso_process_registration_step_1" />		
 			<input type="hidden" id="mer-reg-page-step-1-noheader" name="noheader" value="" />		
@@ -20,22 +21,22 @@
 	
 	$counter = 1;
 	
-	foreach ( $event_queue as $cart_type => $cart ) {
-		if ( $cart['has_items'] ) {
-			foreach ( $cart['items'] as $line_item => $item ) {
+		if ( $event_queue['has_items'] ) {
+			foreach ( $event_queue['items'] as $line_item => $item ) {
 			
 ?>
 
 			<div id="mer-reg-page-attendee-panel-dv-<?php echo $line_item;?>" class="mer-reg-page-attendee-panel-dv">		
 				
-				<h3 id="event_title-<?php echo $item['id'] ?>" class="big-event-title-hdr">  
-					<a href="<?php //echo $registration_url; ?>" id="a_event_title-<?php echo $item['id'] ?>" class="a_event_title" title="<?php echo $item['name'] ?>"><?php echo $item['name'] ?></a>
+				<h3 id="event_title-<?php echo $item['ticket_id'] ?>" class="big-event-title-hdr">  
+					<a href="<?php //echo $registration_url; ?>" id="a_event_title-<?php echo $item['ticket_id'] ?>" class="a_event_title" title="<?php echo $item['ticket_name'] ?>"><?php echo $item['ticket_name'] ?></a>
 				</h3>
+				<p><?php echo $item['ticket_desc'] ? __('Ticket Details: ', 'event_espresso') . $item['ticket_desc'] : ''; ?></p>
 
 		<?php foreach( $item['attendee_questions'][ $line_item ] as $att_nmbr => $attendee_questions ) { ?>
 
-				<fieldset id="mer-reg-page-attendee-wrap-<?php echo $item['id'] . '-' . $counter;?>" class="mer-reg-page-attendee-wrap-fs">
-	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr] . ' : ' . $item['ticket_desc']?></legend>
+				<fieldset id="mer-reg-page-attendee-wrap-<?php echo $item['ticket_id'] . '-' . $counter;?>" class="mer-reg-page-attendee-wrap-fs">
+	  				<legend class="mer-reg-page-attendee-lgnd smaller-text lt-grey-text"><?php echo $item['attendee_headings'][ $line_item ][$att_nmbr];?></legend>
 
 			<?php if ( ! empty( $attendee_questions )) { ?>
 						<?php //do an action before the questions output, including the item and count 
@@ -75,9 +76,9 @@
 								<p class="event_form_field mer-reg-page-copy-attendee-chk-pg">
 									<label><?php echo __('Attendee #', 'event_espresso') . $att['att_nmbr'];?>
 										<input 	type="checkbox" 
-														id="mer-reg-page-copy-attendee-chk-<?php echo $item['id'].'-'.$att['att_nmbr'].'-'.$line_item;?>" 
+														id="mer-reg-page-copy-attendee-chk-<?php echo $item['ticket_id'].'-'.$att['att_nmbr'].'-'.$line_item;?>" 
 														class="mer-reg-page-copy-attendee-chk <?php echo $css_class;?>" 
-														value="<?php echo $item['id'].'-1';?>" 
+														value="<?php echo $item['ticket_id'].'-1';?>" 
 														rel="<?php echo $att['input_id'];?>"
 												/>
 									</label>
@@ -117,9 +118,8 @@
 		?>
 			</div>			
 	<?php			
-			 } // $cart['items'] as $line_item 
-		 } // $cart['has_items'] 
-	} // $event_queue as $cart_type
+			 } // $event_queue['items'] as $line_item 
+		 } // $event_queue['has_items'] 
 ?>
 
 			
@@ -130,7 +130,7 @@
 			
 		<!--<a href ="" onclick="return false" id="mer-reg-page-go-to-step-2-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >-->
 				<a href =""  id="mer-reg-page-go-to-step-2-btn" class="mer-register-btn ui-button ui-button-big hide-if-no-js" >
-					<?php _e('Registration&nbsp;Step&nbsp;2&nbsp;', 'event_espresso'); ?><span class="ui-icon ui-icon-carat-1-e"></span>
+					<?php echo $next_step; ?><span class="ui-icon ui-icon-carat-1-e"></span>
 				</a>
 	
 				<noscript>
@@ -138,7 +138,7 @@
 								id="mer-reg-page-go-to-step-2-sbmt-btn" 
 								class="mer-register-btn no-js-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx"
 								name="mer-reg-page-go-to-step-2-sbmt-btn" 
-								value="&nbsp;<?php  _e('Registration&nbsp;Step&nbsp;2', 'event_espresso'); ?>&nbsp;&raquo;" 
+								value="&nbsp;<?php echo $next_step; ?>&nbsp;&raquo;" 
 						/>				
 				</noscript>	
 				

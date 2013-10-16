@@ -2,12 +2,12 @@
 
 	<h2 id="mer-reg-page-step-title-2-hdr" class="mer-reg-page-step-title-hdr">
 		<?php _e('Step 2 - Payment Options', 'event_espresso'); ?>
-		<a id="mer-reg-page-edit-step-2-lnk" class="mer-reg-page-go-to-step-2 mer-reg-page-edit-step-lnk <?php echo $step_2_edit_lnk_class; ?>" ><?php _e('edit', 'event_espresso'); ?></a>
+		<a id="mer-reg-page-edit-step-2-lnk" class="mer-reg-page-go-to-step-2 mer-reg-page-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 
-	<div id="mer-reg-page-step-2-dv" class="mer-reg-page-step-dv <?php echo $step_2_dv_class; ?>">
+	<div id="mer-reg-page-step-2-dv" class="mer-reg-page-step-dv <?php echo $step_dv_class; ?>">
 
-		<form id="mer-registration-frm-2" action="<?php echo $reg_page_goto_step_3_url;?>" method="post">
+		<form id="mer-registration-frm-2" action="<?php echo $reg_step_form_url;?>" method="post">
 
 			<input type="hidden" id="mer-reg-page-step-2-action" name="ajax_action" value="espresso_process_registration_step_2" />
 			<input type="hidden" id="mer-reg-page-step-2-noheader" name="noheader" value="" />		
@@ -94,7 +94,7 @@
 
 		<!--<a href="" onclick="return false" id="mer-reg-page-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >-->
 			<a href="" id="mer-reg-page-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big hide-if-no-js" >
-				<?php _e('Registration&nbsp;Step&nbsp;3&nbsp;', 'event_espresso'); ?><span class="ui-icon ui-icon-carat-1-e"></span>
+				<?php echo $next_step; ?><span class="ui-icon ui-icon-carat-1-e"></span>
 			</a>
 
 			<noscript>
@@ -102,7 +102,7 @@
 							id="mer-reg-page-go-to-step-3-sbmt-btn"
 							class="mer-register-btn no-js-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx"
 							name="mer-reg-page-go-to-step-3-sbmt-btn"
-							value="&nbsp;<?php  _e('Registration&nbsp;Step&nbsp;3&nbsp;', 'event_espresso'); ?>&nbsp;&raquo;"
+							value="&nbsp;<?php echo $next_step; ?>&nbsp;&raquo;"
 					/>
 			</noscript>
 
