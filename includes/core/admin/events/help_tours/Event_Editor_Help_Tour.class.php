@@ -106,7 +106,9 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_stop_eleven(),
 				'button_text' => __('End Tour', 'event_espresso'),
 				'options' => array(
-					'tipLocation' => 'left'
+					'tipLocation' => 'left',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => 10
 					)
 				)
 			);
