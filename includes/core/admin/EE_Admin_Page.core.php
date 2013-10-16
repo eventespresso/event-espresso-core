@@ -350,7 +350,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		  	'tipAnimation' => 'fade',           // 'pop' or 'fade' in each tip
 		  	'pauseAfter' => array(),                // array of indexes where to pause the tour after
 		  	'tipAnimationFadeSpeed' => 300,    // if 'fade'- speed in ms of transition
-		  	'cookieMonster' => defined('WP_DEBUG') && WP_DEBUG ? false : true,           // true/false for whether cookies are used
+		  	'cookieMonster' => true,           // true/false for whether cookies are used
 		  	'cookieName' => 'joyride',         // choose your own cookie name (setup will add the prefix for the specific page joyride)
 	  		'cookieDomain' => false,           // set to false or yoursite.com
 		  	//'tipContainer' => 'body',            // Where the tip be attached if not inline
