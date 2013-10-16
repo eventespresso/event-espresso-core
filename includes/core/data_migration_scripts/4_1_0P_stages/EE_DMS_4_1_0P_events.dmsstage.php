@@ -127,36 +127,53 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_donations'=>new EE_Boolean_Field('EVT_donations', __("Accept Donations?", "event_espresso"), false, false)
 				
 			));
+ 
  * 
- * @todo: calculate new CPT event stati
- * @todo: how to handle posts attached to events?
- * @todo: how ot handle recurring events?
- * @todo: convert post image
- * @todo: how to handle venue info on event row?
- * @todo: realized we're not handling post created/modified GMTs
- * @todo: what to do with these 3.1 columsn:  -`use_coupon_code` varchar(1) DEFAULT 'N',
-  -`use_groupon_code` varchar(1) DEFAULT 'N',
-  -`category_id` text,
-  -`coupon_id` text,
-  -`tax_percentage` float DEFAULT NULL,
-  -`tax_mode` int(11) DEFAULT NULL,
-  -`early_disc` varchar(10) DEFAULT NULL,
-  -`early_disc_date` varchar(15) DEFAULT NULL,
-  -item_groups` longtext,
-  -`event_type` varchar(250) DEFAULT NULL,
-  -`alt_email` text,
-  -`likes` int(22) DEFAULT NULL,
-  -`ticket_id` int(22) DEFAULT '0',
+ * 3.1's start end table
+ * 
+CREATE TABLE `wp_events_start_end` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `event_id` int(11) DEFAULT NULL,
+  `start_time` varchar(10) DEFAULT NULL,
+  `end_time` varchar(10) DEFAULT NULL,
+  `reg_limit` int(15) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `event_id` (`event_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8$$
+
+
+ * 
+ * and 4.1 Datetime model's tables and fields:
+ * $this->_tables = array(
+			'Datetime'=> new EE_Primary_Table('esp_datetime', 'DTT_ID')
+		);
+		$this->_fields = array(
+			'Datetime'=>array(
+				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso')),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
+				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, 999999),
+				'DTT_sold'=>new EE_Integer_Field('DTT_sold', __('How many sales for this Datetime that have occured', 'event_espresso'), true, 0 ),
+				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
+				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
+				'DTT_parent' => new EE_Integer_Field('DTT_parent', __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0 ),
+				'DTT_deleted' => new EE_Trashed_Flag_Field('DTT_deleted', __('Flag indicating datetime is archived', 'event_espresso'), false, false ),
+			));
  */
 class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
+	private $_old_start_end_table;
 	private $_new_table;
 	private $_new_meta_table;
+	private $_new_datetime_table;
 	function __construct() {
 		global $wpdb;
 		$this->_old_table = $wpdb->prefix."events_detail";
+		$this->_old_start_end_table = $wpdb->prefix."events_start_end";
 		$this->_new_table = $wpdb->prefix."posts";
 		$this->_new_meta_table = $wpdb->prefix."esp_event_meta";
+		$this->_new_datetime_table = $wpdb->prefix."esp_datetime";
 		$this->_pretty_name = __("Events", "event_espresso");
 		parent::__construct();
 	}
@@ -180,6 +197,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 					$this->get_migration_script()->set_mapping($this->_old_table, $event_row['id'], $this->_new_meta_table, $meta_id);
 				}
 				$this->_add_post_metas($event_row, $post_id);
+				$this->_convert_start_end_times($event_row,$post_id);
 				//maybe create a venue from info on the event?
 				$new_venue_id = $this->_maybe_create_venue($event_row);
 				if($new_venue_id){
@@ -347,7 +365,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'%d',//EVT_allow_mutliple
 			'%d',//EVT_additional_limit
 			'%d',//EVT_additional_attendee_reg_info
-			'%d',//EVT_default_registration_status
+			'%s',//EVT_default_registration_status
 			'%d',//EVT_rqeuire_pre_approval
 			'%d',//EVT_member_only
 			'%s',//EVT_phone
@@ -534,5 +552,89 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		return $wpdb->insert_id;
 	
 	}
+	/**
+	 * Converts all the 3.1 start-end times for the event to 4.1 datetimes
+	 * @global type $wpdb
+	 * @param array $old_event results of get_results(...,ARRAY_A)
+	 * @param int $new_cpt_id new post ID
+	 * @return void (if there are errors though, adds them to the stage's error list
+	 */
+	private function _convert_start_end_times($old_event,$new_cpt_id){
+		$start_end_times = $this->_get_old_start_end_times($old_event['id']);
+		foreach($start_end_times as $start_end_time){
+			$datetime_id = $this->_insert_new_datetime($start_end_time,$old_event,$new_cpt_id);
+			if($datetime_id){
+				$this->get_migration_script()->set_mapping($this->_old_start_end_table, $start_end_time['id'], $this->_new_datetime_table, $datetime_id);
+			}
+		}
+	}
+	/**
+	 * Queries the 3.1 wp_events_start_end table to get all the start and end times for the event
+	 * @global type $wpdb
+	 * @param type $old_event_id
+	 * @return type
+	 */
+	private function _get_old_start_end_times($old_event_id){
+		global $wpdb;
+		return $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_start_end_table WHERE event_id=%d",$old_event_id),ARRAY_A);
+	}
+	/**
+	 * Inserts a 4.1 datetime given the 3.1 start_end db row and event_details row
+	 * @param type $start_end_time_row
+	 * @param type $old_event_row
+	 * @param type $new_cpt_id
+	 * @return int ID of new datetime
+	 */
+	private function _insert_new_datetime($start_end_time_row,$old_event_row,$new_cpt_id){
+		global $wpdb;
+		$start_date = $old_event_row['start_date'];
+		$start_time = $this->get_migration_script()->convertTimeFromAMPM($start_end_time_row['start_time']);
+		$end_date = $old_event_row['end_date'];
+		$end_time = $this->get_migration_script()->convertTimeFromAMPM($start_end_time_row['end_time']);
+		$existing_datetimes = $this->_count_other_datetimes_exist_for_new_event($new_cpt_id);
+		$cols_n_values = array(
+			'EVT_ID'=>$new_cpt_id,//EVT_ID
+			'DTT_EVT_start'=> "$start_date $start_time:00",//DTT_EVT_start
+			'DTT_EVT_end'=> "$end_date $end_time:00",//DTT_EVT_end
+			'DTT_reg_limit'=>$old_event_row['reg_limit'],//DTT_reg_limit
+			'DTT_sold'=>$this->_count_registrations($old_event_row['id']),//DTT_sold
+			'DTT_is_primary'=> 0 == $existing_datetimes ,//DTT_is_primary... if count==0, then we'll call it the 'primary'
+			'DTT_order'=> $existing_datetimes,//DTT_order, just give it the same order as the count of how many datetimes already exist
+			'DTT_parent'=>0,
+			'DTT_deleted'=>false
+		);
+		$datatypes = array(
+			'%d',//EVT_Id
+			'%s',//DTT_EVT_start
+			'%s',//DTT_EVT_end
+			'%d',//DTT_reg_limit
+			'%d',//DTT_sold
+			'%d',//DTT_is_primary
+			'%d',//DTT_order
+			'%d',//DTT_parent
+			'%d',//DTT_deleted
+		);
+		$success = $wpdb->insert($this->_new_datetime_table,$cols_n_values,$datatypes);
+		if ( ! $success){
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_start_end_table, array_merge($old_event_row,$start_end_time_row), $this->_new_datetime_table, $cols_n_values, $datatypes));
+			return 0;
+		}
+		return $wpdb->insert_id;
+	}
+	
+	/**
+	 * Checks if there's a 4.1 datetime for this event already. This is mostly only handy
+	 * when deciding whether a datetime we're about ot insert should be the 'primary' or not
+	 * @global type $wpdb
+	 * @param type $cpt_event_id
+	 * @return int
+	 */
+	private function _count_other_datetimes_exist_for_new_event($cpt_event_id){
+		global $wpdb;
+		$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $this->_new_datetime_table WHERE EVT_ID=%d",$cpt_event_id));
+		return intval($count);
+	}
+	
+	
 	
 }
