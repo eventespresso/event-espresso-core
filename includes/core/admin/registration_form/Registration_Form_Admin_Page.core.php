@@ -71,6 +71,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	protected function _init_page_props() {
 		$this->page_slug = REGISTRATION_FORM_PG_SLUG;
 		$this->page_label = __('Registration Form', 'event_espresso');
+		$this->_admin_base_url = REGISTRATION_FORM_ADMIN_URL;
+		$this->_admin_base_path = REGISTRATION_FORM_ADMIN;
+		$this->_admin_page_title = __('Registration Form', 'event_espresso');
 	}
 
 
@@ -85,8 +88,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
-		$this->_admin_base_url = EE_FORMS_ADMIN_URL;
-		$this->_admin_page_title = __('Registration Form', 'event_espresso');
 		$this->_labels = array(
 			'buttons' => array(
 				'edit_question' => __('Edit Question', 'event_espresso')

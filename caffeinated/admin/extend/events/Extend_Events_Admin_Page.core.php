@@ -40,6 +40,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _extend_page_config() {
 
+		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
+
 		//partial route/config override
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
 		$this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';

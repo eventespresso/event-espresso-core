@@ -40,6 +40,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 
 	protected function _extend_page_config() {
+		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'general_settings';
 
 		$new_page_routes['google_map_settings'] = '_google_map_settings';
 		$new_page_routes['update_google_map_settings'] = array(

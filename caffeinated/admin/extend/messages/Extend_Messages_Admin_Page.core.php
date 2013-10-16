@@ -35,6 +35,8 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 		parent::__construct( $routing );
 	}
 
-
+	protected function _extend_page_config() {
+		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'messages';
+	}
 
 } //end class Messages_Admin_Page

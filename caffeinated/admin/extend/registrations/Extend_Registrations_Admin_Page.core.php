@@ -42,6 +42,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 	protected function _extend_page_config() {
+		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'registrations';
 		$new_page_routes = array(
 			'reports' => '_registration_reports'
 			);
