@@ -208,7 +208,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 10
 				),
-				'list_table' => 'Events_Admin_List_Table'
+				'list_table' => 'Events_Admin_List_Table',
+				'help_tour' => array(
+					'Event_Overview_Help_Tour'
+					)
 			),
 			'import_events' => array(
 				'nav' => array(
