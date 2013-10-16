@@ -114,12 +114,23 @@ final class EE_Front_Controller {
 //CREATE A BASIC REG, ATTENDEE, AND TRANSACTION
 		//
 //		$txn = EE_Transaction::new_instance(array('TXN_total'=>34.02,'TXN_paid'=>34.02, 'STS_ID'=>'TIN'));
-//		$txn->save();
-//		$att = EE_Attendee::new_instance(array('ATT_fname'=>'monkey'));
-//		$att->save();
-//		$evt = EEM_Event::instance()->get_one();
-//		$reg = EE_Registration::new_instance(array('TXN_ID'=>$txn->ID(),'ATT_ID'=>$att->ID(),'TKT_ID'=>1,'STS_ID'=>'RCN'));
-//		$reg->save();
+////		$txn->save();
+////		$att = EE_Attendee::new_instance(array('ATT_fname'=>'monkey'));
+////		$att->save();
+////		$evt = EEM_Event::instance()->get_one();
+//		$reg = EE_Registration::new_instance(array('TKT_ID'=>1,'STS_ID'=>'RCN'));
+////		$reg->save();
+//		d($txn);
+//		$txn->add_registration($reg);
+//		d($txn);
+//		$reg2 = EE_Registration::new_instance(array('TKT_ID'=>2,'STS_ID'=>'RCN'));
+//		$txn->add_registration($reg2);
+//		d($txn);
+//		$txn->remove_registration_with_id(1);
+//		d($txn);
+//		$txn->save_this_and_cached();
+//		d($txn);
+//		d($txn->registrations());
 //		$regs = EEM_Registration::instance()->get_all(array(array('Status.STS_open'=>true)));
 //		echo 'echodump of $regs';
 //		var_dump($regs);
