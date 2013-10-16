@@ -315,6 +315,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 20
 					),
 				'list_table' => 'Event_Categories_Admin_List_Table',
+				'help_tour' => array(
+					'Event_Categories_Help_Tour'
+					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 		);
