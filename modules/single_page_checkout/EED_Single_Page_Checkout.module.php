@@ -456,7 +456,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			foreach ( $this->_transaction->registrations() as $registration ) {
 				
 				$line_item_ID = $registration->reg_url_link();	
-				$cart_line_items = '#mer-reg-page-line-item-' . $line_item_ID;					
+				$cart_line_items = '#spco-line-item-' . $line_item_ID;					
 				$event_queue['items'][ $line_item_ID ]['ticket_id'] = $registration->ticket()->ID();
 				$event_queue['items'][ $line_item_ID ]['ticket_name'] = $registration->ticket()->name();
 				$event_queue['items'][ $line_item_ID ]['ticket_desc'] = $registration->ticket()->description();
@@ -887,7 +887,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		void
 	 */
 	private function _process_return_to_reg_step_query_args( $args ) {
-		$remove = array( 'ajax_action', 'espresso_ajax', 'noheader', 'mer-reg-page-go-to-step-2-sbmt-btn' );
+		$remove = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-step-2-sbmt-btn' );
 		foreach ( $_POST as $key => $value ) {
 			if ( in_array( $key, $remove )) {
 				unset( $_POST[ $key ] );
