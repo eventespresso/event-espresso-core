@@ -350,6 +350,52 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 	/**
+	 * return the total number of tickets available for purchase
+	 * @param  int    $DTT_ID the primary key for a particular datetime
+	 * @return int
+	 */
+	public function remaining( $DTT_ID = FALSE ) {
+		// are we checking availablity for a particular datetime ?
+		if ( $DTT_ID ) {
+			// get that datetime object
+			$datetimes = $this->get_first_related( 
+				'Datetime',
+				array( array( 'DTT_ID' => $DTT_ID ))
+			);
+		} else {
+			// we need to check availability of ALL datetimes
+			// get that datetime object
+			$datetimes = $this->get_many_related( 
+				'Datetime',
+				array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ))
+			);			
+		}
+		//d( $datetimes );
+		// if datetime reg limit is not unlimited
+		if ( ! empty( $datetimes )) {
+			// set a super high value for $tickets_remaining cuz -1 would throw off the use of 'min' below
+			$tickets_remaining = 1000000;
+			foreach ( $datetimes as $datetime ) {
+				// if datetime reg limit is not unlimited
+				if ( $datetime->tickets_remaining() > -1 ) {
+					$tickets_remaining = min( $tickets_remaining, $datetime->tickets_remaining() );
+				}
+			}
+			if ( $tickets_remaining != 1000000 ) {
+				return $tickets_remaining;
+			}
+		}
+		// not checking individual datetime?
+		if ( $this->_TKT_qty < 1 ) {
+			// unlimited tickets available
+			return -1;
+		}
+		return $this->_TKT_qty > $this->_TKT_sold ? $this->_TKT_qty - $this->_TKT_sold : 0;
+	}
+
+
+
+	/**
 	 * Using the start date and end date this method calculates whether the ticket is On Sale, Pending, or Expired
 	 * @param bool $display true = we'll return a localized string, otherwise we just return the value of the relevant status const
 	 * @return mixed(int|string) status int if the display string isn't requested
