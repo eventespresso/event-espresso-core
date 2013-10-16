@@ -2014,7 +2014,14 @@ abstract class EEM_Base extends EE_Base{
 	public function related_settings_for($relation_name){
 		$relatedModels=$this->relation_settings();
 		if(!array_key_exists($relation_name,$relatedModels)){
-			throw new EE_Error(sprintf(__('Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...','event_espresso'),$relation_name,  $this->_get_class_name(),implode(array_keys($relatedModels))));
+			throw new EE_Error(
+				sprintf(
+					__('Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...','event_espresso'),
+					$relation_name,
+					$this->_get_class_name(),
+					implode( ', ', array_keys( $relatedModels ))
+				)
+			);
 		}
 		return $relatedModels[$relation_name];
 	}

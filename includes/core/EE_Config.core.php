@@ -848,6 +848,18 @@ class EE_Registration_Config extends EE_Config_Base {
 	 * @var boolean $pending_counts_reg_limit
 	 */
       public $pending_counts_reg_limit;
+	
+	/**
+	 * Whether to skip the registration confirmation page
+	 * @var boolean $skip_reg_confirmation
+	 */
+      public $skip_reg_confirmation;
+	
+	/**
+	 * Whether registration confirmation should be the last page of SPCO
+	 * @var boolean $reg_confirmation_last
+	 */
+      public $reg_confirmation_last;
 	  
 	  /**
 	   * Whether or not to use ReCaptcha
@@ -900,6 +912,8 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->use_attendee_pre_approval = FALSE;
 		$this->show_pending_payment_options = FALSE;
 		$this->pending_counts_reg_limit = TRUE;
+		$this->skip_reg_confirmation = FALSE;
+		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;
 		$this->recaptcha_theme = 'clean';
 		$this->recaptcha_language = 'en';

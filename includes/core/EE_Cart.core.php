@@ -91,7 +91,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@access private
 	 *	@return void
 	 */	
-  private function __construct() {
+  	private function __construct() {
  
 	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
@@ -100,18 +100,31 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		}
 		
 		// are we using encryption?
-		if ( ! defined( 'ESPRESSO_ENCRYPT' )) {
-			EE_Registry::instance()->load_core( 'Encryption' );
-		}
+//		if ( ! defined( 'ESPRESSO_ENCRYPT' )) {
+//			EE_Registry::instance()->load_core( 'Encryption' );
+//		}
 
 		// grab any session data carried over from the previous page access
 		$this->_items = EE_Registry::instance()->SSN->get_session_data( FALSE, 'cart' );	
+		//d( $this->_items );
+		$this->_items = is_array( $this->_items ) ? $this->_items : array();	
 
 		// once everything is all said and done, save the cart to the EE_Session
 		add_action( 'shutdown', array( $this, '_save_cart' ), 90 );
 
 	}
 
+
+
+
+	/**
+	 *	get_items
+	 *	@access public
+	 *	@return array
+	 */	
+	public function get_items() {
+		return $this->_items;
+	}
 
 
 
@@ -125,12 +138,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */	
 	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1 ) {
 		// add $ticket to cart
-		if ( $this->_add_item( new EE_Ticket_Item( $ticket, $qty ))) {
-			$this->_save_cart();
-			return TRUE;
-		} else {
-			return FALSE;
-		}
+		$this->_add_item( new EE_Ticket_Cart_Item( $ticket, $qty ));
+		return $this->_save_cart() ? TRUE : FALSE;
 	}		
 
 
@@ -145,7 +154,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */	
 	private function _add_item( EE_Cart_Item $item ) {			
 		// add item to cart
-		$this->_items[ $item->get_line_item_ID ] = $item;		
+		$this->_items[ $item->line_item_ID() ] = $item;		
 		// recalculate cart totals based on new items
 		if ( $this->_calculate_cart_total_before_tax() ) {
 			return TRUE;
@@ -167,8 +176,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	// 
 	public function update_item( EE_Cart_Item $item ) {
 		// check if item exists
-		if ( isset( $this->_items[ $item->get_line_item_ID ] )) {
-			$this->_items[ $item->get_line_item_ID ] = $item;
+		if ( isset( $this->_items[ $item->line_item_ID() ] )) {
+			$this->_items[ $item->line_item_ID() ] = $item;
 		}	
 	}
 
@@ -181,10 +190,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return void
 	 */	
 	private function _calculate_cart_total_before_tax() {
-		$this->_total_before_tax = 0;		
-		foreach ( $this->_items as $item ) {
-            		$this->_total_before_tax += $item->get_price() * $item->get_qty();	
-		}
+		$this->_total_before_tax = 0;
+		if ( is_array( $this->_items )) {
+			foreach ( $this->_items as $item ) {
+	            		$this->_total_before_tax += $item->price() * $item->qty();	
+			}
+		}	
 		return $this->_total_before_tax;
 	}
 
@@ -197,7 +208,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	public function get_cart_total_before_tax() {
-		return $this->_calculate_cart_total_before_tax();
+		return $this->_total_before_tax == 0 ? $this->_calculate_cart_total_before_tax() : $this->_total_before_tax;
 	}
 
 
@@ -209,11 +220,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@access private
 	 *	@return void
 	 */	
-	private function _apply_taxes() {
+	private function _apply_taxes_to_total() {
 		// start with empty array
 		$this->_taxes = array();
 		// get array of taxes via Price Model
-		$taxes = $this->EE->load_model( 'Price' )->get_all_prices_that_are_taxes();	
+		$taxes = EE_Registry::instance()->load_model( 'Price' )->get_all_prices_that_are_taxes();	
 		// set grand total to total cart value before taxes
 		$this->_grand_total = $this->_calculate_cart_total_before_tax();
 		//loop thru taxes 
@@ -223,13 +234,21 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			// apply taxes to grand_total
 			$this->_grand_total += $this->_total_before_tax * $tax->amount() / 100;
 		}
-			
-//		$taxes = $this->_tax_strategy->get_taxes();
-//		foreach ( $this->_items as $item ) {
-//			if ( $item->is_taxable() ) {
-//	            		$item = 	
-//			}
-//		}
+
+	}
+
+
+
+
+
+	/**
+	 *	get_applied_taxes
+	 *	@access public
+	 *	@return float
+	 */	
+	public function get_applied_taxes() {
+		$this->_apply_taxes_to_total();
+		return $this->_taxes;		
 	}
 
 
@@ -242,9 +261,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	public function get_cart_grand_total() {
-		$this->_apply_taxes();
+		$this->_apply_taxes_to_total();
 		return $this->_grand_total;		
-	}	
+	}
 
 
 
@@ -262,7 +281,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		
 		// check if only a single line_item_id was passed
-		if ( ! is_array( $line_item_ids )) {
+		if ( ! empty( $line_item_ids ) && ! is_array( $line_item_ids )) {
 			// place single line_item_id in an array to appear as multiple line_item_ids
 			$line_item_ids = array ( $line_item_ids );			
 		}
@@ -340,7 +359,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return EE_Item
 	 */
 	public function rewind() {
-		return reset( $this->_items );
+		return is_array( $this->_items ) ? reset( $this->_items ) : NULL;
 	}
 
 	/**
@@ -350,7 +369,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function current() {
-		return current( $this->_items );
+		return is_array( $this->_items ) ? current( $this->_items ) : NULL;
 	}
 
 	/**
@@ -360,7 +379,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function next() {
-		return next( $this->_items );
+		return is_array( $this->_items ) ? next( $this->_items ) : NULL;
 	}
 
 	/**
@@ -370,7 +389,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function key() {
-		return key( $this->_items );
+		return is_array( $this->_items ) ? key( $this->_items ) : NULL;
 	}
 
 	/**
@@ -390,180 +409,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return int
 	 */
 	public function count() {
-		return count( $this->_items );
+		return is_array( $this->_items ) ? count( $this->_items ) : 0;
 	}
 
 
 
 
 }
-
-
-
-/*
- * ------------------------------------------------------------------------
- * 
- * EE_Cart_Item class
- *
- * @ version		2.0
- * @package		Event Espresso
- * @author		Brent Christensen 
- *
- * ------------------------------------------------------------------------
- */
-abstract class EE_Cart_Item {
-
-	/**
-	 * 	a unique identifier generated upon item creation that will be used as the key for this item in the cart
-	 * 	@access 	protected
-	 *	@param string
-	 */
-	protected $_line_item_ID;
-
-	/**
-	 * 	the number of items of this type
-	 * 	@access 	protected
-	 *	@param int
-	 */
-	protected $_qty;
-
-	/**
-	 * 	returns the ID
-	 * 	@access 	public
-	 *	@return string
-	 */
-	abstract public function get_ID();
-
-	/**
-	 * 	returns the name
-	 * 	@access 	public
-	 *	@return string
-	 */
-	abstract public function get_name();
-
-	/**
-	 * 	returns the price
-	 * 	@access 	public
-	 *	@return float
-	 */
-	abstract public function get_price();
-
-	/**
-	 * 	whether or not taxes should be applied to this item
-	 * 	@access 	public
-	 *	@return boolean
-	 */
-	abstract public function is_taxable();
-
-	/**
-	 * 	sets the unique identifier for this item
-	 * 	@access 	protected
-	 */
-	protected function set_line_item_ID( $classname, $ID ) {
-		// each line item in the cart requires a unique identifier
-		$this->_line_item_ID = md5( $classname . $ID . now() );
-	}
-
-	/**
-	 * 	get the number of items of this type
-	 * 	@access 	public
-	 *	@return string
-	 */
-	protected function get_line_item_ID() {
-		return $this->_line_item_ID;
-	}
-	/**
-	 * 	sets the number of items of this type
-	 * 	@access 	protected
-	 *	@param int $qty
-	 */
-	protected function set_qty( $qty ) {
-		$this->_qty = $qty;
-	}
-
-	/**
-	 * 	get the number of items of this type
-	 * 	@access 	public
-	 *	@return int
-	 */
-	public function get_qty() {
-		return $this->_qty;
-	}
-
-} 
-
-
-/*
- * ------------------------------------------------------------------------
- * 
- * EE_Ticket_Item class
- *
- * @ version		2.0
- * @package		Event Espresso
- * @author		Brent Christensen 
- *
- * ------------------------------------------------------------------------
- */
-abstract class EE_Ticket_Item extends EE_Cart_Item {
-
-	/**
-	 *	@var EE_Ticket $_ticket
-	 * 	@access 	protected
-	 */
-	protected $_ticket;
-	
-	/**
-	 * 	class constructor
-	 * 	@access 	public
-	 *	@param EE_Ticket $ticket
-	 *	@param int $qty
-	 *	@return void
-	 */
-	public function __construct( EE_Ticket $ticket, $qty = 1 )	{
-		$this->_set_line_item_ID( 'EE_Ticket', $ticket->ID() );
-		$this->_ticket = $ticket;
-		$this->_qty = $qty;
-	}
-	
-	/**
-	 * 	returns the ID
-	 * 	@access 	public
-	 *	@return string
-	 */
-	public function get_ID() {
-		return $this->_ticket->ID();
-	}
-
-	/**
-	 * 	returns the name
-	 * 	@access 	public
-	 *	@return string
-	 */
-	public function get_name() {
-		return $this->_ticket->name();
-	}
-
-	/**
-	 * 	returns the price
-	 * 	@access 	public
-	 *	@return float
-	 */
-	public function get_price() {
-		return $this->_ticket->price();
-	}
-
-	/**
-	 * 	whether or not taxes should be applied to this item
-	 * 	@access 	public
-	 *	@return boolean
-	 */
-	public function is_taxable() {
-		return $this->_ticket->taxable();
-	}
-
-} 
-
-
-
 /* End of file EE_Cart.core.php */
 /* Location: /includes/core/EE_Cart.core.php */

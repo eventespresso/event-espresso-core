@@ -108,7 +108,6 @@ final class EE_System {
 		// setup autoloaders
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		spl_autoload_register( array( 'EEH_Autoloader', 'espresso_autoloader' ));
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 	}

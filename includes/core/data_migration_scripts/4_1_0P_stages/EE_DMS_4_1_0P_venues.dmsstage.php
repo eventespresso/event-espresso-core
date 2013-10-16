@@ -120,8 +120,10 @@ function __construct() {
 					'post_content'=>isset($meta['description']) ? $meta['description'] : '',//VNU_desc
 					'post_name'=>$old_venue['identifier'],//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
+					'post_date_gmt'=>  current_time('mysql',true),
 					'post_excerpt'=>wp_trim_words($meta['description'] ? $meta['description'] : '',50),//VNU_short_desc arbitraty only 50 characters
 					'post_modified'=>current_time('mysql'),//VNU_modified
+					'post_modified_gmt'=>current_time('mysql',true),
 					'post_author'=>$old_venue['wp_user'],//VNU_wp_user
 					'post_parent'=>null,//parent
 					'menu_order'=>0,//VNU_order
@@ -132,8 +134,10 @@ function __construct() {
 					'%s',//VNU_desc
 					'%s',//VNU_identifier
 					'%s',//VNU_created
+					'%s',
 					'%s',//VNU_short_desc
 					'%s',//VNU_modified
+					'%s',
 					'%d',//VNU_wp_user
 					'%d',//parent
 					'%d',//VNU_order

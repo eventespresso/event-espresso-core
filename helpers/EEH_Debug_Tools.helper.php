@@ -33,15 +33,15 @@ class EEH_Debug_Tools{
 	/**
 	 * 	class constructor
 	 *
-	 *  @access 	private
-	 *  @return 	void
+	 *  	@access 	private
+	 *  	@return 	void
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
 		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'kint' . DS . 'Kint.class.php' );
 		
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
-			//add_action( 'shutdown', array($this,'espresso_printr_session') );
+			add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
 		}
 		add_action( 'activated_plugin',array($this,'espresso_plugin_activation_errors') );
 	}
@@ -49,12 +49,12 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 * 		print_r EE_Session object at bottom of page after everything else has happened
+	 * 	dump EE_Session object at bottom of page after everything else has happened
 	 *
-	 * 		@return void
+	 * 	@return void
 	 */
-	public function espresso_printr_session() {
-		if ( function_exists( 'wp_get_current_user' ) && current_user_can('administrator') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {	
+	public function espresso_session_footer_dump() {
+		if ( function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
 			Kint::dump( EE_Registry::instance()->SSN );
 			$this->espresso_list_hooked_functions();
 			$this->show_times();
@@ -64,11 +64,11 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 * 		List All Hooked Functions
-	 * 		to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
-	 *		http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/  
+	 * 	List All Hooked Functions
+	 * 	to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
+	 *	http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/  
 	 *
-	 * 		@return void
+	 * 	@return void
 	 */
 	public function espresso_list_hooked_functions( $tag=FALSE ){
 		global $wp_filter;
@@ -126,9 +126,9 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 * 		captures plugin activation errors for debugging
+	 * 	captures plugin activation errors for debugging
 	 *
-	 * 		@return void
+	 * 	@return void
 	 */
 	public function espresso_plugin_activation_errors() {
 		if ( WP_DEBUG === TRUE ) {
