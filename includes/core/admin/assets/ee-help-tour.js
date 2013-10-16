@@ -28,6 +28,10 @@ jQuery(document).ready(function($) {
 			if ( v[0].id == tourid )
 				options = v[0].options;
 		});
+		//destroy initial joyride
+		$('#' + tourid).joyride("destroy");
+		//restart but with cookie set to false
+		options.cookieMonster = false;
 		$('#' + tourid).joyride(options);
 	});
 });
