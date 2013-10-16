@@ -237,12 +237,14 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'S'=>'publish',//@todo: what DO we do with secondary events?
 			'D'=>'trash',
 		);
-		if($old_event['event_status']=='IA'){//its ineactive eh? well is it sold_out, postponed, expired, or cancelled?
-			//check if we're ahead or behind the start time
-			
-			
-		}
 		$post_status = $status_conversions[$old_event['event_status']];
+		if($old_event['event_status']=='IA'){//its ineactive eh? well is it sold_out? (postponed and cancelled don't exist in 3.1)
+			//check if we've sold out
+			if (intval($old_event['reg_limit']) >= $this->_count_registrations()){
+				$post_status = 'sold_out';
+			}
+		}
+		
 		$event_meta = maybe_unserialize($old_event['event_meta']);
 		$cols_n_values = array(
 			'post_title'=>$old_event['event_name'],//EVT_name
@@ -278,6 +280,18 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			return 0;
 		}
 		return $wpdb->insert_id;
+	}
+	
+	/**
+	 * Counts all the registrations for the event in teh 3.1 DB. (takes into account attendee rows which represent various registrations)
+	 * @global type $wpdb
+	 * @param type $event_id
+	 * @return int
+	 */
+	private function _count_registrations($event_id){
+		global $wpdb;
+		$count = $wpdb->get_var($wpdb->prepare("SELECT sum(quantity) FROM {$wpdb->prefix}events_attendee WHERE event_id=%d",$event_id));
+		return intval($count);
 	}
 	
 	private function _insert_event_meta($old_event,$new_cpt_id){
