@@ -240,7 +240,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 //IA=inactive in 3.1: events were switched to this when they expired. in 4.1 that's just calculated
 			'O'=>'publish',//@todo: will be an event type later; if this is the status, set the end date WAAAY later; and add term for 'ongoing'
 			'A'=>'publish',
-			'S'=>'publish',//@todo: what DO we do with secondary events?
+			'S'=>'draft',//@todo: is it ok to just mark secondary/waitlist events as DRAFTS?
 			'D'=>'trash',
 		);
 		$post_status = $status_conversions[$old_event['event_status']];
@@ -256,8 +256,10 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'post_content'=>$old_event['event_desc'],//EVT_desc
 			'post_name'=>$old_event['event_identifier'],//EVT_slug
 			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
+			'post_date_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
 			'post_excerpt'=>wp_trim_words($old_event['event_desc'],50),//EVT_short_desc
-			'post_modified'=>$old_event['submitted'],//EVT_modified
+			'post_modified'=>$event_meta['date_submitted'],//EVT_modified
+			'post_modified_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
 			'post_author'=>$old_event['wp_user'],//EVT_wp_user
 			'post_parent'=>null,//parent maybe get this from some REM field?
 			'menu_order'=>null,//EVT_order
@@ -269,8 +271,10 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'%s',//EVT_desc
 			'%s',//EVT_slug
 			'%s',//EVT_created
+			'%s',
 			'%s',//EVT_short_desc
 			'%s',//EVT_modified
+			'%s',
 			'%s',//EVT_wp_user
 			'%d',//post_parent
 			'%d',//EVT_order
@@ -396,8 +400,10 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 					'post_content'=>'',//VNU_desc
 					'post_name'=>sanitize_title($old_event['venue_title']),//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
+					'post_date_gmt'=>get_gmt_from_date(current_time('mysql')),
 					'post_excerpt'=>'',//VNU_short_desc arbitraty only 50 characters
 					'post_modified'=>current_time('mysql'),//VNU_modified
+					'post_modified_gmt'=>get_gmt_from_date(current_time('mysql')),
 					'post_author'=>$old_event['wp_user'],//VNU_wp_user
 					'post_parent'=>null,//parent
 					'menu_order'=>0,//VNU_order
@@ -408,8 +414,10 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 					'%s',//VNU_desc
 					'%s',//VNU_identifier
 					'%s',//VNU_created
+					'%s',
 					'%s',//VNU_short_desc
 					'%s',//VNU_modified
+					'%s',
 					'%d',//VNU_wp_user
 					'%d',//parent
 					'%d',//VNU_order
