@@ -59,7 +59,7 @@ abstract class EE_Help_Tour extends EE_Base {
 	 *			'custom_class' => 'some_custom_class', //optional custom class to add for this stop.
 	 *			'button_text' => 'custom text for button', //optional
 	 *			'content' => 'The content for the stop', //required
-	 *			'pause_after' => false, //indicate if you want the tour to pause after this stop and it will get added to the pauseAfter global option array setup for the joyride instance.
+	 *			'pause_after' => false, //indicate if you want the tour to pause after this stop and it will get added to the pauseAfter global option array setup for the joyride instance. This is only applicable when this tour has been set to run on timer.
 	 *			'options' => array(
 	 *				//override any of the global options set via the help_tour "option_callback" for the joyride instance on this specific stop.
 	 *				)
@@ -117,7 +117,7 @@ abstract class EE_Help_Tour extends EE_Base {
 	 */
 	protected function _set_tour_options( $options = array() ) {
 		$defaults = array(
-			'tipLocation' => 'bottom',         // 'top' or 'bottom' in relation to parent
+			'tipLocation' => 'bottom',         // 'top', 'bottom', 'right', 'left' in relation to parent
 		  	'nubPosition' => 'auto',           // override on a per tooltip bases. can be "auto", "right", "top", "bottom", "left"
 		  	'scroll' => true, //whether to scrollTo the next step or not
 		  	'scrollSpeed' => 300,              // Page scrolling speed in ms
