@@ -106,6 +106,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// grab any session data carried over from the previous page access
 		$this->_items = EE_Registry::instance()->SSN->get_session_data( FALSE, 'cart' );	
+		//d( $this->_items );
+		$this->_items = is_array( $this->_items ) ? $this->_items : array();	
 
 		// once everything is all said and done, save the cart to the EE_Session
 		add_action( 'shutdown', array( $this, '_save_cart' ), 90 );
@@ -188,10 +190,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return void
 	 */	
 	private function _calculate_cart_total_before_tax() {
-		$this->_total_before_tax = 0;		
-		foreach ( $this->_items as $item ) {
-            		$this->_total_before_tax += $item->price() * $item->qty();	
-		}
+		$this->_total_before_tax = 0;
+		if ( is_array( $this->_items )) {
+			foreach ( $this->_items as $item ) {
+	            		$this->_total_before_tax += $item->price() * $item->qty();	
+			}
+		}	
 		return $this->_total_before_tax;
 	}
 
@@ -216,7 +220,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@access private
 	 *	@return void
 	 */	
-	private function _apply_taxes() {
+	private function _apply_taxes_to_total() {
 		// start with empty array
 		$this->_taxes = array();
 		// get array of taxes via Price Model
@@ -230,13 +234,21 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			// apply taxes to grand_total
 			$this->_grand_total += $this->_total_before_tax * $tax->amount() / 100;
 		}
-			
-//		$taxes = $this->_tax_strategy->get_taxes();
-//		foreach ( $this->_items as $item ) {
-//			if ( $item->is_taxable() ) {
-//	            		$item = 	
-//			}
-//		}
+
+	}
+
+
+
+
+
+	/**
+	 *	get_applied_taxes
+	 *	@access public
+	 *	@return float
+	 */	
+	public function get_applied_taxes() {
+		$this->_apply_taxes_to_total();
+		return $this->_taxes;		
 	}
 
 
@@ -249,9 +261,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	public function get_cart_grand_total() {
-		$this->_apply_taxes();
+		$this->_apply_taxes_to_total();
 		return $this->_grand_total;		
-	}	
+	}
 
 
 
@@ -347,7 +359,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return EE_Item
 	 */
 	public function rewind() {
-		return reset( $this->_items );
+		return is_array( $this->_items ) ? reset( $this->_items ) : NULL;
 	}
 
 	/**
@@ -357,7 +369,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function current() {
-		return current( $this->_items );
+		return is_array( $this->_items ) ? current( $this->_items ) : NULL;
 	}
 
 	/**
@@ -367,7 +379,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function next() {
-		return next( $this->_items );
+		return is_array( $this->_items ) ? next( $this->_items ) : NULL;
 	}
 
 	/**
@@ -377,7 +389,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function key() {
-		return key( $this->_items );
+		return is_array( $this->_items ) ? key( $this->_items ) : NULL;
 	}
 
 	/**
@@ -397,7 +409,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return int
 	 */
 	public function count() {
-		return count( $this->_items );
+		return is_array( $this->_items ) ? count( $this->_items ) : 0;
 	}
 
 
