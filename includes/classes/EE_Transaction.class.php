@@ -177,7 +177,12 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	protected $_Extra_Meta = NULL;
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @param type $timezone
+	 * @return EE_Transaction
+	 */
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
@@ -186,7 +191,12 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @param type $timezone
+	 * @return EE_Transaction
+	 */
 	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
@@ -622,6 +632,23 @@ class EE_Transaction extends EE_Base_Class{
 		return $this->get_many_related('Extra_Meta', $query_params);
 	}
 
+	/**
+	 * Wrapper for _add_relation_to
+	 * @param type $registration
+	 * @return EE_Base_Class the relation was added to
+	 */
+	public function add_registration($registration){
+		return $this->_add_relation_to($registration, 'Registration');
+	}
+	/**
+	 * Removes the given registration from being related (even before saving thist ransaction).
+	 * If an ID/index is provided and this transaction isn't saved yet, removes it from list of cached relations
+	 * @param type $registration_or_id
+	 * @return EE_Base_Class that was removed from being related
+	 */
+	public function remove_registration_with_id($registration_or_id){
+		return $this->_remove_relation_to($registration_or_id, 'Registration');
+	}
 }
 
 

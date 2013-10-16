@@ -276,7 +276,7 @@ class EE_Base_Class{
 	 * if this is a Transaction, that could be a payment or a registration)
 	 * @param string $relationName one of the keys in the _model_relations array on the model. Eg 'Registration'
 	 * assocaited with this model object
-	 * @return boolean success
+	 * @return mixed index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one related thing, no array)
 	 */
 	public function cache($relationName,$object_to_cache){
 		if ( empty( $object_to_cache ) ) return; //its entirely possible that there IS no related object yet in which case there is nothing to cache.
@@ -291,6 +291,7 @@ class EE_Base_Class{
 			//for each of these model objects (eg, if this is a registration, there's only 1 attendee for it)
 			//so, just set it to be cached
 			$this->$relationNameClassAttribute = $object_to_cache;
+			$return = true;
 		}else{
 			//there can be many of those other objects for this one.
 			//just add it to the array of related objects of that type.
@@ -298,9 +299,17 @@ class EE_Base_Class{
 			if( ! is_array($this->$relationNameClassAttribute)){
 				$this->$relationNameClassAttribute = array();
 			}
-			$this->{$relationNameClassAttribute}[$object_to_cache->ID()]=$object_to_cache;
+			
+			if($this->ID()){
+				$return = $object_to_cache->ID();
+				$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
+			}else{
+				$return = count($this->$relationNameClassAttribute);
+				$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
+			}
+			
 		}
-		return true;
+		return $return;
 	}
 
 
@@ -401,33 +410,39 @@ class EE_Base_Class{
 	 * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
 	 * then only remove that one object from our cached array. Otherwise, clear the entire list.
 	 * @param string $relationName one of the keys in the _model_relations array on the model. Eg 'Registration'
-	 * @param EE_Base_Class $object_to_remove_from_cache
+	 * @param mixed $object_to_remove_or_index_into_array or an index into the array of cached things
 	 * @param bool          $clear_all This flags clearing the entire cache relation property if this is HasMany or HABTM.
-	 * @return boolean success
+	 * @return EE_Base_Class from which was cleared from teh cache, or true if we requested to remove a relation from all
 	 */
-	public function clear_cache($relationName, $object_to_remove_from_cache = null, $clear_all = FALSE){
+	public function clear_cache($relationName, $object_to_remove_or_index_into_array = null, $clear_all = FALSE){
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
 		if( ! $relationship_to_model){
 			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot clear that cache",'event_espresso'),$relationName,get_class($this)));
 		}
-		if($object_to_remove_from_cache !== null){
-			$object_to_remove_from_cache = $this->ensure_related_thing_is_model_obj($object_to_remove_from_cache, $relationName);
-			if( ! ($object_to_remove_from_cache instanceof EE_Base_Class)){
-				throw new EE_Error(sprintf(__("You have requested to remove the cached relationship to %s, but have not provided a model object. Instead you provided a %s",'event_espresso'),$relationName,get_class($object_to_remove_from_cache)));
-			}
-		}
 		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
-		if($relationship_to_model instanceof EE_Belongs_To_Relation || $clear_all ){
+		if($clear_all){
+			$obj_removed = true;
+			$this->$relationNameClassAttribute  = null;
+		}elseif($relationship_to_model instanceof EE_Belongs_To_Relation){
+			$obj_removed = $this->$relationNameClassAttribute;
 			$this->$relationNameClassAttribute  = null;
 		}else{
-			if($object_to_remove_from_cache){
-				//throw new EE_Error("removing an individual item from teh cahce not fully working yet");
-				unset($this->{$relationNameClassAttribute}[$object_to_remove_from_cache->ID()]);
+			if($object_to_remove_or_index_into_array instanceof EE_Base_Class && $object_to_remove_or_index_into_array->ID()){
+				$index_in_cache = $object_to_remove_or_index_into_array->ID();
+			}elseif($object_to_remove_or_index_into_array instanceof EE_Base_Class){
+				//so they provided a model object, but it's not yet saved to the DB... so let's go hunting for it!
+				foreach($this->get_all_from_cache($relationName) as $index => $potentially_obj_we_want){
+					if($potentially_obj_we_want == $object_to_remove_or_index_into_array){
+						$index_in_cache = $index;
+					}
+				}
 			}else{
-				$this->$relationNameClassAttribute = null;
+				$index_in_cache = $object_to_remove_or_index_into_array;
 			}
+			$obj_removed = $this->{$relationNameClassAttribute}[$index_in_cache];
+			unset($this->{$relationNameClassAttribute}[$index_in_cache]);
 		}
-		return true;
+		return $obj_removed;
 	}
 	
 	/**
@@ -833,6 +848,38 @@ class EE_Base_Class{
 		return $results;
 	}
 	
+	/**
+	 * Saves this model object and its cached relations to the database.
+	 * Saves the cached related model objects, and ensures the relation between them
+	 * and this object and properly setup
+	 * @return int 1 on succesful update; ID of new model object on save; 0 on failure+
+	 */
+	public function save_this_and_cached(){
+		//make sure this has been saved
+		if( ! $this->ID()){
+			$id = $this->save();
+		}else{
+			$id = $this->ID();
+		}
+		foreach($this->get_model()->relation_settings() as $relationName => $relationObj){
+		
+			$property_name = $this->_get_private_attribute_name($relationName);
+			if($this->$property_name){
+				if($relationObj instanceof EE_Belongs_To_Relation){
+					//add a relation to that relation type (which saves the appropriate thing in the process)
+					$this->_add_relation_to($this->$property_name, $relationName);
+				}else{
+					d($property_name);
+					d($this);
+					foreach($this->$property_name as $index => $related_model_obj){
+						$this->_add_relation_to($related_model_obj, $relationName);
+					}
+				}
+			}
+		}
+		return $id;
+	}
+	
 	
 	/**
 	 * converts a field name to the private attribute's name on teh class.
@@ -952,7 +999,8 @@ class EE_Base_Class{
 	
 	/**
 	 * Adds a relationship to the specified EE_Base_Class object, given the relationship's name. Eg, if the curren tmodel is related
-	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
+	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array.
+	 * If this model object doensn't exist in teh DB, just caches the related thing
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
@@ -960,10 +1008,21 @@ class EE_Base_Class{
 	 * @return EE_Base_Class the object the relation was added to
 	 */
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array()){
-		$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
-
-		//clear cache so future get_many_related and get_first_related() return new results.
-		$this->clear_cache( $relationName, $otherObject, TRUE );
+		//if this thing exists in the DB, save the relation to the DB
+		if($this->ID()){
+			$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			//clear cache so future get_many_related and get_first_related() return new results.
+			$this->clear_cache( $relationName, $otherObject, TRUE );
+		}else{//this thing doesn't exist in the DB, just cache it
+			if( ! $otherObjectModelObjectOrID instanceof EE_Base_Class){
+				throw new EE_Error(sprintf(__("Before a model object is saved to the database, calls to _add_relation_to must be passed an actual object, not just an ID. You provideed %s as the model object to a %s", "event_espresso"),$otherObjectModelObjectOrID,get_class($this)));
+			}else{
+				$otherObject = $otherObjectModelObjectOrID;
+			}
+			$this->cache($relationName, $otherObjectModelObjectOrID);
+		}
+		
+		
 		return $otherObject;
 	}
 	
@@ -971,15 +1030,20 @@ class EE_Base_Class{
 	
 	/**
 	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the currentmodel is related
-	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array
-	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
+	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array.
+	 * If this model object doesn't exist in the DB, just removes teh related thing from the cache
+	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to teh DB yet
 	 * @param string $relationName
 	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the relation was removed from
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array() ){
-		$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
-		$this->clear_cache($relationName, $otherObject);
+		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
+			$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			$this->clear_cache($relationName, $otherObject);
+		}else{//this doesn't exist in teh DB, just remove it from the cache
+			$otherObject = $this->clear_cache($relationName,$otherObjectModelObjectOrID);
+		}
 		return $otherObject;
 	}
 	
@@ -992,22 +1056,26 @@ class EE_Base_Class{
 	 * @return EE_Base_Class[]
 	 */
 	public function get_many_related($relationName,$query_params = array()){
-		//if there are query parameters, forget about caching the related model objects.
-		if( $query_params ){
-			$related_model_objects = $this->get_model()->get_all_related($this, $relationName, $query_params);
-		}else{
-			//did we already cache the result of this query?
-			$cached_results = $this->get_all_from_cache($relationName);
-			if ( ! $cached_results ){
+		if($this->ID()){//this exists in teh DB, so get the related things from either the cache or the DB
+			//if there are query parameters, forget about caching the related model objects.
+			if( $query_params ){
 				$related_model_objects = $this->get_model()->get_all_related($this, $relationName, $query_params);
-				//if no query parameters were passed, then we got all the related model objects
-				//for that relation. We can cache them then.
-				foreach($related_model_objects as $related_model_object){
-					$this->cache($relationName, $related_model_object);
-				}
 			}else{
-				$related_model_objects = $cached_results;
+				//did we already cache the result of this query?
+				$cached_results = $this->get_all_from_cache($relationName);
+				if ( ! $cached_results ){
+					$related_model_objects = $this->get_model()->get_all_related($this, $relationName, $query_params);
+					//if no query parameters were passed, then we got all the related model objects
+					//for that relation. We can cache them then.
+					foreach($related_model_objects as $related_model_object){
+						$this->cache($relationName, $related_model_object);
+					}
+				}else{
+					$related_model_objects = $cached_results;
+				}
 			}
+		}else{//this doesn't exist itn eh DB, so just get the related things from the cache
+			$related_model_objects = $this->get_all_from_cache($relationName);
 		}
 		return $related_model_objects;
 	}
@@ -1019,21 +1087,27 @@ class EE_Base_Class{
 	 * @return EE_Base_Class (not an array, a single object)
 	 */
 	public function get_first_related($relationName,$query_params = array()){
-		//if they've provided some query parameters, don't bother trying to cache teh result
-		//also make sure we're not caching the result of get_first_related
-		//on a relation which should have an array of objects (because the cache might have an array of objects)
-		if ($query_params || ! $this->get_model()->related_settings_for($relationName) instanceof EE_Belongs_To_Relation){
-			$related_model_object =  $this->get_model()->get_first_related($this, $relationName, $query_params);
-		}else{
-			//first, check if we've already cached the result of this query
-			$cached_result = $this->get_one_from_cache($relationName);
-			if ( ! $cached_result ){
-				
-				$related_model_object = $this->get_model()->get_first_related($this, $relationName, $query_params);
-				$this->cache($relationName,$related_model_object);
+		if($this->ID()){//this exists in the DB, get from the cache OR the DB
+			
+		
+			//if they've provided some query parameters, don't bother trying to cache teh result
+			//also make sure we're not caching the result of get_first_related
+			//on a relation which should have an array of objects (because the cache might have an array of objects)
+			if ($query_params || ! $this->get_model()->related_settings_for($relationName) instanceof EE_Belongs_To_Relation){
+				$related_model_object =  $this->get_model()->get_first_related($this, $relationName, $query_params);
 			}else{
-				$related_model_object = $cached_result;
+				//first, check if we've already cached the result of this query
+				$cached_result = $this->get_one_from_cache($relationName);
+				if ( ! $cached_result ){
+
+					$related_model_object = $this->get_model()->get_first_related($this, $relationName, $query_params);
+					$this->cache($relationName,$related_model_object);
+				}else{
+					$related_model_object = $cached_result;
+				}
 			}
+		}else{//this doesn't exist in the DB, just get what's cached on this object
+			$related_model_object = $this->get_one_from_cache($relationName);
 		}
 		return $related_model_object;
 	}
@@ -1043,14 +1117,19 @@ class EE_Base_Class{
 	 * Does a delete on all related objects of type $relationName and removes
 	 * the current model object's relation to them. If they can't be deleted (because 
 	 * of blocking related model objects) does nothing. If the related model obejcts are
-	 * soft-deletable, they will be soft-deleted regardless of related blocking model objects
+	 * soft-deletable, they will be soft-deleted regardless of related blocking model objects.
+	 * If this model object doesn't exist yet in the DB, just removes its related things
 	 * @param string $relationName
 	 * @param array $query_params like EEM_Base::get_all's 
 	 * @return int how many deleted
 	 */
 	public function delete_related($relationName,$query_params = array()){
-		$count =  $this->get_model()->delete_related($this, $relationName, $query_params);
-		$this->clear_cache($relationName);
+		if($this->ID()){
+			$count =  $this->get_model()->delete_related($this, $relationName, $query_params);
+		}else{
+			$count = count($this->get_all_from_cache($relationName));
+			$this->clear_cache($relationName);
+		}
 		return $count;
 	}
 	
@@ -1059,13 +1138,17 @@ class EE_Base_Class{
 	 * the current model object's relation to them. If they can't be deleted (because 
 	 * of blocking related model objects) just does a soft delete on it instead, if possible.
 	 * If the related thing isn't a soft-deletable model object, this function is identical
-	 * to delete_related()
+	 * to delete_related(). If this model object doesn't exist in the DB, just remove its related things
 	 * @param string $relationName
 	 * @param array $query_params like EEM_Base::get_all's 
 	 * @return int how many deleted (includign those soft deleted)
 	 */
 	public function delete_related_permanently($relationName,$query_params = array()){
-		$count =  $this->get_model()->delete_related_permanently($this, $relationName, $query_params);
+		if($this->ID()){
+			$count =  $this->get_model()->delete_related_permanently($this, $relationName, $query_params);
+		}else{
+			$count = count($this->get_all_from_cache($relationName));
+		}
 		$this->clear_cache($relationName);
 		return $count;
 	}

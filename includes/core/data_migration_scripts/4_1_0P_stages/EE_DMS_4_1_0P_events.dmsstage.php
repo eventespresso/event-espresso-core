@@ -221,17 +221,18 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 //		'IA'=>'inactive',
 //		'O'=>'ongoing',
 //		'P'=>'pending',
-//		'R'=>'draft',x
+//		'R'=>'draft',
 //		'D'=>'deleted');
 //		4.1 Event Post stati are the normal post statis 
 //		(publish,future,draft,pending,private,trash,auto-draft,inherit)
 //		and 3 custom ones: cancelled,postponed,sold_out
 		$status_conversions = array(
 			'R'=>'draft',
-			'X'=>'draft',//4.1 doesn't have a "not approved for publishing" status
+			'X'=>'draft',//4.1 doesn't have a "not approved for publishing" status. this is what posts are set to that aren't approved
 			'P'=>'pending',
-			'IA'=>'publish',//IA=inactive in 3.1: events were switched to this when they expired. in 4.1 that's just calculated
-			'O'=>'publish',//@todo: there is no ongoing events in 4.1 right?
+			'IA'=>'draft',//draft and in the past
+//IA=inactive in 3.1: events were switched to this when they expired. in 4.1 that's just calculated
+			'O'=>'publish',//@todo: will be an event type later; if this is the status, set the end date WAAAY later; and add term for 'ongoing'
 			'A'=>'publish',
 			'S'=>'publish',//@todo: what DO we do with secondary events?
 			'D'=>'trash',
@@ -293,7 +294,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'Incomplete'=>'RNA',
 			'Pending'=>'RPN'
 		);
-		$default_payment_status = isset($old_default_reg_stati_conversions[$event_meta['default_payment_status']]) && $old_default_reg_stati_conversions[$event_meta['default_payment_status']] ? $old_default_reg_stati_conversions[$event_meta['default_payment_status']] : 'RNA';
+		$default_reg_status = isset($old_default_reg_stati_conversions[$event_meta['default_payment_status']]) && $old_default_reg_stati_conversions[$event_meta['default_payment_status']] ? $old_default_reg_stati_conversions[$event_meta['default_payment_status']] : 'RNA';
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
@@ -302,7 +303,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'EVT_allow_multiple'=> 'Y' == $old_event['allow_multiple'],
 			'EVT_additional_limit'=> $old_event['additional_limit'],
 			'EVT_additional_attendee_reg_info' => $event_meta['additional_attendee_reg_info'],
-			'EVT_default_registration_status' => $default_payment_status,
+			'EVT_default_registration_status' => $default_reg_status,
 			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
 			'EVT_member_only'=>$old_event['member_only'],
 			'EVT_phone'=> $old_event['phone'],
