@@ -36,6 +36,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	//set in define_page_props()
 	protected $_admin_base_url;
+	protected $_admin_base_path;
 	protected $_admin_page_title;
 	protected $_labels;
 

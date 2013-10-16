@@ -45,6 +45,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _extend_page_config() {
+		$this->_admin_base_path = REGISTRATION_FORM_CAF_ADMIN;
 		$new_page_routes = array(
 			'question_groups' => '_question_groups_overview_list_table',
 			'add_question' => '_edit_question',

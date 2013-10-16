@@ -58,6 +58,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_admin_base_url = EVENTS_ADMIN_URL;
+		$this->_admin_base_path = EVENTS_ADMIN;
 		$this->_cpt_model_names = array(
 			'create_new' => 'EEM_Event',
 			'edit' => 'EEM_Event'

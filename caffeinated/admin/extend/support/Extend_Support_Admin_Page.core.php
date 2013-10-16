@@ -38,7 +38,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 
 
 	protected function _extend_page_config() {
-
+		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'support';
 		//new routes and new configs (or overrides )
 		$new_page_routes = array(
 			'faq' => '_faq'

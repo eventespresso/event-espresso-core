@@ -39,6 +39,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	protected function _init_page_props() {
 		$this->page_slug = EE_MAINTENANCE_PG_SLUG;
 		$this->page_label = __('Maintenance', 'event_espresso');
+		$this->_admin_base_url = EE_MAINTENANCE_ADMIN_URL;
+		$this->_admin_base_path = EE_MAINTENANCE_ADMIN;
+		$this->_admin_page_title = $this->page_label;
 	}
 
 
@@ -51,8 +54,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
-		$this->_admin_base_url = EE_MAINTENANCE_ADMIN_URL;
-		$this->_admin_page_title = $this->page_label;
+		
 	}
 
 
