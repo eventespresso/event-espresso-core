@@ -540,3 +540,17 @@ label.error  { display: block; color: #FE2A00 !important; }
 	padding: 31px;
 	display: none;
 }
+
+
+
+/**
+ * ee-help-tour stuff
+ **/
+.ee-abs-container {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.ee-help-tour-restart-buttons {
+	margin: auto;
+	text-align: center;
+}

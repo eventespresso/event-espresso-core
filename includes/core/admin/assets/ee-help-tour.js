@@ -19,4 +19,15 @@ jQuery(document).ready(function($) {
 			$('#' + v[0].id).joyride(v[0].options);
 		});
 	});
+
+	//add triggers for restarting the tour
+	$(document).on('click', '.trigger-ee-help-tour', function() {
+		var tourid = $(this).attr('id').replace('trigger-tour-', '');
+		var options;
+		$.each(EE_HELP_TOUR, function( i, v ) {
+			if ( v[0].id == tourid )
+				options = v[0].options;
+		});
+		$('#' + tourid).joyride(options);
+	});
 });

@@ -234,6 +234,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					)
 				),
 				'help_tour' => array(
+					'label' => __('Event Editor Tour', 'event_espresso'),
 					'id' => 'event-editor-joyride',
 					'stop_callback' => '_events_help_tour_steps',
 					//'options_callback' => '_events_help_tour_options'
