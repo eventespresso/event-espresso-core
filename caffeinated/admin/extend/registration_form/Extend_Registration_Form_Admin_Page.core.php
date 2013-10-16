@@ -31,12 +31,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	
 
 	public function __construct( $routing = TRUE ) {
-		parent::__construct( $routing );
 		define( 'REGISTRATION_FORM_CAF_ADMIN', EE_CORE_CAF_ADMIN_EXTEND . 'registration_form' . DS );
 		define( 'REGISTRATION_FORM_CAF_ASSETS_PATH', REGISTRATION_FORM_CAF_ADMIN . 'assets' . DS );		
 		define( 'REGISTRATION_FORM_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/assets/' );	
 		define( 'REGISTRATION_FORM_CAF_TEMPLATE_PATH', REGISTRATION_FORM_CAF_ADMIN . 'templates' . DS );	
 		define( 'REGISTRATION_FORM_CAF_TEMPLATE_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/templates/' );
+		parent::__construct( $routing );
 	}
 
 	

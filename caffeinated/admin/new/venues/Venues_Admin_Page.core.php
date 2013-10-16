@@ -65,7 +65,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$this->page_slug = EE_VENUES_PG_SLUG;
 		$this->_admin_base_url = EE_VENUES_ADMIN_URL;
-		$this->_admin_base_path = EE_VENUES_ADMIN;
+		$this->_admin_base_path = EE_CORE_CAF_ADMIN . 'new/venues';
 		$this->page_label = __('Event Venues', 'event_espresso');
 		$this->_cpt_model_names = array(
 			'create_new' => 'EEM_Venue',
