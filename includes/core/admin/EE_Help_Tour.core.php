@@ -119,6 +119,8 @@ abstract class EE_Help_Tour extends EE_Base {
 		$defaults = array(
 			'tipLocation' => 'bottom',         // 'top', 'bottom', 'right', 'left' in relation to parent
 		  	'nubPosition' => 'auto',           // override on a per tooltip bases. can be "auto", "right", "top", "bottom", "left"
+		  	'tipAdjustmentY' => 0, 			//allow for adjustment of tip
+		  	'tipAdjustmentX' => 0,			//allow for adjustment of tip
 		  	'scroll' => true, //whether to scrollTo the next step or not
 		  	'scrollSpeed' => 300,              // Page scrolling speed in ms
 		  	'timer' => 0,	                // 0 = off, all other numbers = time(ms) 
