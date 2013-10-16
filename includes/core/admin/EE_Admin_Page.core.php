@@ -1078,6 +1078,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 				}
 
 				$options['pauseAfter'] = $pauses;
+				//let's make sure the cookie is set for THIS tour only
+				$options['cookieName'] = $id;
 
 				$tours[] = array(
 					'label' => $label,
