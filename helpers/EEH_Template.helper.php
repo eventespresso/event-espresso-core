@@ -215,7 +215,7 @@ class EEH_Template {
 				foreach ( $stop['options'] as $option => $value ) {
 					$options .= $option . ':' . $value . ';';
 				}
-				$options = '"';
+				$options .= '"';
 			} else {
 				$options = '';
 			}
