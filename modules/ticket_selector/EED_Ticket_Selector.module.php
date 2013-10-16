@@ -229,7 +229,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		array  or FALSE
 	*/	
 	public function process_ticket_selections() {
-		
+		// check nonce
 		if ( !EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || !wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
 			$error_msg = __( 'We\'re sorry but your request failed to pass a security check.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -243,6 +243,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		//possibly wrappe din a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
 		EE_Registry::instance()->SSN->clear_session();
+		//d( EE_Registry::instance()->SSN );
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// do we have an event id?
@@ -290,16 +291,16 @@ class EED_Ticket_Selector extends  EED_Module {
 					} 
 				}
 				
-//$cart = EE_Cart::instance()->whats_in_the_cart();
-//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//die();
-				if ( $tckts_slctd ) {				
+//				d( EE_Registry::instance()->CART );
+
+				if ( $tckts_slctd ) {
 					if ( $success ) {
 						if ( $return ) {
 							return TRUE;
 						} else {
-							$registration_url = add_query_arg( array( 'ee'=>'register', 'step' => 1 ), get_permalink( $this->EE->CFG->core->reg_page_id ));
-							wp_safe_redirect($registration_url);
+							EE_Registry::instance()->SSN->set_session_data( EE_Registry::instance()->CART );
+							EE_Registry::instance()->SSN->update_espresso_session();
+							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( $this->EE->CFG->core->reg_page_id )));
 							exit();
 						}
 					} else {
@@ -321,7 +322,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				exit();
 			} elseif ( isset( $event_to_add['id'] )) {
 				EE_Error::get_notices( FALSE, TRUE );
-				wp_safe_redirect( get_permalink( $event_to_add['id'] ) );
+				wp_safe_redirect( get_permalink( $event_to_add['id'] ));
 				exit(); 
 			} else {
 				echo EE_Error::get_notices();			
