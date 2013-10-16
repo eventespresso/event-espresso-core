@@ -22,6 +22,8 @@ jQuery(document).ready(function($) {
 
 	//add triggers for restarting the tour
 	$(document).on('click', '.trigger-ee-help-tour', function() {
+		$('#screen-meta').slideToggle();
+		$('#screen-options-link-wrap').css('visibility', 'visible');
 		var tourid = $(this).attr('id').replace('trigger-tour-', '');
 		var options;
 		$.each(EE_HELP_TOUR, function( i, v ) {
