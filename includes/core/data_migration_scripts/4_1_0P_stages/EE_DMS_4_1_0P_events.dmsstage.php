@@ -235,6 +235,9 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		if($old_event['alt_email']){
 			add_post_meta($post_id,'alt_email',$old_event['alt_email']);
 		}
+		if($old_event['recurrence_id']){
+			add_post_meta($post_id,'recurrence_id',$old_event['recurrence_id']);
+		}
 	}
 	private function _insert_cpt($old_event){
 		global $wpdb;
