@@ -47,6 +47,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 
+		//temporarily unset decaf help_tours to avoid errors
+		unset( $this->_page_config['default_event_settings']['help_tour'] );
+		unset( $this->_page_config['create_new']['help_tour']);
+		unset( $this->_page_config['default']['help_tour'] );
+		unset( $this->_page_config['category_list']['help_tour'] );
+
 		//add filters and actions
 		//modifying _views
 		add_filter('FHEE_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
