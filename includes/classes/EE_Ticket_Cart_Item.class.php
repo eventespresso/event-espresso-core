@@ -43,6 +43,14 @@ class EE_Ticket_Cart_Item extends EE_Cart_Item {
 	}
 	
 	/**
+	 * 	returns the EE_Ticket object
+	 * 	@access 	public
+	 *	@return EE_Ticket
+	 */
+	public function ticket() {
+		return $this->ticket;
+	}	
+	/**
 	 * 	returns the ID
 	 * 	@access 	public
 	 *	@return string
