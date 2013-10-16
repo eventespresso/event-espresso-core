@@ -235,10 +235,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					)
 				),
 				'help_tour' => array(
-					'label' => __('Event Editor Tour', 'event_espresso'),
-					'id' => 'event-editor-joyride',
-					'stop_callback' => '_events_help_tour_steps',
-					//'options_callback' => '_events_help_tour_options'
+					'Event_Editor_Help_Tour'
 					),
 			),
 			'edit' => array(
@@ -322,9 +319,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _events_help_tour_steps() {
+		require_once( EVENTS_TEMPLATE_PATH . 'decaf_ee_editor_steps.template.php' );
 		return array(
 			0 => array(
-				'content' => '<div style="width: 400px; margin: auto; padding: 10px"><iframe width="250" height="140" src="//www.youtube.com/embed/BQ4yd2W50No" frameborder="0" allowfullscreen></iframe></div>'
+				'content' => '<h3>Welcome to the Event Espresso Event Editor!</h3>'
 				),
 			1 => array(
 				'id' => 'title',
