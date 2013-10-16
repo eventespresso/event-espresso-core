@@ -587,9 +587,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, '_add_screen_options_' . $this->_current_view ) )
 			call_user_func( array( $this, '_add_screen_options_' . $this->_current_view ) );
 
-		//add help tab(s) - set via page_config.
-		$this->_add_help_tabs();
+
+		//add help tab(s) and tour- set via page_config.
 		$this->_add_help_tour();
+		$this->_add_help_tabs();
 
 
 		//add feature_pointers - global, page child class, and view specific
