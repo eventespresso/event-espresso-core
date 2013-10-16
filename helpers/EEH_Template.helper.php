@@ -182,4 +182,50 @@ class EEH_Template {
 
 
 
+	/**
+	 * This helper generates the html structure for the jquery joyride plugin with the given params.
+	 * @link http://zurb.com/playground/jquery-joyride-feature-tour-plugin
+	 * @see EE_Admin_Page->_stop_callback() for the construct expected for the $stops param.
+	 * @param  string $id    the container that contains all the elements for the joyride process
+	 * @param  array $stops  a formatted array that contains all the stops in order and their given setup instructions
+	 * @return string         html
+	 */
+	public static function help_tour_stops_generator( $id, $stops ) {
+		$content = '<ol style="display:none" id="' . $id . '">';
+
+		foreach ( $stops as $stop ) {
+			$data_id = !empty( $stop['id'] ) ? ' data-id="' . $stop['id'] . '"' : '';
+			$data_class = empty( $data_id ) && !empty( $stop['class'] ) ? ' data-class="' . $stop['class'] . '"' : '';
+
+			//if container is set to modal then let's make sure we set the options accordingly
+			if ( empty( $data_id ) && empty( $data_class ) ) {
+				$options['modal'] = true;
+				$options['expose'] = true;
+			}
+
+			$custom_class = !empty( $stop['custom_class'] ) ? ' class="' . $stop['custom_class'] . '"' : '';
+			$button_text = !empty( $stop['button_text'] ) ? ' data-button="' . $stop['button_text'] . '"' : '';
+			$innercontent = isset($stop['content']) ? $stop['content'] : '';
+
+			//options
+			if ( isset( $stop['options'] ) && is_array( $stop['options'] ) ) {
+				$options = ' data-options="';
+				foreach ( $stop['options'] as $option => $value ) {
+					$options .= $option . ':' . $value . ';';
+				}
+				$options = '"';
+			} else {
+				$options = '';
+			}
+
+			//let's put all together
+			$content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $innercontent . '</li>';
+		}
+
+		$content .= '</ol>';
+		return $content;
+	}
+
+
+
 } //end EEH_Template class

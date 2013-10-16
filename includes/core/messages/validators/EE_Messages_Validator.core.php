@@ -210,7 +210,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 			if ( class_exists( $classname ) ) {
 				$a = new ReflectionClass( $classname );
 				$obj = $a->newInstance();
-				$codes_from_objs[$group] = array_keys($obj->get_shortcodes());
+				$codes_from_objs[$group] = $obj->get_shortcodes();
 			}
 		}
 
@@ -248,6 +248,17 @@ abstract class EE_Messages_Validator extends EE_Base {
 			//hey! don't forget to include the type if present!
 			$this->_validators[$field]['type'] = isset( $config['type'] ) ? $config['type'] : NULL;
 		}
+	}
+
+
+	/**
+	 * This just returns the validators property that contains information about the various shortcodes and their availablility with each field
+	 *
+	 * 
+	 * @return array
+	 */
+	public function get_validators() {
+		return $this->_validators;
 	}
 
 
@@ -302,8 +313,9 @@ abstract class EE_Messages_Validator extends EE_Base {
 				$invalid_shortcodes = $this->_invalid_shortcodes( $value, $this->_validators[$field]['shortcodes'] );
 				//if true then that means there is a returned error message that we'll need to add to the _errors array for this field.
 				if ( $invalid_shortcodes ) {
+					$v_s = array_keys($this->_validators[$field]['shortcodes']);
 					$err_msg = sprintf( __('<p>The following shortcodes were found in the "%s" field that ARE not valid: %s</p>', 'event_espresso'), '<strong>' . $field_label . '</strong>', $invalid_shortcodes );
-					$err_msg .= sprintf( __('<p>Valid shortcodes for this field are: %s', 'event_espresso'), implode(', ', $this->_validators[$field]['shortcodes'] ) );
+					$err_msg .= sprintf( __('<p>Valid shortcodes for this field are: %s', 'event_espresso'), implode(', ', $v_s ) );
 				}
 			}
 
@@ -361,7 +373,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$incoming_shortcodes = (array) $matches[0];
 
 		//get a diff of the shortcodes in the string vs the valid shortcodes
-		$diff = array_diff( $incoming_shortcodes, $valid_shortcodes );
+		$diff = array_diff( $incoming_shortcodes, array_keys($valid_shortcodes) );
 
 		if ( empty( $diff ) ) return FALSE; //there is no diff, we have no invalid shortcodes, so return
 

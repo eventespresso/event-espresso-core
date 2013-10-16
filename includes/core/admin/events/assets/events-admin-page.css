@@ -223,19 +223,19 @@
    	text-align: center;
    }
 
-.inactive {
+.ee-status.inactive {
 	background-color: #E44064;
 }
 
-.active {
+.ee-status.active {
 	background-color: #70CC50;		/*#87c442*/
 }
 
-.upcoming {
+.ee-status.upcoming {
 	background-color: #007BAE;  /*#e5ff00*/
 }
 
-.expired {
+.ee-status.expired {
 	background-color: #A39D9C;
 }
 

@@ -45,14 +45,14 @@ class EE_messages {
 		
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
-		$this->_get_active_messengers();
-		$this->_get_installed_message_types();	
+		$this->_set_active_messengers_and_message_types();
+		$this->_set_installed_message_types();	
 	}
 
 	/**
 	 * get active messengers from db and instantiate them.
 	 */
-	private function _get_active_messengers() {
+	private function _set_active_messengers_and_message_types() {
 		// todo: right now this just gets active global messengers: at some point we'll have to get what the active messengers are for the event.
 		$_actives = get_option('ee_active_messengers');
 		$actives = is_array($_actives) ? array_keys($_actives) : $_actives;
@@ -73,11 +73,16 @@ class EE_messages {
 		}
 	}
 
+
+
+
+
+
 	/**
 	 * get active types from db and load the related files.  They don't get instantiated till $this->send_message.
 	 * 
 	 */
-	private function _get_installed_message_types() {
+	private function _set_installed_message_types() {
 		//get installed
 		$message_types = $this->get_installed( 'message_types' );
 
@@ -359,7 +364,7 @@ class EE_messages {
 	}
 
 	/**
-	 * gets an array of installed messengers and message objects.
+	 * gets an array of installed messengers and message types objects.
 	 * 
 	 * @access public
 	 * @param string $type we can indicate just returning installed message types or messengers (or both) via this parameter.
@@ -409,6 +414,25 @@ class EE_messages {
 
 	public function get_active_messengers() {
 		return $this->_active_messengers;
+	}
+
+
+	/**
+	 * This does NOT return the _active_message_types property but simply returns an array of active message types from that property.  (The _active_message_types property is indexed by messenger and active message_types per messenger).
+	 *
+	 * @access public
+	 * @return array array of message_type references
+	 */
+	public function get_active_message_types() {
+		$message_types = array();
+		foreach ( $this->_active_message_types as $messenger => $mtvalues ) {
+			foreach ( $mtvalues as $mt => $config ) {
+				if ( !in_array( $mt, $message_types ) )
+					$message_types[] = $mt;
+			}
+		}
+
+		return $message_types;
 	}
 
 	public function get_installed_message_types() {

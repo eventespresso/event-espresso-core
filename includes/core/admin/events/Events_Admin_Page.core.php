@@ -232,7 +232,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Ticket Options', 'event_espresso'),
 						'callback' => 'ticket_options_info_help_tab'
 					)
-				)
+				),
+				'help_tour' => array(
+					'label' => __('Event Editor Tour', 'event_espresso'),
+					'id' => 'event-editor-joyride',
+					'stop_callback' => '_events_help_tour_steps',
+					//'options_callback' => '_events_help_tour_options'
+					),
 			),
 			'edit' => array(
 				'nav' => array(
@@ -311,6 +317,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				),
 		);
+	}
+
+
+	protected function _events_help_tour_steps() {
+		return array(
+			0 => array(
+				'content' => '<div style="width: 400px; margin: auto; padding: 10px"><iframe width="250" height="140" src="//www.youtube.com/embed/BQ4yd2W50No" frameborder="0" allowfullscreen></iframe></div>'
+				),
+			1 => array(
+				'id' => 'title',
+				'content' => '<p>Enter the event title here.</p>'
+				)
+			);
 	}
 
 	protected function _add_screen_options() {
@@ -719,6 +738,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
+			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
+			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
+				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
+				$DTT = EEH_DTT_helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
+				$DTT->save();
+			}
+
 			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtt = $DTT;
 
@@ -808,6 +834,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			//update ticket.
 			$TKT->save();
+
+			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
+			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
+				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
+				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
+				$TKT->save();
+			}
+
+			
 			$saved_tickets[$TKT->ID()] = $TKT;
 
 			//add prices to ticket
