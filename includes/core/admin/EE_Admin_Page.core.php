@@ -904,7 +904,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			}
 
 			// let's see if there is a help_sidebar set for the current route and we'll set that up for usage as well.
-			if ( is_array( $config) && isset( $config['help_sidebar'] ) ) {
+			if ( is_array( $config ) && isset( $config['help_sidebar'] ) ) {
 				//check that the callback given is valid
 				if ( !method_exists($this, $config['help_sidebar'] ) )
 					throw new EE_Error( sprintf( __('The _page_config array has a callback set for the "help_sidebar" option.  However the callback given (%s) is not a valid callback.  Doublecheck the spelling and make sure this method exists for the class %s', 'event_espresso'), $config['help_sidebar'], get_class($this) ) );
@@ -914,7 +914,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 				$content .= $tour_buttons; //add help tour buttons.
 
 				//do we have any help tours setup?  Cause if we do we want to add the buttons
-
 				$this->_current_screen->set_help_sidebar($content);
 			}
 
@@ -922,6 +921,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( !isset( $config['help_sidebar'] ) && !empty( $tour_buttons ) ) {
 				$this->_current_screen->set_help_sidebar($tour_buttons);
 			}
+
+			//handle if no help_tabs are set so the sidebar will still show for the help tour buttons
+			if ( !isset( $config['help_tabs'] ) && !empty($tour_buttons) ) {
+				$_ht['id'] = $this->page_slug;
+				$_ht['title'] = __('Help Tours', 'event_espresso');
+				$_ht['content'] = '<p>' . __('The buttons to the right allow you to start/restart any help tours available for this page', 'event_espresso') . '</p>';
+				$this->_current_screen->add_help_tab($_ht);
+				}/**/
 			
 
 			if ( !isset( $config['help_tabs'] ) ) return; //no help tabs for this route
