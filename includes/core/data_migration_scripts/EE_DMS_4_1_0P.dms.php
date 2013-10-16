@@ -1057,7 +1057,29 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		}
 		return $state;
 	}
-	
+	/**
+	 * Fixes times like "5:00 PM" into the expected 24-hour format "17:00".
+	 * THis is actually just copied from the 3.1 JSON API because it needed to do the exact same thing
+	 * @param type $timeString
+	 * @return string in the php datetime format: "G:i" (24-hour format hour with leading zeros, a colon, and minutes with leading zeros)
+	 */
+	public function convertTimeFromAMPM($timeString){
+		$matches = array();
+		preg_match("~(\\d*):(\\d*)~",$timeString,$matches);
+		if( ! $matches || count($matches)<3){
+			$hour = '00';
+			$minutes = '00';
+		}else{
+			$hour = intval($matches[1]);
+			$minutes = $matches[2];
+		}
+		if(strpos($timeString, 'PM') || strpos($timeString, 'pm')){
+			$hour = intval($hour) + 12;
+		}
+		$hour = str_pad( "$hour", 2, '0',STR_PAD_LEFT);
+		$minutes = str_pad( "$minutes", 2, '0',STR_PAD_LEFT);
+		return "$hour:$minutes";
+	}
 	
 	
 	
