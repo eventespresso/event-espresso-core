@@ -205,6 +205,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 10
 				),
 				'list_table' => 'Venues_Admin_List_Table',
+				'help_tour' => array( 'Venue_Overview_Help_Tour' ),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 			),
 			'create_new' => array(
@@ -286,7 +287,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	//none of the below group are currently used for Event Venues
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}
 	public function admin_notices() {}

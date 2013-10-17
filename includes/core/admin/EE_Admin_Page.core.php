@@ -984,13 +984,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( isset( $config['help_tour'] ) ) {
 
 				foreach( $config['help_tour'] as $tour ) {
-					$file_path = $this->_admin_base_path . 'help_tours/' . $tour . '.class.php';
+					$file_path = $this->_get_dir() . '/help_tours/' . $tour . '.class.php';
 					//let's see if we can get that file... if not its possible this is a decaf route not set in caffienated so lets try and get the caffeinated equivalent
 					$file_path = !is_readable($file_path) ? EE_CORE_ADMIN . basename($this->_get_dir()) . '/help_tours/' . $tour . '.class.php' : $file_path;
 
 					//if file is STILL not readable then let's do a EE_Error so its more graceful than a fatal error.
-					if ( !is_readable($file_path ) ) {
+					if ( !is_readable($file_path) ) {
 						EE_Error::add_error( sprintf( __('The file path given for the help tour (%s) is not a valid path.  Please check that the string you set for the help tour on this route (%s) is the correct spelling', 'event_espresso'), $file_path, $tour ), __FILE__, __FUNCTION__, __LINE__ );
+						return;
 					}
 
 					require_once $file_path;
