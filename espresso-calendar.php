@@ -270,7 +270,6 @@ class EE_Calendar {
 				ob_start();?>
 				<!-- select box filters -->
 				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
-				<div id="widget-filter-button"></div>
 				<div class="ee-filter-form">
 				<?php if(!empty($temp_cats)){?>
 					<select id="ee-category-submit" class="ee-category-select" name="event_category_id">
@@ -303,13 +302,6 @@ class EE_Calendar {
 				
 				</div>
 				</form>
-				<script>
-				jQuery(function ($) {
-						$("#widget-filter-button").click(function() {
-							$( "#ee-category-submit" ).toggleClass( "show" );
-
-});					});
-				</script>
 				
 				<?php
 				$output_filter = ob_get_contents();
