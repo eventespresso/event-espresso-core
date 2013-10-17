@@ -29,10 +29,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Venue_Overview_Help_Tour extends EE_Help_Tour {
 
-	public function __construct() {
+	protected function _set_tour_properties() {
 		$this->_label = __('Venue Overview Tour', 'event_espresso');
 		$this->_slug = 'venue-overview-joyride';
-		parent::__construct();
 	}
 
 

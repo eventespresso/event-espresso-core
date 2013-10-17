@@ -29,10 +29,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Event_Editor_Help_Tour extends EE_Help_Tour {
 
-	public function __construct() {
+	protected function _set_tour_properties() {
 		$this->_label = __('Event Editor Tour', 'event_espresso');
 		$this->_slug = 'event-editor-joyride';
-		parent::__construct();
 	}
 
 

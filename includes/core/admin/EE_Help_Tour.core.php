@@ -85,6 +85,16 @@ abstract class EE_Help_Tour extends EE_Base {
 
 
 	/**
+	 * holds anything found in the $_REQUEST object (however we override any _gets with _post data).
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $_req_data = array();
+
+
+
+	/**
 	 * _constructor
 	 * initialized the tour object and sets up important properties required to setup the tour.
 	 *
@@ -92,9 +102,22 @@ abstract class EE_Help_Tour extends EE_Base {
 	 * @return void
 	 */
 	public function __construct() {
+		$this->_req_data = array_merge( $_GET, $_POST );
+		$this->_set_tour_properties();
 		$this->_set_tour_stops();
 		$this->_set_tour_options();
 	}
+
+
+
+	/**
+	 * required method that has the sole purpose of setting up the tour $_label and $_slug properties
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_tour_properties();
 
 
 

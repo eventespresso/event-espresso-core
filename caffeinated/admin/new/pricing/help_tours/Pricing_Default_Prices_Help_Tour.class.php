@@ -29,10 +29,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour {
 
-	public function __construct() {
+	protected function _set_tour_properties() {
 		$this->_label = __('Default Prices Tour', 'event_espresso');
 		$this->_slug = 'default-prices-joyride';
-		parent::__construct();
 	}
 
 

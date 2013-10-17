@@ -29,10 +29,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 
-	public function __construct() {
+	protected function _set_tour_properties() {
 		$this->_label = __('Default Settings Tour', 'event_espresso');
 		$this->_slug = 'event-default-settings-caf-joyride';
-		parent::__construct();
 	}
 
 
