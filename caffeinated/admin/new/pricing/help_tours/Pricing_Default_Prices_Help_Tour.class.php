@@ -22,7 +22,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  *
  * @package		Pricing_Default_Prices_Help_Tour
- * @subpackage	caffeinated/admin/new/pricing/Pricing_Default_Prices_Help_Tour.core.php
+ * @subpackage	caffeinated/admin/new/pricing/help_tours/Pricing_Default_Prices_Help_Tour.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -122,27 +122,27 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _name_column_stop() {
-		return '<p>' . __('about the Price name column', 'event_espresso');
+		return '<p>' . __('about the Price name column', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _type_column_stop() {
-		return '<p>' . __('about the Price type column', 'event_espresso');
+		return '<p>' . __('about the Price type column', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _description_column_stop() {
-		return '<p>' . __('about the Price description column', 'event_espresso');
+		return '<p>' . __('about the Price description column', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _amount_column_stop() {
-		return '<p>' . __('about the Price amount column', 'event_espresso');
+		return '<p>' . __('about the Price amount column', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _tbody_stop() {
-		return '<p>' . __('about the price table in general including things like how you can sort etc.', 'event_espresso');
+		return '<p>' . __('about the price table in general including things like how you can sort etc.', 'event_espresso') . '</p>';
 	}
 
 	protected function _end() {

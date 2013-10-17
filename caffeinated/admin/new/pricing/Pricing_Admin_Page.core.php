@@ -200,6 +200,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 30
 						),
 					'list_table' => 'Price_Types_List_Table',
+					'help_tour' => array( 'Price_Types_Default_Help_Tour' ),
 					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
 				),
 			'add_new_price_type' => array(
