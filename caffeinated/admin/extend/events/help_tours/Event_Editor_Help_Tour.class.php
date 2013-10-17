@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Event_Editor_Help_Tour
  *
- * This is the help tour object for the decaf Event Editor
+ * This is the help tour object for the caffeinated Event Editor
  *
  *
  * @package		Event_Editor_Help_Tour
- * @subpackage	includes/core/admin/Event_Editor_Help_Tour.core.php
+ * @subpackage	caffeinated/admin/extend/events/help_tours/Event_Editor_Help_Tour.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -31,7 +31,7 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 
 	public function __construct() {
 		$this->_label = __('Event Editor Tour', 'event_espresso');
-		$this->_slug = 'event-editor-joyride';
+		$this->_slug = 'event-editor-caf-joyride';
 		parent::__construct();
 	}
 
