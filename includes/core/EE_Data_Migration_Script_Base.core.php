@@ -181,11 +181,14 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$this->_maybe_do_schema_changes(true);
 
 		$num_records_actually_migrated =0;
+		$records_migrated_per_stage = array();
 		//get the next stage that isn't complete
 		foreach($this->stages() as $stage){
 			if( $stage->get_status() == EE_Data_Migration_Manager::status_continue){
 				try{
-					$num_records_actually_migrated += $stage->migration_step($num_records_to_migrate_limit);
+					$records_migrated_during_stage = $stage->migration_step($num_records_to_migrate_limit);
+					$num_records_actually_migrated += $records_migrated_during_stage;
+					$records_migrated_per_stage[$stage->pretty_name()] = $records_migrated_during_stage;
 				}catch(Exception $e){
 					//yes if we catch an exception here, we consider that migration stage borked.
 					$stage->set_status(EE_Data_Migration_Manager::status_fatal_error);
@@ -213,10 +216,21 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			//first double-cehckw ehaven't already done this
 			$this->_maybe_do_schema_changes(false);
 		}else{
-			//update the feedback message
-			$this->_feedback_message = sprintf(__("Migrated %d records successfully during %s", "event_espresso"),$num_records_actually_migrated,$stage->pretty_name());
+			$this->_update_feedback_message($records_migrated_per_stage);
 		}
 		return $num_records_actually_migrated;
+	}
+	
+	/**
+	 * Updates teh feedback message according to what was done during this migration stage.
+	 * @param array $records_migrated_per_stage KEYS are pretty names for each stage; values are the count of records migrated from that stage
+	 * @return void
+	 */
+	private function _update_feedback_message($records_migrated_per_stage){
+		$this->_feedback_message = '';
+		foreach($records_migrated_per_stage as $migration_stage_name => $num_records_migrated){
+			$this->_feedback_message .= sprintf(__("Migrated %d records successfully during %s", "event_espresso"),$num_records_migrated,$migration_stage_name) . "<br>";
+		}
 	}
 	/**
 	 * Calls either schema_changes_before_migration() (if $before==true) or schema_changes_after_migration
@@ -282,7 +296,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return EE_Data_Migration_Script_Stage[]
 	 */
 	protected function stages(){
-		$stages = apply_filters('FHEE__EE_Data_Migration_Script_Base__stages',$this->_migration_stages);
+		$stages = apply_filters('FHEE__'.get_class($this).'__stages',$this->_migration_stages);
 		ksort($stages);
 		return $stages;
 	}
