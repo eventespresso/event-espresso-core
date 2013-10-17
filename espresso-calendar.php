@@ -258,7 +258,7 @@ class EE_Calendar {
 		// set default attributes
 		$atts = shortcode_atts( $defaults, $atts );
 		
-		
+		// Query for Select box filters
 		$c_sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
 		$temp_cats = $wpdb->get_results($c_sql);
 		
@@ -272,37 +272,28 @@ class EE_Calendar {
 				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
 				<div class="ee-filter-form">
 				<?php if(!empty($temp_cats)){?>
-					<select id="ee-category-submit" class="ee-category-select" name="event_category_id">
-						<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
-						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?>
-						</option>
-						<?php
-							foreach($temp_cats as $cat) {
-								
-								echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
-							}
-						?>
+					<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
+					<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
+					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+					<?php
+						foreach($temp_cats as $cat) {
+						echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
+							}?>
 					</select>
 				<?php }?>
 				
 				<?php if(!empty($temp_venue)){?>
-				
 					<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
-						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?>
-						</option>
-						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?>
-						</option>
-						<?php
-							foreach($temp_venue as $venue) {
-								echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
-							}
-						?>
+					<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
+					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+					<?php
+						foreach($temp_venue as $venue) {
+						echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
+						}?>
 					</select>
 				<?php }?>
-				
 				</div>
 				</form>
-				
 				<?php
 				$output_filter = ob_get_contents();
 				ob_end_clean();
@@ -321,53 +312,53 @@ class EE_Calendar {
 		}
 		// i18n some strings
 		$ee_calendar_js_options['monthNames'] = array( 
-			__('January', 'event_espresso'),
-			__('February', 'event_espresso'),
-			__('March', 'event_espresso'),
-			__('April', 'event_espresso'),
-			__('May', 'event_espresso'),
-			__('June', 'event_espresso'),
-			__('July', 'event_espresso'),
-			__('August', 'event_espresso'),
-			__('September', 'event_espresso'),
-			__('October', 'event_espresso'),
-			__('November', 'event_espresso'),
-			__('December', 'event_espresso')
+			__('January', 		'event_espresso'),
+			__('February', 		'event_espresso'),
+			__('March', 		'event_espresso'),
+			__('April', 		'event_espresso'),
+			__('May', 			'event_espresso'),
+			__('June', 			'event_espresso'),
+			__('July', 			'event_espresso'),
+			__('August', 		'event_espresso'),
+			__('September', 	'event_espresso'),
+			__('October', 		'event_espresso'),
+			__('November', 		'event_espresso'),
+			__('December', 		'event_espresso')
 		);
 			
 		$ee_calendar_js_options['monthNamesShort'] =array( 
-				__('Jan', 'event_espresso'),
-				__('Feb', 'event_espresso'),
-				__('Mar', 'event_espresso'),
-				__('Apr', 'event_espresso'),
-				__('May', 'event_espresso'),
-				__('Jun', 'event_espresso'),
-				__('Jul', 'event_espresso'),
-				 __('Aug', 'event_espresso'),
-				__('Sep', 'event_espresso'),
-				__('Oct', 'event_espresso'),
-				__('Nov', 'event_espresso'),
-				__('Dec', 'event_espresso')
+				__('Jan', 		'event_espresso'),
+				__('Feb', 		'event_espresso'),
+				__('Mar', 		'event_espresso'),
+				__('Apr', 		'event_espresso'),
+				__('May', 		'event_espresso'),
+				__('Jun', 		'event_espresso'),
+				__('Jul', 		'event_espresso'),
+				__('Aug', 		'event_espresso'),
+				__('Sep', 		'event_espresso'),
+				__('Oct', 		'event_espresso'),
+				__('Nov', 		'event_espresso'),
+				__('Dec', 		'event_espresso')
 			);
 				
 		$ee_calendar_js_options['dayNames'] = array( 
-				__('Sunday', 'event_espresso'),
-				__('Monday', 'event_espresso'),
-				__('Tuesday', 'event_espresso'),
+				__('Sunday', 	'event_espresso'),
+				__('Monday', 	'event_espresso'),
+				__('Tuesday', 	'event_espresso'),
 				__('Wednesday', 'event_espresso'),
-				__('Thursday', 'event_espresso'),
-				__('Friday', 'event_espresso'),
-				__('Saturday', 'event_espresso')
+				__('Thursday', 	'event_espresso'),
+				__('Friday', 	'event_espresso'),
+				__('Saturday', 	'event_espresso')
 			);
 			
 		$ee_calendar_js_options['dayNamesShort'] = array( 
-				__('Sun', 'event_espresso'),
-				__('Mon', 'event_espresso'),
-				__('Tue', 'event_espresso'),
-				__('Wed', 'event_espresso'),
-				__('Thu', 'event_espresso'),
-				__('Fri', 'event_espresso'),
-				__('Sat', 'event_espresso')
+				__('Sun', 		'event_espresso'),
+				__('Mon', 		'event_espresso'),
+				__('Tue', 		'event_espresso'),
+				__('Wed', 		'event_espresso'),
+				__('Thu', 		'event_espresso'),
+				__('Fri', 		'event_espresso'),
+				__('Sat', 		'event_espresso')
 			);
 			
 		$ee_calendar_js_options['theme'] = ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
