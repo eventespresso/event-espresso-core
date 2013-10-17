@@ -13,8 +13,11 @@ jQuery(document).ready(function($) {
 
 		v = typeof(EE_HELP_TOUR.tours[current_tour]) !== 'undefined' ? EE_HELP_TOUR.tours[current_tour] : null;
 
-		if ( v === null )
+		if ( v === null ) {
+			//rewind current_tour
+			current_tour--;
 			return;
+		}
 		/**
 		 * verify callbacks before sending to joyride.
 		 */
