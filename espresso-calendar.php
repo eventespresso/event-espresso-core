@@ -221,6 +221,7 @@ class EE_Calendar {
 				if ( $show_tooltips ) {
 					wp_enqueue_style('qtip');
 					wp_enqueue_script('jquery-qtip');
+					wp_enqueue_script('jquery');
 				}
 				wp_enqueue_style('fullcalendar');
 				wp_enqueue_style('espresso_calendar');
@@ -267,12 +268,15 @@ class EE_Calendar {
 		if (isset($this->_calendar_options['enable_calendar_filters']) && $this->_calendar_options['enable_calendar_filters'] == TRUE ){
 			if (!empty($temp_venue) || !empty($temp_cats)){
 				ob_start();?>
-				<div class="ee-filter-form">
+				<!-- select box filters -->
 				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+				<div id="widget-filter-button"></div>
+				<div class="ee-filter-form">
 				<?php if(!empty($temp_cats)){?>
-					<select class="submit-this ee-category-select" name="event_category_id">
-						<option class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
-						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+					<select id="ee-category-submit" class="ee-category-select" name="event_category_id">
+						<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
+						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?>
+						</option>
 						<?php
 							foreach($temp_cats as $cat) {
 								
@@ -283,9 +287,12 @@ class EE_Calendar {
 				<?php }?>
 				
 				<?php if(!empty($temp_venue)){?>
-					<select class="submit-this ee-venue-select" name="event_venue_id">
-						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
-						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+				
+					<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
+						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?>
+						</option>
+						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?>
+						</option>
 						<?php
 							foreach($temp_venue as $venue) {
 								echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
@@ -293,15 +300,22 @@ class EE_Calendar {
 						?>
 					</select>
 				<?php }?>
-				</form>
+				
 				</div>
+				</form>
+				<script>
+				jQuery(function ($) {
+						$("#widget-filter-button").click(function() {
+							$( "#ee-category-submit" ).toggleClass( "show" );
+
+});					});
+				</script>
 				
 				<?php
 				$output_filter = ob_get_contents();
 				ob_end_clean();
 			}
 		}
-
 
 		// grab some request vars
 		$this->_event_category_id = $atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
@@ -617,10 +631,6 @@ class EE_Calendar {
 				}
 			}
 
-
-
-
-
 			//Custom fields:
 			//These can be used to perform special functions in your display.
 			//This decalares the category ID as the CSS class name
@@ -709,10 +719,7 @@ class EE_Calendar {
 		die();
 
 	}
-
-
-
-
+	
 	/**
 	 * 	widget_init
 	 *
@@ -728,9 +735,6 @@ class EE_Calendar {
 			register_widget('Espresso_Calendar_Widget'); 
 		}
 	}
-
-
-
 
 	/**
 	 *		@ override magic methods
