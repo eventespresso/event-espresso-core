@@ -301,6 +301,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
+				'help_tour' => array( 'Registration_View_Help_Tour' ),
 				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 				
