@@ -29,10 +29,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Registration_Overview_Help_Tour extends EE_Help_Tour {
 
-	public function __construct() {
+	protected function _set_tour_properties() {
 		$this->_label = __('Reg Overview Tour', 'event_espresso');
-		$this->_slug = 'registration-overview-joyride';
-		parent::__construct();
+		if ( isset( $this->_req_data['event_id'] ) )
+			$this->_slug = 'registration-per-event-overview-joyride';
+		else
+			$this->_slug = 'registration-overview-joyride';
 	}
 
 
@@ -125,6 +127,22 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			100 => array(
+				'id' => 'TXN_total',
+				'content' => $this->_txn_total_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20
+					)
+				),
+			110 => array(
+				'id' => 'TXN_paid',
+				'content' => $this->_txn_paid_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20
+					)
+				),
+			120 => array(
 				'id' => 'actions',
 				'content' => $this->_actions_stop(),
 				'options' => array(
@@ -133,15 +151,22 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => -10,
 					)
 				),
-			110 => array(
+			130 => array(
 				'class' => 'ee-list-table-legend-container',
 				'content' => $this->_legend_stop(),
 				'options' => array(
 					'tipLocation' => 'right'
 					)
 				),
-			
-			120 => array(
+			140 => array(
+				'id' => 'registrations-csv-report',
+				'content' => $this->_reg_csv_button_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -40
+					)
+				),
+			150 => array(
 				'id' => 'contextual-help-link',
 				'content' => $this->_end(),
 				'button_text' => __('End Tour', 'event_espresso'),
@@ -157,7 +182,11 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Welcome to the Registration overview page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction to the registration overview page', 'event_espresso') . '</p>';
+		if ( isset( $this->_req_data['event_id'] ) ) {
+			$content .= '<p>' . __('An introduction to the registration overview page for a single event. This view is pretty much the same as the default overview registration page except you are only seeing registrations for a specific event.  There are also some changes to the available columns in this view.', 'event_espresso') . '</p>';
+		} else {
+			$content .= '<p>' . __('An introduction to the registration overview page. This is the default view for the registration overview page ', 'event_espresso') . '</p>';
+		}
 		return $content;
 	}
 
@@ -209,10 +238,22 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 		return '<p>' . __('about the reg status column', 'event_espresso') . '</p>';
 	}
 
+	protected function _txn_total_stop() {
+		return '<p>' . __('about the txn total column', 'event_espresso') . '</p>';
+	}
+
+	protected function _txn_paid_stop() {
+		return '<p>' . __('about the txn paid column', 'event_espresso') . '</p>';
+	}
+
 	protected function _actions_stop() {
 		return '<p>' . __('about the actions column', 'event_espresso') . '</p>';
 	}
 
+
+	protected function _reg_csv_button_stop() {
+		return '<p>' . __('about the registration csv button', 'event_espresso') . '</p>';
+	}
 
 	protected function _legend_stop() {
 		return '<p>' . __('This is the legend that describes the actions available in the Actions column.', 'event_espresso') . '</p>';
