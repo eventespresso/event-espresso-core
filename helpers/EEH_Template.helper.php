@@ -144,7 +144,7 @@ class EEH_Template {
 	 * @return string        the html output for the button
 	 */
 	public static function get_button_or_link( $url, $label, $class = 'button-primary' ) {
-		$button = '<a href="' . $url . '" class="' . $class . '">' . $label . '</a>';
+		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '">' . $label . '</a>';
 		return $button;
 	}
 
