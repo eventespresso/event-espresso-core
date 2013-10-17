@@ -286,7 +286,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	//none of the below group are currently used for Event Venues
-	protected function _add_help_tabs() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {}
 	public function admin_notices() {}
