@@ -96,11 +96,10 @@ select.ee-venue-select {
 	-webkit-appearance:none;
  	border-radius: 1px;
 	cursor: pointer;
-	padding: 10px 24px 9px 9px;
+	padding: 10px;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	position: relative;
-	background: #fcfcfc url(images/arrow.png) no-repeat 90%;
 	border: 1px solid #ccc;
 	width: 150px;
 	cursor: pointer;
