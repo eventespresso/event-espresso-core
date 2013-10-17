@@ -196,13 +196,14 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 				if($meta_id){
 					$this->get_migration_script()->set_mapping($this->_old_table, $event_row['id'], $this->_new_meta_table, $meta_id);
 				}
-				$this->_add_post_metas($event_row, $post_id);
 				$this->_convert_start_end_times($event_row,$post_id);
+				$this->_convert_event_image_to_attachment_post_type($event_row,$post_id);
 				//maybe create a venue from info on the event?
 				$new_venue_id = $this->_maybe_create_venue($event_row);
 				if($new_venue_id){
 					$this->_insert_new_venue_to_event($post_id,$new_venue_id);
 				}
+				$this->_add_post_metas($event_row, $post_id);
 						
 			}
 			$items_migrated_this_step++;
@@ -224,6 +225,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		unset($event_meta['date_submitted']);//factored into CPT
 		unset($event_meta['additional_attendee_reg_info']);//facotred into event meta table 
 		unset($event_meta['default_payment_status']);//dido
+		unset($event_meta['event_thumbnail_url']);//used to find post featured image
 		foreach($event_meta as $meta_key => $meta_value){
 			if ($meta_key){//if th emeta key is just an empty string, ignore it
 				$success = add_post_meta($post_id,$meta_key,$meta_value,true);
@@ -638,6 +640,98 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		return intval($count);
 	}
 	
+	/**
+	 * Makes sure the 3.1's event image is converted to an image attachment post to the 4.1 CPT event
+	 * and sets it as teh featured image on the CPT event
+	 * @param type $old_event
+	 * @param type $new_cpt_id
+	 * @return void
+	 */
+	private function _convert_event_image_to_attachment_post_type($old_event,$new_cpt_id){
+		$event_meta = maybe_unserialize($old_event['event_meta']);
+		$guid = isset($event_meta['event_thumbnail_url']) ? $event_meta['event_thumbnail_url'] : null;
+		if($guid){
+			//check for an existing attachment post with this guid
+			$attachment_post_id = $this->_get_image_attachment_id_by_GUID($guid);
+			if( ! $attachment_post_id){
+				//post thumbnail with that GUID doesn't exist, we should create one
+				$attachment_post_id = $this->_create_image_attachment_from_GUID($guid);
+			}
+			//double-check we actually have an attachment post
+			if( $attachment_post_id){
+				update_post_meta($new_cpt_id,'_thumbnail_id',$attachment_post_id);
+			}else{
+				$this->add_error(sprintf(__("Could not update event image %s for event %s. New Event CPT ID is %d but attachments post ID is %d", "event_espresso"),$guid,http_build_query($old_event),$new_cpt_id,$attachment_post_id));
+			}
+		}
+	}
 	
+	/**
+	 * Finds the attachment post containing info about an image attachment given teh GUID (link to the image itself),
+	 * and returns its ID.
+	 * @global type $wpdb
+	 * @param string $guid
+	 * @return int
+	 */
+	private function _get_image_attachment_id_by_GUID($guid){
+		global $wpdb;
+		$attachment_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid=%s LIMIT 1",$guid));
+		return $attachment_id;
+	}
+	
+	/**
+	 * Creates an image attachment post for the GUID. If teh GUID points to a remote image,
+	 * we download it to our uploads directory so that it can be properly processed (eg, creates different sizes of thumbnails)
+	 * @param type $guid
+	 * @return int
+	 */
+	private function _create_image_attachment_from_GUID($guid){
+		if ( ! $guid){
+			$this->add_error(sprintf(__("Cannot create image attachment for a blank GUID!", "event_espresso")));
+			return 0;
+		}
+		$wp_filetype = wp_check_filetype(basename($guid), null );
+		$wp_upload_dir = wp_upload_dir();
+		//if the file is located remotely, download it to our uploads DIR, because wp_genereate_attachmnet_metadata needs the file to be local
+		if(strpos($guid,$wp_upload_dir['url']) === FALSE){
+			//image is located remotely. download it and place it in the uploads directory
+			$contents= file_get_contents($guid);
+			$local_filepath  = $wp_upload_dir['path'].DS.basename($guid);
+			$savefile = fopen($local_filepath, 'w');
+			fwrite($savefile, $contents);
+			fclose($savefile);			
+			$guid = str_replace($wp_upload_dir['path'],$wp_upload_dir['url'],$local_filepath); 
+		}else{
+			$local_filepath = str_replace($wp_upload_dir['url'],$wp_upload_dir['path'],$guid);
+		}
+		
+		$attachment = array(
+		   'guid' => $guid, 
+		   'post_mime_type' => $wp_filetype['type'],
+		   'post_title' => preg_replace('/\.[^.]+$/', '', basename($guid)),
+		   'post_content' => '',
+		   'post_status' => 'inherit'
+		);
+		$attach_id = wp_insert_attachment( $attachment, $guid, 37 );
+		if( ! $attach_id ){
+			$this->add_error(sprintf(__("Could not create image attachment post from image '%s'. Attachment data was %s.", "event_espresso"),$guid,http_build_query($attachment)));
+			return $attach_id;
+		}
+		
+		// you must first include the image.php file
+		// for the function wp_generate_attachment_metadata() to work
+		require_once(ABSPATH . 'wp-admin/includes/image.php');
+		
+		$attach_data = wp_generate_attachment_metadata( $attach_id, $local_filepath );
+		if( ! $attach_data){
+			$this->add_error(sprintf(__("Coudl not genereate attachment metadata for attachment post %d with filepath %s and GUID %s.", "event_espresso"),$attach_id,$savefile,$guid));
+			return $attach_id;
+		}
+		$metadata_save_result = wp_update_attachment_metadata( $attach_id, $attach_data );
+		if( ! $metadata_save_result ){
+			$this->add_error(sprintf(__("Could not update attachment metadata for attachment %d with data %s", "event_espresso"),$attach_id,http_build_query($attach_data)));
+		}
+		return $attach_id;
+	}
 	
 }
