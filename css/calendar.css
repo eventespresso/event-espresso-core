@@ -75,19 +75,8 @@
  
 /* Select Box */
 
-#widget-filter-button{
-	width: 10px;
-	height: 10px;
-	background: #ccc;
-}
- .ee-category-select{
- 	display:none;
- }
- .widget-category-visible{
- 	display:block;
- }
  .ee-filter-form {
- 	margin: 0 0 2em 0;
+ 	margin: 			0 0 2em 0;
  }
 
 /* RESET SELECT */
@@ -355,14 +344,12 @@ select:focus {
 	padding: 			0 4px;	
 	}
 #espresso_calendar .thumb-wrap { 
-	display: 			block; 
-	overflow: 			hidden;  
+	display: 			block;  
 	padding: 			3px 0 0; 
-	max-width:			150px; 
+	width:  			100%; 
 	vertical-align: 	middle;
 	}
-#espresso_calendar .thumb-wrap img { 
-	max-width:			150px; 
+#espresso_calendar .thumb-wrap img {  
 	width:				100%; 
 	border-radius: 		0; 
 	box-shadow: 		none; 
@@ -388,6 +375,11 @@ select:focus {
 #espresso_calendar .fc-widget-header {
 	font-weight: 		400;
 	}
+#espresso_calendar .fc-event-inner{
+	width: 				100%;
+	height: 			auto;
+	overflow: 			visible;
+}
 
 /* Tooltip Styles */
 
