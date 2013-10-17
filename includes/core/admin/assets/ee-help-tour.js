@@ -47,6 +47,8 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.trigger-ee-help-tour', function() {
 		$('#screen-meta').slideToggle();
 		$('#screen-options-link-wrap').css('visibility', 'visible');
+		//destroy current joyride
+		$('#' + EE_HELP_TOUR.tours[current_tour].id).joyride("destroy");
 		var tourid = $(this).attr('id').replace('trigger-tour-', '');
 		var options;
 		$.each(EE_HELP_TOUR.tours, function( i, v ) {
@@ -56,12 +58,7 @@ jQuery(document).ready(function($) {
 				options = i;
 			}
 		});
-
-		//k let's make sure that we set the current tour to the previous one
-		if ( options !== 0 ) {
-			options--;
-		}
 		current_tour = options;
-		joyridepostride();
+		joyridestart();
 	});
 });
