@@ -169,6 +169,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						),
 					'list_table' => 'Prices_List_Table',
 					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
+					'help_tour' => array( 'Pricing_Default_Prices_Help_Tour'),
 					'help_tabs' => array(
 						'price_type_info' => array(
 							'title' => __('About Price Types', 'event_espresso'),
