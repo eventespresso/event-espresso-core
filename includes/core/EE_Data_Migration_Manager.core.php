@@ -279,7 +279,7 @@ class EE_Data_Migration_Manager{
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 					EEH_Activation::initialize_db_content();
-
+					$this->_save_migrations_ran();
 					return array(
 						'records_to_migrate'=>1,
 						'records_migrated'=>1,
@@ -311,7 +311,7 @@ class EE_Data_Migration_Manager{
 		//ok so we definitely have a data migration script
 		try{
 			//do what we came to do!
-			$current_script_class->migration_step(10);
+			$current_script_class->migration_step(50);
 			switch($current_script_class->get_status()){
 				case EE_Data_Migration_Manager::status_continue:
 					$response_array = array(
@@ -326,7 +326,7 @@ class EE_Data_Migration_Manager{
 					$this->_update_current_database_state_to($this->_migrates_to_version($current_script_name, false));
 					$response_array =  array(
 							'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
-							'records_migrated'=>$current_script_class->count_records_to_migrate(),//so we're done, so just assume we've finished ALL records
+							'records_migrated'=>$current_script_class->count_records_migrated(),
 							'status'=> EE_Data_Migration_Manager::status_completed,
 							'message'=>$current_script_class->get_feedback_message(),
 							'script'=> sprintf(__("%s Completed",'event_espresso'),$current_script_class->pretty_name())
