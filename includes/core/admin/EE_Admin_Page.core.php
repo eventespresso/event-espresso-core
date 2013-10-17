@@ -898,8 +898,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( isset( $this->_help_tour[$this->_req_action]) ) {
 				$tour_buttons = '<div class="ee-abs-container"><div class="ee-help-tour-restart-buttons">';
 				foreach ( $this->_help_tour['tours'] as $tour ) {
-					$tour_buttons .= '<button id="trigger-tour-' . $tour->get_slug() . '" class="button-primary trigger-ee-help-tour">' . $tour->get_label() . '</button>';
+					$tb[] = '<button id="trigger-tour-' . $tour->get_slug() . '" class="button-primary trigger-ee-help-tour">' . $tour->get_label() . '</button>';
 				}
+				$tour_buttons .= implode('<br />', $tb);
 				$tour_buttons .= '</div></div>';
 			}
 
