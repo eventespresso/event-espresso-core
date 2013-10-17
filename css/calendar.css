@@ -344,12 +344,14 @@ select:focus {
 	padding: 			0 4px;	
 	}
 #espresso_calendar .thumb-wrap { 
-	display: 			block;  
+	display: 			block; 
+	overflow: 			hidden;  
 	padding: 			3px 0 0; 
-	width:  			100%; 
+	max-width:			150px; 
 	vertical-align: 	middle;
 	}
-#espresso_calendar .thumb-wrap img {  
+#espresso_calendar .thumb-wrap img { 
+	max-width:			150px; 
 	width:				100%; 
 	border-radius: 		0; 
 	box-shadow: 		none; 
@@ -375,11 +377,6 @@ select:focus {
 #espresso_calendar .fc-widget-header {
 	font-weight: 		400;
 	}
-#espresso_calendar .fc-event-inner{
-	width: 				100%;
-	height: 			auto;
-	overflow: 			visible;
-}
 
 /* Tooltip Styles */
 
