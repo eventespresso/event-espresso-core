@@ -59,9 +59,9 @@ class EEH_Activation {
 	 */
 	public static function initialize_db_content(){
 		EEH_Activation::initialize_system_questions();
-		EEH_Activation::insert_default_prices();
-		EEH_Activation::insert_default_price_types();
-		EEH_Activation::insert_default_tickets();
+//		EEH_Activation::insert_default_prices();
+//		EEH_Activation::insert_defaulinsert_default_pricest_price_types();
+//		EEH_Activation::insert_default_tickets();
 		EEH_Activation::insert_default_status_codes();
 //		default countries and states actually takes place during data migration scripts
 //		because converting state and coutnry names to foreign keys must occur for venues, attendees, etc
@@ -702,116 +702,13 @@ class EEH_Activation {
 
 
 
-	/**
-	 * insert_default_price_types
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function insert_default_price_types() {
-
-		global $wpdb;
-
-		if ($wpdb->get_var("SHOW TABLES LIKE '" . EEM_Price_Type::table() . "'") == EEM_Price_Type::table()) {
-
-			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . EEM_Price_Type::table();
-			$price_types_exist = $wpdb->get_var( $SQL );
-			
-			if ( ! $price_types_exist ) {
-				$SQL = "INSERT INTO " . EEM_Price_Type::table() . " ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
-							(1, '" . __('Base Price', 'event_espresso') . "', 1, 0, 0, 0, 0),
-							(2, '" . __('Member % Discount', 'event_espresso') . "', 2, 1, 1, 10, 0),
-							(3, '" . __('Member Dollar Discount', 'event_espresso') . "', 2, 1, 0, 10, 0),
-							(4, '" . __('Percent Discount', 'event_espresso') . "', 2, 0, 1, 20, 0),
-							(5, '" . __('Dollar Discount', 'event_espresso') . "', 2, 0, 0, 30, 0),
-							(6, '" . __('Percent Surcharge', 'event_espresso') . "', 3, 0, 1, 40, 0),
-							(7, '" . __('Dollar Surcharge', 'event_espresso') . "', 3, 0, 0, 50, 0),
-							(8, '" . __('Regional Tax', 'event_espresso') . "', 4, 0, 1, 60, 0),
-							(9, '" . __('Federal Tax', 'event_espresso') . "', 4, 0, 1, 70, 0);";
-				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
-				$wpdb->query( $SQL );	
-			}
-		}
-	}
 
 
 
-	/**
-	 * insert_default_prices
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function insert_default_prices() {
-
-		global $wpdb;
-		
-		if ($wpdb->get_var("SHOW TABLES LIKE '" . EEM_Price::table() . "'") == EEM_Price::table()) {
-			
-			$SQL = 'SELECT COUNT(PRC_ID) FROM ' . EEM_Price::table();
-			$prices_exist = $wpdb->get_var( $SQL );
-			
-			if ( ! $prices_exist ) {
-				$SQL = "INSERT INTO " . EEM_Price::table() . "
-							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_row, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 1, 0),
-							(2, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 1, NULL, 10, 0, 2, 0),
-							(3, 4, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, NULL, 20, 0, 3, 0),
-							(4, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, NULL, 30, 0, 4, 0),
-							(5, 7, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 5, 0),
-							(6, 8, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 6, 0);";			
-				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
-				$wpdb->query($SQL);			
-			}
-		}	
-	}
 
 
 
-	/**
-	 * insert default ticket
-	 *
-	 * @access public
-	 * @static
-	 * @return void
-	 */
-	public static function insert_default_tickets() {
-
-		global $wpdb;
-
-		if ( $wpdb->get_var("SHOW TABLES LIKE'" . EEM_Ticket::table() . "'") == EEM_Ticket::table() ) {
-
-			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . EEM_Ticket::table();
-			$tickets_exist = $wpdb->get_var($SQL);
-
-			if ( ! $tickets_exist ) {
-				$SQL = "INSERT INTO " . EEM_Ticket::table() . "
-					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
-					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
-				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
-				$wpdb->query($SQL);
-			}
-		}
-
-		if ( $wpdb->get_var("SHOW TABLES LIKE'" . EEM_Ticket_Price::table() . "'") == EEM_Ticket_Price::table() ) {
-
-			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . EEM_Ticket_Price::table();
-			$ticket_prc_exist = $wpdb->get_var($SQL);
-
-			if ( ! $ticket_prc_exist ) {
-
-				$SQL = "INSERT INTO " . EEM_Ticket_Price::table() . "
-				( TKP_ID, TKT_ID, PRC_ID ) VALUES 
-				( 1, 1, 1 )
-				";
-
-				$SQL = apply_filters( 'FHEE_default_ticket_price_activation_sql', $SQL);
-				$wpdb->query($SQL);
-			}
-		}
-	}
+	
 
 
 

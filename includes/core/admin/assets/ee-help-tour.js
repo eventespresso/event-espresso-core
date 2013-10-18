@@ -1,39 +1,66 @@
 jQuery(document).ready(function($) {
+	var current_tour = 0;
+	var joyridepostride = function(joyride_index,current_tip) {
+		v = EE_HELP_TOUR.tours[current_tour];
+		$('#' + v.id).joyride("destroy");
+		current_tour++;
+		joyridestart();
+	};
+
+
+	var joyridestart = function() {
+		v = typeof(EE_HELP_TOUR.tours[current_tour]) !== 'undefined' ? EE_HELP_TOUR.tours[current_tour] : null;
+
+		if ( v === null ) {
+			//rewind current_tour
+			current_tour--;
+			return;
+		}
+
+		/**
+		 * verify callbacks before sending to joyride.
+		 */
+		if ( typeof v.options.postExposeCallback !== 'undefined' && typeof window[v.options.postExposeCallback] !== 'function' )
+			v.options.postExposeCallback = $.noop;
+		if ( typeof v.options.preRideCallback !== 'undefined' && typeof window[v.options.preRideCallback] !== 'function' )
+			v.options.preRideCallback = $.noop;
+		if ( typeof v.options.postRideCallback !== 'undefined' && typeof window[v.options.postRideCallback] !== 'function' )
+			v.options.postRideCallback = $.noop;
+		if ( typeof v.options.preStepCallback !== 'undefined' && typeof window[v.options.preStepCallback] !== 'function' )
+			v.options.preStepCallback = $.noop;
+		if ( typeof v.options.postStepCallback !== 'undefined' && typeof window[v.options.postStepCallback] !== 'function' )
+			v.options.postStepCallback = $.noop;
+
+		v.options.postRideCallback = joyridepostride; //note this overrides any existing callback set for postride.  If we come into cases where we need to set a callback for post ride then this will have to be modified.
+
+		$('#' + v.id).joyride(v.options);
+	};
+
 	//if we've got an EE_HELP_TOUR object then we can loop through it to get the stuff needed for the joyride and kick it off.
 	$(window).load(function() {
-		$.each( EE_HELP_TOUR, function(i,v) {
-			/**
-			 * verify callbacks before sending to joyride.
-			 */
-			if ( typeof v[0].options.postExposeCallback !== 'undefined' && typeof window[v[0].options.postExposeCallback] !== 'function' )
-				v[0].options.postExposeCallback = $.noop;
-			if ( typeof v[0].options.preRideCallback !== 'undefined' && typeof window[v[0].options.preRideCallback] !== 'function' )
-				v[0].options.preRideCallback = $.noop;
-			if ( typeof v[0].options.postRideCallback !== 'undefined' && typeof window[v[0].options.postRideCallback] !== 'function' )
-				v[0].options.postRideCallback = $.noop;
-			if ( typeof v[0].options.preStepCallback !== 'undefined' && typeof window[v[0].options.preStepCallback] !== 'function' )
-				v[0].options.preStepCallback = $.noop;
-			if ( typeof v[0].options.postStepCallback !== 'undefined' && typeof window[v[0].options.postStepCallback] !== 'function' )
-				v[0].options.postStepCallback = $.noop;
-
-			$('#' + v[0].id).joyride(v[0].options);
-		});
+		//check if they've been here if they have then let's skip to the next tour (if exists)
+		if ( $.cookie(EE_HELP_TOUR.tours[current_tour].id) !== null )
+			current_tour++;
+		joyridestart();
 	});
+
 
 	//add triggers for restarting the tour
 	$(document).on('click', '.trigger-ee-help-tour', function() {
-		$('#screen-meta').slideToggle();
-		$('#screen-options-link-wrap').css('visibility', 'visible');
+		$('#contextual-help-link').trigger('click');
+
+		//destroy current joyride
+		$('#' + EE_HELP_TOUR.tours[current_tour].id).joyride("destroy");
 		var tourid = $(this).attr('id').replace('trigger-tour-', '');
 		var options;
-		$.each(EE_HELP_TOUR, function( i, v ) {
-			if ( v[0].id == tourid )
-				options = v[0].options;
+		$.each(EE_HELP_TOUR.tours, function( i, v ) {
+			if ( v.id == tourid ) {
+				//set cookieMonster to false for this option
+				EE_HELP_TOUR.tours[i].options.cookieMonster = false;
+				options = i;
+			}
 		});
-		//destroy initial joyride
-		$('#' + tourid).joyride("destroy");
-		//restart but with cookie set to false
-		options.cookieMonster = false;
-		$('#' + tourid).joyride(options);
+		current_tour = options;
+		joyridestart();
 	});
 });

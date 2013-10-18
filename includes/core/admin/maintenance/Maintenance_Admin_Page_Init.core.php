@@ -41,6 +41,8 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'EE_MAINTENANCE_ASSETS_URL', EE_CORE_ADMIN_URL . 'maintenance/assets/' );
 		define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 
+		//check that if we're in maintenance mode that we tell the admin taht
+		add_action('admin_notices',array($this,'check_maintenance_mode'));
 		parent::__construct();
 	}
 
@@ -72,6 +74,27 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 	 */
 	public function make_maintenance_page_parent_slug($old_parent_slug){
 		return EE_MAINTENANCE_PG_SLUG;
+	}
+	
+	/**
+	 * Checks if we're in maintenance mode, and if so we notify the admin adn tell them how to take the site OUT of maintenance mode
+	 */
+	public function check_maintenance_mode(){
+		if(EE_Maintenance_Mode::instance()->level()){
+			$maintenance_page_url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_MAINTENANCE_ADMIN_URL);
+			switch(EE_Maintenance_Mode::instance()->level()){
+				case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
+					echo '<div class="updated">
+						<p>'. sprintf(__("Event Espresso is in Frontend-Only MAINTENANCE MODE. This means the front-end (ie, non-wp-admin pages) is disabled for ALL users except site admins. Visit the %s Maintenance Page %s to disable maintenance mode.", "event_espresso"),"<a href='$maintenance_page_url'>","</a>").
+					'</div>';
+					break;
+				case EE_Maintenance_Mode::level_2_complete_maintenance:
+						echo '<div class="error">
+						<p>'. sprintf(__("Event Espresso is in COMPLETE MAINTENANCE MODE because your database needs to migrated. This means the Event Espresso is disabled (both wp-admin pages and frontend event registration) until you run the migrations. Visit the %s Maintenance Page %s.", "event_espresso"),"<a href='$maintenance_page_url'>","</a>").
+					'</div>';
+					break;
+			}
+		}
 	}
 
 } //end class Payments_Admin_Page_Init

@@ -85,16 +85,49 @@ abstract class EE_Help_Tour extends EE_Base {
 
 
 	/**
+	 * holds anything found in the $_REQUEST object (however we override any _gets with _post data).
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $_req_data = array();
+
+
+
+	/**
+	 * a flag that is set on init for whether this help_tour is happening on a caf install or not.
+	 * @var boolean
+	 */
+	protected $_is_caf = false;
+
+
+
+	/**
 	 * _constructor
 	 * initialized the tour object and sets up important properties required to setup the tour.
 	 *
 	 * @access public
+	 * @param boolean $caf used to indicate if this tour is happening on caf install or not.
 	 * @return void
 	 */
-	public function __construct() {
+	public function __construct($caf = FALSE) {
+		$this->_is_caf = $caf;
+		$this->_req_data = array_merge( $_GET, $_POST );
+		$this->_set_tour_properties();
 		$this->_set_tour_stops();
 		$this->_set_tour_options();
 	}
+
+
+
+	/**
+	 * required method that has the sole purpose of setting up the tour $_label and $_slug properties
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return void
+	 */
+	abstract protected function _set_tour_properties();
 
 
 
@@ -119,6 +152,8 @@ abstract class EE_Help_Tour extends EE_Base {
 		$defaults = array(
 			'tipLocation' => 'bottom',         // 'top', 'bottom', 'right', 'left' in relation to parent
 		  	'nubPosition' => 'auto',           // override on a per tooltip bases. can be "auto", "right", "top", "bottom", "left"
+		  	'tipAdjustmentY' => 0, 			//allow for adjustment of tip
+		  	'tipAdjustmentX' => 0,			//allow for adjustment of tip
 		  	'scroll' => true, //whether to scrollTo the next step or not
 		  	'scrollSpeed' => 300,              // Page scrolling speed in ms
 		  	'timer' => 0,	                // 0 = off, all other numbers = time(ms) 

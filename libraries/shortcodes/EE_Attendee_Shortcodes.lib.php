@@ -82,7 +82,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		$query_args = array(
 			'page' => 'espresso_registrations',
 			'action' => 'edit_attendee',
-			'id' => $ID
+			'post' => $ID
 			);
 
 		//require EE_Admin_Page core

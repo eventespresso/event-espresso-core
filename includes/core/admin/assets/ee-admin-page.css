@@ -550,7 +550,11 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin-top: 20px;
 	margin-bottom: 20px;
 }
+
 .ee-help-tour-restart-buttons {
-	margin: auto;
 	text-align: center;
+}
+
+.button-primary.trigger-ee-help-tour {
+	margin: 5px;
 }

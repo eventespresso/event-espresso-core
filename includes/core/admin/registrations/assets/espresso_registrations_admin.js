@@ -121,13 +121,17 @@ jQuery(document).ready(function($) {
 	});
 
 	//validation
-	$('#post').validate({
-		invalidHandler: function( event, validator ) {
-			//toggle the wpjs indicators
-			$('.spinner').hide();
-			$('#publish').removeClass('button-primary-disabled');
-		}
-	});/**/
+	try {
+		$('#post').validate({
+			invalidHandler: function( event, validator ) {
+				//toggle the wpjs indicators
+				$('.spinner').hide();
+				$('#publish').removeClass('button-primary-disabled');
+			}
+		});/**/
+	} catch(err) {
+		//won't do anything just wanna make sure .validate only runs when the jQuery validate plugin is present
+	}
 });
 
 /**
@@ -135,4 +139,5 @@ jQuery(document).ready(function($) {
  */
 jQuery('#post-status-display').parent().hide();
 jQuery('#visibility').hide();
-jQuery('#timestamp').html(ATTENDEE_DETAILS.att_publish_text);
+if ( typeof(ATTENDEE_DETAILS) !== 'undefined' )
+	jQuery('#timestamp').html(ATTENDEE_DETAILS.att_publish_text);

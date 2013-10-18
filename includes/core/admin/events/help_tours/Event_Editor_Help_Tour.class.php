@@ -29,10 +29,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Event_Editor_Help_Tour extends EE_Help_Tour {
 
-	public function __construct() {
+	protected function _set_tour_properties() {
 		$this->_label = __('Event Editor Tour', 'event_espresso');
-		$this->_slug = 'event-editor-joyride';
-		parent::__construct();
+		$this->_slug = $this->_is_caf ? 'event-editor-caf-joyride' : 'event-editor-joyride';
 	}
 
 
@@ -59,6 +58,13 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'top'
 					)
 				),
+			45 => array(
+				'id' => 'espresso_events_Venues_Hooks_venue_metabox_metabox',
+				'content' => $this->_stop_four_caf(),
+				'options' => array(
+					'tipLocation' => 'top'
+					)
+				),
 			50 => array(
 				'id' => 'espresso_event_editor_venue',
 				'content' => $this->_stop_five(),
@@ -66,47 +72,70 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'top'
 					)
 				),
+			55 => array(
+				'id' => 'espresso_events_Pricing_Hooks_pricing_metabox_metabox',
+				'content' => $this->_stop_five_caf(),
+				'options' => array(
+					'tipLocation' => 'top'
+					)
+				),
 			60 => array(
+				'id' => 'espresso_event_types',
+				'content' => $this->_stop_six_caf(),
+				'options' => array(
+					'tipLocation' => 'left'
+					)
+				),
+			70 => array(
 				'id' => 'taxonomy-espresso_event_categories',
 				'content' => $this->_stop_six(),
 				'options' => array(
 					'tipLocation' => 'left'
 					)
 				),
-			70 => array(
-				'id' => 'espresso_events_Registration_Form_Hooks_primary_questions_metabox',
+			80 => array(
+				'id' => $this->_is_caf ? 'espresso_events_Registration_Form_Hooks_Extend_primary_questions_metabox' : 'espresso_events_Registration_Form_Hooks_primary_questions_metabox',
 				'content' => $this->_stop_seven(),
 				'options' => array(
 					'tipLocation' => 'left'
 					)
 				),
-			80 => array(
+			85 => array(
+				'id' => 'espresso_events_Registration_Form_Hooks_Extend_additional_questions_metabox',
+				'content' => $this->_stop_nine_caf(),
+				'options' => array(
+					'tipLocation' => 'left'
+					)
+				),
+			90 => array(
 				'id' => 'espresso_event_editor_event_options',
 				'content' => $this->_stop_eight(),
 				'options' => array(
 					'tipLocation' => 'left'
 					)
 				),
-			90 => array(
+			100 => array(
 				'id' => 'postimagediv',
 				'content' => $this->_stop_nine(),
 				'options' => array(
 					'tipLocation' => 'left'
 					)
 				),
-			100 => array(
+			110 => array(
 				'id' => 'submitpost',
 				'content' => $this->_stop_ten(),
 				'options' => array(
 					'tipLocation' => 'left'
 					)
 				),
-			110 => array(
+			120 => array(
 				'id' => 'contextual-help-link',
 				'content' => $this->_stop_eleven(),
 				'button_text' => __('End Tour', 'event_espresso'),
 				'options' => array(
-					'tipLocation' => 'left'
+					'tipLocation' => 'left',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => 10
 					)
 				)
 			);
@@ -131,12 +160,26 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 		return '<p>' . __('The Event Datetime & Ticket section is where you enter details about when the event is happening and what tickets you want to offer for access to the event.', 'event_espresso') . '</p>';
 	}
 
+	protected function _stop_four_caf() {
+		return '<p>' . __('In this section, you can enter details about the venue that is hosting your event.', 'event_espresso') . '</p>';
+	}
+
 	protected function _stop_five() {
 		return '<p>' . __('In this section, you can enter details about the venue that is hosting your event.', 'event_espresso') . '</p>';
 	}
 
+
+	protected function _stop_five_caf() {
+		return '<p>' . __('The Event Datetime & Ticket section is where you enter details about when the event is happening and what tickets you want to offer for access to the event.', 'event_espresso') . '</p>';
+	}
+
+
 	protected function _stop_six() {
 		return '<p>' . __('Events can be categorized if you wish.', 'event_espresso') . '</p>';
+	}
+
+	protected function _stop_six_caf() {
+		return '<p>' . __('Some info about Event Types blah blah blah', 'event_espresso') . '</p>';
 	}
 
 
@@ -150,6 +193,10 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_nine() {
 		return '<p>' . __('You can set a feature image for your event here.', 'event_espresso') . '</p>';
+	}
+
+	protected function _stop_nine_caf() {
+		return '<p>' . __('All about question groups for additional attendees here.', 'event_espresso') . '</p>';
 	}
 
 

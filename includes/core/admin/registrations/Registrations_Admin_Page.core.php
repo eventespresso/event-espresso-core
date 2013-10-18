@@ -270,6 +270,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 5
 					),
+				'help_tour' => array( 'Registration_Overview_Help_Tour' ),
 				'list_table' => 'EE_Registrations_List_Table'
 				),
 
@@ -279,8 +280,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 10,
 					'persistent' => true
 					),
-					'list_table' => 'EE_Event_Registrations_List_Table',
-					'metaboxes' => array()
+				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
+				'list_table' => 'EE_Event_Registrations_List_Table',
+				'metaboxes' => array()
 				),
 
 			'registration_checkins' => array(
@@ -300,6 +302,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
+				'help_tour' => array( 'Registration_View_Help_Tour' ),
 				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 				
@@ -339,8 +342,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Contact List', 'event_espresso'),
 					'order' => 20
 					),
-					'list_table' => 'EE_Attendee_Contact_List_Table',
-					'metaboxes' => array()
+				'list_table' => 'EE_Attendee_Contact_List_Table',
+				'help_tour' => array( 'Contact_List_Help_Tour' ),
+				'metaboxes' => array()
 				),
 
 			//override default cpt routes
@@ -1534,7 +1538,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				
 				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $attendee->full_address_as_array() );
 				
-				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$attendee->ID() ), REG_ADMIN_URL );
+				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );
 				
 				$att_nmbr++;
 			}
@@ -2265,7 +2269,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	protected function _attendee_contact_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_attendee', 'add-attendee', array(), 'button add-new-h2');
 		$this->_search_btn_label = __('Contacts', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -2785,7 +2788,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = 0;
 		}
 		
-		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'id' => $this->_req_data['ATT_ID'] ) );
+		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'post' => $this->_req_data['ATT_ID'] ) );
 			
 	}
  

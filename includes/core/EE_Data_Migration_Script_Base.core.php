@@ -181,11 +181,14 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$this->_maybe_do_schema_changes(true);
 
 		$num_records_actually_migrated =0;
+		$records_migrated_per_stage = array();
 		//get the next stage that isn't complete
 		foreach($this->stages() as $stage){
 			if( $stage->get_status() == EE_Data_Migration_Manager::status_continue){
 				try{
-					$num_records_actually_migrated += $stage->migration_step($num_records_to_migrate_limit);
+					$records_migrated_during_stage = $stage->migration_step($num_records_to_migrate_limit);
+					$num_records_actually_migrated += $records_migrated_during_stage;
+					$records_migrated_per_stage[$stage->pretty_name()] = $records_migrated_during_stage;
 				}catch(Exception $e){
 					//yes if we catch an exception here, we consider that migration stage borked.
 					$stage->set_status(EE_Data_Migration_Manager::status_fatal_error);
@@ -213,10 +216,22 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			//first double-cehckw ehaven't already done this
 			$this->_maybe_do_schema_changes(false);
 		}else{
-			//update the feedback message
-			$this->_feedback_message = sprintf(__("Migrated %d records successfully during %s", "event_espresso"),$num_records_actually_migrated,$stage->pretty_name());
+			$this->_update_feedback_message($records_migrated_per_stage);
 		}
 		return $num_records_actually_migrated;
+	}
+	
+	/**
+	 * Updates teh feedback message according to what was done during this migration stage.
+	 * @param array $records_migrated_per_stage KEYS are pretty names for each stage; values are the count of records migrated from that stage
+	 * @return void
+	 */
+	private function _update_feedback_message($records_migrated_per_stage){
+		$feedback_message_array = array();
+		foreach($records_migrated_per_stage as $migration_stage_name => $num_records_migrated){
+			$feedback_message_array[] = sprintf(__("Migrated %d records successfully during %s", "event_espresso"),$num_records_migrated,$migration_stage_name) ;
+		}
+		$this->_feedback_message = implode("<br>",$feedback_message_array);
 	}
 	/**
 	 * Calls either schema_changes_before_migration() (if $before==true) or schema_changes_after_migration
@@ -282,7 +297,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return EE_Data_Migration_Script_Stage[]
 	 */
 	protected function stages(){
-		$stages = apply_filters('FHEE__EE_Data_Migration_Script_Base__stages',$this->_migration_stages);
+		$stages = apply_filters('FHEE__'.get_class($this).'__stages',$this->_migration_stages);
 		ksort($stages);
 		return $stages;
 	}
@@ -666,6 +681,42 @@ abstract class EE_Data_Migration_Class_Base{
 	}
 }
 
+/**
+ * Migration stages which simply cycle through all the rows of an old table and somehow migrate them to the new DB
+ * should probably extend Stage_Table in order to avoid code repetition. To extend this, implement the _migrate_old_row() method,
+ * and create a constructor which defines $this->_old_table to be the name of teh old table.
+ */
+abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Script_Stage{
+	protected $_old_table;
+	function _migration_step($num_items=50){
+		global $wpdb;
+		$start_at_record = $this->count_records_migrated();
+		$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$start_at_record,$num_items),ARRAY_A);
+		$items_actually_migrated = 0;
+		foreach($rows as $old_row){
+			$this->_migrate_old_row($old_row);
+			$items_actually_migrated++;
+		}
+		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
+			$this->set_completed();
+		}
+		return $items_actually_migrated;
+	}
+	function _count_records_to_migrate() {
+		global $wpdb;
+		$count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+		return $count;
+	}
+	
+	/**
+	 * takes care of migrating this particular row from the OLD table to whatever its
+	 * representation is in the new database. If there are errors, use $this->add_error to log them. If there is a fatal error
+	 * which prevents all future migrations, throw an exception describing it
+	 * @param $old_row an associative array where keys are column names and values are their values.
+	 * @return null
+	 */
+	abstract protected function _migrate_old_row($old_row);
+}
 /**
  * This is a stub data migraiton that we can put in the array of data migrations when we have an aerror
  * finding the next data migration script.
