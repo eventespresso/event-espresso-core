@@ -437,7 +437,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['selected_gateway'] = $this->EE->LIB->EEM_Gateways->selected_gateway();
 		$this->EE->LIB->EEM_Gateways->set_form_url($this->_reg_page_base_url);
 		if (empty($session_data['billing_info'])) {
-			$this->EE->SSN->set_session_data(array('fill' => TRUE), 'billing_info');
+			$this->EE->SSN->set_session_data( array( 'billing_info' => array( 'fill' => TRUE )));
 		}
 
 		$event_queue = array();
@@ -789,8 +789,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 			if ( isset( $valid_data['custom_questions'] )) {
-				$custom_questions = $valid_data['custom_questions'];
-				$this->EE->SSN->set_session_data(array('custom_questions'=>$custom_questions), 'session_data');
+				$this->EE->SSN->set_session_data( array( 'custom_questions' =>$valid_data['custom_questions'] ));
 				unset( $valid_data['custom_questions'] );
 			}
 			
@@ -849,7 +848,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						$primary_attendee['fname'] = $valid_data[$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['fname'];
 						$primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['lname'];
 						$primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['email'];
-						$this->EE->SSN->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+						$this->EE->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee ));
 					} else if ( $form_input == 'additional_attendee_reg_info' && $input_value == 1 ) {
 						// we need to copy basic info from primary attendee
 						$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['fname'] = $attendees[$line_item_id][$event_id]['attendees'][1]['fname'];
@@ -944,7 +943,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
 			
 			// FREE EVENT !!! YEAH : )
-			if ($this->EE->SSN->set_session_data(array('billing_info' => 'no payment required'), $section = 'session_data')) {
+			if ( $this->EE->SSN->set_session_data( array( 'billing_info' => 'no payment required' ))) {
 				$msg = __( 'Registration Step 2 completed.', 'event_espresso' );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );	
 			} 
@@ -1206,7 +1205,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					//remove the session from the transaction before saving it to the session... otherwise we'll have a recursive relationship! bad!!
 					$transaction->set_txn_session_data(NULL);
 					// save registrations and transaction to the session
-					$this->EE->SSN->set_session_data( array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
+					$this->EE->SSN->set_session_data( array( 'registration' => $saved_registrations, 'transaction' => $transaction ));
 					// save the session to the db
 					$this->EE->SSN->update_espresso_session();			
 					break;
@@ -1385,7 +1384,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				if (isset($attendee['primary_attendee']) && $attendee['primary_attendee'] == 1) {
 					$primary_attendee = $session['primary_attendee'];
 					$primary_attendee['registration_id'] = $new_reg_code;
-					EE_Registry::instance()->SSN->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+					EE_Registry::instance()->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee ));
 				}
 				
 				EE_Registry::instance()->SSN->set_session_data( $session['cart'] );

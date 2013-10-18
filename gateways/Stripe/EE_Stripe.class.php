@@ -229,7 +229,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 					'raw_response' => $response
 					);
 
-				$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				$EE_Session->set_session_data( array( 'txn_results' => $txn_results ));
 
 				$success = $payment_status == 'Approved' ? TRUE : FALSE;
 

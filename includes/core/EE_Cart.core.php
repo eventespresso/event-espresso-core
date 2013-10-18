@@ -340,8 +340,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				'cart' => $this->_items,
 				'_cart_grand_total_qty' => count( $this->_items ),
 				'_cart_grand_total_amount' => $this->get_cart_grand_total()
-			);
-				
+			);				
 			// add cart data to session so it can be saved to the db
 			if ( EE_Registry::instance()->SSN->set_session_data( $cart_data )) {
 				return TRUE;
