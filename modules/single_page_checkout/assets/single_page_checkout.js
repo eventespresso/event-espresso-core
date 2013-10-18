@@ -5,8 +5,8 @@
 	// clear firefox and safari cache
 	$(window).unload( function() {}); 
 
-
-	//$('#mer-registration-frm-1').validate();
+	$('#spco-copy-all-attendee-chk').prop( 'checked', false );
+	//$('#spco-registration-attendee_information-frm').validate();
 
 	
 	//close btn for notifications
@@ -44,7 +44,7 @@
 				$(this).trigger('click');
 			}
 		});
-		var good_to_go = verify_all_questions_answered('#mer-registration-frm-1');		
+		var good_to_go = verify_all_questions_answered('#spco-registration-attendee_information-frm');		
 		if ( good_to_go !== true ) {
 			show_event_queue_ajax_error_msg( good_to_go );
 		}
@@ -60,15 +60,15 @@
 		var clicked_checkbox = $(this);
 		
 		// the primary attendee question group
-		var prmry_att_qstn_grp = $(this).val();
+		var prmry_att_qstn_grp = $('#primary-attendee').val();
 //		console.log( JSON.stringify( 'prmry_att_qstn_grp: ' + prmry_att_qstn_grp, null, 4 ));
 		// find all of the primaray attendee's questions for this event
 		var prmry_att_questions = $( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input');		
-		//$( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');		
+		//$( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');
 
 		// the targeted attendee question group
-		var trgt_att_qstn_grp = $(this).attr('rel');
-//		console.log( JSON.stringify( 'trgt_att_qstn_grp: ' + trgt_att_qstn_grp, null, 4 ));
+		var trgt_att_input = $(this).val();
+//		console.log( JSON.stringify( 'trgt_att_input: ' + trgt_att_input, null, 4 ));
 		
 		// set some empty vars (and reset when we loop back)
 		var input_id = '';
@@ -84,18 +84,13 @@
 			if ( input_id != undefined ) {
 				// split the above var
 				var input_id_array =  input_id.split('-');
-//				console.log( input_id_array );
+//				console.log( JSON.stringify( 'input_id_array: ' + input_id_array, null, 4 ));
 	
-				// grab the current event id
-				var event_id = input_id_array[0];		 
-				var att_nmbr = input_id_array[1];		 
-				var event_date = input_id_array[2];		 
-				var event_time = input_id_array[3];		 
-				var ticket_price = input_id_array[4];		 
-				var input_name = input_id_array[5];		 
-				var answer_id = input_id_array[6];		 
-				
-//				input_name = $(this).attr('name');
+				// grab the current input's details
+				var att_nmbr = input_id_array[0];		 
+				var line_item_id = input_id_array[1];		 
+				var input_name = input_id_array[2];	
+				// and it's value'
 				input_value = $(this).val();
 //				console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
 //				console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
@@ -124,10 +119,10 @@
 				
 				} else {
 	
-					new_input_id = '#' + trgt_att_qstn_grp + '-' +  input_name;
-					if ( answer_id != undefined ) {
-						new_input_id = new_input_id + '-' + answer_id;
-					}
+					new_input_id = '#' + trgt_att_input + '-' +  input_name;
+//					if ( answer_id != undefined ) {
+//						new_input_id = new_input_id + '-' + answer_id;
+//					}
 //					console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
 					
 					if ( $(new_input_id).length > 0 ){
@@ -286,10 +281,10 @@
 		}
 		$('.reg-page-billing-info-dv').addClass('hidden');
 		$('.reg-page-payment-option-dv').removeClass('hidden');
-		//	$('.spco-go-to-step-2').on( 'click', function() {
-		$('#spco-step-2-dv').css({ 'display' : 'none' }).removeClass('hidden');
+		//	$('.spco-go-to-payment_options').on( 'click', function() {
+		$('#spco-payment_options-dv').css({ 'display' : 'none' }).removeClass('hidden');
 		// set step 2 back to auto height 
-		$('#spco-step-2-dv').css( 'height', 'auto' );
+		$('#spco-payment_options-dv').css( 'height', 'auto' );
 		hide_step(1);
 		hide_step(3);
 		go_to_step(2,msg);
@@ -304,9 +299,9 @@
 			msg ='';
 		}
 
-		$('#spco-step-3-dv').css({ 'display' : 'none' }).removeClass('hidden');		
+		$('#spco-registration_confirmation-dv').css({ 'display' : 'none' }).removeClass('hidden');		
 		// set step 3 back to auto height 
-		$('#spco-step-3-dv').css( 'height', 'auto' );	
+		$('#spco-registration_confirmation-dv').css( 'height', 'auto' );	
 		hide_step(1);
 		hide_step(2);
 		go_to_step(3,msg);
@@ -321,7 +316,7 @@
 	}	
 
 
-
+/*
 	// go to step 1 via edit link
 	$('.spco-go-to-step-1').on( 'click', function(e) {
 		e.preventDefault();
@@ -331,7 +326,7 @@
 	});
 	
 	// go to step 2 via edit link
-	$('.spco-go-to-step-2').on( 'click', function(e) {
+	$('.spco-go-to-payment_options').on( 'click', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		mer_reg_page_go_to_step_2('');
@@ -339,7 +334,7 @@
 	});
 
 	// go to step 3 via edit link
-	$('.spco-go-to-step-3').on( 'click', function(e) {
+	$('.spco-go-to-registration_confirmation').on( 'click', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		selected_gateway_dv = process_selected_gateway();		
@@ -349,7 +344,7 @@
 
 	
 	// submit Step 1 of registraion form
-	$('#spco-go-to-step-2-btn').on( 'click', function(e) {	
+	$('#spco-go-to-payment_options-btn').on( 'click', function(e) {	
 		e.preventDefault();
 		e.stopPropagation();
 		process_reg_step ( 1 );
@@ -357,7 +352,7 @@
 		
 	
 	// submit Step 2 of registraion form
-	$('#spco-go-to-step-3-btn').on( 'click', function(e) {	
+	$('#spco-go-to-registration_confirmation-btn').on( 'click', function(e) {	
 		e.preventDefault();
 		e.stopPropagation();
 		selected_gateway_dv = process_selected_gateway();
@@ -376,6 +371,21 @@
 			process_reg_step ( 3 );
 		}		
 		
+	});*/
+
+
+	// submit Step 3 of registraion form
+	$('.spco-next-step-btn').on( 'click', function(e) {	
+		e.preventDefault();
+		e.stopPropagation();
+		off_site_payment = $('#reg-page-off-site-gateway').val();
+		if ( off_site_payment == 1 ) {
+			$('#mer-registration-frm-3').submit();
+		} else {
+			var step = $(this).attr('rel');
+//			console.log( JSON.stringify( 'step: ' + step, null, 4 ));	
+			process_reg_step ( step );
+		}		
 	});
 
 
@@ -423,21 +433,19 @@
 	function process_reg_step ( step, form_to_check ) { //, off_site_payment
 		
 		if ( form_to_check == '' || form_to_check == undefined ) {
-			form_to_check = '#mer-registration-frm-'+step;
+			form_to_check = '#spco-registration-'+step+'-frm';
 		}
 		
 		var good_to_go = verify_all_questions_answered( form_to_check );
 
 		if ( good_to_go === true ) {
 
-			$('#spco-step-'+step+'-ajax').val(1);
-			$('#spco-step-'+step+'-noheader').val('true');
-			$('#spco-step-'+step+'-action').attr( 'name', 'action' );		
-			var form_data = $('#mer-registration-frm-'+step).serialize();
+			//$('#spco-'+step+'-ajax').val(1);
+			$('#spco-'+step+'-noheader').val('true');
+			$('#spco-'+step+'-action').attr( 'name', 'action' );		
+			var form_data = $('#spco-registration-'+step+'-frm').serialize();
 			form_data.ee_front_ajax = true;
-//alert	(form_data);
-//alert( '#spco-step-'+step+'-action = ' + $('#spco-step-'+step+'-action').val() );
-//alert( 'eei18n.ajax_url = ' + eei18n.ajax_url );
+//			console.log( JSON.stringify( 'form_data: ' + form_data, null, 4 ));
 
 			$.ajax({
 				type: "POST",
@@ -448,7 +456,7 @@
 					do_before_event_queue_ajax();
 				}, 
 				success: function(response){	
-					var next = parseInt(step) + 1;
+					var next = 'after_' + step;
 //					console.log( JSON.stringify( 'step: ' + step, null, 4 ));
 //					console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
 //					console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
@@ -529,15 +537,15 @@
 		}
 
 		 if ( whch_form == '' ){
-			whch_form = '#mer-registration-frm-1';
+			whch_form = '#spco-registration-' + eei18n.reg_step_1 + '-frm';
 		}
-//		alert( 'whch_form = '+whch_form );
+		//console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
 		
 		var good_to_go = true;
 		
 		$( whch_form + ' .required' ).each( function(index) {
 
-//			console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
+			//console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
 			
 			// empty field
 			if ( $(this).val() == '' ) {
