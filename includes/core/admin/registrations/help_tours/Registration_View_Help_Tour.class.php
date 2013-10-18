@@ -29,10 +29,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Registration_View_Help_Tour extends EE_Help_Tour {
 
-	public function __construct() {
+	public function _set_tour_properties() {
 		$this->_label = __('Registration View Tour', 'event_espresso');
 		$this->_slug = 'registration-view-joyride';
-		parent::__construct();
 	}
 
 
