@@ -280,8 +280,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 10,
 					'persistent' => true
 					),
-					'list_table' => 'EE_Event_Registrations_List_Table',
-					'metaboxes' => array()
+				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
+				'list_table' => 'EE_Event_Registrations_List_Table',
+				'metaboxes' => array()
 				),
 
 			'registration_checkins' => array(
