@@ -460,8 +460,6 @@ class EEH_Form_Fields {
 		$default_q_meta = array(
 				'att_nmbr' => 1,
 				'ticket_id' => '',
-				'date' => '',
-				'time' => '',
 				'input_name' => '',
 				'input_id' => '',
 				'input_class' => ''
@@ -490,30 +488,23 @@ class EEH_Form_Fields {
 					$html .= $before_question_group_questions;
 					// loop thru questions
 					foreach ( $questions as $QST ) {
-						//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 						
 						$qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST->ID();
-//						$qst_name = isset( $QST->ANS_ID ) ? '[' . $qst_name . '][' . $QST->ANS_ID . ']' : '[' . $qst_name . ']';
-//						$input_name = isset( $q_meta['input_name'] ) ? $q_meta['input_name']  : '';
-//						$input_id = isset( $q_meta['input_id'] ) ? $q_meta['input_id'] : sanitize_key( $QST->display_text() );
-//						$input_class = isset( $q_meta['input_class'] ) ? $q_meta['input_class'] : '';
-//						
-//						$QST->QST_input_name = 'qstn' . $input_name . $qst_name;
-//						$QST->QST_input_id = $input_id . '-' . $qstn_id;
-//						$QST->QST_input_class = $input_class;
 						$QST->options();
 						
 						$answer = NULL;
-						
-						if (  isset( $_GET['qstn'] ) && isset( $q_meta['EVT_ID'] ) && isset( $q_meta['att_nmbr'] ) && isset( $q_meta['date'] ) && isset( $q_meta['time'] ) && isset( $q_meta['price_id'] )) {
+										
+						if (  isset( $_GET['qstn'] ) && isset( $q_meta['input_id'] ) && isset( $q_meta['att_nmbr'] )) {
 							// check for answer in $_GET in case we are reprocessing a form after an error
-							if ( isset( $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] )) {
-								$answer = sanitize_text_field( $_GET['qstn'][ $q_meta['EVT_ID'] ][ $q_meta['att_nmbr'] ][ $q_meta['date'] ][ $q_meta['time'] ][ $q_meta['price_id'] ][ $qstn_id ] );
+							if ( isset( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] )) {
+								$answer = sanitize_text_field( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] );
 							}							
 						} else if ( isset( $q_meta['attendee'] ) && $q_meta['attendee'] ) {
 							//attendee data from the session
 							$answer = isset( $q_meta['attendee'][ $qstn_id ] ) ? $q_meta['attendee'][ $qstn_id ] : NULL;
 						}
+						
+						
 						
 						$QFI = new EE_Question_Form_Input(
 							$QST,
