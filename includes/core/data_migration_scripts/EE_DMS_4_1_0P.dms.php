@@ -28,17 +28,19 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  * --that the instance of EE_Config have an property named 'gateway' which is a class with properties '-'payment_settings' and 'active_gateways'
  *	 which are both arrays
  * --a function named update_espresso_config() which saves the EE_Config object to teh database
+ * --...and all its subclasses... really, you're best off copying the whole thin gwhen 4.1 is released into this file and wrapping its declaration in if( ! class_exists()){...}
  */
 class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
+
+	
 	
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_migration_stages = array(
-//			10=>new EE_DMS_4_1_0P_attendees(),
+			new EE_DMS_4_1_0P_org_options(),
+			new EE_DMS_4_1_0P_gateways(),
 			new EE_DMS_4_1_0P_events(),
 			new EE_DMS_4_1_0P_prices(),
-			//important: this one should be ran AFTER the general settings
-			new EE_DMS_4_1_0P_gateways(),
 			new EE_DMS_4_1_0P_category_details(),
 			new EE_DMS_4_1_0P_event_category(),
 			new EE_DMS_4_1_0P_venues(),
@@ -1056,7 +1058,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	
 	/**
 	 * Gets a country entry as an array, or creates one if none is found. Much like EEM_Country::instance()->get_one(), but is independent of
-	 * outside code which can change in future versions of EE
+	 * outside code which can change in future versions of EE. Also, $country_name CAN be a 3.1 country ID (int), a 2-letter ISO, 3-letter ISO, or name
 	 * @global type $wpdb
 	 * @param string $country_name
 	 * @return array where keys are columns, values are column values
@@ -1067,14 +1069,18 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		}
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
-		
+		if(is_int($country_name)){
+			$country_name = $this->get_iso_from_3_1_country_id($country_name);
+		}
 		$country = $wpdb->get_row($wpdb->prepare("SELECT * FROM $country_table WHERE 
-			CNT_ISO3 LIKE %s OR CNT_name LIKE %s LIMIT 1",$country_name,$country_name),ARRAY_A);
+			CNT_ISO LIKE %s OR
+			CNT_ISO3 LIKE %s OR 
+			CNT_name LIKE %s LIMIT 1",$country_name,$country_name,$country_name),ARRAY_A);
 		if( ! $country ){
 			//insert a new one then
 			$cols_n_values = array(
-				'CNT_ISO'=> $this->_find_available_country_iso() ,
-				'CNT_ISO3'=> strtoupper(substr($country_name, 0, 3)),
+				'CNT_ISO'=> $this->_find_available_country_iso(2) ,
+				'CNT_ISO3'=> $this->_find_available_country_iso(3),
 				'RGN_ID'=>0,
 				'CNT_name'=>$country_name,
 				'CNT_cur_code'=>'USD',
@@ -1121,11 +1127,11 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	 * @global type $wpdb
 	 * @return string
 	 */
-	private function _find_available_country_iso(){
+	private function _find_available_country_iso($num_letters = 2){
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
 		do{
-			$current_iso = strtoupper(wp_generate_password(2, false));
+			$current_iso = strtoupper(wp_generate_password($num_letters, false));
 			$country_with_that_iso = $wpdb->get_var($wpdb->prepare("SELECT count(CNT_ISO) FROM ".$country_table." WHERE CNT_ISO=%s",$current_iso));
 		}while(intval($country_with_that_iso));
 		return $current_iso;
@@ -1146,7 +1152,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			$country = $this->get_or_create_country($country_name);
 			$country_iso = $country['CNT_ISO'];
 		}catch(EE_Error $e){
-			$country_iso = '';
+			$country_iso = $this->get_default_country_iso();
 		}
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
@@ -1201,10 +1207,277 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		return "$hour:$minutes";
 	}
 	
+	/**
+	 * Gets teh ISO3 fora country given its 3.1 country ID.
+	 * @param int $country_id
+	 * @return string the country's ISO3 code
+	 */
+	public function get_iso_from_3_1_country_id($country_id){
+		$old_countries = array(
+			array(64, 'United States', 'US', 'USA', 1),
+			array(15, 'Australia', 'AU', 'AUS', 1),
+			array(39, 'Canada', 'CA', 'CAN', 1),
+			array(171, 'United Kingdom', 'GB', 'GBR', 1),
+			array(70, 'France', 'FR', 'FRA', 2),
+			array(111, 'Italy', 'IT', 'ITA', 2),
+			array(63, 'Spain', 'ES', 'ESP', 2),
+			array(1, 'Afghanistan', 'AF', 'AFG', 1),
+			array(2, 'Albania', 'AL', 'ALB', 1),
+			array(3, 'Germany', 'DE', 'DEU', 2),
+			array(198, 'Switzerland', 'CH', 'CHE', 1),
+			array(87, 'Netherlands', 'NL', 'NLD', 2),
+			array(197, 'Sweden', 'SE', 'SWE', 1),
+			array(230, 'Akrotiri and Dhekelia', 'CY', 'CYP', 2),
+			array(4, 'Andorra', 'AD', 'AND', 2),
+			array(5, 'Angola', 'AO', 'AGO', 1),
+			array(6, 'Anguilla', 'AI', 'AIA', 1),
+			array(7, 'Antarctica', 'AQ', 'ATA', 1),
+			array(8, 'Antigua and Barbuda', 'AG', 'ATG', 1),
+			array(10, 'Saudi Arabia', 'SA', 'SAU', 1),
+			array(11, 'Algeria', 'DZ', 'DZA', 1),
+			array(12, 'Argentina', 'AR', 'ARG', 1),
+			array(13, 'Armenia', 'AM', 'ARM', 1),
+			array(14, 'Aruba', 'AW', 'ABW', 1),
+			array(16, 'Austria', 'AT', 'AUT', 2),
+			array(17, 'Azerbaijan', 'AZ', 'AZE', 1),
+			array(18, 'Bahamas', 'BS', 'BHS', 1),
+			array(19, 'Bahrain', 'BH', 'BHR', 1),
+			array(20, 'Bangladesh', 'BD', 'BGD', 1),
+			array(21, 'Barbados', 'BB', 'BRB', 1),
+			array(22, 'Belgium ', 'BE', 'BEL', 2),
+			array(23, 'Belize', 'BZ', 'BLZ', 1),
+			array(24, 'Benin', 'BJ', 'BEN', 1),
+			array(25, 'Bermudas', 'BM', 'BMU', 1),
+			array(26, 'Belarus', 'BY', 'BLR', 1),
+			array(27, 'Bolivia', 'BO', 'BOL', 1),
+			array(28, 'Bosnia and Herzegovina', 'BA', 'BIH', 1),
+			array(29, 'Botswana', 'BW', 'BWA', 1),
+			array(96, 'Bouvet Island', 'BV', 'BVT', 1),
+			array(30, 'Brazil', 'BR', 'BRA', 1),
+			array(31, 'Brunei', 'BN', 'BRN', 1),
+			array(32, 'Bulgaria', 'BG', 'BGR', 1),
+			array(33, 'Burkina Faso', 'BF', 'BFA', 1),
+			array(34, 'Burundi', 'BI', 'BDI', 1),
+			array(35, 'Bhutan', 'BT', 'BTN', 1),
+			array(36, 'Cape Verde', 'CV', 'CPV', 1),
+			array(37, 'Cambodia', 'KH', 'KHM', 1),
+			array(38, 'Cameroon', 'CM', 'CMR', 1),
+			array(98, 'Cayman Islands', 'KY', 'CYM', 1),
+			array(172, 'Central African Republic', 'CF', 'CAF', 1),
+			array(40, 'Chad', 'TD', 'TCD', 1),
+			array(41, 'Chile', 'CL', 'CHL', 1),
+			array(42, 'China', 'CN', 'CHN', 1),
+			array(105, 'Christmas Island', 'CX', 'CXR', 1),
+			array(43, 'Cyprus', 'CY', 'CYP', 2),
+			array(99, 'Cocos Island', 'CC', 'CCK', 1),
+			array(100, 'Cook Islands', 'CK', 'COK', 1),
+			array(44, 'Colombia', 'CO', 'COL', 1),
+			array(45, 'Comoros', 'KM', 'COM', 1),
+			array(46, 'Congo', 'CG', 'COG', 1),
+			array(47, 'North Korea', 'KP', 'PRK', 1),
+			array(50, 'Costa Rica', 'CR', 'CRI', 1),
+			array(51, 'Croatia', 'HR', 'HRV', 1),
+			array(52, 'Cuba', 'CU', 'CUB', 1),
+			array(173, 'Czech Republic', 'CZ', 'CZE', 1),
+			array(53, 'Denmark', 'DK', 'DNK', 1),
+			array(54, 'Djibouti', 'DJ', 'DJI', 1),
+			array(55, 'Dominica', 'DM', 'DMA', 1),
+			array(174, 'Dominican Republic', 'DO', 'DOM', 1),
+			array(56, 'Ecuador', 'EC', 'ECU', 1),
+			array(57, 'Egypt', 'EG', 'EGY', 1),
+			array(58, 'El Salvador', 'SV', 'SLV', 1),
+			array(60, 'Eritrea', 'ER', 'ERI', 1),
+			array(61, 'Slovakia', 'SK', 'SVK', 2),
+			array(62, 'Slovenia', 'SI', 'SVN', 2),
+			array(65, 'Estonia', 'EE', 'EST', 2),
+			array(66, 'Ethiopia', 'ET', 'ETH', 1),
+			array(102, 'Faroe islands', 'FO', 'FRO', 1),
+			array(103, 'Falkland Islands', 'FK', 'FLK', 1),
+			array(67, 'Fiji', 'FJ', 'FJI', 1),
+			array(69, 'Finland', 'FI', 'FIN', 2),
+			array(71, 'Gabon', 'GA', 'GAB', 1),
+			array(72, 'Gambia', 'GM', 'GMB', 1),
+			array(73, 'Georgia', 'GE', 'GEO', 1),
+			array(74, 'Ghana', 'GH', 'GHA', 1),
+			array(75, 'Gibraltar', 'GI', 'GIB', 1),
+			array(76, 'Greece', 'GR', 'GRC', 2),
+			array(77, 'Grenada', 'GD', 'GRD', 1),
+			array(78, 'Greenland', 'GL', 'GRL', 1),
+			array(79, 'Guadeloupe', 'GP', 'GLP', 1),
+			array(80, 'Guam', 'GU', 'GUM', 1),
+			array(81, 'Guatemala', 'GT', 'GTM', 1),
+			array(82, 'Guinea', 'GN', 'GIN', 1),
+			array(83, 'Equatorial Guinea', 'GQ', 'GNQ', 1),
+			array(84, 'Guinea-Bissau', 'GW', 'GNB', 1),
+			array(85, 'Guyana', 'GY', 'GUY', 1),
+			array(86, 'Haiti', 'HT', 'HTI', 1),
+			array(88, 'Honduras', 'HN', 'HND', 1),
+			array(89, 'Hong Kong', 'HK', 'HKG', 1),
+			array(90, 'Hungary', 'HU', 'HUN', 1),
+			array(91, 'India', 'IN', 'IND', 1),
+			array(205, 'British Indian Ocean Territory', 'IO', 'IOT', 1),
+			array(92, 'Indonesia', 'ID', 'IDN', 1),
+			array(93, 'Iraq', 'IQ', 'IRQ', 1),
+			array(94, 'Iran', 'IR', 'IRN', 1),
+			array(95, 'Ireland', 'IE', 'IRL', 2),
+			array(97, 'Iceland', 'IS', 'ISL', 1),
+			array(110, 'Israel', 'IL', 'ISR', 1),
+			array(49, 'Ivory Coast ', 'CI', 'CIV', 1),
+			array(112, 'Jamaica', 'JM', 'JAM', 1),
+			array(113, 'Japan', 'JP', 'JPN', 1),
+			array(114, 'Jordan', 'JO', 'JOR', 1),
+			array(115, 'Kazakhstan', 'KZ', 'KAZ', 1),
+			array(116, 'Kenya', 'KE', 'KEN', 1),
+			array(117, 'Kyrgyzstan', 'KG', 'KGZ', 1),
+			array(118, 'Kiribati', 'KI', 'KIR', 1),
+			array(48, 'South Korea', 'KR', 'KOR', 1),
+			array(228, 'Kosovo', 'XK', 'XKV', 2), // there is no official ISO code for Kosovo yet (http://geonames.wordpress.com/2010/03/08/xk-country-code-for-kosovo/) so using a temporary country code and a modified 3 character code for ISO code -- this should be updated if/when Kosovo gets its own ISO code
+			array(119, 'Kuwait', 'KW', 'KWT', 1),
+			array(120, 'Laos', 'LA', 'LAO', 1),
+			array(121, 'Latvia', 'LV', 'LVA', 2),
+			array(122, 'Lesotho', 'LS', 'LSO', 1),
+			array(123, 'Lebanon', 'LB', 'LBN', 1),
+			array(124, 'Liberia', 'LR', 'LBR', 1),
+			array(125, 'Libya', 'LY', 'LBY', 1),
+			array(126, 'Liechtenstein', 'LI', 'LIE', 1),
+			array(127, 'Lithuania', 'LT', 'LTU', 2),
+			array(128, 'Luxemburg', 'LU', 'LUX', 2),
+			array(129, 'Macao', 'MO', 'MAC', 1),
+			array(130, 'Macedonia', 'MK', 'MKD', 1),
+			array(131, 'Madagascar', 'MG', 'MDG', 1),
+			array(132, 'Malaysia', 'MY', 'MYS', 1),
+			array(133, 'Malawi', 'MW', 'MWI', 1),
+			array(134, 'Maldivas', 'MV', 'MDV', 1),
+			array(135, 'Mali', 'ML', 'MLI', 1),
+			array(136, 'Malta', 'MT', 'MLT', 2),
+			array(101, 'Northern Marianas', 'MP', 'MNP', 1),
+			array(137, 'Morocco', 'MA', 'MAR', 1),
+			array(104, 'Marshall islands', 'MH', 'MHL', 1),
+			array(138, 'Martinique', 'MQ', 'MTQ', 1),
+			array(139, 'Mauritius', 'MU', 'MUS', 1),
+			array(140, 'Mauritania', 'MR', 'MRT', 1),
+			array(141, 'Mayote', 'YT', 'MYT', 2),
+			array(142, 'Mexico', 'MX', 'MEX', 1),
+			array(143, 'Micronesia', 'FM', 'FSM', 1),
+			array(144, 'Moldova', 'MD', 'MDA', 1),
+			array(145, 'Monaco', 'MC', 'MCO', 2),
+			array(146, 'Mongolia', 'MN', 'MNG', 1),
+			array(147, 'Montserrat', 'MS', 'MSR', 1),
+			array(227, 'Montenegro', 'ME', 'MNE', 2),
+			array(148, 'Mozambique', 'MZ', 'MOZ', 1),
+			array(149, 'Myanmar', 'MM', 'MMR', 1),
+			array(150, 'Namibia', 'NA', 'NAM', 1),
+			array(151, 'Nauru', 'NR', 'NRU', 1),
+			array(152, 'Nepal', 'NP', 'NPL', 1),
+			array(9, 'Netherlands Antilles', 'AN', 'ANT', 1),
+			array(153, 'Nicaragua', 'NI', 'NIC', 1),
+			array(154, 'Niger', 'NE', 'NER', 1),
+			array(155, 'Nigeria', 'NG', 'NGA', 1),
+			array(156, 'Niue', 'NU', 'NIU', 1),
+			array(157, 'Norway', 'NO', 'NOR', 1),
+			array(158, 'New Caledonia', 'NC', 'NCL', 1),
+			array(159, 'New Zealand', 'NZ', 'NZL', 1),
+			array(160, 'Oman', 'OM', 'OMN', 1),
+			array(161, 'Pakistan', 'PK', 'PAK', 1),
+			array(162, 'Palau', 'PW', 'PLW', 1),
+			array(163, 'Panama', 'PA', 'PAN', 1),
+			array(164, 'Papua New Guinea', 'PG', 'PNG', 1),
+			array(165, 'Paraguay', 'PY', 'PRY', 1),
+			array(166, 'Peru', 'PE', 'PER', 1),
+			array(68, 'Philippines', 'PH', 'PHL', 1),
+			array(167, 'Poland', 'PL', 'POL', 1),
+			array(168, 'Portugal', 'PT', 'PRT', 2),
+			array(169, 'Puerto Rico', 'PR', 'PRI', 1),
+			array(170, 'Qatar', 'QA', 'QAT', 1),
+			array(176, 'Rwanda', 'RW', 'RWA', 1),
+			array(177, 'Romania', 'RO', 'ROM', 2),
+			array(178, 'Russia', 'RU', 'RUS', 1),
+			array(229, 'Saint Pierre and Miquelon', 'PM', 'SPM', 2),
+			array(180, 'Samoa', 'WS', 'WSM', 1),
+			array(181, 'American Samoa', 'AS', 'ASM', 1),
+			array(183, 'San Marino', 'SM', 'SMR', 2),
+			array(184, 'Saint Vincent and the Grenadines', 'VC', 'VCT', 1),
+			array(185, 'Saint Helena', 'SH', 'SHN', 1),
+			array(186, 'Saint Lucia', 'LC', 'LCA', 1),
+			array(188, 'Senegal', 'SN', 'SEN', 1),
+			array(189, 'Seychelles', 'SC', 'SYC', 1),
+			array(190, 'Sierra Leona', 'SL', 'SLE', 1),
+			array(191, 'Singapore', 'SG', 'SGP', 1),
+			array(192, 'Syria', 'SY', 'SYR', 1),
+			array(193, 'Somalia', 'SO', 'SOM', 1),
+			array(194, 'Sri Lanka', 'LK', 'LKA', 1),
+			array(195, 'South Africa', 'ZA', 'ZAF', 1),
+			array(196, 'Sudan', 'SD', 'SDN', 1),
+			array(199, 'Suriname', 'SR', 'SUR', 1),
+			array(200, 'Swaziland', 'SZ', 'SWZ', 1),
+			array(201, 'Thailand', 'TH', 'THA', 1),
+			array(202, 'Taiwan', 'TW', 'TWN', 1),
+			array(203, 'Tanzania', 'TZ', 'TZA', 1),
+			array(204, 'Tajikistan', 'TJ', 'TJK', 1),
+			array(206, 'Timor Oriental', 'TP', 'TMP', 1),
+			array(207, 'Togo', 'TG', 'TGO', 1),
+			array(208, 'Tokelau', 'TK', 'TKL', 1),
+			array(209, 'Tonga', 'TO', 'TON', 1),
+			array(210, 'Trinidad and Tobago', 'TT', 'TTO', 1),
+			array(211, 'Tunisia', 'TN', 'TUN', 1),
+			array(212, 'Turkmenistan', 'TM', 'TKM', 1),
+			array(213, 'Turkey', 'TR', 'TUR', 1),
+			array(214, 'Tuvalu', 'TV', 'TUV', 1),
+			array(215, 'Ukraine', 'UA', 'UKR', 1),
+			array(216, 'Uganda', 'UG', 'UGA', 1),
+			array(59, 'United Arab Emirates', 'AE', 'ARE', 1),
+			array(217, 'Uruguay', 'UY', 'URY', 1),
+			array(218, 'Uzbekistan', 'UZ', 'UZB', 1),
+			array(219, 'Vanuatu', 'VU', 'VUT', 1),
+			array(220, 'Vatican City', 'VA', 'VAT', 2),
+			array(221, 'Venezuela', 'VE', 'VEN', 1),
+			array(222, 'Vietnam', 'VN', 'VNM', 1),
+			array(108, 'Virgin Islands', 'VI', 'VIR', 1),
+			array(223, 'Yemen', 'YE', 'YEM', 1),
+			array(225, 'Zambia', 'ZM', 'ZMB', 1),
+			array(226, 'Zimbabwe', 'ZW', 'ZWE', 1));
+		
+		$country_iso = 'US';
+		foreach($old_countries as $country_array){
+			//note: index 0 is the 3.1 country ID
+			if($country_array[0] == $country_id){
+				//note: index 2 is the ISO
+				$country_iso = $country_array[2];
+				break;
+			}
+		}
+		return $country_iso;
+	}
+	
+	/**
+	 * Gets the ISO3 for the 
+	 * @return string
+	 */
+	public function get_default_country_iso(){
+		$old_org_options= get_option('events_organization_settings');
+		$iso = $this->get_iso_from_3_1_country_id($old_org_options['organization_country']);
+		return $iso;
+	}
+	
+	/**
+	 * Converst a 3.1 payment status to its equivalent 4.1 regisration status
+	 * @param string $payment_status possible value for 3.1's evens_attendee.payment_statsu
+	 * @return string STS_ID for use in 4.1
+	 */
+	public function convert_3_1_payment_status_to_4_1_STS_ID($payment_status){
+		$mapping = $default_reg_stati_conversions=array(
+		'Completed'=>'RAP',
+		''=>'RNA',
+		'Incomplete'=>'RNA',
+		'Pending'=>'RPN');
+		return isset($mapping[$payment_status]) ? $mapping[$payment_status] : 'RNA';
+	}
 	
 	
 	
 }
+
+
 
 
 
