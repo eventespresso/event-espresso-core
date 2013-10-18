@@ -10,7 +10,6 @@ jQuery(document).ready(function($) {
 
 
 	var joyridestart = function() {
-
 		v = typeof(EE_HELP_TOUR.tours[current_tour]) !== 'undefined' ? EE_HELP_TOUR.tours[current_tour] : null;
 
 		if ( v === null ) {
@@ -32,7 +31,7 @@ jQuery(document).ready(function($) {
 		if ( typeof v.options.postStepCallback !== 'undefined' && typeof window[v.options.postStepCallback] !== 'function' )
 			v.options.postStepCallback = $.noop;
 
-		v.options.postrideCallback = 'joyridepostride';
+		v.options.postrideCallback = 'joyridepostride'; //note this overrides any existing callback set for postride.  If we come into cases where we need to set a callback for post ride then this will have to be modified.
 
 		$('#' + v.id).joyride(v.options);
 	};
@@ -40,7 +39,7 @@ jQuery(document).ready(function($) {
 	//if we've got an EE_HELP_TOUR object then we can loop through it to get the stuff needed for the joyride and kick it off.
 	$(window).load(function() {
 		//check if they've been here if they have then let's skip to the next tour (if exists)
-		if ( document.cookie.indexOf(EE_HELP_TOUR.tours[current_tour].id) >= 0 )
+		if ( $.cookie(EE_HELP_TOUR.tours[current_tour].id) === 'undefined' )
 			current_tour++;
 		joyridestart();
 	});
@@ -48,8 +47,8 @@ jQuery(document).ready(function($) {
 
 	//add triggers for restarting the tour
 	$(document).on('click', '.trigger-ee-help-tour', function() {
-		$('#screen-meta').slideToggle();
-		$('#screen-options-link-wrap').css('visibility', 'visible');
+		$('#contextual-help-link').trigger('click');
+
 		//destroy current joyride
 		$('#' + EE_HELP_TOUR.tours[current_tour].id).joyride("destroy");
 		var tourid = $(this).attr('id').replace('trigger-tour-', '');
