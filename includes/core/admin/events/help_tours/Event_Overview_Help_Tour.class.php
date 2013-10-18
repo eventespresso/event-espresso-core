@@ -31,7 +31,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
 		$this->_label = __('Event Overview Tour', 'event_espresso');
-		$this->_slug = 'event-overview-joyride';
+		$this->_slug = $this->_is_caf ? 'event-overview-caf-joyride' : 'event-overview-joyride';
 	}
 
 
@@ -65,12 +65,20 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => -15
 					)
 				),
+			45 => array(
+				'id' => 'EVT_CAT',
+				'content' => $this->_stop_about_filters(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -30
+					)
+				),
 			50 => array(
 				'id' => 'start_date',
 				'content' => $this->_stop_five(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -40
+					'tipAdjustmentY' => -25
 					)
 				),
 			60 => array(
@@ -78,7 +86,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_stop_six(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -40
+					'tipAdjustmentY' => -25
 					)
 				),
 			70 => array(
@@ -86,7 +94,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_stop_seven(),
 				'options' => array(
 					'tipLocation' => 'left',
-					'tipAdjustmentY' => -40,
+					'tipAdjustmentY' => -25,
 					'tipAdjustmentX' => -15
 					)
 				),
@@ -128,6 +136,10 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_four() {
 		return '<p>' . __('Fields that will be searched with the value from the search are: Event Name, Event Description, Event Short Description', 'event_espresso') . '</p>';
+	}
+
+	protected function _stop_about_filters() {
+		return '<p>' . __('You can filter the events in this list by blah blah blah', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_five() {

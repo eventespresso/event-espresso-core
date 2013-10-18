@@ -114,6 +114,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * This is just a property that flags whether the given route is a caffeinated route or not.
+	 * @var boolean
+	 */
+	protected $_is_caf = FALSE;
+
+
+
 
 
 	/**
@@ -124,6 +132,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@return void
 	 */
 	public function __construct( $routing = TRUE ) {
+
+		if ( strpos( $this->_get_dir(), 'caffeinated' ) !== false )
+			$this->_is_caf = TRUE;
 		
 		$this->_yes_no_values = array(
 			array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
@@ -977,6 +988,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_help_tour = array();
 		//loop through _page_config to find any help_tour defined
 		
+		
 		foreach ( $this->_page_config as $route => $config ) {
 			//we're only going to set things up for this route
 			if ( $route !== $this->_req_action )
@@ -1002,7 +1014,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 						throw new EE_Error( implode( '||', $error_msg ));
 					}
 					$a = new ReflectionClass($tour);
-					$tour_obj = $a->newInstance();
+					$tour_obj = $a->newInstance($this->_is_caf);
 					$tours[] = $tour_obj;
 					$this->_help_tour[$route][] = EEH_Template::help_tour_stops_generator( $tour_obj );
 				}

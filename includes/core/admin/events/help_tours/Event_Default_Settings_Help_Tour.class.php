@@ -31,7 +31,7 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
 		$this->_label = __('Default Settings Tour', 'event_espresso');
-		$this->_slug = 'event-default-settings-joyride';
+		$this->_slug = $this->_is_caf ? 'event-default-settings-caf-joyride' : 'event-default-settings-joyride';
 	}
 
 
@@ -52,6 +52,15 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 			30 => array(
 				'id' => 'pending_counts_reg_limit',
 				'content' => $this->_stop_three(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 15
+					)
+				),
+			35 => array(
+				'id' => 'use_attendee_pre_approval',
+				'content' => $this->_pending_approval_stop(),
 				'options' => array(
 					'tipLocation' => 'right',
 					'tipAdjustmentY' => -50,
@@ -86,6 +95,10 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_three() {
 		return '<p>' . __('Pending Registrations count etc info blah blah blah', 'event_espresso') . '</p>';
+	}
+
+	protected function _pending_approval_stop() {
+		return '<p>' . __('What the heck is pending approval?', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_four() {

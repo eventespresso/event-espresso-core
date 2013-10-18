@@ -95,13 +95,23 @@ abstract class EE_Help_Tour extends EE_Base {
 
 
 	/**
+	 * a flag that is set on init for whether this help_tour is happening on a caf install or not.
+	 * @var boolean
+	 */
+	protected $_is_caf = false;
+
+
+
+	/**
 	 * _constructor
 	 * initialized the tour object and sets up important properties required to setup the tour.
 	 *
 	 * @access public
+	 * @param boolean $caf used to indicate if this tour is happening on caf install or not.
 	 * @return void
 	 */
-	public function __construct() {
+	public function __construct($caf = FALSE) {
+		$this->_is_caf = $caf;
 		$this->_req_data = array_merge( $_GET, $_POST );
 		$this->_set_tour_properties();
 		$this->_set_tour_stops();
