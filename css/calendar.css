@@ -449,6 +449,9 @@ a.reg-now-btn {
 .fc, .fc table .ui-widget-header {
 	font-size: 			1em;
 	}
+.ui-widget-content img {
+	max-width: 100%;
+}
 
 /* Calendar Widget CSS */
 /* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
