@@ -242,7 +242,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		//so clear any previosu items in the cart. When MER happens this will probably need to be tweaked, 
 		//possibly wrappe din a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
-		EE_Registry::instance()->SSN->clear_session();
+		//EE_Registry::instance()->SSN->clear_session();
 		//d( EE_Registry::instance()->SSN );
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
