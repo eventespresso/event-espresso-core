@@ -999,7 +999,7 @@ class EE_Base_Class{
 	
 	/**
 	 * Adds a relationship to the specified EE_Base_Class object, given the relationship's name. Eg, if the curren tmodel is related
-	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array.
+	 * to a group of events, the $relationName should be 'Event', and should be a key in the EE Model's $_model_relations array.
 	 * If this model object doensn't exist in teh DB, just caches the related thing
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
