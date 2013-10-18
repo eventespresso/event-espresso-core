@@ -11,6 +11,9 @@
  * @ link				http://www.eventespresso.com
  * @ version		4+
  */
+
+do_action( 'AHEE_before_event_list' );
+
 ?>
 
 <div id="dates-list-event-list-dv" class="max-width maxwidth row">
