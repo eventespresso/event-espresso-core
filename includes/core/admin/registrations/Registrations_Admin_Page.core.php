@@ -1908,7 +1908,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$line_item_id = $item['line_item_id'];
 		
 		//grab session
-		EE_Registry::instance()->SSN->set_session_data( array( 'fill' => TRUE ), 'billing_info' );			
+		EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => array( 'fill' => TRUE )));			
 		// load gateways
 		$EEM_Gateways = EE_Registry::instance()->load_model( 'Gateways' );		
 
@@ -1964,7 +1964,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$primary_attendee['fname'] = $qstns['fname'];
 			$primary_attendee['lname'] = $qstns['lname'];
 			$primary_attendee['email'] = $qstns['email'];
-			EE_Registry::instance()->SSN->set_session_data(array('primary_attendee' => $primary_attendee), 'session_data');
+			EE_Registry::instance()->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee ));
 
 		}
 		// update attendee details
@@ -2015,7 +2015,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
 //		$transaction->set_txn_session_data(null);
 //		//var_dump(EE_Registry::instance()->SSN->get_session_data());
-//		EE_Registry::instance()->SSN->set_session_data(array( 'registration' => $saved_registrations, 'transaction' => $transaction ), 'session_data');
+//		EE_Registry::instance()->SSN->set_session_data( array( 'registration' => $saved_registrations, 'transaction' => $transaction ));
 //		EE_Registry::instance()->SSN->update_espresso_session();
 			
 //		printr( EE_Registry::instance()->SSN, 'EE_Registry::instance()->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );

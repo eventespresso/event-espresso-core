@@ -171,15 +171,12 @@ class EE_Taxes extends EE_BASE {
 			}
 		}
 		// add tax data to session
-		EE_Registry::instance()->SSN->set_session_data( 
-				array(
-						'taxes' 										=> $this->_calculated_taxes,
-						'tax_totals' 								=> $tax_totals,
-						'grand_total_price_object' 	=> $this->_grand_total,
-						'_cart_grand_total_amount' 	=> $this->_grand_total->price()
-				),
-				'session_data'
-		);
+		EE_Registry::instance()->SSN->set_session_data( array(
+			'taxes' => $this->_calculated_taxes,
+			'tax_totals' => $tax_totals,
+			'grand_total_price_object' => $this->_grand_total,
+			'_cart_grand_total_amount' => $this->_grand_total->price()
+		));
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 		
 	}

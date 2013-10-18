@@ -1,16 +1,17 @@
-<!--**********************************  STEP 2 	**********************************-->
+<!--***************  PAYMENT OPTIONS STEP  ***************-->
 
-	<h2 id="spco-step-title-2-hdr" class="spco-step-title-hdr">
-		<?php _e('Step 2 - Payment Options', 'event_espresso'); ?>
-		<a id="spco-edit-step-2-lnk" class="spco-go-to-step-2 spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
+	<h2 id="spco-payment_options-hdr" class="spco-step-title-hdr">
+		<?php echo sprintf( __('Step %d -  Payment Options', 'event_espresso'), $step_nmbr ); ?>
+		<a id="spco-edit-payment_options-lnk" class="spco-go-to-payment_options spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 
-	<div id="spco-step-2-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
+	<div id="spco-payment_options-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
 
-		<form id="mer-registration-frm-2" action="<?php echo $reg_step_form_url;?>" method="post">
+		<form id="spco-registration-payment_options-frm" action="<?php echo $reg_step_form_url;?>" method="post">
 
-			<input type="hidden" id="spco-step-2-action" name="ajax_action" value="espresso_process_registration_step_2" />
-			<input type="hidden" id="spco-step-2-noheader" name="noheader" value="" />		
+			<input type="hidden" id="spco-payment_options-action" name="ajax_action" value="espresso_<?php echo $reg_step_ajax_action;?>" />
+			<input type="hidden" id="spco-payment_options-noheader" name="noheader" value="" />		
+			<input type="hidden" id="spco-payment_options-next-step" name="next_step" value="<?php echo $next_step; ?>" />		
 
 <?php
 		if ( $events_requiring_pre_approval != '' ) { ?>
@@ -32,7 +33,7 @@
 			<p id="spco-coupon-code-input-pg" class="event_form_field">
 				<label><?php _e('Enter discount code', 'event_espresso'); ?></label>
 				<input type="text" id="spco-coupon_codes-txt" class="spco-coupon_codes-txt medium-txt <?php echo $css_class;?>"  value="" />
-				<a id="spco-apply-coupon-btn" class="ui-button ui-priority-secondary ui-state-default ui-corner-all add-hover-fx hide-if-no-js" href="<?php echo $mer_reg_page_ajax_coupons_url;?>" >
+				<a id="spco-apply-coupon-btn" class="ui-button ui-priority-secondary ui-state-default ui-corner-all add-hover-fx hide-if-no-js" href="<?php echo $spco_reg_page_ajax_coupons_url;?>" >
 					<span class="ui-icon ui-icon-tag"></span><?php _e('apply&nbsp;coupon&nbsp;', 'event_espresso'); ?>
 				</a>
 			</p>
@@ -86,28 +87,27 @@
 		<?php
 				// end  if  $payment_required
 			} else { ?>
-			<input type="hidden" id="reg-page-no-payment-required-step-2" name="reg-page-no-payment-required" value="1" />
+			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="reg-page-no-payment-required" value="1" />
 			<?php _e('This is a free event, so no billing will occur.', 'event_espresso'); ?>
 <?php }  ?>
 
-		<div id="spco-whats-next-buttons" class="mer-whats-next-buttons">
+		<div id="spco-whats-next-buttons" class="spco-whats-next-buttons">
 
-		<!--<a href="" onclick="return false" id="spco-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx icon-right hide-if-no-js" >-->
-			<a href="" id="spco-go-to-step-3-btn" class="mer-register-btn ui-button ui-button-big hide-if-no-js" >
-				<?php echo $next_step; ?><span class="ui-icon ui-icon-carat-1-e"></span>
+			<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="<?php echo $step; ?>" >
+				<?php echo $next_step_text; ?>
 			</a>
 
 			<noscript>
 				<input type="submit"
-							id="spco-go-to-step-3-sbmt-btn"
-							class="mer-register-btn no-js-btn ui-button ui-button-big ui-priority-primary ui-state-default ui-corner-all add-hover-fx"
-							name="spco-go-to-step-3-sbmt-btn"
-							value="&nbsp;<?php echo $next_step; ?>&nbsp;&raquo;"
+							id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn"
+							class="spco-next-step-btn spco-register-btn no-js-btn"
+							name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn"
+							value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;"
 					/>
 			</noscript>
 
 		</div>
-		<!--end mer-whats-next-buttons-->
+		<!--end spco-whats-next-buttons-->
 
 		</form>
 

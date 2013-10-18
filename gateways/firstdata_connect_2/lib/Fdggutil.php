@@ -24,7 +24,7 @@ class espresso_Fdggutil {
 		$this->dateTime = date("Y:m:d-H:i:s");
 		$session_data = $EE_Session->get_session_data();
 		$session_data['gateway_data']['transaction_dateTime'] = $this->dateTime;
-		$EE_Session->set_session_data($session_data['gateway_data'], 'gateway_data');
+		$EE_Session->set_session_data( $session_data['gateway_data'] );
 	}
 
 	public function set_chargetotal($chargetotal) {

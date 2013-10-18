@@ -21,7 +21,7 @@ function espresso_send_to_firstdata_connect_2($EE_Session) {
 	$fdggutil->set_dateTime($EE_Session);
 	do_action('AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($fdggutil)));
 	$session_data['gateway_data']['off-site-form'] = $fdggutil->submitPayment($EE_Session);
-	$EE_Session->set_session_data($session_data['gateway_data'], 'gateway_data');
+	$EE_Session->set_session_data( $session_data['gateway_data'] );
 }
 
 add_action('AHEE_gateway_process_step_3', 'espresso_send_to_firstdata_connect_2');

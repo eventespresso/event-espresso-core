@@ -120,20 +120,18 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			$this->encryption = EE_Registry::instance()->load_core( 'Encryption' );
 		}
 
-		$extra_default_session_vars = array();
 		// filter hook allows outside functions/classes/plugins to change default empty cart
-		$extra_default_session_vars = apply_filters( 'FHEE_default_session_vars', $extra_default_session_vars );
+		$extra_default_session_vars = apply_filters( 'FHEE_default_session_vars', array() );
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
 
 		$this->_set_defaults();
-
 
 		// check for existing session and retreive it from db
 		if ( ! $this->_espresso_session() ) {
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
-		
+//		d( $this->_session_data );
 		add_action( 'AHEE_before_event_list', array( $this, 'clear_session' ), 10, 2 );
 		// check request for 'clear_session' param
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 10 );
@@ -157,8 +155,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				$this->_session_data[ $key ] = array();
 			} else {
 				$this->_session_data[ $key ] = '';
-			}
-			
+			}			
 		}
 	}
 
@@ -185,24 +182,25 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @access	public
 	 * @return	array
 	 */
-	public function get_session_data( $key = FALSE, $section = FALSE ) {
+	public function get_session_data( $key = NULL, $section = NULL, $where = NULL ) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
+//		echo '<h4>get_session_data : ' . $where  . '</h4><br />';
+//		echo '$key : <b>' . $key . '</b>  - isset? ' . ( isset( $this->_session_data[ $key ] ) ? 'YES' : 'NO' ) . '<br />';
+		//echo '$key : <b>' . $key . '</b>  - isset? ' . ( isset( $this->_session_data[ $section ][$key] ) ? 'YES' : 'NO' ) . '<br />';
+//		echo '<span style="font-size:10px;font-weight:normal;">' . __FILE__ . '.&nbsp;&nbsp;line no: ' . __LINE__ . '</span><br />';
 
-		if ( $section != FALSE && $key != FALSE ) {
-			//echo  '1 key : ' . $key . '<br />section : ' . $section . '<br />';
-			if ( isset( $this->_session_data[ $section ][$key] )) {
-				return $this->_session_data[ $section ][$key];
-			}			
-		} elseif ( $section != FALSE )  {
-			//echo  '2 key : ' . $key . '<br />section : ' . $section . '<br />';
-			if ( isset( $this->_session_data[ $section ] )) {
-				return $this->_session_data[ $section ];
-			}
-		}  else  {
-			//echo  '3 key : ' . $key . '<br />section : ' . $section . '<br />';
+		if ( empty( $section ) && empty( $key )) {
 			return $this->_session_data;
+//		} else if ( isset( $this->_session_data[ $section ] ) && isset( $this->_session_data[ $section ][$key] )) {
+//			echo '<h1>$key found</h1><br /><br />';
+//			return $this->_session_data[ $section ][$key];
+		} else if ( isset( $this->_session_data[ $key ] ))  {
+//			echo '<h1>$key found</h1><br /><br />';
+			return $this->_session_data[ $key ];
+		}  else  {
+			return NULL;
 		}
 
 	}
@@ -216,7 +214,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @access	public
 	 * @return	TRUE on success, FALSE on fail
 	 */
-	public function set_session_data( $data, $section = 'cart' ) {
+	public function set_session_data( $data ) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
@@ -227,13 +225,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			return FALSE;
 		}
 
-		if ( $section == 'session_data' ) {
-			foreach ( $data as $key =>$value ) {
+		foreach ( $data as $key =>$value ) {
+			if ( ! isset( $this->_default_session_vars[ $key ] )) {
 				$this->_session_data[ $key ] = $value;
-			}
-		} else {
-			foreach ( $data as $key =>$value ) {
-				$this->_session_data[ $section ][ $key ] = $value;
 			}
 		}
 
@@ -254,8 +248,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 		// starts a new session if one doesn't already exist, or reinitiates an existing one
-		if (isset($_GET['session_id'])) {
-			session_id(sanitize_key($_GET['session_id']));
+		if ( isset( $_GET['session_id'] )) {
+			session_id( sanitize_key( $_GET['session_id'] ));
 			session_start();
 		}
 		
@@ -278,7 +272,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 		// now let's retreive what's in the db
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
-		if ( $session_data = get_transient( $this->_sid ) ) {
+		if ( $session_data = get_transient( 'EE_SSN_' . $this->_sid )) {
 
 			// un-encrypt the data
 			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
@@ -441,7 +435,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// encrypt it if we are using encryption
 		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
-		set_transient( $this->_sid, $session_data, $this->_expiration );
+		set_transient( 'EE_SSN_' . $this->_sid, $session_data, $this->_expiration );
 		//die();
 		return set_transient( $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
@@ -607,7 +601,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				'cart',
 				'gateway_data', 
 				'transaction', 
-				'registration',
 				'primary_attendee',
 				'tax_totals',
 				'taxes',
@@ -620,11 +613,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 																
 		$this->set_session_data(
 			array(
-						'_events_in_cart' => array(),
-						'_cart_grand_total_qty' => 0,
-						'_cart_grand_total_amount' => 0
-					),
-					'session_data'
+				'cart' => NULL,
+				'transaction' => NULL,
+				'_cart_grand_total_qty' => 0,
+				'_cart_grand_total_amount' => 0
+			)
 		);
 
 	}
