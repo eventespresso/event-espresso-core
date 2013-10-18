@@ -1,10 +1,9 @@
 jQuery(document).ready(function($) {
 	var current_tour = 0;
-	var joyridepostride = function() {
+	var joyridepostride = function(joyride_index,current_tip) {
 		v = EE_HELP_TOUR.tours[current_tour];
 		$('#' + v.id).joyride("destroy");
 		current_tour++;
-		console.log(v.id);
 		joyridestart();
 	};
 
@@ -17,6 +16,7 @@ jQuery(document).ready(function($) {
 			current_tour--;
 			return;
 		}
+
 		/**
 		 * verify callbacks before sending to joyride.
 		 */
@@ -31,7 +31,7 @@ jQuery(document).ready(function($) {
 		if ( typeof v.options.postStepCallback !== 'undefined' && typeof window[v.options.postStepCallback] !== 'function' )
 			v.options.postStepCallback = $.noop;
 
-		v.options.postrideCallback = 'joyridepostride'; //note this overrides any existing callback set for postride.  If we come into cases where we need to set a callback for post ride then this will have to be modified.
+		v.options.postRideCallback = joyridepostride; //note this overrides any existing callback set for postride.  If we come into cases where we need to set a callback for post ride then this will have to be modified.
 
 		$('#' + v.id).joyride(v.options);
 	};
@@ -39,7 +39,7 @@ jQuery(document).ready(function($) {
 	//if we've got an EE_HELP_TOUR object then we can loop through it to get the stuff needed for the joyride and kick it off.
 	$(window).load(function() {
 		//check if they've been here if they have then let's skip to the next tour (if exists)
-		if ( $.cookie(EE_HELP_TOUR.tours[current_tour].id) === 'undefined' )
+		if ( $.cookie(EE_HELP_TOUR.tours[current_tour].id) !== null )
 			current_tour++;
 		joyridestart();
 	});
