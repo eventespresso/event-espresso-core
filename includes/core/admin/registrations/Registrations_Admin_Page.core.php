@@ -1538,7 +1538,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				
 				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $attendee->full_address_as_array() );
 				
-				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$attendee->ID() ), REG_ADMIN_URL );
+				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );
 				
 				$att_nmbr++;
 			}
@@ -2788,7 +2788,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = 0;
 		}
 		
-		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'id' => $this->_req_data['ATT_ID'] ) );
+		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'post' => $this->_req_data['ATT_ID'] ) );
 			
 	}
  

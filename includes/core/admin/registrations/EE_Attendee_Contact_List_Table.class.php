@@ -101,7 +101,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 	function column_ATT_lname($item) {
 
 		// edit attendee link
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . $item->lname() . '</a>';
 		return $name_link;
 
@@ -115,7 +115,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 		//Build row actions
 		$actions = array();
 		// edit attendee link
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );
 		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 
 		if ( $this->_view == 'in_use' ) {
@@ -131,7 +131,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Attendee Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 		}
 
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . $item->fname() . '</a>';
 
 		//Return the name contents
