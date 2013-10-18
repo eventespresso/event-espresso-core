@@ -342,8 +342,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Contact List', 'event_espresso'),
 					'order' => 20
 					),
-					'list_table' => 'EE_Attendee_Contact_List_Table',
-					'metaboxes' => array()
+				'list_table' => 'EE_Attendee_Contact_List_Table',
+				'help_tour' => array( 'Contact_List_Help_Tour' ),
+				'metaboxes' => array()
 				),
 
 			//override default cpt routes
