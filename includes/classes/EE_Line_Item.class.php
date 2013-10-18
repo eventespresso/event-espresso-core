@@ -33,12 +33,32 @@ class EE_Line_Item extends EE_Base_Class{
 	protected $_LIN_name = NULL;
 	/** Line Item Description", "event_espresso @var LIN_desc*/ 
 	protected $_LIN_desc = NULL;
-	/** Amount", "event_espresso @var LIN_amount*/ 
-	protected $_LIN_amount = NULL;
+	/**
+	 * Line Item Unit Price
+	 */
+	protected $_LIN_unit_price = NULL;
+	/**
+	 *
+	 * @var $_LIN_is_percent whether or not the unit price is a percent
+	 */
+	protected $_LIN_is_percent = NULL;
 	/** Quantity", "event_espresso @var LIN_quantity*/ 
 	protected $_LIN_quantity = NULL;
-	/** Taxable?", "event_espresso @var LIN_taxable*/ 
-	protected $_LIN_taxable = NULL;
+	/**
+	 *
+	 * @var $_LIN_total total percent ? (previous-total * unit_price) : (unit_price * quantity); (where previous-total is the total of all previous line items in this group)
+	 */
+	protected $_LIN_total = NULL;
+	/**
+	 *
+	 * @var $_LIN_order order of application in producing the parent (this only makes a different when the items are a mix of percent VS flat-rate items)
+	 */
+	protected $_LIN_order = NULL;
+	/**
+	 *
+	 * @var $_LIN_type one of line-item, sub-item, sub-total, tax, total. mostly handy for display
+	 */
+	protected $_LIN_type = NULL;
 	/** ID of Item purchased. NOT for querying", "event_espresso @var LIN_item_id*/ 
 	protected $_LIN_item_id = NULL;
 	/** Type of Line Item purchased. NOT for querying", "event_espresso @var LIN_item_type*/ 
@@ -119,22 +139,6 @@ class EE_Line_Item extends EE_Base_Class{
 		return $this->set('LIN_desc', $desc);
 	}
 	/**
-	 * Gets amount
-	 * @return float
-	 */
-	function amount() {
-		return $this->get('LIN_amount');
-	}
-
-	/**
-	 * Sets amount
-	 * @param float $amount
-	 * @return boolean
-	 */
-	function set_amount($amount) {
-		return $this->set('LIN_amount', $amount);
-	}
-	/**
 	 * Gets quantity
 	 * @return int
 	 */
@@ -150,22 +154,7 @@ class EE_Line_Item extends EE_Base_Class{
 	function set_quantity($quantity) {
 		return $this->set('LIN_quantity', $quantity);
 	}
-	/**
-	 * Gets taxable
-	 * @return boolean
-	 */
-	function taxable() {
-		return $this->get('LIN_taxable');
-	}
-
-	/**
-	 * Sets taxable
-	 * @param boolean $taxable
-	 * @return boolean
-	 */
-	function set_taxable($taxable) {
-		return $this->set('LIN_taxable', $taxable);
-	}
+	
 	/**
 	 * Gets item_id
 	 * @return string
@@ -198,7 +187,104 @@ class EE_Line_Item extends EE_Base_Class{
 	function set_item_type($item_type) {
 		return $this->set('LIN_item_type', $item_type);
 	}
+	
+	/**
+	 * Gets unit_price
+	 * @return float
+	 */
+	function unit_price() {
+		return $this->get('LIN_unit_price');
+	}
 
+	/**
+	 * Sets unit_price
+	 * @param float $unit_price
+	 * @return boolean
+	 */
+	function set_unit_price($unit_price) {
+		return $this->set('LIN_unit_price', $unit_price);
+	}
+	/**
+	 * Gets is_percent
+	 * @return boolean
+	 */
+	function is_percent() {
+		return $this->get('LIN_is_percent');
+	}
+
+	/**
+	 * Sets is_percent
+	 * @param boolean $is_percent
+	 * @return boolean
+	 */
+	function set_is_percent($is_percent) {
+		return $this->set('LIN_is_percent', $is_percent);
+	}
+	/**
+	 * Gets total
+	 * @return float
+	 */
+	function total() {
+		return $this->get('LIN_total');
+	}
+
+	/**
+	 * Sets total
+	 * @param float $total
+	 * @return boolean
+	 */
+	function set_total($total) {
+		return $this->set('LIN_total', $total);
+	}
+	/**
+	 * Gets parent
+	 * @return int
+	 */
+	function parent_ID() {
+		return $this->get('LIN_parent');
+	}
+
+	/**
+	 * Sets parent
+	 * @param int $parent
+	 * @return boolean
+	 */
+	function set_parent_ID($parent) {
+		return $this->set('LIN_parent', $parent);
+	}
+	
+	/**
+	 * Gets type
+	 * @return string
+	 */
+	function type() {
+		return $this->get('LIN_type');
+	}
+
+	/**
+	 * Sets type
+	 * @param string $type
+	 * @return boolean
+	 */
+	function set_type($type) {
+		return $this->set('LIN_type', $type);
+	}
+
+	/**
+	 * Gets the line item of which this item is a compoiste. Eg, if this is a subtotal, the parent might be a total\
+	 * @return EE_Line_Item
+	 */
+	public function parent(){
+		return $this->get_model()->get_one_by_ID($this->parent_ID());
+	}
+
+	/**
+	 * Gets ALL the children of this line item (ie, all the parts that contribute towards this total).
+	 * @return EE_Line_Item[]
+	 */
+	public function children(){
+		return $this->get_modeel()->get_all(array(array('LIN_parent'=>$this->ID())));
+	}
 
 
 
