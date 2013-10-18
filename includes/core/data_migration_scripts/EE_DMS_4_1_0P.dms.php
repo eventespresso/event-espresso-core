@@ -36,8 +36,9 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		$this->_migration_stages = array(
 //			10=>new EE_DMS_4_1_0P_attendees(),
 			new EE_DMS_4_1_0P_events(),
+			new EE_DMS_4_1_0P_prices(),
 			//important: this one should be ran AFTER the general settings
-//			30=>new EE_DMS_4_1_0P_gateways(),
+			new EE_DMS_4_1_0P_gateways(),
 			new EE_DMS_4_1_0P_category_details(),
 			new EE_DMS_4_1_0P_event_category(),
 			new EE_DMS_4_1_0P_venues(),
@@ -582,6 +583,10 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		//(because many need to convert old string states to foreign keys into the states table)
 		$this->insert_default_states();
 		$this->insert_default_countries();
+		//setting up default prices, price types, and tickets is also essential for the price migrations
+		$this->insert_default_price_types();
+		$this->insert_default_prices();
+		$this->insert_default_tickets();
 		
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);
@@ -932,6 +937,116 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		
 		}
 		
+	}
+	
+	/**
+	 * insert_default_price_types
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public function insert_default_price_types() {
+
+		global $wpdb;
+		$price_type_table = $wpdb->prefix."esp_price_type";
+
+		if ($wpdb->get_var("SHOW TABLES LIKE '$price_type_table'") == $price_type_table) {
+
+			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
+			$price_types_exist = $wpdb->get_var( $SQL );
+			
+			if ( ! $price_types_exist ) {
+				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
+							(1, '" . __('Base Price', 'event_espresso') . "', 1, 0, 0, 0, 0),
+							(2, '" . __('Member % Discount', 'event_espresso') . "', 2, 1, 1, 10, 0),
+							(3, '" . __('Member Dollar Discount', 'event_espresso') . "', 2, 1, 0, 10, 0),
+							(4, '" . __('Percent Discount', 'event_espresso') . "', 2, 0, 1, 20, 0),
+							(5, '" . __('Dollar Discount', 'event_espresso') . "', 2, 0, 0, 30, 0),
+							(6, '" . __('Percent Surcharge', 'event_espresso') . "', 3, 0, 1, 40, 0),
+							(7, '" . __('Dollar Surcharge', 'event_espresso') . "', 3, 0, 0, 50, 0),
+							(8, '" . __('Regional Tax', 'event_espresso') . "', 4, 0, 1, 60, 0),
+							(9, '" . __('Federal Tax', 'event_espresso') . "', 4, 0, 1, 70, 0);";
+				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
+				$wpdb->query( $SQL );	
+			}
+		}
+	}
+	
+	/**
+	 * insert_default_prices
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public function insert_default_prices() {
+
+		global $wpdb;
+		$price_table = $wpdb->prefix."esp_price";
+		
+		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
+			
+			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
+			$prices_exist = $wpdb->get_var( $SQL );
+			
+			if ( ! $prices_exist ) {
+				$SQL = "INSERT INTO $price_table
+							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_row, PRC_parent ) VALUES
+							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 1, 0),
+							(2, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 1, NULL, 10, 0, 2, 0),
+							(3, 4, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, NULL, 20, 0, 3, 0),
+							(4, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, NULL, 30, 0, 4, 0),
+							(5, 7, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 5, 0),
+							(6, 8, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 6, 0);";			
+				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
+				$wpdb->query($SQL);			
+			}
+		}	
+	}
+	
+	/**
+	 * insert default ticket
+	 *
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public function insert_default_tickets() {
+
+		global $wpdb;
+		$ticket_table = $wpdb->prefix."esp_ticket";
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_table'") == $ticket_table ) {
+
+			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
+			$tickets_exist = $wpdb->get_var($SQL);
+
+			if ( ! $tickets_exist ) {
+				$SQL = "INSERT INTO $ticket_table
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
+					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
+				$wpdb->query($SQL);
+			}
+		}
+		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
+
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_price_table'") == $ticket_price_table ) {
+
+			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
+			$ticket_prc_exist = $wpdb->get_var($SQL);
+
+			if ( ! $ticket_prc_exist ) {
+
+				$SQL = "INSERT INTO $ticket_price_table
+				( TKP_ID, TKT_ID, PRC_ID ) VALUES 
+				( 1, 1, 1 )
+				";
+
+				$SQL = apply_filters( 'FHEE_default_ticket_price_activation_sql', $SQL);
+				$wpdb->query($SQL);
+			}
+		}
 	}
 	
 	/**

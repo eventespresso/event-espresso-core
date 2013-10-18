@@ -271,7 +271,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		);
 		$post_status = $status_conversions[$old_event['event_status']];
 		//check if we've sold out
-		if (intval($old_event['reg_limit']) <= $this->_count_registrations($old_event['id'])){
+		if (intval($old_event['reg_limit']) <= self::count_registrations($old_event['id'])){
 			$post_status = 'sold_out';
 		}
 //		FYI postponed and cancelled don't exist in 3.1
@@ -323,7 +323,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	 * @param type $event_id
 	 * @return int
 	 */
-	private function _count_registrations($event_id){
+	public static function count_registrations($event_id){
 		global $wpdb;
 		$count = $wpdb->get_var($wpdb->prepare("SELECT sum(quantity) FROM {$wpdb->prefix}events_attendee WHERE event_id=%d",$event_id));
 		return intval($count);
@@ -602,7 +602,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'DTT_EVT_start'=> "$start_date $start_time:00",//DTT_EVT_start
 			'DTT_EVT_end'=> "$end_date $end_time:00",//DTT_EVT_end
 			'DTT_reg_limit'=>$old_event_row['reg_limit'],//DTT_reg_limit
-			'DTT_sold'=>$this->_count_registrations($old_event_row['id']),//DTT_sold
+			'DTT_sold'=>$this->count_registrations($old_event_row['id']),//DTT_sold
 			'DTT_is_primary'=> 0 == $existing_datetimes ,//DTT_is_primary... if count==0, then we'll call it the 'primary'
 			'DTT_order'=> $existing_datetimes,//DTT_order, just give it the same order as the count of how many datetimes already exist
 			'DTT_parent'=>0,
