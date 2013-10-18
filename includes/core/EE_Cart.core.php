@@ -105,12 +105,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 //		}
 
 		// grab any session data carried over from the previous page access
-		$this->_items = EE_Registry::instance()->SSN->get_session_data( FALSE, 'cart' );	
+		$this->_items = EE_Registry::instance()->SSN->get_session_data( 'cart' );	
 		//d( $this->_items );
 		$this->_items = is_array( $this->_items ) ? $this->_items : array();	
 
 		// once everything is all said and done, save the cart to the EE_Session
-		add_action( 'shutdown', array( $this, '_save_cart' ), 90 );
+		add_action( 'shutdown', array( $this, 'save_cart' ), 90 );
 
 	}
 
@@ -139,7 +139,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1 ) {
 		// add $ticket to cart
 		$this->_add_item( new EE_Ticket_Cart_Item( $ticket, $qty ));
-		return $this->_save_cart() ? TRUE : FALSE;
+		return $this->save_cart() ? TRUE : FALSE;
 	}		
 
 
@@ -317,9 +317,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@access public
 	 *	@return void
 	 */	
-	public function empty_cart() {		
+	public function empty_cart() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
-		$this->_items = array();		
+		$this->_items = array();
+		$this->save_cart( TRUE );	
 	}		
 	
 
@@ -329,22 +330,24 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 	/**
 	 *	@save cart to session
-	 *	@access private
+	 *	@access public
 	 *	@return TRUE on success, FALSE on fail
 	 */	
-	public function _save_cart() {
+	public function save_cart( $save_empty = FALSE ) {
 		
-		$cart_data = array(
-			'cart' => $this->_items,
-			'_cart_grand_total_qty' => count( $this->_items ),
-			'_cart_grand_total_amount' => $this->get_cart_grand_total()
-		);
-			
-		// add cart data to session so it can be saved to the db
-		if ( EE_Registry::instance()->SSN->set_session_data( $cart_data, 'session_data' )) {
-			return TRUE;
-		} else {
-			return FALSE;
+		if ( ! empty( $this->_items ) || $save_empty ) {
+			$cart_data = array(
+				'cart' => $this->_items,
+				'_cart_grand_total_qty' => count( $this->_items ),
+				'_cart_grand_total_amount' => $this->get_cart_grand_total()
+			);
+				
+			// add cart data to session so it can be saved to the db
+			if ( EE_Registry::instance()->SSN->set_session_data( $cart_data )) {
+				return TRUE;
+			} else {
+				return FALSE;
+			}			
 		}
 
 	}
