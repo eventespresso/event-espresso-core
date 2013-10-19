@@ -108,7 +108,9 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		$old_org_options = get_option('events_organization_settings');
 		foreach($this->_org_options_we_know_how_to_migrate as $option_name){
 			$this->_handle_org_option($option_name, $old_org_options[$option_name]);
-
+			if($option_name=='surcharge'){
+				$this->_insert_new_global_surcharge_price($old_org_options);
+			}
 			$items_actually_migrated++;
 		}
 
@@ -264,12 +266,6 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'full_logging': 
 			  //?
 			  break;
-		  case 'surcharge_type':
-			  //?
-			  break;
-		  case 'surcharge_text': 
-			  //?
-			  break;
 		  case 'affiliate_id': 
 			  //?
 			  break;
@@ -278,6 +274,61 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  default:
 			  do_action('AHEE__EE_DMS_4_1_0P__handle_org_option',$option_name,$value);
 		}
+	}
+	
+	/**
+	 * Creates a 4.1 member price discount
+	 * @global type $wpdb
+	 * @param type $old_price
+	 * @return int
+	 */
+	private function _insert_new_global_surcharge_price($org_options){	
+		$amount = floatval($org_options['surcharge']);
+		//dont createa a price if the surcharge is 0
+		if($amount <=.01){
+			return 0;
+		}
+		if($org_options['surcharge_type'] == 'flat_rate'){
+			$price_type = EE_DMS_4_1_0P_prices::price_type_flat_surcharge;
+		}else{
+			$price_type = EE_DMS_4_1_0P_prices::price_type_percent_surcharge;
+		}
+		global $wpdb;
+		$cols_n_values = array(
+			'PRT_ID'=>$price_type,
+			'PRC_amount'=>$amount,
+			'PRC_name'=>  $org_options['surcharge_text'],
+			'PRC_is_default'=>true,
+			'PRC_overrides'=>false,
+			'PRC_order'=>100,
+			'PRC_deleted'=>false,
+			'PRC_row'=>0,
+			'PRC_parent'=>null
+		
+		);
+		$datatypes = array(
+			'%d',//PRT_ID
+			'%f',//PRT_amount
+			'%s',//PRC_name
+			'%d',//PRC_is_default
+			'%d',//PRC_overrides
+			'%d',//PRC_order
+			'%d',//PRC_deleted
+			'%d',//PRC_row
+			'%d',//PRC_parent
+		);
+		$price_table = $wpdb->prefix."esp_price";
+		$success = $wpdb->insert($price_table,$cols_n_values,$datatypes);
+		if ( ! $success){
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion('org_options', 
+					array(
+						'surcharge'=>$org_options['surcharge'],
+						'surcharge_type'=>$org_options['surcharge_type'],
+						'surcharge_text'=>$org_options['surcharge_text']), $price_table, $cols_n_values, $datatypes));
+			return 0;
+		}
+		$new_id = $wpdb->insert_id;
+		return $new_id;
 	}
 	
 	protected $_org_options_we_know_how_to_migrate = array(
