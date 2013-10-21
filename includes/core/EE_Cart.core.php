@@ -228,11 +228,13 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// set grand total to total cart value before taxes
 		$this->_grand_total = $this->_calculate_cart_total_before_tax();
 		//loop thru taxes 
-		foreach ( $taxes as $tax ) {
-			// track taxes
-			$this->_taxes[ $tax->name() ] = $this->_total_before_tax * $tax->amount() / 100;
-			// apply taxes to grand_total
-			$this->_grand_total += $this->_total_before_tax * $tax->amount() / 100;
+		foreach ( $taxes as $priority => $taxes_at_priority ) {
+			foreach($taxes_at_priority as $tax){
+				// track taxes
+				$this->_taxes[ $tax->name() ] = $this->_total_before_tax * $tax->amount() / 100;
+				// apply taxes to grand_total
+				$this->_grand_total += $this->_total_before_tax * $tax->amount() / 100;
+			}
 		}
 
 	}

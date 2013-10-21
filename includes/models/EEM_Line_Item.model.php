@@ -74,11 +74,13 @@ class EEM_Line_Item extends EEM_Base {
 		$this->_fields = array(
 			'Line_Item'=> array(
 				'LIN_ID'=>new EE_Primary_Key_Int_Field('LIN_ID', __("ID", "event_espresso")),
+				'LIN_code'=>new EE_Slug_Field('LIN_code', __("Code for index into Cart", "event_espresso"), true),
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __("Transaction ID", "event_espresso"), true, null, 'Transaction'),
 				'LIN_name'=>new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), false, ''),
 				'LIN_desc'=>new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), true),
 				'LIN_unit_price'=>new EE_Float_Field('LIN_unit_price',  __("Unit Price", "event_espresso"),false,0),
 				'LIN_is_percent'=>new EE_Boolean_Field('LIN_is_percent', __("Is Percent", "event_espresso"), false, false),
+				'LIN_is_taxable'=>new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), false, false),
 				'LIN_order'=>new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), false,1),
 				'LIN_total'=>new EE_Float_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),
 				'LIN_quantity'=>new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), true, null),
@@ -90,12 +92,14 @@ class EEM_Line_Item extends EEM_Base {
 							'subtotal'=>  __("Subtotal", "event_espresso"),
 							'tax'=>  __("Tax", "event_espresso"),
 							'total'=>  __("Total", "event_espresso"))),
-				'LIN_item_id'=>new EE_Plain_Text_Field('LIN_item_id', __("ID of Item purchased. NOT for querying", "event_espresso"), true,null),
-				'LIN_item_type'=>new EE_Plain_Text_Field('LIN_item_type', __("Type of Line Item purchased. NOT for querying", "event_espresso"), true,null),
+				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('LIN_item_id', __("ID of Item purchased.", "event_espresso"), true,null),
+				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true,null),
 			)
 		);
 		$this->_model_relations = array(
-			'Transaction'=>new EE_Belongs_To_Relation()
+			'Transaction'=>new EE_Belongs_To_Relation(),
+			'Ticket'=>new EE_Belongs_To_Any_Relation(),
+			'Price'=>new EE_Belongs_To_Any_Relation(),
 		);
 		parent::__construct( $timezone );
 	}
