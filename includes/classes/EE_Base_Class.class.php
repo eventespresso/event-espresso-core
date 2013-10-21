@@ -1238,6 +1238,33 @@ class EE_Base_Class{
 		}
 		return apply_filters($tagName,null,$this,$args);
 	}
+
+
+	public function __sleep() {
+		$this->dropEE();
+		$reflection = new ReflectionClass( $this );
+		$properties   = $reflection->getProperties();
+		$properties_to_serialize = array();
+		foreach ( $properties as $key => $property ) {
+			$propertyName = $property->getName();
+			if ( $propertyName != 'EE' ) {
+				$properties_to_serialize[] = $propertyName;
+			}
+		}
+		return $properties_to_serialize;
+	}
+
+	public function __wakeup() {
+		$this->getEE();
+	}
+	
+	public function dropEE() {
+		$this->EE = NULL;
+	}
+	
+	public function getEE() {
+		$this->EE = EE_Registry::instance();
+	}
 	
 	
 }

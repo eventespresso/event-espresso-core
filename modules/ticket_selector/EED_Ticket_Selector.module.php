@@ -135,10 +135,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		$template_args['event'] = self::$_event;
 
 		if ( self::$_event->allow_multiple() ) {
-			// make sure additional_limit is set
-			$additional_limit = self::$_event->additional_limit() ? self::$_event->additional_limit() : self::$_event->reg_limit();
-			// then make it at least 1
-			$additional_limit = $additional_limit < 1 ? 1 : $additional_limit;
+			// make sure additional_limit is set and that it is at least 1
+			$additional_limit = self::$_event->additional_limit() < 1 ? 1 : self::$_event->additional_limit();
 			//self::$_event->set_additional_limit( $additional_limit );
 			$max_tickets = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', 16 );
 			// let's make the max amount of attendees somebody can select a little more reasonable
@@ -298,7 +296,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( $return ) {
 							return TRUE;
 						} else {
-							EE_Registry::instance()->SSN->set_session_data( array( 'cart' => EE_Registry::instance()->CART ));
+							EE_Registry::instance()->save_cart();
 							EE_Registry::instance()->SSN->update_espresso_session();
 							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( $this->EE->CFG->core->reg_page_id )));
 							exit();

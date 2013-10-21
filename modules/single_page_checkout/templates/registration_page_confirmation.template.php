@@ -2,7 +2,7 @@
 	
 	<h2 id="spco-registration_confirmation-hdr" class="spco-step-title-hdr">
 		<?php echo sprintf( __('Step %d -  Registration Confirmation', 'event_espresso'), $step_nmbr ); ?>
-		<a id="spco-edit-registration_confirmation-lnk" class="spco-go-to-registration_confirmation spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
+		<a id="spco-edit-registration_confirmation-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 	
 	<div id="spco-registration_confirmation-dv" class="spco-step-dv <?php echo $step_dv_class; ?>	">
