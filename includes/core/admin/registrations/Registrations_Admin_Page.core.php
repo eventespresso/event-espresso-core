@@ -292,6 +292,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => FALSE
 					),
 				'list_table' => 'EE_Registration_CheckIn_List_Table',
+				'help_tour' => array( 'Checkin_Toggle_View_Help_Tour' ),
 				'metaboxes' => array()
 				),
 								
@@ -2117,7 +2118,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$dtt_id = isset(  $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$go_back_url = !empty( $reg_id )  ? EE_Admin_Page::add_query_args_and_nonce(array('action' => 'event_registrations', 'event_id' => EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Event')->ID(), 'DTT_ID' => $dtt_id ), $this->_admin_base_url ) : '';
 		
-		$this->_template_args['before_list_table'] = !empty( $reg_id ) && !empty( $dtt_id ) ? '<h2>' . sprintf(__("%s's check in records for %s at the event, %s", 'event_espresso'), EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Attendee')->full_name(), '<a href="' . $go_back_url . '">' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->start_date_and_time() . ' - ' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->end_date_and_time() . '</a>', EEM_Datetime::instance()->get_one_by_ID($dtt_id)->get_first_related('Event')->get('EVT_name') ) . '</h2>' : '';
+		$this->_template_args['before_list_table'] = !empty( $reg_id ) && !empty( $dtt_id ) ? '<h2>' . sprintf(__("%s's check in records for %s at the event, %s", 'event_espresso'), '<span id="checkin-attendee-name">' . EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Attendee')->full_name() . '</span>', '<span id="checkin-dtt"><a href="' . $go_back_url . '">' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->start_date_and_time() . ' - ' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->end_date_and_time() . '</a></span>', '<span id="checkin-event-name">' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->get_first_related('Event')->get('EVT_name') . '</span>' ) . '</h2>' : '';
 		$this->_template_args['list_table_hidden_fields'] = !empty( $reg_id ) ? '<input type="hidden" name="REGID" value="' . $reg_id . '">' : '';
 		$this->_template_args['list_table_hidden_fields'] .= !empty( $dtt_id ) ? '<input type="hidden" name="DTT_ID" value="' . $dtt_id . '">' : '';
 

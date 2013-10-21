@@ -16,7 +16,7 @@ class EE_DMS_4_1_0P_gateways extends EE_Data_Migration_Script_Stage{
 private $_converted_active_gateways = false;
 
 function _migration_step($num_items=50){
-	
+	//loads existing EE_CONfig from DB, if it exists
 	$new_gateway_config_obj = EE_Config::instance()->gateway;
 	$items_actually_migrated = 0;
 	//convert settings
