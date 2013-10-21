@@ -208,8 +208,7 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 			  //? 
 			  break;
 		  case 'display_address_in_regform': 
-			  //depercated?
-			  break;
+			  $c->template_settings->display_address_in_regform = 'Y' == $value;break;
 		  case 'use_custom_post_types': 
 			  //?
 			  break;
