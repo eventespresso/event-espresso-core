@@ -147,6 +147,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
+				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
 				),
 

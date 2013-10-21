@@ -43,12 +43,54 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 			);
 
 		if ( $this->_is_caf ) {
+			$this->_stops[15] = array(
+				'id' => 'add-new-question-group',
+				'content' => $this->_add_new_question_group_stop(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 20
+					)
+				);
 			$this->_stops[20] = array(
 				'id' => 'event-espresso_page_espresso_registration_form-search-input',
 				'content' => $this->_search_stop(),
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => -15
+					)
+				);
+			$this->_stops[30] = array(
+				'id' => 'name',
+				'content' => $this->_name_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20
+					)
+				);
+			$this->_stops[40] = array(
+				'id' => 'description',
+				'content' => $this->_description_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20
+					)
+				);
+			$this->_stops[50] = array(
+				'id' => 'show_group_name',
+				'content' => $this->_show_group_name_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20
+					)
+				);
+			$this->_stops[60] = array(
+				'id' => 'show_group_desc',
+				'content' => $this->_show_group_description_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20,
 					'tipAdjustmentX' => -15
 					)
 				);
@@ -77,7 +119,28 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 		return $content;
 	}
 
-	
+
+	protected function _add_new_question_group_stop() {
+		return '<p>' . __("click here to add a new question group.", 'event_espresso') . '</p>';
+	}
+
+
+	protected function _name_stop() {
+		return '<p>' . __('about the group name column', 'event_espresso') . '</p>';
+	}
+
+	protected function _description_stop() {
+		return '<p>' . __('about the description column', 'event_espresso') . '</p>';
+	}
+
+	protected function _show_group_name_stop() {
+		return '<p>' . __('about the show name column', 'event_espresso') . '</p>';
+	}
+
+	protected function _show_group_description_stop() {
+		return '<p>' . __('about the show description column', 'event_espresso') . '</p>';
+	}
+
 
 	protected function _search_stop() {
 		return '<p>' . __('Fields that will be searched with the value from the search are: the question group name and question group description.', 'event_espresso') . '</p>';
