@@ -387,6 +387,15 @@ class EE_Line_Item extends EE_Base_Class{
 			return $this->get_first_related($model_name_of_related_obj);
 		}
 	}
+	
+	/**
+	 * Like EE_Line_Item::object(), but can only ever actually return an EE_Ticket.
+	 * (IE, if this line item is for a price or something else, will return NULL)
+	 * @return EE_Ticket
+	 */
+	function ticket(){
+		return $this->get_first_related('Ticket');
+	}
 
 	/**
 	 * Adds the line item as a child to this line item
