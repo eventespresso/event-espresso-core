@@ -68,17 +68,18 @@
 				<td class="tckt-slctr-tbl-td-status"><?php echo $ticket_status; ?></td>
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
+
 				if ( $ticket->is_on_sale() && $ticket->available() ) {
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
-					// if only one attendee is allowed
+					// if more than one attendee is allowed
 					if ( $max_atndz > 1 ) { 
 						// if $ticket->remaining() equals -1, then there are unlimited tickets for sale, so use $max_atndz, otherwise offer however many tickets are left
 						$max_atndz = $ticket->remaining() < 0 ? $max_atndz : $ticket->remaining();
 						// but... we also want to restrict the number of tickets by the ticket max setting
-						$max_atndz = $ticket->max() ? $ticket->max() : $max_atndz;
+						$max_atndz = $ticket->max() > 0 ? $ticket->max() : $max_atndz;
 						// and we also want to restrict the minimum number of tickets by the ticket min setting
-						$min_atndz = $ticket->min() ? $ticket->min() : 1;					
+						$min_atndz = $ticket->min() > 0 ? $ticket->min() : 1;					
 				?>
 					<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
 						<option value="0">&nbsp;0&nbsp;</option>

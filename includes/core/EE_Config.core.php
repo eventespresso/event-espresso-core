@@ -81,6 +81,11 @@ final class EE_Config {
 	 * @var EE_Gateway_Config
 	 */
 	public $gateway;
+	/**
+	 *
+	 * @var EE_Template_Config 
+	 */
+	public $template_settings;
 
 
 

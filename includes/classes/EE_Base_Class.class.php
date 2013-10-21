@@ -1106,8 +1106,18 @@ class EE_Base_Class{
 					$related_model_object = $cached_result;
 				}
 			}
-		}else{//this doesn't exist in the DB, just get what's cached on this object
-			$related_model_object = $this->get_one_from_cache($relationName);
+		}else{
+			//this doesn't existin teh Db, but maybe the relation is of type belongsto, and so the related thing might
+			if( $this->get_model()->related_settings_for($relationName) instanceof EE_Belongs_To_Relation){
+				$related_model_object =  $this->get_model()->get_first_related($this, $relationName, $query_params);
+			}else{
+				$related_model_object = null;
+			}
+			//this doesn't exist in the DB and apparently teh thing it belogns to doesnt either, just get what's cached on this object
+			if( ! $related_model_object){
+				$related_model_object = $this->get_one_from_cache($relationName);
+			}
+			
 		}
 		return $related_model_object;
 	}

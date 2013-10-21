@@ -27,6 +27,11 @@ class EE_Line_Item extends EE_Base_Class{
 	
 	/** ID", "event_espresso @var LIN_ID*/ 
 	protected $_LIN_ID = NULL;
+	/**
+	 * Index in cart
+	 * @var string 
+	 */
+	protected $_LIN_code = NULL;
 	/** Transaction ID", "event_espresso @var TXN_ID*/ 
 	protected $_TXN_ID = NULL;
 	/** Line Item Name", "event_espresso @var LIN_name*/ 
@@ -42,6 +47,11 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @var $_LIN_is_percent whether or not the unit price is a percent
 	 */
 	protected $_LIN_is_percent = NULL;
+	/**
+	 * Indicating whether or not this item should be taxed
+	 * @var boolean
+	 */
+	protected $_LIN_is_taxable = NULL;
 	/** Quantity", "event_espresso @var LIN_quantity*/ 
 	protected $_LIN_quantity = NULL;
 	/**
@@ -59,12 +69,11 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @var $_LIN_type one of line-item, sub-item, sub-total, tax, total. mostly handy for display
 	 */
 	protected $_LIN_type = NULL;
-	/** ID of Item purchased. NOT for querying", "event_espresso @var LIN_item_id*/ 
-	protected $_LIN_item_id = NULL;
-	/** Type of Line Item purchased. NOT for querying", "event_espresso @var LIN_item_type*/ 
-	protected $_LIN_item_type = NULL;
+	/** ID of Item purchased.", "event_espresso @var OBJ_ID*/ 
+	protected $_OBJ_ID = NULL;
+	/** Type of Line Item purchased.", "event_espresso @var LIN_item_type*/ 
+	protected $_OBJ_type = NULL;
 		
-
 
 
 
@@ -73,11 +82,27 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @var EE_Registration
 	 */
 	protected $_Transaction;
+	
+	/**
+	 * The ticket this line item MAY refer to
+	 * @var EE_Ticket
+	 */
+	protected $_Ticket;
+
+	/**
+	 *The Price (usually a tax) this item MAY refer to
+	 * @var EE_Price
+	 */
+	protected $_Price;
 
 
 
-
-
+/**
+ * 
+ * @param type $props_n_values
+ * @param type $timezone
+ * @return EE_Line_Item
+ */
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );
@@ -159,8 +184,8 @@ class EE_Line_Item extends EE_Base_Class{
 	 * Gets item_id
 	 * @return string
 	 */
-	function item_id() {
-		return $this->get('LIN_item_id');
+	function OBJ_ID() {
+		return $this->get('OBJ_ID');
 	}
 
 	/**
@@ -168,24 +193,25 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @param string $item_id
 	 * @return boolean
 	 */
-	function set_item_id($item_id) {
-		return $this->set('LIN_item_id', $item_id);
+	function set_OBJ_ID($item_id) {
+		return $this->set('OBJ_ID', $item_id);
 	}
+	
 	/**
 	 * Gets item_type
 	 * @return string
 	 */
-	function item_type() {
-		return $this->get('LIN_item_type');
+	function OBJ_type() {
+		return $this->get('OBJ_type');
 	}
 
 	/**
 	 * Sets item_type
-	 * @param string $item_type
+	 * @param string $OBJ_type
 	 * @return boolean
 	 */
-	function set_item_type($item_type) {
-		return $this->set('LIN_item_type', $item_type);
+	function set_OBJ_type($OBJ_type) {
+		return $this->set('OBJ_type', $OBJ_type);
 	}
 	
 	/**
@@ -285,6 +311,55 @@ class EE_Line_Item extends EE_Base_Class{
 	public function children(){
 		return $this->get_modeel()->get_all(array(array('LIN_parent'=>$this->ID())));
 	}
+	
+	/**
+	 * Gets code
+	 * @return string
+	 */
+	function code() {
+		return $this->get('LIN_code');
+	}
+
+	/**
+	 * Sets code
+	 * @param string $code
+	 * @return boolean
+	 */
+	function set_code($code) {
+		return $this->set('LIN_code', $code);
+	}
+	/**
+	 * Gets is_taxable
+	 * @return boolean
+	 */
+	function is_taxable() {
+		return $this->get('LIN_is_taxable');
+	}
+
+	/**
+	 * Sets is_taxable
+	 * @param boolean $is_taxable
+	 * @return boolean
+	 */
+	function set_is_taxable($is_taxable) {
+		return $this->set('LIN_is_taxable', $is_taxable);
+	}
+
+	/**
+	 * Gets the object that this model-joins-to. Eg, if this line item join model object
+	 * is for a ticket, this will return teh ticket object
+	 * @return EE_Base_Class (one of the model objects that the field OBJ_ID can point to... see the 'OBJ_ID' field on EEM_Promotion_Object)
+	 */
+	function object(){
+		$model_name_of_related_obj = $this->OBJ_type();
+		$is_model_name = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
+		if( ! $is_model_name ){
+			return null;
+		}else{
+			return $this->get_first_related($model_name_of_related_obj);
+		}
+	}
+
 
 
 
