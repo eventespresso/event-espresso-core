@@ -136,7 +136,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour')
 				),
 
 			'question_groups' => array(
