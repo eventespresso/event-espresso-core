@@ -6,15 +6,6 @@
 	$(window).unload( function() {}); 
 
 	$('#spco-copy-all-attendee-chk').prop( 'checked', false );
-	//$('#spco-registration-attendee_information-frm').validate();
-
-	
-	//close btn for notifications
-//	$('.close-event-queue-msg').on( 'click', function(){
-//		$(this).parent().hide();
-//	});
-
-
 
 	// apply coupon button
 	$('#spco-apply-coupon-btn').on( 'click', function() {
@@ -307,35 +298,7 @@
 		spco_go_to[ step ]( '' );
 		return false;
 	});
-	
-	
-/*
-	// go to step 1 via edit link
-	$('.spco-go-to-step-1').on( 'click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		mer_reg_page_go_to_step_1('');
-		return false;
-	});
-	
-	// go to step 2 via edit link
-	$('.spco-go-to-payment_options').on( 'click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		mer_reg_page_go_to_step_2('');
-		return false;
-	});
 
-	// go to step 3 via edit link
-	$('.spco-go-to-registration_confirmation').on( 'click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		selected_gateway_dv = process_selected_gateway();		
-		process_reg_step ( 2, selected_gateway_dv );
-		return false;
-	});
-
-	*/
 
 
 	// submit registraion form
