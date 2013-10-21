@@ -12,15 +12,15 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 }
 .spco-register-btn:hover { text-decoration:none; }*/
 
-.spco-register-btn {
+#single-page-checkout .spco-register-btn {
 	padding: .75em 1.5em; margin:1em 0; 
 	background: #7DBD29; border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
 	font-size:14px; line-height:24px; color:#fff; font-weight: bold; text-shadow:1px 1px 0px rgba(0,0,0,.3); text-decoration: none;
 	box-shadow:0px 1px 1px rgba(0,0,0,.5), 0px 1px 7px -1px rgba(0,0,0,.3);
 }
-.spco-register-btn:hover { background: #6CBA00; color:#fff; }
-.spco-register-btn:visited { color:#fff; }
-.spco-register-btn:active { top:1px; }
+#single-page-checkout .spco-register-btn:hover { background: #6CBA00; color:#fff; }
+#single-page-checkout .spco-register-btn:visited { color:#fff; }
+#single-page-checkout .spco-register-btn:active { top:1px; }
 
 
 .mini-btn {

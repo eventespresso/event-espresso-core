@@ -224,21 +224,22 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// start with empty array
 		$this->_taxes = array();
 		// get array of taxes via Price Model
-		$taxes = EE_Registry::instance()->load_model( 'Price' )->get_all_prices_that_are_taxes();	
+		$ordered_taxes = EE_Registry::instance()->load_model( 'Price' )->get_all_prices_that_are_taxes();	
+		ksort( $ordered_taxes );
 		// set grand total to total cart value before taxes
 		$this->_grand_total = $this->_calculate_cart_total_before_tax();
 		//loop thru taxes 
-		foreach ( $taxes as $priority => $taxes_at_priority ) {
-			foreach($taxes_at_priority as $tax){
-				// track taxes
-				$this->_taxes[ $tax->name() ] = $this->_total_before_tax * $tax->amount() / 100;
-				// apply taxes to grand_total
-				$this->_grand_total += $this->_total_before_tax * $tax->amount() / 100;
+		foreach ( $ordered_taxes as $taxes ) {
+			foreach ( $taxes as $tax ) {
+				if ( $tax instanceof EE_Price ) {
+					// track taxes
+					$this->_taxes[ $tax->name() ] = $this->_total_before_tax * $tax->amount() / 100;
+					// apply taxes to grand_total
+					$this->_grand_total += $this->_total_before_tax * $tax->amount() / 100;
+				}
 			}
 		}
-
 	}
-
 
 
 

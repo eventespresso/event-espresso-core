@@ -137,7 +137,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		if ( self::$_event->allow_multiple() ) {
 			// make sure additional_limit is set and that it is at least 1
 			$additional_limit = self::$_event->additional_limit() < 1 ? 1 : self::$_event->additional_limit();
-			//self::$_event->set_additional_limit( $additional_limit );
+			// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
 			$max_tickets = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', 16 );
 			// let's make the max amount of attendees somebody can select a little more reasonable
 			$template_args['max_atndz'] = $additional_limit > $max_tickets ? $max_tickets : $additional_limit;	
