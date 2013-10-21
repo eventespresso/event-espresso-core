@@ -10,9 +10,9 @@
 		foreach ( $reg_steps as $reg_step => $reg_step_details ) {
 			$step_display_dv_class = $step == $reg_step ? 'active-step' : 'inactive-step';
 		?>
-		<div id="spco-step-<?php echo $step_nmbr; ?>-display-dv" class="spco-step-display-dv <?php echo $step_display_dv_class; ?> steps-<?php echo count( $reg_steps ); ?>">
+		<div id="spco-step-<?php echo $reg_step; ?>-display-dv" class="spco-step-display-dv <?php echo $step_display_dv_class; ?> steps-<?php echo count( $reg_steps ); ?>">
 			<a class="spco-step-big-nmbr"><?php echo $step_nmbr; ?></a>
-			<h2 id="spco-step-<?php echo $step_nmbr; ?>-display-hdr" class="spco-steps-display-hdr">
+			<h2 id="spco-step-<?php echo $reg_step; ?>-display-hdr" class="spco-steps-display-hdr">
 				&nbsp;<?php echo str_replace( '&nbsp;', '<br/>&nbsp;', $reg_step_details['name'] ); ?>				
 			</h2>
 		</div>

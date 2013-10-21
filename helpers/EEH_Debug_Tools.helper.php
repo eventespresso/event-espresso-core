@@ -192,7 +192,6 @@ if ( !function_exists( 'dump_post' ) ) {
 function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 
 	if( ! $var_name ) {
-
 		if ( is_object( $var )) {
 			$var_name = 'object';
 		} else if ( is_array( $var )) {
@@ -202,15 +201,19 @@ function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 		} else {
 			$var_name = 'string';
 		}  
-
 	}
+	
 	$var_name = str_replace( array( '$', '_' ), array( '', ' ' ), $var_name );
 	$var_name = ucwords( $var_name );
 
+	
 	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
 	echo '<h3><b>' . $var_name . '</b></h3>';
+	if ( is_object( $var )) { $var->dropEE(); }
 	echo print_r($var);
+	if ( is_object( $var )) { $var->getEE(); }
 	echo '</pre>';
+	
 
 	if( $die ) {
 		die();
