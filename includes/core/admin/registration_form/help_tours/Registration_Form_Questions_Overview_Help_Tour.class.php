@@ -31,7 +31,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
 		$this->_label = __('Questions Tour', 'event_espresso');
-		$this->_slug = 'questions-overview-joyride';
+		$this->_slug = $this->_is_caf ? 'questions-overview-caf-joyride' : 'questions-overview-joyride';
 	}
 
 
@@ -39,6 +39,15 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 		$this->_stops = array(
 			10 => array(
 				'content' => $this->_start(),
+				),
+			15 => array(
+				'id' => 'add-new-question',
+				'content' => $this->_add_new_question_stop(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 20
+					)
 				),
 			20 => array(
 				'id' => 'event-espresso_page_espresso_registration_form-search-input',
@@ -107,6 +116,10 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _search_stop() {
 		return '<p>' . __('Fields that will be searched with the value from the search are: the question name (display text)', 'event_espresso') . '</p>';
+	}
+
+	protected function _add_new_question_stop() {
+		return '<p>' . __("click here to add a new question.", 'event_espresso') . '</p>';
 	}
 
 
