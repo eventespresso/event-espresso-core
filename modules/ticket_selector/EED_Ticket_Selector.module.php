@@ -242,7 +242,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		//so clear any previosu items in the cart. When MER happens this will probably need to be tweaked, 
 		//possibly wrappe din a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
-		EE_Registry::instance()->SSN->clear_session();
+		//EE_Registry::instance()->SSN->clear_session();
 		//d( EE_Registry::instance()->SSN );
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -298,7 +298,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( $return ) {
 							return TRUE;
 						} else {
-							EE_Registry::instance()->SSN->set_session_data( EE_Registry::instance()->CART );
+							EE_Registry::instance()->SSN->set_session_data( array( 'cart' => EE_Registry::instance()->CART ));
 							EE_Registry::instance()->SSN->update_espresso_session();
 							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( $this->EE->CFG->core->reg_page_id )));
 							exit();

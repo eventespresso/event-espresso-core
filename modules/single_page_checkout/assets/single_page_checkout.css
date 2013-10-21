@@ -1,27 +1,34 @@
  span.ui-icon { float:none !important; }
 .icon-right span.ui-icon { margin: 0.7em 0.3em 0 0; }
 
-.ui-state-highlight { padding:.5em 1em; }
-.ui-button.icon-right { padding: 0.95em 1em 0.95em !important; }
+/*.spco-register-btn.icon-right { padding: 0.95em 1em 0.95em !important; }
 a .ui-icon { display:inline-block!important; float:none!important; position:relative; top:3px; margin:0px 5px 0 0!important;  }
 
-.ui-button {
-		display: inline-block; position: relative; padding: 0.4em .75em .45em;
-		border:1px solid #ccc;
+.spco-register-btn {
+		display: inline-block; position: relative;padding:.95em 1em; margin:1em 0; 
+		border:1px solid #ccc; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;
 		font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
-		text-align: center; font-weight: bold; line-height: 1; cursor: pointer;
-		-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;
+		text-align: center; font-weight: bold; line-height: 1; cursor: pointer;		
 }
-.ui-button:hover { text-decoration:none; }
+.spco-register-btn:hover { text-decoration:none; }*/
 
-.ui-button-big { padding: 0.95em 1em .95em; margin:1em 0; }
+.spco-register-btn {
+	padding: .75em 1.5em; margin:1em 0; 
+	background: #7DBD29; border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
+	font-size:14px; line-height:24px; color:#fff; font-weight: bold; text-shadow:1px 1px 0px rgba(0,0,0,.3); text-decoration: none;
+	box-shadow:0px 1px 1px rgba(0,0,0,.5), 0px 1px 7px -1px rgba(0,0,0,.3);
+}
+.spco-register-btn:hover { background: #6CBA00; color:#fff; }
+.spco-register-btn:visited { color:#fff; }
+.spco-register-btn:active { top:1px; }
+
 
 .mini-btn {
 	display: inline-block; position: relative; padding: 0.4em .75em .45em;
 	border:1px solid #ccc;
 	font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
 	text-align: center; font-weight: bold; line-height: 1; cursor: pointer; vertical-align:middle;
-	-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;
+	-moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;
 }
 
 
@@ -40,9 +47,9 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .striked { text-decoration:line-through; }
 
 
-.mer-whats-next-buttons { clear:both; padding:2em 0 1em; margin:0; text-align:right; }
-.mer-whats-next-buttons .event-queue-register-btn,
-.mer-whats-next-buttons .mer-register-btn { margin-left: 1em!important; }
+.spco-whats-next-buttons { clear:both; padding:2em 0 1em; margin:0; text-align:right; }
+.spco-whats-next-buttons .event-queue-register-btn,
+.spco-whats-next-buttons .spco-register-btn { margin-left: 1em!important; }
 
 .act-like-link { cursor:pointer; }
 .small-text { font-size:.85em; letter-spacing:.5px; line-height:1.5em; }
@@ -90,13 +97,11 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #single-page-checkout .active-step .spco-steps-display-hdr { color:inherit!important; }
 #single-page-checkout .inactive-step .spco-step-big-nmbr { color:#e8e8e8; }
 
-#spco-step-1-dv {	}
-#spco-step-1-hdr {	}
 
-#spco-step-2-dv {	}
-#spco-step-2-hdr {	}
+#spco-payment_options-dv {	}
+#spco-payment_options-hdr {	}
 
-#spco-step-3-dv {	}
+#spco-registration_confirmation-dv {	}
 #spco-step-3-hdr {	}
 
 
@@ -104,18 +109,18 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .spco-step-title-hdr { margin:3em 0 1em !important;  border-bottom: 2px solid #eee;   }	
 .spco-step-dv { padding:0; margin:0 0 2em; border:none;  }
 
-.spco-attendee-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius:5px; }
+.spco-attendee-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius: 2px; }
 
 .event-list-display-dv .big-event-title-hdr,
 #single-page-checkout .big-event-title-hdr {
-	font-size:24px; line-height:1.1em; margin:1em 0 0;
+	font-size:1.5em; line-height:1.1em; margin:1em 0 0;
 }
 .spco-steps-pg { margin:0 0 2em; /*font-size:.8em; line-height:1.4em; *//*color:#666; */}
 
 .spco-attendee-panel-dv { width:100%!important; }
 .spco-event-title-hdr .ui-icon { position:relative; top:-2px; margin-right:1em; }
 
-.spco-attendee-wrap-fs, .reg-page-confirmation-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius:5px; }
+.spco-attendee-wrap-fs, .reg-page-confirmation-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius: 2px; }
 
 .spco-attendee-lgnd { 
 	width: auto; padding:0 1em; margin:0;
@@ -181,7 +186,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .asterisk, .espresso-form-input-lbl em { font-weight:bold; color:red !important; }
 .requires-value { border-color:red !important; border-width:2px !important; }
 
-#spco-copy-attendee-dv { position:relative; padding:1.5em; margin:1em 0; background:#f8f8f8; border-radius:5px; line-height:1.1em; }
+#spco-copy-attendee-dv { position:relative; padding:1.5em; margin:1em 0; background:#f8f8f8; border-radius: 2px; line-height:1.1em; }
 #spco-copy-attendee-dv .spco-copy-attendee-pg { margin:0; font-size:.8em; letter-spacing:.4px; }
 #spco-copy-attendee-dv .spco-copy-all-attendee-pg { margin:0 0 .75em;}
 #spco-copy-attendee-dv label { 
@@ -202,25 +207,25 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #spco-apply-coupon-btn { position:relative; top:-1px; font-size:.8em; }
 #spco-coupon-codes-pg { padding:0 0 2em 155px; }
 
-#spco-step-2-dv #methods-of-payment { margin:2em 0; }
-#spco-step-2-dv #methods-of-payment h3 { margin:.5em 0; }
-#spco-step-2-dv .reg-page-payment-option-dv {
+#spco-payment_options-dv #methods-of-payment { margin:2em 0; }
+#spco-payment_options-dv #methods-of-payment h3 { margin:.5em 0; }
+#spco-payment_options-dv .reg-page-payment-option-dv {
 	display: inline-block; position: relative; max-width:140px; padding:20px; margin:0 1em 1em 0; 
-	border:1px solid #ddd; border-radius:3px; background:#fff;
+	border:1px solid #ddd; border-radius: 2px; background:#fff;
 	text-align: center; line-height:1em; vertical-align: middle; cursor:pointer;
 }
-#spco-step-2-dv .reg-page-payment-option-dv.hidden { display:none; }
-#spco-step-2-dv .reg-page-payment-option-dv img { 
+#spco-payment_options-dv .reg-page-payment-option-dv.hidden { display:none; }
+#spco-payment_options-dv .reg-page-payment-option-dv img { 
 	vertical-align:middle; max-width:140px !important; padding:0; margin:auto; box-shadow: none !important; box-radius: 0 !important; 
 }
-#spco-step-2-dv .reg-page-payment-option-dv:hover {
+#spco-payment_options-dv .reg-page-payment-option-dv:hover {
 	top:-1px; border-color:#d5d5d5; text-decoration:none;
 	-webkit-box-shadow: 4px 10px 15px -3px rgba(0,0,0,.05), 1px 2px 4px -1px rgba(0,0,0,.1), -2px -1px 5px rgba(0,0,0,.025); 
 	-moz-box-shadow:4px 10px 15px -3px rgba(0,0,0,.05), 1px 2px 4px -1px rgba(0,0,0,.1), -2px -1px 5px rgba(0,0,0,.025); 
 	box-shadow:4px 10px 15px -3px rgba(0,0,0,.05), 1px 2px 4px -1px rgba(0,0,0,.1), -2px -1px 5px rgba(0,0,0,.025);	
 }
-#spco-step-2-dv .reg-page-payment-option-dv .algn-vrt { display: table !important; height:30px; }
-#spco-step-2-dv .reg-page-payment-option-dv .vrt-cell { display: table-cell !important; vertical-align: middle; }
+#spco-payment_options-dv .reg-page-payment-option-dv .algn-vrt { display: table !important; height:30px; }
+#spco-payment_options-dv .reg-page-payment-option-dv .vrt-cell { display: table-cell !important; vertical-align: middle; }
 
 
 #reg-page-select-other-gateway-lnk {
@@ -238,11 +243,11 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 #external-link-msg-pg img { position: relative; top:2px; }
 
 .sandbox-panel {
-   padding: 10px; margin:0 0 2em; background-color: #FFFFE0; border:1px solid #E6DB55; border-radius:3px;
+   padding: 10px; margin:0 0 2em; background-color: #FFFFE0; border:1px solid #E6DB55; border-radius: 2px;
 }
 
 .sandbox-panel .tbl-wrap {
-   padding: 3px; margin:0; background-color: #fff; border:1px solid #dfdfdf; border-radius:3px;
+   padding: 3px; margin:0; background-color: #fff; border:1px solid #dfdfdf; border-radius: 2px;
 }
 .sandbox-panel .test-credit-card-data-tbl {
    width:100%; padding: 0; margin:0; background-color: #fff; border:1px solid #dfdfdf; border-collapse:collapse; font-size:.9em;

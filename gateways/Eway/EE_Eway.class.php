@@ -373,7 +373,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 			$txn_details['invoice_number'] = $response_array['txn_id'];
 			$txn_details['transaction_id'] = $response_array['txn_id'];
 		}
-		EE_Registry::instance()->SSN->set_session_data(array('txn_results' => $txn_details), 'session_data');
+		EE_Registry::instance()->SSN->set_session_data( array( 'txn_results' => $txn_details ));
 
 		$success = $txn_details['approved'];
 

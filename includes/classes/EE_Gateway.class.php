@@ -232,19 +232,22 @@ abstract class EE_Gateway {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		add_action('AHEE_display_payment_gateways', array(&$this, 'espresso_display_payment_gateways'));
 		// grab session data for this gateway
-		if ($this->_session_gateway_data = $this->EE->SSN->get_session_data($this->_gateway_name, "gateway_data")) {
-			if (!empty($this->_session_gateway_data['form_url'])) {
-				$this->_form_url = $this->_session_gateway_data['form_url'];
-			}
-			if (!empty($this->_session_gateway_data['css_class'])) {
-				$this->_css_class = $this->_session_gateway_data['css_class'];
-			}
-			if (!empty($this->_session_gateway_data['selected'])) {
-				$this->_selected = $this->_session_gateway_data['selected'];
-				//$this->_update_actions();
-			}
-			if (!empty($this->_session_gateway_data['css_link_class'])) {
-				$this->_css_link_class = $this->_session_gateway_data['css_link_class'];
+		if ( $gateway_data = $this->EE->SSN->get_session_data( 'gateway_data' )) {
+			if ( isset( $gateway_data[ $this->_gateway_name ] )) {
+				$this->_session_gateway_data = $gateway_data[ $this->_gateway_name ];
+				if (!empty($this->_session_gateway_data['form_url'])) {
+					$this->_form_url = $this->_session_gateway_data['form_url'];
+				}
+				if (!empty($this->_session_gateway_data['css_class'])) {
+					$this->_css_class = $this->_session_gateway_data['css_class'];
+				}
+				if (!empty($this->_session_gateway_data['selected'])) {
+					$this->_selected = $this->_session_gateway_data['selected'];
+					//$this->_update_actions();
+				}
+				if (!empty($this->_session_gateway_data['css_link_class'])) {
+					$this->_css_link_class = $this->_session_gateway_data['css_link_class'];
+				}
 			}
 		}
 	}
@@ -447,17 +450,17 @@ abstract class EE_Gateway {
 	}
 
 	private function _set_session_data() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		
-		$this->EE->SSN->set_session_data(
-				array(
-							$this->_gateway_name => array(
-									'form_url' => $this->_form_url,
-									'selected' => $this->_selected,
-									'css_class' => $this->_css_class,
-									'css_link_class' => $this->_css_link_class
-							)
-						), 'gateway_data');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
+		// get existing gateway data
+		$gateway_data = $this->EE->SSN->get_session_data( 'gateway_data' );
+		// add this gateway
+		$gateway_data[ $this->_gateway_name ] = array(
+			'form_url' => $this->_form_url,
+			'selected' => $this->_selected,
+			'css_class' => $this->_css_class,
+			'css_link_class' => $this->_css_link_class
+		);		
+		$this->EE->SSN->set_session_data( array( 'gateway_data' => $gateway_data ));
 	}
 
 	public function reset_session_data() {

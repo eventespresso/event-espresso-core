@@ -238,7 +238,7 @@ Class EE_Firstdata extends EE_Gateway {
 					'raw_response' => $response
 			);
 
-			$EE_Session->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+			$EE_Session->set_session_data( array( 'txn_results' => $txn_results ));
 
 			add_action('AHEE_email_after_payment', 'espresso_email_after_payment'); //<-- Should this be here ? or in the successful txn bit above ( after line 80 ? ) or does this send failed txn info as well /
 			// return $payment_data;  <<<<-------  do we need to return success or FALSE or anything ?

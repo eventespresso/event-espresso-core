@@ -3,7 +3,7 @@
 function espresso_display_firstdata_connect_2() {
 	global $EE_Session;
 	$gateway = 'firstdata_connect_2';
-	$gateway_data = $EE_Session->get_session_data(FALSE, 'gateway_data');
+	$gateway_data = $EE_Session->get_session_data( 'gateway_data' );
 
 	$gateway_settings = $gateway_data['payment_settings'][$gateway];
 	

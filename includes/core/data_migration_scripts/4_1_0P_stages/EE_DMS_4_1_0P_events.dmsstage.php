@@ -167,6 +167,8 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 	private $_new_table;
 	private $_new_meta_table;
 	private $_new_datetime_table;
+	
+	
 	function __construct() {
 		global $wpdb;
 		$this->_old_table = $wpdb->prefix."events_detail";
@@ -338,12 +340,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 //	array('id' => 'Pending', 'text' => 'Pending'),
 //	//array('id' => 'Completed', 'text' => 'Completed')
 //);
-		$old_default_reg_stati_conversions = array(
-			''=>'RNA',
-			'Incomplete'=>'RNA',
-			'Pending'=>'RPN'
-		);
-		$default_reg_status = isset($old_default_reg_stati_conversions[$event_meta['default_payment_status']]) && $old_default_reg_stati_conversions[$event_meta['default_payment_status']] ? $old_default_reg_stati_conversions[$event_meta['default_payment_status']] : 'RNA';
+		$default_reg_status = $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID(isset($event_meta['default_payment_status']) ? $event_meta['default_payment_status'] : '');
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
@@ -469,7 +466,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		global $wpdb;
 
 		//assume the country is the same as the organization's old settings
-		$country_iso3 = 'USA';
+		$country_iso = $this->get_migration_script()->get_default_country_iso();
 		//find the state from the venue, or the organization, or just guess california
 		if( ! $old_event['state']){
 			$old_org_options = get_option('events_organization_settings');
@@ -482,7 +479,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 		}
 		//get a state ID with the same name, if possible
 		try{
-			$state = $this->get_migration_script()->get_or_create_state($state_name,$country_iso3);
+			$state = $this->get_migration_script()->get_or_create_state($state_name,$country_iso);
 			$state_id = $state['STA_ID'];
 		}catch(EE_Error $e){
 			$this->add_error($e->getMessage());
@@ -495,7 +492,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'VNU_address2'=>$old_event['address2'],//VNU_address2
 			'VNU_city'=>$old_event['city'],//VNU_city
 			'STA_ID'=>$state_id,//STA_ID
-			'CNT_ISO'=>$country_iso3,//CNT_ISO
+			'CNT_ISO'=>$country_iso,//CNT_ISO
 			'VNU_zip'=>$old_event['zip'],//VNU_zip
 			'VNU_phone'=>$old_event['venue_phone'],//VNU_phone
 			'VNU_capacity'=>-1,//VNU_capacity

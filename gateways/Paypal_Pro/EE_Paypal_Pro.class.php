@@ -548,7 +548,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'invoice_number' => $session_data['primary_attendee']['registration_id'],
 						'raw_response' => $PayPalResult
 				);
-				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				$this->EE->SSN->set_session_data( array( 'txn_results' => $txn_results ));
 				$primary_registrant = $transaction->primary_registration();
 				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 
@@ -598,7 +598,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 								'PAY_details' => $e));
 				$payment->save();
 				$this->update_transaction_with_payment($transaction, $payment);
-				$this->EE->SSN->set_session_data(array('txn_results' => $txn_results), $section = 'session_data');
+				$this->EE->SSN->set_session_data( array( 'txn_results' => $txn_results ));
 				
 				$return = array('error'=>$e->getMessage());
 			}

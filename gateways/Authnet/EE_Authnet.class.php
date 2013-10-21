@@ -462,7 +462,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 			$txn_details['response_msg'] = __('You\'re registration has been completed successfully.', 'event_espresso');
 			$txn_details['status'] = 'Approved';
 		}
-		EE_Registry::instance()->SSN->set_session_data(array('txn_results' => $txn_details), 'session_data');
+		EE_Registry::instance()->SSN->set_session_data( array( 'txn_results' => $txn_details ));
 
 		$success = $txn_details['approved'];
 
