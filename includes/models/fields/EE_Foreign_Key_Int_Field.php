@@ -10,8 +10,7 @@ class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base{
 	 * @return int
 	 */
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		$model_classname = $this->get_model_class_name_pointed_to();
-		if($value_inputted_for_field_on_model_object instanceof $model_classname){
+		if($this->is_model_obj_of_type_pointed_to($value_inputted_for_field_on_model_object)){
 			$value_inputted_for_field_on_model_object = $value_inputted_for_field_on_model_object->ID();
 		}
 		return absint($value_inputted_for_field_on_model_object);

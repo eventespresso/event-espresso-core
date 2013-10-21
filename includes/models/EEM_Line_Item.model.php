@@ -71,6 +71,7 @@ class EEM_Line_Item extends EEM_Base {
 		$this->_tables = array(
 			'Line_Item'=>new EE_Primary_Table('esp_line_item','LIN_ID')
 		);
+		$line_items_can_be_for = array('Ticket','Price');
 		$this->_fields = array(
 			'Line_Item'=> array(
 				'LIN_ID'=>new EE_Primary_Key_Int_Field('LIN_ID', __("ID", "event_espresso")),
@@ -92,8 +93,8 @@ class EEM_Line_Item extends EEM_Base {
 							'subtotal'=>  __("Subtotal", "event_espresso"),
 							'tax'=>  __("Tax", "event_espresso"),
 							'total'=>  __("Total", "event_espresso"))),
-				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('LIN_item_id', __("ID of Item purchased.", "event_espresso"), true,null),
-				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true,null),
+				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("ID of Item purchased.", "event_espresso"), true,null,$line_items_can_be_for),
+				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true,null,$line_items_can_be_for),
 			)
 		);
 		$this->_model_relations = array(
