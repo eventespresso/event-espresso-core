@@ -2,7 +2,7 @@
 
 	<h2 id="spco-payment_options-hdr" class="spco-step-title-hdr">
 		<?php echo sprintf( __('Step %d -  Payment Options', 'event_espresso'), $step_nmbr ); ?>
-		<a id="spco-edit-payment_options-lnk" class="spco-go-to-payment_options spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
+		<a id="spco-edit-payment_options-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 
 	<div id="spco-payment_options-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
@@ -16,12 +16,13 @@
 <?php
 		if ( $events_requiring_pre_approval != '' ) { ?>
 			<h4 class="important-notice small-text"><?php _e('Important Notice:', 'event_espresso');?></h4>
-			<p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text"><?php echo __('The following events require attendee pre-approval and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. If this is a free event, then no billing will occur.', 'event_espresso'); ?></p>
+			<p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text">
+				<?php echo __('The following events require attendee pre-approval and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. If this is a free event, then no billing will occur.', 'event_espresso'); ?>				
+			</p>
 			<h6><?php _e('Events Requiring Pre-Approval:', 'event_espresso');?></h6>
 			<ul><?php echo $events_requiring_pre_approval; ?></ul>
-
 <?php
-		} 	// end  if  $events_requiring_pre_approval
+		} // end  if  $events_requiring_pre_approval
 
 			if ( $payment_required ) {
 
