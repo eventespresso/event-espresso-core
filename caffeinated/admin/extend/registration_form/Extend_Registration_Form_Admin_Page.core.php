@@ -351,16 +351,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _questions_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
 		$this->_search_btn_label = __('Questions', 'event_espresso');
+		$this->_admin_page_title .= $this->_search_btn_label . $this->get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
 
 
 	protected function _question_groups_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'button add-new-h2');
 		$this->_search_btn_label = __('Question Groups', 'event_espressp');
+		$this->_admin_page_title .= $this->_search_btn_label . $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
