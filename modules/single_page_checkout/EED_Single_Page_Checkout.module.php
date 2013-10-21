@@ -29,6 +29,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_thank_you_page_url = '';
 	// where we are in the reg process
 	private $_current_step = '';
+	// where we are going next in the reg process
+	private $_next_step = '';
 	// erg_url_link for a previously saved registration
 	private $_reg_url_link = '';
 	// array of tempate paths
@@ -75,6 +77,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		foreach ( self::$_reg_steps as $reg_step => $reg_step_details ) {
 			EE_Config::register_route( $reg_step, 'EED_Single_Page_Checkout', $reg_step_details['process_func'] );
 		}
+		//EE_Config::register_route( 'finalize_registration', 'EED_Single_Page_Checkout', 'finalize_registration' );
 	}
 
 
@@ -94,6 +97,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			add_action( 'wp_ajax_espresso_' . $reg_step_details['process_func'], array( 'EED_Single_Page_Checkout', $reg_step_details['process_func'] ));
 			add_action( 'wp_ajax_nopriv_espresso_' . $reg_step_details['process_func'], array( 'EED_Single_Page_Checkout', $reg_step_details['process_func'] ));
 		}
+//		add_action( 'wp_ajax_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
+//		add_action( 'wp_ajax_nopriv_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
 	}
 
 
@@ -183,6 +188,27 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	}
 
 
+	/**
+	 * 	set next step
+	 *
+	 *  @access 	private
+	 *  @return 	void
+	 */
+	private function _set_next_step() {
+		reset( self::$_reg_steps );
+		// set pointer to current step 
+		while ( key( self::$_reg_steps ) != $this->_current_step ) {
+			next( self::$_reg_steps );
+		}
+		// advance one more spot
+		if ( next( self::$_reg_steps )) {
+			$this->_next_step = key( self::$_reg_steps );			
+			// then back to current step
+			prev( self::$_reg_steps );
+		}
+	}
+
+
 
 
 	/**
@@ -230,7 +256,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->set_templates();
 		$this->_reg_page_base_url = get_permalink( $this->EE->CFG->core->reg_page_id );
 		// grab what step we're on
-		$this->_current_step = $this->EE->REQ->is_set( 'step' ) ? absint( $this->EE->REQ->get( 'step' )) : 'attendee_information';
+		$this->_current_step = $this->EE->REQ->is_set( 'step' ) ? absint( $this->EE->REQ->get( 'step' )) : 'attendee_information';			
+		// and the next step
+		$this->_set_next_step();
 		// returning from the thank you page ?
 		$this->_reg_url_link = $this->EE->REQ->is_set( 'e_reg_url_link' ) ? $this->EE->REQ->get( 'e_reg_url_link' ) : FALSE;		
 		// if reg_url_link is present in the request, then we are only being sent back to SPCO to retry the payment 
@@ -257,9 +285,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->_transaction = $this->_initialize_transaction();
 		}
 		$this->_initialize_registrations();
-		$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));			
-		
-		//d( $this->_transaction );
+		$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));		
+//		d( $this->_transaction );
 		
 		// make sure reg steps array is setup
 		if ( empty( self::$_reg_steps )) {
@@ -336,7 +363,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function wp_enqueue_scripts() {
 		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css' );
 		wp_enqueue_style( 'single_page_checkout' );
-		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core'), '', TRUE );
+		wp_enqueue_script( 'underscore' );
+		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), '', TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
@@ -371,7 +399,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 	void
 	 */
 	private function _initialize_registrations() {
-		
+		//d( $this->EE->CART );
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			// now let's add the cart items to the $transaction
 			if ( count( $this->EE->CART ) ) {
@@ -626,6 +654,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['register_url'] = add_query_arg( array('ee' => 'register'), $this->_reg_page_base_url );
 		$template_args['event_queue_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
 
+		$template_args['confirmation_data'] = $this->_current_step == 'registration_confirmation' ? $this->registration_confirmation() : '';
 
 		//Recaptcha
 		$recaptcha = '';
@@ -664,7 +693,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		);
 		$confirmation_btn_text = $grand_total > 0 ? $confirm_n_pay : $confirm;
 
-		//$template_args['confirmation_data'] = $this->display_data_for_confirmation();
+		
 		$registration_steps = '';
 		$step_nmbr = 1;
 		// set pointer to first step
@@ -684,7 +713,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$step_args = array_merge(
 				$template_args, 
 				array( 
-					'step' => $this->_current_step, 
+					'step' => $reg_step, 
 					'step_nmbr' => $step_nmbr, 
 					'edit_lnk_class' => $edit_lnk_class, 
 					'edit_lnk_url' => $edit_lnk_url,
@@ -698,15 +727,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			//d( $step_args );
 			$registration_steps .= EEH_Template::display_template( $this->_templates[ $reg_step_details['template'] ], $step_args, TRUE);
 			// pass step info to js
-			EE_Registry::$i18n_js_strings[ 'reg_step_' . $step_nmbr ] = $reg_step_details['display_func'];	
-			EE_Registry::$i18n_js_strings[ 'reg_steps' ][ $step_nmbr ] = $reg_step_details['display_func'];	
+//			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step_details['display_func'];	
+//			EE_Registry::$i18n_js_strings[ 'reg_steps' ][ $step_nmbr ] = $reg_step_details['display_func'];	
+			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step_details['display_func'];	
 			// next step	
 			$next = next( self::$_reg_steps );
 			// pass next step info to js
-			EE_Registry::$i18n_js_strings[ 'after_' . $reg_step_details['display_func'] ] = $next['display_func'];
+			//EE_Registry::$i18n_js_strings[ 'after_' . $reg_step_details['display_func'] ] = $next['display_func'];
 			$step_nmbr++;
 
 		}
+		
+		EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = 'finalize_registration';
+				
 
 		$wrapper_args = array( 
 			'step' => $this->_current_step,
@@ -771,10 +804,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		printr( $this->_transaction, '$this->_transaction <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		die();
 
-		// don't need these so get rid of them so they don't get processed
-//		unset($_POST['action']);
-//		unset($_REQUEST['espresso_ajax']);
-
 		// empty container
 		$valid_data = array();
 		
@@ -794,87 +823,65 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 			
 			if ( isset( $valid_data['primary_attendee'] )) {
-				$primary_attendee =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
+				$primary_attendee_id =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
 				unset( $valid_data['primary_attendee'] );
 			}
 			
 			$this->EE->load_helper( 'Template' );
 			
 			// now loop through our array of valid post data
-			foreach ( $valid_data as $att_line_item => $attendee_form ) {
+			foreach ( $valid_data as $line_item_id => $attendee_form ) {
 				foreach ( $attendee_form as $form_input => $input_value ) {
-					
-					$att_line_item = explode( '-', $att_line_item );
-					$att_nmbr = $att_line_item[0];
-					$line_item_id = isset( $att_line_item[1] ) ? $att_line_item[1] : NULL;
-					
-					foreach ( $this->_transaction->registrations()  as $registration ) {
-//							printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//						if ( $registration->reg_url_link() == $line_item_id && $line_item_id !== NULL ) {
-							$answers = $registration->answers();
-							printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-							
-//						}
-					}
-					// add ticket price to the array
-					$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['price_paid'] = EEH_Template::format_currency( $tckt_price / 100, TRUE );
-					// now add all other post data that was generated by attendee questions
-					$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr][$form_input] = $input_value;
-					unset($attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['line_item_id']);
-					
-					if ( $form_input == 'fname'  && empty( $input_value )) {
-							// required value
-							EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );											
-					} elseif ( $form_input == 'lname' && empty( $input_value )) {
-							// required value
-							EE_Error::add_error( __( 'Last Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );											
-					} elseif ( $form_input == 'email' ) {
-						if ( empty( $input_value )) {
-							// required value
-							EE_Error::add_error( __( 'Email Address is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );											
-						} else {
-							// clean the email address
-							$valid_email = sanitize_email( $input_value );
-							// check if it matches
-							if ( $input_value != $valid_email ) {
-								// whoops!!!
-								EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
-							}
+					// check for critical inputs
+					if ( empty( $input_value )) {
+						switch( $form_input ) {
+							case 'fname' :						
+								EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+							break;
+							case 'lname' :						
+								EE_Error::add_error( __( 'Last Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+							break;
+							case 'email' :						
+								EE_Error::add_error( __( 'Email Address is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+							break;
 						}
-					} 
+					} elseif ( $form_input == 'email' ) {
+						// clean the email address
+						$valid_email = sanitize_email( $input_value );
+						// check if it matches
+						if ( $input_value != $valid_email ) {
+							// whoops!!!
+							EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
+						}
+					}
 					// store a bit of data about the primary attendee
-					if ($form_input == 'primary_attendee' && $input_value == 1) {										
+					if ( $line_item_id == $primary_attendee_id ) {										
 						//$primary_attendee['registration_id'] = $registration_id;
-						$primary_attendee['fname'] = $valid_data[$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['fname'];
-						$primary_attendee['lname'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['lname'];
-						$primary_attendee['email'] = $valid_data['qstn'][$event_id][$att_nmbr][$event_date][$event_time][$tckt_price]['email'];
-						$this->EE->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee ));
+						$primary_attendee[ $form_input ] = $input_value;
+						
 					} else if ( $form_input == 'additional_attendee_reg_info' && $input_value == 1 ) {
 						// we need to copy basic info from primary attendee
-						$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['fname'] = $attendees[$line_item_id][$event_id]['attendees'][1]['fname'];
-						$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['lname'] = $attendees[$line_item_id][$event_id]['attendees'][1]['lname'];
-						$attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['email'] = $attendees[$line_item_id][$event_id]['attendees'][1]['email'];
-						unset($attendees[$line_item_id][$event_id]['attendees'][$att_nmbr]['additional_attendee_reg_info']);
+						$input_value = $primary_attendee[ $form_input ];
+					}
+					// now find the registration this attendee form belongs to							
+					foreach ( $this->_transaction->registrations()  as $registration ) {
+						if ( $line_item_id !== NULL && $line_item_id == $registration->reg_url_link() ) {
+							$answers = $registration->answers();
+							foreach ( $answers as $answer ) {
+								if ( $answer->question()->system_ID() == $form_input ) {
+									$answer->set_value( $input_value );
+								}
+							}
+						}
 					}
 				}
 			}
-		
-			//printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//			printr( $this->EE, '$this->EE  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-			// now we'll save our data to the session by doing... MORE LOOPING !!!
-			foreach ($attendees as $line_item_id => $line_item) {
-				foreach ($line_item as $event_id => $attendees_data) {
-					$this->EE->CART->set_line_item_details($attendees_data, $line_item_id);
-				}
-			}
-
+			$this->EE->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee, 'transaction' => $this->_transaction ));
+			// grab any errors
 			$notices = EE_Error::get_notices( FALSE, FALSE, TRUE );
-			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
-			//echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-			if (!$error_msg) {
-				$success_msg .= __('Attendee information submitted successfully.', 'event_espresso');
+			if ( ! $error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE ) {
+				$success_msg = __('Attendee information submitted successfully.', 'event_espresso');
 			}
 
 		} else {
@@ -884,52 +891,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
-		do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_1__end',$this,$valid_data);
+		do_action('AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
 
-		if ($this->send_ajax_response($success_msg, $error_msg)) {
-			$reg_page_step_2_url = add_query_arg(array('ee' => 'register', 'step' => '2'), $this->_reg_page_base_url);
-			wp_safe_redirect($reg_page_step_2_url);
-			exit();
-		} else {
-			$args = $this->_process_return_to_reg_step_query_args( array('ee' => 'register', 'step' => '1', 'errors' => urlencode( $error_msg )));
-			$reg_page_step_1_url = add_query_arg( $args, $this->_reg_page_base_url );
-			wp_safe_redirect($reg_page_step_1_url);
-			exit();
-		}
+		$this->go_to_next_step( $success_msg, $error_msg );
+
 	}
 
 
 
 
 
-	/**
-	 * 		_process_return_to_reg_step_1_query_args
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _process_return_to_reg_step_query_args( $args ) {
-		$remove = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn' );
-		foreach ( $_POST as $key => $value ) {
-			if ( in_array( $key, $remove )) {
-				unset( $_POST[ $key ] );
-			}
-		}
-		$args = array_merge( $_POST, $args );
-		return $args;
-	}
-
-
-
-
 
 	/**
-	 * 		process_registration_step_2
+	 * 	process_payment_options
 	 *
-	 * 		@access 		public
-	 * 		@return 		void
+	 * 	@access private
+	 * 	@return 	void
 	 */
-	public function process_registration_step_2() {
+	private function _process_payment_options() {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
@@ -944,8 +923,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			
 			// FREE EVENT !!! YEAH : )
 			if ( $this->EE->SSN->set_session_data( array( 'billing_info' => 'no payment required' ))) {
-				$msg = __( 'Registration Step 2 completed.', 'event_espresso' );
-				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );	
+				$success_msg = __( 'no payment required.', 'event_espresso' );
+				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );	
 			} 
 
 		} else { 
@@ -958,16 +937,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
 			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 
-			if ($this->send_ajax_response( $success_msg, $error_msg, '_send_reg_step_2_ajax_response' )) {
-				$reg_page_step_3_url = add_query_arg(array('ee' => 'register', 'step' => '3'), $this->_reg_page_base_url);
-				wp_safe_redirect($reg_page_step_3_url);
-				exit();
-			} else {
-				$reg_page_step_2_url = add_query_arg(array('ee' => 'register', 'step' => '2'), $this->_reg_page_base_url);
-				wp_safe_redirect($reg_page_step_2_url);
-				exit();
-			}
 		}
+
+		$this->go_to_next_step( $success_msg, $error_msg );
+
 	}
 
 
@@ -976,23 +949,18 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 		send reg step 2 ajax response
+	 * 	_go_to_registration_confirmation_ajax_response
 	 *
-	 * 		@access 		private
-	 * 		@param 		string 		$success_msg
-	 * 		@return 		JSON
+	 * 	@access private
+	 * 	@param string 	$success_msg
+	 * 	@return 	JSON
 	 */
-	private function _send_reg_step_2_ajax_response( $args, $success_msg) {
-
-		// Sidney is watching me...   { : \
+	private function _go_to_registration_confirmation_ajax_response( $args, $success_msg ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-		$confirmation_page = $this->display_data_for_confirmation();
 		$response_data = array(
-				'success' => $success_msg,
-				'return_data' => array('reg-page-confirmation-dv' => $confirmation_page)
+			'success' => $success_msg,
+			'return_data' => array('reg-page-confirmation-dv' => $this->registration_confirmation())
 		);
-
 		echo json_encode($response_data);
 		// to be... or...
 		die();
@@ -1004,12 +972,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 		display session info for confirmation
+	 * 	display session info for confirmation
 	 *
-	 * 		@access 		public
-	 * 		@return 		string
+	 * 	@access private
+	 * 	@return 	string
 	 */
-	public function display_data_for_confirmation() {
+	private function _registration_confirmation() {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->EE->load_helper( 'Template' );
@@ -1109,12 +1077,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 		process_registration_step_3
+	 * 	_process_registration_confirmation
 	 *
-	 * 		@access 		public
-	 * 		@return 		void
+	 * 	@access private
+	 * 	@return 	void
 	 */
-	public function process_registration_step_3() {
+	private function _process_registration_confirmation() {
 		// Sidney is watching me...   { : \
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
@@ -1245,7 +1213,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//$session = $this->EE->SSN->get_session_data();
 		//printr( $session, '$session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); 
 		//die();
-		if ($this->send_ajax_response($success_msg, $error_msg, '_send_reg_step_3_ajax_response')) {
+		if ($this->send_ajax_response($success_msg, $error_msg, '_send_finalize_registration_ajax_response')) {
 			wp_safe_redirect($this->_thank_you_page_url);
 			exit();
 		} else {
@@ -1457,7 +1425,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@param 		string 		$success_msg
 	 * 		@return 		JSON
 	 */
-	private function _send_reg_step_3_ajax_response($args, $success_msg) {
+	private function _send_finalize_registration_ajax_response($args, $success_msg) {
 
 		// Sidney is watching me...   { : \
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -1471,27 +1439,56 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		die();
 	}
 
+
+
+
+
+	/**
+	 * 		_process_return_to_reg_step_query_args
+	 *
+	 * 		@access 	private
+	 * 		@return 		void
+	 */
+	private function _process_return_to_reg_step_query_args( $args ) {
+		$remove = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn' );
+		foreach ( $_POST as $key => $value ) {
+			if ( in_array( $key, $remove )) {
+				unset( $_POST[ $key ] );
+			}
+		}
+		return array_merge( $_POST, $args );
+	}
+
+
 	
 	
 	/**
-	 *   handle ajax message responses
+	 *   handle ajax message responses and redirects
 	 *
 	 *   @access public
 	 *   @return void
 	 */
-	public function send_ajax_response($success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE) {
-
-		$valid_callback = FALSE;
-		// check for valid callback function
-		if ($callback != FALSE && $callback != '' && !function_exists($callback)) {
-			$valid_callback = TRUE;
+	public function go_to_next_step( $success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE ) {
+		
+		$no_errors = TRUE;
+		
+		switch ( $this->_next_step ) {
+			case 'registration_confirmation' :
+				$valid_callback = '_go_to_registration_confirmation_ajax_response';
+			break;
+			case 'finalize_registration' :
+				$valid_callback = '_send_finalize_registration_ajax_response';
+			break;
 		}
+
+		// check for valid callback function
+		$valid_callback = $callback !== FALSE && $callback != '' && function_exists($callback) ? TRUE : FALSE;
 //		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->EE->REQ->ajax : ' . $this->EE->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		if ($success_msg) {
+		if ( $success_msg ) {
 			// if this is an ajax request AND a callback function exists
-			if ( $this->EE->REQ->ajax  && $valid_callback) {
+			if ( $this->EE->REQ->ajax  && $valid_callback ) {
 				// send data through to the callback function
 				$this->$callback( $callback_param, $success_msg );
 			} elseif ( $this->EE->REQ->ajax ) {
@@ -1503,19 +1500,29 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// not ajax
 				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
 				// return true to advance to next step
-				return TRUE;
+				$no_errors = TRUE;
 			}
-		} elseif ($error_msg) {
+		} elseif ( $error_msg ) {
 
 			if ( $this->EE->REQ->ajax ) {
 				echo json_encode( array( 'error' => $error_msg ));
 				die();
 			} else {
 				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-				// return false to return to retry step
-				return FALSE;
+				$no_errors = FALSE;
 			}
 		}
+		// store notices in a transient
+		EE_Error::get_notices( FALSE, TRUE, TRUE );
+		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
+		if ( $next_step = $no_errors ? $this->_next_step : $this->_current_step ) {
+			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => 'register', 'step' => $next_step ));
+			$redirect = add_query_arg( $args, $this->_reg_page_base_url );
+		} else {
+			$redirect = $this->_thank_you_page_url;
+		}
+		wp_safe_redirect( $redirect );
+		exit();
 	}
 
 

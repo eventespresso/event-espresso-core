@@ -231,11 +231,10 @@
 	 * @param int step_to_hide 1, 2, or 3
 	 * @return void
 	 **/
-	function hide_step(step_to_hide){
-		$('#spco-step-'+step_to_hide+'-dv').slideUp( function() {				
-			$('#spco-step-'+step_to_hide+'-dv').height(0);
-			$('#spco-edit-step-'+step_to_hide+'-lnk').removeClass('hidden');		
-			
+	function hide_steps(){
+		$('.spco-step-dv').slideUp( function() {				
+			$('.spco-step-dv').height(0);
+			$('.spco-edit-step-lnk').removeClass('hidden');			
 		});	
 	}
 	
@@ -246,76 +245,70 @@
 	 * @param string msg message to show
 	 * @return void
 	 **/
-	function go_to_step(step_to_show,msg){
+	function go_to_step( step_to_show, msg ){
 		$('.spco-step-display-dv').removeClass('active-step').addClass('inactive-step');	
 		$('#spco-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
-		$('#spco-edit-step-'+step_to_show+'-lnk').addClass('hidden');	
+		$('#spco-edit-'+step_to_show+'-lnk').addClass('hidden');	
 		$('#espresso-ajax-loading').fadeOut('fast');
-		$('#spco-step-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
+		$('#spco-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
 			scroll_to_top_of_form( msg );
 		});
 	}
 	
-	
-	
-	// go to step 1
-	function mer_reg_page_go_to_step_1( msg ) {	
-	
-		if ( msg == undefined ) {
-			msg ='';
-		}
-		// set step 1 back to auto height 
-		$('#spco-step-1-dv').css( 'height', 'auto' );
-		hide_step(2);
-		hide_step(3);
-		go_to_step(1,msg);
-	}
+	var spco_go_to = {		
+		
+		// go to attendee_information
+		attendee_information : function ( msg ) {		
+				hide_steps();
+				// set attendee_information back to auto height 
+				$('#spco-attendee_information-dv').css( 'height', 'auto' );
+				if ( msg == undefined ) { msg =''; }
+				go_to_step( 'attendee_information', msg );
+			},
 
+		// go to payment_options
+		payment_options : function ( msg ) {
+				hide_steps();
+				$('.reg-page-billing-info-dv').addClass('hidden');
+				$('.reg-page-payment-option-dv').removeClass('hidden');
+				$('#spco-payment_options-dv').css({ 'display' : 'none' }).removeClass('hidden');
+				// set payment_options back to auto height 
+				$('#spco-payment_options-dv').css( 'height', 'auto' );
+				if ( msg == undefined ) { msg =''; }
+				go_to_step( 'payment_options', msg );
+			},
 
+		// go to registration_confirmation
+		registration_confirmation : function ( msg ) {
+				hide_steps();
+				$('#spco-registration_confirmation-dv').css({ 'display' : 'none' }).removeClass('hidden');		
+				// set registration_confirmation back to auto height 
+				$('#spco-registration_confirmation-dv').css( 'height', 'auto' );	
+				if ( msg == undefined ) { msg =''; }
+				go_to_step( 'registration_confirmation', msg );
 
-	// go to step 2
-	function mer_reg_page_go_to_step_2( msg ) {	
+			},
 
-		if ( msg == undefined ) {
-			msg ='';
-		}
-		$('.reg-page-billing-info-dv').addClass('hidden');
-		$('.reg-page-payment-option-dv').removeClass('hidden');
-		//	$('.spco-go-to-payment_options').on( 'click', function() {
-		$('#spco-payment_options-dv').css({ 'display' : 'none' }).removeClass('hidden');
-		// set step 2 back to auto height 
-		$('#spco-payment_options-dv').css( 'height', 'auto' );
-		hide_step(1);
-		hide_step(3);
-		go_to_step(2,msg);
-	}
-
-
-
-	// go to step 3
-	function mer_reg_page_go_to_step_3( msg ) {	
-
-		if ( msg == undefined ) {
-			msg ='';
-		}
-
-		$('#spco-registration_confirmation-dv').css({ 'display' : 'none' }).removeClass('hidden');		
-		// set step 3 back to auto height 
-		$('#spco-registration_confirmation-dv').css( 'height', 'auto' );	
-		hide_step(1);
-		hide_step(2);
-		go_to_step(3,msg);
+		// finalize_registration
+		finalize_registration : function ( msg ) {
+				scroll_to_top_of_form( msg );
+			}	
 
 	}
 
 
 
-	// go to step 4
-	function mer_reg_page_go_to_step_4( msg ) {
-		scroll_to_top_of_form( msg );
-	}	
 
-
+	// go to step 1 via edit link
+	$('#single-page-checkout').on( 'spco-edit-step-lnk', 'click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var step = $(this).attr('rel');
+		spco_go_to[ step ]( '' );
+		return false;
+	});
+	
+	
 /*
 	// go to step 1 via edit link
 	$('.spco-go-to-step-1').on( 'click', function(e) {
@@ -342,51 +335,36 @@
 		return false;
 	});
 
-	
-	// submit Step 1 of registraion form
-	$('#spco-go-to-payment_options-btn').on( 'click', function(e) {	
-		e.preventDefault();
-		e.stopPropagation();
-		process_reg_step ( 1 );
-	});
-		
-	
-	// submit Step 2 of registraion form
-	$('#spco-go-to-registration_confirmation-btn').on( 'click', function(e) {	
-		e.preventDefault();
-		e.stopPropagation();
-		selected_gateway_dv = process_selected_gateway();
-		process_reg_step ( 2, selected_gateway_dv );
-	});
-		
-	
-	// submit Step 3 of registraion form
-	$('#spco-confirm-reg-btn').on( 'click', function(e) {	
-		e.preventDefault();
-		e.stopPropagation();
-		off_site_payment = $('#reg-page-off-site-gateway').val();
-		if ( off_site_payment == 1 ) {
-			$('#mer-registration-frm-3').submit();
-		} else {
-			process_reg_step ( 3 );
-		}		
-		
-	});*/
+	*/
 
 
-	// submit Step 3 of registraion form
+	// submit registraion form
 	$('.spco-next-step-btn').on( 'click', function(e) {	
 		e.preventDefault();
 		e.stopPropagation();
-		off_site_payment = $('#reg-page-off-site-gateway').val();
-		if ( off_site_payment == 1 ) {
-			$('#mer-registration-frm-3').submit();
-		} else {
-			var step = $(this).attr('rel');
-//			console.log( JSON.stringify( 'step: ' + step, null, 4 ));	
-			process_reg_step ( step );
-		}		
+		var step = $(this).attr('rel');
+		next_step = get_next_step( step );
+//		alert( 'step = ' + step + '\n' + 'next_step = ' + next_step );
+		form_to_check = '#spco-registration-'+step+'-frm';
+		if ( next_step == 'finalize_registration' && $('#reg-page-off-site-gateway').val() == 1 ) {
+//			alert( 'off-site-gateway' );
+			$('#spco-registration-'+step+'-frm').submit();
+			return;
+		} else if ( step == 'payment_options' ) {
+			form_to_check = process_selected_gateway();
+		} 
+		
+		process_reg_step ( step, next_step, form_to_check );
+
 	});
+
+
+
+	function get_next_step( step ) {
+		var step_index = _.indexOf( eei18n.reg_steps, step );
+		step_index = step_index + 1;
+		return eei18n.reg_steps[ step_index ];	
+	}
 
 
 
@@ -409,32 +387,10 @@
 
 
 
-	function mer_reg_page_go_to( step, response ) {
-	
-		if ( response.error != '' && response.error != undefined ) {
-			show_event_queue_ajax_error_msg( response.error );
-		} else {
-			if ( step == 2 ) {
-				mer_reg_page_go_to_step_2( response );
-			} else if ( step == 3 ) {
-				mer_reg_page_go_to_step_3( response );
-			} else if ( step == 4 ) {
-				mer_reg_page_go_to_step_4( response );
-			}  		
-		}	
-
-	}
-
-
-
 	/**
 	*		submit a step of registraion form
 	*/	
-	function process_reg_step ( step, form_to_check ) { //, off_site_payment
-		
-		if ( form_to_check == '' || form_to_check == undefined ) {
-			form_to_check = '#spco-registration-'+step+'-frm';
-		}
+	function process_reg_step ( step, next_step, form_to_check ) { //, off_site_payment
 		
 		var good_to_go = verify_all_questions_answered( form_to_check );
 
@@ -455,16 +411,20 @@
 				beforeSend: function() {
 					do_before_event_queue_ajax();
 				}, 
-				success: function(response){	
-					var next = 'after_' + step;
-//					console.log( JSON.stringify( 'step: ' + step, null, 4 ));
-//					console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
-//					console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
-//					console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
+				success: function( response ){	
+					console.log( JSON.stringify( 'step: ' + step, null, 4 ));
+					console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ));
+					console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
+					console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
+					console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
 					if ( response.return_data != undefined ) {
-						process_return_data( next, response );
+						process_return_data( next_step, response );
 					} else {
-						mer_reg_page_go_to( next, response );						
+						if ( response.error != '' && response.error != undefined ) {
+							show_event_queue_ajax_error_msg( response.error );
+						} else {
+							spco_go_to[ next_step ]( response );
+						}
 					}								
 				},
 				error: function(response) {
@@ -492,9 +452,10 @@
 				
 	}
 
+		
 
 
-	function process_return_data( next, response ) {
+	function process_return_data( next_step, response ) {
 //alert('process_return_data');
 		for ( key in response.return_data ) {
 			//alert( 'key = ' + key + '\n' + 'response.return_data[key] = ' + response.return_data[key] );
@@ -511,7 +472,7 @@
 
 		msg = new Object();
 		msg.success = response.success;
-		mer_reg_page_go_to( next, msg );
+		spco_go_to[ next_step ](  msg  );
 
 	}
 
@@ -648,9 +609,11 @@
 		$('#methods-of-payment').slideUp( 250, function() {
 
 			$('.reg-page-payment-option-dv').each(function() {
-				if ( $(this).find('.reg-page-payment-option-lnk').attr('id') != selected_gateway ) {
+//				if ( $(this).find('.reg-page-payment-option-lnk').attr('id') != selected_gateway ) {
 					$(this).toggleClass( 'hidden' );
-				}			
+//				} else {
+//					alert( 'selected_payment_option = ' + selected_payment_option + '\n' + 'selected_gateway = ' + selected_gateway );
+//				}		
 			});		
 			// get target element from "this" (the control element's) "rel" attribute
 			var gateway_form = 'reg-page-billing-info-' + selected_payment_option.attr("rel"); 	
@@ -659,6 +622,8 @@
 			$('#hide-'+gateway_form).removeClass('hidden'); 
 			$('#reg-page-select-other-gateway-lnk').toggleClass( 'hidden' );
 			$('#methods-of-payment').slideDown( 500 );
+
+			
 
 		});		
 
