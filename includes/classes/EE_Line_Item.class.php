@@ -94,6 +94,12 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @var EE_Price
 	 */
 	protected $_Price;
+	
+	/**
+	 * All children line items
+	 * @var EE_Line_Item[]
+	 */
+	protected $_Line_Item;
 
 
 
@@ -112,6 +118,19 @@ class EE_Line_Item extends EE_Base_Class{
 
 	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
 		return new self( $props_n_values, TRUE, $timezone );
+	}
+	
+	/**
+	 * Adds some defaults if they're not specified
+	 * @param type $fieldValues
+	 * @param type $bydb
+	 * @param type $timezone
+	 */
+	protected function __construct($fieldValues = null, $bydb = FALSE, $timezone = NULL) {
+		if(! isset($fieldValues['LIN_code'])){
+			$fieldValues['LIN_code'] = $this->generate_code();
+		}
+		parent::__construct($fieldValues, $bydb, $timezone);
 	}
 	
 	/**
@@ -309,7 +328,15 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @return EE_Line_Item[]
 	 */
 	public function children(){
-		return $this->get_modeel()->get_all(array(array('LIN_parent'=>$this->ID())));
+		if($this->ID()){
+			return $this->get_model()->get_all(array(array('LIN_parent'=>$this->ID())));
+		}else{
+			if( ! is_array($this->_Line_Item)){
+				$this->_Line_Item = array();
+			}
+			return $this->_Line_Item;
+			
+		}
 	}
 	
 	/**
@@ -360,7 +387,96 @@ class EE_Line_Item extends EE_Base_Class{
 		}
 	}
 
+	/**
+	 * Adds the line item as a child to this line item
+	 * @param EE_Line_Item $line_item
+	 * @return void
+	 */
+	function add_child_line_item(EE_Line_Item $line_item){
+		if($this->ID()){
+			$line_item->set_parent_ID($this->ID());
+			$line_item->save();
+		}else{
+			$this->_Line_Item[$line_item->code()] = $line_item;
+		}
+	}
+	/**
+	 * Gets teh child line item as specified by its code. Because this returns an object (by reference)
+	 * you can modify this child line item and the parent (this object) can know about them
+	 * because it also has a reference to that line item
+	 * @param string $code
+	 * @return EE_Line_Item
+	 */
+	function get_child_line_item($code){
+		if($this->ID()){
+			return $this->get_model()->get_one(array(array('LIN_code'=>$code)));
+		}else{
+			return $this->_Line_Item[$code];
+		}
+	}
+	/**
+	 * Returns how many items are deleted (or, if this item hasn' tbeen saved ot teh DB yet, just how many it HAD cached on it)
+	 * @return int
+	 */
+	function delete_children_line_items(){
+		if($this->ID()){
+			return $this->get_model()->delete(array(array('LIN_parent'=>$this->ID())));
+		}else{
+			$count = count($this->_Line_Item);
+			$this->_Line_Item = array();
+			return $count;
+		}
+	}
+	
+	/**
+	 * If this line item has been saved to the DB, deletes its child with LIN_code == $code. If this line 
+	 * HASN'T been saved to the DB, removes the child line item with index $code
+	 * @param string $code
+	 * @return int count of items deleted (or simply removed from the line item's cache, if not hasn' tbeen saved to teh DB yet)
+	 */
+	function delete_child_line_item($code){
+		if($this->ID()){
+			return $this->get_model()->delete(array(array('LIN_code'=>$code,'LIN_parent'=>$this->ID())));
+		}else{
+			unset($this->_Line_Item[$code]);
+			return 1;
+		}
+	}
+	
+	/**
+	 * Creates a code and returns a string. doesn't assign the code to this model object
+	 * @return string
+	 */
+	function generate_code(){
+		// each line item in the cart requires a unique identifier
+		return md5( $this->_OBJ_type . $this->_OBJ_ID . time() );
+	}
 
+	/**
+	 * Recalculates the total of this line item based on its children, or based on its changed quantity. If this item 
+	 * has NO children, then just returns: is_percent ? (total) : (unit price * quantity)
+	 * @return float
+	 */
+	function recalculate_total(){
+		if($this->children()){
+			$total = 0;
+			foreach($this->children() as $child_line_item){
+				if($child_line_item->is_percent()){
+					$total += $total * $child_line_item->total() / 100;
+				}else{
+					$total += $child_line_item->recalculate_total();
+				}
+			}
+		}else{
+			if($this->is_percent()){
+				$total = $this->total();
+			}else{
+				$total = $this->unit_price() * $this->quantity();
+			}
+		}
+		$this->set_total($total);
+		return $total;
+	}
 
 
 }

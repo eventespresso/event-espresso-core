@@ -90,7 +90,7 @@ class EEM_Line_Item extends EEM_Base {
 						array(
 							'line-item'=>  __("Line Item", "event_espresso"),
 							'sub-item'=>  __("Sub-Item", "event_espresso"),
-							'subtotal'=>  __("Subtotal", "event_espresso"),
+							'sub-total'=>  __("Subtotal", "event_espresso"),
 							'tax'=>  __("Tax", "event_espresso"),
 							'total'=>  __("Total", "event_espresso"))),
 				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("ID of Item purchased.", "event_espresso"), true,null,$line_items_can_be_for),
