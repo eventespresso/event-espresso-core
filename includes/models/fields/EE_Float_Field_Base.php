@@ -3,7 +3,7 @@ require_once('EE_Model_Field_Base.php');
 /**
  * Text_Fields is a base class for any fields which are have float value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
  */
-abstract class EE_Float_Field_Base extends EE_Model_Field_Base{
+class EE_Float_Field extends EE_Model_Field_Base{
 	function get_wpdb_data_type(){
 		return '%f';
 	}

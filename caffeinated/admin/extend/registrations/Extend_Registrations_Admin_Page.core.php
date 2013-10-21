@@ -54,8 +54,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'nav' => array(
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
-					)
-				)
+					),
+				'help_tour' => array( 'Registration_Reports_Help_Tour' )
+				),
 			);
 
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );

@@ -198,19 +198,20 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_line_item';
 		$sql="LIN_ID int(11) NOT NULL AUTO_INCREMENT,
+				LIN_code varchar(245) NOT NULL DEFAULT '',
 				TXN_ID int(11) DEFAULT NULL,
 				LIN_name varchar(245) NOT NULL DEFAULT '',
 				LIN_desc varchar(245) DEFAULT NULL,
 				LIN_unit_price decimal(10,3) DEFAULT NULL,
 				LIN_is_percent tinyint(1) DEFAULT 0,
+				LIN_is_taxable tinyint(1) DEFAULT 0,
 				LIN_order int DEFAULT 0,
 				LIN_parent int DEFAULT 0,
 				LIN_type varchar(10) NOT NULL,
 				LIN_total decimal(10,3) DEFAULT NULL,
 				LIN_quantity int(10) DEFAULT NULL,
-				LIN_taxable tinyint(1) DEFAULT NULL,
-				LIN_item_id varchar(10) DEFAULT NULL,
-				LIN_item_type varchar(45)DEFAULT NULL,
+				OBJ_ID int(11) DEFAULT NULL,
+				OBJ_type varchar(45)DEFAULT NULL,
 				PRIMARY KEY  (LIN_ID)";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB');
 

@@ -33,9 +33,26 @@ abstract class EE_Field_With_Model_Name extends EE_Model_Field_Base{
 	}
 	/**
 	 * Returns the model's classname (eg EE_Event instead of just Event)
-	 * @return string
+	 * @return array
 	 */
-	function get_model_class_name_pointed_to(){
-		return "EE_".$this->_model_name;
+	function get_model_class_names_pointed_to(){
+		$model_names = array();
+		if(is_array($this->_model_name)){
+			foreach($this->_model_name as $model_name){
+				$model_names[] = "EE_".$model_name;
+			}
+		}else{
+			$model_names = array("EE_".$this->_model_name);
+		}
+		return $model_names;
+	}
+	
+	function is_model_obj_of_type_pointed_to($model_obj_or_ID){
+		foreach($this->get_model_class_names_pointed_to() as $model_obj_classname){
+			if($model_obj_or_ID instanceof $model_obj_classname){
+				return true;
+			}
+		}
+		return false;
 	}
 }
