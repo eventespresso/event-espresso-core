@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
 	$('.espresso-notices.fade-away').delay(10000).slideUp();
 
 	//close btn for notifications
-	$('#espresso-notices').on( 'click', '.close-espresso-notice', function(e){
+	$('.close-espresso-notice').on( 'click', function(e){
 		$(this).parent().hide();
 		e.preventDefault();
 		e.stopPropagation();
