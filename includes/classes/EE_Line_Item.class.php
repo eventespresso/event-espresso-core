@@ -339,6 +339,7 @@ class EE_Line_Item extends EE_Base_Class{
 		}
 	}
 	
+	
 	/**
 	 * Gets code
 	 * @return string

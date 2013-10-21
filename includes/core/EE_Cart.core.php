@@ -55,6 +55,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private $_total_line_item;
 	
+	/**
+	 * Really only used for implementing iterator interface. Otherwise  unused
+	 * @var EE_Line_Item[]
+	 */
+	private $_iterable_line_items = array();
 	
 	
 
@@ -69,7 +74,13 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Cart )) {
-			self::$_instance = new self();
+			//try getting the cart out of the session
+			$saved_cart = EE_Registry::instance()->SSN->get_session_data('cart');
+			if($saved_cart && is_object( $saved_cart ) && ( $saved_cart instanceof EE_Cart ) ){
+				self::$_instance = $saved_cart;
+			}else{
+				self::$_instance = new self();
+			}
 		}
 		return self::$_instance;
 	}
@@ -169,6 +180,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			return array();
 		}
 	}
+	
+	
 	
 	/**
 	 * Gets the line item which comprises all the items as children of it (ie, NOT taxes or promotions)
@@ -492,7 +505,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return EE_Item
 	 */
 	public function rewind() {
-		return is_array( $this->get_items() ) ? reset( $this->get_items() ) : NULL;
+		$this->_iterable_line_items = $this->get_items();
+		return is_array( $this->_iterable_line_items ) ? reset( $this->_iterable_line_items ) : NULL;
 	}
 
 	/**
@@ -502,7 +516,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function current() {
-		return is_array( $this->get_items() ) ? current( $this->get_items() ) : NULL;
+		return is_array( $this->_iterable_line_items ) ? current( $this->_iterable_line_items ) : NULL;
 	}
 
 	/**
@@ -512,7 +526,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function next() {
-		return is_array( $this->get_items() ) ? next( $this->get_items() ) : NULL;
+		return is_array( $this->_iterable_line_items ) ? next( $this->_iterable_line_items ) : NULL;
 	}
 
 	/**
@@ -522,7 +536,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function key() {
-		return is_array( $this->get_items() ) ? key( $this->get_items() ) : NULL;
+		return is_array( $this->_iterable_line_items ) ? key( $this->_iterable_line_items ) : NULL;
 	}
 
 	/**
@@ -532,7 +546,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return boolean
 	 */
 	public function valid() {
-		return key( $this->get_items() ) !== NULL ? TRUE : FALSE;
+		return key( $this->_iterable_line_items ) !== NULL ? TRUE : FALSE;
 	}
 	
 	/**
