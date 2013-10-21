@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Registration_Form_Questions_Overview_Help_Tour
  *
- * This is the help tour object for the Registration Overview page
+ * This is the help tour object for the Questions Overview page
  *
  *
  * @package		Registration_Form_Questions_Overview_Help_Tour

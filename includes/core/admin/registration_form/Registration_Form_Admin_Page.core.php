@@ -144,7 +144,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Question Groups'),
 					'order' => 20
-					)
+					),
+				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour')
 				),
 
 			'edit_question' => array(
