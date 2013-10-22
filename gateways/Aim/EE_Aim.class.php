@@ -190,7 +190,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			/* @var $transaction EE_Transaction */
 			$transaction = $total_line_item->transaction();
 			$primary_registrant = $transaction->primary_registration();
-			foreach ($transaction->items_purchased() as $line_item) {
+			foreach ($total_line_item->get_items() as $line_item) {
 				$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
 //				$attendee = $registration->attendee();
 //				$attendee_full_name = $attendee ? $attendee->full_name() : '';
@@ -200,7 +200,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			}
 
 			$grand_total = $total_line_item->total();//$session_data['_cart_grand_total_amount'];
-			foreach($transaction->tax_items() as $tax_line_item){
+			foreach($total_line_item->tax_descendants() as $tax_line_item){
 				$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax->total(), 'N');
 			}
 			
