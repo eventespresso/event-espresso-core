@@ -228,6 +228,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10 
 					),
 				'list_table' => 'Messages_Template_List_Table',
+				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
 				'help_tabs' => array_merge( array(
 						'messages_overview' => array(
 							'title' => __('About the Overview', 'event_espresso'),
