@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
 	var current_tour = 0;
 	var tour_stop_cache = 0;
 	var last_tour_stop = EE_HELP_TOUR.tours.length-1;
+	var do_postride = true;
 	var joyridepostride = function(joyride_index,current_tip) {
 		v = EE_HELP_TOUR.tours[current_tour];
 		$('#' + v.id).joyride("destroy");
@@ -40,7 +41,8 @@ jQuery(document).ready(function($) {
 		if ( typeof v.options.postStepCallback !== 'undefined' && typeof window[v.options.postStepCallback] !== 'function' )
 			v.options.postStepCallback = $.noop;
 
-		v.options.postRideCallback = joyridepostride; //note this overrides any existing callback set for postride.  If we come into cases where we need to set a callback for post ride then this will have to be modified.
+		if ( do_postride )
+			v.options.postRideCallback = joyridepostride; //note this overrides any existing callback set for postride.  If we come into cases where we need to set a callback for post ride then this will have to be modified.
 
 		$('#' + v.id).joyride(v.options);
 	};
@@ -66,6 +68,8 @@ jQuery(document).ready(function($) {
 			if ( v.id == tourid ) {
 				//set cookieMonster to false for this option
 				EE_HELP_TOUR.tours[i].options.cookieMonster = false;
+				//make sure we don't do the postride callback
+				do_postride = false;
 				options = i;
 			}
 		});
