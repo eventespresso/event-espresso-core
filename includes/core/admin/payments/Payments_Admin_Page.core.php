@@ -80,6 +80,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
 				'help_tabs' => $this->_get_gateway_help_tabs(),
 				),
 			'payment_settings' => array(
