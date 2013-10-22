@@ -55,16 +55,6 @@ class Transaction_Reports_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -40
 					)
-				),
-			40 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
 				)
 			);
 	}
@@ -82,9 +72,5 @@ class Transaction_Reports_Help_Tour extends EE_Help_Tour {
 
 	protected function _txn_per_event_report() {
 		return '<p>' . __('about the txn per event report', 'event_espresso') . '</p>';
-	}
-
-	protected function _end() {
-		return '<p>' . __('That\'s it for this tour!  At any time you can restart this tour by clicking on this help dropdown and then clicking the "TXN Reports Tour" Tour button.  All the best with your events!', 'event_espresso') . '</p>';
 	}
 }

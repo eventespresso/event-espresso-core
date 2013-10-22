@@ -133,16 +133,6 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'right'
 					)
-				),
-			120 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
 				)
 			);
 	}
@@ -207,9 +197,5 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 
 	protected function _legend_stop() {
 		return '<p>' . __('This is the legend that describes the different checkin statuses.', 'event_espresso') . '</p>';
-	}
-
-	protected function _end() {
-		return '<p>' . __('That\'s it for the tour through the Event Checkin overview!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Event Checkin Tour button.  All the best with your events!', 'event_espresso') . '</p>';
 	}
 }

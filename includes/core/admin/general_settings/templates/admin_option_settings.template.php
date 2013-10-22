@@ -152,5 +152,25 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 		</tbody>
 	</table>
 
+	<h4 class="ee-admin-settings-hdr">
+		<?php _e('Help Tour Global Activation', 'event_espresso'); ?>
+	</h4>
+
+	<table class="form-table">
+		<tbody>
+
+			<tr>
+				<th>
+					<label>
+						<?php _e('This toggles whether ee help tours are active globally or not', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EEH_Form_Fields::select_input('help_tour_activation', $values, $help_tour_activation ); ?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
 
 </div>

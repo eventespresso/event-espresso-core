@@ -983,6 +983,13 @@ class EE_Admin_Config extends EE_Config_Base {
 
 
 	/**
+	 * help tours on or off (global setting)
+	 * @var boolean
+	 */
+	public $help_tour_activation;
+
+
+	/**
 	 * 	class constructor
 	 *
 	 *  @access 	public
@@ -999,6 +1006,7 @@ class EE_Admin_Config extends EE_Config_Base {
 		$this->remote_logging_url = NULL;
 		$this->show_reg_footer = TRUE;
 		$this->affiliate_id = NULL;
+		$this->help_tour_activation = TRUE;
 	}
 
 }

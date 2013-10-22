@@ -79,16 +79,6 @@ class Checkin_Toggle_View_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -20
 					)
-				),
-			70 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
 				)
 			);
 	}
@@ -120,9 +110,5 @@ class Checkin_Toggle_View_Help_Tour extends EE_Help_Tour {
 
 	protected function _checkin_timestamp_stop() {
 		return '<p>' . __('the timestamp of this activity', 'event_espresso') . '</p>';
-	}
-
-	protected function _end() {
-		return '<p>' . __('That\'s it for this tour!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Check-in List Tour button.  All the best with your events!', 'event_espresso') . '</p>';
 	}
 }
