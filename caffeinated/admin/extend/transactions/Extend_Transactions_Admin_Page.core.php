@@ -53,7 +53,8 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 				'nav' => array(
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 20
-					)
+					),
+				'help_tour' => array( 'Transaction_Reports_Help_Tour' )
 				)
 			);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );

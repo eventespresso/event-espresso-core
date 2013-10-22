@@ -201,6 +201,6 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _end() {
-		return '<p>' . sprintf( __('That\'s it for the tour through the Transaction overview!  At any time you can restart this tour by clicking on this help dropdown and then clicking the "%s" Tour button.  All the best with your events!', 'event_espresso'), $this->_label ) . '</p>';
+		return '<p>' . sprintf( __('That\'s it for the tour!  At any time you can restart this tour by clicking on this help dropdown and then clicking the "%s" Tour button.  All the best with your events!', 'event_espresso'), $this->_label ) . '</p>';
 	}
 }
