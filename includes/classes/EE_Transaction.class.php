@@ -168,7 +168,15 @@ class EE_Transaction extends EE_Base_Class{
 	/**
 	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
 	 */
-	protected $_Promotion_Object;
+	protected $_Promotion_Object = NULL;
+	
+	/**
+	 * All the line items associated with this transaction. Note: the line item of type 'total'
+	 * is the most important one, and should eb the parent of all other line items 
+	 * (meaning it is the result of all the other line items)
+	 * @var EE_Line_Item[]
+	 */
+	protected $_Line_Item = NULL;
 
 
 	/**
@@ -648,6 +656,24 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	public function remove_registration_with_id($registration_or_id){
 		return $this->_remove_relation_to($registration_or_id, 'Registration');
+	}
+	
+	/**
+	 * Gets ALL the line items related to this transaction (unstructured)
+	 * @param type $query_params
+	 * @return EE_Line_Item[]
+	 */
+	public function line_items($query_params){
+		return $this->get_many_related('Line_Item', $query_params);
+	}
+	
+	/**
+	 * Gets the total line item (which is a parent of all other related line items,
+	 * meaning it takes them all intou account on its total)
+	 * @return EE_Line_Item
+	 */
+	public function total_line_item(){
+		return $this->get_first_related('Line_Item', array(array('LIN_type'=>  EEM_Line_Item::type_total)));
 	}
 }
 

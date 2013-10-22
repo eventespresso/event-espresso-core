@@ -826,9 +826,9 @@ Class EEM_Gateways {
 
 
 	/**
-	 * 		process_reg_step_3
+	 * 		Processes the final step of SPCO in order to process payments
 	 * 		@access public
-	* 		@param	int	$id
+	* 		@param EE_Line_Item $total_line_item the line item whose total takes all other line items on this transaction into account
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
 	public function process_reg_step_3() {

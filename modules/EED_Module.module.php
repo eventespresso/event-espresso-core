@@ -35,7 +35,7 @@ abstract class EED_Module extends EE_Base {
 
 	/**
 	 * 	EE_Registry Object
-	 *	@var 	object	
+	 *	@var 	EE_Registry	
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
