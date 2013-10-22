@@ -582,6 +582,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['remote_logging_url'] = isset( $this->EE->CFG->admin->remote_logging_url ) && ! empty( $this->EE->CFG->admin->remote_logging_url ) ? stripslashes( $this->EE->CFG->admin->remote_logging_url ) : '';
 		$this->_template_args['show_reg_footer'] = isset( $this->EE->CFG->admin->show_reg_footer ) ? absint( $this->EE->CFG->admin->show_reg_footer ) : TRUE;
 		$this->_template_args['affiliate_id'] = isset( $this->EE->CFG->admin->affiliate_id ) ? $this->_display_nice( $this->EE->CFG->admin->affiliate_id ) : '';
+		$this->_template_args['help_tour_activation'] = isset( $this->EE->CFG->admin->help_tour_activation ) ? absint( $this->EE->CFG->admin->help_tour_activation ): 1;
 		
 		$this->_set_add_edit_form_tags( 'update_admin_option_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -600,6 +601,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->EE->CFG->admin->remote_logging_url = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : $this->EE->CFG->admin->remote_logging_url;
 		$this->EE->CFG->admin->show_reg_footer = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : $this->EE->CFG->admin->show_reg_footer;
 		$this->EE->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : $this->EE->CFG->admin->affiliate_id;
+		$this->EE->CFG->admin->help_tour_activation = isset( $this->_req_data['help_tour_activation'] ) ? absint( $this->_req_data['help_tour_activation'] ) : $this->EE->CFG->admin->help_tour_activation;
 		
 		$this->EE->CFG->admin = apply_filters( 'FHEE_admin_option_settings_save', $this->EE->CFG->admin );	
 		
