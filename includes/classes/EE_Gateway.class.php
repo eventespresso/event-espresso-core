@@ -120,7 +120,7 @@ abstract class EE_Gateway {
 	 * @param EE_Line_item $line_item
 	 * @return array with either index 'success' in case of success, 'error' in case of error
 	 */
-	public function process_payment_start($line_item){
+	public function process_payment_start(EE_Line_Item $line_item){
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		return array('success'=>TRUE);
 	}
