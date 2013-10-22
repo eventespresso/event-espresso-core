@@ -81,7 +81,7 @@
 		<input id="reg-page-selected-gateway" type="hidden" value="<?php echo $selected_gateway; ?>" name="selected_gateway">
 		<input id="reg-page-selected-gateway-name-free" type="hidden" value="free" name="selected_gateway_name[free]">
 		<div id="methods-of-payment">
-			<h3><?php _e('Please select your method of payment:', 'event_espresso'); ?></h3>
+			<h3 id="select-method-of-payment-hdr"><?php _e('Please select your method of payment:', 'event_espresso'); ?></h3>
 			<?php	do_action('AHEE_display_payment_gateways'); ?>
 			<a id="reg-page-select-other-gateway-lnk" class="hidden smaller-text right" rel=""><?php _e('select a different method of payment:', 'event_espresso'); ?></a>
 		</div><!-- / .event-display-boxes payment opts -->
@@ -92,23 +92,25 @@
 			<?php _e('This is a free event, so no billing will occur.', 'event_espresso'); ?>
 <?php }  ?>
 
-		<div id="spco-whats-next-buttons" class="spco-whats-next-buttons">
+			<?php do_action( 'AHEE__before_spco_whats_next_buttons', $step, $next_step ); ?>
 
-			<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="<?php echo $step; ?>" >
-				<?php echo $next_step_text; ?>
-			</a>
+			<div id="spco-payment_options-whats-next-buttons-dv" class="spco-whats-next-buttons">
 
-			<noscript>
-				<input type="submit"
-							id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn"
-							class="spco-next-step-btn spco-register-btn no-js-btn"
-							name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn"
-							value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;"
-					/>
-			</noscript>
+				<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="payment_options" >
+					<?php echo $next_step_text; ?>
+				</a>
 
-		</div>
-		<!--end spco-whats-next-buttons-->
+				<noscript>
+					<input type="submit"
+								id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn"
+								class="spco-next-step-btn spco-register-btn no-js-btn"
+								name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn"
+								value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;"
+						/>
+				</noscript>
+
+			</div>
+			<!--end spco-whats-next-buttons-->
 
 		</form>
 

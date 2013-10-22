@@ -139,9 +139,11 @@ if ( $event_queue['total_items'] > 0 ) {
 		
 		<div><a id="spco-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right" ><?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?></a></div>
 		
-		<div id="spco-whats-next-buttons" class="spco-whats-next-buttons">
+		<?php do_action( 'AHEE__before_spco_whats_next_buttons', $step, $next_step ); ?>
 		
-			<a href =""  id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="<?php echo $step; ?>" >
+		<div id="spco-attendee_information-whats-next-buttons-dv" class="spco-whats-next-buttons">
+		
+			<a href =""  id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="attendee_information" >
 				<?php echo $next_step_text; ?>
 			</a>
 
