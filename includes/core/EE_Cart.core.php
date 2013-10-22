@@ -290,7 +290,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	private function _calculate_cart_total_before_tax() {
-		return $this->get_ticket_items()->recalculate_total();
+		return $this->get_ticket_items()->recalculate_pre_tax_total();
 	}
 	
 	/**
