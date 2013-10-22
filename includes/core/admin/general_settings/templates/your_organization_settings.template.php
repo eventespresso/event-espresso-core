@@ -75,7 +75,7 @@
 					</label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" name="organization_city" value="<?php echo $organization_city; ?>" />
+					<input id="organization_city" class="regular-text" type="text" name="organization_city" value="<?php echo $organization_city; ?>" />
 				</td>
 			</tr>
 			<?php echo EEH_Form_Fields::generate_form_input( $states ); ?>
