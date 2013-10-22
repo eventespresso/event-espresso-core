@@ -207,7 +207,7 @@ class EE_Taxes extends EE_BASE {
 		$total_tax = 0;
 
 		//This first checks to see if the given ticket is taxable.
-		if ( ! $ticket->get('TKT_is_taxable') )
+		if ( ! $ticket->get('TKT_taxable') )
 			return $tax;
 
 		//get subtotal (notice we're only retrieving a subtotal if there isn't one given)
