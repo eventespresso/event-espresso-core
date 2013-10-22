@@ -63,7 +63,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 	 * Checks that there is at least one active gateway. If not, add a notice
 	 */
 	public function check_payment_gateway_setup(){
-		$actives = EEM_Gateways::instance()->active_gateways();
+		$actives = EE_Config::instance()->gateway->active_gateways;
 		if( ! $actives || count($actives) < 1){
 			$url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_PAYMENTS_ADMIN_URL);
 			echo '<div class="error">

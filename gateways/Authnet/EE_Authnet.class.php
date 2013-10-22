@@ -348,7 +348,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function process_reg_step_3() {
+	public function process_payment_start(EE_Line_Item $total_line_item) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 

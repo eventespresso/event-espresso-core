@@ -290,7 +290,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	private function _calculate_cart_total_before_tax() {
-		return $this->get_ticket_items()->recalculate_total();
+		return $this->get_ticket_items()->recalculate_pre_tax_total();
 	}
 	
 	/**
@@ -358,7 +358,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		if( ! $this->get_taxes_line_item()->children()){
 			$this->_add_taxes_to_cart();
 		}
-		$this->get_grand_total()->recalculate_post_tax_total();
+		$this->get_grand_total()->recalculate_total_including_taxes();
 		return $this->get_taxes_line_item()->total();
 	}
 

@@ -167,7 +167,11 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		<?php
 	}
 
-	public function process_reg_step_3() {
+	/**
+	 * @param EE_Line_Item $line_item
+	 * @return boolean
+	 */
+	public function process_payment_start(EE_Line_Item $total_line_item) {
 		$session_data = $this->EE->SSN->get_session_data();
 		$billing_info = $session_data['billing_info'];
 
@@ -182,29 +186,31 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				define("AUTHORIZENET_SANDBOX", false);
 			}
 
-//			$reg_info = $session_data['cart']['REG'];
-			$primary_attendee = $session_data['primary_attendee'];
-
 			$item_num = 1;
 			/* @var $transaction EE_Transaction */
-			$transaction = $session_data['transaction'];
-			foreach ($transaction->registrations() as $registration) {
-				$attendee = $registration->attendee();
-				$attendee_full_name = $attendee ? $attendee->full_name() : '';
-				$ticket = $registration->ticket();
-				$this->addLineItem(
-						$item_num++, substr($attendee_full_name, 0, 31), substr($attendee_full_name . " attending " . $registration->event_name() . " with ticket " . $ticket->name_and_info(), 0, 255), 1, $registration->price_paid(), 'N');
+			$transaction = $total_line_item->transaction();
+			$primary_registrant = $transaction->primary_registration();
+			foreach ($total_line_item->get_items() as $line_item) {
+				$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
+//				$attendee = $registration->attendee();
+//				$attendee_full_name = $attendee ? $attendee->full_name() : '';
+//				$ticket = $registration->ticket();
+//				$this->addLineItem(
+//						$item_num++, substr($attendee_full_name, 0, 31), substr($attendee_full_name . " attending " . $registration->event_name() . " with ticket " . $ticket->name_and_info(), 0, 255), 1, $registration->price_paid(), 'N');
 			}
 
-			$grand_total = $session_data['_cart_grand_total_amount'];
-
-			if (isset($session_data['tax_totals'])) {
-				foreach ($session_data['tax_totals'] as $key => $tax) {
-					$grand_total += $tax;
-					$this->addLineItem($item_num, $session_data['taxes'][$key]['name'], '', 1, $tax, 'N');
-					$item_num++;
-				}
+			$grand_total = $total_line_item->total();//$session_data['_cart_grand_total_amount'];
+			foreach($total_line_item->tax_descendants() as $tax_line_item){
+				$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax->total(), 'N');
 			}
+			
+//			if (isset($session_data['tax_totals'])) {
+//				foreach ($session_data['tax_totals'] as $key => $tax) {
+//					$grand_total += $tax;
+//					$this->addLineItem($item_num, $session_data['taxes'][$key]['name'], '', 1, $tax, 'N');
+//					$item_num++;
+//				}
+//			}
 
 			//start transaction
 			$this->setField('amount', $grand_total);
@@ -218,7 +224,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('city', $billing_info['reg-page-billing-city-' . $this->_gateway_name]['value']);
 			$this->setField('state', $billing_info['reg-page-billing-state-' . $this->_gateway_name]['value']);
 			$this->setField('zip', $billing_info['reg-page-billing-zip-' . $this->_gateway_name]['value']);
-			$this->setField('cust_id', $primary_attendee['registration_id']);
+			$this->setField('cust_id', $primary_registrant->ID());
 			//invoice_num would be nice to have itbe unique per SPCO page-load, taht way if users
 			//press back, they don't submit a duplicate. However, we may be keepin gthe user on teh same spco page
 			//in which case, we need to generate teh invoice num per request right here...
@@ -238,23 +244,8 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					$txn_id = $response->transaction_id;
 				}
 				$payment_status = $response->approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined;
-				$txn_results = array(
-					'gateway' => $this->_payment_settings['display_name'],
-					'approved' => $response->approved ? $response->approved : 0,
-					'status' => $payment_status,
-					'response_msg' => $response->response_reason_text,
-					'amount' => $response->amount,
-					'method' => $response->method,
-					'card_type' => $response->card_type,
-					'auth_code' => $response->authorization_code,
-					'md5_hash' => $response->md5_hash,
-					'transaction_id' => $txn_id,
-					'invoice_number' => $response->invoice_number,
-					'raw_response' => $response
-				);
 				$this->_debug_log("<hr>No Previous IPN payment received. Create a new one");
 				//no previous payment exists, create one
-				$primary_registrant = $transaction->primary_registration();
 				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 
 				$payment = EE_Payment::new_instance(array(
@@ -273,7 +264,6 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				
 				$success = $payment->save();
 				$successful_update_of_transaction = $this->update_transaction_with_payment($transaction, $payment);
-				$this->EE->SSN->set_session_data( array( 'txn_results' => $txn_results ));
 				//we successfully got a response from AIM. the payment might not necessarily have gone through
 				//but we did our job, so return sucess
 				$return = array('success' => true);

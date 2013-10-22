@@ -231,7 +231,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function process_reg_step_3() {
+	public function process_payment_start(EE_Line_Item $total_line_item) {
 
 		$this->_gatewayUrl = 'https://www.2checkout.com/checkout/purchase';
 		$session_data = EE_Registry::instance()->SSN->get_session_data();

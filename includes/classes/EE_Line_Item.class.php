@@ -487,7 +487,7 @@ class EE_Line_Item extends EE_Base_Class{
 	 * Has the side-effect of saving the total as it was just calculated
 	 * @return float
 	 */
-	function recalculate_post_tax_total(){
+	function recalculate_total_including_taxes(){
 		$pre_tax_total = $this->recalculate_pre_tax_total();
 		$tax_total = $this->recalculate_taxes_and_total();
 		$total = $pre_tax_total + $tax_total;
@@ -571,21 +571,63 @@ class EE_Line_Item extends EE_Base_Class{
 	}
 	
 	/**
+	 * Gets the total tax on this line item. Assumes taxes have already been calculated using recalculate_taxes_and_total
+	 * @return float
+	 */
+	public function get_total_tax(){
+		$this->_recalculate_tax_sub_total();
+		$total = 0;
+		foreach($this->tax_descendants() as $tax_line_item){
+			$total +=$tax_line_item->total();
+		}
+		return $total;
+	}
+	
+	/**
+	 * Gets the total for all the items purchaed only
+	 * @return float
+	 */
+	public function get_items_total(){
+		$total = 0;
+		foreach($this->_get_descendants_of_type(EEM_Line_Item::type_line_item) as $item){
+			$total += $item->total();
+		}
+		return $total;
+	}
+	
+	/**
 	 * Gets all the descendants (ie, children or children of children etc) that 
 	 * are of the type 'tax'
 	 * @return EE_Line_Item[]
 	 */
 	function tax_descendants(){
-		$tax_line_items = array();
+		return $this->_get_descendants_of_type(EEM_Line_Item::type_tax);
+	}
+	
+	/**
+	 * Gets all the real items purchaed whcih are children of this item
+	 * @return EE_Line_Item[]
+	 */
+	function get_items(){
+		return $this->_get_descendants_of_type(EEM_Line_Item::type_line_item);
+	}
+	
+	/**
+	 * Gets all descendants of the specified type
+	 * @param string $type one of teh constants on EEM_Line_Item
+	 * @return EE_Line_Item
+	 */
+	protected function _get_descendants_of_type($type){
+		$line_items_of_type = array();
 		foreach($this->children() as $child_line_item){
-			if($child_line_item->is_tax()){
-				$tax_line_items[] = $child_line_item;
+			if($child_line_item->type() == $type){
+				$line_items_of_type[] = $child_line_item;
 			}else{
 				//go-through-all-its children looking for taxes
-				$tax_line_items = array_merge($tax_line_items,$child_line_item->tax_descendants());
+				$line_items_of_type = array_merge($line_items_of_type,$child_line_item->_get_descendants_of_type($type));
 			}
 		}
-		return $tax_line_items;
+		return $line_items_of_type;
 	}
 
 	/**
@@ -613,6 +655,14 @@ class EE_Line_Item extends EE_Base_Class{
 			}
 		}
 		return $total;
+	}
+	
+	/**
+	 * Gets the transaction for this line item
+	 * @return EE_Transaction
+	 */
+	public function transaction(){
+		return $this->get_first_related('Transaction');
 	}
 
 }

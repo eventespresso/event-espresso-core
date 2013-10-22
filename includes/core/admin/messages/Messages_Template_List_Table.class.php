@@ -207,8 +207,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 
 		if ( !$item->is_global() ) {
-			$trashed_count = $item->is_trashed_count();
-			if ( $trashed_count <= 0 ) {
+			if ( !$item->get('MTP_deleted') ) {
 				$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Template Group to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 			} else {
 				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Message Template', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
@@ -228,7 +227,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			$ctxt[] = '<a href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a>';
 		}
 
-		$ctx_content = sprintf( __('<strong>%s:</strong> ', 'event_espresso'), ucwords($c_label['plural']) ) . implode(' | ', $ctxt);
+		$ctx_content = !$item->get('MTP_deleted') ? sprintf( __('<strong>%s:</strong> ', 'event_espresso'), ucwords($c_label['plural']) ) . implode(' | ', $ctxt) : '';
 
 
 		//Return the name contents
