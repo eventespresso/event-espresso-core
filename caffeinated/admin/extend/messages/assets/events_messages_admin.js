@@ -80,11 +80,11 @@ jQuery(document).ready(function($) {
 		},
 
 		display_modal: function() {
-			var messages_content = $('#messages-change-edit-templates-dv').clone().html();
+			var messages_content = $('#messages-change-edit-templates-dv').html();
 			dialogHelper.displayModal().addContent(messages_content);
 			overlay.on('click', function() {
 				EE_messages_evt_helper.close_modal();
-				$('.messages-change-edit-templates-content').html('');
+				$('.messages-change-edit-templates-content', '.ee-admin-dialog-container').html('');
 			});
 		},
 
@@ -118,7 +118,7 @@ jQuery(document).ready(function($) {
 				return;
 			
 			var main_container = type == 'content' ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox') : $('.ee-notices', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox');
-			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content') : $('.ee-notices', '.messages-change-edit-templates-content');
+			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.messages-change-edit-templates-content', '.ee-admin-dialog-container').find('.ee-notices');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
 			$('.ajax-loader-grey').toggle().hide();
@@ -139,17 +139,17 @@ jQuery(document).ready(function($) {
 		EE_messages_evt_helper.get_template_content(this);
 	});
 
-	$('.messages-change-edit-templates-content').on('submit', 'form', function(e) {
+	$('.ee-admin-dialog-container').on('submit', 'form', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this, 'form');
 	});
 
-	$('.messages-change-edit-templates-content').on('click', '.messages-preview-button', function(e) {
+	$('.ee-admin-dialog-container').on('click', '.messages-preview-button', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this);
 	});
 
-	$('.messages-change-edit-templates-content').on('click', '.messages-preview-go-back-button', function(e) {
+	$('.ee-admin-dialog-container').on('click', '.messages-preview-go-back-button', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this);
 	});
