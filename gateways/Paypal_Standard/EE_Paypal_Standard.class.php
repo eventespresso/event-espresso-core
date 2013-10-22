@@ -345,7 +345,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function process_payment_start() {
+	public function process_payment_start(EE_Line_Item $total_line_item) {
 
 		$session_data = $this->EE->SSN->get_session_data();
 		$paypal_settings = $this->_payment_settings;
@@ -356,35 +356,27 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$item_num = 1;
 		
 		/* @var $transaction EE_Transaction */
-		$transaction = $session_data['transaction'];
-		foreach($transaction->registrations() as $registration){
-			/* @var $registration EE_Registration */
-			$ticket_datetimes_for_reg = $registration->ticket()->datetimes();
-			foreach($ticket_datetimes_for_reg as $datetime){
-				$times[] = $datetime->start_date_and_time();
-			}
-			$this->addField('item_name_' . $item_num, $registration->attendee()->full_name() . ' attending ' . $registration->event_name()  . ' on ' . implode(", ",$times).', ' . $registration->ticket()->name());
-			$this->addField('amount_' . $item_num, $registration->price_paid());
-			$this->addField('quantity_' . $item_num, '1');
+		$transaction = $total_line_item->transaction();
+		foreach($total_line_item->get_items() as $line_item){
+			
+			$this->addField('item_name_' . $item_num, $line_item->name());
+			$this->addField('amount_' . $item_num, $line_item->unit_price());
+			$this->addField('quantity_' . $item_num, $line_item->quantity());
 			$item_num++;
 		}
 		
-		$total = $session_data['_cart_grand_total_amount'];
-		if (isset($session_data['tax_totals'])) {
-			foreach ($session_data['tax_totals'] as $key => $taxes) {
-				$total = $total + $taxes;
-				$this->addField('item_name_' . $item_num, $session_data['taxes'][$key]['name']);
-				$this->addField('amount_' . $item_num, $taxes);
-				$this->addField('quantity_' . $item_num, '1');
-				$item_num++;
-			}
+		foreach ($total_line_item->tax_descendants() as  $tax_line_item) {
+			$this->addField('item_name_' . $item_num, $tax_line_item->name());
+			$this->addField('amount_' . $item_num, $tax_line_item->total());
+			$this->addField('quantity_' . $item_num, '1');
+			$item_num++;
 		}
 		//get any of the current registrations, 
-		$a_current_registration = current($session_data['registration']);
+		$primary_registrant = $transaction->primary_registration();
 		$this->addField('business', $paypal_id);
-		$this->addField('return',  $this->_get_return_url($a_current_registration));
+		$this->addField('return',  $this->_get_return_url($primary_registrant));
 		$this->addField('cancel_return', $this->_get_cancel_url());
-		$this->addField('notify_url', $this->_get_notify_url($a_current_registration));
+		$this->addField('notify_url', $this->_get_notify_url($primary_registrant));
 		$this->addField('cmd', '_cart');
 		$this->addField('upload', '1');
 		$this->addField('currency_code', $paypal_cur);
