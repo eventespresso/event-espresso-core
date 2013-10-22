@@ -198,6 +198,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Your Organization'),
 					'order' => 50
 					),
+				'help_tour' => array( 'Your_Organization_Help_Tour' ),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 			'admin_option_settings' => array(
