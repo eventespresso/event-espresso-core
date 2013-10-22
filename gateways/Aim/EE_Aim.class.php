@@ -244,20 +244,6 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					$txn_id = $response->transaction_id;
 				}
 				$payment_status = $response->approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined;
-				$txn_results = array(
-					'gateway' => $this->_payment_settings['display_name'],
-					'approved' => $response->approved ? $response->approved : 0,
-					'status' => $payment_status,
-					'response_msg' => $response->response_reason_text,
-					'amount' => $response->amount,
-					'method' => $response->method,
-					'card_type' => $response->card_type,
-					'auth_code' => $response->authorization_code,
-					'md5_hash' => $response->md5_hash,
-					'transaction_id' => $txn_id,
-					'invoice_number' => $response->invoice_number,
-					'raw_response' => $response
-				);
 				$this->_debug_log("<hr>No Previous IPN payment received. Create a new one");
 				//no previous payment exists, create one
 				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
@@ -278,7 +264,6 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				
 				$success = $payment->save();
 				$successful_update_of_transaction = $this->update_transaction_with_payment($transaction, $payment);
-				$this->EE->SSN->set_session_data( array( 'txn_results' => $txn_results ));
 				//we successfully got a response from AIM. the payment might not necessarily have gone through
 				//but we did our job, so return sucess
 				$return = array('success' => true);

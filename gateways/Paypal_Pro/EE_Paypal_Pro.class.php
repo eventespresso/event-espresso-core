@@ -522,21 +522,6 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				unset($PayPalResult['RAWREQUEST']);
 				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
 				$approved = $this->_APICallSuccessful($PayPalResult);
-				$txn_results = array(
-						'gateway' => $this->_payment_settings['display_name'],
-						'approved' => $approved,
-						'status' => $approved ? 'Approved' : 'Declined',
-						'response_msg' => $message,
-						'amount' => isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0,
-						'method' => 'CC',
-						'card_type' => $billing_info['reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
-						'auth_code' => '',
-						'md5_hash' => $PayPalResult['CORRELATIONID'],
-						'transaction_id' => isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : '',
-						'invoice_number' => $session_data['primary_attendee']['registration_id'],
-						'raw_response' => $PayPalResult
-				);
-				$this->EE->SSN->set_session_data( array( 'txn_results' => $txn_results ));
 				$primary_registrant = $transaction->primary_registration();
 				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 
