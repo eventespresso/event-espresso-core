@@ -136,7 +136,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// check request for 'clear_session' param
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 10 );
 		// once everything is all said and done,
-		add_action( 'shutdown', array( $this, 'update_espresso_session' ), 100);
+		add_action( 'shutdown', array( $this, 'update' ), 100);
 
 	}
 
@@ -326,7 +326,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		@access public
 	 *		@return TRUE on success, FALSE on fail
 	 */
-	public function update_espresso_session( $new_session = FALSE ) {
+	public function update( $new_session = FALSE ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
@@ -411,7 +411,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// use the update function for now with $new_session arg set to TRUE
-		return  $this->update_espresso_session( TRUE ) ? TRUE : FALSE;
+		return  $this->update( TRUE ) ? TRUE : FALSE;
 
 	}
 

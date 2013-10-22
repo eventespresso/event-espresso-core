@@ -116,6 +116,18 @@ abstract class EE_Help_Tour extends EE_Base {
 		$this->_set_tour_properties();
 		$this->_set_tour_stops();
 		$this->_set_tour_options();
+
+		//append the end stop to all tours //note if tours have already have the end stop method defined we use it instead.
+		$this->_stops[] = array(
+			'id' => 'contextual-help-link',
+				'content' => $this->_end(),
+				'button_text' => __('End Tour', 'event_espresso'),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => 10
+					)
+			);
 	}
 
 
@@ -139,6 +151,18 @@ abstract class EE_Help_Tour extends EE_Base {
 	 * @return void
 	 */
 	abstract protected function _set_tour_stops();
+
+
+
+	/**
+	 * This is the default last stop for all tours that is displayed at the end of a tour OR when a tour is exited for the first time.
+	 * Child tours can override if they want this last stop to be something different.
+	 * 
+	 * @return string
+	 */
+	protected function _end() {
+		return '<p>' . sprintf( __('That\'s it for the tour!  At any time you can restart this tour by clicking on this help dropdown and then clicking the "%s" Tour button.  All the best with your events!', 'event_espresso'), $this->_label ) . '</p>';
+	}
 
 
 

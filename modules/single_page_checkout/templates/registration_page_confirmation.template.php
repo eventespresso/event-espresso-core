@@ -23,9 +23,11 @@
 					<?php echo $confirmation_data; ?>
 				</div>
 
-				<div id="spco-whats-next-buttons" class="mer-whats-next-buttons">
+				<?php do_action( 'AHEE__before_spco_whats_next_buttons', 'registration_confirmation', $next_step ); ?>
 
-					<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="<?php echo $step; ?>" >
+				<div id="spco-registration_confirmation-whats-next-buttons-dv" class="mer-whats-next-buttons">
+
+					<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="registration_confirmation" >
 						<strong><?php echo $next_step_text; ?></strong>
 					</a>
 

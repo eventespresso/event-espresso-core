@@ -165,16 +165,6 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -40
 					)
-				),
-			150 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
 				)
 			);
 	}
@@ -257,9 +247,5 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _legend_stop() {
 		return '<p>' . __('This is the legend that describes the actions available in the Actions column.', 'event_espresso') . '</p>';
-	}
-
-	protected function _end() {
-		return '<p>' . __('That\'s it for the tour through the Registration overview!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Reg Overview Tour button.  All the best with your events!', 'event_espresso') . '</p>';
 	}
 }

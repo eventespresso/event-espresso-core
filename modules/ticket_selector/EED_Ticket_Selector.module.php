@@ -297,7 +297,7 @@ class EED_Ticket_Selector extends  EED_Module {
 							return TRUE;
 						} else {
 							EE_Registry::instance()->save_cart();
-							EE_Registry::instance()->SSN->update_espresso_session();
+							EE_Registry::instance()->SSN->update();
 							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( $this->EE->CFG->core->reg_page_id )));
 							exit();
 						}

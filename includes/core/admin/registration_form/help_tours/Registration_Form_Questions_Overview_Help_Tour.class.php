@@ -90,16 +90,6 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -20,
 					'tipAdjustmentX' => -15
 					)
-				),
-			70 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
 				)
 			);
 	}
@@ -141,7 +131,4 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 		return '<p>' . __('about the required column', 'event_espresso') . '</p>';
 	}
 
-	protected function _end() {
-		return '<p>' . __('That\'s it for the tour through the registration form questionsoverview!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Questions Tour button.  All the best with your events!', 'event_espresso') . '</p>';
-	}
 }

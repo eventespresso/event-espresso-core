@@ -582,8 +582,9 @@
 			var gateway_form = 'reg-page-billing-info-' + selected_payment_option.attr("rel"); 	
 			$('#reg-page-selected-gateway').val( selected_payment_option.attr("rel") );
 			$('#'+gateway_form+'-dv').toggleClass( 'hidden' );
-			$('#hide-'+gateway_form).removeClass('hidden'); 
+			$('#hide-'+gateway_form).removeClass('hidden');			
 			$('#reg-page-select-other-gateway-lnk').toggleClass( 'hidden' );
+			$('#select-method-of-payment-hdr').toggleClass( 'hidden' );
 			$('#methods-of-payment').slideDown( 500 );
 
 			

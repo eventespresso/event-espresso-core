@@ -278,7 +278,7 @@ class EE_Base_Class{
 	 * assocaited with this model object
 	 * @return mixed index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one related thing, no array)
 	 */
-	public function cache($relationName,$object_to_cache){
+	public function cache($relationName,$object_to_cache, $cache_id = NULL ){
 		if ( empty( $object_to_cache ) ) return; //its entirely possible that there IS no related object yet in which case there is nothing to cache.
 		
 		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
@@ -304,8 +304,13 @@ class EE_Base_Class{
 				$return = $object_to_cache->ID();
 				$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
 			}else{
-				$return = count($this->$relationNameClassAttribute);
-				$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
+				if ( empty( $cache_id )) {
+					$return = count($this->$relationNameClassAttribute);
+					$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
+				} else {
+					$this->{$relationNameClassAttribute}[$cache_id]=$object_to_cache;
+					$return = $cache_id;
+				}
 			}
 			
 		}
@@ -1007,7 +1012,7 @@ class EE_Base_Class{
 	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array()){
+	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
 		//if this thing exists in the DB, save the relation to the DB
 		if($this->ID()){
 			$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
@@ -1019,7 +1024,7 @@ class EE_Base_Class{
 			}else{
 				$otherObject = $otherObjectModelObjectOrID;
 			}
-			$this->cache($relationName, $otherObjectModelObjectOrID);
+			$this->cache($relationName, $otherObjectModelObjectOrID, $cache_id );
 		}
 		
 		
