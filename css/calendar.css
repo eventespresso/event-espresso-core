@@ -2,17 +2,34 @@
  * Espresso Events Calendar Stylesheet
  * (c) 2013 Espresso Events
  * -------------------------------------------------------------------------*/
+/* Table of Contents
+
+	- Prettify the fonts
+	- General Styles
+	- Specific Theme Fixes
+	- Calendar Specific Styles
+	- Select Box Styles
+	- Buttons and Related Paraphenalia
+	- Miscellaneous Calendar Styles
+	- Event Styles
+	- Tooltip Styles
+	- Calendar Widget CSS
+	- Default Resets for Themeroller 
+	- Media Query for Screens < 768px
+
 
  /*
- * Prettify the fonts (especially) in webkit browsers
- */
+ Prettify the fonts (especially) in webkit browsers
+ ---------------------------------------------------------------------------------------------------- */
 
 *{
 	text-rendering: 		optimizeLegibility;
   	-webkit-font-smoothing: antialiased;
   	}
 
-/* General Styles */
+/* 
+General Styles 
+---------------------------------------------------------------------------------------------------- */
 
 #espresso_calendar { 
 	position: 				relative !important; 
@@ -21,13 +38,17 @@
 	width: 					100% !important; 
 	}
 
-/* Specific Theme Fixes:  This section will use !important much more than it should. */
+/* 
+Specific Theme Fixes:  This section will use !important much more than it should. 
+---------------------------------------------------------------------------------------------------- */
 
 .entry-content td {
 	border-top: 			0px solid #ededed !important; /*fixes top border on calendar header in twentytwelve*/
 	}
 	
-/* Calendar Specific Styles */
+/* 
+Calendar Specific Styles
+---------------------------------------------------------------------------------------------------- */
 
 #espresso_calendar:not(.ui-widget) .fc-header-title h2,
 .fc-header-title h2 {
@@ -73,13 +94,17 @@
  	border-bottom-width: 	0;
  }
  
-/* Select Box */
+/* 
+Select Box
+---------------------------------------------------------------------------------------------------- */
 
  .ee-filter-form {
  	margin: 			0 0 2em 0;
  }
 
-/* RESET SELECT */
+/* 
+RESET SELECT
+---------------------------------------------------------------------------------------------------- */
 
 .ee-filter-form select {
   -webkit-appearance:     button;
@@ -108,34 +133,46 @@
   transition:             box-shadow 200ms, border-color 200ms;
   }
 
-/* CSS box shadow capable browsers (via modernizr) IE9+ */
+/* 
+CSS box shadow capable browsers (via modernizr) IE9+
+---------------------------------------------------------------------------------------------------- */
 .boxshadow .ee-filter-form select {
   background-color:       #f2f2f2;
   border-color:           #fff;
   box-shadow:             inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0,0,0,0.6);
   }
-/* CSS text shadow capable browsers (via modernizr) IE10+ */
+/* 
+CSS text shadow capable browsers (via modernizr) IE10+
+---------------------------------------------------------------------------------------------------- */
 .textshadow .ee-filter-form select {
   text-shadow:            0 1px 0 #fff;
   }
 .textshadow .ee-filter-form option {
   text-shadow:            none;
   }
-/* hover - note it doesn't happen on touch devices, as that can give inconsistent results */
+/* 
+hover - note it doesn't happen on touch devices, as that can give inconsistent results
+---------------------------------------------------------------------------------------------------- */
 .no-touch.boxshadow .ee-filter-form select:hover {
   box-shadow:             inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 0 3px #ff8;
   }
-/* focus */
+/* 
+focus
+---------------------------------------------------------------------------------------------------- */
 .boxshadow .ee-filter-form select:focus {
   outline:                none;
   border-color:           #6cf;
   box-shadow:             inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 4px #6cf;
   }
-/* disabled */
+/* 
+disabled
+---------------------------------------------------------------------------------------------------- */
 .ee-filter-form select:disabled {
   color:                  #ccc;
 }
-/* errors */
+/* 
+errors
+---------------------------------------------------------------------------------------------------- */
 .ee-filter-form select.error,
 .ee-filter-form.error select,
 .ee-filter-form .error select {
@@ -146,7 +183,7 @@
 /* 
   *** IE6/IE7 ***
   - Almost no styling possible, so cancel out the extra stuff and try to even out the metrics
-*/
+---------------------------------------------------------------------------------------------------- */
 .ee-filter-form select {
   *height:                auto;
   *padding:               auto;
@@ -154,7 +191,7 @@
 }
 /* 
   *** IE9/10 ***
-*/
+---------------------------------------------------------------------------------------------------- */
 @media screen and (min-width:0\0) {
   .boxshadow .ee-filter-form select,
   .boxshadow .ee-filter-form select:disabled,
@@ -167,11 +204,15 @@
     width:                12px;
     padding-left:         5px;
   }
-  /* hover */
+  /* 
+  hover 
+  ---------------------------------------------------------------------------------------------------- */
   .no-touch.boxshadow .ee-filter-form select:hover {
     box-shadow:           inset 0 0.9em 0 #fff, 0px 1px 6px 0 rgba(0,0,0,0.6), 0 0 0 3px #ff8;
   }
-  /* focus */
+  /* 
+  focus
+  ---------------------------------------------------------------------------------------------------- */
   .boxshadow .ee-filter-form select:focus {
     box-shadow:           inset 0 0.9em 0 #fff, 0px 1px 6px 0 rgba(0,0,0,0.6), 0 0 4px #6cf;
   }
@@ -179,7 +220,7 @@
 
 /* 
   *** WEBKIT ***
-*/
+---------------------------------------------------------------------------------------------------- */
 @media all and (-webkit-min-device-pixel-ratio: 0) {
   .ee-filter-form select {
     padding-right:        30px;
@@ -194,12 +235,16 @@
     background-repeat:    no-repeat, repeat;
     background-position:  100% 50%, 0 0;
   }
-  /* hover */
+  /* 
+  hover
+  ---------------------------------------------------------------------------------------------------- */
   .no-touch.boxshadow .ee-filter-form select:hover {
     -webkit-box-shadow:   0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 0 3px #ff8;
     box-shadow:           0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 0 3px #ff8;
   }
-  /* focus */
+  /* 
+  focus
+  ---------------------------------------------------------------------------------------------------- */
   .boxshadow .ee-filter-form select:focus {
     -webkit-box-shadow:   0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 4px #6cf;
     box-shadow:           0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 4px #6cf;
@@ -210,7 +255,9 @@ select:focus {
 	outline: 			none; 
 	}
 
-/* The Buttons and related paraphenalia */
+/* 
+The Buttons and related paraphenalia 
+---------------------------------------------------------------------------------------------------- */
 
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button { 
 	-moz-box-sizing: 	content-box !important; 
@@ -325,7 +372,8 @@ select:focus {
 	color:				#999 !important;
 	}
 
-/* Event Styles */
+/* Event Styles
+---------------------------------------------------------------------------------------------------- */
 
 #espresso_calendar .fc-event-title { 
 	display: 			block; 
@@ -378,7 +426,8 @@ select:focus {
 	font-weight: 		400;
 	}
 
-/* Tooltip Styles */
+/* Tooltip Styles
+---------------------------------------------------------------------------------------------------- */
 
 .qtip, .ui-helper-reset { 
 	border: 			1px solid #ccc;
@@ -453,7 +502,8 @@ a.reg-now-btn {
 	max-width: 100%;
 }
 
-/* Calendar Widget CSS */
+/* Calendar Widget CSS
+---------------------------------------------------------------------------------------------------- */
 /* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
 /* added in 2.0 by Chris Reynolds */
 .espresso_calendar_widget #ee-category-submit,
@@ -502,7 +552,8 @@ a.reg-now-btn {
 	font-size: 			0.75em; 
 	} 
 	
-/* default resets for themeroller */
+/* Default resets for themeroller
+---------------------------------------------------------------------------------------------------- */
 
 .ui-state-highlight.fc-today { 
 	border-top: 		1px solid #AAA; 
@@ -545,7 +596,8 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block {
 	border: 			none;
 	}
 	
-/* prevent transitions from getting applied to calendar links as some themes are known to do this */
+/* prevent transitions from getting applied to calendar links as some themes are known to do this
+---------------------------------------------------------------------------------------------------- */
 
 #espresso_calendar a {
 	-webkit-transition: none !important;
@@ -559,8 +611,9 @@ a.fc-event.themeroller.ui-widget-header p.time-display-block {
 	}
 
  /*
- * Media Query for screens smaller then 768px (iPad portrait)
- */
+ Media Query for screens smaller then 768px (iPad portrait)
+ ---------------------------------------------------------------------------------------------------- */
+ 
 
 @media only screen and (max-width: 767px)  {
 
