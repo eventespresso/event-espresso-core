@@ -682,7 +682,7 @@ jQuery(document).ready(function($) {
 			this.context = 'ticket';
 
 			//apply total price
-			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + this.getTotalPrice());
+			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + this.getTotalPrice().finalTotal);
 
 			//if we're updating then let's make sure this ticket is removed from the createdItems property
 			this.createdItems = _.without(this.createdItems, this.ticketRow);
@@ -1001,7 +1001,7 @@ jQuery(document).ready(function($) {
 			}
 
 			//update totals on the form.
-			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice();
+			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice().finalTotal;
 			newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
 			newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
 			newTKTrow.find('.ticket-display-row-TKT_price').text('$' + price_amount);
@@ -1290,7 +1290,7 @@ jQuery(document).ready(function($) {
 		 * @return {fixed} The total amount by decimal.
 		 */
 		getTotalPrice: function( dotaxes ) {
-			var runningtotal = 0, priceAmount, operator, is_percent;
+			var runningtotal = 0, priceAmount, operator, is_percent, totals=[];
 			dotaxes = typeof(dotaxes) === 'undefined' ? true : false;
 			//loop through all the prices for a given ticket
 			$('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow ).find('tr.ee-active-price').each( function() {
@@ -1309,6 +1309,8 @@ jQuery(document).ready(function($) {
 				}
 			});
 
+			totals.subtotal = runningtotal.toFixed(2);
+
 			//apply taxes?
 			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
 				this.applyTaxes();
@@ -1318,7 +1320,9 @@ jQuery(document).ready(function($) {
 				});
 			}
 
-			return runningtotal.toFixed(2); //todo eventually this can be dynamic according to currency setting
+			totals.finalTotal = runningtotal.toFixed(2);
+
+			return totals; //todo eventually this can be dynamic according to currency setting
 		},
 
 
@@ -1329,9 +1333,9 @@ jQuery(document).ready(function($) {
 		applyTotalPrice: function() {
 			var TKTrow = $( '#edit-ticketrow-' + this.ticketRow );
 			var price_amount = this.getTotalPrice();
-			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount);
-			TKTrow.find('.ticket-price-amount').text('$' + price_amount);
-			TKTrow.find('.edit-ticket-TKT_price').val(price_amount);
+			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount.finalTotal);
+			TKTrow.find('.ticket-price-amount').text('$' + priceAmount.finalTotal);
+			TKTrow.find('.edit-ticket-TKT_price').val(price_amount.subtotal);
 			//$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 		},
 
@@ -1342,7 +1346,7 @@ jQuery(document).ready(function($) {
 			//get subtotal
 			var tax,
 				id,
-				subtotal = this.getTotalPrice(false),
+				subtotal = this.getTotalPrice(false).finalTotal,
 				editTicketRow = '#edit-ticketrow-' + this.ticketRow;
 			//make sure subtotal shows the right total
 			$('.TKT-taxable-subtotal-amount-display', editTicketRow ).text('$' + subtotal);
