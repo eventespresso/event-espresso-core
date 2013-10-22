@@ -232,6 +232,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Countries'),
 					'order' => 70
 					),
+				'help_tour' => array( 'Countries_Help_Tour' ),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				)
 			);
