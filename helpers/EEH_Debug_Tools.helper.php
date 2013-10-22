@@ -209,9 +209,9 @@ function printr( $var, $var_name = FALSE, $height = 'auto', $die = FALSE ) {
 	
 	echo '<pre style="display:block; width:100%; height:' . $height . '; overflow:scroll; border:2px solid light-blue;">';
 	echo '<h3><b>' . $var_name . '</b></h3>';
-	if ( is_object( $var )) { $var->dropEE(); }
+	if ( is_object( $var ) && $var instanceof EE_Base ) { $var->dropEE(); }
 	echo print_r($var);
-	if ( is_object( $var )) { $var->getEE(); }
+	if ( is_object( $var ) && $var instanceof EE_Base ) { $var->getEE(); }
 	echo '</pre>';
 	
 
