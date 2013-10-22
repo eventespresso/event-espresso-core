@@ -15,6 +15,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  * ------------------------------------------------------------------------
  *
  * EE_Line_Item class
+ * see EEM_Line_Item for description
  *
  * @package			Event Espresso
  * @subpackage		includes/classes/EE_Checkin.class.php
@@ -465,6 +466,7 @@ class EE_Line_Item extends EE_Base_Class{
 	/**
 	 * Recalculates the total of this line item based on its children, or based on its changed quantity. If this item 
 	 * has NO children, then just returns: is_percent ? (total) : (unit price * quantity)
+	 * Has the side-effect of saving the total as it was just calculated
 	 * @return float
 	 */
 	function recalculate_total(){
@@ -488,5 +490,31 @@ class EE_Line_Item extends EE_Base_Class{
 		return $total;
 	}
 
+	/**
+	 * Returns the amount taxable among this line item's children (or if it has no children,
+	 * how much of it is taxable)
+	 * @return float
+	 */
+	function taxable_total(){
+		if($this->children()){
+			$total = 0;
+			foreach($this->children() as $child_line_item){
+				if($child_line_item->is_percent()){
+					$total += $total * $child_line_item->total() / 100;
+				}elseif($child_line_item->is_taxable ()){
+					$total += $child_line_item->recalculate_total();
+				}
+			}
+		}else{
+			if($this->is_percent()){
+				$total = $this->total();
+			}elseif($this->is_taxable ()){
+				$total = $this->unit_price() * $this->quantity();
+			}else{
+				$total = 0;
+			}
+		}
+		return $total;
+	}
 
 }

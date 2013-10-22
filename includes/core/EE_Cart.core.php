@@ -14,6 +14,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
  * ------------------------------------------------------------------------
  * 
  * EE_Cart class
+ * Used to keep track of which tickets the user has specified they want to purchase.
+ * This data is used for generating the Transaction and Registrations, and the 
+ * Line Items on cart are themselves saved for creating a persistent snapshot of
+ * what was purchased and for how much. 
+ * 
  *
  * @ version		2.0
  * @subpackage	includes/core/EE_Cart.core.php
@@ -309,11 +314,17 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	private function _calculate_cart_total_before_tax() {
 		$total = 0;
 		$items_line_item = $this->get_items_line_item();
-		foreach($items_line_item->children() as $line_item){
-			$total += $line_item->total();
-		}
-		$items_line_item->set_total($total);
+		$items_line_item->recalculate_total();
 		return $total;
+	}
+	
+	/**
+	 * Gets the total amoutn taxable amongst the line 
+	 * @return float
+	 */
+	private function _calculate_cart_taxable_total(){
+		$items_line_item = $this->get_items_line_item();
+		return $items_line_item->taxable_total();
 	}
 
 
@@ -351,7 +362,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		
 		// set grand total to total cart value before taxes
 		$grand_total = $this->_calculate_cart_total_before_tax();
-		
+		$amount_taxable = $this->_calculate_cart_taxable_total();
 		$taxes_line_item = $this->get_taxes_line_item();
 		//just to be safe, remove its old tax line items
 		$taxes_line_item->delete_children_line_items();
@@ -360,7 +371,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			foreach ( $taxes as $tax ) {
 				if ( $tax instanceof EE_Price ) {
 					// track taxes
-					$total_for_this_tax = $grand_total * $tax->amount() / 100;
+					$total_for_this_tax = $amount_taxable * $tax->amount() / 100;
 					$taxes_line_item->add_child_line_item(EE_Line_Item::new_instance(array(
 						'LIN_name'=>$tax->name(),
 						'LIN_desc'=>$tax->desc(),
@@ -396,7 +407,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 	/**
-	 *	get_cart_grand_total
+	 *	Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
 	 *	@access public
 	 *	@return float
 	 */	

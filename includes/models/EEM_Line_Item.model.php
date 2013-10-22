@@ -14,13 +14,26 @@
  * ------------------------------------------------------------------------
  *
  * Line Item Model. MOstly used for storing a snapshot of all the items in a transaction
- * as they were recorded at teh time of transaction completion (purchase)
+ * as they were recorded at the time of being added to teh cart. 
+ * There are different 'types' of line items: item, sub-item, tax, sub-total, and total.
+ * Note that line items can be nested. For example, a total line item should have one-or-more
+ * children sub-totals. Likewise, sub-totals should have one-or-more nested items or taxes
+ * (or maybe promotions or products?). Also, items can have nested sub-items (eg. an item could be a 
+ * ticket, which has many sub-item prices which together make up teh price of that ticket).
+ * Note that line items should point to real model objects using OBJ_ID and OBJ_type (note:
+ * there is a current limitation that they can only point to models with INT primary keys),
+ * but this is NOT required. And in fact, the items they are related to CAN be deleted, but
+ * the line item should still exist (in this case it merely shows that there was ONCE a model
+ * object the line item was based off of).
+ * 
+ * In usage, Line Items are first stored on the EE_Cart, but not saved until a user's registration is
+ * finalized (like how the EE_Transaction is stored in the session until it is confirmed). 
+ * Many of their methods (like 
  *
- * This links Registrations with datetimes for recording checkin's and checkouts (and attendance)
  *
  * @package			Event Espresso
- * @subpackage		includes/models/EEM_Checkin.model.php
- * @author			Darren Ethier
+ * @subpackage		includes/models/EEM_Line_Item.model.php
+ * @author			Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
