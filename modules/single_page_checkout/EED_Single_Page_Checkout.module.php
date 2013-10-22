@@ -408,7 +408,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$att_nmbr = 0;
 				
 				$this->EE->CART->get_cart_grand_total();
-				d($this->EE->CART->get_grand_total());die;
+//				d($this->EE->CART->get_grand_total());die;
 				foreach ( $this->EE->CART as $item ) {
 					//Note that EE_Cart implements ITERABLE
 					/* @var $item EE_Line_Item */
