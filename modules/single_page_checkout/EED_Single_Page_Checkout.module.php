@@ -510,7 +510,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$event_queue['title'] = __('Registrations', 'event_espresso');
 		$attendee_headings = array();
 		$additional_attendees = array();
-		$additional_attendee_forms = TRUE;
+		$additional_attendee_forms = FALSE;
 		// no reg_url_link means we need to generate a new reg form
 		if ( ! $this->_reg_url_link ) {
 			
@@ -522,11 +522,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				
 				foreach ( $this->_transaction->registrations() as $registration ) {
 					
-					$total_items++;
 					$line_item_ID = $registration->reg_url_link();	
 					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
+					$template_args['total_items'] = $event_queue['total_items'] = $registration->count();
+					
+					echo '<h4>additional_attendee_reg_info : ' . $registration->event()->additional_attendee_reg_info() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 					$Question_Groups = $this->EE->load_model( 'Question_Group' )->get_all( array( array( 'Event.EVT_ID' => $registration->event()->ID() )));
 					foreach ( $Question_Groups as $Question_Group ) {
@@ -542,8 +544,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						}
 					}
 
-					$additional_attendee_reg_info = $registration->event()->additional_attendee_reg_info() ? absint( $registration->event()->additional_attendee_reg_info() ) : 1;
-
 					$question_meta = array(
 							'EVT_ID' => $registration->event()->ID(),
 							'att_nmbr' => $registration->count(),
@@ -551,7 +551,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'input_name' =>  '[' . $line_item_ID . ']',
 							'input_id' => $line_item_ID,
 							'input_class' => 'ee-reg-page-questions' . $template_args['css_class'],
-							'additional_attendee_reg_info' => $additional_attendee_reg_info,
+							'additional_attendee_reg_info' => $registration->event()->additional_attendee_reg_info(),
 					);
 					//printr( $question_meta, '$question_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -561,23 +561,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
 
 					// show this attendee form?
-					if ( empty( $attendee_questions )) {
-						$additional_attendee_forms = FALSE;
+					if ( empty( $attendee_questions )) {						
 						$attendee_questions .= '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>';
 						$attendee_questions .= '
 							<input
 									type="hidden"
 									id="' . $line_item_ID . '-additional_attendee_reg_info"
 									name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]"
-									value="'.$additional_attendee_reg_info.'"
+									value="'.$registration->event()->additional_attendee_reg_info().'"
 							/>' . "\n";
+					} else {
+						$additional_attendee_forms = TRUE;
 					}
 					$event_queue['items'][ $line_item_ID ]['attendee_questions'] = $attendee_questions;
 
 
 
 					// is this the primarary registrant ?
-					if ( $total_items == 1 && $registration->count() == 1 ) {
+					if ( $registration->count() == 1 ) {
 						// grab line item from primary attendee
 						$template_args['prmy_att_input_name'] =  $line_item_ID;					
 					} else { 
@@ -594,7 +595,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						$item_name .= $registration->ticket()->description() != '' ? ' - ' . $registration->ticket()->description() : '';
 						
 						// if this is a new ticket OR if this is the very first additional attendee after the primary attendee
-						if ( $registration->ticket()->ID() != $prev_event || $total_items == 2 ) {
+						if ( $registration->ticket()->ID() != $prev_event || $registration->count() == 2 ) {
 							$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = $item_name;
 							$prev_event = $registration->ticket()->ID();
 						} else {
@@ -604,7 +605,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 				} 
 
-				$event_queue['total_items'] = $total_items;
 				$event_queue['sub_total'] = EEH_Template::format_currency( $this->EE->CART->get_cart_total_before_tax() );
 				
 				$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
@@ -653,15 +653,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 		$template_args['spco_reg_page_ajax_coupons_url'] = add_query_arg( array( 'ee' => 'apply_coupon' ), $this->_reg_page_base_url );
-
-		//$template_args['target_inputs'] = rtrim($target_inputs, '&&');
-
-		$template_args['print_copy_info'] = $additional_attendee_forms || $x > 2 ? TRUE : FALSE;
+		$template_args['print_copy_info'] = $additional_attendee_forms || $template_args['total_items'] > 2 ? TRUE : FALSE;
 		
 //		d($additional_event_attendees);
 		$template_args['additional_event_attendees'] = $additional_event_attendees;
-
-		$template_args['total_items'] = $total_items;		
 
 		$template_args['payment_required'] = $grand_total > 0 ? TRUE : FALSE;
 		$template_args['sub_total'] = EEH_Template::format_currency( $grand_total );
@@ -865,11 +860,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					// Houston, we have a registration!
 					$att_nmbr++;
 					// grab related answer objects
-					$answers = $registration->answers();
+//					$answers = $registration->answers();
 					// reg_url_link / line item ID exists ?
 					if ( $line_item_id = $registration->reg_url_link() ) {
 						// do we need to copy basic info from primary attendee ?
-						$copy_primary = isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) && $valid_data[ $line_item_id ]['additional_attendee_reg_info'] == 1 ? TRUE : FALSE;
+						$copy_primary = isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) ? absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) : 0;
 						// now loop through our array of valid post data && process attendee reg forms
 						foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
 							
@@ -898,15 +893,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							// store a bit of data about the primary attendee
 							if ( $att_nmbr == 1 && $line_item_id == $primary_attendee_id ) {
 								$primary_attendee[ $form_input ] = $input_value;
-							} else if ( $copy_primary ) {
+							} else if ( $copy_primary == 1 && get_Question_ID_from_system_string() ) {
 								$input_value = isset( $primary_attendee[ $form_input ] ) ? $primary_attendee[ $form_input ] : $input_value;
 							}
 
+								foreach ( $registration->answers() as $answer ) {
+									$answer->dropEE();
+									printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+									if ( $answer->question()->system_ID() == $form_input ) {
+										$answer->set_value( $input_value );
+									}
+								}
+								
 							// if this form input has a corresponding attendee property
 							if ( isset( $attendee_properties[ $form_input ] )) {
 								$attendee[ $form_input ] = $input_value;
 							} else if ( $line_item_id == $registration->reg_url_link() ) {
-								foreach ( $answers as $answer ) {
+								foreach ( $registration->answers() as $answer ) {
+									$answer->dropEE();
+									printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 									if ( $answer->question()->system_ID() == $form_input ) {
 										$answer->set_value( $input_value );
 									}

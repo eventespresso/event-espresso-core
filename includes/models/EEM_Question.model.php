@@ -118,11 +118,9 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			'zip'=> EEM_Attendee::zip_question_id,
 			'phone'=> EEM_Attendee::phone_question_id
 		);
-		 if(array_key_exists($QST_system, $conversion_array)){
-			return $conversion_array[$QST_system];
-		 }else{
-			 return null;
-		 }
+
+		return isset( $conversion_array[ $QST_system ] ) ? $conversion_array[ $QST_system ] : NULL;
+
 	}
 	
 	
