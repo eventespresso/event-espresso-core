@@ -358,7 +358,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		if( ! $this->get_taxes_line_item()->children()){
 			$this->_add_taxes_to_cart();
 		}
-		$this->get_grand_total()->recalculate_total_including_taxes();
+		$this->get_grand_total()->recalculate_post_tax_total();
 		return $this->get_taxes_line_item()->total();
 	}
 

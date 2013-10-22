@@ -487,7 +487,7 @@ class EE_Line_Item extends EE_Base_Class{
 	 * Has the side-effect of saving the total as it was just calculated
 	 * @return float
 	 */
-	function recalculate_total_including_taxes(){
+	function recalculate_post_tax_total(){
 		$pre_tax_total = $this->recalculate_pre_tax_total();
 		$tax_total = $this->recalculate_taxes_and_total();
 		$total = $pre_tax_total + $tax_total;
@@ -600,7 +600,7 @@ class EE_Line_Item extends EE_Base_Class{
 				if($child_line_item->is_percent()){
 					$total += $total * $child_line_item->total() / 100;
 				}elseif($child_line_item->is_taxable ()){
-					$total += $child_line_item->recalculate_total();
+					$total += $child_line_item->recalculate_pre_tax_total();
 				}
 			}
 		}else{
