@@ -29,7 +29,7 @@
 					</label>
 				</th>
 				<td>
-					<select name="reg_page_id" data-placeholder="Choose a page...">
+					<select id="reg_page_id" name="reg_page_id" data-placeholder="Choose a page...">
 						<option value="0">
 							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
@@ -64,7 +64,7 @@
 					</label>
 				</th>
 				<td>
-					<select name="txn_page_id" data-placeholder="Choose a page...">
+					<select id="txn_page_id" name="txn_page_id" data-placeholder="Choose a page...">
 						<option value="0">
 							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
@@ -98,7 +98,7 @@
 					</label>
 				</th>
 				<td>
-					<select name="thank_you_page_id" data-placeholder="Choose a page...">
+					<select id="thank_you_page_id" name="thank_you_page_id" data-placeholder="Choose a page...">
 						<option value="0">
 							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>
@@ -132,7 +132,7 @@
 					</label>
 				</th>
 				<td>
-					<select name="cancel_page_id" data-placeholder="Choose a page...">
+					<select id="cancel_page_id" name="cancel_page_id" data-placeholder="Choose a page...">
 						<option value="0">
 							<?php _e('Main Page', 'event_espresso'); ?>
 						</option>

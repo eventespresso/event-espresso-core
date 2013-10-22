@@ -56,6 +56,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 					'order' => 40
 					),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tour' => array( 'Google_Maps_Help_Tour' ),
 				'help_tabs' => array(
 					'gmaps_info' => array(
 						'title' => __('Google Maps Configuration', 'event_espresso'),

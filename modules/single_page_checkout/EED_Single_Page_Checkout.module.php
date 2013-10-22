@@ -407,23 +407,39 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( count( $this->EE->CART ) ) {
 				$att_nmbr = 0;
 				foreach ( $this->EE->CART as $item ) {
+					//Note that EE_Cart implements ITERABLE
+					/* @var $item EE_Line_Item */
 					// grab the related event object for this ticket
-					$event = $item->ticket->get_first_related( 'Datetime' )->get_first_related( 'Event' );
+					$ticket = $item->ticket();
+					if ( ! $ticket){
+						EE_Error::add_error(sprintf(__("The Line Item %d did not have a valid ticket", "event_espresso"),$item->ID()), __FILE__, __FUNCTION__, __LINE__);
+						continue;
+					}
+					$first_datetime = $ticket->get_first_related( 'Datetime' );
+					if ( ! $first_datetime){
+						EE_Error::add_error(sprintf(__("The Ticket '%s' isnt for any datetimes, which is erroneous", "event_espresso"),$ticket->name()), __FILE__, __FUNCTION__, __LINE___);
+						continue;
+					}
+					$event = $first_datetime->get_first_related( 'Event' );
+					if ( ! $event ){
+						EE_Error::add_error(sprintf(__("The ticket you are purchasing  (%s) isn't for any event! The data must be corrupted", "event_espresso"),$ticket->name()),__FILE__,__FUNCTION__,__LINE__);
+						continue;
+					}
 					//do the following for each ticket of this type they selected
-					for ( $x = 1; $x <= $item->qty(); $x++ ) {
+					for ( $x = 1; $x <= $item->quantity(); $x++ ) {
 						$att_nmbr++;
-						$reg_url_link = $att_nmbr . '-' . $item->line_item_ID();
+						$reg_url_link = $att_nmbr . '-' . $item->code();
 						// now create a new registration for the ticket				
 				 		$registration = EE_Registration::new_instance( array( 
 							'EVT_ID' => $event->ID(),
 							'TXN_ID' => $this->_transaction->ID(),
-							'TKT_ID' => $item->ticket->ID(),
+							'TKT_ID' => $ticket->ID(),
 							'STS_ID' => $this->EE->CFG->registration->default_STS_ID,
 							'REG_date' => $this->_transaction->datetime(),
-							'REG_final_price' => $item->ticket->price(),
+							'REG_final_price' => $ticket->price(),
 							'REG_session' => $this->EE->SSN->id(),
 							'REG_count' => $att_nmbr,
-							'REG_group_size' => $item->qty(),
+							'REG_group_size' => $item->quantity(),
 							'REG_url_link'	=> $reg_url_link
 						));
 						$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );

@@ -228,6 +228,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10 
 					),
 				'list_table' => 'Messages_Template_List_Table',
+				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
 				'help_tabs' => array_merge( array(
 						'messages_overview' => array(
 							'title' => __('About the Overview', 'event_espresso'),
@@ -258,6 +259,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE,
+				'help_tour' => array( 'Message_Templates_Edit_Help_Tour' ),
 				'help_tabs' => array_merge( array(
 						'edit_message_template' => array(
 							'title' => __('About Template Editor', 'event_espresso'),
@@ -290,6 +292,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'metaboxes' => array('_messages_settings_metaboxes'),
+				'help_tour' => array( 'Messages_Settings_Help_Tour' ),
 				'help_tabs' => array_merge( array(
 						'settings' => array(
 							'title' => __('About Message Settings', 'event_espresso'),
@@ -525,6 +528,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ee_messages_overview_list_table() {
+		$this->_admin_page_title = __('Messages', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 

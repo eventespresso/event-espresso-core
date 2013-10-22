@@ -145,7 +145,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 10
 					),
-				'list_table' => 'EE_Admin_Transactions_List_Table'
+				'list_table' => 'EE_Admin_Transactions_List_Table',
+				'help_tour' => array( 'Transactions_Overview_Help_Tour' )
 				),
 			'view_transaction' => array(
 				'nav' => array(
@@ -154,6 +155,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['TXN_ID']) ? add_query_arg(array('TXN_ID' => $this->_req_data['TXN_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
+				'help_tour' => array( 'Transaction_Details_Help_Tour' ),
 				'metaboxes' => array('_transaction_details_metaboxes')
 				)
 		);
@@ -338,6 +340,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _transactions_overview_list_table() {
+		$this->_admin_page_title = __('Transactions', 'event_espresso');
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_transaction_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -604,6 +607,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		global $wpdb;
 		
 		extract( $metabox['args'] );		
+
 		
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
