@@ -207,6 +207,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 60
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tour' => array( 'Admin_Options_Help_Tour' ),
 				'help_tabs' => array(
 					'full_logging_info' => array(
 						'title' => __('Full Logging', 'event_espresso'),
