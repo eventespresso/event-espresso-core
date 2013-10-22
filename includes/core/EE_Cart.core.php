@@ -127,7 +127,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$this->_grand_total = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'total',
 			'LIN_name'=>  __('Grand Total', 'event_espresso'),
-			'LIN_type'=>'total',
+			'LIN_type'=>  EEM_Line_Item::type_total,
 			'OBJ_type'=>'Transaction'
 		));
 		$this->_get_subtotal_for_tickets();
@@ -144,7 +144,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$items_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'tickets',
 			'LIN_name'=>  __('Tickets', 'event_espresso'),
-			'LIN_type'=>'sub-total'
+			'LIN_type'=>  EEM_Line_Item::type_sub_total
 		));
 		$this->_grand_total->add_child_line_item($items_line_item);
 		return $items_line_item;
@@ -158,7 +158,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$tax_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'taxes',
 			'LIN_name'=> __('Taxes', 'event_espresso'),
-			'LIN_type'=>'sub-total'
+			'LIN_type'=>  EEM_Line_Item::type_tax_sub_total
 		));
 		$this->_grand_total->add_child_line_item($tax_line_item);
 		return $tax_line_item;
@@ -184,7 +184,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public function get_ticket_items(){
 		$tickets = $this->_grand_total->get_child_line_item('tickets');
-		return $tickets ? $line_item : $this->_get_subtotal_for_tickets();
+		return $tickets ? $tickets : $this->_get_subtotal_for_tickets();
 	}
 	
 	/**
@@ -224,7 +224,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			'LIN_is_taxable'=>$ticket->taxable(),
 			'LIN_order'=>count($this->_grand_total->children()),
 			'LIN_total'=>$ticket->price() * $qty,
-			'LIN_type'=>'line-item',
+			'LIN_type'=>  EEM_Line_Item::type_line_item,
 			'OBJ_ID'=>$ticket->ID(),
 			'OBJ_type'=>'Ticket'
 		));
@@ -290,10 +290,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	private function _calculate_cart_total_before_tax() {
-		$total = 0;
-		$items_line_item = $this->get_ticket_items();
-		$items_line_item->recalculate_total();
-		return $total;
+		return $this->get_grand_total()->recalculate_pre_tax_total();
 	}
 	
 	/**
@@ -301,8 +298,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @return float
 	 */
 	private function _calculate_cart_taxable_total(){
-		$items_line_item = $this->get_ticket_items();
-		return $items_line_item->taxable_total();
+		return $this->get_grand_total()->recalculate_pre_tax_total(true);
 	}
 
 
@@ -314,33 +310,22 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	public function get_cart_total_before_tax() {
-		$items_line_item = $this->get_ticket_items();
-		if($items_line_item && $items_line_item->total()){
-			return $items_line_item->total();
-		}else{
-			return $this->_calculate_cart_total_before_tax();
-		}
+		return $this->_calculate_cart_total_before_tax();
 	}
 
 
 
-
-
 	/**
-	 *	apply_taxes
-	 *	@access private
-	 *	@return void
-	 */	
-	private function _apply_taxes_to_total() {
+	 * Simply adds global taxes to the cart's taxes (if they were already in there, updates them).
+	 * Doesn't calculate the totals for each tax or add the tax totals to the total line item
+	 * @return void
+	 */
+	private function _add_taxes_to_cart(){
 		// start with empty array
 		$this->_taxes = array();
 		// get array of taxes via Price Model
 		$ordered_taxes = EE_Registry::instance()->load_model( 'Price' )->get_all_prices_that_are_taxes();	
 		ksort( $ordered_taxes );
-		
-		// set grand total to total cart value before taxes
-		$grand_total = $this->_calculate_cart_total_before_tax();
-		$amount_taxable = $this->_calculate_cart_taxable_total();
 		$taxes_line_item = $this->get_taxes_line_item();
 		//just to be safe, remove its old tax line items
 		$taxes_line_item->delete_children_line_items();
@@ -348,8 +333,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		foreach ( $ordered_taxes as $order => $taxes ) {
 			foreach ( $taxes as $tax ) {
 				if ( $tax instanceof EE_Price ) {
-					// track taxes
-					$total_for_this_tax = $amount_taxable * $tax->amount() / 100;
 					$taxes_line_item->add_child_line_item(EE_Line_Item::new_instance(array(
 						'LIN_name'=>$tax->name(),
 						'LIN_desc'=>$tax->desc(),
@@ -357,22 +340,33 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 						'LIN_is_percent'=>true,
 						'LIN_is_taxable'=>false,
 						'LIN_order'=>$order,
-						'LIN_total'=>$total_for_this_tax,
+						'LIN_total'=>0,
+						'LIN_type'=>  EEM_Line_Item::type_tax
 					)));
-					
-					$taxes_line_item->set_total($taxes_line_item->total() + $total_for_this_tax);
 				}
 			}
 		}
-		$this->_grand_total->recalculate_total();
-		return $taxes_line_item->total();
+	}
+	
+	/**
+	 *	Applies taxes to teh grand total line itemand recalculates it, and returns the grant total
+	 *	@access private
+	 *	@return float 
+	 */	
+	private function _apply_taxes_to_total() {
+		
+		if( ! $this->get_taxes_line_item()->children()){
+			$this->_add_taxes_to_cart();
+		}
+		$this->get_grand_total()->recalculate_total_including_taxes();
+		return $this->get_taxes_line_item()->total();
 	}
 
 
 
 
 	/**
-	 *	get_applied_taxes
+	 *	gets the total amoutn of tax paid for items in this cart
 	 *	@access public
 	 *	@return float
 	 */	
@@ -391,12 +385,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */	
 	public function get_cart_grand_total() {
 		$this->_apply_taxes_to_total();
-		$total_line_item = $this->get_grand_total();
-		if($total_line_item){
-			return $total_line_item->total();
-		}else{
-			return 0;
-		}
+		return $this->get_grand_total()->total();
 	}
 
 
@@ -468,7 +457,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */	
 	public function save_cart( $save_empty = FALSE ) {
 		
-		if (  $this->get_items() || $save_empty ) {
+		if (  $this->get_tickets() || $save_empty ) {
 			// add cart data to session so it can be saved to the db
 			if ( EE_Registry::instance()->SSN->set_session_data( array( 'cart'=> $this ))) {
 				return TRUE;
@@ -489,7 +478,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return EE_Item
 	 */
 	public function rewind() {
-		$this->_iterable_line_items = $this->get_items();
+		$this->_iterable_line_items = $this->get_tickets();
 		return is_array( $this->_iterable_line_items ) ? reset( $this->_iterable_line_items ) : NULL;
 	}
 
@@ -540,7 +529,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return int
 	 */
 	public function count() {
-		return is_array( $this->get_items() ) ? count( $this->get_items() ) : 0;
+		return is_array( $this->get_tickets() ) ? count( $this->get_tickets() ) : 0;
 	}
 
 

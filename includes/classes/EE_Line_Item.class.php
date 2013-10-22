@@ -462,32 +462,130 @@ class EE_Line_Item extends EE_Base_Class{
 		// each line item in the cart requires a unique identifier
 		return md5( $this->_OBJ_type . $this->_OBJ_ID . time() );
 	}
+	
+	function is_tax(){
+		return EEM_Line_Item::type_tax == $this->type();
+	}
+	function is_tax_sub_total(){
+		return EEM_Line_Item::type_tax_sub_total == $this->type();
+	}
+	function is_line_item(){
+		return EEM_Line_Item::type_line_item == $this->type();
+	}
+	function is_sub_line_item(){
+		return EEM_Line_Item::type_sub_line_item == $this->type();
+	}
+	function is_sub_total(){
+		return EEM_Line_Item::type_sub_total == $this->type();
+	}
+	function is_total(){
+		return EEM_Line_Item::type_total == $this->type();
+	}
 
 	/**
-	 * Recalculates the total of this line item based on its children, or based on its changed quantity. If this item 
-	 * has NO children, then just returns: is_percent ? (total) : (unit price * quantity)
+	 * Gets the final total on this item, taking taxes into account.
 	 * Has the side-effect of saving the total as it was just calculated
 	 * @return float
 	 */
-	function recalculate_total(){
-		if($this->children()){
+	function recalculate_total_including_taxes(){
+		$pre_tax_total = $this->recalculate_pre_tax_total();
+		$tax_total = $this->recalculate_taxes_and_total();
+		$total = $pre_tax_total + $tax_total;
+		$this->set_total($total);
+		return $total;
+	}
+	/**
+	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
+	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
+	 * unit price * quantity or the total of all its children.
+	 * @return float
+	 */
+	function recalculate_pre_tax_total($include_taxable_items_only = false){
+		//completely ignore tax sub-totals when calculating the pre-tax-total
+		if($this->is_tax_sub_total()){
+			return 0;
+		}elseif($this->is_sub_line_item()){
+			throw new EE_Error(sprintf(__("Calculating the pretax-total on subline items doesnt make sense right now. You were trying to calculate it on %s", "event_espresso"),d($this)));
+		}elseif($this->is_line_item()){
+			//we'll want to attach promotions here too. So maybe, if the line item has children, we'll need to take them into account too
+			if( $include_taxable_items_only && ! $this->is_taxable() ){//if the item isn't taxable and we care, then don't include it
+				return 0;
+			}else{
+				$total = $this->unit_price() * $this->quantity();
+			}
+		}elseif($this->is_sub_total() || $this->is_total()){
+			//get the total of all its children
 			$total = 0;
 			foreach($this->children() as $child_line_item){
+				//only recalculate sub-totals for NON-taxes
 				if($child_line_item->is_percent()){
 					$total += $total * $child_line_item->total() / 100;
 				}else{
-					$total += $child_line_item->recalculate_total();
+					$total += $child_line_item->recalculate_pre_tax_total($include_taxable_items_only);
 				}
-			}
-		}else{
-			if($this->is_percent()){
-				$total = $this->total();
-			}else{
-				$total = $this->unit_price() * $this->quantity();
 			}
 		}
 		$this->set_total($total);
 		return $total;
+	}
+	
+	/**
+	 * Recalculates the total on each individual tax (based on a recalculation of the pre-tax total), sets
+	 * the totals on each tax calculated, and returns the final tax total
+	 * @return float
+	 */
+	function recalculate_taxes_and_total(){
+		//get all taxes
+		$taxes = $this->tax_descendants();
+		//calculate the pretax total
+		$taxable_total = $this->recalculate_pre_tax_total(true);
+		$tax_total = 0;
+		foreach($taxes as $tax){
+			$total_on_this_tax = $taxable_total*$tax->unit_price()/100;
+			//remember the total on this line item
+			$tax->set_total($total_on_this_tax);
+			$tax_total += $total_on_this_tax;
+		}
+		$this->_recalculate_tax_sub_total();
+		return $tax_total;
+		
+	}
+	
+	/**
+	 * Simply forces all the tax-sub-totals to recalculate. Assumes the taxes have been calculated
+	 * @return void
+	 */
+	private function _recalculate_tax_sub_total(){
+		if($this->is_tax_sub_total()){
+			$total = 0;
+			//simply loop through all its children (which should be taxes) and sum their total
+			foreach($this->children() as $child_tax){
+				$total += $child_tax->total();
+			}
+			$this->set_total($total);
+		}elseif($this->is_total()){
+			foreach($this->children() as $maybe_tax_subtotal){
+				$maybe_tax_subtotal->_recalculate_tax_sub_total();
+			}
+		}
+	}
+	
+	/**
+	 * Gets all the descendants (ie, children or children of children etc) that 
+	 * are of the type 'tax'
+	 * @return EE_Line_Item[]
+	 */
+	function tax_descendants(){
+		$tax_line_items = array();
+		foreach($this->children() as $child_line_item){
+			if($child_line_item->is_tax()){
+				$tax_line_items[] = $child_line_item;
+			}else{
+				//go-through-all-its children looking for taxes
+				$tax_line_items = array_merge($tax_line_items,$child_line_item->tax_descendants());
+			}
+		}
+		return $tax_line_items;
 	}
 
 	/**
