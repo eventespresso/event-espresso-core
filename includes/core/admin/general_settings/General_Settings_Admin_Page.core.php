@@ -177,6 +177,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tour' => array( 'Templates_Help_Tour' ),
 				'help_tabs' => array(
 					'enable_styles_info' => array(
 						'title' => __('Enable Styles', 'event_espresso'),
