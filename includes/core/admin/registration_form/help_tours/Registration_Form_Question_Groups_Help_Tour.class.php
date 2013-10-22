@@ -94,16 +94,6 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => -15
 					)
 				);
-			$this->_stops[80] = array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
-				);
 		}
 	}
 
@@ -144,9 +134,5 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 
 	protected function _search_stop() {
 		return '<p>' . __('Fields that will be searched with the value from the search are: the question group name and question group description.', 'event_espresso') . '</p>';
-	}
-
-	protected function _end() {
-		return '<p>' . __('That\'s it for the tour through the registration form question groups overview!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Question Groups Tour button.  All the best with your events!', 'event_espresso') . '</p>';
 	}
 }

@@ -78,18 +78,7 @@ class Event_Categories_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'left'
 					)
-				),
-			90 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_stop_seven(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
 				)
-			
 			);
 	}
 
@@ -120,9 +109,5 @@ class Event_Categories_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_six() {
 		return '<p>' . __('These helpful plugin links...blah.blah..blah', 'event_espresso') . '</p>';
-	}
-
-	protected function _stop_seven() {
-		return '<p>' . __('That\'s it for the tour through the event categories tab!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Event Categories Tour button.  All the best with your events!', 'event_espresso') . '</p>';
 	}
 }

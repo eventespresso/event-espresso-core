@@ -72,16 +72,6 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -20
 					)
-				),
-			70 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
 				)
 			);
 	}
@@ -110,9 +100,5 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 
 	protected function _att_email_stop() {
 		return '<p>' . __('about the attendee email column', 'event_espresso') . '</p>';
-	}
-
-	protected function _end() {
-		return '<p>' . __('That\'s it for the tour through the Contact List overview!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Contact List Tour button.  All the best with your events!', 'event_espresso') . '</p>';
 	}
 }
