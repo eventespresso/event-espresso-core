@@ -128,10 +128,12 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @param type $timezone
 	 */
 	protected function __construct($fieldValues = null, $bydb = FALSE, $timezone = NULL) {
-		if(! isset($fieldValues['LIN_code'])){
-			$fieldValues['LIN_code'] = $this->generate_code();
-		}
+		
 		parent::__construct($fieldValues, $bydb, $timezone);
+		
+		if( ! $this->get('LIN_code')){
+			$this->set_code($this->generate_code());
+		}
 	}
 	
 	/**
