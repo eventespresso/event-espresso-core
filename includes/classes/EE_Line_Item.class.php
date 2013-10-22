@@ -379,7 +379,7 @@ class EE_Line_Item extends EE_Base_Class{
 	 * is for a ticket, this will return teh ticket object
 	 * @return EE_Base_Class (one of the model objects that the field OBJ_ID can point to... see the 'OBJ_ID' field on EEM_Promotion_Object)
 	 */
-	function object(){
+	function get_object(){
 		$model_name_of_related_obj = $this->OBJ_type();
 		$is_model_name = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
 		if( ! $is_model_name ){
@@ -390,7 +390,7 @@ class EE_Line_Item extends EE_Base_Class{
 	}
 	
 	/**
-	 * Like EE_Line_Item::object(), but can only ever actually return an EE_Ticket.
+	 * Like EE_Line_Item::get_object(), but can only ever actually return an EE_Ticket.
 	 * (IE, if this line item is for a price or something else, will return NULL)
 	 * @return EE_Ticket
 	 */
