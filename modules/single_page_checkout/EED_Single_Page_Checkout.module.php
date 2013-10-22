@@ -406,9 +406,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// now let's add the cart items to the $transaction
 			if ( count( $this->EE->CART ) ) {
 				$att_nmbr = 0;
-				
-				$this->EE->CART->get_cart_grand_total();
-				d($this->EE->CART->get_grand_total());die;
+
 				foreach ( $this->EE->CART as $item ) {
 					//Note that EE_Cart implements ITERABLE
 					/* @var $item EE_Line_Item */
@@ -527,10 +525,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
 					$template_args['total_items'] = $event_queue['total_items'] = $registration->count();
-					
-					echo '<h4>additional_attendee_reg_info : ' . $registration->event()->additional_attendee_reg_info() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
-					$Question_Groups = $this->EE->load_model( 'Question_Group' )->get_all( array( array( 'Event.EVT_ID' => $registration->event()->ID() )));
+					$Question_Groups = $this->EE->load_model( 'Question_Group' )->get_all( array( 
+						array( 
+							'Event.EVT_ID' => $registration->event()->ID(), 
+							'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
+						)
+					));
+					
 					foreach ( $Question_Groups as $Question_Group ) {
 						$Questions = $Question_Group->get_many_related( 'Question' );
 						foreach ( $Questions as $Question ) {
@@ -550,8 +552,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'ticket_id' => $registration->ticket()->ID(),
 							'input_name' =>  '[' . $line_item_ID . ']',
 							'input_id' => $line_item_ID,
-							'input_class' => 'ee-reg-page-questions' . $template_args['css_class'],
-							'additional_attendee_reg_info' => $registration->event()->additional_attendee_reg_info(),
+							'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
 					);
 					//printr( $question_meta, '$question_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -568,7 +569,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									type="hidden"
 									id="' . $line_item_ID . '-additional_attendee_reg_info"
 									name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]"
-									value="'.$registration->event()->additional_attendee_reg_info().'"
+									value="0"
 							/>' . "\n";
 					} else {
 						$additional_attendee_forms = TRUE;
@@ -608,9 +609,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$event_queue['sub_total'] = EEH_Template::format_currency( $this->EE->CART->get_cart_total_before_tax() );
 				
 				$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
-	//			d( $this->EE->SSN );
-				$txn = $this->EE->SSN->get_session_data( 'transaction' );
-	//			d( $txn );
+
 				
 			} else {
 				// empty
@@ -897,13 +896,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								$input_value = isset( $primary_attendee[ $form_input ] ) ? $primary_attendee[ $form_input ] : $input_value;
 							}
 
-								foreach ( $registration->answers() as $answer ) {
-									$answer->dropEE();
-									printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-									if ( $answer->question()->system_ID() == $form_input ) {
-										$answer->set_value( $input_value );
-									}
-								}
+//								foreach ( $registration->answers() as $answer ) {
+//									$answer->dropEE();
+//									printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//									if ( $answer->question()->system_ID() == $form_input ) {
+//										$answer->set_value( $input_value );
+//									}
+//								}
 								
 							// if this form input has a corresponding attendee property
 							if ( isset( $attendee_properties[ $form_input ] )) {
@@ -911,7 +910,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							} else if ( $line_item_id == $registration->reg_url_link() ) {
 								foreach ( $registration->answers() as $answer ) {
 									$answer->dropEE();
-									printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//									printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 									if ( $answer->question()->system_ID() == $form_input ) {
 										$answer->set_value( $input_value );
 									}
