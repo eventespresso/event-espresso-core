@@ -87,6 +87,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 //		$page_args['admin_reports'][] = 'chart1';
 		
 		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_reports.template.php';
+		$this->_admin_page_title = __('Transactions', 'event_espresso');
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
 		
 		
