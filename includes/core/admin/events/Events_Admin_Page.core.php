@@ -599,13 +599,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$wheres = array( $this->_event_model->primary_key_name() => $post_id );
 
 		$event_values = array(
-			'EVT_display_desc' => isset( $this->_req_data['display_desc'] ) ? 1 : 0,
-			'EVT_display_reg_form' => isset( $this->_req_data['display_reg_form'] ) ? 1 : 0,
-			'EVT_allow_multiple' => isset( $this->_req_data['allow_multiple'] ) ? 1 : 0,
+			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
+			'EVT_display_reg_form' => !empty( $this->_req_data['display_reg_form'] ) ? 1 : 0,
+			'EVT_allow_multiple' => !empty( $this->_req_data['allow_multiple'] ) ? 1 : 0,
 			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
-			'EVT_require_pre_approval' => isset( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
-			'EVT_member_only' => isset( $this->_req_data['member_only'] ) ? 1 : 0,
-			'EVT_allow_overflow' => isset( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
+			'EVT_require_pre_approval' => !empty( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
+			'EVT_member_only' => !empty( $this->_req_data['member_only'] ) ? 1 : 0,
+			'EVT_allow_overflow' => !empty( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
+			'EVT_additional_attendee_reg_info' => !empty( $this->_req_data['additional_attendee_reg_info'] ) ? (int) $this->_req_data['additional_attendee_reg_info'] : 0,
 			'EVT_timezone_string' => !empty( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL,
 			'EVT_external_URL' => !empty( $this->_req_data['externalURL'] ) ? $this->_req_data['externalURL'] : NULL,
 			'EVT_phone' => !empty( $this->_req_data['event_phone'] ) ? $this->_req_data['event_phone'] : NULL
