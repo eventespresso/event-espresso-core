@@ -525,6 +525,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ee_messages_overview_list_table() {
+		$this->_admin_page_title = __('Messages', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
