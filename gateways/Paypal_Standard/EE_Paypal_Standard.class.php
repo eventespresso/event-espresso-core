@@ -482,7 +482,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
-			<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the PayPal.com website where your payment will be securely processed.', 'event_espresso'); ?>
+			<?php _e('After finalizing your registration, you will be transferred to the PayPal.com website where your payment will be securely processed.', 'event_espresso'); ?>
 		</div>
 
 		<?php

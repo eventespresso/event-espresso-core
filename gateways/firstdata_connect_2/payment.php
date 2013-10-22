@@ -14,7 +14,7 @@ function espresso_display_firstdata_connect_2() {
 			</a>
 
 			<div id="reg-page-billing-info-<?php echo $gateway;?>-dv" class="reg-page-billing-info-dv <?php echo $gateways[ $gateway ]['css_class'];?>">
-				<?php _e('After confirming the details of your registration in Step 3, you will be transferred to the FirstData Connect 2.0 website where your payment will be securely processed.', 'event_espresso'); ?>
+				<?php _e('After finalizing your registration, you will be transferred to the FirstData Connect 2.0 website where your payment will be securely processed.', 'event_espresso'); ?>
 			</div>
 <?php 
 }

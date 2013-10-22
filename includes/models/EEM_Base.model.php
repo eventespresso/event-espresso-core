@@ -2162,7 +2162,8 @@ abstract class EEM_Base extends EE_Base{
 			$classInstance=$this->instantiate_class_from_array_or_object($row);
 			//set the timezone on the instantiated objects
 			$classInstance->set_timezone( $this->_timezone );
-
+			// remove EE_Registry frominstantiated objects
+			$classInstance->dropEE();
 			//make sure if there is any timezone setting present that we set the timezone for the object
 			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
 			//also, for all the relations of type BelgonsTo, see if we can cache
@@ -2181,6 +2182,7 @@ abstract class EEM_Base extends EE_Base{
 					if( $other_model_obj_maybe ){
 						//set timezone on these other model objects if they are present
 						$other_model_obj_maybe->set_timezone( $this->_timezone );
+						$other_model_obj_maybe->dropEE();
 						$classInstance->cache($modelName, $other_model_obj_maybe);
 					}
 				}

@@ -107,7 +107,7 @@ class EE_Email_messenger extends EE_messenger  {
 				'shortcodes' => array('organization')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list')
+				'shortcodes' => array('event_list','attendee_list', 'organization')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'registration')
