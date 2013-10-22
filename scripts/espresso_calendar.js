@@ -39,7 +39,7 @@ jQuery(document).ready(function($) {
 		// Determines the number of weeks displayed in a month view. Also determines each week's height.
 		weekMode: eeCAL.weekMode,
 		// Will make the entire calendar (including header) a pixel height.
-		height: eeCAL.espresso_calendar_height,
+		height: !eeCAL.widget ? eeCAL.espresso_calendar_height:'',
 		aspectRatio: 1.618,
 		// Triggered when the calendar loads and every time a different date-range is displayed.
 		viewDisplay: function(view) {
@@ -199,6 +199,8 @@ jQuery(document).ready(function($) {
 					element.height( base_evt_height + img_height );
 				}
 			}
+			
+			
 			
 			if ( eeCAL.show_tooltips ) {				
 				element.qtip({
