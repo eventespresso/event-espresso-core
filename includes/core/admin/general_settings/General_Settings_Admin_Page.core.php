@@ -147,6 +147,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
 				'help_tabs' => array(
 					'registration_page_info' => array(
 						'title' => __('Event Registration Page', 'event_espresso'),
