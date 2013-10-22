@@ -145,7 +145,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 10
 					),
-				'list_table' => 'EE_Admin_Transactions_List_Table'
+				'list_table' => 'EE_Admin_Transactions_List_Table',
+				'help_tour' => array( 'Transactions_Overview_Help_Tour' )
 				),
 			'view_transaction' => array(
 				'nav' => array(
@@ -604,6 +605,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		global $wpdb;
 		
 		extract( $metabox['args'] );		
+
 		
 		// process items in cart
 		$cart_items = $this->_session['cart']['REG']['items'];
