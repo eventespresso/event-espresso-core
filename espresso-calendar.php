@@ -540,13 +540,23 @@ class EE_Calendar {
 			//important! time must be in iso8601 format 2010-05-10T08:30!!
 			$events[ $cntr ]['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
 			$events[ $cntr ]['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
+			$events[ $cntr ]['reg_start'] = date("c", strtotime($event->registration_start . ' ' . event_date_display($event->registration_startT, get_option('time_format'))));
+			$events[ $cntr ]['reg_end'] = date("c", strtotime($event->registration_end . ' ' . event_date_display($event->registration_endT, get_option('time_format'))));
 			
 			$start = strtotime( $event->start_date . ' ' . $event->start_time );
 			$end = strtotime( $event->end_date . ' ' . $event->end_time );
 			$events[ $cntr ]['event_days'] = max( ceil(( $end - $start ) / ( 60*60*24 )), 1 );
 
-			$expired = $events[ $cntr ]['end'] < date('Y-m-d') && $event->event_status != 'O' ? TRUE : FALSE;
+			$expired = ($events[ $cntr ]['end'] < date('Y-m-d') || $events[ $cntr ]['reg_end'] < date('Y-m-d')) && $event->event_status != 'O' ? TRUE : FALSE;
 			if ( $expired ) {
+				$events[ $cntr ]['className'] = 'expired';
+			} else {
+				$events[ $cntr ]['className'] = '';
+			}
+			
+			//Make sure registration is open 
+			$not_open = $events[ $cntr ]['reg_start'] > date('Y-m-d') ? TRUE : FALSE;
+			if ( $not_open ) {
 				$events[ $cntr ]['className'] = 'expired';
 			} else {
 				$events[ $cntr ]['className'] = '';
@@ -670,7 +680,9 @@ class EE_Calendar {
 				//add link
 				$regButtonText = $event->display_reg_form == 'Y' ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
 				// reg open
-				if ( $num_completed < $reg_limit && ! $expired ) {
+				if (! $expired && $not_open){
+					$events[ $cntr ]['tooltip'] .= '<div class="sold-out-dv">' . __('Registration Not Open', 'event_espresso') . '</div>';
+				} else if ( $num_completed < $reg_limit && ! $expired ) {
 					$events[ $cntr ]['tooltip'] .= '<a class="ui-state-active reg-now-btn" href="' . $events[ $cntr ]['url'] . '">' . $regButtonText . '</a>';				
 				} else if ( $num_completed >= $reg_limit && ! $expired ) {
 					$events[ $cntr ]['tooltip'] .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';				
