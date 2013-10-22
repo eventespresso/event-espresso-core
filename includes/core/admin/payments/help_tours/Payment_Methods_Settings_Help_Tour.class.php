@@ -16,22 +16,22 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * Payment_Methods_Selection_Help_Tour
+ * Payment_Methods_Settings_Help_Tour
  *
  * This is the help tour object for the Registration Overview page
  *
  *
- * @package		Payment_Methods_Selection_Help_Tour
- * @subpackage	includes/core/admin/payments/help_tours/Payment_Methods_Selection_Help_Tour.class.php
+ * @package		Payment_Methods_Settings_Help_Tour
+ * @subpackage	includes/core/admin/payments/help_tours/Payment_Methods_Settings_Help_Tour.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour {
+class Payment_Methods_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Payment Methods Tour', 'event_espresso');
-		$this->_slug = 'payment-methods-joyride';
+		$this->_label = __('Payment Settings Tour', 'event_espresso');
+		$this->_slug = 'payment-settings-joyride';
 	}
 
 
@@ -41,23 +41,15 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_start(),
 				),
 			20 => array(
-				'class' => 'gateway_links',
-				'content' => $this->_gateway_links_stop(),
+				'id' => 'show_pending_payment_options',
+				'content' => $this->_show_pending_options_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -40,
-					'tipAdjustmentX' => 20
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 15
 					)
 				),
 			30 => array(
-				'id' => 'postbox-container-2',
-				'content' => $this->_gateway_settings_metabox_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
-					)
-				),
-			40 => array(
 				'id' => 'contextual-help-link',
 				'content' => $this->_end(),
 				'button_text' => __('End Tour', 'event_espresso'),
@@ -72,21 +64,17 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Payment Method Gateway activation page!', 'event_espresso') . '</h3>';
+		$content = '<h3>' . __('Welcome to the Payment Settings page!', 'event_espresso') . '</h3>';
 		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	
 
-	protected function _gateway_links_stop() {
-		return '<p>' . __('about the gateway selectors', 'event_espresso') . '</p>';
+	protected function _show_pending_options_stop() {
+		return '<p>' . __('about the setting', 'event_espresso') . '</p>';
 	}
 
-
-	protected function _gateway_settings_metabox_stop() {
-		return '<p>' . __('about the gateway settings metabox', 'event_espresso') . '</p>';
-	}
 
 	protected function _end() {
 		return '<p>' . sprintf( __('That\'s it for the tour!  At any time you can restart this tour by clicking on this help dropdown and then clicking the "%s" Tour button.  All the best with your events!', 'event_espresso'), $this->_label ) . '</p>';

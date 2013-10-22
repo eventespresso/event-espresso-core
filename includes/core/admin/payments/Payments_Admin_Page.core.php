@@ -88,6 +88,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'label' => __('Settings', 'event_espresso'),
 					'order' => 20
 					),
+				'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				)
 			);
