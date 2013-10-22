@@ -41,7 +41,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->page_label = __('Payment Methods', 'event_espresso');
 		$this->_admin_base_url = EE_PAYMENTS_ADMIN_URL;
 		$this->_admin_base_path = EE_PAYMENTS_ADMIN;
-		$this->_admin_page_title = $this->page_label;
 	}
 
 
@@ -53,6 +52,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
+		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'publishbox' => __('Update Settings', 'event_espresso')
 			);
@@ -201,7 +201,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$gateways = array();
 		//let's assemble the array for the _tab_text_links helper
 		foreach ( $payment_settings as $gateway => $settings ) {
-		
+
 			if(	isset($this->_req_data['activate_' . $gateway]) ||
 				isset($this->_req_data['deactivate_' . $gateway]) ||
 				isset($this->_req_data['update_' . $gateway])){
