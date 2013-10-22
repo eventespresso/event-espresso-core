@@ -403,13 +403,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			foreach ( $this->_transaction->registrations() as $registration ) {
 //				$this->_transaction->remove_registration_with_id( $registration );
 //			}
+//echo '<h4>count( $this->EE->CART->get_tickets() ) : ' . count( $this->EE->CART->get_tickets() ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//printr( $this->EE->CART->get_tickets(), '$this->EE->CART->get_tickets()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// now let's add the cart items to the $transaction
-			if ( count( $this->EE->CART ) ) {
+			if ( count( $this->EE->CART )) {
 				$att_nmbr = 0;
 				
 				$this->EE->CART->get_cart_grand_total();
 //				d($this->EE->CART->get_grand_total());die;
 				foreach ( $this->EE->CART as $item ) {
+//					echo '<h4>$item->code() : ' . $item->code() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 					//Note that EE_Cart implements ITERABLE
 					/* @var $item EE_Line_Item */
 					// grab the related event object for this ticket
@@ -432,6 +435,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					for ( $x = 1; $x <= $item->quantity(); $x++ ) {
 						$att_nmbr++;
 						$reg_url_link = $att_nmbr . '-' . $item->code();
+//						echo '<h4>$reg_url_link : ' . $reg_url_link . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 						// now create a new registration for the ticket				
 				 		$registration = EE_Registration::new_instance( array( 
 							'EVT_ID' => $event->ID(),
@@ -448,7 +452,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
 						$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
 						$this->_transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
-					}
+					}					
 				}
 			}	
 		}
@@ -526,7 +530,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
-					$template_args['total_items'] = $event_queue['total_items'] = $registration->count();
+					$total_items = $registration->count();
 
 					$Question_Groups = $this->EE->load_model( 'Question_Group' )->get_all( array( 
 						array( 
@@ -654,7 +658,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 		$template_args['spco_reg_page_ajax_coupons_url'] = add_query_arg( array( 'ee' => 'apply_coupon' ), $this->_reg_page_base_url );
-		$template_args['print_copy_info'] = $additional_attendee_forms || $template_args['total_items'] > 2 ? TRUE : FALSE;
+		$template_args['print_copy_info'] = $additional_attendee_forms || $total_items > 2 ? TRUE : FALSE;
 		
 //		d($additional_event_attendees);
 		$template_args['additional_event_attendees'] = $additional_event_attendees;
@@ -666,6 +670,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
 
 		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
+		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 
 //	d( $event_queue );
 		$template_args['event_queue'] = $event_queue;
