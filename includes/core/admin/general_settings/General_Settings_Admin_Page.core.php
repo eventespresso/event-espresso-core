@@ -50,7 +50,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->page_slug = GEN_SET_PG_SLUG;
 		$this->page_label = GEN_SET_LABEL;
 		$this->_admin_base_url = GEN_SET_ADMIN_URL;
-		$this->_admin_page_title = GEN_SET_LABEL;
 		$this->_admin_base_path = GEN_SET_ADMIN;
 	}
 
@@ -69,6 +68,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
+		$this->_admin_page_title = GEN_SET_LABEL;
 		$this->_labels = array(
 			'publishbox' => __('Update Settings', 'event_espresso')
 			);
@@ -147,6 +147,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
 				'help_tabs' => array(
 					'registration_page_info' => array(
 						'title' => __('Event Registration Page', 'event_espresso'),
@@ -176,6 +177,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tour' => array( 'Templates_Help_Tour' ),
 				'help_tabs' => array(
 					'enable_styles_info' => array(
 						'title' => __('Enable Styles', 'event_espresso'),
@@ -196,6 +198,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Your Organization'),
 					'order' => 50
 					),
+				'help_tour' => array( 'Your_Organization_Help_Tour' ),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				),
 			'admin_option_settings' => array(
@@ -204,6 +207,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 60
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tour' => array( 'Admin_Options_Help_Tour' ),
 				'help_tabs' => array(
 					'full_logging_info' => array(
 						'title' => __('Full Logging', 'event_espresso'),
@@ -228,6 +232,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Countries'),
 					'order' => 70
 					),
+				'help_tour' => array( 'Countries_Help_Tour' ),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				)
 			);

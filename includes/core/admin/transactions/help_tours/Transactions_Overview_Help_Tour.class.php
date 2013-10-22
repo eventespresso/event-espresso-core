@@ -22,7 +22,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  *
  * @package		Transactions_Overview_Help_Tour
- * @subpackage	includes/core/admin/registration/help_tours/Transactions_Overview_Help_Tour.class.php
+ * @subpackage	includes/core/admin/transactions/help_tours/Transactions_Overview_Help_Tour.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
