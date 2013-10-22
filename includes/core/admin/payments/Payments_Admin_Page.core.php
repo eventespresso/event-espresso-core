@@ -135,25 +135,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * @return array an array of help tabs for the gateways.
 	 */
 	protected function _get_gateway_help_tabs() {
-		global $EEM_Gateways, $current_user;
 		$help_tabs = array();
 		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
 			require_once(EE_MODELS . 'EEM_Gateways.model.php');
-			$EEM_Gateways = EEM_Gateways::instance();
-			$EEM_Gateways->set_active_gateways();
 		}
 
-		$gateway_data = $this->EE->SSN->get_session_data( 'gateway_data' );
-		$gateway_instances = $EEM_Gateways->get_gateway_instances();
-		//printr( $gateway_instances, '$gateway_instances  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
-		//printr( $payment_settings, '$payment_settings  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		//we only really need to generate help tabs for the given gateways
+		$gateway_instances = EEM_Gateways::instance()->get_gateway_instances();
+		$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
 		
-		if ( empty( $gateway_data['payment_settings']) ){
-			$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
-		}
 
 	
 		foreach ( $payment_settings as $gateway => $settings ) {
@@ -174,24 +163,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _gateway_settings() {
-		global $EEM_Gateways, $current_user;
 
 		require_once(EE_MODELS . 'EEM_Gateways.model.php');
 		$EEM_Gateways = EEM_Gateways::instance();
-		$EEM_Gateways->set_active_gateways();
 		
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		
-		$gateway_data = $this->EE->SSN->get_session_data( 'gateway_data' );
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
-		$payment_settings = array_key_exists('payment_settings',$gateway_data) ? $gateway_data['payment_settings'] : null;
-		/* if there are no payment settings in the session yet, add them from the DB. This fixes a bug where on first page load
-		 * of the payment admin page, the gateways info wouldn't show because payment_settings was always blank.
-		 * To reproduce that error, clear your cookies and delete the entry for 'payment_settings' in the usermeta table */
-		if (  empty($gateway_data['payment_settings']) ){
-			$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($current_user->ID, 'payment_settings', true);
-			$this->EE->SSN->set_session_data( array( 'payment_settings' => $payment_settings ));
-		}
+		$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($current_user->ID, 'payment_settings', true);
 		//lets add all the metaboxes
 		foreach( $gateway_instances as $gate_obj ) {
 			$gate_obj->add_settings_page_meta_box();
@@ -212,19 +191,17 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 			// now add or remove gateways from list
 			if ( isset( $this->_req_data['activate_' . $gateway] )) {
-				$gateway_data['active_gateways'][$gateway] = array();
 				//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
 				$EEM_Gateways->set_active($gateway);
 			}
 			if ( isset( $this->_req_data['deactivate_' . $gateway] )) {
-				unset($gateway_data['active_gateways'][$gateway]);
 				//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
 				$EEM_Gateways->unset_active($gateway);
 			}		
 
 			$gateways[$gateway] = array(
 				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
-				'class' => array_key_exists( $gateway, $gateway_data['active_gateways'] ) ? 'gateway-active' : '',
+				'class' => isset($this->EE->CFG->gateway->active_gateways[$gateway])  ? 'gateway-active' : '',
 				'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
 				'title' => __('Modify this Gateway', 'event_espresso'),
 				'slug' => $gateway
@@ -232,8 +209,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			
 			
 		}
-		//bandaid to fix bug where gateways wouldn't appear active on firsrt pag eload after activating them
-		$this->EE->SSN->set_session_data( array( 'gateway_data' => $gateway_data ));
 		
 		if ( ! $selected_gateway_name ) {
 //			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';

@@ -25,7 +25,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 Class EEM_Gateways {
 
 	private static $_instance = NULL;
-	private $_active_gateways = array();
 	private $_all_gateways = array();
 	private $_gateway_instances = array();
 	private $_payment_settings = array();
@@ -79,7 +78,6 @@ Class EEM_Gateways {
 		define('ESPRESSO_GATEWAYS', TRUE);
 		
 		$this->_load_session_gateway_data();
-		$this->_set_active_gateways();
 		$this->_load_payment_settings();
 		$this->_scan_and_load_all_gateways();
 	}
@@ -109,38 +107,6 @@ Class EEM_Gateways {
 			$this->_ajax = $this->_session_gateway_data['ajax'];
 		}
 	}
-
-
-
-	/**
-	 * 		set_active_gateways
-	 * 		@access public
-	 * 		@return void
-	 */
-	public function set_active_gateways() {
-		$this->_set_active_gateways();
-	}
-
-
-
-	/**
-	 * 		_set_active_gateways
-	 * 		@access private
-	 * 		@return void
-	 */
-	private function _set_active_gateways() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (!empty($this->_session_gateway_data['active_gateways'])) {
-			$this->_active_gateways = $this->_session_gateway_data['active_gateways'];
-			
-		} else {
-			$this->_active_gateways = $this->EE->CFG->gateway->active_gateways;//get_user_meta($this->EE->CFG->wp_user, 'active_gateways', TRUE);
-			if (!is_array($this->_active_gateways)) {
-				$this->_active_gateways = array();
-			}
-			$this->EE->SSN->set_session_data( array( 'gateway_data' => array( 'active_gateways' => $this->_active_gateways )));
-		}
-	}
 	
 
 
@@ -152,18 +118,10 @@ Class EEM_Gateways {
 	 */
 	private function _load_payment_settings() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-//		if (!empty($this->_session_gateway_data['payment_settings'])) {
-//			$this->_payment_settings = $this->_session_gateway_data['payment_settings'];
-//		} else {
-			
-			$this->_payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
-			if (!is_array($this->_payment_settings)) {
-				$this->_payment_settings = array();
-			}
-			$this->EE->SSN->set_session_data( array( 'gateway_data' => array('payment_settings' => $this->_payment_settings )));
-//		}
-
-		//echo printr( $this->_payment_settings, __CLASS__ . ' ->' . __FUNCTION__ . ' ( line #' .  __LINE__ . ' )' );
+		$this->_payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
+		if (!is_array($this->_payment_settings)) {
+			$this->_payment_settings = array();
+		}
 	}
 
 	/**
@@ -188,12 +146,12 @@ Class EEM_Gateways {
 			$this->_load_all_gateway_files();
 		} else {
 			// if something went wrong, fail gracefully
-			if ( ! is_array($this->_active_gateways)) {	
+			if ( ! is_array($this->EE->CFG->gateway->active_gateways)) {	
 				$msg = __( 'There are no active payment gateways. Please configure at least one gateway in the Event Espresso Payment settings page.', 'event_espresso'); 
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return;
 			}
-			foreach ($this->_active_gateways as $gateway => $in_uploads) {
+			foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 				$classname = 'EE_' . $gateway;
 				$filename = $classname . '.class.php';
 				if ($in_uploads) {
@@ -355,8 +313,8 @@ Class EEM_Gateways {
 		if (!$gateway) {
 			return FALSE;
 		}
-		if (array_key_exists($gateway, $this->_active_gateways)) {
-			return array($gateway => $this->_active_gateways[$gateway]);
+		if (array_key_exists($gateway, $this->EE->CFG->gateway->active_gateways)) {
+			return array($gateway => $this->EE->CFG->gateway->active_gateways[$gateway]);
 		} else {
 			return FALSE;
 		}
@@ -398,8 +356,7 @@ Class EEM_Gateways {
 
 
 		if (array_key_exists($gateway, $this->_all_gateways)) {
-			$this->_active_gateways[$gateway] = $this->_all_gateways[$gateway];
-			$this->EE->CFG->gateway->active_gateways = $this->_active_gateways;
+			$this->EE->CFG->gateway->active_gateways[$gateway] = $this->_all_gateways[$gateway];
 			if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
 				$msg = sprintf( __('%s Gateway Activated!', 'event_espresso'), $this->_payment_settings[$gateway]['display_name'] );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -428,9 +385,8 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 
-		if (array_key_exists($gateway, $this->_active_gateways)) {
-			unset($this->_active_gateways[$gateway]);
-			$this->EE->CFG->gateway->active_gateways = $this->_active_gateways;
+		if (array_key_exists($gateway, $this->EE->CFG->gateway->active_gateways)) {
+			unset($this->EE->CFG->gateway->active_gateways[$gateway]);
 			if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
 				$msg = sprintf( __('%s Gateway Deactivated!', 'event_espresso'), $this->_payment_settings[$gateway]['display_name'] );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -455,14 +411,14 @@ Class EEM_Gateways {
 	 */
 	public function set_selected_gateway($gateway = FALSE) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (!$gateway || !array_key_exists($gateway, $this->_active_gateways)) {
+		if (!$gateway || !array_key_exists($gateway, $this->EE->CFG->gateway->active_gateways)) {
 			return FALSE;
 		} 
 		
 		$this->_selected_gateway = $gateway;
 		$this->_hide_other_gateways = TRUE;
 		$this->_set_session_data();
-		foreach ($this->_active_gateways as $gateway => $in_uploads) {
+		foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 			if ($this->_selected_gateway == $gateway) {
 				$this->_gateway_instances[$gateway]->set_selected();
 			} else {
@@ -494,7 +450,7 @@ Class EEM_Gateways {
 		$this->_selected_gateway = NULL;
 		$this->_hide_other_gateways = FALSE;
 		$this->_set_session_data();
-		foreach ($this->_active_gateways as $gateway => $in_uploads) {
+		foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 			$this->_gateway_instances[$gateway]->unset_selected();
 		}
 		return TRUE;
@@ -519,7 +475,7 @@ Class EEM_Gateways {
 	public function selected_gateway_obj(){
 		$gateway_exists = isset($this->_gateway_instances[$this->selected_gateway()]);
 		if ( ! $gateway_exists ){
-			throw new EE_Error(sprintf(__("Payment Gateway error. Gateway %s is not available. Available gateways are: %s", "event_espresso"),$this->selected_gateway(),implode(array_keys($this->active_gateways()))));
+			throw new EE_Error(sprintf(__("Payment Gateway error. Gateway %s is not available. Available gateways are: %s", "event_espresso"),$this->selected_gateway(),implode(array_keys($this->EE->CFG->gateway->active_gateways))));
 		}
 		return $this->_gateway_instances[$this->selected_gateway()];
 	}
@@ -537,7 +493,7 @@ Class EEM_Gateways {
 		if (!$base_url) {
 			return FALSE;
 		}
-		foreach ($this->_active_gateways as $gateway => $in_uploads) {
+		foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 			if (!empty($this->_gateway_instances[$gateway])) {
 				$this->_gateway_instances[$gateway]->set_form_url($base_url);
 			} else {
@@ -675,7 +631,7 @@ Class EEM_Gateways {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	
-		foreach ($this->_active_gateways as $gateway => $in_uploads) {
+		foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 			if (!empty($this->_gateway_instances[$gateway])) {
 				$this->_gateway_instances[$gateway]->reset_session_data();
 			} else {
@@ -688,7 +644,6 @@ Class EEM_Gateways {
 		$this->_off_site_form = NULL;
 		$this->_ajax = TRUE;
 		$this->_payment_settings = array();
-		$this->_active_gateways = array();
 		
 		$this->EE->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		$this->EE->SSN->set_session_data(
@@ -697,8 +652,7 @@ Class EEM_Gateways {
 							'hide_other_gateways' => $this->_hide_other_gateways,
 							'off_site_form' => $this->_off_site_form,
 							'ajax' => $this->_ajax,
-							'payment_settings' => $this->_payment_settings,
-							'active_gateways' => $this->_active_gateways
+							'payment_settings' => $this->_payment_settings
 						), 
 						'gateway_data'
 				);
@@ -1012,15 +966,6 @@ Class EEM_Gateways {
 			
 		}
 	}
-	
-	/**
-	 * Gets all teh gateways which are active
-	 * @return EE_Gateway[]
-	 */
-	public function active_gateways(){
-		return $this->_active_gateways;
-	}
-
 
 
 	/**
