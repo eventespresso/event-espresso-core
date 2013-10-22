@@ -909,6 +909,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( isset( $this->_help_tour[$this->_req_action]) ) {
 				$tour_buttons = '<div class="ee-abs-container"><div class="ee-help-tour-restart-buttons">';
 				foreach ( $this->_help_tour['tours'] as $tour ) {
+					//if this is the end tour then we don't need to setup a button
+					if ( $tour instanceof EE_Help_Tour_final_stop )
+						continue;
 					$tb[] = '<button id="trigger-tour-' . $tour->get_slug() . '" class="button-primary trigger-ee-help-tour">' . $tour->get_label() . '</button>';
 				}
 				$tour_buttons .= implode('<br />', $tb);
@@ -1018,9 +1021,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 					}
 					$a = new ReflectionClass($tour);
 					$tour_obj = $a->newInstance($this->_is_caf);
+
 					$tours[] = $tour_obj;
 					$this->_help_tour[$route][] = EEH_Template::help_tour_stops_generator( $tour_obj );
 				}
+
+				//let's inject the end tour stop element common to all pages... this will only get seen once per machine.
+				$end_stop_tour = new EE_Help_Tour_final_stop($this->_is_caf);
+				$tours[] = $end_stop_tour;
+				$this->_help_tour[$route][] = EEH_Template::help_tour_stops_generator( $end_stop_tour );
 			}
 		}
 

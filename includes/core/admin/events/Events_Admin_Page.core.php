@@ -210,7 +210,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'list_table' => 'Events_Admin_List_Table',
 				'help_tour' => array(
-					'Event_Overview_Help_Tour'
+					'Event_Overview_Help_Tour',
+					//'New_Features_Test_Help_Tour' for testing multiple help tour
 					)
 			),
 			'import_events' => array(

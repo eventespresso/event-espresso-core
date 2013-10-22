@@ -1,9 +1,18 @@
 jQuery(document).ready(function($) {
 	var current_tour = 0;
+	var tour_stop_cache = 0;
+	var last_tour_stop = EE_HELP_TOUR.tours.length-1;
 	var joyridepostride = function(joyride_index,current_tip) {
 		v = EE_HELP_TOUR.tours[current_tour];
 		$('#' + v.id).joyride("destroy");
-		current_tour++;
+
+		//check if we've ever had our final stop tour run
+		if ( $.cookie(EE_HELP_TOUR.tours[last_tour_stop].id) === null ) {
+			tour_stop_cache = current_tour+1;
+			current_tour = last_tour_stop;
+		} else {
+			current_tour = tour_stop_cache > 0 ? tour_stop_cache : current_tour++;
+		}
 		joyridestart();
 	};
 
