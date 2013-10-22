@@ -2017,7 +2017,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 //		$transaction->set_txn_session_data(null);
 //		//var_dump(EE_Registry::instance()->SSN->get_session_data());
 //		EE_Registry::instance()->SSN->set_session_data( array( 'registration' => $saved_registrations, 'transaction' => $transaction ));
-//		EE_Registry::instance()->SSN->update_espresso_session();
+//		EE_Registry::instance()->SSN->update();
 			
 //		printr( EE_Registry::instance()->SSN, 'EE_Registry::instance()->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		die();

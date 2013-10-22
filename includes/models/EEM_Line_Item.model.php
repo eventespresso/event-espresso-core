@@ -39,7 +39,13 @@
  */
 
 class EEM_Line_Item extends EEM_Base {
-
+	
+	const type_tax_sub_total = 'tax-sub-total';
+	const type_tax = 'tax';
+	const type_line_item = 'line-item';
+	const type_sub_line_item = 'sub-item';
+	const type_sub_total = 'sub-total';
+	const type_total = 'total';
 	// private instance of the EEM_Checkin object
 	private static $_instance = NULL;
 
@@ -101,11 +107,12 @@ class EEM_Line_Item extends EEM_Base {
 				'LIN_parent'=>new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
 				'LIN_type'=>new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item', 
 						array(
-							'line-item'=>  __("Line Item", "event_espresso"),
-							'sub-item'=>  __("Sub-Item", "event_espresso"),
-							'sub-total'=>  __("Subtotal", "event_espresso"),
-							'tax'=>  __("Tax", "event_espresso"),
-							'total'=>  __("Total", "event_espresso"))),
+							self::type_line_item=>  __("Line Item", "event_espresso"),
+							self::type_sub_line_item=>  __("Sub-Item", "event_espresso"),
+							self::type_sub_total=>  __("Subtotal", "event_espresso"),
+							self::type_tax_sub_total => __("Tax Subtotal", "event_espresso"),
+							self::type_tax=>  __("Tax", "event_espresso"),
+							self::type_total=>  __("Total", "event_espresso"))),
 				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("ID of Item purchased.", "event_espresso"), true,null,$line_items_can_be_for),
 				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true,null,$line_items_can_be_for),
 			)

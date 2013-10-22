@@ -1,17 +1,6 @@
  span.ui-icon { float:none !important; }
 .icon-right span.ui-icon { margin: 0.7em 0.3em 0 0; }
 
-/*.spco-register-btn.icon-right { padding: 0.95em 1em 0.95em !important; }
-a .ui-icon { display:inline-block!important; float:none!important; position:relative; top:3px; margin:0px 5px 0 0!important;  }
-
-.spco-register-btn {
-		display: inline-block; position: relative;padding:.95em 1em; margin:1em 0; 
-		border:1px solid #ccc; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;
-		font-family: "Helvetica Neue", "Helvetica", Arial, Verdana, sans-serif;
-		text-align: center; font-weight: bold; line-height: 1; cursor: pointer;		
-}
-.spco-register-btn:hover { text-decoration:none; }*/
-
 #single-page-checkout .spco-register-btn {
 	padding: .75em 1.5em; margin:1em 0; 
 	background: #7DBD29; border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
@@ -110,6 +99,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 .spco-step-dv { padding:0; margin:0 0 2em; border:none;  }
 
 .spco-attendee-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius: 2px; }
+#single-page-checkout .spco-attendee-wrap-fs p { margin:0 0 .5em;  }
 
 .event-list-display-dv .big-event-title-hdr,
 #single-page-checkout .big-event-title-hdr {
@@ -129,6 +119,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 }
 .event_questions + .spco-attendee-lgnd { margin-top:2em; }
 
+
 .reg-page-form-field-wrap-pg { margin:0 0 1em; }
 .spco-copy-attendee-chk-pg { display:inline-block; float:left; clear:none!important; width:32%; }
 .spco-copy-attendee-hr {
@@ -136,7 +127,7 @@ a .ui-icon { display:inline-block!important; float:none!important; position:rela
 	border:none; border-top:1px solid rgba( 0,0,0,.05); border-bottom:1px solid rgba( 255,255,255,.9);
 }
 .reg-page-form-field-wrap-pg label { 
-    display: inline-block; float: left; width: 150px; padding: 0.5em 10px 1em 0;
+    display: inline-block; float: left; width: 150px; padding: 0.75em 10px 0.75em 0;
 	font-size: .9em; line-height: 1em; text-align: right; vertical-align: middle;
 }
 

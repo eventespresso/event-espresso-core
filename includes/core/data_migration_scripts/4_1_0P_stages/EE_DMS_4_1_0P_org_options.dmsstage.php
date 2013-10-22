@@ -250,12 +250,8 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'espresso_dashboard_widget': 
 			  //?
 			  break;
-		  case 'time_reg_limit': 
-			  //?
-			  break;
 		  case 'use_attendee_pre_approval': 
-			  //?
-			  break;
+			  $c->registration->use_attendee_pre_approval = $value; break;
 		  case 'use_personnel_manager': 
 			  //?
 			  break;
