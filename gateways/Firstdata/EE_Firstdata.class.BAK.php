@@ -154,7 +154,7 @@ Class EE_Firstdata extends EE_Gateway {
 		<?php
 	}
 
-	public function process_reg_step_3() {
+	public function process_payment_start() {
 		global $EE_Session;
 		$session_data = $EE_Session->get_session_data();
 		$billing_info = $session_data['billing_info'];

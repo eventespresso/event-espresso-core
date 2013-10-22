@@ -345,7 +345,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function process_reg_step_3() {
+	public function process_payment_start() {
 
 		$session_data = $this->EE->SSN->get_session_data();
 		$paypal_settings = $this->_payment_settings;

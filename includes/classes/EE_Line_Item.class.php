@@ -614,5 +614,13 @@ class EE_Line_Item extends EE_Base_Class{
 		}
 		return $total;
 	}
+	
+	/**
+	 * Gets the transaction this line item is related to
+	 * @return EE_Transaction
+	 */
+	public function transaction(){
+		return $this->get_first_related('Transaction');
+	}
 
 }

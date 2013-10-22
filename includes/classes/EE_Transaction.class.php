@@ -666,7 +666,21 @@ class EE_Transaction extends EE_Base_Class{
 	public function line_items($query_params){
 		return $this->get_many_related('Line_Item', $query_params);
 	}
+	/**
+	 * Gets all the line items which are for ACTUAL items
+	 * @return EE_Line_Item[]
+	 */
+	public function items_purchased(){
+		return $this->line_items(array(array('LIN_type'=>  EEM_Line_Item::type_line_item)));
+	}
 	
+	/**
+	 * Gets all the line items which are taxes on the total
+	 * @return EE_Line_Item[]
+	 */
+	public function tax_items(){
+		return $this->line_items(array(array('LIN_type'=>  EEM_Line_Item::type_tax)));
+	}
 	/**
 	 * Gets the total line item (which is a parent of all other related line items,
 	 * meaning it takes them all intou account on its total)

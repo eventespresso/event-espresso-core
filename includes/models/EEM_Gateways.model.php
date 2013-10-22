@@ -831,7 +831,7 @@ Class EEM_Gateways {
 	* 		@param EE_Line_Item $total_line_item the line item whose total takes all other line items on this transaction into account
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
-	public function process_reg_step_3() {
+	public function process_payment_start(EE_Line_Item $line_item) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$return_page_url = $this->_get_return_page_url();
 		// free event?
@@ -855,7 +855,7 @@ Class EEM_Gateways {
 		} else {
 			try{
 				$response = array(
-					'msg' => $this->selected_gateway_obj()->process_reg_step_3(),
+					'msg' => $this->selected_gateway_obj()->process_payment_start($line_item),
 					'forward_url' => $return_page_url
 				);
 			}catch(EE_Error $e){

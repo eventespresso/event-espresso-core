@@ -199,7 +199,7 @@ Class EE_Eway extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function process_reg_step_3() {
+	public function process_payment_start() {
 
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 
