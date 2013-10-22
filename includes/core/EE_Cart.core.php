@@ -244,9 +244,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */	
 	private function _add_item(EE_Line_Item $item ) {			
 		// add item to cart
-		$items_line_item = $this->get_ticket_items();
-		if($items_line_item){
-			$items_line_item->add_child_line_item($item);	
+		$ticket_items = $this->get_ticket_items();
+		if($ticket_items){
+			$ticket_items->add_child_line_item($item);	
 		}else{
 			return false;
 		}
@@ -272,9 +272,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	// 
 	public function update_item( EE_Line_Item $item ) {
 		// check if item exists
-		$items_line_item = $this->get_ticket_items();
-		if($items_line_item && $items_line_item->get_child_line_item($item->code())){
-			$items_line_item->add_child_line_item($item);
+		$ticket_items = $this->get_ticket_items();
+		if($ticket_items && $ticket_items->get_child_line_item($item->code())){
+			$ticket_items->add_child_line_item($item);
 			return true;
 		}else{
 			return false;
@@ -290,7 +290,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return float
 	 */	
 	private function _calculate_cart_total_before_tax() {
-		return $this->get_grand_total()->recalculate_pre_tax_total();
+		return $this->get_ticket_items()->recalculate_total();
 	}
 	
 	/**
