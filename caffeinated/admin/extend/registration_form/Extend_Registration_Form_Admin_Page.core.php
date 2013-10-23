@@ -352,14 +352,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _questions_overview_list_table() {
-		$this->_admin_page_title .= $this->_search_btn_label . $this->get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
+		$this->_search_btn_label = __('Questions', 'event_espresso');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
 
 
 	protected function _question_groups_overview_list_table() {
-		$this->_admin_page_title .= $this->_search_btn_label . $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'button add-new-h2');
+		$this->_search_btn_label = __('Question Groups', 'event_espresso');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'button add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -736,7 +738,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		
 		if( $count ){
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$results=$this->_question_model->count_deleted($query_params);
+			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
+			$results=$this->_question_model->count_deleted($where);
 		}else{
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
 			$results=$this->_question_model->get_all_deleted($query_params);
@@ -750,7 +753,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
 		if ($count){
-			$results = $questionGroupModel->count($query_params);
+			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
+			$results = $questionGroupModel->count($where);
 		}else{
 			$results = $questionGroupModel->get_all($query_params);
 		}
@@ -763,7 +767,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
 		if($count){
-			$results = $questionGroupModel->count_deleted($query_params);
+			$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
+			$results = $questionGroupModel->count_deleted($where);
 		}else{
 			$results = $questionGroupModel->get_all_deleted($query_params);
 		}
