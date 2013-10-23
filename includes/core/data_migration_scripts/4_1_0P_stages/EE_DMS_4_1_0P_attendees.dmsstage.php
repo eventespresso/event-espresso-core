@@ -516,7 +516,8 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		//only add a payment for primary attendees
 		$old_pay_stati_indicating_no_payment = array('Pending','Incomplete','Not Completed');
-		if(intval($old_attendee['is_primary']) && !in_array($old_attendee['payment_status'], $old_pay_stati_indicating_no_payment)){
+		//if this is for a primary 3.1 attendee which WASN'T free and has a completed, cancelled, or declined payment...
+		if(intval($old_attendee['is_primary']) && floatval($old_attendee['total_cost']) && !in_array($old_attendee['payment_status'], $old_pay_stati_indicating_no_payment)){
 			$pay_status_mapping = array(
 				'Completed'=>'PAP',
 				'Payment Declined'=>'PDC',
