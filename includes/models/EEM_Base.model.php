@@ -1124,7 +1124,8 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	public static function table(){
-		return static::instance()->_get_main_table()->get_table_name();
+		$called_class = get_called_class();
+		return $called_class::instance()->_get_main_table()->get_table_name();
 		
 	}	
 
