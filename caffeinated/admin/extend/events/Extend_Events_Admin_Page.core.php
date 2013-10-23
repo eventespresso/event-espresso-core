@@ -58,7 +58,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE_views_toplevel_page_espresso_events_default', array( $this, 'additional_views'), 10 );
+		add_filter('FHEE_list_table_views_espresso_events_default', array( $this, 'additional_views'), 10 );
 
 		//event settings
 		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
@@ -424,7 +424,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 */
 	public function total_events_this_month() {
 		//Dates
-		$curdate = date('Y-m-d');
 		$this_year_r = date('Y');
 		$this_month_r = date('m');
 		$days_this_month = date('t');
@@ -432,11 +431,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$end = ' 23:59:59';
 
 		$where = array(
-			'status' => array( '!=', 'trash' ),
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
+			'status' => array( 'NOT IN', array('trash') ),
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) ),
+			'post_type' => array( '!=', 'revision' )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
 		return $count;
 	}
 
@@ -471,8 +471,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		}
 
 		$where = array(
-				//todo add event categories
-				'Datetime.DTT_is_primary' => 1,
+				//'Datetime.DTT_is_primary' => 1,
 		);
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
@@ -509,7 +508,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$this_year_r = date('Y');
 			$this_month_r = date('m');
 			$days_this_month = date('t');
-			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01'), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month) ) );
+			$start = ' 00:00:00';
+			$end = ' 23:59:59';
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
 		}
 
 		$where['post_type'] = array( '!=', 'revision' );

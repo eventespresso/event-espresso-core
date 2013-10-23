@@ -1603,6 +1603,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	protected function _set_list_table_view() {		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+
+
 		// looking at active items or dumpster diving ?
 		if ( ! isset( $this->_req_data['status'] ) || ! array_key_exists( $this->_req_data['status'], $this->_views )) {
 			$this->_view = isset( $this->_views['in_use'] ) ? 'in_use' : 'all';
@@ -1641,9 +1643,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( empty( $this->_views )) {
 			$this->_views = array();
 		}
-
-		//filter the views before setting up
-		$this->_views = apply_filters( 'FHEE_views_' . $this->_current_screen->id . '_' . $this->_req_action, $this->_views );
 
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {

@@ -77,7 +77,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_get_checkins(NULL);
+		$this->_views['all']['count'] = $this->_get_checkins(NULL, true);
 	}
 
 
