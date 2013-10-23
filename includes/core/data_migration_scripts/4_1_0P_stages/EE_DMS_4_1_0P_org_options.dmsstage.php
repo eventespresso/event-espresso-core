@@ -148,93 +148,24 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 			  $c->organization->zip = $value;break;
 		  case 'contact_email': 
 			  $c->organization->email;break;
-		  case 'default_mail': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'payment_subject': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'payment_message': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'message': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
 		  case 'default_payment_status': 
 			  $c->registration->default_STS_ID =  $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID($value);break;
 		  case 'organization_country': 
 			  $c->organization->CNT_ISO = $this->get_migration_script()->get_iso_from_3_1_country_id($value);break;
 		  case 'currency_symbol': 
 			  $c->currency->sign = $value;break;
-		  case 'expire_on_registration_end': 
-			    //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'email_before_payment': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'email_fancy_headers': 
-			    //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'enable_default_style': 
-			  //?
-			  break;
-		  case 'event_ssl_active': 
-			  //?
-			  break;
-		  case 'selected_style': 
-			  //?
-			  break;
 		  case 'show_pending_payment_options': 
 			  $c->registration->show_pending_payment_options = 'Y' == $value;break;
-		  case 'show_reg_footer': 
-			  //?
-			  break;
-		  case 'skip_confirmation_page': 
-			  //?
-			  break;
-		  case 'allow_mer_discounts': 
-			  //N/A 
-			  break;
-		  case 'allow_mer_vouchers': 
-			  //N/A
-			  break;
-		  case 'display_short_description_in_event_list': 
-			  //?
-			  break;
-		  case 'display_description_on_multi_reg_page': 
-			  //N/A 
-			  break;
-		  case 'display_address_in_event_list': 
-			  //? 
-			  break;
 		  case 'display_address_in_regform': 
 			  $c->template_settings->display_address_in_regform = 'Y' == $value;break;
-		  case 'use_custom_post_types': 
-			  //?
-			  break;
-		  case 'display_ical_download': 
-			  //?
-			  break;
-		  case 'display_featured_image':
-			  //?
-			  break;
-		  case 'themeroller': 
-			  //?
-			  break;
 		  case 'default_logo_url': 
 			  $c->organization->logo_url = $value;break;
-		  case 'event_page_id': 
-			  //converts to /events by default
-			  break;
 		  case 'return_url': 
 			  $c->core->thank_you_page_id = $value;break;
 		  case 'cancel_return': 
 			  $c->core->cancel_page_id = $value;break;
 		  case 'notify_url': 
 			  $c->core->txn_page_id = $value;break;
-		  case 'events_in_dasboard': 
-			  //?
-			  break;
 		  case 'use_captcha': 
 			  $c->registration->use_captcha = $value;break;
 		  case 'recaptcha_publickey': 
@@ -248,22 +179,17 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'recaptcha_language': 
 			  $c->registration->recaptcha_language = $value;break;
 		  case 'espresso_dashboard_widget': 
-			  //?
-			  break;
+			  $c->admin->use_dashboard_widget = $value; break;
 		  case 'use_attendee_pre_approval': 
 			  $c->registration->use_attendee_pre_approval = $value; break;
 		  case 'use_personnel_manager': 
-			  //?
-			  break;
+			  $c->admin->use_personnel_manager = $value; break;
 		  case 'use_event_timezones': 
-			  //?
-			  break;
+			  $c->admin->use_event_timezones = $value; break;
 		  case 'full_logging': 
-			  //?
-			  break;
+			  $c->admin->use_full_logging = $value;break;
 		  case 'affiliate_id': 
-			  //?
-			  break;
+			  $c->admin->affiliate_id = $value;break;
 		  case 'site_license_key': 
 			  $c->core->site_license_key = $value;break;
 		  default:
