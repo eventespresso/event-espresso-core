@@ -41,7 +41,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->page_label = PRICING_LABEL;
 		$this->_admin_base_url = PRICING_ADMIN_URL;
 		$this->_admin_base_path = PRICING_ADMIN;
-		$this->_admin_page_title = PRICING_LABEL;
 	}
 
 
@@ -56,6 +55,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
+		$this->_admin_page_title = PRICING_LABEL;
 		$this->_labels = array(
 			'buttons' => array(
 				'add' => __('Add New Price', 'event_espresso'),
