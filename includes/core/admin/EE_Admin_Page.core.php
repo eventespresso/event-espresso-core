@@ -565,13 +565,24 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
+	public function load_page_dependencies() {
+		try {
+			$this->_load_page_dependencies();
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+	}
+
+
+
 	/**
 	 * load_page_dependencies
 	 * loads things specific to this page class when its loaded.  Really helps with efficiency.
 	 * @access public
 	 * @return void
 	 */
-	public function load_page_dependencies() {
+	protected function _load_page_dependencies() {
 		//let's set the current_screen and screen options to override what WP set
 		$this->_current_screen = get_current_screen();
 			
@@ -602,7 +613,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//add help tab(s) and tour- set via page_config.
 		$this->_add_help_tour();
 		$this->_add_help_tabs();
-
 
 		//add feature_pointers - global, page child class, and view specific
 		$this->_add_feature_pointers();

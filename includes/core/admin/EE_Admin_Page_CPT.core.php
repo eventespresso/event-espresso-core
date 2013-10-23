@@ -261,18 +261,27 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+	public function load_page_dependencies() {
+		try {
+			$this->_load_page_dependencies();
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+	}
+
+
 
 	/**
 	 * overloading the EE_Admin_Page parent load_page_dependencies so we can get the cpt stuff added in appropriately
 	 *
-	 * @access public
+	 * @access protected
 	 * @return void
 	 */
-	public function load_page_dependencies() {
+	protected function _load_page_dependencies() {
 
 		//we only add stuff if this is a cpt_route!
 		if ( !$this->_cpt_route ) {
-			parent::load_page_dependencies();
+			parent::_load_page_dependencies();
 			return;
 		}
 
@@ -319,7 +328,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			add_action('edit_form_after_title', array( $this, 'edit_form_after_title' ), 10 );
 
 
-		parent::load_page_dependencies();
+		parent::_load_page_dependencies();
 		$this->modify_current_screen();
 		add_action( 'admin_enqueue_scripts', array( $this, 'setup_autosave_hooks'), 30 );
 		//we route REALLY early.
