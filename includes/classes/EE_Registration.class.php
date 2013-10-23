@@ -735,7 +735,7 @@ class EE_Registration extends EE_Base_Class {
 	 * @return string
 	 */
 	public function reg_date(){
-		return $this->get('REG_date');
+		return $this->get_datetime('REG_date');
 	}
 	
 	/**
