@@ -60,7 +60,6 @@ CREATE TABLE `wp_events_prices` (
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
 				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),
-				'PRC_row' => new EE_Integer_Field('PRC_row', 'Order of how prices are displayed', false, 1 ),
 				'PRC_parent' => new EE_Integer_Field('PRC_parent', __('Indicates what PRC_ID is the parent of this PRC_ID'), true, 0 )
 			)
 		);
@@ -161,7 +160,6 @@ class EE_DMS_4_1_0P_prices extends EE_Data_Migration_Script_Stage_Table{
 			'PRC_overrides'=>false,
 			'PRC_order'=>0,
 			'PRC_deleted'=>false,
-			'PRC_row'=>1,
 			'PRC_parent'=>null
 		
 		);
@@ -173,7 +171,6 @@ class EE_DMS_4_1_0P_prices extends EE_Data_Migration_Script_Stage_Table{
 			'%d',//PRC_overrides
 			'%d',//PRC_order
 			'%d',//PRC_deleted
-			'%d',//PRC_row
 			'%d',//PRC_parent
 		);
 		$success = $wpdb->insert($this->_new_price_table,$cols_n_values,$datatypes);
@@ -201,7 +198,6 @@ class EE_DMS_4_1_0P_prices extends EE_Data_Migration_Script_Stage_Table{
 			'PRC_overrides'=>false,
 			'PRC_order'=>10,
 			'PRC_deleted'=>false,
-			'PRC_row'=>2,
 			'PRC_parent'=>null
 		
 		);
@@ -213,7 +209,6 @@ class EE_DMS_4_1_0P_prices extends EE_Data_Migration_Script_Stage_Table{
 			'%d',//PRC_overrides
 			'%d',//PRC_order
 			'%d',//PRC_deleted
-			'%d',//PRC_row
 			'%d',//PRC_parent
 		);
 		$success = $wpdb->insert($this->_new_price_table,$cols_n_values,$datatypes);
@@ -246,7 +241,6 @@ class EE_DMS_4_1_0P_prices extends EE_Data_Migration_Script_Stage_Table{
 			'PRC_overrides'=>false,
 			'PRC_order'=>20,
 			'PRC_deleted'=>false,
-			'PRC_row'=>3,
 			'PRC_parent'=>null
 		
 		);
@@ -258,7 +252,6 @@ class EE_DMS_4_1_0P_prices extends EE_Data_Migration_Script_Stage_Table{
 			'%d',//PRC_overrides
 			'%d',//PRC_order
 			'%d',//PRC_deleted
-			'%d',//PRC_row
 			'%d',//PRC_parent
 		);
 		$success = $wpdb->insert($this->_new_price_table,$cols_n_values,$datatypes);
