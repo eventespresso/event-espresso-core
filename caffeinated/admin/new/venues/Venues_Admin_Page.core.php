@@ -283,6 +283,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	protected function _add_screen_options_category_list() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Venue Categories', 'event_espresso');
+		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
+	}
+
+
+
 
 
 
