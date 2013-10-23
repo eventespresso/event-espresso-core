@@ -666,5 +666,26 @@ class EE_Line_Item extends EE_Base_Class{
 	public function transaction(){
 		return $this->get_first_related('Transaction');
 	}
+	
+	/**
+	 * Saves this line item to the DB, and recurisvely saves its descendants.
+	 * Because there currently is no proper parent-child relation on the model,
+	 * save_this_and_cached() will NOT save the descendants. 
+	 * Also sets the transaction on this line item and all its descendants before saving
+	 * @param int $txn_id if none is provided, assumes $this->TXN_ID()
+	 * @return int count of items saved
+	 */
+	public function save_this_and_descendants_to_txn($txn_id = NULL ){
+		if( ! $txn_id ){
+			$txn_id = $this->TXN_ID();
+		}
+		$this->set_TXN_ID($txn_id);
+		$children = $this->children();
+		$this->save();
+		foreach($children as $child_line_item){
+			$child_line_item->set_parent_ID($this->ID());
+			$child_line_item->save_this_and_descendants_to_txn($txn_id);
+		}
+	}
 
 }

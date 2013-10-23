@@ -271,8 +271,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			return false;
 		}
 		
-		d($item);
-			
+		
 		// recalculate cart totals based on new items
 		if ( $this->_calculate_cart_total_before_tax() ) {
 			return TRUE;
