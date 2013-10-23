@@ -664,7 +664,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @param  boolean $all      whether to ignore all query params and just return ALL registrations (or count if count is set)
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE, $all = FALSE ) {
+	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE  ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
@@ -782,13 +782,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		
 		if($count){
-			return $all ? EEM_Registration::instance()->count() : EEM_Registration::instance()->count(array($_where));
+			return EEM_Registration::instance()->count(array($_where));
 		}else{
 			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ) );
 			if ( $per_page !== -1 ) {
 				$query_params['limit'] = $limit;
 			}
-			$registrations =  $all ? EEM_Registration::instance()->get_all() : EEM_Registration::instance()->get_all($query_params);
+			$registrations =  EEM_Registration::instance()->get_all($query_params);
 			global $wpdb;
 	
 
@@ -2185,7 +2185,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$query_params[0]['Ticket.Datetime.DTT_is_primary'] = 1;
 		}
 
-		if($reg_status){
+		if($reg_status ){
 			$query_params[0]['STS_ID']=$reg_status;
 		}
 		if($trash){
@@ -2220,7 +2220,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$query_params['limit'] = $limit;
 		$query_params['force_join'] = array('Attendee');//force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
 		if($count){
-			$registrations = EEM_Registration::instance()->count($query_params);
+			$registrations = EEM_Registration::instance()->count(array($query_params[0]));
 		}else{
 			$registrations = EEM_Registration::instance()->get_all($query_params);
 		
