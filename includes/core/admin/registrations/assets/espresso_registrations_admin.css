@@ -30,7 +30,7 @@
 .wp-list-table .column-REG_date,
 .wp-list-table .column-DTT_EVT_start { width:12.5%; }
 /*.wp-list-table .column-ATT_fname { width:11%; }*/
-.wp-list-table .column-REG_count { width:3%; text-align:center;  }
+.wp-list-table .column-REG_count { width:5%; text-align:center;  }
 .wp-list-table .column-ATT_email { width:10.5%; }
 .wp-list-table .column-REG_code { width:10.5%; }
 .wp-list-table .column-Reg_status { width:6.5%; text-align:center; }

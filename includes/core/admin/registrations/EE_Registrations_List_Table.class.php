@@ -65,12 +65,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$this->_columns = array(
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 	           	'REG_ID' => __( 'ID', 'event_espresso' ),
-				'REG_date' => __( 'Registration Date', 'event_espresso' ),
-	           	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
-				'ATT_email' =>  __('Email Address', 'event_espresso'),
-				'REG_count' => __('Att #', 'event_espresso'),
-				'REG_code' => __( 'Registration Code', 'event_espresso' ),
-				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
+	           	'REG_count' => __('Att #', 'event_espresso'),
+	           	'ATT_fname' => __( 'Name', 'event_espresso' ),
+				'ATT_email' =>  __('Email', 'event_espresso'),		
+				'REG_date' => __( 'Reg Date', 'event_espresso' ),
+				'REG_code' => __( 'Reg Code', 'event_espresso' ),
+				'Reg_status' => __( 'Status', 'event_espresso' ),
 	  			'PRC_amount' => __( 'Ticket Price', 'event_espresso' ),
 	  			'REG_final_price' => __( 'Final Price', 'event_espresso' ),
 	  			'TXN_total' => __( 'Total Txn', 'event_espresso' ),
@@ -86,14 +86,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		} else {
 			$this->_columns = array(
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-	           	'REG_ID' => __( 'ID', 'event_espresso' ),
-				'REG_date' => __( 'Registration Date', 'event_espresso' ),
-				'event_name' => __( 'Event Title', 'event_espresso' ),
-	   	       	'DTT_EVT_start' => __( 'Event Date & Time', 'event_espresso' ),
+	           	'REG_ID' => __( 'ID', 'event_espresso' ),  	
 				'REG_count' => __('Att #', 'event_espresso'),
-	           	'ATT_fname' => __( 'Attendee Name', 'event_espresso' ),
-				'REG_code' => __( 'Registration Code', 'event_espresso' ),
-				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
+	           	'ATT_fname' => __( 'Name', 'event_espresso' ),
+				'REG_date' => __( 'Reg Date', 'event_espresso' ),
+				'event_name' => __( 'Event', 'event_espresso' ),
+	   	       	'DTT_EVT_start' => __( 'Event Date', 'event_espresso' ),
+				'REG_code' => __( 'Reg Code', 'event_espresso' ),
+				'Reg_status' => __( 'Status', 'event_espresso' ),
 	  			'REG_final_price' => __( 'Price', 'event_espresso' ),
             	'actions' => __( 'Actions', 'event_espresso' )
 	        );			
