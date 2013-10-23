@@ -49,6 +49,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_1_0P_questions(),
 			new EE_DMS_4_1_0P_question_group_question(),
 			new EE_DMS_4_1_0P_event_question_group(),
+			new EE_DMS_4_1_0P_attendees(),
 		);
 		parent::__construct();
 	}
@@ -1144,7 +1145,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	 * @param string $state_name
 	 * @return array where keys are columns, values are column values
 	 */
-	public function get_or_create_state($state_name,$country_name){
+	public function get_or_create_state($state_name,$country_name = ''){
 		if( ! $state_name ){
 			throw new EE_Error(__("Could not get-or-create state because no state name was provided", "event_espresso"));
 		}

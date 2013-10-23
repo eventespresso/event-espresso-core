@@ -222,9 +222,15 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 			return false;
 		}
 		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_transaction_table, $txn_id);
-		//
-		
-		
+		$pay_id = $this->_insert_new_payment($old_row,$txn_id);
+		if($pay_id){
+			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_payment_table,$pay_id);
+		}
+		//even if there was no payment, we can go ahead with adding teh reg
+		$new_regs = $this->_insert_new_registrations($old_row,$new_att_id,$txn_id);
+		if($new_regs){
+			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_reg_table,$new_regs);
+		}
 	}
 	
 	private function _insert_new_attendee_cpt($old_attendee){
@@ -272,13 +278,13 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$new_country_iso = $this->get_migration_script()->get_default_country_iso();
 		}
 		try{
-			$new_state = $this->get_migration_script($old_attendee['state'],$new_country_iso);
+			$new_state = $this->get_migration_script()->get_or_create_state($old_attendee['state'],$new_country_iso);
 			$new_state_id = $new_state['STA_ID'];
 		}catch(EE_Error $exception){
 			$new_state_id = 0;
 		}
 		$cols_n_values = array(
-			'ATT_ID_fk'=>$new_attendee_cpt_id,
+			'ATT_ID'=>$new_attendee_cpt_id,
 			'ATT_fname'=>$old_attendee['fname'],
 			'ATT_lname'=>$old_attendee['lname'],
 			'ATT_address'=>$old_attendee['address'],
@@ -291,7 +297,7 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 			'ATT_phone'=>$old_attendee['phone'],			
 		);
 		$datatypes = array(
-			'%d',//ATT_ID_fk
+			'%d',//ATT_ID
 			'%s',//ATT_fname
 			'%s',//ATT_lname
 			'%s',//ATT_address
@@ -337,15 +343,17 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$STS_ID = isset($txn_status_mapping[$old_attendee['payment_status']]) ? $txn_status_mapping[$old_attendee['payment_status']] : 'TIN';
 			$cols_n_values = array(
 				'TXN_timestamp'=>$old_attendee['date'],
-				'TXN_total'=>floatva($old_attendee['final_price']),
+				'TXN_total'=>floatval($old_attendee['cost_total']),
 				'TXN_paid'=>floatval($old_attendee['amount_pd']),
 				'STS_ID'=>$STS_ID,
+				'TXN_hash_salt'=>$old_attendee['hashSalt']
 			);
 			$datatypes = array(
 				'%s',//TXN_timestamp
 				'%f',//TXN_total
 				'%f',//TXN_paid
 				'%s',//STS_ID
+				'%s',//TXN_hash_salt
 			);
 			$success = $wpdb->insert($this->_new_transaction_table,$cols_n_values,$datatypes);
 			if ( ! $success){
@@ -366,11 +374,188 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 		
 		
 	}
-	
-	private function _insert_new_registration($old_attendee){
+	/**
+	 * Adds however many rgistrations are indicated by the old attendee's QUANTITY field,
+	 * and returns an array of their IDs
+	 * @global type $wpdb
+	 * @param array $old_attendee
+	 * @param int $new_attendee_id
+	 * @param int $new_txn_id
+	 * @return array
+	 */
+	private function _insert_new_registrations($old_attendee,$new_attendee_id,$new_txn_id){
+		global $wpdb;
+		$reg_status_mapping = array(
+				'Completed'=>'RAP',
+				'Pending'=>'RPN',
+				'Payment Declined'=>'RNA',
+				'Incomplete'=>'RNA',
+				'Not Completed'=>'RNA',
+				'Cancelled'=>'RCN',
+				'Declined'=>'RNA'
+			);
+		$STS_ID = isset($reg_status_mapping[$old_attendee['payment_status']]) ? $reg_status_mapping[$old_attendee['payment_status']] : 'RNA';
+		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix.'events_detail', $old_attendee['event_id'], $wpdb->posts);
+		if( ! $new_event_id){
+			$this->add_error(sprintf(__("Could not find NEW event CPT ID for old event '%d' on old attendee %s", "event_espresso"),$old_attendee['event_id'],http_build_query($old_attendee)));
+		}
+		
+		$ticket_id = $this->_try_to_find_new_ticket_id($old_attendee,$new_event_id);
+		if( ! $ticket_id){
+			$this->add_error(sprintf(__("Could not find a NEW ticket for OLD attendee %s", "event_espresso"),http_build_query($old_attendee)));
+		}
+		$regs_on_this_row = intval($old_attendee['quantity']);
+		$new_reg_ids = array();
+		for($count = 0; $count < $regs_on_this_row; $count++){
+			$regs_on_this_event_and_txn = $this->_count_new_registrations_on_txn($new_txn_id) + 1;
+			$cols_n_values = array(
+				'EVT_ID'=>$new_event_id,
+				'ATT_ID'=>$new_attendee_id,
+				'TXN_ID'=>$new_txn_id,
+				'TKT_ID'=>$ticket_id,
+				'STS_ID'=>$STS_ID,
+				'REG_date'=>$old_attendee['date'],
+				'REG_final_price'=>$old_attendee['final_price'],
+				'REG_session'=>$old_attendee['attendee_session'],
+				'REG_code'=>$old_attendee['registration_id'],
+				'REG_url_link'=>$old_attendee['registration_id'].'-'.$count,
+				'REG_count'=>$regs_on_this_event_and_txn,
+				'REG_group_size'=>$this->_sum_old_attendees_with_registration_id($old_attendee['registration_id']),
+				'REG_att_is_going'=>true
+			);
+			$datatypes = array(
+				'%d',//EVT_ID
+				'%d',//ATT_ID
+				'%d',//TXN_ID
+				'%d',//TKT_ID
+				'%s',//STS_ID
+				'%s',//REG_date
+				'%f',//REG_final_price
+				'%s',//REG_session
+				'%s',//REG_code
+				'%s',//REG_url_link
+				'%d',//REG_count
+				'%d',//REG_group_size
+				'%d',//REG_att_is_going
+			);
+			$success = $wpdb->insert($this->_new_reg_table,$cols_n_values,$datatypes);
+			if ( ! $success){
+				$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_reg_table, $cols_n_values, $datatypes));
+				return 0;
+			}
+			$new_reg_ids[] = $wpdb->insert_id;
+		}
+		return $new_reg_ids;
+	}
+	/**
+	 * Makes a best guess at which ticket is the one the attendee purchased.
+	 * Obviously, the old attendee's event_id narrows it down quite a bit;
+	 * then the old attendee's orig_price and event_time, and price_option can uniquely identify the ticket
+	 * however, if we don't find an exact match, see if any of those conditions match;
+	 * and lastly if none of that works, just use the first ticket for the event we find
+	 * @param array $old_attendee
+	 */
+	private function _try_to_find_new_ticket_id($old_attendee,$new_event_id){
+		global $wpdb;
+		$tickets_table = $wpdb->prefix."esp_ticket";
+		$datetime_tickets_table = $wpdb->prefix."esp_datetime_ticket";
+		$datetime_table = $wpdb->prefix."esp_datetime";
+		
+		$old_att_price_option = $old_attendee['price_option'];
+		$old_att_price = floatval($old_attendee['orig_price']);
+		
+		$old_att_start_date = $old_attendee['start_date'];
+		$old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
+		$old_att_datetime = "$old_att_start_date $old_att_start_time:00";
+		//add all conditions to an array from which we can SHIFT conditions off in order to widen our search
+		//the most important condition should be last, as it will be array_shift'ed off last
+		$conditions = array(
+			$wpdb->prepare("$datetime_table.DTT_EVT_start = %s",$old_att_datetime),//times match?
+			$wpdb->prepare("$tickets_table.TKT_price = %f",$old_att_price),//prices match?
+			$wpdb->prepare("$tickets_table.TKT_name = %s",$old_att_price_option),//names match?
+			$wpdb->prepare("$datetime_table.EVT_ID = %d",$new_event_id),//events match?
+		);
+		$select_and_join_part = "SELECT $tickets_table.TKT_ID FROM $tickets_table INNER JOIN 
+			$datetime_tickets_table ON $tickets_table.TKT_ID = $datetime_tickets_table.TKT_ID INNER JOIN
+			$datetime_table ON $datetime_tickets_table.DTT_ID = $datetime_table.DTT_ID";
+		//start running queries, widening search each time by removing a condition
+		do{
+			$full_query = $select_and_join_part." WHERE ".implode(" AND ",$conditions)." LIMIT 1";
+			echo "running query:'$full_query'<br>";
+			$ticket_id_found = $wpdb->get_var($full_query);
+			echo "result:$ticket_id_found<br>";
+			array_shift($conditions);
+		}while( ! $ticket_id_found && $conditions);
+		return $ticket_id_found;
 		
 	}
-	private function _insert_new_payment($old_attendee){
+	/**
+	 * Sums all the OLD registration with the $old_registration_id. This takes into account BOTH
+	 * when each row has a quantity of 1, and when a single row has a quantity greater than 1
+	 * @global type $wpdb
+	 * @param type $old_registration_id
+	 * @return int
+	 */
+	private function _sum_old_attendees_with_registration_id($old_registration_id){
+		global $wpdb;
+		$count = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s",$old_registration_id));
+		return intval($count);
+	}
+	/**
+	 * Counts all the registrations on this transaction added SO FAR
+	 * @global type $wpdb
+	 * @param int $txn_id
+	 * @return int
+	 */
+	private function _count_new_registrations_on_txn($txn_id){
+		global $wpdb;
+		$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(REG_ID) FROM ".$this->_new_reg_table." WHERE TXN_ID=%d",$txn_id));
+		return intval($count);
+	}
+	private function _insert_new_payment($old_attendee,$new_txn_id){
+		global $wpdb;
+		//only add a payment for primary attendees
+		$old_pay_stati_indicating_no_payment = array('Pending','Incomplete','Not Completed');
+		if(intval($old_attendee['is_primary']) && !in_array($old_attendee['payment_status'], $old_pay_stati_indicating_no_payment)){
+			$pay_status_mapping = array(
+				'Completed'=>'PAP',
+				'Payment Declined'=>'PDC',
+				'Cancelled'=>'PCN',
+				'Declined'=>'PDC'
+			);
+			$STS_ID = isset($pay_status_mapping[$old_attendee['payment_status']]) ? $pay_status_mapping[$old_attendee['payment_status']] : 'PFL';//IE, if we don't recognize teh status, assume paymetn failed
+			$cols_n_values = array(
+				'TXN_ID'=>$new_txn_id,
+				'STS_ID'=>$STS_ID,
+				'PAY_timestamp'=>$old_attendee['date'],
+				'PAY_gateway'=>$old_attendee['txn_type'],
+				'PAY_gateway_response'=>'',
+				'PAY_txn_id_chq_nmbr'=>$old_attendee['txn_id'],
+				'PAY_via_admin'=>false,
+				'PAY_details'=>$old_attendee['transaction_details']
+				
+			);
+			$datatypes = array(
+				'%d',//TXN_Id
+				'%s',//STS_ID
+				'%s',//PAY_timestamp
+				'%s',//PAY_gateway
+				'%s',//PAY_gateway_response
+				'%d',//PAY_via_admin
+				'%s',//PAY_details
+			);
+			$success = $wpdb->insert($this->_new_payment_table,$cols_n_values,$datatypes);
+			if ( ! $success){
+				$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_attendee_cpt_table, $cols_n_values, $datatypes));
+				return 0;
+			}
+			$new_id = $wpdb->insert_id;
+			return $new_id;
+			
+		}else{
+			return 0;
+		}
+		
 		
 	}
 	
