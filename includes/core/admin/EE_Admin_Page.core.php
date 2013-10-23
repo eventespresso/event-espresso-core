@@ -1643,7 +1643,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//filter the views before setting up
-		$this->_views = apply_filters( 'FHEE_views_' . $this->_current_screen->id, $this->_views );
+		$this->_views = apply_filters( 'FHEE_views_' . $this->_current_screen->id . '_' . $this->_req_action, $this->_views );
 
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {

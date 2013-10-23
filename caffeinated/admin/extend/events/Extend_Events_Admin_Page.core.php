@@ -58,7 +58,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE_views_toplevel_page_espresso_events', array( $this, 'additional_views'), 10 );
+		add_filter('FHEE_views_toplevel_page_espresso_events_default', array( $this, 'additional_views'), 10 );
 
 		//event settings
 		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
