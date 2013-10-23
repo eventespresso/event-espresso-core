@@ -24,11 +24,11 @@
 </p>
 
 <?php echo $additional_registration_options; ?>
-
-<p>
-	<label><?php _e('Default Payment Status', 'event_espresso'); ?></label>
-	<?php echo $default_registration_status; ?>
-</p>
+<!-- removing the next block temporarily because it's not going to be used as is -->
+<!-- <p> -->
+	<!-- <label><?php _e('Default Payment Status', 'event_espresso'); ?></label> -->
+	<?php //echo $default_registration_status; ?>
+<!-- </p> -->
 
 <p>
 	<label><?php _e('Display  Description', 'event_espresso'); ?></label>

@@ -41,7 +41,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->page_label = PRICING_LABEL;
 		$this->_admin_base_url = PRICING_ADMIN_URL;
 		$this->_admin_base_path = PRICING_ADMIN;
-		$this->_admin_page_title = PRICING_LABEL;
 	}
 
 
@@ -56,6 +55,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
+		$this->_admin_page_title = PRICING_LABEL;
 		$this->_labels = array(
 			'buttons' => array(
 				'add' => __('Add New Price', 'event_espresso'),
@@ -168,7 +168,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 10
 						),
 					'list_table' => 'Prices_List_Table',
-					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 					'help_tour' => array( 'Pricing_Default_Prices_Help_Tour'),
 					'help_tabs' => array(
 						'price_type_info' => array(
@@ -216,8 +215,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'label' => __('Edit Price Type', 'event_espresso'),
 							'order' => 40,
 							'persistent' => FALSE
-						),
-					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' )
+						)
 				)
 		);
 	}
@@ -236,6 +234,14 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 	protected function _add_screen_options_default() {
 		$this->_per_page_screen_option();
+	}
+
+
+	protected function _add_screen_options_price_types() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Price Types', 'event_espresso');
+		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
 	}
 
 

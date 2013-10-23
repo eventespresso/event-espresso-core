@@ -73,7 +73,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->page_label = __('Registration Form', 'event_espresso');
 		$this->_admin_base_url = REGISTRATION_FORM_ADMIN_URL;
 		$this->_admin_base_path = REGISTRATION_FORM_ADMIN;
-		$this->_admin_page_title = __('Registration Form', 'event_espresso');
 	}
 
 
@@ -88,6 +87,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
+		$this->_admin_page_title = __('Registration Form', 'event_espresso');
 		$this->_labels = array(
 			'buttons' => array(
 				'edit_question' => __('Edit Question', 'event_espresso')
@@ -167,11 +167,17 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _add_screen_options_default() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Questions', 'event_espresso');
 		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
 	}
 
 	protected function _add_screen_options_question_groups() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Question Groups', 'event_espresso');
 		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
 	}
 
 	//none of the below group are currently used for Event Categories
@@ -288,7 +294,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	protected function _questions_overview_list_table() {
 		$this->_search_btn_label = __('Questions', 'event_espresso');
-		$this->_admin_page_title .= $this->_search_btn_label;
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -532,7 +537,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$QST = EEM_Question::instance();
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
 		if ($count){
-			$results = $QST->count($query_params);
+			$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
+			$results = $QST->count($where);
 		}else{
 			$results = $QST->get_all($query_params);
 		}
@@ -544,7 +550,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
 		$query_params=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);
-		$questions=EEM_Question::instance()->get_all_deleted($query_params);
+		$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
+		$questions=$count ? EEM_Question::instance()->get_all_deleted($where) : EEM_Question::instance()->get_all_deleted($query_params);
 		return $questions;
 	}
 

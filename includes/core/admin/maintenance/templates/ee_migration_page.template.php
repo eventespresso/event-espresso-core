@@ -114,7 +114,7 @@
 		); 
 	?>
 		<p class='description'><?php _e("Frontend Maintenance might be handy if you want to debug something on the frontend of your website before allowing non-administrators to see.", "event_espresso");?></p>
-		<input type='submit' value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
+		<input type='submit' class="button-primary" value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
 	</form>
 	<?php } ?>
 	
