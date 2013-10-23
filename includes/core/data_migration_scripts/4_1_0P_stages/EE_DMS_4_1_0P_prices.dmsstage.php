@@ -187,38 +187,38 @@ class EE_DMS_4_1_0P_prices extends EE_Data_Migration_Script_Stage_Table{
 	 * @param type $old_price
 	 * @return int
 	 */
-	private function _insert_new_member_price($old_price){		
-		$discount_amount = floatval($old_price['event_cost']) - floatval($old_price['member_price']);
-		global $wpdb;
-		$cols_n_values = array(
-			'PRT_ID'=>self::price_type_member_discount,
-			'PRC_amount'=>$discount_amount,
-			'PRC_name'=>$old_price['member_price_type'],
-			'PRC_is_default'=>false,
-			'PRC_overrides'=>false,
-			'PRC_order'=>10,
-			'PRC_deleted'=>false,
-			'PRC_parent'=>null
-		
-		);
-		$datatypes = array(
-			'%d',//PRT_ID
-			'%f',//PRT_amount
-			'%s',//PRC_name
-			'%d',//PRC_is_default
-			'%d',//PRC_overrides
-			'%d',//PRC_order
-			'%d',//PRC_deleted
-			'%d',//PRC_parent
-		);
-		$success = $wpdb->insert($this->_new_price_table,$cols_n_values,$datatypes);
-		if ( ! $success){
-			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_price, $this->_new_price_table, $cols_n_values, $datatypes));
-			return 0;
-		}
-		$new_id = $wpdb->insert_id;
-		return $new_id;
-	}
+//	private function _insert_new_member_price($old_price){		
+//		$discount_amount = floatval($old_price['event_cost']) - floatval($old_price['member_price']);
+//		global $wpdb;
+//		$cols_n_values = array(
+//			'PRT_ID'=>self::price_type_member_discount,
+//			'PRC_amount'=>$discount_amount,
+//			'PRC_name'=>$old_price['member_price_type'],
+//			'PRC_is_default'=>false,
+//			'PRC_overrides'=>false,
+//			'PRC_order'=>10,
+//			'PRC_deleted'=>false,
+//			'PRC_parent'=>null
+//		
+//		);
+//		$datatypes = array(
+//			'%d',//PRT_ID
+//			'%f',//PRT_amount
+//			'%s',//PRC_name
+//			'%d',//PRC_is_default
+//			'%d',//PRC_overrides
+//			'%d',//PRC_order
+//			'%d',//PRC_deleted
+//			'%d',//PRC_parent
+//		);
+//		$success = $wpdb->insert($this->_new_price_table,$cols_n_values,$datatypes);
+//		if ( ! $success){
+//			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_price, $this->_new_price_table, $cols_n_values, $datatypes));
+//			return 0;
+//		}
+//		$new_id = $wpdb->insert_id;
+//		return $new_id;
+//	}
 	/**
 	 * Creates a 4.1 member price discount
 	 * @global type $wpdb
