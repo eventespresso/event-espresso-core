@@ -163,29 +163,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 
-	/**
-	 * 		retreive all prices that are member prices
-	 *
-	 * 		@access		public
-	 * 		@return 		EE_Price[]
-	 */
-	public function get_all_prices_that_are_member_prices() {
-		return $this->get_all(array(array('Price_Type.PRT_is_member' => TRUE )));
-	}
-
-	
-	/**
-	 * 		retreive all prices that are member prices
-	 *
-	 * 		@access		public
-	 * 		@return 		EE_Price[]
-	 */
-	public function get_all_prices_that_are_not_member_prices() {
-		return $this->get_all(array(array('Price_Type.PRT_is_member' => FALSE )));
-	}
-
-
-
 
 
 

@@ -49,14 +49,6 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class{
 	*/
 	protected $_PBT_ID = NULL;
 
-	/**
-	*	Price type a member Price?
-	*
-	*	@access	protected
-	*	@var bool
-	*/
-	protected $_PRT_is_member = NULL;
-
 
 
   /**
@@ -118,20 +110,6 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class{
 	*/
 	public function set_name( $PRT_name = FALSE ) {
 		$this->set('PRT_name',$PRT_name);
-	}
-
-
-
-
-
-	/**
-	*		Set Price Type is member price
-	*
-	* 		@access		public
-	*		@param		bool		$PRT_is_member
-	*/
-	public function set_is_member( $PRT_is_member = NULL ) {
-		$this->set('PRT_is_member',$PRT_is_member);
 	}
 
 
@@ -201,15 +179,6 @@ class EE_Price_Type extends EE_Soft_Delete_Base_Class{
 		return $this->get_pretty('PBT_ID');
 	}
 
-
-
-	/**
-	*		get is Price Type a member price?
-	* 		@access		public
-	*/
-	public function is_member() {
-		return $this->get('PRT_is_member');
-	}
 
 
 
