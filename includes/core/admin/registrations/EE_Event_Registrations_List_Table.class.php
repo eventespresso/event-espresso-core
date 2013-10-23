@@ -21,7 +21,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_event_attendees( $this->_per_page ) : $this->_admin_page->get_event_attendees( $this->_per_page, FALSE, TRUE );
-		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_event_attendees(  $this->_per_page, TRUE ) : $this->_admin_page->get_event_attendees(  $this->_per_page, TRUE, TRUE );
+		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_event_attendees(  $this->_per_page, TRUE ) : $this->_admin_page->get_event_attendees(  $this->_per_page, TRUE, TRUE);
 	}
 
 
@@ -122,7 +122,25 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _add_view_counts() {
-		$this->_views['all']['count'] = $this->_admin_page->get_event_attendees( $this->_per_page, TRUE );
+		$this->_views['all']['count'] = $this->_get_total_event_attendees();
+	}
+
+
+
+
+	protected function _get_total_event_attendees() {
+		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+		if ($EVT_ID){
+			$query_params[0]['EVT_ID']=$EVT_ID;
+		}
+		//if DTT is included we do multiple datetimes.  Otherwise we just do primary datetime
+		if ( $DTT_ID ) {
+			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
+		} else {
+			$query_params[0]['Ticket.Datetime.DTT_is_primary'] = 1;
+		}
+		return EEM_Registration::instance()->count($query_params);
 	}
 
 
