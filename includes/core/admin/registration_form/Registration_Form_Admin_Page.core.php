@@ -73,7 +73,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->page_label = __('Registration Form', 'event_espresso');
 		$this->_admin_base_url = REGISTRATION_FORM_ADMIN_URL;
 		$this->_admin_base_path = REGISTRATION_FORM_ADMIN;
-		$this->_admin_page_title = __('Registration Form', 'event_espresso');
 	}
 
 
@@ -88,6 +87,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
+		$this->_admin_page_title = __('Registration Form', 'event_espresso');
 		$this->_labels = array(
 			'buttons' => array(
 				'edit_question' => __('Edit Question', 'event_espresso')
@@ -167,11 +167,17 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _add_screen_options_default() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Questions', 'event_espresso');
 		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
 	}
 
 	protected function _add_screen_options_question_groups() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Question Groups', 'event_espresso');
 		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
 	}
 
 	//none of the below group are currently used for Event Categories
