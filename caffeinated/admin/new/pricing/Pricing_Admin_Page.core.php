@@ -237,6 +237,14 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	}
 
 
+	protected function _add_screen_options_price_types() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Price Types', 'event_espresso');
+		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
+	}
+
+
 
 
 	protected function _add_feature_pointers() {}
