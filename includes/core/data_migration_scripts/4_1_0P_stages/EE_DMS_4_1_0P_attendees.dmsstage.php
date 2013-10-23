@@ -188,6 +188,11 @@ CREATE TABLE `wp_events_detail` (
 		);
  */
 class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
+	private $_new_attendee_cpt_table;
+	private $_new_attendee_meta_table;
+	private $_new_reg_table;
+	private $_new_transaction_table;
+	private $_new_payment_table;
 	function __construct() {
 		global $wpdb;
 		$this->_pretty_name = __("Attendees", "event_espresso");
@@ -201,11 +206,28 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 	}
 	
 	protected function _migrate_old_row($old_row) {
-//		$new_att_id = 
+		$new_att_id = $this->_insert_new_attendee_cpt($old_row);
+		if( ! $new_att_id){
+			//if we couldnt even make an attendee, abandon all hope
+			return false;
+		}
+		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_attendee_cpt_table, $new_att_id);
+		$new_att_meta_id = $this->_insert_attendee_meta_row($old_row, $new_att_id);
+		if($new_att_meta_id){
+			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_attendee_meta_table, $new_att_meta_id);
+		}
+		$txn_id = $this->_insert_new_transaction($old_row);
+		if( ! $txn_id){
+			//if we couldnt make the transaction, also abandon all hope
+			return false;
+		}
+		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_transaction_table, $txn_id);
+		//
+		
+		
 	}
 	
 	private function _insert_new_attendee_cpt($old_attendee){
-		
 		global $wpdb;
 		$cols_n_values = array(
 			'post_title'=>$old_attendee['fname']." ".$old_attendee['lname'],//ATT_full_name
@@ -231,20 +253,117 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 			'%s',//post_type
 			'%s',//status
 		);
-		$success = $wpdb->insert($this->_new_price_table,$cols_n_values,$datatypes);
+		$success = $wpdb->insert($this->_new_attendee_cpt_table,$cols_n_values,$datatypes);
 		if ( ! $success){
-			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_price, $this->_new_price_table, $cols_n_values, $datatypes));
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_attendee_cpt_table, $cols_n_values, $datatypes));
 			return 0;
 		}
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
 	
-	private function _insert_attendee_meta_row($old_attendee){
-		
+	private function _insert_attendee_meta_row($old_attendee,$new_attendee_cpt_id){
+		global $wpdb;
+		//get the state and country ids from the old row
+		try{
+			$new_country = $this->get_migration_script()->get_or_create_country($old_attendee['country_id']);
+			$new_country_iso = $new_country['CNT_ISO'];
+		}catch(EE_Error $exception){
+			$new_country_iso = $this->get_migration_script()->get_default_country_iso();
+		}
+		try{
+			$new_state = $this->get_migration_script($old_attendee['state'],$new_country_iso);
+			$new_state_id = $new_state['STA_ID'];
+		}catch(EE_Error $exception){
+			$new_state_id = 0;
+		}
+		$cols_n_values = array(
+			'ATT_ID_fk'=>$new_attendee_cpt_id,
+			'ATT_fname'=>$old_attendee['fname'],
+			'ATT_lname'=>$old_attendee['lname'],
+			'ATT_address'=>$old_attendee['address'],
+			'ATT_address2'=>$old_attendee['address2'],
+			'ATT_city'=>$old_attendee['city'],
+			'STA_ID'=>$new_state_id,
+			'CNT_ISO'=>$new_country_iso,
+			'ATT_zip'=>$old_attendee['zip'],
+			'ATT_email'=>$old_attendee['email'],
+			'ATT_phone'=>$old_attendee['phone'],			
+		);
+		$datatypes = array(
+			'%d',//ATT_ID_fk
+			'%s',//ATT_fname
+			'%s',//ATT_lname
+			'%s',//ATT_address
+			'%s',//ATT_address2
+			'%s',//ATT_city
+			'%d',//STA_ID
+			'%s',//CNT_ISO
+			'%s',//ATT_zip
+			'%s',//ATT_email
+			'%s',//ATT_phone
+		);
+		$success = $wpdb->insert($this->_new_attendee_meta_table,$cols_n_values,$datatypes);
+		if ( ! $success){
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_attendee_meta_table, $cols_n_values, $datatypes));
+			return 0;
+		}
+		$new_id = $wpdb->insert_id;
+		return $new_id;
 	}
 	
+	/**
+	 * Note: we don't necessarily create a new transaction for each attendee row.
+	 * Only if the old attendee 'is_primary' is true; otherwise we find the old attendee row that
+	 * 'is_primary' and has the same 'txn_id', then we return ITS new transaction id
+	 * @global type $wpdb
+	 * @param type $old_attendee
+	 * @return int
+	 */
 	private function _insert_new_transaction($old_attendee){
+		global $wpdb;
+		if(intval($old_attendee['is_primary'])){//primary attendee, so create txn
+			
+			//maps 3.1 payment stati onto 4.1 transaction stati
+			$txn_status_mapping = array(
+				'Completed'=>'TCM',
+				'Pending'=>'TPN',
+				'Payment Declined'=>'TIN',
+				'Incomplete'=>'TIN',
+				'Not Completed'=>'TIN',
+				'Cancelled'=>'TIN',
+				'Declined'=>'TIN'
+			);
+			$STS_ID = isset($txn_status_mapping[$old_attendee['payment_status']]) ? $txn_status_mapping[$old_attendee['payment_status']] : 'TIN';
+			$cols_n_values = array(
+				'TXN_timestamp'=>$old_attendee['date'],
+				'TXN_total'=>floatva($old_attendee['final_price']),
+				'TXN_paid'=>floatval($old_attendee['amount_pd']),
+				'STS_ID'=>$STS_ID,
+			);
+			$datatypes = array(
+				'%s',//TXN_timestamp
+				'%f',//TXN_total
+				'%f',//TXN_paid
+				'%s',//STS_ID
+			);
+			$success = $wpdb->insert($this->_new_transaction_table,$cols_n_values,$datatypes);
+			if ( ! $success){
+				$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_transaction_table, $cols_n_values, $datatypes));
+				return 0;
+			}
+			$new_id = $wpdb->insert_id;
+			return $new_id;
+		}else{//non-primary attendee, so find its primary attendee's transaction
+			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and txn_id=%s",$old_attendee['txn_id']));
+			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);
+			if( ! $txn_id){
+				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  http_build_query($old_attendee),$primary_attendee_old_id));
+				$txn_id = 0;
+			}
+			return $txn_id;
+		}
+		
 		
 	}
 	

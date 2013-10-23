@@ -98,7 +98,7 @@ Cli'... (length=607)
  * 
  * 
  * 
- * @todo: add surcharges back in
+ * @todo: inform clients that messages have COMPLETELY changed in 4.1; themeroller isn't in there; event list page is no more;
  */
 class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 
