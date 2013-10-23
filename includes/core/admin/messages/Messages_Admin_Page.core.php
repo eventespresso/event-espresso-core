@@ -67,7 +67,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->page_label = __('Messages System', 'event_espresso');
 		$this->_admin_base_url = EE_MSG_ADMIN_URL;
 		$this->_admin_base_path = EE_MSG_ADMIN;
-		$this->_admin_page_title = $this->page_label;
 
 		$this->_activate_state = isset($this->_req_data['activate_state']) ? (array) $this->_req_data['activate_state'] : array();
 
@@ -147,6 +146,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
+		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
 				'add' => __('Add New Message Template', 'event_espresso'),
@@ -324,7 +324,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _add_screen_options_default() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Message Templates', 'event_espresso');
 		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
 	}
 
 
