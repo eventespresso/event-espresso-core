@@ -404,11 +404,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 	protected function _add_screen_options_contact_list() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __("Attendees", 'event_espresso');
 		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
 	}
 
 	protected function _add_screen_options_registration_checkins() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Check In Records', 'event_espresso');
 		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
 	}
 
 
