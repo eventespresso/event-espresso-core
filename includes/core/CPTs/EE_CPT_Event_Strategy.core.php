@@ -68,7 +68,7 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function posts_fields( $SQL ) {
 		// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
-		$SQL .= ', ' . EEM_Datetime::table() . '.* ' ;
+		$SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ' ;
 		return $SQL;
 	}
 
@@ -83,7 +83,7 @@ class EE_CPT_Event_Strategy {
 	public function posts_join( $SQL ) {
 		global $wpdb;
 		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
-		$SQL .= ' JOIN ' . EEM_Datetime::table() . ' ON ( ' . EEM_Datetime::table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+		$SQL .= ' JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Datetime::instance()->table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
 		return $SQL;
 	}
 
@@ -99,7 +99,7 @@ class EE_CPT_Event_Strategy {
 		global $wpdb;
 		// adds something like " AND wp_esp_datetime.DTT_is_primary = 1 " to WP Query WHERE statement
 		// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
-		$SQL .= ' AND ' . EEM_Datetime::table() . '.DTT_is_primary = 1 ';
+		$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_is_primary = 1 ';
 		return $SQL;
 	}
 
