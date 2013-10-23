@@ -168,7 +168,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 10
 						),
 					'list_table' => 'Prices_List_Table',
-					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 					'help_tour' => array( 'Pricing_Default_Prices_Help_Tour'),
 					'help_tabs' => array(
 						'price_type_info' => array(
@@ -216,8 +215,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'label' => __('Edit Price Type', 'event_espresso'),
 							'order' => 40,
 							'persistent' => FALSE
-						),
-					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' )
+						)
 				)
 		);
 	}
