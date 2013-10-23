@@ -234,8 +234,11 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			'MTP_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
 			'MTP_is_global' => TRUE,
-			'MTP_is_active' => $active
 			);
+
+		if ( $active != 'all' ) {
+			$_where['MTP_is_active'] = $active;
+		}
 
 		$query_params = array( $_where, 'order_by' => array( $orderby => $order ), 'limit' => $limit );
 

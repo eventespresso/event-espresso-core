@@ -249,7 +249,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	function column_event($item) {
 		$event_id = $item->event();
 		if ( empty( $event_id ) ) 
-			return __('Global', 'event_espresso');
+			return __('All Events', 'event_espresso');
 
 		$get_event_name = $item->event_name();
 		$event_name = empty($get_event_name) ? __('Cannot find Event', 'event_espresso') : $get_event_name;

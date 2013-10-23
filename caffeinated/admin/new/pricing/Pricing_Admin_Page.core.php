@@ -969,7 +969,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$set_column_values = array(
 				'PRT_name' => $this->_req_data['PRT_name'],
 				'PBT_ID' => absint($this->_req_data['PBT_ID']),
-				'PRT_is_member' => absint($this->_req_data['PRT_is_member']),
 				'PRT_is_percent' => absint($this->_req_data['PRT_is_percent']),
 				'PRT_order' => absint($this->_req_data['PRT_order']),
 				'PRT_deleted' => 0

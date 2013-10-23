@@ -171,16 +171,13 @@ class EE_Cost_Calculator extends EE_BASE {
 		
 		// cycle thru events
 		foreach ( $this->_all_event_prices as $event_price ) {
-			// if members only, then check for login, OR let anybody in for non-member pricing
-			if (( $types[ $event_price->type() ]->is_member() && is_user_logged_in() ) || ! $types[ $event_price->type() ]->is_member() ) {
-				// if calendar controlled pricing, then check date, OR let anybody in for regular pricing ( setting FALSE in start_date and end_date methods returns timestamps )
-				if ( ( ( $event_price->start_date( FALSE ) <= $today && $event_price->end_date( FALSE ) >= $today )) || ! $event_price->use_dates() ) {
-					// separate ticket prices ( order = 0 ) from adjuestments ( order > 0 )
-					if ( $types[ $event_price->type() ]->order() == 0 ) {
-						$base_prices[ $event_price->ID() ] = new EE_Base_Ticket_Price( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));					
-					} else {
-						$price_modifiers[ $event_price->order() ][ $event_price->ID() ] = new EE_Price_Composite( $event_price, $types[ $event_price->type() ] );
-					}
+			// if calendar controlled pricing, then check date, OR let anybody in for regular pricing ( setting FALSE in start_date and end_date methods returns timestamps )
+			if ( ( ( $event_price->start_date( FALSE ) <= $today && $event_price->end_date( FALSE ) >= $today )) || ! $event_price->use_dates() ) {
+				// separate ticket prices ( order = 0 ) from adjuestments ( order > 0 )
+				if ( $types[ $event_price->type() ]->order() == 0 ) {
+					$base_prices[ $event_price->ID() ] = new EE_Base_Ticket_Price( new EE_Price_Composite( $event_price, $types[ $event_price->type() ] ));					
+				} else {
+					$price_modifiers[ $event_price->order() ][ $event_price->ID() ] = new EE_Price_Composite( $event_price, $types[ $event_price->type() ] );
 				}
 			}
 		}
@@ -806,9 +803,6 @@ class EE_Price_Composite {
 	}
 	public function base_type() {
 		return $this->_PRT->base_type();
-	}
-	public function is_member() {
-		return $this->_PRT->is_member();
 	}
 	public function is_percent() {
 		return $this->_PRT->is_percent();
