@@ -890,7 +890,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
 				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
-				'PRC_row' => $row
+				'PRC_order' => $row
 				);
 
 			if ( $new_prices || empty( $PRC_values['PRC_ID'] ) ) {

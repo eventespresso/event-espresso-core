@@ -223,7 +223,6 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 			'PRC_overrides'=>false,
 			'PRC_order'=>100,
 			'PRC_deleted'=>false,
-			'PRC_row'=>0,
 			'PRC_parent'=>null
 		
 		);
@@ -235,7 +234,6 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 			'%d',//PRC_overrides
 			'%d',//PRC_order
 			'%d',//PRC_deleted
-			'%d',//PRC_row
 			'%d',//PRC_parent
 		);
 		$price_table = $wpdb->prefix."esp_price";

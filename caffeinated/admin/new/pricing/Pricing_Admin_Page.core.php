@@ -557,7 +557,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'PRC_overrides' => NULL,
 				'PRC_order' => 0,
 				'PRC_deleted' => 0,
-				'PRC_row' => 1,
 				'PRC_parent' => 0
 		);
 		return $set_column_values;
