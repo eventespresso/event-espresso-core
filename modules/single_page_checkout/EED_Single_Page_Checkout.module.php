@@ -1119,7 +1119,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								break;
 	
 							case 'state' :
-								if (!in_array($key, $exclude_attendee_info) /*&& !is_numeric($key)*/ && $value != '') {
+								if (!in_array($key, $exclude_attendee_info)  && $value != '') {
 									if ( isset( $states[ $value ] )) {
 										array_push( $extra_att_details, $states[ $value ]->get( 'STA_abbrev' ) );
 									} else {
@@ -1129,7 +1129,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								break;
 	
 							default:
-								if (!in_array($key, $exclude_attendee_info) /*&& !is_numeric($key)*/ && $value != '') {
+								if (!in_array($key, $exclude_attendee_info) && $value != '') {
 									array_push($extra_att_details, $value);
 								}
 						}
