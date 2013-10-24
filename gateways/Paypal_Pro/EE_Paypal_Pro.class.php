@@ -334,12 +334,14 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 * 		@return void
 	 */
 //	public function espresso_gateway_process_step_3() {
-	public function process_payment_start(EE_Line_Item $total_line_item) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
 
 		$session_data = $this->EE->SSN->get_session_data();
 
 		$billing_info = $session_data['billing_info'];
-		$transaction = $total_line_item->transaction();
+		if( ! $transaction){
+			$transaction = $total_line_item->transaction();
+		}
 		$primary_registrant = $transaction->primary_registration();
 		if ($billing_info != 'no payment required') {
 

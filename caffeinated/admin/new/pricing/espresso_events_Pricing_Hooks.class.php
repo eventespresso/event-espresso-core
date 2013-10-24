@@ -419,7 +419,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
 				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
-				'PRC_row' => $row
+				'PRC_order' => $row
 				);
 
 			if ( $new_prices || empty( $PRC_values['PRC_ID'] ) ) {
@@ -766,7 +766,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_ticket_price_row( $tktrow, $prcrow, $price, $default, $ticket, $show_trash = TRUE, $show_create = TRUE ) {
 		$template_args = array(
 			'tkt_row' => $default && empty($ticket) ? 'TICKETNUM' : $tktrow,
-			'prc_row' => $default && empty($price) ? 'PRICENUM' : $prcrow,
+			'PRC_order' => $default && empty($price) ? 'PRICENUM' : $prcrow,
 			'edit_prices_name' => $default && empty($price) ? 'PRICENAMEATTR' : 'edit_prices',
 			'price_type_selector' => $default && empty( $price ) ? $this->_get_base_price_template( $tktrow, $prcrow, $price, $default ) : $this->_get_price_type_selector( $tktrow, $prcrow, $price, $default ),
 			'PRC_ID' => $default && empty($price) ? 0 : $price->ID(),
@@ -803,7 +803,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_base_price_template( $tktrow, $prcrow, $price, $default ) {
 		$template_args = array(
 				'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
-				'prc_row' => $default && empty( $price ) ? 'PRICENUM' : $prcrow,
+				'PRC_order' => $default && empty( $price ) ? 'PRICENUM' : $prcrow,
 				'PRT_ID' => $default && empty( $price ) ? 1 : $price->get('PRT_ID'),
 				'PRT_name' => __('Base Price', 'event_espresso'),
 				'price_selected_operator' => '+',
@@ -842,7 +842,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
-			'prc_row' => $default && empty( $price ) ? 'PRICENUM' : $prcrow,
+			'PRC_order' => $default && empty( $price ) ? 'PRICENUM' : $prcrow,
 			'price_modifier_selector' => EEH_Form_Fields::select_input( $select_name, $all_price_types, $selected_price_type_id, 'style="width:auto;"', 'edit-price-PRT_ID' ),
 			'price_option_spans' => $price_option_spans,
 			'price_selected_operator' => $default && empty( $price ) ? '' : ( $price->is_discount() ? '-' : '+' ),

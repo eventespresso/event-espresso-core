@@ -854,30 +854,45 @@ class EE_Base_Class{
 	}
 	
 	/**
-	 * Saves this model object and its cached relations to the database.
+	 * Saves this model object and its NEW cached relations to the database.
+	 * (Meaning, for now, IT DOES NOT WORK if the cached items already exist in the DB. 
+	 * In order for that to work, we would need to mark model objects as dirty/clean...
+	 * because otherwise, there's a potential for infinite looping of saving
 	 * Saves the cached related model objects, and ensures the relation between them
 	 * and this object and properly setup
-	 * @return int 1 on succesful update; ID of new model object on save; 0 on failure+
+	 * @return int ID of new model object on save; 0 on failure+
 	 */
-	public function save_this_and_cached(){
+	public function save_new_cached_related_model_objs(){
 		//make sure this has been saved
 		if( ! $this->ID()){
 			$id = $this->save();
 		}else{
 			$id = $this->ID();
 		}
+		//now save all the NEW cached model objects  (ie they don't exist in the DB)
 		foreach($this->get_model()->relation_settings() as $relationName => $relationObj){
 		
 			$property_name = $this->_get_private_attribute_name($relationName);
 			if($this->$property_name){
+				//is this a relation where we should expect just ONE related object (ie, EE_Belongs_To_relation)
+				//or MANY related objects (ie, EE_HABTM_Relation or EE_Has_Many_Relation)?
 				if($relationObj instanceof EE_Belongs_To_Relation){
 					//add a relation to that relation type (which saves the appropriate thing in the process)
-					$this->_add_relation_to($this->$property_name, $relationName);
-				}else{
-					d($property_name);
-					d($this);
-					foreach($this->$property_name as $index => $related_model_obj){
+					//but ONLY if it DOESNT exist in the DB
+					/* @var $related_model_obj EE_Base_Class */
+					$related_model_obj = $this->$property_name;
+					if( ! $related_model_obj->ID()){
 						$this->_add_relation_to($related_model_obj, $relationName);
+						$related_model_obj->save_new_cached_related_model_objs();
+					}
+				}else{
+					foreach($this->$property_name as $related_model_obj){
+						//add a relation to that relation type (which saves the appropriate thing in the process)
+						//but ONLY if it DOESNT exist in the DB
+						if( ! $related_model_obj->ID()){
+							$this->_add_relation_to($related_model_obj, $relationName);
+							$related_model_obj->save_new_cached_related_model_objs();
+						}
 					}
 				}
 			}

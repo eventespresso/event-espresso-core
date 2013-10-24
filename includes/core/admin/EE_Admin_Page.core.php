@@ -565,13 +565,24 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
+	public function load_page_dependencies() {
+		try {
+			$this->_load_page_dependencies();
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+	}
+
+
+
 	/**
 	 * load_page_dependencies
 	 * loads things specific to this page class when its loaded.  Really helps with efficiency.
 	 * @access public
 	 * @return void
 	 */
-	public function load_page_dependencies() {
+	protected function _load_page_dependencies() {
 		//let's set the current_screen and screen options to override what WP set
 		$this->_current_screen = get_current_screen();
 			
@@ -602,7 +613,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//add help tab(s) and tour- set via page_config.
 		$this->_add_help_tour();
 		$this->_add_help_tabs();
-
 
 		//add feature_pointers - global, page child class, and view specific
 		$this->_add_feature_pointers();
@@ -1406,7 +1416,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_filter('FHEE_load_joyride', '__return_true');
 
 		//script for sorting tables
-		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
 		wp_register_script( 'ee-parse-uri', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 		//and parsing associative serialized form elements
@@ -1603,6 +1613,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	protected function _set_list_table_view() {		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+
+
 		// looking at active items or dumpster diving ?
 		if ( ! isset( $this->_req_data['status'] ) || ! array_key_exists( $this->_req_data['status'], $this->_views )) {
 			$this->_view = isset( $this->_views['in_use'] ) ? 'in_use' : 'all';
@@ -1641,9 +1653,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( empty( $this->_views )) {
 			$this->_views = array();
 		}
-
-		//filter the views before setting up
-		$this->_views = apply_filters( 'FHEE_views_' . $this->_current_screen->id, $this->_views );
 
 		// cycle thru views
 		foreach ( $this->_views as $key => $view ) {

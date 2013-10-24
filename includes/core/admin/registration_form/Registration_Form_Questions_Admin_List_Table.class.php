@@ -90,6 +90,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE );
+		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( -1, $this->_current_page, TRUE);
 	}
 
 

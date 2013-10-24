@@ -49,6 +49,8 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_1_0P_questions(),
 			new EE_DMS_4_1_0P_question_group_question(),
 			new EE_DMS_4_1_0P_event_question_group(),
+			new EE_DMS_4_1_0P_attendees(),
+			new EE_DMS_4_1_0P_answers()
 		);
 		parent::__construct();
 	}
@@ -398,7 +400,6 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 					  PRC_overrides int(10) unsigned DEFAULT NULL,
 					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
 					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  PRC_row tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  PRC_parent int(10) unsigned DEFAULT 0,
 					  PRIMARY KEY  (PRC_ID)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB');
@@ -409,7 +410,6 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		$sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
 				  PRT_name VARCHAR(45) NOT NULL ,
 				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
-				  PRT_is_member tinyint(1) NOT NULL DEFAULT '0',
 				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
 				  PRT_order tinyint(1) UNSIGNED NULL,
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
@@ -965,16 +965,14 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			$price_types_exist = $wpdb->get_var( $SQL );
 			
 			if ( ! $price_types_exist ) {
-				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_member, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
-							(1, '" . __('Base Price', 'event_espresso') . "', 1, 0, 0, 0, 0),
-							(2, '" . __('Member % Discount', 'event_espresso') . "', 2, 1, 1, 10, 0),
-							(3, '" . __('Member Dollar Discount', 'event_espresso') . "', 2, 1, 0, 10, 0),
-							(4, '" . __('Percent Discount', 'event_espresso') . "', 2, 0, 1, 20, 0),
-							(5, '" . __('Dollar Discount', 'event_espresso') . "', 2, 0, 0, 30, 0),
-							(6, '" . __('Percent Surcharge', 'event_espresso') . "', 3, 0, 1, 40, 0),
-							(7, '" . __('Dollar Surcharge', 'event_espresso') . "', 3, 0, 0, 50, 0),
-							(8, '" . __('Regional Tax', 'event_espresso') . "', 4, 0, 1, 60, 0),
-							(9, '" . __('Federal Tax', 'event_espresso') . "', 4, 0, 1, 70, 0);";
+				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
+							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, 0),
+							(2, '" . __('Percent Discount', 'event_espresso') . "', 2,  1, 20, 0),
+							(3, '" . __('Dollar Discount', 'event_espresso') . "', 2,  0, 30, 0),
+							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, 0),
+							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, 0),
+							(6, '" . __('Regional Tax', 'event_espresso') . "', 4,  1, 60, 0),
+							(7, '" . __('Federal Tax', 'event_espresso') . "', 4,  1, 70, 0);";
 				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
 				$wpdb->query( $SQL );	
 			}
@@ -1000,13 +998,12 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO $price_table
-							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_row, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 1, 0),
-							(2, 3, '20', 'Members Discount', 'Members receive a 20% discount off of the regular price. Example content - delete if you want to', 1, NULL, 10, 0, 2, 0),
-							(3, 4, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, NULL, 20, 0, 3, 0),
-							(4, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, NULL, 30, 0, 4, 0),
-							(5, 7, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 5, 0),
-							(6, 8, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 6, 0);";			
+							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
+							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 0),
+							(2, 2, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, NULL, 20, 0, 0),
+							(3, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, NULL, 30, 0, 0),
+							(4, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 0),
+							(5, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 0);";			
 				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}
@@ -1145,7 +1142,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	 * @param string $state_name
 	 * @return array where keys are columns, values are column values
 	 */
-	public function get_or_create_state($state_name,$country_name){
+	public function get_or_create_state($state_name,$country_name = ''){
 		if( ! $state_name ){
 			throw new EE_Error(__("Could not get-or-create state because no state name was provided", "event_espresso"));
 		}

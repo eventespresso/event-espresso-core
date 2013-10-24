@@ -219,14 +219,14 @@ class EED_Event_List  extends EED_Module {
 			$show_expired = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
 			// override default expired option if set via filter
 			$show_expired = EE_Registry::instance()->REQ->is_set( 'elf_expired_chk' ) ? absint( EE_Registry::instance()->REQ->get( 'elf_expired_chk' )) : $show_expired;
-			$SQL .= ! $show_expired ? ' AND ' . EEM_Datetime::table() . '.DTT_EVT_end > "' . date('Y-m-d H:s:i') . '" ' : '';
+			$SQL .= ! $show_expired ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . date('Y-m-d H:s:i') . '" ' : '';
 			// Category
 			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
 			$SQL .=  ! empty( $elf_category ) ? ' AND ' . $wpdb->terms . '.slug = "' . $elf_category . '" ' : '';
 			// Start Date
 			$elf_month = EE_Registry::instance()->REQ->is_set( 'elf_month_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_month_dd' )) : '';
 
-			$SQL .= ! empty( $elf_month ) ? ' AND ' . EEM_Datetime::table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $elf_month )) . '" AND ' . EEM_Datetime::table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $elf_month )) . '" ' : '';
+			$SQL .= ! empty( $elf_month ) ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $elf_month )) . '" AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $elf_month )) . '" ' : '';
 
 		}
 		return $SQL;
@@ -242,7 +242,7 @@ class EED_Event_List  extends EED_Module {
 	public function posts_orderby( $SQL ) {
 		global $wpdb, $wp_query;
 		if ( $wp_query->is_main_query() ) {			
-			$SQL = ' ' . EEM_Datetime::table() . '.DTT_EVT_start ASC ';
+			$SQL = ' ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ASC ';
 		}
 		return $SQL;
 	}

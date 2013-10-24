@@ -82,7 +82,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
 				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),
-				'PRC_row' => new EE_Integer_Field('PRC_row', 'Order of how prices are displayed', false, 1 ),
 				'PRC_parent' => new EE_Integer_Field('PRC_parent', __('Indicates what PRC_ID is the parent of this PRC_ID'), true, 0 )
 			)
 		);
@@ -159,29 +158,6 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				),
 			'order_by'=>$this->_order_by_array_for_get_all_method()
 		));
-	}
-
-
-
-	/**
-	 * 		retreive all prices that are member prices
-	 *
-	 * 		@access		public
-	 * 		@return 		EE_Price[]
-	 */
-	public function get_all_prices_that_are_member_prices() {
-		return $this->get_all(array(array('Price_Type.PRT_is_member' => TRUE )));
-	}
-
-	
-	/**
-	 * 		retreive all prices that are member prices
-	 *
-	 * 		@access		public
-	 * 		@return 		EE_Price[]
-	 */
-	public function get_all_prices_that_are_not_member_prices() {
-		return $this->get_all(array(array('Price_Type.PRT_is_member' => FALSE )));
 	}
 
 

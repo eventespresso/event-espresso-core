@@ -52,7 +52,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->page_label = __('Transactions', 'event_espresso');
 		$this->_admin_base_url = TXN_ADMIN_URL;
 		$this->_admin_base_path = TXN_ADMIN;
-		$this->_admin_page_title = $this->page_label;
 	}
 
 
@@ -75,6 +74,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	protected function  _define_page_props() {
+		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
 				'add' => __('Add New Transaction', 'event_espresso'),
@@ -174,8 +174,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
-
-
 
 
 

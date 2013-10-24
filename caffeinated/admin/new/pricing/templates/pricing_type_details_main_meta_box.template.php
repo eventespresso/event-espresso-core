@@ -22,23 +22,6 @@
 					<p class="description"><?php _e('A name for this Price Type.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
-			
-			<tr>
-				<th>
-					<label><?php _e('Apply to Members Only', 'event_espresso'); ?></label>
-				</th>
-				<td>
-					<?php $yes_checked = $price_type->is_member() ? ' checked="checked"' : ''; ?>
-					<label style="margin-right:15px;"><input type="radio" name="PRT_is_member" value="1"<?php echo $yes_checked;?> style="margin-right:5px;">
-						<?php _e('Yes', 'event_espresso');?>
-					</label>
-					<?php $no_checked = $price_type->is_member() ? '' : ' checked="checked"'; ?>
-					<label style="margin-right:15px;"><input type="radio" name="PRT_is_member" value="0"<?php echo $no_checked;?> style="margin-right:5px;">
-						<?php _e('No', 'event_espresso');?>
-					</label>
-					<p class="description"><?php _e('Whether this Price Type will <b>only</b> be available to members that are logged into the site.', 'event_espresso'); ?></p>
-				</td>
-			</tr>
 
 			<tr>
 				<th>

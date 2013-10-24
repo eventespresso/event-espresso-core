@@ -57,8 +57,8 @@ class EEM_CPT_Base extends EEM_Base{
 	 * @access public
 	 * @return string
 	 */
-	public static function meta_table() {
-		$meta_table = static::instance()->_get_other_tables();
+	public function meta_table() {
+		$meta_table = $this->_get_other_tables();
 		$meta_table = reset( $meta_table );
 		return $meta_table instanceof EE_Secondary_Table ? $meta_table->get_table_name() : NULL;
 	}

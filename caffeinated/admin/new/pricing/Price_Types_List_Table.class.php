@@ -59,7 +59,6 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 				'name' => __('Name', 'event_espresso'),
 				'base_type' => '<div class="jst-cntr">' . __('Base Type', 'event_espresso') . '</div>',
-				'member' => '<div class="jst-cntr">' . __('Members', 'event_espresso') . '<br/>' . __('Only?', 'event_espresso') . '</div>',
 				'percent' => '<div class="jst-cntr">' . __('Applied', 'event_espresso') . '<br/>' . __('as ', 'event_espresso') . '<span class="big-text">' . __('%', 'event_espresso') . '</span>' . __(' or ', 'event_espresso') . '<span class="big-text">' . __('$', 'event_espresso') . '</span></div>',
 				'order' => '<div class="jst-cntr">' . __('Order of', 'event_espresso') . '<br/>' . __('Application', 'event_espresso') . '</div>'
 			);
@@ -134,14 +133,6 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 										/* $2%s */ $item->ID(),
 										/* $3%s */ $this->row_actions($actions)
 		);
-	}
-
-
-
-
-
-	function column_member($item) {
-		return '<div class="jst-cntr">' . ( $item->is_member() ? 'Yes' : '' ) . '</div>';
 	}
 
 

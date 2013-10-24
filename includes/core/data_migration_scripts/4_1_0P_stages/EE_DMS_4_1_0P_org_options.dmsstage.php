@@ -98,7 +98,7 @@ Cli'... (length=607)
  * 
  * 
  * 
- * @todo: add surcharges back in
+ * @todo: inform clients that messages have COMPLETELY changed in 4.1; themeroller isn't in there; event list page is no more;
  */
 class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 
@@ -142,99 +142,36 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'organization_city': 
 			  $c->organization->city = $value;break;
 		  case 'organization_state': 
-			  $state_id = $this->get_migration_script()->get_or_create_state($value);
+			  $state = $this->get_migration_script()->get_or_create_state($value);
+			  $state_id = $state['STA_ID'];
 			  $c->organization->STA_ID = $state_id;break;
 		  case 'organization_zip': 
 			  $c->organization->zip = $value;break;
 		  case 'contact_email': 
 			  $c->organization->email;break;
-		  case 'default_mail': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'payment_subject': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'payment_message': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'message': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
 		  case 'default_payment_status': 
 			  $c->registration->default_STS_ID =  $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID($value);break;
 		  case 'organization_country': 
 			  $c->organization->CNT_ISO = $this->get_migration_script()->get_iso_from_3_1_country_id($value);break;
 		  case 'currency_symbol': 
 			  $c->currency->sign = $value;break;
-		  case 'expire_on_registration_end': 
-			    //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'email_before_payment': 
-			  //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'email_fancy_headers': 
-			    //@todo: this should probably be handled by messages migration
-			  break;
-		  case 'enable_default_style': 
-			  //?
-			  break;
-		  case 'event_ssl_active': 
-			  //?
-			  break;
-		  case 'selected_style': 
-			  //?
-			  break;
 		  case 'show_pending_payment_options': 
 			  $c->registration->show_pending_payment_options = 'Y' == $value;break;
-		  case 'show_reg_footer': 
-			  //?
-			  break;
-		  case 'skip_confirmation_page': 
-			  //?
-			  break;
-		  case 'allow_mer_discounts': 
-			  //N/A 
-			  break;
-		  case 'allow_mer_vouchers': 
-			  //N/A
-			  break;
-		  case 'display_short_description_in_event_list': 
-			  //?
-			  break;
-		  case 'display_description_on_multi_reg_page': 
-			  //N/A 
-			  break;
-		  case 'display_address_in_event_list': 
-			  //? 
-			  break;
 		  case 'display_address_in_regform': 
 			  $c->template_settings->display_address_in_regform = 'Y' == $value;break;
-		  case 'use_custom_post_types': 
-			  //?
-			  break;
-		  case 'display_ical_download': 
-			  //?
-			  break;
-		  case 'display_featured_image':
-			  //?
-			  break;
-		  case 'themeroller': 
-			  //?
-			  break;
 		  case 'default_logo_url': 
 			  $c->organization->logo_url = $value;break;
-		  case 'event_page_id': 
-			  //converts to /events by default
-			  break;
 		  case 'return_url': 
+			  //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
+			  //to ESPRESSO_THANK_YOU
+			  $thank_you_page_post = get_post($value);
+			  $thank_you_page_post->post_content = str_replace("[ESPRESSO_PAYMENTS]","[ESPRESSO_THANK_YOU]",$thank_you_page_post->post_content);
+			  wp_update_post($thank_you_page_post);
 			  $c->core->thank_you_page_id = $value;break;
 		  case 'cancel_return': 
 			  $c->core->cancel_page_id = $value;break;
 		  case 'notify_url': 
 			  $c->core->txn_page_id = $value;break;
-		  case 'events_in_dasboard': 
-			  //?
-			  break;
 		  case 'use_captcha': 
 			  $c->registration->use_captcha = $value;break;
 		  case 'recaptcha_publickey': 
@@ -248,22 +185,17 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'recaptcha_language': 
 			  $c->registration->recaptcha_language = $value;break;
 		  case 'espresso_dashboard_widget': 
-			  //?
-			  break;
+			  $c->admin->use_dashboard_widget = $value; break;
 		  case 'use_attendee_pre_approval': 
 			  $c->registration->use_attendee_pre_approval = $value; break;
 		  case 'use_personnel_manager': 
-			  //?
-			  break;
+			  $c->admin->use_personnel_manager = $value; break;
 		  case 'use_event_timezones': 
-			  //?
-			  break;
+			  $c->admin->use_event_timezones = $value; break;
 		  case 'full_logging': 
-			  //?
-			  break;
+			  $c->admin->use_full_logging = $value;break;
 		  case 'affiliate_id': 
-			  //?
-			  break;
+			  $c->admin->affiliate_id = $value;break;
 		  case 'site_license_key': 
 			  $c->core->site_license_key = $value;break;
 		  default:
@@ -297,7 +229,6 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 			'PRC_overrides'=>false,
 			'PRC_order'=>100,
 			'PRC_deleted'=>false,
-			'PRC_row'=>0,
 			'PRC_parent'=>null
 		
 		);
@@ -309,7 +240,6 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 			'%d',//PRC_overrides
 			'%d',//PRC_order
 			'%d',//PRC_deleted
-			'%d',//PRC_row
 			'%d',//PRC_parent
 		);
 		$price_table = $wpdb->prefix."esp_price";

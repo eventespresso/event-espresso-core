@@ -60,6 +60,11 @@ final class EE_Config {
 
 	/**
 	 *
+	 * @var EE_Admin_Config
+	 */
+	public $admin;
+	/**
+	 *
 	 * @var EE_Organization_Config
 	 */
 	public $organization;

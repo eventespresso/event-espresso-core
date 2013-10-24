@@ -722,14 +722,14 @@ class EEH_Activation {
 	public static function insert_default_status_codes() {
 
 		global $wpdb;
-		$table = $wpdb->get_var("SHOW TABLES LIKE '" . EEM_Status::table() . "'");
+		$table = $wpdb->get_var("SHOW TABLES LIKE '" . EEM_Status::instance()->table() . "'");
 
-		if ( $table == EEM_Status::table()) {
+		if ( $table == EEM_Status::instance()->table()) {
 
-			$SQL = "DELETE FROM " . EEM_Status::table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
+			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPN', 'RCN', 'RAP', 'RNA', 'TIN', 'TPN', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 			$wpdb->query($SQL);
 
-			$SQL = "INSERT INTO " . EEM_Status::table() . " 
+			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . " 
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
 					('ACT', 'ACTIVE', 'event', 0, NULL, 1),
 					('NAC', 'NOT_ACTIVE', 'event', 0, NULL, 0),

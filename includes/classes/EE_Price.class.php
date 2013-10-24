@@ -101,13 +101,6 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 
 
 
-	/**
-	 * Order that this price is displayed in the edit ui
-	 * @var integer
-	 */
-	protected $_PRC_row = 1;
-
-
 
 
 	/**
@@ -299,16 +292,6 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 	}
 
 
-
-
-	/**
-	 * get display order
-	 * @access public
-	 * @return int
-	 */
-	public function row() {
-		return $this->get('PRC_row');
-	}
 
 
 	/**

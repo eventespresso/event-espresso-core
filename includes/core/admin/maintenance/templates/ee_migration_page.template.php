@@ -76,7 +76,7 @@
 	</div>
 	<?php if ($show_migration_progress){?>
 	<div id='migration-monitor' <?php echo $show_backup_db_text ? "style='display:none'" : ''?>>
-		<div id='migration-start-border'><button id='start-migration' class='button'><?php echo $show_continue_current_migration_script ? sprintf(__("Continue Migration %s", "event_espresso"),array_shift($script_names)) : sprintf(__("Start Migration %s", "event_espresso"),array_shift($script_names));?></button></div>
+		<div id='migration-start-border'><button id='start-migration' class='button-primary'><?php echo $show_continue_current_migration_script ? sprintf(__("Continue Migration %s", "event_espresso"),array_shift($script_names)) : sprintf(__("Start Migration %s", "event_espresso"),array_shift($script_names));?></button></div>
 		<div id='progress-area'>
 			<div class="progress-responsive">
 				<figure>
@@ -114,7 +114,7 @@
 		); 
 	?>
 		<p class='description'><?php _e("Frontend Maintenance might be handy if you want to debug something on the frontend of your website before allowing non-administrators to see.", "event_espresso");?></p>
-		<input type='submit' value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
+		<input type='submit' class="button-primary" value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
 	</form>
 	<?php } ?>
 	
