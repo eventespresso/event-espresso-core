@@ -1416,7 +1416,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_filter('FHEE_load_joyride', '__return_true');
 
 		//script for sorting tables
-		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
 		wp_register_script( 'ee-parse-uri', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 		//and parsing associative serialized form elements
