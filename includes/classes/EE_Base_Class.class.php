@@ -1309,7 +1309,7 @@ class EE_Base_Class{
 		$query_params  = array(array(
 			'EXM_key'=>$meta_key,
 			'OBJ_ID'=>$this->ID(),
-			'EXM_type'=>$this->_get_model_classname(get_class($this))));
+			'EXM_type'=>$this->get_model()->get_this_model_name()));
 		if($previous_value !== NULL){
 			$query_params[0]['EXM_value'] = $meta_value;
 		}
@@ -1341,7 +1341,7 @@ class EE_Base_Class{
 			'EXM_key'=>$meta_key,
 			'EXM_value'=>$meta_value,
 			'OBJ_ID'=>$this->ID(),
-			'EXM_type'=>$this->_get_model_classname(get_class($this))));
+			'EXM_type'=>$this->get_model()->get_this_model_name()));
 		$new_extra_meta->save();
 		return true;
 	}
@@ -1357,7 +1357,7 @@ class EE_Base_Class{
 		$query_params  = array(array(
 			'EXM_key'=>$meta_key,
 			'OBJ_ID'=>$this->ID(),
-			'EXM_type'=>$this->_get_model_classname(get_class($this))));
+			'EXM_type'=>$this->get_model()->get_this_model_name()));
 		if($meta_value !== NULL){
 			$query_params[0]['EXM_value'] = $meta_value;
 		}
@@ -1382,7 +1382,7 @@ class EE_Base_Class{
 		}
 		
 		if($result){
-			return $result;
+			return $result->value();
 		}else{
 			return $default;
 		}
