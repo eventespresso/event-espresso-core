@@ -833,8 +833,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		if ( $this->EE->REQ->is_set( 'qstn' )) {
 			// loop through post data and sanitize all elements
-			array_walk_recursive( $this->EE->REQ->get( 'qstn' ), array( $this, 'sanitize_text_field_for_array_walk' ));
-			$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', $this->EE->REQ->get( 'qstn' ));			
+//			$valid_data = array();
+//			foreach($this->EE->REQ->get('qstn') as $key=> $value){
+//				$valid_data[sanitize_text_field($key)] = sanitize_text_field($value);
+//			}
+//			$qstn = $this->EE->REQ->get( 'qstn' );
+//			array_walk_recursive( $qstn, array( $this, 'sanitize_text_field_for_array_walk' ));
+//			$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', $this->EE->REQ->get( 'qstn' ));			
+			
+			if ( $this->EE->REQ->is_set( 'qstn' )) {
+				$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', $this->EE->REQ->get( 'qstn' ));			
+				// loop through post data and sanitize all elements
+				array_walk_recursive( $valid_data, array( $this, 'sanitize_text_field_for_array_walk' ));
+			}
 		}
 
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
