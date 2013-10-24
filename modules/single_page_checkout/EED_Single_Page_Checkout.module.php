@@ -614,7 +614,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 				} 
 
-				$event_queue['sub_total'] = EEH_Template::format_currency( $this->EE->CART->get_cart_total_before_tax() );
 				
 				$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
 				$this->EE->SSN->update();
@@ -626,28 +625,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 
 		$event_queue['empty_msg'] = __( 'Their appears to be nothing in your Event Queue.', 'event_espresso' );
-		$grand_total = $this->EE->CART->get_cart_grand_total();
 
 		// PRE APPROVAL
 		$template_args['events_requiring_pre_approval'] = '';
-		//  do we have any events that require it ?
-//		if (!empty($events_requiring_pre_approval)) {
-//
-//			// echo printr( $events_requiring_pre_approval, '$events_requiring_pre_approval' );
-//			// cycle through array of events requiring pre approval
-//			foreach ($events_requiring_pre_approval as $cart_type => $cart_contents) {
-//				foreach ($cart_contents as $items) {
-//					foreach ($items as $line_item_id => $item) {
-//						// we will subtract events that require pre-approval from the event queue totals since these will not be getting purchased right now
-//						//$total_items = $total_items - $item['qty'];
-//						$grand_total = $grand_total - $item['ticket_price'];
-//						$template_args['events_requiring_pre_approval'] .= '<li>' . $item['name'] . '</li>';
-//					}
-//				}
-//			}
-//			$template_args['events_requiring_pre_approval'] = rtrim($template_args['events_requiring_pre_approval'], ', ');
-//		}
-
 
 		//  GOT COUPONS ?
 		$template_args['events_that_use_coupon_codes'] = '';
@@ -664,13 +644,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		d($additional_event_attendees);
 		$template_args['additional_event_attendees'] = $additional_event_attendees;
 
-		$template_args['payment_required'] = $grand_total > 0 ? TRUE : FALSE;
-		$template_args['sub_total'] = EEH_Template::format_currency( $grand_total );
-
-		$template_args['taxes'] = EE_Taxes::calculate_taxes( $grand_total );
+		$grand_total = $this->EE->CART->get_cart_grand_total();
 		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
-
 		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
+		
+		$cart_total_before_tax = $this->EE->CART->get_cart_total_before_tax();
+		$template_args['payment_required'] = $cart_total_before_tax > 0 ? TRUE : FALSE;
+//		$event_queue['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
+		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
+
+		
+//		$template_args['taxes'] = EE_Taxes::calculate_taxes( $grand_total );
+		$template_args['taxes'] = $this->EE->CART->get_taxes_line_item()->children();
+		
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 
 //	d( $event_queue );
@@ -730,7 +716,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// loop through steps
 		while ( $reg_step_details = current( self::$_reg_steps )) {
 			$reg_step = key( self::$_reg_steps );
-			$edit_lnk_class = $this->_current_step == $reg_step ? '' : ' hidden';
+			$edit_lnk_class = $this->_current_step == $reg_step ? ' hidden' : '';
 			$edit_lnk_url = add_query_arg( array( 'ee' => 'register', 'step' => $reg_step_details['display_func'] ), $this->_reg_page_base_url );
 			$step_dv_class = $this->_current_step == $reg_step ? '' : ' hidden';
 			$reg_step_form_url = add_query_arg( array( 'ee' => 'register', 'step' => $reg_step_details['process_func'] ), $this->_reg_page_base_url );
@@ -1536,7 +1522,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$response = $this->EE->LIB->EEM_Gateways->process_payment_start( $this->EE->CART->get_grand_total(), $this->_transaction );
 			$this->_thank_you_page_url = $response['forward_url'];
 			if ( isset( $response['msg']['success'] )) {
-				$success_msg = $response['msg']['success'];
+				$response_data = array(
+						'success' => $response['msg']['success'],
+						'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
+				);
+				echo json_encode($response_data);
+				die();
 			} else {
 				$error_msg = $response['msg']['error'];
 			}
@@ -1551,31 +1542,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 	}
 
-
-
-
-
-	
-	/**
-	 * 		send reg step 3 ajax response
-	 *
-	 * 		@access 		private
-	 * 		@param 		string 		$success_msg
-	 * 		@return 		JSON
-	 */
-	private function _send_finalize_registration_ajax_response($args, $success_msg) {
-
-		// Sidney is watching me...   { : \
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		$response_data = array(
-				'success' => $success_msg,
-				'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
-		);
-
-		echo json_encode($response_data);
-		// to be... or...
-		die();
-	}
 
 
 

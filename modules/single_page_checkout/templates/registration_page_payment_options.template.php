@@ -2,7 +2,7 @@
 
 	<h2 id="spco-payment_options-hdr" class="spco-step-title-hdr">
 		<?php echo sprintf( __('Step %d -  Payment Options', 'event_espresso'), $step_nmbr ); ?>
-		<a id="spco-edit-payment_options-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
+		<a id="spco-edit-payment_options-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="payment_options"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 
 	<div id="spco-payment_options-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
@@ -62,14 +62,15 @@
 		</div>
 
 <?php if ( $taxes ) {
+	d( $taxes );
 				foreach ( $taxes as $tax ){
-?>
+/*?>
 		<div class="reg-page-totals-spn">
 			<span class="lt-grey-text"><?php echo $tax['percent'] . '% ' . $tax['name'];?></span>
 			<span class="reg-page-total-spn"><?php echo$tax['amount'];?></span>
 		</div>
 
-<?php
+<?php*/
 				}
 			}
 ?>
