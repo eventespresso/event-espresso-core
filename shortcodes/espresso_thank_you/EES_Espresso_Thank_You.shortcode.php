@@ -128,23 +128,21 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			}
 			
 			$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'2', 'e_reg_url_link'=>$this->EE->REQ->get( 'e_reg_url_link' )), get_permalink( $this->EE->CFG->core->reg_page_id ));
-			$txn_details = $this->_current_txn->details();
 			
-			$template_args['gateway_content'] = '';
-			if( $txn_details && array_key_exists( 'gateway',$txn_details )){			
-				//create a hackey payment object, but dont save it
-				$gateway_name = $txn_details['gateway'];
-				$payment = EE_Payment::new_instance( array(
-					'TXN_ID'=>$this->_current_txn->ID(), 
-					'STS_ID'=>EEM_Payment::status_id_pending, 
-					'PAY_timestamp'=>current_time('timestamp'), 
-					'PAY_amount'=>$this->_current_txn->total(), 
-					'PAY_gateway'=>$gateway_name
-				));
-			
-				$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
+			$template_args['gateway_content'] = '';			
+			//create a hackey payment object, but dont save it
+			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));
+			$payment = EE_Payment::new_instance( array(
+				'TXN_ID'=>$this->_current_txn->ID(), 
+				'STS_ID'=>EEM_Payment::status_id_pending, 
+				'PAY_timestamp'=>current_time('timestamp'), 
+				'PAY_amount'=>$this->_current_txn->total(), 
+				'PAY_gateway'=>$gateway_name
+			));
 
-			} 
+			$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
+
+			
 			
 			$this->EE->REQ->add_output( EEH_Template::display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));			
 		}

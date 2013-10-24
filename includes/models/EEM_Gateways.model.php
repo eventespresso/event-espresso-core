@@ -788,12 +788,13 @@ Class EEM_Gateways {
 	 */
 	public function process_payment_start(EE_Line_Item $line_item, $transaction = null) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		$return_page_url = $this->_get_return_page_url();
+		if( !$transaction){
+			$transaction = $line_item->transaction();
+		}
+		$return_page_url = $this->_get_return_page_url($transaction);
 		// free event?
 		if ( ! $line_item->total()) {
-			if( !$transaction){
-				$transaction = $line_item->transaction();
-			}
+			
 			$transaction->set_status(EEM_Transaction::complete_status_code);
 			$transaction->save();
 			$response = array(
@@ -824,22 +825,17 @@ Class EEM_Gateways {
 	 * 		get thank you page url
 	 *
 	 * 		@access 		public
+	 *		@param EE_Transaction $transaction
 	 * 		@return 		void
 	 */
-	private function _get_return_page_url() {
+	private function _get_return_page_url($transaction) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//get thank you page url
 		$return_page_url = rtrim( get_permalink( $this->EE->CFG->core->thank_you_page_id ), '/' );
-		$session_data = $this->EE->SSN->get_session_data();
-		if ( is_array( $session_data['registration'] )) {
-			// grab first item in registration array
-			$a_current_registration = current( $session_data['registration'] );
-			// is it an EE_Registration object ?
-			if ( ! ( $a_current_registration instanceof EE_Registration )) {
-				// No??? We must go deeper!!!
-				$a_current_registration = current( $a_current_registration );
-			}			
-			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$a_current_registration->reg_url_link() ), $return_page_url );
+		if ( $transaction && $transaction instanceof EE_Transaction && $reg = $transaction->primary_registration()) {		
+			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$reg->reg_url_link() ), $return_page_url );
+		}else{
+			throw new EE_Error(sprintf(__("Cant get return page because no current transaction is specified", "event_espresso")));
 		}
 		return $return_page_url;
 	}

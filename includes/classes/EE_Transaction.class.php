@@ -84,17 +84,6 @@ class EE_Transaction extends EE_Base_Class{
 	
 	
 	
-    /**
-    *	Transaction Details
-	* 
-    *	notes regarding the transaction
-	*  
-	*	@access	protected
-    *	@var string	
-    */
-	protected $_TXN_details = NULL;	
-	
-	
 	
     /**
     *	session data
@@ -256,19 +245,6 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-	/**
-	*		Set transaction total
-	* 
-	* 		@access		public		
-	*		@param		string		$details 		notes regarding the transaction
-	*/	
-	public function set_details( $details = FALSE ) {
-		return $this->set('TXN_details',$details);
-	}
-
-
-
-
 
 
 	/**
@@ -369,17 +345,6 @@ class EE_Transaction extends EE_Base_Class{
 	*/	
 	public function status_ID() {
 		return $this->get('STS_ID');
-	}
-
-
-
-
-	/**
-	*		get Transaction Details
-	* 		@access		public
-	*/	
-	public function details() {
-		return $this->get('TXN_details');
 	}
 
 
