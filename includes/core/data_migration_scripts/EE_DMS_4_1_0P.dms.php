@@ -209,7 +209,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 				LIN_is_taxable tinyint(1) DEFAULT 0,
 				LIN_order int DEFAULT 0,
 				LIN_parent int DEFAULT 0,
-				LIN_type varchar(10) NOT NULL,
+				LIN_type varchar(25) NOT NULL,
 				LIN_total decimal(10,3) DEFAULT NULL,
 				LIN_quantity int(10) DEFAULT NULL,
 				OBJ_ID int(11) DEFAULT NULL,
