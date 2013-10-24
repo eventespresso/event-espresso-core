@@ -363,7 +363,9 @@
 			$('#spco-'+step+'-noheader').val('true');
 			$('#spco-'+step+'-action').attr( 'name', 'action' );		
 			var form_data = $('#spco-registration-'+step+'-frm').serialize();
-			form_data.ee_front_ajax = true;
+			form_data += '&ee_front_ajax=1';
+			form_data += '&step=' + step;
+			
 //			console.log( JSON.stringify( 'form_data: ' + form_data, null, 4 ));
 
 			$.ajax({
@@ -375,11 +377,11 @@
 					do_before_event_queue_ajax();
 				}, 
 				success: function( response ){	
-					console.log( JSON.stringify( 'step: ' + step, null, 4 ));
-					console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ));
-					console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
-					console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
-					console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
+//					console.log( JSON.stringify( 'step: ' + step, null, 4 ));
+//					console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ));
+//					console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
+//					console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
+//					console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
 					if ( response.return_data != undefined ) {
 						process_return_data( next_step, response );
 					} else {
