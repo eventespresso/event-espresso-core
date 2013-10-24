@@ -66,6 +66,12 @@ class EE_Line_Item extends EE_Base_Class{
 	 */
 	protected $_LIN_order = NULL;
 	/**
+	 * The parent line item's ID. (By "parent", we mean that THIS line item contributes towards
+	 * the total on the "parent's" total)
+	 * @var int
+	 */
+	protected $_LIN_parent = NULL;
+	/**
 	 *
 	 * @var $_LIN_type one of line-item, sub-item, sub-total, tax, total. mostly handy for display
 	 */
