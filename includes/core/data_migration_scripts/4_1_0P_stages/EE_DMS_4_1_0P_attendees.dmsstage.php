@@ -343,7 +343,7 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$STS_ID = isset($txn_status_mapping[$old_attendee['payment_status']]) ? $txn_status_mapping[$old_attendee['payment_status']] : 'TIN';
 			$cols_n_values = array(
 				'TXN_timestamp'=>$old_attendee['date'],
-				'TXN_total'=>floatval($old_attendee['cost_total']),
+				'TXN_total'=>floatval($old_attendee['total_cost']),
 				'TXN_paid'=>floatval($old_attendee['amount_pd']),
 				'STS_ID'=>$STS_ID,
 				'TXN_hash_salt'=>$old_attendee['hashSalt']
@@ -481,9 +481,7 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 		//start running queries, widening search each time by removing a condition
 		do{
 			$full_query = $select_and_join_part." WHERE ".implode(" AND ",$conditions)." LIMIT 1";
-			echo "running query:'$full_query'<br>";
 			$ticket_id_found = $wpdb->get_var($full_query);
-			echo "result:$ticket_id_found<br>";
 			array_shift($conditions);
 		}while( ! $ticket_id_found && $conditions);
 		return $ticket_id_found;

@@ -274,7 +274,7 @@ class EE_DMS_4_1_0P_prices extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		$event_row = $this->_get_event_row($old_price_row['event_id']);
 		if($old_price_row['surcharge_type'] == 'flat_rate'){
-			$final_ticket_price = floatval($old_price_row['event_cost']) - floatval($old_price_row['surcharge']);
+			$final_ticket_price = floatval($old_price_row['event_cost']) + floatval($old_price_row['surcharge']);
 		}else{//percent surcharge
 			$final_ticket_price = floatval($old_price_row['event_cost']) * (1 + 100*floatval($old_price_row['surcharge']));
 		}
