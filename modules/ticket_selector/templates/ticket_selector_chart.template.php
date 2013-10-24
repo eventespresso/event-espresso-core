@@ -51,7 +51,7 @@
 						rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
 						title="<?php _e( 'click to show additional ticket details', 'event_espresso' ); ?>"						
 					>
-						<?php echo sprintf( __( 'show%sdetails +', 'event_espresso' ), '&nbsp;' ); ?>						
+						<?php echo sprintf( __( 'show%1$sdetails%1$s+', 'event_espresso' ), '&nbsp;' ); ?>						
 					</a>
 					<a 
 						id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
@@ -60,7 +60,7 @@
 						title="<?php _e( 'click to hide additional ticket details', 'event_espresso' ); ?>"
 						style="display:none;"
 					>
-						<?php _e( 'hide details -', 'event_espresso' ); ?>
+						<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 					</a>
 					<?php } ?>
 				</td>	
@@ -79,7 +79,8 @@
 						// but... we also want to restrict the number of tickets by the ticket max setting
 						$max_atndz = $ticket->max() > 0 ? $ticket->max() : $max_atndz;
 						// and we also want to restrict the minimum number of tickets by the ticket min setting
-						$min_atndz = $ticket->min() > 0 ? $ticket->min() : 1;					
+						$min_atndz = $ticket->min() > 0 ? $ticket->min() : 1;
+
 				?>
 					<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
 						<option value="0">&nbsp;0&nbsp;</option>
