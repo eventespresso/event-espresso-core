@@ -171,7 +171,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	 * @param EE_Line_Item $line_item
 	 * @return boolean
 	 */
-	public function process_payment_start(EE_Line_Item $total_line_item) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction=null) {
 		$session_data = $this->EE->SSN->get_session_data();
 		$billing_info = $session_data['billing_info'];
 
@@ -187,8 +187,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			}
 
 			$item_num = 1;
-			/* @var $transaction EE_Transaction */
-			$transaction = $total_line_item->transaction();
+			if(!$transaction){
+				$transaction = $total_line_item->transaction();
+			}
 			$primary_registrant = $transaction->primary_registration();
 			foreach ($total_line_item->get_items() as $line_item) {
 				$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');

@@ -345,7 +345,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function process_payment_start(EE_Line_Item $total_line_item) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
 
 		$session_data = $this->EE->SSN->get_session_data();
 		$paypal_settings = $this->_payment_settings;
@@ -356,7 +356,9 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$item_num = 1;
 		
 		/* @var $transaction EE_Transaction */
-		$transaction = $total_line_item->transaction();
+		if( ! $transaction){
+			$transaction = $total_line_item->transaction();
+		}
 		foreach($total_line_item->get_items() as $line_item){
 			
 			$this->addField('item_name_' . $item_num, $line_item->name());

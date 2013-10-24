@@ -783,24 +783,19 @@ Class EEM_Gateways {
 	 * 		Processes the final step of SPCO in order to process payments
 	 * 		@access public
 	* 		@param EE_Line_Item $total_line_item the line item whose total takes all other line items on this transaction into account
+	 *		@param EE_Transaction $transaction
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
-	public function process_payment_start(EE_Line_Item $line_item) {
+	public function process_payment_start(EE_Line_Item $line_item, $transaction = null) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$return_page_url = $this->_get_return_page_url();
 		// free event?
-		if (isset($_POST['reg-page-no-payment-required']) && absint($_POST['reg-page-no-payment-required']) == 1) {
-			// becuz this was a free event we need to generate some pseudo gateway results
-			$txn_results = array(
-					'approved' => TRUE,
-					'response_msg' => __('You\'re registration has been completed successfully.', 'event_espresso'),
-					'status' => 'Approved',
-					'details' => 'free event',
-					'amount' => 0.00,
-					'method' => 'none'
-			);
-
-			$this->EE->SSN->set_session_data( array( 'txn_results' => $txn_results ));
+		if ( ! $line_item->total()) {
+			if( !$transaction){
+				$transaction = $line_item->transaction();
+			}
+			$transaction->set_status(EEM_Transaction::complete_status_code);
+			$transaction->save();
 			$response = array(
 					'msg' => array('success'=>TRUE),
 					'forward_url' => $return_page_url
@@ -809,7 +804,7 @@ Class EEM_Gateways {
 		} else {
 			try{
 				$response = array(
-					'msg' => $this->selected_gateway_obj()->process_payment_start($line_item),
+					'msg' => $this->selected_gateway_obj()->process_payment_start($line_item,$transaction),
 					'forward_url' => $return_page_url
 				);
 			}catch(EE_Error $e){
