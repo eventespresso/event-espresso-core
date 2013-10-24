@@ -142,7 +142,8 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'organization_city': 
 			  $c->organization->city = $value;break;
 		  case 'organization_state': 
-			  $state_id = $this->get_migration_script()->get_or_create_state($value);
+			  $state = $this->get_migration_script()->get_or_create_state($value);
+			  $state_id = $state['STA_ID'];
 			  $c->organization->STA_ID = $state_id;break;
 		  case 'organization_zip': 
 			  $c->organization->zip = $value;break;
@@ -161,6 +162,11 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'default_logo_url': 
 			  $c->organization->logo_url = $value;break;
 		  case 'return_url': 
+			  //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
+			  //to ESPRESSO_THANK_YOU
+			  $thank_you_page_post = get_post($value);
+			  $thank_you_page_post->post_content = str_replace("[ESPRESSO_PAYMENTS]","[ESPRESSO_THANK_YOU]",$thank_you_page_post->post_content);
+			  wp_update_post($thank_you_page_post);
 			  $c->core->thank_you_page_id = $value;break;
 		  case 'cancel_return': 
 			  $c->core->cancel_page_id = $value;break;

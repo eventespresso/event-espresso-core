@@ -50,6 +50,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_1_0P_question_group_question(),
 			new EE_DMS_4_1_0P_event_question_group(),
 			new EE_DMS_4_1_0P_attendees(),
+			new EE_DMS_4_1_0P_answers()
 		);
 		parent::__construct();
 	}
