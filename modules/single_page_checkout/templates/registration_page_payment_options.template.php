@@ -62,7 +62,6 @@
 		</div>
 
 <?php if ( $taxes ) {
-	d( $taxes );
 				foreach ( $taxes as $tax ){
 /*?>
 		<div class="reg-page-totals-spn">
