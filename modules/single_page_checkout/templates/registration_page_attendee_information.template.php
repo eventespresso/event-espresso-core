@@ -3,7 +3,7 @@
 
 <h2 id="spco-attendee_information-hdr" class="spco-step-title-hdr">
 	<?php echo sprintf( __('Step %d -  Attendee Information', 'event_espresso'), $step_nmbr ); ?>
-	<a id="spco-edit-attendee_information-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>"><?php _e('edit', 'event_espresso'); ?></a>
+	<a id="spco-edit-attendee_information-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="attendee_information"><?php _e('edit', 'event_espresso'); ?></a>
 </h2>
 <?php do_action('after_spco-attendee_information-hdr')?>
 <div id="spco-attendee_information-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">

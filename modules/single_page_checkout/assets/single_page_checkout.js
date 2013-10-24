@@ -291,7 +291,7 @@
 
 
 	// go to step 1 via edit link
-	$('#single-page-checkout').on( 'spco-edit-step-lnk', 'click', function(e) {
+	$('#single-page-checkout').on( 'click', '.spco-edit-step-lnk', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var step = $(this).attr('rel');
@@ -302,7 +302,7 @@
 
 
 	// submit registraion form
-	$('.spco-next-step-btn').on( 'click', function(e) {	
+	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {	
 		e.preventDefault();
 		e.stopPropagation();
 		var step = $(this).attr('rel');
