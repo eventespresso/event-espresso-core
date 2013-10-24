@@ -1297,4 +1297,72 @@ class EE_Base_Class{
 	}
 	
 	
+	/**
+	 * Similar to insert_post_meta, adds a record in teh Extra_Meta model's table with the given key and value.
+	 * A $previous_value can be specified in case there are many meta rows with teh same key
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 * @param string $previous_value
+	 * @return int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+	 */
+	public function update_extra_meta($meta_key,$meta_value,$previous_value = NULL){
+		$query_params  = array(array(
+			'EXM_key'=>$meta_key,
+			'OBJ_ID'=>$this->ID(),
+			'EXM_type'=>$this->_get_model_classname(get_class($this))));
+		if($previous_value !== NULL){
+			$query_params[0]['EXM_value'] = $meta_value;
+		}
+		$records_updated = EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);
+		if( ! $records_updated){
+			return $this->insert_extra_meta($meta_key, $meta_value);
+		}else{
+			return $records_updated;
+		}
+	}
+	
+	/**
+	 * Adds a new extra meta record. If $unique is set to TRUE, we'll first double-check
+	 * no other extra meta for this model object have teh same key. Returns TRUE if the 
+	 * extra meta row was entered, false if not
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 * @param boolean $unique
+	 * @return boolean
+	 */
+	public function add_extra_meta($meta_key,$meta_value,$unique = false){
+		if($unique){
+			$existing_extra_meta = EEM_Extra_Meta::instance()->get_one(array(array('EXM_key'=>$meta_key,'OBJ_ID'=>$this->ID(),'EXM_type'=>$this->_get_model_classname(get_class($this)))));
+			if($existing_extra_meta){
+				return false;
+			}
+		}
+		$new_extra_meta = EE_Extra_Meta::new_instance(array(
+			'EXM_key'=>$meta_key,
+			'EXM_value'=>$meta_value,
+			'OBJ_ID'=>$this->ID(),
+			'EXM_type'=>$this->_get_model_classname(get_class($this))));
+		$new_extra_meta->save();
+		return true;
+	}
+	
+	/**
+	 * Deletes all the extra meta rows for this record as specified by key. If $meta_value 
+	 * is specified, only deletes extra meta records with that value.
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 * @return int number of extra meta rows deleted
+	 */
+	public function delete_extra_meta($meta_key,$meta_value = NULL){
+		$query_params  = array(array(
+			'EXM_key'=>$meta_key,
+			'OBJ_ID'=>$this->ID(),
+			'EXM_type'=>$this->_get_model_classname(get_class($this))));
+		if($meta_value !== NULL){
+			$query_params[0]['EXM_value'] = $meta_value;
+		}
+		$count_deleted = EEM_Extra_Meta::instance()->delete($query_params);
+		return $count_deleted;
+	}
+	
 }

@@ -556,24 +556,11 @@ abstract class EE_Gateway {
 			return false;
 		}
 		$transaction = $this->_TXN->ensure_is_obj($transaction);
-		
+		/* @var $transaction EE_transaction */
 		//now, if teh payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
 			$transaction->set_status(EEM_Transaction::open_status_code);
-			$legacy_txn_details = array(
-				'gateway' => $this->_gateway_name,
-				'approved' => FALSE,
-				'response_msg' => __('Your registration will be marked as complete once your payment is received.', 'event_espresso'),
-				'status' => 'Open',
-				'raw_response' => serialize($_REQUEST),
-				'amount' => 0.00,
-				'method' => 'Off-line',
-				'auth_code' => '',
-				'md5_hash' => '',
-				'invoice_number' => '',
-				'transaction_id' => ''
-			);
-			$transaction->set_details($legacy_txn_details);
+			$transaction->update_extra_meta('gateway', $this->_gateway_name);
 			$transaction->save();
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 		}else{
