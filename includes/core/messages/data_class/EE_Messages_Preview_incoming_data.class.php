@@ -274,7 +274,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'TXN_total' => $grand_total, //txn_total
 				'TXN_paid' => $grand_total, //txn_paid
 				'STS_ID' => 'PAP', //sts_id
-				'TXN_details' => 'Transaction was approved', //notes regarding transaction
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
 				'TXN_hash_salt' => NULL, //hash salt blank as well
 				'TXN_tax_data' => $this->taxes,

@@ -567,31 +567,7 @@ abstract class EE_Gateway {
 			$payment = $this->_PAY->ensure_is_obj($payment);
 			//ok, now process the transaction according to the payment
 			$transaction->update_based_on_payments();
-			
-			
-			//create the legacy transaction details. Really this data is a duplication of the 
-			//payment data, and should probably be removed as to avoid confusion
-			$payment_details = $payment->details();
-			$legacy_txn_details = array(
-				'gateway' => $payment->gateway(),
-				'approved' => $payment->STS_ID()==EEM_Payment::status_id_approved ? true : false,
-				'response_msg' => $payment->pretty_status(),
-				'status' => in_array($payment->STS_ID(),array(EEM_Payment::status_id_approved)) ? 'Completed' : 'Open',
-				'raw_response' => $payment_details,
-				'amount' => $payment->amount(),
-				'method' => 'CART', // TODO : can we capture the credit card type used for this from the gateway (ie: Visa, MC)? or set it to PayPal if applicable
-				'auth_code' => ($payment_details && array_key_exists('payer_id',$payment_details)) ? $payment_details['payer_id'] : '',
-				'md5_hash' => ($payment_details && array_key_exists('verify_sign',$payment_details)) ? $payment_details['verify_sign'] : '',
-				//'invoice_number' => sanitize_text_field($_POST['invoice_id']),
-				//'transaction_id' => sanitize_text_field($_POST['ipn_track_id'])
-			);
-			$transaction->set_details($legacy_txn_details);
-			//old code also set the hash_salt, added teh transaction to the session, and setted_tax_data.
-			//but I don't see either how those are necessary, or why they should be handled in the page's controller.
-			//the hash_salt doesn't seem to be used anywhere. 
-			//The tax data should be added on the thankyou page, not here, as this may be an IPN.
-			//updating teh transaction in the session should be done on the thank you page, as taht's where the session is always available.
-			$transaction->save();
+			$transaction->update_extra_meta('gateway', $this->_gateway_name);
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		}	
 		return true;

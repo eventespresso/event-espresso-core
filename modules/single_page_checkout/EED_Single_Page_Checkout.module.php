@@ -1184,7 +1184,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$success_msg = FALSE;
 		$error_msg = FALSE;
 		$continue_reg = TRUE;
-		$txn_details = array();
 
 		// check recaptcha
 		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
@@ -1247,7 +1246,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						'TXN_total' => $grand_total, 
 						'TXN_paid' => 0, 
 						'STS_ID' => $txn_status, 
-						'TXN_details' => NULL, 
 						'TXN_session_data' => $session, 
 						'TXN_hash_salt' => NULL, 
 						'TXN_tax_data' => array(

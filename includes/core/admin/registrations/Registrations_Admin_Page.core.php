@@ -1998,7 +1998,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'TXN_total' => $grand_total, 
 				'TXN_paid' => 0, 
 				'STS_ID' => $txn_status, 
-				'TXN_details' => NULL, 
 				'TXN_session_data' => $session, 
 				'TXN_hash_salt' => NULL, 
 				'TXN_tax_data' => array(

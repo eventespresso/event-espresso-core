@@ -22,7 +22,10 @@
  * ------------------------------------------------------------------------
  */
 class Transactions_Admin_Page extends EE_Admin_Page {
-
+	/**
+	 *
+	 * @var EE_Transaction
+	 */
 	private $_transaction;
 	private $_session;
 	private static $_txn_status;
@@ -406,9 +409,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_template_args['amount_due'] =  FALSE;
 		}
 
-		$txn_details = $this->_transaction->get('TXN_details');
+		$gateway = $this->_transaction->get_extra_meta('gateway', true, FALSE);
 
-		$this->_template_args['method_of_payment'] = ! empty( $txn_details['gateway'] ) ? $txn_details['gateway'] : FALSE;
+		$this->_template_args['method_of_payment'] = $gateway;
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		// link back to overview
 		$this->_template_args['txn_overview_url'] = ! empty ( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : TXN_ADMIN_URL;  
@@ -1037,7 +1040,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Ticket.TKT_description' => array( 'LIKE', $sstr ),
 				'Payment.PAY_method' => array('LIKE', $sstr),
 				'Payment.PAY_gateway' => array('LIKE', $sstr),
-				'TXN_details' => array( 'LIKE', $sstr ),
 				'TXN_session_data' => array( 'LIKE', $sstr )
 				);
 		}

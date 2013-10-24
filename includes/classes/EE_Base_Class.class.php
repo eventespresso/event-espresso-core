@@ -1365,4 +1365,28 @@ class EE_Base_Class{
 		return $count_deleted;
 	}
 	
+	/**
+	 * Gets the extra meta with the given meta key. If you specify "single" we just return 1, otherwise
+	 * an array of everything found. Requires that this model actually have a relation of type EE_Has_Many_Any_Relation.
+	 * You can specify $default is case you haven't found the extra meta
+	 * @param string $meta_key
+	 * @param boolean $single
+	 * @param mixed $default if we don't find anything, what should we return?
+	 * @return mixed single value if $single; array if ! $single
+	 */
+	public function get_extra_meta($meta_key,$single = FALSE,$default = NULL){
+		if($single){
+			$result = $this->get_first_related('Extra_Meta',array(array('EXM_key'=>$meta_key)));
+		}else{
+			$result =  $this->get_many_related('Extra_Meta',array(array('EXM_key'=>$meta_key)));
+		}
+		
+		if($result){
+			return $result;
+		}else{
+			return $default;
+		}
+		
+	}
+	
 }
