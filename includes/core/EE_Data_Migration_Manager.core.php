@@ -96,7 +96,7 @@ class EE_Data_Migration_Manager{
 		if( ! $this->_data_migrations_ran ){
 			//setup autoloaders for each of the scripts in there
 			$this->get_all_data_migration_scripts_available();
-			 $data_migrations_data = get_option(EE_Data_Migration_Manager::data_migrations_option_name);
+			 $data_migrations_data = get_option(EE_Data_Migration_Manager::data_migrations_option_name,array());
 			 $data_migrations_ran = array();
 			 //convert into data migration script classes where possible
 			 foreach($data_migrations_data as $version_string => $data_migration_data){
