@@ -584,12 +584,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*/	
 	public function tickets_remaining() {
 		// is there a reg limit set ?
-		if ( $this->_DTT_reg_limit < 0 ) {
+		if ( $this->_DTT_reg_limit < 1 ) {
 			// unlimited tickets available
 			return -1;
 		}
 		// tickets remaining availalbe for purchase
-		return $this->_DTT_reg_limit > $this->_DTT_sold ? $this->_DTT_reg_limit - $this->_DTT_sold : 0 ;
+		return $this->_DTT_reg_limit > $this->_DTT_sold ? $this->_DTT_reg_limit - $this->_DTT_sold : 0;
 	}
 
 
