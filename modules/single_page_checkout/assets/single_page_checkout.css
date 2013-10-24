@@ -219,6 +219,7 @@
 #spco-payment_options-dv .reg-page-payment-option-dv .vrt-cell { display: table-cell !important; vertical-align: middle; }
 
 
+
 #reg-page-select-other-gateway-lnk {
 	float:right; margin:2em 0 0; cursor:pointer;
 }
@@ -233,8 +234,9 @@
 #external-link-msg-pg { margin:0 0 4em; color:#ccc; font-size:.8em; text-align: center;; }
 #external-link-msg-pg img { position: relative; top:2px; }
 
+.reg-page-billing-info-dv p,
 .sandbox-panel {
-   padding: 10px; margin:0 0 2em; background-color: #FFFFE0; border:1px solid #E6DB55; border-radius: 2px;
+   padding: 1em; margin:0 0 2em; background-color: #FFFFE0; border:1px solid #E6DB55; border-radius: 2px;
 }
 
 .sandbox-panel .tbl-wrap {
