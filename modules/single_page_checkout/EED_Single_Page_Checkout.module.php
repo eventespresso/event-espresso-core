@@ -379,14 +379,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 	EE_Transaction object
 	 */
 	private function _initialize_transaction() {
-		// grab cart total
-		$TXN_total = $this->EE->CART->get_cart_grand_total();
 		// create new TXN
 		$transaction = EE_Transaction::new_instance( array( 
 				'TXN_timestamp' => current_time('mysql'),
-				'TXN_total' => $TXN_total, 
+				'TXN_total' => $this->EE->CART->get_cart_grand_total(), 
 				'TXN_paid' => 0, 
-				'STS_ID' => $TXN_total > 0 ? 'TIN' : 'TCM',
+				'STS_ID' => 'TIN',
 				'TXN_tax_data' => $this->EE->CART->get_applied_taxes()
 		));
 		return $transaction;
@@ -431,8 +429,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						$att_nmbr++;
 						$reg_url_link = $att_nmbr . '-' . $item->code();
 
-						$reg_code = $this->_transaction->ID() . '-' . $ticket->ID() . '-' . $att_nmbr . '-' . substr( $this->EE->SSN->id(), 0, 3 ) . ( absint( date( 'i' )));				
-						$reg_code = apply_filters( 'FHEE__SPCO__initialize_registrations__reg_code', $new_reg_code, $this->_transaction, $att_nmbr );
+//						$reg_code = $this->_transaction->ID() . '-' . $ticket->ID() . '-' . $att_nmbr . '-' . substr( $this->EE->SSN->id(), 0, 3 ) . ( absint( date( 'i' )));				
+//						$reg_code = apply_filters( 'FHEE__SPCO__initialize_registrations__reg_code', $reg_code, $this->_transaction, $att_nmbr );
 
 						// now create a new registration for the ticket				
 				 		$registration = EE_Registration::new_instance( array( 
@@ -443,7 +441,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'REG_date' => $this->_transaction->datetime(),
 							'REG_final_price' => $ticket->price(),
 							'REG_session' => $this->EE->SSN->id(),
-							'REG_code' => $reg_code,
+//							'REG_code' => $reg_code,
 							'REG_count' => $att_nmbr,
 							'REG_group_size' => $item->quantity(),
 							'REG_url_link'	=> $reg_url_link
@@ -856,7 +854,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				unset( $valid_data['primary_attendee'] );
 			}
 			
-			$this->EE->load_helper( 'Template' );
+			$this->EE->load_model( 'Attendee' );
+//			$this->EE->load_helper( 'Template' );
 			$attendee_properties = array( 'fname', 'lname', 'email', 'address', 'address2', 'city', 'state', 'country', 'zip', 'phone' );			
 			$states = EEM_State::instance()->get_all( array( 
 				array( 'Country.CNT_active'=>true, 'STA_active'=>true )
@@ -954,7 +953,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								'ATT_lname' => $attendee_data['ATT_lname'], 
 								'ATT_email' => $attendee_data['ATT_email']
 							);
-							$existing_attendee = $ATT->find_existing_attendee( $where_cols_n_values );
+							$existing_attendee = $this->EE->LIB->EEM_Attendee->find_existing_attendee( $where_cols_n_values );
 							// do we already have an existing record for this attendee ?
 							if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {						
 								// add relation to existing attendee
@@ -1524,8 +1523,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _process_finalize_registration() {
 		
-		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$success_msg = FALSE;
@@ -1552,20 +1549,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		if ($continue_reg) {
 
-			if (( $this->EE->CFG->registration->pending_counts_reg_limit && $success_msg !== FALSE ) || $transaction->status() == 'TCM' ) {
-			}
+			//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 			
-			 //save_new_cached_related_model_objs();
+			$this->_transaction->save_new_cached_related_model_objs();
+			$this->EE->CART->get_grand_total();
 
 			// attempt to perform transaction via payment gateway
-			do_action('AHEE__EE_Single_Page_Checkout__process_registration_step_3__before_gateway', $this );
-			$response = $this->EE->LIB->EEM_Gateways->process_payment_start();
+			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
+			$response = $this->EE->LIB->EEM_Gateways->process_payment_start( $this->_transaction );
 			$this->_thank_you_page_url = $response['forward_url'];
 			if ( isset( $response['msg']['success'] )) {
 				$success_msg = $response['msg']['success'];
 			} else {
 				$error_msg = $response['msg']['error'];
 			}
+			
+			if (( $this->EE->CFG->registration->pending_counts_reg_limit && $success_msg !== FALSE ) || $this->_transaction->status() == 'TCM' ) {
+			}
+			
 
 		}
 
