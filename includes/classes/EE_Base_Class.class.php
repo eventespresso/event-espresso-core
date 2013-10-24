@@ -1315,7 +1315,7 @@ class EE_Base_Class{
 		}
 		$records_updated = EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);
 		if( ! $records_updated){
-			return $this->insert_extra_meta($meta_key, $meta_value);
+			return $this->add_extra_meta($meta_key, $meta_value);
 		}else{
 			return $records_updated;
 		}
