@@ -362,7 +362,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 						'LIN_is_taxable'=>false,
 						'LIN_order'=>$order,
 						'LIN_total'=>0,
-						'LIN_type'=>  EEM_Line_Item::type_tax
+						'LIN_type'=>  EEM_Line_Item::type_tax,
+						'OBJ_type'=>'Price',
+						'OBJ_ID'=>$tax->ID()
 					)));
 				}
 			}
