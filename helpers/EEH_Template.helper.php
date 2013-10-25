@@ -78,7 +78,7 @@ class EEH_Template {
 	 * @param  string $CNT_ISO 2 letter ISO code for a country
 	 * @return string        the html output for the formatted money value
 	 */
-	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE ) {
+	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE, $cur_code_span_class = 'currency-code' ) {
 		// ensure amount was received
 		if ( is_null( $amount ) ) {
 			$msg = __( 'In order to format currency, an amount needs to be passed.', 'event_espresso' );
@@ -123,7 +123,7 @@ class EEH_Template {
 			// add currency sign
 			$amount = $mny->sign_b4 ? $mny->sign . $amount : $amount . $mny->sign;
 			// add currency code ?
-			$amount = $display_code ? $amount . ' (' . $mny->code . ')' : $amount;			
+			$amount = $display_code ? $amount . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount;			
 		}
 		// clean up vars
 		unset( $mny );
