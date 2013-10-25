@@ -3,7 +3,15 @@
 //Creates the invoice pdf
 class Invoice {
 
+	/**
+	 *
+	 * @var EE_Registration
+	 */
 	private $registration;
+	/**
+	 *
+	 * @var EE_Transaction
+	 */
 	private $transaction;
 	private $invoice_settings;
 	private $EE;
@@ -87,10 +95,10 @@ class Invoice {
 		$template_args['net_total'] = '';
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			//$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
-			$tax_data = $this->transaction->tax();
-			if(!empty($tax_data) && array_key_exists('taxes',$tax_data)){
-				foreach ($tax_data['taxes'] as $tax) {
-					$template_args['net_total'] .= $this->espressoInvoiceTotals( $tax['name'], $tax['amount']);
+			$tax_items = $this->transaction->tax_items();
+			if(!empty($tax_items) ){
+				foreach ($tax_items as $tax) {
+					$template_args['net_total'] .= $this->espressoInvoiceTotals( $tax->name(), $tax->total());
 				}
 			}
 						

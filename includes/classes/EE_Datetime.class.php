@@ -675,7 +675,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		return $this->get_many_related('Ticket', $query_params);
 	}
 
-
+	/**
+	 * 
+	 * @return EE_Event
+	 */
+	public function event(){
+		return $this->get_first_related('Event');
+	}
 
 
 
