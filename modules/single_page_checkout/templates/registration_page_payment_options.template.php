@@ -61,16 +61,15 @@
 			<span class="reg-page-total-spn"><?php echo$sub_total;?></span>
 		</div>
 
-<?php if ( $taxes ) {
-	d( $taxes );
+<?php 		if ( $taxes ) {
 				foreach ( $taxes as $tax ){
-/*?>
+?>
 		<div class="reg-page-totals-spn">
-			<span class="lt-grey-text"><?php echo $tax['percent'] . '% ' . $tax['name'];?></span>
-			<span class="reg-page-total-spn"><?php echo$tax['amount'];?></span>
+			<span class="lt-grey-text"><?php echo $tax->total() . '% ' . $tax->name();?></span>
+			<span class="reg-page-total-spn"><?php echo EEH_Template::format_currency( $tax->total() );?></span>
 		</div>
 
-<?php*/
+<?php
 				}
 			}
 ?>
