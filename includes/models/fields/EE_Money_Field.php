@@ -7,15 +7,9 @@ class EE_Money_Field extends EE_Float_Field{
 		return '%f';
 	}
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted){
-		$EE = EE_Registry::instance();
+		EE_Registry::instance()->load_helper( 'Template' );
 		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
-		
-		if($EE->CFG->currency->sign_b4){
-			$pretty_money = $EE->CFG->currency->sign.$pretty_float." (".$EE->CFG->currency->code.")";
-		}else{
-			$pretty_money = $pretty_float.$EE->CFG->currency->sign." (".$EE->CFG->currency->code.")";
-		}
-		return $pretty_money;
+		return EEH_Template::format_currency( $pretty_float );
 	}
 	
 	/**
