@@ -87,11 +87,6 @@
 #single-page-checkout .inactive-step .spco-step-big-nmbr { color:#e8e8e8; }
 
 
-#spco-payment_options-dv {	}
-#spco-payment_options-hdr {	}
-
-#spco-registration_confirmation-dv {	}
-#spco-step-3-hdr {	}
 
 
 .spco-edit-step-lnk { float:right; font-weight:normal; font-size:.6em; line-height:3.5em; letter-spacing:1px; cursor:pointer; }
@@ -100,6 +95,8 @@
 
 .spco-attendee-wrap-fs { padding:1em 3% 0em; margin:1em 0 2em; border: 2px solid #eee; border-radius: 2px; }
 #single-page-checkout .spco-attendee-wrap-fs p { margin:0 0 .5em;  }
+#single-page-checkout .spco-attendee-wrap-fs  .espresso-question-group-desc-pg { margin:-1em 1em 1em; font-size:.9em; color:#999;	}
+
 
 .event-list-display-dv .big-event-title-hdr,
 #single-page-checkout .big-event-title-hdr {
