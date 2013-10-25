@@ -202,16 +202,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			$grand_total = $total_line_item->total();//$session_data['_cart_grand_total_amount'];
 			foreach($total_line_item->tax_descendants() as $tax_line_item){
-				$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax->total(), 'N');
+				$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax_line_item->total(), 'N');
 			}
 			
-//			if (isset($session_data['tax_totals'])) {
-//				foreach ($session_data['tax_totals'] as $key => $tax) {
-//					$grand_total += $tax;
-//					$this->addLineItem($item_num, $session_data['taxes'][$key]['name'], '', 1, $tax, 'N');
-//					$item_num++;
-//				}
-//			}
 
 			//start transaction
 			$this->setField('amount', $grand_total);
