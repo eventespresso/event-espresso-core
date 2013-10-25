@@ -62,6 +62,39 @@
 .close-espresso-notice:hover { color:#000 !important; border-color:#000 !important; }
 
 
+
+
+.float-right { float:right; }
+.left { float:left; }
+.clear, .clear-float { clear:both; }
+.hidden { display:none; }
+.hide-if-no-js { display:none; }
+.cntr { text-align: center; }
+
+.jst-left { text-align:left; }
+.jst-cntr { text-align:center; }
+.jst-rght { text-align:right; }
+
+.tiny-text { font-size:.5em; line-height:.8em; letter-spacing:.75px; }
+.smaller-text { font-size:.7em; line-height:1em; letter-spacing:.5px; }
+.small-text { font-size:.85em; line-height:1.2em; letter-spacing:.25px; }
+.big-text { font-size:1.2em; line-height:1.6em; letter-spacing:-.25px; }
+.bigger-text { font-size:1.5em; line-height:2em; letter-spacing:-.5px; }
+.huge-text { font-size:2em; line-height:2.4em; letter-spacing:-.75px; }
+
+.lt-grey-text { color:#a8a8a8; }
+.grey-text { color:#888; }
+.drk-grey-text { color:#666; }
+.important-notice { font-weight:bold; color:#f59200; }
+.tiny-link { display:block; text-align:right; font-size:.6em; cursor:pointer; }
+.underline-hdr { padding:0 0 .05em; margin:2em 0 1em; border-bottom: 2px solid #eee; }
+.overline-hdr { padding:.5em 0 0; margin:2em 0 1em; border-top: 2px solid #eee; }
+.no-bold { font-weight: normal; }
+.currency-code { font-size:.7em; color:#a8a8a8; vertical-align: text-top; }
+
+.display-the-hidden,
+.hide-the-displayed {cursor:pointer; }
+
 /*******************************************************/
 /****				 	    	-==ATTENTION==-	     				****/
 /**** 			MOVE THIS FILE BEFORE EDITING 			****/
