@@ -139,7 +139,7 @@ if ( $event_queue['total_items'] > 0 ) {
 		
 		<div><a id="spco-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right" ><?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?></a></div>
 		
-		<?php do_action( 'AHEE__before_spco_whats_next_buttons', $step, $next_step ); ?>
+		<?php do_action( 'AHEE__before_spco_whats_next_buttons', 'attendee_information', $next_step ); ?>
 		
 		<div id="spco-attendee_information-whats-next-buttons-dv" class="spco-whats-next-buttons">
 		
