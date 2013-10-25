@@ -910,8 +910,43 @@ class EE_Registration extends EE_Base_Class {
 	}
 
 
+
+	
+	/**
+	 * genrerates reg code if that has yet to been done, 
+	 * sets reg status based on transaction status and event pre-approval setting
+	 * @return void
+	 */
+	public function finalize() {
+		$update_reg = FALSE;
+		// generate a reg code ?
+		if ( empty( $this->_REG_code )) {
+			$new_reg_code = array(
+				$this->_TXN_ID,
+				$this->_TKT_ID,
+				$this->_REG_count,
+				substr( $this->_REG_url_link, strpos( $this->_REG_url_link, '-' ), 3 ) . substr( $this->_REG_url_link, -3 ),
+				$this->get_first_related('Transaction')->is_completed() ? 1 : 0
+			);
+			$new_reg_code = implode( '-', $new_reg_code );
+			$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );
+			$this->set( 'REG_code', $new_reg_code );
+			$update_reg = TRUE;
+		}
+		// update reg status if TXN is complete and event does NOT require pre-approval
+		if ( $this->get_first_related('Transaction')->is_completed() && ! $this->get_first_related('Event')->require_pre_approval() ) {
+			$this->set( 'REG_status', EEM_Registration::status_id_approved );
+			$update_reg = TRUE;
+		}		
+		
+		if ( $update_reg ) { 
+			$this->save();
+		}
+	}
+
+
+
+
 }
-
-
 /* End of file EE_Registration.class.php */
-/* Location: includes/classes/EE_Registration.class.php */	
+/* Location: includes/classes/EE_Registration.class.php */
