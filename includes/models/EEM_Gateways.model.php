@@ -786,17 +786,19 @@ Class EEM_Gateways {
 	 *		@param EE_Transaction $transaction
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
-	public function process_payment_start(EE_Line_Item $line_item, $transaction = null) {
+	public function process_payment_start( EE_Line_Item $line_item, EE_Transaction $transaction = NULL ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		if( !$transaction){
 			$transaction = $line_item->transaction();
 		}
 		$return_page_url = $this->_get_return_page_url($transaction);
+		EE_Registry::instance()->load_helper( 'Template' );
 		// free event?
-		if ( ! $line_item->total()) {
+		if ( $line_item->total() == EEH_Template::format_currency( 0, TRUE )) {
 			
 			$transaction->set_status(EEM_Transaction::complete_status_code);
 			$transaction->save();
+			$transaction->finalize();
 			$response = array(
 					'msg' => array('success'=>TRUE),
 					'forward_url' => $return_page_url
@@ -894,8 +896,7 @@ Class EEM_Gateways {
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (!empty($this->_selected_gateway)
-						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
+		if ( ! empty( $this->_selected_gateway ) && ! empty( $this->_gateway_instances[ $this->_selected_gateway ] )) {
 			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page_logic($transaction);
 		}
 		$this->check_for_completed_transaction($transaction);
