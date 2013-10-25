@@ -232,11 +232,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$running_total_for_ticket = 0;
 		foreach($ticket->prices(array('order_by'=>array('PRC_order'=>'ASC'))) as $price){
 			$price_total = $price->is_percent() ? $running_total_for_ticket * $price->amount() / 100 : $price->amount();
+			
 			$sub_line_item = EE_Line_Item::new_instance(array(
 				'LIN_name'=>$price->name(),
 				'LIN_desc'=>$price->desc(),
-				'LIN_unit_price'=>$price->amount(),
-				'LIN_is_percent'=>$price->is_percent(),
 				'LIN_quantity'=>$price->is_percent() ? null : 1,
 				'LIN_is_taxable'=> false,
 				'LIN_order'=>$price->order(),
@@ -245,6 +244,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				'OBJ_ID'=>$price->ID(),
 				'OBJ_type'=>'Price'
 			));
+			if($price->is_percent()){
+				$sub_line_item->set_percent($price->amount());
+			}else{
+				$sub_line_item->set_unit_price($price->amount());
+			}
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item($sub_line_item);
 		}
@@ -357,8 +361,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 					$taxes_line_item->add_child_line_item(EE_Line_Item::new_instance(array(
 						'LIN_name'=>$tax->name(),
 						'LIN_desc'=>$tax->desc(),
-						'LIN_unit_price'=>$tax->amount(),
-						'LIN_is_percent'=>true,
+						'LIN_percent'=>$tax->amount(),
 						'LIN_is_taxable'=>false,
 						'LIN_order'=>$order,
 						'LIN_total'=>0,

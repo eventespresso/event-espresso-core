@@ -99,7 +99,7 @@ class EEM_Line_Item extends EEM_Base {
 				'LIN_name'=>new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), false, ''),
 				'LIN_desc'=>new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), true),
 				'LIN_unit_price'=>new EE_Money_Field('LIN_unit_price',  __("Unit Price", "event_espresso"),false,0),
-				'LIN_is_percent'=>new EE_Boolean_Field('LIN_is_percent', __("Is Percent", "event_espresso"), false, false),
+				'LIN_percent'=>new EE_Float_Field('LIN_percent', __("Percent", "event_espresso"), false, false),
 				'LIN_is_taxable'=>new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), false, false),
 				'LIN_order'=>new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), false,1),
 				'LIN_total'=>new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),

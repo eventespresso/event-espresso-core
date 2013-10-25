@@ -40,14 +40,14 @@ class EE_Line_Item extends EE_Base_Class{
 	/** Line Item Description", "event_espresso @var LIN_desc*/ 
 	protected $_LIN_desc = NULL;
 	/**
-	 * Line Item Unit Price
+	 * Line Item Unit Price (0 if its a percent)
 	 */
 	protected $_LIN_unit_price = NULL;
 	/**
 	 *
-	 * @var $_LIN_is_percent whether or not the unit price is a percent
+	 * @var $_LIN_percent if its a percent line item, then this is a number betweeen 100-1
 	 */
-	protected $_LIN_is_percent = NULL;
+	protected $_LIN_percent = NULL;
 	/**
 	 * Indicating whether or not this item should be taxed
 	 * @var boolean
@@ -259,21 +259,42 @@ class EE_Line_Item extends EE_Base_Class{
 		return $this->set('LIN_unit_price', $unit_price);
 	}
 	/**
-	 * Gets is_percent
+	 * Checks if this item is a percentage modifier or not
 	 * @return boolean
 	 */
 	function is_percent() {
-		return $this->get('LIN_is_percent');
+		$unit_price =  $this->get('LIN_unit_price');
+		$percent = $this->get('LIN_percent');
+		if( ! $unit_price && $percent){
+			return true;
+		}elseif($unit_price && ! $percent){
+			return false;
+		}elseif($unit_price && $percent){
+			throw new EE_Error(sprintf(__("A Line Itm cannot have a uni price (%s) AND a percent (%s)!", "event_espresso"),$unit_price,$percent));
+		}else{//if they're both 0, assume its not a percent item
+			return false;
+		}
+	}
+	/**
+	 * Gets percent (between 100-.01)
+	 * @return float
+	 */
+	function percent() {
+		return $this->get('LIN_percent');
 	}
 
 	/**
-	 * Sets is_percent
-	 * @param boolean $is_percent
+	 * Sets percent (bewteen 100-0.01)
+	 * @param float $percent
 	 * @return boolean
 	 */
-	function set_is_percent($is_percent) {
-		return $this->set('LIN_is_percent', $is_percent);
+	function set_percent($percent) {
+		return $this->set('LIN_percent', $percent);
 	}
+
+	
+
+	
 	/**
 	 * Gets total
 	 * @return float
@@ -527,7 +548,7 @@ class EE_Line_Item extends EE_Base_Class{
 			foreach($this->children() as $child_line_item){
 				//only recalculate sub-totals for NON-taxes
 				if($child_line_item->is_percent()){
-					$total += $total * $child_line_item->total() / 100;
+					$total += $total * $child_line_item->percent() / 100;
 				}else{
 					$total += $child_line_item->recalculate_pre_tax_total($include_taxable_items_only);
 				}
@@ -549,7 +570,7 @@ class EE_Line_Item extends EE_Base_Class{
 		$taxable_total = $this->recalculate_pre_tax_total(true);
 		$tax_total = 0;
 		foreach($taxes as $tax){
-			$total_on_this_tax = $taxable_total*$tax->unit_price()/100;
+			$total_on_this_tax = $taxable_total*$tax->percent()/100;
 			//remember the total on this line item
 			$tax->set_total($total_on_this_tax);
 			$tax_total += $total_on_this_tax;
@@ -647,17 +668,19 @@ class EE_Line_Item extends EE_Base_Class{
 		if($this->children()){
 			$total = 0;
 			foreach($this->children() as $child_line_item){
-				if($child_line_item->is_percent()){
-					$total += $total * $child_line_item->total() / 100;
-				}elseif($child_line_item->is_taxable ()){
+				if($child_line_item->is_percent() && $this->is_taxable()){
+					$total += $total * $child_line_item->percent() / 100;
+				}elseif($child_line_item->is_taxable()){
 					$total += $child_line_item->recalculate_pre_tax_total();
 				}
 			}
 		}else{
-			if($this->is_percent()){
-				$total = $this->total();
-			}elseif($this->is_taxable ()){
-				$total = $this->unit_price() * $this->quantity();
+			if($this->is_taxable()){
+				if($this->is_percent()){
+					$total = $this->total();
+				}else{
+					$total = $this->unit_price() * $this->quantity();
+				}
 			}else{
 				$total = 0;
 			}
