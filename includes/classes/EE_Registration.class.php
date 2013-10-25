@@ -921,11 +921,12 @@ class EE_Registration extends EE_Base_Class {
 		$update_reg = FALSE;
 		// generate a reg code ?
 		if ( empty( $this->_REG_code )) {
+			// figure out where to start parsing the reg code
+			$chars = strpos( $this->_REG_url_link, '-' ) + 4;
 			$new_reg_code = array(
 				$this->_TXN_ID,
 				$this->_TKT_ID,
-				$this->_REG_count,
-				substr( $this->_REG_url_link, strpos( $this->_REG_url_link, '-' ), 3 ) . substr( $this->_REG_url_link, -3 ),
+				substr( $this->_REG_url_link, 0, $chars ) . substr( $this->_REG_url_link, -3 ),
 				$this->get_first_related('Transaction')->is_completed() ? 1 : 0
 			);
 			$new_reg_code = implode( '-', $new_reg_code );
