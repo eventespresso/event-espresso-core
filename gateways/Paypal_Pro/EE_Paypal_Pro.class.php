@@ -417,26 +417,26 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					// Phone Number of payer.  20 char max.
 					'phonenum' => empty($billing_info['reg-page-billing-phone-' . $this->_gateway_name ]['value']) ? '' : $billing_info['reg-page-billing-phone-' . $this->_gateway_name ]['value']
 			);
-
+			$this->EE->load_helper('Template');
 			$PaymentDetails = array(
 					// Required.  Total amount of order, including shipping, handling, and tax.
-					'amt' => $grand_total,
+					'amt' => EEH_Template::format_currency($grand_total,true),
 					// Required.  Three-letter currency code.  Default is USD.
 					'currencycode' => $this->_payment_settings['currency_format'],
 					// Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
-					'itemamt' => $total_line_item->get_items_total(),//
+					'itemamt' => EEH_Template::format_currency($total_line_item->get_items_total(),true),//
 					// Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
 					'shippingamt' => '',
 					// Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
 					'handlingamt' => '',
 					// Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
-					'taxamt' => $total_line_item->get_total_tax(),
+					'taxamt' => EEH_Template::format_currency($total_line_item->get_total_tax(),true),
 					// Description of the order the customer is purchasing.  127 char max.
 					'desc' => 'Event Registrations from ' . get_bloginfo('name'),
 					// Free-form field for your own use.  256 char max.
 					'custom' => $primary_registrant ? $primary_registrant->ID() : '',
 					// Your own invoice or tracking number
-					'invnum' => $transaction->ID(),
+					'invnum' => wp_generate_password(12,false),//$transaction->ID(),
 					// URL for receiving Instant Payment Notifications.  This overrides what your profile is set to use.
 					'notifyurl' => ''
 			);
