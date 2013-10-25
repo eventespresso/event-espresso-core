@@ -347,7 +347,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
 
-		$session_data = $this->EE->SSN->get_session_data();
 		$paypal_settings = $this->_payment_settings;
 		$paypal_id = $paypal_settings['paypal_id'];
 		$paypal_cur = $paypal_settings['currency_format'];
@@ -429,12 +428,12 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$gateway_response = __('Your payment is approved.', 'event_espresso');
 		}elseif($_POST['payment_status']=='Pending'){
 			$status = EEM_Payment::status_id_pending;//approved
-			$gateway_response = __('Your payment is in progress. Another message will be sent when paymente is approved.', 'event_espresso');
+			$gateway_response = __('Your payment is in progress. Another message will be sent when payment is approved.', 'event_espresso');
 		}else{
 			$status = EEM_Payment::status_id_declined;//declined
 			$gateway_response = __('Your payment has been declined.', 'event_espresso');
 		}
-		$this->_debug_log( "<hr>Payment is interpreted as $status, and teh gateway's response set to '$gateway_response'");
+		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
 		//check if we've already processed this payment
 		
 		$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
@@ -445,7 +444,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				$this->_debug_log( "<hr>Duplicated IPN! ignore it...");
 				return false;
 			}else{
-				$this->_debug_log( "<hr>Existing IPN for this paypal trasaction, but its got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
+				$this->_debug_log( "<hr>Existing IPN for this paypal transaction, but it\'s got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
 				$payment->set_status($status);
 				$payment->set_amount($_POST['mc_gross']);
 				$payment->set_gateway_response($gateway_response);
@@ -457,7 +456,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			$primary_registrant = $transaction->primary_registration();
 			$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 			
-			$payment = EE_Payment::new_instance(array('TXN_ID' => $transaction->ID(), 
+			$payment = EE_Payment::new_instance(array(
+				'TXN_ID' => $transaction->ID(), 
 				'STS_ID' => $status, 
 				'PAY_timestamp' => $transaction->datetime(), 
 				'PAY_method' => sanitize_text_field($_POST['txn_type']), 
@@ -468,7 +468,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				'PAY_po_number' => NULL, 
 				'PAY_extra_accntng'=>$primary_registration_code,
 				'PAY_via_admin' => false, 
-				'PAY_details' => $_POST));
+				'PAY_details' => $_POST
+			));
 		
 		}
 		$payment->save();
@@ -484,7 +485,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
-			<?php _e('After finalizing your registration, you will be transferred to the PayPal.com website where your payment will be securely processed.', 'event_espresso'); ?>
+			<h3><?php _e('You have selected "PayPal" as your method of payment', 'event_espresso'); ?></h3>
+			<p><?php _e('After finalizing your registration, you will be transferred to the PayPal.com website where your payment will be securely processed.', 'event_espresso'); ?></p>
 		</div>
 
 		<?php
