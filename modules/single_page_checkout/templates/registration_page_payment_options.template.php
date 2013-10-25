@@ -92,7 +92,7 @@
 			<?php _e('This is a free event, so no billing will occur.', 'event_espresso'); ?>
 <?php }  ?>
 
-			<?php do_action( 'AHEE__before_spco_whats_next_buttons', $step, $next_step ); ?>
+			<?php do_action( 'AHEE__before_spco_whats_next_buttons', 'payment_options', $next_step ); ?>
 
 			<div id="spco-payment_options-whats-next-buttons-dv" class="spco-whats-next-buttons">
 

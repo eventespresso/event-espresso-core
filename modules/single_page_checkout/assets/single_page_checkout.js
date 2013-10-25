@@ -430,7 +430,7 @@
 				window.location.replace( response.return_data[key] );
 				return;
 			} else if ( key == 'off-site-redirect') {
-				$( '#content' ).html( response.return_data[key] );
+				$( '#spco-extra-finalize_registration-inputs-dv' ).html( response.return_data[key] );
 				document.forms['gateway_form'].submit();
 			}
 		}
