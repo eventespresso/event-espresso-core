@@ -295,7 +295,8 @@ class EE_Question_Form_Input {
 	 * @return array
 	 */
 	public function options() {
-		return $this->_QST->temp_options();
+		$temp_options = $this->_QST->temp_options();
+		return ! empty( $temp_options ) ? $temp_options : $this->_QST->options();
 	}
 
 
