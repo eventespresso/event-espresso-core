@@ -73,13 +73,86 @@
 					<th class="left event_th"><?php _e('Event', 'event_espresso'); ?></th>
 					<th class="left ticket_th"><?php _e('Ticket', 'event_espresso'); ?></th>
 					<th class="left datetime_th"><?php _e('Date & Time', 'event_espresso'); ?></th>
-					<th class="left attendee_th"><?php _e('Attendee', 'event_espresso'); ?></th>
 					<th class="subtotal_th"><?php _e('Line Total', 'event_espresso'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
-				<?php $c=false; foreach($transaction->registrations() as $registration){
-					/*@var $registration EE_Registration */ ?>
+				<?php 
+				function ee_invoice_display_line_item(EE_Line_Item $line_item){
+					switch($line_item->type()){
+						case EEM_Line_Item::type_total:
+							foreach($line_item->children() as $child_line_item){
+								ee_invoice_display_line_item($child_line_item);
+							}?>
+							<tr id="total_tr">
+								<td colspan="3">&nbsp;</td>
+								<td class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
+								<td class="total"><?php echo $line_item->total();?></td>
+							</tr>
+						<?php break;
+						case EEM_Line_Item::type_sub_total:
+							foreach($line_item->children() as $child_line_item){
+								ee_invoice_display_line_item($child_line_item);
+							}?>
+							<tr id="total_tr">
+								<td colspan="3">&nbsp;</td>
+								<td class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
+								<td class="total"><?php echo $line_item->total();?></td>
+							</tr>
+						<?php break;
+						case EEM_Line_Item::type_tax_sub_total:
+							foreach($line_item->children() as $child_line_item){
+								ee_invoice_display_line_item($child_line_item);
+							}?>
+							<tr id="total_tr">
+								<td colspan="3">&nbsp;</td>
+								<td class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
+								<td class="total"><?php echo $line_item->total();?></td>
+							</tr>
+						<?php break;
+						case EEM_Line_Item::type_line_item:
+							$datetimes = $line_item->ticket()->datetimes();
+							$a_datetime = reset($datetimes);
+							?>
+						<tr class="item <?php echo  'odd'; ?>">
+							<td class="item_l"><?php echo $line_item->quantity();?></td>
+							<td class="item_l"><?php echo $a_datetime->event()->name(); ?></td>
+							<td class="item_l"><?php echo $line_item->name() ?></td>
+							<td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?></td>
+							<td class="item_r"><?php echo $line_item->total();?></td>
+						</tr>
+						<?php 
+						foreach($line_item->children() as $child_line_item){
+							ee_invoice_display_line_item($child_line_item);
+						}
+						break;
+						case EEM_Line_Item::type_sub_line_item:							
+							?>
+						<tr class="item sub-item">
+							<td class="item_l"></td>
+							<td class="item_l"></td>
+							<td class="item_r"><?php echo $line_item->name() ?></td>
+							<td class="item_l"></td>
+							<td class="item_r"><?php echo $line_item->total();?></td>
+						</tr>
+						<?php break;
+					case EEM_Line_Item::type_tax:							
+							?>
+						<tr class="item sub-item">
+							<td class="item_l"></td>
+							<td class="item_l"></td>
+							<td class="item_l"></td>
+							<td class="item_l"><?php echo $line_item->name() ?></td>
+							<td class="item_r"><?php echo $line_item->total();?></td>
+						</tr><?php break;
+					}
+				}
+				$c=false; 
+				/* @var $transaction EE_Transaction */
+				$total_line_item = $transaction->total_line_item();
+				ee_invoice_display_line_item($total_line_item);
+				/* foreach($transaction->registrations() as $registration){
+					 ?>
 					<tr class="item <?php echo ($c = !$c) ? ' odd' : ''; ?>">
 						<td class="item_l">1</td>
 						<td class="item_l"><?php echo $registration->event_name() ?></td>
@@ -88,21 +161,9 @@
 						<td class="item_l"><?php echo $registration->attendee()->full_name() ?></td>
 						<td class="item_r"><?php echo EEH_Template::format_currency($registration->price_paid())?></td>
 					</tr>
-				<?php } ?>
+				<?php } */ ?>
 			</tbody>
-			<tfoot>
-				<tr id="total_tr">
-					<td colspan="4">&nbsp;</td>
-					<td class="total" id="total_currency"><?php _e('Sub Total', 'event_espresso'); ?></td>
-					<td class="total"><?php echo EEH_Template::format_currency($total_cost)?></td>
-				</tr>
-				<?php //echo $discount; ?>
-				<tr id="total_tr">
-					<td colspan="4">&nbsp;</td>
-					<td class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
-					<td class="total"><?php echo EEH_Template::format_currency($total_cost)?></td>
-				</tr>
-			</tfoot>
+			
 		</table>		
 		<h2><?php _e("Payments",'event_espresso')?></h2>
 		<table id="invoice-amount">
