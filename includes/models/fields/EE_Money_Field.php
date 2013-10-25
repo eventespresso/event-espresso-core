@@ -28,4 +28,9 @@ class EE_Money_Field extends EE_Float_Field{
 		$rounded_value = round($value_inputted_for_field_on_model_object,  EE_Registry::instance()->CFG->currency->dec_plc);
 		return parent::prepare_for_set($rounded_value);
 	}
+	
+	function prepare_for_get($value_of_field_on_model_object) {
+		$c = EE_Registry::instance()->CFG->currency;
+		return number_format(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc, $c->dec_mrk, $c->thsnds);
+	}
 }
