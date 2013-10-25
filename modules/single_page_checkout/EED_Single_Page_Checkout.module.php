@@ -706,6 +706,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'&nbsp;'  // %1$s
 		);
 		$confirmation_btn_text = $grand_total > 0 ? $confirm_n_pay : $confirm;
+		
+		add_action( 'AHEE__before_spco_whats_next_buttons', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
 
 		
 		$registration_steps = '';
@@ -723,7 +725,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			//d( $next );
 			$next_step = $next ? $next['display_func'] : 'finalize_registration';
 			$next_step_text = $next ? sprintf( __('Proceed%1$sto%1$s', 'event_espresso'), '&nbsp;' ) . $next['name'] : $confirmation_btn_text;
-
+			
 			$step_args = array_merge(
 				$template_args, 
 				array( 
@@ -760,6 +762,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->EE->REQ->add_output( EEH_Template::display_template( $this->_templates['registration_page_wrapper'], $wrapper_args, TRUE ));
 	}
 
+
+
+
+
+
+	/**
+	 * 	add_extra_finalize_registration_inputs
+	 *
+	 * 	@access 	public
+	 * 	@param 	string 	$label
+	 * 	@return 		string
+	 */
+	public function add_extra_finalize_registration_inputs( $current_step, $next_step ) {
+		if ( $next_step == 'finalize_registration' ) {
+			echo '<div id="spco-extra-finalize_registration-inputs-dv"></div>';		
+		}
+	}
 
 
 
