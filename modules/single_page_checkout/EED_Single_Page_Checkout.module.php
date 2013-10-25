@@ -650,7 +650,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		$cart_total_before_tax = $this->EE->CART->get_cart_total_before_tax();
 		$template_args['payment_required'] = $cart_total_before_tax > 0 ? TRUE : FALSE;
-//		$event_queue['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
 		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
 
 		
@@ -810,28 +809,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
-		
-//		printr( $this->_transaction, '$this->_transaction <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		die();
-
 		// empty container
 		$valid_data = array();
 		
 		if ( $this->EE->REQ->is_set( 'qstn' )) {
+			$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', $this->EE->REQ->get( 'qstn' ));			
 			// loop through post data and sanitize all elements
-//			$valid_data = array();
-//			foreach($this->EE->REQ->get('qstn') as $key=> $value){
-//				$valid_data[sanitize_text_field($key)] = sanitize_text_field($value);
-//			}
-//			$qstn = $this->EE->REQ->get( 'qstn' );
-//			array_walk_recursive( $qstn, array( $this, 'sanitize_text_field_for_array_walk' ));
-//			$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', $this->EE->REQ->get( 'qstn' ));			
-			
-			if ( $this->EE->REQ->is_set( 'qstn' )) {
-				$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', $this->EE->REQ->get( 'qstn' ));			
-				// loop through post data and sanitize all elements
-				array_walk_recursive( $valid_data, array( $this, 'sanitize_text_field_for_array_walk' ));
-			}
+			array_walk_recursive( $valid_data, array( $this, 'sanitize_text_field_for_array_walk' ));
 		}
 
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
@@ -850,11 +834,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 			
 			$this->EE->load_model( 'Attendee' );
-//			$this->EE->load_helper( 'Template' );
-			$attendee_properties = array( 'fname', 'lname', 'email', 'address', 'address2', 'city', 'state', 'country', 'zip', 'phone' );			
-			$states = EEM_State::instance()->get_all( array( 
-				array( 'Country.CNT_active'=>true, 'STA_active'=>true )
-			));
 
 			if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations() !== NULL ) {
 				// grab the saved registrations from the transaction				
