@@ -732,7 +732,7 @@ class EE_Calendar_Admin {
 										<td>
 											<?php echo select_input('tooltip_style', $tooltip_style, !empty($espresso_calendar['tooltip_style']) ? $espresso_calendar['tooltip_style'] : 'qtip-light', 'id="tooltip_style"'); ?><br/>
 											<span class="description">
-												<?php _e('Adds styling to tooltips. Default: light', 'event_espresso'); ?>
+												<?php printf(__('Adds styling to tooltips, if you are NOT using Themeroller, in the %sTemplate Settings%s.', 'event_espresso'), '<a href="admin.php?page=template_confg#style-themeroller">', '</a>'); ?>
 											</span>
 										</td>
 									</tr>
