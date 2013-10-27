@@ -199,8 +199,13 @@ class EEM_Attendee extends EEM_CPT_Base {
 			// search by combo of first and last names plus the email address
 			$where_cols_n_values = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );  	 
 		}
+		$valid_data = TRUE;
+		// check for required values
+		$valid_data = isset( $where_cols_n_values['ATT_fname'] ) && ! empty( $where_cols_n_values['ATT_fname'] ) ? $valid_data : FALSE;
+		$valid_data = isset( $where_cols_n_values['ATT_lname'] ) && ! empty( $where_cols_n_values['ATT_lname'] ) ? $valid_data : FALSE;
+		$valid_data = isset( $where_cols_n_values['ATT_email'] ) && ! empty( $where_cols_n_values['ATT_email'] ) ? $valid_data : FALSE;
 		
-		if ( $attendee = $this->get_attendee( $where_cols_n_values )) {
+		if ( $valid_data && $attendee = $this->get_attendee( $where_cols_n_values )) {
 			return $attendee;
 		} else {
 			return FALSE;
