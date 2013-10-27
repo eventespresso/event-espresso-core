@@ -38,22 +38,19 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
 	protected function _setup_data() {
 
-		$session_stuff = $this->_data->get_session_data();
-		$this->_data = $session_stuff;
-
 		//basically ALL we're going to get from this is the transaction object and use it to build the majority of our info.
-		
-		$this->txn = !empty( $this->_data['transaction'] ) ? $this->_data['transaction'] : NULL;
+		$session = $this->_data->get_session_data();
+		$this->txn = $session['transaction'];
 
-		if ( empty( $this->txn ) || ! $this->txn instanceof EE_Transaction )
+		if ( empty( $this->txn ) || ! $this->txn instanceof EE_Transaction ) {
 			throw new EE_Error( __('Incomding data for the EE_Session data handler must have a valid EE_Transaction object in order to setup the data') );
+		}
 
 		$this->reg_info = array();
-		$this->incoming_data = $this->_data;
+		$this->incoming_data = $session;
 		$this->taxes = $this->txn->tax();
 
 		$this->grand_total_price_object = '';
-		$session = $this->txn->session_data();
 
 		//other data from the session (if possible)
 		$this->user_id = isset( $session['user_id'] ) ? $session['user_id'] : '';

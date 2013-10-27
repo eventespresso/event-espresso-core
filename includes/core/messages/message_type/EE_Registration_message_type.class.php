@@ -50,18 +50,14 @@ class EE_Registration_message_type extends EE_message_type {
 
 		//if email_on_payment is set then we'll trigger an exit when incoming data is an EE_Session object.
 		$settings = $this->get_existing_admin_settings($this->_active_messenger->name);
-		
-		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; //default is TRUE (yes we want to delay)! 
-
-
+		//default is TRUE (yes we want to delay)! 
+		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; 
+		//for SPCO trigger 
 		if ( $this->_data instanceof EE_Session ) {
-			//for SPCO trigger BUT we need to make sure that this isn't a FREE event.
-			$session = $this->_data->get_session_data();
-			$transaction = $session['transaction'];
-
+			// BUT we need to make sure that this isn't a FREE event.
+			$transaction = $this->_data->get_session_data( 'transaction' );
 			//check grandtotal
-			$is_free = $transaction->total() > 0 ? FALSE : TRUE;
-			
+			$is_free = $transaction->total() > 0 ? FALSE : TRUE;			
 			$return = $delay && !$is_free ? TRUE : FALSE;
 			$this->_data_handler = $is_free ? 'EE_Session' : NULL;
 		} else {
