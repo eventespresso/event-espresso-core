@@ -936,7 +936,7 @@ class EE_Registration extends EE_Base_Class {
 		}
 		// update reg status if TXN is complete and event does NOT require pre-approval
 		if ( $this->get_first_related('Transaction')->is_completed() && ! $this->get_first_related('Event')->require_pre_approval() ) {
-			$this->set( 'REG_status', EEM_Registration::status_id_approved );
+			$this->set( 'STS_ID', EEM_Registration::status_id_approved );
 			$update_reg = TRUE;
 		}		
 		
