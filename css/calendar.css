@@ -355,23 +355,17 @@ The Buttons and related paraphenalia
 
 #espresso_calendar .fc-event-title {
 	display: block;
-	padding: 0 4px;
+	padding: 4px;
 	font-size: 14px;
 	margin-bottom: 4px;
 }
-#espresso_calendar .fc-event-time {
-	display: block;
-	padding: 0 0 4px;
-	display: none;
-}
+
 #espresso_calendar .time-display-block {
 	margin: 0;
 	padding: 4px;
+	display:block;
 }
-#espresso_calendar .event-end-time {
-	margin: 0;
-	padding: 0 4px;
-}
+
 #espresso_calendar .thumb-wrap {
 	display: block;
 	overflow: hidden;
