@@ -12,6 +12,7 @@
 	- Buttons and Related Paraphenalia
 	- Miscellaneous Calendar Styles
 	- Event Styles
+	- Category Legend Styles
 	- Tooltip Styles
 	- Calendar Widget CSS
 	- Default Resets for Themeroller 
@@ -428,6 +429,23 @@ The Buttons and related paraphenalia
 	font-weight: 		400;
 	}
 
+/* Category Legend Styles
+---------------------------------------------------------------------------------------------------- */
+
+div#espreso-category-legend {
+	clear:				both;
+	}
+div#espreso-category-legend ul {
+	float:left;
+	}	
+	
+div#espreso-category-legend li {
+	list-style:			none;
+	margin:				0 10px 5px 0;
+	padding:			0 7px 0 7px;
+	float:left;
+	}	
+	
 /* Tooltip Styles
 ---------------------------------------------------------------------------------------------------- */
 

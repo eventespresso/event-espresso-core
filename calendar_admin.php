@@ -125,6 +125,7 @@ class EE_Calendar_Admin {
 				'espresso_calendar_height' => '',
 				'enable_calendar_thumbs' => false,
 				'enable_calendar_filters' => false,
+				'enable_category_legend' => false,
 				
 				'show_tooltips' => true,
 				'tooltips_pos_my_1' => 'bottom',
@@ -297,6 +298,7 @@ class EE_Calendar_Admin {
 			$espresso_calendar['ee_event_background'] = ( !empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : '007BAE';
 			$espresso_calendar['ee_event_text_color'] = ( !empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : 'FFFFFF';
 			$espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
+			$espresso_calendar['enable_category_legend'] = $_POST['enable_category_legend'];
 
 			$espresso_calendar['titleFormat_month'] = $_POST['titleFormat_month'];
 			$espresso_calendar['titleFormat_week'] = $_POST['titleFormat_week'];
@@ -506,7 +508,7 @@ class EE_Calendar_Admin {
 								</tbody>
 							</table>
 							<h4>
-								<?php _e('Page Settings', 'event_espresso'); ?>
+								<?php _e('Layout Settings', 'event_espresso'); ?>
 							</h4>
 							<table class="form-table">
 								<tbody>
@@ -571,6 +573,17 @@ class EE_Calendar_Admin {
 											</span>
 										</td>
 									</tr>
+									
+<?php } ?>
+								</tbody>
+							</table>
+<?php if ($espresso_premium == true) { ?>
+							<h4>
+								<?php _e('Display Settings', 'event_espresso'); ?>
+							</h4>
+
+							<table class="form-table">
+								<tbody>
 									<tr>
 										<th>
 											<label for="enable-calendar-thumbs">
@@ -599,16 +612,6 @@ class EE_Calendar_Admin {
 											</span>
 										</td>
 									</tr>
-<?php } ?>
-								</tbody>
-							</table>
-<?php if ($espresso_premium == true) { ?>
-							<h4>
-								<?php _e('Theme Settings', 'event_espresso'); ?>
-							</h4>
-
-							<table class="form-table">
-								<tbody>
 									<tr>
 										<th>
 											<label for="enable-cat-classes">
@@ -619,6 +622,19 @@ class EE_Calendar_Admin {
 											<?php echo select_input('enable_cat_classes', $values, $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"'); ?><br />
 											<span class="description">
 												<?php _e('This setting allows you to set each category to display a different color. Set each category color in Event Espresso > Categories.', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<label for="show-cat-legend">
+												<?php _e('Show Category Legend', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td>
+											<?php echo select_input('enable_category_legend', $values, $espresso_calendar['enable_category_legend'], 'id="show-cat-legend"'); ?><br />
+											<span class="description">
+												<?php _e('This setting allows you display a category legend above the calendar.', 'event_espresso'); ?>
 											</span>
 										</td>
 									</tr>

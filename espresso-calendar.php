@@ -258,43 +258,75 @@ class EE_Calendar {
 		// set default attributes
 		$atts = shortcode_atts( $defaults, $atts );
 		
-		// Query for Select box filters
-		$c_sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
-		$temp_cats = $wpdb->get_results($c_sql);
-		
-		$v_sql = "SELECT * FROM " . EVENTS_VENUE_TABLE;
-		$temp_venue = $wpdb->get_results($v_sql);
 		$output_filter = '';
-		if (isset($this->_calendar_options['enable_calendar_filters']) && $this->_calendar_options['enable_calendar_filters'] == TRUE ){
+		if (!$atts['widget']) {
+			// Query for Select box filters
+			$c_sql = "SELECT * FROM " . EVENTS_CATEGORY_TABLE;
+			$temp_cats = $wpdb->get_results($c_sql);
+			
+			$v_sql = "SELECT * FROM " . EVENTS_VENUE_TABLE;
+			$temp_venue = $wpdb->get_results($v_sql);
+			
+			
 			if (!empty($temp_venue) || !empty($temp_cats)){
-				ob_start();?>
-				<!-- select box filters -->
-				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
-				<div class="ee-filter-form">
-				<?php if(!empty($temp_cats)){?>
-					<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
-					<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
-					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
-					<?php
-						foreach($temp_cats as $cat) {
-						echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
-							}?>
-					</select>
-				<?php }?>
 				
-				<?php if(!empty($temp_venue)){?>
-					<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
-					<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
-					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+				ob_start();
+				
+				//Category legend
+				if (isset($this->_calendar_options['enable_category_legend']) && $this->_calendar_options['enable_category_legend'] == TRUE ){
+					echo '<div id="espreso-category-legend"><ul id="ee-category-legend-ul">';
+					
+					foreach ($temp_cats as $category) {
+						$catcode = $category->id;
+						$catmeta = unserialize($category->category_meta);
+						$bg = $catmeta['event_background'];
+						$fontcolor = $catmeta['event_text_color'];
+						$use_bg = $catmeta['use_pickers'];
+			
+						if($use_bg == "Y") {
+							echo '<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid ' . $bg . ';">';
+						} else {
+							echo '<li id="ee-category-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid #CCC";>';
+						}
+					
+						echo '<span class="ee-category"><a href="?event_category_id='.$category->category_identifier.'">'.$category->category_name.'</a></span></a></li>';
+						
+					}
+					//echo '<li class="has-sub" style="border-left:solid 1px #000;"><a href="?event_category_id">'.__('All', 'event_espresso').'</a></li>';
+					echo '</ul></div>';
+				}
+				
+				//Filter dropdowns
+				if (isset($this->_calendar_options['enable_calendar_filters']) && $this->_calendar_options['enable_calendar_filters'] == TRUE ){
+					?>
+					<!-- select box filters -->
+					<div class="ee-filter-form">
+					<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+					<?php if(!empty($temp_cats)){?>
+						<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
+						<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
+						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+						<?php
+							foreach($temp_cats as $cat) {
+							echo '<option '.(isset($_REQUEST['event_category_id']) && $cat->category_identifier == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$cat->category_identifier.'">'.stripslashes($cat->category_name).'</option>';
+								}?>
+						</select>
+					<?php }?>
+					
+					<?php if(!empty($temp_venue)){?>
+						<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
+						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
+						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+						<?php
+							foreach($temp_venue as $venue) {
+							echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
+							}?>
+						</select>
+					<?php }?>
+					</form>
+					</div>
 					<?php
-						foreach($temp_venue as $venue) {
-						echo '<option'. (isset($_REQUEST['event_venue_id']) && $venue->id == $_REQUEST['event_venue_id'] ? ' selected="selected"' :'').' value="'.$venue->id.'">'.stripslashes($venue->name).'</option>';
-						}?>
-					</select>
-				<?php }?>
-				</div>
-				</form>
-				<?php
+				}
 				$output_filter = ob_get_contents();
 				ob_end_clean();
 			}
@@ -372,15 +404,17 @@ class EE_Calendar {
 		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
 		
 		$calendar_class = $atts['widget'] ? 'calendar_widget' : 'calendar_fullsize';
-
-		return $output_filter.'
+		
+		$output_filter = apply_filters( 'filter_hook_espresso_calendar_output_filter', $output_filter );
+		
+		return apply_filters( 'filter_hook_espresso_calendar_output_before', '' ).$output_filter.'
 	<div id="espresso_calendar" class="'. $calendar_class . '">
 		<div id="ee-calendar-ajax-loader-dv">
 			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif">
 		</div>
 	</div>
 	<div style="clear:both;" ></div>
-	<div id="espresso_calendar_images" ></div>'; 
+	<div id="espresso_calendar_images" ></div>'.apply_filters( 'filter_hook_espresso_calendar_output_after','' ); 
 	
 	}
 
