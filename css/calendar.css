@@ -90,8 +90,9 @@ Calendar Specific Styles
 Select Box
 ---------------------------------------------------------------------------------------------------- */
 
- .ee-filter-form {
+.ee-filter-form {
 	margin: 0 0 2em 0;
+	clear: both;
 }
 /* 
 RESET SELECT
