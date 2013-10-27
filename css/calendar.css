@@ -377,11 +377,13 @@ The Buttons and related paraphenalia
 
 #espresso_calendar .fc-event-title { 
 	display: 			block; 
-	padding: 			0 4px; 
+	padding: 			0 4px;
+	font-size:			14px;
+	margin-bottom:		4px;	
 	}
 #espresso_calendar .fc-event-time { 
 	display: 			block; 
-	padding: 			0 0 4px; 
+	padding: 			0 0 4px;
 	}
 #espresso_calendar .time-display-block { 
 	margin: 			0;
@@ -394,7 +396,7 @@ The Buttons and related paraphenalia
 #espresso_calendar .thumb-wrap { 
 	display: 			block; 
 	overflow: 			hidden;  
-	padding: 			3px 0 0; 
+	padding: 			10px 0 0; 
 	max-width:			150px; 
 	vertical-align: 	middle;
 	}
@@ -563,6 +565,7 @@ a.fc-event.themeroller.ui-widget-header span.fc-event-title,
 a.fc-event.themeroller.ui-widget-header p.time-display-block { 
 	font-weight: 		normal; 
 	}
+
 .themeroller .thumb-wrap { 
 	overflow: 			hidden; 
 	max-height: 		80px; 
