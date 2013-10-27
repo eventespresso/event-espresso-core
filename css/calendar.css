@@ -409,9 +409,13 @@ The Buttons and related paraphenalia
 
 div#espreso-category-legend {
 	clear: both;
+	margin: 0;
+	padding: 0;
 }
 div#espreso-category-legend ul {
 	float:left;
+	margin: 0 0 10px 0;
+	padding: 0;
 }
 div#espreso-category-legend li {
 	list-style: none;
