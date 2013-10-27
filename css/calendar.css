@@ -23,672 +23,630 @@
  Prettify the fonts (especially) in webkit browsers
  ---------------------------------------------------------------------------------------------------- */
 
-*{
-	text-rendering: 		optimizeLegibility;
-  	-webkit-font-smoothing: antialiased;
-  	}
-
+* {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+}
 /* 
 General Styles 
 ---------------------------------------------------------------------------------------------------- */
 
-#espresso_calendar { 
-	position: 				relative !important; 
-	z-index:				100; 
-	margin:					1em 0 0; 
-	width: 					100% !important; 
-	}
-
+#espresso_calendar {
+	position: relative !important;
+	z-index: 100;
+	margin: 1em 0 0;
+	width: 100% !important;
+}
 /* 
-Specific Theme Fixes:  This section will use !important much more than it should. 
+Specific Theme Fixes: This section will use !important much more than it should. 
 ---------------------------------------------------------------------------------------------------- */
 
 .entry-content td {
-	border-top: 			0px solid #ededed !important; /*fixes top border on calendar header in twentytwelve*/
-	}
+	border-top: 0px solid #ededed !important; /*fixes top border on calendar header in twentytwelve*/
+}
 	
 /* 
 Calendar Specific Styles
 ---------------------------------------------------------------------------------------------------- */
 
-#espresso_calendar:not(.ui-widget) .fc-header-title h2,
-.fc-header-title h2 {
-	font-family:			"Helvetica Neue", "Helvetica", Arial, sans-serif;
-	font-size:				1.3em;
-	margin:					0; 
-	font-weight: 			400; 
-	line-height: 			1;
-	vertical-align: 		bottom !important;
-	}
+#espresso_calendar:not(.ui-widget) .fc-header-title h2, .fc-header-title h2 {
+ font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+ font-size: 1.3em;
+ margin: 0;
+ font-weight: 400;
+ line-height: 1;
+ vertical-align: bottom !important;
+}
 #espresso_calendar .ui-widget .fc-header-title h2 {
-	font-family:			"Helvetica Neue", "Helvetica", Arial, sans-serif;
-	font-size:				1em;
-	letter-spacing: 		-1px; /* tighter letter spacing is for the Week and Day views */
-	margin: 				0; 
-	font-weight: 			400; 
-	line-height: 			1;
-	vertical-align: 		bottom !important;
-	}
-#espresso_calendar .fc-content table { 
-	background-color:		#fff; 
-	}
-#espresso_calendar table.fc-header, 
-#espresso_calendar table.fc-border-separate { 
-	border: 				none; 
-	margin-bottom: 			0;
-	}
+	font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+	font-size: 1em;
+	letter-spacing: -1px; /* tighter letter spacing is for the Week and Day views */
+	margin: 0;
+	font-weight: 400;
+	line-height: 1;
+	vertical-align: bottom !important;
+}
+#espresso_calendar .fc-content table {
+	background-color: #fff;
+}
+#espresso_calendar table.fc-header, #espresso_calendar table.fc-border-separate {
+	border: none;
+	margin-bottom: 0;
+}
 #espresso_calendar .fc-day-header {
-	padding:				5px 0;  
-	font-weight: 			400;
-	}
-#espresso_calendar .fc .fc-header-space,
-.fc .fc-header-space {
-	padding-left: 			3px;
+	padding: 5px 0;
+	font-weight: 400;
 }
-#espresso_calendar table.fc-border-separate td{
-	border-top: 			1px solid #ddd !important;
+#espresso_calendar .fc .fc-header-space, .fc .fc-header-space {
+	padding-left: 3px;
 }
-#espresso_calendar  td.fc-widget-content {
- 	border-top: 			1px solid #ededed !important;
- }
- 
+#espresso_calendar table.fc-border-separate td {
+	border-top: 1px solid #ddd !important;
+}
+#espresso_calendar td.fc-widget-content {
+	border-top: 1px solid #ededed !important;
+}
 /* 
 Select Box
 ---------------------------------------------------------------------------------------------------- */
 
  .ee-filter-form {
- 	margin: 			0 0 2em 0;
- }
-
+	margin: 0 0 2em 0;
+}
 /* 
 RESET SELECT
 ---------------------------------------------------------------------------------------------------- */
 
 .ee-filter-form select {
-  -webkit-appearance:     button;
-  -webkit-box-sizing:     content-box;
-  -moz-box-sizing:        content-box;
-  box-sizing:             content-box;
-  border:                 1px solid #aaa;
-  margin:                 0;
-  padding:                0;
-  }
+	-webkit-appearance: button;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	border: 1px solid #aaa;
+	margin: 0;
+	padding: 0;
+}
 .ee-filter-form select {
-  display:                inline-block;
-  vertical-align:         baseline;
-  height:                 1.4em;
-  margin:                 2px;
-  padding:                0.3em 0.6em 0.3em 0.6em;
-  background:             #fff;
-  border:                 1px solid #aaa;
-  border-radius:          0.3em;
-  font-size:              0.85em;
-  color: 				  #777;
-  overflow:               hidden;
- 
-  -webkit-transition:     box-shadow 200ms, border-color 200ms;
-  -moz-transition:        box-shadow 200ms, border-color 200ms;
-  transition:             box-shadow 200ms, border-color 200ms;
-  }
-
+	display: inline-block;
+	vertical-align: baseline;
+	height: 1.4em;
+	margin: 2px;
+	padding: 0.3em 0.6em 0.3em 0.6em;
+	background: #fff;
+	border: 1px solid #aaa;
+	border-radius: 0.3em;
+	font-size: 0.85em;
+	color: #777;
+	overflow: hidden;
+	-webkit-transition: box-shadow 200ms, border-color 200ms;
+	-moz-transition: box-shadow 200ms, border-color 200ms;
+	transition: box-shadow 200ms, border-color 200ms;
+}
 /* 
 CSS box shadow capable browsers (via modernizr) IE9+
 ---------------------------------------------------------------------------------------------------- */
 .boxshadow .ee-filter-form select {
-  background-color:       #f2f2f2;
-  border-color:           #fff;
-  box-shadow:             inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0,0,0,0.6);
-  }
+	background-color: #f2f2f2;
+	border-color: #fff;
+	box-shadow: inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0, 0, 0, 0.6);
+}
 /* 
 CSS text shadow capable browsers (via modernizr) IE10+
 ---------------------------------------------------------------------------------------------------- */
 .textshadow .ee-filter-form select {
-  text-shadow:            0 1px 0 #fff;
-  }
+	text-shadow: 0 1px 0 #fff;
+}
 .textshadow .ee-filter-form option {
-  text-shadow:            none;
-  }
+	text-shadow: none;
+}
 /* 
 hover - note it doesn't happen on touch devices, as that can give inconsistent results
 ---------------------------------------------------------------------------------------------------- */
 .no-touch.boxshadow .ee-filter-form select:hover {
-  box-shadow:             inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 0 3px #ff8;
-  }
+	box-shadow: inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0, 0, 0, 0.6), 0 0 0 3px #ff8;
+}
 /* 
 focus
 ---------------------------------------------------------------------------------------------------- */
 .boxshadow .ee-filter-form select:focus {
-  outline:                none;
-  border-color:           #6cf;
-  box-shadow:             inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 4px #6cf;
-  }
+	outline: none;
+	border-color: #6cf;
+	box-shadow: inset 0 0.9em 0 #fff, 0px 1px 3px 0 rgba(0, 0, 0, 0.6), 0 0 4px #6cf;
+}
 /* 
 disabled
 ---------------------------------------------------------------------------------------------------- */
 .ee-filter-form select:disabled {
-  color:                  #ccc;
+	color: #ccc;
 }
 /* 
 errors
 ---------------------------------------------------------------------------------------------------- */
-.ee-filter-form select.error,
-.ee-filter-form.error select,
-.ee-filter-form .error select {
-  color:                  #bf212e;
-  border-color:           #bf212e;
+.ee-filter-form select.error, .ee-filter-form.error select, .ee-filter-form .error select {
+	color: #bf212e;
+	border-color: #bf212e;
 }
-
 /* 
-  *** IE6/IE7 ***
-  - Almost no styling possible, so cancel out the extra stuff and try to even out the metrics
+ *** IE6/IE7 ***
+ - Almost no styling possible, so cancel out the extra stuff and try to even out the metrics
 ---------------------------------------------------------------------------------------------------- */
 .ee-filter-form select {
-  *height:                auto;
-  *padding:               auto;
-  *margin:                0.3em 2px 0.3em 3px;
+ *height: auto;
+ *padding: auto;
+ *margin: 0.3em 2px 0.3em 3px;
 }
 /* 
-  *** IE9/10 ***
+ *** IE9/10 ***
 ---------------------------------------------------------------------------------------------------- */
 @media screen and (min-width:0\0) {
-  .boxshadow .ee-filter-form select,
-  .boxshadow .ee-filter-form select:disabled,
-  .boxshadow .ee-filter-form select:disabled:hover {
-    box-shadow:           inset 0 0.9em 0 #fff, 0px 1px 6px 0 rgba(0,0,0,0.6);
-  }
-  .ee-filter-form select::-ms-expand {
-    background:           transparent;
-    border:               none;
-    width:                12px;
-    padding-left:         5px;
-  }
-  /* 
-  hover 
-  ---------------------------------------------------------------------------------------------------- */
-  .no-touch.boxshadow .ee-filter-form select:hover {
-    box-shadow:           inset 0 0.9em 0 #fff, 0px 1px 6px 0 rgba(0,0,0,0.6), 0 0 0 3px #ff8;
-  }
-  /* 
-  focus
-  ---------------------------------------------------------------------------------------------------- */
-  .boxshadow .ee-filter-form select:focus {
-    box-shadow:           inset 0 0.9em 0 #fff, 0px 1px 6px 0 rgba(0,0,0,0.6), 0 0 4px #6cf;
-  }
+ .boxshadow .ee-filter-form select, .boxshadow .ee-filter-form select:disabled, .boxshadow .ee-filter-form select:disabled:hover {
+ box-shadow: inset 0 0.9em 0 #fff, 0px 1px 6px 0 rgba(0, 0, 0, 0.6);
+}
+ .ee-filter-form select::-ms-expand {
+ background: transparent;
+ border: none;
+ width: 12px;
+ padding-left: 5px;
+}
+ /* 
+ hover 
+ ---------------------------------------------------------------------------------------------------- */
+ .no-touch.boxshadow .ee-filter-form select:hover {
+ box-shadow: inset 0 0.9em 0 #fff, 0px 1px 6px 0 rgba(0, 0, 0, 0.6), 0 0 0 3px #ff8;
+}
+ /* 
+ focus
+ ---------------------------------------------------------------------------------------------------- */
+ .boxshadow .ee-filter-form select:focus {
+ box-shadow: inset 0 0.9em 0 #fff, 0px 1px 6px 0 rgba(0, 0, 0, 0.6), 0 0 4px #6cf;
+}
 }
 
 /* 
-  *** WEBKIT ***
+ *** WEBKIT ***
 ---------------------------------------------------------------------------------------------------- */
 @media all and (-webkit-min-device-pixel-ratio: 0) {
-  .ee-filter-form select {
-    padding-right:        30px;
-  }
-  .boxshadow .ee-filter-form select {
-    -webkit-box-shadow:   0px 1px 3px 0 rgba(0,0,0,0.6);
-    box-shadow:           0px 1px 3px 0 rgba(0,0,0,0.6);
-  }
-  .ee-filter-form select {
-    background-image:     url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAWCAYAAADafVyIAAAAzElEQVRIDWP8//8/Ay0BE8zws2fPgmyium1wC2AWUZsetYBgiI4GEcEgYiGoAqqgq6trGZAZia4emFGXlZeXR6OLw/hEx8G/f/+ygYY9hWkE0UD+IyCVhSyGzibagoqKiveMjIyJIHNBhgAN/wekYoGu/wji4wJEWwAyoKysbDfQ4ClQw7qAhh/CZTBMnOg4gGl4+fJluYSEhNC9e/fqYGJ4aaCLQN5lOHPmDJACAzAfyKIKTVIQ4XUpDslRC3AEDEJ46AcRIyg50hIAANnugKRDswA6AAAAAElFTkSuQmCC"), -webkit-gradient(linear, left top, left bottom, color-stop(41%, #fff), color-stop(41%, #f1f1f1), color-stop(100%, #f2f2f2)); /* for older Android 2 with old gradient syntax and PNG image */
-    background-image:     url("data:image/svg+xml;utf8,<svg width='24px' height='22px' version='1.1' xmlns='http://www.w3.org/2000/svg'><title>select-arrow</title><g id='arrow-group' fill='rgb(223,223,223)' fill-rule='evenodd'><path d='M10,9 L13.4690265,14 L17,9 L10,9 Z M10,9' id='arrow' fill='rgb(155,155,155)'></path><path d='M2,1 L2,21 L3,21 L3,1 L2,1 Z M2,1' id='dark-line' fill='rgb(213,213,213)'></path><path d='M3,1 L3,21 L4,21 L4,1 L3,1 Z M3,1' id='light-line' fill='rgb(254,255,255)'></path></g></svg>"), -webkit-linear-gradient(-90deg, #fff 41%, #f1f1f1 41%, #f2f2f2 100%); /* for android4+/iOS/Chrome/Safari with -webkit gradient syntax and SVG image */
-    background-repeat:    no-repeat, repeat;
-    background-position:  100% 50%, 0 0;
-  }
-  /* 
-  hover
-  ---------------------------------------------------------------------------------------------------- */
-  .no-touch.boxshadow .ee-filter-form select:hover {
-    -webkit-box-shadow:   0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 0 3px #ff8;
-    box-shadow:           0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 0 3px #ff8;
-  }
-  /* 
-  focus
-  ---------------------------------------------------------------------------------------------------- */
-  .boxshadow .ee-filter-form select:focus {
-    -webkit-box-shadow:   0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 4px #6cf;
-    box-shadow:           0px 1px 3px 0 rgba(0,0,0,0.6), 0 0 4px #6cf;
-  }
+ .ee-filter-form select {
+ padding-right: 30px;
 }
-
+ .boxshadow .ee-filter-form select {
+ -webkit-box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.6);
+ box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.6);
+}
+ .ee-filter-form select {
+ background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAWCAYAAADafVyIAAAAzElEQVRIDWP8//8/Ay0BE8zws2fPgmyium1wC2AWUZsetYBgiI4GEcEgYiGoAqqgq6trGZAZia4emFGXlZeXR6OLw/hEx8G/f/+ygYY9hWkE0UD+IyCVhSyGzibagoqKiveMjIyJIHNBhgAN/wekYoGu/wji4wJEWwAyoKysbDfQ4ClQw7qAhh/CZTBMnOg4gGl4+fJluYSEhNC9e/fqYGJ4aaCLQN5lOHPmDJACAzAfyKIKTVIQ4XUpDslRC3AEDEJ46AcRIyg50hIAANnugKRDswA6AAAAAElFTkSuQmCC"), -webkit-gradient(linear, left top, left bottom, color-stop(41%, #fff), color-stop(41%, #f1f1f1), color-stop(100%, #f2f2f2)); /* for older Android 2 with old gradient syntax and PNG image */
+ background-image: url("data:image/svg+xml;utf8,<svg width='24px' height='22px' version='1.1' xmlns='http://www.w3.org/2000/svg'><title>select-arrow</title><g id='arrow-group' fill='rgb(223,223,223)' fill-rule='evenodd'><path d='M10,9 L13.4690265,14 L17,9 L10,9 Z M10,9' id='arrow' fill='rgb(155,155,155)'></path><path d='M2,1 L2,21 L3,21 L3,1 L2,1 Z M2,1' id='dark-line' fill='rgb(213,213,213)'></path><path d='M3,1 L3,21 L4,21 L4,1 L3,1 Z M3,1' id='light-line' fill='rgb(254,255,255)'></path></g></svg>"), -webkit-linear-gradient(-90deg, #fff 41%, #f1f1f1 41%, #f2f2f2 100%); /* for android4+/iOS/Chrome/Safari with -webkit gradient syntax and SVG image */
+ background-repeat: no-repeat, repeat;
+ background-position: 100% 50%, 0 0;
+}
+ /* 
+ hover
+ ---------------------------------------------------------------------------------------------------- */
+ .no-touch.boxshadow .ee-filter-form select:hover {
+ -webkit-box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.6), 0 0 0 3px #ff8;
+ box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.6), 0 0 0 3px #ff8;
+}
+ /* 
+ focus
+ ---------------------------------------------------------------------------------------------------- */
+ .boxshadow .ee-filter-form select:focus {
+ -webkit-box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.6), 0 0 4px #6cf;
+ box-shadow: 0px 1px 3px 0 rgba(0, 0, 0, 0.6), 0 0 4px #6cf;
+}
+}
 select:focus {
-	outline: 			none; 
-	}
+	outline: none;
+}
 
 /* 
 The Buttons and related paraphenalia 
 ---------------------------------------------------------------------------------------------------- */
 
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button { 
-	-moz-box-sizing: 	content-box !important; 
-	box-sizing: 		content-box !important; 
-	border: 			1px solid #ccc;
-	padding: 			5px 10px; 
-	border-radius: 		0px; 
-	background: 		#fff; 
-	box-shadow:			none; 
-	text-shadow: 		0px 0px 0px #fff; 
-	word-wrap: 			normal; 
-	font-weight: 		400; 
-	font-size:			.8em; 
-	opacity: 			1;
-	margin-right:		1px;
-	}
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev, 
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next { 
-	padding: 			10px 0.6em; 
-	color: 				#fff; 
-	text-shadow: 		0px 0px 0px #fff; 
-	}
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev,
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-month {  
-	font-size:			.8em; 
-	padding: 			5px 10px;
-	color: 				#777;
-	border-top-left-radius: 1px; 
-	border-bottom-left-radius: 1px; 
-	}
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next,
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-today  {  
-	font-size:			.8em; 
-	padding: 			5px 10px;
-	color: 				#777;
-	border-top-right-radius: 1px; 
-	border-bottom-right-radius: 1px; 
-	}
-#espresso_calendar:not(.ui-widget) .fc-button .fc-icon-wrap  { 
-	top: 				auto; 
-	float: 				none; 
-	}
-#espresso_calendar:not(.ui-widget) .fc-button .fc-icon-wrap .ui-icon  { 
-	top: 				auto; 
-	float: 				none; 
-	margin:				14.5px auto 0; 
-	}
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-header-space { 
-	display: 			inline-block; 
-	padding:			0; 
-	width:				1px; 
-	height:				45px; 
-	background:			#fff; 
-	}
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-text-arrow { 
-	color:				#777A80; 
-	text-shadow:		.5px .5px 0px #fff; 
-	}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button {
+ -moz-box-sizing: content-box !important;
+ box-sizing: content-box !important;
+ border: 1px solid #ccc;
+ padding: 5px 10px;
+ border-radius: 0px;
+ background: #fff;
+ box-shadow: none;
+ text-shadow: 0px 0px 0px #fff;
+ word-wrap: normal;
+ font-weight: 400;
+ font-size: .8em;
+ opacity: 1;
+ margin-right: 1px;
+}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev, #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next {
+ padding: 10px 0.6em;
+ color: #fff;
+ text-shadow: 0px 0px 0px #fff;
+}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev, #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-month {
+ font-size: .8em;
+ padding: 5px 10px;
+ color: #777;
+ border-top-left-radius: 1px;
+ border-bottom-left-radius: 1px;
+}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next, #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-today {
+ font-size: .8em;
+ padding: 5px 10px;
+ color: #777;
+ border-top-right-radius: 1px;
+ border-bottom-right-radius: 1px;
+}
+#espresso_calendar:not(.ui-widget) .fc-button .fc-icon-wrap {
+ top: auto;
+ float: none;
+}
+#espresso_calendar:not(.ui-widget) .fc-button .fc-icon-wrap .ui-icon {
+ top: auto;
+ float: none;
+ margin: 14.5px auto 0;
+}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-header-space {
+ display: inline-block;
+ padding: 0;
+ width: 1px;
+ height: 45px;
+ background: #fff;
+}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-text-arrow {
+ color: #777A80;
+ text-shadow: .5px .5px 0px #fff;
+}
 
 /* Miscellaneous Calendar Styles */
 
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-other-month {  
-	background:			#fcfcfc; 
-	}
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-state-highlight {  
-	background:			#FEFEDF; 
-	}
-#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number { 
-	color: 				#777;
-	font-size: 			1em; 
-	line-height: 		2; 
-	}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-other-month {
+ background: #fcfcfc;
+}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-state-highlight {
+ background: #FEFEDF;
+}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number {
+ color: #777;
+ font-size: 1em;
+ line-height: 2;
+}
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-view-agendaDay .fc-agenda-body td div {
-	min-height:			50px;
-	}
-#espresso_calendar:not(.ui-widget) .fc-state-active,
-#espresso_calendar:not(.ui-widget) .fc-state-hover,
-#espresso_calendar:not(.ui-widget) .fc-state-hover .fc-text-arrow { 
-	color: 				#2F3334 !important; 
-	}
-#espresso_calendar:not(.ui-widget) .fc-state-disabled { 
-	display: 			none; 
-	color:				#999; 
-	}
-#espresso_calendar td { 
-	padding: 			0; 
-	}
-#espresso_calendar .fc-grid .fc-day-number { 
-	padding:			0 .5em; 
-	}	
-#espresso_calendar:not(.ui-widget) .fc-event { 
-	margin:				0 1.5px 3px;
-	border: 			none; 
-	border-radius:		0; 
-	background-color:	#007BAE; 
-	font-size: 			85%; 
-	line-height:		1; 
-	}
-#espresso_calendar.calendar_widget .fc-event { 
-	margin:				0 0 2px; 
-	padding:			0px; 
-	min-height:			15px; 
-	}
-#espresso_calendar .fc-event a { 
-	letter-spacing:		-.5px; 
-	}
-#espresso_calendar .fc-event a:hover { 
-	text-shadow: 		none; 
-	}
-#espresso_calendar:not(.ui-widget) .fc-event.expired { 
-	background:			#EEEEE6 !important; 
-	color:				#999 !important;
-	}
-
+ min-height: 50px;
+}
+#espresso_calendar:not(.ui-widget) .fc-state-active, #espresso_calendar:not(.ui-widget) .fc-state-hover, #espresso_calendar:not(.ui-widget) .fc-state-hover .fc-text-arrow {
+ color: #2F3334 !important;
+}
+#espresso_calendar:not(.ui-widget) .fc-state-disabled {
+ display: none;
+ color: #999;
+}
+#espresso_calendar td {
+	padding: 0;
+}
+#espresso_calendar .fc-grid .fc-day-number {
+	padding: 0 .5em;
+}
+#espresso_calendar:not(.ui-widget) .fc-event {
+ margin: 0 1.5px 3px;
+ border: none;
+ border-radius: 0;
+ background-color:	#007BAE;
+ font-size: 85%;
+ line-height: 1;
+}
+#espresso_calendar.calendar_widget .fc-event {
+	margin: 0 0 2px;
+	padding: 0px;
+	min-height: 15px;
+}
+#espresso_calendar .fc-event a {
+	letter-spacing: -.5px;
+}
+#espresso_calendar .fc-event a:hover {
+	text-shadow: none;
+}
+#espresso_calendar:not(.ui-widget) .fc-event.expired {
+ background: #EEEEE6 !important;
+ color: #999 !important;
+}
 /* Event Styles
 ---------------------------------------------------------------------------------------------------- */
 
-#espresso_calendar .fc-event-title { 
-	display: 			block; 
-	padding: 			0 4px;
-	font-size:			14px;
-	margin-bottom:		4px;	
-	}
-#espresso_calendar .fc-event-time { 
-	display: 			block; 
-	padding: 			0 0 4px;
-	display:			none;
-	}
-#espresso_calendar .time-display-block { 
-	margin: 			0;
-	padding: 			4px;	 
-	}
+#espresso_calendar .fc-event-title {
+	display: block;
+	padding: 0 4px;
+	font-size: 14px;
+	margin-bottom: 4px;
+}
+#espresso_calendar .fc-event-time {
+	display: block;
+	padding: 0 0 4px;
+	display: none;
+}
+#espresso_calendar .time-display-block {
+	margin: 0;
+	padding: 4px;
+}
 #espresso_calendar .event-end-time {
-	margin: 			0;
-	padding: 			0 4px;	
-	}
-#espresso_calendar .thumb-wrap { 
-	display: 			block; 
-	overflow: 			hidden;  
-	padding: 			10px 0 0; 
-	max-width:			150px; 
-	vertical-align: 	middle;
-	}
-#espresso_calendar .thumb-wrap img { 
-	max-width:			150px; 
-	width:				100%; 
-	border-radius: 		0; 
-	box-shadow: 		none; 
-	vertical-align: 	middle;
-	opacity: 			0.7;
-	}
-#espresso_calendar .thumb-wrap img:hover{
-	opacity: 			1;
-  	filter: 			alpha(opacity=100);
-  	zoom: 				1;
-  	-webkit-transition: all 1s ease-in-out;
-  	-moz-transition: 	all 1s ease-in-out;
-  	-o-transition: 		all 1s ease-in-out;
-  	transition: 		all 1s ease-in-out;
-  	}
-#espresso_calendar .fc-view-agendaWeek .thumb-wrap { 
-	overflow: 			hidden; 
-	/*max-height: 		20px;*/
-	}
-#espresso_calendar .fc-view-agendaDay .thumb-wrap { 
-	height: 			auto; 
-	}
+	margin: 0;
+	padding: 0 4px;
+}
+#espresso_calendar .thumb-wrap {
+	display: block;
+	overflow: hidden;
+	padding: 10px 0 0;
+	max-width: 150px;
+	vertical-align: middle;
+}
+#espresso_calendar .thumb-wrap img {
+	max-width: 150px;
+	width: 100%;
+	border-radius: 0;
+	box-shadow: none;
+	vertical-align: middle;
+	opacity: 0.7;
+}
+#espresso_calendar .thumb-wrap img:hover {
+	opacity: 1;
+	filter: alpha(opacity=100);
+	zoom: 1;
+	-webkit-transition: all 1s ease-in-out;
+	-moz-transition: all 1s ease-in-out;
+	-o-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
+}
+#espresso_calendar .fc-view-agendaWeek .thumb-wrap {
+	overflow: hidden;/*max-height: 20px;*/
+}
+#espresso_calendar .fc-view-agendaDay .thumb-wrap {
+	height: auto;
+}
 #espresso_calendar .fc-widget-header {
-	font-weight: 		400;
-	}
-
+	font-weight: 400;
+}
 /* Category Legend Styles
 ---------------------------------------------------------------------------------------------------- */
 
 div#espreso-category-legend {
-	clear:				both;
-	}
+	clear: both;
+}
 div#espreso-category-legend ul {
 	float:left;
-	}	
-	
+}
 div#espreso-category-legend li {
-	list-style:			none;
-	margin:				0 10px 5px 0;
-	padding:			0 7px 0 7px;
+	list-style: none;
+	margin: 0 10px 5px 0;
+	padding: 0 7px 0 7px;
 	float:left;
-	}	
-	
+}
 /* Tooltip Styles
 ---------------------------------------------------------------------------------------------------- */
 
-.qtip, .ui-helper-reset { 
-	border: 			1px solid #ccc;
-	padding: 			10px; 
-	}
+.qtip, .ui-helper-reset {
+	border: 1px solid #ccc;
+	padding: 10px;
+}
 .ui-tooltip-title {
-	font-size: 			1.2em;
-	font-weight: 		600;
-	margin:				10px;
-	}
+	font-size: 1.2em;
+	font-weight: 600;
+	margin: 10px;
+}
 .ui-tooltip-content p {
-	font-size: 			1em;
-	line-height: 		1.4;
-	padding: 			10px 10px 0 10px;
-	}
+	font-size: 1em;
+	line-height: 1.4;
+	padding: 10px 10px 0 10px;
+}
 p.time_cal_qtip {
-	padding: 			10px;
-	margin: 			10px;
-	border-top: 		1px dashed #ccc;
-	border-bottom: 		1px dashed #ccc;
-	}
+	padding: 10px;
+	margin: 10px;
+	border-top: 1px dashed #ccc;
+	border-bottom: 1px dashed #ccc;
+}
 .qtip-close .ui-icon {
-	margin: 			0 !important;
-	}
-.attendee_limit_qtip,
-.time_cal_qtip {
-	margin: 			1em 0; 
-	font-weight: 		400;
-	}
-.sold-out-dv,
-.reg-now-btn {
-	display: 			inline-block; 
-	float: 				right; 
-	margin:				10px; 
-	padding: 			.5em 1em .5em; 
-	border-radius: 		2px; 
-	color: 				#FFF; 
-	text-decoration: 	none; 
-	font-weight: 		400; 
-	font-size: 			1em; 
-	line-height: 		2;
-	}
-a.reg-now-btn:hover { 
-	color:				#777; 
+	margin: 0 !important;
+}
+.attendee_limit_qtip, .time_cal_qtip {
+	margin: 1em 0;
+	font-weight: 400;
+}
+.sold-out-dv, .reg-now-btn {
+	display: inline-block;
+	float: right;
+	margin: 10px;
+	padding: .5em 1em .5em;
+	border-radius: 2px;
+	color: #FFF;
+	text-decoration: none;
+	font-weight: 400;
+	font-size: 1em;
+	line-height: 2;
+}
+a.reg-now-btn:hover {
+	color: #777;
 	text-decoration:	none;
-	}
-a.reg-now-btn { 
-	box-sizing: 		content-box !important; 
-	border: 			1px solid #ccc;
-	padding: 			5px 10px; 
-	border-radius: 		0px; 
-	background: 		#fff; 
-	box-shadow:			none; 
-	text-shadow: 		0px 0px 0px #fff; 
-	word-wrap: 			normal; 
-	font-weight: 		400; 
-	font-size: 			1em; 
-	color: 				#777; 
-	}
+}
+a.reg-now-btn {
+	box-sizing: content-box !important;
+	border: 1px solid #ccc;
+	padding: 5px 10px;
+	border-radius: 0px;
+	background: #fff;
+	box-shadow: none;
+	text-shadow: 0px 0px 0px #fff;
+	word-wrap: normal;
+	font-weight: 400;
+	font-size: 1em;
+	color: #777;
+}
 .sold-out-dv {
-	background: 		#E44064; 
-	}
+	background: #E44064;
+}
 .ui-state-active.reg-now-btn:hover {
-	background: 		#777;
-	color: 				#fff;
-	text-decoration: 	underline;
-	}
+	background: #777;
+	color: #fff;
+	text-decoration: underline;
+}
 .fc, .fc table .ui-widget-header {
-	font-size: 			1em;
-	}
+	font-size: 1em;
+}
 .ui-widget-content img {
 	max-width: 100%;
 }
-
 /* Calendar Widget CSS
 ---------------------------------------------------------------------------------------------------- */
 /* this stuff controls the widget styles and overrides some of the default stuff to make the widget prettier */
 /* added in 2.0 by Chris Reynolds */
-.espresso_calendar_widget #ee-category-submit,
-.espresso_calendar_widget #ee-venue-submit {
-	display:			none;
+.espresso_calendar_widget #ee-category-submit, .espresso_calendar_widget #ee-venue-submit {
+	display: none;
 }
-.espresso_calendar_widget span.fc-event-title,
-.espresso_calendar_widget p.time-display-block,
-.espresso_calendar_widget .thumb-wrap {
-	position: 			absolute;
-	left: 				-999em; /* hide the titles because they make things ugly */
-	}
+.espresso_calendar_widget span.fc-event-title, .espresso_calendar_widget p.time-display-block, .espresso_calendar_widget .thumb-wrap {
+	position: absolute;
+	left: -999em; /* hide the titles because they make things ugly */
+}
 .espresso_calendar_widget .fc-event-skin {
-	height: 			16px;
-	border: 			none;
-	background-color: 	transparent; /* get rid of the background color and border */
-	}
-
-.espresso_calendar_widget .fc-day-content div { 
-	min-height: 		15px; 
-	}
-.espresso_calendar_widget a.fc-event-skin div:hover { 
-	background-position:6px 0px!important; 
-	}
-.espresso_calendar_widget .fc-header h2 { 
-	font-weight: 		normal; 
-	font-size: 			1.2em; 
-	} 
-.espresso_calendar_widget th.fc-widget-header { 
-	font-weight: 		normal; 
-	} 
-.espresso_calendar_widget .fc-button-content { 
-	padding: 			0 5px; 
-	height: 			16px; 
-	font-size: 			0.8em; 
-	line-height: 		16px; 
-	} 
-.espresso_calendar_widget table.fc-header { 
-	margin-bottom: 		0; 
-	} 
-.espresso_calendar_widget table.fc-border-separate tbody { 
-	font-size: 			0.8em;
-	} 
-
-.espresso_calendar_widget table.fc-border-separate thead { 
-	font-size: 			0.75em; 
-	} 
-	
+	height: 16px;
+	border: none;
+	background-color: transparent; /* get rid of the background color and border */
+}
+.espresso_calendar_widget .fc-day-content div {
+	min-height: 15px;
+}
+.espresso_calendar_widget a.fc-event-skin div:hover {
+	background-position:6px 0px!important;
+}
+.espresso_calendar_widget .fc-header h2 {
+	font-weight: normal;
+	font-size: 1.2em;
+}
+.espresso_calendar_widget th.fc-widget-header {
+	font-weight: normal;
+}
+.espresso_calendar_widget .fc-button-content {
+	padding: 0 5px;
+	height: 16px;
+	font-size: 0.8em;
+	line-height: 16px;
+}
+.espresso_calendar_widget table.fc-header {
+	margin-bottom: 0;
+}
+.espresso_calendar_widget table.fc-border-separate tbody {
+	font-size: 0.8em;
+}
+.espresso_calendar_widget table.fc-border-separate thead {
+	font-size: 0.75em;
+}
 /* Default resets for themeroller
 ---------------------------------------------------------------------------------------------------- */
 
-.ui-state-highlight.fc-today { 
-	border-top: 		1px solid #AAA; 
-	border-left: 		1px solid #aaa; 
-	}
-a.fc-event.themeroller.ui-widget-header span.fc-event-title,
-a.fc-event.themeroller.ui-widget-header p.time-display-block { 
-	font-weight: 		normal; 
-	}
-
-.themeroller .thumb-wrap { 
-	overflow: 			hidden; 
-	max-height: 		80px; 
-	}
-.fc-view-agendaDay .themeroller .thumb-wrap { 
-	max-height: 		100%; 
-	}
-.fc-corner-left .fc-event-inner { 
-	border-left: 		0px; 
-	}
-.espresso_calendar_widget th.ui-widget-header { 
-	font-weight: 		normal; 
-	}
-.espresso_calendar_widget .fc-button-content .ui-icon { 
-	margin-top: 		-50%; 
-	}
-.espresso_calendar_widget span.ui-icon { 
-	margin: 			0; 
-	} 
+.ui-state-highlight.fc-today {
+	border-top: 1px solid #AAA;
+	border-left: 1px solid #aaa;
+}
+a.fc-event.themeroller.ui-widget-header span.fc-event-title, a.fc-event.themeroller.ui-widget-header p.time-display-block {
+	font-weight: normal;
+}
+.themeroller .thumb-wrap {
+	overflow: hidden;
+	max-height: 80px;
+}
+.fc-view-agendaDay .themeroller .thumb-wrap {
+	max-height: 100%;
+}
+.fc-corner-left .fc-event-inner {
+	border-left: 0px;
+}
+.espresso_calendar_widget th.ui-widget-header {
+	font-weight: normal;
+}
+.espresso_calendar_widget .fc-button-content .ui-icon {
+	margin-top: -50%;
+}
+.espresso_calendar_widget span.ui-icon {
+	margin: 0;
+}
 .espresso_calendar_widget .fc-button {
-	height:				auto;
-	}	
+	height: auto;
+}
 #ee-calendar-ajax-loader-img {
-	position:			absolute; 
-	top:				-16px; 
-	left:				50%; 
-	margin:				0 0 0 -33px;
-	box-shadow: 		none !important;
-	}
+	position: absolute;
+	top: -16px;
+	left: 50%;
+	margin: 0 0 0 -33px;
+	box-shadow: none !important;
+}
 .fc-header td {
-	border: 			none;
-	}
-	
+	border: none;
+}
 /* prevent transitions from getting applied to calendar links as some themes are known to do this
 ---------------------------------------------------------------------------------------------------- */
 
 #espresso_calendar a {
 	-webkit-transition: none !important;
-	-moz-transition:    none !important;
-	-ms-transition:     none !important;
-	-o-transition:      none !important;
-	transition:         none !important;
+	-moz-transition: none !important;
+	-ms-transition: none !important;
+	-o-transition: none !important;
+	transition: none !important;
 }
-.ui-tooltip-tip { 
-	position:			absolute; 
-	}
+.ui-tooltip-tip {
+	position: absolute;
+}
 
  /*
  Media Query for screens smaller then 768px (iPad portrait)
  ---------------------------------------------------------------------------------------------------- */
  
 
-@media only screen and (max-width: 767px)  {
+@media only screen and (max-width: 767px) {
 
 	/* Force table to not be like tables anymore */
-	table.fc-header, thead.fc-header, table.fc-header tbody, table td.fc-header-left, table td.fc-header-center, table td.fc-header-right, table.fc-header tr { 
-		display: 		block; 
-		border:			none;
-	}
-	.fc-button.fc-button-prev.fc-state-default.fc-corner-left.fc-corner-right {
-		position: 		absolute;
-		top:			55px;
-	}
-	table.fc-header td.fc-header-left {
-		/* Behave  like a "row" */
-		border: 		none;
-		position: 		relative; 
-		height:			0;
-	}
-	td.fc-header-center,
-	td.fc-header-right {
-		width:			100%;
-	}
-	table.fc-header td.fc-header-center,
-	table.fc-header td.fc-header-right { 
-		/* Behave  like a "row" */
-		border: 		none;
-		position: 		relative; 
-		height:			55px;
-	}
-	#espresso_calendar:not(.ui-widget) .fc-header-title h2 {
-		margin:			20px 0 0 0;
-	}
-	#espresso_calendar .fc-day-header {
-		font-size:		.85em;
-		padding:		0 1px;
-	}
-	#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number {
-		padding: 		0 2px 0 0;
-	}
-	table.fc-header td:before { 
-		/* Now like a table header */
-		position: 		absolute;
-		/* Top/left values mimic padding */
-		top: 			6px;
-		left: 			6px;
-		width: 			45%; 
-		padding-right: 	10px; 
-		white-space: 	nowrap;
-	}
-	.qtip_info {
-		display:		block;
-	}
-	#espresso_calendar .fc-event-title,
-	#espresso_calendar .time-display-block,
-	#espresso_calendar .thumb-wrap,
-	.ui-tooltip-content p:first-child {
-		display:		none;
-	}
+table.fc-header, thead.fc-header, table.fc-header tbody, table td.fc-header-left, table td.fc-header-center, table td.fc-header-right, table.fc-header tr {
+ display: block;
+ border: none;
+}
+ .fc-button.fc-button-prev.fc-state-default.fc-corner-left.fc-corner-right {
+ position: absolute;
+ top: 55px;
+}
+ table.fc-header td.fc-header-left {
+ /* Behave like a "row" */
+ border: none;
+ position: relative;
+ height: 0;
+}
+ td.fc-header-center, td.fc-header-right {
+ width: 100%;
+}
+ table.fc-header td.fc-header-center, table.fc-header td.fc-header-right {
+ /* Behave like a "row" */
+ border: none;
+ position: relative;
+ height: 55px;
+}
+ #espresso_calendar:not(.ui-widget) .fc-header-title h2 {
+ margin: 20px 0 0 0;
+}
+ #espresso_calendar .fc-day-header {
+ font-size: .85em;
+ padding: 0 1px;
+}
+ #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number {
+ padding: 0 2px 0 0;
+}
+ table.fc-header td:before {
+ /* Now like a table header */
+ position: absolute;
+ /* Top/left values mimic padding */
+ top: 6px;
+ left: 6px;
+ width: 45%;
+ padding-right: 10px;
+ white-space: nowrap;
+}
+ .qtip_info {
+ display: block;
+}
+ #espresso_calendar .fc-event-title, #espresso_calendar .time-display-block, #espresso_calendar .thumb-wrap, .ui-tooltip-content p:first-child {
+ display: none;
+}
 }
