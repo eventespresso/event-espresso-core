@@ -91,9 +91,6 @@ Calendar Specific Styles
 #espresso_calendar  td.fc-widget-content {
  	border-top: 			1px solid #ededed !important;
  }
- .fc-border-separate tr.fc-last th {
- 	border-bottom-width: 	0;
- }
  
 /* 
 Select Box
@@ -385,6 +382,7 @@ The Buttons and related paraphenalia
 #espresso_calendar .fc-event-time { 
 	display: 			block; 
 	padding: 			0 0 4px;
+	display:			none;
 	}
 #espresso_calendar .time-display-block { 
 	margin: 			0;
@@ -418,9 +416,9 @@ The Buttons and related paraphenalia
   	-o-transition: 		all 1s ease-in-out;
   	transition: 		all 1s ease-in-out;
   	}
-#espresso_calendar .fc-view-agendaWeek  .thumb-wrap { 
+#espresso_calendar .fc-view-agendaWeek .thumb-wrap { 
 	overflow: 			hidden; 
-	max-height: 		20px;
+	/*max-height: 		20px;*/
 	}
 #espresso_calendar .fc-view-agendaDay .thumb-wrap { 
 	height: 			auto; 
