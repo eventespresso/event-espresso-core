@@ -249,6 +249,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// load classes
 		$this->EE->load_core( 'Cart' );
 		$TXN_MDL = $this->EE->load_model( 'Transaction' );
+		if ( ! isset( $this->EE->REQ )) {
+			$this->EE->load_core( 'Request_Handler' );
+		}
 
 		$this->set_templates();
 		$this->_reg_page_base_url = get_permalink( $this->EE->CFG->core->reg_page_id );
@@ -277,9 +280,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		d( $this->_transaction );
 		if ( ! $this->_transaction instanceof EE_Transaction ) {
 			$this->_transaction = $this->_initialize_transaction();
+		}
+		// verify registrations have been set
+		$registrations = $this->_transaction->registrations();
+		if ( empty( $registrations )) {
 			$this->_initialize_registrations();
 		}
-			
+		
+//		printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		$this->_transaction->dropEE();
 //		d( $this->_transaction );
 
@@ -440,8 +448,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}					
 			}
 			$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
+			$this->EE->SSN->update();
+
 //			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//			$this->EE->SSN->update();
 		}
 
 	}
@@ -516,7 +525,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$attendee_questions = array();
 				$prev_event = NULL;
 				
-				foreach ( $this->_transaction->registrations() as $registration ) {
+				foreach ( $transaction->registrations() as $registration ) {
 					
 					$line_item_ID = $registration->reg_url_link();	
 					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
@@ -606,7 +615,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				} 
 
 				
-				$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
+				$this->EE->SSN->set_session_data( array( 'transaction' => $transaction ));
 //				echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 //				$this->EE->SSN->update();
 //				d( $this->_transaction );
