@@ -215,8 +215,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		}
 
 		foreach ( $data as $key =>$value ) {
-			if ( ! isset( $this->_default_session_vars[ $key ] )) {
-				$this->_session_data[ $key ] = $value;
+			if ( isset( $this->_default_session_vars[ $key ] )) {
+				EE_Error::add_error( sprintf( __( 'Sorry! %s is a default session datum and can not be reset.', 'event_espresso' ), $key ), __FILE__, __FUNCTION__, __LINE__ );
+				return FALSE;
+			} else {
+				$this->_session_data[ $key ] = $value;				
 			}
 		}
 
