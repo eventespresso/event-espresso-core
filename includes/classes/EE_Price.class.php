@@ -234,6 +234,10 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 		return $this->get('PRT_ID');
 	}
 	
+	/**
+	 * 
+	 * @return EE_Price_Type
+	 */
 	public function type_obj(){
 		return $this->get_first_related('Price_Type');
 	}

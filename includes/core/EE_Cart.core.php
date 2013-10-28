@@ -231,23 +231,24 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		//now add the sub-line items
 		$running_total_for_ticket = 0;
 		foreach($ticket->prices(array('order_by'=>array('PRC_order'=>'ASC'))) as $price){
-			$price_total = $price->is_percent() ? $running_total_for_ticket * $price->amount() / 100 : $price->amount();
+			$sign = $price->is_discount() ? -1 : 1;			
+			$price_total = $price->is_percent() ? $running_total_for_ticket * $price->amount() / 100 : $price->amount() * $qty;
 			
 			$sub_line_item = EE_Line_Item::new_instance(array(
 				'LIN_name'=>$price->name(),
 				'LIN_desc'=>$price->desc(),
-				'LIN_quantity'=>$price->is_percent() ? null : 1,
+				'LIN_quantity'=>$price->is_percent() ? null : $qty,
 				'LIN_is_taxable'=> false,
 				'LIN_order'=>$price->order(),
-				'LIN_total'=>$price_total,
+				'LIN_total'=>$sign * $price_total,
 				'LIN_type'=>  EEM_Line_Item::type_sub_line_item,
 				'OBJ_ID'=>$price->ID(),
 				'OBJ_type'=>'Price'
 			));
 			if($price->is_percent()){
-				$sub_line_item->set_percent($price->amount());
+				$sub_line_item->set_percent($sign * $price->amount());
 			}else{
-				$sub_line_item->set_unit_price($price->amount());
+				$sub_line_item->set_unit_price($sign * $price->amount());
 			}
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item($sub_line_item);
