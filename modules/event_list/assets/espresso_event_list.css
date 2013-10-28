@@ -139,7 +139,8 @@
 	#grid-view-event-list-dv  .espresso-event-wrapper-dv.has-img  .event-content p { margin: 0 .5em .5em; }	
 	#grid-view-event-list-dv  .espresso-event-wrapper-dv  .event-meta { text-align: right; margin: 0 0 1em; }
 
-	#grid-view-event-list-dv #espresso-events-list-wrap-dv a.ee-register-button-lnk { margin:1em 0; }
+	#grid-view-event-list-dv .espresso-event-wrapper-dv a.ee-register-button-lnk { margin:1em 1em 0; }
+	#grid-view-event-list-dv .espresso-event-wrapper-dv.has-img a.ee-register-button-lnk { margin:1em 0 0; }
 
 	#grid-view-event-list-dv .tiny-event-list-grid.espresso-event-list-event { width: 120px; }
 	#grid-view-event-list-dv .tiny-event-list-grid .event-datetimes h4 { font-size:.9em; }
