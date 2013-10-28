@@ -58,7 +58,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * --tax2
 	 * @var EE_Line_Item
 	 */
-	private $_grand_total;
+	private $_grand_total = NULL;
 	
 	/**
 	 * Really only used for implementing iterator interface. Otherwise  unused
@@ -80,13 +80,20 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Cart )) {
 			//try getting the cart out of the session
-			$saved_cart = EE_Registry::instance()->SSN->get_session_data('cart');
-			if($saved_cart && is_object( $saved_cart ) && ( $saved_cart instanceof EE_Cart ) ){
+			$saved_cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
+			if( ! empty( $saved_cart ) && is_object( $saved_cart ) && ( $saved_cart instanceof EE_Cart )) {
 				self::$_instance = $saved_cart;
-			}else{
+				self::$_instance->_tax_strategy = $saved_cart->_tax_strategy;
+				self::$_instance->_grand_total = $saved_cart->_grand_total;
+				self::$_instance->_iterable_line_items = $saved_cart->_iterable_line_items;
+//				if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) { d( self::$_instance ); }
+			} else {
 				self::$_instance = new self();
 			}
+			unset( $saved_cart );
 		}
+		// once everything is all said and done, save the cart to the EE_Session
+		add_action( 'shutdown', array( self::$_instance, 'save_cart' ), 90 );
 		return self::$_instance;
 	}
 	
@@ -112,11 +119,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 //		if ( ! defined( 'ESPRESSO_ENCRYPT' )) {
 //			EE_Registry::instance()->load_core( 'Encryption' );
 //		}
-		$this->_create_grand_total();
+		if ( empty( $this->_grand_total )) {
+			$this->_create_grand_total();
+		}
 		
-		// once everything is all said and done, save the cart to the EE_Session
-		add_action( 'shutdown', array( $this, 'save_cart' ), 90 );
-
 	}
 	
 	/**
@@ -124,6 +130,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @return EE_Line_Item
 	 */
 	private function _create_grand_total(){
+//		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
+//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		}
 		$this->_grand_total = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'total',
 			'LIN_name'=>  __('Grand Total', 'event_espresso'),
@@ -252,7 +261,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item($sub_line_item);
 		}
-		$this->_add_item( $line_item);
+
+		$this->_add_item( $line_item );
 		return $this->save_cart() ? TRUE : FALSE;
 	}		
 
@@ -466,6 +476,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return void
 	 */	
 	public function empty_cart() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
 		$this->_grand_total = $this->_create_grand_total();
 		$this->save_cart( TRUE );	
@@ -481,17 +492,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@access public
 	 *	@return TRUE on success, FALSE on fail
 	 */	
-	public function save_cart( $save_empty = FALSE ) {
-		
-		if (  $this->get_tickets() || $save_empty ) {
-			// add cart data to session so it can be saved to the db
-			if ( EE_Registry::instance()->SSN->set_session_data( array( 'cart'=> $this ))) {
-				return TRUE;
-			} else {
-				return FALSE;
-			}			
-		}
-
+	public function save_cart() {
+//		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
+//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		}
+		return EE_Registry::instance()->SSN->set_session_data( array( 'cart'=> $this ));
 	}
 
 	
