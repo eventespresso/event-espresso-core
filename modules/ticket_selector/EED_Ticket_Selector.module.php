@@ -228,7 +228,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/	
 	public function process_ticket_selections() {
 		// check nonce
-		if ( !EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || !wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
+		if ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
 			$error_msg = __( 'We\'re sorry but your request failed to pass a security check.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
@@ -266,9 +266,12 @@ class EED_Ticket_Selector extends  EED_Module {
 				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
 				
+				// all data appears to be valid
 				$tckts_slctd = FALSE;
 				$success = FALSE;
-				// all data appears to be valid
+				// load cart
+				EE_Registry::instance()->load_core( 'Cart' );
+
 				// cycle thru the number of data rows sent from the event listsing
 				for ( $x = 0; $x < $valid['rows']; $x++ ) {		
 					// does this row actually contain a ticket quantity?
@@ -296,7 +299,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( $return ) {
 							return TRUE;
 						} else {
-							EE_Registry::instance()->save_cart();
+							EE_Registry::instance()->CART->save_cart();
 							EE_Registry::instance()->SSN->update();
 							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( $this->EE->CFG->core->reg_page_id )));
 							exit();
@@ -485,8 +488,6 @@ class EED_Ticket_Selector extends  EED_Module {
 	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1 ) {
 	
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		// load cart
-		EE_Registry::instance()->load_core( 'Cart' );
 		// get the number of spaces left for this event
 		$available_spaces = self::get_available_spaces( $ticket );
 		// compare availalbe spaces against the number of tickets being purchased

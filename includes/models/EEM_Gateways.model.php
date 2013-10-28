@@ -76,7 +76,7 @@ Class EEM_Gateways {
 		$this->EE->load_class( 'Onsite_Gateway' );	
 		$this->EE->load_core( 'Session' );	
 		define('ESPRESSO_GATEWAYS', TRUE);
-		
+		$this->set_ajax();		
 		$this->_load_session_gateway_data();
 		$this->_load_payment_settings();
 		$this->_scan_and_load_all_gateways();
@@ -485,22 +485,21 @@ Class EEM_Gateways {
 	/**
 	 * 		set_form_url
 	 * 		@access public
-	* 		@param	string	$base_url
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
-	public function set_form_url($base_url = FALSE) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (!$base_url) {
-			return FALSE;
-		}
-		foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
-			if (!empty($this->_gateway_instances[$gateway])) {
-				$this->_gateway_instances[$gateway]->set_form_url($base_url);
-			} else {
-				return FALSE;
+	public function set_form_url() {
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
+		if ( $base_url = get_permalink( $this->EE->CFG->core->reg_page_id ) ) {
+			foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
+				if (!empty($this->_gateway_instances[$gateway])) {
+					$this->_gateway_instances[$gateway]->set_form_url($base_url);
+				} else {
+					return FALSE;
+				}
 			}
+			return TRUE;
 		}
-		return TRUE;
+		return FALSE;
 	}
 
 
@@ -595,17 +594,19 @@ Class EEM_Gateways {
 	/**
 	 * 		set_ajax
 	 * 		@access public
-	* 		@param	boolean	$on_or_off
-	 * 		@return 	boolean	TRUE on success FALSE on fail
+	 * 		@return 	void
 	 */
-	public function set_ajax( $on_or_off ) {
+	public function set_ajax() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if ( ! is_bool( $on_or_off )) {
-			$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
-			return FALSE;
+		if ( ! isset( $this->EE->REQ )) {
+			$this->EE->load_core( 'Request_Handler' );		
 		}
-		$this->_ajax = $on_or_off;
-		return $this->_set_session_data();
+		if ( ! is_bool( $this->EE->REQ->ajax )) {
+			$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
+			$this->_ajax = FALSE;
+		} else {
+			$this->_ajax = $this->EE->REQ->ajax;
+		}		
 	}
 
 
@@ -786,17 +787,19 @@ Class EEM_Gateways {
 	 *		@param EE_Transaction $transaction
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
-	public function process_payment_start(EE_Line_Item $line_item, $transaction = null) {
+	public function process_payment_start( EE_Line_Item $line_item, EE_Transaction $transaction = NULL ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if( !$transaction){
+		if ( empty( $transaction )){
 			$transaction = $line_item->transaction();
 		}
-		$return_page_url = $this->_get_return_page_url($transaction);
+		$return_page_url = $this->_get_return_page_url( $transaction );
+		EE_Registry::instance()->load_helper( 'Template' );
 		// free event?
-		if ( ! $line_item->total()) {
+		if ( $line_item->total() == EEH_Template::format_currency( 0, TRUE )) {
 			
 			$transaction->set_status(EEM_Transaction::complete_status_code);
 			$transaction->save();
+			$transaction->finalize();
 			$response = array(
 					'msg' => array('success'=>TRUE),
 					'forward_url' => $return_page_url
@@ -828,11 +831,16 @@ Class EEM_Gateways {
 	 *		@param EE_Transaction $transaction
 	 * 		@return 		void
 	 */
-	private function _get_return_page_url($transaction) {
+	private function _get_return_page_url( EE_Transaction $transaction ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//get thank you page url
 		$return_page_url = rtrim( get_permalink( $this->EE->CFG->core->thank_you_page_id ), '/' );
-		if ( $transaction && $transaction instanceof EE_Transaction && $reg = $transaction->primary_registration()) {		
+		
+		$reg = $transaction->registrations();
+		//$reg = $transaction->primary_registration();
+		printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		die();
+		if ( $reg ) {		
 			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$reg->reg_url_link() ), $return_page_url );
 		}else{
 			throw new EE_Error(sprintf(__("Cant get return page because no current transaction is specified", "event_espresso")));
@@ -894,8 +902,7 @@ Class EEM_Gateways {
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (!empty($this->_selected_gateway)
-						&& !empty($this->_gateway_instances[ $this->_selected_gateway ])) {
+		if ( ! empty( $this->_selected_gateway ) && ! empty( $this->_gateway_instances[ $this->_selected_gateway ] )) {
 			$this->_gateway_instances[ $this->_selected_gateway ]->thank_you_page_logic($transaction);
 		}
 		$this->check_for_completed_transaction($transaction);

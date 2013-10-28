@@ -115,12 +115,6 @@
 	-moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;
 }
 
-.float-right { float:right; }
-.left { float:left; }
-.clear, .clear-float { clear:both; }
-.hidden { display:none/*!important*/; }
-.hide-if-no-js { display:none; }
-.cntr { text-align: center; }
 
 
 .tkt-sltr-thrd-chrt-price-spn {
@@ -128,37 +122,9 @@
 }
 
 .available-spaces-last-update-spn { margin-left:1em; font-size:.7em; letter-spacing:1px; color:#999; }
-.small-text { font-size:.85em; letter-spacing:.5px; }
-.smaller-text { font-size:.7em; letter-spacing:1px; }
-.lt-grey-text { color:#a8a8a8; }
-.drk-grey-text { color:#666; }
-.important-notice { font-weight:bold; color:#f59200; }
-.tiny-link { display:block; text-align:right; font-size:.6em; cursor:pointer; }
-.underline-hdr { padding:0 0 .05em; margin:2em 0 1em; border-bottom: 2px solid #eee; }
-.overline-hdr { padding:.5em 0 0; margin:2em 0 1em; border-top: 2px solid #eee; }
-.no-bold {
-	font-weight: normal;
-}
-
-.display-the-hidden,
-.hide-the-displayed {cursor:pointer; }
-
-.sold-out {
-	font-size:.85em; font-weight: bold; color: #E53248;
-}
+.sold-out { font-size:.85em; font-weight: bold; color: #E53248; }
 
 
-/*#message {
-	display:block; position:absolute; top:3.5em; left:5%; width:80%; height:auto; padding:.75em 2.5% .75em 7.5%; margin:0m 5%;	z-index:999; 
-	background:#fff; border-radius:5px; border-width:2px; border-style:solid; 
-	font-size:.95em; color:#444 !important; line-height:1.4em; text-align:center;
-	-webkit-box-shadow: 4px 10px 15px -3px rgba(0,0,0,.3), 1px 2px 4px -1px rgba(0,0,0,.6), -2px -1px 5px rgba(0,0,0,.1); 
-	-moz-box-shadow:4px 10px 15px -3px rgba(0,0,0,.3), 1px 2px 4px -1px rgba(0,0,0,.6), -2px -1px 5px rgba(0,0,0,.1); 
-	box-shadow:4px 10px 15px -3px rgba(0,0,0,.3), 1px 2px 4px -1px rgba(0,0,0,.6), -2px -1px 5px rgba(0,0,0,.1);
-}
-#message.success { border-color:#B9D147; }
-#message.error { border-color:#EB574D; }
-#message p { margin:0; }*/
 
 .ee-gmap-align-left { float: left; margin:2.5em 1.5em 1em 0; }
 .ee-gmap-align-center { margin:2em auto 1em; }

@@ -646,6 +646,7 @@ class EE_Transaction extends EE_Base_Class{
 	public function tax_items(){
 		return $this->line_items(array(array('LIN_type'=>  EEM_Line_Item::type_tax)));
 	}
+
 	/**
 	 * Gets the total line item (which is a parent of all other related line items,
 	 * meaning it takes them all intou account on its total)
@@ -654,9 +655,35 @@ class EE_Transaction extends EE_Base_Class{
 	public function total_line_item(){
 		return $this->get_first_related('Line_Item', array(array('LIN_type'=>  EEM_Line_Item::type_total)));
 	}
-}
 
 
 
-/* End of file EE_Transaction.class.php */
-/* Location: includes/classes/EE_Transaction.class.php */		
+	/**
+	 * cycles thru related registrations and calls finalize_registration() on each
+	 * @return void
+	 */
+	public function finalize(){
+		//$registrations = $this->get_many_related('Registration');
+		foreach ( $this->get_many_related('Registration') as $registration ) {
+			$registration->finalize();
+		}
+		if ( ! is_admin() && ! $this->EE->REQ->is_set( 'e_reg_url_link' )) {
+			//remove the session from the transaction before saving it to the db to minimize recursive relationships
+			$this->set_txn_session_data( NULL );
+			// save registrations and transaction to the session
+			$this->EE->SSN->set_session_data( array( 'transaction' => $this ));
+			// save the transactionless session back to this transaction
+			$this->set_txn_session_data( $this->EE->SSN->get_session_data() );
+			// save the transaction to the db
+			$this->save();
+		}
+	}
+
+
+
+
+
+
+
+}/* End of file EE_Transaction.class.php */
+/* Location: includes/classes/EE_Transaction.class.php */

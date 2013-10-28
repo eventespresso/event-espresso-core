@@ -22,21 +22,24 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 #STS_ID {}
 .column-STS_ID { width:8%; /*text-align:center; */}
 /* green text */
-.status-TCM, .txn-overview-full-payment-spn,
+.status-TCM { color:#090; font-size:.85em; font-weight:bold; }
+.txn-overview-full-payment-spn,
 .txn-admin-payment-status-PAP { color:#090;  }
 /* orange text */
-.status-TPN, .txn-overview-part-payment-spn,
+.status-TPN { color:#F93; font-weight:bold; }
+.txn-overview-part-payment-spn,
 .txn-admin-payment-status-PFL { color:#F93; font-weight:bold;  }
 /* red text */
-.status-TOP,
+.status-TOP { color:#F00; font-weight:bold; }
 .txn-overview-no-payment-spn,
 .txn-admin-payment-status-PDC { color:#F00; font-weight:bold; }
 /* grey text */
+.status-TIN { color:#999; font-size:.85em; }
 .txn-admin-payment-status-PCN { color:#999;  }
 
 #TXN_total, #TXN_paid { text-align:center; }
-.column-TXN_total, .column-TXN_paid { width:8%; text-align:right; }
-.txn-pad-rght { display:block; padding-right:1.5em; }
+.column-TXN_total, .column-TXN_paid { width:7.5%; text-align:right; }
+.txn-pad-rght { display:block; padding-right:1em; }
 
 .column-ATT_fname { width:14%; }
 .column-ATT_email { width:14%; }

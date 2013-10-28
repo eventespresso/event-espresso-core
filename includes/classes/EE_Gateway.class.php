@@ -569,7 +569,8 @@ abstract class EE_Gateway {
 			$transaction->update_based_on_payments();
 			$transaction->update_extra_meta('gateway', $this->_gateway_name);
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
-		}	
+		}
+		$transaction->finalize();
 		return true;
 	}
 	

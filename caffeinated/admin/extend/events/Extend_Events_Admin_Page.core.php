@@ -292,9 +292,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function list_table_filters( $oldfilters, $list_table_obj ) {
 		$filters = array();
 
-		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
-		require_once EE_CORE_ADMIN . 'admin_helper.php';
-
 		//first month/year filters
 		$filters[] = $this->espresso_event_months_dropdown();
 

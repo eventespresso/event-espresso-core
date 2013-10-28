@@ -55,7 +55,9 @@ class EEH_Debug_Tools{
 	 */
 	public function espresso_session_footer_dump() {
 		if ( function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
+			Kint::dump(  EE_Registry::instance()->SSN->id() );
 			Kint::dump( EE_Registry::instance()->SSN );
+//			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
 			$this->espresso_list_hooked_functions();
 			$this->show_times();
 		}

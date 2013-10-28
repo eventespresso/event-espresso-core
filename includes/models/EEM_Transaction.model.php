@@ -338,8 +338,7 @@ class EEM_Transaction extends EEM_Base {
 	 */
 	public function update_based_on_payments($transaction_obj_or_id){
 		$transaction = $this->ensure_is_obj($transaction_obj_or_id);
-		require_once( EE_MODELS . 'EEM_Payment.model.php');
-		$PAY = EEM_Payment::instance();
+		$PAY = $this->EE->load_model( 'Payment' );
 		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_approved );
 		//$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );
 		$transaction->set_paid( $total_paid );

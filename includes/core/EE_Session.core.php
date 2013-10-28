@@ -131,7 +131,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
-//		d( $this->_session_data );
+//		if ( ! isset( $_REQUEST['ee'] ) || $_REQUEST['ee'] != 'process_ticket_selections' ) {
+//			d( $this->_session_data );
+//		}
 		add_action( 'AHEE_before_event_list', array( $this, 'clear_session' ), 10, 2 );
 		// check request for 'clear_session' param
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 10 );
@@ -182,28 +184,15 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @access	public
 	 * @return	array
 	 */
-	public function get_session_data( $key = NULL, $section = NULL, $where = NULL ) {
-
+	public function get_session_data( $key = NULL ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-//		echo '<h4>get_session_data : ' . $where  . '</h4><br />';
-//		echo '$key : <b>' . $key . '</b>  - isset? ' . ( isset( $this->_session_data[ $key ] ) ? 'YES' : 'NO' ) . '<br />';
-		//echo '$key : <b>' . $key . '</b>  - isset? ' . ( isset( $this->_session_data[ $section ][$key] ) ? 'YES' : 'NO' ) . '<br />';
-//		echo '<span style="font-size:10px;font-weight:normal;">' . __FILE__ . '.&nbsp;&nbsp;line no: ' . __LINE__ . '</span><br />';
-
-		if ( empty( $section ) && empty( $key )) {
-			return $this->_session_data;
-//		} else if ( isset( $this->_session_data[ $section ] ) && isset( $this->_session_data[ $section ][$key] )) {
-//			echo '<h1>$key found</h1><br /><br />';
-//			return $this->_session_data[ $section ][$key];
-		} else if ( isset( $this->_session_data[ $key ] ))  {
-//			echo '<h1>$key found</h1><br /><br />';
-			return $this->_session_data[ $key ];
+		 if ( ! empty( $key ))  {
+			return  isset( $this->_session_data[ $key ] ) ? $this->_session_data[ $key ] : NULL;
 		}  else  {
-			return NULL;
+			return $this->_session_data;
 		}
-
 	}
+
 
 
 
@@ -247,14 +236,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	private function _espresso_session() {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		// starts a new session if one doesn't already exist, or reinitiates an existing one
-		if ( isset( $_GET['session_id'] )) {
-			session_id( sanitize_key( $_GET['session_id'] ));
-			session_start();
-		}
-		
-		if ( ! session_id() ) {
-			session_start();
+		// first visit ?
+		if ( session_id() === '' ) {
 			// set initial site access time
 			$this->_session_data['init_access'] = $this->_time;		
 			// set referer	
@@ -264,22 +247,20 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = '';
 			}
 		}
+		//starts a new session if one doesn't already exist, or reinitiates an existing one
+		session_start();
 		// grab the session ID
 		$this->_sid = session_id();
+		//d( $this->_sid );
 		// set the "user agent"
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
-		
-
 		// now let's retreive what's in the db
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
 		if ( $session_data = get_transient( 'EE_SSN_' . $this->_sid )) {
-
 			// un-encrypt the data
 			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
-
 			// unserialize
-			$this->_session_data = maybe_unserialize( $session_data );
-
+			$session_data = maybe_unserialize( $session_data );
 			// just a check to make sure the sesion array is indeed an array
 			if ( ! is_array( $session_data ) ) {
 				// no?!?! then something's wrong
@@ -330,47 +311,47 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
-		if ( empty( $this->_session_data ) )
+		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
+		}			
 		
 		foreach ( $this->_session_data as $key => $value ) {
 
 			switch( $key ) {
 
 				case 'id' :
-						// session ID
-						$session_data['id'] = $this->_sid;
+					// session ID
+					$session_data['id'] = $this->_sid;
 				break;
 
 				case 'ip_address' :
-						// visitor ip address
-						$session_data['ip_address'] = $this->_visitor_ip();
+					// visitor ip address
+					$session_data['ip_address'] = $this->_visitor_ip();
 				break;
 
 				case 'user_agent' :
-						// visitor user_agent
-						$session_data['user_agent'] = $this->_user_agent;
+					// visitor user_agent
+					$session_data['user_agent'] = $this->_user_agent;
 				break;
 
 				case 'init_access' :
-							$session_data['init_access'] = absint( $value );
+					$session_data['init_access'] = absint( $value );
 				break;
 
 				case 'last_access' :
-						// current access time
-						$session_data['last_access'] = $this->_time;
+					// current access time
+					$session_data['last_access'] = $this->_time;
 				break;
 
 				case 'pages_visited' :
-						// set pages visited where the first will be the http referrer
-						if ( $this->_session_data[ 'pages_visited' ][ $session_data['last_access'] ] = $this->_get_page_visit() ) {
-							$session_data[ 'pages_visited' ] = $this->_session_data[ 'pages_visited' ];
-						}						
+					// set pages visited where the first will be the http referrer
+					$this->_session_data[ 'pages_visited' ][ $this->_time ] = $this->_get_page_visit();
+					$session_data[ 'pages_visited' ] = $this->_session_data[ 'pages_visited' ];						
 				break;
 
 				default :
-						// carry any other data over
-						$session_data[$key] = $this->_session_data[$key];
+					// carry any other data over
+					$session_data[$key] = $this->_session_data[$key];
 				break;
 
 			}
@@ -429,42 +410,63 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 //		echo printr( $this->_session_data, 'session_data' );
+//		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
+//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		}
 
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
 		// encrypt it if we are using encryption
 		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
-		set_transient( 'EE_SSN_' . $this->_sid, $session_data, $this->_expiration );
-		//die();
-		return set_transient( $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
+		return set_transient( 'EE_SSN_' . $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}
+	
+	
 
+	
+	/**
+	 *	@attempt to get IP address of current visitor from server
+	 *	@access public
+	 *	@return string
+	* 	TODO: can use this when PHP >+ 5.2 becomes required by WP
+	 */
+//	private function _visitor_ip() {
+//		foreach ( array( 'REMOTE_ADDR', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED' ) as $key ) {
+//			if ( isset( $_SERVER[ $key ] )) {
+//				foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) {
+//					$ip = trim( $ip );
+//					if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== FALSE ){
+//						return $ip;
+//					}
+//				}
+//			}
+//		}
+//	}
 
 
 
 
 	/**
-	 *		@attempt to get IP address of current visitor from server
-	 *		@access public
-	 *		@return string
+	 *	@attempt to get IP address of current visitor from server
+	 *	@access public
+	 *	@return string
 	 */
 	private function _visitor_ip() {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		$visitor_ip = '0:0:0:0';
 
-		if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
-			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['HTTP_CLIENT_IP'] )) {
-				$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
-			}
-		} elseif ( isset( $_SERVER['REMOTE_ADDR'] )) {
+		if ( isset( $_SERVER['REMOTE_ADDR'] )) {
 			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['REMOTE_ADDR'] )) {
 				$visitor_ip = esc_attr( $_SERVER['REMOTE_ADDR'] );
 			}			
+		} else if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
+			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['HTTP_CLIENT_IP'] )) {
+				$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
+			}
 		}
 
 		// break it up!!!
@@ -599,14 +601,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$this->reset_data( 
 			array(
 				'cart',
-				'gateway_data', 
 				'transaction', 
 				'primary_attendee',
-				'tax_totals',
-				'taxes',
-				'billing_info',
-				'txn_results',
-				'grand_total_price_object'
+				'billing_info'
 			),
 			$show_all_notices
 		);
@@ -614,9 +611,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$this->set_session_data(
 			array(
 				'cart' => NULL,
-				'transaction' => NULL,
-				'_cart_grand_total_qty' => 0,
-				'_cart_grand_total_amount' => 0
+				'transaction' => NULL
 			)
 		);
 
