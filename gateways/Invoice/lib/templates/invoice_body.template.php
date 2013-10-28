@@ -69,80 +69,106 @@
 			
 			<thead>
 				<tr id="header_row">
-					<th class="quantity_th"><span class=""><?php _e('Qty', 'event_espresso'); ?></span></th>
-					<th class="left event_th"><?php _e('Event', 'event_espresso'); ?></th>
-					<th class="left ticket_th"><?php _e('Ticket', 'event_espresso'); ?></th>
-					<th class="left datetime_th"><?php _e('Date & Time', 'event_espresso'); ?></th>
+					<th class="left ticket_th"><?php _e('Item', 'event_espresso'); ?></th>
+					<th class="left event_th"><?php _e('Description', 'event_espresso'); ?></th>
+					<th class="left event_th"><?php _e('Unit Price', 'event_espresso'); ?></th>
+					<th class="quantity_th"><?php _e('Qty', 'event_espresso'); ?></th>
 					<th class="subtotal_th"><?php _e('Line Total', 'event_espresso'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php 
-				function ee_invoice_display_line_item(EE_Line_Item $line_item){
+				function ee_invoice_display_line_item(EE_Line_Item $line_item,$odd = false){
 					switch($line_item->type()){
 						case EEM_Line_Item::type_total:
 							foreach($line_item->children() as $child_line_item){
 								ee_invoice_display_line_item($child_line_item);
-							}?>
+								}?>
+							<tr><td colspan="5"><hr></td></tr>
 							<tr id="total_tr">
-								<td colspan="3">&nbsp;</td>
-								<td class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
+								<td colspan="2">&nbsp;</td>
+								<td colspan="2" class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total();?></td>
 							</tr>
 						<?php break;
+						
+						
 						case EEM_Line_Item::type_sub_total:
 							foreach($line_item->children() as $child_line_item){
-								ee_invoice_display_line_item($child_line_item);
+							$odd = !$odd;
+								ee_invoice_display_line_item($child_line_item,$odd);
 							}?>
+							<tr><td colspan="2"></td><td colspan="3"><hr></td></tr>
 							<tr id="total_tr">
-								<td colspan="3">&nbsp;</td>
-								<td class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
+								<td colspan="2">&nbsp;</td>
+								<td colspan="2" class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total();?></td>
 							</tr>
 						<?php break;
+						
+						
 						case EEM_Line_Item::type_tax_sub_total:
 							foreach($line_item->children() as $child_line_item){
-								ee_invoice_display_line_item($child_line_item);
+								$odd = !$odd;
+								ee_invoice_display_line_item($child_line_item, $odd);
 							}?>
+							<tr><td colspan="2"></td><td colspan="3"><hr></td></tr>
 							<tr id="total_tr">
-								<td colspan="3">&nbsp;</td>
-								<td class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
+								<td colspan="2">&nbsp;</td>
+								<td colspan="2" class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total();?></td>
 							</tr>
 						<?php break;
+						
+						
 						case EEM_Line_Item::type_line_item:
-							$datetimes = $line_item->ticket()->datetimes();
-							$a_datetime = reset($datetimes);
+							$subitems = $line_item->children(); 
+							$has_subitems  = count($subitems) > 1 ;
 							?>
-						<tr class="item <?php echo  'odd'; ?>">
-							<td class="item_l"><?php echo $line_item->quantity();?></td>
-							<td class="item_l"><?php echo $a_datetime->event()->name(); ?></td>
-							<td class="item_l"><?php echo $line_item->name() ?></td>
-							<td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?></td>
-							<td class="item_r"><?php echo $line_item->total();?></td>
-						</tr>
-						<?php 
-						foreach($line_item->children() as $child_line_item){
-							ee_invoice_display_line_item($child_line_item);
-						}
+							<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
+								<td class="item_l"><?php echo $line_item->name() ?></td>
+								<td class="item_l"><?php echo $line_item->desc() ?></td>
+								<td colspan="3"></td>
+								<?php //<td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?>
+							</tr>
+							<?php 
+							if( $has_subitems ){
+								foreach($line_item->children() as $child_line_item){
+									ee_invoice_display_line_item($child_line_item,$odd);
+								}
+							} ?>
+							<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
+								<td colspan="2"></td>
+								<td class="item_l <?php echo $has_subitems ? 'total':''?>"><?php echo $line_item->unit_price()?></td>
+								<td class="item_l"><?php echo $line_item->quantity();?></td>
+								<td class="item_r <?php echo $has_subitems ? 'total':''?>"> <?php echo $line_item->total(); echo $line_item->is_taxable() ? '*' : ''?> </td>
+								<?php //<td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?>
+							</tr>
+								
+						<?php
 						break;
 						case EEM_Line_Item::type_sub_line_item:							
 							?>
 						<tr class="item sub-item">
-							<td class="item_l"></td>
-							<td class="item_l"></td>
 							<td class="item_r"><?php echo $line_item->name() ?></td>
-							<td class="item_l"></td>
+							<td class="item_l"><?php echo $line_item->desc() ?></td>
+							<?php if ($line_item->is_percent()) { ?>
+								<td class="item_l"><?php echo $line_item->percent();?>%</td>
+								<td/>
+							<?php }else{//flat discount/surcharge ?>
+								<td class="item_l"><?php echo $line_item->unit_price();?></td>
+								<td/>
+							<?php } ?>
 							<td class="item_r"><?php echo $line_item->total();?></td>
 						</tr>
 						<?php break;
 					case EEM_Line_Item::type_tax:							
 							?>
 						<tr class="item sub-item">
-							<td class="item_l"></td>
-							<td class="item_l"></td>
-							<td class="item_l"></td>
 							<td class="item_l"><?php echo $line_item->name() ?></td>
+							<td class="item_l"><?php echo $line_item->desc() ?></td>
+							<td class="item_l"><?php echo $line_item->percent() ?>%</td>
+							<td class="item_l"></td>
 							<td class="item_r"><?php echo $line_item->total();?></td>
 						</tr><?php break;
 					}
@@ -164,7 +190,8 @@
 				<?php } */ ?>
 			</tbody>
 			
-		</table>		
+		</table>
+		<p><?php _e("* Items with a * are taxable", "event_espresso");?></p>
 		<h2><?php _e("Payments",'event_espresso')?></h2>
 		<table id="invoice-amount">
 			<thead>

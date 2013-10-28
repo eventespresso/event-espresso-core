@@ -263,13 +263,13 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @return boolean
 	 */
 	function is_percent() {
-		$unit_price =  $this->get('LIN_unit_price');
+		$unit_price_is_not_0 =  $this->get('LIN_unit_price') > .01;
 		$percent = $this->get('LIN_percent');
-		if( ! $unit_price && $percent){
+		if( ! $unit_price_is_not_0 && $percent){
 			return true;
-		}elseif($unit_price && ! $percent){
+		}elseif($unit_price_is_not_0 && ! $percent){
 			return false;
-		}elseif($unit_price && $percent){
+		}elseif($unit_price_is_not_0 && $percent){
 			throw new EE_Error(sprintf(__("A Line Itm cannot have a uni price (%s) AND a percent (%s)!", "event_espresso"),$unit_price,$percent));
 		}else{//if they're both 0, assume its not a percent item
 			return false;
