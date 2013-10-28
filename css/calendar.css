@@ -346,18 +346,17 @@ The Buttons and related paraphenalia
 #espresso_calendar .fc-event a:hover {
 	text-shadow: none;
 }
-#espresso_calendar:not(.ui-widget) .fc-event.expired {
+/*#espresso_calendar:not(.ui-widget) .fc-event.expired {
  background: #EEEEE6 !important;
  color: #999 !important;
-}
+}*/
 /* Event Styles
 ---------------------------------------------------------------------------------------------------- */
 
 #espresso_calendar .fc-event-title {
 	display: block;
-	padding: 4px;
+	padding: 0 4px 4px;
 	font-size: 14px;
-	margin-bottom: 4px;
 }
 
 #espresso_calendar .time-display-block {
