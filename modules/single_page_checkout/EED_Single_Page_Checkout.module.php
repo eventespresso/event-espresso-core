@@ -487,7 +487,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$this->EE->LIB->EEM_Gateways->unset_selected_gateway( $payment );
 			}
 		}
-		//$template_args['selected_gateway'] = $this->EE->LIB->EEM_Gateways->selected_gateway();
+		$template_args['selected_gateway'] = $this->EE->LIB->EEM_Gateways->selected_gateway();
 
 //		if ( empty( $session_data['billing_info'])) {
 //			$this->EE->SSN->set_session_data( array( 'billing_info' => array( 'fill' => TRUE )));
