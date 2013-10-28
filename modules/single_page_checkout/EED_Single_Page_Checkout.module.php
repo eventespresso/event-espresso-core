@@ -247,6 +247,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public function init() {
 		// load classes
+		$this->EE->load_model( 'Gateways' );
 		$this->EE->load_core( 'Cart' );
 		$TXN_MDL = $this->EE->load_model( 'Transaction' );
 		if ( ! isset( $this->EE->REQ )) {
@@ -470,7 +471,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->EE->load_helper( 'Form_Fields' );
 		$this->EE->load_helper( 'Template' );
 		$this->EE->load_class( 'Question_Form_Input', array(), FALSE, FALSE, TRUE );
-		$this->EE->load_model( 'Gateways' );
 
 		$template_args = array();
 		$template_args['css_class'] = '';
@@ -961,20 +961,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {				
 									// add relation to existing attendee
 									$registration->_add_relation_to( $existing_attendee, 'Attendee' );
-									echo '$existing_attendee <br/>';
+//									echo '$existing_attendee <br/>';
 								} elseif ( $copy_primary && $att_nmbr > 1 ) {
 									// add relation to new attendee
 									$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
-									echo '$copy_primary attendee <br/>';
+//									echo '$copy_primary attendee <br/>';
 								} else {
 									// add relation to new attendee
 									$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );
-									echo 'new attendee <br/>';
+//									echo 'new attendee <br/>';
 								}
 								
 								// who's the man ?
 								if ( $att_nmbr == 1 ) {
-									echo '$primary_attendee_obj<br/>';
+//									echo '$primary_attendee_obj<br/>';
 									$primary_attendee_obj = $registration->get_first_related( 'Attendee' );
 								}
 
@@ -1541,7 +1541,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ($continue_reg) {
 
 			//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-			
 			$this->_transaction->save_new_cached_related_model_objs();
 			$this->_transaction->save();
 //			$this->_transaction->dropEE();
