@@ -184,7 +184,11 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 					<?php foreach ($transaction->registrations() as $registration) { ?>
 						<tr>
 							<td>
-								<?php echo htmlentities( $registration->attendee()->get('ATT_fname') . ' ' . $registration->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' );?>
+							<?php 
+								if ( $registration->attendee() instanceof EE_Attendee ) {									
+									echo htmlentities( $registration->attendee()->get('ATT_fname') . ' ' . $registration->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' );
+								}
+							?>
 							</td>
 							<td>
 								<?php $registration->e('REG_code') ?>
