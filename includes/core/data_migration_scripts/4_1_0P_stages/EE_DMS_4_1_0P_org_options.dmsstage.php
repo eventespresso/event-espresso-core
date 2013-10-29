@@ -161,6 +161,15 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 			  $c->template_settings->display_address_in_regform = 'Y' == $value;break;
 		  case 'default_logo_url': 
 			  $c->organization->logo_url = $value;break;
+		  case 'event_page_id':
+			  
+			    //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
+			  //to ESPRESSO_THANK_YOU
+			  $reg_page_post = get_post($value);
+			  $reg_page_post->post_content = str_replace("[ESPRESSO_EVENTS]","[ESPRESSO_CHECKOUT]",$reg_page_post->post_content);
+			  wp_update_post($reg_page_post);
+			  $c->core->thank_you_page_id = $value;break;
+			  break;
 		  case 'return_url': 
 			  //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
 			  //to ESPRESSO_THANK_YOU
