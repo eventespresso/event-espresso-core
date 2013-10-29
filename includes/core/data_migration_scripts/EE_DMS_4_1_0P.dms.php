@@ -52,7 +52,24 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_1_0P_attendees(),
 			new EE_DMS_4_1_0P_answers()
 		);
+//		if($this->_checkin_table_exists()){
+//			$this->_migration_stages[] = new EE_DMS_4_1_0P_checkins();
+//		}
 		parent::__construct();
+	}
+	/**
+	 * Checks if this 3.1 checkin table exists. If it doesn't we can't migrate checkins
+	 * @global type $wpdb
+	 * @return boolean
+	 */
+	private function _checkin_table_exists(){
+		global $wpdb;
+		$results = $wpdb->get_results("SHOW TABLES LIKE '".$wpdb->prefix."events_attendee_checkin"."'");
+		if($results){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	public function can_migrate_from_version($version_string) {
 		if($version_string < '4.0.0' && $version_string > '3.1.26' ){
