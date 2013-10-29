@@ -517,7 +517,6 @@ class EEH_Form_Fields {
 							$q_meta
 						);
 						//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
 						$html .= self::generate_form_input( $QFI );						
 					}
 					$html .= $after_question_group_questions;					

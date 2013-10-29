@@ -40,9 +40,11 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 		$other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
 		//find the field on th eother model which is a foreign key to this model
 		$fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-		//set that field on the other model to this model's ID
-		$this_model_obj->set($fk_on_this_model->get_name(), $other_model_obj->ID());
-		$this_model_obj->save();
+		if ( $this_model_obj->get($fk_on_this_model->get_name()) != $other_model_obj->ID()){
+			//set that field on the other model to this model's ID
+			$this_model_obj->set($fk_on_this_model->get_name(), $other_model_obj->ID());
+			$this_model_obj->save();
+		}
 		return $other_model_obj;
 	}
 
