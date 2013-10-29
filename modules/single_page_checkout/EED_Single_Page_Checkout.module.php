@@ -284,7 +284,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 //		d( $this->_transaction );
 		if ( ! $this->_transaction instanceof EE_Transaction ) {
-			$this->_transaction = $this->_initialize_transaction();
+			$this->_initialize_transaction();
 		}
 		// verify registrations have been set
 		$registrations = $this->_transaction->registrations();
@@ -380,10 +380,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	generates a new EE_Transaction object and adds related EE_Registration objects for each ticket in the cart
+	 * 	generates a new EE_Transaction object and adds it to the $_transaction property.
 	 *
 	 * 	@access private
-	 * 	@return 	EE_Transaction object
+	 * 	@return void
 	 */
 	private function _initialize_transaction() {
 		// create new TXN
@@ -394,7 +394,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'STS_ID' => 'TIN',
 				'TXN_tax_data' => $this->EE->CART->get_applied_taxes()
 		));
-		return $transaction;
+		$this->_transaction = $transaction;
 	}
 
 
