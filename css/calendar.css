@@ -67,7 +67,7 @@ Calendar Specific Styles
 	vertical-align: bottom !important;
 }
 #espresso_calendar .fc-content table {
-	background-color: #fff;
+	/*background-color: #fff;*/
 }
 #espresso_calendar table.fc-header, #espresso_calendar table.fc-border-separate {
 	border: none;
