@@ -154,8 +154,12 @@ class EED_Ticket_Selector extends  EED_Module {
 		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
 		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
-		EEH_Template::display_template($templates['ticket_selector'], $template_args);
+		$content = EEH_Template::display_template($templates['ticket_selector'], $template_args, true);
 
+		if ( $added_by_admin )
+			return $content;
+
+		echo $content;
 	}
 
 
