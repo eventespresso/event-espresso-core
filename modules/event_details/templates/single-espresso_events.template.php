@@ -85,11 +85,11 @@ get_header();
 			<article id="post-0" class="post no-results not-found">
 
 				<header class="event-header">
-					<h1 class="event-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1>
+					<h1 class="event-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1><br/>
 				</header>
 
 				<div class="event-content">
-					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p>
+					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p><br/>
 					<?php get_search_form(); ?>
 				</div><!-- .event-content -->
 
