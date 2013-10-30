@@ -432,7 +432,6 @@ class EE_Calendar {
 		remove_shortcode('LISTATTENDEES');
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
-		
 		$today = date( 'Y-m-d' );
 		$month = date('m' );
 		$year = date('Y' );
@@ -521,6 +520,7 @@ class EE_Calendar {
 		}
 		$enable_calendar_thumbs = isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ? TRUE : FALSE;
 		
+		$wp_thumbnail_crop = get_option( 'thumbnail_crop' );//Is WP thumbnail cropping active?
 		if ( $enable_calendar_thumbs ) {
 			$thumbnail_size_w = get_option( 'thumbnail_size_w' );
 			$thumbnail_size_h = get_option( 'thumbnail_size_h' );
@@ -614,7 +614,7 @@ class EE_Calendar {
 			$events[ $cntr ]['event_time_no_tags'] = wp_strip_all_tags( $events[ $cntr ]['event_time'] );
 
 			$event_meta = unserialize($event->event_meta);
-
+			
 			// Add thumb to eventArray
 			if ( $enable_calendar_thumbs && isset( $event_meta['event_thumbnail_url'] ) && ! empty( $event_meta['event_thumbnail_url'] )) {
 				
@@ -629,7 +629,9 @@ class EE_Calendar {
 				// generate thumbnail size string ie: -150x150
 				$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
 				// check that thumbnail dimesions are not already included in filename
-				$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
+				$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE && $wp_thumbnail_crop == FALSE ? $thumbnail_size : '';
+				
+				
 				$path_to_thumbnail = $dirname . $filename . '.' . $ext;
 				
 				$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
