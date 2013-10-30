@@ -25,8 +25,12 @@
 		<div class="clear-float"></div>
 	</div>
 	
-	<?php do_action('before_reg-page-steps'); ?>
-	<?php echo $registration_steps; ?>
+<?php 
+	do_action( 'AHEE__SPCO__before_registration_steps' );
+	echo $registration_steps; 
+	do_action( 'AHEE__SPCO__after_registration_steps' );
+?>
+	
 
 <?php } else { ?>
 	<h2 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php _e('There is currently nothing in the Event Queue', 'event_espresso'); ?></h2>

@@ -44,6 +44,9 @@
 				<!--end mer-whats-next-buttons-->
 
 			</form>		
+
+			<?php do_action( 'AHEE__SPCO__after_reg_step_form', 'registration_confirmation', $next_step ); ?>
+
 		</div>
 	</div>
 	<!--end Step 3-->

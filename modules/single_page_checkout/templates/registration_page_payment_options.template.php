@@ -113,6 +113,8 @@
 			<!--end spco-whats-next-buttons-->
 
 		</form>
+		
+		<?php do_action( 'AHEE__SPCO__after_reg_step_form', 'payment_options', $next_step ); ?>
 
 	</div>
 	<!--end Step 2-->

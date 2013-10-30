@@ -161,6 +161,8 @@ if ( $event_queue['total_items'] > 0 ) {
 
 	</form>		
 
+	<?php do_action( 'AHEE__SPCO__after_reg_step_form', 'attendee_information', $next_step ); ?>
+
 </div>
 <!--end Step 1-->
 
