@@ -483,6 +483,15 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$this->save_cart( TRUE );	
 	}		
 	
+	/**
+	 * Sets the cart to match the line item. Especialy handy for loading an old cart where you
+	 *  know the grand total line item on it
+	 * @param EE_Line_Item $line_item
+	 */
+	public function set_grand_total_line_item($line_item){
+		$this->_grand_total = $line_item;
+	}
+	
 
 
 

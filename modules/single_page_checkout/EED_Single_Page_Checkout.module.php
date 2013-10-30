@@ -263,21 +263,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->_set_next_step();
 		// returning from the thank you page ?
 		$this->_reg_url_link = $this->EE->REQ->is_set( 'e_reg_url_link' ) ? $this->EE->REQ->get( 'e_reg_url_link' ) : FALSE;		
+		
 		// if reg_url_link is present in the request, then we are only being sent back to SPCO to retry the payment 
 		if ( $this->_reg_url_link ) {
+			$this->EE->CART->empty_cart();
 			// let's get that transaction data
+			/* @var $transaction EE_Transaction */
 			$transaction = $TXN_MDL->get_transaction_from_reg_url_link();
-			// grab session data from saved TXN record
-			$session = $transaction->session_data();
-			if ( isset( $session['transaction'] ) && $session['transaction'] instanceof EE_Transaction ) {
-				$this->EE->SSN->set_session_data( array( 'transaction' => $session['transaction'] ));
-//				echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-				$this->EE->CART->empty_cart();
-//				$this->EE->SSN->update();
+			if($transaction){
+				// grab session data from saved TXN record
+				$this->EE->SSN->set_session_data( array( 'transaction' => $transaction ));
+				$this->EE->CART->set_grand_total_line_item($transaction->total_line_item());
+				$this->_transaction = $transaction;
 			}
-		} 
-
-		$this->_transaction = $this->EE->SSN->get_session_data( 'transaction' );
+			
+			
+		
+		} else{
+			$this->_transaction = $this->EE->SSN->get_session_data( 'transaction' );
+		}
 //		d( $this->_transaction );
 		if ( ! $this->_transaction instanceof EE_Transaction ) {
 			$this->_transaction = $this->_initialize_transaction();
@@ -467,7 +471,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public function registration_checkout() {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		
+		d($this->EE->CART);
 		$this->EE->load_helper( 'Form_Fields' );
 		$this->EE->load_helper( 'Template' );
 		$this->EE->load_class( 'Question_Form_Input', array(), FALSE, FALSE, TRUE );
@@ -514,7 +518,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$additional_attendees = array();
 		$additional_attendee_forms = FALSE;
 		// no reg_url_link means we need to generate a new reg form
-		if ( ! $this->_reg_url_link ) {
+		if ( ! $this->_reg_url_link || true) {
 			
 			// grab the saved registrations from teh transaction				
 			if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations() !== NULL ) {
@@ -542,30 +546,38 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					foreach ( $Question_Groups as $Question_Group ) {
 						$Questions = $Question_Group->get_many_related( 'Question' );
 						//d( $Questions );
-						foreach ( $Questions as $Question ) {
-							$answer = EE_Answer::new_instance ( array( 
-								'QST_ID'=> $Question->ID(),
-								'REG_ID'=> $registration->ID()
-							 ));
-							$answer->_add_relation_to( $Question, 'Question' );
-							$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-							$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
-						}
-					}
-
-					$question_meta = array(
+						$question_meta = array(
 							'EVT_ID' => $registration->event()->ID(),
 							'att_nmbr' => $registration->count(),
 							'ticket_id' => $registration->ticket()->ID(),
 							'input_name' =>  '[' . $line_item_ID . ']',
 							'input_id' => $line_item_ID,
 							'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
-					);
+						);
+						foreach ( $Questions as $Question ) {
+							/*@var $Question EE_Question */
+							if( ! $registration){
+								$answer = EE_Answer::new_instance ( array( 
+									'QST_ID'=> $Question->ID(),
+									'REG_ID'=> $registration->ID()
+								 ));
+								$answer->_add_relation_to( $Question, 'Question' );
+								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
+								$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
+							}else{
+								$answer_to_question = EEM_Answer::instance()->get_answer_value_to_question($registration,$Question->ID());
+								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer_to_question;
+							}
+
+						}
+						
+					}
+
+					
 					//printr( $question_meta, '$question_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
 					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
-					
 					$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
 
 					// show this attendee form?
@@ -659,7 +671,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['taxes'] = $this->EE->CART->get_taxes_line_item()->children();
 		
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
-
 //	d( $event_queue );
 		$template_args['event_queue'] = $event_queue;
 		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';

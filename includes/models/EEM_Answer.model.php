@@ -66,7 +66,59 @@ class EEM_Answer extends EEM_Base {
 		parent::__construct();
 	}
 
-
+	/**
+	 * Gets the string answer to the question for this registration (it could either be stored
+	 * on the attendee or in the answer table. This function finds its value regardless)
+	 * @param EE_Registration $registration
+	 * @param int $question_id
+	 * @return string
+	 */
+	public function get_answer_value_to_question(EE_Registration $registration,$question_id){
+		$value = null;
+		//only bother checking if the registration has an attendee
+		if($registration->attendee_ID() && $registration->attendee()){
+			switch($question_id){
+				case EEM_Attendee::fname_question_id:
+					$value =  $registration->attendee()->fname();
+					break;
+				case EEM_Attendee::lname_question_id:
+					$value = $registration->attendee()->lname();
+					break;
+				case EEM_Attendee::email_question_id:
+					$value = $registration->attendee()->email();
+					break;
+				case EEM_Attendee::address_question_id:
+					$value = $registration->attendee()->address();
+					break;
+				case EEM_Attendee::address2_question_id:
+					$value = $registration->attendee()->address2();
+					break;
+				case EEM_Attendee::city_question_id:
+					$value = $registration->attendee()->city();
+					break;
+				case EEM_Attendee::state_question_id:
+					$value = $registration->attendee()->state_ID();
+					break;
+				case EEM_Attendee::country_question_id:
+					$value = $registration->attendee()->country_ISO();
+					break;
+				case EEM_Attendee::phone_question_id:
+					$value = $registration->attendee()->phone();
+					break;
+				case EEM_Attendee::zip_question_id:
+					$value = $registration->attendee()->zip();
+					break;				
+			}
+		}
+		if (  $value === null){
+			$answer_obj = $this->get_one(array(array('QST_ID'=>$question_id,'REG_ID'=>$registration->ID())));
+			if($answer_obj){
+				$value = $answer_obj->value();
+			}
+		}
+		return apply_filters('FHEE__EEM_Answer__get_answer_value_to_question',$value,$registration,$question_id);
+		
+	}
 }
 // End of file EEM_Answer.model.php
 // Location: /includes/models/EEM_Answer.model.php
