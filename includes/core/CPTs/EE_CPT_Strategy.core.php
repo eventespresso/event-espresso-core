@@ -171,7 +171,7 @@ class EE_CPT_Strategy extends EE_BASE {
 				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 				add_filter( 'posts_join',	array( $this, 'posts_join' ));
 				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
-				add_action( 'loop_start',	array( $this, 'loop_start' ), 1 );
+				add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
 
 			}				
 		}
@@ -251,12 +251,12 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
-	 * 	loop_start
+	 * 	the_posts
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function loop_start( WP_Query $wp_query ) {
+	public function the_posts( $posts, WP_Query $wp_query ) {
 //		d( $wp_query );
 		$CPT_class = 'EE_' . $this->CPT['singular_name'];
 		// loop thru posts
@@ -267,6 +267,7 @@ class EE_CPT_Strategy extends EE_BASE {
 				}
 			}
 		}		
+		return $wp_query->posts;
 	}
 
 
@@ -322,7 +323,7 @@ class EE_CPT_Default_Strategy {
 		$this->CPT = $CPT;
 		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
-		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
+		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
 
 
@@ -356,7 +357,7 @@ class EE_CPT_Default_Strategy {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function loop_start( $WP_Query ) {
+	public function the_posts(  $posts, $WP_Query ) {
 //		$EVT = $this->EE->load_model( 'Event' );
 //		$EVT_IDs = array();
 //		foreach( $WP_Query->posts as $WP_Post ) {
@@ -366,7 +367,7 @@ class EE_CPT_Default_Strategy {
 //		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
+		return $posts;
 	}
 
 

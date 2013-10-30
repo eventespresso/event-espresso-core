@@ -55,7 +55,7 @@ class EE_CPT_Event_Strategy {
 		add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 		add_filter( 'posts_join',	array( $this, 'posts_join' ));
 		add_filter( 'posts_where',	array( $this, 'posts_where' ));
-		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
+		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
 
 
@@ -106,14 +106,15 @@ class EE_CPT_Event_Strategy {
 
 
 	/**
-	 * 	loop_start
+	 * 	the_posts
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function loop_start( WP_Query $wp_query ) {
+	public function the_posts( $posts, WP_Query $wp_query ) {
 		$this->EE->load_helper('Event_View');
 //		$wp_query = EEH_Event_View::get_event_datetimes_and_tickets_for_WP_Query( $wp_query );
+		return $posts;
 	}
 
 

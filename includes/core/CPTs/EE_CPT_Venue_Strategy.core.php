@@ -53,7 +53,7 @@ class EE_CPT_Venue_Strategy extends EE_CPT_Strategy {
 		$this->CPT = $CPT;
 //		printr( $CPT, '$CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
-		add_action( 'loop_start', array( $this, 'loop_start' ), 1 );
+		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
 
 
@@ -81,12 +81,12 @@ class EE_CPT_Venue_Strategy extends EE_CPT_Strategy {
 
 
 	/**
-	 * 	wp
+	 * 	the_posts
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function loop_start( $WP_Query ) {
+	public function the_posts( $posts, $WP_Query ) {
 		//$EVT = $this->EE->load_model( 'Event' );
 //		printr( $EVT, '$EVT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		$EVT_IDs = array();
