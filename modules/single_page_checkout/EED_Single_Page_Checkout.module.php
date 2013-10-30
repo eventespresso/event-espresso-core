@@ -1250,6 +1250,35 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
+	/**
+	 * This processes the registration form from the admin and returns either the true or false depending on the success of the process. 
+	 *
+	 * Note that this method handles not only validating the registration form but also saving to the database all the data in the session.
+	 * 
+	 * @access  public
+	 * @return mixed bool|int (either false on fail OR TXN id on success)
+	 */
+	public function process_registration_from_admin() {
+		//nonce check was done in admin so no need to do here.
+		//first lets validate the registration form
+		$this->init_for_admin();
+		$success = $this->_process_attendee_information();
+
+		//if failure in processing attendee info then let's get out early
+		if ( !$success )
+			return false;
+
+		//all is good so let's continue with finalizing the registration.
+		$this->_transaction->save_new_cached_related_model_objs();
+		$this->_transaction->save();
+		$this->EE->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
+		return $this->_transaction->ID();
+	}
+
+
+
+
+
 
 	/**
 	 * 	process_payment_options
