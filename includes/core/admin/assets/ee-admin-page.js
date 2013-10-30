@@ -129,43 +129,40 @@ jQuery(document).ready(function($) {
 	});
 
 
-	// generic click event for displaying and giving focus to an element and hiding control 
+	// generic click event for displaying and giving focus to an element and hiding control
 	$('.display-the-hidden').on( 'click', function() {
-		$('.auto-hide').slideUp(500);
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = $(this).attr("rel"); 
-		var control = $(this);
+		var item_to_display = $(this).attr("rel");
+		//alert( 'item_to_display = ' + item_to_display );
+		// hide the control element
+		$(this).fadeOut(50).hide();
 		// display the target's div container - use slideToggle or removeClass
-		$('#'+item_to_display+'-dv').slideToggle(500, function() {		
-			if ( ! control.hasClass('no-hide') ){
-				// hide the control element
-				control.addClass('hidden'); 
-			} 
+		$('#'+item_to_display+'-dv').slideToggle(250, function() {
 			// display the target div's hide link
-			$('#hide-'+item_to_display).removeClass('hidden'); 
+			$('#hide-'+item_to_display).fadeIn(50).show();
 			// if hiding/showing a form input, then id of the form input must = item_to_display
-			//$('#'+item_to_display).focus(); // add focus to the target
-		}); 
+			$('#'+item_to_display).focus(); // add focus to the target
+		});
+		e.preventDefault();
+		e.stopPropagation();
 		return false;
 	});
 
-	// generic click event for re-hiding an element and displaying it's display control 
+	// generic click event for re-hiding an element and displaying it's display control
 	$('.hide-the-displayed').on( 'click', function() {
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = $(this).attr("rel"); 
-		var control = $(this);
+		var item_to_hide = $(this).attr("rel");
+		// hide the control element
+		$(this).fadeOut(50).hide();
 		// hide the target's div container - use slideToggle or addClass
-		$('#'+item_to_hide+'-dv').slideToggle(500, function() {
-			//$('#'+item_to_hide+'-dv').delay(250).addClass('hidden'); 
-			if ( ! control.hasClass('no-hide') ){
-				// hide the control element
-				control.addClass('hidden'); 
-			}
+		$('#'+item_to_hide+'-dv').slideToggle(250, function() {
 			// display the control element that toggles display of this element
-			$('#display-'+item_to_hide).removeClass('hidden');  
-		}); 
+			$('#display-'+item_to_hide).fadeIn(50).show();
+		});
+		e.preventDefault();
+		e.stopPropagation();
 		return false;
-	});	
+	});
 	
 	
 
