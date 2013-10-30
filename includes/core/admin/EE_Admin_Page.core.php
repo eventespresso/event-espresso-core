@@ -2503,7 +2503,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 
-		$redirect_url = $this->_admin_base_url;
+		//set redirect url. Note if there is a "page" index in the $query_args then we go with vanilla admin.php route, otherwise we go with whatever is set as the _admin_base_url
+		$redirect_url = isset( $query_args['page'] ) ? admin_url('admin.php') : $this->_admin_base_url;
 
 		// overwrite default success messages //BUT ONLY if overwrite not overridden
 		if ( !$override_overwrite ) {
