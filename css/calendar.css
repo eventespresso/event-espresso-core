@@ -355,8 +355,13 @@ The Buttons and related paraphenalia
 
 #espresso_calendar .fc-event-title {
 	display: block;
-	padding: 0 4px 4px;
+	padding: 6px 4px 4px;
 	font-size: 14px;
+}
+
+/*This is the time above the title in aganeda view.*/
+.fc-event-time {
+	display:none;
 }
 
 #espresso_calendar .time-display-block {
