@@ -1,6 +1,6 @@
 <?php 
 /**
- * migrates 3.1 attendee rows into 4.1 registrations, attendees, transactions, and payments
+ * migrates 3.1 attendee rows into 4.1 registrations, attendees, transactions, line items, payments
  * 
  * 3.1 Attendee table definition:
  * delimiter $$
@@ -185,6 +185,37 @@ CREATE TABLE `wp_events_detail` (
 				'PAY_details'=>new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment','event_espresso'), true, '')
 			)
 		);
+4.1 Line Item table fields
+ * $this->_tables = array(
+			'Line_Item'=>new EE_Primary_Table('esp_line_item','LIN_ID')
+		);
+		$line_items_can_be_for = array('Ticket','Price');
+		$this->_fields = array(
+			'Line_Item'=> array(
+				'LIN_ID'=>new EE_Primary_Key_Int_Field('LIN_ID', __("ID", "event_espresso")),
+				'LIN_code'=>new EE_Slug_Field('LIN_code', __("Code for index into Cart", "event_espresso"), true),
+				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __("Transaction ID", "event_espresso"), true, null, 'Transaction'),
+				'LIN_name'=>new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), false, ''),
+				'LIN_desc'=>new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), true),
+				'LIN_unit_price'=>new EE_Money_Field('LIN_unit_price',  __("Unit Price", "event_espresso"),false,0),
+				'LIN_percent'=>new EE_Float_Field('LIN_percent', __("Percent", "event_espresso"), false, false),
+				'LIN_is_taxable'=>new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), false, false),
+				'LIN_order'=>new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), false,1),
+				'LIN_total'=>new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),
+				'LIN_quantity'=>new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), true, null),
+				'LIN_parent'=>new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
+				'LIN_type'=>new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item', 
+						array(
+							self::type_line_item=>  __("Line Item", "event_espresso"),
+							self::type_sub_line_item=>  __("Sub-Item", "event_espresso"),
+							self::type_sub_total=>  __("Subtotal", "event_espresso"),
+							self::type_tax_sub_total => __("Tax Subtotal", "event_espresso"),
+							self::type_tax=>  __("Tax", "event_espresso"),
+							self::type_total=>  __("Total", "event_espresso"))),
+				'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("ID of Item purchased.", "event_espresso"), true,null,$line_items_can_be_for),
+				'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true,null,$line_items_can_be_for),
+			)
+		);
  */
 class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_attendee_cpt_table;
@@ -192,6 +223,7 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_reg_table;
 	private $_new_transaction_table;
 	private $_new_payment_table;
+	private $_new_line_table;
 	function __construct() {
 		global $wpdb;
 		$this->_pretty_name = __("Attendees", "event_espresso");
@@ -201,6 +233,7 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$this->_new_reg_table = $wpdb->prefix."esp_registration";
 		$this->_new_transaction_table = $wpdb->prefix."esp_transaction";
 		$this->_new_payment_table = $wpdb->prefix."esp_payment";
+		$this->_new_line_table = $wpdb->prefix."esp_line_item";
 		parent::__construct();
 	}
 	
@@ -323,7 +356,7 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 	 * 'is_primary' and has the same 'txn_id', then we return ITS new transaction id
 	 * @global type $wpdb
 	 * @param type $old_attendee
-	 * @return int
+	 * @return int new transaction id
 	 */
 	private function _insert_new_transaction($old_attendee){
 		global $wpdb;
@@ -380,7 +413,7 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 	 * @param array $old_attendee
 	 * @param int $new_attendee_id
 	 * @param int $new_txn_id
-	 * @return array
+	 * @return array of new registratio ids
 	 */
 	private function _insert_new_registrations($old_attendee,$new_attendee_id,$new_txn_id){
 		global $wpdb;
@@ -404,7 +437,7 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$this->add_error(sprintf(__("Could not find a NEW ticket for OLD attendee %s", "event_espresso"),http_build_query($old_attendee)));
 		}
 		$regs_on_this_row = intval($old_attendee['quantity']);
-		$new_reg_ids = array();
+		$new_regs = array();
 		for($count = 0; $count < $regs_on_this_row; $count++){
 			$regs_on_this_event_and_txn = $this->_count_new_registrations_on_txn($new_txn_id) + 1;
 			$cols_n_values = array(
@@ -442,9 +475,10 @@ class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
 				$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_reg_table, $cols_n_values, $datatypes));
 				return 0;
 			}
-			$new_reg_ids[] = $wpdb->insert_id;
+			$cols_n_values['REG_ID'] = $wpdb->insert_id;
+			$new_regs[] = $wpdb->insert_id;
 		}
-		return $new_reg_ids;
+		return $new_regs;
 	}
 	/**
 	 * Makes a best guess at which ticket is the one the attendee purchased.
