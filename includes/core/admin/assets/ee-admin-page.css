@@ -165,7 +165,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .left { float:left; }
 .clear, .clear-float { clear:both; }
 .hidden { display:none; }
-.hide-if-no-js { display:none; }
 .cntr { text-align: center; }
 
 .lt-grey-text { color:#a8a8a8; }
