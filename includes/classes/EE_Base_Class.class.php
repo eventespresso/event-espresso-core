@@ -873,6 +873,7 @@ class EE_Base_Class{
 		foreach($this->get_model()->relation_settings() as $relationName => $relationObj){
 		
 			$property_name = $this->_get_private_attribute_name($relationName);
+
 			if($this->$property_name){
 				//is this a relation where we should expect just ONE related object (ie, EE_Belongs_To_relation)
 				//or MANY related objects (ie, EE_HABTM_Relation or EE_Has_Many_Relation)?
@@ -881,22 +882,23 @@ class EE_Base_Class{
 					//but ONLY if it DOESNT exist in the DB
 					/* @var $related_model_obj EE_Base_Class */
 					$related_model_obj = $this->$property_name;
-					if( ! $related_model_obj->ID()){
+//					if( ! $related_model_obj->ID()){
 						$this->_add_relation_to($related_model_obj, $relationName);
 						$related_model_obj->save_new_cached_related_model_objs();
-					}
+//					} 
 				}else{
 					foreach($this->$property_name as $related_model_obj){
 						//add a relation to that relation type (which saves the appropriate thing in the process)
 						//but ONLY if it DOESNT exist in the DB
-						if( ! $related_model_obj->ID()){
+//						if( ! $related_model_obj->ID()){
 							$this->_add_relation_to($related_model_obj, $relationName);
 							$related_model_obj->save_new_cached_related_model_objs();
-						}
+//						}
 					}
 				}
 			}
 		}
+
 		return $id;
 	}
 	
