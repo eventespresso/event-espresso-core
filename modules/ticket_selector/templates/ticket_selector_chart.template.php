@@ -11,7 +11,7 @@
 		<tbody>
 <?php 
 
-		$row = 0;
+		$row = 1;
 		foreach ( $tickets as $TKT_ID => $ticket ) {
 			
 			//d( $ticket );
@@ -101,7 +101,7 @@
 							id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
 							class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all"
 							value="<?php echo $row . '-'; ?>1"
-							<?php echo $row == 0 ? ' checked="checked"' : ''; ?>
+							<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
 						/>
 					</label>
 			<?php
@@ -200,7 +200,7 @@
 
 	<input type="hidden" name="noheader" value="true" />
 	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo $_SERVER['REQUEST_URI']?>" />
-	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row; ?>" />
+	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
 	<input type="hidden" name="tkt-slctr-event-<?php echo $EVT_ID; ?>" value="<?php echo base64_encode( serialize( $event )); ?>" />

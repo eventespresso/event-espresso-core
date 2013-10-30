@@ -403,10 +403,10 @@ class EED_Ticket_Selector extends  EED_Module {
 								//d( $rows );
 								// explode ints by the dash
 								$row_qty = explode( '-', $row_qty );
-								$row = isset( $row_qty[0] ) ? ( absint( $row_qty[0] )+1 ) : 1;
+								$row = isset( $row_qty[0] ) ? ( absint( $row_qty[0] )) : 1;
 								$qty = isset( $row_qty[1] ) ? absint( $row_qty[1] ) : 0;
 								$row_qty = array( $row => $qty );
-								// d( $row_qty );
+								 //d( $row_qty );
 								for( $x = 1; $x <= $rows; $x++ ) {
 									if ( ! isset( $row_qty[$x] )) {
 										$row_qty[$x] = 0;
