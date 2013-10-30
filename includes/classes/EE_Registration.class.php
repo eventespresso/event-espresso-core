@@ -987,7 +987,7 @@ class EE_Registration extends EE_Base_Class {
 			$this->save();
 		}
 		
-		if ( $this->EE->CFG->registration->pending_counts_reg_limit || $this->_transaction->status() === EEM_Transaction::complete_status_code ) {
+		if ( $this->EE->CFG->registration->pending_counts_reg_limit || $this->_transaction->status() === EEM_Transaction::complete_status_code || $this->_transaction->status() === EEM_Transaction::overpaid_status_code ) {
 			$this->reserve_registration_space();
 		}
 			
