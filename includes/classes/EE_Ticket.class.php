@@ -696,6 +696,29 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	function set_sold($sold) {
 		return $this->set('TKT_sold', $sold);
 	}
+	
+	/**
+	 * increments sold by amount passed by $qty
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function increase_sold( $qty = 1 ) {
+		$sold = $this->_TKT_sold;
+		$sold = $sold + $qty;
+		return $this->set( 'TKT_sold', $sold );
+	}
+	
+	/**
+	 * decrements (subtracts) sold by amount passed by $qty
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function decrease_sold( $qty = 1 ) {
+		$sold = $this->_TKT_sold;
+		$sold = $sold - $qty;
+		return $this->set( 'TKT_sold', $sold );
+	}
+	
 	/**
 	 * Gets qty
 	 * @return int
