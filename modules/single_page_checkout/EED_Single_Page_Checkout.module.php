@@ -1224,6 +1224,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$success_msg = FALSE;
 			$error_msg = __('No valid question responses were received.', 'event_espresso');
 		}
+
+
+		//this might be called while in admin and if it is then we don't want to do our normal steps.
+		if ( is_admin() ) {
+			if ( $error_msg ) {
+				EE_Error::add_error($error_msg, __FILE__, __FUNCTION__, __LINE__);
+				return false;
+			} else {
+				EE_Error::add_success($success_msg);
+				return true;
+			}
+		}
+
 		
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
