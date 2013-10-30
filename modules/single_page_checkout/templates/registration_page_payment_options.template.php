@@ -65,7 +65,7 @@
 				foreach ( $taxes as $tax ){
 ?>
 		<div class="reg-page-totals-spn">
-			<span class="lt-grey-text"><?php echo $tax->total() . '% ' . $tax->name();?></span>
+			<span class="lt-grey-text"><?php echo $tax->percent() . '% ' . $tax->name();?></span>
 			<span class="reg-page-total-spn"><?php echo EEH_Template::format_currency( $tax->total() );?></span>
 		</div>
 

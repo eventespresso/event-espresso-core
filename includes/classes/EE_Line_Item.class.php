@@ -573,7 +573,7 @@ class EE_Line_Item extends EE_Base_Class{
 			$total_on_this_tax = $taxable_total*$tax->percent()/100;
 			//remember the total on this line item
 			$tax->set_total($total_on_this_tax);
-			$tax_total += $total_on_this_tax;
+			$tax_total += $tax->total();
 		}
 		$this->_recalculate_tax_sub_total();
 		return $tax_total;
