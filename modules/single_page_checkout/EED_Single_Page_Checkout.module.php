@@ -536,6 +536,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
 					$total_items += $registration->count();
 
+					$question_meta = array(
+						'EVT_ID' => $registration->event()->ID(),
+						'att_nmbr' => $registration->count(),
+						'ticket_id' => $registration->ticket()->ID(),
+						'input_name' =>  '[' . $line_item_ID . ']',
+						'input_id' => $line_item_ID,
+						'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
+					);
 					$Question_Groups = $this->EE->load_model( 'Question_Group' )->get_all( array( 
 						array( 
 							'Event.EVT_ID' => $registration->event()->ID(), 
@@ -546,17 +554,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					foreach ( $Question_Groups as $Question_Group ) {
 						$Questions = $Question_Group->get_many_related( 'Question' );
 						//d( $Questions );
-						$question_meta = array(
-							'EVT_ID' => $registration->event()->ID(),
-							'att_nmbr' => $registration->count(),
-							'ticket_id' => $registration->ticket()->ID(),
-							'input_name' =>  '[' . $line_item_ID . ']',
-							'input_id' => $line_item_ID,
-							'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
-						);
 						foreach ( $Questions as $Question ) {
 							/*@var $Question EE_Question */
-							if( ! $registration){
+							if( !  $this->_reg_url_link ){
 								$answer = EE_Answer::new_instance ( array( 
 									'QST_ID'=> $Question->ID(),
 									'REG_ID'=> $registration->ID()
@@ -720,7 +720,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		);
 		$confirmation_btn_text = $grand_total > 0 ? $confirm_n_pay : $confirm;
 		
-		add_action( 'AHEE__before_spco_whats_next_buttons', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
+		add_action( 'AHEE__SPCO__after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
 
 		
 		$registration_steps = '';
@@ -883,6 +883,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								$att_nmbr++;
 								// grab related answer objects
 								$answers = $registration->answers();
+								//printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$attendee_data = array();
 								// do we need to copy basic info from primary attendee ?
 								$copy_primary = ! isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) || absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
