@@ -471,7 +471,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public function registration_checkout() {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		d($this->EE->CART);
+		//d($this->EE->CART);
 		$this->EE->load_helper( 'Form_Fields' );
 		$this->EE->load_helper( 'Template' );
 		$this->EE->load_class( 'Question_Form_Input', array(), FALSE, FALSE, TRUE );
