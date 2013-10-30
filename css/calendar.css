@@ -623,7 +623,7 @@ table.fc-header, thead.fc-header, table.fc-header tbody, table td.fc-header-left
  table.fc-header td.fc-header-center, table.fc-header td.fc-header-right {
  /* Behave like a "row" */
  border: none;
- position: relative;
+ /*position: relative;*/
  height: 55px;
 }
  #espresso_calendar:not(.ui-widget) .fc-header-title h2 {
@@ -638,7 +638,7 @@ table.fc-header, thead.fc-header, table.fc-header tbody, table td.fc-header-left
 }
  table.fc-header td:before {
  /* Now like a table header */
- position: absolute;
+ /*position: absolute;*/
  /* Top/left values mimic padding */
  top: 6px;
  left: 6px;
