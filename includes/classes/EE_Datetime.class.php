@@ -280,6 +280,30 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
+	/**
+	 * increments sold by amount passed by $qty
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function increase_sold( $qty = 1 ) {
+		$sold = $this->_DTT_sold;
+		$sold = $sold + $qty;
+		return $this->set( 'DTT_sold', $sold );
+	}
+	
+	/**
+	 * decrements (subtracts) sold amount passed by $qty
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function decrease_sold( $qty = 1 ) {
+		$sold = $this->_DTT_sold;
+		$sold = $sold - $qty;
+		return $this->set( 'DTT_sold', $sold );
+	}
+
+
+
 
 
 
