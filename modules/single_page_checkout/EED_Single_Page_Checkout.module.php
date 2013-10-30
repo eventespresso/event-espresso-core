@@ -495,7 +495,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		}
 
 		$event_queue = array();
-		$cart_line_items = '';
+//		$cart_line_items = '';
 		$total_items = 0;
 
 //		$additional_event_registration_info = new stdClass();
@@ -516,22 +516,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// no reg_url_link means we need to generate a new reg form
 		if ( ! $this->_reg_url_link ) {
 			
-			$transaction = $this->EE->SSN->get_session_data( 'transaction' );
 			// grab the saved registrations from teh transaction				
-			if ( $transaction instanceof EE_Transaction && $transaction->registrations() !== NULL ) {
+			if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations() !== NULL ) {
 				
 				//d( $this->_transaction );
 				$event_queue['has_items'] = TRUE;
 				$attendee_questions = array();
 				$prev_event = NULL;
 				
-				foreach ( $transaction->registrations() as $registration ) {
+				foreach ( $this->_transaction->registrations() as $registration ) {
 					
 					$line_item_ID = $registration->reg_url_link();	
-					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
+//					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
-					$total_items = $registration->count();
+					$total_items += $registration->count();
 
 					$Question_Groups = $this->EE->load_model( 'Question_Group' )->get_all( array( 
 						array( 
@@ -577,7 +576,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									type="hidden"
 									id="' . $line_item_ID . '-additional_attendee_reg_info"
 									name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]"
-									value="1"
+									value="0"
 							/>' . "\n";
 					} else {
 						$additional_attendee_forms = TRUE;
@@ -615,7 +614,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				} 
 
 				
-				$this->EE->SSN->set_session_data( array( 'transaction' => $transaction ));
+				$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
 //				echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 //				$this->EE->SSN->update();
 //				d( $this->_transaction );
@@ -864,10 +863,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					// attendee counter
 					$att_nmbr = 0;
 					// grab the saved registrations from the transaction				
-					foreach ( $this->_transaction->registrations()  as $registration ) {				
+					foreach ( $this->_transaction->registrations()  as $registration ) {			
 						// verify object
 						if ( $registration instanceof EE_Registration ) {
-
 							// reg_url_link / line item ID exists ?
 							if ( $line_item_id = $registration->reg_url_link() ) {
 								// Houston, we have a registration!
@@ -876,7 +874,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								$answers = $registration->answers();
 								$attendee_data = array();
 								// do we need to copy basic info from primary attendee ?
-								$copy_primary = isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) ? absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) : 0;
+								$copy_primary = ! isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) || absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
 								unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
 								// now loop through our array of valid post data && process attendee reg forms
 								foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
@@ -950,33 +948,36 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									}
 
 								}
-								
-								$where_cols_n_values = array(
-									'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
-									'ATT_lname' => isset( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : '',
-									'ATT_email' => isset( $attendee_data['ATT_email'] ) ? $attendee_data['ATT_email'] : ''
-								);
-								$existing_attendee = $this->EE->LIB->EEM_Attendee->find_existing_attendee( $where_cols_n_values );
-								// do we already have an existing record for this attendee ?
-								if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {				
-									// add relation to existing attendee
-									$registration->_add_relation_to( $existing_attendee, 'Attendee' );
-//									echo '$existing_attendee <br/>';
-								} elseif ( $copy_primary && $att_nmbr > 1 ) {
+								// this registration does not require additional attendee information ?
+								if ( $copy_primary && $att_nmbr > 1 ) {
 									// add relation to new attendee
 									$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
 //									echo '$copy_primary attendee <br/>';
 								} else {
-									// add relation to new attendee
-									$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );
-//									echo 'new attendee <br/>';
+									// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
+									$existing_attendee = $this->EE->LIB->EEM_Attendee->find_existing_attendee( array(
+										'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
+										'ATT_lname' => isset( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : '',
+										'ATT_email' => isset( $attendee_data['ATT_email'] ) ? $attendee_data['ATT_email'] : ''
+									));
+									// did we find an already existing record for this attendee ?
+									if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {				
+										// add relation to existing attendee
+										$registration->_add_relation_to( $existing_attendee, 'Attendee' );
+//										echo '$existing_attendee <br/>';
+									} else {
+										// add relation to new attendee
+										$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );
+//										echo 'new attendee <br/>';
+									}
+									
+									// who's the man ?
+									if ( $att_nmbr == 1 ) {
+//										echo '$primary_attendee_obj<br/>';
+										$primary_attendee_obj = $registration->get_first_related( 'Attendee' );
+									}									
 								}
-								
-								// who's the man ?
-								if ( $att_nmbr == 1 ) {
-//									echo '$primary_attendee_obj<br/>';
-									$primary_attendee_obj = $registration->get_first_related( 'Attendee' );
-								}
+
 
 							} else {
 								EE_Error::add_error( __( 'An invalid or missing line item ID was encountered while attempting to process a registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -985,9 +986,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							}
 
 						}
+//						$registration->dropEE();
+//						$registration->_remove_relation_to( $registration->event(), 'Event' );
+//						$registration->_remove_relation_to( $registration->ticket(), 'Ticket' );
+//						$registration->attendee()->dropEE();
+//						
+//						printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					}
 
 					$this->EE->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee, 'transaction' => $this->_transaction ));
+//					printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //					echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 //					$this->EE->SSN->update();
 					
@@ -1062,6 +1070,166 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->go_to_next_step( $success_msg, $error_msg );
 
 	}
+
+
+
+
+	
+	/**
+	 * 	_process_finalize_registration
+	 *
+	 * 	@access private
+	 * 	@return 	void
+	 */
+	private function _process_finalize_registration() {
+		
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+
+		$success_msg = FALSE;
+		$error_msg = FALSE;
+		$continue_reg = TRUE;
+
+		// check recaptcha
+		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
+			if ( ! function_exists( 'recaptcha_check_answer' )) {
+				$this->EE->load_file( EVENT_ESPRESSO_PLUGINFULLPATH . DS . 'tpc', 'recaptchalib', '' );
+			}
+			$response = recaptcha_check_answer(
+					$this->EE->CFG->registration->recaptcha_privatekey, 
+					$_SERVER["REMOTE_ADDR"],
+					$this->EE->REQ->is_set( 'recaptcha_challenge_field' ) ? $this->EE->REQ->get( 'recaptcha_challenge_field' ) : '',
+					$this->EE->REQ->is_set( 'recaptcha_response_field' ) ? $this->EE->REQ->get( 'recaptcha_response_field' ) : ''
+			);
+			// ohhh soo sorry... it appears you can't read gibberish chicken scratches !!!
+			if ( ! $response->is_valid ) {
+				$continue_reg = FALSE;
+				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
+			}
+		}
+		
+		if ($continue_reg) {
+
+			//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+			$this->_transaction->save_new_cached_related_model_objs();
+			$this->_transaction->save();
+//			$this->_transaction->dropEE();
+//			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			$this->EE->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
+
+			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
+			// attempt to perform transaction via payment gateway
+			$response = $this->EE->LIB->EEM_Gateways->process_payment_start( $this->EE->CART->get_grand_total(), $this->_transaction );
+			$this->_thank_you_page_url = $response['forward_url'];
+			if ( isset( $response['msg']['success'] )) {
+				$response_data = array(
+						'success' => $response['msg']['success'],
+						'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
+				);
+				echo json_encode($response_data);
+				die();
+			} else {
+				$error_msg = $response['msg']['error'];
+			}
+			
+		}
+
+		$this->go_to_next_step( $success_msg, $error_msg );
+		
+	}
+
+
+
+
+
+
+	/**
+	 * 		_process_return_to_reg_step_query_args
+	 *
+	 * 		@access 	private
+	 * 		@return 		void
+	 */
+	private function _process_return_to_reg_step_query_args( $args ) {
+		$remove = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn' );
+		foreach ( $_POST as $key => $value ) {
+			if ( in_array( $key, $remove )) {
+				unset( $_POST[ $key ] );
+			}
+		}
+		return array_merge( $_POST, $args );
+	}
+
+
+	
+	
+	/**
+	 *   handle ajax message responses and redirects
+	 *
+	 *   @access public
+	 *   @return void
+	 */
+	public function go_to_next_step( $success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE ) {
+		
+		$no_errors = TRUE;
+		switch ( $this->_next_step ) {
+			case 'registration_confirmation' :
+				$callback = '_go_to_registration_confirmation_ajax_response';
+			break;
+			case 'finalize_registration' :
+				$callback = '_process_finalize_registration';
+			break;
+		}
+		
+
+		// check for valid callback function
+		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
+//		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->EE->REQ->ajax : ' . $this->EE->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		if ( $success_msg ) {
+			// if this is an ajax request AND a callback function exists
+			if ( $this->EE->REQ->ajax  && $valid_callback ) {
+				// send data through to the callback function
+				$this->$callback( $callback_param, $success_msg );
+			} elseif ( $this->EE->REQ->ajax ) {
+				// just send the ajax
+				echo json_encode( array( 'success' => $success_msg ));
+				// to be... or...
+				die();
+			} else {
+				// not ajax
+				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
+				// return true to advance to next step
+				$no_errors = TRUE;
+			}
+		} elseif ( $error_msg ) {
+
+			if ( $this->EE->REQ->ajax ) {
+				echo json_encode( array( 'error' => $error_msg ));
+				die();
+			} else {
+				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+				$no_errors = FALSE;
+			}
+		}
+		// store notices in a transient
+		EE_Error::get_notices( FALSE, TRUE, TRUE );
+		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
+		if ( $next_step = $no_errors ? $this->_next_step : $this->_current_step ) {
+			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => 'register', 'step' => $next_step ));
+			$redirect = add_query_arg( $args, $this->_reg_page_base_url );
+		} else {
+			$redirect = $this->_thank_you_page_url;
+		}
+		wp_safe_redirect( $redirect );
+		exit();
+	}
+
+
+
+
 
 
 
@@ -1497,170 +1665,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		return $saved_registrations;
 	}
 */
-
-
-
-
-
-
-
-
-	
-	/**
-	 * 	_process_finalize_registration
-	 *
-	 * 	@access private
-	 * 	@return 	void
-	 */
-	private function _process_finalize_registration() {
-		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-		$success_msg = FALSE;
-		$error_msg = FALSE;
-		$continue_reg = TRUE;
-
-		// check recaptcha
-		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
-			if ( ! function_exists( 'recaptcha_check_answer' )) {
-				$this->EE->load_file( EVENT_ESPRESSO_PLUGINFULLPATH . DS . 'tpc', 'recaptchalib', '' );
-			}
-			$response = recaptcha_check_answer(
-					$this->EE->CFG->registration->recaptcha_privatekey, 
-					$_SERVER["REMOTE_ADDR"],
-					$this->EE->REQ->is_set( 'recaptcha_challenge_field' ) ? $this->EE->REQ->get( 'recaptcha_challenge_field' ) : '',
-					$this->EE->REQ->is_set( 'recaptcha_response_field' ) ? $this->EE->REQ->get( 'recaptcha_response_field' ) : ''
-			);
-			// ohhh soo sorry... it appears you can't read gibberish chicken scratches !!!
-			if ( ! $response->is_valid ) {
-				$continue_reg = FALSE;
-				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
-			}
-		}
-		
-		if ($continue_reg) {
-
-			//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-			$this->_transaction->save_new_cached_related_model_objs();
-			$this->_transaction->save();
-//			$this->_transaction->dropEE();
-//			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			$this->EE->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
-
-			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
-			// attempt to perform transaction via payment gateway
-			$response = $this->EE->LIB->EEM_Gateways->process_payment_start( $this->EE->CART->get_grand_total(), $this->_transaction );
-			$this->_thank_you_page_url = $response['forward_url'];
-			if ( isset( $response['msg']['success'] )) {
-				$response_data = array(
-						'success' => $response['msg']['success'],
-						'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
-				);
-				echo json_encode($response_data);
-				die();
-			} else {
-				$error_msg = $response['msg']['error'];
-			}
-			
-			if (( $this->EE->CFG->registration->pending_counts_reg_limit && $success_msg !== FALSE ) || $this->_transaction->status() == 'TCM' ) {
-			}
-			
-
-		}
-
-		$this->go_to_next_step( $success_msg, $error_msg );
-		
-	}
-
-
-
-
-
-
-	/**
-	 * 		_process_return_to_reg_step_query_args
-	 *
-	 * 		@access 	private
-	 * 		@return 		void
-	 */
-	private function _process_return_to_reg_step_query_args( $args ) {
-		$remove = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn' );
-		foreach ( $_POST as $key => $value ) {
-			if ( in_array( $key, $remove )) {
-				unset( $_POST[ $key ] );
-			}
-		}
-		return array_merge( $_POST, $args );
-	}
-
-
-	
-	
-	/**
-	 *   handle ajax message responses and redirects
-	 *
-	 *   @access public
-	 *   @return void
-	 */
-	public function go_to_next_step( $success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE ) {
-		
-		$no_errors = TRUE;
-		switch ( $this->_next_step ) {
-			case 'registration_confirmation' :
-				$callback = '_go_to_registration_confirmation_ajax_response';
-			break;
-			case 'finalize_registration' :
-				$callback = '_process_finalize_registration';
-			break;
-		}
-		
-
-		// check for valid callback function
-		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
-//		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->EE->REQ->ajax : ' . $this->EE->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		if ( $success_msg ) {
-			// if this is an ajax request AND a callback function exists
-			if ( $this->EE->REQ->ajax  && $valid_callback ) {
-				// send data through to the callback function
-				$this->$callback( $callback_param, $success_msg );
-			} elseif ( $this->EE->REQ->ajax ) {
-				// just send the ajax
-				echo json_encode( array( 'success' => $success_msg ));
-				// to be... or...
-				die();
-			} else {
-				// not ajax
-				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
-				// return true to advance to next step
-				$no_errors = TRUE;
-			}
-		} elseif ( $error_msg ) {
-
-			if ( $this->EE->REQ->ajax ) {
-				echo json_encode( array( 'error' => $error_msg ));
-				die();
-			} else {
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-				$no_errors = FALSE;
-			}
-		}
-		// store notices in a transient
-		EE_Error::get_notices( FALSE, TRUE, TRUE );
-		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
-		if ( $next_step = $no_errors ? $this->_next_step : $this->_current_step ) {
-			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => 'register', 'step' => $next_step ));
-			$redirect = add_query_arg( $args, $this->_reg_page_base_url );
-		} else {
-			$redirect = $this->_thank_you_page_url;
-		}
-		wp_safe_redirect( $redirect );
-		exit();
-	}
 
 
 
