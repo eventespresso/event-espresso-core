@@ -421,7 +421,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'TXN_timestamp' => current_time('mysql'),
 				'TXN_total' => $this->EE->CART->get_cart_grand_total(), 
 				'TXN_paid' => 0, 
-				'STS_ID' => 'TIN',
+				'STS_ID' => EEM_Transaction::incomplete_status_code,
 				'TXN_tax_data' => $this->EE->CART->get_applied_taxes()
 		));
 		$this->_transaction = $transaction;
@@ -1361,6 +1361,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 			$this->_transaction->save_new_cached_related_model_objs();
+			// remove transaction details from session
+			$this->EE->SSN->set_session_data( 'transaction' => NULL );
+			// then save the session to the txn
+			$this->_transaction->set( 'TXN_session_data', $this->EE->SSN );
+			// and save the txn to the db
 			$this->_transaction->save();
 //			$this->_transaction->dropEE();
 //			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
