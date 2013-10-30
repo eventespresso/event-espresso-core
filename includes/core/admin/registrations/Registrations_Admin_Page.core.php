@@ -1900,7 +1900,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			case 'questions' :
 				//process registration
 				$TXN_ID = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
-				exit();
 				if ( !$TXN_ID ) {
 					$query_args = array(
 						'action' => 'new_registration',
