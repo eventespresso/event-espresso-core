@@ -913,6 +913,60 @@ class EE_Registration extends EE_Base_Class {
 
 	
 	/**
+	 * genrerates reg code
+	 * @return string
+	 */
+	private function _generate_new_reg_code() {
+		// figure out where to start parsing the reg code
+		$chars = strpos( $this->_REG_url_link, '-' ) + 4;
+		$new_reg_code = array(
+			$this->_TXN_ID,
+			$this->_TKT_ID,
+			substr( $this->_REG_url_link, 0, $chars ) . substr( $this->_REG_url_link, -3 ),
+			$this->get_first_related('Transaction')->is_completed() ? 1 : 0
+		);
+		$new_reg_code = implode( '-', $new_reg_code );
+		$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );	
+		return $new_reg_code;
+	}
+
+
+
+	
+	/**
+	 * increments this registration's related ticket sold and corresponding datetime sold values
+	 * @return void
+	 */
+	public function reserve_registration_space() {
+		$this->ticket()->increase_sold();
+		$this->ticket()->save();
+		$datetimes = $this->ticket()->datetimes();
+		foreach ( $datetimes as $datetime ) {
+			$datetime->increase_sold();
+			$datetime->save();
+		}	
+	}
+
+
+	
+	/**
+	 * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
+	 * @return void
+	 */
+	public function release_registration_space() {
+		$this->ticket()->decrease_sold();
+		$this->ticket()->save();
+		$datetimes = $this->ticket()->datetimes();
+		foreach ( $datetimes as $datetime ) {
+			$datetime->decrease_sold();
+			$datetime->save();
+		}	
+	}
+
+
+
+	
+	/**
 	 * genrerates reg code if that has yet to been done, 
 	 * sets reg status based on transaction status and event pre-approval setting
 	 * @return void
@@ -920,19 +974,8 @@ class EE_Registration extends EE_Base_Class {
 	public function finalize() {
 		$update_reg = FALSE;
 		// generate a reg code ?
-		if ( empty( $this->_REG_code )) {
-			// figure out where to start parsing the reg code
-			$chars = strpos( $this->_REG_url_link, '-' ) + 4;
-			$new_reg_code = array(
-				$this->_TXN_ID,
-				$this->_TKT_ID,
-				substr( $this->_REG_url_link, 0, $chars ) . substr( $this->_REG_url_link, -3 ),
-				$this->get_first_related('Transaction')->is_completed() ? 1 : 0
-			);
-			$new_reg_code = implode( '-', $new_reg_code );
-			$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );
-			$this->set( 'REG_code', $new_reg_code );
-			$update_reg = TRUE;
+		if ( empty( $this->_REG_code )) {			
+			$update_reg = $this->set( 'REG_code', $this->_generate_new_reg_code() ) ? TRUE : FALSE;
 		}
 		// update reg status if TXN is complete and event does NOT require pre-approval
 		if ( $this->get_first_related('Transaction')->is_completed() && ! $this->get_first_related('Event')->require_pre_approval() ) {
@@ -943,6 +986,12 @@ class EE_Registration extends EE_Base_Class {
 		if ( $update_reg ) { 
 			$this->save();
 		}
+		
+		if ( $this->EE->CFG->registration->pending_counts_reg_limit || $this->_transaction->status() === EEM_Transaction::complete_status_code ) {
+			$this->reserve_registration_space();
+		}
+			
+		
 	}
 
 
