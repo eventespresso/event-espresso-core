@@ -1,4 +1,2 @@
-
-		<div id="admin-page-header">
-			<h1><span class="small-text not-bold"><?php _e( 'Event: ', 'event_espresso' );?></span><?php echo $event_name;?></h1>
-		</div>
+<h1><span class="small-text not-bold"><?php _e( 'Adding Registration For: ', 'event_espresso' );?></span><?php echo $event_name;?></h1>
+<?php echo $step_content; ?>
