@@ -349,6 +349,99 @@ class EED_Ticket_Selector extends  EED_Module {
 	}
 
 
+	/**
+	 * basically does the same as process_tickets_selections() method except this will process tickets from the manual registration via the admin.
+	 *
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public static function process_tickets_selection_from_admin() {
+		//nonce has already been verified in the admin
+		//only one registration is in process and session has already been cleared in the admin
+		EE_Registry::instance()->load_core('Session');
+		EE_Registry::instance()->load_core( 'Cart' );
+
+		if ( empty( EE_Registry::instance()->REQ ) ) {
+			EE_Registry::instance()->load_core( 'Request_Handler' );
+		}
+		$return = FALSE;
+		
+		// do we have an event id?
+		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' )) {
+		
+			// validate/sanitize data
+			$valid = self::_validate_post_data('add_event_to_cart');
+			// d( $valid );
+		
+			//check total tickets oredered vs max number of attendees that can register
+			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
+		
+				// ordering too many tickets !!!
+				$singular = 'You have attempted to select %s ticket.';
+				$plural = 'You have attempted to select %s tickets.';
+				$limit_error_1 = sprintf( _n( $singular, $plural, $valid['total_tickets'], 'event_espresso' ), $valid['total_tickets'], $valid['total_tickets'] );
+		
+				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may select at a time can not exceed %s.';
+				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may select at a time can not exceed %s.';
+				$limit_error_2 = sprintf( _n( $singular, $plural, $valid['max_atndz'], 'event_espresso' ), $valid['max_atndz'], $valid['max_atndz'] );
+				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
+				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			} else {
+				
+				$tckts_slctd = FALSE;
+				$success = FALSE;
+
+				//load cart
+				EE_Registry::instance()->load_core( 'Cart' );
+				// all data appears to be valid
+				// cycle thru the number of data rows sent from the event listsing
+				for ( $x = 0; $x < $valid['rows']; $x++ ) {		
+					// does this row actually contain a ticket quantity?
+					if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {		
+						// YES we have a ticket quantity				
+						$tckts_slctd = TRUE;
+//						d( $valid['ticket_obj'][$x] );
+						if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
+							// then add ticket to cart
+							if ( self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] )) {
+								$success = TRUE;
+							}							
+						} else {
+							// nothing added to cart
+							$error_msg = __( 'A valid ticket could not be retreived for this event.<br/>Please refresh this page and try again.', 'event_espresso' );
+							EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+						}						
+					} 
+				}
+				
+
+				if ( $tckts_slctd ) {
+					if ( $success ) {
+						EE_Registry::instance()->save_cart();
+						EE_Registry::instance()->SSN->update();
+						return true;
+					} else {
+						// nothing added to cart
+						$error_msg = __( 'No tickets were added for the event.<br/>Please try refreshing the page and try beginning the process again.', 'event_espresso' );
+						EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+					}
+
+				} else {
+					// no ticket quantities were selected
+					$error_msg = __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' );
+					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+				}				
+			}
+			
+		}
+
+		//if we made it here something went wrong so let's just return false
+		return false;
+
+	}
+
+
 
 
 
