@@ -595,61 +595,45 @@ a.fc-event.themeroller.ui-widget-header span.fc-event-title, a.fc-event.themerol
 	position: absolute;
 }
 
- /*
- Media Query for screens smaller then 768px (iPad portrait)
- ---------------------------------------------------------------------------------------------------- */
+/* Media Query for screens smaller then 768px (iPad portrait)
+---------------------------------------------------------------------------------------------------- */
  
 
 @media only screen and (max-width: 767px) {
 
-	/* Force table to not be like tables anymore */
-table.fc-header, thead.fc-header, table.fc-header tbody, table td.fc-header-left, table td.fc-header-center, table td.fc-header-right, table.fc-header tr {
- display: block;
- border: none;
+	#espresso_calendar .fc-day-header {
+		font-size: .85em;
+		padding: 0 1px;
+	}
+	#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number {
+		padding: 0 2px 0 0;
+	}
+	.qtip_info {
+		display: block;
+	}
 }
- .fc-button.fc-button-prev.fc-state-default.fc-corner-left.fc-corner-right {
- position: absolute;
- top: 55px;
+
+@media only screen and (max-width: 600px) and (min-width: 480px) {
+	
+	#espresso_calendar .fc-header-center {
+		position: absolute;
+		margin: -35px auto 0;
+		text-align: center;
+		width: 50%;
+	}
 }
- table.fc-header td.fc-header-left {
- /* Behave like a "row" */
- border: none;
- position: relative;
- height: 0;
+
+@media only screen and (max-width: 480px) {
+	
+	#espresso_calendar .fc-event-title,
+	#espresso_calendar .time-display-block, 
+	#espresso_calendar .thumb-wrap, 
+	.ui-tooltip-content p:first-child,
+	#espresso_calendar .fc-button-month,
+	#espresso_calendar .fc-button-agendaDay,
+	#espresso_calendar .fc-button-agendaWeek,
+	#espresso_calendar .fc-button-today {
+		display: none;
+	}
 }
- td.fc-header-center, td.fc-header-right {
- width: 100%;
-}
- table.fc-header td.fc-header-center, table.fc-header td.fc-header-right {
- /* Behave like a "row" */
- border: none;
- /*position: relative;*/
- height: 55px;
-}
- #espresso_calendar:not(.ui-widget) .fc-header-title h2 {
- margin: 20px 0 0 0;
-}
- #espresso_calendar .fc-day-header {
- font-size: .85em;
- padding: 0 1px;
-}
- #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-day-number {
- padding: 0 2px 0 0;
-}
- table.fc-header td:before {
- /* Now like a table header */
- /*position: absolute;*/
- /* Top/left values mimic padding */
- top: 6px;
- left: 6px;
- width: 45%;
- padding-right: 10px;
- white-space: nowrap;
-}
- .qtip_info {
- display: block;
-}
- #espresso_calendar .fc-event-title, #espresso_calendar .time-display-block, #espresso_calendar .thumb-wrap, .ui-tooltip-content p:first-child {
- display: none;
-}
-}
+
