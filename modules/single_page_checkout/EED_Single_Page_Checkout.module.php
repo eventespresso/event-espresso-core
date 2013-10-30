@@ -307,6 +307,36 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
+	/**
+	 * The purpose of this method is to just initialize SPCO for manual admin registration handling
+	 *
+	 * Note, it is fully expected that eventually things will be abstracted a bit more conveniently for the Admin usage of SPCO but this is a quick and dirty method to get things implemented with as much DRY as possible.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function init_for_admin() {
+		// load classes
+		$this->EE->load_model( 'Gateways' );
+		$this->EE->load_core( 'Cart' );
+
+		if ( empty( $this->EE->REQ ) ) {
+			$this->EE->load_core( 'Request_Handler' );
+		}
+
+		$this->_transaction = $this->EE->SSN->get_session_data( 'transaction' );
+		if ( ! $this->_transaction instanceof EE_Transaction ) {
+			$this->_initialize_transaction();
+		}
+
+		//verify registrations have been set
+		$registrations = $this->_transaction->registrations();
+		if ( empty( $registrations ) )
+			$this->_initialize_registrations();
+	}
+
+
+
 
 	/**
 	 * 	run
