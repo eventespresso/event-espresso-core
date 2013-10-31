@@ -118,7 +118,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	private function __construct() {
-		
+		do_action('AHEE__EE_Config__construct__start',$this);
 		//set defaults
 		$this->core = new EE_Core_Config();
 		$this->organization = new EE_Organization_Config();
@@ -138,7 +138,7 @@ final class EE_Config {
 		// load existing EE site settings
 		$this->_load_config();
 		add_action( 'init', array( $this, 'init' ), 10 );
-		
+		do_action('AHEE__EE_Config__construct__end',$this);
 	}
 
 
@@ -197,6 +197,7 @@ final class EE_Config {
 	 *  @return 	boolean success 
 	 */
 	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
+		do_action('AHEE__EE_Config__update_espresso_config__start',$this);
 		// compare existing settings with what's already saved'
 		$saved_config = $this->get_espresso_config();
 		$no_change = $saved_config == $this ? TRUE : FALSE;
@@ -213,7 +214,7 @@ final class EE_Config {
 		} else {
 			$saved = update_option( 'espresso_config', $this );
 		}
-		
+		do_action('AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved);
 		// if config remains the same or was updated successfully
 		if ( $no_change || $saved ) {
 			if ( $add_success ) {
@@ -239,7 +240,10 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function update_post_shortcodes() {
+		do_action('AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes);
 		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
+		
+		
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it
@@ -309,6 +313,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_shortcode( $shortcode_path = NULL ) {
+		do_action('AHEE__EE_Config__register_shortcode__start',$shortcode_path);
 		$shortcode_ext = '.shortcode.php';
 		// make all separators match
 		$shortcode_path = rtrim( str_replace( '/\\', DS, $shortcode_path ), DS );
@@ -383,6 +388,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_module( $module_path = NULL ) {
+		do_action('AHEE__EE_Config__register_module__start',$module_path);
 		$module_ext = '.module.php';
 		// make all separators match
 		$module_path = rtrim( str_replace( '/\\', DS, $module_path ), DS );
@@ -434,6 +440,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
+		do_action('AHEE__EE_Config__register_route__start',$route,$module,$method_name);
 		$module = str_replace( 'EED_', '', $module );
 		if ( ! isset( EE_Registry::instance()->modules[ $module ] )) {
 			$msg = sprintf( __( 'The module %s has not been registered.', 'event_espresso' ), $module );
@@ -465,6 +472,8 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_route( $route = NULL ) {
+		do_action('AHEE__EE_Config__get_route__start',$route);
+		$route = apply_filters('FHEE__EE_Config__get_route',$route);
 		if ( isset( EE_Config::$_module_route_map[ $route ] )) {
 			return EE_Config::$_module_route_map[ $route ];
 		}
@@ -483,6 +492,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
+		do_action('AHEE__EE_Config__register_forward',$route,$status,$forward);
 		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this forward has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -524,8 +534,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_forward( $route = NULL, $status = 0 ) {
+		do_action('AHEE__EE_Config__get_forward__start',$route,$status);
 		if ( isset( EE_Config::$_module_forward_map[ $route ][ $status ] )) {
-			return EE_Config::$_module_forward_map[ $route ][ $status ];
+			return apply_filters('FHEE__EE_Config__get_forward',EE_Config::$_module_forward_map[ $route ][ $status ],$route,$status);
 		}
 		return NULL;
 	}
@@ -542,6 +553,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
+		do_action('AHEE__EE_Config__register_view__start',$route,$status,$view);
 		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this view has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -568,8 +580,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_view( $route = NULL, $status = 0 ) {
+		do_action('AHEE__EE_Config__get_view__start',$route,$status);
 		if ( isset( EE_Config::$_module_view_map[ $route ][ $status ] )) {
-			return EE_Config::$_module_view_map[ $route ][ $status ];
+			return apply_filters('FHEE__EE_Config__get_view',EE_Config::$_module_view_map[ $route ][ $status ],$route,$status);
 		}
 		return NULL;
 	}
@@ -584,7 +597,7 @@ final class EE_Config {
 	 *  @return 	array
 	 */
 	public function __sleep() {
-		return array(
+		return apply_filters('FHEE__EE_Config__sleep',array(
 			'core',
 			'organization',
 			'currency',
@@ -593,7 +606,7 @@ final class EE_Config {
 			'template_settings',
 			'map_settings',
 			'gateway'
-		);
+		));
 	}
 
 
@@ -613,8 +626,8 @@ class EE_Config_Base{
 	 *		@ override magic methods
 	 *		@ return void
 	 */	
-//	public function __get($a) { return FALSE; }
-//	public function __set($a,$b) { return FALSE; }
+	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,parent::__get($a)); }
+	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a,parent::__set($a,$b)); }
 	public function __isset($a) { return FALSE; }
 	public function __unset($a) { return FALSE; }
 	public function __clone() { return FALSE; }
