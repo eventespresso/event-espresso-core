@@ -679,7 +679,24 @@ class EE_Transaction extends EE_Base_Class{
 		}
 	}
 
-
+	/**
+	 *  Gets the array of billing info for the gateway and for this transaction's primary registration's attendee.
+	 * @param string $gateway_name the gateway class' _gateway_name property
+	 * @return array if the billing info ISN"T found, returns NULL
+	 */
+	public function billing_info_for_gateway($gateway_name){
+		$primary_reg = $this->primary_registration();
+		if( ! $primary_reg ){
+			EE_Error::add_error(__("Cannot get billing info for gateway %s on transaction because no primary registration exists", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		$attendee = $primary_reg->attendee();
+		if ( ! $attendee){
+			EE_Error::add_error(__("Cannot get billing info for gateway %s on transaction because teh primary registration has no attendee exists", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		return $attendee->billing_info_for_gateway($gateway_name);
+	}
 
 
 

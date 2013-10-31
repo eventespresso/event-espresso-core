@@ -714,6 +714,21 @@ class EE_Attendee extends EE_CPT_Base{
 		return $this->_Event;
 	}
 	
+	/**
+	 * Gets the billing info array where keys match espresso_reg_page_billing_inputs(),
+	 * and keys are their cleaned values
+	 * @param string $gateway_name the _gateway_name property on teh gateway class
+	 * @return array of key-value-pairs on success; but if the billing info ISN'T found
+	 * then returns NULL
+	 */
+	public function billing_info_for_gateway($gateway_name){
+		$billing_info =  $this->get_post_meta('billing_info_'.$gateway_name,true);
+		if ( !$billing_info){
+			$billing_info = null;
+		}
+		return $billing_info;
+	}
+	
 }
 
 /* End of file EE_Attendee.class.php */

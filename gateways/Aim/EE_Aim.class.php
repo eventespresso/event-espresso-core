@@ -174,8 +174,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	public function process_payment_start(EE_Line_Item $total_line_item, $transaction=null) {
 		$session_data = $this->EE->SSN->get_session_data();
 		$billing_info = $session_data['billing_info'];
-
+		
 		if ($billing_info != 'no payment required') {
+			$this->_save_billing_info_to_attendee($billing_info, $transaction);
 			// Enable test mode if needed
 			//4007000000027  <-- test successful visa
 			//4222222222222  <-- test failure card number

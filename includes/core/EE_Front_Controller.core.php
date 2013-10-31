@@ -81,7 +81,6 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
-		
 //		$ticket = EEM_Ticket::instance()->get_one();
 //		$li = EE_Line_Item::new_instance(array(
 //			'LIN_code'=>'wefaeefaw',

@@ -344,7 +344,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		}
 		$primary_registrant = $transaction->primary_registration();
 		if ($billing_info != 'no payment required') {
-
+			$this->_save_billing_info_to_attendee($billing_info, $transaction);
 			$grand_total = $total_line_item->total();//$session_data['_cart_grand_total_amount'];
 			
 
