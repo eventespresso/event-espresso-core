@@ -98,7 +98,7 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct() {
-		do_action('AHEE__EE_System__construct__start',$this);
+		do_action('AHEE__EE_System__construct__begin',$this);
 		if ( WP_DEBUG === TRUE && ! class_exists( 'EEH_Debug_Tools' )) { 
 			espresso_load_required( 'EEH_Debug_Tools', EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
 		}
@@ -182,7 +182,16 @@ final class EE_System {
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		switch($this->detect_req_type($espresso_db_update)){
 			case EE_System::req_type_new_activation:
+				do_action('AHEE__EE_System__manage_activation_process__new_activation');
+				EE_Registry::instance()->load_helper( 'Activation' );
+				EEH_Activation::system_initialization();
+				EEH_Activation::initialize_db_and_folders();
+				EEH_Activation::initialize_db_content();
+				EEH_Activation::get_caffeinated_activation();				
+				$this->update_list_of_installed_versions($espresso_db_update);
+				break;
 			case EE_System::req_type_reactivation:
+				do_action('AHEE__EE_System__manage_activation_process__reactivation');
 				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
@@ -191,16 +200,19 @@ final class EE_System {
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_upgrade:
+				do_action('AHEE__EE_System__manage_activation_process__upgrade');
 				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_downgrade:
+				do_action('AHEE__EE_System__manage_activation_process__downgrade');
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_normal:
 			default:
 				break;
 		}
+		do_action('AHEE__EE_System__manage_activation_process__end');
 	}
 
 	
@@ -214,6 +226,8 @@ final class EE_System {
 	 * if it needed correction
 	 */
 	private function fix_espresso_db_upgrade_option($espresso_db_update = null){
+		do_action('AHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin');
+		do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin',$espresso_db_update);
 		if( ! $espresso_db_update){
 			$espresso_db_update = get_option( 'espresso_db_update' );
 		}
@@ -250,6 +264,9 @@ final class EE_System {
 			update_option( 'espresso_db_update', $espresso_db_update );
 			
 		}
+		
+		do_action('AHEE__EE_System__manage_fix_espresso_db_upgrade_option__end');
+		do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__end',$espresso_db_update);
 		return $espresso_db_update;
 	}
 	
