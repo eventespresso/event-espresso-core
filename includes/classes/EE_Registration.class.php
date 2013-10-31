@@ -929,7 +929,8 @@ class EE_Registration extends EE_Base_Class {
 			);
 			$new_reg_code = implode( '-', $new_reg_code );
 			$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );	
-			return $this->set( 'REG_code', $new_reg_code ) ? TRUE : FALSE;
+			$this->set( 'REG_code', $new_reg_code );
+			return TRUE;
 		}
 		return FALSE;
 	}
@@ -977,18 +978,13 @@ class EE_Registration extends EE_Base_Class {
 	 */
 	public function finalize() {
 		$update_reg = $this->_generate_new_reg_code();
-		// update reg status if TXN is complete and event does NOT require pre-approval
-		if ( $this->get_first_related('Transaction')->is_completed() && ! $this->get_first_related('Event')->require_pre_approval() ) {
+		// update reg status if no monies are owing and event does NOT require pre-approval
+		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && ! $this->get_first_related('Event')->require_pre_approval() ) {
 			$this->set( 'STS_ID', EEM_Registration::status_id_approved );
 			$update_reg = TRUE;
 		}		
-		
-	
-		if ( 
-			$this->EE->CFG->registration->pending_counts_reg_limit 
-			|| $this->_transaction->status() === EEM_Transaction::complete_status_code 
-			|| $this->_transaction->status() === EEM_Transaction::overpaid_status_code 
-		) {
+		// does this registration count towards the reg limits ?
+		if ( $this->EE->CFG->registration->pending_counts_reg_limit  || $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) {
 			$this->reserve_registration_space();
 		}
 			
