@@ -60,6 +60,7 @@ final class EE_Front_Controller {
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
+		do_action('AHEE__EE_Front_Controller__construct__done',$this);
 	}
 
 
@@ -244,7 +245,9 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function employ_CPT_Strategy() {
-		$this->EE->load_core( 'CPT_Strategy' );
+		if ( apply_filters('FHEE__EE_Front_Controller__employ_CPT_Strategy',true)){
+			$this->EE->load_core( 'CPT_Strategy' );
+		}
 	}
 
 
@@ -288,9 +291,9 @@ final class EE_Front_Controller {
 	 */
 	public function get_request( WP $WP ) {
 //		d( $WP );
-		do_action( 'AHEE__Front_Controller__get_request__before_Request_Handler_loaded' );
+		do_action( 'AHEE__EE_ront_Controller__get_request__before_Request_Handler_loaded' );
 		$this->EE->load_core( 'Request_Handler', $WP );	
-		do_action( 'AHEE__Front_Controller__get_request__after_Request_Handler_loaded' );
+		do_action( 'AHEE__EE_Front_Controller__get_request__after_Request_Handler_loaded' );
 	}
 
 
@@ -303,10 +306,11 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function _initialize_shortcodes( WP $WP ) {
+		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__start',$this);
 		// make sure post_name is set on REQ
 		if ( $this->EE->REQ->is_set( 'post_name' )) {
 			// grab post_name from request
-			$current_post = $this->EE->REQ->get( 'post_name' );
+			$current_post = apply_filters('FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',$this->EE->REQ->get( 'post_name' ));
 //			d( $current_post );
 			// if it's not set, then check if frontpage is blog
 			if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
@@ -383,6 +387,7 @@ final class EE_Front_Controller {
 				}
 			}
 		}
+		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__end',$this);
 //		printr( $this->EE->shortcodes, '$this->EE->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
@@ -522,7 +527,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function header_meta_tag() {
-		print( "<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />");
+		print( apply_filters("FHEE__EE_Front_Controller__header_meta_tag","<meta name='generator' content='Event Espresso Version " . EVENT_ESPRESSO_VERSION . "' />"));
 	}
 
 
@@ -610,9 +615,9 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function display_registration_footer() {
-		$url = apply_filters( 'FHEE__registration_footer__url', 'http://eventespresso.com/' );
-		if ( $this->EE->CFG->admin->show_reg_footer ) {
-			return '<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>';
+		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
+		if ( apply_filters('FHEE__EE_Front__Controller__show_reg_footer',$this->EE->CFG->admin->show_reg_footer )) {
+			return apply_filters('FHEE__EE_Front_Controller__display_registration_footer','<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>');
 		}
 	}
 
@@ -626,8 +631,12 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function display_errors() {
-		echo EE_Error::get_notices();
-		EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php' );
+		do_action('AHEE__EE_Front_Controller__display_errors__begin');
+		if(apply_filters('FHEE__EE_Front_Controller__display_errors',true)){
+			echo EE_Error::get_notices();
+			EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php' );
+		}
+		do_action('AHEE__EE_Front_Controller__display_errors__end');
 	}
 
 
