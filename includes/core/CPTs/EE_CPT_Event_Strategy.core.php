@@ -52,13 +52,33 @@ class EE_CPT_Event_Strategy {
 		$this->EE = $EE;
 		$this->CPT = $CPT;
 
-		add_filter( 'posts_fields', array( $this, 'posts_fields' ));
-		add_filter( 'posts_join',	array( $this, 'posts_join' ));
-		add_filter( 'posts_where',	array( $this, 'posts_where' ));
+		$this->_add_filters();
+	}
+	
+	protected $_filters = array('posts_fields','posts_join','posts_where');
+
+	/**
+	 * When an instance of this class is created, we add our filters 
+	 * (which will get removed in case the next call to get_posts ISN'T
+	 * for event CPTs)
+	 */
+	protected function _add_filters(){
+		foreach($this->_filters as $filter){
+			add_filter($filter,array($this,$filter));
+		}
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
-
-
+	/**
+	 * Should eb called when the last filter or hook is fired for thiss CPT strategy.
+	 * This is to avoid applying this CPT strategy for other posts or CPTs (eg,
+	 * we don't want to join to teh datetime table when querying for venues, do we!?)
+	 */
+	protected function _remove_filters(){
+		foreach($this->_filters as $filter){
+			remove_filter($filter,array($this,$filter));
+		}
+		remove_filter( 'the_posts', array( $this, 'the_posts' ));
+	}
 
 	/**
 	 * 	posts_fields

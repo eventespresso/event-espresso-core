@@ -142,7 +142,6 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _initial_setup() {
-		
 		// grab POST data
 		$this->get_post_data();		
 		// build event list query

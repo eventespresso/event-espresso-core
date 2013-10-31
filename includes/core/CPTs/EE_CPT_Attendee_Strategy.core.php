@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE_CPT_Venue_Strategy
+ * EE_CPT_Attendee_Strategy
  *
  * @package			Event Espresso
  * @subpackage	/core/
@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_CPT_Venue_Strategy {
+class EE_CPT_Attendee_Strategy {
 
 
 	/**

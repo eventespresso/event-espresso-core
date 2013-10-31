@@ -1275,8 +1275,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		//all is good so let's continue with finalizing the registration.
 		$this->_transaction->save_new_cached_related_model_objs();
+		$this->EE->SSN->set_session_data(array('transaction', NULL ) );
+		$this->_transaction->set('TXN_session_data', $this->EE->SSN );
 		$this->_transaction->save();
 		$this->EE->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
+		$this->EE->SSN->clear_session();
 		return $this->_transaction->ID();
 	}
 

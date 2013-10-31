@@ -714,6 +714,32 @@ class EE_Attendee extends EE_CPT_Base{
 		return $this->_Event;
 	}
 	
+	/**
+	 * Gets the billing info array where keys match espresso_reg_page_billing_inputs(),
+	 * and keys are their cleaned values
+	 * @param string $gateway_name the _gateway_name property on teh gateway class
+	 * @return array exactly like EE_Onsite_Gateway->espresso_reg_page_billing_inputs(),
+	 * where keys are names of fields, and values are an array of settings (the most important keys being
+	 * 'label' and 'value)
+	 */
+	public function billing_info_for_gateway($gateway_name){
+		$billing_info =  $this->get_post_meta('billing_info_'.$gateway_name,true);
+		if ( !$billing_info){
+			return null;
+		}
+		$gateway_model = $this->EE->load_model('Gateways');
+		$gateway = $gateway_model->get_gateway($gateway_name);
+		if ( ! $gateway instanceof EE_Onsite_Gateway){
+			return null;
+		}else{
+			$billing_inputs = $gateway->espresso_reg_page_billing_inputs();
+			foreach($billing_inputs as $input_name => $billing_input_settings){
+				$billing_inputs[$input_name]['value'] = isset($billing_info[$input_name]) ? $billing_info[$input_name] : null;
+			}
+		}
+		return $billing_inputs;
+	}
+	
 }
 
 /* End of file EE_Attendee.class.php */

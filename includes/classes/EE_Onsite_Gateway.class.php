@@ -208,5 +208,42 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		$confirm_data['expiry date'] .= $billing_info[ 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ]['value'];
 		return $confirm_data;
 	}
+	
+	/**
+	 * Saves the cleaned billing info to the trasnaction's primary registration's attendee.
+	 * @param array $billing_info where keys are keys in teh espresso_reg_page_billing_inputs()'s array, values are their
+	 * cleaned values.
+	 * @param EE_Transaction $transaction
+	 * @return boolean
+	 */
+	protected function _save_billing_info_to_attendee($billing_info,$transaction){
+		if( ! $transaction || ! $transaction instanceof EE_Transaction){
+			EE_Error::add_error(__("Cannot save billing info because no transaction was specified", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		$primary_reg = $transaction->primary_registration();
+		if( ! $primary_reg ){
+			EE_Error::add_error(__("Cannot save billing info because the transaction has no primary registration", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		$attendee_id = $primary_reg->attendee_ID();
+		if( ! $attendee_id ){
+			EE_Error::add_error(__("Cannot save billing info because the transaction's primary registration has no attendee!", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		$billing_input_field_settings = $this->espresso_reg_page_billing_inputs();
+		$billing_info_ready_for_saving = array();
+		foreach($billing_input_field_settings as $field_name => $settings){
+			if(in_array($settings['sanitize'],array('ccv','ccard'))){
+				//dont save ccv or credit card data
+				continue;
+			}
+			$cleaned_value = isset( $billing_info[$field_name]) && isset($billing_info[$field_name]['value']) ? $billing_info[$field_name]['value'] : null;
+			$billing_info_ready_for_saving[$field_name] = $cleaned_value;
+		}
+		
+		$success = update_post_meta($attendee_id, 'billing_info_'.$this->_gateway_name, $billing_info_ready_for_saving);
+		return $success;
+	}
 
 }

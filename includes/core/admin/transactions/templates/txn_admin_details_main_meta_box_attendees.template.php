@@ -6,7 +6,7 @@
 			<thead>
 				<tr>
 					<th class="jst-left"><?php _e( '#', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'Event Name and Ticket', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Attendee', 'event_espresso' );?></th>
 					<th class="jst-rght"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Email', 'event_espresso' );?></th>
@@ -15,42 +15,23 @@
 			</thead>
 			<tbody>
 		<?php if ( isset( $event_attendees ) && is_array( $event_attendees )) : ?>
-			<?php foreach ( $event_attendees as $event => $attendees ) : ?>
-				<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
-					<?php 
-						//printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						$att = $attendee['att_obj'];
-						$reg = $attendee['reg_obj'];
-						$attendee['fname'] = isset( $attendee['fname'] ) ? $attendee['fname'] : $attendees[1]['fname'];
-						$attendee['lname'] = isset( $attendee['lname'] ) ? $attendee['lname'] : $attendees[1]['lname'];
-						$attendee['email'] = isset( $attendee['email'] ) ? $attendee['email'] : $attendees[1]['email'];
-					?>
+			<?php foreach ( $event_attendees as $registration => $attendee ) : ?>	
 				<tr>
-					<td class="jst-left"><?php echo$att_nmbr;?></td>
-					<td class="jst-left"><?php echo stripslashes( $event );?></td>
+					<td class="jst-left"><?php echo $attendee['att_num'];?></td>
+					<td class="jst-left"><?php echo $attendee['event_ticket_name'];?></td>
 					<td class="jst-left">
 						<?php 
-						$attendee_name = $att->fname() != '' ? $att->fname() : $attendee['fname'];
-						$attendee_name .= $att->lname() != '' ? ' ' . $att->lname() : ' ' . $attendee['lname'];
-						$att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$att->ID() ), REG_ADMIN_URL ); 
+						$att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee['att_id'] ), REG_ADMIN_URL ); 
 						?>
 						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
-							<?php echo $attendee_name;?>
+							<?php echo $attendee['attendee']?>
 						</a>					
 					</td>
-					<?php $price_paid = is_object( $reg ) && $reg->price_paid() != '' ? $reg->price_paid() : $attendee['price_paid']; ?>
-					<td class="jst-rght"><?php echo $currency_sign . ' ' . number_format( $price_paid, 2 );?></td>
-					<td class="jst-left"><?php echo $att->email() != '' ? $att->email() : $attendee['email'];?></td>
-					<td class="jst-left">
-						<?php
-							echo $att->address() != '' ? $att->address() . ', ' : '';
-							echo $att->city() != '' ? $att->city() . ', ' : '';
-							echo $att->state_ID() != '' ? $att->state_ID() . ', ' : '';
-							echo $att->zip();
-						?>
+					<td class="jst-rght"><?php echo $attendee['ticket_price']; ?></td>
+					<td class="jst-left"><?php echo $attendee['email']; ?></td>
+					<td class="jst-left"><?php echo $attendee['address']; ?>
 					</td>
 				</tr>
-				<?php endforeach; // $attendees?>
 			<?php endforeach; // $event_attendees?>
 		<?php endif; // isset( $event_attendees )?>
 			</tbody>

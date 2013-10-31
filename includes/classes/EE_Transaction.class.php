@@ -678,8 +678,46 @@ class EE_Transaction extends EE_Base_Class{
 			$this->save();
 		}
 	}
+	
+	/**
+	 * Gets the last payment made
+	 * @return EE_Payment
+	 */
+	public function last_payment(){
+		return $this->get_first_related('Payment',array('order_by'=>array('PAY_ID'=>'desc')));
+	}
 
-
+	/**
+	 *  Gets the array of billing info for the gateway and for this transaction's primary registration's attendee.
+	 * @param string $gateway_name the gateway class' _gateway_name property
+	 * @return array exactly like EE_Onsite_Gateway->espresso_reg_page_billing_inputs(),
+	 * where keys are names of fields, and values are an array of settings (the most important keys being
+	 * 'label' and 'value)
+	 */
+	public function billing_info(){
+		$gateway_name = $this->get_extra_meta('gateway',true);
+		if ( ! $gateway_name){
+			$last_payment = $this->last_payment();
+			if( $last_payment){
+				$gateway_name = $last_payment->gateway();
+			}
+		}
+		if ( !$gateway_name){
+			EE_Error::add_error(__("Could not find billing info for transaction because no gateway has been used for it yet", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		$primary_reg = $this->primary_registration();
+		if( ! $primary_reg ){
+			EE_Error::add_error(__("Cannot get billing info for gateway %s on transaction because no primary registration exists", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		$attendee = $primary_reg->attendee();
+		if ( ! $attendee){
+			EE_Error::add_error(__("Cannot get billing info for gateway %s on transaction because teh primary registration has no attendee exists", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		return $attendee->billing_info_for_gateway($gateway_name);
+	}
 
 
 
