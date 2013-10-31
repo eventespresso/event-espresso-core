@@ -2,10 +2,10 @@
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="1" cellspacing="0" cellpadding="0">		
 		<thead>
 			<tr>
-				<th scope="col" width="60%"><h3><?php _e( 'Ticket Options', 'event_espresso' ); ?></h3></th>
-				<th scope="col" width="18%"><?php _e( 'Price', 'event_espresso' ); ?> <span class="small-text no-bold"><?php _e( '(each)', 'event_espresso' ); ?></span></th>
-				<th scope="col" width="14%"><?php _e( 'Status', 'event_espresso' ); ?></th>
-				<th scope="col" width="8%" class="cntr"><?php _e( 'Qty', 'event_espresso' ); ?></th>
+				<th scope="col" width="65%"><h3><?php _e( 'Ticket Options', 'event_espresso' ); ?></h3></th>
+				<th scope="col" width="20%"><?php _e( 'Price', 'event_espresso' ); ?> <span class="small-text no-bold"><?php _e( '(each)', 'event_espresso' ); ?></span></th>
+				<!--<th scope="col" width="14%"><?php _e( 'Status', 'event_espresso' ); ?></th>-->
+				<th scope="col" width="15%" class="cntr"><?php _e( 'Quantity', 'event_espresso' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -13,6 +13,7 @@
 
 		$row = 1;
 		foreach ( $tickets as $TKT_ID => $ticket ) {
+			
 			
 			//d( $ticket );
 			
@@ -43,6 +44,7 @@
 ?>
 			<tr class="tckt-slctr-tbl-tr <?php echo $status_class; ?>">		
 				<td class="tckt-slctr-tbl-td-name">
+					<?php //d( $TKT_ID ); ?>
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
 					<?php if ( $ticket->ticket_status() > 0 ) { ?>
 					<a 
@@ -62,31 +64,35 @@
 					>
 						<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 					</a>
-					<?php } ?>
+					<?php } 
+//echo '<h4>$max_atndz : ' . $max_atndz . '</h4>';
+//echo '<h4>$ticket->is_on_sale() : ' . $ticket->is_on_sale() . '</h4>';
+//echo '<h4>$ticket->available() : ' . $ticket->available() . '</h4>';
+//echo '<h4>$ticket->remaining() : ' . $ticket->remaining() . '</h4>';
+					?>
 				</td>	
 				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
-				<td class="tckt-slctr-tbl-td-status"><?php echo $ticket_status; ?></td>
+				<!--<td class="tckt-slctr-tbl-td-status"><?php echo $ticket_status; ?></td>-->
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
-
-				if ( $ticket->is_on_sale() && $ticket->available() ) {
+				if ( $ticket->is_on_sale() && $ticket->remaining() > 0 && $ticket->remaining() >= $ticket->min() ) {
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 					// if more than one attendee is allowed
 					if ( $max_atndz > 1 ) { 
 						// if $ticket->remaining() equals -1, then there are unlimited tickets for sale, so use $max_atndz, otherwise offer however many tickets are left
-						$max_atndz = $ticket->remaining() < 0 ? $max_atndz : $ticket->remaining();
+						$max = $ticket->remaining() < 0 ? $max_atndz : $ticket->remaining();
 						// but... we also want to restrict the number of tickets by the ticket max setting
-						$max_atndz = $ticket->max() > 0 ? $ticket->max() : $max_atndz;
+						$max = $ticket->max() > 0 ? $ticket->max() : $max;
 						// and we also want to restrict the minimum number of tickets by the ticket min setting
-						$min_atndz = $ticket->min() > 0 ? $ticket->min() : 1;
+						$min = $ticket->min() > 0 ? $ticket->min() : 1;
 
 				?>
 					<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
 						<option value="0">&nbsp;0&nbsp;</option>
 					<?php
 						// offer ticket quantities from the min to the max
-						for ( $i = $min_atndz; $i <= $max_atndz; $i++) { 
+						for ( $i = $min; $i <= $max; $i++) { 
 					?>
 						<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;</option>
 					<?php } ?>
@@ -94,37 +100,40 @@
 				<?php 
 					} else { 
 				?>
-					<label>
-						<input 
-							type="radio" 
-							name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" 
-							id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
-							class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all"
-							value="<?php echo $row . '-'; ?>1"
-							<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
-						/>
-					</label>
+					<input 
+						type="radio" 
+						name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" 
+						id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
+						class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all"
+						value="<?php echo $row . '-'; ?>1"
+						<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
+					/>
 			<?php
 					} 
 				} else {
-					if ( ! $ticket->available() ) {
+					// sold out or other status ?
+					if (( ! $ticket->remaining() && $ticket->ticket_status() >= 0 ) || $ticket->remaining() < $ticket->min() ) {
 						echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
-					} else if ( ! $ticket->is_on_sale() ) {
-					?>
-					<select class="ticket-selector-tbl-qty-slct" disabled="disabled">
-						<option value="0">&nbsp;0&nbsp;</option>
-					</select>
+					} else if ( $ticket->is_pending() ) {
+					?>	
+					<p class="ticket-pending-pg">
+						<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
+						<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
+					</p>
 					<?php
 					} else {
-					?>
-					<select class="ticket-selector-tbl-qty-slct" disabled="disabled">
-						<option value="0">&nbsp;0&nbsp;</option>
-					</select>
+						echo $ticket_status;
+					} 
+					// depending on group reg we need to change the format for qty
+					if (  $max_atndz > 1 ) {
+					?>	
+					<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="0" />
+					<?php
+					} else {
+					?>	
+					<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" value="<?php echo $row . '-'; ?>0" />
 					<?php
 					}
-				?>	
-					<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="0" />					
-				<?php
 				}
 			?>	
 					<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>" />
