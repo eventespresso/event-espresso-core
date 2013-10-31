@@ -253,6 +253,7 @@ class EE_Calendar {
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
 		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE, 'show_tooltips' => FALSE ), $this->_calendar_options );
+
 		// make sure $atts is an array
 		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
@@ -415,6 +416,7 @@ class EE_Calendar {
 	</div>
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>'.apply_filters( 'filter_hook_espresso_calendar_output_after','' ); 
+	do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
 	
 	}
 
