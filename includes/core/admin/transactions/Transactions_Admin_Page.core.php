@@ -463,51 +463,22 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		global $wpdb;
 		$this->_set_transaction_object();
 
-		// process items in cart
-		$cart_items = isset( $this->_session['cart'] ) ? $this->_session['cart']['REG']['items'] : array();
-		$this->_template_args['items'] = array();
-		$exclude = array( 'attendees' );
+		//get line items from transaction
+		$this->_template_args['line_items'] = $this->_transaction->get_many_related('Line_Item', array(array('LIN_type' => 'line-item' ) ) );
 		
 		$this->_template_args['REG_code'] = $this->_transaction->get_first_related('Registration')->get('REG_code');
-		
-		if ( ! empty( $cart_items )) {
-			foreach ( $cart_items as $line_item_ID => $item ) {
-				foreach ( $item as $key => $value ) {
-					if ( ! in_array( $key, $exclude )) {
-						if ( $key == 'options' ) {
-							$options = $value;
-							foreach ( $options as $opt => $option ) {
-								if ( $opt == 'date' ) {
-									$option = strtotime( $option );
-								} else if  ( $opt == 'time' ) {
-									$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
-									$option = strtotime( $option . ' ' . $ampm );
-								}
-								$this->_template_args['items'][ $item['name'] ][ $opt ] = $option;
-							}
-						} elseif ( $key == 'line_item_id' ) {
-							$this->_template_args['items'][ $item['name'] ][ $key ] = '<a title="' . $value . '" style="color:#333;">' . substr( $value, 0, 6 ) . '...</a>';
-						} else {
-							$this->_template_args['items'][ $item['name'] ][ $key ] = $value;
-						}					
-					} 
-				}
-			}		
-		}
 
 		
 		// process taxes
-		if ( $taxes = $this->_transaction->get('TXN_tax_data') ) {
-			$this->_template_args['taxes'] = $taxes['taxes'];
+		if ( $taxes = $this->_transaction->get_many_related('Line_Item', array( array('LIN_type' => 'tax') ) ) ) {
+			$this->_template_args['taxes'] = $taxes;
 		} else {
 			$this->_template_args['taxes'] = FALSE;
 		}
 
-		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
+		$this->_template_args['grand_total'] = EEH_Template::format_currency($this->_transaction->get('TXN_total') );
 		$this->_template_args['TXN_status'] = $this->_transaction->get('STS_ID');
 
-
-		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$txn_status_class = 'status-' . $this->_transaction->get('STS_ID');
 		
 		// process payment details

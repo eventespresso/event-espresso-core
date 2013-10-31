@@ -10,7 +10,6 @@
 				<tr>
 					<th class="jst-left"><?php _e( 'Line Item ID', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Event Date', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Ticket Option', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Qty', 'event_espresso' );?></th>
@@ -18,28 +17,32 @@
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ( $items as $item ) : ?>
+		<?php foreach ( $line_items as $item ) : ?>
+			<?php
+				$event = $item->get_first_related('Transaction')->get_first_related('Registration')->get_first_related('Event');
+				$event_name = $event->get('EVT_name');
+
+			?>
 			<tr>
-				<td class="jst-left"><?php echo $item['line_item_id'];?></td>
-				<td class="jst-left"><?php echo $item['name'];?></td>
-				<td class="jst-left"><?php echo date( 'D M j, Y', $item['date'] ) . ',    ' . date( 'g:i a', $item['time'] );?></td>
-				<td class="jst-left"><?php echo stripslashes( $item['ticket_desc'] );?></td>
-				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['ticket_price'], 2 );?></td>
-				<td class="jst-rght"><?php echo $item['qty'];?></td>
-				<td class="jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $item['line_total'], 2 );?></td>
+				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
+				<td class="jst-left"><?php echo $event_name;?></td>
+				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_unit_price') ); ?></td>
+				<td class="jst-rght"><?php echo $item->get('LIN_quantity');?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_total') ); ?></td>
 			</tr>
 		<?php endforeach; // $items?>
 		<?php if ( is_array($taxes) ) : ?>
 			<?php foreach ( $taxes as $tax ) : ?>
 				<tr class="admin-primary-mbox-taxes-tr">
-					<th class=" jst-rght" colspan="6"><?php echo $tax['name'];?></th>
-					<th class=" jst-rght"><?php echo $currency_sign . '&nbsp;' . number_format( $tax['amount'], 2 );?></th>
+					<th class=" jst-rght" colspan="5"><?php echo $tax->get('LIN_name');?></th>
+					<th class=" jst-rght"><?php echo EEH_Template::format_currency($tax->get('LIN_quantity') );?></th>
 				</tr>
 			<?php endforeach; // $taxes?>
 		<?php endif; // $taxes?>
 				<tr class="admin-primary-mbox-total-tr">
-					<th class=" jst-rght" colspan="6"><?php _e( 'Transaction Total', 'event_espresso' );?></th>
-					<th class=" jst-rght"><?php echo $currency_sign;?>&nbsp;<span id="txn-admin-grand-total"><?php echo number_format( $grand_total, 2 );?></span></th>
+					<th class=" jst-rght" colspan="5"><?php _e( 'Transaction Total', 'event_espresso' );?></th>
+					<th class=" jst-rght"><?php echo $grand_total;?></span></th>
 				</tr>
 			</tbody>	
 		</table>
