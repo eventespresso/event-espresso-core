@@ -65,11 +65,14 @@
 .tkt-slctr-tbl tbody .tckt-slctr-tkt-details-tr + .tckt-slctr-tbl-tr { border-top:1px solid #eee; }
 .tkt-slctr-tbl tr.ticket-sales-expired { }
 .tkt-slctr-tbl td { padding:1em; font-size:1em; line-height:1.35em; }
+.tkt-slctr-tbl td .ticket-pending-pg { position: relative; top:-.5em; margin:0 0 -.5em; line-height:.8em; }
 .tkt-slctr-tbl td .ticket-on-sale { color:#60A000; font-weight: bold; }
-.tkt-slctr-tbl td .ticket-pending { color:#f59200; font-weight: bold; }
+.tkt-slctr-tbl td .ticket-pending { font-size:.85em; color:#f59200; font-weight: bold; }
+.tkt-slctr-tbl td .ticket-sales-expired { font-size:.85em; color:#A8A8A8; }
 .tkt-slctr-tbl .tckt-slctr-tbl-td-price,
 .tkt-slctr-tbl .tckt-slctr-tbl-td-status { padding:1em 0; }
 .tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding:1em 1em 1em 0; }
+.tkt-slctr-tbl td .sold-out { font-size:.85em; font-weight: bold; color: #E53248; }
 
 .tckt-slctr-cal-img {
 	display: inline-block; width:12px; height:12px; padding:0px; margin:2px .4em -1px .2em;
@@ -122,7 +125,7 @@
 }
 
 .available-spaces-last-update-spn { margin-left:1em; font-size:.7em; letter-spacing:1px; color:#999; }
-.sold-out { font-size:.85em; font-weight: bold; color: #E53248; }
+
 
 
 

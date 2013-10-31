@@ -70,23 +70,14 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		
-		$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}
 
 
 
 	/**
-	 * 	process_shortcode - EVENT_LIST - Returns a list of events
+	 * 	process_shortcode - ESPRESSO_EVENTS
 	 * 
-	 * 	[EVENT_LIST]
-	 * 	[EVENT_LIST limit=1]
-	 * 	[EVENT_LIST css_class=my-custom-class]
-	 * 	[EVENT_LIST show_expired=true]
-	 * 	[EVENT_LIST show_deleted=true]
-	 * 	[EVENT_LIST show_secondary=true]
-	 * 	[EVENT_LIST show_recurrence=true]
-	 * 	[EVENT_LIST category_identifier=your_category_identifier]
+	 * 	[ESPRESSO_EVENTS]
 	 *  
 	 *  @access 	public
 	 *  @param		array 	$attributes
@@ -94,7 +85,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 */
 	public function process_shortcode( $attributes ) {
 		//event_espresso_get_event_details( $attributes );
-		return '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		return $this->ouput;		
 	}
 

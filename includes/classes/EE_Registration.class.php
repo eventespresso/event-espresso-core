@@ -914,20 +914,25 @@ class EE_Registration extends EE_Base_Class {
 	
 	/**
 	 * genrerates reg code
-	 * @return string
+	 * @return boolean
 	 */
 	private function _generate_new_reg_code() {
-		// figure out where to start parsing the reg code
-		$chars = strpos( $this->_REG_url_link, '-' ) + 4;
-		$new_reg_code = array(
-			$this->_TXN_ID,
-			$this->_TKT_ID,
-			substr( $this->_REG_url_link, 0, $chars ) . substr( $this->_REG_url_link, -3 ),
-			$this->get_first_related('Transaction')->is_completed() ? 1 : 0
-		);
-		$new_reg_code = implode( '-', $new_reg_code );
-		$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );	
-		return $new_reg_code;
+		// generate a reg code ?
+		if ( empty( $this->_REG_code )) {			
+			// figure out where to start parsing the reg code
+			$chars = strpos( $this->_REG_url_link, '-' ) + 4;
+			$new_reg_code = array(
+				$this->_TXN_ID,
+				$this->_TKT_ID,
+				substr( $this->_REG_url_link, 0, $chars ) . substr( $this->_REG_url_link, -3 ),
+				$this->get_first_related('Transaction')->is_completed() ? 1 : 0
+			);
+			$new_reg_code = implode( '-', $new_reg_code );
+			$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );	
+			$this->set( 'REG_code', $new_reg_code );
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 
@@ -972,26 +977,21 @@ class EE_Registration extends EE_Base_Class {
 	 * @return void
 	 */
 	public function finalize() {
-		$update_reg = FALSE;
-		// generate a reg code ?
-		if ( empty( $this->_REG_code )) {			
-			$update_reg = $this->set( 'REG_code', $this->_generate_new_reg_code() ) ? TRUE : FALSE;
-		}
-		// update reg status if TXN is complete and event does NOT require pre-approval
-		if ( $this->get_first_related('Transaction')->is_completed() && ! $this->get_first_related('Event')->require_pre_approval() ) {
+		$update_reg = $this->_generate_new_reg_code();
+		// update reg status if no monies are owing and event does NOT require pre-approval
+		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && ! $this->get_first_related('Event')->require_pre_approval() ) {
 			$this->set( 'STS_ID', EEM_Registration::status_id_approved );
 			$update_reg = TRUE;
 		}		
-		
-		if ( $update_reg ) { 
-			$this->save();
-		}
-		
-		if ( $this->EE->CFG->registration->pending_counts_reg_limit || $this->_transaction->status() === EEM_Transaction::complete_status_code ) {
+		// does this registration count towards the reg limits ?
+		if ( $this->EE->CFG->registration->pending_counts_reg_limit  || $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) {
 			$this->reserve_registration_space();
 		}
 			
-		
+		if ( $update_reg ) { 
+			$this->save();
+		}
+			
 	}
 
 

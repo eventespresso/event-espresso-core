@@ -208,9 +208,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
-		// nothing ??? go home!
-		if ( empty( $data )) {
-			EE_Error::add_error( __( 'No session data was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+		// nothing ??? bad data ??? go home!
+		if ( empty( $data ) || ! is_array( $data )) {
+			EE_Error::add_error( __( 'No session data or invalid session data was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -600,23 +600,16 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * 		@return void
 	 */
 	public function clear_session( $class = '', $func = '', $show_all_notices = FALSE ) {
-
-		$this->reset_data( 
-			array(
-				'cart',
-				'transaction', 
-				'primary_attendee',
-				'billing_info'
-			),
-			$show_all_notices
-		);
+		
+		// wipe out everything that isn't a default session datum
+		$this->reset_data( array_keys( $this->_session_data ));
 																
-		$this->set_session_data(
-			array(
-				'cart' => NULL,
-				'transaction' => NULL
-			)
-		);
+//		$this->set_session_data(
+//			array(
+//				'cart' => NULL,
+//				'transaction' => NULL
+//			)
+//		);
 
 	}
 

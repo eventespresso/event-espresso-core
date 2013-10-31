@@ -421,7 +421,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'TXN_timestamp' => current_time('mysql'),
 				'TXN_total' => $this->EE->CART->get_cart_grand_total(), 
 				'TXN_paid' => 0, 
-				'STS_ID' => 'TIN',
+				'STS_ID' => EEM_Transaction::incomplete_status_code,
 				'TXN_tax_data' => $this->EE->CART->get_applied_taxes()
 		));
 		$this->_transaction = $transaction;
@@ -1084,78 +1084,83 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								// do we need to copy basic info from primary attendee ?
 								$copy_primary = ! isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) || absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
 								unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
-								// now loop through our array of valid post data && process attendee reg forms
-								foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
-									
-									//echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-									
-									// check for critical inputs
-									if ( empty( $input_value )) {
+								if ( isset( $valid_data[ $line_item_id ] )) {
+									// now loop through our array of valid post data && process attendee reg forms
+									foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
 										
+										//echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+										
+										// check for critical inputs
+										if ( empty( $input_value )) {
+											
+											switch( $form_input ) {
+												case 'fname' :
+													EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+												break;
+												case 'lname' :
+													EE_Error::add_error( __( 'Last Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+												break;
+												case 'email' :
+													EE_Error::add_error( __( 'Email Address is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+												break;
+											}
+											
+										} elseif ( $form_input == 'email' ) {
+											// clean the email address
+											$valid_email = sanitize_email( $input_value );
+											// check if it matches
+											if ( $input_value != $valid_email ) {
+												// whoops!!!
+												EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+											}
+										}
+									
+										// store a bit of data about the primary attendee
+										if ( $att_nmbr == 1 && $line_item_id == $primary_attendee['line_item_id'] && ! empty( $input_value )) {
+											$primary_attendee[ $form_input ] = $input_value;
+										} else if ( $copy_primary ) {
+											$input_value = isset( $primary_attendee[ $form_input ] ) ? $primary_attendee[ $form_input ] : $input_value;
+										}
+										
+										// $answer_cache_id is the key used to find the EE_Answer we want
+										$answer_cache_id = $form_input . '-' . $line_item_id;
+										$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
+									
+										$attendee_property = FALSE;
+										//rename a couple of form_inputs
 										switch( $form_input ) {
-											case 'fname' :
-												EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+											case 'state' :
+												$form_input = 'STA_ID';
+												$attendee_property = TRUE;
 											break;
-											case 'lname' :
-												EE_Error::add_error( __( 'Last Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+											case 'country' :
+												$form_input = 'CNT_ISO';
+												$attendee_property = TRUE;
 											break;
-											case 'email' :
-												EE_Error::add_error( __( 'Email Address is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-											break;
+											default :
+												$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
+												$form_input = 'ATT_' . $form_input;
 										}
-										
-									} elseif ( $form_input == 'email' ) {
-										// clean the email address
-										$valid_email = sanitize_email( $input_value );
-										// check if it matches
-										if ( $input_value != $valid_email ) {
-											// whoops!!!
-											EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					
+										// if this form input has a corresponding attendee property
+										if ( $attendee_property ) {
+											$attendee_data[ $form_input ] = $input_value;
+											if (  $answer_is_obj ) {
+												// and delete the corresponding answer since we won't be storing this data in that object
+												$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
+											}
+										} elseif (  $answer_is_obj ) {
+											// save this data to the attendee object
+											$answers[ $answer_cache_id ]->set_value( $input_value );
+										} else {
+											EE_Error::add_error( __( 'Unable to save registration form data.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 										}
-									}
-								
-									// store a bit of data about the primary attendee
-									if ( $att_nmbr == 1 && $line_item_id == $primary_attendee['line_item_id'] && ! empty( $input_value )) {
-										$primary_attendee[ $form_input ] = $input_value;
-									} else if ( $copy_primary ) {
-										$input_value = isset( $primary_attendee[ $form_input ] ) ? $primary_attendee[ $form_input ] : $input_value;
-									}
-									
-									// $answer_cache_id is the key used to find the EE_Answer we want
-									$answer_cache_id = $form_input . '-' . $line_item_id;
-									$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
-								
-									$attendee_property = FALSE;
-									//rename a couple of form_inputs
-									switch( $form_input ) {
-										case 'state' :
-											$form_input = 'STA_ID';
-											$attendee_property = TRUE;
-										break;
-										case 'country' :
-											$form_input = 'CNT_ISO';
-											$attendee_property = TRUE;
-										break;
-										default :
-											$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
-											$form_input = 'ATT_' . $form_input;
-									}
-				
-									// if this form input has a corresponding attendee property
-									if ( $attendee_property ) {
-										$attendee_data[ $form_input ] = $input_value;
-										if (  $answer_is_obj ) {
-											// and delete the corresponding answer since we won't be storing this data in that object
-											$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
-										}
-									} elseif (  $answer_is_obj ) {
-										// save this data to the attendee object
-										$answers[ $answer_cache_id ]->set_value( $input_value );
-									} else {
-										EE_Error::add_error( __( 'Unable to save registration form data.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-									}
 
+									}
+								} else {
+									EE_Error::add_error( __( 'No form data or invalid data was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 								}
+
 								// this registration does not require additional attendee information ?
 								if ( $copy_primary && $att_nmbr > 1 ) {
 									// add relation to new attendee
@@ -1188,7 +1193,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 							} else {
-								EE_Error::add_error( __( 'An invalid or missing line item ID was encountered while attempting to process a registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+								EE_Error::add_error( __( 'An invalid or missing line item ID was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 								// remove malformed data
 								unset( $valid_data[ $line_item_id ] );
 							}
@@ -1364,6 +1369,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 			$this->_transaction->save_new_cached_related_model_objs();
+			// and save the txn to the db
 			$this->_transaction->save();
 //			$this->_transaction->dropEE();
 //			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );

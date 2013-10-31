@@ -27,7 +27,7 @@ global $css_class;
 
 $att_nmbr = 0;
 $prev_event = '';
-//$print_copy_info = count( $additional_event_attendees ) ? TRUE : FALSE;
+$print_copy_info = count( $additional_event_attendees ) ? TRUE : FALSE;
 
 if ( $event_queue['total_items'] > 0 ) {
 	foreach ( $event_queue['items'] as $line_item => $item ) {
