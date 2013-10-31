@@ -600,23 +600,16 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * 		@return void
 	 */
 	public function clear_session( $class = '', $func = '', $show_all_notices = FALSE ) {
-
-		$this->reset_data( 
-			array(
-				'cart',
-				'transaction', 
-				'primary_attendee',
-				'billing_info'
-			),
-			$show_all_notices
-		);
+		
+		// wipe out everything that isn't a default session datum
+		$this->reset_data( array_keys( $this->_session_data ));
 																
-		$this->set_session_data(
-			array(
-				'cart' => NULL,
-				'transaction' => NULL
-			)
-		);
+//		$this->set_session_data(
+//			array(
+//				'cart' => NULL,
+//				'transaction' => NULL
+//			)
+//		);
 
 	}
 
