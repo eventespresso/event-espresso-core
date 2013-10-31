@@ -93,8 +93,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
 		// load EE_Request_Handler
-		add_action( 'parse_request', array( $this, 'apply_CPT_Strategy' ), 2 );
-		
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 	}
 
 
@@ -128,27 +127,60 @@ class EE_CPT_Strategy extends EE_BASE {
 		return $this->_CPT_endpoints;
 	}	
 
+	/**
+	 * Checks if we're on a EE-CPT archive-or-single page, and if we've never set the EE request var. 
+	 * If so, sets the 'ee' request variable
+	 * so other parts of EE can know what CPT is getting queried.
+	 * To Mike's knowlege, this must be called from during or after the pre_get_posts hook
+	 * in order for is_archive() and is_single() methods to work properly.
+	 * @param WP)Object $WP_Object
+	 * @return void
+	 */
+	public function _possibly_set_ee_request_var(){
+		global $wp;
+		if ( ! $this->EE->REQ->is_set( 'ee' ) && 
+				isset( $wp->query_vars['post_type'] ) && 
+				isset( $this->_CPTs[ $wp->query_vars['post_type'] ] )) {
+			// check that route exists for CPT archive slug
+			$cpt = $this->_CPTs[ $wp->query_vars['post_type'] ];
+			if ( is_archive() && EE_Config::get_route( $cpt['plural_slug'] )) {
+				// ie: set "ee" to "events"
+				$this->EE->REQ->set( 'ee', $cpt['plural_slug'] );
+			// or does it match a single page CPT like /event/
+			} else if ( is_single() && EE_Config::get_route( $cpt['singular_slug'] )) {
+				// ie: set "ee" to "event"
+				$this->EE->REQ->set( 'ee', $cpt['singular_slug'] );
+			}
+		}
+	}
 
 	/**
-	 * 	apply_CPT_Strategy
+	 * 	If this query (not just "main" queries (ie, for WP's infamous "loop")) is for an EE CPT, then we want to supercharge the get_posts query
+	 * to add our EE stuff (like joining to our tables, selecting extra columns, and adding 
+	 * EE objects to teh post to facilitate further querying of related data etc)
 	 *
 	 * 	@access public
 	 * 	@return array
 	 */
-	public function apply_CPT_Strategy( $WP_Object ) {
+	public function pre_get_posts( $WP_Query ) {
+		$this->_possibly_set_ee_request_var();
+		
 //		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// is current query for an EE CPT ?
-		if ( isset( $WP_Object->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Object->query_vars['post_type'] ] )) {
+		if ( isset( $WP_Query->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Query->query_vars['post_type'] ] )) {
 			// is EE on or off ?
 			if ( EE_Maintenance_Mode::instance()->level() ) {
 				// reroute CPT template view to maintenance_mode.template.php
-				add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
+				if( ! has_filter('template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
+					add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
+				}
 				return;
 			}
+			
 			// grab details for the CPT the current query is for
-			$this->CPT = $this->_CPTs[ $WP_Object->query_vars['post_type'] ];
+			$this->CPT = $this->_CPTs[ $WP_Query->query_vars['post_type'] ];
 			// set post type
-			$this->CPT['post_type'] = $WP_Object->query_vars['post_type'];
+			$this->CPT['post_type'] = $WP_Query->query_vars['post_type'];
 			// the post or category or term that is triggering EE
 			$this->CPT['espresso_page'] = $this->EE->REQ->is_espresso_page();
 			// requested post name
@@ -160,14 +192,13 @@ class EE_CPT_Strategy extends EE_BASE {
 				$this->CPT_model = $this->EE->load_model( $this->CPT['singular_name'] );
 				$this->CPT['tables'] = $this->CPT_model->get_tables();
 				// is there a Meta Table for this CPT?
-				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;
-				// creates classname like:  EE_CPT_Event_Strategy
+				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;		
+// creates classname like:  EE_CPT_Event_Strategy
 				$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
 				// load and instantiate
 				 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));	
 //				printr( $CPT_Strategy, '$CPT_Strategy  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-				add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
+//				add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 				add_filter( 'posts_join',	array( $this, 'posts_join' ));
 				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
@@ -186,29 +217,15 @@ class EE_CPT_Strategy extends EE_BASE {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function pre_get_posts(  $WP_Query  ) {
-
-		if ( ! $WP_Query->is_main_query() ) {
-			return;
-		}
-		// if no other module has already set a route
-		if ( ! $this->EE->REQ->is_set( 'ee' )) {
-			// check that route exists for CPT archive slug
-			if ( is_archive() && EE_Config::get_route( $this->CPT['plural_slug'] )) {
-				// ie: set "ee" to "events"
-				$this->EE->REQ->set( 'ee', $this->CPT['plural_slug'] );
-			// or does it match a single page CPT like /event/
-			} else if ( is_single() && EE_Config::get_route( $this->CPT['singular_slug'] )) {
-				// ie: set "ee" to "event"
-				$this->EE->REQ->set( 'ee', $this->CPT['singular_slug'] );
-			}
-		}
-		
-		//d( $this->EE->REQ );
-
-		return $WP_Query;
-		
-	}
+//	public function pre_get_posts(  $WP_Query  ) {
+//
+//		
+//		
+//		//d( $this->EE->REQ );
+//
+//		return $WP_Query;
+//		
+//	}
 
 
 
@@ -221,7 +238,6 @@ class EE_CPT_Strategy extends EE_BASE {
 	public function posts_fields( $SQL ) {
 		// does this CPT have a meta table ?
 		if ( isset( $this->CPT['meta_table'] )) {
-			global $wpdb;
 			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
