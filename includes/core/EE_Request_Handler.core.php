@@ -58,7 +58,11 @@ final class EE_Request_Handler {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( $WP ) {
+	public function __construct( $wp ) {
+		//if somebody forgot to provide us with WP, thats ok because its global
+		if( ! $wp){
+			global $wp;
+		}
 		// AJAX ???
 		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
 		// grab request vars
@@ -66,8 +70,8 @@ final class EE_Request_Handler {
 		if ( ! is_admin() ) {
 			// get current post name from URL
 			EE_Registry::instance()->load_helper( 'URL' );	
-			$this->set( 'post_name', $WP->request );		
-			$this->set_espresso_page( EEH_URL::test_for_espresso_page( $WP->request ) );			
+			$this->set( 'post_name', $wp->request );		
+			$this->set_espresso_page( EEH_URL::test_for_espresso_page( $wp->request ) );			
 		}
 	}
 

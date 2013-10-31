@@ -146,6 +146,8 @@ class EEH_URL {
 	public static function test_for_espresso_page( $current_request = FALSE ) {
 		self::$_is_espresso_page = FALSE;
 		// load espresso CPT endpoints
+		//first make sure teh CPT strategy is available
+		EE_Registry::instance()->load_core('CPT_Strategy');
 		$espresso_CPT_endpoints = EE_CPT_Strategy::instance()->get_CPT_endpoints();
 		// load all pages using espresso shortcodes
 		$post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();

@@ -690,7 +690,9 @@ class EE_Transaction extends EE_Base_Class{
 	/**
 	 *  Gets the array of billing info for the gateway and for this transaction's primary registration's attendee.
 	 * @param string $gateway_name the gateway class' _gateway_name property
-	 * @return array if the billing info ISN"T found, returns NULL
+	 * @return array exactly like EE_Onsite_Gateway->espresso_reg_page_billing_inputs(),
+	 * where keys are names of fields, and values are an array of settings (the most important keys being
+	 * 'label' and 'value)
 	 */
 	public function billing_info(){
 		$gateway_name = $this->get_extra_meta('gateway',true);

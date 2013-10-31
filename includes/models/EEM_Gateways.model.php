@@ -438,7 +438,16 @@ Class EEM_Gateways {
 		return $this->_gateway_instances;
 	}
 	
-
+	/**
+	 * Gets the gateway specified by gateway_name (where gateway_name == the gateway's _gateway_name property)
+	 * @param string $gateway_name
+	 * @return EE_Gateway
+	 */
+	public function get_gateway($gateway_name){
+		$gateway = isset($this->_gateway_instances[$gateway_name]) ? $this->_gateway_instances[$gateway_name] : null;
+		return $gateway;
+	}
+	
 
 	/**
 	 * 		unset gateway as selected
