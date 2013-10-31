@@ -646,17 +646,17 @@ Class EEM_Gateways {
 		$this->_ajax = TRUE;
 		$this->_payment_settings = array();
 		
-		$this->EE->SSN->clear_session( __CLASS__, __FUNCTION__ );
+		$this->EE->SSN->clear_session();
 		$this->EE->SSN->set_session_data(
-				array(
-							'selected_gateway' => $this->_selected_gateway,
-							'hide_other_gateways' => $this->_hide_other_gateways,
-							'off_site_form' => $this->_off_site_form,
-							'ajax' => $this->_ajax,
-							'payment_settings' => $this->_payment_settings
-						), 
-						'gateway_data'
-				);
+			array(
+				'selected_gateway' => $this->_selected_gateway,
+				'hide_other_gateways' => $this->_hide_other_gateways,
+				'off_site_form' => $this->_off_site_form,
+				'ajax' => $this->_ajax,
+				'payment_settings' => $this->_payment_settings
+			), 
+			'gateway_data'
+		);
 						
 		//espresso_clear_session(); this seemed silly. we just expelled
 		//all this effort clearing specific gateway items in the session, and now
