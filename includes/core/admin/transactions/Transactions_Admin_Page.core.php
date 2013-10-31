@@ -304,7 +304,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	    //get transaction object
 	    $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
-	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
+	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data')->get_session_data() : NULL;
+
 	 	if ( empty( $this->_transaction ) ) {
 	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
