@@ -284,7 +284,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 //		d( $this->_transaction );
 		if ( ! $this->_transaction instanceof EE_Transaction ) {
-			$this->_transaction = $this->_initialize_transaction();
+			$this->_initialize_transaction();
 		}
 		// verify registrations have been set
 		$registrations = $this->_transaction->registrations();
@@ -303,6 +303,36 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'translate_js_strings' ), 1 );
+	}
+
+
+
+	/**
+	 * The purpose of this method is to just initialize SPCO for manual admin registration handling
+	 *
+	 * Note, it is fully expected that eventually things will be abstracted a bit more conveniently for the Admin usage of SPCO but this is a quick and dirty method to get things implemented with as much DRY as possible.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function init_for_admin() {
+		// load classes
+		$this->EE->load_model( 'Gateways' );
+		$this->EE->load_core( 'Cart' );
+
+		if ( empty( $this->EE->REQ ) ) {
+			$this->EE->load_core( 'Request_Handler' );
+		}
+
+		$this->_transaction = $this->EE->SSN->get_session_data( 'transaction' );
+		if ( ! $this->_transaction instanceof EE_Transaction ) {
+			$this->_initialize_transaction();
+		}
+
+		//verify registrations have been set
+		$registrations = $this->_transaction->registrations();
+		if ( empty( $registrations ) )
+			$this->_initialize_registrations();
 	}
 
 
@@ -380,10 +410,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	generates a new EE_Transaction object and adds related EE_Registration objects for each ticket in the cart
+	 * 	generates a new EE_Transaction object and adds it to the $_transaction property.
 	 *
 	 * 	@access private
-	 * 	@return 	EE_Transaction object
+	 * 	@return void
 	 */
 	private function _initialize_transaction() {
 		// create new TXN
@@ -394,7 +424,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'STS_ID' => 'TIN',
 				'TXN_tax_data' => $this->EE->CART->get_applied_taxes()
 		));
-		return $transaction;
+		$this->_transaction = $transaction;
 	}
 
 
@@ -778,6 +808,172 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
+	/**
+	 * this generates the output for the registration form for manual registrations via the admin
+	 *
+	 * @access public
+	 * @return string html
+	 */
+	public function registration_checkout_for_admin() {
+		$this->init_for_admin();
+		$this->EE->load_helper( 'Form_Fields' );
+		$this->EE->load_helper( 'Template' );
+		$this->EE->load_class( 'Question_Form_Input', array(), FALSE, FALSE, TRUE );
+
+
+		$template_args = array();
+		$template_args['css_class'] = '';
+		$template_args['confirmation_data'] = '';
+
+		$event_queue = array();
+		$cart_line_items = '';
+		$total_items = 0;
+
+
+		$additional_event_attendees = array();
+		$events_requiring_pre_approval = array();
+		$events_that_use_coupon_codes = array();
+		$events_that_use_groupon_codes = array();
+		$template_args['reg_page_discounts_dv_class'] = 'hidden';
+		
+		$template_args['whats_in_the_cart'] = '';
+
+		$event_queue['title'] = __('Registrations', 'event_espresso');
+		$attendee_headings = array();
+		$additional_attendees = array();
+		$additional_attendee_forms = FALSE;
+
+		if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations() !== NULL ) {
+				//d( $this->_transaction );
+				$event_queue['has_items'] = TRUE;
+				$attendee_questions = array();
+				$prev_event = NULL;
+				
+				foreach ( $this->_transaction->registrations() as $registration ) {
+					
+					$line_item_ID = $registration->reg_url_link();	
+					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
+					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
+					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
+					$total_items = $registration->count();
+
+					$Question_Groups = $this->EE->load_model( 'Question_Group' )->get_all( array( 
+						array( 
+							'Event.EVT_ID' => $registration->event()->ID(), 
+							'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
+						)
+					));
+					
+					foreach ( $Question_Groups as $Question_Group ) {
+						$Questions = $Question_Group->get_many_related( 'Question' );
+						//d( $Questions );
+						$question_meta = array(
+							'EVT_ID' => $registration->event()->ID(),
+							'att_nmbr' => $registration->count(),
+							'ticket_id' => $registration->ticket()->ID(),
+							'input_name' =>  '[' . $line_item_ID . ']',
+							'input_id' => $line_item_ID,
+							'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
+						);
+						foreach ( $Questions as $Question ) {
+							/*@var $Question EE_Question */
+							if( ! $registration){
+								$answer = EE_Answer::new_instance ( array( 
+									'QST_ID'=> $Question->ID(),
+									'REG_ID'=> $registration->ID()
+								 ));
+								$answer->_add_relation_to( $Question, 'Question' );
+								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
+								$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
+							}else{
+								$answer_to_question = EEM_Answer::instance()->get_answer_value_to_question($registration,$Question->ID());
+								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer_to_question;
+							}
+
+						}
+						
+					}
+
+					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
+					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
+					
+					$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
+
+					// show this attendee form?
+					if ( empty( $attendee_questions )) {						
+						$attendee_questions .= '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>';
+						$attendee_questions .= '
+							<input
+									type="hidden"
+									id="' . $line_item_ID . '-additional_attendee_reg_info"
+									name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]"
+									value="0"
+							/>' . "\n";
+					} else {
+						$additional_attendee_forms = TRUE;
+					}
+					$event_queue['items'][ $line_item_ID ]['attendee_questions'] = $attendee_questions;
+
+
+
+					// is this the primarary registrant ?
+					if ( $registration->count() == 1 ) {
+						// grab line item from primary attendee
+						$template_args['prmy_att_input_name'] =  $line_item_ID;					
+					} else { 
+					
+						// for all  attendees other than the primary attendee				
+						$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ] = array(
+								'ticket' => $registration->ticket()->name(),
+								'att_nmbr' => $registration->count(),
+								'input_id' => $line_item_ID,
+								'input_name' =>  '[' . $line_item_ID . ']'
+						);
+						
+						$item_name = $registration->ticket()->name();
+						$item_name .= $registration->ticket()->description() != '' ? ' - ' . $registration->ticket()->description() : '';
+						
+						// if this is a new ticket OR if this is the very first additional attendee after the primary attendee
+						if ( $registration->ticket()->ID() != $prev_event || $registration->count() == 2 ) {
+							$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = $item_name;
+							$prev_event = $registration->ticket()->ID();
+						} else {
+							// no heading
+							$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = FALSE;
+						}
+					}
+				} 
+				
+				$this->EE->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
+	
+			} else {
+				// empty
+				$event_queue['has_items'] = FALSE;
+			}
+
+		$template_args['additional_event_attendees'] = $additional_event_attendees;
+		$grand_total = $this->EE->CART->get_cart_grand_total();
+		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
+		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
+		
+		$cart_total_before_tax = $this->EE->CART->get_cart_total_before_tax();
+		$template_args['payment_required'] = $cart_total_before_tax > 0 ? TRUE : FALSE;
+		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
+
+		
+//		$template_args['taxes'] = EE_Taxes::calculate_taxes( $grand_total );
+		$template_args['taxes'] = $this->EE->CART->get_taxes_line_item()->children();
+		
+		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
+		$template_args['event_queue'] = $event_queue;
+		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
+		$template = REG_TEMPLATE_PATH . 'registration_page_registration_questions.template.php';
+		return EEH_Template::display_template( $template, $template_args, TRUE );
+	}
+
+
+
+
 
 
 	/**
@@ -1028,6 +1224,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$success_msg = FALSE;
 			$error_msg = __('No valid question responses were received.', 'event_espresso');
 		}
+
+
+		//this might be called while in admin and if it is then we don't want to do our normal steps.
+		if ( is_admin() ) {
+			if ( $error_msg ) {
+				EE_Error::add_error($error_msg, __FILE__, __FUNCTION__, __LINE__);
+				return false;
+			} else {
+				EE_Error::add_success($success_msg);
+				return true;
+			}
+		}
+
 		
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
@@ -1035,6 +1244,38 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		$this->go_to_next_step( $success_msg, $error_msg );
 
+	}
+
+
+
+
+
+	/**
+	 * This processes the registration form from the admin and returns either the true or false depending on the success of the process. 
+	 *
+	 * Note that this method handles not only validating the registration form but also saving to the database all the data in the session.
+	 * 
+	 * @access  public
+	 * @return mixed bool|int (either false on fail OR TXN id on success)
+	 */
+	public function process_registration_from_admin() {
+		//nonce check was done in admin so no need to do here.
+		//first lets validate the registration form
+		$this->init_for_admin();
+		$success = $this->_process_attendee_information();
+
+		//if failure in processing attendee info then let's get out early
+		if ( !$success )
+			return false;
+
+		//all is good so let's continue with finalizing the registration.
+		$this->_transaction->save_new_cached_related_model_objs();
+		$this->EE->SSN->set_session_data(array('transaction', NULL ) );
+		$this->_transaction->set('TXN_session_data', $this->EE->SSN );
+		$this->_transaction->save();
+		$this->EE->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
+		$this->EE->SSN->clear_session();
+		return $this->_transaction->ID();
 	}
 
 

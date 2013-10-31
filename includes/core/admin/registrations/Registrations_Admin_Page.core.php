@@ -145,10 +145,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'noheader' => TRUE						
 					),
 					
-				'new_registration' => '_new_registration',
+				'new_registration' => 'new_registration',
 					
-				'save_new_registration'	=> array(
-						'func' => '_save_new_registration',
+				'process_registration_step'	=> array(
+						'func' => '_process_registration_step',
 						'noheader' => TRUE
 					),
 					
@@ -313,7 +313,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array( 'new_registration_metaboxes', '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'labels' => array(
 					'publishbox' => __('Save Registration', 'event_espresso')
 					)
@@ -474,6 +474,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function load_scripts_styles_new_registration() {
 		wp_register_script( 'espresso-validate-new-reg', REG_ASSETS_URL . 'espresso-validate-new-reg.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso-validate-new-reg');
+		EED_Ticket_Selector::set_definitions();
+		EED_Ticket_Selector::load_tckt_slctr_assets();
 	}
 
 
@@ -1676,30 +1678,105 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@access private
 	*		@return void
 	*/
-	public function _new_registration() {
+	public function new_registration() {
 		
 		if ( ! $this->_set_reg_event() ) {
-			return FALSE;
+			throw new EE_Error(__('Unable to continue with registering a new attendee because there is no Event ID in the request', 'event_espresso') );
 		}
-		// gotta start with a clean slate
-		$this->EE->SSN->clear_session( __CLASS__, __FUNCTION__ );
+
+		// gotta start with a clean slate if we're not coming here via ajax
+		if ( !defined('DOING_AJAX' ) && ( !isset($this->_req_data['processing_registration']) || isset( $this->_req_data['step_error'] ) ) )
+			$this->EE->SSN->clear_session( __CLASS__, __FUNCTION__ );
+		
 		$this->_template_args['event_name'] = '' ;
 		// event name
 		if ( $this->_reg_event ) {
 			$this->_template_args['event_name'] = $this->_reg_event->name();
-			$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$this->_reg_event->ID() ), EVENTS_ADMIN_URL );	
+			$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit', 'post'=>$this->_reg_event->ID() ), EVENTS_ADMIN_URL );	
 			$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $this->_reg_event->name() . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
 			$this->_template_args['event_name'] .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 		}
 
+		$this->_template_args['step_content'] = $this->_get_registration_step_content();
+
+		if ( defined('DOING_AJAX' ) )
+			$this->_return_json();
+
+
 		// grab header
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee.template.php';
-		$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
-		$this->_set_add_edit_form_tags( 'save_new_registration' );
-		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		//$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();	
+	}
+
+
+
+
+	/**
+	 * This returns the content for a registration step
+	 *
+	 * @access protected
+	 * @return string html
+	 */
+	protected function _get_registration_step_content() {
+		
+		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee_step_content.template.php';
+		$template_args = array(
+			'title' => '',
+			'content' => '',
+			'step_button_text' => ''
+			);
+
+		//to indicate we're processing a new registration
+		$hidden_fields = array(
+			'processing_registration' => array(
+				'type' => 'hidden',
+				'value' => 1
+				),
+			'event_id' => array(
+				'type' => 'hidden',
+				'value' => $this->_reg_event->ID()
+				)
+			);
+		
+		//if the cart is empty then we know we're at step one so we'll display ticket selector
+		$cart = $this->EE->SSN->get_session_data('cart');
+		$step = empty( $cart ) ? 'ticket' : 'questions';
+
+		switch ( $step ) {
+			case 'ticket' :
+				$template_args['title'] = __('Step One: Select the Ticket for this registration', 'event_espresso');
+				$template_args['content'] = EED_Ticket_Selector::display_ticket_selector( $this->_reg_event, TRUE );
+				$template_args['step_button_text'] = __('Continue', 'event_espresso');
+				break;
+			case 'questions' :
+				$template_args['title'] = __('Step Two: Add Attendee Details for this Registration', 'event_espresso');
+				$template_args['content'] = $this->_get_new_registration_questions();
+				$template_args['step_button_text'] = __('Save Registration and Continue to Details', 'event_espresso');
+				break;
+		}
+
+		$this->_set_add_edit_form_tags( 'process_registration_step', $hidden_fields ); //we come back to the process_registration_step route.
+
+		return EEH_Template::display_template( $template_path, $template_args, TRUE );
+	}
+
+
+
+
+	/**
+	 * This returns the questions form for a new registration
+	 *
+	 * @access protected
+	 * @return string html
+	 */
+	protected function _get_new_registration_questions() {
+		//in theory we should be able to run EED_SPCO at this point because the cart should have been setup properly by the first _process_registration_step run.
+		$SPCO = EED_Single_Page_Checkout::instance();
+		return $SPCO->registration_checkout_for_admin();
 	}
 
 
@@ -1728,104 +1805,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	/**
-	 * 		generates metaboxes for
-	*		@access private
-	*		@return void
-	*/
-	protected function new_registration_metaboxes() {
-		
-		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
-		if ( ! $EVT_ID ) {
-			return FALSE;
-		}
-		
-		add_meta_box( 
-			'reg-new-att-tickets-mbox', 
-			__( 'Date, Time, &amp; Price Selection', 'event_espresso' ), 
-			array( $this, '_reg_new_att_tickets_meta_box' ), 
-			$this->wp_page_slug, 
-			'normal', 
-			'high', 
-			array( 'EVT_ID' => $EVT_ID )
-		);
-		
-		add_meta_box( 
-			'reg-new-att-questions-mbox', 
-			__( 'Registration Form Questions', 'event_espresso' ), 
-			array( $this, '_reg_new_att_questions_meta_box' ), 
-			$this->wp_page_slug, 
-			'normal', 
-			'high', 
-			array( 'EVT_ID' => $EVT_ID )
-		);
-	}
-
-
-
-
 
 	/**
-	 * 		generates HTML for the Register New Attendee Admin Page Ticket Selector meta box
-	*		@access private
-	*		@return void
-	*/
-	public function _reg_new_att_tickets_meta_box( $post, $metabox = array( 'args' => array()) ) {
+	 * The purpose of this method is to simply setup the SPCO instance on page load for registering a new attendee via the admin.
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _setup_SPCO_for_admin() {
+		$SPCO = EED_Single_Page_Checkout::instance();
+		$SPCO->set_definitions();
+
+		//filter in our own array
 		
-		extract( $metabox['args'] );		
-		
-		if ( ! $this->_set_reg_event() ) {
-			return FALSE;
-		}
-
-		$datetimes = $this->_reg_event->get_many_related('Datetime');
-
-		//TODO finish when br3nt gets the ticket selector all worked out.
-
-		EE_Registry::instance()->load_class( 'Ticket_Prices', array(), FALSE, TRUE, TRUE );
-		$TKT_PRCs = new EE_Ticket_Prices( $EVT_ID );
-		$this->_reg_event->prices = $TKT_PRCs->get_all_final_event_prices();
-
-		$this->_reg_event->currency_symbol = EE_Registry::instance()->CFG->currency->sign;
-
-		$this->_reg_event->available_spaces = get_number_of_attendees_reg_limit( $EVT_ID, 'available_spaces' );
-		$this->_reg_event->allow_multiple = FALSE;
-		$this->_template_args['event'] = $this->_reg_event;
-		
-		// ticket selector
-		EE_Registry::instance()->load_class( 'Ticket_Selector', array(), FALSE, TRUE, TRUE );
-		echo EE_Ticket_Selector::init( $this->_reg_event, TRUE ); 
-		echo '<br />';
-
-	}
-
-
-
-
-
-	/**
-	 * 		generates HTML for the Register New Attendee Admin Page Questions
-	*		@access private
-	*		@return void
-	*/
-	public function _reg_new_att_questions_meta_box( $post, $metabox = array( 'args' => array()) ) {
-
-		extract( $metabox['args'] );
-
-		//get question groups for event
-		$QSGs = EEM_Event::instance()->get_one_by_ID($EVT_ID)->get_many_related('Question_Group');		
-
-		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
-		add_filter( 'FHEE_form_after_question_group_questions', array( $this, 'form_after_question_group_new_reg' ), 10, 1 );	
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input_wrap_new_reg' ), 10, 1 );
-
-		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( array(), $QSGs );
-		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		echo EEH_Form_Fields::generate_question_groups_html( $question_groups );
-
 	}
 
 
@@ -1870,169 +1862,67 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * 		_save_new_registration
+	 * 		_process_registration_step
 	 *
 	 * 		@access 		public
 	 * 		@return 		string
 	 */
-	public function _save_new_registration() {	
+	public function _process_registration_step() {
+		$this->_set_reg_event();
+		//what step are we on?
+		$cart = $this->EE->SSN->get_session_data( 'cart' );
+		$step = empty( $cart ) ? 'ticket' : 'questions';
 
-		//TODO needs to be completed after Brent gets the ticket selector stuff done.
-			
-		// grab event id
-		$EVT_ID = isset( $this->_req_data['tkt-slctr-event-id'] ) ? absint( $this->_req_data['tkt-slctr-event-id'] ) : FALSE;		
-		if ( ! $EVT_ID ) {
-			$error_msg = __( 'An error occured. No Event ID or an  invalid Event ID was submitted.', 'event_espresso' );
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-			$this->_redirect_after_action( 
-				FALSE, 
-				__('New Attendee Registration', 'event_espresso'), 
-				__('created', 'event_espresso'), 
-				array( 'action' => 'default' ) 
-			);
+		//if doing ajax then we need to verify the nonce
+		if ( 'DOING_AJAX' ) {
+			$nonce = isset( $this->_req_data[$this->_req_nonce] ) ? sanitize_text_field( $this->_req_data[$this->_req_nonce] ) : '';
+			$this->_verify_nonce( $nonce, $this->_req_nonce );
 		}
-		
-		// process Ticket Option
-		EE_Registry::instance()->load_class( 'Ticket_Selector', array(), FALSE, TRUE, TRUE );
-		// get ticket option added to cart, which adds it to session, etc, etc
-		if ( ! EE_Ticket_Selector::process_ticket_selections( FALSE, TRUE )) {
-			$error_msg = __( 'An error occured. The ticket option could not be processed for the registration.', 'event_espresso' );
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-			$this->_redirect_after_action( 
-				FALSE, 
-				__('New Attendee Registration', 'event_espresso'), 
-				__('created', 'event_espresso'), 
-				array( 'action' => 'default', 'event_id' => $EVT_ID ) 
-			);
-		}
-		
-		EE_Registry::instance()->load_class( 'Cart', array(), FALSE, TRUE, TRUE );
-		// grab cart item
-		$cart = EE_Registry::instance()->CART->whats_in_the_cart();
-		//grab first (and only) item
-		$item = array_pop( $cart['items'] );
-		// grab line item id
-		$line_item_id = $item['line_item_id'];
-		
-		//grab session
-		EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => array( 'fill' => TRUE )));			
-		// load gateways
-		$EEM_Gateways = EE_Registry::instance()->load_model( 'Gateways' );		
 
-		// set some defaults
-		$attendees = array();
-		$primary_attendee = array();
-		$att_nmbr = 1;
-
-		// grab a bunch of data directly from the ticket selector
-		$requires_pre_approval = isset( $this->_req_data['tkt-slctr-pre-approval-' . $EVT_ID] ) ? absint( $this->_req_data['tkt-slctr-pre-approval-' . $EVT_ID] ) : FALSE;
-		if ( isset( $this->_req_data['tkt-slctr-qty-' . $EVT_ID] )) {
-			$ts_row = explode( '-', $this->_req_data['tkt-slctr-qty-' . $EVT_ID] );
-			$ts_row = absint( $ts_row[0] );
-		} else {
-			$ts_row = 0;
-		}
-		// datetime ID
-		$DTT_ID = isset( $this->_req_data['tkt-slctr-dtt-id-' . $EVT_ID][ $ts_row ] ) ? absint( $this->_req_data['tkt-slctr-dtt-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
-		// date string
-		$event_date = isset( $this->_req_data['tkt-slctr-date-id-' . $EVT_ID][ $ts_row ] ) ? sanitize_text_field( $this->_req_data['tkt-slctr-date-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
-		// time string
-		$event_time = isset( $this->_req_data['tkt-slctr-time-id-' . $EVT_ID][ $ts_row ] ) ? date( 'Gi', absint( $this->_req_data['tkt-slctr-time-id-' . $EVT_ID][ $ts_row ] )) : FALSE;
-		// price string
-		$tckt_price = isset( $this->_req_data['tkt-slctr-ticket-id-' . $EVT_ID][ $ts_row ] ) ? sanitize_text_field( $this->_req_data['tkt-slctr-ticket-id-' . $EVT_ID][ $ts_row ] ) : FALSE;
-		// total ticket cost
-		$grand_total = isset( $this->_req_data['tkt-slctr-ticket-price-' . $EVT_ID][ $ts_row ] ) ? ( $this->_req_data['tkt-slctr-ticket-price-' . $EVT_ID][ $ts_row ] ) : FALSE;		
-				
-//		printr( $_POST, '$_POST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		if ( isset( $this->_req_data['qstn'] )) {
-			$qstns = apply_filters('FHEE_reg_admin_new_registration_form', $this->_req_data['qstn']);	
-			// sanitize reg form questions
-			array_walk_recursive( $qstns, array( $this, 'sanitize_text_field_for_array_walk' ));
-			// add questions
-			foreach ( $qstns as $form_input => $input_value) {
-				// get rid of htmlentities
-				$input_value = html_entity_decode($input_value, ENT_QUOTES, 'UTF-8');
-				// add ticket price to the array
-				$attendees['attendees'][1]['price_paid'] = number_format( $grand_total, 2, '.', '' );
-				// now add all other post data that was generated by attendee questions
-				$attendees['attendees'][1][$form_input] = $input_value;
-				unset( $attendees['attendees'][1]['line_item_id'] );		
-			}
-			
-			// now save the attendee data
-			if ( ! EE_Registry::instance()->CART->set_line_item_details( $attendees, $line_item_id )) {
-				$notices = EE_Error::get_notices(FALSE);
-				$error_msg = $notices['errors'];
+		switch ( $step ) {
+			case 'ticket' :
+				//process ticket selection
+				$success = EED_Ticket_Selector::process_tickets_selection_from_admin();
+				if ( $success ) {
+					EE_Error::add_success( __('Tickets Selected. Now complete the registration for the attendees'), 'event_espresso');
+				} else {
+					$query_args['step_error'] = $this->_req_data['step_error'] = TRUE;
+				}
+				if ( defined('DOING_AJAX') ) {
+					$this->new_registration(); //display next step
+				} else {
+					$query_args['action'] = 'new_registration';
+					$query_args['processing_registration'] = true;
+					$query_args['event_id'] = $this->_reg_event->ID();
+					$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );	
+				}
+				break;
+			case 'questions' :
+				//process registration
+				$TXN_ID = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
+				if ( !$TXN_ID ) {
+					$query_args = array(
+						'action' => 'new_registration',
+						'processing_registration' => true,
+						'event_id' => $this->_reg_event->ID()
+						);
+					if ( defined('DOING_AJAX' ) ) {
+						$this->new_registration(); //display registration form again because there are errors (maybe validation?)
+					} else {
+						$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );	
+					}
+				}
+				$query_args = array(
+					'action' => 'view_transaction',
+					'TXN_ID' => $TXN_ID,
+					'page' => 'espresso_transactions'
+					);
+				EE_Error::add_success( __('Registration Created.  Please review the transaction and add any payments as necessary', 'event_espresso') );
+				$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+				break;
 			}
 
-			// and store a bit of data about the primary attendee
-			$primary_attendee['line_item_id'] = $line_item_id;
-			$primary_attendee['fname'] = $qstns['fname'];
-			$primary_attendee['lname'] = $qstns['lname'];
-			$primary_attendee['email'] = $qstns['email'];
-			EE_Registry::instance()->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee ));
-
-		}
-		// update attendee details
-		EE_Registry::instance()->CART->_save_cart();
-		// grab cart item
-		$cart = EE_Registry::instance()->CART->whats_in_the_cart();
-		//printr( $cart, '$cart  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			
-		// taxes ?
-		EE_Registry::instance()->load_class( 'Taxes', array(), FALSE, TRUE, TRUE );
-		$taxes = EE_Taxes::calculate_taxes( $grand_total );
-		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
-		// totals over 0 initially get set to Incomlete, whereas Free Events get set to complete
-		$txn_status = $grand_total > 0 ? 'TPN' : 'TCM';
-
-		// grab session data
-		$session = EE_Registry::instance()->SSN->get_session_data();
-		// start the transaction record
-		EE_Registry::instance()->load_class( 'Transaction', array(), FALSE, TRUE, TRUE );
-		// create TXN object
-		$transaction = EE_Transaction::new_instance(
-			array( 
-				'TXN_timestamp' => current_time('timestamp'), 
-				'TXN_total' => $grand_total, 
-				'TXN_paid' => 0, 
-				'STS_ID' => $txn_status, 
-				'TXN_session_data' => $session, 
-				'TXN_hash_salt' => NULL, 
-				'TXN_tax_data' => array(
-					'tax_totals'=>$session['tax_totals'],
-					'taxes'=>$session['taxes']
-					)
-			) 
-		);
-		$transaction->save();
-//		echo '<h4>$results : ' . $results . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		$reg_items = $session['cart']['REG']['items'];
-		$saved_registrations = EE_Single_Page_Checkout::save_registration_items( $reg_items, $transaction );
-
-		$transaction->set_txn_session_data( $session );
-		$success = $transaction->save();
-//		echo '<h4>$results : ' . $results . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $transaction, '$transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		//remove the session from teh transaction befores saving it to teh session... otherwise we'll ahve a recursive relationship! bad!!
-//		$transaction->set_txn_session_data(null);
-//		//var_dump(EE_Registry::instance()->SSN->get_session_data());
-//		EE_Registry::instance()->SSN->set_session_data( array( 'registration' => $saved_registrations, 'transaction' => $transaction ));
-//		EE_Registry::instance()->SSN->update();
-			
-//		printr( EE_Registry::instance()->SSN, 'EE_Registry::instance()->SSN  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		die();
-//		$this->_req_data = array();
-//		
-		$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$transaction->ID() ), TXN_ADMIN_URL );
-		wp_safe_redirect( $txn_url );
-		exit();
-//		$this->_redirect_after_action( $success, __( 'New Registration', 'event_espresso' ), 'created', array( 'action' => 'view_transaction', 'TXN_ID'=>$transaction->ID() ), TXN_ADMIN_URL );
-	
+			//what are you looking here for?  Should be nothing to do at this point.	
 	}
 
 

@@ -304,7 +304,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	    //get transaction object
 	    $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
-	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
+	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data')->get_session_data() : NULL;
+
 	 	if ( empty( $this->_transaction ) ) {
 	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -462,51 +463,22 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		global $wpdb;
 		$this->_set_transaction_object();
 
-		// process items in cart
-		$cart_items = isset( $this->_session['cart'] ) ? $this->_session['cart']['REG']['items'] : array();
-		$this->_template_args['items'] = array();
-		$exclude = array( 'attendees' );
+		//get line items from transaction
+		$this->_template_args['line_items'] = $this->_transaction->get_many_related('Line_Item', array(array('LIN_type' => 'line-item' ) ) );
 		
 		$this->_template_args['REG_code'] = $this->_transaction->get_first_related('Registration')->get('REG_code');
-		
-		if ( ! empty( $cart_items )) {
-			foreach ( $cart_items as $line_item_ID => $item ) {
-				foreach ( $item as $key => $value ) {
-					if ( ! in_array( $key, $exclude )) {
-						if ( $key == 'options' ) {
-							$options = $value;
-							foreach ( $options as $opt => $option ) {
-								if ( $opt == 'date' ) {
-									$option = strtotime( $option );
-								} else if  ( $opt == 'time' ) {
-									$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
-									$option = strtotime( $option . ' ' . $ampm );
-								}
-								$this->_template_args['items'][ $item['name'] ][ $opt ] = $option;
-							}
-						} elseif ( $key == 'line_item_id' ) {
-							$this->_template_args['items'][ $item['name'] ][ $key ] = '<a title="' . $value . '" style="color:#333;">' . substr( $value, 0, 6 ) . '...</a>';
-						} else {
-							$this->_template_args['items'][ $item['name'] ][ $key ] = $value;
-						}					
-					} 
-				}
-			}		
-		}
 
 		
 		// process taxes
-		if ( $taxes = $this->_transaction->get('TXN_tax_data') ) {
-			$this->_template_args['taxes'] = $taxes['taxes'];
+		if ( $taxes = $this->_transaction->get_many_related('Line_Item', array( array('LIN_type' => 'tax') ) ) ) {
+			$this->_template_args['taxes'] = $taxes;
 		} else {
 			$this->_template_args['taxes'] = FALSE;
 		}
 
-		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
+		$this->_template_args['grand_total'] = EEH_Template::format_currency($this->_transaction->get('TXN_total') );
 		$this->_template_args['TXN_status'] = $this->_transaction->get('STS_ID');
 
-
-		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$txn_status_class = 'status-' . $this->_transaction->get('STS_ID');
 		
 		// process payment details
@@ -518,7 +490,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
 
 		if ( isset( $txn_details['invoice_number'] )) {
-			$this->_template_args['txn_details']['invoice_number']['value'] = $txn_details['invoice_number'];
+			$this->_template_args['txn_details']['invoice_number']['value'] = $this->_template_args['REG_code'];
 			$this->_template_args['txn_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
 			$this->_template_args['txn_details']['invoice_number']['class'] = 'regular-text';
 		} 
@@ -611,52 +583,32 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		
 		// process items in cart
-		$cart_items = $this->_session['cart']['REG']['items'];
-		$this->_template_args['items'] = array();
+		$line_items = $this->_transaction->get_many_related('Line_Item', array( array( 'LIN_type' => 'line-item' ) ) );
 		$this->_template_args['event_attendees'] = array();
 		
-		if ( ! empty( $cart_items )) {
-			foreach ( $cart_items as $line_item_ID => $item ) {
-				$event_name_and_price_option = $item['name'] . ' - ' . $item['options']['ticket_desc'];
-				//printr( $item, '$item' );
-				foreach ( $item['attendees'] as $att_nmbr => $attendee ) {
-					// check for attendee object
-					$attendee['att_obj'] = isset( $attendee['att_obj'] ) && is_object( $attendee['att_obj'] ) ? $attendee['att_obj'] : FALSE;
-					if ( ! $attendee['att_obj'] ) {
-						if ( isset( $attendee['fname'] ) && isset( $attendee['lname'] ) && isset( $attendee['email'] )) {
-							$where_fields_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
-							$ATT_MDL = EEM_Attendee::instance();
-							if ( ! $attendee['att_obj'] = $ATT_MDL->get_one( array( $where_fields_n_values ) )) {
-							} else {
-								$attendee['att_obj'] = FALSE;
-							}
-							if ( ! $attendee['att_obj'] ) {
-								$attendee['att_obj'] = EEM_Attendee::instance()->create_default_object();
-							}	 
-						}
-						// check for reg object
-						$attendee['reg_obj'] = isset( $attendee['reg_obj'] ) && is_object( $attendee['reg_obj'] ) ? $attendee['reg_obj'] : FALSE;		
-						if ( ! $attendee['reg_obj'] ) {
-							$where_fields_n_values = array( 'ATT_fname' => $attendee['fname'], 'ATT_lname' => $attendee['lname'], 'ATT_email' => $attendee['email'] );
-							$REG_MDL = EEM_Registration::instance();
-							if ( ! $attendee['reg_obj'] = $REG_MDL->get_registration_for_transaction_attendee( $TXN_ID, $attendee['att_obj']->ID(), $att_nmbr )) {
-								$attendee['reg_obj'] = EEM_Registration::instance()->create_default_object();
-							}	 
-						}
-					
-						foreach ( $attendee as $key => $value ) {
-							$this->_template_args['event_attendees'][ $event_name_and_price_option ][ $att_nmbr ][ $key ] = maybe_unserialize( $value );
-						}
-					}
-				}
-			}
-			//printr( $this->_template_args['event_attendees'], 'event_attendees' );
+		if ( ! empty( $line_items )) {
+			foreach ( $line_items as $item ) {
+				$ticket = $item->ticket();
+				if ( empty( $ticket ) )
+					continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+				$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() ), 'group_by' => 'ATT_ID'));
+				$event = $ticket->get_first_related('Registration')->get_first_related('Event');
 
-			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
+				foreach( $registrations as $registration ) {
+					$attendee = $registration->get_first_related('Attendee');
+					$this->_template_args['event_attendees'][$registration->ID()]['att_num'] = $registration->get('REG_count');
+					$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] = $event->get('EVT_name') . ' - ' . $item->get('LIN_name');
+					$this->_template_args['event_attendees'][$registration->ID()]['attendee'] = $attendee->full_name();
+					$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] = EEH_Template::format_currency($item->get('LIN_unit_price'));
+					$this->_template_args['event_attendees'][$registration->ID()]['email'] = $attendee->email();
+					$this->_template_args['event_attendees'][$registration->ID()]['address'] =  implode(',<br>', $attendee->full_address_as_array() );
+					$this->_template_args['event_attendees'][$registration->ID()]['att_id'] = $attendee->ID();
+				}
 			$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  
 
 			$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
 			echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+			}
 
 		}
 	}
@@ -710,8 +662,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	function _txn_billing_info_side_meta_box() {
-	
-		$billing_info = $this->_session['billing_info'];		
+		echo "the billing info is in development";
+		/**$billing_info = $this->_session['billing_info'];	
 
 		if ( is_array( $billing_info )) {
 		
@@ -788,7 +740,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );  
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_billing_info.template.php';
-		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );/**/
 	}
 
 
