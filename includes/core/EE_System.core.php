@@ -98,7 +98,7 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct() {
-
+		do_action('AHEE__EE_System__construct__start',$this);
 		if ( WP_DEBUG === TRUE && ! class_exists( 'EEH_Debug_Tools' )) { 
 			espresso_load_required( 'EEH_Debug_Tools', EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
 		}
@@ -110,6 +110,7 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+		do_action('AHEE__EE_System__construct__end',$this);
 	}
 
 
