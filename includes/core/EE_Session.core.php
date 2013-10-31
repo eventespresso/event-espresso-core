@@ -208,9 +208,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
-		// nothing ??? go home!
-		if ( empty( $data )) {
-			EE_Error::add_error( __( 'No session data was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+		// nothing ??? bad data ??? go home!
+		if ( empty( $data ) || ! is_array( $data )) {
+			EE_Error::add_error( __( 'No session data or invalid session data was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
