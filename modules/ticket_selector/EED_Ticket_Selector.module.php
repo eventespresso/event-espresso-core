@@ -55,10 +55,10 @@ class EED_Ticket_Selector extends  EED_Module {
 		// routing
 		EE_Config::register_route( 'process_ticket_selections', 'EED_Ticket_Selector', 'process_ticket_selections' );
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
-//		add_action( 'AHEE_events_list_footer', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
+//		add_action( 'AHEE_events_list_footer', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );		
 	}
@@ -458,6 +458,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		
 		// start with an empty array()
 		$valid_data = array();
+//		d( $_POST );
 
 		//if event id is valid
 		if ( $id = absint( EE_Registry::instance()->REQ->get( 'tkt-slctr-event-id' ))) {
@@ -492,18 +493,19 @@ class EED_Ticket_Selector extends  EED_Module {
 
 						// arrays of integers
 						case 'qty':
+//							d( $input_value );
 							$row_qty = $input_value;
 							// if qty is coming from a radio button input, then we need to assemble an array of rows
 							if( ! is_array( $row_qty )) {
 								// get number of rows
 								$rows = EE_Registry::instance()->REQ->is_set( 'tkt-slctr-rows-' . $id ) ? absint( EE_Registry::instance()->REQ->get( 'tkt-slctr-rows-' . $id )) : 1;
-								//d( $rows );
+//								d( $rows );
 								// explode ints by the dash
 								$row_qty = explode( '-', $row_qty );
 								$row = isset( $row_qty[0] ) ? ( absint( $row_qty[0] )) : 1;
 								$qty = isset( $row_qty[1] ) ? absint( $row_qty[1] ) : 0;
 								$row_qty = array( $row => $qty );
-								 //d( $row_qty );
+//								 d( $row_qty );
 								for( $x = 1; $x <= $rows; $x++ ) {
 									if ( ! isset( $row_qty[$x] )) {
 										$row_qty[$x] = 0;
@@ -511,7 +513,7 @@ class EED_Ticket_Selector extends  EED_Module {
 								}
 							}
 							ksort( $row_qty );
-							// d( $row_qty );
+//							 d( $row_qty );
 							// cycle thru values
 							foreach ( $row_qty as $qty ) {
 								$qty = absint( $qty );
@@ -567,7 +569,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-		//d( $valid_data );
+//		d( $valid_data );
 		return $valid_data;
 	}
 
