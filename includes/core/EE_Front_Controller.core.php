@@ -306,7 +306,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function _initialize_shortcodes( WP $WP ) {
-		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__start',$this);
+		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__begin',$this);
 		// make sure post_name is set on REQ
 		if ( $this->EE->REQ->is_set( 'post_name' )) {
 			// grab post_name from request
