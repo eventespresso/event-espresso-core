@@ -383,7 +383,7 @@ The Buttons and related paraphenalia
 	border-radius: 0;
 	box-shadow: none;
 	vertical-align: middle;
-	opacity: 0.7;
+	opacity: 0.85;
 }
 #espresso_calendar .thumb-wrap img:hover {
 	opacity: 1;
@@ -578,7 +578,7 @@ a.fc-event.themeroller.ui-widget-header span.fc-event-title, a.fc-event.themerol
 	margin: 0 0 0 -33px;
 	box-shadow: none !important;
 }
-.fc-header td {
+#espresso_calendar .fc-header td {
 	border: none;
 }
 /* prevent transitions from getting applied to calendar links as some themes are known to do this
