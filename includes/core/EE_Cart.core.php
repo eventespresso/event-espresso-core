@@ -184,6 +184,24 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	public function get_tickets() {
 		return $this->get_ticket_items()->children();
 	}
+
+
+	/**
+	 * returns the total quantity of tickets in the cart
+	 *
+	 * @access public
+	 * @return int
+	 */
+	public function all_ticket_quantity_count() {
+		$tickets = $this->get_tickets();
+		if ( empty( $tickets ) )
+			return 0;
+		$count = 0;
+		foreach ( $tickets as $ticket ) {
+			$count = $count + $ticket->get('LIN_quantity');
+		}
+		return $count;
+	}
 	
 	
 	

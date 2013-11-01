@@ -434,7 +434,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 	void
 	 */
 	private function _initialize_registrations() {
-		//d( $this->EE->CART );
+		//d($this->EE->CART->all_ticket_quantity_count());
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			$att_nmbr = 0;
 			// now let's add the cart items to the $transaction
@@ -473,7 +473,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						'REG_final_price' => $ticket->price(),
 						'REG_session' => $this->EE->SSN->id(),
 						'REG_count' => $att_nmbr,
-						'REG_group_size' => $item->quantity(),
+						'REG_group_size' => $this->EE->CART->all_ticket_quantity_count(),
 						'REG_url_link'	=> $reg_url_link
 					));
 					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
