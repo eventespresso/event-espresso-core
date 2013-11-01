@@ -39,8 +39,8 @@
 	 * @return bool
 	 */
 	if ( ! function_exists( 'espresso_event_date' )) {
-		function espresso_event_date() {
-			EEH_Event_View::the_event_date();
+		function espresso_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
+			echo EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt );
 		}		
 	}
 
@@ -54,8 +54,8 @@
 	 * @return bool
 	 */
 	if ( ! function_exists( 'espresso_event_end_date' )) {
-		function espresso_event_end_date() {
-			EEH_Event_View::the_event_end_date();
+		function espresso_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
+			echo EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt );
 		}		
 	}
 
@@ -68,11 +68,13 @@
 	 * @return bool
 	 */
 	if ( ! function_exists( 'espresso_event_date_range' )) {
-		function espresso_event_date_range() {
-			EEH_Event_View::the_event_date();
-			if ( EEH_Event_View::the_event_date( FALSE ) != EEH_Event_View::the_event_end_date( FALSE )) {
-				echo __( ' to ', 'event_espresso' );
-				EEH_Event_View::the_event_end_date();
+		function espresso_event_date_range( $dt_frmt = 'M jS', $tm_frmt = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a' ) {
+			$the_event_date = EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt );
+			$the_event_end_date = EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt );
+			if ( $the_event_date != $the_event_end_date ) {
+				echo $the_event_date . __( ' - ', 'event_espresso' ) . EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt );;
+			} else {
+				echo EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt );
 			}
 		}		
 	}
@@ -150,14 +152,9 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function the_event_date( $echo = TRUE ) {
+	public static function the_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
 		$datetime = EEH_Event_View::get_primary_date_obj();
-		if ( $echo ) {
-			$datetime->e_start_date_and_time( 'D M jS', 'g:i a' );
-		} else {
-			return $datetime->start_date_and_time( 'D M jS', 'g:i a' );
-		}
-				
+		return $datetime->start_date_and_time( $dt_frmt, $tm_frmt );			
 	}
 
 
@@ -168,13 +165,9 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function the_event_end_date( $echo = TRUE ) {
+	public static function the_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
 		$datetime = EEH_Event_View::get_last_date_obj();
-		if ( $echo ) {
-			$datetime->e_end_date_and_time( 'D M jS', 'g:i a' );
-		} else {
-			return $datetime->end_date_and_time( 'D M jS', 'g:i a' );
-		}
+		return $datetime->end_date_and_time( $dt_frmt, $tm_frmt );
 	}
 
 
@@ -207,7 +200,12 @@ class EEH_Event_View extends EEH_Base {
 	public static function get_primary_date_obj() {
 		global $post;
 //		d( $post );
-		return  isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ? $post->EE_Event->get_first_related('Datetime') : FALSE;
+		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
+			$datetimes = $post->EE_Event->get_many_related('Datetime');
+			return reset( $datetimes );
+		} else {
+			 return FALSE;
+		} 
 	}
 
 
@@ -223,6 +221,8 @@ class EEH_Event_View extends EEH_Base {
 		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
 			$datetimes = $post->EE_Event->get_many_related('Datetime');
 			return end( $datetimes );
+		} else {
+			 return FALSE;
 		}
 	}
 
@@ -235,7 +235,7 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function edit_event_link( $link = '', $before = '<p class="edit-event-lnk small-txt clear">', $after = '</p>', $EVT_ID = FALSE ) {
+	public static function edit_event_link( $link = '', $before = '<p class="edit-event-lnk small-txt">', $after = '</p>', $EVT_ID = FALSE ) {
 		global $post;
 		// get EVT_ID either from passed value or global $post var
 		$EVT_ID = $EVT_ID ? $EVT_ID : $post->ID;
