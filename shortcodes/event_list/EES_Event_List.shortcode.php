@@ -52,7 +52,7 @@ class EES_Event_List  extends EES_Shortcode {
 	 */
 	public function run( WP $WP ) {
 		//add_filter( 'the_content', array( $this, 'the_content' ));
-		$this->EE->REQ->set( 'ee', 'event_list' );
+		$this->EE->REQ->set( 'ee', 'events' );
 	}
 
 
