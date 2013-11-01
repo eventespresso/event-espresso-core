@@ -144,6 +144,8 @@ class EED_Event_List  extends EED_Module {
 	private function _initial_setup() {
 		// grab POST data
 		$this->get_post_data();		
+		// make sure CPT is set correctly
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 1 );
 		// build event list query
 		add_action( 'posts_join', array( $this, 'posts_join' ), 1 );
 		add_action( 'posts_where', array( $this, 'posts_where' ), 1 );
@@ -185,6 +187,18 @@ class EED_Event_List  extends EED_Module {
 
 
 	/**
+	 * 	pre_get_posts
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function pre_get_posts( $wp_query ) {
+		//d( $wp_query );
+		//$wp_query->query_vars['post_type'] = 'espresso_events';
+	}
+
+
+	/**
 	 * 	posts_join
 	 *
 	 *  @access 	public
@@ -192,7 +206,9 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_join( $SQL ) {
 		global $wpdb, $wp_query;
-		if ( $wp_query->is_main_query() ) {
+		//d( $wp_query );
+		
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' && $wp_query->is_main_query() ) {
 			// Category
 			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
 			if ( ! empty( $elf_category )) {
@@ -213,7 +229,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_where( $SQL ) {
 		global $wpdb, $wp_query;
-		if ( $wp_query->is_main_query() ) {			
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' && $wp_query->is_main_query() ) {			
 			// Show Expired ?
 			$show_expired = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
 			// override default expired option if set via filter
@@ -240,7 +256,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_orderby( $SQL ) {
 		global $wpdb, $wp_query;
-		if ( $wp_query->is_main_query() ) {			
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' && $wp_query->is_main_query() ) {			
 			$SQL = ' ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ASC ';
 		}
 		return $SQL;
@@ -321,20 +337,18 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function wp_enqueue_scripts() {
-
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE )) {
 			// first check uploads folder
 			if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'templates/event_list.css' )) {
 				wp_register_style( 'espresso_event_list', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_list.css', array() );
-				wp_register_script( 'espresso_event_list', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_list.js', array( 'blocksit' ), '1.0', TRUE  );
+				wp_register_script( 'espresso_event_list', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
 			} else {
 				wp_register_style( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.css', array() );
-				wp_register_script( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.js', array( 'blocksit' ), '1.0', TRUE );
+				wp_register_script( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
 			}
-			wp_register_script( 'blocksit', EVENT_LIST_ASSETS_URL . 'blocksit.min.js', array( 'jquery' ), '1.0', TRUE );
 			wp_enqueue_style( 'espresso_event_list' );
-			wp_enqueue_script( 'blocksit' );
+			wp_enqueue_script( 'jquery-masonry' );
 			wp_enqueue_script( 'espresso_event_list' );
 		}
 
@@ -431,8 +445,11 @@ class EED_Event_List  extends EED_Module {
 			);
 		
 		switch ( $CFG->EED_Event_List->default_view ) {
-			case 'list' :
+			case 'dates-list' :
 					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'dates-list-event-list.template.php';
+				break;
+			case 'text-list' :
+					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'text-list-event-list.template.php';
 				break;
 			default :
 					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'grid-view-event-list.template.php';
@@ -522,8 +539,11 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public static function get_template_part() {
 		switch ( self::$_default_view ) {
-			case 'list' :
+			case 'dates-list' :
 					return 'dates-list-event-list.template.php';
+				break;
+			case 'text-list' :
+					return 'text-list-event-list.template.php';
 				break;
 			default :
 					return 'grid-view-event-list.template.php';
