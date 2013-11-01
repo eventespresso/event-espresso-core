@@ -474,8 +474,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function load_scripts_styles_new_registration() {
 		wp_register_script( 'espresso-validate-new-reg', REG_ASSETS_URL . 'espresso-validate-new-reg.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso-validate-new-reg');
-		EED_Ticket_Selector::set_definitions();
 		EED_Ticket_Selector::load_tckt_slctr_assets();
+		EED_Single_Page_Checkout::wp_enqueue_scripts();
 	}
 
 

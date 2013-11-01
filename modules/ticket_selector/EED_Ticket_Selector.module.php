@@ -72,6 +72,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
+		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 	}
 
 
