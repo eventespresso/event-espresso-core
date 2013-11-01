@@ -182,7 +182,7 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'notify_url': 
 			  $c->core->txn_page_id = $value;break;
 		  case 'use_captcha': 
-			  $c->registration->use_captcha = $value;break;
+			  $c->registration->use_captcha = $value == 'Y' ? true: false; break;
 		  case 'recaptcha_publickey': 
 			  $c->registration->recaptcha_publickey = $value;break;
 		  case 'recaptcha_privatekey': 
@@ -194,15 +194,15 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'recaptcha_language': 
 			  $c->registration->recaptcha_language = $value;break;
 		  case 'espresso_dashboard_widget': 
-			  $c->admin->use_dashboard_widget = $value; break;
+			  $c->admin->use_dashboard_widget = $value == 'Y' ? true: false; break;
 		  case 'use_attendee_pre_approval': 
-			  $c->registration->use_attendee_pre_approval = $value; break;
+			  $c->registration->use_attendee_pre_approval = $value == 'Y' ? true: false; break;
 		  case 'use_personnel_manager': 
-			  $c->admin->use_personnel_manager = $value; break;
+			  $c->admin->use_personnel_manager = $value == 'Y' ? true: false; break;
 		  case 'use_event_timezones': 
-			  $c->admin->use_event_timezones = $value; break;
+			  $c->admin->use_event_timezones = $value == 'Y' ? true: false; break;
 		  case 'full_logging': 
-			  $c->admin->use_full_logging = $value;break;
+			  $c->admin->use_full_logging = $value == 'Y' ? true: false;break;
 		  case 'affiliate_id': 
 			  $c->admin->affiliate_id = $value;break;
 		  case 'site_license_key': 
