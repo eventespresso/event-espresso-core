@@ -237,7 +237,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('espresso_txn');
 
 		//scripts
-		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable', 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso_txn');	
 
 		;
@@ -662,80 +662,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	function _txn_billing_info_side_meta_box() {
-		echo "the billing info is in development";
-		/**$billing_info = $this->_session['billing_info'];	
+		$billing_info = $this->_transaction->billing_info();
 
-		if ( is_array( $billing_info )) {
-		
-			$this->_template_args['free_event'] = FALSE; 
-			
-			$this->_template_args['fname']['value'] = ! empty ( $billing_info['reg-page-billing-fname']['value'] ) ? $billing_info['reg-page-billing-fname']['value'] : '';
-			$this->_template_args['fname']['label'] = ! empty ( $billing_info['reg-page-billing-fname']['label'] ) ? $billing_info['reg-page-billing-fname']['label'] :  __( 'First Name', 'event_espresso' );
-			
-			$this->_template_args['lname']['value'] = ! empty ( $billing_info['reg-page-billing-lname']['value'] ) ? $billing_info['reg-page-billing-lname']['value'] : '';
-			$this->_template_args['lname']['label'] = ! empty ( $billing_info['reg-page-billing-lname']['label'] ) ? $billing_info['reg-page-billing-lname']['label'] :  __( 'Last Name', 'event_espresso' );
-			
-			$this->_template_args['email']['value'] = ! empty ( $billing_info['reg-page-billing-email']['value'] ) ? $billing_info['reg-page-billing-email']['value'] : '';
-			$this->_template_args['email']['label'] = __( 'Email', 'event_espresso' );
-			
-			$this->_template_args['address']['value'] = ! empty ( $billing_info['reg-page-billing-address']['value'] ) ? $billing_info['reg-page-billing-address']['value'] : '';
-			$this->_template_args['address']['label'] = ! empty ( $billing_info['reg-page-billing-address']['label'] ) ? $billing_info['reg-page-billing-address']['label'] :  __( 'Address', 'event_espresso' );
-			
-			$this->_template_args['city']['value'] = ! empty ( $billing_info['reg-page-billing-city']['value'] ) ? $billing_info['reg-page-billing-city']['value'] : '';
-			$this->_template_args['city']['label'] = ! empty ( $billing_info['reg-page-billing-city']['label'] ) ? $billing_info['reg-page-billing-city']['label'] :  __( 'City', 'event_espresso' );
-			
-			$this->_template_args['state']['value'] = ! empty ( $billing_info['reg-page-billing-state']['value'] ) ? $billing_info['reg-page-billing-state']['value'] : '';
-			$this->_template_args['state']['label'] = ! empty ( $billing_info['reg-page-billing-state']['label'] ) ? $billing_info['reg-page-billing-state']['label'] :  __( 'State', 'event_espresso' );
-			
-			$this->_template_args['country']['value'] = ! empty ( $billing_info['reg-page-billing-country']['value'] ) ? $billing_info['reg-page-billing-country']['value'] : '';
-			$this->_template_args['country']['label'] = ! empty ( $billing_info['reg-page-billing-country']['label'] ) ? $billing_info['reg-page-billing-country']['label'] : __( 'Country', 'event_espresso' );
-			
-			$this->_template_args['zip']['value'] = ! empty ( $billing_info['reg-page-billing-zip']['value'] ) ? $billing_info['reg-page-billing-zip']['value'] : '';
-			$this->_template_args['zip']['label'] = ! empty ( $billing_info['reg-page-billing-zip']['label'] ) ? $billing_info['reg-page-billing-zip']['label'] :  __( 'Zip Code', 'event_espresso' );
-			
-			if ( isset( $billing_info['reg-page-billing-card-nmbr'] )) {
-				
-				$this->_template_args['credit_card_info'] = TRUE;
-				
-				$ccard = $billing_info['reg-page-billing-card-nmbr']['value'];
-				$this->_template_args['card_nmbr']['value'] = substr( $ccard, 0, 4 ) . ' XXXX XXXX ' . substr( $ccard, -4 );
-				$this->_template_args['card_nmbr']['label'] = 'Credit Card';
-		
-				$this->_template_args['card_exp_date']['value'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . ' / ' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
-				$this->_template_args['card_exp_date']['label'] = 'mm / yy';
-		
-				$this->_template_args['card_ccv_code']['value'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-				$this->_template_args['card_ccv_code']['label'] = $billing_info['reg-page-billing-card-ccv-code']['label'];
-				
-			} else {
-				$this->_template_args['credit_card_info'] = FALSE;
-			}
-			
-		} else {
-
-
-			$this->_template_args['fname']['value'] = '';
-			$this->_template_args['fname']['label'] =  __( 'First Name', 'event_espresso' );
-			$this->_template_args['lname']['value'] =  '';
-			$this->_template_args['lname']['label'] = __( 'Last Name', 'event_espresso' );
-			$this->_template_args['email']['value'] = '';
-			$this->_template_args['email']['label'] = __( 'Email', 'event_espresso' );
-			$this->_template_args['address']['value'] = '';
-			$this->_template_args['address']['label'] = __( 'Address', 'event_espresso' );
-			$this->_template_args['city']['value'] = '';
-			$this->_template_args['city']['label'] = __( 'City', 'event_espresso' );
-			$this->_template_args['state']['value'] = '';
-			$this->_template_args['state']['label'] =  __( 'State', 'event_espresso' );
-			$this->_template_args['country']['value'] = '';
-			$this->_template_args['country']['label'] = __( 'Country', 'event_espresso' );
-			$this->_template_args['zip']['value'] = '';
-			$this->_template_args['zip']['label'] = __( 'Zip Code', 'event_espresso' );
-			$this->_template_args['credit_card_info'] = FALSE;
-			$this->_template_args['free_event'] = $billing_info; 
-			
-		}
-	
-		//printr( $this->_template_args, 'template_args' );
+		$this->_template_args['billing_info'] = $this->_transaction->billing_info();
 		
 		$this->_template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );  
 

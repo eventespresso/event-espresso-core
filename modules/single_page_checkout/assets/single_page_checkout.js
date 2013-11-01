@@ -306,18 +306,23 @@
 		e.preventDefault();
 		e.stopPropagation();
 		var step = $(this).attr('rel');
-		next_step = get_next_step( step );
-//		alert( 'step = ' + step + '\n' + 'next_step = ' + next_step );
-		form_to_check = '#spco-registration-'+step+'-frm';
-		if ( next_step == 'finalize_registration' && $('#reg-page-off-site-gateway').val() == 1 ) {
-//			alert( 'off-site-gateway' );
-			$('#spco-registration-'+step+'-frm').submit();
-			return;
-		} else if ( step == 'payment_options' ) {
-			form_to_check = process_selected_gateway();
-		} 
-		
-		process_reg_step ( step, next_step, form_to_check );
+		if ( step != undefined && step != '' ) {
+			next_step = get_next_step( step );
+	//		alert( 'step = ' + step + '\n' + 'next_step = ' + next_step );
+			// disable submit btn
+			if ( next_step == 'finalize_registration' ) {
+				$( this ).attr('disabled', 'disabled').attr( 'rel', '' );
+			}
+			form_to_check = '#spco-registration-'+step+'-frm';
+			if ( next_step == 'finalize_registration' && $('#reg-page-off-site-gateway').val() == 1 ) {
+	//			alert( 'off-site-gateway' );
+				$('#spco-registration-'+step+'-frm').submit();
+				return;
+			} else if ( step == 'payment_options' ) {
+				form_to_check = process_selected_gateway();
+			} 
+			process_reg_step ( step, next_step, form_to_check );			
+		}
 
 	});
 

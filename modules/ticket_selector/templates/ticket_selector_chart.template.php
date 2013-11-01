@@ -112,7 +112,7 @@
 					} 
 				} else {
 					// sold out or other status ?
-					if (( ! $ticket->remaining() && $ticket->ticket_status() >= 0 ) || $ticket->remaining() < $ticket->min() ) {
+					if (( $ticket->is_remaining() === 0 && $ticket->ticket_status() >= 0 ) ) {
 						echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
 					} else if ( $ticket->is_pending() ) {
 					?>	

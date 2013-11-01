@@ -348,20 +348,39 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 
 
+	/**
+	 * The purpose of this method is to simply return a boolean for whether there are any tickets remaining for sale considering ALL the factors used for figuring that out.
+	 *
+	 * @access public
+	 * @param  int     $DTT_ID if an int above 0 is included here then we get a specific dtt.
+	 * @return boolean         true = tickets remaining, false not.
+	 */
+	public function is_remaining( $DTT_ID = 0 ) {
+		$num_remaining = $this->remaining($DTT_ID);
+		if ( $num_remaining === 0 )
+			return false;
+
+		if ( $num_remaining > 0 && $num_remaining < $ticket->min() )
+			return false;
+
+		return true;
+	}	
+
+
 
 	/**
 	 * return the total number of tickets available for purchase
 	 * @param  int    $DTT_ID the primary key for a particular datetime
 	 * @return int
 	 */
-	public function remaining( $DTT_ID = FALSE ) {
+	public function remaining( $DTT_ID = 0 ) {
 		// are we checking availablity for a particular datetime ?
 		if ( $DTT_ID ) {
 			// get that datetime object
-			$datetimes = $this->get_first_related( 
+			$datetimes = $this->get_many_related( 
 				'Datetime',
 				array( array( 'DTT_ID' => $DTT_ID ))
-			);
+			); //needs to be in array for loop below.
 		} else {
 			// we need to check availability of ALL datetimes
 			// get that datetime object
@@ -370,27 +389,20 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 				array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ))
 			);			
 		}
-		//d( $datetimes );
+		
 		// if datetime reg limit is not unlimited
 		if ( ! empty( $datetimes )) {
 			// set a super high value for $tickets_remaining cuz -1 would throw off the use of 'min' below
-			$tickets_remaining = 1000000;
+			$tickets_remaining = $this->_TKT_qty - $this->_TKT_sold;
 			foreach ( $datetimes as $datetime ) {
 				// if datetime reg limit is not unlimited
 				if ( $datetime->tickets_remaining() > -1 ) {
-					$tickets_remaining = min( $tickets_remaining, $datetime->tickets_remaining() );
+					$tickets_remaining = $tickets_remaining > 0 ? min( $tickets_remaining, $datetime->tickets_remaining() ) : $datetime->tickets_remaining();
 				}
 			}
-			if ( $tickets_remaining != 1000000 ) {
-				return $tickets_remaining;
-			}
+			$tickets_remaining = $tickets_remaining < 0 ? -1 : $tickets_remaining;
+			return $tickets_remaining;
 		}
-		// not checking individual datetime?
-		if ( $this->_TKT_qty < 1 ) {
-			// unlimited tickets available
-			return -1;
-		}
-		return $this->_TKT_qty > $this->_TKT_sold ? $this->_TKT_qty - $this->_TKT_sold : 0;
 	}
 
 
