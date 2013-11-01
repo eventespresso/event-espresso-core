@@ -75,7 +75,7 @@
 				<!--<td class="tckt-slctr-tbl-td-status"><?php echo $ticket_status; ?></td>-->
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
-				if ( $ticket->is_on_sale() && $ticket->remaining() > 0 && $ticket->remaining() >= $ticket->min() ) {
+				if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 					// if more than one attendee is allowed
