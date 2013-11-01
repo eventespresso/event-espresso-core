@@ -673,7 +673,7 @@ class EE_Transaction extends EE_Base_Class{
 			// save registrations and transaction to the session
 			$this->EE->SSN->set_session_data( array( 'transaction' => $this ));
 			// save the transactionless session back to this transaction
-			$this->set_txn_session_data( $this->EE->SSN->get_session_data() );
+			$this->set_txn_session_data( $this->EE->SSN );
 			// save the transaction to the db
 			$this->save();
 		}
