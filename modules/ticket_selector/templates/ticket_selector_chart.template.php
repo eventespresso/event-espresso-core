@@ -75,7 +75,7 @@
 				<!--<td class="tckt-slctr-tbl-td-status"><?php echo $ticket_status; ?></td>-->
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
-				if ( $ticket->is_on_sale() && $ticket->remaining() > 0 && $ticket->remaining() >= $ticket->min() ) {
+				if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 					// if more than one attendee is allowed
@@ -112,7 +112,7 @@
 					} 
 				} else {
 					// sold out or other status ?
-					if (( $ticket->is_remaining() === 0 && $ticket->ticket_status() >= 0 ) ) {
+					if (( !$ticket->is_remaining() && $ticket->ticket_status() >= 0 ) ) {
 						echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
 					} else if ( $ticket->is_pending() ) {
 					?>	
