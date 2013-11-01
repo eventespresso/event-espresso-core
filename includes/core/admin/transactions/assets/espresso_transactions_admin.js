@@ -33,6 +33,7 @@ jQuery(document).ready(function($) {
 		$('.mop-'+mop).show();
 	});
 
+	var dialog_content = $('#txn-admin-apply-payment-dv');
 
 
 
@@ -56,7 +57,6 @@ jQuery(document).ready(function($) {
 
 		$('#txn-admin-modal-dialog-edit-payment-lnk').removeClass('hidden');
 		$('#txn-admin-modal-dialog-cancel-lnk').removeClass('hidden');
-		
 		display_payments_and_refunds_modal_dialog();
 	});
 
@@ -89,40 +89,39 @@ jQuery(document).ready(function($) {
 	
 	function display_payments_and_refunds_modal_dialog() {
 		$('#message').hide();
-		position_overlay();
-		position_dialog();
 		$('#txn-admin-payment-method-slct').trigger('change');
+		//reset form values
+		$('.txn-admin-apply-payment-inp').each( function() {
+			$(this).val('');
+		});
+		var regCode = $('#txn-admin-reg-code-inp').val();
+		$('#txn-admin-payment-accounting-inp').val( regCode );
+		$('.txn-admin-apply-payment-slct').each( function() {
+			$(this).val(0);
+		});
+		$('#txn-admin-payment-gateway-response-slct').val('PAP');
+		$('#txn-admin-payment-type-inp').val(1);
+		// remove validation notices
+		$('#txn-admin-apply-payment-frm .required').css( 'border', '1px solid #dfdfdf' ).removeClass('requires-value');
+		$('.validation-notice-dv').hide();
+		
+		$('.mop').hide();
+		var d_contents = dialog_content.clone(true, true).html();
+		$('#txn-admin-apply-payment-dv').empty();
+		dialogHelper.displayModal().addContent(d_contents);
 		overlay.on('click', function() {
-			dialog.fadeOut( 'fast');
-			overlay.fadeOut('fast', function(){
-				overlay.removeClass('active');
-				//reset form values
-				$('.txn-admin-apply-payment-inp').each( function() {
-					$(this).val('');
-				});
-				var regCode = $('#txn-admin-reg-code-inp').val();
-				$('#txn-admin-payment-accounting-inp').val( regCode );
-				$('.txn-admin-apply-payment-slct').each( function() {
-					$(this).val(0);
-				});
-				$('#txn-admin-payment-gateway-response-slct').val('PAP');
+				//add content back to dom
+				$('#txn-admin-apply-payment-dv').html(d_contents);
 				$('.admin-modal-dialog-h2').hide();
 				$('#admin-modal-dialog-options-ul a').addClass('hidden');
-				$('#txn-admin-payment-type-inp').val(1);
-				// remove validation notices
-				$('#txn-admin-apply-payment-frm .required').css( 'border', '1px solid #dfdfdf' ).removeClass('requires-value');
-				$('.validation-notice-dv').hide();
-				
-				$('.mop').hide();
 			});
-		});
 	}
 
 
 
 	//modal dialog "submit" buttons
 
-	$('#txn-admin-modal-dialog-apply-payment-lnk').on( 'click', function( event ) {
+	$(document).on( 'click', '#txn-admin-modal-dialog-apply-payment-lnk', function( event ) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
@@ -130,7 +129,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 
-	$('#txn-admin-modal-dialog-apply-refund-lnk').on( 'click', function( event ) {
+	$(document).on( 'click', '#txn-admin-modal-dialog-apply-refund-lnk', function( event ) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
@@ -138,7 +137,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 
-	$('#txn-admin-modal-dialog-edit-payment-lnk').on( 'click', function( event ) {
+	$(document).on( 'click', '#txn-admin-modal-dialog-edit-payment-lnk', function( event ) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
@@ -382,7 +381,7 @@ jQuery(document).ready(function($) {
 
 
 
-	$('#txn-admin-modal-dialog-cancel-lnk').on( 'click',  function() {
+	$(document).on( 'click', '#txn-admin-modal-dialog-cancel-lnk', function() {
 		overlay.trigger('click');
 	});
 
