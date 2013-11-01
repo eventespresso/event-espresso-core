@@ -70,6 +70,7 @@ class EED_Event_Details  extends EED_Module {
 //		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 //		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 10 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
+		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 //		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		//$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 	}

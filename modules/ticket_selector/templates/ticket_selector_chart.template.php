@@ -11,36 +11,34 @@
 		<tbody>
 <?php 
 
-		$row = 1;
-		foreach ( $tickets as $TKT_ID => $ticket ) {
-			
-			
-			//d( $ticket );
-			
-			switch ( $ticket->ticket_status() ) {
-				// expired
-				case -1 :
-					$ticket_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( TRUE ) . '</span>';
-					$status_class = 'ticket-sales-expired lt-grey-text';
-				break;
-				// archived
-				case 0 :
-					$ticket_status = '<span class="archived-ticket">' . $ticket->ticket_status( TRUE ) . '</span>';
-					$status_class = 'archived-ticket hidden';
-				break;
-				// pending
-				case 1 :
-					$ticket_status = '<span class="ticket-pending">' . $ticket->ticket_status( TRUE ) . '</span>';
-					$status_class = 'ticket-pending';	
-				break;
-				// onsale
-				case 2 :
-					$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( TRUE ) . '</span>';
-					$status_class = 'ticket-on-sale';
-				break;
-			}
-
-
+$row = 1;
+foreach ( $tickets as $TKT_ID => $ticket ) {
+	
+	
+	//d( $ticket );
+	
+	switch ( $ticket->ticket_status() ) {
+		// expired
+		case -1 :
+			$ticket_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( TRUE ) . '</span>';
+			$status_class = 'ticket-sales-expired lt-grey-text';
+		break;
+		// archived
+		case 0 :
+			$ticket_status = '<span class="archived-ticket">' . $ticket->ticket_status( TRUE ) . '</span>';
+			$status_class = 'archived-ticket hidden';
+		break;
+		// pending
+		case 1 :
+			$ticket_status = '<span class="ticket-pending">' . $ticket->ticket_status( TRUE ) . '</span>';
+			$status_class = 'ticket-pending';	
+		break;
+		// onsale
+		case 2 :
+			$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( TRUE ) . '</span>';
+			$status_class = 'ticket-on-sale';
+		break;
+	}
 ?>
 			<tr class="tckt-slctr-tbl-tr <?php echo $status_class; ?>">		
 				<td class="tckt-slctr-tbl-td-name">
@@ -64,24 +62,26 @@
 					>
 						<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 					</a>
-					<?php } 
+				<?php } 
 //echo '<h4>$max_atndz : ' . $max_atndz . '</h4>';
 //echo '<h4>$ticket->is_on_sale() : ' . $ticket->is_on_sale() . '</h4>';
 //echo '<h4>$ticket->available() : ' . $ticket->available() . '</h4>';
 //echo '<h4>$ticket->remaining() : ' . $ticket->remaining() . '</h4>';
-					?>
+				?>
 				</td>	
 				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
 				<!--<td class="tckt-slctr-tbl-td-status"><?php echo $ticket_status; ?></td>-->
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
+				
 				if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 					// if more than one attendee is allowed
 					if ( $max_atndz > 1 ) { 
-						// if $ticket->remaining() equals -1, then there are unlimited tickets for sale, so use $max_atndz, otherwise offer however many tickets are left
-						$max = $ticket->remaining() < 0 ? $max_atndz : $ticket->remaining();
+						$tickets_remaining = $ticket->remaining();
+						// if $tickets_remaining equals -1, then there are unlimited tickets for sale, so use $max_atndz, otherwise offer however many tickets are left
+						$max = $tickets_remaining < 0 ? $max_atndz : $tickets_remaining;
 						// but... we also want to restrict the number of tickets by the ticket max setting
 						$max = $ticket->max() > 0 ? $ticket->max() : $max;
 						// and we also want to restrict the minimum number of tickets by the ticket min setting
@@ -112,7 +112,7 @@
 					} 
 				} else {
 					// sold out or other status ?
-					if (( !$ticket->is_remaining() && $ticket->ticket_status() >= 0 ) ) {
+					if ( ! $ticket->is_remaining() && $ticket->ticket_status() >= 0 ) {
 						echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
 					} else if ( $ticket->is_pending() ) {
 					?>	
@@ -198,9 +198,9 @@
 				</td>
 			</tr>
 <?php
-					$row++;
+		$row++;
 
-				}
+	}
 
 ?>				
 						

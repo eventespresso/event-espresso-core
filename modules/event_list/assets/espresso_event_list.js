@@ -1,32 +1,21 @@
 jQuery(document).ready(function($) {
 	
-//	var date_tester = document.createElement( 'input' );
-//	date_tester.setAttribute( 'type', 'date' );
-//	// if type is text then and only then should you call the fallback
-//	if( date_tester.type === 'text' ){
-//		$( '#date' ).datepicker({
-//			dateFormat: 'dd-mm-yy'
-//		});
-//	}
-
-	
-
 	//window resize
 	var currentWidth = 0;
 	
-//	var eventSize = 'tiny';
-//
-//	if ( eventWidth <= 120 ) {
-//		eventSize = 'tiny-event-list-img';
-//	} else if ( eventWidth <= 148 ) {
-//		eventSize = 'small-event-list-img';
-//	} else if ( eventWidth <= 190 ) {
-//		eventSize = 'med-event-list-img';
-//	} else if ( eventWidth <= 260 ) {
-//		eventSize = 'large-event-list-img';
-//	} else {
-//		eventSize = 'huge-event-list-img';
-//	} 
+	var eventSize = 'tiny';
+
+	if ( eventWidth <= 120 ) {
+		eventSize = 'tiny-event-list-img';
+	} else if ( eventWidth <= 148 ) {
+		eventSize = 'small-event-list-img';
+	} else if ( eventWidth <= 190 ) {
+		eventSize = 'med-event-list-img';
+	} else if ( eventWidth <= 260 ) {
+		eventSize = 'large-event-list-img';
+	} else {
+		eventSize = 'huge-event-list-img';
+	} 
 	var eventWidth = $('#grid-view-event-list-dv .espresso-event-list-event').first().outerWidth();
 	$('#grid-view-event-list-dv .espresso-event-list-event').each( function() {
 		$(this).find('.ee-event-img-dv').css({ 'width' : eventWidth, 'min-height' : eventWidth*.618 });
@@ -60,16 +49,18 @@ jQuery(document).ready(function($) {
 		if(conWidth != currentWidth) {
 			currentWidth = conWidth;
 			$('#grid-view-event-list-dv #espresso-events-list-dv').width(conWidth).fadeIn();
-			$('#grid-view-event-list-dv #espresso-events-list-dv').BlocksIt({
-				blockElement: '#grid-view-event-list-dv .espresso-event-list-event',
-				numOfCol: col,
-				offsetX: 10,
-				offsetY: 10
-			}); 
+
+			$('#grid-view-event-list-dv #espresso-events-list-dv').masonry({
+				columnWidth: eventWidth,
+				itemSelector: '.espresso-event-list-event',
+				gutter: 10,
+				isFitWidth: true
+			});			
+
 		}
 		
 	};
-	
+
 	$(window).resize(function() {
 		espresso_resize_event_list();
 	});

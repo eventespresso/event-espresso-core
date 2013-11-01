@@ -546,7 +546,7 @@ abstract class EE_Gateway {
 		// save registrations and transaction to the session
 		$this->EE->SSN->set_session_data( array( 'transaction' => $transaction ));
 		// save the transactionless session back to this transaction
-		$transaction->set_txn_session_data( $this->EE->SSN->get_session_data() );
+		$transaction->set_txn_session_data( $this->EE->SSN );
 		// save the transaction to the db
 		$transaction->save();		
 		return true;
