@@ -360,7 +360,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		if ( $num_remaining === 0 )
 			return false;
 
-		if ( $num_remaining > 0 && $num_remaining < $ticket->min() )
+		if ( $num_remaining > 0 && $num_remaining < $this->min() )
 			return false;
 
 		return true;
