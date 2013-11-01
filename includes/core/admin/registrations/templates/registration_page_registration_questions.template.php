@@ -1,8 +1,8 @@
 <div id="spco-attendee_information-dv" class="spco-step-dv">
 	
 	<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
-		<?php sprintf( 
-		__(' In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%1$s) are required.', 'event_espresso'),
+		<?php printf( 
+		__(' In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%2$s) are required.', 'event_espresso'),
 		'<br />',
 		'<span class="asterisk">*</span>'
 		);?>		
@@ -21,9 +21,6 @@ if ( $event_queue['total_items'] > 0 ) {
 		<div id="spco-attendee-panel-dv-<?php echo $line_item;?>" class="spco-attendee-panel-dv">		
 			
 			<?php if ( $item['ticket']->name() != $prev_event ) { ?>
-			<h3 id="event_title-<?php echo $item['ticket']->ID() ?>" class="big-event-title-hdr">
-				<?php echo $item['event']->name(); ?>				
-			</h3>
 			<p>
 			<?php 
 				echo $item['ticket']->name() . ':  ' . EEH_Template::format_currency( $item['ticket']->price() ) . '<br/>';
