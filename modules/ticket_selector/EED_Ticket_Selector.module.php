@@ -60,7 +60,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
 //		add_action( 'AHEE_events_list_footer', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
-		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );		
+		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );	
 	}
 
 
@@ -95,9 +95,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@param	object 			$WP  
 	* 	@return 	void	
 	*/
-	public function run( $event ) {
-		
-	}
+	public function run( $WP ) {}
 
 
 
@@ -657,13 +655,15 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	public static function load_tckt_slctr_assets() {
 		// add some style
-		wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
-		wp_enqueue_style('ticket_selector');
-		// make it dance
-//		wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
-//		wp_enqueue_script('ticket_selector');
-		// loco grande 
-		wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
+		if ( apply_filters( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', FALSE )) {
+			wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
+			wp_enqueue_style('ticket_selector');
+			// make it dance
+//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
+//			wp_enqueue_script('ticket_selector');
+			// loco grande 
+			wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
+		}
 	}
 
 
