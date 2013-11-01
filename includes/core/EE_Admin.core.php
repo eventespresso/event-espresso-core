@@ -171,6 +171,7 @@ final class EE_Admin {
 			add_action( 'action_hook_espresso_help', array( $this, 'help_tab_links' ), 10, 4 );
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
+			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			// bring out the pidgeons!!!
 			$this->EE->load_core( 'messages_init' );
 		}
@@ -654,6 +655,18 @@ final class EE_Admin {
 				$this->EE->CFG->update_post_shortcodes();
 			}			
 		}
+	}
+
+
+
+	/**
+	 * 	its_eSpresso - converts the less commonly used spelling of "Expresso" to "Espresso"
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function its_eSpresso( $content ) {
+		return str_replace( '[EXPRESSO_', '[ESPRESSO_', $content );
 	}
 
 
