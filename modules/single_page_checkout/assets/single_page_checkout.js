@@ -6,13 +6,13 @@
 	$(window).unload( function() {}); 
 	
 	//	var date_tester = document.createElement( 'input' );
-	date_tester.setAttribute( 'type', 'date' );
-	// if type is text then and only then should you call the fallback
-	if( date_tester.type === 'text' ){
-		$( '#date' ).datepicker({
-			dateFormat: 'dd-mm-yy'
-		});
-	}
+//	date_tester.setAttribute( 'type', 'date' );
+//	// if type is text then and only then should you call the fallback
+//	if( date_tester.type === 'text' ){
+//		$( '#date' ).datepicker({
+//			dateFormat: 'dd-mm-yy'
+//		});
+//	}
 
 	$('#spco-copy-all-attendee-chk').prop( 'checked', false );
 
