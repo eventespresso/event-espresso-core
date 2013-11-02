@@ -43,11 +43,18 @@ final class EE_Request_Handler {
 	private $_output = '';
 
 	/**
-	 * whether current request is via AJAX
+	 * 	whether current request is via AJAX
 	 *	@var 	boolean
-	 * 	@access 	private
+	 * 	@access public
 	 */
 	public $ajax = FALSE;
+
+	/**
+	 * 	whether current request is via AJAX from the frontend of the site
+	 *	@var 	boolean
+	 * 	@access public
+	 */
+	public $front_ajax = FALSE;
 
 
 
@@ -63,16 +70,18 @@ final class EE_Request_Handler {
 		if( ! $wp){
 			global $wp;
 		}
-		// AJAX ???
-		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
 		// grab request vars
 		$this->_params = $_REQUEST;
+		// AJAX ???
+		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
+		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
 		if ( ! is_admin() ) {
 			// get current post name from URL
 			EE_Registry::instance()->load_helper( 'URL' );	
 			$this->set( 'post_name', $wp->request );		
 			$this->set_espresso_page( EEH_URL::test_for_espresso_page( $wp->request ) );			
 		}
+
 	}
 
 
