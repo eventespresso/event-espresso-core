@@ -658,8 +658,8 @@ class EE_Registration extends EE_Base_Class {
 	 * Gets the ticket this registration is for
 	 * @return EE_Ticket
 	 */
-	public function ticket(){
-		return $this->get_first_related('Ticket');
+	public function ticket($query_params = array()){
+		return $this->get_first_related('Ticket', $query_params);
 	}
 	
 

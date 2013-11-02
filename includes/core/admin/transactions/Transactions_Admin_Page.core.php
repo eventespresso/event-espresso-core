@@ -591,7 +591,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$ticket = $item->ticket();
 				if ( empty( $ticket ) )
 					continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
-				$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() ), 'group_by' => 'ATT_ID'));
+				$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
 				$event = $ticket->get_first_related('Registration')->get_first_related('Event');
 
 				foreach( $registrations as $registration ) {
@@ -604,12 +604,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					$this->_template_args['event_attendees'][$registration->ID()]['address'] =  implode(',<br>', $attendee->full_address_as_array() );
 					$this->_template_args['event_attendees'][$registration->ID()]['att_id'] = $attendee->ID();
 				}
-			$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  
+		}
+		$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'attendees'  ), TXN_ADMIN_URL );  
 
-			$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
-			echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-			}
-
+		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_main_meta_box_attendees.template.php';
+		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		}
 	}
 
@@ -858,7 +857,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	    //make sure our timestampes start and end right at the boundaries for each day
 	    $start_date = date( 'Y-m-d', strtotime( $start_date ) ) . ' 00:00:00';
-	    $end_date = date( 'Y-m-d', strtotime( $end_date ) ) . ' 00:00:00';
+	    $end_date = date( 'Y-m-d', strtotime( $end_date ) ) . ' 24:00:00';
+
 
 	    //convert to timestamps
 	    $start_date = strtotime( $start_date );
