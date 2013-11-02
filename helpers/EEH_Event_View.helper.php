@@ -237,22 +237,24 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function edit_event_link( $link = '', $before = '<p class="edit-event-lnk small-txt">', $after = '</p>', $EVT_ID = FALSE ) {
 		global $post;
-		// get EVT_ID either from passed value or global $post var
-		$EVT_ID = $EVT_ID ? $EVT_ID : $post->ID;
-		// can the user edit this post ?
-		if ( current_user_can( 'edit_post', $EVT_ID )) {
-			// set link text
-			$link = ! empty( $link ) ? $link : __('edit this event');
-			// generate nonce
-			$nonce = wp_create_nonce( 'edit_nonce' );
-			// generate url to event editor for this event
-			$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'post' => $EVT_ID, 'edit_nonce' => $nonce ), admin_url() );
-			// get edit CPT text
-			$post_type_obj = get_post_type_object( $post->post_type );
-			// build final link html
-			$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
-			// put it all together 
-			echo $before . apply_filters( 'edit_post_link', $link, $EVT_ID ) . $after;			
+		if ( $post->post_type == 'espresso_events' ) {
+			// get EVT_ID either from passed value or global $post var
+			$EVT_ID = $EVT_ID ? $EVT_ID : $post->ID;
+			// can the user edit this post ?
+			if ( current_user_can( 'edit_post', $EVT_ID )) {
+				// set link text
+				$link = ! empty( $link ) ? $link : __('edit this event');
+				// generate nonce
+				$nonce = wp_create_nonce( 'edit_nonce' );
+				// generate url to event editor for this event
+				$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'post' => $EVT_ID, 'edit_nonce' => $nonce ), admin_url() );
+				// get edit CPT text
+				$post_type_obj = get_post_type_object( $post->post_type );
+				// build final link html
+				$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
+				// put it all together 
+				echo $before . apply_filters( 'edit_post_link', $link, $EVT_ID ) . $after;			
+			}
 		}
 	}
 
@@ -280,19 +282,19 @@ class EEH_Event_View extends EEH_Base {
 	 *  @param 	array	$EVT_IDs an array of Event IDs
 	 *  @return 	string
 	 */
-	public static function extract_event_IDs_from_WP_Query( WP_Query $wp_query = NULL ) {
-		// array for storing Event IDs
-		$EVT_IDs = array();
-		// loop thru posts
-		if ( isset( $wp_query->posts )) {
-			foreach( $wp_query->posts as $event ) {
-				if ( $event->post_type == 'espresso_events' ) {
-					$EVT_IDs[] = $event->ID;
-				}
-			}
-		}
-		return $EVT_IDs;
-	}	
+//	public static function extract_event_IDs_from_WP_Query( WP_Query $wp_query = NULL ) {
+//		// array for storing Event IDs
+//		$EVT_IDs = array();
+//		// loop thru posts
+//		if ( isset( $wp_query->posts )) {
+//			foreach( $wp_query->posts as $event ) {
+//				if ( $event->post_type == 'espresso_events' ) {
+//					$EVT_IDs[] = $event->ID;
+//				}
+//			}
+//		}
+//		return $EVT_IDs;
+//	}	
 
 
 
@@ -304,19 +306,19 @@ class EEH_Event_View extends EEH_Base {
 	 *  @param 	array	$EVT_IDs an array of Event IDs
 	 *  @return 	string
 	 */
-	public static function get_datetimes_for_events( $EVT_IDs = array() ) {
-		
-		if ( ! is_array( $EVT_IDs )) {
-			$EVT_IDs = array( absint( $EVT_IDs ));
-		}
-		// load model
-		EE_Registry::instance()->load_model( 'Datetime' );
-		// grab datetimes for events
-		$datetimes = EEM_Datetime::instance()->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs ))));
-		$datetimes = is_array( $datetimes ) ? $datetimes : array();
-//		printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $datetimes;
-	}	
+//	public static function get_datetimes_for_events( $EVT_IDs = array() ) {
+//		
+//		if ( ! is_array( $EVT_IDs )) {
+//			$EVT_IDs = array( absint( $EVT_IDs ));
+//		}
+//		// load model
+//		EE_Registry::instance()->load_model( 'Datetime' );
+//		// grab datetimes for events
+//		$datetimes = EEM_Datetime::instance()->get_all( array( array( 'EVT_ID' => array( 'IN', $EVT_IDs ))));
+//		$datetimes = is_array( $datetimes ) ? $datetimes : array();
+////		printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		return $datetimes;
+//	}	
 
 
 
@@ -331,23 +333,23 @@ class EEH_Event_View extends EEH_Base {
 	 *  @param 	array		$tickets
 	 *  @return 	string
 	 */
-	public static function add_event_datetimes_and_tickets_to_WP_Query( WP_Query $wp_query = NULL, $datetimes = array(), $tickets = array() ) {
-		$datetimes = is_array( $datetimes ) ? $datetimes : array();
-		$tickets = is_array( $tickets ) ? $tickets : array();
-		// now loop thru posts
-		foreach( $wp_query->posts as $EVT_ID => $event ) {
-			// add empty arrays to events
-			$wp_query->posts[ $EVT_ID ]->datetimes = array();
-			// add datetimes
-			foreach ( $datetimes as $datetime ) {
-				if ( $event->ID == $datetime->get( 'EVT_ID' )) {
-					//$datetime->tickets();
-					$wp_query->posts[ $EVT_ID ]->datetimes[ $datetime->ID() ] = $datetime;
-				}
-			}
-		}
-		return $wp_query;
-	}	
+//	public static function add_event_datetimes_and_tickets_to_WP_Query( WP_Query $wp_query = NULL, $datetimes = array(), $tickets = array() ) {
+//		$datetimes = is_array( $datetimes ) ? $datetimes : array();
+//		$tickets = is_array( $tickets ) ? $tickets : array();
+//		// now loop thru posts
+//		foreach( $wp_query->posts as $EVT_ID => $event ) {
+//			// add empty arrays to events
+//			$wp_query->posts[ $EVT_ID ]->datetimes = array();
+//			// add datetimes
+//			foreach ( $datetimes as $datetime ) {
+//				if ( $event->ID == $datetime->get( 'EVT_ID' )) {
+//					//$datetime->tickets();
+//					$wp_query->posts[ $EVT_ID ]->datetimes[ $datetime->ID() ] = $datetime;
+//				}
+//			}
+//		}
+//		return $wp_query;
+//	}	
 
 
 	/**
@@ -358,19 +360,19 @@ class EEH_Event_View extends EEH_Base {
 	 *  @param 	WP_Query	$wp_query
 	 *  @return 	string
 	 */
-	public static function get_event_datetimes_and_tickets_for_WP_Query( WP_Query $wp_query = NULL ) {
-		if ( $wp_query ) {
-			// array of Event IDs
-			$EVT_IDs = EEH_Event_View::extract_event_IDs_from_WP_Query( $wp_query );
-			if ( ! empty( $EVT_IDs )) {
-				// get datetimes
-				$datetimes = EEH_Event_View::get_datetimes_for_events( $EVT_IDs );
-				// now put it all together
-				$wp_query = EEH_Event_View::add_event_datetimes_and_tickets_to_WP_Query( $wp_query, $datetimes );
-			}					
-		}
-		return $wp_query;
-	}	
+//	public static function get_event_datetimes_and_tickets_for_WP_Query( WP_Query $wp_query = NULL ) {
+//		if ( $wp_query ) {
+//			// array of Event IDs
+//			$EVT_IDs = EEH_Event_View::extract_event_IDs_from_WP_Query( $wp_query );
+//			if ( ! empty( $EVT_IDs )) {
+//				// get datetimes
+//				$datetimes = EEH_Event_View::get_datetimes_for_events( $EVT_IDs );
+//				// now put it all together
+//				$wp_query = EEH_Event_View::add_event_datetimes_and_tickets_to_WP_Query( $wp_query, $datetimes );
+//			}					
+//		}
+//		return $wp_query;
+//	}	
 
 
 
