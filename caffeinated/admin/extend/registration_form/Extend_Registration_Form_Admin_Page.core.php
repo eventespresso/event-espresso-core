@@ -499,7 +499,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				if(empty($option_req_data['QSO_value'])){
 					$option_req_data['QSO_value']=$option_req_data['QSO_name'];
 				}
-				if(empty($option_req_data['QSO_name'])){
+				if(empty($option_req_data['QSO_name']) && $option_req_data['QSO_name'] !== 0 ){
 					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
 				}
 

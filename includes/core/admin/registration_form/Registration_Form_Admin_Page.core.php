@@ -458,7 +458,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					if(empty($option_req_data['QSO_value'])){
 						$option_req_data['QSO_value']=$option_req_data['QSO_name'];
 					}
-					if(empty($option_req_data['QSO_name'])){
+					if(empty($option_req_data['QSO_name']) && $option_req_data['QSO_name'] !== 0 ){
 						$option_req_data['QSO_name']=$option_req_data['QSO_value'];
 					}
 					$new_option=EE_Question_Option::new_instance( array( 'QSO_name' => $option_req_data['QSO_name'], 'QSO_value' => $option_req_data['QSO_value'], 'QST_ID' => $question->ID()));
