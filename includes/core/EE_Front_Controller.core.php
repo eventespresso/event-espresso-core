@@ -436,7 +436,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp() {
-		$this->EE->load_helper( 'Template' );	
+		$this->EE->load_helper( 'Template' );
 	}
 
 
@@ -634,6 +634,7 @@ final class EE_Front_Controller {
 		do_action('AHEE__EE_Front_Controller__display_errors__begin');
 		if(apply_filters('FHEE__EE_Front_Controller__display_errors',true)){
 			echo EE_Error::get_notices();
+			$this->EE->load_helper( 'Template' );
 			EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php' );
 		}
 		do_action('AHEE__EE_Front_Controller__display_errors__end');
