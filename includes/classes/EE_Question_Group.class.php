@@ -247,4 +247,17 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	public function remove_question($questionObjectOrID){
 		return $this->_remove_relation_to($questionObjectOrID, 'Question');
 	}
+
+
+	/**
+	 * The purpose of this method is set the question group order for this question group to be the max out of all question groups
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function set_order_to_latest() {
+		$latest_order = $this->get_model()->get_latest_question_group_order();
+		$latest_order++;
+		$this->set('QSG_order', $latest_order );
+	}
 }

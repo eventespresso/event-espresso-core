@@ -1,5 +1,5 @@
 <tr class="ticket-tax-row TKT-taxes-display"<?php echo $display_tax; ?>>
-	<td colspan="3">
+	<td colspan="4">
 		<span class="TKT-tax-label"><?php echo $tax_label; ?></span>
 	</td>
 	<td>

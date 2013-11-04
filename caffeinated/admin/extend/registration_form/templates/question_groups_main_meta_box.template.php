@@ -16,6 +16,8 @@ foreach($all_questions as $unused_question){
 }
 /* @var array $values. Array of arrays, where each sub-array contains 2 keys: 'id' (internal value) and 'name' (label for displaying) */
 assert(is_array($values));
+
+echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order') );
 ?>
 
 <div class="edit-group padding" style="float:left; width:60%; padding-right: 5%;">
