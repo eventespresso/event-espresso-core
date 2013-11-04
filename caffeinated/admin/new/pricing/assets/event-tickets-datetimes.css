@@ -289,9 +289,13 @@ basic-ticket-info tbody td:nth-child(3), .basic-ticket-info tbody td:nth-child(4
 }
 
 .price-table tbody td:nth-child(4) {
-    padding: 0;
+    padding: 4px;
     margin: 0;
     text-align:right;
+}
+
+.price-table tbody td:nth-child(6) {
+    padding: 4px;
 }
 
 .price-table tbody td:nth-child(2) input, .price-table tbody:nth-child(3) input {
