@@ -27,8 +27,9 @@ do_action( 'AHEE_before_event_list' );
 				
 		<?php if ( have_posts() ) { ?>
 			<?php while ( have_posts() ) { the_post(); ?>
+			<?php global $post; ?>
 			
-			<article id="post-<?php echo $post->ID; ?>" <?php post_class('espresso-event-list-event'); ?>>
+			<article id="post-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
 			
 				<div id="events-list-event-wrap-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 				

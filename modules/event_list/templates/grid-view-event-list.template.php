@@ -26,7 +26,8 @@ do_action( 'AHEE_before_event_list' );
 		<?php if ( have_posts() ) { ?>
 		<div id="espresso-events-list-dv" class="column columns" role="main">				
 			<?php while ( have_posts() ) { the_post(); ?>
-			<article id="post-<?php echo $post->ID; ?>" <?php post_class( 'espresso-event-list-event ' . espresso_event_list_grid_size() ); ?>>
+			<?php global $post; ?>
+			<article id="post-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
 			
 				<div class="event-datetimes">
 					<h4><?php espresso_event_date_range(); ?></h4>
