@@ -9,6 +9,7 @@ assert($question_types);
 echo EEH_Form_Fields::hidden_input('QST_system', $question->system_ID());
 echo EEH_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EEH_Form_Fields::hidden_input('QST_deleted', $question->deleted());
+echo EEH_Form_Fields::hidden_input('QST_order', $question->get('QST_order') );
 $QST_system = $question->system_ID();
 $fields = $question->get_model()->field_settings();
 ?>

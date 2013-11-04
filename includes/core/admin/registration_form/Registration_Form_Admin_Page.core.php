@@ -346,6 +346,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
 		}else{
 			$question= EE_Question::new_instance();
+			$question->set_order_to_latest();
 			$this->_set_add_edit_form_tags('insert_question');
 		}
 		$questionTypes=array();
@@ -445,6 +446,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				foreach($options as $option_ID=>$option){
 					$option_req_index=$this->_get_option_req_data_index($option_ID);
 					if($option_req_index!==FALSE){
+						if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_name'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_name'] !== '0' )
+						$this->_req_data['question_options'][$option_req_index]['QSO_name'] = $this->_req_data['question_options'][$option_req_index]['QSO_value'];
 						$option->save($this->_req_data['question_options'][$option_req_index]);
 					}else{
 						//not found, remove it
@@ -458,7 +461,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					if(empty($option_req_data['QSO_value'])){
 						$option_req_data['QSO_value']=$option_req_data['QSO_name'];
 					}
-					if(empty($option_req_data['QSO_name'])){
+					if(empty($option_req_data['QSO_name']) && $option_req_data['QSO_name'] !== '0' ){
 						$option_req_data['QSO_name']=$option_req_data['QSO_value'];
 					}
 					$new_option=EE_Question_Option::new_instance( array( 'QSO_name' => $option_req_data['QSO_name'], 'QSO_value' => $option_req_data['QSO_value'], 'QST_ID' => $question->ID()));

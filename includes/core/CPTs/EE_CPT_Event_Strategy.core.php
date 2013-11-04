@@ -132,6 +132,7 @@ class EE_CPT_Event_Strategy {
 	 *  @return 	void
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
+		// automagically load the event view helper so that it's functions are available
 		$this->EE->load_helper('Event_View');
 //		$wp_query = EEH_Event_View::get_event_datetimes_and_tickets_for_WP_Query( $wp_query );
 		return $posts;

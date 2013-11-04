@@ -87,7 +87,7 @@ do_action( 'AHEE_before_event_list' );
 
 		<?php } else { ?>
 
-			<article id="post-0" class="post no-results not-found">
+			<article id="post-0" class="no-espresso-events-found">
 
 				<header class="event-header">
 					<h1 class="event-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1>

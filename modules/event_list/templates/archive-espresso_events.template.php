@@ -7,15 +7,14 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package		Event Espresso
- * @ author			Seth Shoultes
+ * @ author		Seth Shoultes
  * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
+ * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link			http://www.eventespresso.com
  * @ version		4+
  */
 get_header();
-$event_list_template_part = espresso_event_list_template_part();
-include( $event_list_template_part );
+include( espresso_event_list_template_part() );
 // if you are copying this file into your theme folder in order to edit it, 
 // then replace the above line of code with something like:
 // get_template_part( 'archive', 'event_list.template' );

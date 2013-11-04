@@ -23,23 +23,9 @@ do_action( 'AHEE_before_event_list' );
 		
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
-		<div id="espresso-events-list-dv" class="column columns" role="main">
-				
 		<?php if ( have_posts() ) { ?>
-			<?php while ( have_posts() ) { the_post();
-//			$partial_post = get_post($post->ID);
-//			$partial_post = (array)$partial_post;
-//			unset($partial_post['EVT_visible_on']);
-//			EEH_Debug_Tools::instance()->start_timer();
-//			EEM_Event::instance()->instantiate_class_from_post_object_orig($partial_post);
-//			EEH_Debug_Tools::instance()->stop_timer("instantiate from PARTIAL post and metadata ORIGINAL");
-//			
-//			
-//			EEH_Debug_Tools::instance()->start_timer();
-//			EEM_Event::instance()->instantiate_class_from_post_object($partial_post);
-//			EEH_Debug_Tools::instance()->stop_timer("instantiate from PARTIAL post and metadata NEW");
-
-			?>
+		<div id="espresso-events-list-dv" class="column columns" role="main">				
+			<?php while ( have_posts() ) { the_post(); ?>
 			<article id="post-<?php echo $post->ID; ?>" <?php post_class( 'espresso-event-list-event ' . espresso_event_list_grid_size() ); ?>>
 			
 				<div class="event-datetimes">
@@ -101,10 +87,14 @@ do_action( 'AHEE_before_event_list' );
 			<!-- #post -->
 
 			<?php } ?>
+			<div class="clear"></div>
+		</div>
+		<!-- #espresso-events-list-dv -->
+
 
 		<?php } else { ?>
 
-			<article id="post-0" class="post no-results not-found">
+			<article id="post-0" class="no-espresso-events-found">
 
 				<header class="event-header">
 					<h1 class="event-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1>
@@ -121,10 +111,6 @@ do_action( 'AHEE_before_event_list' );
 
 		<?php } // end have_posts() check ?>
 		
-			<div class="clear"></div>
-		</div>
-		<!-- #espresso-events-list-dv -->
-
 		<?php 
 //		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		 ?>

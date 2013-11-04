@@ -381,6 +381,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
 		}else{
 			$question= $this->EE->load_model('Question')->create_default_object();
+			//let's make sure that the question order is set properly
+			$question->set_order_to_latest();
 			$this->_set_add_edit_form_tags('insert_question');
 		}
 		$questionTypes=array();
@@ -486,6 +488,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			foreach($options as $option_ID=>$option){
 				$option_req_index=$this->_get_option_req_data_index($option_ID);
 				if($option_req_index!==FALSE){
+					//make sure QSO_name is not empty
+					if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_name'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_name'] !== '0' )
+						$this->_req_data['question_options'][$option_req_index]['QSO_name'] = $this->_req_data['question_options'][$option_req_index]['QSO_value'];
 					$option->save($this->_req_data['question_options'][$option_req_index]);
 				}else{
 					//not found, remove it
@@ -499,7 +504,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				if(empty($option_req_data['QSO_value'])){
 					$option_req_data['QSO_value']=$option_req_data['QSO_name'];
 				}
-				if(empty($option_req_data['QSO_name'])){
+				if(empty($option_req_data['QSO_name']) && $option_req_data['QSO_name'] !== '0' ){
 					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
 				}
 
@@ -596,6 +601,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$this->_set_add_edit_form_tags('update_question_group', $additional_hidden_fields);
 		}else{
 			$questionGroup = EE_Question_Group::new_instance();
+			$questionGroup->set_order_to_latest();
 			$this->_set_add_edit_form_tags('insert_question_group');
 		}
 		$this->_template_args['values'] = $this->_yes_no_values;

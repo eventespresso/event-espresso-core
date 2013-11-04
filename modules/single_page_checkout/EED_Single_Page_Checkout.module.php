@@ -1044,7 +1044,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// loop through post data and sanitize all elements
 			array_walk_recursive( $valid_data, array( $this, 'sanitize_text_field_for_array_walk' ));
 		}
-
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if ( ! empty( $valid_data )) {
 		
@@ -1062,12 +1061,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 			
 			$this->EE->load_model( 'Attendee' );
+			// attendee counter
+			$att_nmbr = 0;
 
 			if ( $this->_transaction instanceof EE_Transaction ) {
 				$registrations = $this->_transaction->registrations();
 				if ( ! empty( $registrations )) {
-					// attendee counter
-					$att_nmbr = 0;
 					// grab the saved registrations from the transaction				
 					foreach ( $this->_transaction->registrations()  as $registration ) {			
 						// verify object
@@ -1081,7 +1080,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								//printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$attendee_data = array();
 								// do we need to copy basic info from primary attendee ?
-								$copy_primary = ! isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) || absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
+								$copy_primary =isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
 								unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
 								if ( isset( $valid_data[ $line_item_id ] )) {
 									// now loop through our array of valid post data && process attendee reg forms
@@ -1165,7 +1164,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									// add relation to new attendee
 									$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
 //									echo '$copy_primary attendee <br/>';
-								} else {
+								} else {									
 									// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
 									$existing_attendee = $this->EE->LIB->EEM_Attendee->find_existing_attendee( array(
 										'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
@@ -1173,7 +1172,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 										'ATT_email' => isset( $attendee_data['ATT_email'] ) ? $attendee_data['ATT_email'] : ''
 									));
 									// did we find an already existing record for this attendee ?
-									if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {				
+									if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {		
 										// add relation to existing attendee
 										$registration->_add_relation_to( $existing_attendee, 'Attendee' );
 //										echo '$existing_attendee <br/>';
@@ -1198,15 +1197,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							}
 
 						}
+//						$registration->attendee()->dropEE();						
+//						printr( $registration->attendee(), '
+//$registration->attendee()
+//' . __FILE__ . '<br />line no: ' . __LINE__ . '
+//', 'auto' );
+//						echo '
+//attendee()->fname: ' . $registration->attendee()->fname() . '
+//						
+//';
 //						$registration->dropEE();
 //						$registration->_remove_relation_to( $registration->event(), 'Event' );
 //						$registration->_remove_relation_to( $registration->ticket(), 'Ticket' );
-//						$registration->attendee()->dropEE();
-//						
 //						printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 					}
 
-					$this->EE->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee, 'transaction' => $this->_transaction ));
+//					$this->EE->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee, 'transaction' => $this->_transaction ));
 //					printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //					echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 //					$this->EE->SSN->update();
@@ -1229,9 +1236,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$error_msg = __('No valid question responses were received.', 'event_espresso');
 		}
 
+//echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		//this might be called while in admin and if it is then we don't want to do our normal steps.
-		if ( is_admin() ) {
+		if ( is_admin() && ! $this->EE->REQ->front_ajax ) {
 			if ( $error_msg ) {
 				EE_Error::add_error($error_msg, __FILE__, __FUNCTION__, __LINE__);
 				return false;

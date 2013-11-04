@@ -206,8 +206,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_join( $SQL ) {
 		global $wpdb, $wp_query;
-		//d( $wp_query );
-		
+		//d( $wp_query );		
 		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' && $wp_query->is_main_query() ) {
 			// Category
 			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
@@ -240,9 +239,8 @@ class EED_Event_List  extends EED_Module {
 			$SQL .=  ! empty( $elf_category ) ? ' AND ' . $wpdb->terms . '.slug = "' . $elf_category . '" ' : '';
 			// Start Date
 			$elf_month = EE_Registry::instance()->REQ->is_set( 'elf_month_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_month_dd' )) : '';
-
-			$SQL .= ! empty( $elf_month ) ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $elf_month )) . '" AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $elf_month )) . '" ' : '';
-
+			$SQL .= ! empty( $elf_month ) ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $elf_month )) . '"' : '';
+			$SQL .= ! empty( $elf_month ) ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $elf_month )) . '" ' : '';
 		}
 		return $SQL;
 	}
@@ -286,7 +284,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function excerpt_length( $length ) {
 		
-		if ( self::$_default_view == 'list' ) {
+		if ( self::$_default_view == 'grid' ) {
 			return 36;
 		}
 		
@@ -314,6 +312,9 @@ class EED_Event_List  extends EED_Module {
 	public function excerpt_more( $more ) {
 		return '&hellip;';
 	}
+
+
+
 
 	/**
 	 * 	the_excerpt
@@ -387,7 +388,7 @@ class EED_Event_List  extends EED_Module {
 		$CFG->display_venue = isset( $CFG->display_venue ) && ! empty( $CFG->display_venue ) ? $CFG->display_venue : FALSE;
 		$CFG->display_expired_events = isset( $CFG->display_expired_events ) && ! empty( $CFG->display_expired_events ) ? $CFG->display_expired_events : FALSE;
 		$CFG->default_view = isset( $CFG->default_view ) && ! empty( $CFG->default_view ) ? $CFG->default_view : 'grid';
-		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'med';
+		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'large';
 		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EVENT_LIST_TEMPLATES_PATH . 'archive-espresso_events.template.php';
 		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EVENT_LIST_TEMPLATES_PATH . 'grid-view-event-list.template.php';
 		return $CFG;
@@ -401,23 +402,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function filter_config( $CFG ) {//display_short_description_in_event_list display_exceprt
-		//printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		$CFG->template_settings->EED_Event_List->display_description = isset( $CFG->template_settings->EED_Event_List->display_description ) ? $CFG->template_settings->EED_Event_List->display_description : $CFG->template_settings->EED_Event_List['display_description'],
-//			'display_address' => isset( $CFG->template_settings['display_address_in_event_list'] ) ? $CFG->template_settings['display_address_in_event_list'] : $CFG->template_settings->EED_Event_List['display_address'],
-//			'display_venue' => isset( $CFG->template_settings['display_venue_in_event_list'] ) ? $CFG->template_settings['display_venue_in_event_list'] : $CFG->template_settings->EED_Event_List['display_venue'],
-//			'display_expired_events' => isset( $CFG->template_settings['display_expired_events'] ) ? $CFG->template_settings['display_expired_events'] : $CFG->template_settings->EED_Event_List['display_expired_events'],
-//			'default_view' => isset( $CFG->template_settings['default_view'] ) ? $CFG->template_settings['default_view'] : $CFG->template_settings->EED_Event_List['default_view'],
-//			'event_list_grid_size' => isset( $CFG->template_settings['event_list_grid_size'] ) ? $CFG->template_settings['event_list_grid_size'] : $CFG->template_settings->EED_Event_List['event_list_grid_size'],
-//			'templates' => array(
-//				'full'  => EVENT_LIST_TEMPLATES_PATH . 'archive-espresso_events.template.php',
-//				'part'  => EVENT_LIST_TEMPLATES_PATH . 'grid-view-event-list.template.php'
-//			)
-//		);
-//		unset( $CFG->template_settings['display_description_in_event_list'] );
-//		unset( $CFG->template_settings['display_short_description_in_event_list'] );
-//		unset( $CFG->template_settings['display_address_in_event_list'] );
-//		unset( $CFG->template_settings['display_venue_in_event_list'] );
+	public function filter_config( $CFG ) {
 		return $CFG;
 	}
 
@@ -439,7 +424,7 @@ class EED_Event_List  extends EED_Module {
 		$CFG->EED_Event_List->display_venue = isset( $REQ['display_venue_in_event_list'] ) ? absint( $REQ['display_venue_in_event_list'] ) : FALSE;
 		$CFG->EED_Event_List->display_expired_events = isset( $REQ['display_expired_events'] ) ? absint( $REQ['display_expired_events'] ) : FALSE;
 		$CFG->EED_Event_List->default_view = isset( $REQ['default_view'] ) ? sanitize_text_field( $REQ['default_view'] ) : 'grid';
-		$CFG->EED_Event_List->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'med';
+		$CFG->EED_Event_List->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'large';
 		$CFG->EED_Event_List->templates = array(
 				'full'  => str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'archive-espresso_events.template.php'
 			);
@@ -491,7 +476,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public static function event_list_grid_size() {
 		$EE = EE_Registry::instance();
-		$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Event_List->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Event_List->event_list_grid_size : 'med';
+		$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Event_List->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Event_List->event_list_grid_size : 'large';
 		$event_list_grid_size .= '-event-list-grid';
 		return $event_list_grid_size;
 	}
