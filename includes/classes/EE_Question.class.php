@@ -440,6 +440,19 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 		$system_ID = $this->get('QST_system');
 		return !empty( $system_ID ) ? TRUE : FALSE;
 	}
+
+
+	/**
+	 * The purpose of this method is set the question order this question order to be the max out of all questions
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function set_order_to_latest() {
+		$latest_order = $this->get_model()->get_latest_question_order();
+		$latest_order++;
+		$this->set('QST_order', $latest_order );
+	}
 	
 
 }

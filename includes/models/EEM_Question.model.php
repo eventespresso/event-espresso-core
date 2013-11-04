@@ -124,7 +124,18 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	}
 	
 	
-	//function get_system_questions
+	/**
+	 * searches the db for the question with the latest question order and returns that value.
+	 * @access public
+	 * @return int
+	 */
+	public function get_latest_question_order() {
+		$columns_to_select = array(
+			'max_order' => array("MAX(QST_order)","%d")
+			);
+		$max = $this->_get_all_wpdb_results(array(), ARRAY_A, $columns_to_select );
+		return $max[0]['max_order'];
+	}
 
 
 
