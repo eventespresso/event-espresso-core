@@ -1355,6 +1355,7 @@ jQuery(document).ready(function($) {
 				id = $(this).attr('id').replace('TKT-tax-percentage-', '');
 				tax = parseFloat($(this).val());
 				tax = subtotal * tax/100;
+				tax = tax.toFixed(2);
 				$('#TKT-tax-amount-' + id).val(tax);
 				$('#TKT-tax-amount-display-' + id).text('$' + tax);
 			});
