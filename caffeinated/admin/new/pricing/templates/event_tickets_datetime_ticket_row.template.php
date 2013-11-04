@@ -54,6 +54,7 @@
 							<td></td>
 							<td><?php _e('Amount', 'event_espresso'); ?></td>
 							<td></td>
+							<td></td>
 						</tr>
 					</thead>
 					<tbody class="ticket-price-rows">
@@ -69,6 +70,7 @@
 								<input type="hidden" value="<?php echo $TKT_subtotal_amount; ?>" name="subtotal_amount_<?php echo $tkt_row; ?>" class="TKT-taxable-subtotal-amount">
 							</td>
 							<td></td>
+							<td></td>
 						</tr>
 						<?php echo $tax_rows; ?>
 						<tr class="price-total-row">
@@ -82,6 +84,7 @@
 								<span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span>
 								<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_price]" class="edit-ticket-TKT_price" value="<?php echo $TKT_price_amount; ?>">
 							</td>
+							<td></td>
 							<td><input type="hidden" name="price_total_rows_ticket[<?php echo $tkt_row; ?>]" id="price-total-rows-<?php echo $tkt_row; ?>" value="<?php echo $total_price_rows; ?>"></td>
 						</tr>
 					</tfoot>

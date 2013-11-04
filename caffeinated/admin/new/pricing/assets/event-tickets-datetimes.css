@@ -106,9 +106,8 @@
     height: 100px;;
 }
 
-.basic-ticket-info .ee-text-inp, .basic-ticket-info .ee-small-text-inp, .pricing-table .ee-text-inp, .ee-small-text-inp {
-    margin: 0;
-    margin-left: 10px;
+.edit-price-PRC_desc {
+    height: 70px;
 }
 
 
@@ -147,7 +146,7 @@
 }
 
 .ticket-table tbody tr td {
-  padding-top: 8px;
+  padding-top: 0;
 }
 
 
@@ -207,16 +206,27 @@
     padding: 0;
 }
 
-.basic-ticket-info td {
-    padding-left: 10px;
+.basic-ticket-info input {
+   text-align: right;
 }
 
-.basic-ticket-info {
-    text-align: right;
-}
-
-.basic-ticket-info thead:first-child {
+.basic-ticket-info tbody td:nth-child(1) input, .basic-ticket-info tbody td:nth-child(2) input {
+    width: 90%;
     text-align: left;
+    margin: 0;
+}
+
+.basic-ticket-info tbody td:nth-child(1), .basic-ticket-info tbody td:nth-child(2) {
+    width: 28%;
+}
+
+basic-ticket-info tbody td:nth-child(3), .basic-ticket-info tbody td:nth-child(4), .basic-ticket-info tbody td:nth-child(5), .basic-ticket-info tbody td:nth-child(6) {
+    width: 11%
+}
+
+.basic-ticket-info .ee-text-inp, .basic-ticket-info .ee-small-text-inp {
+    margin: 0;
+    width: 90%;
 }
 
 
@@ -284,9 +294,22 @@
     text-align:right;
 }
 
+.price-table tbody td:nth-child(2) input, .price-table tbody:nth-child(3) input {
+    width: 90%
+}
+
+.price-table tbody td:nth-child(5) input {
+    width: 90%;
+    text-align: right;
+}
+
 .ticket-price-info-display.ticket-price-percentage {
     text-align: left;
     margin-right: 0;
+}
+
+.price-table .price-total-row td, .price-table .price-subtotal-row td {
+    padding-top: 10px;
 }
 
 .edit-price-PRC_amount {
@@ -298,5 +321,5 @@
 }
 
 .ee-active-price .ee-create-button {
-    margin-left: 8px;
+    margin-left: 4px;
 }

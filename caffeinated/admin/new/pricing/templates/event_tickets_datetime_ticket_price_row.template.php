@@ -18,6 +18,8 @@
 	</td>
 	<td>
 		<input type="text" size="1" class="edit-price-PRC_amount" name="<?php echo $edit_prices_name; ?>[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>][PRC_amount]" value="<?php echo $PRC_amount; ?>"<?php echo $disabled; ?>>
+	</td>
+	<td>
 		<span class="ticket-price-info-display ticket-price-percentage-char-display"<?php echo $show_percentage; ?>>%</span>
 	</td>
 	<td>
