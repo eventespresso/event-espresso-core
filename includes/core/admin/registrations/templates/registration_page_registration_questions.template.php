@@ -117,4 +117,5 @@ if ( $event_queue['total_items'] > 0 ) {
 		 } // $event_queue['items'] as $line_item 
 	 } // $event_queue['total_items'] 
 ?>	
+	<div><a id="spco-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right" ><?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?></a></div>
 </div>
