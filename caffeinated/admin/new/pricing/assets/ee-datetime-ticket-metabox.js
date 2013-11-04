@@ -1370,10 +1370,10 @@ jQuery(document).ready(function($) {
 		DateTimeEditToggle: function() {
 			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
 				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
-				this.selector.slideToggle( 1000 );
+				this.selector.slideToggle( 250 );
 			} else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
-				this.selector.slideToggle( 1000 );
+				this.selector.slideToggle( 250 );
 			}
 			return this;
 		},
@@ -1389,7 +1389,7 @@ jQuery(document).ready(function($) {
 		TicketEditToggle: function( trash ) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
-			this.selector.slideToggle(1000);
+			this.selector.slideToggle(250);
 
 			/**
 			 * if creating is true, then we need to remove the existing row and related items from the dom.
@@ -1409,7 +1409,7 @@ jQuery(document).ready(function($) {
 		 */
 		PriceEditToggle: function() {
 			this.selector = $('.extra-price-row', '#extra-price-row-' + this.ticketRow + '-' + this.priceRow);
-			this.selector.slideToggle(1000);
+			this.selector.slideToggle(250);
 			return this;
 		},
 
