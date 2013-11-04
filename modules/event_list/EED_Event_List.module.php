@@ -25,6 +25,15 @@ class EED_Event_List  extends EED_Module {
 
 
 	/**
+	 * 	Whether the module is being instantiated because of the espresso_events CPT endpoint,
+	 * 	or because it is getting called from a shortcode embededed in a post
+	 *	@var 	$_called_from_shortcode
+	 * 	@access 	protected
+	 */
+	protected $_called_from_shortcode = FALSE;
+
+
+	/**
 	 * 	Start Date
 	 *	@var 	$_elf_month
 	 * 	@access 	protected
@@ -66,7 +75,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		EE_Config::register_route( __( 'events', 'event_espresso' ), 'Event_List', 'run' );
-//		EE_Config::register_route( 'event_list', 'Event_List', 'event_list' );		
+		EE_Config::register_route( 'event_list', 'Event_List', 'event_list' );		
 		add_action( 'wp_loaded', array( 'EED_Event_List', 'set_definitions' ), 2 );
 	}
 
@@ -107,8 +116,19 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
-		$this->_initial_setup();
-		EE_Config::register_view( 'events', 0, $this->_get_template('full') );	
+		// grab POST data
+		$this->get_post_data();		
+		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
+		$this->_filter_query_parts();		
+		// load other required components
+		$this->_load_assests();
+		// load template
+		EE_Config::register_view( 'events', 0, $this->_get_template('full') );
+		// ad event list filters
+		add_action( 'AHEE__archive_event_list_template__after_header', array( $this, 'event_list_template_filters' ));
+		remove_all_filters( 'excerpt_length' );
+		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
+		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );
 	}
 
 
@@ -119,47 +139,34 @@ class EED_Event_List  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function event_list() {		
-//		global $wp_query;
-//		$this->EE->load_helper('Event_View');
-//		$this->_initial_setup();
-//		$args = array( 'post_type' => 'espresso_events' );
-//		$wp_query = new WP_Query( $args );
-//		$wp_query = EEH_Event_View::get_event_datetimes_and_tickets_for_WP_Query( $wp_query );	
-//		ob_start();
-//		include( $this->_get_template('part') );
-//		$output = ob_get_clean();	
-//		$this->EE->REQ->output .= $output;
-//		wp_reset_query();
+	public function event_list() {	
+		// grab POST data
+		$this->get_post_data();		
+		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
+		$this->_filter_query_parts();		
+		// load other required components
+		$this->_load_assests();
 	}
 
 
 
+
+
+
+
 	/**
-	 * 	_initial_setup
+	 * 	_filter_query_parts
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	private function _initial_setup() {
-		// grab POST data
-		$this->get_post_data();		
+	private function _filter_query_parts() {
 		// make sure CPT is set correctly
-		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 1 );
+		//add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 1 );
 		// build event list query
-		add_action( 'posts_join', array( $this, 'posts_join' ), 1 );
-		add_action( 'posts_where', array( $this, 'posts_where' ), 1 );
-		add_action( 'posts_orderby', array( $this, 'posts_orderby' ), 1 );
-
-		add_filter( 'FHEE_load_css', '__return_true' );
-		add_filter( 'FHEE_load_EE_Session', '__return_true' );
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
-		remove_all_filters( 'excerpt_length' );
-		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
-		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );
-		//add_filter( 'the_excerpt', array( $this, 'the_excerpt' ), 999 );
-		add_action( 'AHEE__archive_event_list_template__after_header', array( $this, 'event_list_template_filters' ));
-		$this->EE->load_helper( 'Event_View' );
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 1 );
+		add_filter( 'posts_where', array( $this, 'posts_where' ), 1 );
+		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1 );
 	}
 
 
@@ -193,7 +200,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function pre_get_posts( $wp_query ) {
-		//d( $wp_query );
+//		d( $wp_query );
 		//$wp_query->query_vars['post_type'] = 'espresso_events';
 	}
 
@@ -206,8 +213,8 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_join( $SQL ) {
 		global $wpdb, $wp_query;
-		//d( $wp_query );		
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' && $wp_query->is_main_query() ) {
+//		d( $wp_query );		
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' /*&& $wp_query->is_main_query()*/ ) {
 			// Category
 			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
 			if ( ! empty( $elf_category )) {
@@ -228,7 +235,7 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_where( $SQL ) {
 		global $wpdb, $wp_query;
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' && $wp_query->is_main_query() ) {			
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' /*&& $wp_query->is_main_query()*/ ) {			
 			// Show Expired ?
 			$show_expired = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
 			// override default expired option if set via filter
@@ -254,10 +261,26 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function posts_orderby( $SQL ) {
 		global $wpdb, $wp_query;
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' && $wp_query->is_main_query() ) {			
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' /*&& $wp_query->is_main_query() */) {			
 			$SQL = ' ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ASC ';
 		}
 		return $SQL;
+	}
+
+
+
+	/**
+	 * 	_initial_setup
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	private function _load_assests() {
+		add_filter( 'FHEE_load_css', '__return_true' );
+		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
+		//add_filter( 'the_excerpt', array( $this, 'the_excerpt' ), 999 );
+		$this->EE->load_helper( 'Event_View' );
 	}
 
 
@@ -469,16 +492,20 @@ class EED_Event_List  extends EED_Module {
 
 
 	/**
-	 * 	event_list_grid_size
+	 * 	event_list_css
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public static function event_list_grid_size() {
+	public static function event_list_css() {
 		$EE = EE_Registry::instance();
-		$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Event_List->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Event_List->event_list_grid_size : 'large';
-		$event_list_grid_size .= '-event-list-grid';
-		return $event_list_grid_size;
+		$event_list_css = array( 'espresso-event-list-event' );
+		if ( self::$_default_view == 'grid' ) {
+			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Event_List->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Event_List->event_list_grid_size : 'large';
+			$event_list_css[] = $event_list_grid_size . '-event-list-grid';
+		}
+		$event_list_css = apply_filters( 'EED_Event_List__event_list_css__event_list_css_array', $event_list_css );
+		return implode( ' ', $event_list_css );
 	}
 
 
@@ -543,8 +570,8 @@ class EED_Event_List  extends EED_Module {
 
 
 
-function espresso_event_list_grid_size() {
-	return EED_Event_List::event_list_grid_size();
+function espresso_event_list_css() {
+	return EED_Event_List::event_list_css();
 }
  
 function espresso_event_categories() {
