@@ -598,7 +598,7 @@ class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
 			'EVT_ID'=>$new_cpt_id,//EVT_ID
 			'DTT_EVT_start'=> "$start_date $start_time:00",//DTT_EVT_start
 			'DTT_EVT_end'=> "$end_date $end_time:00",//DTT_EVT_end
-			'DTT_reg_limit'=>$old_event_row['reg_limit'],//DTT_reg_limit
+			'DTT_reg_limit'=>intval($start_end_time_row['reg_limit']) ? $start_end_time_row['reg_limit'] : $old_event_row['reg_limit'],//DTT_reg_limit
 			'DTT_sold'=>$this->count_registrations($old_event_row['id']),//DTT_sold
 			'DTT_is_primary'=> 0 == $existing_datetimes ,//DTT_is_primary... if count==0, then we'll call it the 'primary'
 			'DTT_order'=> $existing_datetimes,//DTT_order, just give it the same order as the count of how many datetimes already exist
