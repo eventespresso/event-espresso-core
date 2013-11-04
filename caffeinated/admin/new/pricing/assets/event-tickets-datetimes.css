@@ -41,8 +41,9 @@
 
 .ticket-archived td {
     background-color: #e6e6e6;
-    padding-bottom: 5px;
 }
+
+
 
 .gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
     display: inline-block;
@@ -146,7 +147,8 @@
 }
 
 .ticket-table tbody tr td {
-  padding-top: 0;
+    padding-top: .3em;
+    padding-bottom: .3em;
 }
 
 
@@ -289,13 +291,9 @@ basic-ticket-info tbody td:nth-child(3), .basic-ticket-info tbody td:nth-child(4
 }
 
 .price-table tbody td:nth-child(4) {
-    padding: 4px;
+    padding: 0;
     margin: 0;
     text-align:right;
-}
-
-.price-table tbody td:nth-child(6) {
-    padding: 4px;
 }
 
 .price-table tbody td:nth-child(2) input, .price-table tbody:nth-child(3) input {
