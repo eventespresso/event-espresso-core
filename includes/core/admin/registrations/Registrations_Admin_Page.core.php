@@ -870,7 +870,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( is_object( $this->_registration )) {
 			$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
-			$this->_session = $transaction->session_data();
+			$this->_session = $transaction->session_data()->get_session_data();
 
 			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 			// add PRC_ID to title if editing 
@@ -1159,38 +1159,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	public function _reg_details_meta_box() {
-		//printr( $this->_session, '$this->_session  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		// process items in cart
-		$cart_items = $this->_session['cart']['REG']['items'];
-		$this->_template_args['items'] = array();
-		$exclude = array( 'attendees' );
-		if ( ! empty( $cart_items )) {
-			foreach ( $cart_items as $line_item_ID => $item ) {
-				foreach ( $item as $key => $value ) {
-					if ( ! in_array( $key, $exclude )) {
-						if ( $key == 'options' ) {
-							$options = $value;
-							foreach ( $options as $opt => $option ) {
-								if ( $opt == 'date' ) {
-									$option = strtotime( $option );
-								} else if  ( $opt == 'time' ) {
-									$ampm = ( (float)$option > 11.59 ) ? (( (float)$option == 24.00 ) ? 'am' : 'pm' ) : 'am';
-									$option = strtotime( $option . ' ' . $ampm );
-								}
-								$this->_template_args['items'][ $item['name'] ][ $opt ] = $option;
-							}
-						} else {
-							$this->_template_args['items'][ $item['name'] ][ $key ] = $value;
-						}
-					} else {
-						$this->_template_args['event_attendees'][ $item['name'] ][ $key ] = $value;
-					}
-				}
-			}
-		}
+		
+		$this->_template_args['line_items'] = $this->_session['transaction']->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
 
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
+
+		$event = $this->_registration->get_first_related('Event');
+		$this->_template_args['event'] = $event;
+		$this->_template_args['event_name'] = $event->get('EVT_name');
 
 		// process taxes
 		if ( $transaction ) {
@@ -1204,7 +1180,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$reg_status_class = 'status-' . $this->_registration->status_ID();
-		$reg_details = maybe_unserialize( $transaction->details() );
+		$reg_details = maybe_unserialize( $transaction->get_first_related('Payment')->details() );
 
 
 		if ( !is_array($reg_details) || ( is_array($reg_details) && isset($reg_details['REDO_TXN']) && $reg_details['REDO_TXN'] ) ) {
@@ -1221,6 +1197,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['method']['value'] = $reg_details['method'];
 		$this->_template_args['method']['label'] = __( 'Payment Method', 'event_espresso' );
 		$this->_template_args['method']['class'] = 'regular-text';
+
+		$reg_details['response_msg'] = isset($reg_details['response_msg'] ) ? $reg_details['response_msg'] : '';
 
 		$reg_details['response_msg'] = '<span class="' . $reg_status_class . '">' . $reg_details['response_msg'] . '</span>';
 		$this->_template_args['gateway_response_msg']['value'] = $reg_details['response_msg'];
