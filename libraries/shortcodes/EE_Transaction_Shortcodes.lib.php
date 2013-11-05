@@ -114,9 +114,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	private function _get_payment_gateway() {
 		if ( !is_object( $this->_data->txn ) )
 			return '';
-
-		$details = $this->_data->txn->details();
-		return isset( $details['gateway'] ) ? $details['gateway'] : 'Gateway not selected';
+		return $this->_data->txn->selected_gateway();
 	}
 
 } //end EE_Transaction Shortcodes library
