@@ -485,7 +485,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	public function AHEE__EE_Admin_Page__route_admin_request_resend_registration() {
+		add_filter('FHEE_load_EE_messages', '__return_true');
+	}
 
+
+
+	public function AHEE__EE_Admin_Page__route_admin_request_approve_registration() {
+		add_filter('FHEE_load_EE_messages', '__return_true');
+	}
 
 
 
