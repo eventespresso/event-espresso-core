@@ -575,14 +575,15 @@ class EE_Transaction extends EE_Base_Class{
 
 
 	public function selected_gateway() {
-		$details = $this->details();
-		return isset($details['gateway']) ? $details['gateway'] : '';
+		return $this->get_extra_meta('gateway', true);
 	}
 
 
 
 	public function gateway_response_on_transaction() {
-		$details = $this->details();
+		$payment = $this->get_first_related('Payment');
+		$details = !empty( $payment ) ? $this->get_first_related('Payment')->details() : array();
+
 		return isset($details['response_msg']) ? $details['response_msg'] : '';
 	}
 
