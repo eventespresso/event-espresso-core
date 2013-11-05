@@ -836,7 +836,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$error_msg = '';
 
 		//action right before calling route (hook is something like 'AHEE__Registrations_Admin_Page__route_admin_request')
-		do_action( 'AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this );
+		if ( !did_action('AHEE__EE_Admin_Page__route_admin_request')) {
+			do_action( 'AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this );
+		}
 
 		if ( ! empty( $func )) {
 			//try to access page route via this class
