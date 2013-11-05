@@ -758,6 +758,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			
 			//prepare to render page
 			$transaction = $payment->transaction();
+			//finalize so we update reg status if necessary.
+			$transaction->finalize();
 			$this->_get_payment_status_array();
 			$return_data['amount'] = $payment->amount();
 			$return_data['total_paid'] = $transaction->paid();
@@ -810,7 +812,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						'total_paid' => $transaction->paid(), 
 						'txn_status' => $transaction->status_ID(),
 						'pay_status' => $payment->STS_ID(),
-						'PAY_ID' => $PAY_ID
+						'PAY_ID' => $this->_req_data['ID']
 					); 						
 				}						
 			}
