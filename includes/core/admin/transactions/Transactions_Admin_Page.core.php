@@ -766,7 +766,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$return_data['PAY_ID'] = $payment->ID();
 			$return_data['STS_ID'] = $payment->STS_ID();
 			$return_data['status'] = self::$_pay_status[ $payment->STS_ID() ];
-			$return_data['date'] = $payment->timestamp( 'D M j, Y' );
+			$return_data['date'] = $payment->timestamp( 'Y-m-d', 'h:i a' );
 			$return_data['method'] = strtoupper( $payment->method() ) ;
 			$this->_get_active_gateways();
 			$return_data['gateway'] = isset( $this->_template_args['active_gateways'][ $payment->gateway() ] ) ? $this->_template_args['active_gateways'][ $payment->gateway() ] : $payment->gateway();
