@@ -14,7 +14,7 @@ jQuery(document).ready(function($) {
 	var dates = $( '.datepicker' ).datepicker({
 		defaultDate: "-1m",
 		numberOfMonths: 2
-	});
+	});/**/
 
 	$('.confirm-delete').on( 'click', function() {
 		var what = $(this).attr('rel');
@@ -39,9 +39,9 @@ jQuery(document).ready(function($) {
 
 
 	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-edit-lnk', function() {
+		display_payments_and_refunds_modal_dialog();
 		// grab payment ID
 		var PAY_ID = $(this).attr('rel');
-		display_payments_and_refunds_modal_dialog();
 		$('#admin-modal-dialog-edit-payment-h2').show();
 		$('#admin-modal-dialog-edit-payment-h2 > span').html(PAY_ID);
 		// transfer values from table to modal box form
@@ -57,8 +57,9 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).html() );
 		$('#txn-admin-payment-amount-inp').val( $('#payment-amount-' + PAY_ID ).html() );
 
-		$('#txn-admin-modal-dialog-edit-payment-lnk').removeClass('hidden');
-		$('#txn-admin-modal-dialog-cancel-lnk').removeClass('hidden');
+		$('#txn-admin-modal-dialog-edit-payment-lnk').show();
+		$('#txn-admin-modal-dialog-cancel-lnk').show();
+		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
 
@@ -66,11 +67,12 @@ jQuery(document).ready(function($) {
 	$( "#display-txn-admin-apply-payment" ).on( 'click',  function() {
 		display_payments_and_refunds_modal_dialog();
 		$('#admin-modal-dialog-apply-payment-h2').show();
-		$('#txn-admin-modal-dialog-apply-payment-lnk').removeClass('hidden');
-		$('#txn-admin-modal-dialog-cancel-lnk').removeClass('hidden');
+		$('#txn-admin-modal-dialog-apply-payment-lnk').show();
+		$('#txn-admin-modal-dialog-cancel-lnk').show();
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
 		var paymentAmount = $('#txn-admin-total-amount-due').html();
 		$('#txn-admin-payment-amount-inp').val( paymentAmount );
+		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
 
@@ -78,13 +80,14 @@ jQuery(document).ready(function($) {
 	$( "#display-txn-admin-apply-refund" ).on( 'click',  function() {
 		display_payments_and_refunds_modal_dialog();
 		$('#admin-modal-dialog-apply-refund-h2').show();
-		$('#txn-admin-modal-dialog-apply-refund-lnk').removeClass('hidden');
-		$('#txn-admin-modal-dialog-cancel-lnk').removeClass('hidden');
+		$('#txn-admin-modal-dialog-apply-refund-lnk').show();
+		$('#txn-admin-modal-dialog-cancel-lnk').show();
 		$('#txn-admin-payment-payment-id-inp').val(0);
 		$('#txn-admin-payment-type-inp').val(-1);
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
 		var refundAmount = $('#txn-admin-total-amount-due').html();
 		$('#txn-admin-payment-amount-inp').val( refundAmount );
+		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
 	
@@ -98,7 +101,7 @@ jQuery(document).ready(function($) {
 				//add content back to dom
 				dialog_content.html(d_contents);
 				$('.admin-modal-dialog-h2').hide();
-				$('#admin-modal-dialog-options-ul a').addClass('hidden');
+				$('#admin-modal-dialog-options-ul a').hide();
 				$('#txn-admin-payment-method-slct').trigger('change');
 				//reset form values
 				$('.txn-admin-apply-payment-inp').each( function() {
@@ -333,35 +336,35 @@ jQuery(document).ready(function($) {
 
 		if ( totalPaid == txnTotal ) {
 			//alert( 'paid in full' );
-			$('#txn-amount-due-h2').addClass('hidden');
+			$('#txn-amount-due-h2').hide();
 			$('#txn-amount-due-h2 > span').removeClass();
-			$('#txn-admin-payments-total-tr').removeClass('hidden');
-			$('#txn-admin-no-payments-tr').addClass('hidden');
+			$('#txn-admin-payments-total-tr').show();
+			$('#txn-admin-no-payments-tr').hide();
 			$('#payments-total-spn').html( 'Payments Total' );
 			$('#payments-total-spn').parents('tr').removeClass( 'red-text');
 		} else if ( totalPaid > txnTotal ) {
 			//alert( 'overpaid' );
-			$('#txn-amount-due-h2').removeClass('hidden');
+			$('#txn-amount-due-h2').show();
 			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-no-payment-spn');
-			$('#txn-admin-payments-total-tr').removeClass('hidden');
-			$('#txn-admin-no-payments-tr').addClass('hidden');
+			$('#txn-admin-payments-total-tr').show();
+			$('#txn-admin-no-payments-tr').hide();
 			$('#payments-total-spn').html( 'This transaction has been overpaid ! Payments Total' );
 			$('#payments-total-spn').parents('tr').addClass( 'red-text');
 		} else if ( totalPaid > 0 ) {
 			//alert( 'part payment' );
-			$('#txn-amount-due-h2').removeClass('hidden');
+			$('#txn-amount-due-h2').show();
 			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-part-payment-spn');
-			$('#txn-admin-payments-total-tr').removeClass('hidden');
-			$('#txn-admin-no-payments-tr').addClass('hidden');
+			$('#txn-admin-payments-total-tr').show();
+			$('#txn-admin-no-payments-tr').hide();
 			$('#payments-total-spn').html( 'Payments Total' );
 			$('#overpaid').remove();
 			$('#payments-total-spn').parents('tr').removeClass( 'red-text');
 		} else {
 			//alert( 'no payment' );
-			$('#txn-amount-due-h2').removeClass('hidden');
+			$('#txn-amount-due-h2').show();
 			$('#txn-amount-due-h2 > span').removeClass().addClass('txn-overview-no-payment-spn');
-			$('#txn-admin-payments-total-tr').addClass('hidden');
-			$('#txn-admin-no-payments-tr').removeClass('hidden');
+			$('#txn-admin-payments-total-tr').hide();
+			$('#txn-admin-no-payments-tr').show();
 			$('#payments-total-spn').html( 'Payments Total' );
 			$('#overpaid').remove();
 			$('#payments-total-spn').parents('tr').removeClass( 'red-text');
