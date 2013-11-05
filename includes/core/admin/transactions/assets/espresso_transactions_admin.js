@@ -46,16 +46,16 @@ jQuery(document).ready(function($) {
 		$('#admin-modal-dialog-edit-payment-h2 > span').html(PAY_ID);
 		// transfer values from table to modal box form
 		$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
-		$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).html());
-		$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).html() );
-		$('#txn-admin-payment-method-slct').val( $('#payment-method-' + PAY_ID ).html() );
-		$('#txn-admin-payment-gateway-slct').val( $('#payment-gateway-id-' + PAY_ID ).html() );
-		$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).html() );
-		$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).html() );
-		$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).html() );
-		$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).html() );
-		$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).html() );
-		$('#txn-admin-payment-amount-inp').val( $('#payment-amount-' + PAY_ID ).html() );
+		$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
+		$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
+		$('#txn-admin-payment-method-slct').val( $('#payment-method-' + PAY_ID ).text() );
+		$('#txn-admin-payment-gateway-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
+		$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
+		$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
+		$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
+		$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).text() );
+		$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).text() );
+		$('#txn-admin-payment-amount-inp').val( $('#payment-amount-' + PAY_ID ).text() );
 
 		$('#txn-admin-modal-dialog-edit-payment-lnk').show();
 		$('#txn-admin-modal-dialog-cancel-lnk').show();
@@ -70,7 +70,7 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-modal-dialog-apply-payment-lnk').show();
 		$('#txn-admin-modal-dialog-cancel-lnk').show();
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
-		var paymentAmount = $('#txn-admin-total-amount-due').html();
+		var paymentAmount = $('#txn-admin-total-amount-due').text();
 		$('#txn-admin-payment-amount-inp').val( paymentAmount );
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
@@ -85,7 +85,7 @@ jQuery(document).ready(function($) {
 		$('#txn-admin-payment-payment-id-inp').val(0);
 		$('#txn-admin-payment-type-inp').val(-1);
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
-		var refundAmount = $('#txn-admin-total-amount-due').html();
+		var refundAmount = $('#txn-admin-total-amount-due').text();
 		$('#txn-admin-payment-amount-inp').val( refundAmount );
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
@@ -192,7 +192,7 @@ jQuery(document).ready(function($) {
 						do_before_admin_page_ajax();
 					},
 					success: function( response ) {
-						console.log(response);
+						/*console.log(response);/**/
 						if ( response.return_data !== undefined && response.return_data !== false && response.return_data !== null ) {
 							response.edit_or_apply = editOrApply;
 							process_return_data( response );
@@ -204,7 +204,7 @@ jQuery(document).ready(function($) {
 						}
 					},
 					error: function(response) {
-						console.log(response);
+						/*console.log(response);/**/
 						if ( response.errors === undefined ) {
 							response.errors = eei18n.error_occured;
 						}
@@ -326,7 +326,7 @@ jQuery(document).ready(function($) {
 		var totalPaid = parseFloat( response.return_data.total_paid );
 		$('#txn-admin-payment-total').html( totalPaid.toFixed(2) );
 		// total-amount-due
-		var txnTotal = parseFloat( $('#txn-admin-grand-total').html() );
+		var txnTotal = parseFloat( $('#txn-admin-grand-total').text() );
 		var totalAmountDue = txnTotal - totalPaid;
 		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
 		$('#txn-amount-due-h2 > span').html( totalAmountDue.toFixed(2) );
