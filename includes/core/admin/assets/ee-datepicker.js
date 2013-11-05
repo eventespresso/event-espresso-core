@@ -55,7 +55,10 @@ var dttPickerHelper = {
 		this.nextobj = next;
 
 		this.startDate = this.startobj.val() === '' ? moment() : moment(this.startobj.val(), 'YYYY-MM-DD h:mm a');
-		this.endDate = this.endobj.val() === '' ? this.startDate.clone().add('hours', 1) : moment(this.endobj.val(), 'YYYY-MM-DD h:mm a');
+
+		this.endDate = this.endobj instanceof jQuery ? this.endobj.val() : '';
+
+		this.endDate = this.endDate === '' ? this.startDate.clone().add('hours', 1) : moment(this.endDate, 'YYYY-MM-DD h:mm a');
 
 		this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
 		this.dttOptions.minute = doingstart ? this.startDate.minutes() : this.endDate.minutes();
@@ -80,9 +83,11 @@ var dttPickerHelper = {
 				var newDate = moment( dateText, 'YYYY-MM-DD h:mm a'),
 					lastVal = moment(dpinst.lastVal, 'YYYY-MM-DD h:mm a'),
 					diff = lastVal !== null ? lastVal.diff(newDate, 'minutes') : newDate;
+
 				if ( doingstart ) {
 					dttPickerHelper.startDate = newDate;
-					dttPickerHelper.endobj.val(dttPickerHelper.endDate.format('YYYY-MM-DD h:mm a'));
+					if ( dttPickerHelper.endobj instanceof jQuery )
+						dttPickerHelper.endobj.val(dttPickerHelper.endDate.format('YYYY-MM-DD h:mm a'));
 					//dttPickerHelper.nextobj.focus();
 				} else {
 					dttPickerHelper.endDate = newDate;
@@ -94,7 +99,8 @@ var dttPickerHelper = {
 				if ( dttPickerHelper.startDate.isAfter(dttPickerHelper.endDate) ) {
 					if ( doingstart )
 						//use the already calculated diff to set the new endDate or startDate.
-						dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a'));
+						if ( dttPickerHelper.endobj instanceof jQuery )
+							dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a'));
 					else
 						dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a') );
 				}
