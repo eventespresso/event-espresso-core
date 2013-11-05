@@ -85,7 +85,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 		$this->grand_total_price_object = ''; //not available and not needed?
 
-		$session = $this->txn->session_data();
+		$session = $this->txn->session_data()->get_session_data();
 
 		//other data from the session (if possible)
 		$this->user_id = isset( $session['user_id'] ) ? $session['user_id'] : '';
