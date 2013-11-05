@@ -82,7 +82,7 @@
 	<br class="clear"/>
 	
 
-	<?php if ( $grand_total > 0 || $TXN_status != 'TCM' ) : ?>
+	<?php if ( $grand_raw_total > 0 || $TXN_status != 'TCM' ) : ?>
 
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
 		<img id="cash-single" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/cash-single-16x16.png" alt="" /><?php _e( 'Payment Details', 'event_espresso' );?>
@@ -174,8 +174,8 @@
 			<?php endforeach; // $payment?>
 			<?php 
 				$payment_total = number_format( $payment_total, 2 );
-				$pay_totals_class = $payment_total > $grand_total ? ' red-text' : '';
-				$overpaid = $payment_total > $grand_total ? '<span id="overpaid">' . __( 'This transaction has been overpaid ! ', 'event_espresso' ) . '</span>' : '';
+				$pay_totals_class = $payment_total > $grand_raw_total ? ' red-text' : '';
+				$overpaid = $payment_total > $grand_raw_total ? '<span id="overpaid">' . __( 'This transaction has been overpaid ! ', 'event_espresso' ) . '</span>' : '';
 			?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
 					<td class=" jst-rght" colspan="11">
@@ -425,7 +425,7 @@
 		</form>
 	</div>
 
-	<?php endif; // $grand_total > 0?>
+	<?php endif; // $grand_raw_total > 0?>
 	
 </div>
 	
