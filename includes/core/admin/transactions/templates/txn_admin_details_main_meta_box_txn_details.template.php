@@ -46,6 +46,7 @@
 				</tr>
 			</tbody>	
 		</table>
+		<span id="txn-admin-grand-total" class="hidden"><?php echo $grand_raw_total; ?></span>
 	</div>	
 
 
