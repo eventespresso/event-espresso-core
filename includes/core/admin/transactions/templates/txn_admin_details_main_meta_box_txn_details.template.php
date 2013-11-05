@@ -163,9 +163,7 @@
 						<?php $payment_class = $payment->amount() > 0 ? 'txn-admin-payment-status-' . $payment->STS_ID() : 'txn-admin-payment-status-PDC'; ?>
 						<span class="<?php echo $payment_class;?>">
 							<?php echo $currency_sign; ?>&nbsp;
-							<div id="payment-amount-<?php echo $PAY_ID;?>" style="display:inline;">
-								<?php echo number_format( $payment->amount(), 2 );?>
-							</div>
+							<div id="payment-amount-<?php echo $PAY_ID;?>" style="display:inline;"><?php echo number_format( $payment->amount(), 2 );?></div>
 						</span>
 					</td>
 				</tr>
