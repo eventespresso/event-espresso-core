@@ -366,8 +366,11 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 		$messenger = $this->messenger_obj();
 		$message_type = $this->message_type_obj();
 
+		$messenger_name = str_replace( ' ', '_', strtoupper( str_replace( '_', ' ', $messenger->name ) ) );
+		$mt_name = str_replace( ' ', '_', strtoupper( str_replace( '_', ' ', $message_type->name ) ) );
+
 		//validate class for getting our list of shortcodes
-		$classname = 'EE_Messages_' . $messenger->name . '_' . $message_type->name . '_Validator';
+		$classname = 'EE_Messages_' . $messenger_name . '_' . $mt_name . '_Validator';
 		if ( !class_exists( $classname ) ) {
 			$msg[] = __( 'The Validator class was unable to load', 'event_espresso');
 			$msg[] = sprintf( __('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'), $classname );
