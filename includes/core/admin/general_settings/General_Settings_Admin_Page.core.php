@@ -535,7 +535,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//PUE verification stuff
 		$plugin_basename = plugin_basename(EVENT_ESPRESSO_PLUGINPATH);
 		$verify_fail = get_option( 'pue_verification_error_' . $plugin_basename );
-		$this->_template_args['site_license_key_verified'] = !empty( $verify_fail ) ? '<span class"pue-sl-not-verified"></span>' : '<span class="pue-sl-verified"></span>';		
+		$this->_template_args['site_license_key_verified'] = $verify_fail || empty($verify_fail) ? '<span class"pue-sl-not-verified"></span>' : '<span class="pue-sl-verified"></span>';		
 		
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
