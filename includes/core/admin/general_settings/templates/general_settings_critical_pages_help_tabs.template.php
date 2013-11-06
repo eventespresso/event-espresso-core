@@ -12,8 +12,7 @@ function event_list_cpt_info_help_tab_html(){
 function registration_page_info_help_tab_html() { 
 	?>
 	<h2><?php _e('Registration Checkout Page', 'event_espresso'); ?></h2>
-	<p><?php echo sprintf(__('This is the page that site visitors are directed to in oreder to complete their registration. It is very important that this page always contains the %s shortcode.', 'event_espresso'), '<strong>[ESPRESSO_EVENTS]</strong>'); ?></p>
-	<p><?php echo sprintf(__("This page should ALWAYS contain the %s shortcode.", 'event_espresso'), '<strong>[ESPRESSO_CHECKOUT]</strong>'); ?></p>
+	<p><?php echo sprintf(__('This is the page that site visitors are directed to in oreder to complete their registration. It is very important that this page always contains the %s shortcode.', 'event_espresso'), '<strong>[ESPRESSO_CHECKOUT]</strong>'); ?></p>
 	<?php
 }
 

@@ -150,7 +150,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
 				'help_tabs' => array(
 					'registration_page_info' => array(
-						'title' => __('Event Registration Page', 'event_espresso'),
+						'title' => __('Registration Checkout Page', 'event_espresso'),
 						'callback' => 'registration_page_info_help_tab'
 						),
 					'notify_url_info' => array(
