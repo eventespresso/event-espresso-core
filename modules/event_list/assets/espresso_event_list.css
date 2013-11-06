@@ -15,13 +15,14 @@
 	}
 	#espresso-events-list-filters-dv select,
 	#espresso-events-list-filters-dv input[type="text"] {
-		padding: 3px; margin: 0; border:1px solid #A39D9C; vertical-align: middle;
+		width: auto; height:auto; padding: 3px; margin: 0; border:1px solid #A39D9C; vertical-align: middle;
 		border-radius:3px; -webkit-border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;
 	}
+	#espresso-events-list-filters-dv label { display: inline-block; }
 	#espresso-events-list-filters-dv span { margin: 0 1em 0 0; }
 	
 	#espresso-events-list-filters-view-dv { float: right; margin:.35em 0 0; }
-	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk { /*vertical-align: middle;*/ }
+	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk { display: inline-block; margin:0; }
 	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk img { vertical-align: middle; }
 	
 	.ee-checkbox { vertical-align: middle; }
@@ -73,14 +74,17 @@
 	
 	.espresso-events-list-wrap-dv { padding:0 0 2em; font-size:12px; }	
 	.espresso-events-list-dv { position: relative; padding: 0; margin: 0 auto; }	
+	.espresso-events-list-dv .espresso-event-list-event { height: auto; }	
 	.espresso-events-list-wrap-dv .event-list-h1 {
-		position: relative; z-index:10; margin:.75em .5em 0em;
+		position: relative; z-index:10;/* margin:.75em .5em 0em;
 		font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 36px; font-weight: bold; color: #A39D9C;
-		text-shadow: 1px 1px 0px #fff;
-	}	
+		text-shadow: 1px 1px 0px #fff;*/
+	}
+	
+	/*.espresso-event-wrapper-dv  .event-title { font-size:1.3em; margin: 0; line-height: 1em; }	*/
 	.espresso-event-wrapper-dv  .event-content p { line-height: 1.5em;	 }	
 
-	.espresso-events-list-wrap-dv a { color: #007BAE; }
+	.espresso-events-list-wrap-dv a { /*color: #007BAE;*/ }
 	.espresso-events-list-wrap-dv .edit-event-lnk { margin-top:1em; }
 	.espresso-events-list-wrap-dv .post-edit-link { /*margin-top:1em;*/ }
 	
@@ -92,7 +96,7 @@
 	}
 	.espresso-events-list-wrap-dv a.ee-button-lnk { /*padding: .55em 1.15em;*/ }
 	.espresso-events-list-wrap-dv a.ee-register-button-lnk {
-		padding: 6px 1.5em 5px; margin:0; background: #7DBD29; border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
+		display: inline-block; width: auto; height: auto; padding: 6px 1.5em 5px; margin:0; background: #7DBD29; border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
 		font-size:14px; line-height:24px; color:#fff; font-weight: bold; text-shadow:1px 1px 0px rgba(0,0,0,.3); 
 		box-shadow:0px 1px 1px rgba(0,0,0,.5), 0px 1px 7px -1px rgba(0,0,0,.3);
 	}
@@ -102,7 +106,7 @@
 	.espresso-events-list-wrap-dv a.edit-event-lnk { margin:0 1em; }
 	
 	.no-espresso-events-found { padding: 2em; }
-	.no-espresso-events-found .event-title { margin:0 0 1em; font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; }
+	.no-espresso-events-found .event-title { /*margin:0 0 1em; font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; */ }
 	.no-espresso-events-found #s { min-width:200px; width:25%; }
 
 	
@@ -122,7 +126,7 @@
 	
 	.grid-event-list-dv  .event-datetimes h4 {
 		display: block; padding:1px 0 0 24px; margin: .25em 0; background: url("../../../images/calendar_year-16x16.png") no-repeat left top transparent;
-		font-size: 1.4em; line-height:1.5em; color:#A39D9C;
+		font-size: 1.4em; line-height:1.5em; /*color:#A39D9C;*/
 	}
 	.grid-event-list-dv  .event-datetimes h4 + h4 {
 		padding-left:5px; background: none;
@@ -136,7 +140,7 @@
 	.grid-event-list-dv  .espresso-event-wrapper-dv { position: relative; margin:0 1em; background:#fff; background: rgba(255, 255, 255, 0.9); }	
 	.grid-event-list-dv  .espresso-event-wrapper-dv.has-img { }	
 	.grid-event-list-dv  .espresso-event-wrapper-dv .event-header { padding:1em 1em 1em; text-shadow: 1px 1px 0px #fff; }	
-	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.3em; margin: 0; line-height: 1em; }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title {/* font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.3em; margin: 0; line-height: 1em;*/ }	
 	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; }	
 	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; text-transform: lowercase; }
 	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-content p { margin: 0 1em 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	 }	
@@ -152,7 +156,7 @@
 	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.5em; }
 	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
 	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .65em; }
-	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1em; }
+	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1em; */}
 	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: .8em; line-height: 1.2em; }
 	.grid-event-list-dv .tiny-event-list-grid a.ee-register-button-lnk { padding: 3px 1.2em 2px; font-size:10px; line-height:15px; }
 	
@@ -163,7 +167,7 @@
 	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.7em; }
 	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
 	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .8em; }
-	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.1em; }	
+	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.1em; */}	
 	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: .9em; line-height: 1.3em; }
 	.grid-event-list-dv .small-event-list-grid a.ee-register-button-lnk { padding: 4px 1.3em 3px; font-size:11px; line-height:18px; }
 	
@@ -174,7 +178,7 @@
 	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.85em; }
 	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
 	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .9em; }
-	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; }	
+	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; */}	
 	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: 1em; line-height: 1.4em; }
 	.grid-event-list-dv .med-event-list-grid a.ee-register-button-lnk { padding: 5px 1.4em 4px; font-size:12px; line-height:21px; }
 	
@@ -194,7 +198,7 @@
 	}
 	
 	.text-event-list-dv .espresso-event-wrapper-dv { }
-	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.8em; margin: 0 0 .5em; line-height: 1em; }	
+	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.8em; margin: 0 0 .5em; line-height: 1em;*/ }	
 	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; }	
 
 	.text-event-list-dv .event-datetimes h4 { margin:0 0 1em; font-size:1.2em; color: #999; }	
@@ -228,8 +232,8 @@
 
 	.dates-event-list-dv .ee-event-img-dv { float: left; width:60px; margin-right:2em; }
 	
-	.dates-event-list-dv .espresso-event-wrapper-dv { float: left; margin-right:2em; max-width: 59%; }
-	.dates-event-list-dv  .espresso-event-wrapper-dv  .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; margin: 0 0 .25em; line-height: 1em; }	
+	.dates-event-list-dv .espresso-event-wrapper-dv { float: right; margin-right:2em; max-width: 69%; }
+	.dates-event-list-dv  .espresso-event-wrapper-dv  .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; margin: 0 0 .25em; line-height: 1em;*/ }	
 
 	.dates-event-list-dv .event-meta { float: right; max-width:17%; min-width:150px; margin:0; font-size:10px; text-align: center; color:#A39D9C; }
 	.dates-event-list-dv .event-categories-pg { margin:1em 0 0; font-size:10px; line-height:10px; text-align:left; color:#A39D9C; }
