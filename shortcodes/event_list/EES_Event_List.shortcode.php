@@ -53,7 +53,9 @@ class EES_Event_List  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		// this will trigger the EED_Event_list->event_list() method during the pre_get_posts hook point, which allows us initialize things, enqueue assets, etc
+		// this will trigger the EED_Event_list->event_list() method during the pre_get_posts hook point, 
+		// this allows us initialize things, enqueue assets, etc, 
+		// as well, this saves an instantiation of the module in an array using 'event_list' as the key, so that we can retrieve it
 		$this->EE->REQ->set( 'ee', 'event_list' );
 	}
 
@@ -74,62 +76,39 @@ class EES_Event_List  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes ) {
+
+		$default_event_list_shortcode_atts = array(
+			'title' => NULL,
+			'limit' => 10,
+			'css_class' => NULL,
+			'show_expired' => FALSE,
+			'show_deleted' => FALSE,
+			'month' => NULL,
+			'category_slug' => NULL,
+			'order_by' => 'start_date',
+			'sort' => 'ASC',
+			'list_type' =>'text'
+		);
+		// allow the defaults to be filtered
+		$default_event_list_shortcode_atts = apply_filters( 'EES_Event_List__process_shortcode__default_event_list_shortcode_atts', $default_event_list_shortcode_atts );
 		// grab attributes and merge with defaults, then extract
-//		extract( shortcode_atts( 
-//			array(
-//				'limit' => 10,
-//				'css_class' => NULL,
-//				'show_expired' => FALSE,
-//				'show_deleted' => FALSE,
-//				'start_date' => NULL,
-//				'category_slug' => NULL,
-//				'order_by' => NULL,
-//				'sort' => NULL,
-//				'default_view' =>'text-list'
-//			), 
-//			$attributes 
-//		));
-//		
-//		// Show Expired ?
-//		$this->EE->REQ->set( 'elf_expired_chk', $show_expired );
-//		// Category
-//		 $this->EE->REQ->set( 'elf_category_dd', $category_slug );
-//		// Start Date
-//		$this->EE->REQ->set( 'elf_month_dd', $start_date );
-//		// default_view
-//		$this->EE->REQ->set( 'elf_default_view', $default_view );
-//		// add the css class
-//		$this->_css_class = $css_class;
-//		add_filter( 'EED_Event_List__event_list_css__event_list_css_array', array( $this, 'event_list_css' ));
-		
+		$attributes = shortcode_atts( $default_event_list_shortcode_atts, $attributes );
+
+		// run the query
 		global $wp_query;
-		$wp_query = new WP_Query( array( 
-			'post_type' => 'espresso_events' 
-		));
-		
+		$wp_query = new EE_Event_List_Query( $attributes );
+		//d( $wp_query );
+		// turn on the output buffer
 		ob_start();
+		// load our template
 		include( EVENT_LIST_TEMPLATES_PATH . EED_Event_List::get_template_part() );
-		$this->EE->REQ->add_output( ob_get_clean() );
-		//wp_reset_query();
+		// now reset the query and postdata
+		wp_reset_query();
 		wp_reset_postdata();		
-	
-		return $this->EE->REQ->get_output();		
+		// pull our content from the output buffer and return it
+		return ob_get_clean();		
 	}	
 
-
-
-	/**
-	 * 	event_list_css
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function event_list_css( $event_list_css =array() ) {
-		if ( ! empty( $this->_css_class )) {
-			$event_list_css[] = $this->_css_class;
-		}
-		return $event_list_css;
-	}
 
 
 
