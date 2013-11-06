@@ -24,11 +24,6 @@
 	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk { /*vertical-align: middle;*/ }
 	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk img { vertical-align: middle; }
 	
-	
-	.free-events { background:#ffffcc; }
-	.blue-bg { background: lightblue; }
-	.red-bg { background: red; }
-	
 	.ee-checkbox { vertical-align: middle; }
 	.ee-checkbox-lbl:hover { cursor: pointer; }
 	
