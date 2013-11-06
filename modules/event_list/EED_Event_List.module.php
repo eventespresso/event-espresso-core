@@ -59,13 +59,24 @@ class EED_Event_List  extends EED_Module {
 
 	/**
 	 * 	whether to display the event list as a grid or list
-	 *	@var 	$_default_view
+	 *	@var 	$_type
 	 * 	@access 	protected
 	 */
-	protected static $_default_view = NULL;
+	protected static $_type = NULL;
 
 
+	/**
+	 * 	array of existing event list views
+	 *	@var 	$_types
+	 * 	@access 	protected
+	 */
+	protected static $_types = array( 'grid', 'text', 'dates' );
 
+
+	public static $espresso_event_list_ID = 0;
+	public static $espresso_grid_event_lists = array();
+
+	
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -116,6 +127,8 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
+		// grid, text or dates ?
+		EED_Event_List::set_type();
 		// grab POST data
 		$this->get_post_data();		
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
@@ -140,10 +153,6 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function event_list() {	
-		// grab POST data
-		$this->get_post_data();		
-		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
-		$this->_filter_query_parts();		
 		// load other required components
 		$this->_load_assests();
 	}
@@ -164,9 +173,60 @@ class EED_Event_List  extends EED_Module {
 		// make sure CPT is set correctly
 		//add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 1 );
 		// build event list query
-		add_filter( 'posts_join', array( $this, 'posts_join' ), 1 );
-		add_filter( 'posts_where', array( $this, 'posts_where' ), 1 );
-		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1 );
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 1 );
+		add_filter( 'posts_where', array( $this, 'posts_where' ), 1, 1 );
+		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 1 );
+	}
+
+	/**
+	 * 	_type - the type of event list : grid, text, dates
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function set_type() {
+		EED_Event_List::$_types = apply_filters( 'EED_Event_List__set_type__types', EED_Event_List::$_types );
+		$view = isset( EE_Registry::instance()->CFG->EED_Event_List['default_type'] ) ? EE_Registry::instance()->CFG->EED_Event_List['default_type'] : 'grid';
+		$view = EE_Registry::instance()->REQ->is_set( 'elf_type' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_type' )) : $view;
+		$view = apply_filters( 'EED_Event_List__set_type__type', $view );
+		if ( ! empty( $view ) && in_array( $view, EED_Event_List::$_types )) {
+			self::$_type = $view;
+		} 
+	}
+
+	/**
+	 * 	_show_expired
+	 *
+	 *  @access 	private
+	 *  @param	boolean	$req_only if TRUE, then ignore defaults and only return $_POST value
+	 *  @return 	boolean
+	 */
+	private static function _show_expired( $req_only = FALSE ) {	
+		// get default value for "display_expired_events" as set in the EE General Settings > Templates > Event Listings 
+		$show_expired = ! $req_only && isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
+		// override default expired option if set via filter
+		$show_expired = EE_Registry::instance()->REQ->is_set( 'elf_expired_chk' ) ? absint( EE_Registry::instance()->REQ->get( 'elf_expired_chk' )) : $show_expired;
+		return $show_expired ? TRUE : FALSE;
+	}
+
+	/**
+	 * 	_event_category_slug
+	 *
+	 *  @access 	private
+	 *  @return 	string
+	 */
+	private static function _event_category_slug() {			
+		return EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
+	}
+
+	/**
+	 * 	_display_month - what month should the event list display events for?
+	 *
+	 *  @access 	private
+	 *  @return 	string
+	 */
+	private static function _display_month() {			
+		return EE_Registry::instance()->REQ->is_set( 'elf_month_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_month_dd' )) : '';
 	}
 
 
@@ -178,18 +238,15 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function get_post_data() {
-		$this->_elf_month = $this->EE->REQ->is_set( 'elf_month_dd' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_month_dd' )) : '';
-		$this->_elf_category = $this->EE->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_category_dd' )) : '';
-		//$display_expired_events = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
-		$this->_show_expired = $this->EE->REQ->is_set( 'elf_expired_chk' ) ? absint( $this->EE->REQ->get( 'elf_expired_chk' )) : FALSE;
-		$default_view = isset( EE_Registry::instance()->CFG->EED_Event_List['default_view'] ) ? EE_Registry::instance()->CFG->EED_Event_List['default_view'] : 'grid';
-		self::$_default_view = $this->EE->REQ->is_set( 'elf_default_view' ) ? sanitize_text_field( $this->EE->REQ->get( 'elf_default_view' )) : $default_view;
+		$this->_elf_month = EED_Event_List::_display_month();
+		$this->_elf_category = EED_Event_List::_event_category_slug();
+		$this->_show_expired = EED_Event_List::_show_expired( TRUE );
 //		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		echo '<h4>$this->_elf_month : ' . $this->_elf_month . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->_elf_category : ' . $this->_elf_category . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		printr( $this->_elf_category, '$this->_elf_category  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		echo '<h4>$this->_show_expired : ' . $this->_show_expired . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_default_view : ' . $this->_default_view . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_type : ' . $this->_type . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	}
 
 
@@ -212,18 +269,72 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function posts_join( $SQL ) {
-		global $wpdb, $wp_query;
+		global $wp_query;
 //		d( $wp_query );		
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' /*&& $wp_query->is_main_query()*/ ) {
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
 			// Category
-			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
-			if ( ! empty( $elf_category )) {
-				$SQL .= "LEFT JOIN $wpdb->term_relationships ON ($wpdb->posts.ID = $wpdb->term_relationships.object_id)";
-				$SQL .= "LEFT JOIN $wpdb->term_taxonomy ON ($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)";
-				$SQL .= "LEFT JOIN $wpdb->terms ON ($wpdb->terms.term_id = $wpdb->term_taxonomy.term_id)";
-			}
+//			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
+			$SQL .= EED_Event_List::posts_join_sql_for_terms( EED_Event_List::_event_category_slug() );
 		}
 		return $SQL;
+	}
+
+
+	/**
+	 * 	posts_join_sql_for_terms
+	 *
+	 *  @access 	public
+	 *  @param	mixed boolean|string	$join_terms pass TRUE or term string, doesn't really matter since this value doesn't really get used for anything yet
+	 *  @return 	string
+	 */
+	public static function posts_join_sql_for_terms( $join_terms = NULL ) {
+		$SQL= '';
+		if ( ! empty( $join_terms )) {
+			global $wpdb;
+			$SQL .= " LEFT JOIN $wpdb->term_relationships ON ($wpdb->posts.ID = $wpdb->term_relationships.object_id)";
+			$SQL .= " LEFT JOIN $wpdb->term_taxonomy ON ($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)";
+			$SQL .= " LEFT JOIN $wpdb->terms ON ($wpdb->terms.term_id = $wpdb->term_taxonomy.term_id) ";
+		}
+		return  $SQL;
+	}
+
+
+	/**
+	 * 	posts_join_for_orderby
+	 * 	usage:  $SQL .= EED_Event_List::posts_join_for_orderby( $orderby_params );
+	 *
+	 *  @access 	public
+	 *  @param	array	$orderby_params 
+	 *  @return 	string
+	 */
+	public static function posts_join_for_orderby( $orderby_params = array() ) {
+		$SQL= '';
+		$orderby_params = is_array( $orderby_params ) ? $orderby_params : array( $orderby_params );
+		foreach( $orderby_params as $orderby ) {
+			switch ( $orderby ) {
+				
+				case 'ticket_start' :
+				case 'ticket_end' :
+					$SQL .= ' LEFT JOIN ' . EEM_Datetime_Ticket::instance()->table() . ' ON (' . EEM_Datetime::instance()->table() . '.DTT_ID = ' . EEM_Datetime_Ticket::instance()->table() . '.DTT_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Ticket::instance()->table() . ' ON (' . EEM_Datetime_Ticket::instance()->table() . '.TKT_ID = ' . EEM_Ticket::instance()->table() . '.TKT_ID )';
+					break;
+				
+				case 'venue_title' :
+				case 'city' :
+					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Venue::instance()->table() . '.VNU_ID )';
+					break;
+				
+				case 'state' :
+					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Event_Venue::instance()->second_table() . '.VNU_ID )';
+					break;
+				
+				break;
+				
+			}
+		}
+		return  $SQL;
 	}
 
 
@@ -234,20 +345,59 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function posts_where( $SQL ) {
-		global $wpdb, $wp_query;
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' /*&& $wp_query->is_main_query()*/ ) {			
+		global $wp_query;
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events'  ) {			
 			// Show Expired ?
-			$show_expired = isset( EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Event_List['display_expired_events'] : FALSE;
-			// override default expired option if set via filter
-			$show_expired = EE_Registry::instance()->REQ->is_set( 'elf_expired_chk' ) ? absint( EE_Registry::instance()->REQ->get( 'elf_expired_chk' )) : $show_expired;
-			$SQL .= ! $show_expired ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . date('Y-m-d H:s:i') . '" ' : '';
+			$SQL .= EED_Event_List::posts_where_sql_for_show_expired( EED_Event_List::_show_expired() );
 			// Category
-			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
-			$SQL .=  ! empty( $elf_category ) ? ' AND ' . $wpdb->terms . '.slug = "' . $elf_category . '" ' : '';
+			//$elf_category = EED_Event_List::_event_category_slug();
+			$SQL .=  EED_Event_List::posts_where_sql_for_event_category_slug( EED_Event_List::_event_category_slug() );
 			// Start Date
-			$elf_month = EE_Registry::instance()->REQ->is_set( 'elf_month_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_month_dd' )) : '';
-			$SQL .= ! empty( $elf_month ) ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $elf_month )) . '"' : '';
-			$SQL .= ! empty( $elf_month ) ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $elf_month )) . '" ' : '';
+			//$elf_month = EED_Event_List::_display_month();
+			$SQL .= EED_Event_List::posts_where_sql_for_event_list_month( EED_Event_List::_display_month() );
+		}
+		return $SQL;
+	}
+
+
+	/**
+	 * 	posts_where_sql_for_show_expired
+	 *
+	 *  @access 	public
+	 *  @param	boolean	$show_expired if TRUE, then displayed past events
+	 *  @return 	string
+	 */
+	public static function posts_where_sql_for_show_expired( $show_expired = FALSE ) {
+		return  $show_expired != FALSE ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . date('Y-m-d H:s:i') . '" ' : '';
+	}
+
+
+	/**
+	 * 	posts_where_sql_for_event_category_slug
+	 *
+	 *  @access 	public
+	 *  @param	boolean	$event_category_slug
+	 *  @return 	string
+	 */
+	public static function posts_where_sql_for_event_category_slug( $event_category_slug = NULL ) {
+		global $wpdb;
+		return  ! empty( $event_category_slug ) ? ' AND ' . $wpdb->terms . '.slug = "' . $event_category_slug . '" ' : '';
+	}
+
+	/**
+	 * 	posts_where_sql_for_event_list_month
+	 *
+	 *  @access 	public
+	 *  @param	boolean	$month
+	 *  @return 	string
+	 */
+	public static function posts_where_sql_for_event_list_month( $month = NULL ) {
+		$SQL= '';
+		if ( ! empty( $month )) {
+			// event start date is LESS than the end of the month ( so nothing that doesn't start until next month )
+			$SQL = ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start <= "' . date('Y-m-t 23:59:59', strtotime( $month )) . '"';
+			// event end date is GREATER than the start of the month ( so nothing that ended before this month )
+			$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date('Y-m-d 0:0:00', strtotime( $month )) . '" ';
 		}
 		return $SQL;
 	}
@@ -260,11 +410,92 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function posts_orderby( $SQL ) {
-		global $wpdb, $wp_query;
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' /*&& $wp_query->is_main_query() */) {			
-			$SQL = ' ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ASC ';
+		global $wp_query;
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {			
+			$SQL = EED_Event_List::posts_orderby_sql( array( 'start_date' ));
 		}
 		return $SQL;
+	}
+
+
+	/**
+	 * 	posts_orderby_sql
+	 * 
+	 * 	possible parameters:
+	 * 	ID
+	 * 	start_date
+	 * 	end_date
+	 * 	event_name
+	 * 	category_slug
+	 * 	ticket_start
+	 * 	ticket_end
+	 * 	venue_title 
+	 * 	city
+	 * 	state
+	 * 
+	 * 	**IMPORTANT**  
+	 * 	make sure to also send the $orderby_params array to the posts_join_for_orderby() method
+	 * 	or else some of the table references below will result in MySQL errors
+	 *
+	 *  @access 	public
+	 *  @param	boolean	$orderby_params
+	 *  @return 	string
+	 */
+	public static function posts_orderby_sql( $orderby_params = array(), $sort = 'ASC' ) {
+		global $wpdb;
+		$SQL = '';
+		$cntr = 1;
+		$orderby_params = is_array( $orderby_params ) ? $orderby_params : array( $orderby_params );
+		foreach( $orderby_params as $orderby ) {
+			$glue = $cntr == 1 || $cntr == count( $orderby_params ) ? ' ' : ', ';
+			switch ( $orderby ) {
+				
+				case 'id' :
+				case 'ID' :
+					$SQL .= $glue . $wpdb->posts . '.ID ' . $sort;
+					break;
+				
+				case 'start_date' :
+					$SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_start ' . $sort;
+					break;
+				
+				case 'end_date' :
+					$SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_end ' . $sort;
+					break;
+				
+				case 'event_name' :
+					$SQL .= $glue . $wpdb->posts . '.post_title ' . $sort;
+					break;
+				
+				case 'category_slug' :
+					$SQL .= $glue . $wpdb->terms . '.slug ' . $sort;
+					break;
+				
+				case 'ticket_start' :
+					$SQL .= $glue . EEM_Ticket::instance()->table() . '.TKT_start_date ' . $sort;
+					break;
+				
+				case 'ticket_end' :
+					$SQL .= $glue . EEM_Ticket::instance()->table() . '.TKT_end_date ' . $sort;
+					break;
+				
+				case 'venue_title' :
+					$SQL .= $glue . 'venue_title ' . $sort;
+					break;
+				
+				case 'city' :
+					$SQL .= $glue . EEM_Venue::instance()->second_table() . '.VNU_city ' . $sort;
+				break;
+				
+				case 'state' :
+					$SQL .= $glue . EEM_State::instance()->table() . '.STA_name ' . $sort;
+				break;
+				
+			}
+			$cntr++;
+		}
+		//echo '<h4>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		return  $SQL;
 	}
 
 
@@ -307,24 +538,27 @@ class EED_Event_List  extends EED_Module {
 	 */
 	public function excerpt_length( $length ) {
 		
-		if ( self::$_default_view == 'grid' ) {
+		if ( self::$_type == 'grid' ) {
 			return 36;
 		}
 		
 		switch ( EE_Registry::instance()->CFG->template_settings->EED_Event_List->event_list_grid_size ) {
 			case 'tiny' :
-					return 12;
+				return 12;
 				break;
 			case 'small' :
-					return 24;
+				return 24;
 				break;
 			case 'large' :
-					return 48;
+				return 48;
 				break;
+			case 'medium' :
 			default :
-					return 36;
+				return 36;
 		}		
 	}
+
+
 
 	/**
 	 * 	excerpt_more
@@ -375,7 +609,6 @@ class EED_Event_List  extends EED_Module {
 			wp_enqueue_script( 'jquery-masonry' );
 			wp_enqueue_script( 'espresso_event_list' );
 		}
-
 	}
 
 
@@ -410,10 +643,10 @@ class EED_Event_List  extends EED_Module {
 		$CFG->display_address = isset( $CFG->display_address ) && ! empty( $CFG->display_address ) ? $CFG->display_address : FALSE;
 		$CFG->display_venue = isset( $CFG->display_venue ) && ! empty( $CFG->display_venue ) ? $CFG->display_venue : FALSE;
 		$CFG->display_expired_events = isset( $CFG->display_expired_events ) && ! empty( $CFG->display_expired_events ) ? $CFG->display_expired_events : FALSE;
-		$CFG->default_view = isset( $CFG->default_view ) && ! empty( $CFG->default_view ) ? $CFG->default_view : 'grid';
-		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'large';
+		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
+		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
 		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EVENT_LIST_TEMPLATES_PATH . 'archive-espresso_events.template.php';
-		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EVENT_LIST_TEMPLATES_PATH . 'grid-view-event-list.template.php';
+		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EVENT_LIST_TEMPLATES_PATH . 'grid-event-list.template.php';
 		return $CFG;
 	}
 
@@ -446,21 +679,21 @@ class EED_Event_List  extends EED_Module {
 		$CFG->EED_Event_List->display_address = isset( $REQ['display_address_in_event_list'] ) ? absint( $REQ['display_address_in_event_list'] ) : FALSE;
 		$CFG->EED_Event_List->display_venue = isset( $REQ['display_venue_in_event_list'] ) ? absint( $REQ['display_venue_in_event_list'] ) : FALSE;
 		$CFG->EED_Event_List->display_expired_events = isset( $REQ['display_expired_events'] ) ? absint( $REQ['display_expired_events'] ) : FALSE;
-		$CFG->EED_Event_List->default_view = isset( $REQ['default_view'] ) ? sanitize_text_field( $REQ['default_view'] ) : 'grid';
-		$CFG->EED_Event_List->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'large';
+		$CFG->EED_Event_List->default_type = isset( $REQ['default_type'] ) ? sanitize_text_field( $REQ['default_type'] ) : 'grid';
+		$CFG->EED_Event_List->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'medium';
 		$CFG->EED_Event_List->templates = array(
 				'full'  => str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'archive-espresso_events.template.php'
 			);
 		
-		switch ( $CFG->EED_Event_List->default_view ) {
-			case 'dates-list' :
-					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'dates-list-event-list.template.php';
+		switch ( $CFG->EED_Event_List->default_type ) {
+			case 'dates' :
+					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'dates-event-list.template.php';
 				break;
-			case 'text-list' :
-					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'text-list-event-list.template.php';
+			case 'text' :
+					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'text-event-list.template.php';
 				break;
 			default :
-					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'grid-view-event-list.template.php';
+					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'grid-event-list.template.php';
 		}
 		
 		return $CFG;
@@ -481,7 +714,7 @@ class EED_Event_List  extends EED_Module {
 			'elf_month' => $this->_elf_month,
 			'elf_category' => $this->_elf_category,
 			'elf_show_expired' => $this->_show_expired,
-			'elf_default_view' => $this->_default_view
+			'elf_type' => $this->_type
 		);
 		EEH_Template::display_template( EVENT_LIST_TEMPLATES_PATH . 'event-list-template-filters.template.php', $args );		
 	}
@@ -500,8 +733,8 @@ class EED_Event_List  extends EED_Module {
 	public static function event_list_css() {
 		$EE = EE_Registry::instance();
 		$event_list_css = array( 'espresso-event-list-event' );
-		if ( self::$_default_view == 'grid' ) {
-			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Event_List->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Event_List->event_list_grid_size : 'large';
+		if ( self::$_type == 'grid' ) {
+			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Event_List->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Event_List->event_list_grid_size : 'medium';
 			$event_list_css[] = $event_list_grid_size . '-event-list-grid';
 		}
 		$event_list_css = apply_filters( 'EED_Event_List__event_list_css__event_list_css_array', $event_list_css );
@@ -550,25 +783,52 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function get_template_part() {
-		switch ( self::$_default_view ) {
-			case 'dates-list' :
-					return 'dates-list-event-list.template.php';
+		switch ( self::$_type ) {
+			case 'dates' :
+					return 'dates-event-list.template.php';
 				break;
-			case 'text-list' :
-					return 'text-list-event-list.template.php';
+			case 'text' :
+					return 'text-event-list.template.php';
 				break;
 			default :
-					return 'grid-view-event-list.template.php';
+					return 'grid-event-list.template.php';
 		}
 		
 //		return EE_Registry::instance()->CFG->EED_Event_List['templates']['part'];
 	}
-	
+
+
+
+	/**
+	 * 	event_list_title
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function event_list_title() {
+		return apply_filters( 'EED_Event_List__event_list_title__event_list_title', __( 'Upcoming Events', 'event_espresso' ));
+	}	
 
 
 }
 
 
+
+function espresso_get_event_list_ID() {
+	EED_Event_List::$espresso_event_list_ID++;
+	return EED_Event_List::$espresso_event_list_ID;
+}
+
+
+function espresso_grid_event_list( $ID ) {
+	EED_Event_List::$espresso_grid_event_lists[] = $ID;	
+	return $ID;
+}
+
+
+function espresso_event_list_title() {
+	return EED_Event_List::event_list_title();
+}
 
 function espresso_event_list_css() {
 	return EED_Event_List::event_list_css();
@@ -592,5 +852,177 @@ function espresso_event_list_template_part() {
 
 
 
+class EE_Event_List_Query extends WP_Query {
+
+	private $_title = NULL;
+	private $_limit = 10;
+	private $_css_class = NULL;
+	private $_show_expired = FALSE;
+	private $_show_deleted = FALSE;
+	private $_month = NULL;
+	private $_category_slug = NULL;
+	private $_order_by = NULL;
+	private $_sort = NULL;
+	private $_list_type ='text';	
+
+	function __construct( $args = array() ) {
+		//printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// incoming args could be a mix of WP query args + EE shortcode args
+		foreach ( $args as $key =>$value ) {
+			$property = '_' . $key;
+			// if the arg is a property of this class, then it's an EE shortcode arg
+			if ( property_exists( $this, $property )) {
+				// set the property value
+				$this->$property = $value;
+				// then remove it from the array of args that will later be passed to WP_Query() 
+				unset( $args[ $key ] );
+			}
+		}
+		// parse orderby attribute
+		if ( $this->_order_by !== NULL ) {
+			$this->_order_by = explode( ',', $this->_order_by );
+			$this->_order_by = array_map('trim', $this->_order_by);
+		}
+		$this->_sort = in_array( $this->_sort, array( 'ASC', 'asc', 'DESC', 'desc' )) ? strtoupper( $this->_sort ) : 'ASC';
+		
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'EED_Event_List__set_type__type', array( $this, 'event_list_type' ));
+		remove_filter( 'EED_Event_List__event_list_title__event_list_title', array( $this, 'event_list_title' )); 
+		remove_all_filters( 'EED_Event_List__event_list_css__event_list_css_array' );
+//		remove_all_filters( 'EED_Event_List__event_list_css__event_list_css_array', array( $this, 'event_list_css' ));
+
+		//  set view
+		add_filter( 'EED_Event_List__set_type__type', array( $this, 'event_list_type' ), 10, 1 );
+		// have to call this in order to get the above filter applied
+		EED_Event_List::set_type();
+		// Event List Title ?
+		add_filter( 'EED_Event_List__event_list_title__event_list_title', array( $this, 'event_list_title' ), 10, 1 ); 
+		// add the css class
+		add_filter( 'EED_Event_List__event_list_css__event_list_css_array', array( $this, 'event_list_css' ), 10, 1 );
+
+		// Force these args
+		$args = array_merge( $args, array(
+			'post_type' => 'espresso_events',
+			'posts_per_page' => $this->_limit,
+			'update_post_term_cache' => FALSE,
+			'update_post_meta_cache' => FALSE
+		));
+		// filter the query parts
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
+		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
+		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 10, 1 );
+		
+		// run the query
+		parent::__construct( $args );
+	}
+
+
+
+	/**
+	 * 	posts_join
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function posts_join( $SQL ) {
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'posts_join', array( $this, 'posts_join' ));
+		// generate the SQL
+		if ( $this->_category_slug !== NULL ) {
+			$SQL .= EED_Event_List::posts_join_sql_for_terms( TRUE );
+		}
+		if ( $this->_order_by !== NULL ) {
+			$SQL .= EED_Event_List::posts_join_for_orderby( $this->_order_by );
+		}
+		return $SQL;
+	}
+
+
+	/**
+	 * 	posts_where
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function posts_where( $SQL ) {
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'posts_where', array( $this, 'posts_where' ));
+		// Show Expired ?
+		$this->_show_expired = $this->_show_expired ? TRUE : FALSE;
+		$SQL .= EED_Event_List::posts_where_sql_for_show_expired( $this->_show_expired );
+		// Category
+		$SQL .=  EED_Event_List::posts_where_sql_for_event_category_slug( $this->_category_slug );
+		// Start Date
+		$SQL .= EED_Event_List::posts_where_sql_for_event_list_month( $this->_month );
+		return $SQL;
+	}
+
+
+	/**
+	 * 	posts_orderby
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function posts_orderby( $SQL ) {
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'posts_orderby', array( $this, 'posts_orderby' ) );
+		// generate the SQL
+		$SQL =  EED_Event_List::posts_orderby_sql( $this->_order_by, $this->_sort );
+		return $SQL;
+	}
+
+
+	/**
+	 * 	event_list_title
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function event_list_type( $event_list_type ) {
+		if ( ! empty( $this->_list_type )) {
+			return $this->_list_type;
+		}
+		return $event_list_type;
+	}
+
+
+	/**
+	 * 	event_list_title
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function event_list_title( $event_list_title ) {
+		if ( ! empty( $this->_title )) {
+			return $this->_title;
+		}
+		return $event_list_title;
+	}
+
+
+
+	/**
+	 * 	event_list_css
+	 *
+	 *  @access 	public
+	 *  @return 	array
+	 */
+	public function event_list_css( $event_list_css ) {
+		if ( ! empty( $this->_css_class )) {
+			$event_list_css[] = $this->_css_class;
+		}
+		if ( ! empty( $this->_category_slug )) {
+			$event_list_css[] = $this->_category_slug;
+		}
+		return $event_list_css;
+	}
+
+
+
+
+
+
+}
 // End of file EED_Event_List.module.php
 // Location: /modules/event_list/EED_Event_List.module.php
