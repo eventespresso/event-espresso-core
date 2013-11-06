@@ -391,8 +391,8 @@ class EE_Payment extends EE_Base_Class{
 	*		get Payment Timestamp
 	* 		@access		public
 	*/
-	public function timestamp( $dt_frmt = FALSE ) {
-		return $this->get('PAY_timestamp');
+	public function timestamp( $dt_frmt = FALSE, $tm_frmt = FALSE, $date_or_time = NULL ) {
+		return $this->get_datetime('PAY_timestamp', $dt_frmt, $tm_frmt, $date_or_time );
 	}
 
 

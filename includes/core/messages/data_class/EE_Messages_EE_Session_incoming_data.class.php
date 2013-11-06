@@ -43,7 +43,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 		$this->txn = $session['transaction'];
 
 		if ( empty( $this->txn ) || ! $this->txn instanceof EE_Transaction ) {
-			throw new EE_Error( __('Incomding data for the EE_Session data handler must have a valid EE_Transaction object in order to setup the data') );
+			throw new EE_Error( __('Incoming data for the EE_Session data handler must have a valid EE_Transaction object in order to setup the data') );
 		}
 
 		$this->reg_info = array();

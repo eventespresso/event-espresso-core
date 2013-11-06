@@ -92,6 +92,7 @@ class PluginUpdateEngineChecker {
 	 */
 	function __construct( $metadataUrl = NULL, $slug = NULL, $options = array() ){
 		$this->metadataUrl = $metadataUrl;
+
 		$this->_incoming_slug = $slug;
 
 		$options_verified = $this->_verify_options( $options );
@@ -129,7 +130,7 @@ class PluginUpdateEngineChecker {
 	 */
 	private function _check_for_forced_upgrade() {
 		//is this premium?  let's delete any saved options for free
-		if ( $this->_is_premium ) {
+		if ( $this->_is_premium && isset($this->_incoming_slug['free'] ) ) {
 			delete_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])]);
 		} else {
 
@@ -200,6 +201,9 @@ class PluginUpdateEngineChecker {
 				$this->_display_errors('slug_array_invalid');
 				return FALSE;
 			}
+		} else {
+			$this->_display_errors('slug_not_array');
+			return FALSE;
 		}
 		
 		$this->_installed_version = $this->getInstalledVersion();
@@ -217,30 +221,40 @@ class PluginUpdateEngineChecker {
 
 	private function _display_errors( $type ) {
 		$msg = '';
+		if ( defined('WP_DEBUG') && WP_DEBUG ) {
+			switch ( $type ) {
+				case 'options' :
+					$msg .= sprintf( __('Plugin Update Engine is unable to setup correctly for the plugin with the slug "%s" because there are the following keys missing from the options array sent to the PluginUpdateEngineChecker class when it is instantiated:', $this->lang_domain), $this->_incoming_slug ) . '</p><p>';
+					$msg .= '<ul>';
+					foreach ( $this->_pue_errors as $error ) {
+						$msg .= '<li>' . $error . '</li>';
+					}
+					$msg .= '</ul>';
+					break;
 
-		switch ( $type ) {
-			case 'options' :
-				$msg .= __('Plugin Update Engine is unable to setup correctly because there are the following keys missing from the options array sent to the PluginUpdateEngineChecker class when it is instantiated:', $this->lang_domain) . '</p><p>';
-				$msg .= '<ul>';
-				foreach ( $this->_pue_errors as $error ) {
-					$msg .= '<li>' . $error . '</li>';
-				}
-				$msg .= '</ul>';
-				break;
+				case 'slug_array_invalid' :
+					$msg .= __('An array was sent to the PluginUpdateEngineChecker class as the value for the $plugin_slug property, however the array is missing the "premium" index.', $this->lang_domain);
+					break;
 
-			case 'slug_array_invalid' :
-				$msg .= __('An array was sent to the PluginUpdateEngineChecker class as the value for the $plugin_slug property, however the array is missing either the "premium" index.', $this->lang_domain);
-				break;
+				case 'slug_string_invalid' :
+					$msg .= __('A string was sent to the PluginUpdateEngineChecker class as the value for the $plugin_slug property, however the string is empty', $this->lang_domain);
+					break;
 
-			case 'slug_string_invalid' :
-				$msg .= __('A string was sent to the PluginUpdateEngineChecker class as the value for the $plugin_slug property, however the string is empty', $this->lang_domain);
-				break;
+				case 'no_version_present' :
+					$msg .= __('For some reason PUE is unable to determine the current version of the plugin. It is possible that the incorrect value was sent for the "plugin_basename" key in the <strong>$options</strong> array.', $this->lang_domain);
+					break;
 
-			case 'no_version_present' :
-				$msg .= __('For some reason PUE is unable to determine the current version of the plugin. It is possible that the incorrect value was sent for the "plugin_basename" key in the <strong>$options</strong> array.', $this->lang_domain);
+				case 'slug_not_array' :
+					//Old method for plugin name is just to use the slug and manipulate
+					$pluginname = ucwords(str_replace('-', ' ', $this->_incoming_slug) );
+					$msg .= sprintf( __('The following plugin needs to be updated in order to work with this version of our plugin update script: <strong>%s</strong</p><p>You will have to update this manually.  Contact support for further intstructions', $this->lang_domain), $pluginname);
+					break;
+			}
+		} else {
+			$msg .= sprintf( __('Unable to setup automatic updates for the plugin with the slug "%s" because it\'s running an old version of the code used for updates.  To get the new code please update this plugin manually.', $this->lang_domain), $this->_incoming_slug ) . '</p><p>';
 		}
 
-		$this->_error_msg = '<p>' . $msg . '</p>';
+		$this->_error_msg = apply_filters('PUE__display_errors', '<p>' . $msg . '</p>', $type, $this->_pue_errors, $this->_incoming_slug);
 		add_action( 'admin_notices', array( $this, 'show_pue_client_errors'), 10 );
 	}
 
@@ -274,6 +288,7 @@ class PluginUpdateEngineChecker {
 	 * @param mixed (array|string) $slug either an array containing free product slugs or premium product
 	 */
 	private function _set_slug_and_slug_props( $slug, $options ) {
+
 
 		$this->pluginFile = $options['plugin_basename'];
 		$this->lang_domain = isset( $options['lang_domain'] ) && !empty($options['lang_domain']) ? $options['lang_domain'] : NULL;
@@ -309,7 +324,7 @@ class PluginUpdateEngineChecker {
 			//let's go through the conditions on what we use for the slug
 			$set_slug = $this->_is_premium ? $slug['premium'][key($slug['premium'])] : NULL;
 			$set_slug = empty( $set_slug ) && $this->_is_prerelease ? $slug['prerelease'][key($slug['prerelease'])] : $set_slug;
-			$set_slug = empty( $set_slug ) ? $slug['free'][key($slug['free'])] : $set_slug;
+			$set_slug = empty( $set_slug ) && isset( $slug['free'] ) ? $slug['free'][key($slug['free'])] : $set_slug;
 		} else {
 			//first verify that $slug is not empty!
 			if ( empty($slug ) ) {
@@ -491,7 +506,8 @@ class PluginUpdateEngineChecker {
 				$this->_force_premium_upgrade = TRUE;
 				$this->pue_install_key = 'pue_install_key_'.$this->slug;
 				$this->optionName = 'external_updates-' . $this->slug;
-				update_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])], $this->slug );
+				if ( isset( $this->_incoming_slug['free'] ) )
+					update_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])], $this->slug );
 			}
 
 			$this->checkForUpdates();
@@ -662,7 +678,7 @@ class PluginUpdateEngineChecker {
 	
 	}
 	
-	function display_json_error() {
+	function display_json_error($echo = TRUE, $ignore_version_check = FALSE, $alt_content = '') {
 		$pluginInfo = $this->json_error;
 		$update_dismissed = get_option($this->dismiss_upgrade);
 		$msg = '';
@@ -677,7 +693,7 @@ class PluginUpdateEngineChecker {
 			update_option( 'pue_verification_error_' . $this->pluginFile, __('No API key is present', $this->lang_domain) );
 		
 		//only display messages if there is a new version of the plugin.  
-		if ( version_compare($pluginInfo->version, $this->_installed_version, '>') ) {
+		if ( version_compare($pluginInfo->version, $this->_installed_version, '>') || $ignore_version_check ) {
 			if ( $pluginInfo->api_invalid ) {
 				$msg = str_replace('%plugin_name%', $this->pluginName, $pluginInfo->api_invalid_message);
 				$msg = str_replace('%version%', $pluginInfo->version, $msg);
@@ -687,8 +703,9 @@ class PluginUpdateEngineChecker {
 			update_option( 'pue_verification_error_' . $this->pluginFile, $msg );
 
 			//Dismiss code idea below is obtained from the Gravity Forms Plugin by rocketgenius.com
+			ob_start();
 			?>
-				<div class="updated" style="padding:15px; position:relative;" id="pu_dashboard_message"><?php echo $msg ?>
+			<div class="updated" style="padding:15px; position:relative;" id="pu_dashboard_message"><?php echo $alt_content . $msg ?>
 				<a href="javascript:void(0);" onclick="PUDismissUpgrade();" style='float:right;'><?php _e("Dismiss") ?></a>
             </div>
             <script type="text/javascript">
@@ -698,6 +715,12 @@ class PluginUpdateEngineChecker {
                 }
             </script>
 			<?php
+			$content = ob_get_contents();
+			ob_end_clean();
+			if ( $echo )
+				echo $content;
+			else
+				return $content;
 		}
 	}
 
@@ -720,11 +743,11 @@ class PluginUpdateEngineChecker {
 			return;
 		//first any json errors?
 		if ( !empty( $this->json_error ) && isset($this->json_error->api_invalid) ) {
-				$msg = str_replace('%plugin_name%', $this->pluginName, $this->json_error->api_invalid_message);
-				$msg = str_replace('%version%', $this->json_error->version, $msg);
-				$msg = sprintf( __('It appears you\'ve tried entering an api key to upgrade to the premium version of %s, however, the key does not appear to be valid.  This is the message received back from the server:', $this->lang_domain ), $this->pluginName ) . '</p><p>' . $msg;
+				$msg = $this->display_json_error(FALSE, TRUE, '<p>' . sprintf( __('It appears you\'ve tried entering an api key to upgrade to the premium version of %s, however, the key does not appear to be valid.  This is the message received back from the server:', $this->lang_domain ), $this->pluginName ) . '</p>');
+				echo $msg;
+				return;
 		} else {
-			$msg = sprintf( __('Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.', $this->_lang_domain), $this->pluginName );
+			$msg = sprintf( __('Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.', $this->lang_domain), $this->pluginName );
 		}
 
 		//todo add in upgrade button in here.
@@ -732,7 +755,7 @@ class PluginUpdateEngineChecker {
 		$button = '<a href="' . $button_link . '" class="button-secondary pue-upgrade-now-button" value="no">' . __('Upgrade Now', $this->lang_domain) . '</a>';
 
 		$content = '<div class="updated" style="padding:15px; position:relative;" id="pue_update_now_container"><p>' . $msg . '</p>';
-		$content .= empty($this->json_error) ? $button : '';
+		$content .= $button;
 		$content .= '</div>';
 
 		echo $content;

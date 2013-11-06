@@ -237,7 +237,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('espresso_txn');
 
 		//scripts
-		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'jquery-ui-datepicker', 'jquery-ui-draggable', 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'ee-datepicker', 'jquery-ui-datepicker', 'jquery-ui-draggable', 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso_txn');	
 
 		;
@@ -477,6 +477,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		}
 
 		$this->_template_args['grand_total'] = EEH_Template::format_currency($this->_transaction->get('TXN_total') );
+		$this->_template_args['grand_raw_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['TXN_status'] = $this->_transaction->get('STS_ID');
 
 		$txn_status_class = 'status-' . $this->_transaction->get('STS_ID');
@@ -757,6 +758,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			
 			//prepare to render page
 			$transaction = $payment->transaction();
+			//finalize so we update reg status if necessary.
+			$transaction->finalize();
 			$this->_get_payment_status_array();
 			$return_data['amount'] = $payment->amount();
 			$return_data['total_paid'] = $transaction->paid();
@@ -765,7 +768,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$return_data['PAY_ID'] = $payment->ID();
 			$return_data['STS_ID'] = $payment->STS_ID();
 			$return_data['status'] = self::$_pay_status[ $payment->STS_ID() ];
-			$return_data['date'] = $payment->timestamp( 'D M j, Y' );
+			$return_data['date'] = $payment->timestamp( 'Y-m-d', 'h:i a' );
 			$return_data['method'] = strtoupper( $payment->method() ) ;
 			$this->_get_active_gateways();
 			$return_data['gateway'] = isset( $this->_template_args['active_gateways'][ $payment->gateway() ] ) ? $this->_template_args['active_gateways'][ $payment->gateway() ] : $payment->gateway();
@@ -809,7 +812,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						'total_paid' => $transaction->paid(), 
 						'txn_status' => $transaction->status_ID(),
 						'pay_status' => $payment->STS_ID(),
-						'PAY_ID' => $PAY_ID
+						'PAY_ID' => $this->_req_data['ID']
 					); 						
 				}						
 			}

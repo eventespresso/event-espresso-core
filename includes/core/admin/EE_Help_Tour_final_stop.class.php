@@ -60,7 +60,7 @@ class EE_Help_Tour_final_stop extends EE_Help_Tour {
 			'action' => 'admin_option_settings',
 			'page' => 'espresso_general_settings'
 			);
-		return '<p>' . sprintf( __('That\'s it for the tour!  At any time you can restart a tour by clicking on this help dropdown and then clicking one of the Tour buttons.  There are help tours available on all Event Espresso Admin pages.  If you want to turn off help tours for all pages, %sgo here%s. All the best with your events!', 'event_espresso'), '<a href="' . EE_Admin_Page::add_query_args_and_nonce($query_args, '/admin.php' ) . '">', '</a>' ) . '</p>';
+		return '<p>' . sprintf( __('That\'s it for the tour!  At any time you can restart a tour by clicking on this help dropdown and then clicking one of the Tour buttons.  There are help tours available on all Event Espresso Admin pages.  If you want to turn off help tours for all pages, %sgo here%s. All the best with your events!', 'event_espresso'), '<a href="' . EE_Admin_Page::add_query_args_and_nonce($query_args, admin_url('admin.php') ) . '">', '</a>' ) . '</p>';
 	}
 
 }

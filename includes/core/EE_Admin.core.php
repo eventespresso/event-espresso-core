@@ -71,6 +71,8 @@ final class EE_Admin {
 		// load EE_Request_Handler early
 		add_action( 'init', array( $this, 'get_request' ), 4 );
 		add_action( 'init', array( $this, 'init' ), 100 );
+		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
+		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 15 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
@@ -190,6 +192,31 @@ final class EE_Admin {
 
 
 
+	/**
+	 * This is the action hook for the AHEE__EE_Admin_Page__route_admin_request hook that fires off right before an EE_Admin_Page route is called.
+	 *
+	 * @param  string 		 $route 	  The route being called
+	 * @param  EE_Admin_Page $admin_page  The EE_Admin_Page object
+	 * @return void
+	 */
+	public function route_admin_request() {
+		// messages loading is turned OFF by default, but prior to the AHEE__EE_Admin_Page__route_admin_request hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
+		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
+			require_once EE_CORE . 'messages/EE_messages_init.core.php';
+			EE_messages_init::init();
+		}
+	}
+
+
+
+	/**
+	 * wp_loaded should fire on the WordPress wp_loaded hook.  This fires on a VERY late priority.
+	 * @return void
+	 */
+	public function wp_loaded() {}
+
+
+
 
 	/**
 	* admin_init
@@ -199,7 +226,7 @@ final class EE_Admin {
 	*/
 	public function admin_init() {
 		// pew pew pew
-		$this->EE->load_core( 'PUE' );		
+		$this->EE->load_core( 'PUE' );	
 	}
 
 
@@ -276,46 +303,6 @@ final class EE_Admin {
 	}
 
 
-
-	/**
-	* wp_loaded
-	* 
-	* @access public
-	* @return void
-	*/
-	public function wp_loaded() {
-		$this->check_no_ticket_prices_array();
-		
-	}
-
-
-
-	/**
-	 * 	check_no_ticket_prices_array
-	 *
-	 *  @access 	private
-	 *  @return 	string
-	 */
-	private function check_no_ticket_prices_array() {
-		$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
-		//printr( $espresso_no_ticket_prices, '$espresso_no_ticket_prices  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		if ( $espresso_no_ticket_prices ) {
-			$no_ticket_prices_msg = __( '<strong>Warning!</strong> The following events have no ticket prices set for them and will therefore not allow registrations:', 'event_espresso' );
-			foreach ( $espresso_no_ticket_prices as $EVT_ID => $event_name ) {
-				if ( empty( $EVT_ID )) {
-					unset( $espresso_no_ticket_prices[ $EVT_ID ] );
-				} else {
-					$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'page'=>'espresso_events', 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ),  admin_url( 'admin.php?' ));
-					$event_name = stripslashes( htmlentities( $event_name, ENT_QUOTES, 'UTF-8' ));
-					$no_ticket_prices_msg .= '<br/><a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event_name ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
-				}
-			}
-			$no_ticket_prices_msg .= '<br/>' . __( 'click on the event name to go to the event editor and correct this issue.', 'event_espresso' );
-			EE_Error::add_error( $no_ticket_prices_msg, __FILE__, __FUNCTION__, __LINE__ );
-			add_action( 'admin_notices', 'display_admin_notice' );
-			update_option( 'espresso_no_ticket_prices', $espresso_no_ticket_prices );
-		}
-	}
 
 
 

@@ -377,6 +377,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+
+
 	/**
 	 * admin_notices
 	 * Anything triggered by the 'admin_notices' WP hook should be put in here.  This particular method will apply to all pages/views loaded by child class.
@@ -459,6 +461,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
 		add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
 
+
 		//next verify if we need to load anything...
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 		$this->page_folder = strtolower( str_replace( '_Admin_Page', '', str_replace( 'Extend_', '', get_class($this) ) ) );
@@ -509,6 +512,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//filter routes and page_config so addons can add their stuff. Filtering done per class
 		$this->_page_routes = apply_filters('FHEE__' . get_class($this) . '__page_setup__page_routes', $this->_page_routes, $this );
 		$this->_page_config = apply_filters('FHEE__' . get_class($this) . '__page_setup__page_config', $this->_page_config, $this );
+
+		//if AHEE__EE_Admin_Page__route_admin_request_$this->_current_view method is present then we call it hooked into the AHEE__EE_Admin_Page__route_admin_request action
+		if ( method_exists( $this, 'AHEE__EE_Admin_Page__route_admin_request_' . $this->_current_view ) ) {
+			add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'AHEE__EE_Admin_Page__route_admin_request_' . $this->_current_view ), 10, 2 );
+		}
 
 
 		//next route only if routing enabled
@@ -585,7 +593,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _load_page_dependencies() {
 		//let's set the current_screen and screen options to override what WP set
 		$this->_current_screen = get_current_screen();
-			
 		
 		//load admin_notices - global, page class, and view specific
 		add_action( 'admin_notices', array( $this, 'admin_notices_global'), 5 );
@@ -827,6 +834,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$args = is_array( $this->_route ) && isset( $this->_route['args'] ) ? $this->_route['args'] : array();
 
 		$error_msg = '';
+
+		//action right before calling route (hook is something like 'AHEE__Registrations_Admin_Page__route_admin_request')
+		if ( !did_action('AHEE__EE_Admin_Page__route_admin_request')) {
+			do_action( 'AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this );
+		}
 
 		if ( ! empty( $func )) {
 			//try to access page route via this class
@@ -1159,6 +1171,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * wp_loaded_global
+	 * This runs all the code that we want executed within the WP wp_loaded hook.  This method is optional for an EE_Admin page and will execute on every EE Admin Page load
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function wp_loaded() {}
+
+
+
+
+
+
+	/**
 	 * admin_notices
 	 * Anything triggered by the 'admin_notices' WP hook should be put in here.  This particular method will apply on ALL EE_Admin pages.
 	 *
@@ -1410,7 +1436,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('ee-dialog', EE_CORE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true );
 		//wp_register_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script('jquery-ui-timepicker-addon', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker', 'jquery-ui-slider'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		add_filter('FHEE_load_joyride', '__return_true');
