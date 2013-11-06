@@ -166,7 +166,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'callback' => 'cancel_return_info_help_tab'
 						),
 					'event_list_cpt_info'=> array(
-						'title'=>  __("Event List Link", "event_espresso"),
+						'title'=>  __("Event List Page", "event_espresso"),
 						'callback'=> 'event_list_cpt_info_help_tab'
 						),
 					)
