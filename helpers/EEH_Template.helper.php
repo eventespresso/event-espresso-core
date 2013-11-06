@@ -201,8 +201,8 @@ class EEH_Template {
 
 			//if container is set to modal then let's make sure we set the options accordingly
 			if ( empty( $data_id ) && empty( $data_class ) ) {
-				$options['modal'] = true;
-				$options['expose'] = true;
+				$stop['options']['modal'] = true;
+				$stop['options']['expose'] = true;
 			}
 
 			$custom_class = !empty( $stop['custom_class'] ) ? ' class="' . $stop['custom_class'] . '"' : '';
