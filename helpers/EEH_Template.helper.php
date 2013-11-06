@@ -176,8 +176,8 @@ class EEH_Template {
 
 		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
 		$icon = !$icon_style ? ' help_img' : $icon_style;
-		$help_text = !$help_text ? __('click for help', 'event_espresso') : $help_text;
-		return '<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon . '" title="click to open the \'Help\' tab for more information about this feature" > ' . $help_text . ' </a>';
+		$help_text = !$help_text ? __('Click for help', 'event_espresso') : $help_text;
+		return '<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon . '" title="Click to open the \'Help\' tab for more information about this feature." > ' . $help_text . ' </a>';
 	}
 
 
