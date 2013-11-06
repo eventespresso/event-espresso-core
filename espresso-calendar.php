@@ -416,7 +416,7 @@ class EE_Calendar {
 	</div>
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>'.apply_filters( 'filter_hook_espresso_calendar_output_after','' ); 
-	do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
+	
 	
 	}
 
@@ -529,6 +529,7 @@ class EE_Calendar {
 			$upload_dir = wp_upload_dir();
 		}
 
+		do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
 //		$this->timer->stop();
 //		echo $this->timer->get_elapse( __LINE__ );
 		
