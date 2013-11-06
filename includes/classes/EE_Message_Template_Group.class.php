@@ -366,8 +366,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 		$messenger = $this->messenger_obj();
 		$message_type = $this->message_type_obj();
 
-		$messenger_name = str_replace( ' ', '_', strtoupper( str_replace( '_', ' ', $messenger->name ) ) );
-		$mt_name = str_replace( ' ', '_', strtoupper( str_replace( '_', ' ', $message_type->name ) ) );
+		$messenger_name = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $messenger->name ) ) );
+		$mt_name = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $message_type->name ) ) );
 
 		//validate class for getting our list of shortcodes
 		$classname = 'EE_Messages_' . $messenger_name . '_' . $mt_name . '_Validator';
