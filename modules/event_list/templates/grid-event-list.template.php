@@ -8,33 +8,35 @@
  * @ author		Seth Shoultes
  * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
+ * @ link			http://www.eventespresso.com
  * @ version		4+
  */
 
 do_action( 'AHEE_before_event_list' );
-
+$ELID = espresso_get_event_list_ID();
+espresso_grid_event_list( $ELID );
 ?>
 
-<div id="grid-view-event-list-dv" class="max-width maxwidth row">
-	<div id="espresso-events-list-wrap-dv" class="container">
+<div id="grid-event-list-<?php echo $ELID; ?>-dv" class="grid-event-list-dv max-width maxwidth row">
+	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
 	
-		<h1  id="event-list-h1"><?php _e( 'Upcoming Events', 'event_espresso' ); ?></h1>
+		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
 		
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
 		<?php if ( have_posts() ) { ?>
-		<div id="espresso-events-list-dv" class="column columns" role="main">				
+		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">				
 			<?php while ( have_posts() ) { the_post(); ?>
 			<?php global $post; ?>
-			<article id="post-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
-			
+			<article id="<?php echo 'post-' . $ELID . '-' . $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
+				
+				
 				<div class="event-datetimes">
 					<h4><?php espresso_event_date_range(); ?></h4>
 				</div>				
 				<!-- .event-datetimes -->
 
-				<div id="events-list-event-wrap-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
+				<div id="events-list-<?php echo $ELID; ?>-event-wrap-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 
 			<?php
 				$wrap_class = '';
@@ -44,7 +46,7 @@ do_action( 'AHEE_before_event_list' );
 							$caption = esc_attr( get_post( get_post_thumbnail_id( $post->ID ))->post_excerpt );
 							$wrap_class = ' has-img';
 				?>
-					<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
+					<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 						<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>		
 					</div>
 				<?php 
@@ -123,3 +125,5 @@ do_action( 'AHEE_before_event_list' );
 	<!-- #espresso-events-list-wrap-dv -->
 
 </div>
+
+<?php wp_localize_script( 'espresso_event_list', 'espresso_grid_event_lists', EED_Event_List::$espresso_grid_event_lists );	?>

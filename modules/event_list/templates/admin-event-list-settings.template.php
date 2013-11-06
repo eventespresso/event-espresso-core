@@ -8,9 +8,10 @@ $description = array(
 	array('id' => 1, 'text' => __('excerpt (short desc)', 'event_espresso')),
 	array('id' => 2, 'text' => __('full description', 'event_espresso'))
 );
-$event_list_views = array(
-	array('id' => 'grid', 'text' => __('Grid', 'event_espresso')),
-	array('id' => 'list', 'text' => __('List', 'event_espresso'))
+$event_list_types = array(
+	array('id' => 'grid', 'text' => __('Grid View', 'event_espresso')),
+	array('id' => 'text', 'text' => __('Text List', 'event_espresso')),
+	array('id' => 'dates', 'text' => __('Dates List', 'event_espresso'))
 );
 $grid_sizes = array(
 	array('id' => 'tiny', 'text' => __('tiny (up to 6 per row)', 'event_espresso')),
@@ -31,12 +32,12 @@ $grid_sizes = array(
 
 			<tr>
 				<th>
-					<label for="default_view">
-						<?php _e('Default Event List View', 'event_espresso'); ?>
+					<label for="default_type">
+						<?php _e('Default Event List Type', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('default_view', $event_list_views, $default_view, 'id="default_view"'); ?>
+					<?php echo EEH_Form_Fields::select_input('default_type', $event_list_types, $default_type, 'id="default_type"'); ?>
 				</td>
 			</tr>
 

@@ -8,30 +8,30 @@
  * @ author		Seth Shoultes
  * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
+ * @ link			http://www.eventespresso.com
  * @ version		4+
  */
 
 do_action( 'AHEE_before_event_list' );
-
+$ELID = espresso_get_event_list_ID();
 ?>
 
-<div id="text-list-event-list-dv" class="max-width maxwidth row">
-	<div id="espresso-events-list-wrap-dv" class="container">
+<div id="text-event-list-<?php echo $ELID; ?>-dv" class="text-event-list-dv max-width maxwidth row">
+	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
 	
-		<h1  id="event-list-h1"><?php _e( 'Upcoming Event Dates', 'event_espresso' ); ?></h1>
+		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
 		
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
-		<div id="espresso-events-list-dv" class="column columns" role="main">
+		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">
 				
 		<?php if ( have_posts() ) { ?>
 			<?php while ( have_posts() ) { the_post(); ?>
 			<?php global $post; ?>
 			
-			<article id="post-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
+			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
 			
-				<div id="events-list-event-wrap-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
+				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 			
 					<div class="espresso-event-wrapper-dv">
 						<header class="event-header">
@@ -53,7 +53,7 @@ do_action( 'AHEE_before_event_list' );
 					if ( has_post_thumbnail( $post->ID )) {
 						$wrap_class = ' has-img';
 					?>
-						<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
+						<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 							<?php the_post_thumbnail( 'medium' ); // array( 300, 100 )?>
 						</div>
 					<?php 
