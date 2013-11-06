@@ -410,6 +410,8 @@ final class EE_Front_Controller {
 			$module = $Module_Request_Router->resolve_route( $route );
 			// get registered view for route
 			$this->_view_template = $Module_Request_Router->get_view( $route );
+			// map the routes to the module objects
+			$this->EE->modules[ $route ] = $module;
 		}
 		// if a view was registered for the last called route, then hook into template_include
 		if ( ! empty( $this->_view_template )) {
