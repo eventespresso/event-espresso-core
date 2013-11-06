@@ -618,9 +618,10 @@ class EED_Event_List  extends EED_Module {
 	 * 	template_settings_form
 	 *
 	 *  @access 	public
+	 *  @static
 	 *  @return 	void
 	 */
-	public function template_settings_form() {
+	public static function template_settings_form() {
 		$EE = EE_Registry::instance();
 		$EE->CFG->template_settings->EED_Event_List = isset( $EE->CFG->template_settings->EED_Event_List ) ? $EE->CFG->template_settings->EED_Event_List : new stdClass();
 		$EE->CFG->template_settings->EED_Event_List = apply_filters( 'FHEE__Event_List__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Event_List );
@@ -635,9 +636,10 @@ class EED_Event_List  extends EED_Module {
 	 * 	set_default_settings
 	 *
 	 *  @access 	public
+	 *  @static
 	 *  @return 	void
 	 */
-	public function set_default_settings( $CFG ) {
+	public static function set_default_settings( $CFG ) {
 		//printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$CFG->display_description = isset( $CFG->display_description ) && ! empty( $CFG->display_description ) ? $CFG->display_description : TRUE;
 		$CFG->display_address = isset( $CFG->display_address ) && ! empty( $CFG->display_address ) ? $CFG->display_address : FALSE;
