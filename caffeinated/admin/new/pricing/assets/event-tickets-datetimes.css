@@ -35,6 +35,41 @@
 }
 
 
+.datetime-edit-table {
+    width: 70%;
+    float: left;
+}
+
+@media all and (min-width: 1277px) {
+
+    .table-padding-top {
+        position: relative;
+        top: 4px;
+    }
+
+}
+
+@media all and (min-width: 900px) and (max-width: 1276px) {
+     .table-padding-top {
+        position: relative;
+        top: 20px;
+    }
+}
+
+@media all and (min-width: 860px) and (max-width: 899px) {
+    .table-padding-top {
+        position: relative;
+        top: 3px;
+    }
+}
+
+@media all and (max-width: 860px) {
+    .table-padding-top {
+        position: relative;
+        top: 20px;
+    }
+}
+
 .clickable {
     cursor: pointer;
 }
@@ -89,8 +124,6 @@
 
 
 .ee-text-inp, .ee-small-text-inp {
-    margin-left: 10px;
-    margin-right: 10px;
     width: 150px;
 }
 
