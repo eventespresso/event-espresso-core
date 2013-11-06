@@ -177,21 +177,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tour' => array( 'Templates_Help_Tour' ),
-				'help_tabs' => array(
-					'enable_styles_info' => array(
-						'title' => __('Enable Styles', 'event_espresso'),
-						'callback' => 'enable_styles_info_help_tab'
-						),
-					'themeroller_info' => array(
-						'title' => __('Themeroller', 'event_espresso'),
-						'callback' => 'themeroller_info_help_tab'
-						),
-					'custom_templates_info' => array(
-						'title' => __('Custom Templates', 'event_espresso'),
-						'callback' => 'custom_templates_info_help_tab'
-						),
-					)
+				'help_tour' => array( 'Templates_Help_Tour' )
 				),
 			'your_organization_settings' => array(
 				'nav' => array(
@@ -266,28 +252,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 
-
-
-
-	/**
-	 * template settins help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function template_settings_help_tabs( $tab ) {
-		require_once GEN_SET_TEMPLATE_PATH . 'template_settings_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template( $template );
-	}
-	public function enable_styles_info_help_tab() {
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function themeroller_info_help_tab() {
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function custom_templates_info_help_tab() {
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
 
 
 
