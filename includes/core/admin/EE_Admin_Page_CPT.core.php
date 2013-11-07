@@ -954,9 +954,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		$title = $this->_cpt_object->labels->edit_item;
 
+
 		if ( isset( $this->_cpt_routes[$this->_req_data['action']] ) && !isset( $this->_labels['hide_add_button_on_cpt_route']['edit_attendee'] ) ) {
 
-			$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new'), $this->_admin_base_url );
+			$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new', 'page' => $this->page_slug), 'admin.php' );
 		}
 
 		if ( post_type_supports($this->_cpt_routes[$this->_req_action], 'comments') ) {
