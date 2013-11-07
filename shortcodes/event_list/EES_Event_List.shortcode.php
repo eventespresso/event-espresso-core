@@ -64,12 +64,15 @@ class EES_Event_List  extends EES_Shortcode {
 	/**
 	 * 	process_shortcode - EVENT_LIST - Returns a list of events
 	 * 	[EVENT_LIST]
-	 * 	[EVENT_LIST limit=1]
-	 * 	[EVENT_LIST css_class=my-custom-class]
+	 * 	[EVENT_LIST title="My Super Event"]
+	 * 	[EVENT_LIST limit=5]
+	 * 	[EVENT_LIST css_class="my-custom-class"]
+	 * 	[EVENT_LIST month="October 2104"]
 	 * 	[EVENT_LIST show_expired=true]
-	 * 	[EVENT_LIST show_deleted=true]
-	 * 	[EVENT_LIST category_identifier=your_category_identifier]
-	 * 	[EVENT_LIST order_by=date(start_date),id]
+	 * 	[EVENT_LIST category_slug="free-events"]
+	 * 	[EVENT_LIST order_by="start_date,id"]
+	 * 	[EVENT_LIST sort="ASC"]
+	 * 	[EVENT_LIST list_type="grid"]
 	 * 
 	 *  @access 	public
 	 *  @param		array 	$attributes
@@ -82,7 +85,6 @@ class EES_Event_List  extends EES_Shortcode {
 			'limit' => 10,
 			'css_class' => NULL,
 			'show_expired' => FALSE,
-			'show_deleted' => FALSE,
 			'month' => NULL,
 			'category_slug' => NULL,
 			'order_by' => 'start_date',
