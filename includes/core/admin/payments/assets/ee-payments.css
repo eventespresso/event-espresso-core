@@ -27,3 +27,20 @@ img.ee_media_image{
 	max-width:140px;
 	max-height:95px;
 }
+
+.form-table {
+	width: 100%;
+}
+
+.form-table th {
+	width: 10%;
+	
+}
+
+.form-table textarea  {
+	width: 100%;
+}
+
+.form-table input {
+	width: 90%;
+}
