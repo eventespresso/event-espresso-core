@@ -196,7 +196,7 @@
 					</label>
 				</th>
 				<td>
-					<input placeholder="www.pinterest.com/profilename" id="organization_pinterest" type="text" class="regular-text" name="organization_pinterest" value="<?php echo $organization_pinterest ?>" />
+					<input placeholder="pinterest.com/profilename" id="organization_pinterest" type="text" class="regular-text" name="organization_pinterest" value="<?php echo $organization_pinterest ?>" />
 				</td>
 			</tr>
 
