@@ -40,31 +40,63 @@
     float: left;
 }
 
+.datetime-edit-table td:nth-child(3) {
+    width: 10%
+}
+
+.align-left-button-container {
+    float: left;
+    width: 30%;
+}
+
+.align-left-button-container .ee-save-button, .align-left-button-container .ee-cancel-button {
+   margin: 0px;
+}
+
+@media all and (max-width: 695px) {
+    
+    .align-left-button-container {
+        clear: left;
+        width: 100%;
+        margin-top: -20px;
+        margin-bottom: 20px;
+    } 
+}/**/
+
+@media all and (min-width: 960px) and (max-width: 1108px) {
+    .align-left-button-container {
+        clear: left;
+        width: 100%;
+        margin-top: -20px;
+        margin-bottom: 20px;
+    } 
+}
+
 @media all and (min-width: 1277px) {
 
-    .table-padding-top {
+    .table-padding-top, .align-left-button-container  {
         position: relative;
         top: 4px;
     }
 
 }
 
-@media all and (min-width: 900px) and (max-width: 1276px) {
-     .table-padding-top {
+@media all and (min-width: 900px) {
+     .table-padding-top, .align-left-button-container {
         position: relative;
         top: 20px;
     }
 }
 
-@media all and (min-width: 860px) and (max-width: 899px) {
-    .table-padding-top {
+@media all and (min-width: 896px) and (max-width: 899px) {
+    .table-padding-top, .align-left-button-container {
         position: relative;
         top: 3px;
     }
 }
 
-@media all and (max-width: 860px) {
-    .table-padding-top {
+@media all and (max-width: 896px) {
+    .table-padding-top, .align-left-button-container {
         position: relative;
         top: 20px;
     }
@@ -124,11 +156,12 @@
 
 
 .ee-text-inp, .ee-small-text-inp {
-    width: 150px;
+    width: 100%
 }
 
 .ee-small-text-inp {
-    width: 50px;
+    min-width: 50px;
+    max-width: 100%;
 }
 
 .ee-large-text-inp {
