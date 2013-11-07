@@ -86,6 +86,10 @@ function _migration_step($num_items=50){
 		if(isset($venue_meta['contact']) && $venue_meta['contact']){
 			add_post_meta($new_id,'contact',$venue_meta['contact']);
 		}
+		//is there an image on this venue?
+		if(isset($venue_meta['image']) && $venue_meta['image']){
+			$this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($venue_meta['image'],$new_id,$this);
+		}
 		$items_actually_migrated++;
 	}
 	if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
@@ -166,7 +170,7 @@ function __construct() {
 			$country = $this->get_migration_script()->get_or_create_country($old_venue['country']);
 			$country_iso = $country['CNT_ISO'];
 		}catch(EE_Error $e){
-			$this->add_error($e->getMessage());
+			$this->add_error(sprintf(__("%s for venue %s", "event_espresso"),$e->getMessage(),http_build_query($old_venue)));
 			$country_iso = null;
 		}
 		//get a state with the same name, if possible
@@ -174,7 +178,7 @@ function __construct() {
 			$state = $this->get_migration_script()->get_or_create_state($old_venue['state'],isset($country['CNT_name']) ? $country['CNT_name'] : $old_venue['country']);
 			$state_id = $state['STA_ID'];
 		}catch(EE_Error $e){
-			$this->add_error($e->getMessage());
+			$this->add_error(sprintf(__("%s for venue %s", "event_espresso"),$e->getMessage(),http_build_query($old_venue)));
 			$state_id = 0;
 		}
 		$meta = maybe_unserialize($old_venue['meta']);
