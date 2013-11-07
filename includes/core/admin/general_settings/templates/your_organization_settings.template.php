@@ -166,7 +166,7 @@
 					<?php 
 						$values=array(					
 							array('id'=>'yes','text'=> __('Yes! I want to help improve Event Espresso!','event_espresso')),
-							array('id'=>'no','text'=> __('No! I\'m a grumpy old toot and I don\'t like you >:(','event_espresso'))
+							array('id'=>'no','text'=> __('Not at this time. Maybe later.','event_espresso'))
 						);
 						echo EEH_Form_Fields::select_input('ueip_optin', $values, !empty($ee_ueip_optin) ? $ee_ueip_optin : 'yes'); 
 					?>
