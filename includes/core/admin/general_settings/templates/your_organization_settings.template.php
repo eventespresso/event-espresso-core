@@ -149,6 +149,84 @@
 	</table>
 	<br/><br/>
 
+	<h4 class="ee-admin-settings-hdr">
+		<?php _e('Social Links', 'event_espresso'); ?>
+	</h4>
+	<p class="description"><?php _e('Enter any links to social accounts for your organization here', 'event_espresso'); ?></p>
+
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th>
+					<label for="organization_facebook">
+						<?php _e('Facebook', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input placeholder="facebook.com/profile.name" id="organization_facebook" type="text" class="regular-text" name="organization_facebook" value="<?php echo $organization_facebook ?>" />
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="organization_twitter">
+						<?php _e('Twitter', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input placeholder="twitter.com/twitterhandle" id="organization_twitter" type="text" class="regular-text" name="organization_twitter" value="<?php echo $organization_twitter ?>" />
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="organization_linkedin">
+						<?php _e('Linkedin', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input placeholder="linkedin.com/in/profilename" id="organization_linkedin" type="text" class="regular-text" name="organization_linkedin" value="<?php echo $organization_linkedin ?>" />
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="organization_pinterest">
+						<?php _e('Pinterest', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input placeholder="www.pinterest.com/profilename" id="organization_pinterest" type="text" class="regular-text" name="organization_pinterest" value="<?php echo $organization_pinterest ?>" />
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="organization_google">
+						<?php _e('Google+', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input placeholder="google.com/+profileName" id="organization_google" type="text" class="regular-text" name="organization_google" value="<?php echo $organization_google ?>" />
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="organization_instagram">
+						<?php _e('Instagram', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input placeholder="instagram.com/handle" id="organization_instagram" type="text" class="regular-text" name="organization_instagram" value="<?php echo $organization_instagram ?>" />
+				</td>
+			</tr>
+
+		</tbody>
+	</table>
+	<br/><br/>
+
+
 	<p>
 		<?php echo  EE_PUE::espresso_data_collection_optin_text( FALSE ); ?>
 	</p>
