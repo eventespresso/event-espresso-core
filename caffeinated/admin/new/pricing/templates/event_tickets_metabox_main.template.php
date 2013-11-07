@@ -28,9 +28,11 @@
 					</td>
 				</tr>
 			</table>
-			<button data-context="datetime" class="button-primary ee-create-button left table-padding-top">
-				<?php _e('Create Datetime', 'event_espresso'); ?>
-			</button>
+			<div class="save-cancel-button-container th-adjust">
+				<button data-context="datetime" class="button-primary ee-create-button">
+					<?php _e('Create Datetime', 'event_espresso'); ?>
+				</button>
+			</div>
 			<div style="clear:both"></div>
 		</div>
 	</div> <!-- end #add-event-datetime -->

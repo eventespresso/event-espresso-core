@@ -17,7 +17,7 @@
 			</td>
 		</tr>
 	</table>
-	<div class="align-left-button-container left">
+	<div class="save-cancel-button-container th-adjust">
 		<button data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="button-primary ee-save-button">
 			<?php _e('Update Datetime', 'event_espresso'); ?>
 		</button>
