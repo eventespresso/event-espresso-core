@@ -8,61 +8,32 @@
  * @ author		Seth Shoultes
  * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
+ * @ link			http://www.eventespresso.com
  * @ version		4+
  */
 
 do_action( 'AHEE_before_event_list' );
-
+$ELID = espresso_get_event_list_ID();
 ?>
 
-<div id="dates-list-event-list-dv" class="max-width maxwidth row">
-	<div id="espresso-events-list-wrap-dv" class="container">
+<div id="text-event-list-<?php echo $ELID; ?>-dv" class="text-event-list-dv max-width maxwidth row">
+	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
 	
-		<h1  id="event-list-h1"><?php _e( 'Upcoming Event Dates', 'event_espresso' ); ?></h1>
+		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
 		
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
-		<div id="espresso-events-list-dv" class="column columns" role="main">
+		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">
 				
 		<?php if ( have_posts() ) { ?>
 			<?php while ( have_posts() ) { the_post(); ?>
+			<?php global $post; ?>
 			
-			<article id="post-<?php echo $post->ID; ?>" <?php post_class('espresso-event-list-event'); ?>>
+			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
 			
-				<div id="events-list-event-wrap-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
-				
-				<div class="event-datetimes">
-					<?php $datetime = espresso_event_date_obj();?>
-					<div class="event-date-calendar-page-dv">
-						<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
-						<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
-					</div>		
-				</div>		
-				<!-- .event-datetimes -->
-
-			<?php
-				$wrap_class = '';
-				if ( has_post_thumbnail( $post->ID )) {
-					$wrap_class = ' has-img';
-				?>
-					<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
-						<?php the_post_thumbnail( array( 60, 60 ));?>
-					</div>
-				<?php 
-				}				
-			?>
-
-					<footer class="event-meta">
-						
-						<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
-						<p class="event-categories-pg"><?php _e( 'category: ', 'event_espresso' ) . the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
-						
-						<?php espresso_edit_event_link(); ?>
-					</footer>
-					<!-- .entry-meta -->
-
-					<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
+				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
+			
+					<div class="espresso-event-wrapper-dv">
 						<header class="event-header">
 							<h3 class="event-title">
 								<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
@@ -72,7 +43,23 @@ do_action( 'AHEE_before_event_list' );
 						</header>
 						<!-- .event-header -->
 						
-						<div class="event-content">
+						<div class="event-datetimes">
+							<h4><?php espresso_event_date_range( 'F jS', ' ', 'l F jS @ ', ' g:i a' ); ?></h4>
+						</div>
+						<!-- .event-datetimes -->
+						
+				<?php
+					$wrap_class = '';
+					if ( has_post_thumbnail( $post->ID )) {
+						$wrap_class = ' has-img';
+					?>
+						<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
+							<?php the_post_thumbnail( 'medium' ); // array( 300, 100 )?>
+						</div>
+					<?php 
+					}				
+				?>
+						<div class="event-content<?php echo $wrap_class;?>">
 							<?php 
 								if( espresso_display_full_description_in_event_list() ) {
 									the_content(); 
@@ -83,10 +70,16 @@ do_action( 'AHEE_before_event_list' );
 							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
 						</div>				
 						<!-- .event-content -->
-
 					</div>
 
-				<div class="clear"></div>
+					<footer class="event-meta">
+						<p class="event-categories-pg"><?php _e( 'category: ', 'event_espresso' ) . the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
+						<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>	
+						<?php espresso_edit_event_link(); ?>
+					</footer>
+					<!-- .entry-meta -->
+
+					<div class="clear"></div>
 				</div>
 			</article>
 			<!-- #post -->

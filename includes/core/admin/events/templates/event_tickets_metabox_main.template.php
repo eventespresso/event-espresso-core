@@ -46,6 +46,7 @@
 					<td><?php _e('Ticket Name', 'event_espresso'); ?></td>
 					<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
 					<td><?php _e('Sell Until', 'event_espresso'); ?></td>
+					<td><span class="hidden">currency symbol</span></td>
 					<td><?php _e('Price', 'event_espresso'); ?></td>
 					<td><?php _e('Qty', 'event_espresso'); ?></td>
 					<td></td>

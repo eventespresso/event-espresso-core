@@ -738,6 +738,57 @@ class EE_Organization_Config extends EE_Config_Base {
 	*/ 
 	public $logo_url;
 
+
+	/**
+	 * The below are all various properties for holding links to organization social network profiles
+	 * @var string
+	 */
+	
+	/**
+	 * facebook (facebook.com/profile.name)
+	 * @var string
+	 */
+	public $facebook;
+
+
+	/**
+	 * twitter (twitter.com/twitterhandle)
+	 * @var string
+	 */
+	public $twitter;
+
+
+
+	/**
+	 * linkedin (linkedin.com/in/profilename)
+	 * @var string
+	 */
+	public $linkedin;
+
+
+
+	/**
+	 * pinterest (www.pinterest.com/profilename)
+	 * @var string
+	 */
+	public $pinterest;
+
+
+
+	/**
+	 * google+ (google.com/+profileName)
+	 * @var string
+	 */
+	public $google;
+
+
+
+	/**
+	 * instragram (instagram.com/handle)
+	 * @var string
+	 */
+	public $instagram;
+
 	/**
 	 * 	class constructor
 	 *
@@ -754,7 +805,12 @@ class EE_Organization_Config extends EE_Config_Base {
 		$this->CNT_ISO = 'US';
 		$this->zip = '12345';
 		$this->email = get_bloginfo('admin_email');
-		$this->logo_url = '';	
+		$this->logo_url = '';
+
+		$socialnetworks = array('facebook,twitter,linkedin,pinterest,google,instagram');
+		foreach ( $socialnetworks as $name ) {
+			$this->$name = '';
+		}	
 	}
 	
 }

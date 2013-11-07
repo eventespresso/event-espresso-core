@@ -161,9 +161,11 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 
 	protected function _setup_data() {
 
+		$payment = $this->txn->get_first_related('Payment');
+
 		$this->taxes = $this->txn->tax();
 		$grand_total = $this->txn->total();
-		$this->billing = $this->txn->details();
+		$this->billing = !empty( $payment ) ? $payment->details() : array();
 
 
 		//events and attendees
@@ -182,7 +184,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		$this->reg_info = array();
 
 		//get txn session data
-		$session = $this->txn->session_data();
+		$session = $this->txn->session_data()->get_session_data();
 
 		$this->user_id = isset($session['user_id']) ? $session['user_id'] : NULL;
 		$this->ip_address =	isset($session['ip_address']) ? $session['ip_address'] : NULL;

@@ -49,7 +49,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 				'page_route' => array( 'edit', 'create_new' ),
 				'func' => 'primary_questions',
 				'label' => __('Questions for Primary Attendee', 'event_espresso'),
-				'priority' => 'core',
+				'priority' => 'default',
 				'context' => 'side'
 				)
 		);

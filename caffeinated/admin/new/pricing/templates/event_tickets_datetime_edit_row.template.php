@@ -15,16 +15,17 @@
 				<label for="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>"><?php _e('Reg Limit', 'event_espresso'); ?></label>
 				<input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>" class="ee-small-text-inp event-datetime-DTT_reg_limit" value="<?php echo $DTT_reg_limit; ?>">
 			</td>
-			<td class="event-datetime-column button-column">
-				<button data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="button-primary ee-save-button">
-					<?php _e('Update Datetime', 'event_espresso'); ?>
-				</button>
-				<button data-datetime-row="<?php echo $dtt_row; ?>" data-context="datetime" class="button-secondary ee-cancel-button">
-					<?php _e('Cancel', 'event_espresso'); ?>
-				</button>
-			</td>
 		</tr>
 	</table>
+	<div class="save-cancel-button-container th-adjust">
+		<button data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="button-primary ee-save-button">
+			<?php _e('Update Datetime', 'event_espresso'); ?>
+		</button>
+		<button data-datetime-row="<?php echo $dtt_row; ?>" data-context="datetime" class="button-secondary ee-cancel-button">
+			<?php _e('Cancel', 'event_espresso'); ?>
+		</button>
+	</div>
+	<div style="clear: both"></div>
 </section>
 
 <?php 

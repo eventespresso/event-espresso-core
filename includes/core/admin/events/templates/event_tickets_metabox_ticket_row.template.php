@@ -10,8 +10,10 @@
 	<td>
 		<input type="text" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="<?php echo $TKT_end_date; ?>" data-context="end-ticket" data-date-field-context="#edit-ticketrow-<?php echo $ticketrow; ?>" data-related-field=".edit-ticket-TKT_start_date" data-next-field=".edit-ticket-PRC_amount" value="<?php echo $TKT_end_date; ?>">
 	</td>
-	<td>	
+	<td>
 		<span class="ticket-price-info-display ticket-price-dollar-sign-display"><?php echo $price_currency_symbol; ?></span>
+	</td>
+	<td>	
 		<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp ee-inp-right" name="edit_prices[<?php echo $ticketrow; ?>][1][PRC_amount]" value="<?php echo $PRC_amount; ?>">
 
 		<input type="hidden" name="edit_prices[<?php echo $ticketrow; ?>][1][PRT_ID]" class="edit-price-PRT_ID" value="1">

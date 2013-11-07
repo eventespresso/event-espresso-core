@@ -130,7 +130,7 @@ jQuery(document).ready(function($) {
 
 
 	// generic click event for displaying and giving focus to an element and hiding control
-	$('.display-the-hidden').on( 'click', function() {
+	$('.display-the-hidden').on( 'click', function(e) {
 		// get target element from "this" (the control element's) "rel" attribute
 		var item_to_display = $(this).attr("rel");
 		//alert( 'item_to_display = ' + item_to_display );
@@ -149,7 +149,7 @@ jQuery(document).ready(function($) {
 	});
 
 	// generic click event for re-hiding an element and displaying it's display control
-	$('.hide-the-displayed').on( 'click', function() {
+	$('.hide-the-displayed').on( 'click', function(e) {
 		// get target element from "this" (the control element's) "rel" attribute
 		var item_to_hide = $(this).attr("rel");
 		// hide the control element

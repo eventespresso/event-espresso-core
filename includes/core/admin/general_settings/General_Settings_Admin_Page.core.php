@@ -150,7 +150,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
 				'help_tabs' => array(
 					'registration_page_info' => array(
-						'title' => __('Event Registration Page', 'event_espresso'),
+						'title' => __('Registration Checkout Page', 'event_espresso'),
 						'callback' => 'registration_page_info_help_tab'
 						),
 					'notify_url_info' => array(
@@ -166,7 +166,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'callback' => 'cancel_return_info_help_tab'
 						),
 					'event_list_cpt_info'=> array(
-						'title'=>  __("Event List Link", "event_espresso"),
+						'title'=>  __("Event List Page", "event_espresso"),
 						'callback'=> 'event_list_cpt_info_help_tab'
 						),
 					)
@@ -177,21 +177,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tour' => array( 'Templates_Help_Tour' ),
-				'help_tabs' => array(
-					'enable_styles_info' => array(
-						'title' => __('Enable Styles', 'event_espresso'),
-						'callback' => 'enable_styles_info_help_tab'
-						),
-					'themeroller_info' => array(
-						'title' => __('Themeroller', 'event_espresso'),
-						'callback' => 'themeroller_info_help_tab'
-						),
-					'custom_templates_info' => array(
-						'title' => __('Custom Templates', 'event_espresso'),
-						'callback' => 'custom_templates_info_help_tab'
-						),
-					)
+				'help_tour' => array( 'Templates_Help_Tour' )
 				),
 			'your_organization_settings' => array(
 				'nav' => array(
@@ -266,28 +252,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 
-
-
-
-	/**
-	 * template settins help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function template_settings_help_tabs( $tab ) {
-		require_once GEN_SET_TEMPLATE_PATH . 'template_settings_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template( $template );
-	}
-	public function enable_styles_info_help_tab() {
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function themeroller_info_help_tab() {
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function custom_templates_info_help_tab() {
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
 
 
 
@@ -487,6 +451,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_email'] = isset( $this->EE->CFG->organization->email ) ? $this->_display_nice( $this->EE->CFG->organization->email ) : '';
 		$this->_template_args['currency_sign'] = isset( $this->EE->CFG->currency->sign ) ? $this->_display_nice( $this->EE->CFG->currency->sign ) : '$';
 		$this->_template_args['organization_logo_url'] = isset( $this->EE->CFG->organization->logo_url ) ? $this->_display_nice( $this->EE->CFG->organization->logo_url ) : FALSE;
+		$this->_template_args['organization_facebook'] = isset( $this->EE->CFG->organization->facebook ) ? $this->_display_nice( $this->EE->CFG->organization->facebook ) : '';
+		$this->_template_args['organization_twitter'] = isset( $this->EE->CFG->organization->twitter ) ? $this->_display_nice( $this->EE->CFG->organization->twitter ) : '';
+		$this->_template_args['organization_linkedin'] = isset( $this->EE->CFG->organization->linkedin ) ? $this->_display_nice( $this->EE->CFG->organization->linkedin ) : '';
+		$this->_template_args['organization_pinterest'] = isset( $this->EE->CFG->organization->pinterest ) ? $this->_display_nice( $this->EE->CFG->organization->pinterest ) : '';
+		$this->_template_args['organization_google'] = isset( $this->EE->CFG->organization->google ) ? $this->_display_nice( $this->EE->CFG->organization->google ) : '';
+		$this->_template_args['organization_instagram'] = isset( $this->EE->CFG->organization->instagram ) ? $this->_display_nice( $this->EE->CFG->organization->instagram ) : '';
 		//UXIP settings
 		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin', TRUE );
 		
@@ -535,7 +505,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//PUE verification stuff
 		$plugin_basename = plugin_basename(EVENT_ESPRESSO_PLUGINPATH);
 		$verify_fail = get_option( 'pue_verification_error_' . $plugin_basename );
-		$this->_template_args['site_license_key_verified'] = !empty( $verify_fail ) ? '<span class"pue-sl-not-verified"></span>' : '<span class="pue-sl-verified"></span>';		
+		$this->_template_args['site_license_key_verified'] = $verify_fail || empty($verify_fail) ? '<span class"pue-sl-not-verified"></span>' : '<span class="pue-sl-verified"></span>';		
 		
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -556,6 +526,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->EE->CFG->organization->zip = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : $this->EE->CFG->organization->zip;
 		$this->EE->CFG->organization->email = isset( $this->_req_data['organization_email'] ) ? sanitize_email( $this->_req_data['organization_email'] ) : $this->EE->CFG->organization->email;
 		$this->EE->CFG->organization->logo_url = isset( $this->_req_data['organization_logo_url'] ) ? esc_url_raw( $this->_req_data['organization_logo_url'] ) : $this->EE->CFG->organization->logo_url;
+		$this->EE->CFG->organization->facebook = isset( $this->_req_data['organization_facebook'] ) ? esc_url_raw( $this->_req_data['organization_facebook'] ) : $this->EE->CFG->organization->facebook;
+		$this->EE->CFG->organization->twitter = isset( $this->_req_data['organization_twitter'] ) ? esc_url_raw( $this->_req_data['organization_twitter'] ) : $this->EE->CFG->organization->twitter;
+		$this->EE->CFG->organization->linkedin = isset( $this->_req_data['organization_linkedin'] ) ? esc_url_raw( $this->_req_data['organization_linkedin'] ) : $this->EE->CFG->organization->linkedin;
+		$this->EE->CFG->organization->pinterest = isset( $this->_req_data['organization_pinterest'] ) ? esc_url_raw( $this->_req_data['organization_pinterest'] ) : $this->EE->CFG->organization->pinterest;
+		$this->EE->CFG->organization->google = isset( $this->_req_data['organization_google'] ) ? esc_url_raw( $this->_req_data['organization_google'] ) : $this->EE->CFG->organization->google;
+		$this->EE->CFG->organization->instagram = isset( $this->_req_data['organization_instagram'] ) ? esc_url_raw( $this->_req_data['organization_instagram'] ) : $this->EE->CFG->organization->instagram;
 		$this->EE->CFG->core->ee_ueip_optin = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : $this->EE->CFG->core->ee_ueip_optin; 
 
 		$this->EE->CFG = apply_filters('FHEE_your_organization_settings_save', $this->EE->CFG );	

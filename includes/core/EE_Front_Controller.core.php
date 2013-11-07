@@ -269,6 +269,7 @@ final class EE_Front_Controller {
 	public function wp_loaded() {
 		// messages loading is turned OFF by default, but prior to the wp_loaded hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
+			require_once EE_CORE . 'messages/EE_messages_init.core.php';
 			EE_messages_init::init();
 		}
 
@@ -410,6 +411,8 @@ final class EE_Front_Controller {
 			$module = $Module_Request_Router->resolve_route( $route );
 			// get registered view for route
 			$this->_view_template = $Module_Request_Router->get_view( $route );
+			// map the routes to the module objects
+			$this->EE->modules[ $route ] = $module;
 		}
 		// if a view was registered for the last called route, then hook into template_include
 		if ( ! empty( $this->_view_template )) {
@@ -436,7 +439,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp() {
-		$this->EE->load_helper( 'Template' );	
+		$this->EE->load_helper( 'Template' );
 	}
 
 
@@ -634,6 +637,7 @@ final class EE_Front_Controller {
 		do_action('AHEE__EE_Front_Controller__display_errors__begin');
 		if(apply_filters('FHEE__EE_Front_Controller__display_errors',true)){
 			echo EE_Error::get_notices();
+			$this->EE->load_helper( 'Template' );
 			EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php' );
 		}
 		do_action('AHEE__EE_Front_Controller__display_errors__end');

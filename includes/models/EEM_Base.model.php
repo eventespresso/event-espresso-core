@@ -1123,10 +1123,23 @@ abstract class EEM_Base extends EE_Base{
 	 * returns EE_Primary_Table table name
 	 * @return string
 	 */
-	public function table(){
+	public function table() {
 		return $this->_get_main_table()->get_table_name();
-		
-	}	
+	}
+
+	/**
+	 * table
+	 * returns first EE_Secondary_Table table name
+	 * @return string
+	 */
+	public function second_table() {
+		// grab second table from tables array 
+		// YES THERE IS A BLANK PARAMETER FOLLOWED BY A COMMA AND THE LINE LOOKS BACKWARDS - NO FIXIE CUZ YOU BREAKIE !!!
+		list(  , $second_table ) = $this->_tables;
+		return $second_table instanceof EE_Secondary_Table ? $second_table->get_table_name() : NULL;
+	}
+
+
 
 	/**
 	 * Gets all the tables of type EE_Other_Table from EEMerimental_Model::_tables

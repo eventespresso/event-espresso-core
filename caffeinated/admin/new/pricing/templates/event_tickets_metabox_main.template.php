@@ -11,27 +11,30 @@
 	</div> <!-- end .event-datetimes-container -->
 	<div id="add-event-datetime" class="event-datetime-row add-dtt-row">
 		<h5 class="datetime-tickets-heading"><?php _e('Add New Datetime', 'event_espresso'); ?></h5><?php echo $add_new_dtt_help_link; ?>
-		<table id="add-new-event-datetime-table" class="datetime-edit-table">
-			<tr>
-				<td class="event-datetime-column date-column">
-					<label for="add-new-event-datetime-DTT_EVT_start"><?php _e('Event Start', 'event_espresso'); ?></label>
-					<input type="text" name="add_new_datetime[DTT_EVT_start]" id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp ee-datepicker" data-context="start-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_end" data-next-field="#add-new-event-datetime-DTT_EVT_start">
-				</td>
-				<td class="event-datetime-column date-column">
-					<label for="add-new-event-datetime-DTT_EVT_end"><?php _e('Event End', 'event_espresso'); ?></label>
-					<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp ee-datepicker" data-context="end-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_start" data-next-field="#add-new-event-datetime-DTT_reg_limit">
-				</td>
-				<td class="event-datetime-column reg-limit-column">
-					<label for="add-new-event-datetime-DTT_reg_limit"><?php _e('Reg Limit', 'event_espresso'); ?></label>
-					<input type="text" name="add_new_datetime[DTT_reg_limit]" id="add-new-event-datetime-DTT_reg_limit" class="ee-small-text-inp">
-				</td>
-				<td class="event-datetime-column button-column">
-					<button data-context="datetime" class="button-primary ee-create-button">
-						<?php _e('Create Datetime', 'event_espresso'); ?>
-					</button>
-				</td>
-			</tr>
-		</table>
+		<div>
+			<table id="add-new-event-datetime-table" class="datetime-edit-table">
+				<tr>
+					<td class="event-datetime-column date-column">
+						<label for="add-new-event-datetime-DTT_EVT_start"><?php _e('Event Start', 'event_espresso'); ?></label>
+						<input type="text" name="add_new_datetime[DTT_EVT_start]" id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp ee-datepicker" data-context="start-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_end" data-next-field="#add-new-event-datetime-DTT_EVT_start">
+					</td>
+					<td class="event-datetime-column date-column">
+						<label for="add-new-event-datetime-DTT_EVT_end"><?php _e('Event End', 'event_espresso'); ?></label>
+						<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp ee-datepicker" data-context="end-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_start" data-next-field="#add-new-event-datetime-DTT_reg_limit">
+					</td>
+					<td class="event-datetime-column reg-limit-column">
+						<label for="add-new-event-datetime-DTT_reg_limit"><?php _e('Reg Limit', 'event_espresso'); ?></label>
+						<input type="text" name="add_new_datetime[DTT_reg_limit]" id="add-new-event-datetime-DTT_reg_limit" class="ee-small-text-inp">
+					</td>
+				</tr>
+			</table>
+			<div class="save-cancel-button-container th-adjust">
+				<button data-context="datetime" class="button-primary ee-create-button">
+					<?php _e('Create Datetime', 'event_espresso'); ?>
+				</button>
+			</div>
+			<div style="clear:both"></div>
+		</div>
 	</div> <!-- end #add-event-datetime -->
 	
 

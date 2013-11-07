@@ -2,7 +2,7 @@
 /******************* EVENT LIST FILTERS ****************** */
 	
 	#espresso-events-list-filters-wrapper-dv {
-		position: relative; margin:0 1em 1em;  z-index:1;
+		position: relative; margin:0 0 1em;  z-index:1;
 	}
 	#espresso-events-list-filters-h3 {
 		color:#A39D9C; margin:0 0 .25em; 
@@ -15,16 +15,15 @@
 	}
 	#espresso-events-list-filters-dv select,
 	#espresso-events-list-filters-dv input[type="text"] {
-		padding: 3px; margin: 0; border:1px solid #A39D9C; vertical-align: middle;
+		width: auto; height:auto; padding: 3px; margin: 0; border:1px solid #A39D9C; vertical-align: middle;
 		border-radius:3px; -webkit-border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;
 	}
+	#espresso-events-list-filters-dv label { display: inline-block; }
 	#espresso-events-list-filters-dv span { margin: 0 1em 0 0; }
 	
 	#espresso-events-list-filters-view-dv { float: right; margin:.35em 0 0; }
-	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk { /*vertical-align: middle;*/ }
+	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk { display: inline-block; margin:0; }
 	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk img { vertical-align: middle; }
-	
-	
 	
 	.ee-checkbox { vertical-align: middle; }
 	.ee-checkbox-lbl:hover { cursor: pointer; }
@@ -73,168 +72,172 @@
 	.hidden { display:none; }
 	
 	
-	#espresso-events-list-wrap-dv { padding:0 0 2em; font-size:12px; }	
-	#espresso-events-list-dv { position: relative; padding: 0; margin: 0 auto; }	
-	#event-list-h1 {
-		position: relative; z-index:10; margin:.75em .5em 0em;
-		font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 2em; font-weight: bold; color: #A39D9C;
-		text-shadow: 1px 1px 0px #fff;
-	}	
+	.espresso-events-list-wrap-dv { padding:0 0 2em;/* font-size:12px;*/ }	
+	.espresso-events-list-dv { position: relative; padding: 0; margin: 0 auto; }	
+	.espresso-events-list-dv .espresso-event-list-event { height: auto; }	
+	.espresso-events-list-wrap-dv .event-list-h1 {
+		position: relative; z-index:10;/* margin:.75em .5em 0em;
+		font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 36px; font-weight: bold; color: #A39D9C;
+		text-shadow: 1px 1px 0px #fff;*/
+	}
+	
+	/*.espresso-event-wrapper-dv  .event-title { font-size:1.3em; margin: 0; line-height: 1em; }	*/
 	.espresso-event-wrapper-dv  .event-content p { line-height: 1.5em;	 }	
 
-	#espresso-events-list-wrap-dv a { color: #007BAE; }
-	#espresso-events-list-wrap-dv .edit-event-lnk { margin-top:1em; }
-	#espresso-events-list-wrap-dv .post-edit-link { /*margin-top:1em;*/ }
+	.espresso-events-list-wrap-dv a { /*color: #007BAE;*/ }
+	.espresso-event-wrapper-dv  .event-meta { width: auto; }
+	.espresso-events-list-wrap-dv .edit-event-lnk { margin-top:1em; }
+	.espresso-events-list-wrap-dv .post-edit-link { /*margin-top:1em;*/ }
 	
-	#espresso-events-list-wrap-dv .ee-button-lnk {
+	.espresso-events-list-wrap-dv .ee-button-lnk {
 		display: inline-block; position: relative; padding: 5px .75em 6px; margin:0;
 		background:#fff; border:1px solid #a39d9c; border-radius: 3px; 		
 		font-weight: normal; font-size:10px; line-height:10px; color:#464549; text-shadow:1px 1px 0px rgba(255,255,255,.9); text-decoration: none; text-align: center;
 		box-shadow:none;
 	}
-	#espresso-events-list-wrap-dv a.ee-button-lnk { /*padding: .55em 1.15em;*/ }
-	#espresso-events-list-wrap-dv a.ee-register-button-lnk {
-		padding: 6px 1.5em 5px; margin:0; background: #7DBD29; border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
+	.espresso-events-list-wrap-dv a.ee-button-lnk { /*padding: .55em 1.15em;*/ }
+	.espresso-events-list-wrap-dv a.ee-register-button-lnk {
+		display: inline-block; position: relative; width: auto; height: auto; padding: 6px 1.5em 5px; margin:0; background: #7DBD29; border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
 		font-size:14px; line-height:24px; color:#fff; font-weight: bold; text-shadow:1px 1px 0px rgba(0,0,0,.3); 
 		box-shadow:0px 1px 1px rgba(0,0,0,.5), 0px 1px 7px -1px rgba(0,0,0,.3);
 	}
-	#espresso-events-list-wrap-dv a.ee-register-button-lnk:hover { background: #6CBA00; color:#fff; }
-	#espresso-events-list-wrap-dv a.ee-register-button-lnk:visited { color:#fff; }
-	#espresso-events-list-wrap-dv a.ee-register-button-lnk:active { top:1px; }
-	#espresso-events-list-wrap-dv a.edit-event-lnk { margin:0 1em; }
+	.espresso-events-list-wrap-dv a.ee-register-button-lnk:hover { background: #6CBA00; color:#fff; }
+	.espresso-events-list-wrap-dv a.ee-register-button-lnk:visited { color:#fff; }
+	.espresso-events-list-wrap-dv a.ee-register-button-lnk:active { top:1px; }
+	.espresso-events-list-wrap-dv a.edit-event-lnk { margin:0 1em; }
 	
 	.no-espresso-events-found { padding: 2em; }
-	.no-espresso-events-found .event-title { margin:0 0 1em; font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; }
+	.no-espresso-events-found .event-title { /*margin:0 0 1em; font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; */ }
 	.no-espresso-events-found #s { min-width:200px; width:25%; }
 
 	
 	/******************* PIN-MASH (GRID-VIEW) TEMPLATE ****************** */
 	
 	
-	#grid-view-event-list-dv #espresso-events-list-dv { display: none; }
-	#grid-view-event-list-dv #espresso-events-list-wrap-dv .espresso-event-list-event {
+	.grid-event-list-dv .espresso-events-list-dv { /*display: none;*/ }
+	.grid-event-list-dv /*.espresso-events-list-wrap-dv*/ .espresso-event-list-event {
 		display: inline-block; float: left; position: relative; padding:0; margin: 10px 10px 20px; border:none;
 		-webkit-transition: top 1s ease, left 1s ease; -moz-transition: top 1s ease, left 1s ease; -o-transition: top 1s ease, left 1s ease; -ms-transition: top 1s ease, left 1s ease;
 	}
-	#grid-view-event-list-dv  .events-list-event-wrap-dv {
+	.grid-event-list-dv  .events-list-event-wrap-dv {
 		width: auto; height: auto; padding:0 0 10px;
 		background: #fff; 
 		box-shadow: 0 1px 3px rgba(34,25,25,0.4); -moz-box-shadow: 0 1px 3px rgba(34,25,25,0.4); -webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
 	}
 	
-	#grid-view-event-list-dv  .event-datetimes h4 {
-		display: block; padding:0 0 1px 24px; margin: .25em 0; background: url("../../../images/calendar_year-16x16.png") no-repeat left top transparent;
-		font-size: 1.45em; color:#A39D9C;
+	.grid-event-list-dv  .event-datetimes h4 {
+		display: block; padding:1px 0 0 24px; margin: .25em 0; background: url("../../../images/calendar_year-16x16.png") no-repeat left top transparent;
+		font-size: 1.4em; line-height:1.5em; /*color:#A39D9C;*/
 	}
-	#grid-view-event-list-dv  .event-datetimes h4 + h4 {
+	.grid-event-list-dv  .event-datetimes h4 + h4 {
 		padding-left:5px; background: none;
 	}
 		
-	#grid-view-event-list-dv  .ee-event-img-dv { position: relative; width:100%; overflow: hidden; margin:0 0 -2.4em; }
-	#grid-view-event-list-dv  .ee-event-img { 
+	.grid-event-list-dv  .ee-event-img-dv { position: relative; width:100%; overflow: hidden; margin:0 0 -2.4em; }
+	.grid-event-list-dv  .ee-event-img { 
 		/*position: absolute; top: auto; left: auto;*/ width:100%; height: auto; 
 		border-radius:0 !important; box-shadow:none !important; 
 	}	
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv { position: relative; margin:0 1em; background:#fff; background: rgba(255, 255, 255, 0.9); }	
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv.has-img { }	
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv .event-header { padding:1em 1em 1em; text-shadow: 1px 1px 0px #fff; }	
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv  .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.3em; margin: 0; line-height: 1em; }	
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; }	
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; text-transform: lowercase; }
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv  .event-content p { margin: 0 1em 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	 }	
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv.has-img  .event-content p { margin: 0 .5em .5em; }	
-	#grid-view-event-list-dv  .espresso-event-wrapper-dv  .event-meta { text-align: right; margin: 0 0 1em; }
+	.grid-event-list-dv  .espresso-event-wrapper-dv { position: relative; margin:0 1em; background:#fff; background: rgba(255, 255, 255, 0.9); }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv.has-img { }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv .event-header { padding:1em 1em 1em; text-shadow: 1px 1px 0px #fff; }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title {/* font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.3em; margin: 0; line-height: 1em;*/ }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; text-transform: lowercase; }
+	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-content p { margin: 0 1em 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	 }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv.has-img  .event-content p { margin: 0 .5em .5em; }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-meta { text-align: right; margin: 0 0 1em; }
 
-	#grid-view-event-list-dv .espresso-event-wrapper-dv a.ee-register-button-lnk { margin:1em 0 0; }
+	.grid-event-list-dv .espresso-event-wrapper-dv a.ee-register-button-lnk { margin:1em 0 0; }
 
-	#grid-view-event-list-dv .tiny-event-list-grid.espresso-event-list-event { width: 120px; }
-	#grid-view-event-list-dv .tiny-event-list-grid .event-datetimes h4 { font-size:.9em; }
-	#grid-view-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv { margin:0 .5em; }
-	#grid-view-event-list-dv .tiny-event-list-grid .ee-event-img-dv { margin:0 0 -1.9em; }
-	#grid-view-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.5em; }
-	#grid-view-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
-	#grid-view-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .65em; }
-	#grid-view-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1em; }
-	#grid-view-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: .8em; line-height: 1.2em; }
-	#grid-view-event-list-dv .tiny-event-list-grid a.ee-register-button-lnk { padding: 3px 1.2em 2px; font-size:10px; line-height:15px; }
+	.grid-event-list-dv .tiny-event-list-grid.espresso-event-list-event { width: 120px; }
+	.grid-event-list-dv .tiny-event-list-grid .event-datetimes h4 { background: none; font-size:.85em; font-weight: normal; line-height:16px;  padding-left:0; word-spacing:-2px; }
+	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv { margin:0 .5em; }
+	.grid-event-list-dv .tiny-event-list-grid .ee-event-img-dv { margin:0 0 -1.9em; }
+	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.5em; }
+	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
+	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .65em; }
+	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1em; */}
+	.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: .8em; line-height: 1.2em; }
+	.grid-event-list-dv .tiny-event-list-grid a.ee-register-button-lnk { padding: 3px 1.2em 2px; font-size:10px; line-height:15px; }
 	
-	#grid-view-event-list-dv .small-event-list-grid.espresso-event-list-event { width: 148px; }
-	#grid-view-event-list-dv .small-event-list-grid .event-datetimes h4 { font-size:1em; }
-	#grid-view-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv { margin:0 .7em; }
-	#grid-view-event-list-dv .small-event-list-grid .ee-event-img-dv { margin:0 0 -2.1em; }
-	#grid-view-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.7em; }
-	#grid-view-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
-	#grid-view-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .8em; }
-	#grid-view-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.1em; }	
-	#grid-view-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: .9em; line-height: 1.3em; }
-	#grid-view-event-list-dv .small-event-list-grid a.ee-register-button-lnk { padding: 4px 1.3em 3px; font-size:11px; line-height:18px; }
+	.grid-event-list-dv .small-event-list-grid.espresso-event-list-event { width: 148px; }
+	.grid-event-list-dv .small-event-list-grid .event-datetimes h4 { background: none; font-size:1em; font-weight: normal; line-height:16px;  padding-left:0; word-spacing:-1px;  }
+	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv { margin:0 .7em; }
+	.grid-event-list-dv .small-event-list-grid .ee-event-img-dv { margin:0 0 -2.1em; }
+	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.7em; }
+	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
+	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .8em; }
+	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.1em; */}	
+	.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: .9em; line-height: 1.3em; }
+	.grid-event-list-dv .small-event-list-grid a.ee-register-button-lnk { padding: 4px 1.3em 3px; font-size:11px; line-height:18px; }
 	
-	#grid-view-event-list-dv .med-event-list-grid.espresso-event-list-event { width: 190px; }
-	#grid-view-event-list-dv .med-event-list-grid .event-datetimes h4 { font-size:1.1em; }
-	#grid-view-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv { margin:0 .85em; }
-	#grid-view-event-list-dv .med-event-list-grid .ee-event-img-dv { margin:0 0 -2.4em; }
-	#grid-view-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.85em; }
-	#grid-view-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
-	#grid-view-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .9em; }
-	#grid-view-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; }	
-	#grid-view-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: 1em; line-height: 1.4em; }
-	#grid-view-event-list-dv .med-event-list-grid a.ee-register-button-lnk { padding: 5px 1.4em 4px; font-size:12px; line-height:21px; }
+	.grid-event-list-dv .med-event-list-grid.espresso-event-list-event { width: 190px; }
+	.grid-event-list-dv .med-event-list-grid .event-datetimes h4 { font-size:1em; line-height:1.2em; }
+	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv { margin:0 .85em; }
+	.grid-event-list-dv .med-event-list-grid .ee-event-img-dv { margin:0 0 -2.4em; }
+	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.85em; }
+	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
+	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .9em; }
+	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; */}	
+	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-content p { font-size: 1em; line-height: 1.4em; }
+	.grid-event-list-dv .med-event-list-grid a.ee-register-button-lnk { padding: 5px 1.4em 4px; font-size:12px; line-height:21px; }
 	
-	#grid-view-event-list-dv  .large-event-list-grid {}
-	#grid-view-event-list-dv .large-event-list-grid.espresso-event-list-event { width: 260px; }
+	.grid-event-list-dv  .large-event-list-grid {}
+	.grid-event-list-dv .large-event-list-grid.espresso-event-list-event { width: 260px; }
 
-	#grid-view-event-list-dv  .huge-event-list-grid {}
-	#grid-view-event-list-dv .huge-event-list-grid.espresso-event-list-event { width: 260px; }
+	.grid-event-list-dv  .huge-event-list-grid {}
+	.grid-event-list-dv .huge-event-list-grid.espresso-event-list-event { width: 260px; }
 
 
 
 	/******************* TEXT LIST TEMPLATE ****************** */
 	
 	
-	#text-list-event-list-dv .espresso-event-list-event {
+	.text-event-list-dv .espresso-event-list-event {
 		padding: 2em 1em 3em; margin: 1em; border: none; border-bottom: 1px dotted #EEEEE6;
 	}
 	
-	#text-list-event-list-dv .espresso-event-wrapper-dv { }
-	#text-list-event-list-dv  .espresso-event-wrapper-dv  .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.8em; margin: 0 0 .5em; line-height: 1em; }	
-	#text-list-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; }	
+	.text-event-list-dv .espresso-event-wrapper-dv { }
+	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.8em; margin: 0 0 .5em; line-height: 1em;*/ }	
+	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; }	
 
-	#text-list-event-list-dv .event-datetimes h4 { margin:0 0 1em; font-size:1.2em; color: #999; }	
+	.text-event-list-dv .event-datetimes h4 { margin:0 0 1em; font-size:1.2em; color: #999; }	
 
-	#text-list-event-list-dv .ee-event-img-dv { float: left; margin:0 3em 2em 0; }
+	.text-event-list-dv .ee-event-img-dv { float: left; margin:0 3em 2em 0; }
 	
-	#text-list-event-list-dv .event-meta { float: right; max-width:25%; min-width:136px; margin:1em 0 0; font-size:10px; /*text-align: center; */color:#A39D9C; }
-	#text-list-event-list-dv .event-categories-pg { margin:1em 0; font-size:10px; text-align:left; color:#A39D9C; }
+	.text-event-list-dv .event-meta { float: right; max-width:25%; min-width:150px; margin:0; font-size:10px; /*text-align: center; */color:#A39D9C; }
+	.text-event-list-dv .event-categories-pg { margin:0 0 1em; font-size:10px; text-align:left; color:#A39D9C; }
 
 
 
 	/******************* DATES LIST TEMPLATE ****************** */
 	
 	
-	#dates-list-event-list-dv .espresso-event-list-event {
+	.dates-event-list-dv .espresso-event-list-event {
 		padding: 1em 0 2em; margin: 1em; border: none; border-bottom: 1px solid #EEEEE6;
 	}
 	
-	#dates-list-event-list-dv .event-datetimes { float: left; width:60px; margin-right:2em; }	
-	#dates-list-event-list-dv .event-date-calendar-page-dv {
-		width:58px; height:58px; border: 1px solid #007BAE; border-radius: 3px;
+	.dates-event-list-dv .event-datetimes { float: left; width:60px; margin-right:2em; }	
+	.dates-event-list-dv .event-date-calendar-page-dv {
+		width:58px; height:58px; background:#fff; border: 1px solid #007BAE; border-radius: 3px;
 		text-align: center;
 	}
-	#dates-list-event-list-dv .event-date-calendar-page-month-dv {
-		padding:5px 1em 6px; background: #007BAE;  border-bottom: 1px solid #007BAE; 
+	.dates-event-list-dv .event-date-calendar-page-month-dv {
+		padding:5px 5px 6px; background: #007BAE;  border-bottom: 1px solid #007BAE; 
 		color: #fff; font-weight: bold; font-size:12px; line-height: 12px;
 	}
-	#dates-list-event-list-dv .event-date-calendar-page-day-dv {
-		padding:8px 1em 9px; color:#007BAE; font-weight: bold; font-size:18px;  /*007BAE*/
+	.dates-event-list-dv .event-date-calendar-page-day-dv {
+		padding:8px 5px 9px; color:#007BAE; font-weight: bold; font-size:18px; line-height:18px;  /*007BAE*/
 	}
 
-	#dates-list-event-list-dv .ee-event-img-dv { float: left; width:60px; margin-right:2em; }
+	.dates-event-list-dv .ee-event-img-dv { float: left; width:60px; margin-right:2em; }
 	
-	#dates-list-event-list-dv .espresso-event-wrapper-dv { float: left; margin-right:2em; max-width: 59%; }
-	#dates-list-event-list-dv  .espresso-event-wrapper-dv  .event-title { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; margin: 0 0 .25em; line-height: 1em; }	
+	.dates-event-list-dv .espresso-event-wrapper-dv { float: left; margin-right:2em; max-width: 69%; }
+	.dates-event-list-dv  .espresso-event-wrapper-dv  .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; margin: 0 0 .25em; line-height: 1em;*/ }	
 
-	#dates-list-event-list-dv .event-meta { float: right; max-width:17%; min-width:136px; margin:0; font-size:10px; text-align: center; color:#A39D9C; }
-	#dates-list-event-list-dv .event-categories-pg { margin:1em 0 0; font-size:10px; line-height:10px; text-align:left; color:#A39D9C; }
+	.dates-event-list-dv .event-meta { float: right; max-width:17%; min-width:150px; margin:0; font-size:10px; text-align: center; color:#A39D9C; }
+	.dates-event-list-dv .event-categories-pg { margin:1em 0 0; font-size:10px; line-height:10px; text-align:left; color:#A39D9C; }
 
 
 	

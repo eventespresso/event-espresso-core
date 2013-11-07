@@ -29,15 +29,15 @@
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ( $items as $item ) : ?>
+		<?php foreach ( $line_items as $item ) : ?>
 			<tr>
-				<td class="jst-left"><?php echo $item['line_item_id'];?></td>
-				<td class="jst-left"><?php echo $item['name'];?></td>
-				<td class="jst-left"><?php echo date( 'D M j, Y', $item['date'] ) . ',    ' . date( 'g:i a', $item['time'] );?></td>
-				<td class="jst-left"><?php echo $item['ticket_desc'];?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket_price'] );?></td>
-				<td class="jst-rght"><?php echo $item['qty'];?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency($item['line_total']);?></td>
+				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
+				<td class="jst-left"><?php echo $event_name;?></td>
+				<td class="jst-left"><?php echo $event->primary_datetime()->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a'); ?></td>
+				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency( $item->get('LIN_unit_price') );?></td>
+				<td class="jst-rght"><?php echo $item->get('LIN_quantity');?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_total'));?></td>
 			</tr>
 		<?php endforeach; // $items?>
 		<?php if ( $taxes ) : ?>
