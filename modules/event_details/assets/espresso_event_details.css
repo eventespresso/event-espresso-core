@@ -1,11 +1,11 @@
 	
-	#espresso-event-details-wrap-dv { width:65%; }	
+	#espresso-event-details-wrap-dv {  clear: both; margin: 1em auto;  /*width:65%;*/ }	
 	#espresso-event-details-dv { position: relative; padding: 0; margin: 0 auto; }	
 	#event-details-h1 {
-		z-index:10; margin:.5em  0 1em;
+		z-index:10; /*margin:.5em  0 1em;
 		font-size: 2em; line-height:1.1em; font-weight: bold; color: #464549;
 		text-shadow: 1px 1px 0px #fff; word-break: keep-all; white-space: wrap; 
-		-webkit-hyphens:none; -moz-hyphens:none; hyphens:none;
+		-webkit-hyphens:none; -moz-hyphens:none; hyphens:none;*/
 	}	
 	.espresso_events {
 		position: relative; width: 95%; height: auto; padding:0; margin: 2%;

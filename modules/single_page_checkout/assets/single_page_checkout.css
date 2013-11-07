@@ -174,7 +174,7 @@
 .asterisk, .espresso-form-input-lbl em { font-weight:bold; color:red !important; }
 .requires-value { border-color:red !important; border-width:2px !important; }
 
-#spco-copy-attendee-dv { position:relative; padding:1.5em; margin:1em 0; background:#f8f8f8; border-radius: 2px; line-height:1.1em; }
+#spco-copy-attendee-dv { position:relative; padding:1.5em; margin:1em 0; background:rgba( 255, 255, 255, .25 ); border-radius: 2px; line-height:1.1em; }
 #spco-copy-attendee-dv .spco-copy-attendee-pg { margin:0; font-size:.8em; letter-spacing:.4px; }
 #spco-copy-attendee-dv .spco-copy-all-attendee-pg { margin:0 0 .75em;}
 #spco-copy-attendee-dv label { 
