@@ -858,7 +858,6 @@ class EE_Event_List_Query extends WP_Query {
 	private $_limit = 10;
 	private $_css_class = NULL;
 	private $_show_expired = FALSE;
-	private $_show_deleted = FALSE;
 	private $_month = NULL;
 	private $_category_slug = NULL;
 	private $_order_by = NULL;
