@@ -775,6 +775,37 @@ class EED_Event_List  extends EED_Module {
 
 
 
+	/**
+	 * 	display_venue
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function display_venue_details() {
+		$EE = EE_Registry::instance();
+		$EE->load_helper( 'Venue_View' );
+		$display_venue= isset( $EE->CFG->template_settings->EED_Event_List->display_venue ) ? $EE->CFG->template_settings->EED_Event_List->display_venue : FALSE;
+		$venue_name = EEH_Venue_View::venue_name();
+		return $display_venue && ! empty( $venue_name ) ? TRUE : FALSE;
+	}
+
+
+	/**
+	 * 	display_address
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function display_address() {
+		$EE = EE_Registry::instance();
+		$EE->load_helper( 'Venue_View' );
+		$display_address= isset( $EE->CFG->template_settings->EED_Event_List->display_address ) ? $EE->CFG->template_settings->EED_Event_List->display_address : FALSE;
+		$venue_name = EEH_Venue_View::venue_name();
+		return $display_address && ! empty( $venue_name ) ? TRUE : FALSE;
+	}
+
+
+
 
 
 
@@ -850,6 +881,14 @@ function espresso_display_excerpt_in_event_list() {
 
 function espresso_event_list_template_part() {
 	return EED_Event_List::get_template_part();
+}
+
+function espresso_display_details_venue_in_event_list() {
+	return EED_Event_List::display_venue_details();
+}
+
+function espresso_display_venue_address_in_event_list() {
+	return EED_Event_List::display_address();
 }
 
 
