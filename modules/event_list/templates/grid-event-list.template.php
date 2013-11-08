@@ -17,7 +17,7 @@ $ELID = espresso_get_event_list_ID();
 espresso_grid_event_list( $ELID );
 ?>
 
-<div id="grid-event-list-<?php echo $ELID; ?>-dv" class="grid-event-list-dv max-width maxwidth row">
+<div id="grid-event-list-<?php echo $ELID; ?>-dv" class="grid-event-list-dv entry-content max-width maxwidth row">
 	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
 	
 		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
@@ -75,6 +75,15 @@ espresso_grid_event_list( $ELID );
 						</div>				
 						<!-- .event-content -->
 						
+						<?php if ( espresso_display_venue_address_in_event_list() ) { ?>
+						<div class="espresso-venue-dv">
+							<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
+							<strong><?php espresso_venue_name(); ?></strong>
+							<?php espresso_venue_address( 'inline' ); ?>
+						</div>				
+						<!-- .espresso-venue-dv -->
+						<?php } ?>
+
 						<footer class="event-meta">
 							<p><?php the_terms( $post->ID, 'espresso_event_categories' );// the_terms( $post->ID, 'category' );  ?></p>
 							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
