@@ -135,7 +135,7 @@
 		padding-left:5px; background: none;
 	}
 		
-	.grid-event-list-dv  .ee-event-img-dv { position: relative; width:100%; overflow: hidden; margin:0 0 -2.4em; }
+	.grid-event-list-dv  .ee-event-img-dv { position: relative; width:100%; overflow: hidden; margin:0 0 -2.5em; }
 	.grid-event-list-dv  .ee-event-img { 
 		/*position: absolute; top: auto; left: auto;*/ width:100%; height: auto; 
 		border-radius:0 !important; box-shadow:none !important; 
@@ -143,8 +143,8 @@
 	.grid-event-list-dv  .espresso-event-wrapper-dv { position: relative; margin:0 1em; background:#fff; background: rgba(255, 255, 255, 0.9); }	
 	.grid-event-list-dv  .espresso-event-wrapper-dv.has-img { }	
 	.grid-event-list-dv  .espresso-event-wrapper-dv .event-header { padding:1em 1em 1em; text-shadow: 1px 1px 0px #fff; }	
-	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title {/* font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.3em; margin: 0; line-height: 1em;*/ }	
-	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title { margin: 0; line-height: 1.1em; /* font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.3em; margin: 0; */ }	
+	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; line-height: 1em; }	
 	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; text-transform: lowercase; }
 	.grid-event-list-dv  .espresso-event-wrapper-dv  .event-content p { margin: 0 1em 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	 }	
 	.grid-event-list-dv  .espresso-event-wrapper-dv.has-img  .event-content p { margin: 0 .5em .5em; }	
@@ -177,7 +177,7 @@
 	.grid-event-list-dv .med-event-list-grid.espresso-event-list-event { width: 190px; }
 	.grid-event-list-dv .med-event-list-grid .event-datetimes h4 { font-size:1em; line-height:1.2em; }
 	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv { margin:0 .85em; }
-	.grid-event-list-dv .med-event-list-grid .ee-event-img-dv { margin:0 0 -2.4em; }
+	.grid-event-list-dv .med-event-list-grid .ee-event-img-dv { margin:0 0 -2.5em; }
 	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header { padding:.85em; }
 	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv.has_img .event-header { padding:0em; }
 	.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header p { font-size: .9em; }
