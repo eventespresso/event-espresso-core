@@ -354,6 +354,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			'statuses' => $statuses,
 			'cur_status_label' => array_key_exists($post->post_status, $statuses) ? $statuses[$post->post_status] : ''
 			);
+
+		//we'll add a trash post status (WP doesn't add one for some reason)
+		if ( $post->post_status == 'trash' ) {
+			$template_args['cur_status_label'] = __('Trashed', 'event_espresso');
+			$statuses['trash'] = __('Trashed', 'event_espresso');
+			$template_args['statuses'] = $statuses;
+		}
+
 		$template = EE_CORE_ADMIN_TEMPLATE . 'status_dropdown.template.php';
 		EEH_Template::display_template( $template, $template_args );
 	}
