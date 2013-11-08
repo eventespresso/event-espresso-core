@@ -244,6 +244,11 @@ jQuery(document).ready(function($) {
 	if ( our_status == 'Trashed' )
 		$('#delete-action').hide();
 
+	/**
+	 * temporarily remove preview button
+	 */
+	$('#preview-action').remove();
+
 
 	/**
 	 * EE Help dialog loads
