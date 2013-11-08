@@ -23,8 +23,7 @@
  * ------------------------------------------------------------------------
  */
 class EES_Event_List  extends EES_Shortcode {
-	
-	private $_css_class = NULL;
+
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
