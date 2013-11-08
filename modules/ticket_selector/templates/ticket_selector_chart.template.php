@@ -80,10 +80,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					// if more than one attendee is allowed
 					if ( $max_atndz > 1 ) { 
 						$tickets_remaining = $ticket->remaining();
-						// if $tickets_remaining equals -1, then there are unlimited tickets for sale, so use $max_atndz, otherwise offer however many tickets are left
-						$max = $tickets_remaining < 0 ? $max_atndz : $tickets_remaining;
-						// but... we also want to restrict the number of tickets by the ticket max setting
-						$max = $ticket->max() > 0 ? $ticket->max() : $max;
+						// if $tickets_remaining equals -1, then there are unlimited tickets for sale, so use $max_atndz, 
+						// otherwise offer however many tickets are left, as long as that is still less than $max_atndz
+						$max = $tickets_remaining < 0 ? $max_atndz : min( $tickets_remaining, $max_atndz );
+						// but... we also want to restrict the number of tickets by the ticket max setting,
+						// however, the max still can't be higher than what was just set above
+						$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
 						// and we also want to restrict the minimum number of tickets by the ticket min setting
 						$min = $ticket->min() > 0 ? $ticket->min() : 1;
 
