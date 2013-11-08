@@ -32,6 +32,9 @@
 	.espresso-event-details .ee-register-button-lnk:active { top:-1px; }
 	.espresso-event-details .edit-event-lnk { margin:0 1em; }
 	
+	.espresso-venue-dv { padding: 1em 2em; margin:1em 0; border:1px solid #eee; background: #f8f8f8; }
+	/*.espresso-address-dv div:first-child { margin:.5em 0 0 2em; }*/
+	
 	.tiny-txt { font-size:.5em; letter-spacing:1px; }
 	.smaller-txt { font-size:.7em; letter-spacing:.6px; }
 	.small-txt { font-size:.85em; letter-spacing:.3px; }
