@@ -1489,6 +1489,104 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 	
 	
 	
+	/**
+	 * Makes sure the 3.1's image url is converted to an image attachment post to the 4.1 CPT event
+	 * and sets it as teh featured image on the CPT event
+	 * @param type $old_event
+	 * @param type $new_cpt_id
+	 * @param  EE_Data_Migration_Script_Stage $migration_stage the stage which called this, where errors should be added
+	 * @return void
+	 */
+	public function convert_image_url_to_attachment_and_attach_to_post($guid,$new_cpt_id,  EE_Data_Migration_Script_Stage $migration_stage){
+		if($guid){
+			//check for an existing attachment post with this guid
+			$attachment_post_id = $this->_get_image_attachment_id_by_GUID($guid);
+			if( ! $attachment_post_id){
+				//post thumbnail with that GUID doesn't exist, we should create one
+				$attachment_post_id = $this->_create_image_attachment_from_GUID($guid, $migration_stage);
+			}
+			//double-check we actually have an attachment post
+			if( $attachment_post_id){
+				update_post_meta($new_cpt_id,'_thumbnail_id',$attachment_post_id);
+			}else{
+				$migration_stage->add_error(sprintf(__("Could not update event image %s for CPT with ID %d, but attachments post ID is %d", "event_espresso"),$guid,$new_cpt_id,$attachment_post_id));
+			}
+		}
+	}
+	
+	/**
+	 * Creates an image attachment post for the GUID. If teh GUID points to a remote image,
+	 * we download it to our uploads directory so that it can be properly processed (eg, creates different sizes of thumbnails)
+	 * @param type $guid
+	 * @param EE_Data_Migration_Script_Stage $migration_stage
+	 * @return int
+	 */
+	private function _create_image_attachment_from_GUID($guid, EE_Data_Migration_Script_Stage $migration_stage){
+		if ( ! $guid){
+			$migration_stage->add_error(sprintf(__("Cannot create image attachment for a blank GUID!", "event_espresso")));
+			return 0;
+		}
+		$wp_filetype = wp_check_filetype(basename($guid), null );
+		$wp_upload_dir = wp_upload_dir();
+		//if the file is located remotely, download it to our uploads DIR, because wp_genereate_attachmnet_metadata needs the file to be local
+		if(strpos($guid,$wp_upload_dir['url']) === FALSE){
+			//image is located remotely. download it and place it in the uploads directory
+			$contents= file_get_contents($guid);
+			if($contents === FALSE){
+				$migration_stage->add_error(sprintf(__("Could not read image at %s, and therefore couldnt create an attachment post for it.", "event_espresso"),$guid));
+				return false;
+			}
+			$local_filepath  = $wp_upload_dir['path'].DS.basename($guid);
+			$savefile = fopen($local_filepath, 'w');
+			fwrite($savefile, $contents);
+			fclose($savefile);			
+			$guid = str_replace($wp_upload_dir['path'],$wp_upload_dir['url'],$local_filepath); 
+		}else{
+			$local_filepath = str_replace($wp_upload_dir['url'],$wp_upload_dir['path'],$guid);
+		}
+		
+		$attachment = array(
+		   'guid' => $guid, 
+		   'post_mime_type' => $wp_filetype['type'],
+		   'post_title' => preg_replace('/\.[^.]+$/', '', basename($guid)),
+		   'post_content' => '',
+		   'post_status' => 'inherit'
+		);
+		$attach_id = wp_insert_attachment( $attachment, $guid );
+		if( ! $attach_id ){
+			$migration_stage->add_error(sprintf(__("Could not create image attachment post from image '%s'. Attachment data was %s.", "event_espresso"),$guid,http_build_query($attachment)));
+			return $attach_id;
+		}
+		
+		// you must first include the image.php file
+		// for the function wp_generate_attachment_metadata() to work
+		require_once(ABSPATH . 'wp-admin/includes/image.php');
+		
+		$attach_data = wp_generate_attachment_metadata( $attach_id, $local_filepath );
+		if( ! $attach_data){
+			$migration_stage->add_error(sprintf(__("Coudl not genereate attachment metadata for attachment post %d with filepath %s and GUID %s. Please check the file was downloaded properly.", "event_espresso"),$attach_id,$local_filepath,$guid));
+			return $attach_id;
+		}
+		$metadata_save_result = wp_update_attachment_metadata( $attach_id, $attach_data );
+		if( ! $metadata_save_result ){
+			$migration_stage->add_error(sprintf(__("Could not update attachment metadata for attachment %d with data %s", "event_espresso"),$attach_id,http_build_query($attach_data)));
+		}
+		return $attach_id;
+	}
+	
+	/**
+	 * Finds the attachment post containing info about an image attachment given teh GUID (link to the image itself),
+	 * and returns its ID.
+	 * @global type $wpdb
+	 * @param string $guid
+	 * @return int
+	 */
+	private function _get_image_attachment_id_by_GUID($guid){
+		global $wpdb;
+		$attachment_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid=%s LIMIT 1",$guid));
+		return $attachment_id;
+	}
+	
 }
 
 

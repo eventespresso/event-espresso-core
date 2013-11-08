@@ -451,6 +451,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_email'] = isset( $this->EE->CFG->organization->email ) ? $this->_display_nice( $this->EE->CFG->organization->email ) : '';
 		$this->_template_args['currency_sign'] = isset( $this->EE->CFG->currency->sign ) ? $this->_display_nice( $this->EE->CFG->currency->sign ) : '$';
 		$this->_template_args['organization_logo_url'] = isset( $this->EE->CFG->organization->logo_url ) ? $this->_display_nice( $this->EE->CFG->organization->logo_url ) : FALSE;
+		$this->_template_args['organization_facebook'] = isset( $this->EE->CFG->organization->facebook ) ? $this->_display_nice( $this->EE->CFG->organization->facebook ) : '';
+		$this->_template_args['organization_twitter'] = isset( $this->EE->CFG->organization->twitter ) ? $this->_display_nice( $this->EE->CFG->organization->twitter ) : '';
+		$this->_template_args['organization_linkedin'] = isset( $this->EE->CFG->organization->linkedin ) ? $this->_display_nice( $this->EE->CFG->organization->linkedin ) : '';
+		$this->_template_args['organization_pinterest'] = isset( $this->EE->CFG->organization->pinterest ) ? $this->_display_nice( $this->EE->CFG->organization->pinterest ) : '';
+		$this->_template_args['organization_google'] = isset( $this->EE->CFG->organization->google ) ? $this->_display_nice( $this->EE->CFG->organization->google ) : '';
+		$this->_template_args['organization_instagram'] = isset( $this->EE->CFG->organization->instagram ) ? $this->_display_nice( $this->EE->CFG->organization->instagram ) : '';
 		//UXIP settings
 		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin', TRUE );
 		
@@ -520,6 +526,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->EE->CFG->organization->zip = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : $this->EE->CFG->organization->zip;
 		$this->EE->CFG->organization->email = isset( $this->_req_data['organization_email'] ) ? sanitize_email( $this->_req_data['organization_email'] ) : $this->EE->CFG->organization->email;
 		$this->EE->CFG->organization->logo_url = isset( $this->_req_data['organization_logo_url'] ) ? esc_url_raw( $this->_req_data['organization_logo_url'] ) : $this->EE->CFG->organization->logo_url;
+		$this->EE->CFG->organization->facebook = isset( $this->_req_data['organization_facebook'] ) ? esc_url_raw( $this->_req_data['organization_facebook'] ) : $this->EE->CFG->organization->facebook;
+		$this->EE->CFG->organization->twitter = isset( $this->_req_data['organization_twitter'] ) ? esc_url_raw( $this->_req_data['organization_twitter'] ) : $this->EE->CFG->organization->twitter;
+		$this->EE->CFG->organization->linkedin = isset( $this->_req_data['organization_linkedin'] ) ? esc_url_raw( $this->_req_data['organization_linkedin'] ) : $this->EE->CFG->organization->linkedin;
+		$this->EE->CFG->organization->pinterest = isset( $this->_req_data['organization_pinterest'] ) ? esc_url_raw( $this->_req_data['organization_pinterest'] ) : $this->EE->CFG->organization->pinterest;
+		$this->EE->CFG->organization->google = isset( $this->_req_data['organization_google'] ) ? esc_url_raw( $this->_req_data['organization_google'] ) : $this->EE->CFG->organization->google;
+		$this->EE->CFG->organization->instagram = isset( $this->_req_data['organization_instagram'] ) ? esc_url_raw( $this->_req_data['organization_instagram'] ) : $this->EE->CFG->organization->instagram;
 		$this->EE->CFG->core->ee_ueip_optin = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : $this->EE->CFG->core->ee_ueip_optin; 
 
 		$this->EE->CFG = apply_filters('FHEE_your_organization_settings_save', $this->EE->CFG );	

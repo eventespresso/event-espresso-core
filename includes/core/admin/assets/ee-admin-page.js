@@ -217,7 +217,7 @@ jQuery(document).ready(function($) {
 			}else {
 				$( beforeWhat ).before( msg );
 			}
-			if ( fadeaway == true ) {
+			if ( fadeaway === true ) {
 				$('#message').removeClass('hidden').show().delay(8000).fadeOut();
 			} else {
 				$('#message').removeClass('hidden').show();
@@ -225,7 +225,7 @@ jQuery(document).ready(function($) {
 
 		}
 
-	}
+	};
 
 
 	/**
@@ -234,11 +234,20 @@ jQuery(document).ready(function($) {
 	var wp_status = $('.ee-status-container', '#misc-publishing-actions').first();
 	var our_status = $('#cur_status').text();
 	var extra_statuses = $('#ee_post_status').html();
-	if ( our_status != '' )
+	if ( our_status !== '' )
 		$('#post-status-display').text(our_status);
 
-	if ( extra_statuses != '' )
+	if ( extra_statuses !== '' )
 		$(extra_statuses).appendTo($('#post_status'));
+	
+	// handle removing "move to trash" text if post_status is trash
+	if ( our_status == 'Trashed' )
+		$('#delete-action').hide();
+
+	/**
+	 * temporarily remove preview button
+	 */
+	$('#preview-action').remove();
 
 
 	/**
@@ -312,4 +321,3 @@ jQuery(document).ready(function($) {
 
 
 });
-

@@ -354,6 +354,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			'statuses' => $statuses,
 			'cur_status_label' => array_key_exists($post->post_status, $statuses) ? $statuses[$post->post_status] : ''
 			);
+
+		//we'll add a trash post status (WP doesn't add one for some reason)
+		if ( $post->post_status == 'trash' ) {
+			$template_args['cur_status_label'] = __('Trashed', 'event_espresso');
+			$statuses['trash'] = __('Trashed', 'event_espresso');
+			$template_args['statuses'] = $statuses;
+		}
+
 		$template = EE_CORE_ADMIN_TEMPLATE . 'status_dropdown.template.php';
 		EEH_Template::display_template( $template, $template_args );
 	}
@@ -954,9 +962,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		$title = $this->_cpt_object->labels->edit_item;
 
+
 		if ( isset( $this->_cpt_routes[$this->_req_data['action']] ) && !isset( $this->_labels['hide_add_button_on_cpt_route']['edit_attendee'] ) ) {
 
-			$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new'), $this->_admin_base_url );
+			$this->_template_args['post_new_file'] = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'create_new', 'page' => $this->page_slug), 'admin.php' );
 		}
 
 		if ( post_type_supports($this->_cpt_routes[$this->_req_action], 'comments') ) {
