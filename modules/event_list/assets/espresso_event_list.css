@@ -105,6 +105,8 @@
 	.espresso-events-list-wrap-dv a.ee-register-button-lnk:visited { color:#fff; }
 	.espresso-events-list-wrap-dv a.ee-register-button-lnk:active { top:1px; }
 	.espresso-events-list-wrap-dv a.edit-event-lnk { margin:0 1em; }
+
+	.espresso-venue-dv { padding: 1em; margin:1em 0; border:1px solid #eee; background: #f8f8f8; }
 	
 	.no-espresso-events-found { padding: 2em; }
 	.no-espresso-events-found .event-title { /*margin:0 0 1em; font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; */ }
