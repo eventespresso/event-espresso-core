@@ -1398,7 +1398,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			return FALSE;
 		}
 
-		$this->_set_model_object( $EVT_ID );
+		$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
 
 		// clean status
 		$event_status = sanitize_key($event_status);
