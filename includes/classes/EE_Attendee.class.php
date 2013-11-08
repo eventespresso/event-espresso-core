@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Attendee extends EE_CPT_Base{
+class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 
     /**
@@ -590,10 +590,10 @@ class EE_Attendee extends EE_CPT_Base{
 
 
 	/**
-	*		get Attendee Country ISO Code
-	* 		@access		public
+	*	get Attendee Country ISO Code
+	* 	@access		public
 	*/	
-	public function country_ISO() {
+	public function country_ID() {
 		return $this->get('CNT_ISO');
 	}
 

@@ -1,6 +1,6 @@
 <?php
 
-class EE_Venue extends EE_CPT_Base {
+class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 
 	/**
 	 * Related events
