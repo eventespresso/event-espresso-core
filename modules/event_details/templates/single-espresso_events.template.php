@@ -15,13 +15,13 @@
  */
 get_header();
 ?>
-<div class="maxwidth max-width row">
+<div class="entry-content maxwidth max-width row">
 	<div id="espresso-event-details-wrap-dv" class="site-content">
 		<div id="espresso-event-details-dv" class="" role="main">
 				
 		<?php if ( have_posts() ) { ?>
 			<?php while ( have_posts() ) { the_post();?>
-			
+			<?php global $post;?>
 			<?php do_action( 'AHEE_event_details_before_post', $post ); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class('espresso-event-details'); ?>>
 				
@@ -31,6 +31,7 @@ get_header();
 					<h1  id="event-details-h1"><?php the_title(); ?></h1>
 					<?php do_action( 'AHEE_event_details_header_bottom', $post ); ?>
 				</header>
+				<!-- .event-header -->
 
 				<div class="event-datetimes">
 					<?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
@@ -57,7 +58,14 @@ get_header();
 				}				
 			?>
 			<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
-				<!-- .event-header -->
+			
+				<div class="espresso-venue-dv">
+					<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
+					<strong><?php espresso_venue_name(); ?></strong>
+					<?php espresso_venue_address( 'inline' ); ?>
+				</div>				
+				<!-- .espresso-venue-dv -->
+
 				<div class="event-content">
 					<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
 					<?php the_content(); ?> 
@@ -65,6 +73,7 @@ get_header();
 					<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
 				</div>				
 				<!-- .event-content -->
+				
 				<footer class="event-meta">
 					<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>
 					<?php espresso_edit_event_link(); ?>
