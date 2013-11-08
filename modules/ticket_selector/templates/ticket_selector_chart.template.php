@@ -104,12 +104,13 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						type="radio" 
 						name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" 
 						id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
-						class="ticket-selector-tbl-qty-slct ui-widget-content ui-corner-all"
+						class="ticket-selector-tbl-qty-slct"
 						value="<?php echo $row . '-'; ?>1"
 						<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
 					/>
 			<?php
 					} 
+					
 				} else {
 					// sold out or other status ?
 					if ( ! $ticket->is_remaining() && $ticket->ticket_status() >= 0 ) {
@@ -129,11 +130,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					?>	
 					<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="0" />
 					<?php
-					} else {
-					?>	
-					<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" value="<?php echo $row . '-'; ?>0" />
-					<?php
-					}
+					} 
 				}
 			?>	
 					<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>" />
