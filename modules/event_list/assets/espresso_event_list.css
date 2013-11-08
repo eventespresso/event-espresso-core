@@ -23,7 +23,7 @@
 	
 	#espresso-events-list-filters-view-dv { float: right; margin:.35em 0 0; }
 	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk { display: inline-block; margin:0; }
-	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk img { vertical-align: middle; }
+	#espresso-events-list-filters-view-dv .events-list-filter-view-lnk img { vertical-align: middle; box-shadow:none !important; }
 	
 	.ee-checkbox { vertical-align: middle; }
 	.ee-checkbox-lbl:hover { cursor: pointer; }
@@ -106,10 +106,10 @@
 	.espresso-events-list-wrap-dv a.ee-register-button-lnk:active { top:1px; }
 	.espresso-events-list-wrap-dv a.edit-event-lnk { margin:0 1em; }
 
-	.espresso-venue-dv { padding: 1em; margin:1em 0; border:1px solid #eee; background: #f8f8f8; }
+	.espresso-venue-dv {  width: auto; padding: 1em; margin:1em 0; border:1px solid #eee; background: #f8f8f8; }
 	
 	.no-espresso-events-found { padding: 2em; }
-	.no-espresso-events-found .event-title { /*margin:0 0 1em; font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; */ }
+	.no-espresso-events-found .event-title { margin:0 0 1em; /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; */ }
 	.no-espresso-events-found #s { min-width:200px; width:25%; }
 
 	
@@ -201,10 +201,10 @@
 	}
 	
 	.text-event-list-dv .espresso-event-wrapper-dv { }
-	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.8em; margin: 0 0 .5em; line-height: 1em;*/ }	
-	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a { text-decoration: none; }	
+	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title {  margin-top: 0; /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.8em; margin: 0 0 .5em; line-height: 1em;*/ }	
+	.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a { /*text-decoration: none; */}	
 
-	.text-event-list-dv .event-datetimes h4 { margin:0 0 1em; font-size:1.2em; color: #999; }	
+	.text-event-list-dv .event-datetimes h4 { /*margin:0 0 1em; font-size:1.2em; color: #999; */}	
 
 	.text-event-list-dv .ee-event-img-dv { float: left; margin:0 3em 2em 0; }
 	
@@ -217,10 +217,10 @@
 	
 	
 	.dates-event-list-dv .espresso-event-list-event {
-		padding: 1em 0 2em; margin: 1em; border: none; border-bottom: 1px solid #EEEEE6;
+		position: relative; padding: 1em 0 2em; margin: 1em; border: none; border-bottom: 1px solid #EEEEE6;
 	}
 	
-	.dates-event-list-dv .event-datetimes { float: left; width:60px; margin-right:2em; }	
+	.dates-event-list-dv .event-datetimes {  position:absolute; top:1em; left:0;  }	
 	.dates-event-list-dv .event-date-calendar-page-dv {
 		width:58px; height:58px; background:#fff; border: 1px solid #007BAE; border-radius: 3px;
 		text-align: center;
@@ -233,10 +233,10 @@
 		padding:8px 5px 9px; color:#007BAE; font-weight: bold; font-size:18px; line-height:18px;  /*007BAE*/
 	}
 
-	.dates-event-list-dv .ee-event-img-dv { float: left; width:60px; margin-right:2em; }
+	.dates-event-list-dv .ee-event-img-dv {  position:absolute; top:1em; left:90px;  }
 	
-	.dates-event-list-dv .espresso-event-wrapper-dv { float: left; margin-right:2em; max-width: 69%; }
-	.dates-event-list-dv  .espresso-event-wrapper-dv  .event-title { /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; margin: 0 0 .25em; line-height: 1em;*/ }	
+	.dates-event-list-dv .espresso-event-wrapper-dv { margin-left:180px;  }
+	.dates-event-list-dv  .espresso-event-wrapper-dv  .event-title { margin-top: 0; /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; margin: 0 0 .25em; line-height: 1em;*/ }	
 
 	.dates-event-list-dv .event-meta { float: right; max-width:17%; min-width:150px; margin:0; font-size:10px; text-align: center; color:#A39D9C; }
 	.dates-event-list-dv .event-categories-pg { margin:1em 0 0; font-size:10px; line-height:10px; text-align:left; color:#A39D9C; }
