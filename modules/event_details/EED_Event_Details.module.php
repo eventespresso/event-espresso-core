@@ -72,7 +72,7 @@ class EED_Event_Details  extends EED_Module {
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 //		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
-		//$this->ouput =  '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+		$this->EE->load_helper( 'Venue_View' );
 	}
 
 
@@ -170,7 +170,7 @@ class EED_Event_Details  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function template_include( $template_path ) {
-
+		
 		if ( get_post_type() == 'espresso_events' ) {
 			if ( is_single() ) {
 				// check if the template file exists in the theme first
