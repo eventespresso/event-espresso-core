@@ -668,7 +668,7 @@ class EE_Transaction extends EE_Base_Class{
 		foreach ( $this->get_many_related('Registration') as $registration ) {
 			$registration->finalize();
 		}
-		if ( ! is_admin() && ! $this->EE->REQ->is_set( 'e_reg_url_link' )) {
+		if (( ! is_admin() || $this->EE->REQ->is_set( 'ee_front_ajax' ) && $this->EE->REQ->get( 'ee_front_ajax' )) && ! $this->EE->REQ->is_set( 'e_reg_url_link' )) {
 			//remove the session from the transaction before saving it to the db to minimize recursive relationships
 			$this->set_txn_session_data( NULL );
 			// save registrations and transaction to the session
