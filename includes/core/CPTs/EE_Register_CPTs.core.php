@@ -150,13 +150,13 @@ class EE_Register_CPTs {
 					'taxonomies'=> array(
 						'espresso_venue_categories'
 				))),
-			'espresso_persons' => array(
+			/*'espresso_persons' => array(
 				'singular_name' => __("Person", "event_espresso"),
 				'plural_name' => __("People", "event_espresso"),
 				'singular_slug' => __("person", "event_espresso"),
 				'plural_slug' => __("people", "event_espresso"),
 				'args' => array()
-				),
+				),/**/ //temporarily disable personsCPT because not in use.
 			'espresso_attendees' => array(
 				'singular_name' => __("Attendee", "event_espresso"),
 				'plural_name' => __("Attendees", "event_espresso"),
