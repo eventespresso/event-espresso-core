@@ -150,7 +150,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 				  EVT_ID INT UNSIGNED NOT NULL ,
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
-				  DTT_reg_limit mediumint(8) unsigned DEFAULT NULL,
+				  DTT_reg_limit mediumint(8) DEFAULT -1,
 				  DTT_sold mediumint(8) unsigned DEFAULT 0,
 				  DTT_is_primary tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
 				  DTT_order mediumint(3) unsigned DEFAULT 0,
