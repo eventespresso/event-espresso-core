@@ -219,7 +219,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 70
 					),
 				'help_tour' => array( 'Countries_Help_Tour' ),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				//'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
 				)
 			);
 	}
@@ -631,7 +631,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_set_add_edit_form_tags( 'update_country_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( GEN_SET_TEMPLATE_PATH . 'countries_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();
+		$this->display_admin_page_with_no_sidebar();
 	}
 
 	
