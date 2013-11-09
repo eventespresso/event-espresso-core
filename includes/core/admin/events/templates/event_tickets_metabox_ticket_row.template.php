@@ -14,20 +14,30 @@
 		<span class="ticket-price-info-display ticket-price-dollar-sign-display"><?php echo $price_currency_symbol; ?></span>
 	</td>
 	<td>	
-		<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp ee-inp-right" name="edit_prices[<?php echo $ticketrow; ?>][1][PRC_amount]" value="<?php echo $PRC_amount; ?>">
+		<?php if ( empty( $disabled ) ) : ?>
+			<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp ee-inp-right" name="edit_prices[<?php echo $ticketrow; ?>][1][PRC_amount]" value="<?php echo $PRC_amount; ?>">
+		<?php else : ?>
+			<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp ee-inp-right" name="disabled_price_amount" value="<?php echo $PRC_amount; ?>"<?php echo $disabled; ?>>
+			<input type="hidden" size="1" class="edit-price-PRC_amount ee-small-text-inp ee-inp-right" name="edit_prices[<?php echo $ticketrow; ?>][1][PRC_amount]" value="<?php echo $PRC_amount; ?>">
+		<?php endif; ?>
 
 		<input type="hidden" name="edit_prices[<?php echo $ticketrow; ?>][1][PRT_ID]" class="edit-price-PRT_ID" value="1">
 		<input type="hidden" name="edit_prices[<?php echo $ticketrow; ?>][1][PRC_ID]" class="edit-price-PRC_ID" value="<?php echo $PRC_ID; ?>">
 		<input type="hidden" name="edit_prices[<?php echo $ticketrow; ?>][1][PRC_is_default]" class="edit-price-PRC_is_default" value="<?php echo $PRC_is_default; ?>">
 	</td>
 	<td>
-		<input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-inp-right" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_qty]" value="<?php echo $TKT_qty; ?>">
+		<?php if ( empty( $disabled ) ) : ?>
+			<input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-inp-right" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_qty]" value="<?php echo $TKT_qty; ?>">
+		<?php else : ?>
+			<input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-inp-right" name="disabled_tkt_qty" value="<?php echo $TKT_qty; ?>"<?php echo $disabled; ?>>
+			<input type="hidden" class="edit-ticket-TKT_qty ee-small-text-inp ee-inp-right" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_qty]" value="<?php echo $TKT_qty; ?>">
+		<?php endif; ?>
 	</td>
 	<td>
 		<span class="TKT_sold"><?php echo $TKT_sold; ?></span>
 	</td>
 	<td>
-		<span class="trash-icon clickable" data-ticket-row="<?php echo $ticketrow; ?>" data-context="ticket">
+		<span class="<?php echo $trash_icon; ?>" data-ticket-row="<?php echo $ticketrow; ?>" data-context="ticket">
 	</td>
 </tr>
 
@@ -47,4 +57,6 @@
  * $PRC_ID
  * $PRC_is_default
  * $TKT_qty
+ * $trash_icon
+ * $disabled
  */
