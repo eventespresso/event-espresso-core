@@ -1137,7 +1137,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'TKT_end_date' => $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
 			'TKT_is_default' => $ticket->get('TKT_is_default'),
 			'TKT_qty' => $ticket->get('TKT_qty') === -1 ? '' : $ticket->get('TKT_qty'),
-			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets'
+			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
+			'TKT_sold' => $skeleton ? 0 : $ticket->get('TKT_sold')
 			);
 
 		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price') : $this->EE->load_model('Price')->create_default_object();

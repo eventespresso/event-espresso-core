@@ -24,6 +24,9 @@
 		<input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-inp-right" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_qty]" value="<?php echo $TKT_qty; ?>">
 	</td>
 	<td>
+		<span class="TKT_sold"><?php echo $TKT_sold; ?></span>
+	</td>
+	<td>
 		<span class="trash-icon clickable" data-ticket-row="<?php echo $ticketrow; ?>" data-context="ticket">
 	</td>
 </tr>

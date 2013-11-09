@@ -49,6 +49,7 @@
 					<td><span class="hidden">currency symbol</span></td>
 					<td><?php _e('Price', 'event_espresso'); ?></td>
 					<td><?php _e('Qty', 'event_espresso'); ?></td>
+					<td><?php _e('Sold', 'event_espresso'); ?></td>
 					<td></td>
 				</tr>
 			</thead>
