@@ -738,6 +738,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'DTT_order' => $row,
 				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
+			
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 			
 			if ( !empty( $dtt['DTT_ID'] ) ) {
@@ -805,7 +806,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
 			
 			if ( !empty( $tkt['TKT_ID'] ) ) {
-				$TKT = $this->EE->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
+				$TKT = $this->EE->load_model( 'Ticket')->get_one( array(array('TKT_ID' => $tkt['TKT_ID']), 'default_where_conditions' => 'none') );
+
 
 				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
 
