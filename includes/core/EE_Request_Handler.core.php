@@ -106,7 +106,7 @@ final class EE_Request_Handler {
 	 *  @return 	mixed
 	 */
 	public function is_espresso_page() {
-		return $this->_params['is_espresso_page'];
+		return isset( $this->_params['is_espresso_page'] ) ? $this->_params['is_espresso_page'] : FALSE;
 	}
 
 
