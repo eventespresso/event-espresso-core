@@ -10,41 +10,28 @@
  * array/hash/object that is given.
  * Docs: http://www.openjs.com/scripts/others/dump_function_php_print_r.php
  */
-function dump(arr,level) {
-	var dumped_text = "";
-	if(!level) level = 0;
-	
-	//The padding given at the beginning of the line.
-	var level_padding = "";
-	for(var j=0;j<level+1;j++) level_padding += "    ";
-	
-	if(typeof(arr) == 'object') { //Array/Hashes/Objects
-		for(var item in arr) {
-			var value = arr[item];
-			
-			if(typeof(value) == 'object') { //If it is an array,
-				dumped_text += level_padding + "'" + item + "' ...\n";
-				dumped_text += dump(value,level+1);
-			} else {
-				dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
-			}
-		}
-	} else { //Stings/Chars/Numbers etc.
-		dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
-	}
-	return dumped_text;
-}
-
-
-function getFunctionName() {
-	var myName = arguments.callee.toString();
-	myName = myName.substr('function '.length);
-	myName = myName.substr(0, myName.indexOf('('));
-	return myName;
-}
-
-
 jQuery(document).ready(function($) {
+
+	// add jQuery function to center elements on screen
+	$.fn.center = function () {
+		this.css({ 'position' : 'absolute' });
+		var element_top = Math.max( 0, ((( $(window).height() / 2 ) - this.outerHeight() ) / 2 )  + $(window).scrollTop() );
+		var element_left = Math.max( 0, (( $(window).width() - this.outerWidth() ) / 2 ) + $(window).scrollLeft() );
+		this.css({ 'top' : element_top + 'px' });
+		this.css({ 'left' : element_left + 'px' });
+		return this;
+	};
+
+	$('#espresso-notices').center();
+	$('.espresso-notices').slideDown();
+	$('.espresso-notices.fade-away').delay(10000).slideUp();
+
+	//close btn for notifications
+	$('.close-espresso-notice').on( 'click', function(e){
+		$(this).parent().hide();
+		e.preventDefault();
+		e.stopPropagation();
+	});
 
 	$('.show-if-js').css({ 'display' : 'inline-block' });
 	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
@@ -105,14 +92,38 @@ jQuery(document).ready(function($) {
 	});
 	
 	
-	// add jQuery function to center elements on screen
-	$.fn.center = function () {
-		this.css({ 'position' : 'absolute' });
-		var element_top = Math.max( 0, ((( $(window).height() / 2 ) - this.outerHeight() ) / 2 )  + $(window).scrollTop() );
-		var element_left = Math.max( 0, (( $(window).width() - this.outerWidth() ) / 2 ) + $(window).scrollLeft() );
-		this.css({ 'top' : element_top + 'px' });
-		this.css({ 'left' : element_left + 'px' });
-		return this;
-	};
 	
 });
+
+function dump(arr,level) {
+	var dumped_text = "";
+	if(!level) level = 0;
+	
+	//The padding given at the beginning of the line.
+	var level_padding = "";
+	for(var j=0;j<level+1;j++) level_padding += "    ";
+	
+	if(typeof(arr) == 'object') { //Array/Hashes/Objects
+		for(var item in arr) {
+			var value = arr[item];
+			
+			if(typeof(value) == 'object') { //If it is an array,
+				dumped_text += level_padding + "'" + item + "' ...\n";
+				dumped_text += dump(value,level+1);
+			} else {
+				dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+			}
+		}
+	} else { //Stings/Chars/Numbers etc.
+		dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+	}
+	return dumped_text;
+}
+
+
+function getFunctionName() {
+	var myName = arguments.callee.toString();
+	myName = myName.substr('function '.length);
+	myName = myName.substr(0, myName.indexOf('('));
+	return myName;
+}

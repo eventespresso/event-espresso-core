@@ -1,16 +1,5 @@
 jQuery(document).ready(function($) {
 	
-	$('#espresso-notices').center();
-	$('.espresso-notices').slideDown();
-	$('.espresso-notices.fade-away').delay(10000).slideUp();
-
-	//close btn for notifications
-	$('.close-espresso-notice').on( 'click', function(e){
-		$(this).parent().hide();
-		e.preventDefault();
-		e.stopPropagation();
-	});
-
 	var message = $('#ee-error-message');
 	var target;
 	
