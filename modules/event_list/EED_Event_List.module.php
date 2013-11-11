@@ -600,9 +600,12 @@ class EED_Event_List  extends EED_Module {
 			// first check uploads folder
 			if ( file_exists( get_stylesheet_directory() . 'event_list/espresso_event_list.css' )) {
 				wp_register_style( 'espresso_event_list', get_stylesheet_directory() . 'event_list/espresso_event_list.css', array() );
-				wp_register_script( 'espresso_event_list', get_stylesheet_directory() . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
 			} else {
 				wp_register_style( 'espresso_event_list', EE_TEMPLATES_URL . 'event_list/espresso_event_list.css', array() );
+			}
+			if ( file_exists( get_stylesheet_directory() . 'event_list/espresso_event_list.js' )) {
+				wp_register_script( 'espresso_event_list', get_stylesheet_directory() . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
+			} else {
 				wp_register_script( 'espresso_event_list', EE_TEMPLATES_URL . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
 			}
 			wp_enqueue_style( 'espresso_event_list' );
