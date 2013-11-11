@@ -202,8 +202,8 @@ final class EE_Admin {
 	 * @return void
 	 */
 	public function enable_hidden_ee_nav_menu_metaboxes() {
-		global $wp_meta_boxes;
-		if ( ! is_array($wp_meta_boxes) )
+		global $wp_meta_boxes, $pagenow;
+		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' )
 			return;
 
 		$initial_meta_boxes = array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' );
