@@ -189,7 +189,8 @@ final class EE_Admin {
 		}
 
 		//make sure our cpts and custom taxonomy metaboxes get shown for first time users
-		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ) );
+		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ), 10 );
+		add_action('admin_head', array( $this, 'register_custom_nav_menu_boxes' ), 10 );
 		
 	}
 
@@ -225,6 +226,163 @@ final class EE_Admin {
 		update_user_option( $user->ID, 'metaboxhidden_nav-menus', $hidden_meta_boxes, true );
 	}
 
+
+
+
+
+
+	/**
+	 * This method simply registers custom nav menu boxes for "nav_menus.php route"
+	 *
+	 * Currently EE is using this to make sure there are menu options for our CPT archive page routes.
+	 *
+	 * @todo modify this so its more dynamic and automatic for all ee cpts and setups and can also be hooked into by addons etc.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function register_custom_nav_menu_boxes() {
+		add_meta_box( 'add-extra-nav-menu-pages', __('Event Espresso Pages', 'event_espresso'), array( $this, 'ee_cpt_archive_pages' ), 'nav-menus', 'side', 'core' );
+	}
+
+
+
+
+	public function ee_cpt_archive_pages() {
+		global $nav_menu_selected_id;
+
+		$db_fields = false;
+		$walker = new Walker_Nav_Menu_Checklist( $db_fields );
+		$current_tab = 'event-archives';
+		$page_links = array();
+		
+		/*if ( ! empty( $_REQUEST['quick-search-posttype-' . $post_type_name] ) ) {
+			$current_tab = 'search';
+		}/**/
+
+		$removed_args = array(
+			'action',
+			'customlink-tab',
+			'edit-menu-item',
+			'menu-item',
+			'page-tab',
+			'_wpnonce',
+		);
+
+		?>
+		<div id="posttype-extra-nav-menu-pages" class="posttypediv">
+			<ul id="posttype-extra-nav-menu-pages-tabs" class="posttype-tabs add-menu-item-tabs">
+				<li <?php echo ( 'event-archives' == $current_tab ? ' class="tabs"' : '' ); ?>>
+					<a class="nav-tab-link" data-type="tabs-panel-posttype-extra-nav-menu-pages-event-archives" href="<?php if ( $nav_menu_selected_id ) echo esc_url(add_query_arg('extra-nav-menu-pages-tab', 'event-archives', remove_query_arg($removed_args))); ?>#tabs-panel-posttype-extra-nav-menu-pages-event-archives">
+						<?php _e( 'Event Archive Pages', 'event_espresso' ); ?>
+					</a>
+				</li>
+				<!-- temporarily removing but leaving skeleton in place in case we ever decide to add more tabs.
+				<li <?php echo ( 'all' == $current_tab ? ' class="tabs"' : '' ); ?>>
+					<a class="nav-tab-link" data-type="<?php echo esc_attr( $post_type_name ); ?>-all" href="<?php if ( $nav_menu_selected_id ) echo esc_url(add_query_arg($post_type_name . '-tab', 'all', remove_query_arg($removed_args))); ?>#<?php echo $post_type_name; ?>-all">
+						<?php _e( 'View All' ); ?>
+					</a>
+				</li>
+				<li <?php echo ( 'search' == $current_tab ? ' class="tabs"' : '' ); ?>>
+					<a class="nav-tab-link" data-type="tabs-panel-posttype-extra-nav-menu-pages-search" href="<?php if ( $nav_menu_selected_id ) echo esc_url(add_query_arg('extra-nav-menu-pages-tab', 'search', remove_query_arg($removed_args))); ?>#tabs-panel-posttype-extra-nav-menu-pages-search">
+						<?php _e( 'Search'); ?>
+					</a>
+				</li> -->
+			</ul><!-- .posttype-tabs -->
+
+			<div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives" class="tabs-panel <?php
+			echo ( 'event-archives' == $current_tab ? 'tabs-panel-active' : 'tabs-panel-inactive' );
+			?>">
+				<ul id="extra-nav-menu-pageschecklist-event-archives" class="categorychecklist form-no-clear">
+					<?php
+					$pages = $this->_get_extra_nav_menu_pages_items();
+					$args['walker'] = $walker;
+					echo walk_nav_menu_tree( array_map( array( $this, '_setup_extra_nav_menu_pages_items' ), $pages), 0, (object) $args );
+					?>
+				</ul>
+			</div><!-- /.tabs-panel -->
+
+			<p class="button-controls">
+				<span class="list-controls">
+					<a href="<?php
+						echo esc_url( add_query_arg(
+							array(
+								'extra-nav-menu-pages-tab' => 'event-archives',
+								'selectall' => 1,
+							),
+							remove_query_arg( $removed_args )
+						));
+					?>#posttype-extra-nav-menu-pages>" class="select-all"><?php _e('Select All'); ?></a>
+				</span>
+
+				<span class="add-to-menu">
+					<input type="submit"<?php wp_nav_menu_disabled_check( $nav_menu_selected_id ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( __( 'Add to Menu' ) ); ?>" name="add-post-type-menu-item" id="<?php esc_attr_e( 'submit-posttype-extra-nav-menu-pages' ); ?>" />
+					<span class="spinner"></span>
+				</span>
+			</p>
+
+		</div><!-- /.posttypediv -->
+
+		<?php
+	}
+
+
+
+	/**
+	 * Returns an array of event archive nav items.  
+	 *
+	 * @todo  for now this method is just in place so when it gets abstracted further we can substitue in whatever method we use for getting the extra nav menu items
+	 * @return array
+	 */
+	private function _get_extra_nav_menu_pages_items() {
+		$menuitems = array(
+			0 => array(
+				'title' => __('Event List', 'event_espresso'),
+				'url' => get_post_type_archive_link( 'espresso_events' ),
+				'description' => __('Archive page for all events.', 'event_espresso')
+				),
+			1 => array(
+				'title' => __('Venue List', 'event_espresso'),
+				'url' => get_post_type_archive_link( 'espresso_venues' ),
+				'description' => __('Archive page for all venues.', 'event_espresso')
+				)
+			);
+		return $menuitems;
+	}
+
+
+
+	/**
+	 * Setup nav menu walker item for usage in the event archive nav menu metabox.  It receives a menu_item array with the properites and converts it to the menu item object.
+	 * 
+	 * @see wp_setup_nav_menu_item() in wp-includes/nav-menu.php
+	 * @return stdClass
+	 */
+	private function _setup_extra_nav_menu_pages_items( $menuitem ) {
+		$menu_item = new stdClass();
+		$keys = array(
+			'ID' => 0,
+			'db_id' => 0,
+			'menu_item_parent' => 0,
+			'object_id' => -1,
+			'post_parent' => 0,
+			'type' => 'custom',
+			'object' => '',
+			'type_label' => __('Extra Nav Menu Item', 'event_espresso'),
+			'title' => '',
+			'url' => '',
+			'target' => '',
+			'attr_title' => '',
+			'description' => '',
+			'classes' => array(),
+			'xfn' => ''
+			);
+
+		foreach ( $keys as $key => $value) {
+			$menu_item->$key = isset($menuitem[$key]) ? $menuitem[$key] : $value;
+		}
+		return $menu_item;
+	}
 
 
 	/**
