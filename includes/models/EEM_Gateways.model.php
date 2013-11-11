@@ -808,7 +808,7 @@ Class EEM_Gateways {
 			
 			$transaction->set_status(EEM_Transaction::complete_status_code);
 			$transaction->save();
-			$transaction->finalize();
+			
 			$response = array(
 					'msg' => array('success'=>TRUE),
 					'forward_url' => $return_page_url
@@ -828,6 +828,7 @@ Class EEM_Gateways {
 				);
 			}
 		}
+		$transaction->finalize();
 		return $response;
 	}	
 
