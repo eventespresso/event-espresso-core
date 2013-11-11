@@ -154,13 +154,13 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<br/>						
 						
 						<h5><?php _e( 'Purchasable Quantities', 'event_espresso' ); ?></h5>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Min Qty:', 'event_espresso' ); ?></span><?php echo $ticket->min() ? $ticket->min() : 0; ?><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Max Qty:', 'event_espresso' ); ?></span><?php echo $ticket->max() ? $ticket->max() : __( 'no limit', 'event_espresso' ); ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Min Qty:', 'event_espresso' ); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Max Qty:', 'event_espresso' ); ?></span><?php echo $ticket->max() > 0 ? $ticket->max() : __( 'no limit', 'event_espresso' ); ?><br/>
 						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'the number of tickets that can be purchased per registration', 'event_espresso' ); ?></span>
 						<br/>
 						
 						<h5><?php _e( 'Ticket Uses', 'event_espresso' ); ?></h5>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# of Uses:', 'event_espresso' ); ?></span><?php echo $ticket->uses() ? $ticket->uses() : 1; ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# of Uses:', 'event_espresso' ); ?></span><?php echo $ticket->uses() > 1 ? $ticket->uses() : 1; ?><br/>
 						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'the number of times this ticket can be used to gain entrance to this event', 'event_espresso' ); ?></span>
 						<br/>
 						
