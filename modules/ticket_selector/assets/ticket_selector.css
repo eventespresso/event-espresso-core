@@ -93,11 +93,11 @@
 
 
 .tckt-slctr-tkt-details-tr td { padding:0; }
-.tckt-slctr-tkt-details-dv { position: relative; padding:1em; margin:0 1em 1em; background:#EAF3F9; border-radius:2px; text-shadow:1px 1px 0px #fff; }
+.tckt-slctr-tkt-details-dv { position: relative; padding:1em 1.5em 1.5em; margin:1em; /*background:#EAF3F9;*/ background:rgba( 128, 128, 128, .1 ); border-radius:2px; text-shadow:1px 1px 0px #fff; }
 .tckt-slctr-tkt-details-dv h5 { margin:1em 0 0; }
-.tckt-slctr-tkt-details-tbl-wrap-dv { width:100%; padding:3px; margin:.5em 0 0; background: #fff; border-color: #eee; border-radius:2px; }
-.tckt-slctr-tkt-details-tbl { 
-	width:100%; background: #fcfcfc; 
+.tckt-slctr-tkt-details-tbl-wrap-dv { width:99%; padding:3px; margin:.5em 0 0; background: #fff; border-color: #eee; border-radius:2px; }
+.tckt-slctr-tkt-details-tbl-wrap-dv .tckt-slctr-tkt-details-tbl { 
+	width:100%; margin:0; background: #fcfcfc; 
 	border-style: solid none none solid; border-width: 1px; border-color: #eee;
 }
 .tckt-slctr-tkt-details-tbl thead { padding:0; background:#fff; font-size:1em; }
