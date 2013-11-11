@@ -100,7 +100,7 @@ class EEM_Answer extends EEM_Base {
 					$value = $registration->attendee()->state_ID();
 					break;
 				case EEM_Attendee::country_question_id:
-					$value = $registration->attendee()->country_ISO();
+					$value = $registration->attendee()->country_ID();
 					break;
 				case EEM_Attendee::phone_question_id:
 					$value = $registration->attendee()->phone();

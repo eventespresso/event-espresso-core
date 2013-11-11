@@ -2572,7 +2572,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					)),
 				EE_Answer::new_instance( array(
 					'ANS_ID' => 0,
-					'ANS_value' => $this->_cpt_model_obj->country_ISO()
+					'ANS_value' => $this->_cpt_model_obj->country_ID()
 					)),
 				array(
 					'input_id' => 'CNT_ISO',
