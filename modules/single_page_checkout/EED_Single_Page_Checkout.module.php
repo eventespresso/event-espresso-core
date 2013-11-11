@@ -438,6 +438,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		//d($this->EE->CART->all_ticket_quantity_count());
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			$att_nmbr = 0;
+			$total_items = $this->EE->CART->all_ticket_quantity_count();
 			// now let's add the cart items to the $transaction
 			foreach ( $this->EE->CART->get_tickets() as $item ) {
 				// grab the related ticket object for this lient_item
@@ -474,7 +475,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						'REG_final_price' => $ticket->price(),
 						'REG_session' => $this->EE->SSN->id(),
 						'REG_count' => $att_nmbr,
-						'REG_group_size' => $this->EE->CART->all_ticket_quantity_count(),
+						'REG_group_size' => $total_items,
 						'REG_url_link'	=> $reg_url_link
 					));
 					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
@@ -523,23 +524,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		$template_args['selected_gateway'] = $this->EE->LIB->EEM_Gateways->selected_gateway();
 
-//		if ( empty( $session_data['billing_info'])) {
-//			$this->EE->SSN->set_session_data( array( 'billing_info' => array( 'fill' => TRUE )));
-//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		}
-
 		$event_queue = array();
-//		$cart_line_items = '';
 		$total_items = 0;
-
-//		$additional_event_registration_info = new stdClass();
-//		$additional_event_registration_info = apply_filters( 'FHEE_additional_event_registration_info_init', $additional_event_registration_info );
+		$ticket_count = array();
 
 		$additional_event_attendees = array();
 		$events_requiring_pre_approval = array();
 		$events_that_use_coupon_codes = array();
 		$events_that_use_groupon_codes = array();
 		$template_args['reg_page_discounts_dv_class'] = 'hidden';
+		$template_args['additional_attendee_reg_info'] = NULL;
 		
 		$template_args['whats_in_the_cart'] = '';
 
@@ -565,6 +559,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
 					$total_items += $registration->count();
+					$ticket_count[ $registration->ticket()->ID() ] = isset( $ticket_count[ $registration->ticket()->ID() ] ) ? $ticket_count[ $registration->ticket()->ID() ] + 1 : 1;
 
 					$question_meta = array(
 						'EVT_ID' => $registration->event()->ID(),
@@ -611,9 +606,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
 
 					// show this attendee form?
-					if ( empty( $attendee_questions )) {						
-						$attendee_questions .= '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>';
-						$attendee_questions .= '
+					if ( empty( $attendee_questions )) {				
+						//$attendee_questions .= '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>';
+//						$attendee_questions .= '
+						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '
 							<input
 									type="hidden"
 									id="' . $line_item_ID . '-additional_attendee_reg_info"
@@ -621,7 +617,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									value="0"
 							/>' . "\n";
 					} else {
-						$additional_attendee_forms = TRUE;
+						$additional_attendee_forms = $registration->count() == 1 ? FALSE : TRUE;
+						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '';
 					}
 					$event_queue['items'][ $line_item_ID ]['attendee_questions'] = $attendee_questions;
 
@@ -683,7 +680,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 		$template_args['spco_reg_page_ajax_coupons_url'] = add_query_arg( array( 'ee' => 'apply_coupon' ), $this->_reg_page_base_url );
-		$template_args['print_copy_info'] = $additional_attendee_forms || $total_items > 2 ? TRUE : FALSE;
+//		$template_args['print_copy_info'] = $additional_attendee_forms || $total_items > 2 ? TRUE : FALSE;
+		$template_args['total_items'] = $total_items;
+		$template_args['ticket_count'] = $ticket_count;
+		$template_args['print_copy_info'] = $additional_attendee_forms;
 		
 //		d($additional_event_attendees);
 		$template_args['additional_event_attendees'] = $additional_event_attendees;
@@ -1081,7 +1081,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								//printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$attendee_data = array();
 								// do we need to copy basic info from primary attendee ?
-								$copy_primary =isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
+								$copy_primary = isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
 								unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
 								if ( isset( $valid_data[ $line_item_id ] )) {
 									// now loop through our array of valid post data && process attendee reg forms
