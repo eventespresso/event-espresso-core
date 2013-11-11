@@ -14,6 +14,9 @@ jQuery(document).ready(function($) {
 		//append to existing ticketRows
 		newTicket = $(newTicket).appendTo('#all-ticket-rows');
 
+		//show trash icon
+		$('.trash-icon', newTicket ).show();
+
 		//focus on first input
 		newTicket.find('input:visible').first().focus();
 	});
@@ -27,5 +30,13 @@ jQuery(document).ready(function($) {
 		var next = $(data.nextField, data.dateFieldContext);
 		var doingstart = data.context == 'start-dtt' || data.context == 'start-ticket' ? true : false;
 		dttPickerHelper.picker(start, end, next, doingstart);
+	});
+
+	$('.trash-icon', '.event-tickets-container').on('click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var this_row = $(this).parent().parent();
+		this_row.remove();
 	});
 });

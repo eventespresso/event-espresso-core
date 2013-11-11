@@ -101,7 +101,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	@access	protected
     *	@var int	
     */
-	protected $_DTT_reg_limit = NULL;
+	protected $_DTT_reg_limit = -1;
 
 
 

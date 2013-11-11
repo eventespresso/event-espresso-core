@@ -32,12 +32,18 @@
 }
 
 .add-new-ticket-table td:nth-child(5), .add-new-ticket-table td:nth-child(6) {
-    width: 8%
+    width: 6%;
 }
 
 .add-new-ticket-table td:nth-child(4) {
     width: 4%;
     text-align: right;
+    padding-top: 4px;
+}
+
+.add-new-ticket-table td:nth-child(7) {
+    width: 4%;
+    text-align: center;
     padding-top: 4px;
 }
 
@@ -56,7 +62,7 @@
 
 .ee-full-textarea-inp {
     width: 100%;
-    height: 100px;;
+    height: 100px;
 }
 
 .datetime-tickets-heading, .tickets-heading {
@@ -76,7 +82,43 @@
 
 .save-cancel-button-container {
     float: left;
-    margin-top: 25px;
+    margin-top: 27px;
+}
+
+
+@media all and (max-width: 1310px) {
+    .save-cancel-button-container {
+        margin-top: 10px;
+        float: right;
+    }
+    
+    .add-new-ticket-table {
+        width: 100%;
+        float: left;
+    }
+}
+
+.gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
+    display: inline-block;
+    height: 16px;
+    margin-top: 3px;
+    padding: 0;
+    vertical-align: middle;
+    width: 16px;
+}
+
+.trash-icon {
+    background: transparent url(../../../../../images/trash-small-16x16.png) 0 0 no-repeat;
+}
+
+.lock-icon {
+    background: transparent url(../../../../../images/lock.png) 0 0 no-repeat;
+}
+
+
+/* make sure trash icon doesn't display for first ticket row /**/
+.add-new-ticket-table tr:first-child .trash-icon {
+    display:none;
 }
 
 

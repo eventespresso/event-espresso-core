@@ -28,7 +28,11 @@
 							<input type="text" name="edit_event_datetimes[1][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-1" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-context="end-dtt" data-date-field-context="#edit-event-datetime-1" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit" value="<?php echo $time->get_date('DTT_EVT_end', 'Y-m-d h:i a'); ?>">
 						</td>
 						<td class="event-datetime-column reg-limit-column">
-							<input type="text" name="edit_event_datetimes[1][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-1" class="ee-small-text-inp ee-inp-right event-datetime-DTT_reg_limit" value="<?php echo $time->get('DTT_reg_limit'); ?>">
+							<?php
+								$reg_limit = $time->get('DTT_reg_limit');
+								$reg_limit = $reg_limit == -1 ? '' : $reg_limit;
+							?>
+							<input type="text" name="edit_event_datetimes[1][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-1" class="ee-small-text-inp ee-inp-right event-datetime-DTT_reg_limit" value="<?php echo $reg_limit; ?>">
 						</td>
 						<td class="datetime-tickets-sold"><?php printf( __('Tickets Sold: %s', 'event_espresso'), $time->get('DTT_sold') ); ?></td>
 					</tr>
@@ -49,6 +53,7 @@
 					<td><span class="hidden">currency symbol</span></td>
 					<td><?php _e('Price', 'event_espresso'); ?></td>
 					<td><?php _e('Qty', 'event_espresso'); ?></td>
+					<td><?php _e('Sold', 'event_espresso'); ?></td>
 					<td></td>
 				</tr>
 			</thead>

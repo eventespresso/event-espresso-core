@@ -738,6 +738,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'DTT_order' => $row,
 				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
+
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 			
 			if ( !empty( $dtt['DTT_ID'] ) ) {
@@ -772,6 +773,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$update_prices = false;
 
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
+
 			$ticket_price = isset( $data['edit_prices'][$row][1]['PRC_amount'] ) ? $data['edit_prices'][$row][1]['PRC_amount'] : 0;
 
 			$TKT_values = array(
@@ -807,10 +809,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			if ( !empty( $tkt['TKT_ID'] ) ) {
 				$TKT = $this->EE->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
 
+
 				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') ? TRUE : FALSE;
+				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {
@@ -857,17 +860,38 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$TKT->save();
 			}
 
-			
+			//initially let's add the ticket to the dtt
+			$saved_dtt->_add_relation_to( $TKT, 'Ticket' );
+
 			$saved_tickets[$TKT->ID()] = $TKT;
 
 			//add prices to ticket
 			$this->_add_prices_to_ticket( $data['edit_prices'][$row], $TKT, $update_prices );
-
-
-			//with decaf tickets never get removed (trashed)... so we just need to make sure the ticket is added to the solitary dtt saved.
-			$saved_dtt->_add_relation_to( $TKT, 'Ticket' );
-
 		}
+		//however now we need to handle permanantly deleting tickets via the ui.  Keep in mind that the ui does not allow deleting/archiving tickets that have ticket sold.  However, it does allow for deleting tickets that have no tickets sold, in which case we want to get rid of permanantely because there is no need to save in db.
+		$old_tickets = isset( $old_tickets[0] ) && $old_tickets[0] == '' ? array() : $old_tickets;
+		$tickets_removed = array_diff( $old_tickets, array_keys( $saved_tickets ) );
+
+		foreach ( $tickets_removed as $id ) {
+			$id = absint( $id );
+
+			//get the ticket for this id
+			$tkt_to_remove = $this->EE->load_model('Ticket')->get_one_by_ID($id);
+
+			//need to get all the related datetimes on this ticket and remove from every single one of them (remember this process can ONLY kick off if there are NO tkts_sold)
+			$dtts = $tkt_to_remove->get_many_related('Datetime');
+
+			foreach( $dtts as $dtt ) {
+				$tkt_to_remove->_remove_relation_to($dtt, 'Datetime');
+			}
+
+			//need to do the same for prices (except these prices can also be deleted because again, tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
+			$tkt_to_remove->delete_related_permanently('Price');
+			
+
+			//finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
+			$tkt_to_remove->delete_permanently();
+		}/**/
 	}
 
 
@@ -1063,7 +1087,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'ticket_rows' => '',
 			'existing_ticket_ids' => '',
 			'total_ticket_rows' => 1,
-			'ticket_js_structure' => ''
+			'ticket_js_structure' => '',
+			'trash-icon' => 'lock-icon',
+			'disabled' => ''
 			);
 
 		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
@@ -1089,13 +1115,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			foreach ( $times as $time ) {
 				$existing_datetime_ids[] = $time->get('DTT_ID');
 				$template_args['time'] = $time;
-				$related_tickets = $time->get_many_related('Ticket');
+				$related_tickets = $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none' ) );
 				
 				if ( !empty($related_tickets) ) {
 					$template_args['total_ticket_rows'] = count($related_tickets);
+					$row = 0;
 					foreach ( $related_tickets as $ticket ) {
 						$existing_ticket_ids[] = $ticket->get('TKT_ID');
-						$template_args['ticket_rows'] .= $this->_get_ticket_row($ticket);
+						$template_args['ticket_rows'] .= $this->_get_ticket_row($ticket, FALSE, $row );
+						
+						$row++;
 					}
 				} else {
 					$template_args['total_ticket_rows'] = 1;
@@ -1128,19 +1157,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @param  boolean    $skeleton whether we're generating a skeleton for js manipulation
 	 * @return string               generated html for the ticket row.
 	 */	
-	private function _get_ticket_row( $ticket, $skeleton = FALSE ) {
+	private function _get_ticket_row( $ticket, $skeleton = FALSE, $row = 0 ) {
 		$template_args = array(
-			'ticketrow' => $skeleton ? 'TICKETNUM' : $ticket->get('TKT_row'),
+			'ticketrow' => $skeleton ? 'TICKETNUM' : $row,
 			'TKT_ID' => $ticket->get('TKT_ID'),
 			'TKT_name' => $ticket->get('TKT_name'),
 			'TKT_start_date' => $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
 			'TKT_end_date' => $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
 			'TKT_is_default' => $ticket->get('TKT_is_default'),
 			'TKT_qty' => $ticket->get('TKT_qty') === -1 ? '' : $ticket->get('TKT_qty'),
-			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets'
+			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
+			'TKT_sold' => $skeleton ? 0 : $ticket->get('TKT_sold'),
+			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon clickable' : 'lock-icon',
+			'disabled' => $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted' ) ) ? '' : ' disabled=disabled'
 			);
 
-		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price') : $this->EE->load_model('Price')->create_default_object();
+
+		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none')) : $this->EE->load_model('Price')->create_default_object();
 
 
 		$price_args = array(

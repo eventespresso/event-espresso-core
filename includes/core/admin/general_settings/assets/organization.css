@@ -4,18 +4,32 @@
 }
 #country-details-settings-dv, #country-states-settings-dv {
 	float:left;
-	width:50%;
+	width:47%;
 	min-width: 350px;
+	padding: 10px;
 }
 
-#general-setting-country-details-tbl, #general-setting-country-states-tbl { width:100%;}
-#general-setting-country-details-tbl input, #general-setting-country-states-tbl input {width: 100%;}/**/
+.form-table { width:100%;}
+#general-setting-country-details-tbl .regular-text, #general-setting-country-states-tbl .regular-text, .form-table .regular-text { width: 100%; }/**/
 
-#general-setting-country-states-tbl td input { padding: 0; margin: 0; width: 100%; }/**/
-#general-setting-country-states-tbl td ul { width: 100%; }
-#general-setting-country-states-tbl td ul li { min-width: 30px;}
+#general-setting-country-states-tbl td text { padding: 0; margin: 0; width: 100%; }/**/
+#general-setting-country-states-tbl td ul { width: 100% }
 #general-setting-country-states-tbl td { margin:0; }/**/
-#general-setting-country-states-tbl tbody td:first-child { width: 10%; }/**/
-#general-setting-country-states-tbl tbody td:nth-child(2) { width: 75%; }
-#general-setting-country-states-tbl tbody td:nth-child(3) { width: 10%; }
-#general-setting-country-states-tbl tbody td:nth-child(4) { width: 5%; }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(1) { width: 10%; }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(2) { width: 80%; }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(3) { width: 5%; }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(4) { width: 5%; }
+
+.add-new-state-tbl td:first-child { width: 10%;}
+
+@media all and (min-width: 850px) and (max-width: 1231px) {
+	#country-details-settings-dv, #country-states-settings-dv {
+		width: 100%;
+	}
+}
+
+@media all and (max-width: 817px) {
+	#country-details-settings-dv, #country-states-settings-dv {
+		width: 100%;
+	}
+}
