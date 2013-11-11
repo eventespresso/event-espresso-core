@@ -85,12 +85,13 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 		$this->grand_total_price_object = ''; //not available and not needed?
 
-		$session = $this->txn->session_data()->get_session_data();
+		$session = $this->txn->session_data();
+		$session_data =  $session instanceof EE_Session ? $session->get_session_data() : array();		
 
 		//other data from the session (if possible)
-		$this->user_id = isset( $session['user_id'] ) ? $session['user_id'] : '';
-		$this->ip_address = isset( $session['ip_address'] ) ? $session['ip_address'] : '';
-		$this->user_agent = isset( $session['user_agent'] ) ? $session['user_agent'] : '';
+		$this->user_id = isset( $session_data['user_id'] ) ? $session_data['user_id'] : '';
+		$this->ip_address = isset( $session_data['ip_address'] ) ? $session_data['ip_address'] : '';
+		$this->user_agent = isset( $session_data['user_agent'] ) ? $session_data['user_agent'] : '';
 		$this->init_access = $this->last_access = '';
 
 		$this->billing = $this->payment->details();
