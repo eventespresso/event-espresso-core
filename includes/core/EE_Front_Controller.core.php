@@ -210,7 +210,10 @@ final class EE_Front_Controller {
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
 		// display errors
 		add_action('wp_footer', array( $this, 'display_errors' ), 2 );			
-		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );			
+		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
+
+		//exclude EE critical pages from wp_list_pages
+		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );			
 	
 
 			//random debug code added by mike.
@@ -232,6 +235,18 @@ final class EE_Front_Controller {
 //		EE_Error::add_error('Ermehgerd!!! MOAR ERRORS!!! Seff n Garf aw gonna be maaaaad at you!!!');
 
 		
+	}
+
+
+	/**
+	 * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are never returned with the function.
+	 *
+	 *
+	 * @param  array  $exclude_array any existing pages being excluded are in this array.
+	 * @return array
+	 */
+	public function remove_pages_from_wp_list_pages( $exclude_array ) {
+		return  array_merge( $exclude_array, $this->EE->CFG->core->get_critical_pages_array() );
 	}
 
 
