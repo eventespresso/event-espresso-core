@@ -46,7 +46,6 @@ class EE_Register_CPTs {
 
 
 	function __construct(){
-				
 		// register taxonomies
 		$taxonomies = self::get_taxonomies();
 		foreach ( $taxonomies as $taxonomy =>  $tax ) {
@@ -97,6 +96,7 @@ class EE_Register_CPTs {
 				'plural_name' => __("Event Categories", "event_espresso"),
 				'args' => array(
 					'public'=>true,
+					'show_in_nav_menus' => true,
 					'rewrite' => array( 'slug' => __( 'event-category', 'event_espresso' ))
 				)),
 			'espresso_venue_categories' => array(
@@ -104,6 +104,7 @@ class EE_Register_CPTs {
 				'plural_name' => __("Venue Categories", "event_espresso"),
 				'args' => array(
 					'public'=>true,
+					'show_in_nav_menus' => true,
 					'rewrite' => array( 'slug' => __( 'venue-category', 'event_espresso' ))
 				)),
 			'espresso_event_type' => array(
@@ -137,6 +138,7 @@ class EE_Register_CPTs {
 				'singular_slug' => __("event", "event_espresso"),
 				'plural_slug' => __("events", "event_espresso"),
 				'args' => array(
+					'show_in_nav_menus' => true,
 					'taxonomies'=> array(
 						'espresso_event_categories',
 						'espresso_event_type'
@@ -147,6 +149,7 @@ class EE_Register_CPTs {
 				'singular_slug' => __("venue", "event_espresso"),
 				'plural_slug' => __("venues", "event_espresso"),
 				'args' => array(
+					'show_in_nav_menus' => true,
 					'taxonomies'=> array(
 						'espresso_venue_categories'
 				))),
@@ -195,7 +198,8 @@ class EE_Register_CPTs {
 		),
 		'show_ui'           => true,
 		'show_admin_column' => true,
-		'query_var'         => true
+		'query_var'         => true,
+		'show_in_nav_menus' => false
 		//'rewrite'           => array( 'slug' => 'genre' ),
 	);
 		
@@ -222,6 +226,7 @@ class EE_Register_CPTs {
 	 * @return void, but registers the custom post type
 	 */
 	function register_CPT($post_type, $singular_name,$plural_name,$override_args = array()) {
+
 	  $labels = array(
 		'name' => $plural_name,
 		'singular_name' => $singular_name,
@@ -244,6 +249,7 @@ class EE_Register_CPTs {
 		'publicly_queryable' => true,
 		'show_ui' => false, 
 		'show_in_menu' => false, 
+		'show_in_nav_menus' => false,
 		'query_var' => true,
 		'rewrite' => array( 'slug' => sanitize_title($plural_name) ),
 		'capability_type' => 'post',
