@@ -192,10 +192,11 @@ final class EE_Admin {
 		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ), 10 );
 		add_action('admin_head', array( $this, 'register_custom_nav_menu_boxes' ), 10 );
 
-		//exclude EE critical pages from all nav menus
+		//exclude EE critical pages from all nav menus and wp_list_pages
 		add_filter('nav_menu_meta_box_object', array( $this, 'remove_pages_from_nav_menu'), 10 );
-		
 	}
+
+
 
 
 	/**
@@ -210,12 +211,7 @@ final class EE_Admin {
 		if ( $post_type->name !== 'page' )
 			return $post_type;
 
-		$critical_pages = array(
-			$this->EE->CFG->core->reg_page_id,
-			$this->EE->CFG->core->txn_page_id,
-			$this->EE->CFG->core->thank_you_page_id,
-			$this->EE->CFG->core->cancel_page_id
-			);
+		$critical_pages = $this->EE->CFG->core->get_critical_pages_array();
 
 		$post_type->_default_query = array(
 			'post__not_in' => $critical_pages );
