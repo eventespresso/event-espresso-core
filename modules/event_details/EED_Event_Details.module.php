@@ -36,7 +36,7 @@ class EED_Event_Details  extends EED_Module {
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		EE_Config::register_route( 'event', 'Event_Details', 'run' );
-		EE_Config::register_view( 'event', 0, EVENT_DETAILS_TEMPLATES_PATH . 'single-espresso_events.template.php' );
+		EE_Config::register_view( 'event', 0, EVENT_ESPRESSO_TEMPLATES . 'event_details' . DS . 'single-espresso_events.php' );
 	}
 
 	/**
@@ -148,12 +148,12 @@ class EED_Event_Details  extends EED_Module {
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE )) {
 			if ( is_single() ) {
 				// first check uploads folder
-				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'templates/event_details.css' )) {
-					wp_register_style( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_details.js', array('espresso_core'), '1.0', TRUE  );
+				if ( file_exists( get_stylesheet_directory() . 'event_details/espresso_event_details.css' )) {
+					wp_register_style( 'espresso_event_details', get_stylesheet_directory() . 'event_details/espresso_event_details.css', array() );
+					wp_register_script( 'espresso_event_details', get_stylesheet_directory() . 'event_details/espresso_event_details.js', array('espresso_core'), '1.0', TRUE  );
 				} else {
-					wp_register_style( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', EVENT_DETAILS_ASSETS_URL . 'espresso_event_details.js', array('espresso_core'), '1.0', TRUE );
+					wp_register_style( 'espresso_event_details', EE_TEMPLATES_URL . 'event_details/espresso_event_details.css', array() );
+					wp_register_script( 'espresso_event_details', EE_TEMPLATES_URL . 'event_details/espresso_event_details.js', array('espresso_core'), '1.0', TRUE );
 				}
 				wp_enqueue_style( 'espresso_event_details' );
 				wp_enqueue_script( 'espresso_event_details' );
@@ -176,13 +176,13 @@ class EED_Event_Details  extends EED_Module {
 				// check if the template file exists in the theme first
 				if ( ! $template_path = locate_template( array( 'single-espresso_events.php' ))) {
 					// otherwise get it from 
-					$template_path = EVENT_DETAILS_TEMPLATES_PATH . 'single-espresso_events.php';
+					$template_path = EVENT_ESPRESSO_TEMPLATES . 'event_details' . DS . 'single-espresso_events.php';
 				}
 			} else if ( is_archive() ) {
 				// check if the template file exists in the theme first
 				if ( ! $template_path = locate_template( array( 'archive-espresso_events.php' ))) {
 					// otherwise get it from 
-					$template_path = EVENT_DETAILS_TEMPLATES_PATH . 'archive-espresso_events.php';
+					$template_path = EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events.php';
 				}
 			} 
 		}
@@ -202,10 +202,35 @@ class EED_Event_Details  extends EED_Module {
 		$content .= $this->ouput;
 		return $content;
 	}
-	
+
+
+
+
+
+	/**
+	 * 	display_address
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function display_address() {
+		$EE = EE_Registry::instance();
+		$EE->load_helper( 'Venue_View' );
+		$display_address= isset( $EE->CFG->template_settings->display_address_in_regform ) ? $EE->CFG->template_settings->display_address_in_regform : TRUE;
+		$venue_name = EEH_Venue_View::venue_name();
+		return $display_address && ! empty( $venue_name ) ? TRUE : FALSE;
+	}	
 	
 
 
 }
+
+
+function espresso_display_venue_address_in_event_details() {
+	return EED_Event_Details::display_address();
+}
+
+
+
 // End of file EED_Event_Details.module.php
 // Location: /modules/event_details/EED_Event_Details.module.php

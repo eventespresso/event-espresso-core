@@ -59,12 +59,14 @@ get_header();
 			?>
 			<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
 			
+				<?php if ( espresso_display_venue_address_in_event_details() ) { ?>
 				<div class="espresso-venue-dv">
 					<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
 					<strong><?php espresso_venue_name(); ?></strong>
 					<?php espresso_venue_address( 'inline' ); ?>
 				</div>				
 				<!-- .espresso-venue-dv -->
+				<?php } ?>
 
 				<div class="event-content">
 					<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
