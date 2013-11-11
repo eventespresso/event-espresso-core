@@ -79,7 +79,7 @@ if ( $event_queue['total_items'] > 0 ) {
 						<div id="more-attendee-copy-options-dv" class="">
 							<a id="hide-more-attendee-copy-options" class="hide-the-displayed smaller-text float-right" rel="more-attendee-copy-options" ><?php  _e('less options', 'event_espresso');?></a>
 							<p class="spco-copy-attendee-pg">
-								<?php _e('The following checkboxes allow you to use the above information for only the selected additional event attendees.', 'event_espresso'); ?>								
+								<?php _e('The following checkboxes allow you to use the above information for only the selected additional tickets/attendees.', 'event_espresso'); ?>								
 							</p>
 
 					<?php 						
@@ -114,7 +114,7 @@ if ( $event_queue['total_items'] > 0 ) {
 					} else if ( $att_nmbr == 1 ) { 
 				?>
 					<p id="spco-auto-copy-attendee-pg" class="smaller-text lt-grey-text">
-						<?php _e('The above information will be used for any additional event attendees.', 'event_espresso'); ?>								
+						<?php _e('The above information will be used for any additional tickets/attendees.', 'event_espresso'); ?>								
 					</p>						
 				<?php	
 						
