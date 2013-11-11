@@ -189,7 +189,7 @@ final class EE_Admin {
 		}
 
 		//make sure our cpts and custom taxonomy metaboxes get shown for first time users
-		$this->_enable_hidden_ee_nav_menu_metaboxes();
+		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ) );
 		
 	}
 
@@ -198,10 +198,10 @@ final class EE_Admin {
 	/**
 	 * WP by default only shows three metaboxes in "nav-menus.php" for first times users.  We want to make sure our metaboxes get shown as well
 	 *
-	 * @access private
+	 * @access public
 	 * @return void
 	 */
-	private function _enable_hidden_ee_nav_menu_metaboxes() {
+	public function enable_hidden_ee_nav_menu_metaboxes() {
 		global $wp_meta_boxes;
 		if ( ! is_array($wp_meta_boxes) )
 			return;
