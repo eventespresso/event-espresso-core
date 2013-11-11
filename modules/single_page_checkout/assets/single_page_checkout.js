@@ -314,13 +314,15 @@
 	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {	
 		e.preventDefault();
 		e.stopPropagation();
+		// re-enable submit btn in case it was disabled
+		$('#spco-go-to-step-finalize_registration-btn').prop( 'disabled', false );
 		var step = $(this).attr('rel');
 		if ( step != undefined && step != '' ) {
 			next_step = get_next_step( step );
 	//		alert( 'step = ' + step + '\n' + 'next_step = ' + next_step );
 			// disable submit btn
 			if ( next_step == 'finalize_registration' ) {
-				$( this ).attr('disabled', 'disabled').attr( 'rel', '' );
+				$( this ).prop( 'disabled', true ).attr( 'rel', '' );
 			}
 			form_to_check = '#spco-registration-'+step+'-frm';
 			if ( next_step == 'finalize_registration' && $('#reg-page-off-site-gateway').val() == 1 ) {
@@ -556,6 +558,7 @@
 		if ( good_to_go === true && allAttendeesChk ) {
 			$('.espresso-question-group-wrap').slideUp(); 
 			$('#spco-copy-attendee-dv').slideUp();
+			$('#spco-auto-copy-attendee-pg').slideUp();
 			$('#spco-display-event-questions-lnk').removeClass('hidden');
 		} else if ( good_to_go != '' && good_to_go != true ) {
 			msg = new Object();
