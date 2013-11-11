@@ -191,7 +191,35 @@ final class EE_Admin {
 		//make sure our cpts and custom taxonomy metaboxes get shown for first time users
 		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ), 10 );
 		add_action('admin_head', array( $this, 'register_custom_nav_menu_boxes' ), 10 );
+
+		//exclude EE critical pages from all nav menus
+		add_filter('nav_menu_meta_box_object', array( $this, 'remove_pages_from_nav_menu'), 10 );
 		
+	}
+
+
+	/**
+	 * this simply hooks into the nav menu setup of pages metabox and makes sure that we remove EE critical pages from the list of options.
+	 *
+	 * the wp function "wp_nav_menu_item_post_type_meta_box" found in wp-admin/includes/nav-menu.php looks for the "_default_query" property on the post_type object and it uses that to override any queries found in the existing query for the given post type.  Note that _default_query is not a normal property on the post_type object.  It's found ONLY in this particular context.
+	 * @param  object $post_type WP post type object
+	 * @return object            WP post type object
+	 */
+	public function remove_pages_from_nav_menu( $post_type ) {
+		//if this isn't the "pages" post type let's get out
+		if ( $post_type->name !== 'page' )
+			return $post_type;
+
+		$critical_pages = array(
+			$this->EE->CFG->core->reg_page_id,
+			$this->EE->CFG->core->txn_page_id,
+			$this->EE->CFG->core->thank_you_page_id,
+			$this->EE->CFG->core->cancel_page_id
+			);
+
+		$post_type->_default_query = array(
+			'post__not_in' => $critical_pages );
+		return $post_type;
 	}
 
 
