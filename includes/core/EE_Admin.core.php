@@ -187,7 +187,42 @@ final class EE_Admin {
 				$e->get_error();
 			}			
 		}
+
+		//make sure our cpts and custom taxonomy metaboxes get shown for first time users
+		$this->_enable_hidden_ee_nav_menu_metaboxes();
 		
+	}
+
+
+
+	/**
+	 * WP by default only shows three metaboxes in "nav-menus.php" for first times users.  We want to make sure our metaboxes get shown as well
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _enable_hidden_ee_nav_menu_metaboxes() {
+		global $wp_meta_boxes;
+		if ( ! is_array($wp_meta_boxes) )
+			return;
+
+		$initial_meta_boxes = array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' );
+		$hidden_meta_boxes = array();
+
+		foreach ( array_keys($wp_meta_boxes['nav-menus']) as $context ) {
+			foreach ( array_keys($wp_meta_boxes['nav-menus'][$context]) as $priority ) {
+				foreach ( $wp_meta_boxes['nav-menus'][$context][$priority] as $box ) {
+					if ( in_array( $box['id'], $initial_meta_boxes ) ) {
+						unset( $box['id'] );
+					} else {
+						$hidden_meta_boxes[] = $box['id'];
+					}
+				}
+			}
+		}
+
+		$user = wp_get_current_user();
+		update_user_option( $user->ID, 'metaboxhidden_nav-menus', $hidden_meta_boxes, true );
 	}
 
 
