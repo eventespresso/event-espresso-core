@@ -150,9 +150,12 @@ class EED_Event_Details  extends EED_Module {
 				// first check uploads folder
 				if ( file_exists( get_stylesheet_directory() . 'event_details/espresso_event_details.css' )) {
 					wp_register_style( 'espresso_event_details', get_stylesheet_directory() . 'event_details/espresso_event_details.css', array() );
-					wp_register_script( 'espresso_event_details', get_stylesheet_directory() . 'event_details/espresso_event_details.js', array('espresso_core'), '1.0', TRUE  );
 				} else {
 					wp_register_style( 'espresso_event_details', EE_TEMPLATES_URL . 'event_details/espresso_event_details.css', array() );
+				}
+				if ( file_exists( get_stylesheet_directory() . 'event_details/espresso_event_details.js' )) {
+					wp_register_script( 'espresso_event_details', get_stylesheet_directory() . 'event_details/espresso_event_details.js', array('espresso_core'), '1.0', TRUE  );
+				} else {
 					wp_register_script( 'espresso_event_details', EE_TEMPLATES_URL . 'event_details/espresso_event_details.js', array('espresso_core'), '1.0', TRUE );
 				}
 				wp_enqueue_style( 'espresso_event_details' );
