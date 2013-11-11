@@ -746,6 +746,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
+
+				$DTM->save();
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[$DTM->ID()] = $DTM;
 			} else {

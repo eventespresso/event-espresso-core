@@ -152,12 +152,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
+
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[$DTM->ID()] = $DTM;
 			} else {
 				$DTM = $this->EE->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
 			}
 			
+			$DTM->save();			
 			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.

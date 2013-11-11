@@ -675,7 +675,16 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_id = FALSE;
 		$this->thank_you_page_id = FALSE;
 		$this->cancel_page_id = FALSE;
-	}	
+	}
+
+	public function get_critical_pages_array() {
+		return array(
+			$this->reg_page_id,
+			$this->txn_page_id,
+			$this->thank_you_page_id,
+			$this->cancel_page_id
+			);
+	}
 
 }
 
