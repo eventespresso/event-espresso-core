@@ -15,8 +15,15 @@
  */
 get_header();
 include( espresso_event_list_template_part() );
-// if you are copying this file into your theme folder in order to edit it, 
-// then replace the above line of code with something like:
-// get_template_part( 'archive', 'event_list.template' );
-// but be sure to also copy the archive-event_list.template.php over to your themes folder as well
+/*
+*** IMPORTANT ***
+ if you are copying this file into your theme folder in order to edit it, 
+ you can replace the above line of code with something like:
+ get_template_part( 'archive', 'archive-espresso_events-grid-view' );
+ *** be sure to also copy ALL of the following event-list template parts over to your themes folder as well :
+ * archive-espresso_events-dates-view.php
+ * archive-espresso_events-filters.php
+ * archive-espresso_events-grid-view.php
+ * archive-espresso_events-text-view.php
+*/
 get_footer(); 	

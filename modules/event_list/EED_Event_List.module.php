@@ -525,7 +525,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @return 	string
 	 */
 	private function _get_template( $which = 'part' ) {
-		return EVENT_LIST_TEMPLATES_PATH . 'archive-espresso_events.template.php';		
+		return EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events.php';		
 	}
 
 
@@ -598,12 +598,12 @@ class EED_Event_List  extends EED_Module {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE )) {
 			// first check uploads folder
-			if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'templates/event_list.css' )) {
-				wp_register_style( 'espresso_event_list', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_list.css', array() );
-				wp_register_script( 'espresso_event_list', EVENT_ESPRESSO_UPLOAD_URL . 'templates/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
+			if ( file_exists( get_stylesheet_directory() . 'event_list/espresso_event_list.css' )) {
+				wp_register_style( 'espresso_event_list', get_stylesheet_directory() . 'event_list/espresso_event_list.css', array() );
+				wp_register_script( 'espresso_event_list', get_stylesheet_directory() . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
 			} else {
-				wp_register_style( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.css', array() );
-				wp_register_script( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
+				wp_register_style( 'espresso_event_list', EE_TEMPLATES_URL . 'event_list/espresso_event_list.css', array() );
+				wp_register_script( 'espresso_event_list', EE_TEMPLATES_URL . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
 			}
 			wp_enqueue_style( 'espresso_event_list' );
 			wp_enqueue_script( 'jquery-masonry' );
@@ -647,8 +647,8 @@ class EED_Event_List  extends EED_Module {
 		$CFG->display_expired_events = isset( $CFG->display_expired_events ) && ! empty( $CFG->display_expired_events ) ? $CFG->display_expired_events : FALSE;
 		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
 		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
-		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EVENT_LIST_TEMPLATES_PATH . 'archive-espresso_events.template.php';
-		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EVENT_LIST_TEMPLATES_PATH . 'grid-event-list.template.php';
+		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events.php';
+		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events-grid-view.php';
 		return $CFG;
 	}
 
@@ -684,23 +684,47 @@ class EED_Event_List  extends EED_Module {
 		$CFG->EED_Event_List->default_type = isset( $REQ['default_type'] ) ? sanitize_text_field( $REQ['default_type'] ) : 'grid';
 		$CFG->EED_Event_List->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'medium';
 		$CFG->EED_Event_List->templates = array(
-				'full'  => str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'archive-espresso_events.template.php'
+				'full'  => EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events.php'
 			);
 		
 		switch ( $CFG->EED_Event_List->default_type ) {
 			case 'dates' :
-					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'dates-event-list.template.php';
+					$CFG->EED_Event_List->templates['part'] = EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events-dates-view.php';
 				break;
 			case 'text' :
-					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'text-event-list.template.php';
+					$CFG->EED_Event_List->templates['part'] = EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events-text-view.php';
 				break;
 			default :
-					$CFG->EED_Event_List->templates['part'] = str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS . 'grid-event-list.template.php';
+					$CFG->EED_Event_List->templates['part'] = EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events-grid-view.php';
 		}
 		
 		return $CFG;
 	}
 
+
+
+
+
+	/**
+	 * 	get_template_part
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function get_template_part() {
+		switch ( self::$_type ) {
+			case 'dates' :
+					return 'archive-espresso_events-dates-view.php';
+				break;
+			case 'text' :
+					return 'archive-espresso_events-text-view.php';
+				break;
+			default :
+					return 'archive-espresso_events-grid-view.php';
+		}
+		
+//		return EE_Registry::instance()->CFG->EED_Event_List['templates']['part'];
+	}
 
 
 
@@ -718,7 +742,7 @@ class EED_Event_List  extends EED_Module {
 			'elf_show_expired' => $this->_show_expired,
 			'elf_type' => $this->_type
 		);
-		EEH_Template::display_template( EVENT_LIST_TEMPLATES_PATH . 'event-list-template-filters.template.php', $args );		
+		EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events-filters.php', $args );		
 	}
 
 
@@ -805,30 +829,6 @@ class EED_Event_List  extends EED_Module {
 	}
 
 
-
-
-
-
-	/**
-	 * 	get_template_part
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function get_template_part() {
-		switch ( self::$_type ) {
-			case 'dates' :
-					return 'dates-event-list.template.php';
-				break;
-			case 'text' :
-					return 'text-event-list.template.php';
-				break;
-			default :
-					return 'grid-event-list.template.php';
-		}
-		
-//		return EE_Registry::instance()->CFG->EED_Event_List['templates']['part'];
-	}
 
 
 
