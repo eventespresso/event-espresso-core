@@ -3,11 +3,11 @@ jQuery(document).ready( function( $ ) {
 	var geocoder;
 	var eegmap;
 
-	for ( var event_id in ee_gmap_vars ) {
-		if ( ee_gmap_vars.hasOwnProperty( event_id )) {
+	for ( var VNU_ID in ee_gmap_vars ) {
+		if ( ee_gmap_vars.hasOwnProperty( VNU_ID )) {
 			
-			var func_name = 'ee_gmap_' + event_id;
-			var gvars = ee_gmap_vars[ event_id ];
+			var func_name = 'ee_gmap_' + VNU_ID;
+			var gvars = ee_gmap_vars[ VNU_ID ];
 
 			window.func_name = {
 
@@ -37,7 +37,7 @@ jQuery(document).ready( function( $ ) {
 
 					//console.log( myOptions );
 					
-					var map_canvas = 'map_canvas_' + gvars.event_id;
+					var map_canvas = 'map_canvas_' + gvars.VNU_ID;
 					eegmap = new google.maps.Map( document.getElementById( map_canvas ), myOptions );
 					
 					window.func_name.showAddress( eegmap, geocoder ); 
