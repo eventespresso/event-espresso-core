@@ -94,25 +94,6 @@ class EEH_Activation {
 	}
 
 
-	/**
-	 * 	get_caffeinated_activation
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function get_caffeinated_activation() {
-	
-		if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' )) {
-			require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/init.php' );
-			espresso_caffeinated_activation();
-		}
-		// grab notices and save to db for display after activation finishes
-		EE_Error::get_notices( FALSE, TRUE );
-
-	}	
-
-
 
 
 	/**

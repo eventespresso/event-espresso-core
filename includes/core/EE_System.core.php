@@ -186,8 +186,7 @@ final class EE_System {
 				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
-				EEH_Activation::initialize_db_content();
-				EEH_Activation::get_caffeinated_activation();				
+				EEH_Activation::initialize_db_content();			
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_reactivation:
@@ -195,8 +194,7 @@ final class EE_System {
 				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
-				EEH_Activation::initialize_db_content();
-				EEH_Activation::get_caffeinated_activation();				
+				EEH_Activation::initialize_db_content();				
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_upgrade:
