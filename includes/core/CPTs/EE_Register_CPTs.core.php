@@ -47,13 +47,13 @@ class EE_Register_CPTs {
 
 	function __construct(){
 		// register taxonomies
-		$taxonomies = self::get_taxonomies();
+		$taxonomies = apply_filters('FHEE__EE_Register_CPTs__get_taxonomies', self::get_taxonomies() );
 		foreach ( $taxonomies as $taxonomy =>  $tax ) {
 			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
 		}
 		
 		// register CPTs
-		$CPTs = self::get_CPTs();
+		$CPTs = apply_filters('FHEE__EE_Register_CPTs__get_CPTs', self::get_CPTs() );
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
 			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
 		}
@@ -104,7 +104,7 @@ class EE_Register_CPTs {
 				'plural_name' => __("Venue Categories", "event_espresso"),
 				'args' => array(
 					'public'=>true,
-					'show_in_nav_menus' => true,
+					'show_in_nav_menus' => false, //by default this doesn't show for decaf
 					'rewrite' => array( 'slug' => __( 'venue-category', 'event_espresso' ))
 				)),
 			'espresso_event_type' => array(
@@ -149,7 +149,7 @@ class EE_Register_CPTs {
 				'singular_slug' => __("venue", "event_espresso"),
 				'plural_slug' => __("venues", "event_espresso"),
 				'args' => array(
-					'show_in_nav_menus' => true,
+					'show_in_nav_menus' => false, //by default this doesn't show for decaf
 					'taxonomies'=> array(
 						'espresso_venue_categories'
 				))),

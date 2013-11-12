@@ -102,7 +102,10 @@ final class EE_System {
 		if ( WP_DEBUG === TRUE && ! class_exists( 'EEH_Debug_Tools' )) { 
 			espresso_load_required( 'EEH_Debug_Tools', EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
 		}
+
 		$this->_load_registry();
+		$this->_maybe_brew_regular();
+
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		// setup autoloaders
@@ -111,6 +114,20 @@ final class EE_System {
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 		do_action('AHEE__EE_System__construct__end',$this);
+	}
+
+
+
+	/**
+	 * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks that need to be setup before our EE_System launches.
+	 * @return void
+	 */
+	private function _maybe_brew_regular() {
+		$reg_file = EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/brewing_regular.php';
+		$eedecaf = ( defined( 'EE_DECAF' ) && ! EE_DECAF ) || ! defined('EE_DECAF') ? FALSE : TRUE;
+		if ( is_readable( $reg_file ) && ! $eedecaf ) {
+			require_once $reg_file;
+		}
 	}
 
 
@@ -186,8 +203,7 @@ final class EE_System {
 				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
-				EEH_Activation::initialize_db_content();
-				EEH_Activation::get_caffeinated_activation();				
+				EEH_Activation::initialize_db_content();			
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_reactivation:
@@ -195,8 +211,7 @@ final class EE_System {
 				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
-				EEH_Activation::initialize_db_content();
-				EEH_Activation::get_caffeinated_activation();				
+				EEH_Activation::initialize_db_content();				
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_upgrade:
