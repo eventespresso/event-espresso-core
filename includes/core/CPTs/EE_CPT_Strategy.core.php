@@ -136,13 +136,11 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @param WP)Object $WP_Object
 	 * @return void
 	 */
-	public function _possibly_set_ee_request_var(){
-		global $wp;
-		if ( ! $this->EE->REQ->is_set( 'ee' ) && 
-				isset( $wp->query_vars['post_type'] ) && 
-				isset( $this->_CPTs[ $wp->query_vars['post_type'] ] )) {
+	public function _possibly_set_ee_request_var( $WP_Query ){
+
+		if ( ! $this->EE->REQ->is_set( 'ee' ) && isset( $WP_Query->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Query->query_vars['post_type'] ] )) {
 			// check that route exists for CPT archive slug
-			$cpt = $this->_CPTs[ $wp->query_vars['post_type'] ];
+			$cpt = $this->_CPTs[ $WP_Query->query_vars['post_type'] ];
 			if ( is_archive() && EE_Config::get_route( $cpt['plural_slug'] )) {
 				// ie: set "ee" to "events"
 				$this->EE->REQ->set( 'ee', $cpt['plural_slug'] );
@@ -163,9 +161,11 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * 	@return array
 	 */
 	public function pre_get_posts( $WP_Query ) {
-		$this->_possibly_set_ee_request_var();
+		
+		$this->_possibly_set_ee_request_var( $WP_Query );
 		
 //		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		d( $WP_Query );
 		// is current query for an EE CPT ?
 		if ( isset( $WP_Query->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Query->query_vars['post_type'] ] )) {
 			// is EE on or off ?
@@ -176,7 +176,13 @@ class EE_CPT_Strategy extends EE_BASE {
 				}
 				return;
 			}
-			
+			// add support for viewing 'private', 'draft', or 'pending' posts
+			if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && current_user_can( 'edit_post', absint( $WP_Query->query_vars['p'] ))) {			
+				// we can just inject directly into the WP_Query object
+				$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
+				// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
+				$this->EE->REQ->set( 'ee', $this->_CPTs[ $WP_Query->query_vars['post_type'] ]['singular_slug'] );
+			}
 			// grab details for the CPT the current query is for
 			$this->CPT = $this->_CPTs[ $WP_Query->query_vars['post_type'] ];
 			// set post type
@@ -185,6 +191,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			$this->CPT['espresso_page'] = $this->EE->REQ->is_espresso_page();
 			// requested post name
 			$this->CPT['post_name'] = $this->EE->REQ->get( 'post_name' );
+			//d( $this->CPT );
 			//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// make sure CPT name is set or things is gonna break
 			if ( isset( $this->CPT['singular_name'] )) {
@@ -193,39 +200,19 @@ class EE_CPT_Strategy extends EE_BASE {
 				$this->CPT['tables'] = $this->CPT_model->get_tables();
 				// is there a Meta Table for this CPT?
 				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;		
-// creates classname like:  EE_CPT_Event_Strategy
+				// creates classname like:  EE_CPT_Event_Strategy
 				$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
 				// load and instantiate
 				 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));	
-//				printr( $CPT_Strategy, '$CPT_Strategy  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//				add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
+
 				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 				add_filter( 'posts_join',	array( $this, 'posts_join' ));
 				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
 				add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
-
 			}				
 		}
-//		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
-
-
-	/**
-	 * 	pre_get_posts
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-//	public function pre_get_posts(  $WP_Query  ) {
-//
-//		
-//		
-//		//d( $this->EE->REQ );
-//
-//		return $WP_Query;
-//		
-//	}
 
 
 
@@ -263,6 +250,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		//d( $SQL );
 		return $SQL;
 	}
+
 
 
 
