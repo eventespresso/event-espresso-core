@@ -36,10 +36,10 @@ class EEH_Maps {
 	 */
 	public static function google_map( $ee_gmaps_opts ){
 		
-		$ee_map_width = isset( $ee_gmaps_opts['ee_map_width'] ) && ! empty( $ee_gmaps_opts['ee_map_width'] ) ? $ee_gmaps_opts['ee_map_width'] : '200';	
-		$ee_map_height = isset( $ee_gmaps_opts['ee_map_height'] ) && ! empty( $ee_gmaps_opts['ee_map_height'] ) ? $ee_gmaps_opts['ee_map_height'] : '200';
+		$ee_map_width = isset( $ee_gmaps_opts['ee_map_width'] ) && ! empty( $ee_gmaps_opts['ee_map_width'] ) ? $ee_gmaps_opts['ee_map_width'] : '300';	
+		$ee_map_height = isset( $ee_gmaps_opts['ee_map_height'] ) && ! empty( $ee_gmaps_opts['ee_map_height'] ) ? $ee_gmaps_opts['ee_map_height'] : '185';
 		$ee_map_zoom = isset( $ee_gmaps_opts['ee_map_zoom'] ) && ! empty( $ee_gmaps_opts['ee_map_zoom'] ) ? $ee_gmaps_opts['ee_map_zoom'] : '12';
-		$ee_map_nav_display = isset( $ee_gmaps_opts['ee_map_nav_display'] ) && ! empty( $ee_gmaps_opts['ee_map_nav_display'] )? 'true' : 'false';
+		$ee_map_nav_display = isset( $ee_gmaps_opts['ee_map_nav_display'] ) && ! empty( $ee_gmaps_opts['ee_map_nav_display'] ) ? 'true' : 'false';
 		$ee_map_nav_size =  isset( $ee_gmaps_opts['ee_map_nav_size'] ) && ! empty( $ee_gmaps_opts['ee_map_nav_size'] )? $ee_gmaps_opts['ee_map_nav_size'] : 'default';
 		$ee_map_type_control =  isset( $ee_gmaps_opts['ee_map_type_control'] ) && ! empty( $ee_gmaps_opts['ee_map_type_control'] )? $ee_gmaps_opts['ee_map_type_control'] : 'default';
 		$static_url =  isset( $ee_gmaps_opts['ee_static_url'] ) && ! empty( $ee_gmaps_opts['ee_static_url'] )? $ee_gmaps_opts['ee_static_url'] : FALSE;
@@ -80,8 +80,8 @@ class EEH_Maps {
 
 				wp_enqueue_script( 'gmap_api', 'http://maps.google.com/maps/api/js?sensor=false', array('jquery'), NULL, TRUE );
 				wp_register_script( 'ee_gmap', plugin_dir_url(__FILE__) . 'assets/ee_gmap.js', array('gmap_api'), '1.0', TRUE );
-				self::$gmap_vars[ $ee_gmaps_opts['event_id'] ] = array(
-					'event_id' => $ee_gmaps_opts['event_id'],
+				self::$gmap_vars[ $ee_gmaps_opts['VNU_ID'] ] = array(
+					'VNU_ID' => $ee_gmaps_opts['VNU_ID'],
 					'ee_map_zoom' => $ee_map_zoom,
 					'ee_map_nav_display' => $ee_map_nav_display,
 					'ee_map_nav_size' => $ee_map_nav_size,
@@ -92,7 +92,7 @@ class EEH_Maps {
 				
 				
 				$html = '<div class="ee-gmap-parent'.$map_align.';">';
-				$html .= '	<div class="ee-gmap" id="map_canvas_' . $ee_gmaps_opts['event_id'] .'" style="width: '.$ee_map_width.'px; height: '.$ee_map_height.'px;"></div>';
+				$html .= '	<div class="ee-gmap" id="map_canvas_' . $ee_gmaps_opts['VNU_ID'] .'" style="width: '.$ee_map_width.'px; height: '.$ee_map_height.'px;"></div>';
 				$html .= '</div>';
 				return $html;
 				
