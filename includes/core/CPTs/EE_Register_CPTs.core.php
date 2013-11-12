@@ -141,8 +141,10 @@ class EE_Register_CPTs {
 					'show_in_nav_menus' => true,
 					'taxonomies'=> array(
 						'espresso_event_categories',
-						'espresso_event_type'
-				))),
+						'espresso_event_type',
+						'post_tag'
+						)
+				)),
 			'espresso_venues' => array(
 				'singular_name' => __("Venue", "event_espresso"),
 				'plural_name' => __("Venues", "event_espresso"),
@@ -151,8 +153,10 @@ class EE_Register_CPTs {
 				'args' => array(
 					'show_in_nav_menus' => false, //by default this doesn't show for decaf
 					'taxonomies'=> array(
-						'espresso_venue_categories'
-				))),
+						'espresso_venue_categories',
+						'post_tag'
+						)
+				)),
 			/*'espresso_persons' => array(
 				'singular_name' => __("Person", "event_espresso"),
 				'plural_name' => __("People", "event_espresso"),
@@ -170,6 +174,7 @@ class EE_Register_CPTs {
 					'publicly_queryable'=> FALSE,
 					'hierarchical'=> FALSE,
 					'has_archive' => FALSE,
+					'taxonomies' => array( 'post_tag' ),
 					'supports' => array( 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
 				))
 			);
