@@ -99,7 +99,7 @@ abstract class EE_Model_Relation_Base{
 	 * Gets all the model objects of type of other model related to $model_object,
 	 * according to this relation. This is the same code for EE_HABTM_Relation and EE_Has_Many_Relation.
 	 * For both of those child classes, $model_object must be saved so that it has an ID before querying,
-	 * otherwise an error will be thrown.
+	 * otherwise an error will be thrown. Note: by default we disable default_where_conditions
 	 * EE_Belongs_To_Relation doesn't need to be saved before querying.
 	 * @param EE_Base_Class|int $model_object_or_id or the primary key of this model
 	 * @param array $query_params like EEM_Base::get_all's $query_params
@@ -107,10 +107,23 @@ abstract class EE_Model_Relation_Base{
 	 * @return EE_Base_Class[]
 	 */
 	public function get_all_related($model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false){
+		$query_params = $this->_disable_default_where_conditions_on_query_param($query_params);
 		$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
 		$model_object_id = $this->_get_model_object_id( $model_object_or_id );
 		$query_params[0][$query_param_where_this_model_pk] = $model_object_id;
 		return $this->get_other_model()->get_all($query_params);
+	}
+	
+	/**
+	 * Alters teh $query_params to disable default where conditions, unless otherwise specified
+	 * @param string $query_params
+	 * @return string
+	 */
+	protected function _disable_default_where_conditions_on_query_param($query_params){
+		if( ! isset($query_params['default_where_conditions'])){
+			$query_params['default_where_conditions']='none';
+		}
+		return $query_params;
 	}
 	
 	/**

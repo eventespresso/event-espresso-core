@@ -1072,7 +1072,8 @@ class EE_Base_Class{
 	/**
 	 * Gets all the related model objects of the specified type. Eg, if the current class if
 	 * EE_Event, you could call $this->get_many_related('Registration') to get an array of all the
-	 * EE_Registration objects which related to this event.
+	 * EE_Registration objects which related to this event. Note: by default, we remove the "default query params"
+	 * because we want to get even deleted items etc.
 	 * @param string $relationName key in the model's _model_relations array
 	 * @param array $query_paramslike EEM_Base::get_all
 	 * @return EE_Base_Class[]
@@ -1100,6 +1101,31 @@ class EE_Base_Class{
 			$related_model_objects = $this->get_all_from_cache($relationName);
 		}
 		return $related_model_objects;
+	}
+	
+	/**
+	 * Insetad of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
+	 * unless otherwise specified in the $query_params
+	 * @param string $model_name like 'Event', or 'Registration'
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @param string $field_to_count name of field to count by. By default, uses primary key
+	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
+	 * @return int
+	 */
+	public function count_related($relation_name, $query_params =array(),$field_to_count = NULL, $distinct = FALSE){
+		$this->get_model()->count_related($this,$relation_name,$query_params,$field_to_count,$distinct);
+	}
+	/**
+	 * Insetad of getting the related model objects, simply sums up the values of the specified field.
+	 * Note: ignores default_where_conditions by default, unless otherwise specified i nthe $query_params
+	 * @param string $model_name like 'Event', or 'Registration'
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @param string $field_to_sum name of field to count by. By default, uses primary key (which doesn't make much sense,
+	 * so you should probably change it)
+	 * @return int
+	 */
+	public function sum_related($relation_name, $query_params = array(), $field_to_sum = null){
+		$this->get_model()->sum_related($this, $relation_name, $query_params, $field_to_sum);
 	}
 	
 	/**
