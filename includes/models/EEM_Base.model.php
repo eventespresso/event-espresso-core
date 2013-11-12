@@ -762,6 +762,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params like EEMerimental_Base::get_all's
 	 * @param string $field_to_count field on model to count by (not column name)
 	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
+	 * @return int
 	 */
 	function count($query_params =array(),$field_to_count = NULL, $distinct = FALSE){
 		global $wpdb;
@@ -886,7 +887,9 @@ abstract class EEM_Base extends EE_Base{
 	
 	
 	/**
-	 * 
+	 * Gets all the related items of the specified $model_name, using $query_params.
+	 * Note: by default, we remove the "default query params"
+	 * because we want to get even deleted items etc.
 	 * @global type $wpdb
 	 * @param mixed $id_or_obj EE_Base_Class child or its ID
 	 * @param string $model_name like 'Event', 'Registration', etc. always singular
@@ -932,28 +935,33 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	/**
-	 * Insetad of getting the related model objects, simply counts them. 
+	 * Insetad of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
+	 * unless otherwise specified in the $query_params
 	 * @param int/EE_Base_Class $id_or_obj
 	 * @param string $model_name like 'Event', or 'Registration'
 	 * @param array $query_params like EEM_Base::get_all's
 	 * @param string $field_to_count name of field to count by. By default, uses primary key
+	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
-	function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null){
+	function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null, $distinct = FALSE){
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use teh query params on the related model's normal get_all query,
 		//except add a condition to say to match the curren't mod
-		
+		if( ! isset($query_params['default_where_conditions'])){
+			$query_params['default_where_conditions']='none';
+		}
 		$this_model_name = $this->get_this_model_name();
 		$this_pk_field_name = $this->get_primary_key_field()->get_name();
 		$query_params[0][$this_model_name.".".$this_pk_field_name]=$id_or_obj;
-		return $related_model->count($query_params,$field_to_count);
+		return $related_model->count($query_params,$field_to_count,$distinct);
 	}
 	
 	
 	
 	/**
 	 * Insetad of getting the related model objects, simply sums up the values of the specified field.
+	 * Note: ignores default_where_conditions by default, unless otherwise specified i nthe $query_params
 	 * @param int/EE_Base_Class $id_or_obj
 	 * @param string $model_name like 'Event', or 'Registration'
 	 * @param array $query_params like EEM_Base::get_all's
@@ -964,7 +972,9 @@ abstract class EEM_Base extends EE_Base{
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use teh query params on the related model's normal get_all query,
 		//except add a condition to say to match the curren't mod
-		
+		if( ! isset($query_params['default_where_conditions'])){
+			$query_params['default_where_conditions']='none';
+		}
 		$this_model_name = $this->get_this_model_name();
 		$this_pk_field_name = $this->get_primary_key_field()->get_name();
 		$query_params[0][$this_model_name.".".$this_pk_field_name]=$id_or_obj;

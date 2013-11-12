@@ -84,6 +84,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 		$ID_value_on_other_model = $model_obj->get($fk_field_obj->get_name());
 		//get all where their PK matches that value
 		$query_params[0][$this->get_other_model()->get_primary_key_field()->get_name()] = $ID_value_on_other_model;
+		$query_params = $this->_disable_default_where_conditions_on_query_param($query_params);
 //		echo '$query_params';
 //		var_dump($query_params);
 		return $this->get_other_model()->get_all($query_params, $values_already_prepared_by_model_object);
