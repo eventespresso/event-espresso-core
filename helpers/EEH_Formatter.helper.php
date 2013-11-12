@@ -249,7 +249,7 @@ class EEH_Address {
 	* 	@param boolean $use_schema whether to apply schema.org formatting to the address
 	* 	@return string
 	*/	
-	public static function format ( $obj_with_address = NULL, $type = 'multiline', $use_schema = TRUE ) {
+	public static function format ( $obj_with_address = NULL, $type = 'multiline', $use_schema = TRUE, $add_wrapper = TRUE ) {
 		// check that incoming object implements the EEI_Has_Address interface
 		if ( ! $obj_with_address instanceof EEI_Has_Address ) {
 			$msg = __( 'The address could not be formatted.', 'event_espresso' );
@@ -261,9 +261,9 @@ class EEH_Address {
 		$formatter = EEH_Address::_get_formatter( $type );
 		// apply schema.org formatting ?
 		$use_schema = ! is_admin() ? $use_schema : FALSE;
-		$formatted_address = '<div class="espresso-address-dv">';
-		$formatted_address .= $use_schema ? EEH_Address::_schema_formatting( $formatter, $obj_with_address ) : EEH_Address::_regular_formatting( $formatter, $obj_with_address ) ;
-		$formatted_address .= '</div>';
+		$formatted_address = $add_wrapper && ! $use_schema ? '<div class="espresso-address-dv">' : '';
+		$formatted_address .= $use_schema ? EEH_Address::_schema_formatting( $formatter, $obj_with_address ) : EEH_Address::_regular_formatting( $formatter, $obj_with_address, $add_wrapper ) ;
+		$formatted_address .= $add_wrapper && ! $use_schema ? '</div>' : '';
 		// return the formated address
 		return $formatted_address;
 	}
@@ -304,8 +304,8 @@ class EEH_Address {
 	* 	@param object EEI_Has_Address $obj_with_address
 	* 	@return string
 	*/	
-	private static function _regular_formatting( $formatter, $obj_with_address ){
-		$formatted_address = '<div>';
+	private static function _regular_formatting( $formatter, $obj_with_address, $add_wrapper = TRUE ){
+		$formatted_address = $add_wrapper ? '<div>' : '';
 		$formatted_address .= $formatter->format(
 			$obj_with_address->address(),
 			$obj_with_address->address2(),
@@ -314,7 +314,7 @@ class EEH_Address {
 			$obj_with_address->country_ID(),
 			$obj_with_address->zip()
 		);
-		$formatted_address .= '</div>';
+		$formatted_address .= $add_wrapper ? '</div>' : '';
 		// return the formated address
 		return $formatted_address;
 	}	

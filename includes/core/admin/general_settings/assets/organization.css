@@ -16,8 +16,8 @@
 #general-setting-country-states-tbl td ul { width: 100% }
 #general-setting-country-states-tbl td { margin:0; }/**/
 #general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(1) { width: 10%; }
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(2) { width: 80%; }
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(3) { width: 5%; }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(2) { /*width: 80%;*/ }
+#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(3) { width: 5%; min-width:122px; }
 #general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(4) { width: 5%; }
 
 .add-new-state-tbl td:first-child { width: 10%;}

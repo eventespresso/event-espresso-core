@@ -2,12 +2,21 @@ jQuery(document).ready( function( $ ) {
 
 	var geocoder;
 	var eegmap;
+	
+	$('.ee-gmap').each( function() {
+		var map_width = $(this).outerWidth();
+		var map_height = $(this).outerHeight();
+		var ratio = map_height / map_width;
+		var new_width = $(this).parent().innerWidth();
+		var new_height = new_width * ratio;
+		$(this).css({ 'width' : new_width, 'height' : new_height });
+	});
 
-	for ( var event_id in ee_gmap_vars ) {
-		if ( ee_gmap_vars.hasOwnProperty( event_id )) {
+	for ( var map_ID in ee_gmap_vars ) {
+		if ( ee_gmap_vars.hasOwnProperty( map_ID )) {
 			
-			var func_name = 'ee_gmap_' + event_id;
-			var gvars = ee_gmap_vars[ event_id ];
+			var func_name = 'ee_gmap_' + map_ID;
+			var gvars = ee_gmap_vars[ map_ID ];
 
 			window.func_name = {
 
@@ -37,7 +46,7 @@ jQuery(document).ready( function( $ ) {
 
 					//console.log( myOptions );
 					
-					var map_canvas = 'map_canvas_' + gvars.event_id;
+					var map_canvas = 'map_canvas_' + gvars.map_ID;
 					eegmap = new google.maps.Map( document.getElementById( map_canvas ), myOptions );
 					
 					window.func_name.showAddress( eegmap, geocoder ); 

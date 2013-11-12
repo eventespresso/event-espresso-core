@@ -25,15 +25,6 @@ class EED_Event_List  extends EED_Module {
 
 
 	/**
-	 * 	Whether the module is being instantiated because of the espresso_events CPT endpoint,
-	 * 	or because it is getting called from a shortcode embededed in a post
-	 *	@var 	$_called_from_shortcode
-	 * 	@access 	protected
-	 */
-	protected $_called_from_shortcode = FALSE;
-
-
-	/**
 	 * 	Start Date
 	 *	@var 	$_elf_month
 	 * 	@access 	protected
@@ -510,6 +501,10 @@ class EED_Event_List  extends EED_Module {
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
+		if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
+			EE_Registry::instance()->load_helper( 'Maps' );
+			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
+		}
 		//add_filter( 'the_excerpt', array( $this, 'the_excerpt' ), 999 );
 		$this->EE->load_helper( 'Event_View' );
 	}
@@ -599,12 +594,12 @@ class EED_Event_List  extends EED_Module {
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE )) {
 			// first check uploads folder
 			if ( file_exists( get_stylesheet_directory() . 'event_list/espresso_event_list.css' )) {
-				wp_register_style( 'espresso_event_list', get_stylesheet_directory() . 'event_list/espresso_event_list.css', array() );
+				wp_register_style( 'espresso_event_list', get_stylesheet_directory_uri() . 'event_list/espresso_event_list.css', array() );
 			} else {
 				wp_register_style( 'espresso_event_list', EE_TEMPLATES_URL . 'event_list/espresso_event_list.css', array() );
 			}
 			if ( file_exists( get_stylesheet_directory() . 'event_list/espresso_event_list.js' )) {
-				wp_register_script( 'espresso_event_list', get_stylesheet_directory() . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
+				wp_register_script( 'espresso_event_list', get_stylesheet_directory_uri() . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
 			} else {
 				wp_register_script( 'espresso_event_list', EE_TEMPLATES_URL . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
 			}

@@ -64,6 +64,7 @@ get_header();
 					<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
 					<strong><?php espresso_venue_name(); ?></strong>
 					<?php espresso_venue_address( 'inline' ); ?>
+					<?php espresso_venue_gmap( $post->ID ); ?>
 				</div>				
 				<!-- .espresso-venue-dv -->
 				<?php } ?>
