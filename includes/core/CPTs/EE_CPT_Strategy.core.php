@@ -177,7 +177,7 @@ class EE_CPT_Strategy extends EE_BASE {
 				return;
 			}
 			// add support for viewing 'private', 'draft', or 'pending' posts
-			if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && current_user_can( 'edit_post', absint( $WP_Query->query_vars['p'] ))) {			
+			if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {			
 				// we can just inject directly into the WP_Query object
 				$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
 				// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
