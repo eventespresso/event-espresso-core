@@ -24,6 +24,7 @@ jQuery(document).ready(function($) {
 	$('#event-and-ticket-form-content').on('focus', '.ee-datepicker', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
+
 		var data = $(this).data();
 		var start = data.context == 'start-dtt' || data.context == 'start-ticket' ? $(this, data.dateFieldContext ) : $(data.relatedField, data.dateFieldContext);
 		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.relatedField, data.dateFieldContext);
@@ -32,7 +33,7 @@ jQuery(document).ready(function($) {
 		dttPickerHelper.picker(start, end, next, doingstart);
 	});
 
-	$('.trash-icon', '.event-tickets-container').on('click', function(e) {
+	$('.add-new-ticket-table').on('click', '.trash-icon', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
