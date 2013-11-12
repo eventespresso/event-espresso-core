@@ -54,6 +54,7 @@ class EE_Brewing_Regular extends EE_Base {
 		 */
 		add_filter('FHEE__EE_Register_CPTs__get_taxonomies', array( $this, 'filter_taxonomies' ), 10 );
 		add_filter('FHEE__EE_Register_CPTs__get_CPTs', array( $this, 'filter_cpts' ), 10 );
+		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
 	}
 
 
@@ -75,6 +76,16 @@ class EE_Brewing_Regular extends EE_Base {
 	public function filter_cpts( $cpt_array ) {
 		$cpt_array['espresso_venues']['args']['show_in_nav_menus'] = TRUE;
 		return $cpt_array;
+	}
+
+
+	public function nav_metabox_items( $menuitems ) {
+		$menuitems[] = array(
+			'title' => __('Venue List', 'event_espresso'),
+			'url' => get_post_type_archive_link( 'espresso_venues' ),
+			'description' => __('Archive page for all venues.', 'event_espresso')
+			);
+		return $menuitems;
 	}
 }
 $brewing = new EE_Brewing_Regular();

@@ -359,19 +359,12 @@ final class EE_Admin {
 	 * @return array
 	 */
 	private function _get_extra_nav_menu_pages_items() {
-		$menuitems = array(
-			0 => array(
-				'title' => __('Event List', 'event_espresso'),
-				'url' => get_post_type_archive_link( 'espresso_events' ),
-				'description' => __('Archive page for all events.', 'event_espresso')
-				),
-			1 => array(
-				'title' => __('Venue List', 'event_espresso'),
-				'url' => get_post_type_archive_link( 'espresso_venues' ),
-				'description' => __('Archive page for all venues.', 'event_espresso')
-				)
+		$menuitems[] = array(
+			'title' => __('Event List', 'event_espresso'),
+			'url' => get_post_type_archive_link( 'espresso_events' ),
+			'description' => __('Archive page for all events.', 'event_espresso')	
 			);
-		return $menuitems;
+		return apply_filters('FHEE__EE_Admin__get_extra_nav_menu_pages_items', $menuitems);
 	}
 
 
