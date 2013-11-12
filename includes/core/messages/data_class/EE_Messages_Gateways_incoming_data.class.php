@@ -136,7 +136,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 					/*@var $reg EE_Registration */
 					$event = $reg->event_obj();
 					$first_datetime = $event->first_datetime();
-					$tkt = $reg->get_first_related('Ticket');
+					$tkt = $reg->ticket();
 					$events[$eid] = array(
 						'ID' => $reg->event_ID(),
 						'line_ref' => $reg->event_ID(),
