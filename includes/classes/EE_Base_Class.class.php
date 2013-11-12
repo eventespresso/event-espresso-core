@@ -1072,7 +1072,8 @@ class EE_Base_Class{
 	/**
 	 * Gets all the related model objects of the specified type. Eg, if the current class if
 	 * EE_Event, you could call $this->get_many_related('Registration') to get an array of all the
-	 * EE_Registration objects which related to this event.
+	 * EE_Registration objects which related to this event. Note: by default, we remove the "default query params"
+	 * because we want to get even deleted items etc.
 	 * @param string $relationName key in the model's _model_relations array
 	 * @param array $query_paramslike EEM_Base::get_all
 	 * @return EE_Base_Class[]
@@ -1086,6 +1087,9 @@ class EE_Base_Class{
 				//did we already cache the result of this query?
 				$cached_results = $this->get_all_from_cache($relationName);
 				if ( ! $cached_results ){
+					if( ! isset($query_params['default_where_conditions'])){
+						$query_params['default_where_conditions']='none';
+					}
 					$related_model_objects = $this->get_model()->get_all_related($this, $relationName, $query_params);
 					//if no query parameters were passed, then we got all the related model objects
 					//for that relation. We can cache them then.
