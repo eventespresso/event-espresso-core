@@ -84,6 +84,12 @@
 			</thead>
 			<tbody>
 				<?php 
+				/**
+				 * Recursive function for traversing all the sub-items of each line item
+				 * and displaying them in the table
+				 * @param EE_Line_Item $line_item
+				 * @param boolean $odd for indicating whether to style this line item as an 'odd' or 'even'
+				 */
 				function ee_invoice_display_line_item(EE_Line_Item $line_item,$odd = false){
 					switch($line_item->type()){
 						case EEM_Line_Item::type_total:
