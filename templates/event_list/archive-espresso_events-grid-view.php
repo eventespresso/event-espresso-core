@@ -136,4 +136,3 @@ espresso_grid_event_list( $ELID );
 
 </div>
 
-<?php wp_localize_script( 'espresso_event_list', 'espresso_grid_event_lists', EED_Event_List::$espresso_grid_event_lists );	?>
