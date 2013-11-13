@@ -101,7 +101,6 @@ final class EE_System {
 		do_action('AHEE__EE_System__construct__begin',$this);
 
 		$this->_load_registry();
-		$this->_maybe_brew_regular();
 
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
