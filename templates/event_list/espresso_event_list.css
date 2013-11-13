@@ -107,6 +107,7 @@
 	.espresso-events-list-wrap-dv a.edit-event-lnk { margin:0 1em; }
 
 	.espresso-venue-dv {  width: auto; padding: 1em; margin:1em 0; border:1px solid #eee; background: #f8f8f8; }
+	.ee-gmap-wrapper {  }
 	
 	.no-espresso-events-found { padding: 2em; }
 	.no-espresso-events-found .event-title { margin:0 0 1em; /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; */ }
@@ -191,7 +192,7 @@
 	.grid-event-list-dv  .huge-event-list-grid {}
 	.grid-event-list-dv .huge-event-list-grid.espresso-event-list-event { width: 260px; }
 
-
+	.grid-event-list-dv .ee-gmap-wrapper {  }
 
 	/******************* TEXT LIST TEMPLATE ****************** */
 	
@@ -211,7 +212,7 @@
 	.text-event-list-dv .event-meta { float: right; max-width:25%; min-width:150px; margin:0; font-size:10px; /*text-align: center; */color:#A39D9C; }
 	.text-event-list-dv .event-categories-pg { margin:0 0 1em; font-size:10px; text-align:left; color:#A39D9C; }
 
-
+	.text-event-list-dv .ee-gmap-wrapper {  }
 
 	/******************* DATES LIST TEMPLATE ****************** */
 	
@@ -241,7 +242,9 @@
 	.dates-event-list-dv .event-meta { float: right; max-width:17%; min-width:150px; margin:0; font-size:10px; text-align: center; color:#A39D9C; }
 	.dates-event-list-dv .event-categories-pg { margin:1em 0 0; font-size:10px; line-height:10px; text-align:left; color:#A39D9C; }
 
-
+	.dates-event-list-dv .espresso-venue-address-wrap-dv { float: left; max-width: 50%; }
+	.dates-event-list-dv .espresso-venue-name-spn { /*max-width: 50%; */}
+	.dates-event-list-dv .ee-gmap-wrapper { float: right; }
 	
 
 

@@ -34,6 +34,7 @@ $ELID = espresso_get_event_list_ID();
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 			
 					<div class="espresso-event-wrapper-dv">
+					
 						<header class="event-header">
 							<h3 class="event-title">
 								<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
@@ -48,42 +49,44 @@ $ELID = espresso_get_event_list_ID();
 						</div>
 						<!-- .event-datetimes -->
 						
-				<?php
-					$wrap_class = '';
-					if ( has_post_thumbnail( $post->ID )) {
-						$wrap_class = ' has-img';
-					?>
+						<?php
+							$wrap_class = '';
+							if ( has_post_thumbnail( $post->ID )) {
+								$wrap_class = ' has-img';
+						?>
 						<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 							<?php the_post_thumbnail( 'medium' ); // array( 300, 100 )?>
 						</div>
-					<?php 
-					}				
-				?>
-						<div class="event-content<?php echo $wrap_class;?>">
-							<?php 
-								if( espresso_display_full_description_in_event_list() ) {
-									the_content(); 
-								} else {
-									the_excerpt(); 
-								}
-							?> 
-							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
+						<?php } ?>
+						
+						<div class="event-content<?php echo $wrap_class;?>">						
+
+						<?php 
+							if( espresso_display_full_description_in_event_list() ) {
+								the_content(); 
+							} else {
+								the_excerpt(); 
+							}
+						?>
+						
+						<?php if ( espresso_display_venue_address_in_event_list() ) { ?>
+							<div class="espresso-venue-dv">
+								<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
+								<strong><?php espresso_venue_name(); ?></strong>
+								<?php espresso_venue_address( 'inline' ); ?>
+								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
+								<div class="clear"></div>
+							</div>				
+							<!-- .espresso-venue-dv -->
+						<?php } ?>
+
 						</div>				
 						<!-- .event-content -->
-
-						<?php if ( espresso_display_venue_address_in_event_list() ) { ?>
-						<div class="espresso-venue-dv">
-							<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
-							<strong><?php espresso_venue_name(); ?></strong>
-							<?php espresso_venue_address( 'inline' ); ?>
-							<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
-						</div>				
-						<!-- .espresso-venue-dv -->
-						<?php } ?>
 
 					</div>
 
 					<footer class="event-meta">
+						<?php do_action( 'AHEE_events_list_footer', $post ); ?>
 						<p class="event-categories-pg"><?php _e( 'category: ', 'event_espresso' ) . the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
 						<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>	
 						<?php espresso_edit_event_link(); ?>

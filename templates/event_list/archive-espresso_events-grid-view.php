@@ -57,7 +57,7 @@ espresso_grid_event_list( $ELID );
 					<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
 						<header class="event-header">
 							<h3 class="event-title">
-								<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
+								<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'Go to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
 									<?php the_title(); ?>							
 								</a>
 							</h3>
@@ -81,6 +81,7 @@ espresso_grid_event_list( $ELID );
 							<strong><?php espresso_venue_name(); ?></strong>
 							<?php espresso_venue_address( 'inline' ); ?>
 							<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
+							<div class="clear"></div>
 						</div>				
 						<!-- .espresso-venue-dv -->
 						<?php } ?>
