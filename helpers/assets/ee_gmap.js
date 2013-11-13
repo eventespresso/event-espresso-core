@@ -8,7 +8,12 @@ jQuery(document).ready( function( $ ) {
 		var map_height = $(this).outerHeight();
 		var ratio = map_height / map_width;
 		var new_width = $(this).parent().innerWidth();
-		var new_height = new_width * ratio;
+		if ( new_width < map_width ) {
+			var new_height = new_width * ratio;			
+		} else {
+			new_width = map_width;
+			var new_height = map_height;
+		}
 		$(this).css({ 'width' : new_width, 'height' : new_height });
 	});
 
