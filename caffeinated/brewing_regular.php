@@ -29,7 +29,6 @@ class EE_Brewing_Regular extends EE_Base {
 
 	public function __construct() {
 		$this->_run_now();
-		add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ), 3 );
 		add_action( 'init', array( $this, 'on_init' ), 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'on_wp_enqueue_scripts'), 10 );
 	}
@@ -37,14 +36,11 @@ class EE_Brewing_Regular extends EE_Base {
 
 	private function _run_now(){
 		/**
-		 * note, this action hook is simply for reliably having things run ONLY if EE Regular is running.  This hook is executed VERY eraly in the EE loading process so the callback should only be a point for adding other hooks etc into the EE loading process.
+		 * note, this action hook is simply for reliably having things run ONLY if EE Regular is running.  This hook is executed at the plugins_loaded (priority 3) hook point. (see EE_System::plugins_loaded)
 		 */
 		do_action('AHEE__EE_Brewing_Regular__run_now');
 	}
 
-
-
-	public function on_plugins_loaded(){}
 
 
 

@@ -119,6 +119,7 @@ final class EE_System {
 		//and deciding whether or nto to set maintenance mode
 		// check for plugin activation/upgrade/installation
 		$this->_manage_activation_process();
+		$this->_maybe_brew_regular();
 		// let's get it started		
 		if ( is_admin() && ! EE_FRONT_AJAX ) {
 			EE_Registry::instance()->load_core( 'Admin' );

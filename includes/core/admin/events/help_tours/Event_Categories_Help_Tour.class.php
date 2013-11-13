@@ -64,20 +64,6 @@ class Event_Categories_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -40
 					)
-				),
-			70 => array(
-				'id' => 'espresso_news_post_box',
-				'content' => $this->_stop_five(),
-				'options' => array(
-					'tipLocation' => 'left'
-					)
-				),
-			80 => array(
-				'id' => 'espresso_links_post_box',
-				'content' => $this->_stop_six(),
-				'options' => array(
-					'tipLocation' => 'left'
-					)
 				)
 			);
 	}
@@ -95,19 +81,11 @@ class Event_Categories_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _stop_three() {
-		return '<p>' . __('help about the shortcode column.', 'event_espresso') . '</p>';
+		return '<p>' . __('The category shortcodes can be used to generate a list of events in a particular category. You can place these shortcodes in the HTML view of a page or post.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_four() {
-		return '<p>' . __('Help about the "Events" column and what the numbers mean here.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is a count of the events currently assigned to this category. Clicking the number will take you to the list of events for this category.', 'event_espresso') . '</p>';
 	}
 
-
-	protected function _stop_five() {
-		return '<p>' . __('You\'ll find this "news" box on various pages throughout the Event Admin', 'event_espresso') . '</p>';
-	}
-
-	protected function _stop_six() {
-		return '<p>' . __('These helpful plugin links...blah.blah..blah', 'event_espresso') . '</p>';
-	}
 }
