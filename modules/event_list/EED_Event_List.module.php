@@ -79,7 +79,7 @@ class EED_Event_List  extends EED_Module {
 		EE_Config::register_route( __( 'events', 'event_espresso' ), 'Event_List', 'run' );
 		EE_Config::register_route( 'event_list', 'Event_List', 'event_list' );		
 		add_action( 'wp_loaded', array( 'EED_Event_List', 'set_definitions' ), 2 );
-		add_filter( 'pre_get_posts', array( $this, 'clear_session' ), 9 );
+		add_filter( 'pre_get_posts', array( 'EED_Event_List', 'clear_session' ), 9 );
 	}
 
 	/**
