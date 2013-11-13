@@ -57,6 +57,15 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			40 => array(
+				'id' => 'month_range',
+				'content' => $this->_stop_about_filters(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -35,
+					'tipAdjustmentX' => 60
+					)
+				),
+			45 => array(
 				'id' => 'toplevel_page_espresso_events-search-input',
 				'content' => $this->_stop_four(),
 				'options' => array(
@@ -65,14 +74,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => -15
 					)
 				),
-			45 => array(
-				'id' => 'EVT_CAT',
-				'content' => $this->_stop_about_filters(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -30
-					)
-				),
+			
 			50 => array(
 				'id' => 'start_date',
 				'content' => $this->_stop_five(),
@@ -119,8 +121,8 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _stop_one() {
-		$content = '<h3>' . __('Welcome to the Event Espresso Event Admin!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This brief tour will go over all the different areas of this screen to help you understand what they are for.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Event Overview', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This brief tour of the event overview, will go over all the different areas of this screen, to help you understand how to use Event Espresso.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -129,7 +131,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _stop_three() {
-		return '<p>' . __('About the views') . '</p>';
+		return '<p>' . __('Quick filtering of events on this page.') . '</p>';
 	}
 
 	protected function _stop_four() {
@@ -137,7 +139,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _stop_about_filters() {
-		return '<p>' . __('You can filter the events in this list by blah blah blah', 'event_espresso') . '</p>';
+		return '<p>' . __('Advanced filters for events in this list, using a combination of event status, month, and/or category. ', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_five() {

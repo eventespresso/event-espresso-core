@@ -70,7 +70,7 @@ class Event_Categories_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _stop_one() {
-		$content = '<h3>' . __('Welcome to the Event Espresso Event Categories Help Tour!', 'event_espresso') . '</h3>';
+		$content = '<h3>' . __('Event Categories', 'event_espresso') . '</h3>';
 		$content .= '<p>' . __('This brief tour will go over all the different areas of this screen to help you understand what they are for.', 'event_espresso') . '</p>';
 		return $content;
 	}
