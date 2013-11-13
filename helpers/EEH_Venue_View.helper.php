@@ -50,12 +50,12 @@
 	 * 	espresso_venue_name
 	 *
 	 *  @access 	public
-	 *  @param 	boolean 	$link_to_website - whether to turn Venue name into a clickable link to the Venue's website
+	 *  @param 	string 	$link_to - options( details, website, none ) whether to turn Venue name into a clickable link to the Venue's details page or website
 	 *  @return 	string
 	 */
 	if ( ! function_exists( 'espresso_venue_name' )) {
-		function espresso_venue_name( $link_to_website = TRUE ) {
-			echo EEH_Venue_View::venue_name( $link_to_website );
+		function espresso_venue_name( $link_to = 'details' ) {
+			echo EEH_Venue_View::venue_name( $link_to );
 		}		
 	}
 
@@ -88,6 +88,18 @@
 	}
 
 
+	/**
+	 * espresso_venue_phone
+	 *
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_venue_phone' )) {
+		function espresso_venue_phone() {
+			echo EEH_Venue_View::venue_phone();
+		}		
+	}
+
+
 
 
 
@@ -116,8 +128,9 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @return 	object
 	 */
 	private static function get_venue( $VNU_ID = FALSE ) {
+		$VNU_ID = absint( $VNU_ID );
 		// do we already have the Venue you are looking for?
-		if ( EEH_Venue_View::$_venue instanceof EE_Venue && $VNU_ID && $VNU_ID ==  EEH_Venue_View::$_venue->ID() ) {
+		if ( EEH_Venue_View::$_venue instanceof EE_Venue && $VNU_ID ==  EEH_Venue_View::$_venue->ID() ) {
 			return EEH_Venue_View::$_venue;
 		}
 		// international newspaper?
@@ -202,15 +215,64 @@ class EEH_Venue_View extends EEH_Base {
 	 * 	venue_name
 	 *
 	 *  @access 	public
-	 *  @param 	boolean 	$link_to_website - whether to turn Venue name into a clickable link to the Venue's website
+	 *  @param 	string 	$link_to - options( details, website, none ) whether to turn Venue name into a clickable link to the Venue's details page or website
 	 *  @return 	string
 	 */
-	public static function venue_name( $link_to_website = TRUE ) {
+	public static function venue_name( $link_to = 'details' ) {
 		$venue = EEH_Venue_View::get_venue();
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			$venue_name = EEH_Schema::name( EEH_Venue_View::$_venue->name() );
-			return $link_to_website ? EEH_Venue_View::venue_website_link( $venue_name ) : $venue_name;
+			switch( $link_to ) {
+				
+				case 'details' :
+					return EEH_Venue_View::venue_details_link( $venue_name );
+				break;
+				
+				case 'website' :
+					return EEH_Venue_View::venue_website_link( $venue_name );
+				break;
+				
+				default :
+					return $venue_name;
+			}
+		}
+		return NULL;
+	}
+
+
+
+
+	/**
+	 * 	venue_details_link
+	 *
+	 *  @access 	public
+	 *  @param	string $text 
+	 *  @return 	string
+	 */
+	public static function venue_details_link( $text = '' ) {
+		$venue = EEH_Venue_View::get_venue();
+		if ( $venue instanceof EE_Venue ) {
+			return EEH_Schema::url( get_permalink( $venue->ID() ), $text );
+		}
+		return NULL;
+	}
+
+
+
+	/**
+	 * 	venue_website_link
+	 *
+	 *  @access 	public
+	 *  @param	string $text 
+	 *  @return 	string
+	 */
+	public static function venue_website_link( $text = '' ) {
+		$venue = EEH_Venue_View::get_venue();
+		if ( $venue instanceof EE_Venue ) {
+			$url = $venue->venue_url();
+			$text = ! empty( $text ) ? $text : $url;
+			return ! empty( $url ) ? EEH_Schema::url( $url, $text ) : '';
 		}
 		return NULL;
 	}
@@ -225,12 +287,10 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @param	string $text 
 	 *  @return 	string
 	 */
-	public static function venue_website_link( $text = '' ) {
+	public static function venue_phone() {
 		$venue = EEH_Venue_View::get_venue();
 		if ( $venue instanceof EE_Venue ) {
-			$url = EEH_Venue_View::$_venue->venue_url();
-			$text = ! empty( $text ) ? $text : $url;
-			return ! empty( $url ) ? '<a  itemprop="url" href="' . $url . '">' . $text . '</a>' : '';
+			return EEH_Schema::telephone( $venue->phone() );
 		}
 		return NULL;
 	}
