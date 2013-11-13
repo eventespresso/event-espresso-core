@@ -104,7 +104,6 @@ final class EE_System {
 		}
 
 		$this->_load_registry();
-		$this->_maybe_brew_regular();
 
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
@@ -113,6 +112,7 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		// continue with regular request
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+
 		do_action('AHEE__EE_System__construct__end',$this);
 	}
 
@@ -168,6 +168,7 @@ final class EE_System {
 		//and deciding whether or nto to set maintenance mode
 		// check for plugin activation/upgrade/installation
 		$this->_manage_activation_process();
+		$this->_maybe_brew_regular();
 		// let's get it started		
 		if ( is_admin() && ! EE_FRONT_AJAX ) {
 			EE_Registry::instance()->load_core( 'Admin' );
