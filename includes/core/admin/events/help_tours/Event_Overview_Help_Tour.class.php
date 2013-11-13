@@ -104,6 +104,15 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'right'
 					)
+				),
+			85 => array(
+				'id' => 'view-event-archive-page',
+				'content' => $this->_stop_archive_button(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -45,
+					'tipAdjustmentX' => 5
+					)
 				)
 			);
 	}
@@ -132,7 +141,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _stop_five() {
-		return '<p>' . __('The Start date is the start date for this event. duh.', 'event_espresso') . '</p>';
+		return '<p>' . __('Start date for this event.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_six() {
@@ -146,5 +155,9 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_eight() {
 		return '<p>' . __('This is the legend that describes the actions available in the Actions column.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _stop_archive_button() {
+		return '<p>This button takes you to the event listings page on the front-end of your website.</p>';
 	}
 }
