@@ -117,7 +117,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	public function dtt_and_tickets_caf_update( $evtobj, $data ) {
 		//first we need to start with datetimes cause they are the "root" items attached to events.
 		$saved_dtts = $this->_update_dtts( $evtobj, $data );
-
 		//next tackle the tickets (and prices?)
 		$success = $this->_update_tkts( $evtobj, $saved_dtts, $data );
 	}
@@ -213,6 +212,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @return bool                 		success or fail
 	 */
 	private function _update_tkts( $evtobj, $saved_dtts, $data ) {
+		//stripslashes because WP filtered the $_POST ($data) array to add slashes
+		$data = stripslashes_deep($data);
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 		$saved_tickets = $dtts_on_existing = array();
@@ -309,8 +310,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			}
 
 			//update ticket.
+			
 			$TKT->save();
-
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {

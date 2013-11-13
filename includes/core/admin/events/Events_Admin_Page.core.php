@@ -773,7 +773,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//update tickets next
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 		$update_prices = false;
-
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
 			$ticket_price = isset( $data['edit_prices'][$row][1]['PRC_amount'] ) ? $data['edit_prices'][$row][1]['PRC_amount'] : 0;

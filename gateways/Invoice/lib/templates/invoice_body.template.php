@@ -22,8 +22,14 @@
 					<div id="invoice-info">
 						<h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso')?></h2>
 						<h3><b><?php _e('Date:', 'event_espresso')?></b> <span>[registration_date]</span></h3>
-						<h3><b><?php _e('Invoice #', 'event_espresso')?></b> <span>[registration_code]</span></h3>
+						<h3><b><?php _e('Registration Code:', 'event_espresso')?></b> <span>[registration_code]</span></h3>
+						<h3><b><?php _e('Transaction ID:', 'event_espresso')?></b> <span>[transaction_id]</span></h3>
 					</div>
+				</td>
+			</tr>
+			<tr>
+				<td id="instructions" colspan="2">
+					[instructions]
 				</td>
 			</tr>
 		</table>
@@ -78,6 +84,12 @@
 			</thead>
 			<tbody>
 				<?php 
+				/**
+				 * Recursive function for traversing all the sub-items of each line item
+				 * and displaying them in the table
+				 * @param EE_Line_Item $line_item
+				 * @param boolean $odd for indicating whether to style this line item as an 'odd' or 'even'
+				 */
 				function ee_invoice_display_line_item(EE_Line_Item $line_item,$odd = false){
 					switch($line_item->type()){
 						case EEM_Line_Item::type_total:
@@ -260,13 +272,6 @@
 						<h3><?php _e('Other Information', 'event_espresso'); ?></h3>
 						<div id="company-reg-number"><strong>Company Registration Number:</strong> 9273109</div>
 						<div id="contract-number"><strong>Contract/PO:</strong> PO 87227643</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td id="comments" colspan="2">
-					<div class="wrapper">
-						<?php echo $pdf_instructions; ?>
 					</div>
 				</td>
 			</tr>

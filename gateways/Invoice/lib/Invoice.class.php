@@ -173,6 +173,7 @@ class Invoice {
 		$SearchValues = array(
 				"[organization]",
 				"[registration_code]",
+				"[transaction_id]",
 				"[name]",
 				"[base_url]",
 				"[download_link]",
@@ -182,7 +183,8 @@ class Invoice {
 				"[state]",
 				"[zip]",
 				"[email]",
-				"[registration_date]"
+				"[registration_date]",
+				"[instructions]",
 		);
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		$org_state = $this->EE->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
@@ -194,6 +196,7 @@ class Invoice {
 		$ReplaceValues = array(
 				stripslashes( $EE->CFG->organization->name ),
 				$this->registration->reg_code(),
+				$this->transaction->ID(),
 				$primary_attendee->full_name(),
 				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/' : EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/lib/templates/',
 				$this->registration->invoice_url(),//home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
@@ -203,7 +206,8 @@ class Invoice {
 				$org_state_name,
 				$EE->CFG->organization->zip,
 				$EE->CFG->organization->email,
-				$this->registration->date()
+				$this->registration->date(),
+				$this->invoice_settings['pdf_instructions']
 		);
 
 		return str_replace($SearchValues, $ReplaceValues, $content);
