@@ -26,7 +26,7 @@
 class EEH_Maps {
 
 	// array of map settings
-	private static $gmap_vars;
+	public static $gmap_vars = array();
 
 
 	/**
@@ -78,8 +78,8 @@ class EEH_Maps {
 			return $html;
 			
 		 } else {
-
-			self::$gmap_vars[ $ee_gmaps_opts['map_ID'] ] = array(
+			
+			EEH_Maps::$gmap_vars[ $ee_gmaps_opts['map_ID'] ] = array(
 				'map_ID' => $ee_gmaps_opts['map_ID'],
 				'ee_map_zoom' => $ee_map_zoom,
 				'ee_map_nav_display' => $ee_map_nav_display,
@@ -87,10 +87,9 @@ class EEH_Maps {
 				'ee_map_type_control' => $ee_map_type_control,
 				'location' => $ee_gmaps_opts['location']
 			);
-
 			wp_enqueue_script( 'gmap_api' );
 			wp_enqueue_script( 'ee_gmap' );		
-			wp_localize_script( 'ee_gmap', 'ee_gmap_vars', self::$gmap_vars );
+			wp_localize_script( 'ee_gmap', 'ee_gmap_vars', EEH_Maps::$gmap_vars );
 			
 			$html = '<div class="ee-gmap-parent'.$map_align.';">';
 			$html .= '<div class="ee-gmap" id="map_canvas_' . $ee_gmaps_opts['map_ID'] .'" style="width: '.$ee_map_width.'px; height: '.$ee_map_height.'px;"></div>';  //
