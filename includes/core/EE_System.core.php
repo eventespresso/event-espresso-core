@@ -99,21 +99,38 @@ final class EE_System {
 	 */
 	private function __construct() {
 		do_action('AHEE__EE_System__construct__begin',$this);
-		if ( WP_DEBUG === TRUE && ! class_exists( 'EEH_Debug_Tools' )) { 
-			espresso_load_required( 'EEH_Debug_Tools', EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
-		}
 
 		$this->_load_registry();
-		$this->_maybe_brew_regular();
 
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		// setup autoloaders
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		// continue with regular request
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-		do_action('AHEE__EE_System__construct__end',$this);
+		// check for activation errors
+		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
+			EE_Error::add_error( $activation_errors );
+			update_option( 'espresso_plugin_activation_errors', FALSE );
+		}
+		// get model names
+		$this->_parse_model_names();
+		//we gave addons a chance to register themselves before detecting the request type
+		//and deciding whether or nto to set maintenance mode
+		// check for plugin activation/upgrade/installation
+		$this->_manage_activation_process();
+		$this->_maybe_brew_regular();
+		// let's get it started		
+		if ( is_admin() && ! EE_FRONT_AJAX ) {
+			EE_Registry::instance()->load_core( 'Admin' );
+		} else if ( EE_Maintenance_Mode::instance()->level() ) {
+			// shut 'er down down for maintenance ?
+			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
+		} else {
+			EE_Registry::instance()->load_core( 'Front_Controller' );
+		}
+		// load additional common resources
+		add_action( 'init', array( $this, 'init' ), 3 );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			do_action('AHEE__EE_System__construct__end',$this);
 	}
 
 
@@ -147,41 +164,6 @@ final class EE_System {
 		}
 	}
 
-
-
-
-	/**
-	 * 	plugins_loaded
-	 *
-	 * 	@access 	public
-	 * 	@return 		void
-	 */
-	public function plugins_loaded() {
-		// check for activation errors
-		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
-			EE_Error::add_error( $activation_errors );
-			update_option( 'espresso_plugin_activation_errors', FALSE );
-		}
-		// get model names
-		$this->_parse_model_names();
-		//we gave addons a chance to register themselves before detecting the request type
-		//and deciding whether or nto to set maintenance mode
-		// check for plugin activation/upgrade/installation
-		$this->_manage_activation_process();
-		// let's get it started		
-		if ( is_admin() && ! EE_FRONT_AJAX ) {
-			EE_Registry::instance()->load_core( 'Admin' );
-		} else if ( EE_Maintenance_Mode::instance()->level() ) {
-			// shut 'er down down for maintenance ?
-			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
-		} else {
-			EE_Registry::instance()->load_core( 'Front_Controller' );
-		}
-		// load additional common resources
-		add_action( 'init', array( $this, 'init' ), 3 );
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			
-	
-	}
 
 
 

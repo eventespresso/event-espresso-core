@@ -79,6 +79,7 @@ class EED_Event_List  extends EED_Module {
 		EE_Config::register_route( __( 'events', 'event_espresso' ), 'Event_List', 'run' );
 		EE_Config::register_route( 'event_list', 'Event_List', 'event_list' );		
 		add_action( 'wp_loaded', array( 'EED_Event_List', 'set_definitions' ), 2 );
+		add_filter( 'pre_get_posts', array( 'EED_Event_List', 'clear_session' ), 9 );
 	}
 
 	/**
@@ -109,6 +110,19 @@ class EED_Event_List  extends EED_Module {
 		define( 'EVENT_LIST_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 	}
 
+
+
+	/**
+	 * 	clear_session
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function clear_session() {
+		// clear the sesion at the last second before EED_Event_List->run() gets called during pre_get_posts @ priority 10
+		// otherwise events build up in the cart and session
+		EE_Registry::instance()->SSN->clear_session();
+	}
 
 
 	/**
@@ -181,6 +195,8 @@ class EED_Event_List  extends EED_Module {
 		$view = EE_Registry::instance()->REQ->is_set( 'elf_type' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_type' )) : $view;
 		$view = apply_filters( 'EED_Event_List__set_type__type', $view );
 		if ( ! empty( $view ) && in_array( $view, EED_Event_List::$_types )) {
+//			echo '<h4>$view : ' . $view . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			self::$_type = $view;
 		} 
 	}
@@ -601,11 +617,12 @@ class EED_Event_List  extends EED_Module {
 			if ( file_exists( get_stylesheet_directory() . 'event_list/espresso_event_list.js' )) {
 				wp_register_script( 'espresso_event_list', get_stylesheet_directory_uri() . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
 			} else {
-				wp_register_script( 'espresso_event_list', EE_TEMPLATES_URL . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
+				wp_register_script( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
 			}
 			wp_enqueue_style( 'espresso_event_list' );
 			wp_enqueue_script( 'jquery-masonry' );
 			wp_enqueue_script( 'espresso_event_list' );
+			wp_localize_script( 'espresso_event_list', 'espresso_grid_event_lists', EED_Event_List::$espresso_grid_event_lists );
 		}
 	}
 

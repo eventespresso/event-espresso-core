@@ -97,42 +97,31 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 	wp_die( __( 'Can not run multiple versions of Event Espresso.', 'event_espresso' ));
 }
 
-function espresso_load_error_handling() {
-	// loaddebugging tools
-	if ( WP_DEBUG === TRUE ) {
-		require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
-		EEH_Debug_Tools::instance();
-	}
-	// load error handling
-	if ( is_readable( EE_CORE . 'EE_Error.core.php' )) {
-		 require_once( EE_CORE . 'EE_Error.core.php' );
-	} else {
-		wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ));
-	}
-}
 
 
-if ( ! isset( $_REQUEST['plugin'] )) {
-	espresso_load_error_handling();
+function espresso_load_system( $activation = FALSE ) {
 	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 	EE_System::instance();
 }
 
 
+
+function espresso_regular_request() {
+	espresso_load_system();
+}
+add_action( 'plugins_loaded', 'espresso_regular_request', 1 );
+
+
+
 function espresso_plugin_activation() {
 
-	espresso_load_error_handling();
 	// check permissions
 	if ( ! current_user_can( 'activate_plugins' )) {
 		throw new EE_Error( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
 		return;
 	}
-	// and referer
-	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-//	check_admin_referer( "activate-plugin_{$plugin}" );
-	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
-	$system = EE_System::instance( TRUE );
-	$system->plugins_loaded();
+	espresso_load_system( TRUE );
+	
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
 
@@ -154,7 +143,24 @@ register_uninstall_hook(    EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_uninstall
 
 
 
+function espresso_load_error_handling() {
+	// loaddebugging tools
+	if ( WP_DEBUG === TRUE ) {
+		require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
+		EEH_Debug_Tools::instance();
+	}
+	// load error handling
+	if ( is_readable( EE_CORE . 'EE_Error.core.php' )) {
+		 require_once( EE_CORE . 'EE_Error.core.php' );
+	} else {
+		wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ));
+	}
+}
+
+
+
 function espresso_load_required( $classname, $full_path_to_file ) {
+	espresso_load_error_handling();
 	if ( is_readable( $full_path_to_file )) {
 		require_once( $full_path_to_file );		
 	} else {

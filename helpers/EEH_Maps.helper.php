@@ -26,7 +26,7 @@
 class EEH_Maps {
 
 	// array of map settings
-	private static $gmap_vars;
+	public static $gmap_vars = array();
 
 
 	/**
@@ -49,20 +49,20 @@ class EEH_Maps {
 		if( isset( $ee_gmaps_opts['ee_map_align'] ) && ! empty( $ee_gmaps_opts['ee_map_align'] )){
 			switch( $ee_gmaps_opts['ee_map_align'] ){
 				case "left":
-					$map_align = ' ee-gmap-align-left left';
+					$map_align = 'ee-gmap-align-left left';
 					break;
 				case "right":
-					$map_align = ' ee-gmap-align-right right';
+					$map_align = 'ee-gmap-align-right right';
 					break;
 				case "center":
-					$map_align = ' ee-gmap-align-center center';
+					$map_align = 'ee-gmap-align-center center';
 					break;
 				case "none":
 				default:
-					$map_align = ' ee-gmap-align-none';
+					$map_align = 'ee-gmap-align-none';
 			}
 		} else {
-			$map_align = ' ee-gmap-align-none';
+			$map_align = 'ee-gmap-align-none';
 		}
 
 
@@ -70,7 +70,7 @@ class EEH_Maps {
 		// if so display a Google static iframe map else run V3 api
 		if( $static_url ) {
 			
-			$html = '<div class="ee-gmap-iframewrap ee-gmap-parent' . $map_align . '">';
+			$html = '<div class="ee-gmap-iframewrap ee-gmap-wrapper ' . $map_align . '">';
 			$html .= '<iframe src="' . $static_url . '&output=embed" style="width: ' . $ee_map_width  .'px; height: ' . $ee_map_height . 'px;" frameborder="0" scrolling="no">';
 			$html .= '</iframe>';
 			$html .= '<a href="' . $static_url . '">View Large map</a>';
@@ -78,8 +78,8 @@ class EEH_Maps {
 			return $html;
 			
 		 } else {
-
-			self::$gmap_vars[ $ee_gmaps_opts['map_ID'] ] = array(
+			
+			EEH_Maps::$gmap_vars[ $ee_gmaps_opts['map_ID'] ] = array(
 				'map_ID' => $ee_gmaps_opts['map_ID'],
 				'ee_map_zoom' => $ee_map_zoom,
 				'ee_map_nav_display' => $ee_map_nav_display,
@@ -87,12 +87,11 @@ class EEH_Maps {
 				'ee_map_type_control' => $ee_map_type_control,
 				'location' => $ee_gmaps_opts['location']
 			);
-
 			wp_enqueue_script( 'gmap_api' );
 			wp_enqueue_script( 'ee_gmap' );		
-			wp_localize_script( 'ee_gmap', 'ee_gmap_vars', self::$gmap_vars );
+			wp_localize_script( 'ee_gmap', 'ee_gmap_vars', EEH_Maps::$gmap_vars );
 			
-			$html = '<div class="ee-gmap-parent'.$map_align.';">';
+			$html = '<div class="ee-gmap-wrapper '.$map_align.';">';
 			$html .= '<div class="ee-gmap" id="map_canvas_' . $ee_gmaps_opts['map_ID'] .'" style="width: '.$ee_map_width.'px; height: '.$ee_map_height.'px;"></div>';  //
 			$html .= '</div>';
 			return $html;

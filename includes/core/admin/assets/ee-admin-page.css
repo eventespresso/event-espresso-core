@@ -53,12 +53,9 @@
 	font-weight: 800;
 }
 
-.metabox-holder .ee-admin-settings-hdr {
-	margin:4em 0 1em; color: #444;
-}
-.metabox-holder .ee-admin-settings-hdr:first-child {
-	margin:1em 0;
-}
+.metabox-holder .ee-admin-settings-hdr { margin:4em 0 1em; color: #444; }
+.metabox-holder .ee-admin-settings-hdr:first-child { margin:1em 0; }
+.metabox-holder .ee-admin-settings-hdr-lnk { font-weight: normal; margin:0 0 0 1em; }
 
 .metabox-holder .ee-admin-settings-hdr + .ee-attention {
 	margin-top: 0;
