@@ -471,6 +471,38 @@ class EEH_Schema {
 		return $obj_with_address->zip() !== NULL && $obj_with_address->zip() !== ''  ? '<span itemprop="postalCode">' . $obj_with_address->zip() . '</span>' : '';
 	}
 
+	/**
+	* 	telephone
+	* 	The telephone number.
+	* 
+	* 	@access public
+	* 	@param string $phone_nmbr
+	* 	@return string
+	*/	
+	public static function telephone ( $phone_nmbr = NULL ) {
+		return $phone_nmbr !== NULL && $phone_nmbr !== ''  ? '<span itemprop="telephone">' . $phone_nmbr . '</span>' : '';
+	}
+
+	/**
+	* 	URL
+	* 	URL of the item as a clickable link
+	* 
+	* 	@access public
+	* 	@param string $url - the URL that the link will resolve to
+	* 	@param string $text - the text that will be used for the visable link
+	* 	@param array $attributes - array of additional link attributes in  attribute_name => value pairs. ie: array( 'title' => 'click here', 'class' => 'link-class' )
+	* 	@return string (link)
+	*/	
+	public static function url ( $url = NULL, $text = NULL, $attributes = array() ) {		
+		$atts = '';
+		foreach ( $attributes as $attribute => $value ) {
+			$atts .= ' ' . $attribute . '="' . $value . '"';
+		}
+		$text = $text !== NULL && $text !== '' ? $text : $url;
+		return $url !== NULL && $url !== '' ? '<a  itemprop="url" href="' . $url . '"' . $atts . '>' . $text . '</a>' : '';
+	}
+
+
 
 
 }
