@@ -688,18 +688,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		d($additional_event_attendees);
 		$template_args['additional_event_attendees'] = $additional_event_attendees;
 
-		$grand_total = $this->EE->CART->get_cart_grand_total();
-		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
-		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
-		
 		$cart_total_before_tax = $this->EE->CART->get_cart_total_before_tax();
 		$template_args['payment_required'] = $cart_total_before_tax > 0 ? TRUE : FALSE;
 		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
 
+		$template_args['taxes'] = defined( 'EE_DECAF' ) && EE_DECAF === TRUE ? $this->EE->CART->get_taxes_line_item()->children() : FALSE;
 		
-//		$template_args['taxes'] = EE_Taxes::calculate_taxes( $grand_total );
-		$template_args['taxes'] = $this->EE->CART->get_taxes_line_item()->children();
+		$grand_total = defined( 'EE_DECAF' ) && EE_DECAF === TRUE ? $this->EE->CART->get_cart_grand_total() : $cart_total_before_tax;
+		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
+		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
 		
+
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 //	d( $event_queue );
 		$template_args['event_queue'] = $event_queue;
