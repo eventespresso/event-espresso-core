@@ -128,7 +128,7 @@
 	}
 	
 	.grid-event-list-dv  .event-datetimes h4 {
-		display: block; padding:1px 0 0 24px; margin: .25em 0; background: url("../../../images/calendar_year-16x16.png") no-repeat left top transparent;
+		display: block; padding:1px 0 0 24px; margin: .25em 0; background: url("../../images/calendar_year-16x16.png") no-repeat left top transparent;
 		font-size: 1.4em; line-height:1.5em; /*color:#A39D9C;*/
 	}
 	.grid-event-list-dv  .event-datetimes h4 + h4 {
