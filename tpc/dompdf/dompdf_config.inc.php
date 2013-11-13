@@ -323,10 +323,11 @@ def("DOMPDF_ENABLE_JAVASCRIPT", true);
 def("DOMPDF_ENABLE_REMOTE", false);
 
 /**
- * The debug output log
+ * The debug output log.
+ * Disabled by Mike
  * @var string
  */
-def("DOMPDF_LOG_OUTPUT_FILE", DOMPDF_FONT_DIR."log.htm");
+def("DOMPDF_LOG_OUTPUT_FILE", false);//DOMPDF_FONT_DIR."log.htm"
 
 /**
  * A ratio applied to the fonts height to be more like browsers' line height
