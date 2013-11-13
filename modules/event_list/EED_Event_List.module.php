@@ -181,6 +181,8 @@ class EED_Event_List  extends EED_Module {
 		$view = EE_Registry::instance()->REQ->is_set( 'elf_type' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_type' )) : $view;
 		$view = apply_filters( 'EED_Event_List__set_type__type', $view );
 		if ( ! empty( $view ) && in_array( $view, EED_Event_List::$_types )) {
+//			echo '<h4>$view : ' . $view . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			self::$_type = $view;
 		} 
 	}
@@ -601,11 +603,12 @@ class EED_Event_List  extends EED_Module {
 			if ( file_exists( get_stylesheet_directory() . 'event_list/espresso_event_list.js' )) {
 				wp_register_script( 'espresso_event_list', get_stylesheet_directory_uri() . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE  );
 			} else {
-				wp_register_script( 'espresso_event_list', EE_TEMPLATES_URL . 'event_list/espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
+				wp_register_script( 'espresso_event_list', EVENT_LIST_ASSETS_URL . 'espresso_event_list.js', array( 'jquery-masonry' ), '1.0', TRUE );
 			}
 			wp_enqueue_style( 'espresso_event_list' );
 			wp_enqueue_script( 'jquery-masonry' );
 			wp_enqueue_script( 'espresso_event_list' );
+			wp_localize_script( 'espresso_event_list', 'espresso_grid_event_lists', EED_Event_List::$espresso_grid_event_lists );
 		}
 	}
 
