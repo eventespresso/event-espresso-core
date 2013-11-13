@@ -641,11 +641,11 @@ class EE_Calendar {
 				$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
 				
 				// check if file exists
-				if ( $pathinfo['dirname'] == $upload_dir['baseurl'] ) {
+				if ( $pathinfo['dirname'] == $upload_dir['url'] ) {
 					// since the above is true we know the file is in the uploads so we can use file_exists() to verify it
-					if ( ! file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . $thumbnail_size . '.' . $ext )) {
+					if ( ! file_exists( $upload_dir['path'] . DIRECTORY_SEPARATOR . $filename . $thumbnail_size . '.' . $ext )) {
 						// hmmm...  the scaled thumbnail doesn't exist, so better check that the original is still there, or set path to FALSE
-						$path_to_thumbnail = file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext ) ? $event_meta['event_thumbnail_url'] : FALSE;
+						$path_to_thumbnail = file_exists( $upload_dir['path'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext ) ? $event_meta['event_thumbnail_url'] : FALSE;
 					}			
 				}
 				
