@@ -183,7 +183,8 @@ class Invoice {
 				"[state]",
 				"[zip]",
 				"[email]",
-				"[registration_date]"
+				"[registration_date]",
+				"[instructions]",
 		);
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		$org_state = $this->EE->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
@@ -205,7 +206,8 @@ class Invoice {
 				$org_state_name,
 				$EE->CFG->organization->zip,
 				$EE->CFG->organization->email,
-				$this->registration->date()
+				$this->registration->date(),
+				$this->invoice_settings['pdf_instructions']
 		);
 
 		return str_replace($SearchValues, $ReplaceValues, $content);

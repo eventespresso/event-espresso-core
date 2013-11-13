@@ -22,9 +22,14 @@
 					<div id="invoice-info">
 						<h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso')?></h2>
 						<h3><b><?php _e('Date:', 'event_espresso')?></b> <span>[registration_date]</span></h3>
-						<h3><b><?php _e('Registration Code', 'event_espresso')?></b> <span>[registration_code]</span></h3>
-						<h3><b><?php _e('Transaction #', 'event_espresso')?></b> <span>[transaction_id]</span></h3>
+						<h3><b><?php _e('Registration Code:', 'event_espresso')?></b> <span>[registration_code]</span></h3>
+						<h3><b><?php _e('Transaction ID:', 'event_espresso')?></b> <span>[transaction_id]</span></h3>
 					</div>
+				</td>
+			</tr>
+			<tr>
+				<td id="instructions" colspan="2">
+					[instructions]
 				</td>
 			</tr>
 		</table>
