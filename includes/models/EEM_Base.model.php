@@ -1083,7 +1083,10 @@ abstract class EEM_Base extends EE_Base{
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
 		}
 		//insert the new entry
-		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);		
+		$old_show_errors_value = $wpdb->show_errors;
+		$wpdb->show_errors(false);
+		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);	
+		$wpdb->show_errors($old_show_errors_value);
 		$this->show_db_query_if_previously_requested($wpdb->last_query);
 		if(!$result){
 			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s. Error was %s",'event_espresso'),

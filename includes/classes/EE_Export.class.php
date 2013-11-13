@@ -312,6 +312,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 					$value = $registration->get_pretty($field->get_name());
 				}
 				$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
+				if($field_name == 'REG_final_price'){
+					$reg_csv_array[__("Currency", "event_espresso")] = EE_Config::instance()->currency->code;
+				}
 			}	
 			//get pretty status
 			$status = $registration->status_obj();
