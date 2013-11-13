@@ -263,13 +263,6 @@
 					</div>
 				</td>
 			</tr>
-			<tr>
-				<td id="comments" colspan="2">
-					<div class="wrapper">
-						<?php echo $pdf_instructions; ?>
-					</div>
-				</td>
-			</tr>
 		</table>
 		
 	</div>
