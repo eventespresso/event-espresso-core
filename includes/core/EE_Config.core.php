@@ -396,6 +396,7 @@ final class EE_Config {
 		$module_dir = basename( $module_path );
 		// create classname from module directory name
 		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
+		echo '<h4>$module : ' . $module . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?

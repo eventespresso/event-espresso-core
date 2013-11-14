@@ -16,7 +16,7 @@
  * Event List
  *
  * @package		Event Espresso
- * @subpackage	/modules/rss_eeds/
+ * @subpackage	/modules/rss_feeds/
  * @author		Brent Christensen 
  *
  * ------------------------------------------------------------------------
@@ -139,4 +139,4 @@ class EED_Rss_Feeds  extends EED_Module {
 
 }
 // End of file EED_Rss_Feeds.module.php
-// Location: /modules/rss_eeds/EED_Rss_Feeds.module.php
+// Location: /modules/rss_feeds/EED_Rss_Feeds.module.php
