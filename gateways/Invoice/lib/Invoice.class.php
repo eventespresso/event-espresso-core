@@ -79,7 +79,13 @@ class Invoice {
 		$template_args['attendee_address'] = $primary_attendee->address();
 		$template_args['attendee_address2'] = $primary_attendee->address2();
 		$template_args['attendee_city'] = $primary_attendee->city();
-		$template_args['attendee_state'] = $primary_attendee->state_ID();
+		$attendee_state = $primary_attendee->state_obj();
+		if($attendee_state){
+			$attendee_state_name = $attendee_state->name();
+		}else{
+			$attendee_state_name = '';
+		}
+		$template_args['attendee_state'] = $attendee_state_name;
 		$template_args['attendee_zip'] = $primary_attendee->zip();
 		
 		$template_args['ship_name'] = $template_args['name'];

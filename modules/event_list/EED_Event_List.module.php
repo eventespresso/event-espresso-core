@@ -118,7 +118,7 @@ class EED_Event_List  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function clear_session() {
+	public static function clear_session() {
 		// clear the sesion at the last second before EED_Event_List->run() gets called during pre_get_posts @ priority 10
 		// otherwise events build up in the cart and session
 		EE_Registry::instance()->SSN->clear_session();

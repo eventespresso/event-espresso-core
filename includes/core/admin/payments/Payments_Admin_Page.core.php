@@ -82,6 +82,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
 				'help_tabs' => $this->_get_gateway_help_tabs(),
+				'require_nonce' => FALSE
 				),
 			'payment_settings' => array(
 				'nav' => array(
@@ -90,6 +91,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					),
 				'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				)
 			);
 	}

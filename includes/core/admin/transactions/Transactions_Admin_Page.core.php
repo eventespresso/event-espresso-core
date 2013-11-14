@@ -149,7 +149,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'EE_Admin_Transactions_List_Table',
-				'help_tour' => array( 'Transactions_Overview_Help_Tour' )
+				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
+				'require_nonce' => FALSE
 				),
 			'view_transaction' => array(
 				'nav' => array(
@@ -159,7 +160,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE
 					),
 				'help_tour' => array( 'Transaction_Details_Help_Tour' ),
-				'metaboxes' => array('_transaction_details_metaboxes')
+				'metaboxes' => array('_transaction_details_metaboxes'),
+				'require_nonce' => FALSE
 				)
 		);
 	}

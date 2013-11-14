@@ -235,14 +235,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'callback' => 'messages_overview_help_tab'
 							),
 						), $default_msg_help_tabs
-				)
+				),
+				'require_nonce' => FALSE
 			),
 			'add_new_message_template' => array(
 				'nav' => array(
 					'label' => __('Add New Message Templates', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE 
-					)
+					),
+				'require_nonce' => FALSE
 				),
 			'edit_message_template' => array(
 				'labels' => array(
@@ -270,7 +272,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'callback' => 'message_template_shortcodes_help_tab'
 							),
 						), $default_msg_help_tabs
-					)
+					),
+				'require_nonce' => FALSE
 				),
 			'preview_message' => array(
 				'nav' => array(
@@ -284,7 +287,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'callback' => 'preview_message_help_tab'
 							)
 						), $default_msg_help_tabs
-					)
+					),
+				'require_nonce' => FALSE
 				),
 			'settings' => array(
 				'nav' => array(
@@ -299,7 +303,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'callback' => 'settings_help_tab'
 							)
 						), $default_msg_help_tabs
-					)
+					),
+				'require_nonce' => FALSE
 				)
 			/*'reports' => array(
 				'nav' => array(

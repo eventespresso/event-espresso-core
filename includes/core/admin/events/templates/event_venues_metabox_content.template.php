@@ -18,10 +18,6 @@
 					<label for="ven-phone"><?php _e('Phone:', 'event_espresso'); ?></label><br/>
 					<input size="20" id="ven-phone" type="text" name="venue_phone" value="<?php echo $_venue->phone(); ?>" />
 				</p>
-				<p>
-					<label for="ven-image"><?php _e('Image:', 'event_espresso'); ?></label><br/>
-					<input size="20" id="ven-image" type="text"  value="<?php echo stripslashes_deep($_venue->feature_image()) ?>" name="venue_image" />
-				</p>
 		</td>
 		
 		<td valign="top" class="manual-venue">

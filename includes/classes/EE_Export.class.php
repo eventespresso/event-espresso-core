@@ -292,6 +292,20 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				'REG_final_price'
 			
 		);
+		$att_fields_to_include = array(
+			'ATT_fname',
+			'ATT_lname',
+			'ATT_email',
+			'ATT_address',
+			'ATT_address2',
+			'ATT_city',
+			'STA_ID',
+			'CNT_ISO',
+			'ATT_zip',
+			'ATT_phone',
+			'ATT_comments',
+			'ATT_notes'
+		);
 		
 		$registrations_csv_ready_array = array();
 		$reg_model = $this->EE->load_model('Registration');
@@ -313,6 +327,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				}
 				$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
 				if($field_name == 'REG_final_price'){
+					//add a column named Currency after teh final price
 					$reg_csv_array[__("Currency", "event_espresso")] = EE_Config::instance()->currency->code;
 				}
 			}	
@@ -332,7 +347,33 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				$datetimes_strings[] = $datetime->start_date_and_time();
 			}
 			$reg_csv_array[__("Datetimes of Ticket", "event_espresso")] = implode(", ", $datetimes_strings);
-			
+			//add attendee columns 
+			$attendee = $registration->attendee();
+			foreach($att_fields_to_include as $att_field_name){
+				if($attendee){
+					if($att_field_name == 'STA_ID'){
+						$state = $attendee->state_obj();
+						if($state){
+							$value = $state->name();
+						}else{
+							$value = '';
+						}
+					}elseif($att_field_name == 'CNT_ISO'){
+						$country = $attendee->country_obj();
+						if($country){
+							$value = $country->name();
+						}else{
+							$value = '';
+						}
+					}else{
+						$value = $attendee->get_pretty($att_field_name);
+					}
+				}else{
+					$value = '';
+				}
+				$field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
+				$reg_csv_array[$this->_get_column_name_for_field($field_obj)] = $value;
+			}
 					
 			//make sure each registration has the same questions in the same order
 			foreach($questions_for_these_registrations as $question){

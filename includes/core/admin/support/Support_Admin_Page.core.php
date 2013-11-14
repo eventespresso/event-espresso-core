@@ -76,13 +76,15 @@ class Support_Admin_Page extends EE_Admin_Page {
 					'label' => __('Installation', 'event_espresso'),
 					'order' => 10),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				),
 			'resources' => array(
 				'nav' => array(
 					'label' => __('Resources', 'event_espresso'),
 					'order' => 20
 					),
-				'metaboxes' => array('_resources_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
+				'metaboxes' => array('_resources_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				),
 			'shortcodes' => array(
 				'nav' => array(
@@ -96,6 +98,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 					'label' => __('Support', 'event_espresso'),
 					'order' => 40),
 				'metaboxes' => array('_support_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				),
 			);
 	}
