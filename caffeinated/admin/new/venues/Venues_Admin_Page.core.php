@@ -380,9 +380,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'restore_venues' => __('Restore_from Trash', 'event_espresso'),
-					'trash_venues' => __('Move to Trash', 'event_espresso'),
-					'delete_venues' => __('Delete Permanently', 'event_espresso')
+					//'restore_venues' => __('Restore_from Trash', 'event_espresso'),
+					//'trash_venues' => __('Move to Trash', 'event_espresso'),
+					'delete_venues' => __('Delete', 'event_espresso')
 					)
 				)
 		);
@@ -640,7 +640,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					$results = $this->_change_venue_status($VNU_ID, $venue_status);
 					$success = $results !== FALSE ? $success : FALSE;
 				} else {
-					$msg = sprintf(__('An error occured. Venue #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $VNU_ID);
+					$msg = sprintf(__('An error occured. Venue #%d could not be moved to the trash because a valid venue ID was not not supplied.', 'event_espresso'), $VNU_ID);
 					EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 					$success = FALSE;
 				}
@@ -727,12 +727,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _delete_venue( $redirect_after = TRUE ) {
 		//determine the venue id and set to array.
 		$VNU_ID = isset($this->_req_data['VNU_ID']) ? absint($this->_req_data['VNU_ID']) : NULL;
-		$VNU_ID = isset( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : NULL;
+		$VNU_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : NULL;
 
 
 		// loop thru venues
 		if ($VNU_ID) {
-			$success = $this->_permanently_delete_venue( $VNU_ID );
+			$success = $this->_delete_or_trash_venue( $VNU_ID );
 		} else {
 			$success = FALSE;
 			$msg = __('An error occured. An venue could not be deleted because a valid venue ID was not not supplied.', 'event_espresso');
@@ -747,11 +747,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _delete_venues() {
 		$success = TRUE;
 		//determine the event id and set to array.
-		$VNU_IDs = isset($this->_req_data['VNU_IDs']) ? (array) $this->_req_data['VNU_IDs'] : array();
+		$VNU_IDs = isset($this->_req_data['venue_id']) ? (array) $this->_req_data['venue_id'] : array();
 		// loop thru events
 		foreach ($VNU_IDs as $VNU_ID) {
 			if ($VNU_ID = absint($VNU_ID)) {
-				$results = $this->_permanently_delete_venue($VNU_ID);
+				$results = $this->_delete_or_trash_venue($VNU_ID);
 				$success = $results !== FALSE ? $success : FALSE;
 			} else {
 				$success = FALSE;
@@ -761,14 +761,14 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		// in order to force a pluralized result message we need to send back a success status greater than 1
 		$success = $success ? 2 : FALSE;
-		$this->_redirect_after_action($success, 'Events', 'deleted', array('action' => 'default'));
+		$this->_redirect_after_action($success, __('Venues', 'event_espresso'), __('deleted', 'event_espresso'), array('action' => 'default'));
 	}
 
 
 
 
 	//todo: put in parent
-	private function _permanently_delete_venue($VNU_ID = FALSE) {
+	private function _delete_or_trash_venue($VNU_ID = FALSE) {
 		// grab event id
 		if (!$VNU_ID = absint($VNU_ID)) {
 			$msg = __('An error occured. No Venue ID or an invalid Venue ID was received.', 'event_espresso');
@@ -776,9 +776,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			return FALSE;
 		}
 		
-		
-		$this->_set_model_object( $VNU_ID );
-		$success = $this->_cpt_model_obj->delete();
+		$this->_cpt_model_obj = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
+		$success = $this->_cpt_model_obj->count_related('Event') > 0 ? $this->_cpt_model_obj->delete() : $this->_cpt_model_obj->delete_permanently();
 		// did it all go as planned ?
 		if ($success) {
 			$msg = sprintf(__('Venue ID # %d has been deleted.', 'event_espresso'), $VNU_ID);
@@ -788,7 +787,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		do_action('AHEE_venue_permanently_deleted');
+		do_action('AHEE_venue_deleted');
 		return TRUE;
 	}
 
