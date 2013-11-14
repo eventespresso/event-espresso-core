@@ -72,8 +72,15 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	 * @param type $query_params
 	 * @return EE_Term_Taxonomy[]
 	 */
-	function categories($query_params = array()){
+	function term_taxonomies($query_params = array()){
 		return $this->get_many_related('Term_Taxonomy', $query_params);
+	}
+	/**
+	 * Removes the relation to the specified term taxonomy
+	 * @param EE_Term_Taxonomy $term_taxonomy
+	 */
+	function remove_term_taxonomy($term_taxonomy){
+		$this->_remove_relation_to($term_taxonomy, 'Term_Taxonomy');
 	}
 
 
