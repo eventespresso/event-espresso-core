@@ -137,7 +137,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour')
+				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
+				'require_nonce' => FALSE
 				),
 
 			'question_groups' => array(
@@ -145,7 +146,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
-				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour')
+				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
+				'require_nonce' => FALSE
 				),
 
 			'edit_question' => array(
@@ -155,7 +157,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'require_nonce' => FALSE
 				),
 			);
 	}

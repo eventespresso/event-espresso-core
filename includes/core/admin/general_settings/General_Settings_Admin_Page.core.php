@@ -169,7 +169,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title'=>  __("Event List Page", "event_espresso"),
 						'callback'=> 'event_list_cpt_info_help_tab'
 						),
-					)
+					),
+				'require_nonce' => FALSE
 				),
 			'template_settings' => array(
 				'nav' => array(
@@ -177,7 +178,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tour' => array( 'Templates_Help_Tour' )
+				'help_tour' => array( 'Templates_Help_Tour' ),
+				'require_nonce' => FALSE
 				),
 			'your_organization_settings' => array(
 				'nav' => array(
@@ -185,7 +187,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 50
 					),
 				'help_tour' => array( 'Your_Organization_Help_Tour' ),
-				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'require_nonce' => FALSE
 				),
 			'admin_option_settings' => array(
 				'nav' => array(
@@ -211,7 +214,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Affiliate', 'event_espresso'),
 						'callback' => 'affiliate_info_help_tab'
 						),
-					)
+					),
+				'require_nonce' => FALSE
 				),
 			'country_settings' => array(
 				'nav' => array(
@@ -219,7 +223,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 70
 					),
 				'help_tour' => array( 'Countries_Help_Tour' ),
-				//'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				//'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'require_nonce' => FALSE
 				)
 			);
 	}

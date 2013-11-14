@@ -453,6 +453,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 						'label' => $this->_cpt_object->labels->add_new_item,
 						'order' => 5
 						),
+					'require_nonce' => FALSE
 					),
 				'edit' => array(
 					'nav' => array(
@@ -460,7 +461,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 						'order' => 5,
 						'persistent' => false,
 						'url' => ''
-						)
+						),
+					'require_nonce' => FALSE
 					) ),
 				$this->_page_config
 			);

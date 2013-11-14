@@ -148,14 +148,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
-				),
-
-			'view_reg_form_settings'	=> '_reg_form_settings',
-			
-			'update_reg_form_settings'	=> array(
-					'func' => '_update_reg_form_settings',
-					'noheader' => TRUE
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				),
 
 			'add_question' => array(
@@ -164,7 +158,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'require_nonce' => FALSE
 				),
 
 			'add_question_group' => array(
@@ -173,7 +168,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'require_nonce' => FALSE
 				),
 
 			'edit_question_group' => array(
@@ -184,6 +180,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'url' => isset($this->_req_data['question_group_id']) ? add_query_arg(array('question_group_id' => $this->_req_data['question_group_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'require_nonce' => FALSE
 				),
 
 			'view_reg_form_settings' => array(
@@ -200,7 +197,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 						'title' => __('reCAPTCHA Information', 'event_espresso'),
 						'callback' => 'recaptcha_info_help_tab'
 						)
-					)
+					),
+				'require_nonce' => FALSE
 				)
 
 			);
