@@ -99,7 +99,7 @@ class EED_RSS_Feeds  extends EED_Module {
 	public function the_event_feed_content( $content ) {
 		if ( is_feed() ) {
 			$this->EE->load_helper( 'Event_View' );
-			EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $EE->CFG->template_settings->EED_Event_List );
+			EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $EE->CFG->template_settings->EED_Events_Archive );
 			$ID = get_the_ID();  
 			$output = '<div><h3>Find me on</h3>';  
 			$output .= '<p><strong>Facebook:</strong> ' . get_post_meta($ID, 'facebook_url', true) . '</p>';  
