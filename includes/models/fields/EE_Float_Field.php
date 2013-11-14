@@ -15,7 +15,7 @@ class EE_Float_Field extends EE_Model_Field_Base{
 	 * @param float $value_on_field_to_be_outputted
 	 * @return string
 	 */
-	function prepare_for_pretty_echoing($value_on_field_to_be_outputted) {
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted,$schema = null){
 		$EE = EE_Registry::instance();
 		return number_format( $value_on_field_to_be_outputted, max(array(2, $EE->CFG->currency->dec_plc)), $EE->CFG->currency->dec_mrk, $EE->CFG->currency->thsnds) ;
 	

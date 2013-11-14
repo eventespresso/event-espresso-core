@@ -178,6 +178,8 @@
 				//row should be blank
 				//AND pretend this is the first row again
 				$row = 1;
+				//reset headers
+				$headers = array();
 				continue;
 			}
 			if($data[0] == EE_CSV::metadata_header){
@@ -199,7 +201,7 @@
 				$data[$i] = str_replace ( '"""', '\\"', $data[$i] );
 				// do we need to grab the column names?
 				if ( $row === 1){
-					if( $first_row_is_headers ) {
+					if( $first_row_is_headers ) {						
 						// store the column names to use for keys
 						$column_name = $data[$i];
 						//check it's not blank... sometimes CSV editign programs adda bunch of empty columns onto the end...
@@ -278,31 +280,52 @@
 
 		$success = FALSE;
 		$error = FALSE;
+		//whther to treat this import as if it's data froma different database or not
+		//ie, if it IS from a different database, ignore foreign keys whihf
+		$export_from_site_a_to_b = true;
 		// first level of array is not table information but a table name was passed to the function
 		// array is only two levels deep, so let's fix that by adding a level, else the next steps will fail
 		if($model_name){
 			$csv_data_array = array($csv_data_array);
 		}
 		// begin looking through the $csv_data_array, expecting the toplevel key to be the model's name...
-		foreach ( $csv_data_array as $model_name_in_csv_data => $model_data_from_import ) {		
+		$old_site_url = 'none-specified';
+	
+		//hanlde metadata
+		if(isset($csv_data_array[EE_CSV::metadata_header]) ){
+			$csv_metadata = array_shift($csv_data_array[EE_CSV::metadata_header]);
+			//ok so its metadata, dont try to save it to ehte db obviously...
+			if(isset($csv_metadata['site_url']) && $csv_metadata['site_url'] == site_url()){
+				EE_Error::add_attention(sprintf(__("CSV Data appears to be from the same database, so attempting to update data", "event_espresso")));
+				$export_from_site_a_to_b = false;
+			}else{
+				$old_site_url = isset( $csv_metadata['site_url']) ? $csv_metadata['site_url'] : $old_site_url;
+				EE_Error::add_attention(sprintf(__("CSV Data appears to be from a different database (%s instead of %s), so we assume IDs in the CSV data DO NOT correspond to IDs in this database", "event_espresso"),$old_site_url,site_url()));
+			};
+			unset($csv_data_array[EE_CSV::metadata_header]);
+		}
+		/**
+		* @var $old_db_to_new_db_mapping 2d array: toplevel keys being model names, bottom-level keys being the original key, and 
+		* the value will be the newly-inserted ID.
+		* If we have already imported data from the same website via CSV, it shoudl be kept in this wp option
+		*/
+	   $old_db_to_new_db_mapping = get_option('espresso_id_mapping_from'.sanitize_title($old_site_url),array());
+	   if( $old_db_to_new_db_mapping){
+		   EE_Error::add_attention(sprintf(__("We noticed you have imported data via CSV from %s before. Because of this, IDs in your CSV have been mapped to their new IDs in %s", "event_espresso"),$old_site_url,site_url()));
+	   }
+		foreach ( $csv_data_array as $model_name_in_csv_data => $model_data_from_import ) {	
 			//now check that assumption was correct. If
 			if ( $this->EE->is_model_name($model_name_in_csv_data)) {
 				$model_name = $model_name_in_csv_data;
-			}elseif($model_name_in_csv_data == EE_CSV::metadata_header){
-				//ok so its metadata, dont try to save it to ehte db obviously...
-				continue;
 			}else {
 				// no table info in the array and no table name passed to the function?? FAIL
 				EE_Error::add_error( __('No table information was specified and/or found, therefore the import could not be completed','event_espresso'));
 				return FALSE;
 			}
+			
 			$model = $this->EE->load_model($model_name);
 		
-			/**
-			 * @var $key_in_csv_to_id_in_db_map 2d array: toplevel keys being model names, bottom-level keys being the original key, and 
-			 * the value will be the newly-inserted ID
-			 */
-			$key_in_csv_to_id_in_db_map = array();
+			
 			//so without further ado, scanning all the data provided for primary keys and their inital values
 			foreach ( $model_data_from_import as $model_object_data ) {		
 				//before we do ANYTHING, make sure the csv row wasn't just completely blank
@@ -315,7 +338,7 @@
 				if($row_is_completely_empty){
 					continue;
 				}
-				$id_in_csv = $model_object_data[$model->primary_key_name()];
+				$id_in_csv = $model->has_primary_key_field() ? $model_object_data[$model->primary_key_name()] : null;
 				
 				//now we need to decide if we're going to add a new model object given the $model_object_data,
 				//or just update.
@@ -327,37 +350,66 @@
 				//...because even if there IS a datetime with the same ID, it COULDN'T have
 				//been for this same event, (because the event was JUST added), and therefore
 				//it's only a COINCIDENCE that a datetime with teh same ID exists
-				$models_it_belongs_to = $model->belongs_to_relations();
-				$do_insert = false;
-				foreach($models_it_belongs_to as $model_name_it_belongs_to => $relation_obj){
-					$fk_field = $model->get_foreign_key_to($model_name_it_belongs_to);
-					$fk_value = $model_object_data[$fk_field->get_name()];
-					//now, is that value in the list of PKs that have been inserted?
-					if(isset($key_in_csv_to_id_in_db_map[$model_name_it_belongs_to][$fk_value])){
-						//INSERT because we inserted the thing it BELONGS to
-						$do_insert = true;
+				
+				if($export_from_site_a_to_b){
+					//if it's a site-to-site export-and-import, see if this modelobject's id
+					//in the old data that we know of
+					if( isset($old_db_to_new_db_mapping[$model_name][$id_in_csv]) ){
+						$id_in_csv = $old_db_to_new_db_mapping[$model_name][$id_in_csv];
+						$do_insert = false;
 					}else{
-						$existing_model_object = $model->get_one_by_ID($id_in_csv);
-						if($existing_model_object){
-							//it already exists, so we'd rather just update it
-							$do_insert = false;
-						}else{
-							//it doesn't already exist, so we OBVIOUSLY can't update it
-							//so insert it
-							$do_insert = true;
+						$do_insert = true;
+					}
+					//loop through all its related models, and see if we can swap their OLD foreign keys
+					//(ie, idsin teh OLD db) for  new foreign key (ie ids in the NEW db)
+					
+					foreach($model->field_settings() as $field_name => $fk_field){
+						if($fk_field instanceof EE_Foreign_Key_Field_Base){
+							$fk_value = $model_object_data[$fk_field->get_name()];
+							//now, is that value in the list of PKs that have been inserted?
+							if(is_array($fk_field->get_model_name_pointed_to())){//it points to a bunch of different models. So don't try each
+								$model_names_pointed_to = $fk_field->get_model_name_pointed_to();
+							}else{
+								$model_names_pointed_to = array($fk_field->get_model_name_pointed_to());
+
+							}
+							$found_new_id = false;
+							foreach($model_names_pointed_to as $model_pointed_to_by_fk){
+								if(isset($old_db_to_new_db_mapping[$model_pointed_to_by_fk][$fk_value])){
+									//and don't forget to replace the temporary id used in the csv with Id of the newly-added thing
+									$model_object_data[$fk_field->get_name()] = $old_db_to_new_db_mapping[$model_pointed_to_by_fk][$fk_value];
+									$found_new_id = true;
+								}
+							}
+							if( ! $found_new_id ){
+								EE_Error::add_error(sprintf(__("Could not find %s with ID %s in old/csv for model %s and row %s.<br>", "event_espresso"),implode(",",$model_names_pointed_to),$fk_value,$model_name,http_build_query($model_object_data)));
+							}
 						}
 					}
+				}else{//this is just a re-import
+					//in this case, check if this thing ACTUALLY exists in teh database
+					if(($model->has_primary_key_field() && $model->get_one_by_ID($id_in_csv)) || 
+						( ! $model->has_primary_key_field() && $model->get_one(array($model_object_data)))){
+						$do_insert = false;
+					}else{
+						$do_insert = true;
+					}
 				}
-				
-				if($do_insert){
+				//remove the primary key, if there is one (we don't want it for inserts OR updates)
+				//we'll put it back in if we need it
+				if($model->has_primary_key_field()){
 					unset($model_object_data[$model->primary_key_name()]);
+				}
+				if($do_insert){
+					
 					//the model takes care of validating the CSV's input
 					try{
 						$new_id = $model->insert($model_object_data);
 						if($new_id){
-							$key_in_csv_to_id_in_db_map[$model_name][$id_in_csv] = $new_id;
+							$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $new_id;
+							d($old_db_to_new_db_mapping);
 							$total_inserts++;
-							EE_Error::add_success( sprintf(__("Successfully added new %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data)));
+							EE_Error::add_success( sprintf(__("Successfully added new %s (with id %s) with csv data %s", "event_espresso"),$model_name,$new_id, implode(",",$model_object_data)));
 						}else{
 							$total_insert_errors++;
 							$model_object_data[$model->primary_key_name()] = $id_in_csv;
@@ -365,7 +417,9 @@
 						}
 					}catch(EE_Error $e){
 						$total_insert_errors++;
-						$model_object_data[$model->primary_key_name()] = $id_in_csv;
+						if($model->has_primary_key_field()){
+							$model_object_data[$model->primary_key_name()] = $id_in_csv;
+						}
 						EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()));
 					}
 				}else{
@@ -394,13 +448,15 @@
 				}
 			}
 		}
+		//save the mapping from old db to new db in case they try re-importing teh same data from teh same website again
+		update_option('espresso_id_mapping_from'.sanitize_title($old_site_url),$old_db_to_new_db_mapping);
 
 		if ( $total_updates > 0 ) {
 			EE_Error::add_success( sprintf(__("%s existing records in the database were updated.", "event_espresso"),$total_updates));
 			$success = true;
 		}
 		if ( $total_inserts > 0 ) {
-			EE_Error::add_success(sprintf(__("$s new records were added to the database.", "event_espresso"),$total_inserts));
+			EE_Error::add_success(sprintf(__("%s new records were added to the database.", "event_espresso"),$total_inserts));
 			$success = true;
 		}
 
@@ -469,7 +525,9 @@
 		$this->fputcsv2($filehandle, $data_row);
 		$meta_data = array( 0=> array(
 			'version'=>espresso_version(),
-			'timezone'=>  EEH_DTT_Helper::get_timezone()));
+			'timezone'=>  EEH_DTT_Helper::get_timezone(),
+			'time_of_export'=>current_time('mysql'),
+			'site_url'=>site_url()));
 		$this->write_data_array_to_csv($filehandle, $meta_data);
 	}
 	

@@ -117,7 +117,7 @@ abstract class EE_Model_Field_Base{
 	 * @param mixed $value_on_field_to_be_outputted
 	 * @return mixed
 	 */
-	function prepare_for_pretty_echoing($value_on_field_to_be_outputted){
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null){
 		return $value_on_field_to_be_outputted;
 	}
 	

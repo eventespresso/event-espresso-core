@@ -274,7 +274,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 
 
-	public function prepare_for_pretty_echoing( $datetimevalue ) {
+	public function prepare_for_pretty_echoing( $datetimevalue, $schema = null ) {
 		$timezone_string = $this->_display_timezone() ? '<span class="ee_dtt_timezone_string">(' . self::get_timezone_abbrev($this->_timezone) . ')</span>' : '';
 		$format_string = $this->_get_date_time_output( TRUE );
 		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string ) . $timezone_string;

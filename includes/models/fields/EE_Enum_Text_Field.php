@@ -40,7 +40,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base{
 	 * @param int/string $value_on_field_to_be_outputted
 	 * @return string
 	 */
-	function prepare_for_pretty_echoing($value_on_field_to_be_outputted) {
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null) {
 		return $this->_allowed_enum_values[$value_on_field_to_be_outputted];
 	}
 }

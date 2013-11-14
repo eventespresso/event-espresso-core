@@ -231,8 +231,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				'Datetime_Ticket'=>$datetime_ticket_query_params,
 				'Ticket'=>$datetime_ticket_query_params,
 				//'Price'=>$related_models_query_params,
-				'Term_Taxonomy'=>$related_models_query_params,
 				'Term'=>$term_query_params,
+				'Term_Taxonomy'=>$related_models_query_params,
+				'Term_Relationship'=>$related_models_query_params, //model has NO primary key...
 				'Venue'=>$related_models_query_params,
 				'Event_Venue'=>$related_models_query_params,
 				'Registration'=>$related_models_query_params,
@@ -288,7 +289,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				'REG_date',
 				'REG_code',
 				'REG_count',
-				'REG_att_is_going',
 				'REG_final_price'
 			
 		);
@@ -306,8 +306,15 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			/*@var $registration EE_Registration */
 			foreach($reg_fields_to_include as $field_name){
 				$field = $reg_model->field_settings_for($field_name);
-				$value = $registration->get_pretty($field->get_name());
+				if($field_name == 'REG_final_price'){
+					$value = $registration->get_pretty($field_name,'schema_no_currency');
+				}else{
+					$value = $registration->get_pretty($field->get_name());
+				}
 				$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
+				if($field_name == 'REG_final_price'){
+					$reg_csv_array[__("Currency", "event_espresso")] = EE_Config::instance()->currency->code;
+				}
 			}	
 			//get pretty status
 			$status = $registration->status_obj();
