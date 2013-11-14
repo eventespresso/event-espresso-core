@@ -174,6 +174,31 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .no-bold { font-weight: normal; }
 .currency-code { font-size:.7em; color:#a8a8a8; vertical-align: text-top; }
 
+/**
+ * common icons
+ */
+.gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
+    display: inline-block;
+    height: 16px;
+    margin-top: 3px;
+    padding: 0;
+    vertical-align: middle;
+    width: 16px;
+}
+
+.trash-icon {
+    background: transparent url(../../../../images/trash-small-16x16.png) 0 0 no-repeat;
+}
+
+.lock-icon {
+    background: transparent url(../../../../images/lock.png) 0 0 no-repeat;
+}
+
+.check-column .lock-icon {
+	margin-left: 6px;
+}
+/** end common icons **/
+
 
 .espresso-help-tab-lnk.help_img {
 	display: inline-block; position: relative; top:3px; width: 16px; height: 16px; margin: 0 0 0 .25em;
