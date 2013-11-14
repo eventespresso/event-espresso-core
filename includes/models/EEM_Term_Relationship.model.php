@@ -49,7 +49,7 @@ class EEM_Term_Relationship extends EEM_Base {
 		$this->singlular_item = __('Term Relationship','event_espresso');
 		$this->plural_item = __('Term Relationships','event_espresso');
 		$this->_tables = array(
-			'Term_Relationship'=> new EE_Primary_Table('term_relationships', 'ANS_ID')
+			'Term_Relationship'=> new EE_Primary_Table('term_relationships')
 		);
 		$this->_fields = array(
 			'Term_Relationship'=>array(
@@ -62,6 +62,9 @@ class EEM_Term_Relationship extends EEM_Base {
 			'Venue'=>new EE_Belongs_To_Relation(),
 			'Attendee'=>new EE_Belongs_To_Relation(),
 			'Term_Taxonomy'=>new EE_Belongs_To_Relation()
+		);
+		$this->_indexes = array(
+			'PRIMARY'=>new EE_Primary_Key_Index(array('object_id','term_taxonomy_id'))
 		);
 		
 		parent::__construct();

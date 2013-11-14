@@ -50,6 +50,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Model_Relation_Base[] array of different kidns of relations
 	 */
 	protected $_model_relations;
+	
+	/**
+	 *
+	 * @var EE_Index
+	 */
+	protected $_indexes = array();
 
 	/**
 	 * Defautls strategy for getting where conditions on this model. This strategy is used to get default
@@ -213,6 +219,9 @@ abstract class EEM_Base extends EE_Base{
 
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
+		}
+		foreach($this->_indexes as $index_name => $index_obj){
+			$index_obj->_construct_finalize($index_name, $this->get_this_model_name());
 		}
 
 		$this->set_timezone($timezone);
@@ -640,13 +649,14 @@ abstract class EEM_Base extends EE_Base{
 			}
 			$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$deletion_where;
 
-	//		/echo "delete sql:$SQL";
+			//		/echo "delete sql:$SQL";
 			$rows_deleted = $wpdb->query($SQL);
 			$this->show_db_query_if_previously_requested($SQL);
 			//$wpdb->print_error();
 		}else{
 			$rows_deleted = 0;
 		}
+		
 		return $rows_deleted;//how many supposedly got updated
 	}
 	
@@ -700,10 +710,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string 	everything that comes after the WHERE statment.
 	 */
 	protected function _setup_ids_for_delete( $objects_for_deletion ) {
+		if($this->has_primary_key_field()){
 		$primary_table = $this->_get_main_table();
 		$other_tables = $this->_get_other_tables();
 		$deletes = $query = array();
-		
 		foreach ( $objects_for_deletion as $deobj ) {
 			//before we mark this object for deletion, 
 			//make sure there's no related objects blocking its deletion
@@ -742,6 +752,23 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		return !empty($query) ? implode(' AND ', $query ) : '';
+		}elseif(count($this->get_combined_primary_key_fields()) > 1){
+			$ways_to_identify_a_row = array();
+			$fields = $this->get_combined_primary_key_fields();
+			//note: because there' sno primary key, that means nothing else  can be pointing to this model, right?
+			foreach($objects_for_deletion as  $deobj){
+				$values_for_each_cpk_for_a_row = array();
+				foreach($fields as $cpk_field_name => $cpk_field){
+					$values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()."=".$deobj[$cpk_field->get_qualified_column()]; 
+				}
+				$ways_to_identify_a_row[] = "(".implode(" AND ",$values_for_each_cpk_for_a_row).")";
+			}
+			return implode(" OR ",$ways_to_identify_a_row);
+		}else{
+			//so there's no primary key and no combined key...
+			//sorry, can't help you
+			throw new EE_Error(sprintf(__("Cannot delete objects of type %s because there is no primary key NOR combined key", "event_espresso"),get_class($this)));
+		}
 	}
 	
 	/**
@@ -2412,4 +2439,26 @@ abstract class EEM_Base extends EE_Base{
 		return $this->_values_already_prepared_by_model_object;
 	}
 	
+	/**
+	 * Gets all the indexes on this model
+	 * @return EE_Index[]
+	 */
+	public function indexes(){
+		return $this->_indexes;
+	}
+	/**
+	 * Gets all the fields which, when combined, make the primary key.
+	 * This is usually just an array with 1 element (the primary key), but in cases
+	 * where there is no primary key, it's a combination of fields as defined
+	 * on a primary index
+	 * @return EE_Model_Field_Base[]
+	 */
+	public function get_combined_primary_key_fields(){
+		foreach($this->indexes() as $index){
+			if($index instanceof EE_Primary_Key_Index){
+				return $index->fields();
+			}
+		}
+		return array($this->get_primary_key_field());
+	}
 }

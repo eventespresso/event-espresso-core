@@ -66,6 +66,15 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	function remove_event_category($category_name){
 		return $this->get_model()->remove_event_category($this,$category_name);
 	}
+	
+	/**
+	 * Gets the term_taxonomies for this CPT
+	 * @param type $query_params
+	 * @return EE_Term_Taxonomy[]
+	 */
+	function categories($query_params = array()){
+		return $this->get_many_related('Term_Taxonomy', $query_params);
+	}
 
 
 

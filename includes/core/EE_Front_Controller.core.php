@@ -82,6 +82,15 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+//		$em = EEM_Event::instance();
+//		$event = $em->get_one(array(array('Term_Taxonomy.term_taxonomy_id'=>array('IS NOT NULL'))));
+//		d($event);
+//		$taxes = $event->categories();
+//		d($taxes);
+//		$a_tax = array_shift($taxes);
+//		$event->_remove_relation_to($a_tax, 'Term_Taxonomy');
+//		$event->clear_cache('Term_Taxonomy');
+//		d($event->categories());
 		////		$ticket = EEM_Ticket::instance()->get_one();
 //		$li = EE_Line_Item::new_instance(array(
 //			'LIN_code'=>'wefaeefaw',
