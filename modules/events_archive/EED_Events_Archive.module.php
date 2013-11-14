@@ -79,7 +79,6 @@ class EED_Events_Archive  extends EED_Module {
 		EE_Config::register_route( __( 'events', 'event_espresso' ), 'Events_Archive', 'run' );
 		EE_Config::register_route( 'event_list', 'Events_Archive', 'event_list' );		
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
-		add_action( 'AHEE__EED_Events_Archive__before_load_assests', array( 'EED_Events_Archive', 'clear_session' ), 9 );
 	}
 
 	/**
@@ -110,19 +109,6 @@ class EED_Events_Archive  extends EED_Module {
 		define( 'EVENTS_ARCHIVE_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 	}
 
-
-
-	/**
-	 * 	clear_session
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function clear_session() {
-		// clear the sesion at the last second before EED_Events_Archive->run() gets called during pre_get_posts @ priority 10
-		// otherwise events build up in the cart and session
-		EE_Registry::instance()->SSN->clear_session();
-	}
 
 
 	/**
@@ -191,6 +177,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	string
 	 */
 	public static function set_type() {
+		do_action( 'AHEE__EED_Events_Archive__before_set_type' );
 		EED_Events_Archive::$_types = apply_filters( 'EED_Events_Archive__set_type__types', EED_Events_Archive::$_types );
 		$view = isset( EE_Registry::instance()->CFG->EED_Events_Archive['default_type'] ) ? EE_Registry::instance()->CFG->EED_Events_Archive['default_type'] : 'grid';
 		$view = EE_Registry::instance()->REQ->is_set( 'elf_type' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_type' )) : $view;
