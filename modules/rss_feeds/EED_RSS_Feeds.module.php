@@ -69,7 +69,7 @@ class EED_RSS_Feeds  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function parse_request() {
+	public static function parse_request() {
 		if ( EE_Registry::instance()->REQ->is_set( 'post_type' )) {
 			define( 'RSS_FEEDS_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 			switch( EE_Registry::instance()->REQ->get( 'post_type' )) {
