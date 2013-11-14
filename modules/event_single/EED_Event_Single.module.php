@@ -8,20 +8,20 @@
  * @ author			Seth Shoultes
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
+ * @ link				http://www.eventespresso.com
  * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
  *
  * Event Details
  *
- * @package			Event Espresso
+ * @package		Event Espresso
  * @subpackage	/modules/event_details/
- * @author				Brent Christensen 
+ * @author		Brent Christensen 
  *
  * ------------------------------------------------------------------------
  */
-class EED_Event_Details  extends EED_Module {
+class EED_Event_Single  extends EED_Module {
 
 
 	/**
@@ -31,12 +31,12 @@ class EED_Event_Details  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		define( 'EVENT_DETAILS_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
-		define( 'EVENT_DETAILS_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
+		define( 'EVENT_SINGLE_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
+		define( 'EVENT_SINGLE_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
-		EE_Config::register_route( 'event', 'Event_Details', 'run' );
-		EE_Config::register_view( 'event', 0, EVENT_ESPRESSO_TEMPLATES . 'event_details' . DS . 'single-espresso_events.php' );
+		EE_Config::register_route( 'event', 'Event_Single', 'run' );
+		EE_Config::register_view( 'event', 0, EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'single-espresso_events.php' );
 	}
 
 	/**
@@ -148,18 +148,18 @@ class EED_Event_Details  extends EED_Module {
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE )) {
 			if ( is_single() ) {
 				// first check uploads folder
-				if ( file_exists( get_stylesheet_directory() . 'event_details/espresso_event_details.css' )) {
-					wp_register_style( 'espresso_event_details', get_stylesheet_directory_uri() . 'event_details/espresso_event_details.css', array() );
+				if ( file_exists( get_stylesheet_directory() . 'espresso_events/single-espresso_events.css' )) {
+					wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . 'espresso_events/single-espresso_events.css', array() );
 				} else {
-					wp_register_style( 'espresso_event_details', EE_TEMPLATES_URL . 'event_details/espresso_event_details.css', array() );
+					wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . 'espresso_events/single-espresso_events.css', array() );
 				}
-				if ( file_exists( get_stylesheet_directory() . 'event_details/espresso_event_details.js' )) {
-					wp_register_script( 'espresso_event_details', get_stylesheet_directory_uri() . 'event_details/espresso_event_details.js', array('espresso_core'), '1.0', TRUE  );
+				if ( file_exists( get_stylesheet_directory() . 'espresso_events/single-espresso_events.js' )) {
+					wp_register_script( 'single-espresso_events', get_stylesheet_directory_uri() . 'espresso_events/single-espresso_events.js', array('espresso_core'), '1.0', TRUE  );
 				} else {
-					wp_register_script( 'espresso_event_details', EE_TEMPLATES_URL . 'event_details/espresso_event_details.js', array('espresso_core'), '1.0', TRUE );
+					wp_register_script( 'single-espresso_events', EVENT_SINGLE_ASSETS_URL . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE );
 				}
-				wp_enqueue_style( 'espresso_event_details' );
-				wp_enqueue_script( 'espresso_event_details' );
+				wp_enqueue_style( 'single-espresso_events' );
+				wp_enqueue_script( 'single-espresso_events' );
 				if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
 					EE_Registry::instance()->load_helper( 'Maps' );
 					add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
@@ -183,7 +183,7 @@ class EED_Event_Details  extends EED_Module {
 				// check if the template file exists in the theme first
 				if ( ! $template_path = locate_template( array( 'single-espresso_events.php' ))) {
 					// otherwise get it from 
-					$template_path = EVENT_ESPRESSO_TEMPLATES . 'event_details' . DS . 'single-espresso_events.php';
+					$template_path = EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'single-espresso_events.php';
 				}
 			} else if ( is_archive() ) {
 				// check if the template file exists in the theme first
@@ -234,10 +234,10 @@ class EED_Event_Details  extends EED_Module {
 
 
 function espresso_display_venue_address_in_event_details() {
-	return EED_Event_Details::display_address();
+	return EED_Event_Single::display_address();
 }
 
 
 
-// End of file EED_Event_Details.module.php
-// Location: /modules/event_details/EED_Event_Details.module.php
+// End of file EED_Event_Single.module.php
+// Location: /modules/event_details/EED_Event_Single.module.php
