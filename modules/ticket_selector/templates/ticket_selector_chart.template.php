@@ -4,7 +4,7 @@
 			<tr>
 				<th scope="col" width="65%"><h3><?php _e( 'Ticket Options', 'event_espresso' ); ?></h3></th>
 				<th scope="col" width="20%"><?php _e( 'Price', 'event_espresso' ); ?> <span class="small-text no-bold"><?php _e( '(each)', 'event_espresso' ); ?></span></th>
-				<th scope="col" width="15%" class="cntr"><?php _e( 'Quantity', 'event_espresso' ); ?></th>
+				<th scope="col" width="15%" class="cntr"><?php _e( 'Quantity*', 'event_espresso' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -216,5 +216,5 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		
 </div>
 <?php if ( $max_atndz > 0 ) { ?>
-	<p class="small-txt lt-grey-text"><?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased per transaction for this event.', 'event_espresso' ), $max_atndz );?></p>
+	<p class="small-txt lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased per transaction for this event.', 'event_espresso' ), $max_atndz );?></p>
 <?php } ?>
