@@ -194,8 +194,11 @@ jQuery(document).ready(function($) {
 					} else {
 						// for single day events
 						// for portrait oriented images
-						if ( thumb_height > event_width ) {
-							var img_height = thumb.height;
+						var thumb_width = thumb.width();
+						if ( thumb_height > thumb_width ) {
+							var img_height = parseInt( thumb_height + day_padding );
+						} else if ( thumb_height == 0) {
+							var img_height = parseInt( day_width + day_padding );
 						} else {
 						// for landscape oriented images
 							var img_height = parseInt( day_width - day_padding );
