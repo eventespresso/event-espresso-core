@@ -107,10 +107,10 @@ final class EE_System {
 		// setup autoloaders
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		EE_Registry::instance()->load_helper( 'Activation' );
+		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 
 		//load textdomain
-		EEH_Activation::load_textdomain();
+		EE_Load_Textdomain::load_textdomain();
 
 		// check for activation errors
 		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
