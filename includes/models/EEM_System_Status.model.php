@@ -48,6 +48,7 @@ class EEM_System_Status{
 			'active_plugins'=>$this->get_active_plugins(),
 			'wp_settings'=>$this->get_wp_settings(),
 			'https_enabled'=>$this->get_https_enabled(),
+			'php_version'=>$this->php_version(),
 			'php_info'=>$this->get_php_info(),
 			
 		);
@@ -58,6 +59,13 @@ class EEM_System_Status{
 	 */
 	function get_ee_version(){
 		return espresso_version();
+	}
+	/**
+	 * 
+	 * @return string
+	 */
+	function php_version(){
+		return phpversion();
 	}
 	/**
 	 * 
