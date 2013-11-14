@@ -334,14 +334,16 @@ class EEM_Registration extends EEM_Base {
 		$query_params = array(
 			array(
 				'EVT_ID'=>$EVT_ID,
-			)
+				'STS_ID' => EEM_Registration::status_id_approved
+			),
+			'default_where_conditions' => 'none'
 		);
 		if( $for_incomplete_payments ){
 			$query_params[0]['Transaction.STS_ID']=array('!=',  EEM_Transaction::complete_status_code);
 		}
 
 		if( $this->EE->CFG->registration->pending_counts_reg_limit ){
-			$query_params[0]['STS_ID']=  EEM_Registration::status_id_pending;
+			$query_params[0]['OR'] = array( 'STS_ID' => EEM_Registration::status_id_pending, 'STS_ID*' => EEM_Registration::status_id_approved );
 		}
 		return $this->count($query_params);	
 	}
