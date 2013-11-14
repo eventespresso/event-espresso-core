@@ -1489,7 +1489,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _delete_event( $redirect_after = TRUE ) {
 		//determine the event id and set to array.
 		$EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : NULL;
-		$EVT_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : NULL;
+		$EVT_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : $EVT_ID;
 
 
 		// loop thru events
@@ -1560,8 +1560,34 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		
 		
-		$this->_set_model_object( $EVT_ID );
-		$success = $this->_cpt_model_obj->delete();
+		$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID($EVT_ID);
+
+		//need to delete related tickets and prices first.
+		$datetimes = $this->_cpt_model_obj->get_many_related('Datetime');
+		foreach ( $datetimes as $datetime ) {
+			$this->_cpt_model_obj->_remove_relation_to($datetime, 'Datetime');
+			$tickets = $datetime->get_many_related('Ticket');
+			foreach ( $tickets as $ticket ) {
+				$ticket->_remove_relation_to($datetime, 'Datetime');
+				$ticket->delete_related_permanently('Price');
+				$ticket->delete_permanently();
+			}
+			$datetime->delete();
+		}
+
+		//what about related venues or terms?
+		$venues = $this->_cpt_model_obj->get_many_related('Venue');
+		foreach ( $venues as $venue ) {
+			$this->_cpt_model_obj->_remove_relation_to($venue, 'Venue');
+		}
+
+		$term_taxonomies = $this->_cpt_model_obj->get_many_related('Term_Taxonomy');
+		
+		foreach ( $term_taxonomies as $term_taxonomy ) {
+			$this->_cpt_model_obj->_remove_relation_to($term_taxonomy,'Term_Taxonomy');
+		}
+
+		$success = $this->_cpt_model_obj->delete_permanently();
 		// did it all go as planned ?
 		if ($success) {
 			$msg = sprintf(__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
