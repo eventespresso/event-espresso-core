@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EED_RSS_Feeds  extends EED_Module {
+class EED_Rss_Feeds  extends EED_Module {
 
 
 	/**
@@ -31,7 +31,7 @@ class EED_RSS_Feeds  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		add_action( 'parse_request', array( 'EED_RSS_Feeds', 'parse_request' ), 10 );
+		add_action( 'parse_request', array( 'EED_Rss_Feeds', 'parse_request' ), 10 );
 	}
 
 	/**
@@ -75,11 +75,11 @@ class EED_RSS_Feeds  extends EED_Module {
 			switch( EE_Registry::instance()->REQ->get( 'post_type' )) {
 				
 				case 'espresso_events' :
-					add_filter( 'the_content', array( 'EED_RSS_Feeds', 'the_event_feed_content' ));
+					add_filter( 'the_content', array( 'EED_Rss_Feeds', 'the_event_feed_content' ));
 					break;
 				
 				case 'espresso_venues' :
-					add_filter( 'the_content', array( 'EED_RSS_Feeds', 'the_venue_feed_content' ));
+					add_filter( 'the_content', array( 'EED_Rss_Feeds', 'the_venue_feed_content' ));
 					break;
 				
 			}
@@ -138,5 +138,5 @@ class EED_RSS_Feeds  extends EED_Module {
 
 
 }
-// End of file RSS_Feeds.module.php
-// Location: /modules/rss_eeds/RSS_Feeds.module.php
+// End of file EED_Rss_Feeds.module.php
+// Location: /modules/rss_eeds/EED_Rss_Feeds.module.php
