@@ -170,7 +170,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		$page = isset( $this->_req_data['page'] ) ? $this->_req_data['page'] : $this->page_slug;
 
-		$this->_cpt_routes = array_merge(array('create_new'=>$this->page_slug, 'edit' => $this->page_slug), $this->_cpt_routes );
+		$this->_cpt_routes = array_merge(array('create_new'=>$this->page_slug, 'edit' => $this->page_slug, 'trash' => $this->page_slug), $this->_cpt_routes );
 
 		//let's see if the current route has a value for cpt_object_slug if it does we use that instead of the page
 		$this->_cpt_object = isset($this->_req_data['action']) && isset( $this->_cpt_routes[$this->_req_data['action']] ) ? get_post_type_object($this->_cpt_routes[$this->_req_data['action']]) : get_post_type_object( $page );
@@ -532,9 +532,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		$route_to_check = $post_type && isset( $this->_cpt_routes[$current_route]) ? $this->_cpt_routes[$current_route] : '';
 
+		add_filter( 'get_delete_post_link', array( $this, 'modify_delete_post_link'), 10, 3 );
 
-		if ( $post_type === $route_to_check )
+
+		if ( $post_type === $route_to_check ) {
 			add_filter('redirect_post_location', array( $this, 'cpt_post_location_redirect'), 10, 2 );
+			//catch trashed wp redirect
+			add_filter('wp_redirect', array( $this, 'cpt_trash_post_location_redirect' ), 10, 2 );
+		}
 
 		//now let's filter redirect if we're on a revision page and the revision is for an event CPT.
 		$revision = isset( $this->_req_data['revision'] ) ? $this->_req_data['revision'] : NULL;
@@ -779,6 +784,43 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		$this->_process_notices( $query_args, TRUE );
 		return self::add_query_args_and_nonce( $query_args, $admin_url );
+	}
+
+
+
+	/**
+	 * Modify the trash link on our cpt edit pages so it has the required query var for triggering redirect properly on our routes.
+	 * @param  string $delete_link  original delete link
+	 * @param  int    $post_id      id of cpt object
+	 * @param  bool   $force_delete whether this is forcing a hard delete instead of trash
+	 * @return string               new delete link
+	 */
+	public function modify_delete_post_link( $delete_link, $post_id, $force_delete ) {
+		$post = get_post($post_id);
+		if ( !isset( $this->_req_data['action'] ) || $post->post_type !== $this->_cpt_routes[$this->_req_data['action']] )
+			return $delete_link;
+
+		return add_query_arg( array('current_route' => 'trash' ), $delete_link );
+	}
+
+
+
+	/**
+	 * This hooks into the wp_redirect filter and if trashed is detected, then we'll redirect to the appropriate EE route
+	 * @param  string $location url
+	 * @param  string $status   status
+	 * @return string           url to redirect to
+	 */
+	public function cpt_trash_post_location_redirect( $location, $status ) {
+		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] !== 'trash' && empty( $this->_req_data['post'] ) )
+			return $location;
+
+		$post = get_post( $this->_req_data['post'] );
+		$query_args = array( 'action' => 'default' );
+		$this->_cpt_object = get_post_type_object($post->post_type);
+		EE_Error::add_success( sprintf( __('%s trashed.', 'event_espresso'), $this->_cpt_object->labels->singular_name) );
+		$this->_process_notices( $query_args, TRUE );
+		return self::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 	}
 
 
