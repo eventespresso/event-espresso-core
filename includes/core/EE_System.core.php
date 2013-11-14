@@ -107,6 +107,11 @@ final class EE_System {
 		// setup autoloaders
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		EE_Registry::instance()->load_helper( 'Activation' );
+
+		//load textdomain
+		EEH_Activation::load_textdomain();
+
 		// check for activation errors
 		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
 			EE_Error::add_error( $activation_errors );
@@ -167,6 +172,8 @@ final class EE_System {
 
 
 
+
+
 	/**
 	* _manage_activation_process
 	* 
@@ -182,7 +189,6 @@ final class EE_System {
 		switch($this->detect_req_type($espresso_db_update)){
 			case EE_System::req_type_new_activation:
 				do_action('AHEE__EE_System__manage_activation_process__new_activation');
-				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
 				EEH_Activation::initialize_db_content();			
@@ -190,7 +196,6 @@ final class EE_System {
 				break;
 			case EE_System::req_type_reactivation:
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
-				EE_Registry::instance()->load_helper( 'Activation' );
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
 				EEH_Activation::initialize_db_content();				
