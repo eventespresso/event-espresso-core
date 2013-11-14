@@ -396,11 +396,8 @@ final class EE_Config {
 		$module_dir = basename( $module_path );
 		// create classname from module directory name
 		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
-		echo '<h4>$module : ' . $module . ' </h4>';
 		// add class prefix
 		$module_class = 'EED_' . $module;
-		echo '<h4>$module_class : ' . $module_class . '  </h4>';
-		echo '<h4>$module_path : ' . $module_path . DS . $module_class . $module_ext . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// does the module exist ?
 		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
 			$msg = sprintf( __( 'The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
