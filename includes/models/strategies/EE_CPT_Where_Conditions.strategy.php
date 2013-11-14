@@ -41,7 +41,7 @@ class EE_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 		$status_field = $this->_get_field_on_column('post_status');
 		
 		return array(
-			$model_relation_chain.$status_field->get_name()=>array('!=','auto-draft'),
+			$model_relation_chain.$status_field->get_name()=>array('NOT IN',array('auto-draft','trash')),
 			'AND*'.$this->_post_type."-and-".$this->_meta_field."-query-clause" => array($model_relation_chain.$post_type_field->get_name()=>$this->_post_type, $model_relation_chain.$this->_meta_field => array( 'IS NOT NULL'))
 		);
 	}

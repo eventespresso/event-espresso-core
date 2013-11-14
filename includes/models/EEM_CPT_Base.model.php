@@ -2,13 +2,80 @@
 
 /*
  * For shared functionality between models internally implemented
- * as Custom Post Types.
+ * as Custom Post Types. Subclass of EEM_Soft_Delete_Base, meaning that when you 'delete' one of these model obejcts
+ * we actuallyd efault ot just trashing it. (It works differently than EEM_Soft_Delete under teh hood,because there's a post status field
+ * insetad of a soft-delete flag, but the functionality is teh same)
  * Note: if you add a new subclass of EEM_CPT_Base, you should add it as a relation
  * on EEM_Term_Taxonomy and EEM_Term_Relationship
  */
 define('EE_Event_Category_Taxonomy','espresso_event_category');
-require_once( EE_MODELS . 'EEM_Base.model.php');
-class EEM_CPT_Base extends EEM_Base{
+//require_once( EE_MODELS . 'EEM_Base.model.php');
+class EEM_CPT_Base extends EEM_Soft_Delete_Base{
+	
+	/**
+	 * Searches for field on this model of type 'deleted_flag'. if it is found,
+	 * returns it's name. BUT That doesn't apply to CPTs. We should istnead usepost_status_field_name
+	 * @return string
+	 * @throws EE_Error
+	 */
+	public function deleted_field_name(){
+		throw new EE_Error(sprintf(__("EEM_CPT_Base should nto call deleted_field_name! It shoul dinstead use post_status_field_name", "event_espresso")));
+	}
+	/**
+	 * Gets the field's name that sets the post status
+	 * @return string
+	 * @throws EE_Error
+	 */
+	public function post_status_field_name(){
+		$field = $this->get_a_field_of_type('EE_WP_Post_Status_Field');
+		if($field){
+			return $field->get_name();
+		}else{
+			throw new EE_Error(sprintf(__('We are trying to find the post status flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?','event_espresso'),get_class($this),get_class($this)));
+		}
+	}
+	
+	/**
+	 * Alters the query params so that only trashed/soft-deleted items are considered
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @return array like EEM_Base::get_all's $query_params
+	 */
+	protected function _alter_query_params_so_only_trashed_items_included($query_params){
+		$post_status_field_name=$this->post_status_field_name();
+		$query_params[0][$post_status_field_name]=self::post_status_trashed;
+		return $query_params;
+	}
+	
+	/**
+	 * Alters teh query params so each item's deleted status is ignored.
+	 * @param array $query_params
+	 * @return array
+	 */
+	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
+		$post_status_field_name=$this->post_status_field_name();
+		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->_statuses));
+		return $query_params;
+	}
+	/**
+	 * Performs deletes or restores on items. Both soft-deleted and non-soft-deleted items considered.
+	 * @param boolean $delete true to indicate deletion, false to indicate restoration
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return boolean success
+	 */
+	function delete_or_restore($delete=true,$query_params = array()){
+		if ( ! $query_params ) {
+			return FALSE;
+		}
+		$post_status_field_name=$this->post_status_field_name();
+		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
+		$new_status = $delete ? self::post_status_trashed : 'draft';
+		if ( $this->update (array($post_status_field_name=>$new_status), $query_params )) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
 	
 	/**
 	 * @var post_status_trashed the wp post statsu for trashed cpts
@@ -216,15 +283,6 @@ class EEM_CPT_Base extends EEM_Base{
 				$new_stati[$status] = $label;
 		}
 		return $new_stati;
-	}
-	
-	/**
-	 * Gets all the trashed CTPs
-	 * @param array $query_params like EEM_Base::get_all
-	 * @return int
-	 */
-	public function count_deleted($query_params = array()){
-		return $this->count(array(array('status'=>array('=','trash'))));
 	}
 
 	/**

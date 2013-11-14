@@ -43,7 +43,9 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	
 	protected function __construct($timezone = NULL) {
 		require_once( EE_MODELS . 'strategies/EE_Soft_Delete_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_Soft_Delete_Where_Conditions();
+		if( ! $this->_default_where_conditions_strategy){
+			$this->_default_where_conditions_strategy = new EE_Soft_Delete_Where_Conditions();
+		}
 		parent::__construct($timezone);
 	}
 	/**
@@ -150,7 +152,7 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @return array like EEM_Base::get_all's $query_params
 	 */
-	private function _alter_query_params_so_only_trashed_items_included($query_params){
+	protected function _alter_query_params_so_only_trashed_items_included($query_params){
 		$deletedFlagFieldName=$this->deleted_field_name();
 		$query_params[0][$deletedFlagFieldName]=true;
 		return $query_params;
@@ -161,7 +163,7 @@ class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @param array $query_params
 	 * @return array
 	 */
-	private function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
+	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
 		$query_params['default_where_conditions'] = 'other_models_only';
 		return $query_params;
 	}
