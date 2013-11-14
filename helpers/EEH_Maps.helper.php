@@ -107,7 +107,7 @@ class EEH_Maps {
 	 * @param  array $atts aray of attributes required for the map link generation
 	 * @return string (link to map!)
 	 */
-	public function espresso_google_map_js() { 
+	public static function espresso_google_map_js() { 
 		wp_register_script( 'gmap_api', 'http://maps.google.com/maps/api/js?sensor=false', array('jquery'), NULL, TRUE );
 		wp_register_script( 'ee_gmap', plugin_dir_url(__FILE__) . 'assets/ee_gmap.js', array('gmap_api'), '1.0', TRUE );
 	}
