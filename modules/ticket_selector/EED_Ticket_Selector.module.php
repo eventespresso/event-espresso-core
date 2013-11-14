@@ -60,7 +60,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
 //		add_action( 'AHEE_events_list_footer', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
-		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );	
+		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
 	}
 
 
@@ -111,7 +111,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return 	string	
 	*/
 	public static function display_ticket_selector( $event = NULL, $added_by_admin = FALSE ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');	
 
 //		d( $event );
 		if ( $event instanceof EE_Event ) {
@@ -230,6 +230,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		array  or FALSE
 	*/	
 	public function process_ticket_selections() {
+		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		// check nonce
 		if ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
 			$error_msg = __( 'We\'re sorry but your request failed to pass a security check.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
@@ -243,7 +244,10 @@ class EED_Ticket_Selector extends  EED_Module {
 		//so clear any previosu items in the cart. When MER happens this will probably need to be tweaked, 
 		//possibly wrappe din a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
-		//EE_Registry::instance()->SSN->clear_session();
+		// unless otherwise requested, clear the session
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE )) {
+			EE_Registry::instance()->SSN->clear_session();
+		}
 		//d( EE_Registry::instance()->SSN );
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
