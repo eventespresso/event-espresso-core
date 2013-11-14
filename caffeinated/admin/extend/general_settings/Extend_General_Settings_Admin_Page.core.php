@@ -62,7 +62,8 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 						'title' => __('Google Maps Configuration', 'event_espresso'),
 						'callback' => 'gmaps_info_help_tab'
 						)
-					)
+					),
+				'require_nonce' => FALSE
 				)
 			);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );

@@ -53,12 +53,9 @@
 	font-weight: 800;
 }
 
-.metabox-holder .ee-admin-settings-hdr {
-	margin:4em 0 1em; color: #444;
-}
-.metabox-holder .ee-admin-settings-hdr:first-child {
-	margin:1em 0;
-}
+.metabox-holder .ee-admin-settings-hdr { margin:4em 0 1em; color: #444; }
+.metabox-holder .ee-admin-settings-hdr:first-child { margin:1em 0; }
+.metabox-holder .ee-admin-settings-hdr-lnk { font-weight: normal; margin:0 0 0 1em; }
 
 .metabox-holder .ee-admin-settings-hdr + .ee-attention {
 	margin-top: 0;
@@ -176,6 +173,31 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .overline-hdr { padding:.5em 0 0; margin:2em 0 1em; border-top: 2px solid #eee; }
 .no-bold { font-weight: normal; }
 .currency-code { font-size:.7em; color:#a8a8a8; vertical-align: text-top; }
+
+/**
+ * common icons
+ */
+.gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
+    display: inline-block;
+    height: 16px;
+    margin-top: 3px;
+    padding: 0;
+    vertical-align: middle;
+    width: 16px;
+}
+
+.trash-icon {
+    background: transparent url(../../../../images/trash-small-16x16.png) 0 0 no-repeat;
+}
+
+.lock-icon {
+    background: transparent url(../../../../images/lock.png) 0 0 no-repeat;
+}
+
+.check-column .lock-icon {
+	margin-left: 6px;
+}
+/** end common icons **/
 
 
 .espresso-help-tab-lnk.help_img {

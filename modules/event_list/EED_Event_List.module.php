@@ -79,6 +79,7 @@ class EED_Event_List  extends EED_Module {
 		EE_Config::register_route( __( 'events', 'event_espresso' ), 'Event_List', 'run' );
 		EE_Config::register_route( 'event_list', 'Event_List', 'event_list' );		
 		add_action( 'wp_loaded', array( 'EED_Event_List', 'set_definitions' ), 2 );
+		add_filter( 'pre_get_posts', array( 'EED_Event_List', 'clear_session' ), 9 );
 	}
 
 	/**
@@ -109,6 +110,19 @@ class EED_Event_List  extends EED_Module {
 		define( 'EVENT_LIST_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 	}
 
+
+
+	/**
+	 * 	clear_session
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function clear_session() {
+		// clear the sesion at the last second before EED_Event_List->run() gets called during pre_get_posts @ priority 10
+		// otherwise events build up in the cart and session
+		EE_Registry::instance()->SSN->clear_session();
+	}
 
 
 	/**

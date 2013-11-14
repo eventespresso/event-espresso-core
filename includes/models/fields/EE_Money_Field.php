@@ -6,10 +6,16 @@ class EE_Money_Field extends EE_Float_Field{
 	function get_wpdb_data_type(){
 		return '%f';
 	}
-	function prepare_for_pretty_echoing($value_on_field_to_be_outputted){
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted,$schema = null){
 		EE_Registry::instance()->load_helper( 'Template' );
+		if($schema == 'schema_no_currency'){
+//			echo "schema no currency!";
+			$display_code = false;
+		}else{
+			$display_code = true;
+		}
 		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
-		return EEH_Template::format_currency( $pretty_float );
+		return EEH_Template::format_currency( $pretty_float, false, $display_code );
 	}
 	
 	/**

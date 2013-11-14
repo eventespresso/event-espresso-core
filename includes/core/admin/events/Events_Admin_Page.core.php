@@ -212,14 +212,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tour' => array(
 					'Event_Overview_Help_Tour',
 					//'New_Features_Test_Help_Tour' for testing multiple help tour
-					)
+					),
+				'require_nonce' => FALSE
 			),
 			'import_events' => array(
 				'nav' => array(
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
 				),
-				'metaboxes' => $default_espresso_boxes
+				'metaboxes' => $default_espresso_boxes,
+				'require_nonce' => FALSE
 			),
 			'create_new' => array(
 				'nav' => array(
@@ -241,6 +243,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tour' => array(
 					'Event_Editor_Help_Tour'
 					),
+				'require_nonce' => FALSE
 			),
 			'edit' => array(
 				'nav' => array(
@@ -259,7 +262,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Ticket Options', 'event_espresso'),
 						'callback' => 'ticket_options_info_help_tab'
 					)
-				)
+				),
+				'require_nonce' => FALSE
 			),
 			'default_event_settings' => array(
 				'nav' => array(
@@ -280,7 +284,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Default Payment Status', 'event_espresso'),
 						'callback' => 'default_payment_status_help_tab'
 					)
-				)
+				),
+				'require_nonce' => FALSE
 			),
 			//event category stuff
 			'add_category' => array(
@@ -294,7 +299,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'callback' => 'unique_id_help_tab'
 						)
 					),
-				'metaboxes' => array('_publish_post_box')
+				'metaboxes' => array('_publish_post_box'),
+				'require_nonce' => FALSE
 				),
 			'edit_category' => array(
 				'nav' => array(
@@ -309,7 +315,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'callback' => 'unique_id_help_tab'
 						)
 					),
-				'metaboxes' => array('_publish_post_box')
+				'metaboxes' => array('_publish_post_box'),
+				'require_nonce' => FALSE
 				),
 			'category_list' => array(
 				'nav' => array(
@@ -321,6 +328,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'Event_Categories_Help_Tour'
 					),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				),
 		);
 	}

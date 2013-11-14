@@ -98,23 +98,6 @@
     }
 }
 
-.gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
-    display: inline-block;
-    height: 16px;
-    margin-top: 3px;
-    padding: 0;
-    vertical-align: middle;
-    width: 16px;
-}
-
-.trash-icon {
-    background: transparent url(../../../../../images/trash-small-16x16.png) 0 0 no-repeat;
-}
-
-.lock-icon {
-    background: transparent url(../../../../../images/lock.png) 0 0 no-repeat;
-}
-
 
 /* make sure trash icon doesn't display for first ticket row /**/
 .add-new-ticket-table tr:first-child .trash-icon {

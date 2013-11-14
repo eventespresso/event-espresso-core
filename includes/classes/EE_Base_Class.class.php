@@ -346,6 +346,7 @@ class EE_Base_Class{
 	 * This also SETS the cache if we return the actual property!
 	 * @param  string $propertyname the name of the property we're trying to retrieve
 	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
+	 *		It can also accept certain pre-defined "schema" strings to define how to output the property. see the field's prepare_for_pretty_echoing for what strings can be used
 	 * @return mixed                whatever the value for the property is we're retrieving
 	 */
 	protected function _get_cached_property( $propertyname, $pretty = FALSE, $extra_cache_ref = NULL ) {
@@ -365,7 +366,8 @@ class EE_Base_Class{
 		//otherwise let's return the property
 		$field_name = ltrim( $propertyname, '_' );
 		$field_obj = $this->get_model()->field_settings_for($field_name);
-		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname) : $field_obj->prepare_for_get($this->$propertyname );
+//		echo "getting $propertyname $extra_cache_ref<br>";
+		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname, $extra_cache_ref) : $field_obj->prepare_for_get($this->$propertyname );
 		$this->_set_cached_property( $propertyname, $value, $cache_type );
 		return $value;
 	}
@@ -1113,7 +1115,7 @@ class EE_Base_Class{
 	 * @return int
 	 */
 	public function count_related($relation_name, $query_params =array(),$field_to_count = NULL, $distinct = FALSE){
-		$this->get_model()->count_related($this,$relation_name,$query_params,$field_to_count,$distinct);
+		return $this->get_model()->count_related($this,$relation_name,$query_params,$field_to_count,$distinct);
 	}
 	/**
 	 * Insetad of getting the related model objects, simply sums up the values of the specified field.
@@ -1125,7 +1127,7 @@ class EE_Base_Class{
 	 * @return int
 	 */
 	public function sum_related($relation_name, $query_params = array(), $field_to_sum = null){
-		$this->get_model()->sum_related($this, $relation_name, $query_params, $field_to_sum);
+		return $this->get_model()->sum_related($this, $relation_name, $query_params, $field_to_sum);
 	}
 	
 	/**
