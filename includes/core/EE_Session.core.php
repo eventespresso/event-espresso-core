@@ -134,7 +134,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 //		if ( ! isset( $_REQUEST['ee'] ) || $_REQUEST['ee'] != 'process_ticket_selections' ) {
 //			d( $this->_session_data );
 //		}
-		add_action( 'AHEE_before_event_list', array( $this, 'clear_session' ), 10, 2 );
 		// check request for 'clear_session' param
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 10 );
 		// once everything is all said and done,
@@ -599,18 +598,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function clear_session( $class = '', $func = '', $show_all_notices = FALSE ) {
-		
+	public function clear_session() {
 		// wipe out everything that isn't a default session datum
 		$this->reset_data( array_keys( $this->_session_data ));
-																
-//		$this->set_session_data(
-//			array(
-//				'cart' => NULL,
-//				'transaction' => NULL
-//			)
-//		);
-
 	}
 
 
@@ -644,13 +634,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 			// first check to make sure it is a valid session var
 			if ( isset( $this->_session_data[ $reset ] )) {
-
 				// then check to make sure it is not a default var
-				if ( ! in_array( $reset, $this->_default_session_vars )) {
-					// set var to NULL
-					$this->_session_data[ $reset ] = NULL;
+				if ( ! array_key_exists( $reset, $this->_default_session_vars )) {
+					// remove session var
+					unset( $this->_session_data[ $reset ] );
 					if ( $show_all_notices ) {
-						EE_Error::add_success( sprintf( __( 'The session variable %s was reset.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_success( sprintf( __( 'The session variable %s was removed.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
 					}
 					$return_value = !isset($return_value) ? TRUE : $return_value;
 
