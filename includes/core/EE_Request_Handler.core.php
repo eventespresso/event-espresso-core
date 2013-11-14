@@ -66,6 +66,7 @@ final class EE_Request_Handler {
 	 *  @return 	void
 	 */
 	public function __construct( $wp ) {
+		//d( $wp );
 		//if somebody forgot to provide us with WP, thats ok because its global
 		if( ! $wp){
 			global $wp;
@@ -77,9 +78,19 @@ final class EE_Request_Handler {
 		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
 		if ( ! is_admin() ) {
 			// get current post name from URL
-			EE_Registry::instance()->load_helper( 'URL' );	
-			$this->set( 'post_name', $wp->request );		
-			$this->set_espresso_page( EEH_URL::test_for_espresso_page( $wp->request ) );			
+			EE_Registry::instance()->load_helper( 'URL' );
+			// set request post name
+			if ( isset( $wp->query_vars['name'] )) {
+				$this->set( 'post_name', $wp->query_vars['name'] );
+			} else if ( isset( $wp->query_vars['pagename'] )) {
+				$this->set( 'post_name', $wp->query_vars['pagename'] );
+			} else {
+				$this->set( 'post_name', basename( $wp->request ));
+			}
+			// set post type
+			$post_type = isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : 'post';
+			$this->set( 'post_type', $post_type );	
+			$this->set_espresso_page( EEH_URL::test_for_espresso_page( $this->get( 'post_name' )));
 		}
 
 	}
