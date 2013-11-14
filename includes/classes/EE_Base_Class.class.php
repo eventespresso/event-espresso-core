@@ -1115,7 +1115,7 @@ class EE_Base_Class{
 	 * @return int
 	 */
 	public function count_related($relation_name, $query_params =array(),$field_to_count = NULL, $distinct = FALSE){
-		$this->get_model()->count_related($this,$relation_name,$query_params,$field_to_count,$distinct);
+		return $this->get_model()->count_related($this,$relation_name,$query_params,$field_to_count,$distinct);
 	}
 	/**
 	 * Insetad of getting the related model objects, simply sums up the values of the specified field.
@@ -1127,7 +1127,7 @@ class EE_Base_Class{
 	 * @return int
 	 */
 	public function sum_related($relation_name, $query_params = array(), $field_to_sum = null){
-		$this->get_model()->sum_related($this, $relation_name, $query_params, $field_to_sum);
+		return $this->get_model()->sum_related($this, $relation_name, $query_params, $field_to_sum);
 	}
 	
 	/**
