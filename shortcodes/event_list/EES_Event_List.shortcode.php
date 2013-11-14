@@ -102,12 +102,11 @@ class EES_Event_List  extends EES_Shortcode {
 		// turn on the output buffer
 		ob_start();
 		// load our template
-//		include( EVENT_LIST_TEMPLATES_PATH . EED_Event_List::get_template_part() );
-		$template_part = EED_Event_List::get_template_part();
-		if ( file_exists( get_stylesheet_directory() . 'event_list/' . $template_part )) {
-			include( get_stylesheet_directory() . 'event_list/' . $template_part );
+		$template_part = EED_Events_Archive::get_template_part();
+		if ( file_exists( get_stylesheet_directory() . 'espresso_events/' . $template_part )) {
+			include( get_stylesheet_directory() . 'espresso_events/' . $template_part );
 		} else {
-			include( EVENT_ESPRESSO_TEMPLATES . 'event_list/' . $template_part );
+			include( EVENT_ESPRESSO_TEMPLATES . 'espresso_events/' . $template_part );
 		}
 		// now reset the query and postdata
 		wp_reset_query();

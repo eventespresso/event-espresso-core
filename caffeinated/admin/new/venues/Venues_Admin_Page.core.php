@@ -207,6 +207,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'list_table' => 'Venues_Admin_List_Table',
 				'help_tour' => array( 'Venue_Overview_Help_Tour' ),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
+				'require_nonce' => FALSE
 			),
 			'create_new' => array(
 				'nav' => array(
@@ -214,7 +215,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 5,
 					'persistent' => FALSE
 				),
-				'metaboxes' => array('_venue_editor_metaboxes')
+				'metaboxes' => array('_venue_editor_metaboxes'),
+				'require_nonce' => FALSE
 				),
 			'edit' => array(
 				'nav' => array(
@@ -223,7 +225,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 				),
-				'metaboxes' => array('_venue_editor_metaboxes')
+				'metaboxes' => array('_venue_editor_metaboxes'),
+				'require_nonce' => FALSE
 			),
 			//event category stuff
 			'add_category' => array(
@@ -237,7 +240,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Unique ID', 'event_espresso'),
 						'callback' => 'unique_id_help_tab'
 						)
-					)
+					),
+				'require_nonce' => FALSE
 				),
 			'edit_category' => array(
 				'nav' => array(
@@ -252,7 +256,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Unique ID', 'event_espresso'),
 						'callback' => 'unique_id_help_tab'
 						)
-					)
+					),
+				'require_nonce' => FALSE
 				),
 			'category_list' => array(
 				'nav' => array(
@@ -261,6 +266,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'list_table' => 'Venue_Categories_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				)
 		);
 	}

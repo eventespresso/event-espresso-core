@@ -50,7 +50,8 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 				'nav' => array(
 					'label' => __('FAQ', 'event_espresso'),
 					'order' => 50),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
+				'require_nonce' => FALSE
 				)
 			);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );

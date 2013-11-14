@@ -174,7 +174,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'title' => __('About Price Types', 'event_espresso'),
 							'callback' => 'price_type_info_help_tab'
 							)
-						)
+						),
+					'require_nonce' => FALSE
 				),
 			'add_new_price' => array(
 					'nav' => array(
@@ -182,7 +183,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 20,
 							'persistent' => FALSE
 						),
-					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' )
+					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
+					'require_nonce' => FALSE
 				),
 			'edit_price' => array(
 					'nav' => array(
@@ -191,7 +193,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 							'persistent' => FALSE
 						),
-					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' )
+					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
+					'require_nonce' => FALSE
 				),
 			'price_types' => array(
 					'nav' => array(
@@ -200,7 +203,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						),
 					'list_table' => 'Price_Types_List_Table',
 					'help_tour' => array( 'Price_Types_Default_Help_Tour' ),
-					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box')
+					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
+					'require_nonce' => FALSE
 				),
 			'add_new_price_type' => array(
 					'nav' => array(
@@ -208,14 +212,16 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 40,
 							'persistent' => FALSE
 						),
-					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' )
+					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' ),
+					'require_nonce' => FALSE
 				),
 			'edit_price_type' => array(
 					'nav' => array(
 							'label' => __('Edit Price Type', 'event_espresso'),
 							'order' => 40,
 							'persistent' => FALSE
-						)
+						),
+					'require_nonce' => FALSE
 				)
 		);
 	}

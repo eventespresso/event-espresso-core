@@ -80,15 +80,16 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'label' => __('Maintenance', 'event_espresso'),
 					'order' => 10
 					),
+				'require_nonce' => FALSE
 //				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				////'help_tabs' => $this->_get_maintenance_help_tabs(),
 				),
 			'system_status'=>array(
 				'nav'=>array(
 					'label'=>  __("System Status", "event_espresso"),
-					'order'=>20
-					
+					'order'=>20	
 				),
+				'require_nonce' => FALSE
 //				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 			)
 			);

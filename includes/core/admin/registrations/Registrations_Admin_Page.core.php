@@ -271,7 +271,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 5
 					),
 				'help_tour' => array( 'Registration_Overview_Help_Tour' ),
-				'list_table' => 'EE_Registrations_List_Table'
+				'list_table' => 'EE_Registrations_List_Table',
+				'require_nonce' => FALSE
 				),
 
 			'event_registrations' => array(
@@ -282,7 +283,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
 				'list_table' => 'EE_Event_Registrations_List_Table',
-				'metaboxes' => array()
+				'metaboxes' => array(),
+				'require_nonce' => FALSE
 				),
 
 			'registration_checkins' => array(
@@ -293,7 +295,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'list_table' => 'EE_Registration_CheckIn_List_Table',
 				'help_tour' => array( 'Checkin_Toggle_View_Help_Tour' ),
-				'metaboxes' => array()
+				'metaboxes' => array(),
+				'require_nonce' => FALSE
 				),
 								
 			'view_registration' => array(
@@ -304,7 +307,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => FALSE
 					),
 				'help_tour' => array( 'Registration_View_Help_Tour' ),
-				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' )
+				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'require_nonce' => FALSE
 				),
 				
 			'new_registration' => array(
@@ -316,7 +320,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'labels' => array(
 					'publishbox' => __('Save Registration', 'event_espresso')
-					)
+					),
+				'require_nonce' => FALSE
 				),
 				
 			'add_new_attendee' => array(
@@ -325,7 +330,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => FALSE
 					),
-					'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box')
+				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE
 				),
 				
 			'edit_attendee' => array(
@@ -335,7 +341,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['ATT_ID']) ? add_query_arg(array('ATT_ID' => $this->_req_data['ATT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-					'metaboxes' => array('attendee_editor_metaboxes')
+				'metaboxes' => array('attendee_editor_metaboxes'),
+				'require_nonce' => FALSE
 				),
 				
 			'contact_list' => array(
@@ -345,7 +352,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'list_table' => 'EE_Attendee_Contact_List_Table',
 				'help_tour' => array( 'Contact_List_Help_Tour' ),
-				'metaboxes' => array()
+				'metaboxes' => array(),
+				'require_nonce' => FALSE
 				),
 
 			//override default cpt routes
