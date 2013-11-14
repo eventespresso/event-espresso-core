@@ -60,12 +60,15 @@ class EEH_Sideloader extends EEH_Base {
 			'_upload_to' => $this->_get_wp_uploads_dir(),
 			'_upload_from' => '',
 			'_permissions' => 0644,
-			'_new_file_name' => 'EE_Sideloader_' . uniqid() . '.default';
+			'_new_file_name' => 'EE_Sideloader_' . uniqid() . '.default'
 			);
+
 		$props = array_merge( $defaults, $init );
+
 		foreach ( $props as $key => $val ) {
-			if ( property_exists( $this->$key ) )
+			if ( property_exists( $this, $key ) ) {
 				$this->$key = $val;
+			}
 		}
 
 		//make sure we include the required wp file for needed functions
@@ -123,7 +126,7 @@ class EEH_Sideloader extends EEH_Base {
 
 		if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
 			unlink( $temp_file );
-			EE_Error::add_error( sprintf( __('Unable to upload the file.  Either the path given to upload from is incorrect, or something else happened.  Here is the response returned:<br />%s', 'event_espresso'), var_export( $response, true ) ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf( __('Unable to upload the file.  Either the path given to upload from is incorrect, or something else happened.  Here is the response returned:<br />%s<br />Here is the path given: %s', 'event_espresso'), var_export( $response, true ), $this->_upload_from ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
@@ -158,7 +161,7 @@ class EEH_Sideloader extends EEH_Base {
 		do_action( 'AHEE__EE_Sideloader__sideload_after', $this, $path );
 
 		//unlink tempfile
-		unlink( $temp_file );
+		@unlink( $temp_file );
 		return true;
 	}
 
