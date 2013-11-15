@@ -276,10 +276,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				//'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
 				'help_tabs' => array(
-					'events_expire_on_reg_end_date_help_tab' => array(
-						'title' => __('Events Expire on Reg End Date', 'event_espresso'),
-						'callback' => 'events_expire_on_reg_end_date_help_tab'
-					),
 					'default_payment_status_help_tab' => array(
 						'title' => __('Default Payment Status', 'event_espresso'),
 						'callback' => 'default_payment_status_help_tab'
@@ -377,9 +373,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		EEH_Template::display_template($template, array());
 	}
 
-	public function events_expire_on_reg_end_date_help_tab() {
-		$this->default_event_settings_help_tab(__FUNCTION__);
-	}
 
 	public function default_payment_status_help_tab() {
 		$this->default_event_settings_help_tab(__FUNCTION__);
