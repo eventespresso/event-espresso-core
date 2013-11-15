@@ -17,6 +17,12 @@ foreach($all_questions as $unused_question){
 /* @var array $values. Array of arrays, where each sub-array contains 2 keys: 'id' (internal value) and 'name' (label for displaying) */
 assert(is_array($values));
 
+$QSG_system = $question_group->system_group();
+ 
+$disabled = ! empty( $QSG_system ) ? ' disabled="disabled"' : '';
+$id =  ! empty( $QST_system ) ? '_disabled' : '';
+
+
 echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order') );
 ?>
 
@@ -35,23 +41,27 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 					<p class="description">
 						<?php _e('A name or heading for this group of questions that can be used to organize your Registration Form. For example: Address Information.','event_espresso')?>
 					</p>
+					<?php if ( ! empty( $QSG_system )) { ?>
+					<span class="description" style="color:#D54E21;">
+						<?php _e('This is a system question group so you are able to modify everything with this group except the identifier and the system questions attached to the group.','event_espresso')?>
+					</span><br/>
+					<?php } ?>
 				</td>
 			</tr>
 			
-<!--			<tr>
+			<tr>
 				<th>
 					<label for="QSG_identifier">
 						<?php _e('Group Identifier','event_espresso');?>
 					</label>
 				</th>
 				<td>
-					<input disabled name="QSG_identifier" value="<?php echo $question_group->identifier()?>" type="text" class="regular-text"><br/>
+					<input name="QSG_identifier<?php echo $id; ?>" value="<?php echo $question_group->identifier()?>" type="text" class="regular-text"<?php echo $disabled; ?>><br/>
 					<p class="description">
 						<?php _e('The "Group Identifier" is a unique name for this group that can be used to distinguish it from all other groups in the system. A Group Identifier therefore can not be the same as any other. It will NOT be displayed to site visitors. If left blank, one will be automagically generated for you, ie: address-info-12345.','event_espresso')?>
 					</p>
 				</td>
-			</tr>
-			-->			
+			</tr>		
 			<tr>
 				<th>
 					<label for="QSG_desc">
@@ -110,10 +120,13 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 							foreach( $all_questions as $question_ID=>$question ){
 								/*@var $question EE_Question*/
 								$checked = array_key_exists( $question_ID, $question_group->questions() ) ? ' checked="checked"' : '';
+								$disabled = $question->get('QST_system') ? ' disabled="disabled"' : '';
+								if ( $question->get('QST_system' ) && empty( $checked ) )
+									continue; //skip over system question not assigned to this group.
 							?>
 							<li>
 								<label for="question-<?php echo $question_ID?>">
-									<input type="checkbox" name="questions[<?php echo $question_ID;?>]" id="question-<?php echo $question_ID;?>" value="<?php echo $question_ID;?>"<?php echo $checked;?>/>
+									<input type="checkbox" name="questions[<?php echo $question_ID;?>]" id="question-<?php echo $question_ID;?>" value="<?php echo $question_ID;?>"<?php echo $checked; echo $disabled; ?>/>
 									 &nbsp; <?php echo $question->display_text()?>				
 								</label>
 							</li>
