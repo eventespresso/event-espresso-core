@@ -48,38 +48,4 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
-
-	public function column_display_text(EE_Question $item) {
-		
-		$system_question = $item->is_system_question();
-		if ( ! $system_question ) {
-			if ( !defined('REG_ADMIN_URL') )
-				define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
-
-			$edit_query_args = array(
-					'action' => 'edit_question',
-					'QST_ID' => $item->ID()
-				);
-
-			$trash_query_args = array(
-					'action' => 'trash_question',
-					'QST_ID' => $item->ID()
-				);
-
-
-			$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
-			$trash_link = EE_Admin_Page::add_query_args_and_nonce( $trash_query_args, EE_FORMS_ADMIN_URL );
-			
-			$actions = array(
-				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
-				'delete' => '<a href="' . $trash_link . '" title="' . __('Delete Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>',
-				);
-		}
-
-		$content = $system_question ? '<strong>' . $item->display_text() . '</strong>' : '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
-		$content .= $system_question ? '' : $this->row_actions($actions);
-		return $content;
-		
-	}
-
 }
