@@ -681,7 +681,7 @@ class EED_Events_Archive  extends EED_Module {
 //		printr( $REQ, '$REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		//$CFG->template_settings->EED_Events_Archive = new stdClass();
-		$CFG->EED_Events_Archive->display_description = isset( $REQ['display_description_in_event_list'] ) ? absint( $REQ['display_description_in_event_list'] ) : 1;
+		$CFG->EED_Events_Archive->display_description = isset( $REQ['display_description_in_event_list'] ) ? absint( $REQ['display_description_in_event_list'] ) : 0;
 		$CFG->EED_Events_Archive->display_address = isset( $REQ['display_address_in_event_list'] ) ? absint( $REQ['display_address_in_event_list'] ) : FALSE;
 		$CFG->EED_Events_Archive->display_venue = isset( $REQ['display_venue_in_event_list'] ) ? absint( $REQ['display_venue_in_event_list'] ) : FALSE;
 		$CFG->EED_Events_Archive->display_expired_events = isset( $REQ['display_expired_events'] ) ? absint( $REQ['display_expired_events'] ) : FALSE;
