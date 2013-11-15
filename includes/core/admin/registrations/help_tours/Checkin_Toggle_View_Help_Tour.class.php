@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Checkin_Toggle_View_Help_Tour
  *
- * This is the help tour object for the Checkin status toggle page
+ * This is the help tour object for the Check-in status toggle page
  *
  *
  * @package		Checkin_Toggle_View_Help_Tour
@@ -85,7 +85,7 @@ class Checkin_Toggle_View_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Attendee Checkin Records page!', 'event_espresso') . '</h3>';
+		$content = '<h3>' . __('Welcome to the Attendee Check-in Records page!', 'event_espresso') . '</h3>';
 		$content .= '<p>' . __('An introduction...', 'event_espresso') . '</p>';
 		return $content;
 	}

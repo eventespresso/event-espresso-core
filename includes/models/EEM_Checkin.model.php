@@ -15,7 +15,7 @@
  *
  * Check In Model
  *
- * This links Registrations with datetimes for recording checkin's and checkouts (and attendance)
+ * This links Registrations with datetimes for recording Check-in's and checkouts (and attendance)
  *
  * @package			Event Espresso
  * @subpackage		includes/models/EEM_Checkin.model.php
@@ -74,7 +74,7 @@ class EEM_Checkin extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Checkin'=> array(
-				'CHK_ID'=>new EE_Primary_Key_Int_Field('CHK_ID', 'Checkin ID'),
+				'CHK_ID'=>new EE_Primary_Key_Int_Field('CHK_ID', 'Check-in ID'),
 				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', 'Registration Id', false, 1, 'Registration'),
 				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime Id', false, 1, 'Datetime'),
 				'CHK_in'=>new EE_Boolean_Field('CHK_in', 'Whether a person has checked in or checked out', false, true),

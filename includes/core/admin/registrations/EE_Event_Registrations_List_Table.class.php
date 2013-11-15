@@ -93,7 +93,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
 			$events = EEM_Event::instance()->get_all(array(array(), 'order_by' => array( 'EVT_name' => 'asc' ) ) );
-			$evts[] = array('id' => 0, 'text' => __('To toggle checkin status for attendees, select an event', 'event_espresso') );
+			$evts[] = array('id' => 0, 'text' => __('To toggle Check-in status for attendees, select an event', 'event_espresso') );
 			foreach ( $events as $evt ) {
 				//any registrations for this event?
 				if ( ! $evt->get_count_of_all_registrations() )
@@ -194,7 +194,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		
 		if ( !empty($DTT_ID) ) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
-			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('Click here to view all the checkins and checkouts for this attendee', 'event_espresso' ) . '">' . __('View Attendee Checkins and Checkouts', 'event_espresso') . '</a>';
+			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('Click here to view all the check-ins and checkouts for this attendee', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
 
 		return !empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions($actions) ) : $name_link;
@@ -239,7 +239,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 	function column_REG_date(EE_Registration $item) {
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $item->reg_date()./*date( 'D M j, Y  g:i a',	 ) .*/ '</a>';	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( get_option('date_format'),	strtotime($item->reg_date()) ) ./*date( 'D M j, Y  g:i a',	 ) .*/ '</a>';	
 		return $REG_date;	
 	}
 
@@ -310,7 +310,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_actions( EE_Registration $item ) {
 		$view_link_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID()));
 
-		$view_lnk = '<li><a href="' . $view_link_url . '" title="' . __('View Attendee Checkin Records', 'event_espresso' ) . '"><img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png"></a></li>';
+		$view_lnk = '<li><a href="' . $view_link_url . '" title="' . __('View Attendee Check-in Records', 'event_espresso' ) . '"><img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png"></a></li>';
 
 		return '<ul class="reg-overview-actions-ul">' . $view_lnk . '</ul>';
 	}
