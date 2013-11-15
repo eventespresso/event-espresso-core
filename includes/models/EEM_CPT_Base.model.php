@@ -190,12 +190,17 @@ class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 				'term_id'=>$term->ID(),
 				'taxonomy'=>EE_Event_Category_Taxonomy,
 				'description'=>$category_description,
+				'count'=>1,
 				'parent'=>$parent_term_taxonomy_id
 			));
+			$term_taxonomy->save();
+		}else{
+			$term_taxonomy->set_count($term_taxonomy->count() + 1);
 			$term_taxonomy->save();
 		}
 		return $this->add_relationship_to($cpt_model_object, $term_taxonomy, 'Term_Taxonomy');
 	}
+	
 	
 	/**
 	 * Removed the category specified by name as having a relation to this event.
@@ -207,6 +212,10 @@ class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	function remove_event_category(EE_CPT_Base $cpt_model_objectevent, $category_name){
 		//find the term_taxonomy by that name
 		$term_taxonomy = $this->get_first_related($cpt_model_objectevent, 'Term_Taxonomy', array(array('Term.name'=>$category_name,'taxonomy'=>EE_Event_Category_Taxonomy)));
+		if($term_taxonomy){
+			$term_taxonomy->set_count($term_taxonomy->count() - 1);
+			$term_taxonomy->save();
+		}
 		return $this->remove_relationship_to($cpt_model_objectevent, $term_taxonomy, 'Term_Taxonomy');
 	}
 

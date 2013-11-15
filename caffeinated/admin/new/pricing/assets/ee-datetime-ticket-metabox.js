@@ -951,34 +951,37 @@ jQuery(document).ready(function($) {
 					curval='';
 					if ( $(this).hasClass('add-new-ticket-PRC_amount') ) {
 						price_amount = $(this).val();
+						idref = 'add-new-ticket-PRC_amount';
 						price_amount = price_amount !== '' ? parseFloat(price_amount) : 0;
 						price_amount = price_amount.toFixed(2);
 					}
 
 					if ( $(this).hasClass('add-new-ticket-TKT_name') ) {
 						pricename = $(this).val();
+						idref = 'add-new-ticket-TKT_name';
 						if ( pricename === '' ) {
 							pricename = curval = DTT_ERROR_MSG.no_ticket_name;
 						}
 					}
 
 					if ( $(this).hasClass('add-new-ticket-TKT_start_date') ) {
+						idref = 'add-new-ticket-TKT_start_date';
 						if ( $(this).val() === '' ) {
 							curval = moment().add('hours', 2).format('YYYY-MM-DD h:mm a');
 						}
 					}
 
 					if ( $(this).hasClass('add-new-ticket-TKT_end_date') ) {
+						idref = 'add-new-ticket-TKT_end_date';
 						if ( $(this).val() === '' ) {
 							curval = $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + tktHelper.dateTimeRow).val();
 						}
 					}
 
-					idref = $(this).attr('class').replace('add-new-', '.edit-');
-					//we also need to strip out any datepicker classes that might have got added
-					idref = idref.replace('ee-datepicker', '');
-					idref = idref.replace('hasDatepicker', '');
-					idref = $.trim(idref);
+					if ( $(this).hasClass('add-new-ticket-TKT_qty') )
+						idref = 'add-new-ticket-TKT_qty';
+
+					idref = idref.replace('add-new-', '.edit-');
 					curval = curval === '' ? $(this).val() : curval;
 					newTKTrow.find(idref).val(curval);
 
