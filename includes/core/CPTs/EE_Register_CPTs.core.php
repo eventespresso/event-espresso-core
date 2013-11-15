@@ -69,7 +69,7 @@ class EE_Register_CPTs {
 
 		//set default terms
 		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events') );
-		$this->set_default_term( 'espresso_event_type', 'single', array('espresso_events') );
+		$this->set_default_term( 'espresso_event_type', 'single-event', array('espresso_events') );
 		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
 
 
