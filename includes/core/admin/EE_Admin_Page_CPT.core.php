@@ -799,7 +799,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function modify_edit_post_link( $link, $id, $context ) {
 		$post = get_post( $id );
-		if ( !isset( $this->_req_data['action'] ) || $post->post_type !== $this->_cpt_routes[$this->_req_data['action']] )
+		if ( !isset( $this->_req_data['action'] ) || !isset( $this->_cpt_routes[$this->_req_data['action']] ) || $post->post_type !== $this->_cpt_routes[$this->_req_data['action']] )
 			return $link;
 		$query_args = array(
 			'action' => 'edit',
