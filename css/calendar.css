@@ -322,7 +322,7 @@ The Buttons and related paraphenalia
  color: #999;
 }
 #espresso_calendar td {
-	padding: 0;
+	padding: 0!important; /* ticket #4161 */
 }
 #espresso_calendar .fc-grid .fc-day-number {
 	padding: 0 .5em;
