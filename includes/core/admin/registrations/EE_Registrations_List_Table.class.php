@@ -237,7 +237,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			<a href="'.$check_in_url.'" title="' . __( 'The Check In List allows you to easily toggle attendee check in status for this event', 'event_espresso' ) . '">' . __( 'View Check-ins', 'event_espresso' ) . '</a>';
 		
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( get_option('date_format'),	strtotime($item->reg_date()) ) . '</a>';	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
 
 		return sprintf('%1$s %2$s', $REG_date, $this->row_actions($actions) );		
 
@@ -283,7 +283,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		foreach($datetimes as $datetime){
 			$query_args['DTT_ID'] = $datetime->ID();
 			$checkin_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, REG_ADMIN_URL );
-			$datetime_strings[] = '<a href="' . $checkin_url . '">' . $datetime->start_date_and_time(get_option('date_format'),' g:i a') . '</a>';
+			$datetime_strings[] = '<a href="' . $checkin_url . '">' . $datetime->start_date_and_time() . '</a>';
 		}
 		return implode("<br />",$datetime_strings);
     }
