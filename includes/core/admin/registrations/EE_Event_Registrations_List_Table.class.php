@@ -107,7 +107,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 			$dtts = array();
 			foreach ( $this->_dtts_for_event as $dtt ) {
-				$datetime_string = $dtt->start_date_and_time('D M j, Y', ' g:i a') . ' - ' . $dtt->end_date_and_time('D M j, Y', ' g:i a');
+				$datetime_string = $dtt->start_date_and_time() . ' - ' . $dtt->end_date_and_time();
 				$dtts[] = array('id' => $dtt->ID(), 'text' => $datetime_string );
 				$cur_dtt = empty( $cur_dtt ) && $dtt->get('DTT_is_primary') ? $dtt->ID() : $cur_dtt;
 			}
@@ -239,7 +239,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 	function column_REG_date(EE_Registration $item) {
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . date( get_option('date_format'),	strtotime($item->reg_date()) ) ./*date( 'D M j, Y  g:i a',	 ) .*/ '</a>';	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
 		return $REG_date;	
 	}
 
