@@ -6,7 +6,7 @@
  * Authorize.net AIM, Bank, Check, Invoice, Paypal Pro and Paypal Standard.
  * 
  */
-class EE_DMS_4_1_0P_category_details extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_category_details extends EE_Data_Migration_Script_Stage{
 private $_old_table;
 private $_new_table;
 private $_new_term_table;

@@ -36,7 +36,7 @@
 			)
 		);
  */
-class EE_DMS_4_1_0P_line_items extends EE_Data_Migration_Script_Stage_Table{
+class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_line_table;
 	private $_new_transaction_table;
 	private $_new_reg_table;

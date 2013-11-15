@@ -39,6 +39,38 @@ class EE_Brewing_Regular extends EE_Base {
 		 * note, this action hook is simply for reliably having things run ONLY if EE Regular is running.  This hook is executed at the plugins_loaded (priority 3) hook point. (see EE_System::plugins_loaded)
 		 */
 		do_action('AHEE__EE_Brewing_Regular__run_now');
+		add_action('AHEE__EEH_Activation__initialize_db_content',array($this,'initialize_caf_db_content'));
+	}
+	
+	/**
+	 * Upon brand-new activation, if this is a new activation of CAF, we want to add
+	 * some global prices that will show off EE4's capabilities. However, if they're upgrading
+	 * from 3.1, or simply 4.1 decaf, we assume they don't want us to suddenly introduce these extra prices.
+	 * This action should only be called when EE 4.1.0P is initially activated.
+	 * Right now the only CAF content are these global prices. If there's more in teh future, then
+	 * we should probably create a caf file to contain it all instead just a function like this.
+	 * @global type $wpdb
+	 */
+	function initialize_caf_db_content(){
+		global $wpdb;
+		$price_table = $wpdb->prefix."esp_price";
+		
+		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
+			
+			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
+			$existing_prices_count = $wpdb->get_var( $SQL );
+			
+			if ( $existing_prices_count <= 1 ) {
+				$SQL = "INSERT INTO $price_table
+							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
+							(2, 2, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, NULL, 20, 0, 0),
+							(3, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, NULL, 30, 0, 0),
+							(4, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 0),
+							(5, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 0);";			
+				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
+				$wpdb->query($SQL);			
+			}
+		}	
 	}
 
 

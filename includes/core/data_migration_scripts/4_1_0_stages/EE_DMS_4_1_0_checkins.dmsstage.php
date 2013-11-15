@@ -24,7 +24,7 @@
 		);
 */
 
-class EE_DMS_4_1_0P_checkins extends EE_Data_Migration_Script_Stage_Table{
+class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_table;
 	function __construct() {
 		global $wpdb;

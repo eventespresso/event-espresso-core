@@ -161,7 +161,7 @@ CREATE TABLE `wp_events_start_end` (
 				'DTT_deleted' => new EE_Trashed_Flag_Field('DTT_deleted', __('Flag indicating datetime is archived', 'event_espresso'), false, false ),
 			));
  */
-class EE_DMS_4_1_0P_events extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
 	private $_old_start_end_table;
 	private $_new_table;

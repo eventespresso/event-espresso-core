@@ -119,11 +119,13 @@ final class EE_System {
 		}
 		// get model names
 		$this->_parse_model_names();
+		//load caf stuff a chance to play during the activation process too.
+		$this->_maybe_brew_regular();
 		//we gave addons a chance to register themselves before detecting the request type
 		//and deciding whether or nto to set maintenance mode
 		// check for plugin activation/upgrade/installation
 		$this->_manage_activation_process();
-		$this->_maybe_brew_regular();
+		
 		// let's get it started		
 		if ( is_admin() && ! EE_FRONT_AJAX ) {
 			EE_Registry::instance()->load_core( 'Admin' );
@@ -190,6 +192,7 @@ final class EE_System {
 			case EE_System::req_type_new_activation:
 				EE_Registry::instance()->load_helper('Activation');
 				do_action('AHEE__EE_System__manage_activation_process__new_activation');
+				EE_Registry::instance()->load_helper('Activation');
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
 				EEH_Activation::initialize_db_content();			
@@ -198,6 +201,7 @@ final class EE_System {
 			case EE_System::req_type_reactivation:
 				EE_Registry::instance()->load_helper('Activation');
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
+				EE_Registry::instance()->load_helper('Activation');
 				EEH_Activation::system_initialization();
 				EEH_Activation::initialize_db_and_folders();
 				EEH_Activation::initialize_db_content();				

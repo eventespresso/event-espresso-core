@@ -30,7 +30,7 @@ CREATE TABLE `wp_events_venue_rel` (
 
  * 
  */
-class EE_DMS_4_1_0P_event_venue extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
 	private $_new_table;
 	function _migration_step($num_items=50){

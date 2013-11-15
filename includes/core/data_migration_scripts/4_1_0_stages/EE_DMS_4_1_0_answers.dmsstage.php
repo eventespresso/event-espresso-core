@@ -30,7 +30,7 @@ CREATE TABLE `wp_events_answer` (
 			));
 */
 
-class EE_DMS_4_1_0P_answers extends EE_Data_Migration_Script_Stage_Table{
+class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_answer_table;
 	
 	function __construct() {

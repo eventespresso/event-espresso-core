@@ -5,7 +5,7 @@
 	
 */
 
-class EE_DMS_4_1_0P_shortcodes extends EE_Data_Migration_Script_Stage{	
+class EE_DMS_4_1_0_shortcodes extends EE_Data_Migration_Script_Stage{	
 	function __construct() {
 		global $wpdb;
 		$this->_pretty_name = __("Shortcodes", "event_espresso");

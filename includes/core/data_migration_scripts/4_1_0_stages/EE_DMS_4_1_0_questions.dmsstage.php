@@ -55,7 +55,7 @@ CREATE TABLE `wp_events_question` (
 					'QSO_deleted'=>new EE_Trashed_Flag_Field('QSO_deleted', __('Flag indicating Option was trashed','event_espresso'), false, false)
 				)
  */
-class EE_DMS_4_1_0P_questions extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
 	private $_new_table;
 	private $_option_table;
