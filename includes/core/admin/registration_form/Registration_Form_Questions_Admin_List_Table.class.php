@@ -96,7 +96,8 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_cb(EE_Question $item) {
-		return sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID() );
+		$system_question = $item->is_system_question();
+		return $system_question ? '<span class="lock-icon"></span>' : sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID() );
 	}
 
 
@@ -114,10 +115,36 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_display_text(EE_Question $item) {
-		//return $item->display_text();
-		$content = '<strong>' . $item->display_text() . '</strong>';
-		return $content;
+		$system_question = $item->is_system_question();
 		
+		if ( !defined('REG_ADMIN_URL') )
+			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
+
+		$edit_query_args = array(
+				'action' => 'edit_question',
+				'QST_ID' => $item->ID()
+			);
+
+		$trash_query_args = array(
+				'action' => 'trash_question',
+				'QST_ID' => $item->ID()
+			);
+
+
+		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
+		$trash_link = EE_Admin_Page::add_query_args_and_nonce( $trash_query_args, EE_FORMS_ADMIN_URL );
+		
+		$actions = array(
+			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+			);
+
+		if ( ! $system_question )
+			$actions['delete'] = '<a href="' . $trash_link . '" title="' . __('Delete Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
+	
+
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
+		$content .= $this->row_actions($actions);
+		return $content;	
 	}
 
 

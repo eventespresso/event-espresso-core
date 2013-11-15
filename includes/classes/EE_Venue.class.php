@@ -179,6 +179,12 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	}
 
 	/**
+	 * Gets short description (AKA: the exceprt)
+	 */
+	function excerpt() {
+		return $this->get('VNU_short_desc');
+	}
+	/**
 	 * Gets identifier
 	 */
 	function identifier() {

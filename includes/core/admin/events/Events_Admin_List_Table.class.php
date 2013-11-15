@@ -63,7 +63,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'reg_begins' => __('Reg Begins', 'event_espresso'),
 			'status' => __('Status', 'event_espresso'),
 			'attendees' => __('Attendees', 'event_espresso'),
-			'tkts_sold' => __('TKTs sold', 'event_espresso'),
+			'tkts_sold' => __('Tickets Sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
 			);
 
@@ -184,7 +184,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 						$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . __('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 				break;
 			default :
-					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Move to Trash', 'event_espresso') . '</a>';
+					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 		}
 
 		$status = $item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
@@ -209,9 +209,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_start_date($item) {
-		!empty( $this->_dtt ) ? $this->_dtt->e_start_date( 'D, M d, Y') : _e('No Date was saved for this Event', 'event_espresso');
+		!empty( $this->_dtt ) ? $this->_dtt->e_start_date() : _e('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_date', 'D, M d, Y', 'My Timezone: ' ) : '';
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_date', '', 'My Timezone: ' ) : '';
 
 	}
 
@@ -219,9 +219,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_start_time($item) {
-		!empty( $this->_dtt ) ? $this->_dtt->e_start_time( get_option( 'time_format' ) ) : _e('No Date was saved for this Event', 'event_espresso');
+		!empty( $this->_dtt ) ? $this->_dtt->e_start_time() : _e('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone( 'DTT_EVT_start', 'get_time', get_option('time_format'), 'My Timezone: ' ) : '';
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone( 'DTT_EVT_start', 'get_time', '', 'My Timezone: ' ) : '';
 	}
 
 
@@ -229,9 +229,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function column_reg_begins($item) {
 		$reg_start = $item->get_ticket_with_earliest_start_time();
-		!empty( $reg_start ) ? $reg_start->e_datetime('TKT_start_date', 'D, M d, Y', 'g:i a') : _e('No Tickets have been setup for this Event', 'event_espresso');
+		!empty( $reg_start ) ? $reg_start->e_datetime('TKT_start_date') : _e('No Tickets have been setup for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $reg_start ) ? $reg_start->display_in_my_timezone('TKT_start_date', 'get_datetime', array('D, M d, Y', 'g:i a'), 'My Timezone: ' ) : '';/**/
+		echo !empty( $reg_start ) ? $reg_start->display_in_my_timezone('TKT_start_date', 'get_datetime', '', 'My Timezone: ' ) : '';/**/
 	}
 
 

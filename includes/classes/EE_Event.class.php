@@ -183,13 +183,6 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_EVT_external_URL;
 
-
-
-	/**
-	 * used to indicate what (if any) additional attendee info is required on registration
-	 * @var string
-	 */
-	protected $_EVT_additional_attendee_reg_info;
 	
 	/**
 	 *Indicates whether or not this event accepts donations
@@ -309,7 +302,7 @@ class EE_Event extends EE_CPT_Base{
 	function member_only(){
 		return $this->get('EVT_member_only');
 	}
-	function event_phone(){
+	function phone(){
 		return $this->get('EVT_phone');
 	}
 	function modified(){
@@ -326,9 +319,7 @@ class EE_Event extends EE_CPT_Base{
 	function require_pre_approval(){
 		return $this->get('EVT_require_pre_approval');
 	}
-	function additional_attendee_reg_info() {
-		return $this->get('EVT_additional_attendee_reg_info');
-	}
+	
 	function default_registration_status() {
 		return $this->get('EVT_default_registration_status');
 	}
@@ -404,9 +395,6 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_wp_user($wp_user) {
 		return $this->set('EVT_wp_user', $wp_user);
-	}
-	function set_additional_attendee_reg_info( $additional_attendee_reg_info ) {
-		return $this->set('EVT_additional_attendee_reg_info', $additional_attendee_reg_info );
 	}
 	function set_default_registration_status( $default_registration_status ) {
 		return $this->set('EVT_default_registration_status', $default_registration_status );

@@ -169,7 +169,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * Related Checkins for this datetime
+	 * Related Check-ins for this datetime
 	 * @var EE_Checkin[]
 	 */
 	protected $_Checkin;

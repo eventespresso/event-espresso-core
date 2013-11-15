@@ -131,7 +131,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * The number of times this ticket can be used to checkin (per registration).
+	 * The number of times this ticket can be used to Check-in (per registration).
 	 * @var int
 	 */
 	protected $_TKT_uses;

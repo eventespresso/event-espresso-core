@@ -116,7 +116,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	}
 
 
-	public function additional_registration_options( $html, $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values ) {
+	public function additional_registration_options( $html, $template_args, $yes_no_values, $default_reg_status_values ) {
 		$template_args['use_attendee_pre_approval'] = $this->EE->CFG->registration->use_attendee_pre_approval;
 		$template_args['attendee_pre_approval_required'] = $this->EE->CFG->registration->use_attendee_pre_approval ? EEH_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
 		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
@@ -152,7 +152,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	protected function _premium_event_editor_meta_boxes() {
 
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->page_slug, 'side', 'core');
-		add_meta_box('espresso_event_types', __('Event Type', 'event_espresso'), array( $this, 'event_type_meta_box' ), $this->page_slug, 'side', 'default' );
+		//add_meta_box('espresso_event_types', __('Event Type', 'event_espresso'), array( $this, 'event_type_meta_box' ), $this->page_slug, 'side', 'default' ); //add this back in when the feature is ready.
 
 		//todo feature in progress
 		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
@@ -175,19 +175,17 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['allow_group_reg_select'] = EEH_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
-		$template_args['additional_attendee_select'] = EEH_Form_Fields::select_input('additional_attendee_reg_info', $additional_attendee_reg_info_values, $this->_cpt_model_obj->additional_attendee_reg_info());
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
 		$template_args['allow_overflow'] = EEH_Form_Fields::select_input('allow_overflow', $yes_no_values, $this->_cpt_model_obj->allow_overflow() );
 		$template_args['require_pre_approval'] = EEH_Form_Fields::select_input('require_pre_approval', $yes_no_values, $this->_cpt_model_obj->require_pre_approval() );
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
 	}

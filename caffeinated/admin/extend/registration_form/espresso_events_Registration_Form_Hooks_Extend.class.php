@@ -90,7 +90,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 				<a href="admin.php?page=espresso_registration_form" target="_blank">
 					<?php _e('group of questions', 'event_espresso'); ?>
 				</a>
-				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
+				<?php _e('to your event.', 'event_espresso'); ?>
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
@@ -101,13 +101,12 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
  				$html = count( $QSGs ) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
 				foreach ( $QSGs as $QSG ) {
 
-					$checked = in_array( $QSG->ID(), $EQGids ) || $QSG->get('QSG_system') == 1 ? ' checked="checked" ' : '';
-					$visibility = $QSG->get('QSG_system') == 1 ? ' style=" visibility:hidden"' : '';
+					$checked = in_array( $QSG->ID(), $EQGids ) ? ' checked="checked" ' : '';
 					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'ID()' => $QSG->ID() ), EE_FORMS_ADMIN_URL );
 
 					$html .= '
 					<p id="event-question-group-' . $QSG->ID() . '">
-						<input value="' . $QSG->ID() . '" type="checkbox"' . $visibility . ' name="add_attendee_question_groups[' . $QSG->ID() . ']"' . $checked . ' /> 
+						<input value="' . $QSG->ID() . '" type="checkbox" name="add_attendee_question_groups[' . $QSG->ID() . ']"' . $checked . ' /> 
 						<a href="' . $edit_link . '" title="Edit ' . $QSG->get('QSG_name') . ' Group" target="_blank">' . $QSG->get('QSG_name') . '</a>
 					</p>';
 				}

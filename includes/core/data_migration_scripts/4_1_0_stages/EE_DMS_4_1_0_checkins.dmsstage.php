@@ -48,7 +48,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		for($i = 0; $i<abs($num_to_checkin_at_this_time); $i++){
 			$new_reg_id = $new_registrations_for_attendee[$i];
 			if( ! $new_reg_id){
-				$this->add_error(sprintf(__('It appears we wanted to checkin more registrations than actually exist. The old attendee record ($s%1) indicated we should checkin $d%2 registrations, but there are only %3$d registrations for that attendee (%4$s)', "event_espresso"),
+				$this->add_error(sprintf(__('It appears we wanted to check-in more registrations than actually exist. The old attendee record ($s%1) indicated we should check-in $d%2 registrations, but there are only %3$d registrations for that attendee (%4$s)', "event_espresso"),
 					http_build_query($old_row),abs($num_to_checkin_at_this_time),count($new_registrations_for_attendee),  http_build_query($new_registrations_for_attendee)));
 				break;
 			}
@@ -71,7 +71,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 	
 	
 	/**
-	 * Tries to find the new datetime the checkin was for, based on the attendee row
+	 * Tries to find the new datetime the Check-in was for, based on the attendee row
 	 * (because we know the attendee was for an event as a specific time, and we know
 	 * the event's OLD ID...)
 	 * @global type $wpdb
@@ -83,7 +83,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 	
 		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_attendee['event_id'], $wpdb->posts);
 		if ( ! $new_event_id){
-			$this->add_error(sprintf(__("Could nto find new event ID with old event id '%d', on attendee row %s; and because of that couldnt find the correct datetime for checkin", "event_espresso"),$old_attendee['event_id'],http_build_query($old_attendee)));
+			$this->add_error(sprintf(__("Could nto find new event ID with old event id '%d', on attendee row %s; and because of that couldnt find the correct datetime for Check-in", "event_espresso"),$old_attendee['event_id'],http_build_query($old_attendee)));
 			return 0;
 		}
 		$old_att_start_date = $old_attendee['start_date'];
@@ -108,11 +108,11 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 	}
 	
 	/**
-	 * Adds a new checkin/checkout record according for $new_reg_id,$new_datetime_id,$checking_in, and $timestmap
+	 * Adds a new Check-in/checkout record according for $new_reg_id,$new_datetime_id,$checking_in, and $timestmap
 	 * @param int $new_reg_id
 	 * @param int $new_datetime_id
 	 * @param string $timestamp mysql datetime
-	 * @return int new checkin id
+	 * @return int new Check-in id
 	 */
 	private function _insert_checkin_record($new_reg_id,$new_datetime){
 		global $wpdb;

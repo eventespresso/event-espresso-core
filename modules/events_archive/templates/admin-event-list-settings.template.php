@@ -76,12 +76,12 @@ $grid_sizes = array(
 
 			<tr>
 				<th>
-					<label for="display_venue_in_event_list">
+					<label for="display_venue_details_in_event_list">
 						<?php _e('Display Venue Details', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('display_venue_in_event_list', $values, $display_venue, 'id="display_venue_in_event_list"'); ?>
+					<?php echo EEH_Form_Fields::select_input('display_venue_details_in_event_list', $values, $display_venue_details, 'id="display_venue_details_in_event_list"'); ?>
 				</td>
 			</tr>
 

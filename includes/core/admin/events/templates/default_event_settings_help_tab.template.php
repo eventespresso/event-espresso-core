@@ -1,26 +1,5 @@
 <?php 
 
-
-function events_expire_on_reg_end_date_help_tab_html() { ?>
-
-	<h2><?php _e('Default Event Settings', 'event_espresso'); ?></h2>
-	<h3><?php _e('Events Expire on Registration End Date', 'event_espresso'); ?></h3>
-
-	<p>
-		<?php _e('This determines when events become inactive and no longer displayed in your event listings.', 'event_espresso'); ?>
-	</p>
-	<p>
-		<strong><?php _e('Yes', 'event_espresso'); ?></strong><br />
-		<?php _e('If set to Yes, then only events that can still be registered for will appear in your event listings.', 'event_espresso'); ?>
-	</p>
-	<p>
-		<strong><?php _e('No', 'event_espresso'); ?></strong><br />
-		<?php _e('If set to No, then events will remain visible in your event listings, even though people can no longer register for them.', 'event_espresso'); ?>
-	</p>
-	
-<?php } 
-
-
 function default_payment_status_help_tab_html() { ?>
 
 	<h2><?php _e('Default Event Settings', 'event_espresso'); ?></h2>

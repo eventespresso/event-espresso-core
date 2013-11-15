@@ -815,11 +815,12 @@ class EE_Organization_Config extends EE_Config_Base {
 		$this->zip = '12345';
 		$this->email = get_bloginfo('admin_email');
 		$this->logo_url = '';
-
-		$socialnetworks = array('facebook,twitter,linkedin,pinterest,google,instagram');
-		foreach ( $socialnetworks as $name ) {
-			$this->$name = '';
-		}	
+		$this->facebook = '';
+		$this->twitter = '';
+		$this->linkedin = '';
+		$this->pinterest = '';
+		$this->google = '';
+		$this->instagram = '';
 	}
 	
 }

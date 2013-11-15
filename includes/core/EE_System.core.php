@@ -190,6 +190,7 @@ final class EE_System {
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		switch($this->detect_req_type($espresso_db_update)){
 			case EE_System::req_type_new_activation:
+				EE_Registry::instance()->load_helper('Activation');
 				do_action('AHEE__EE_System__manage_activation_process__new_activation');
 				EE_Registry::instance()->load_helper('Activation');
 				EEH_Activation::system_initialization();
@@ -198,6 +199,7 @@ final class EE_System {
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_reactivation:
+				EE_Registry::instance()->load_helper('Activation');
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
 				EE_Registry::instance()->load_helper('Activation');
 				EEH_Activation::system_initialization();
@@ -206,11 +208,13 @@ final class EE_System {
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_upgrade:
+				EE_Registry::instance()->load_helper('Activation');
 				do_action('AHEE__EE_System__manage_activation_process__upgrade');
 				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;
 			case EE_System::req_type_downgrade:
+				EE_Registry::instance()->load_helper('Activation');
 				do_action('AHEE__EE_System__manage_activation_process__downgrade');
 				$this->update_list_of_installed_versions($espresso_db_update);
 				break;

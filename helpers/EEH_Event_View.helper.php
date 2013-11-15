@@ -16,12 +16,24 @@
 
 
 	/**
+	 * espresso_event_categories
+	 * returns the terms associated with an event
+	* 
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_event_categories' )) {
+		function espresso_event_categories() {
+			global $post;
+			the_terms( $post->ID, 'espresso_event_categories' );
+		}		
+	}
+
+
+	/**
 	 * espresso_event_date
-	 *
-	 * @returns the primary date for an event
-	 * @uses $wp_query
-	 *
-	 * @return bool
+	* returns the primary date for an event
+	* 
+	 * @return object
 	 */
 	if ( ! function_exists( 'espresso_event_date_obj' )) {
 		function espresso_event_date_obj() {
@@ -31,12 +43,10 @@
 
 
 	/**
-	 * espresso_event_date
-	 *
-	 * @returns the primary date for an event
-	 * @uses $wp_query
-	 *
-	 * @return bool
+	 * espresso_event_date 
+	* returns the primary date for an event
+	* 
+	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_date' )) {
 		function espresso_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
@@ -46,12 +56,34 @@
 
 
 	/**
+	 * espresso_list_of_event_dates
+	* returns the primary date for an event
+	* 
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_list_of_event_dates' )) {
+		function espresso_list_of_event_dates( $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a' ) {
+			$datetimes = EEH_Event_View::get_all_date_obj( $dt_frmt, $tm_frmt );
+			//d( $datetimes );
+			if ( is_array( $datetimes ) && ! empty( $datetimes )) {
+				global $post;
+				echo '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">';
+				foreach ( $datetimes as $datetime ) {
+					echo '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';	
+					echo $datetime->start_date_and_time( $dt_frmt, $tm_frmt );	
+					echo '</li>';	
+				}
+				echo '</ul>';
+			}
+		}		
+	}
+
+
+	/**
 	 * espresso_event_end_date
+	* returns the last date for an event
 	 *
-	 * @returns the last date for an event
-	 * @uses $wp_query
-	 *
-	 * @return bool
+	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_end_date' )) {
 		function espresso_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
@@ -61,18 +93,16 @@
 
 	/**
 	 * espresso_event_date_range
+	* returns the first and last dates for an event (if different)
 	 *
-	 * @returns the first and last dates for an event (if different)
-	 * @uses $wp_query
-	 *
-	 * @return bool
+	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_date_range' )) {
 		function espresso_event_date_range( $dt_frmt = 'M jS', $tm_frmt = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a' ) {
 			$the_event_date = EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt );
 			$the_event_end_date = EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt );
 			if ( $the_event_date != $the_event_end_date ) {
-				echo $the_event_date . __( ' - ', 'event_espresso' ) . EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt );;
+				echo $the_event_date . __( ' - ', 'event_espresso' ) . EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt );
 			} else {
 				echo EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt );
 			}
@@ -82,11 +112,9 @@
 
 	/**
 	 * espresso_event_date_as_calendar_page
+	* returns the primary date for an event, stylized to appear as the page of a calendar
 	 *
-	 * @returns the primary date for an event
-	 * @uses $wp_query
-	 *
-	 * @return bool
+	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_date_as_calendar_page' )) {
 		function espresso_event_date_as_calendar_page() {
@@ -98,12 +126,23 @@
 
 
 	/**
-	 * espresso_edit_event_link
+	 * espresso_event_phone	 
 	 *
-	 * @returns a link to edit an event
-	 * @uses $wp_query
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_event_phone' )) {
+		function espresso_event_phone() {
+			EEH_Event_View::event_phone();
+		}		
+	}
+
+
+
+	/**
+	 * espresso_edit_event_link	 
+	 * returns a link to edit an event
 	 *
-	 * @return bool
+	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_edit_event_link' )) {
 		function espresso_edit_event_link() {
@@ -112,20 +151,115 @@
 	}
 
 
+	/**
+	 * espresso_organization_name
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_name' )) {
+		function espresso_organization_name() {
+			echo EE_Registry::instance()->CFG->organization->name;
+		}		
+	}
 
 	/**
-	 * espresso_event_desc
-	 *
-	 * @returns the primary date for an event
-	 * @uses $wp_query
-	 *
-	 * @return bool
+	 * espresso_organization_address
+	 * @return string
 	 */
-//	if ( ! function_exists( 'espresso_event_desc' )) {
-//		function espresso_event_desc() {
-//			EEH_Event_View::event_desc();
-//		}		
-//	}
+	if ( ! function_exists( 'espresso_organization_address' )) {
+		function espresso_organization_address( $type = 'inline' ) {
+			EE_Registry::instance()->load_helper( 'Formatter' );
+			$address = new EE_Generic_Address(
+				EE_Registry::instance()->CFG->organization->address,
+				EE_Registry::instance()->CFG->organization->address_2,
+				EE_Registry::instance()->CFG->organization->city,
+				EE_Registry::instance()->CFG->organization->STA_ID,
+				EE_Registry::instance()->CFG->organization->CNT_ISO,
+				EE_Registry::instance()->CFG->organization->zip
+			);
+			return EEH_Address::format( $address, $type );
+		}		
+	}
+
+	/**
+	 * espresso_organization_email
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_email' )) {
+		function espresso_organization_email() {
+			echo EE_Registry::instance()->CFG->organization->email;
+		}		
+	}
+
+	/**
+	 * espresso_organization_logo_url
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_logo_url' )) {
+		function espresso_organization_logo_url() {
+			echo EE_Registry::instance()->CFG->organization->logo_url;
+		}		
+	}
+
+	/**
+	 * espresso_organization_facebook
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_facebook' )) {
+		function espresso_organization_facebook() {
+			echo EE_Registry::instance()->CFG->organization->facebook;
+		}		
+	}
+
+	/**
+	 * espresso_organization_twitter
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_twitter' )) {
+		function espresso_organization_twitter() {
+			echo EE_Registry::instance()->CFG->organization->twitter;
+		}		
+	}
+
+	/**
+	 * espresso_organization_linkedin
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_linkedin' )) {
+		function espresso_organization_linkedin() {
+			echo EE_Registry::instance()->CFG->organization->linkedin;
+		}		
+	}
+
+	/**
+	 * espresso_organization_pinterest
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_pinterest' )) {
+		function espresso_organization_pinterest() {
+			echo EE_Registry::instance()->CFG->organization->pinterest;
+		}		
+	}
+
+	/**
+	 * espresso_organization_google
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_google' )) {
+		function espresso_organization_google() {
+			echo EE_Registry::instance()->CFG->organization->google;
+		}		
+	}
+
+	/**
+	 * espresso_organization_instagram
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_instagram' )) {
+		function espresso_organization_instagram() {
+			echo EE_Registry::instance()->CFG->organization->instagram;
+		}		
+	}
+
 
 
 
@@ -226,6 +360,41 @@ class EEH_Event_View extends EEH_Base {
 		}
 	}
 
+
+
+	/**
+	 * 	get_all_date_obj
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function get_all_date_obj() {
+		global $post;
+		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
+			return $post->EE_Event->get_many_related('Datetime');
+		} else {
+			 return FALSE;
+		}
+	}
+
+
+
+
+	/**
+	 * 	event_phone
+	 *
+	 *  @access 	public
+	 *  @param	string $text 
+	 *  @return 	string
+	 */
+	public static function event_phone() {
+		global $post;
+		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
+			EE_Registry::instance()->load_helper( 'Formatter' );
+			return EEH_Schema::telephone( $post->EE_Event->phone() );
+		}
+		return NULL;
+	}
 
 
 

@@ -789,6 +789,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Event.status' => 'draft',
+				'Event.status*' => 'trash',
+				'Event.status**' => 'publish',
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
@@ -811,7 +814,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if($count){
 			return EEM_Registration::instance()->count(array($_where));
 		}else{
-			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ) );
+			//make sure we remove default where conditions cause all registrations matching query are returned
+			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'default_where_conditions' => 'none' );
 			if ( $per_page !== -1 ) {
 				$query_params['limit'] = $limit;
 			}
@@ -1964,11 +1968,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'nocheckinrecord' => array(
 				'icon' => REG_ASSETS_URL . 'images/delete-grey-16x16.png',
-				'desc' => __('This indicates that no checkin record has been created for this attendee', 'event_espresso')
+				'desc' => __('This indicates that no Check-in record has been created for this attendee', 'event_espresso')
 				),
 			'view_details' => array(
 				'icon' => EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png',
-				'desc' => __('View All checkin records for this attendee', 'event_espresso')
+				'desc' => __('View All Check-in records for this attendee', 'event_espresso')
 				),
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
@@ -1986,7 +1990,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * generates HTML for the Registration Checkin list table (showing all checkins for a specific registration)
+	 * generates HTML for the Registration Check-in list table (showing all Check-ins for a specific registration)
 	 * @access protected
 	 * @return void
 	 */
@@ -2259,13 +2263,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	
 	/**
-	 * toggle the checkin status for the given registration (coming from ajax)
+	 * toggle the Check-in status for the given registration (coming from ajax)
 	 * @return json
 	 */
 	public function toggle_checkin_status() {
 		//first make sure we have the necessary data
 		if ( !isset( $this->_req_data['regid'] ) ) {
-			EE_Error::add_error( __('There must be somethign broken with the html structure because the required data for toggling the checkin status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('There must be somethign broken with the html structure because the required data for toggling the Check-in status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['success'] = FALSE;
 			$this->_template_args['error'] = TRUE;
 			$this->_return_json();
@@ -2320,7 +2324,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$query_args['DTT_ID'] = $DTT_ID;
 			$new_status = $this->_toggle_checkin($this->_req_data['regid'], $DTT_ID);		
 		} else {
-			EE_Error::add_error(__('Missing some required data to toggle the checkin', 'event_espresso') );
+			EE_Error::add_error(__('Missing some required data to toggle the Check-in', 'event_espresso') );
 		}
 
 		if ( defined('DOING_AJAX' ) )
@@ -2335,7 +2339,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * This is toggles a single checkin for the given registration and datetime.
+	 * This is toggles a single Check-in for the given registration and datetime.
 	 * @param  int    $REG_ID The registration we're toggling
 	 * @param  int    $DTT_ID The datetime we're toggling
 	 * @return int            The new status toggled to.
@@ -2406,7 +2410,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				EE_Error::add_success( __('Check In record successfully deleted', 'event_espresso') );
 			}
 		} else {
-			EE_Error::add_error(__('In order to delete a checkin record, there must be a Check In ID available. There is not. It is not your fault, there is just a gremlin living in the code', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(__('In order to delete a Check-in record, there must be a Check In ID available. There is not. It is not your fault, there is just a gremlin living in the code', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 	}

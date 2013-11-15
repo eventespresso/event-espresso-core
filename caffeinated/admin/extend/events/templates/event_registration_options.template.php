@@ -14,11 +14,6 @@
 </p>
 
 <p>
-	<label><?php _e('Additional Attendee Registration info?', 'event_espresso'); ?></label>
-	<?php echo $additional_attendee_select; ?>
-</p>
-
-<p>
 	<label><?php _e('Allow Overflow?', 'event_espresso'); ?></label>
 	<?php echo $allow_overflow; ?>
 </p>
@@ -47,7 +42,7 @@
 
 <p>
 	<label><?php _e('Event Phone Number', 'event_espresso'); ?></label>
-	<input name="event_phone" size="20" type="text" value="<?php echo $_event->event_phone(); ?>">
+	<input name="event_phone" size="20" type="text" value="<?php echo $_event->phone(); ?>">
 </p>
 
 <p>

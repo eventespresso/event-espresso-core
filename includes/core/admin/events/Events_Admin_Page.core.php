@@ -215,7 +215,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'require_nonce' => FALSE
 			),
-			'import_events' => array(
+			'import_page' => array(
 				'nav' => array(
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
@@ -276,10 +276,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				//'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
 				'help_tabs' => array(
-					'events_expire_on_reg_end_date_help_tab' => array(
-						'title' => __('Events Expire on Reg End Date', 'event_espresso'),
-						'callback' => 'events_expire_on_reg_end_date_help_tab'
-					),
 					'default_payment_status_help_tab' => array(
 						'title' => __('Default Payment Status', 'event_espresso'),
 						'callback' => 'default_payment_status_help_tab'
@@ -377,9 +373,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		EEH_Template::display_template($template, array());
 	}
 
-	public function events_expire_on_reg_end_date_help_tab() {
-		$this->default_event_settings_help_tab(__FUNCTION__);
-	}
 
 	public function default_payment_status_help_tab() {
 		$this->default_event_settings_help_tab(__FUNCTION__);
@@ -622,7 +615,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'EVT_require_pre_approval' => !empty( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
 			'EVT_member_only' => !empty( $this->_req_data['member_only'] ) ? 1 : 0,
 			'EVT_allow_overflow' => !empty( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
-			'EVT_additional_attendee_reg_info' => !empty( $this->_req_data['additional_attendee_reg_info'] ) ? (int) $this->_req_data['additional_attendee_reg_info'] : 0,
 			'EVT_timezone_string' => !empty( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL,
 			'EVT_external_URL' => !empty( $this->_req_data['externalURL'] ) ? $this->_req_data['externalURL'] : NULL,
 			'EVT_phone' => !empty( $this->_req_data['event_phone'] ) ? $this->_req_data['event_phone'] : NULL
@@ -686,6 +678,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$venue_model = $this->EE->load_model('Venue');
 		$rows_affected = NULL;
 		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
+
+		//very important.  If we don't have a venue name then we'll get out because not necessary to create empty venue
+		if ( empty( $data['venue_title'] ) )
+			return;
 
 		$venue_array = array(
 				'VNU_wp_user' => $evtobj->get('EVT_wp_user'), 
@@ -1206,7 +1202,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
+		
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		
 		//$template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
@@ -1217,7 +1213,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
 	}

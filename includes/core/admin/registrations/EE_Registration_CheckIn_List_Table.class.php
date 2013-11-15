@@ -14,7 +14,7 @@
  * ------------------------------------------------------------------------
  *
  * EE_Registration_CheckIn_List_Table
- * This class handles all the logic for the display of the Checkin List table.  When viewed, all checkins for a given registration are displayed.
+ * This class handles all the logic for the display of the Check-in List table.  When viewed, all Check-ins for a given registration are displayed.
  *
  * @package			Event Espresso
  * @subpackage		includes/core/admin/registrations/EE_Registration_CheckIn_List_Table
@@ -106,7 +106,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 
 	/**
-	 * This retrieves all the checkins for the given parameters.
+	 * This retrieves all the Check-ins for the given parameters.
 	 * experimenting with having the query for the table values within the list table.
 	 *
 	 * @access protected
@@ -142,7 +142,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 		$query_params = array( $_where, 'order_by' => array( $orderby => $order ), 'limit' => $limit );
 
-		//if no per_page value then we just want to return a count of all checkins
+		//if no per_page value then we just want to return a count of all Check-ins
 		if ( empty( $per_page ) )
 			return EEM_Checkin::instance()->count( array( $_where ) );
 
