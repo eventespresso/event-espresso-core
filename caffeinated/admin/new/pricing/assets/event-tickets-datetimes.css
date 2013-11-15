@@ -213,6 +213,12 @@
     padding: 0.5em;
     margin-bottom: 10px;
     font-size: 1.25em;
+    width: 70%;
+}
+
+.total-price-container .currency-code {
+    margin-top: 5px;
+    display: inline-block;
 }
 
 .edit-ticket-TKT_description {
