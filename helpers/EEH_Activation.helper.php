@@ -72,6 +72,8 @@ class EEH_Activation {
 		//also initialize payment settings, which is a side-effect of calling
 		//EEM_Gateway::load_all_gateways()
 		EEM_Gateways::instance()->load_all_gateways();
+		//also, check for CAF default db content
+		do_action('AHEE__EEH_Activation__initialize_db_content');		
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
@@ -407,8 +409,8 @@ class EEH_Activation {
 		//in order to avoid duplicate. When a new version is released (eg 4.2), use that version's data migration code.
 		//if 4.2 doesn't need to migrate anything, and only needs to add a column, you should still create a migration script for it,
 		//but just define the schema changes methods
-		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_1_0P','dms');
-		$current_data_migration_script = new EE_DMS_4_1_0P();
+		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_1_0','dms');
+		$current_data_migration_script = new EE_DMS_4_1_0();
 		$current_data_migration_script->schema_changes_before_migration();
 		$current_data_migration_script->schema_changes_after_migration();
 	}

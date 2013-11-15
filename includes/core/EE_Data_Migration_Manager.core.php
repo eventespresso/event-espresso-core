@@ -135,7 +135,7 @@ class EE_Data_Migration_Manager{
 	
 	/**
 	 * Gets the version the migration script upgrades to
-	 * @param string $migration_script_name eg 'EE_DMS_4_1_0P'
+	 * @param string $migration_script_name eg 'EE_DMS_4_1_0'
 	 * @return stringeg 4.1.0P
 	 * @throws EE_Error
 	 */
