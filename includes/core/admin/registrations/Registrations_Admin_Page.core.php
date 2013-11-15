@@ -789,6 +789,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Event.status' => 'draft',
+				'Event.status*' => 'trash',
+				'Event.status**' => 'publish',
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
@@ -811,7 +814,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if($count){
 			return EEM_Registration::instance()->count(array($_where));
 		}else{
-			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ) );
+			//make sure we remove default where conditions cause all registrations matching query are returned
+			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'default_where_conditions' => 'none' );
 			if ( $per_page !== -1 ) {
 				$query_params['limit'] = $limit;
 			}
