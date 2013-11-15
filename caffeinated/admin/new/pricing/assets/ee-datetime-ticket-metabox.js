@@ -444,18 +444,17 @@ jQuery(document).ready(function($) {
 						$(this).val('0');
 						break;
 
-					case 'event-datetime-DTT_EVT_start' :
-					case 'event-datetime-DTT_EVT_end' :
-					case 'event-datetime-DTT_reg_limit' :
-						newname = curname.replace(row, newrownum);
-						newid = curid.replace(row, newrownum);
-						$(this).attr('name', newname);
-						$(this).attr('id', newid);
-						break;
-
 					case 'datetime-ticket-checkbox' :
 						newname = tktHelper.replaceRowValueByPosition(row, newrownum, 1, curname);
 						$(this).attr('name', newname);
+						break;
+
+					default : /* event-datetime-DTT_EVT_start, event-datetime-DTT_EVT_end, event_datetime-DTT_reg_limit */
+						newname = curname.replace(row, newrownum);
+						newid = typeof(curid) !== 'undefined' ? curid.replace(row, newrownum) : '';
+						$(this).attr('name', newname);
+						if ( newid !== '' )
+							$(this).attr('id', newid);
 						break;
 				}
 			});
