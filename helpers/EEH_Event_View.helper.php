@@ -151,6 +151,116 @@
 	}
 
 
+	/**
+	 * espresso_organization_name
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_name' )) {
+		function espresso_organization_name() {
+			echo EE_Registry::instance()->CFG->organization->name;
+		}		
+	}
+
+	/**
+	 * espresso_organization_address
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_address' )) {
+		function espresso_organization_address( $type = 'inline' ) {
+			EE_Registry::instance()->load_helper( 'Formatter' );
+			$address = new EE_Generic_Address(
+				EE_Registry::instance()->CFG->organization->address,
+				EE_Registry::instance()->CFG->organization->address_2,
+				EE_Registry::instance()->CFG->organization->city,
+				EE_Registry::instance()->CFG->organization->STA_ID,
+				EE_Registry::instance()->CFG->organization->CNT_ISO,
+				EE_Registry::instance()->CFG->organization->zip,
+			);
+			return EEH_Address::format( $address, $type );
+		}		
+	}
+
+	/**
+	 * espresso_organization_email
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_email' )) {
+		function espresso_organization_email() {
+			echo EE_Registry::instance()->CFG->organization->email;
+		}		
+	}
+
+	/**
+	 * espresso_organization_logo_url
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_logo_url' )) {
+		function espresso_organization_logo_url() {
+			echo EE_Registry::instance()->CFG->organization->logo_url;
+		}		
+	}
+
+	/**
+	 * espresso_organization_facebook
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_facebook' )) {
+		function espresso_organization_facebook() {
+			echo EE_Registry::instance()->CFG->organization->facebook;
+		}		
+	}
+
+	/**
+	 * espresso_organization_twitter
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_twitter' )) {
+		function espresso_organization_twitter() {
+			echo EE_Registry::instance()->CFG->organization->twitter;
+		}		
+	}
+
+	/**
+	 * espresso_organization_linkedin
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_linkedin' )) {
+		function espresso_organization_linkedin() {
+			echo EE_Registry::instance()->CFG->organization->linkedin;
+		}		
+	}
+
+	/**
+	 * espresso_organization_pinterest
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_pinterest' )) {
+		function espresso_organization_pinterest() {
+			echo EE_Registry::instance()->CFG->organization->pinterest;
+		}		
+	}
+
+	/**
+	 * espresso_organization_google
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_google' )) {
+		function espresso_organization_google() {
+			echo EE_Registry::instance()->CFG->organization->google;
+		}		
+	}
+
+	/**
+	 * espresso_organization_instagram
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_organization_instagram' )) {
+		function espresso_organization_instagram() {
+			echo EE_Registry::instance()->CFG->organization->instagram;
+		}		
+	}
+
+
 
 
 
