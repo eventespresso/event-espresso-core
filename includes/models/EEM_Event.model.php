@@ -118,7 +118,6 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
 				'EVT_allow_multiple'=>new EE_Boolean_Field('EVT_allow_multiple', __("Allow Multiple Registrations on Same Transaction Flag", "event_espresso"), false, false),
 				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
-				'EVT_additional_attendee_reg_info'=>new EE_Enum_Integer_Field('EVT_additional_attendee_reg_info', __("Info Requested for Additional Attendees?", "event_espresso"), true, EEM_Event::additional_attendee_reg_info_none, self::$_additional_attendee_reg_info_enum),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending, EEM_Registration::reg_status_array()),
 				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
@@ -505,23 +504,6 @@ class EEM_Event  extends EEM_CPT_Base{
 			}
 		}
 		
-	}
-
-
-	public static function additional_attendee_reg_info_array() {
-		self::$_additional_attendee_reg_info_enum = call_user_func( array( __CLASS__, '_get_additional_attendee_reg_info_array' ) );
-		return self::$_additional_attendee_reg_info_enum;
-	}
-
-
-
-
-	private static function _get_additional_attendee_reg_info_array() {
-		return array(
-			EEM_Event::additional_attendee_reg_info_none =>  __("None", "event_espresso"),
-			EEM_Event::additional_attendee_reg_info_personal_info_only => __("Personal Info Only", "event_espresso"),
-			EEM_Event::additional_attendee_reg_info_full =>  __("Full Registration Info", "event_espresso")
-		);
 	}
 
 
