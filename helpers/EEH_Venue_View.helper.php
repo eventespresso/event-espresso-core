@@ -59,6 +59,19 @@
 	}
 
 
+	/**
+	 * 	espresso_venue_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	if ( ! function_exists( 'espresso_venue_excerpt' )) {
+		function espresso_venue_excerpt( $VNU_ID = FALSE ) {
+			echo EEH_Venue_View::venue_excerpt( $VNU_ID );
+		}		
+	}
+
+
 
 	/**
 	 * espresso_venue_categories
@@ -238,7 +251,29 @@ class EEH_Venue_View extends EEH_Base {
 		if ( $venue instanceof EE_Venue ) {
 			return$venue->description();
 		}
-		return NULL;
+		return '';
+	}
+
+
+
+
+	/**
+	 * 	venue_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function venue_excerpt( $VNU_ID = FALSE ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
+		if ( $venue instanceof EE_Venue ) {
+			 if ( $venue->excerpt() != NULL && $venue->excerpt() ) {
+				$excerpt = $venue->excerpt() . EEH_Venue_View::venue_details_link( __( ' more', 'event_espresso' ) . '&hellip;' );
+			} else {
+				$excerpt = $venue->description();
+			}
+			return $venue->excerpt() != NULL && $venue->excerpt() ? $excerpt : '';			
+		}
+		return '';
 	}
 
 
