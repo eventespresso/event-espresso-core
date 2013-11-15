@@ -88,10 +88,9 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 					<label for="QSG_show_group_order">
 						<!--<input type="checkbox" name="QSG_show_group_desc" value="<?php echo $question_group->show_group_desc()?>"> &nbsp;-->
 						<?php _e(' Show Group Description on Registration Page?','event_espresso');?>
-						<?php echo EEH_Form_Fields::select_input( 'QSG_show_group_desc', $values, $question_group->show_group_desc() ); ?>
-						
-						
+						<?php echo EEH_Form_Fields::select_input( 'QSG_show_group_desc', $values, $question_group->show_group_desc() ); ?>						
 					</label>
+					<input type="hidden" name="QSG_system" value="<?php echo $question_group->get('QSG_system'); ?>">
 				</td>
 			</tr>
 			
