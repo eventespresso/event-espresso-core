@@ -126,7 +126,7 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 							?>
 							<li>
 								<label for="question-<?php echo $question_ID?>">
-									<input type="checkbox" name="questions[<?php echo $question_ID;?>]" id="question-<?php echo $question_ID;?>" value="<?php echo $question_ID;?>"<?php echo $checked; echo $disabled; ?>/>
+									<input type="checkbox" name="questions[<?php echo $question_ID;?>]" id="question-<?php echo $question_ID; ?>" value="<?php echo $question_ID;?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
 									 &nbsp; <?php echo $question->display_text()?>				
 								</label>
 							</li>

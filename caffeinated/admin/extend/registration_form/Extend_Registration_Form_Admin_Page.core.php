@@ -341,7 +341,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
 				$this->_req_data['QSG_identifier'] = strtolower( str_replace( ' ', '-', $QSG_name )) . '-' . uniqid();
 			}
-			$set_column_values[$fieldName]=array_key_exists($fieldName,$this->_req_data)?$this->_req_data[$fieldName]:null;
+			if ( isset( $this->_req_data[$fieldName] ) )
+				$set_column_values[$fieldName]=array_key_exists($fieldName,$this->_req_data)?$this->_req_data[$fieldName]:null;
 		}
 		return $set_column_values;//validation fo this data to be performed by the model before insertion.
 	}
@@ -649,13 +650,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		//save the related questions
 		$question_group=$this->_question_group_model->get_one_by_ID($ID);
 		$questions=$question_group->questions();
-		foreach(array_keys($questions) as $question_ID){
+		foreach($questions as $question_ID => $question){
 			
 			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
 				$question_group->add_question($question_ID);
 			}else{
-				//not found, remove it
-				$question_group->remove_question($question_ID);
+				//not found, remove it (but only if not a system question)
+				if ( ! $question->is_system_question() )
+					$question_group->remove_question($question_ID);
 			}
 		}
 		//save new related questions
