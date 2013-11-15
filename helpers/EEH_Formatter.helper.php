@@ -506,3 +506,77 @@ class EEH_Schema {
 
 
 }
+
+
+
+class EE_Generic_Address implements EEI_Has_Address {
+	
+	private $_address = NULL;
+	private $_address2 = NULL;
+	private $_city = NULL;
+	private $_state_ID = NULL;
+	private $_state_obj = NULL;
+	private $_country_ID = NULL;
+	private $_country_obj = NULL;
+	private $_zip = NULL;
+	
+	public function __construct( $address, $address2, $city, $state, $country, $zip ) {
+		$this->_address = $address;
+		$this->_address2 = $address2;
+		$this->_city = $city;
+		if ( $state instanceof EE_State ) {
+			$this->_state_obj = $state;
+		} else {
+			$this->_state_ID = $state;
+		}
+		if ( $country instanceof EE_Country ) {
+			$this->_country_obj = $country;
+		} else {
+			$this->_country_ID = $country;
+		}
+		$this->_zip = $zip;
+	}
+	
+	public function address() {
+		return $this->_address;
+	}
+	
+	public function address2() {
+		return $this->_address2;
+	}
+	
+	public function city() {
+		return $this->_city;
+	}
+	
+	private function _get_state_obj() {
+		return $this->_state_ob !== NULL ? $this->_state_ob : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_state_ID );		
+	}
+	
+	public function state_ID() {
+		return $this->_state_ID;
+	}
+	
+	public function state_obj() {
+		return $this->_state_ob;
+	}
+	
+	private function _get_country_obj() {
+		return ! empty( $this->_country_obj ) ? $this->_country_obj : EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $this->_country_ID );		
+	}
+	
+	public function country_ID() {
+		return $this->_country_ID;
+	}
+
+	public function country_obj() {
+		return $this->_country_obj;
+	}
+
+	public function zip() {
+		return $this->_zip;
+	}
+
+
+	
+}
