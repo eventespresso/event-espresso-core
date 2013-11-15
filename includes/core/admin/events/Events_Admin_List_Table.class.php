@@ -63,7 +63,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'reg_begins' => __('Reg Begins', 'event_espresso'),
 			'status' => __('Status', 'event_espresso'),
 			'attendees' => __('Attendees', 'event_espresso'),
-			'tkts_sold' => __('TKTs sold', 'event_espresso'),
+			'tkts_sold' => __('Tickets Sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
 			);
 
@@ -184,7 +184,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 						$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . __('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 				break;
 			default :
-					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Move to Trash', 'event_espresso') . '</a>';
+					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 		}
 
 		$status = $item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
