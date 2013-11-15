@@ -85,7 +85,7 @@ class EE_Line_Item extends EE_Base_Class{
 
 
 	/**
-	 * Registration the Checkin references
+	 * Registration the Check-in references
 	 * @var EE_Registration
 	 */
 	protected $_Transaction;

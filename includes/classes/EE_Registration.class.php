@@ -235,7 +235,7 @@ class EE_Registration extends EE_Base_Class {
 	protected $_Answer = NULL;
 	
 	/**
-	 * Checkin
+	 * Check-in
 	 * @access protected 
 	 * @var EE_Checkin $_Checkin
 	 */
@@ -790,7 +790,7 @@ class EE_Registration extends EE_Base_Class {
 
 
 	/**
-	 * Returns the number of current checkins this registration is checked into for any of the datetimes the registration is for.  Note, this is ONLY checked in (does not include checkedout)
+	 * Returns the number of current Check-ins this registration is checked into for any of the datetimes the registration is for.  Note, this is ONLY checked in (does not include checkedout)
 	 * @return int
 	 */
 	public function count_checkins_not_checkedout() {
@@ -802,7 +802,7 @@ class EE_Registration extends EE_Base_Class {
 	 * This method simply returns the check in status for this registration and the given datetime.
 	 * @param  int         $DTT_ID  The ID of the datetime we're checking against (if empty we'll get the primary datetime for this registration (via event) and use it's ID);
 	 * @param 	EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
-	 * @return int            Integer representing checkin status.
+	 * @return int            Integer representing Check-in status.
 	 */
 	public function check_in_status_for_datetime( $DTT_ID = 0, $checkin = NULL ) {
 
@@ -827,13 +827,13 @@ class EE_Registration extends EE_Base_Class {
 
 
 	/**
-	 * toggle checkin status for this registration
+	 * toggle Check-in status for this registration
 	 *
-	 * Checkins are toggled in the followin order:
+	 * Check-ins are toggled in the followin order:
 	 * never checked in -> checkedin
 	 * checked in -> checked out
 	 * checked out -> never checked in
-	 * @param  int    $DTT_ID include specific datetime to toggle checkin for.  If not included or null, then it is assumed primary datetime is being toggled.
+	 * @param  int    $DTT_ID include specific datetime to toggle Check-in for.  If not included or null, then it is assumed primary datetime is being toggled.
 	 * @return int|BOOL            the chk_in status toggled to OR false if nothing got changed.
 	 */
 	public function toggle_checkin_status( $DTT_ID = NULL ) {
@@ -855,7 +855,7 @@ class EE_Registration extends EE_Base_Class {
 		$cur_status = $this->check_in_status_for_datetime( NULL, $checkin );
 		$status_to = $status_paths[$cur_status];
 
-		//add relation - note checkins are always creating new rows because we are keeping track of checkins over time.  Eventually we'll probably want to show a list table for the individual checkins so that can be managed.
+		//add relation - note Check-ins are always creating new rows because we are keeping track of Check-ins over time.  Eventually we'll probably want to show a list table for the individual Check-ins so that can be managed.
 		
 		
 		$new_status = $status_to == 2 ? 0 : $status_to;
@@ -878,8 +878,8 @@ class EE_Registration extends EE_Base_Class {
 
 
 	/**
-	 * This method returns a localized message for the toggled checkin message.
-	 * @param  int    $DTT_ID include specific datetime to get the correct checkin message.  If not included or null, then it is assumed checkin for primary datetime was toggled.
+	 * This method returns a localized message for the toggled Check-in message.
+	 * @param  int    $DTT_ID include specific datetime to get the correct Check-in message.  If not included or null, then it is assumed Check-in for primary datetime was toggled.
 	 * @param bool $error This just flags that you want an error message returned. This is put in so that the error message can be customized with the attendee name.
 	 * @return string         internationalized message
 	 */
@@ -901,7 +901,7 @@ class EE_Registration extends EE_Base_Class {
 		//what is the status message going to be?
 		switch ( $cur_status ) {
 			case 0 :
-				$msg = sprintf( __("%s has been removed from checkin records", "event_espresso"), $attendee->full_name()  );
+				$msg = sprintf( __("%s has been removed from Check-in records", "event_espresso"), $attendee->full_name()  );
 				break;
 			case 1 :
 				$msg = sprintf( __('%s has been checked in', 'event_espresso'), $attendee->full_name() );
