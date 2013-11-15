@@ -93,7 +93,7 @@ $ELID = espresso_get_event_list_ID();
 							<?php if ( espresso_display_venue_details_in_event_list() ) { ?>
 							<p>
 								<strong><?php _e( 'Description: ', 'event_espresso' ); ?></strong><br/>
-								<?php echo espresso_venue_description(); ?>								
+								<?php echo espresso_venue_excerpt(); ?>								
 							</p>
 							<p>
 								<strong><?php _e( 'Categories: ', 'event_espresso' ); ?></strong>
