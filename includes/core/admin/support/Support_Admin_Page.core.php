@@ -78,14 +78,14 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE
 				),
-			'resources' => array(
+			/*'resources' => array(
 				'nav' => array(
 					'label' => __('Resources', 'event_espresso'),
 					'order' => 20
 					),
 				'metaboxes' => array('_resources_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE
-				),
+				),*/
 			'shortcodes' => array(
 				'nav' => array(
 					'label' => __('Shortcodes', 'event_espresso'),
