@@ -38,7 +38,8 @@ class Invoice {
 		$template_args = array();
 		$EE = EE_Registry::instance();
 
-		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : 1;		
+		//allow the request to override the default theme defined in the invoice settings
+		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : null;		
 		$themes = array(
 										1 => "simple.css",
 										2 => "bauhaus.css",
@@ -48,11 +49,11 @@ class Invoice {
 										6 => "tranquility.css",
 										7 => "union.css"
 									);
-		$this->invoice_settings['invoice_css'] = $themes[ $theme ];
-		//echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
-
 		//Get the CSS file
-		if (!empty($this->invoice_settings['invoice_css'])) {
+		if(isset( $themes[ $theme ] )){
+			$this->invoice_settings['invoice_css'] =  $themes[ $theme ];
+		}
+		elseif (!empty($this->invoice_settings['invoice_css'])) {
 			$template_args['invoice_css'] = $this->invoice_settings['invoice_css'];
 		} else {
 			$template_args['invoice_css'] = 'simple.css';
