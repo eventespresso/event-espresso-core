@@ -646,8 +646,8 @@ class EED_Events_Archive  extends EED_Module {
 	public static function set_default_settings( $CFG ) {
 		//printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$CFG->display_description = isset( $CFG->display_description ) && ! empty( $CFG->display_description ) ? $CFG->display_description : 1;
-		$CFG->display_address = isset( $CFG->display_address ) && ! empty( $CFG->display_address ) ? $CFG->display_address : FALSE;
-		$CFG->display_venue = isset( $CFG->display_venue ) && ! empty( $CFG->display_venue ) ? $CFG->display_venue : FALSE;
+		$CFG->display_address = isset( $CFG->display_address ) && ! empty( $CFG->display_address ) ? $CFG->display_address : TRUE;
+		$CFG->display_venue_details = isset( $CFG->display_venue_details ) && ! empty( $CFG->display_venue_details ) ? $CFG->display_venue_details : TRUE;
 		$CFG->display_expired_events = isset( $CFG->display_expired_events ) && ! empty( $CFG->display_expired_events ) ? $CFG->display_expired_events : FALSE;
 		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
 		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
@@ -682,8 +682,8 @@ class EED_Events_Archive  extends EED_Module {
 //		printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		//$CFG->template_settings->EED_Events_Archive = new stdClass();
 		$CFG->EED_Events_Archive->display_description = isset( $REQ['display_description_in_event_list'] ) ? absint( $REQ['display_description_in_event_list'] ) : 1;
-		$CFG->EED_Events_Archive->display_address = isset( $REQ['display_address_in_event_list'] ) ? absint( $REQ['display_address_in_event_list'] ) : FALSE;
-		$CFG->EED_Events_Archive->display_venue = isset( $REQ['display_venue_in_event_list'] ) ? absint( $REQ['display_venue_in_event_list'] ) : FALSE;
+		$CFG->EED_Events_Archive->display_address = isset( $REQ['display_address_in_event_list'] ) ? absint( $REQ['display_address_in_event_list'] ) : TRUE;
+		$CFG->EED_Events_Archive->display_venue_details = isset( $REQ['display_venue_details_in_event_list'] ) ? absint( $REQ['display_venue_details_in_event_list'] ) : TRUE;
 		$CFG->EED_Events_Archive->display_expired_events = isset( $REQ['display_expired_events'] ) ? absint( $REQ['display_expired_events'] ) : FALSE;
 		$CFG->EED_Events_Archive->default_type = isset( $REQ['default_type'] ) ? sanitize_text_field( $REQ['default_type'] ) : 'grid';
 		$CFG->EED_Events_Archive->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'medium';
@@ -797,14 +797,14 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function display_description( $value ) {
 		$EE = EE_Registry::instance();
-		$display_description= isset( $EE->CFG->template_settings->EED_Events_Archive->display_description ) ? $EE->CFG->template_settings->EED_Events_Archive->display_description : 0;
+		$display_description= isset( $EE->CFG->template_settings->EED_Events_Archive->display_description ) ? $EE->CFG->template_settings->EED_Events_Archive->display_description : 1;
 		return $display_description === $value ? TRUE : FALSE;
 	}
 
 
 
 	/**
-	 * 	display_venue
+	 * 	display_venue_details
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -812,9 +812,9 @@ class EED_Events_Archive  extends EED_Module {
 	public static function display_venue_details() {
 		$EE = EE_Registry::instance();
 		$EE->load_helper( 'Venue_View' );
-		$display_venue= isset( $EE->CFG->template_settings->EED_Events_Archive->display_venue ) ? $EE->CFG->template_settings->EED_Events_Archive->display_venue : FALSE;
+		$display_venue_details= isset( $EE->CFG->template_settings->EED_Events_Archive->display_venue_details ) ? $EE->CFG->template_settings->EED_Events_Archive->display_venue_details : TRUE;
 		$venue_name = EEH_Venue_View::venue_name();
-		return $display_venue && ! empty( $venue_name ) ? TRUE : FALSE;
+		return $display_venue_details && ! empty( $venue_name ) ? TRUE : FALSE;
 	}
 
 
@@ -887,7 +887,7 @@ function espresso_event_list_template_part() {
 	return EED_Events_Archive::get_template_part();
 }
 
-function espresso_display_details_venue_in_event_list() {
+function espresso_display_venue_details_in_event_list() {
 	return EED_Events_Archive::display_venue_details();
 }
 
@@ -1078,7 +1078,7 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 
 	public $display_description;
 	public $display_addresss;
-	public $display_venue;
+	public $display_venue_details;
 	public $display_expired_events;
 	public $default_type;
 	public $event_list_grid_size;
@@ -1086,8 +1086,8 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 	
 	public function __construct(){
 		$this->display_description = 1;
-		$this->display_address = FALSE;
-		$this->display_venue = FALSE;
+		$this->display_address = TRUE;
+		$this->display_venue_details = TRUE;
 		$this->display_expired_events = FALSE;
 		$this->default_type = 'grid';
 		$this->event_list_grid_size = 'medium';
