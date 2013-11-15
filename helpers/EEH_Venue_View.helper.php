@@ -20,7 +20,6 @@
 	 * espresso_event_venues
 	 *
 	 * @returns all venues related to an event
-	 * @uses $wp_query	 *
 	 * @return array
 	 */
 	if ( ! function_exists( 'espresso_event_venues' )) {
@@ -29,20 +28,6 @@
 		}		
 	}
 
-
-
-	/**
-	 * espresso_edit_venue_link
-	 *
-	 * @returns a link to edit a venue
-	 * @uses $wp_query	 *
-	 * @return string
-	 */
-	if ( ! function_exists( 'espresso_edit_venue_link' )) {
-		function espresso_edit_venue_link( $VNU_ID = FALSE ) {
-			echo EEH_Venue_View::edit_venue_link( $VNU_ID );
-		}		
-	}
 
 
 
@@ -60,10 +45,37 @@
 	}
 
 
+
+	/**
+	 * 	espresso_venue_description
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	if ( ! function_exists( 'espresso_venue_description' )) {
+		function espresso_venue_description( $VNU_ID = FALSE ) {
+			echo EEH_Venue_View::venue_description( $VNU_ID );
+		}		
+	}
+
+
+
+	/**
+	 * espresso_venue_categories
+	 * returns the terms associated with a venue
+	* 
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_venue_categories' )) {
+		function espresso_venue_categories( $VNU_ID = FALSE ) {
+			EEH_Venue_View::venue_categories( $VNU_ID );
+		}		
+	}
+
+
 	/**
 	 * espresso_venue_address
-	 *
-	 * @returns a formatted block of html  for displaying a venue's address'
+	 * returns a formatted block of html  for displaying a venue's address
 	 *
 	 * @return string
 	 */
@@ -76,8 +88,7 @@
 
 	/**
 	 * espresso_venue_gmap
-	 *
-	 * @returns a google map for the venue address
+	 * returns a google map for the venue address
 	 *
 	 * @return string
 	 */
@@ -99,6 +110,30 @@
 		}		
 	}
 
+	/**
+	 * espresso_venue_website
+	 *
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_venue_website' )) {
+		function espresso_venue_website() {
+			echo EEH_Venue_View::venue_website_link();
+		}		
+	}
+
+
+
+	/**
+	 * espresso_edit_venue_link
+	 *
+	 * @returns a link to edit a venue
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_edit_venue_link' )) {
+		function espresso_edit_venue_link( $VNU_ID = FALSE ) {
+			echo EEH_Venue_View::edit_venue_link( $VNU_ID );
+		}		
+	}
 
 
 
@@ -193,6 +228,40 @@ class EEH_Venue_View extends EEH_Base {
 
 
 	/**
+	 * 	venue_description
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function venue_description( $VNU_ID = FALSE ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
+		if ( $venue instanceof EE_Venue ) {
+			return$venue->description();
+		}
+		return NULL;
+	}
+
+
+
+
+	/**
+	 * 	venue_categories
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function venue_categories( $VNU_ID = FALSE ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
+		if ( $venue instanceof EE_Venue ) {			
+			the_terms( $venue->ID(), 'espresso_venue_categories' );
+		}
+	}
+
+
+
+
+
+	/**
 	 * 	venue_address
 	 *
 	 *  @access 	public
@@ -270,6 +339,7 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_website_link( $text = '' ) {
 		$venue = EEH_Venue_View::get_venue();
 		if ( $venue instanceof EE_Venue ) {
+			EE_Registry::instance()->load_helper( 'Formatter' );
 			$url = $venue->venue_url();
 			$text = ! empty( $text ) ? $text : $url;
 			return ! empty( $url ) ? EEH_Schema::url( $url, $text ) : '';
@@ -281,7 +351,7 @@ class EEH_Venue_View extends EEH_Base {
 
 
 	/**
-	 * 	venue_website_link
+	 * 	venue_phone
 	 *
 	 *  @access 	public
 	 *  @param	string $text 
@@ -290,6 +360,7 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_phone() {
 		$venue = EEH_Venue_View::get_venue();
 		if ( $venue instanceof EE_Venue ) {
+			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Schema::telephone( $venue->phone() );
 		}
 		return NULL;
