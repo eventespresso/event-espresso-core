@@ -1581,10 +1581,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_cpt_model_obj->_remove_relation_to($venue, 'Venue');
 		}
 
-		$term_taxonomies = $this->_cpt_model_obj->get_many_related('Term_Taxonomy');
+		$term_taxonomies = $this->_cpt_model_obj->term_taxonomies();
 		
 		foreach ( $term_taxonomies as $term_taxonomy ) {
-			$this->_cpt_model_obj->_remove_relation_to($term_taxonomy,'Term_Taxonomy');
+			$this->_cpt_model_obj->remove_term_taxonomy();
 		}
 
 		$success = $this->_cpt_model_obj->delete_permanently();
