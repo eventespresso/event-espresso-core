@@ -76,11 +76,14 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 		return $this->get_many_related('Term_Taxonomy', $query_params);
 	}
 	/**
-	 * Removes the relation to the specified term taxonomy
+	 * Removes the relation to the specified term taxonomy, and maintains the 
+	 * data integrity of the term taxonomy rpovided
 	 * @param EE_Term_Taxonomy $term_taxonomy
 	 */
 	function remove_term_taxonomy($term_taxonomy){
-		$this->_remove_relation_to($term_taxonomy, 'Term_Taxonomy');
+		$term_taxonomy->set_count($term_taxonomy->count() - 1);
+		$term_taxonomy->save();
+		return $this->_remove_relation_to($term_taxonomy, 'Term_Taxonomy');
 	}
 
 

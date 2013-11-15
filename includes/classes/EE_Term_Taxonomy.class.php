@@ -104,6 +104,47 @@ class EE_Term_Taxonomy extends EE_Base_Class{
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}
+	/**
+	 * Gets taxonomy
+	 * @return string
+	 */
+	function taxonomy() {
+		return $this->get('taxonomy');
+	}
+
+	/**
+	 * Sets taxonomy
+	 * @param string $taxonomy
+	 * @return boolean
+	 */
+	function set_taxonomy($taxonomy) {
+		return $this->set('taxonomy', $taxonomy);
+	}
+	/**
+	 * Gets term_count
+	 * @return int
+	 */
+	function count() {
+		return $this->get('term_count');
+	}
+
+	/**
+	 * Sets term_count
+	 * @param int $term_count
+	 * @return boolean
+	 */
+	function set_count($term_count) {
+		return $this->set('term_count', $term_count);
+	}
+	/**
+	 * Gets the term for this term taxnomy
+	 * @return EE_Term
+	 */
+	function term(){
+		return $this->get_first_related('Term');
+	}
+
+
 
 }
 
