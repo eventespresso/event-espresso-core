@@ -1584,7 +1584,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$term_taxonomies = $this->_cpt_model_obj->term_taxonomies();
 		
 		foreach ( $term_taxonomies as $term_taxonomy ) {
-			$this->_cpt_model_obj->remove_term_taxonomy();
+			$this->_cpt_model_obj->remove_relation_to_term_taxonomy($term_taxonomy);
 		}
 
 		$success = $this->_cpt_model_obj->delete_permanently();

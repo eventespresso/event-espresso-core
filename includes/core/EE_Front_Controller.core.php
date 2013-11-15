@@ -88,7 +88,7 @@ final class EE_Front_Controller {
 //		$taxes = $event->term_taxonomies();
 //		d($taxes);
 //		$a_tax = array_shift($taxes);
-//		$event->remove_term_taxonomy($a_tax);
+//		$event->remove_relation_to_term_taxonomy($a_tax);
 //		$event->clear_cache('Term_Taxonomy');
 //		d($event->term_taxonomies());
 		////		$ticket = EEM_Ticket::instance()->get_one();

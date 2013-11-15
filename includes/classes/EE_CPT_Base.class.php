@@ -79,8 +79,13 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	 * Removes the relation to the specified term taxonomy, and maintains the 
 	 * data integrity of the term taxonomy rpovided
 	 * @param EE_Term_Taxonomy $term_taxonomy
+	 * @return EE_Base_Class the relation was removedfrom
 	 */
-	function remove_term_taxonomy($term_taxonomy){
+	function remove_relation_to_term_taxonomy($term_taxonomy){
+		if( ! $term_taxonomy){
+			EE_Error::add_error(sprintf(__("No Term_Taxonomy provided which to remove from model object of type %s and id %d", "event_espresso"),get_class($this),$this->ID()));
+			return null;
+		}
 		$term_taxonomy->set_count($term_taxonomy->count() - 1);
 		$term_taxonomy->save();
 		return $this->_remove_relation_to($term_taxonomy, 'Term_Taxonomy');
