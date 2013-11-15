@@ -217,7 +217,7 @@ CREATE TABLE `wp_events_detail` (
 			)
 		);
  */
-class EE_DMS_4_1_0P_attendees extends EE_Data_Migration_Script_Stage_Table{
+class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_attendee_cpt_table;
 	private $_new_attendee_meta_table;
 	private $_new_reg_table;

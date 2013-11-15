@@ -11,7 +11,7 @@
  * which are both arrays
  * -a function named update_espresso_config() which saves the EE_Config object to teh database
  */
-class EE_DMS_4_1_0P_gateways extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage{
 
 private $_converted_active_gateways = false;
 
@@ -148,7 +148,7 @@ private function _get_old_gateway_option_name($new_gateway_slug){
 			$option_name = 'espresso_usaepay_onsite'.$normal_option_postfix;
 			break;
 		default:
-			$option_name = apply_filters('FHEE__EE_DMS_4_1_0P_gateways__get_old_gateway_option',$normal_option_prefix.$old_gateway_slug.$normal_option_postfix);
+			$option_name = apply_filters('FHEE__EE_DMS_4_1_0_gateways__get_old_gateway_option',$normal_option_prefix.$old_gateway_slug.$normal_option_postfix);
 	}
 	return $option_name;
 }

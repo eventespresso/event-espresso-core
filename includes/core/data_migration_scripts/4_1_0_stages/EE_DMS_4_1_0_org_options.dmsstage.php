@@ -100,7 +100,7 @@ Cli'... (length=607)
  * 
  * @todo: inform clients that messages have COMPLETELY changed in 4.1; themeroller isn't in there; event list page is no more;
  */
-class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 
 	function _migration_step($num_items=50){
 
@@ -126,7 +126,7 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 	}
 	function __construct() {
 		$this->_pretty_name = __("Organization Options/Config", "event_espresso");
-		$this->_org_options_we_know_how_to_migrate = apply_filters('FHEE__EE_DMS_4_1_0P_org_options__org_options_we_know_how_to_migrate',$this->_org_options_we_know_how_to_migrate);
+		$this->_org_options_we_know_how_to_migrate = apply_filters('FHEE__EE_DMS_4_1_0_org_options__org_options_we_know_how_to_migrate',$this->_org_options_we_know_how_to_migrate);
 		parent::__construct();
 	}
 
@@ -208,7 +208,7 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'site_license_key': 
 			  $c->core->site_license_key = $value;break;
 		  default:
-			  do_action('AHEE__EE_DMS_4_1_0P__handle_org_option',$option_name,$value);
+			  do_action('AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value);
 		}
 	}
 	
@@ -225,9 +225,9 @@ class EE_DMS_4_1_0P_org_options extends EE_Data_Migration_Script_Stage{
 			return 0;
 		}
 		if($org_options['surcharge_type'] == 'flat_rate'){
-			$price_type = EE_DMS_4_1_0P_prices::price_type_flat_surcharge;
+			$price_type = EE_DMS_4_1_0_prices::price_type_flat_surcharge;
 		}else{
-			$price_type = EE_DMS_4_1_0P_prices::price_type_percent_surcharge;
+			$price_type = EE_DMS_4_1_0_prices::price_type_percent_surcharge;
 		}
 		global $wpdb;
 		$cols_n_values = array(

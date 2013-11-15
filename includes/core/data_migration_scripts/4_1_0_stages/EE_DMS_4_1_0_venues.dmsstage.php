@@ -61,7 +61,7 @@
 //			));
  * 
  */
-class EE_DMS_4_1_0P_venues extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
 	private $_new_table;
 	private $_new_meta_table;

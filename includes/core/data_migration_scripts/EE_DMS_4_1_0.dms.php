@@ -6,11 +6,11 @@
 //unfortunately, this needs to be done upon INCLUSION of this file,
 //instead of construction, because it only gets constructed on first page load 
 //(all other times it gets resurrected from a wordpress option)
-$stages = glob(EE_CORE.'data_migration_scripts/4_1_0P_stages/*');
+$stages = glob(EE_CORE.'data_migration_scripts/4_1_0_stages/*');
 $class_to_filepath = array();
 foreach($stages as $filepath){
 	$matches = array();
-	preg_match('~4_1_0P_stages/(.*).dmsstage.php~',$filepath,$matches);
+	preg_match('~4_1_0_stages/(.*).dmsstage.php~',$filepath,$matches);
 	$class_to_filepath[$matches[1]] = $filepath;
 }
 EEH_Autoloader::register_autoloader($class_to_filepath);
@@ -30,30 +30,30 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  * --a function named update_espresso_config() which saves the EE_Config object to teh database
  * --...and all its subclasses... really, you're best off copying the whole thin gwhen 4.1 is released into this file and wrapping its declaration in if( ! class_exists()){...}
  */
-class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
+class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 
 	
 	
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_migration_stages = array(
-			new EE_DMS_4_1_0P_shortcodes(),
-			new EE_DMS_4_1_0P_org_options(),
-			new EE_DMS_4_1_0P_gateways(),
-			new EE_DMS_4_1_0P_events(),
-			new EE_DMS_4_1_0P_prices(),
-			new EE_DMS_4_1_0P_category_details(),
-			new EE_DMS_4_1_0P_event_category(),
-			new EE_DMS_4_1_0P_venues(),
-			new EE_DMS_4_1_0P_event_venue(),
-			new EE_DMS_4_1_0P_question_groups(),
-			new EE_DMS_4_1_0P_questions(),
-			new EE_DMS_4_1_0P_question_group_question(),
-			new EE_DMS_4_1_0P_event_question_group(),
-			new EE_DMS_4_1_0P_attendees(),
-			new EE_DMS_4_1_0P_line_items(),
-			new EE_DMS_4_1_0P_answers(),
-			new EE_DMS_4_1_0P_checkins(),
+			new EE_DMS_4_1_0_shortcodes(),
+			new EE_DMS_4_1_0_org_options(),
+			new EE_DMS_4_1_0_gateways(),
+			new EE_DMS_4_1_0_events(),
+			new EE_DMS_4_1_0_prices(),
+			new EE_DMS_4_1_0_category_details(),
+			new EE_DMS_4_1_0_event_category(),
+			new EE_DMS_4_1_0_venues(),
+			new EE_DMS_4_1_0_event_venue(),
+			new EE_DMS_4_1_0_question_groups(),
+			new EE_DMS_4_1_0_questions(),
+			new EE_DMS_4_1_0_question_group_question(),
+			new EE_DMS_4_1_0_event_question_group(),
+			new EE_DMS_4_1_0_attendees(),
+			new EE_DMS_4_1_0_line_items(),
+			new EE_DMS_4_1_0_answers(),
+			new EE_DMS_4_1_0_checkins(),
 		);
 		parent::__construct();
 	}

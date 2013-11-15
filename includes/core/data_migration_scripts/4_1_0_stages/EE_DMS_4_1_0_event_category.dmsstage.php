@@ -28,7 +28,7 @@ in 4.1, the model's Term_Relationship tables and fields are:
 
  * 
  */
-class EE_DMS_4_1_0P_event_category extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
 	private $_new_table;
 	function _migration_step($num_items=50){
