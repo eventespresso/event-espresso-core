@@ -1,11 +1,10 @@
 	
 	#espresso-event-details-wrap-dv {  clear: both; margin: 1em auto;  /*width:65%;*/ }	
 	#espresso-event-details-dv { position: relative; padding: 0; margin: 0 auto; }	
-	#event-details-h1 {
-		z-index:10; /*margin:.5em  0 1em;
-		font-size: 2em; line-height:1.1em; font-weight: bold; color: #464549;
-		text-shadow: 1px 1px 0px #fff; word-break: keep-all; white-space: wrap; 
-		-webkit-hyphens:none; -moz-hyphens:none; hyphens:none;*/
+	#event-details-h1 { z-index:10; /*margin:.5em  0 1em;*/
+		font-size: 2em; line-height:1.1em; /*font-weight: bold; color: #464549;
+		text-shadow: 1px 1px 0px #fff;*/ word-break: keep-all; white-space: wrap; 
+		-webkit-hyphens:none; -moz-hyphens:none; hyphens:none;
 	}	
 	.espresso_events {
 		position: relative; width: 95%; height: auto; padding:0; margin: 2%;
@@ -13,12 +12,18 @@
 	.ee-event-img-dv { position: relative; width:100%; overflow: hidden; margin:0 0 1em; }
 	.ee-event-img { width:100%; height: 100%; }	
 	.espresso-event-wrapper-dv { position: relative; }	
-	.espresso-event-wrapper-dv.has-img { margin:0 1em; }	
+	/*.espresso-event-wrapper-dv.has-img { margin:0 1em; }	*/
 /*	.espresso-event-wrapper-dv .event-header { padding:1.1em 1.5em 1em; text-shadow: 1px 1px 0px #fff; }	
 	.espresso-event-wrapper-dv  .event-title { font-size:1.5em; margin: 0; line-height: 1em; }	
 	.espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; }*/
-	.espresso-event-wrapper-dv  .event-content p { margin: 0 0 1em; font-size: 1.1em; color: #666; line-height: 1.5em;	}	
+	.espresso-event-wrapper-dv  .event-content { padding: 0 0 .25em; }	
+	.espresso-event-wrapper-dv  .event-content p { /*margin: 0 0 1em; font-size: 1.1em; color: #666; line-height: 1.5em;*/	}	
 	.espresso-event-wrapper-dv  .event-meta { text-align: right; margin: 0 0 1em; }	
+	
+	.espresso-event-details .event-datetimes { padding: 0 0 1em; }
+	.espresso-event-details .event-datetimes-h3  {/* margin-bottom: 0;*/ }	
+	.espresso-event-details  .ee-event-datetimes-ul { list-style: none; }
+	.espresso-event-details  .ee-event-datetimes-li {}
 	
 
 	.espresso-event-details .ee-register-button-lnk {
