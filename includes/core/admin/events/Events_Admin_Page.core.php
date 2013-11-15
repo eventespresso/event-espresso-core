@@ -215,7 +215,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'require_nonce' => FALSE
 			),
-			'import_events' => array(
+			'import_page' => array(
 				'nav' => array(
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
