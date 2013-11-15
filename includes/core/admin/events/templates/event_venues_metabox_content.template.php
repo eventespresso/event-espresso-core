@@ -18,6 +18,8 @@
 					<label for="ven-phone"><?php _e('Phone:', 'event_espresso'); ?></label><br/>
 					<input size="20" id="ven-phone" type="text" name="venue_phone" value="<?php echo $_venue->phone(); ?>" />
 				</p>
+				<hr />
+				<p><?php _e('Venues are only saved with events if there is a Venue title present.', 'event_espresso'); ?></p>
 		</td>
 		
 		<td valign="top" class="manual-venue">

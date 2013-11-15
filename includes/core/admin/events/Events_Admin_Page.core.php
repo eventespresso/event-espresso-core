@@ -686,6 +686,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$rows_affected = NULL;
 		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
 
+		//very important.  If we don't have a venue name then we'll get out because not necessary to create empty venue
+		if ( empty( $data['venue_title'] ) )
+			return;
+
 		$venue_array = array(
 				'VNU_wp_user' => $evtobj->get('EVT_wp_user'), 
 				'VNU_name' => !empty( $data['venue_title'] ) ? $data['venue_title'] : NULL,
