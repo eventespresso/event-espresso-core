@@ -1205,7 +1205,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
+		
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		
 		//$template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
@@ -1216,7 +1216,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
 	}

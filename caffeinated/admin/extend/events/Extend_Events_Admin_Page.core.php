@@ -116,7 +116,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	}
 
 
-	public function additional_registration_options( $html, $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values ) {
+	public function additional_registration_options( $html, $template_args, $yes_no_values, $default_reg_status_values ) {
 		$template_args['use_attendee_pre_approval'] = $this->EE->CFG->registration->use_attendee_pre_approval;
 		$template_args['attendee_pre_approval_required'] = $this->EE->CFG->registration->use_attendee_pre_approval ? EEH_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
 		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
@@ -175,7 +175,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$additional_attendee_reg_info_values = EEM_Event::additional_attendee_reg_info_array();
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
@@ -186,7 +185,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
 		$template_args['allow_overflow'] = EEH_Form_Fields::select_input('allow_overflow', $yes_no_values, $this->_cpt_model_obj->allow_overflow() );
 		$template_args['require_pre_approval'] = EEH_Form_Fields::select_input('require_pre_approval', $yes_no_values, $this->_cpt_model_obj->require_pre_approval() );
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $additional_attendee_reg_info_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
 	}
