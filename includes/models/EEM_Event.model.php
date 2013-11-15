@@ -52,19 +52,6 @@ class EEM_Event  extends EEM_CPT_Base{
 	}
 	
 	
-
-	
-	/**
-	 * Keys are INTs used in the DB and in forms to indicate how much info is required
-	 * for additional attendees. Values are how to display them
-	 * @var array 
-	 */
-	private static $_additional_attendee_reg_info_enum = array();
-	const additional_attendee_reg_info_none = 0;
-	const additional_attendee_reg_info_personal_info_only = 1;
-	const additional_attendee_reg_info_full = 2;
-	
-	
 	
 	protected function __construct($timezone = null){
 		
@@ -73,7 +60,6 @@ class EEM_Event  extends EEM_CPT_Base{
 		$this->singular_item = __('Event','event_espresso');
 		$this->plural_item = __('Events','event_espresso');		
 		
-		self::$_additional_attendee_reg_info_enum = self::_get_additional_attendee_reg_info_array();
 
 		$custom_stati = array(
 			'cancelled' => array(
