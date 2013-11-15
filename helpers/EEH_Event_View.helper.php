@@ -174,7 +174,7 @@
 				EE_Registry::instance()->CFG->organization->city,
 				EE_Registry::instance()->CFG->organization->STA_ID,
 				EE_Registry::instance()->CFG->organization->CNT_ISO,
-				EE_Registry::instance()->CFG->organization->zip,
+				EE_Registry::instance()->CFG->organization->zip
 			);
 			return EEH_Address::format( $address, $type );
 		}		
