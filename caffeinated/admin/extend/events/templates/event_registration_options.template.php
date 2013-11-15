@@ -14,11 +14,6 @@
 </p>
 
 <p>
-	<label><?php _e('Additional Attendee Registration info?', 'event_espresso'); ?></label>
-	<?php echo $additional_attendee_select; ?>
-</p>
-
-<p>
 	<label><?php _e('Allow Overflow?', 'event_espresso'); ?></label>
 	<?php echo $allow_overflow; ?>
 </p>
