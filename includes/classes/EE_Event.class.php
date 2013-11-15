@@ -309,7 +309,7 @@ class EE_Event extends EE_CPT_Base{
 	function member_only(){
 		return $this->get('EVT_member_only');
 	}
-	function event_phone(){
+	function phone(){
 		return $this->get('EVT_phone');
 	}
 	function modified(){
