@@ -76,15 +76,34 @@ $ELID = espresso_get_event_list_ID();
 						</div>				
 						<!-- .event-content -->
 
-						<?php if ( espresso_display_venue_address_in_event_list() ) { ?>
+						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) { ?>
 						<div class="espresso-venue-dv">
 							<div class="espresso-venue-address-wrap-dv">
+							<p>
 								<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
-								<strong><span class="espresso-venue-name-spn"><?php espresso_venue_name(); ?></span></strong>
-								<?php espresso_venue_address( 'inline' ); ?>
+								<strong><?php espresso_venue_name(); ?></strong>
+							</p>
 							</div>
-							<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
-							<div class="clear"></div>
+							<?php if ( espresso_display_venue_address_in_event_list() ) { ?>
+								<strong><?php _e( 'Address: ', 'event_espresso' ); ?></strong>
+								<?php espresso_venue_address( 'inline' ); ?>
+								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
+								<div class="clear"><br/></div>
+							<?php } ?>
+							<?php if ( espresso_display_venue_details_in_event_list() ) { ?>
+							<p>
+								<strong><?php _e( 'Description: ', 'event_espresso' ); ?></strong><br/>
+								<?php echo espresso_venue_description(); ?>								
+							</p>
+							<p>
+								<strong><?php _e( 'Categories: ', 'event_espresso' ); ?></strong>
+								<?php echo espresso_venue_categories(); ?>
+							</p>
+							<p>
+								<strong><?php _e( 'Phone: ', 'event_espresso' ); ?></strong>
+								<?php echo espresso_venue_phone(); ?>
+							</p>
+							<?php } ?>
 						</div>				
 						<!-- .espresso-venue-dv -->
 						<?php } ?>
@@ -92,7 +111,7 @@ $ELID = espresso_get_event_list_ID();
 						<footer class="event-meta">
 							
 							<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
-							<p class="event-categories-pg"><?php _e( 'category: ', 'event_espresso' ) . the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
+							<p class="event-categories-pg"><?php _e( 'category: ', 'event_espresso' ) . espresso_event_categories(); ?></p>
 							
 							<?php espresso_edit_event_link(); ?>
 						</footer>
