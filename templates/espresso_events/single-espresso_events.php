@@ -32,22 +32,18 @@ get_header();
 					<?php do_action( 'AHEE_event_details_header_bottom', $post ); ?>
 				</header>
 				<!-- .event-header -->
-
-				<div class="event-datetimes">
-					<?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
-					<h4><?php espresso_event_date(); ?></h4>
-					<?php do_action( 'AHEE_event_details_after_event_date', $post ); ?>
-				</div>				
-				<!-- .event-datetimes -->
 				
-			<?php
-			//echo '<h3>$post</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $post, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';		
+			<?php do_action( 'AHEE_event_details_before_featured_img', $post ); ?>
+
+			<?php				
 				$wrap_class = '';
 				if ( has_post_thumbnail( $post->ID )) {
 					if ( $img_ID = get_post_thumbnail_id( $post->ID )) {
 						if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'large' )) {
-							$caption = esc_attr( get_post( get_post_thumbnail_id( $post->ID ))->post_excerpt );
+							//d($featured_img);
+							$caption = esc_attr( get_post( get_post( $img_ID ))->post_excerpt );
 							$wrap_class = ' has-img';
+							
 				?>
 				<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 					<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>
@@ -55,27 +51,69 @@ get_header();
 				<?php 
 						}			
 					}			
-				}				
+				}
+				
+				do_action( 'AHEE_event_details_after_featured_img', $post );
+							
 			?>
 			<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
 			
-				<?php if ( espresso_display_venue_address_in_event_details() ) { ?>
-				<div class="espresso-venue-dv">
-					<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
-					<strong><?php espresso_venue_name(); ?></strong>
-					<?php espresso_venue_address( 'inline' ); ?>
-					<?php espresso_venue_gmap( $post->ID ); ?>
-				</div>				
-				<!-- .espresso-venue-dv -->
-				<?php } ?>
-
 				<div class="event-content">
+					<h3 class="about-event-h3"><?php _e( 'About ', 'event_espresso' ); ?></h3>
 					<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
 					<?php the_content(); ?> 
 					<?php do_action( 'AHEE_event_details_after_the_content', $post ); ?>
 					<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
+					<?php if ( espresso_event_phone() != '' ) { ?>
+					<p>
+						<strong><?php _e( 'Phone: ', 'event_espresso' ); ?></strong>
+						<?php echo espresso_event_phone(); ?>
+					</p>
+					<?php } ?>
 				</div>				
 				<!-- .event-content -->
+
+				<?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
+
+				<div class="event-datetimes">					
+					<h3 class="event-datetimes-h3"><?php _e( 'Event Dates and Times ', 'event_espresso' ); ?></h3>
+					<?php espresso_list_of_event_dates();?>
+					<?php do_action( 'AHEE_event_details_after_event_date', $post ); ?>
+				</div>				
+				<!-- .event-datetimes -->
+				
+				<?php do_action( 'AHEE_event_details_before_venue_details', $post ); ?>
+
+				<?php if ( espresso_display_venue_address_in_event_details() ) { ?>
+				<div class="espresso-venue-dv">
+					<p>
+						<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
+						<strong><?php espresso_venue_name(); ?></strong>
+					</p>
+					<?php //if ( espresso_display_venue_address_in_event_list() ) { ?>
+						<strong><?php _e( 'Address: ', 'event_espresso' ); ?></strong>
+						<?php espresso_venue_address( 'inline' ); ?>
+						<?php espresso_venue_gmap( $post->ID ); ?>
+						<div class="clear"><br/></div>
+					<?php //} ?>
+					<?php// if ( espresso_display_venue_details_in_event_list() ) { ?>
+					<p>
+						<strong><?php _e( 'Description: ', 'event_espresso' ); ?></strong><br/>
+						<?php echo espresso_venue_description(); ?>								
+					</p>
+					<p>
+						<strong><?php _e( 'Categories: ', 'event_espresso' ); ?></strong>
+						<?php echo espresso_venue_categories(); ?>
+					</p>
+					<p>
+						<strong><?php _e( 'Phone: ', 'event_espresso' ); ?></strong>
+						<?php echo espresso_venue_phone(); ?>
+					</p>
+					<?php //} ?>					
+				</div>				
+				<!-- .espresso-venue-dv -->
+				<?php } ?>
+
 				
 				<footer class="event-meta">
 					<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>
@@ -83,6 +121,7 @@ get_header();
 					<?php do_action( 'AHEE_event_details_footer_bottom', $post ); ?>
 				</footer>
 				<!-- .entry-meta -->
+				
 			</div>
 
 			</article><!-- #post -->
@@ -97,11 +136,11 @@ get_header();
 			<article id="post-0" class="post no-results not-found">
 
 				<header class="event-header">
-					<h1 class="event-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1><br/>
+					<h1 class="event-title"><?php _e( 'The Event you were looking for could not be found...', 'event_espresso' ); ?></h1><br/>
 				</header>
 
 				<div class="event-content">
-					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p><br/>
+					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p>
 					<?php get_search_form(); ?>
 				</div><!-- .event-content -->
 
@@ -110,14 +149,10 @@ get_header();
 		<?php } // end have_posts() check ?>
 		
 		</div><!-- #content -->
-
-		<?php 
-//		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		 ?>
-
-			
 	</div><!-- #primary -->
 
 	<?php get_sidebar(); ?>
+	
 </div>
+
 <?php get_footer(); ?>

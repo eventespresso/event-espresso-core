@@ -38,5 +38,5 @@
 
 <p>
 	<label><?php _e('Event Phone Number', 'event_espresso'); ?></label>
-	<input name="event_phone" size="20" type="text" value="<?php echo $_event->event_phone(); ?>">
+	<input name="event_phone" size="20" type="text" value="<?php echo $_event->phone(); ?>">
 </p>

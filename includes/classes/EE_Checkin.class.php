@@ -25,7 +25,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 class EE_Checkin extends EE_Base_Class{
 	
 	/**
-	 * Primary Key for the Checkin
+	 * Primary Key for the Check-in
 	 * @var int
 	 */
 	protected $_CHK_ID;
@@ -42,7 +42,7 @@ class EE_Checkin extends EE_Base_Class{
 
 
 	/**
-	 * Foreign Key to the Datetime for this Checkin
+	 * Foreign Key to the Datetime for this Check-in
 	 * @var int
 	 */
 	protected $_DTT_ID;
@@ -72,7 +72,7 @@ class EE_Checkin extends EE_Base_Class{
 	//cached related objects
 	
 	/**
-	 * Datetime Checkin references
+	 * Datetime Check-in references
 	 * @var EE_Datetime
 	 */
 	protected $_Datetime;
@@ -82,7 +82,7 @@ class EE_Checkin extends EE_Base_Class{
 
 
 	/**
-	 * Registration the Checkin references
+	 * Registration the Check-in references
 	 * @var EE_Registration
 	 */
 	protected $_Registration;

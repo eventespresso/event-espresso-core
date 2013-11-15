@@ -74,7 +74,7 @@ jQuery(document).ready(function($) {
 	
 
 	/**
-	 * catch the checkin status triggers
+	 * catch the Check-in status triggers
 	 * @return string (new html for checkin)
 	 */
 	$('.trigger-checkin', '#the-list').on('click', function() {

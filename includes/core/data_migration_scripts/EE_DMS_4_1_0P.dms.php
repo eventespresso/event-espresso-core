@@ -58,7 +58,7 @@ class EE_DMS_4_1_0P extends EE_Data_Migration_Script_Base{
 		parent::__construct();
 	}
 	/**
-	 * Checks if this 3.1 checkin table exists. If it doesn't we can't migrate checkins
+	 * Checks if this 3.1 Check-in table exists. If it doesn't we can't migrate Check-ins
 	 * @global type $wpdb
 	 * @return boolean
 	 */

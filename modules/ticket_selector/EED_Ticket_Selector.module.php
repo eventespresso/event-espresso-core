@@ -58,7 +58,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
-//		add_action( 'AHEE_events_list_footer', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
 	}
@@ -196,9 +195,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/	
 	public static function display_ticket_selector_submit() {
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE )) {
-			echo '
-			<input id="" class="ee-register-button-lnk" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
-			';
+			echo '<input id="" class="ee-register-button-lnk" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />';
 		}
 	}
 
