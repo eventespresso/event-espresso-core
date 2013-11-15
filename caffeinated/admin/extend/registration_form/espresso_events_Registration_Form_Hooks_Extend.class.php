@@ -90,7 +90,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 				<a href="admin.php?page=espresso_registration_form" target="_blank">
 					<?php _e('group of questions', 'event_espresso'); ?>
 				</a>
-				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
+				<?php _e('to your event.', 'event_espresso'); ?>
 			</p>
 			<?php
 			$QSGs = EEM_Event::instance()->get_all_question_groups();
