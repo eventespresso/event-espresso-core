@@ -130,12 +130,12 @@ espresso_grid_event_list( $ELID );
 			<article id="post-0" class="no-espresso-events-found">
 
 				<header class="event-header">
-					<h1 class="event-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1>
+					<h3 class="event-title"><?php _e( 'No upcoming events at this time...', 'event_espresso' ); ?></h3>
 				</header>
 
 				<div class="event-content">
-					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?></p><br/>
-					<?php get_search_form(); ?>
+					<p><?php _e( 'Perhaps searching will help find a related event.', 'event_espresso' ); ?><br/>
+					<?php get_search_form(); ?></p>
 				</div>
 				<!-- .event-content -->
 
