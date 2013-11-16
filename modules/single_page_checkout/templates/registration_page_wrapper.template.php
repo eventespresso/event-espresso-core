@@ -33,7 +33,7 @@
 	
 
 <?php } else { ?>
-	<h2 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php _e('There is currently nothing in the Event Queue', 'event_espresso'); ?></h2>
+	<h3 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php _e('Nothing in your Event Queue', 'event_espresso'); ?></h3>
 	<p><?php _e('You need to select at least one event before you can proceed with the registration process', 'event_espresso'); ?></p>
 <?php } // $! empty_cart ?>
 	
