@@ -1117,6 +1117,7 @@ jQuery(document).ready(function($) {
 			this.itemdata = $(itm).data();
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			getitm = typeof(getitm) === 'undefined' ? false : getitm;
+			this.lastDTTtoggle = true;
 			var rtnitm;
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
 			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.datetimeRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
@@ -1644,8 +1645,8 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		var TKTH = tktHelper.toggleTicketSelect(this);
-		UNSAVED_DATA_MSG.inputChanged=1;
-		return false;
+		if ( TKTH.lastDTTtoggle )
+			UNSAVED_DATA_MSG.inputChanged=1;
 	});
 
 
