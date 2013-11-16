@@ -9,7 +9,7 @@
 	.espresso_events {
 		position: relative; width: 95%; height: auto; padding:0; margin: 2%;
 	}
-	.ee-event-img-dv { position: relative; width:100%; overflow: hidden; margin:0 0 1em; }
+	.ee-event-img-dv { width:100%; overflow: hidden; margin:0 0 1em; }
 	.ee-event-img { width:100%; height: 100%; }	
 	.espresso-event-wrapper-dv { position: relative; }	
 	/*.espresso-event-wrapper-dv.has-img { margin:0 1em; }	*/
