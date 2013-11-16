@@ -100,6 +100,7 @@ class Invoice {
 		$template_args['amount_pd'] = $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
 		$template_args['net_total'] = '';
+		$template_args['show_line_item_description'] = $this->check_if_any_line_items_have_a_description($this->transaction->total_line_item());
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			//$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
 			$tax_items = $this->transaction->tax_items();
@@ -160,7 +161,26 @@ class Invoice {
 		}
 		exit(0);
 	}
-
+	/**
+	 * Checks if this line item, or any of its children, actually has a description.
+	 * If none do, then the template can decide to not show any description column
+	 * @param EE_Line_Item $line_item
+	 * @return boolean
+	 */
+	function check_if_any_line_items_have_a_description(EE_Line_Item $line_item){
+		if($line_item->desc()){
+			return true;
+		}else{
+			foreach($line_item->children() as $child_line_item){
+				if($this->check_if_any_line_items_have_a_description($child_line_item)){
+					return true;
+				}
+			}
+			//well, if I and my children don't have descriptions, I guess not
+			return false;
+		}
+	}
+	
 //Perform the shortcode replacement
 	function espresso_replace_invoice_shortcodes( $content ) {
 
