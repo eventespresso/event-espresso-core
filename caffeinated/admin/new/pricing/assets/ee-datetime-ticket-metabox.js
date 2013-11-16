@@ -851,8 +851,9 @@ jQuery(document).ready(function($) {
 		 * This simply verfies that there is not only ONE active dtt on the row and if there is then we halt the deactivation of that DTT.
 		 * @return {bool} true if DTT can be deacivated. False if its the only DTT on the ticket.
 		 */
-		verifyLastDTT: function() {
-			var dtt_items = $('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow ).find('li.ticket-selected');
+		verifyLastDTT: function(row) {
+			row = typeof(row) === 'undefined' ? this.ticketRow : row;
+			var dtt_items = $('.datetime-tickets-list', '#edit-ticketrow-' + row ).find('li.ticket-selected');
 			if ( dtt_items.length > 1 ) {
 				return true;
 			} else {
@@ -881,10 +882,11 @@ jQuery(document).ready(function($) {
 			activeTKTs.each( function() {
 				tktdata = $(this).data();
 				tktrow = tktdata.ticketRow;
-				dttisactive = $('[data-datetime-row=' + row + ']', '#edit-ticket-row-' + tktrow ).length > 0 ? true : false;
-				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 && dttisactive )
+
+				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 && $('.ticket-selected', '#edit-ticketrow-' + tktrow ).data('datetimeRow') == row )
 					singleDTTTKTs[tktrow] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).val();
 				});
+
 
 			if ( singleDTTTKTs.length === 0 )
 				return true; //we're okay
@@ -1098,7 +1100,7 @@ jQuery(document).ready(function($) {
 		 * Toggle a datetime ticket or ticket datetime list item from active to inactive (and the related attachments to the datetime or ticket).
 		 * @param  {obj}        itm   the selected item
 		 * @param  {bool}       trash are we TRASHING this item? then it needs to be removed from the dom.
-		 * @param {bool} 		getitm return the jquery itm object? (if false then we return the tktHelper object)
+		* @param {bool}			getitm return the jquery itm object? (if false then we return the tktHelper object)
 		 * @return {tktHelper|jQuery selector}       this object for chainability
 		 */
 		toggleTicketSelect: function(itm, trash, getitm) {
@@ -1112,7 +1114,7 @@ jQuery(document).ready(function($) {
 			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]') : $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' );
 
 			if ( !selecting && this.itemdata.context == 'ticket-datetime' ) {
-				toggle = tktHelper.verifyLastDTT();
+				toggle = tktHelper.verifyLastDTT(this.itemdata.ticketRow);
 			}
 
 			if ( toggle ) {
