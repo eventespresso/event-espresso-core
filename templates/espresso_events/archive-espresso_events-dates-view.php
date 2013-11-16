@@ -25,8 +25,8 @@ $ELID = espresso_get_event_list_ID();
 		
 		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">
 				
-		<?php if ( have_posts() ) { ?>
-			<?php while ( have_posts() ) { the_post(); ?>
+		<?php if ( have_posts() ) : ?>
+			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
 			
 			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
@@ -66,17 +66,17 @@ $ELID = espresso_get_event_list_ID();
 						
 						<div class="event-content">
 							<?php 
-								if( espresso_display_full_description_in_event_list() ) {
+								if( espresso_display_full_description_in_event_list() ) :
 									the_content(); 
-								} else {
+								else :
 									the_excerpt(); 
-								}
+								endif;
 							?> 
 							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
 						</div>				
 						<!-- .event-content -->
 
-						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) { ?>
+						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) : ?>
 						<div class="espresso-venue-dv">
 							<div class="espresso-venue-address-wrap-dv">
 							<p>
@@ -84,13 +84,13 @@ $ELID = espresso_get_event_list_ID();
 								<strong><?php espresso_venue_name(); ?></strong>
 							</p>
 							</div>
-							<?php if ( espresso_display_venue_address_in_event_list() ) { ?>
+							<?php if ( espresso_display_venue_address_in_event_list() ) : ?>
 								<strong><?php _e( 'Address: ', 'event_espresso' ); ?></strong>
 								<?php espresso_venue_address( 'inline' ); ?>
 								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
 								<div class="clear"><br/></div>
-							<?php } ?>
-							<?php if ( espresso_display_venue_details_in_event_list() ) { ?>
+							<?php endif; ?>
+							<?php if ( espresso_display_venue_details_in_event_list() ) : ?>
 							<p>
 								<strong><?php _e( 'Description: ', 'event_espresso' ); ?></strong><br/>
 								<?php echo espresso_venue_excerpt(); ?>								
@@ -103,10 +103,10 @@ $ELID = espresso_get_event_list_ID();
 								<strong><?php _e( 'Phone: ', 'event_espresso' ); ?></strong>
 								<?php echo espresso_venue_phone(); ?>
 							</p>
-							<?php } ?>
+							<?php endif; ?>
 						</div>				
 						<!-- .espresso-venue-dv -->
-						<?php } ?>
+						<?php endif; ?>
 
 						<footer class="event-meta">
 							
@@ -124,9 +124,9 @@ $ELID = espresso_get_event_list_ID();
 			</article>
 			<!-- #post -->
 
-			<?php } ?>
+			<?php endwhile; ?>
 
-		<?php } else { ?>
+		<?php else : ?>
 
 			<article id="post-0" class="no-espresso-events-found">
 
@@ -143,15 +143,11 @@ $ELID = espresso_get_event_list_ID();
 			</article>
 			<!-- #post-0 -->
 
-		<?php } // end have_posts() check ?>
+		<?php endif; // end have_posts() check ?>
 		
 			<div class="clear"></div>
 		</div>
 		<!-- #espresso-events-list-dv -->
-
-		<?php 
-//		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		 ?>
 
 		<div class="ee-pagination-dv"><?php  //echo paginate_links( $pagination_args ); ?></div>
 			
