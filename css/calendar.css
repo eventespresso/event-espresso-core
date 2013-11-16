@@ -41,8 +41,12 @@ General Styles
 Specific Theme Fixes: This section will use !important much more than it should. 
 ---------------------------------------------------------------------------------------------------- */
 
-.entry-content td {
+#espresso_calendar .entry-content td {
 	border-top: 0px solid #ededed !important; /*fixes top border on calendar header in twentytwelve*/
+}
+
+#espresso_calendar tr:hover td {
+	background: none; /* expound theme */
 }
 	
 /* 
