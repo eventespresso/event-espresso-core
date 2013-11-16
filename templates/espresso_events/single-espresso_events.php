@@ -63,7 +63,7 @@ get_header();
 				<div class="espresso-event-wrapper-dv <?php echo $wrap_class;?>">
 					<div class="event-content">
 						<h3 class="about-event-h3">
-							<?php _e( 'About ', 'event_espresso' ); ?>
+							<?php _e( 'About', 'event_espresso' ); ?>
 						</h3>
 						<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
 						<?php the_content(); ?>
@@ -71,7 +71,7 @@ get_header();
 						<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
 						<?php if ( espresso_event_phone() != '' ) : ?>
 						<p> <strong>
-							<?php _e( 'Phone: ', 'event_espresso' ); ?>
+							<?php _e( 'Phone:', 'event_espresso' ); ?>
 							</strong> <?php echo espresso_event_phone(); ?> </p>
 						<?php endif; ?>
 					</div>
@@ -80,7 +80,7 @@ get_header();
 					<?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
 					<div class="event-datetimes">
 						<h3 class="event-datetimes-h3">
-							<?php _e( 'Event Dates and Times ', 'event_espresso' ); ?>
+							<?php _e( 'Event Dates and Times', 'event_espresso' ); ?>
 						</h3>
 						<?php espresso_list_of_event_dates();?>
 						<?php do_action( 'AHEE_event_details_after_event_date', $post ); ?>
@@ -91,27 +91,27 @@ get_header();
 					<?php if ( espresso_display_venue_address_in_event_details() ) : ?>
 					<div class="espresso-venue-dv">
 						<p> <strong>
-							<?php _e( 'Location: ', 'event_espresso' ); ?>
+							<?php _e( 'Location:', 'event_espresso' ); ?>
 							</strong><br/>
 							<strong>
 							<?php espresso_venue_name(); ?>
 							</strong> </p>
 						<strong>
-						<?php _e( 'Address: ', 'event_espresso' ); ?>
+						<?php _e( 'Address:', 'event_espresso' ); ?>
 						</strong>
 						<?php espresso_venue_address( 'inline' ); ?>
 						<?php espresso_venue_gmap( $post->ID ); ?>
 						<div class="clear"><br/>
 						</div>
 						<p> <strong>
-							<?php _e( 'Description: ', 'event_espresso' ); ?>
+							<?php _e( 'Description:', 'event_espresso' ); ?>
 							</strong><br/>
 							<?php echo espresso_venue_description(); ?> </p>
 						<p> <strong>
-							<?php _e( 'Categories: ', 'event_espresso' ); ?>
+							<?php _e( 'Categories:', 'event_espresso' ); ?>
 							</strong> <?php echo espresso_venue_categories(); ?> </p>
 						<p> <strong>
-							<?php _e( 'Phone: ', 'event_espresso' ); ?>
+							<?php _e( 'Phone:', 'event_espresso' ); ?>
 							</strong> <?php echo espresso_venue_phone(); ?> </p>
 					</div>
 					<!-- .espresso-venue-dv -->

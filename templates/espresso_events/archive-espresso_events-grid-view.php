@@ -78,26 +78,26 @@ espresso_grid_event_list( $ELID );
 						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) : ?>
 						<div class="espresso-venue-dv">
 							<p>
-								<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
+								<strong><?php _e( 'Location:', 'event_espresso' ); ?></strong><br/>
 								<strong><?php espresso_venue_name(); ?></strong>
 							</p>
 							<?php if ( espresso_display_venue_address_in_event_list() ) : ?>
-								<strong><?php _e( 'Address: ', 'event_espresso' ); ?></strong>
+								<strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
 								<?php espresso_venue_address( 'inline' ); ?>
 								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
 								<div class="clear"><br/></div>
 							<?php endif; ?>
 							<?php if ( espresso_display_venue_details_in_event_list() ) : ?>
 							<p>
-								<strong><?php _e( 'Description: ', 'event_espresso' ); ?></strong><br/>
+								<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
 								<?php echo espresso_venue_excerpt(); ?>								
 							</p>
 							<p>
-								<strong><?php _e( 'Categories: ', 'event_espresso' ); ?></strong>
+								<strong><?php _e( 'Categories:', 'event_espresso' ); ?></strong>
 								<?php echo espresso_venue_categories(); ?>
 							</p>
 							<p>
-								<strong><?php _e( 'Phone: ', 'event_espresso' ); ?></strong>
+								<strong><?php _e( 'Phone:', 'event_espresso' ); ?></strong>
 								<?php echo espresso_venue_phone(); ?>
 							</p>
 							<?php endif; ?>
