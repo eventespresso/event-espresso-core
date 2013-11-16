@@ -30,6 +30,7 @@ get_header();
 					<p><?php the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
 					<h1 id="event-details-h1"><?php the_title(); ?></h1>
 					<p id="event-date-p"><?php espresso_event_date_range(); ?></p>
+					<?php do_action( 'AHEE_ticket_selector_display', $post ); ?>
 					<?php do_action( 'AHEE_event_details_header_bottom', $post ); ?>
 				</header>
 				<!-- .event-header -->
