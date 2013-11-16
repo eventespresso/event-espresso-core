@@ -126,6 +126,7 @@ RESET SELECT
 	border: 1px solid #aaa;
 	border-radius: 0.3em;
 	font-size: 0.85em;
+	line-height: 1.6em; /* ticket 4163 */
 	color: #777;
 	overflow: hidden;
 	-webkit-transition: box-shadow 200ms, border-color 200ms;
