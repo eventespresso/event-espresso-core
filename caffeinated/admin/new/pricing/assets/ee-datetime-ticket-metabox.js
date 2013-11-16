@@ -465,6 +465,9 @@ jQuery(document).ready(function($) {
 				tktHelper.newDTTListRow( this );
 			});
 
+			//make sure all trash-icons show
+			$('.trash-icon', '.event-datetimes-container').show();
+
 			//set the context for any potential chains on this.
 			this.context = 'datetime';
 
@@ -599,6 +602,9 @@ jQuery(document).ready(function($) {
 			$('.edit-dtt-row', '.event-datetimes-container').each( function() {
 				tktHelper.newTKTListRow( this );
 			});
+
+			//make sure all trash icons show on creating the ticket
+			$('.trash-icon', '.event-tickets-container').show();
 
 
 			//set the context for any potential chains on this.
