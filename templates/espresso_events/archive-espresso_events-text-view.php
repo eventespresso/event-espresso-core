@@ -124,7 +124,7 @@ $ELID = espresso_get_event_list_ID();
 			<article id="post-0" class="no-espresso-events-found">
 
 				<header class="event-header">
-					<h1 class="event-title"><?php _e( 'There are no upcoming Events', 'event_espresso' ); ?></h1>
+					<h1 class="event-title"><?php _e( 'No upcoming events at this time...', 'event_espresso' ); ?></h1>
 				</header>
 
 				<div class="event-content">
