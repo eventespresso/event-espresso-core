@@ -48,6 +48,11 @@ Specific Theme Fixes: This section will use !important much more than it should.
 #espresso_calendar tr:hover td {
 	background: none; /* expound theme */
 }
+
+#espresso_calendar .thumb-wrap img {
+	padding: 0; /* swift theme */
+	border: none; /* swatch theme */
+}
 	
 /* 
 Calendar Specific Styles
