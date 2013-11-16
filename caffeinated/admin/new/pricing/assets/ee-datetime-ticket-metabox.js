@@ -8,6 +8,7 @@ jQuery(document).ready(function($) {
 		context: 'datetime',
 		itemdata: {},
 		currentDOMElement: {},
+		lastDTTtoggle: true,
 
 		/**
 		 * this property is used to indicate whether editing is being done after a "create" so that if cancel is pushed we remove the row that was created in the UI.  Otherwise cancel button just toggles the edit view.
@@ -897,6 +898,9 @@ jQuery(document).ready(function($) {
 			if ( singleDTTTKTs.length === 0 )
 				return true; //we're okay
 
+			//make sure that the checkbox is still checked (cause if user clicked the checkbox input instead of the li item then it will have toggled.)
+			//
+
 			//otherwise let's throw up the dialog and prompt
 			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.cancel_button + '</div>';
 
@@ -1113,17 +1117,16 @@ jQuery(document).ready(function($) {
 			this.itemdata = $(itm).data();
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			getitm = typeof(getitm) === 'undefined' ? false : getitm;
-			var toggle = true;
 			var rtnitm;
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
 			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.datetimeRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
 			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]') : $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' );
 
 			if ( !selecting && this.itemdata.context == 'ticket-datetime' ) {
-				toggle = tktHelper.verifyLastDTT(this.itemdata.ticketRow);
+				this.lastDTTtoggle = tktHelper.verifyLastDTT(this.itemdata.ticketRow);
 			}
 
-			if ( toggle ) {
+			if ( this.lastDTTtoggle ) {
 
 				if ( !selecting || trash ) {
 					rtnitm = $(itm).removeClass('ticket-selected');
@@ -1635,14 +1638,28 @@ jQuery(document).ready(function($) {
 
 
 	/**
-	 * datetime/ticket list item clicked to attach detach from related item.
+	 * datetime/ticket list item clicked to attach/detach from related item.
 	 */
 	$('#event-and-ticket-form-content').on('click', '.datetime-ticket', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		tktHelper.toggleTicketSelect(this);
+		var TKTH = tktHelper.toggleTicketSelect(this);
 		UNSAVED_DATA_MSG.inputChanged=1;
 		return false;
+	});
+
+
+	/**
+	 * capture clicks of checkboxes in dtt/ticket list items
+	 */
+	$('#event-and-ticket-form-content').on('click', 'input.datetime-ticket-checkbox', function(e) {
+		e.stopPropagation();
+		var liitem = $(this).parent();
+		var TKTH = tktHelper.toggleTicketSelect(liitem);
+		if ( TKTH.lastDTTtoggle )
+			UNSAVED_DATA_MSG.inputChanged=1;
+		else
+			$(this).prop('checked', true);
 	});
 
 
