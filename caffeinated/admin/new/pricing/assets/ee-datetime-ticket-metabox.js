@@ -707,6 +707,7 @@ jQuery(document).ready(function($) {
 
 
 			var active_tkts_on_dtt = $('.datetime-tickets-list', '#event-datetime-' + this.dateTimeRow).find('.ticket-selected').data('ticketRow');
+			
 			var default_list_row_for_dtt;
 
 			//replace all instances of DTTNUM with dttrow
@@ -718,11 +719,9 @@ jQuery(document).ready(function($) {
 			//replace all instances of TICKETNUM with ticketrownum
 			new_dtt_list_row = new_dtt_list_row.replace(/TICKETNUM/g,ticketrownum);
 
-
-
 			//is this ticketrow in the active tickets list? if so then we toggle.
-			if ( $.inArray(ticketrownum, active_tkts_on_dtt) > -1 ) {
-				this.toggleTicketSelect(new_dtt_list_row);
+			if ( $.inArray(ticketrownum, active_tkts_on_dtt) > -1 || ticketrownum == active_tkts_on_dtt ) {
+				new_dtt_list_row = this.toggleTicketSelect(new_dtt_list_row, false, true);
 			}
 
 
@@ -875,13 +874,15 @@ jQuery(document).ready(function($) {
 			var tktrow,
 				tktdata,
 				singleDTTTKTs = [],
+				dttisactive = false,
 				activeTKTs = $('.ticket-selected', '#event-datetime-' + row);
 
 			//foreach of these tickets lets check if this datetime is the ONLY dtt active.
 			activeTKTs.each( function() {
 				tktdata = $(this).data();
 				tktrow = tktdata.ticketRow;
-				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 )
+				dttisactive = $('[data-datetime-row=' + row + ']', '#edit-ticket-row-' + tktrow ).length > 0 ? true : false;
+				if ( $('.ticket-selected', '#edit-ticketrow-' + tktrow).length === 1 && dttisactive )
 					singleDTTTKTs[tktrow] = $('.edit-ticket-TKT_name', '#edit-ticketrow-' + tktrow).val();
 				});
 
@@ -1097,12 +1098,15 @@ jQuery(document).ready(function($) {
 		 * Toggle a datetime ticket or ticket datetime list item from active to inactive (and the related attachments to the datetime or ticket).
 		 * @param  {obj}        itm   the selected item
 		 * @param  {bool}       trash are we TRASHING this item? then it needs to be removed from the dom.
-		 * @return {tktHelper}       this object for chainability
+		 * @param {bool} 		getitm return the jquery itm object? (if false then we return the tktHelper object)
+		 * @return {tktHelper|jQuery selector}       this object for chainability
 		 */
-		toggleTicketSelect: function(itm, trash) {
+		toggleTicketSelect: function(itm, trash, getitm) {
 			this.itemdata = $(itm).data();
 			trash = typeof(trash) === 'undefined' ? false : trash;
+			getitm = typeof(getitm) === 'undefined' ? false : getitm;
 			var toggle = true;
+			var rtnitm;
 			var selecting = $(itm).hasClass('ticket-selected') ? false : true;
 			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.datetimeRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
 			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]') : $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' );
@@ -1114,7 +1118,7 @@ jQuery(document).ready(function($) {
 			if ( toggle ) {
 
 				if ( !selecting || trash ) {
-					$(itm).removeClass('ticket-selected');
+					rtnitm = $(itm).removeClass('ticket-selected');
 					$('input', itm).prop('checked',false);
 					relateditm.removeClass('ticket-selected');
 					$('input', relateditm).prop('checked',false);
@@ -1123,16 +1127,17 @@ jQuery(document).ready(function($) {
 						$(itm).remove();
 						available_list_row.remove();
 					}
+
 				} else  {
-					$(itm).addClass('ticket-selected');
-					$('input', itm).prop('checked',true);
+					rtnitm = $(itm).addClass('ticket-selected');
+					$('input', rtnitm).prop('checked',true);
 					relateditm.addClass('ticket-selected');
 					$('input', relateditm).prop('checked',true);
 					//update selected tracking in various contexts
 					this.addTicket();
 				}
 			}
-			return this;
+			return getitm ? rtnitm : this;
 		},
 
 
