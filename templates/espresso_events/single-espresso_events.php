@@ -63,7 +63,7 @@ get_header();
 				<div class="espresso-event-wrapper-dv <?php echo $wrap_class;?>">
 					<div class="event-content">
 						<h3 class="about-event-h3">
-							<?php _e( 'About', 'event_espresso' ); ?>
+							<?php _e( 'Details', 'event_espresso' ); ?>
 						</h3>
 						<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
 						<?php the_content(); ?>
