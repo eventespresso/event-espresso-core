@@ -1417,6 +1417,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		// in order to force a pluralized result message we need to send back a success status greater than 1
 		$success = $success ? 2 : FALSE;
 		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
+
 		$this->_redirect_after_action($success, 'Events', $action, array('action' => 'default'));
 	}
 
@@ -1503,8 +1504,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$msg = __('An error occured. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
+
 		if ( $redirect_after )
-			$this->_redirect_after_action($success, 'Event', 'deleted', array('action' => 'default'));
+			$this->_redirect_after_action($success, 'Event', 'deleted', array('action' => 'default', 'status' => 'trash'));
 	}
 
 	/**
@@ -1577,6 +1579,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_cpt_model_obj->_remove_relation_to($venue, 'Venue');
 		}
 
+		//any attached question groups?
+		$question_groups = $this->_cpt_model_obj->get_many_related('Question_Group');
+		if ( !empty( $question_groups ) ) {
+			foreach ( $question_groups as $question_group ) {
+				$this->_cpt_model_obj->_remove_relation_to($question_group, 'Question_Group');
+			}
+		}
+
+
+		//any promotion objects
+		$promotion_objects = $this->_cpt_model_obj->get_many_related('Promotion_Object');
+		if ( !empty( $promotion_objects ) ) {
+			foreach ( $promotion_objects as $promotion_object ) {
+				$this->_cpt_model_obj->_remove_relation_to($promotion_object, 'Promotion_Object');
+			}
+		}
+
+
+		//Message Template Groups
+		$this->_cpt_model_obj->delete_related_permanently('Message_Template_Group');
+
+
+		//term taxonomies
 		$term_taxonomies = $this->_cpt_model_obj->term_taxonomies();
 		
 		foreach ( $term_taxonomies as $term_taxonomy ) {
