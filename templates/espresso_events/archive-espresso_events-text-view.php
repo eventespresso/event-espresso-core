@@ -5,8 +5,8 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package		Event Espresso
- * @ author		Seth Shoultes
- * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2013 Event Espresso  All Rights Reserved.
  * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link			http://www.eventespresso.com
  * @ version		4+
@@ -25,8 +25,8 @@ $ELID = espresso_get_event_list_ID();
 		
 		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">
 				
-		<?php if ( have_posts() ) { ?>
-			<?php while ( have_posts() ) { the_post(); ?>
+		<?php if ( have_posts() ) : ?>
+			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
 			
 			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
@@ -51,37 +51,37 @@ $ELID = espresso_get_event_list_ID();
 						
 						<?php
 							$wrap_class = '';
-							if ( has_post_thumbnail( $post->ID )) {
+							if ( has_post_thumbnail( $post->ID )) :
 								$wrap_class = ' has-img';
 						?>
 						<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 							<?php the_post_thumbnail( 'medium' ); // array( 300, 100 )?>
 						</div>
-						<?php } ?>
+						<?php endif; ?>
 						
-						<div class="event-content<?php echo $wrap_class;?>">						
+						<div class="event-content <?php echo $wrap_class;?>">						
 
 						<?php 
-							if( espresso_display_full_description_in_event_list() ) {
+							if( espresso_display_full_description_in_event_list() ) :
 								the_content(); 
-							} else {
+							else :
 								the_excerpt(); 
-							}
+							endif;
 						?>
 						
-						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) { ?>
+						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) : ?>
 						<div class="espresso-venue-dv">
 							<p>
 								<strong><?php _e( 'Location: ', 'event_espresso' ); ?></strong><br/>
 								<strong><?php espresso_venue_name(); ?></strong>
 							</p>
-							<?php if ( espresso_display_venue_address_in_event_list() ) { ?>
+							<?php if ( espresso_display_venue_address_in_event_list() ) : ?>
 								<strong><?php _e( 'Address: ', 'event_espresso' ); ?></strong>
 								<?php espresso_venue_address( 'inline' ); ?>
 								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
 								<div class="clear"><br/></div>
-							<?php } ?>
-							<?php if ( espresso_display_venue_details_in_event_list() ) { ?>
+							<?php endif; ?>
+							<?php if ( espresso_display_venue_details_in_event_list() ) : ?>
 							<p>
 								<strong><?php _e( 'Description: ', 'event_espresso' ); ?></strong><br/>
 								<?php echo espresso_venue_excerpt(); ?>								
@@ -94,10 +94,10 @@ $ELID = espresso_get_event_list_ID();
 								<strong><?php _e( 'Phone: ', 'event_espresso' ); ?></strong>
 								<?php echo espresso_venue_phone(); ?>
 							</p>
-							<?php } ?>
+							<?php endif; ?>
 						</div>				
 						<!-- .espresso-venue-dv -->
-						<?php } ?>
+						<?php endif; ?>
 
 						</div>				
 						<!-- .event-content -->
@@ -117,9 +117,9 @@ $ELID = espresso_get_event_list_ID();
 			</article>
 			<!-- #post -->
 
-			<?php } ?>
+			<?php endwhile; ?>
 
-		<?php } else { ?>
+		<?php else : ?>
 
 			<article id="post-0" class="no-espresso-events-found">
 
@@ -136,15 +136,11 @@ $ELID = espresso_get_event_list_ID();
 			</article>
 			<!-- #post-0 -->
 
-		<?php } // end have_posts() check ?>
+		<?php endif; // end have_posts() check ?>
 		
 			<div class="clear"></div>
 		</div>
 		<!-- #espresso-events-list-dv -->
-
-		<?php 
-//		printr( $wp_query, '$wp_query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		 ?>
 
 		<div class="ee-pagination-dv"><?php  //echo paginate_links( $pagination_args ); ?></div>
 			
