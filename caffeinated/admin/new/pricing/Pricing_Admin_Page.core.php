@@ -221,6 +221,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 40,
 							'persistent' => FALSE
 						),
+					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' ),
 					'require_nonce' => FALSE
 				)
 		);
@@ -833,6 +834,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
+
 		// grab price type ID
 		$PRT_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		// change page title based on request action
@@ -886,7 +888,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return void
 	*/
-	protected function _price_type_details_meta_boxes() {		
+	protected function _price_type_details_meta_boxes() {	
 		add_meta_box( 'edit-price-details-mbox', __( 'Price Type Details', 'event_espresso' ), array( $this, '_edit_price_type_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
 	}
 
