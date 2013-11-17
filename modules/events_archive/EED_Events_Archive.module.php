@@ -119,6 +119,10 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
+		// set config
+		if ( ! isset( $EE->CFG->template_settings->EED_Events_Archive ) || ! $EE->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
+			$EE->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+		}
 		// grid, text or dates ?
 		EED_Events_Archive::set_type();
 		// grab POST data
@@ -1070,30 +1074,6 @@ class EE_Event_List_Query extends WP_Query {
 }
 
 
-
-/**
- * stores Events_Archive settings
- */
-class EE_Events_Archive_Config extends EE_Config_Base{
-
-	public $display_description;
-	public $display_addresss;
-	public $display_venue_details;
-	public $display_expired_events;
-	public $default_type;
-	public $event_list_grid_size;
-	public $templates;
-	
-	public function __construct(){
-		$this->display_description = 1;
-		$this->display_address = TRUE;
-		$this->display_venue_details = TRUE;
-		$this->display_expired_events = FALSE;
-		$this->default_type = 'grid';
-		$this->event_list_grid_size = 'medium';
-		$this->templates = array( 'full'  => EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php' );
-	}
-}
 
 
 
