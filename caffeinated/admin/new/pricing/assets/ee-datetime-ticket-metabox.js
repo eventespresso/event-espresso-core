@@ -756,8 +756,12 @@ jQuery(document).ready(function($) {
 		 */
 		newTKTListRow: function(dttrowitm) {
 			var dttrownum = $(dttrowitm).attr('id').replace('event-datetime-', '');
+
+			if ( typeof(dttrownum) === 'undefined' )
+				return true; //we may have a blank ticket row.
+
 			var new_tkt_list_row = $('#dtt-new-available-ticket-list-items-holder').clone().html();
-			var active_dtts_on_tkt = $('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow).find('.ticket-selected').data('dateTimeRow');
+			var active_dtts_on_tkt = $('.datetime-tickets-list', '#edit-ticketrow-' + this.ticketRow).find('.ticket-selected').data('datetimeRow');
 			var default_list_row_for_tkt;
 
 			//replace all instances of TICKETNUM with ticketRow
@@ -772,12 +776,11 @@ jQuery(document).ready(function($) {
 
 
 			//is this ticketrow in the active datetimes list? if so then we toggle.
-			if ( $.inArray(dttrownum, active_dtts_on_tkt ) > -1 ) {
-				this.toggleTicketSelect(new_tkt_list_row);
+			if ( $.inArray(dttrownum, active_dtts_on_tkt ) > -1 || dttrownum == active_dtts_on_tkt ) {
+				new_tkt_list_row = this.toggleTicketSelect(new_tkt_list_row, false, true);
 			}
-
 			//append new_tkt_list_row to the ul for datetime-tickets attached to datetime
-			$(dttrowitm).find('.datetime-tickets-list').append(new_tkt_list_row);
+			new_tkt_list_row = $(dttrowitm).find('.datetime-tickets-list').append(new_tkt_list_row);
 
 
 			//we need to update the jQuery.data() element for new row
