@@ -1191,7 +1191,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$reg_status_class = 'status-' . $this->_registration->status_ID();
-		$reg_details = maybe_unserialize( $transaction->get_first_related('Payment')->details() );
+		$payment = $transaction->get_first_related('Payment');
+		$reg_details = !empty($payment) ? maybe_unserialize( $payment->details() ) : NULL;
 
 
 		if ( !is_array($reg_details) || ( is_array($reg_details) && isset($reg_details['REDO_TXN']) && $reg_details['REDO_TXN'] ) ) {
