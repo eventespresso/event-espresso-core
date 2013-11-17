@@ -884,7 +884,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 			$session_object = $transaction->session_data();
 			if ( empty( $session_object ) || ! $session_object instanceof EE_Session )
-				throw EE_Error( __('Something is wrong with the session stored on the transaction', 'event_espresso') );
+				throw new EE_Error( __('Something is wrong with the session stored on the transaction', 'event_espresso') );
 			$this->_session = $session_object->get_session_data();
 
 			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
