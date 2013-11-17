@@ -189,7 +189,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				//remove tkt relationships.
 				$related_tickets = $dtt_to_remove->get_many_related('Ticket');
 				foreach ( $related_tickets as $tkt ) {
-					$saved_dtts[$id]->_remove_relation_to($tkt, 'Ticket');
+					$dtt_to_remove->_remove_relation_to($tkt, 'Ticket');
 				}
 				 
 
