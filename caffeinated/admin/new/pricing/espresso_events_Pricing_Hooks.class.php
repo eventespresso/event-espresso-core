@@ -183,6 +183,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_to_delete = array_diff( $old_datetimes, array_keys($saved_dtts) );
 			foreach ( $dtts_to_delete as $id ) {
 				$id = absint( $id );
+				if ( empty( $id ) )
+					continue;
 
 				$dtt_to_remove = $this->EE->load_model('Datetime')->get_one_by_ID($id);
 
