@@ -599,7 +599,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$additional_hidden_fields=array('QSG_ID'=>array('type'=>'hidden','value'=>$ID));
 			$this->_set_add_edit_form_tags('update_question_group', $additional_hidden_fields);
 		}else{
-			$questionGroup = EE_Question_Group::new_instance();
+			$questionGroup = EEM_Question_Group::instance()->create_default_object();
 			$questionGroup->set_order_to_latest();
 			$this->_set_add_edit_form_tags('insert_question_group');
 		}
