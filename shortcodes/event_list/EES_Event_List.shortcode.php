@@ -56,8 +56,6 @@ class EES_Event_List  extends EES_Shortcode {
 		// this allows us initialize things, enqueue assets, etc, 
 		// as well, this saves an instantiation of the module in an array using 'event_list' as the key, so that we can retrieve it
 		$this->EE->REQ->set( 'ee', 'event_list' );
-		remove_action( 'AHEE__archive_espresso_events__before', 'get_header', 1 );
-		remove_action( 'AHEE__archive_espresso_events__after', 'get_footer', 100 );
 	}
 
 

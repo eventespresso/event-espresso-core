@@ -69,35 +69,6 @@ abstract class EED_Module extends EE_Base {
 		$this->EE = EE_Registry::instance();
 	}
 	
-
-	
-	/**
-	*	scan_template_directory - glob directory for template files
-	*
-	*	@access public
-	*	@return 	array
-	*/
-	public static function scan_template_directory( $folder_path = NULL, $template_patterns = '*', $ignore_patterns = array() ) {
-		// make sure patterns are arrays
-		$template_patterns =  is_array( $template_patterns ) ? $template_patterns : array( $template_patterns );
-		$ignore_patterns =  is_array( $ignore_patterns ) ? $ignore_patterns : array( $ignore_patterns );
-		// add braces and pad each pattern with wildcards
-		$pattern = '{*' . implode( '*,*', $template_patterns ) . '*}';
-		// grab any files that match the pattern
-		$templates = glob( $folder_path . $pattern . '.php', GLOB_BRACE );
-		// cycle thru files
-		foreach ( $templates as $key => $template ) {
-			// cycle thru patterns to ignore
-			foreach( $ignore_patterns as $ignore_pattern ) {
-				// and if we find one, then unset that template
-				if ( strpos( $template, $ignore_pattern )) {
-					unset( $templates[ $key ] );
-				}
-			}
-		}
-		return $templates;
-	}
-	
 }
 // End of file EED_Module.module.php
 // Location: /modules/EED_Module.module.php

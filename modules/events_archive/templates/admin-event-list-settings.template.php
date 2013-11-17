@@ -8,14 +8,15 @@ $description = array(
 	array('id' => 1, 'text' => __('excerpt (short desc)', 'event_espresso')),
 	array('id' => 2, 'text' => __('full description', 'event_espresso'))
 );
-$archive_templates = array();
-foreach ( $templates as $archive_template ) {
-	$archive_templates[] = array( 'id' => $archive_template, 'text' => basename( $archive_template ));
-}
+$event_list_types = array(
+	array('id' => 'grid', 'text' => __('Grid View', 'event_espresso')),
+	array('id' => 'text', 'text' => __('Text List', 'event_espresso')),
+	array('id' => 'dates', 'text' => __('Dates List', 'event_espresso'))
+);
 $grid_sizes = array(
 	array('id' => 'tiny', 'text' => __('tiny (up to 6 per row)', 'event_espresso')),
 	array('id' => 'small', 'text' => __('small (up to 5 per row)', 'event_espresso')),
-	array('id' => 'medium', 'text' => __('medium (up to 4 per row)', 'event_espresso')),
+	array('id' => 'med', 'text' => __('medium (up to 4 per row)', 'event_espresso')),
 	array('id' => 'large', 'text' => __('large (up to 3 per row)', 'event_espresso'))
 );
 ?>
@@ -31,12 +32,12 @@ $grid_sizes = array(
 
 			<tr>
 				<th>
-					<label for="default_template">
-						<?php _e('Default Event List Template', 'event_espresso'); ?>
+					<label for="default_type">
+						<?php _e('Default Event List Type', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('default_template', $archive_templates, $default_template, 'id="default_template"'); ?>
+					<?php echo EEH_Form_Fields::select_input('default_type', $event_list_types, $default_type, 'id="default_type"'); ?>
 				</td>
 			</tr>
 
