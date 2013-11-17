@@ -259,7 +259,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			}
 
 			//if we have a TKT_ID then we need to get that existing TKT_obj and update it
-			//we actually do our saves a head of doing any add_relations to because its entirely possible that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
+			//we actually do our saves ahead of doing any add_relations to because its entirely possible that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
 			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
 			
 			if ( !empty( $TKT_values['TKT_ID'] ) ) {
@@ -510,8 +510,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//tickets attached
 			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none' ) ) : array();
 
-			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!. 
-			if ( empty ( $related_tickets ) ) {
+			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
+			if ( empty ( $related_tickets ) && empty( $event_id ) ) {
 				$related_tickets = $this->EE->load_model('Ticket')->get_all_default_tickets();
 			}
 
