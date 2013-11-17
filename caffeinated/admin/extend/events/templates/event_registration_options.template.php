@@ -13,11 +13,6 @@
 	<input type="text" id="max-registrants" name="additional_limit" value="<?php echo $_event->additional_limit(); ?>" size="4" />
 </p>
 
-<p>
-	<label><?php _e('Allow Overflow?', 'event_espresso'); ?></label>
-	<?php echo $allow_overflow; ?>
-</p>
-
 <?php echo $additional_registration_options; ?>
 <!-- removing the next block temporarily because it's not going to be used as is -->
 <!-- <p> -->

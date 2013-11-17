@@ -59,7 +59,8 @@ class EE_Brewing_Regular extends EE_Base {
 			
 			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
 			$existing_prices_count = $wpdb->get_var( $SQL );
-			
+			//note: I believe this function is called even on upgrades. So 
+			//you could jsut change this conditional to add default prices even on upgrades
 			if ( $existing_prices_count <= 1 ) {
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES

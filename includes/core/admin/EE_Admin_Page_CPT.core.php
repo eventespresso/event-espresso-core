@@ -1014,6 +1014,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			wp_die( __('You attempted to edit an item that doesn&#8217;t exist. Perhaps it was deleted?') );
 		}
 
+		if ( ! empty( $_GET['get-post-lock'] ) ) {
+			$test = wp_set_post_lock( $post_id );
+			wp_redirect( get_edit_post_link( $post_id, 'url' ) );
+			exit();
+		}
+
 
 		$this->_template_args['editing'] = TRUE;
 		$this->_template_args['post_ID'] = $post_id;

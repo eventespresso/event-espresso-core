@@ -38,7 +38,8 @@ class Invoice {
 		$template_args = array();
 		$EE = EE_Registry::instance();
 
-		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : 1;		
+		//allow the request to override the default theme defined in the invoice settings
+		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : null;		
 		$themes = array(
 										1 => "simple.css",
 										2 => "bauhaus.css",
@@ -48,11 +49,11 @@ class Invoice {
 										6 => "tranquility.css",
 										7 => "union.css"
 									);
-		$this->invoice_settings['invoice_css'] = $themes[ $theme ];
-		//echo '<h1>invoice_css : ' . $this->invoice_settings['invoice_css'] . '</h1>';
-
 		//Get the CSS file
-		if (!empty($this->invoice_settings['invoice_css'])) {
+		if(isset( $themes[ $theme ] )){
+			$this->invoice_settings['invoice_css'] =  $themes[ $theme ];
+		}
+		elseif (!empty($this->invoice_settings['invoice_css'])) {
 			$template_args['invoice_css'] = $this->invoice_settings['invoice_css'];
 		} else {
 			$template_args['invoice_css'] = 'simple.css';
@@ -99,6 +100,7 @@ class Invoice {
 		$template_args['amount_pd'] = $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
 		$template_args['net_total'] = '';
+		$template_args['show_line_item_description'] = $this->check_if_any_line_items_have_a_description($this->transaction->total_line_item());
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			//$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
 			$tax_items = $this->transaction->tax_items();
@@ -159,7 +161,26 @@ class Invoice {
 		}
 		exit(0);
 	}
-
+	/**
+	 * Checks if this line item, or any of its children, actually has a description.
+	 * If none do, then the template can decide to not show any description column
+	 * @param EE_Line_Item $line_item
+	 * @return boolean
+	 */
+	function check_if_any_line_items_have_a_description(EE_Line_Item $line_item){
+		if($line_item->desc()){
+			return true;
+		}else{
+			foreach($line_item->children() as $child_line_item){
+				if($this->check_if_any_line_items_have_a_description($child_line_item)){
+					return true;
+				}
+			}
+			//well, if I and my children don't have descriptions, I guess not
+			return false;
+		}
+	}
+	
 //Perform the shortcode replacement
 	function espresso_replace_invoice_shortcodes( $content ) {
 

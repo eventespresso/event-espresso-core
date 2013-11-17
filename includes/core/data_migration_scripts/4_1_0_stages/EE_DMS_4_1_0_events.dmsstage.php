@@ -116,7 +116,6 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
 				'EVT_allow_multiple'=>new EE_Boolean_Field('EVT_allow_multiple', __("Allow Multiple Registrations on Same Transaction Flag", "event_espresso"), false, false),
 				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
-				'EVT_additional_attendee_reg_info'=>new EE_Enum_Integer_Field('EVT_additional_attendee_reg_info', __("Info Requested for Additional Attendees?", "event_espresso"), true, EEM_Event::additional_attendee_reg_info_none, self::$_additional_attendee_reg_info_enum),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending, EEM_Registration::reg_status_array()),
 				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
@@ -350,7 +349,6 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'EVT_visible_on'=> $old_event['visible_on'],
 			'EVT_allow_multiple'=> 'Y' == $old_event['allow_multiple'],
 			'EVT_additional_limit'=> $old_event['additional_limit'],
-			'EVT_additional_attendee_reg_info' => $event_meta['additional_attendee_reg_info'],
 			'EVT_default_registration_status' => $default_reg_status,
 			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
 			'EVT_member_only'=>$old_event['member_only'],
@@ -368,7 +366,6 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'%s',//EVT_visible_on
 			'%d',//EVT_allow_mutliple
 			'%d',//EVT_additional_limit
-			'%d',//EVT_additional_attendee_reg_info
 			'%s',//EVT_default_registration_status
 			'%d',//EVT_rqeuire_pre_approval
 			'%d',//EVT_member_only
