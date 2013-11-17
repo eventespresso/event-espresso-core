@@ -544,7 +544,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
 		$dttrow = 1;
 		foreach ( $times as $time ) {
-			$main_template_args['datetime_rows'] .= $this->_get_datetime_row( $dttrow, $time, $datetime_tickets, $all_tickets );
+			$main_template_args['datetime_rows'] .= $this->_get_datetime_row( $dttrow, $time, $datetime_tickets, $all_tickets, FALSE, $times );
 			$dttrow++;
 		}
 
@@ -563,10 +563,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_datetime_row( $dttrow, EE_Datetime $dtt, $datetime_tickets, $all_tickets, $default = FALSE ) {
+	private function _get_datetime_row( $dttrow, EE_Datetime $dtt, $datetime_tickets, $all_tickets, $default = FALSE, $all_dtts = array() ) {
 
 		$dtt_display_template_args = array(
-			'dtt_display_row' => $this->_get_dtt_display_row( $dttrow, $dtt, $default, $datetime_tickets ),
+			'dtt_display_row' => $this->_get_dtt_display_row( $dttrow, $dtt, $default, $all_dtts ),
 			'dtt_edit_row' => $this->_get_dtt_edit_row( $dttrow, $dtt, $default ),
 			'dtt_attached_tickets_row' => $this->_get_dtt_attached_tickets_row( $dttrow, $dtt, $datetime_tickets, $all_tickets, $default ),
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow
@@ -576,7 +576,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}	
 
 
-	private function _get_dtt_display_row( $dttrow, $dtt, $default = FALSE, $datetime_tickets = array() ) {
+	private function _get_dtt_display_row( $dttrow, $dtt, $default = FALSE, $all_dtts = array() ) {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_name' => $default ? '' : $dtt->get_dtt_display_name(),
@@ -585,7 +585,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'lock-icon' : 'trash-icon clickable'
 			);
 
-		$template_args['show_trash'] = count( $datetime_tickets ) === 1 && $template_args['trash_icon'] !== 'lock-icon' ? ' style="display:none"' : '';
+		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'lock-icon' ? ' style="display:none"' : '';
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_display_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE);
 	}
