@@ -164,6 +164,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
+				$this->EE->load_helper('DTT_Helper');
 				$DTT = EEH_DTT_helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
 			}
