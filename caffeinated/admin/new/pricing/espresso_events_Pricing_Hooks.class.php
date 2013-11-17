@@ -80,7 +80,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 						'dismiss_button' => '<button class="button-secondary ee-modal-cancel">' . __('Dismiss', 'event_espresso') . '</button>'
 						),
 					'DTT_ERROR_MSG' => array(
-						'no_ticket_name' => __('The No Name Ticket', 'event_espresso'),
+						'no_ticket_name' => __('General Admission', 'event_espresso'),
 						'dismiss_button' => '<div class="save-cancel-button-container"><button class="button-secondary ee-modal-cancel">' . __('Dismiss', 'event_espresso') . '</button></div>'
 						)
 					)
