@@ -184,9 +184,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			foreach ( $dtts_to_delete as $id ) {
 				$id = absint( $id );
 
+				$dtt_to_remove = $this->EE->load_model('Datetime')->get_one_by_ID($id);
+
 				//remove tkt relationships.
-				//Note: there shouldn't be any "orphaned" permanently deleteable tickets due to work that will be done on this codebase ticket -> https://events.codebasehq.com/projects/event-espresso/tickets/3533
-				$related_tickets = $saved_dtts[$id]->get_many_related('Ticket');
+				$related_tickets = $dtt_to_remove->get_many_related('Ticket');
 				foreach ( $related_tickets as $tkt ) {
 					$saved_dtts[$id]->_remove_relation_to($tkt, 'Ticket');
 				}
@@ -539,6 +540,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
 		$main_template_args['existing_ticket_ids'] = implode( ',', $existing_ticket_ids );
+		$main_template_args['existing_datetime_ids'] = implode( ',', $existing_datetime_ids );
 		$main_template_args['show_tickets_container'] = '';
 
 		//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
