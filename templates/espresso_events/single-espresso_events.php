@@ -35,7 +35,6 @@ get_header();
 					<p id="event-date-p">
 						<?php espresso_event_date_range(); ?>
 					</p>
-					<?php do_action( 'AHEE_ticket_selector_display', $post ); ?>
 					<?php do_action( 'AHEE_event_details_header_bottom', $post ); ?>
 				</header>
 				<!-- .event-header -->
