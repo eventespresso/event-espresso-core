@@ -697,7 +697,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'clone_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? '' : 'clone-icon clickable'
 			);
 
-		$template_args['trash_hidden'] = count( $all_tickets === 1 ) && $template_args['trash_icon'] != 'lock-icon' ? ' style="display:none"' : '';
+		$template_args['trash_hidden'] = count( $all_tickets ) === 1 && $template_args['trash_icon'] != 'lock-icon' ? ' style="display:none"' : '';
 
 		//handle rows that should NOT be empty
 		if ( empty( $template_args['TKT_start_date'] ) ) {
