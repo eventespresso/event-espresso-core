@@ -85,7 +85,7 @@
 			<?php endforeach; // $reg_details?>
 			</tbody>
 		</table>	
-		<?php printr( $full_session, 'full_session', 'auto' ); ?>
+		<?php print_r( $full_session, 'full_session', 'auto' ); ?>
 	</div>
 	
 	<br class="clear"/>
