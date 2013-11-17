@@ -352,6 +352,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_js', '__return_true' );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 10 );
+		add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Single_Page_Checkout', 'display_recaptcha' ), 10, 2 );
 		$this->registration_checkout();
 
 	}
@@ -713,32 +714,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		$template_args['confirmation_data'] = $this->_current_step == 'registration_confirmation' ? $this->_registration_confirmation() : '';
 
-		//Recaptcha
-		$template_args['recaptcha'] = '';
-		if ( $this->EE->CFG->registration->use_captcha && ( empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
-
-			if (!function_exists('recaptcha_get_html')) {
-				$this->EE->load_file( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc', 'recaptchalib', '' );
-			}
-
-			// the error code from reCAPTCHA, if any
-			$error = null;
-			$template_args['recaptcha'] .= '
-<script type="text/javascript">
-/* <! [CDATA [ */
-	var RecaptchaOptions = { theme : "' . $this->EE->CFG->registration->recaptcha_theme . '", lang : "' . $this->EE->CFG->registration->recaptcha_language . '" };
-/*  ] ]>  */
-</script>
-<p class="reg-page-form-field-wrap-pg" id="spc-captcha">
-	' . __('Anti-Spam Measure: Please enter the following phrase', 'event_espresso') . '
-	' . recaptcha_get_html( $this->EE->CFG->registration->recaptcha_publickey, $error, is_ssl() ? true : false ) . '
-';
-			$template_args['recaptcha'] .= '
-</p>
-';
-		}
-		//End use captcha
-
 		$confirm_n_pay = sprintf( 
 			__('YES!%1$sFinalize%1$sRegistration%1$s%2$s%1$sProceed%1$sto%1$sPayment', 'event_espresso'),
 			'&nbsp;',  // %1$s
@@ -803,6 +778,45 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		);
 		//d( $wrapper_args );
 		$this->EE->REQ->add_output( EEH_Template::display_template( $this->_templates['registration_page_wrapper'], $wrapper_args, TRUE ));
+	}
+
+
+
+
+	/**
+	 * display_recaptcha
+	 *
+	 * @access public
+	 * @return string html
+	 */
+	public function display_recaptcha( $current_step, $next_step ) {
+
+		$recaptcha = '';
+		if ( $next_step == 'finalize_registration' ) {
+			if ( EE_Registry::instance()->CFG->registration->use_captcha && ( empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
+
+				if (!function_exists('recaptcha_get_html')) {
+					require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
+				}
+
+				// the error code from reCAPTCHA, if any
+				$error = null;
+				$recaptcha = '
+<script type="text/javascript">
+/* <! [CDATA [ */
+	var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration->recaptcha_theme . '", lang : "' . EE_Registry::instance()->CFG->registration->recaptcha_language . '" };
+/*  ] ]>  */
+</script>
+<p class="reg-page-form-field-wrap-pg" id="spc-captcha">
+	' . __('Anti-Spam Measure: Please enter the following phrase', 'event_espresso') . '
+	' . recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_publickey, $error, is_ssl() ? true : false ) . '
+</p>
+';
+			}
+		}
+		
+		echo $recaptcha;
+		
 	}
 
 
@@ -1359,7 +1373,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// check recaptcha
 		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
 			if ( ! function_exists( 'recaptcha_check_answer' )) {
-				$this->EE->load_file( EVENT_ESPRESSO_PLUGINFULLPATH . DS . 'tpc', 'recaptchalib', '' );
+				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
 			}
 			$response = recaptcha_check_answer(
 					$this->EE->CFG->registration->recaptcha_privatekey, 
