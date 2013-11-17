@@ -564,6 +564,20 @@ jQuery(document).ready(function($) {
 				}
 
 				$(this).attr('name', newname);
+
+				//if input is TKT_ID then we need to replace the value to zero
+				if ( $(this).hasClass('edit-ticket-TKT_ID') )
+					$(this).val(0);
+
+				//if input is TKT_row then we need to replce the rownum
+				if ( $(this).hasClass('edit-ticket-TKT_row') )
+					$(this).val(newrownum);
+
+				if ( $(this).hasClass('ticket-datetime-rows') )
+					$(this).val('');
+
+				if ( $(this).hasClass('starting-ticket-datetime-rows') )
+					$(this).val('');
 			});
 
 			//textarea
