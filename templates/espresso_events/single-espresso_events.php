@@ -57,6 +57,8 @@ get_header();
 				endif;
 				
 				do_action( 'AHEE_event_details_after_featured_img', $post );
+				
+				espresso_ticket_selector( $post );
 							
 			?>
 				<div class="espresso-event-wrapper-dv <?php echo $wrap_class;?>">
