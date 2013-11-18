@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_messages_init class
+ * EE_Messages_Init class
  *
  * This class is loaded on every page load and its sole purpose is to add the various hooks/filters required for EE_messages system so loading impact is minimal.  Whenever a new message type is added, the corresponding hook/filter that triggers that messenger can be either added in here (ideal method) or the EE_messages controller would have to be called directly wherever a trigger should be.  The ideal method means that if there is ever a place where a message notification needs to be triggered, a do_action() should be added in that location and the corresponding add_action() added in here.
  *
@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 
-class EE_messages_init extends EE_Base {
+class EE_Messages_Init extends EE_Base {
 
 	/**
 	 * This holds the EE_messages controller object when instantiated
@@ -36,16 +36,6 @@ class EE_messages_init extends EE_Base {
 	 */
 	private $_EEMSG = NULL;
 
-
-	/**
-	 * 	init - calls class constructor
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function init() {
-		new EE_messages_init();
-	}
 
 	public function __construct() {
 		$this->_do_actions();
@@ -272,4 +262,4 @@ class EE_messages_init extends EE_Base {
 
 
 
-} //end EE_messages_init
+} //end EE_Messages_Init

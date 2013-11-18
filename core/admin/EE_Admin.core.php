@@ -175,7 +175,7 @@ final class EE_Admin {
 			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			// bring out the pidgeons!!!
-			$this->EE->load_core( 'messages_init' );
+			$this->EE->load_lib( 'Messages_Init' );
 		}
 		
 		// run the admin page factory but ONLY if we are doing an ee admin ajax request
@@ -412,8 +412,7 @@ final class EE_Admin {
 	public function route_admin_request() {
 		// messages loading is turned OFF by default, but prior to the AHEE__EE_Admin_Page__route_admin_request hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
-			require_once EE_CORE . 'messages/EE_messages_init.core.php';
-			EE_messages_init::init();
+			$this->EE->load_lib( 'Messages_Init' );
 		}
 	}
 

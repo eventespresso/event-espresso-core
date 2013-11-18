@@ -293,8 +293,7 @@ final class EE_Front_Controller {
 	public function wp_loaded() {
 		// messages loading is turned OFF by default, but prior to the wp_loaded hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
-			require_once EE_CORE . 'messages/EE_messages_init.core.php';
-			EE_messages_init::init();
+			$this->EE->load_lib( 'Messages_Init' );
 		}
 
 	}

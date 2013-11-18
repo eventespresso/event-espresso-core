@@ -30,8 +30,8 @@ class EEH_MSG_Template {
 
 
 	private static function _set_autoloader() {
-		require_once( EE_CORE . 'messages/EE_messages_init.core.php' );
-		EE_messages_init::set_autoloaders();
+		EE_Registry::instance()->load_lib( 'Messages_Init' );
+		EE_Messages_Init::set_autoloaders();
 	}
 
 
