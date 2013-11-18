@@ -245,13 +245,13 @@ final class EE_Registry {
 	 *	@param string $class_name - simple class name ie: session
 	 *	@return instantiated class object
 	 */	
-	public function load_lib ( $class_name, $arguments = array() ) {
+	public function load_lib ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		$paths = array(
 			EE_LIBRARIES,
 			EE_LIBRARIES . 'messages' . DS,
 		);
 		// retreive instantiated class
-		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments );
+		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments, FALSE, TRUE, $load_only );
 	}
 
 
