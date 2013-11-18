@@ -230,6 +230,8 @@ span.ui-icon {
 	border-radius: 2px;
 }
 #single-page-checkout .spco-attendee-wrap-fs p {
+	display: block;
+	clear:both;
 	margin:0 0 .5em;
 }
 #single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-title-h4 {
@@ -282,10 +284,6 @@ span.ui-icon {
 .event_questions + .spco-attendee-lgnd {
 	margin-top:2em;
 }
-.reg-page-form-field-wrap-pg {
-	margin:0 0 1em;
-	clear:both;
-}
 .spco-copy-attendee-chk-pg {
 	display:inline-block;
 	float:left;
@@ -303,7 +301,8 @@ span.ui-icon {
 .reg-page-form-field-wrap-pg label {
 	display: inline-block;
 	float: left;
-	width: 35%;
+	/*width: 35%;*/
+	width: 150px;
 	padding: 0.75em 10px 0.75em 0;
 	font-size: .9em;
 	line-height: 1em;
@@ -321,7 +320,7 @@ span.ui-icon {
 }
 #single-page-checkout .espresso-radio-btn-options-ul, #single-page-checkout .espresso-checkbox-options-ul {
 	display: inline-block;
-	width: 65%;
+	width: 62.5%;
 	padding: 0;
 	margin: 0.25em 0 0;
 	list-style: none outside none;
@@ -366,7 +365,7 @@ span.ui-icon {
 }
 .reg-page-form-field-wrap-pg input[type="text"] {
 	display:inline-block;
-	width:65%;
+	width: 62.5%;
 	margin:0 0 .5em;
 }
 .reg-page-form-field-wrap-pg select {
