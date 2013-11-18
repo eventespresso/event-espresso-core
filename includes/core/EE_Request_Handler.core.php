@@ -65,7 +65,7 @@ final class EE_Request_Handler {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( $wp ) {
+	public function __construct( $wp = NULL ) {
 		//d( $wp );
 		//if somebody forgot to provide us with WP, thats ok because its global
 		if( ! $wp){
@@ -84,9 +84,9 @@ final class EE_Request_Handler {
 				$this->set( 'post_name', $wp->query_vars['name'] );
 			} else if ( isset( $wp->query_vars['pagename'] )) {
 				$this->set( 'post_name', $wp->query_vars['pagename'] );
-			} else {
+			} else if ( isset( $wp->request )) {
 				$this->set( 'post_name', basename( $wp->request ));
-			}
+			} 
 			// set post type
 			$post_type = isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : 'post';
 			$this->set( 'post_type', $post_type );	

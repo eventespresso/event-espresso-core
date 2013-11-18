@@ -9,8 +9,8 @@ var dttPickerHelper = {
 		stepMinute: 5,
 		hourGrid: 2,
 		minuteGrid: 5,
-		minDate: null,
-		maxDate: null,
+		minDateTime: null,
+		maxDateTime: null,
 		numberOfMonths: 2,
 		hour: null,
 		minute: null,
@@ -24,22 +24,24 @@ var dttPickerHelper = {
 	endobj: {}, //jquery selector obj for end date
 	nextobj: {}, //jquery selector obj for next field to focus in on after date selected.
 
+	pickerobj: {}, //holds the dtt picker object.
+
 
 	//defaults for start and end dates
 	startDate: {},
 	endDate: {},
 
 
-	setminDate: function(date, format) {
+	setminDateTime: function(date, format) {
 		format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
-		this.dttOptions.minDate = moment(date, format);
+		this.dttOptions.minDateTime = moment(date, format);
 		return this;
 	},
 
 
-	setmaxDate: function(date, format) {
+	setmaxDateTime: function(date, format) {
 		format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
-		this.dttOptions.maxDate = moment(date, format);
+		this.dttOptions.maxDateTime = moment(date, format);
 		return this;
 	},
 
@@ -50,7 +52,8 @@ var dttPickerHelper = {
 
 		this.startobj = start;
 		this.endobj = end;
-		var dothis = doingstart ? this.startobj : this.endobj;
+		
+		this.pickerobj = doingstart ? this.startobj : this.endobj;
 
 		this.nextobj = next;
 
@@ -66,12 +69,12 @@ var dttPickerHelper = {
 
 		//set min and max if necessary
 		if ( !doingstart ) {
-			var minDate = this.startDate;
-			this.dttOptions.minDate = this.dttOptions.minDate === null ? minDate.toDate() : this.dttOptions.minDate;
-			this.dttOptions.maxDate = this.dttOptions.maxDate === null ? minDate.clone().add('years', 100).toDate() : this.dttOptions.maxDate;
+			var minDateTime = this.startDate;
+			this.dttOptions.minDateTime = this.dttOptions.minDateTime === null ? minDateTime.toDate() : this.dttOptions.minDateTime;
+			this.dttOptions.maxDateTime = this.dttOptions.maxDateTime === null ? minDateTime.clone().add('years', 100).toDate() : this.dttOptions.maxDateTime;
 		} else {
-			this.dttOptions.minDate = null;
-			this.dttOptions.maxDate = null;
+			this.dttOptions.minDateTime = null;
+			this.dttOptions.maxDateTime = null;
 		}/**/
 
 
@@ -107,7 +110,9 @@ var dttPickerHelper = {
 				dttPickerHelper.resetpicker();
 				return false;
 			};
-		dothis.datetimepicker(this.dttOptions);
+
+			this.pickerobj.datetimepicker(this.dttOptions);
+
 	},
 
 
@@ -126,8 +131,8 @@ var dttPickerHelper = {
 			stepMinute: 5,
 			hourGrid: 2,
 			minuteGrid: 5,
-			minDate: null,
-			maxDate: null,
+			minDateTime: null,
+			maxDateTime: null,
 			numberOfMonths: 2,
 			hour: null,
 			minute: null,
@@ -137,6 +142,7 @@ var dttPickerHelper = {
 		this.dttOptions.minDate = null;
 		this.dttOptions.maxDate = null;
 		this.dttOptions.defaultDate = null;
+		jQuery.datepicker.setDefaults(this.dttOptions); //make sure we reset all instances of the datepicker.
 		return this;
 	}
 
