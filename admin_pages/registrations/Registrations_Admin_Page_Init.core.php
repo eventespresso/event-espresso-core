@@ -38,12 +38,12 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init  {
 		
 		define( 'REG_PG_SLUG', 'espresso_registrations' );	
 		define( 'REG_PG_NAME', ucwords( str_replace( '_', '', REG_PG_SLUG )));	
-		define( 'REG_ADMIN', EE_CORE_ADMIN . 'registrations' . DS );	
+		define( 'REG_ADMIN', EE_ADMIN . 'registrations' . DS );	
 		define( 'REG_ADMIN_URL', admin_url( 'admin.php?page=' . REG_PG_SLUG ));	
 		define( 'REG_ASSETS_PATH', REG_ADMIN . 'assets' . DS );		
-		define( 'REG_ASSETS_URL', EE_CORE_ADMIN_URL . 'registrations/assets/' );	
+		define( 'REG_ASSETS_URL', EE_ADMIN_URL . 'registrations/assets/' );	
 		define( 'REG_TEMPLATE_PATH', REG_ADMIN . 'templates' . DS );	
-		define( 'REG_TEMPLATE_URL', EE_CORE_ADMIN_URL . 'registrations/templates/' );
+		define( 'REG_TEMPLATE_URL', EE_ADMIN_URL . 'registrations/templates/' );
 		
 		parent::__construct();
 	}

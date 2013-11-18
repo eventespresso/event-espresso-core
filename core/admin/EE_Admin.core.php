@@ -93,9 +93,8 @@ final class EE_Admin {
 	 * @return void
 	 */
 	private function _define_all_constants() {
-		define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
-		define( 'EE_CORE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'includes/core/admin/' );
-		define( 'EE_CORE_ADMIN_TEMPLATE', EE_CORE_ADMIN . 'templates' . DS );
+		define( 'EE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'includes/core/admin/' );
+		define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
 		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
 		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
 		define( 'JQPLOT_URL', EE_PLUGIN_DIR_URL . 'scripts/jqplot/' );
@@ -447,7 +446,7 @@ final class EE_Admin {
 	 */
 	public function enqueue_admin_scripts() {
 		//this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.  Note the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script calls.
-		wp_enqueue_script('ee-inject-wp', EE_CORE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_enqueue_script('ee-inject-wp', EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
 		// jquery_validate loading is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {

@@ -34,8 +34,8 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init {
 		//define some help/support page related constants
 		define( 'EE_SUPPORT_PG_SLUG', 'espresso_support' );	
 		define( 'EE_SUPPORT_ADMIN_URL', admin_url('admin.php?page=' . EE_SUPPORT_PG_SLUG ));
-		define( 'EE_SUPPORT_ADMIN_TEMPLATE_PATH', EE_CORE_ADMIN . 'support/templates/');
-		define( 'EE_SUPPORT_ADMIN', EE_CORE_ADMIN . 'support/' );
+		define( 'EE_SUPPORT_ADMIN_TEMPLATE_PATH', EE_ADMIN . 'support/templates/');
+		define( 'EE_SUPPORT_ADMIN', EE_ADMIN . 'support/' );
 
 		parent::__construct();
 	}

@@ -211,8 +211,8 @@ class EEH_Autoloader {
 	 */
 	public static function load_admin_core( $folder, $className ) {
 		$classfile = $className . '.core.php';
-		if ( is_readable( EE_CORE_ADMIN . $folder . DS . $classfile )) {
-			require_once( EE_CORE_ADMIN . $folder . DS . $classfile );
+		if ( is_readable( EE_ADMIN . $folder . DS . $classfile )) {
+			require_once( EE_ADMIN . $folder . DS . $classfile );
 		}			
 	}
 

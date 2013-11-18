@@ -36,9 +36,9 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 		//define some page related constants
 		define( 'EE_MAINTENANCE_PG_SLUG', 'espresso_maintenance_settings' );
 		define( 'EE_MAINTENANCE_ADMIN_URL', admin_url( 'admin.php?page=' . EE_MAINTENANCE_PG_SLUG ));
-		define( 'EE_MAINTENANCE_ADMIN', EE_CORE_ADMIN . 'maintenance' . DS );	
+		define( 'EE_MAINTENANCE_ADMIN', EE_ADMIN . 'maintenance' . DS );	
 		define( 'EE_MAINTENANCE_TEMPLATE_PATH', EE_MAINTENANCE_ADMIN . 'templates' . DS );	
-		define( 'EE_MAINTENANCE_ASSETS_URL', EE_CORE_ADMIN_URL . 'maintenance/assets/' );
+		define( 'EE_MAINTENANCE_ASSETS_URL', EE_ADMIN_URL . 'maintenance/assets/' );
 		define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 
 		//check that if we're in maintenance mode that we tell the admin taht

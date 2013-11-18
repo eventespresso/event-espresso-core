@@ -126,7 +126,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	public function load_wp_global_scripts_styles() {
 		/** STYLES **/
 		//register
-		wp_register_style('espresso_menu', EE_CORE_ADMIN_URL . 'assets/admin-menu-styles.css');
+		wp_register_style('espresso_menu', EE_ADMIN_URL . 'assets/admin-menu-styles.css');
 
 
 
@@ -241,7 +241,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 			}
 		}
 
-		$this->_folder_path = EE_CORE_ADMIN . $this->_folder_name . DS;
+		$this->_folder_path = EE_ADMIN . $this->_folder_name . DS;
 
 		$this->_file_name = preg_replace( '/^ee/' , 'EE', $this->_folder_name );
 		$this->_file_name = ucwords( str_replace('_', ' ', $this->_file_name) );
@@ -332,7 +332,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		
 		// define requested admin page class name then load the file and instantiate
 		$path_to_file = str_replace( array( '\\', '/' ), DS, $this->_folder_path . $admin_page . '.core.php' );
-		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$hook_suffix}",$path_to_file );//so if the file would be in EE_CORE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
+		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$hook_suffix}",$path_to_file );//so if the file would be in EE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
 
 		if ( is_readable( $path_to_file )) {					
 			// This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place

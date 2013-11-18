@@ -242,7 +242,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	protected function _load_autosave_scripts_styles() {
-		/*wp_register_script('cpt-autosave', EE_CORE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array', 'event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
+		/*wp_register_script('cpt-autosave', EE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array', 'event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script('cpt-autosave');/**/ //todo re-enable when we start doing autosave again in 4.2
 
 		//filter _autosave_containers
@@ -362,7 +362,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$template_args['statuses'] = $statuses;
 		}
 
-		$template = EE_CORE_ADMIN_TEMPLATE . 'status_dropdown.template.php';
+		$template = EE_ADMIN_TEMPLATE . 'status_dropdown.template.php';
 		EEH_Template::display_template( $template, $template_args );
 	}
 

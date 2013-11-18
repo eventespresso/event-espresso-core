@@ -205,7 +205,7 @@ class EE_Admin_Page_Loader {
 		$installed_refs = array();
 		$exclude = array( 'assets', 'templates' );
 		// grab everything in the  admin core directory
-		if ( $admin_screens = glob( EE_CORE_ADMIN . '*', GLOB_ONLYDIR )) {
+		if ( $admin_screens = glob( EE_ADMIN . '*', GLOB_ONLYDIR )) {
 			foreach( $admin_screens as $admin_screen ) {
 				// files and anything in the exclude array need not apply
 				if ( is_dir( $admin_screen ) && !in_array( basename($admin_screen), $exclude )) {
@@ -217,7 +217,7 @@ class EE_Admin_Page_Loader {
 
 		if ( empty( $installed_refs ) ) {
 			$error_msg[] = __('There are no EE_Admin pages detected, it looks like EE did not install properly', 'event_espresso');
-			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __('Check that the %s folder exists and is writable. Maybe try deactivating, then reactivating Event Espresso again.', 'event_espresso'), EE_CORE_ADMIN );
+			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __('Check that the %s folder exists and is writable. Maybe try deactivating, then reactivating Event Espresso again.', 'event_espresso'), EE_ADMIN );
 			throw new EE_Error( implode( '||', $error_msg ));
 		}
 
@@ -515,7 +515,7 @@ class EE_Admin_Page_Loader {
 	 * @return void
 	 */
 	public function init_autoloaders( $className ) {
-		$root = EE_CORE_ADMIN;
+		$root = EE_ADMIN;
 		$dir_ref = array(
 			$root => array('core', 'class') // 'controller', 
 			);

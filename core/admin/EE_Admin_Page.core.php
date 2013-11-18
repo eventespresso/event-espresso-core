@@ -1027,7 +1027,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				foreach( $config['help_tour'] as $tour ) {
 					$file_path = $this->_get_dir() . '/help_tours/' . $tour . '.class.php';
 					//let's see if we can get that file... if not its possible this is a decaf route not set in caffienated so lets try and get the caffeinated equivalent
-					$file_path = !is_readable($file_path) ? EE_CORE_ADMIN . basename($this->_get_dir()) . '/help_tours/' . $tour . '.class.php' : $file_path;
+					$file_path = !is_readable($file_path) ? EE_ADMIN . basename($this->_get_dir()) . '/help_tours/' . $tour . '.class.php' : $file_path;
 
 					//if file is STILL not readable then let's do a EE_Error so its more graceful than a fatal error.
 					if ( !is_readable($file_path) ) {
@@ -1268,7 +1268,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$content = '';
 
 		$help_array = empty( $help_array ) ? $this->_get_help_content() : $help_array;
-		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_help_popup.template.php';
+		$template_path = EE_ADMIN_TEMPLATE . 'admin_help_popup.template.php';
 
 
 		//loop through the array and setup content
@@ -1423,7 +1423,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_style('jquery-ui-style', EE_PLUGIN_DIR_URL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
 		wp_register_style('jquery-ui-style-datepicker-css', EE_PLUGIN_DIR_URL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('jquery-jq-plot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array('jquery'), EVENT_ESPRESSO_VERSION );
-		wp_register_style('ee-admin-css', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
+		wp_register_style('ee-admin-css', EE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 		//helpers styles
 		wp_register_style('ee-text-links', EE_PLUGIN_DIR_URL . 'helpers/assets/ee_text_list_helper.css', array(), EVENT_ESPRESSO_VERSION );
 		//enqueue global styles
@@ -1433,8 +1433,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		/** SCRIPTS **/
 
 		//register all scripts
-		wp_register_script('ee-dialog', EE_CORE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script('ee_admin_js', EE_CORE_ADMIN_URL . 'assets/ee-admin-page.js', array('ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script('ee-dialog', EE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('ee_admin_js', EE_ADMIN_URL . 'assets/ee-admin-page.js', array('ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true );
 		//wp_register_script('jquery-ui-datepicker', EE_PLUGIN_DIR_URL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
 		wp_register_script('jquery-ui-timepicker-addon', EE_PLUGIN_DIR_URL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker', 'jquery-ui-slider'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
@@ -1442,7 +1442,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		add_filter('FHEE_load_joyride', '__return_true');
 
 		//script for sorting tables
-		wp_register_script('espresso_ajax_table_sorting', EE_CORE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('espresso_ajax_table_sorting', EE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
 		wp_register_script( 'ee-parse-uri', EE_PLUGIN_DIR_URL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 		//and parsing associative serialized form elements
@@ -1450,7 +1450,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//helpers scripts
 		wp_register_script('ee-text-links', EE_PLUGIN_DIR_URL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-moment', EE_PLUGIN_DIR_URL . 'scripts/moment.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script( 'ee-datepicker', EE_CORE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-datepicker', EE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		//excanvas
 		wp_register_script('excanvas', JQPLOT_URL . 'excanvas.min.js', array(), EVENT_ESPRESSO_VERSION, FALSE );
@@ -1464,7 +1464,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('jqplot-dateAxisRenderer', JQPLOT_URL . 'plugins/jqplot.dateAxisRenderer.min.js', array('jqplot'), '', FALSE);
 		wp_register_script('jqplot-highlighter', JQPLOT_URL . 'plugins/jqplot.highlighter.min.js', array('jqplot'), '', FALSE);
 		wp_register_script('jqplot-pointLabels', JQPLOT_URL . 'plugins/jqplot.pointLabels.min.js', array('jqplot'), '', FALSE);
-		wp_register_script('jqplot-all', EE_CORE_ADMIN_URL . 'assets/ee-admin-jqlot-all.js', array('jqplot-pointLabels', 'jqplot-highlighter', 'jqplot-dateAxisRenderer', 'jqplot-categoryAxisRenderer', 'jqplot-canvasAxisTickRenderer', 'jqplot-canvasTextRenderer', 'jqplot-barRenderer'), EVENT_ESPRESSO_VERSION, FALSE );
+		wp_register_script('jqplot-all', EE_ADMIN_URL . 'assets/ee-admin-jqlot-all.js', array('jqplot-pointLabels', 'jqplot-highlighter', 'jqplot-dateAxisRenderer', 'jqplot-categoryAxisRenderer', 'jqplot-canvasAxisTickRenderer', 'jqplot-canvasTextRenderer', 'jqplot-barRenderer'), EVENT_ESPRESSO_VERSION, FALSE );
 
 
 		//enqueue global scripts
@@ -1496,7 +1496,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( !empty( $this->_help_tour ) ) {
 
 			//register the js for kicking things off
-			wp_enqueue_script('ee-help-tour', EE_CORE_ADMIN_URL . 'assets/ee-help-tour.js', array('jquery-joyride'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_enqueue_script('ee-help-tour', EE_ADMIN_URL . 'assets/ee-help-tour.js', array('jquery-joyride'), EVENT_ESPRESSO_VERSION, TRUE );
 
 			//setup tours for the js tour object
 			foreach ( $this->_help_tour['tours'] as $tour ) {
@@ -1812,7 +1812,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_template_args['current_screen_widget_class'] = 'columns-' . $total_columns;
 			$this->_template_args['current_page'] = $this->_wp_page_slug;
 			$this->_template_args['screen'] = $this->_current_screen;
-			$this->_column_template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_metabox_column_wrapper.template.php';
+			$this->_column_template_path = EE_ADMIN_TEMPLATE . 'admin_details_metabox_column_wrapper.template.php';
 
 			//finally if we don't have has_metaboxes set in the route config let's make sure it IS set other wise the necessary hidden fields for this won't be loaded.
 			$this->_route_config['has_metaboxes'] = TRUE;
@@ -1882,7 +1882,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 	public function espresso_links_post_box() {
-		   $templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
+		   $templatepath = EE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
 			EEH_Template::display_template( $templatepath );	
 		}
 
@@ -1897,7 +1897,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	public function espresso_sponsors_post_box() {
-		$templatepath = EE_CORE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_sponsors.template.php';
+		$templatepath = EE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_sponsors.template.php';
 		EEH_Template::display_template( $templatepath );
 	}
 
@@ -1922,7 +1922,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function editor_overview() {
 		//if we have extra content set let's add it in if not make sure its empty
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
-		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_publish_metabox.template.php';
+		$template_path = EE_ADMIN_TEMPLATE . 'admin_details_publish_metabox.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 
@@ -2142,10 +2142,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
-		$template_path = $sidebar ?  EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
+		$template_path = $sidebar ?  EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php' : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
 
 		if ( defined('DOING_AJAX' ) )
-			$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
+			$template_path = EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
 
 		$template_path = !empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
 
@@ -2168,7 +2168,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//let's generate a default preview action button if there isn't one already present.
 		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
 		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
-		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
+		$template_path = EE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		$this->admin_page_wrapper();
 	}
@@ -2208,7 +2208,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//setup search attributes
 		$this->_set_search_attributes();
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
-		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
+		$template_path = EE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
 
 		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true', 'route' => $this->_req_action), $this->_admin_base_url ) : add_query_arg( array( 'route' => $this->_req_action), $this->_admin_base_url);
 		$this->_template_args['list_table'] = $this->_list_table_object;
@@ -2261,7 +2261,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _display_legend( $items ) {
 		$template_args['items'] = (array) $items;
-		$legend_template = EE_CORE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
+		$legend_template = EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
 		return EEH_Template::display_template($legend_template, $template_args, TRUE);
 	}
 
@@ -2366,7 +2366,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		
 		// load settings page wrapper template
-		$template_path = !defined( 'DOING_AJAX' ) ? EE_CORE_ADMIN_TEMPLATE . 'admin_wrapper.template.php' : EE_CORE_ADMIN_TEMPLATE . 'admin_wrapper_ajax.template.php';
+		$template_path = !defined( 'DOING_AJAX' ) ? EE_ADMIN_TEMPLATE . 'admin_wrapper.template.php' : EE_ADMIN_TEMPLATE . 'admin_wrapper_ajax.template.php';
 
 
 		if ( defined( 'DOING_AJAX' ) ) {

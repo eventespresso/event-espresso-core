@@ -36,13 +36,13 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'REGISTRATION_FORM_PG_SLUG', 'espresso_registration_form' );	
 		define( 'REGISTRATION_FORM_LABEL', __('Registration Form', 'event_espresso'));	
 		define( 'REGISTRATION_FORM_PG_NAME', REGISTRATION_FORM_LABEL );	
-		define( 'REGISTRATION_FORM_ADMIN', EE_CORE_ADMIN . 'registration_form' . DS );	
+		define( 'REGISTRATION_FORM_ADMIN', EE_ADMIN . 'registration_form' . DS );	
 		define( 'REGISTRATION_FORM_ADMIN_URL', admin_url( 'admin.php?page=' . REGISTRATION_FORM_PG_SLUG ));	
 		define( 'EE_FORMS_ADMIN_URL', admin_url('admin.php?page=' . REGISTRATION_FORM_PG_SLUG ));
 		define( 'REGISTRATION_FORM_ASSETS_PATH', REGISTRATION_FORM_ADMIN . 'assets' . DS );		
-		define( 'REGISTRATION_FORM_ASSETS_URL', EE_CORE_ADMIN_URL . 'registration_form/assets/' );	
+		define( 'REGISTRATION_FORM_ASSETS_URL', EE_ADMIN_URL . 'registration_form/assets/' );	
 		define( 'REGISTRATION_FORM_TEMPLATE_PATH', REGISTRATION_FORM_ADMIN . 'templates' . DS );	
-		define( 'REGISTRATION_FORM_TEMPLATE_URL', EE_CORE_ADMIN_URL . 'registration_form/templates/' );
+		define( 'REGISTRATION_FORM_TEMPLATE_URL', EE_ADMIN_URL . 'registration_form/templates/' );
 		parent::__construct();
 	}
 
