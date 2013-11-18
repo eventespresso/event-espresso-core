@@ -35,7 +35,7 @@ class EE_Load_Textdomain extends EE_Base {
 		if ( !empty($lang) && file_exists(EE_LANGUAGES_SAFE_DIR.'event_espresso-'.$lang.'.mo') ){
 			load_plugin_textdomain('event_espresso', false, EE_LANGUAGES_SAFE_LOC);
 		}else{
-			load_plugin_textdomain('event_espresso', false, dirname(EVENT_ESPRESSO_PLUGINPATH) . '/languages/');
+			load_plugin_textdomain('event_espresso', false, dirname(EE_PLUGINPATH) . '/languages/');
 		}
 	}
 

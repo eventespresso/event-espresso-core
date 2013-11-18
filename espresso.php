@@ -52,7 +52,7 @@ if( ! defined( 'SP' ) ){
 }
 
 // define the plugin directory and URL
-define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) . DS);
+define( 'EE_PLUGINPATH', DS . plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) . DS );
 define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path( EVENT_ESPRESSO_MAIN_FILE ));
 define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url( EVENT_ESPRESSO_MAIN_FILE ));
 // main root folder paths

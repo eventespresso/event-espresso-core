@@ -508,7 +508,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 1 );
 
 		//PUE verification stuff
-		$plugin_basename = plugin_basename(EVENT_ESPRESSO_PLUGINPATH);
+		$plugin_basename = plugin_basename(EE_PLUGINPATH);
 		$verify_fail = get_option( 'pue_verification_error_' . $plugin_basename );
 		$this->_template_args['site_license_key_verified'] = $verify_fail || empty($verify_fail) ? '<span class"pue-sl-not-verified"></span>' : '<span class="pue-sl-verified"></span>';		
 		
