@@ -455,7 +455,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EEH_Template.helper.php';
+		require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
 
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
@@ -2653,7 +2653,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url );
 
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EEH_Template.helper.php';
+		require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
 		$button = EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
 
 		return $button;

@@ -73,7 +73,7 @@ class EE_messages_init extends EE_Base {
 			return;
 
 		//let's setup an array of paths to check (for each subsystem)
-		$root = EVENT_ESPRESSO_PLUGINFULLPATH;
+		$root = EE_PLUGIN_DIR_PATH;
 		$core = 'includes/core/';	
 		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 		$dir_ref = array(

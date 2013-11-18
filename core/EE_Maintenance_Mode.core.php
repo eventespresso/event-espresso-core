@@ -151,8 +151,8 @@ class EE_Maintenance_Mode {
 	function template_include() {
 		if ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php' )) {
 			return EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php';
-		} else if ( file_exists( EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/maintenance_mode.template.php' )) {
-			return EVENT_ESPRESSO_PLUGINFULLPATH . 'templates/maintenance_mode.template.php';
+		} else if ( file_exists( EE_PLUGIN_DIR_PATH . 'templates/maintenance_mode.template.php' )) {
+			return EE_PLUGIN_DIR_PATH . 'templates/maintenance_mode.template.php';
 		}
 	}
 

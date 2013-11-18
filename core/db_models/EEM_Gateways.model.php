@@ -161,8 +161,8 @@ Class EEM_Gateways {
 						$this->unset_active($gateway);	// if it can't find a gateway, delete it from the active_gateways
 					}
 				} else {
-					if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
-						require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
+					if (file_exists(EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway . DS . $filename)) {
+						require_once(EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway . DS . $filename);
 					} else {
 						$this->unset_active($gateway);	// if it can't find a gateway, delete it from the active_gateways
 					}
@@ -191,7 +191,7 @@ Class EEM_Gateways {
 		$gateways = array();
 		$upload_gateways = array();
 		// grab standard gateways
-		if ( ! $gateways_glob = glob(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways" . DS . "*", GLOB_ONLYDIR)) {
+		if ( ! $gateways_glob = glob(EE_PLUGIN_DIR_PATH . "gateways" . DS . "*", GLOB_ONLYDIR)) {
 			$gateways_glob = array();
 		}
 		// grab custom gateways
@@ -226,15 +226,15 @@ Class EEM_Gateways {
 					);
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
-			} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
+			} else if (file_exists(EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway . DS . $filename)) {
 //				echo '<h4>$filename : ' . $filename . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
+				require_once(EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway . DS . $filename);
 			} else {
 				$msg = sprintf(
 						__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
 						'<b>' . $filename . '</b>',
 						'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>',
-						'<b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>'
+						'<b>' . EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway . DS . '</b>'
 				);
 				$msg .= '||' . __( 'For the time being, the following error only indicates that the Gateway has yet to be converted over to 4.0 : ', 'event_espresso') . '<br />' . $msg;
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -697,14 +697,14 @@ Class EEM_Gateways {
 		$default_gateway_filepath = apply_filters('FHEE__EEM_Gateways__get_gateway_filepath__default_filepath',EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . $filename,$gateway_name);
 		if (file_exists($default_gateway_filepath)) {
 			require_once($default_gateway_filepath);
-		} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway_name . DS . $filename)) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway_name . DS . $filename);
+		} else if (file_exists(EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway_name . DS . $filename)) {
+			require_once(EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway_name . DS . $filename);
 		} else {
 			$msg = sprintf(
 					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
 					'<b>' . $filename . '</b>',
 					'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . '</b>',
-					'<b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway_name . DS . '</b>'
+					'<b>' . EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway_name . DS . '</b>'
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );	
 		}
@@ -725,14 +725,14 @@ Class EEM_Gateways {
 		$filename = $classname . '.class.php';
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename)) {
 			require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
-		} else if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename)) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . $filename);
+		} else if (file_exists(EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway . DS . $filename)) {
+			require_once(EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway . DS . $filename);
 		} else {
 			$msg = sprintf(
 					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
 					'<b>' . $filename . '</b>',
 					'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>',
-					'<b>' . EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways' . DS . $gateway . DS . '</b>'
+					'<b>' . EE_PLUGIN_DIR_PATH . 'gateways' . DS . $gateway . DS . '</b>'
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );	
 		}

@@ -147,7 +147,7 @@ final class EE_System {
 	 * @return void
 	 */
 	private function _maybe_brew_regular() {
-		$reg_file = EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/brewing_regular.php';
+		$reg_file = EE_PLUGIN_DIR_PATH . 'caffeinated/brewing_regular.php';
 		$eedecaf = ( defined( 'EE_DECAF' ) && ! EE_DECAF ) || ! defined('EE_DECAF') ? FALSE : TRUE;
 		if ( is_readable( $reg_file ) && ! $eedecaf ) {
 			require_once $reg_file;

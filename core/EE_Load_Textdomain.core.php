@@ -60,7 +60,7 @@ class EE_Load_Textdomain extends EE_Base {
 		//made it here so let's get the file from the github repo
 		//@todo: this for now is pointing to the repo for EE3.1.  We'll need to update to the new EE4 languages repo once we've got it working.
 		$sideloader_args = array(
-			'_upload_to' => EVENT_ESPRESSO_PLUGINFULLPATH . 'languages/',
+			'_upload_to' => EE_PLUGIN_DIR_PATH . 'languages/',
 			'_upload_from' => 'https://github.com/eventespresso/languages/blob/master/event_espresso-' . $lang . '.mo?raw=true',
 			'_new_file_name' => 'event_espresso-' . $lang . '.mo'
 			);

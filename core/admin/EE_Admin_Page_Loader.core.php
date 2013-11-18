@@ -128,7 +128,7 @@ class EE_Admin_Page_Loader {
 	 * @return void
 	 */
 	private function _define_caffeinated_constants() {
-		define( 'EE_CORE_CAF_ADMIN', EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin/');
+		define( 'EE_CORE_CAF_ADMIN', EE_PLUGIN_DIR_PATH . 'caffeinated/admin/');
 		define( 'EE_CORE_CAF_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'caffeinated/admin/');
 		define( 'EE_CORE_CAF_ADMIN_NEW', EE_CORE_CAF_ADMIN . 'new/');
 		define( 'EE_CORE_CAF_ADMIN_EXTEND', EE_CORE_CAF_ADMIN . 'extend/');
@@ -439,7 +439,7 @@ class EE_Admin_Page_Loader {
 	private function _set_caffeinated( $installed_refs ) {
 
 		//first let's check if there IS a caffeinated folder. If there is not then lets get out.
-		if ( !is_dir( EVENT_ESPRESSO_PLUGINFULLPATH . 'caffeinated/admin' ) || defined('EE_DECAF') ) return $installed_refs;
+		if ( !is_dir( EE_PLUGIN_DIR_PATH . 'caffeinated/admin' ) || defined('EE_DECAF') ) return $installed_refs;
 
 		$this->_define_caffeinated_constants();
 

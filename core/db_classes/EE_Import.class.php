@@ -103,7 +103,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	public function import() {
 	
-		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_CSV.class.php' );
+		require_once( EE_PLUGIN_DIR_PATH . 'includes/classes/EE_CSV.class.php' );
 		$this->EE_CSV = EE_CSV::instance();
 
 		if ( isset( $_REQUEST['import'] )) {	

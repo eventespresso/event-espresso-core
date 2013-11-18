@@ -202,7 +202,7 @@ abstract class EE_Gateway {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		//require helpers
-		require_once EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers/EEH_Template.helper.php';
+		require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
 		// if our current path is empty or doesn't match what's in the db, then maybe something changed?
 		if ($this->_payment_settings['current_path'] == '' || $this->_payment_settings['current_path'] != $this->_path) {
 			$this->_reset_button_url();

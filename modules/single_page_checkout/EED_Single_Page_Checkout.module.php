@@ -805,7 +805,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( EE_Registry::instance()->CFG->registration->use_captcha && ( empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
 
 			if (!function_exists('recaptcha_get_html')) {
-				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
+				require_once( EE_PLUGIN_DIR_PATH . 'tpc' . DS . 'recaptchalib.php' );
 			}
 
 			// the error code from reCAPTCHA, if any
@@ -1380,7 +1380,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		// check recaptcha
 		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
 			if ( ! function_exists( 'recaptcha_check_answer' )) {
-				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
+				require_once( EE_PLUGIN_DIR_PATH . 'tpc' . DS . 'recaptchalib.php' );
 			}
 			$response = recaptcha_check_answer(
 					$this->EE->CFG->registration->recaptcha_privatekey, 
@@ -1710,7 +1710,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		// check recaptcha
 		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
 			if ( ! function_exists( 'recaptcha_check_answer' )) {
-				$this->EE->load_file( EVENT_ESPRESSO_PLUGINFULLPATH . DS . 'tpc', 'recaptchalib', '' );
+				$this->EE->load_file( EE_PLUGIN_DIR_PATH . DS . 'tpc', 'recaptchalib', '' );
 				$response = recaptcha_check_answer(
 						$this->EE->CFG->registration->recaptcha_privatekey, 
 						$_SERVER["REMOTE_ADDR"], 

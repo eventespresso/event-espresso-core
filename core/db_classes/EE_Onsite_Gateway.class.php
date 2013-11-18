@@ -158,7 +158,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		$reg_page_billing_inputs = apply_filters( 'FHEE_reg_page_billing_inputs', $reg_page_billing_inputs );
 		// if EE_Validate_and_Sanitize is not instantiated
 		if ( ! defined( 'EE_Validate_and_Sanitize' )) {
-			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
+			require_once(EE_PLUGIN_DIR_PATH . 'includes/classes/EE_Validate_and_Sanitize.class.php');
 			$EE_VnS = EE_Validate_and_Sanitize::instance();
 		}
 //printr( $reg_page_billing_inputs, '$reg_page_billing_inputs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
