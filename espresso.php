@@ -68,7 +68,7 @@ define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
 define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
 define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
-define( 'EE_THIRD_PARTY', EE_CORE . 'third_party' . DS );
+define( 'EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS );
 // asset URL paths
 define( 'EE_IMAGES_URL', EE_PLUGIN_DIR_URL . 'images' . DS );
 define( 'EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'templates' . DS );
