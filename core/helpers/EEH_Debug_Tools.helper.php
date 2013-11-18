@@ -38,7 +38,7 @@ class EEH_Debug_Tools{
 	 */
 	private function __construct() {
 		// load Kint PHP debugging library
-		require_once( EE_PLUGIN_DIR_PATH . 'tpc' . DS . 'kint' . DS . 'Kint.class.php' );
+		require_once( EE_THIRD_PARTY . 'kint' . DS . 'Kint.class.php' );
 		
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
