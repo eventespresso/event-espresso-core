@@ -120,8 +120,8 @@ class EED_Events_Archive  extends EED_Module {
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
 		// set config
-		if ( ! isset( $EE->CFG->template_settings->EED_Events_Archive ) || ! $EE->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
-			$EE->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+		if ( ! isset( $this->EE->CFG->template_settings->EED_Events_Archive ) || ! $this->EE->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
+			$this->EE->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
 		}
 		// grid, text or dates ?
 		EED_Events_Archive::set_type();
@@ -681,7 +681,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function update_template_settings( $CFG, $REQ ) {
+	public static function update_template_settings( $CFG, $REQ ) {
 //		printr( $REQ, '$REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		//$CFG->template_settings->EED_Events_Archive = new stdClass();
