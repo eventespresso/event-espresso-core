@@ -1503,7 +1503,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			foreach ( $qstn as $ANS_ID => $ANS_value ) {
 				//get answer 
 				$answer = EEM_Answer::instance()->get_one_by_ID($ANS_ID);
-				$answer->set('ANS_value');
+				$answer->set('ANS_value', $ANS_value);
 				$success = $answer->save();
 			}
 		}
