@@ -655,9 +655,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
 				$question_group->add_question($question_ID);
 			}else{
-				//not found, remove it (but only if not a system question)
-				if ( ! $question->is_system_question() )
-					$question_group->remove_question($question_ID);
+				//not found, remove it (but only if not a system question for the personal group)
+				if ( $question->is_system_question() && $question_group->get('QSG_system') === 1  )
+					continue;
+				$question_group->remove_question($question_ID);
 			}
 		}
 		//save new related questions

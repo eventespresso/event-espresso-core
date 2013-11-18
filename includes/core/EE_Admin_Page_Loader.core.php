@@ -443,7 +443,7 @@ class EE_Admin_Page_Loader {
 
 		$this->_define_caffeinated_constants();
 
-		$exclude = array();
+		$exclude = array('tickets');
 
 		//okay let's setup an "New" pages first (we'll return installed refs later)
 		if ( $new_admin_screens = glob( EE_CORE_CAF_ADMIN . 'new/*', GLOB_ONLYDIR ) ) {

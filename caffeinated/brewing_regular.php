@@ -49,30 +49,138 @@ class EE_Brewing_Regular extends EE_Base {
 	 * This action should only be called when EE 4.1.0P is initially activated.
 	 * Right now the only CAF content are these global prices. If there's more in teh future, then
 	 * we should probably create a caf file to contain it all instead just a function like this.
+	 * Right now, we ASSUME the only price types in the system are default ones
 	 * @global type $wpdb
 	 */
 	function initialize_caf_db_content(){
+//		echo "initialize caf db content!";
 		global $wpdb;
-		$price_table = $wpdb->prefix."esp_price";
 		
-		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
+		$price_type_table = $wpdb->prefix."esp_price_type";
+		$price_table = $wpdb->prefix."esp_price";
+
+		if ($wpdb->get_var("SHOW TABLES LIKE '$price_type_table'") == $price_type_table) {
+
+			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table . ' WHERE PBT_ID=4';//include trashed price types
+			$tax_price_type_count = $wpdb->get_var( $SQL );
 			
-			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
-			$existing_prices_count = $wpdb->get_var( $SQL );
-			//note: I believe this function is called even on upgrades. So 
-			//you could jsut change this conditional to add default prices even on upgrades
-			if ( $existing_prices_count <= 1 ) {
-				$SQL = "INSERT INTO $price_table
-							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-							(2, 2, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, NULL, 20, 0, 0),
-							(3, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, NULL, 30, 0, 0),
-							(4, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 0),
-							(5, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 0);";			
-				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
-				$wpdb->query($SQL);			
+			if ( $tax_price_type_count <= 1) {
+//				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
+//							(6, '" . __('Regional Tax', 'event_espresso') . "', 4,  1, 60, 0),
+//							(7, '" . __('Federal Tax', 'event_espresso') . "', 4,  1, 70, 0);";
+//				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
+//				$wpdb->query( $SQL );
+				$result = $wpdb->insert($price_type_table,
+						array(
+							'PRT_name'=>  __("Regional Tax", "event_espresso"),
+							'PBT_ID'=>4,
+							'PRT_is_percent'=>true,
+							'PRT_order'=>60,
+							'PRT_deleted'=>false
+						),
+						array(
+							'%s',//PRT_name
+							'%d',//PBT_id
+							'%d',//PRT_is_percent
+							'%d',//PRT_order
+							'%d',//PRT_deleted
+						));
+				if( $result){
+					$wpdb->insert($price_table,
+							array(
+								'PRT_ID'=>$wpdb->insert_id,
+								'PRC_amount'=>7.00,
+								'PRC_name'=>  __("Local Sales Tax", "event_espresso"),
+								'PRC_desc'=>  __("Locally imposed tax. Example content - delete if you want to", "event_espresso"),
+								'PRC_is_default'=>true,
+								'PRC_overrides'=>NULL,
+								'PRC_deleted'=>false,
+								'PRC_order'=>40,
+								'PRC_parent'=>null
+							),
+							array(
+								'%d',//PRT_id
+								'%f',//PRC_amount
+								'%s',//PRC_name
+								'%s',//PRC_desc
+								'%d',//PRC_is_default
+								'%d',//PRC_overrides
+								'%d',//PRC_deleted
+								'%d',//PRC_order
+								'%d',//PRC_parent
+							));
+				}
+				//federal tax
+				$result = $wpdb->insert($price_type_table,
+						array(
+							'PRT_name'=>  __("Federal Tax", "event_espresso"),
+							'PBT_ID'=>4,
+							'PRT_is_percent'=>true,
+							'PRT_order'=>70,
+							'PRT_deleted'=>false
+						),
+						array(
+							'%s',//PRT_name
+							'%d',//PBT_id
+							'%d',//PRT_is_percent
+							'%d',//PRT_order
+							'%d',//PRT_deleted
+						));
+				if( $result){
+					$wpdb->insert($price_table,
+							array(
+								'PRT_ID'=>$wpdb->insert_id,
+								'PRC_amount'=>15.00,
+								'PRC_name'=>  __("Sales Tax", "event_espresso"),
+								'PRC_desc'=>  __("Federally imposed tax. Example content - delete if you want to", "event_espresso"),
+								'PRC_is_default'=>true,
+								'PRC_overrides'=>NULL,
+								'PRC_deleted'=>false,
+								'PRC_order'=>50,
+								'PRC_parent'=>null
+							),
+							array(
+								'%d',//PRT_id
+								'%f',//PRC_amount
+								'%s',//PRC_name
+								'%s',//PRC_desc
+								'%d',//PRC_is_default
+								'%d',//PRC_overrides
+								'%d',//PRC_deleted
+								'%d',//PRC_order
+								'%d',//PRC_parent
+							));
+				}
+				
+				
 			}
-		}	
+		}
+		
+		
 	}
+	
+	/**
+	 * Inserts them mostly unconditionally.
+	 * @global type $wpdb
+	 */
+//	private function _insert_caf_prices(){
+//		global $wpdb;
+//		$price_table = $wpdb->prefix."esp_price";
+//		
+//		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
+//			//we are now assuming we want to insert these tables if this function is called
+////			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
+////			$existing_prices_count = $wpdb->get_var( $SQL );
+////			if ( $existing_prices_count <= 1 ) {
+//				$SQL = "INSERT INTO $price_table
+//							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
+//							(4, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 0),
+//							(5, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 0);";			
+//				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
+//				$wpdb->query($SQL);			
+////			}
+//		}	
+//	}
 
 
 

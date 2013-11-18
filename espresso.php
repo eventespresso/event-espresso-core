@@ -104,7 +104,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 
 function espresso_load_system( $activation = FALSE ) {
 	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
-	EE_System::instance();
+	EE_System::instance($activation);
 }
 
 

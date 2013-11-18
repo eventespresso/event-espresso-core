@@ -845,8 +845,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$template_args['confirmation_data'] = '';
 
 		$event_queue = array();
-		$cart_line_items = '';
 		$total_items = 0;
+		$ticket_count = array();
 
 
 		$additional_event_attendees = array();
@@ -854,6 +854,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$events_that_use_coupon_codes = array();
 		$events_that_use_groupon_codes = array();
 		$template_args['reg_page_discounts_dv_class'] = 'hidden';
+		$template_args['additional_attendee_reg_info'] = NULL;
 		
 		$template_args['whats_in_the_cart'] = '';
 
@@ -870,11 +871,21 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				
 				foreach ( $this->_transaction->registrations() as $registration ) {
 					
-					$line_item_ID = $registration->reg_url_link();	
-					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
+					$line_item_ID = $registration->reg_url_link();
+
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
 					$total_items = $registration->count();
+					$ticket_count[ $registration->ticket()->ID() ] = isset( $ticket_count[ $registration->ticket()->ID() ] ) ? $ticket_count[ $registration->ticket()->ID() ] + 1 : 1;
+
+					$question_meta = array(
+						'EVT_ID' => $registration->event()->ID(),
+						'att_nmbr' => $registration->count(),
+						'ticket_id' => $registration->ticket()->ID(),
+						'input_name' =>  '[' . $line_item_ID . ']',
+						'input_id' => $line_item_ID,
+						'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
+					);
 
 					$Question_Groups = $this->EE->load_model( 'Question_Group' )->get_all( array( 
 						array( 
@@ -886,28 +897,16 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					foreach ( $Question_Groups as $Question_Group ) {
 						$Questions = $Question_Group->get_many_related( 'Question' );
 						//d( $Questions );
-						$question_meta = array(
-							'EVT_ID' => $registration->event()->ID(),
-							'att_nmbr' => $registration->count(),
-							'ticket_id' => $registration->ticket()->ID(),
-							'input_name' =>  '[' . $line_item_ID . ']',
-							'input_id' => $line_item_ID,
-							'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
-						);
+						
 						foreach ( $Questions as $Question ) {
 							/*@var $Question EE_Question */
-							if( ! $registration){
-								$answer = EE_Answer::new_instance ( array( 
-									'QST_ID'=> $Question->ID(),
-									'REG_ID'=> $registration->ID()
-								 ));
-								$answer->_add_relation_to( $Question, 'Question' );
-								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-								$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
-							}else{
-								$answer_to_question = EEM_Answer::instance()->get_answer_value_to_question($registration,$Question->ID());
-								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer_to_question;
-							}
+							$answer = EE_Answer::new_instance ( array( 
+								'QST_ID'=> $Question->ID(),
+								'REG_ID'=> $registration->ID()
+							 ));
+							$answer->_add_relation_to( $Question, 'Question' );
+							$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
+							$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
 
 						}
 						
@@ -920,8 +919,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 					// show this attendee form?
 					if ( empty( $attendee_questions )) {						
-						$attendee_questions .= '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>';
-						$attendee_questions .= '
+						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '
 							<input
 									type="hidden"
 									id="' . $line_item_ID . '-additional_attendee_reg_info"
@@ -929,7 +927,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									value="0"
 							/>' . "\n";
 					} else {
-						$additional_attendee_forms = TRUE;
+						$additional_attendee_forms = $registration->count() == 1 ? FALSE : TRUE;
+						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '';
 					}
 					$event_queue['items'][ $line_item_ID ]['attendee_questions'] = $attendee_questions;
 
@@ -971,6 +970,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			}
 
 		$template_args['additional_event_attendees'] = $additional_event_attendees;
+		$template_args['ticket_count'] = $ticket_count;
+		$template_args['print_copy_info'] = $additional_attendee_forms;
 		$grand_total = $this->EE->CART->get_cart_grand_total();
 		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
 		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
@@ -1308,6 +1309,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$this->_transaction->save_new_cached_related_model_objs();
 		$this->EE->SSN->set_session_data(array('transaction', NULL ) );
 		$this->_transaction->set('TXN_session_data', $this->EE->SSN );
+		$this->_transaction->finalize();
 		$this->_transaction->save();
 		$this->EE->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 		$this->EE->SSN->clear_session();

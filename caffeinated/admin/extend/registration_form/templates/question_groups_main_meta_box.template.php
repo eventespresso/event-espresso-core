@@ -43,7 +43,11 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 					</p>
 					<?php if ( ! empty( $QSG_system )) { ?>
 					<span class="description" style="color:#D54E21;">
-						<?php _e('This is a system question group so you are able to modify everything with this group except the identifier and the system questions attached to the group.','event_espresso')?>
+						<?php if ( $QSG_system === 1 ) : ?>
+							<?php _e('This is a system question group so you are able to modify everything with this group except the identifier and the system questions attached to the group.','event_espresso')?>
+						<?php else : ?>
+							<?php _e('This is a system question group so you are able to modify everything with this group except the identifier.','event_espresso')?>
+						<?php endif; ?>
 					</span><br/>
 					<?php } ?>
 				</td>
@@ -120,9 +124,9 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 							foreach( $all_questions as $question_ID=>$question ){
 								/*@var $question EE_Question*/
 								$checked = array_key_exists( $question_ID, $question_group->questions() ) ? ' checked="checked"' : '';
-								$disabled = $question->get('QST_system') ? ' disabled="disabled"' : '';
-								if ( $question->get('QST_system' ) && empty( $checked ) )
-									continue; //skip over system question not assigned to this group.
+								$disabled = $question->get('QST_system') && $QSG_system !== 2 ? ' disabled="disabled"' : '';
+								if ( ($QSG_system === 1 && $question->get('QST_system' ) && empty( $checked ) ) || ( $QSG_system == 2 && in_array( $question_ID, array(1,2,3) ) ) )
+									continue; //skip over system question not assigned to this group except for the address system group cause we want the address questions to display even if they aren't selected (but still not show the personal system questions)
 							?>
 							<li>
 								<label for="question-<?php echo $question_ID?>">

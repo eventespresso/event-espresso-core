@@ -187,42 +187,59 @@ final class EE_System {
 	*/
 	private function _manage_activation_process() {
 		// check if db has been updated, or if its a brand-new installation
+		
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
-		switch($this->detect_req_type($espresso_db_update)){
+		$request_type = $this->detect_req_type($espresso_db_update);
+//		echo "request type:".$request_type;
+		if( ! $request_type == EE_System::req_type_normal){
+			EE_Registry::instance()->load_helper('Activation');
+		}
+		switch($request_type){
 			case EE_System::req_type_new_activation:
-				EE_Registry::instance()->load_helper('Activation');
+				
 				do_action('AHEE__EE_System__manage_activation_process__new_activation');
-				EE_Registry::instance()->load_helper('Activation');
-				EEH_Activation::system_initialization();
-				EEH_Activation::initialize_db_and_folders();
-				EEH_Activation::initialize_db_content();			
-				$this->update_list_of_installed_versions($espresso_db_update);
+				$this->_handle_as_activation();			
+//				echo "done activation";die;
 				break;
 			case EE_System::req_type_reactivation:
-				EE_Registry::instance()->load_helper('Activation');
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
-				EE_Registry::instance()->load_helper('Activation');
-				EEH_Activation::system_initialization();
-				EEH_Activation::initialize_db_and_folders();
-				EEH_Activation::initialize_db_content();				
-				$this->update_list_of_installed_versions($espresso_db_update);
+				$this->_handle_as_activation();
+//				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
-				EE_Registry::instance()->load_helper('Activation');
+//				echo "start upgrade";
 				do_action('AHEE__EE_System__manage_activation_process__upgrade');
-				EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-				$this->update_list_of_installed_versions($espresso_db_update);
+				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
+					//so the database doesnt look old (ie, there are no migration scripts
+					//taht say they need to upgrade it)
+					//THEN, we just want to still give the system a chance to setup new default data
+					$this->_handle_as_activation();
+				}
+//				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
-				EE_Registry::instance()->load_helper('Activation');
 				do_action('AHEE__EE_System__manage_activation_process__downgrade');
-				$this->update_list_of_installed_versions($espresso_db_update);
+				
 				break;
 			case EE_System::req_type_normal:
 			default:
 				break;
 		}
+		if( ! $request_type == EE_System::req_type_normal){
+			$this->update_list_of_installed_versions($espresso_db_update);
+		}
 		do_action('AHEE__EE_System__manage_activation_process__end');
+	}
+	
+	/**
+	 * Does the traditional work of setting up the plugin's database and adding default data.
+	 * If migration script/process didn't exist, this is what woudl happen on every activation/reactivation/upgrade.
+	 * @return void
+	 */
+	private function _handle_as_activation(){
+		EEH_Activation::system_initialization();
+		EEH_Activation::initialize_db_and_folders();
+		EEH_Activation::initialize_db_content();
 	}
 
 	
