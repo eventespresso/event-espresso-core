@@ -800,7 +800,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @access public
 	 * @return string html
 	 */
-	public function display_recaptcha( $current_step, $next_step ) {
+	public static function display_recaptcha( $current_step, $next_step ) {
 
 		if ( EE_Registry::instance()->CFG->registration->use_captcha && ( empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
 
