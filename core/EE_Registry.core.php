@@ -174,7 +174,8 @@ final class EE_Registry {
 	public function load_core ( $class_name, $arguments = array() ) {
 		$paths = array(
 			EE_CORE,
-			EE_CORE . 'CPTs' . DS,
+			EE_ADMIN,
+			EE_CPTS
 		);
 		// retreive instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments );
@@ -248,7 +249,7 @@ final class EE_Registry {
 	public function load_lib ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		$paths = array(
 			EE_LIBRARIES,
-			EE_LIBRARIES . 'messages' . DS,
+			EE_LIBRARIES . 'messages' . DS
 		);
 		// retreive instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments, FALSE, TRUE, $load_only );
@@ -281,7 +282,7 @@ final class EE_Registry {
 			EE_MODELS . 'fields' . DS,
 			EE_MODELS . 'helpers' . DS,
 			EE_MODELS . 'relations' . DS,
-			EE_MODELS . 'strategies' . DS,
+			EE_MODELS . 'strategies' . DS
 		);
 		// retreive instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, '', $arguments, FALSE, TRUE, $load_only );
