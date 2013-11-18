@@ -98,8 +98,8 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 	private $_ticket_count = 0;
 	const price_type_base = 1;
 	const price_type_member_discount = 3;
-	const price_type_percent_surcharge = 6;
-	const price_type_flat_surcharge = 7;
+	const price_type_percent_surcharge = 4;
+	const price_type_flat_surcharge = 5;
 	
 	function __construct() {
 		global $wpdb;

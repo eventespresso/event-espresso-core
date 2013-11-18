@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.022.dev';
+	return '4.1.025.dev';
 }
 //Returns the template version
 function espresso_template_version() {
@@ -104,7 +104,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 
 function espresso_load_system( $activation = FALSE ) {
 	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
-	EE_System::instance();
+	EE_System::instance($activation);
 }
 
 

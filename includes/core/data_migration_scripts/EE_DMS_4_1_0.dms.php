@@ -985,9 +985,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 							(2, '" . __('Percent Discount', 'event_espresso') . "', 2,  1, 20, 0),
 							(3, '" . __('Dollar Discount', 'event_espresso') . "', 2,  0, 30, 0),
 							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, 0),
-							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, 0),
-							(6, '" . __('Regional Tax', 'event_espresso') . "', 4,  1, 60, 0),
-							(7, '" . __('Federal Tax', 'event_espresso') . "', 4,  1, 70, 0);";
+							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, 0);";
 				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
 				$wpdb->query( $SQL );	
 			}
@@ -1017,7 +1015,9 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 0);";			
+							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 0),
+							(2, 2, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, NULL, 20, 0, 0),
+							(3, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, NULL, 30, 0, 0);";			
 				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}
