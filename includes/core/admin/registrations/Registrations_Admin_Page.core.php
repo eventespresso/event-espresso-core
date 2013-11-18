@@ -882,7 +882,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( is_object( $this->_registration )) {
 			$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
-			$this->_session = $transaction->session_data()->get_session_data();
+			$session_object = $transaction->session_data();
+			if ( empty( $session_object ) || ! $session_object instanceof EE_Session )
+				throw new EE_Error( __('Something is wrong with the session stored on the transaction', 'event_espresso') );
+			$this->_session = $session_object->get_session_data();
 
 			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 			// add PRC_ID to title if editing 
@@ -1192,7 +1195,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$reg_status_class = 'status-' . $this->_registration->status_ID();
-		$reg_details = maybe_unserialize( $transaction->get_first_related('Payment')->details() );
+		$payment = $transaction->get_first_related('Payment');
+		$reg_details = !empty($payment) ? maybe_unserialize( $payment->details() ) : NULL;
 
 
 		if ( !is_array($reg_details) || ( is_array($reg_details) && isset($reg_details['REDO_TXN']) && $reg_details['REDO_TXN'] ) ) {
