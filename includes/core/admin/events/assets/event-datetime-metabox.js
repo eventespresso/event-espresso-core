@@ -21,7 +21,7 @@ jQuery(document).ready(function($) {
 		newTicket.find('input:visible').first().focus();
 	});
 
-	$('#event-and-ticket-form-content').on('focus', '.ee-datepicker', function(e) {
+	$('#event-and-ticket-form-content').on('focusin', '.ee-datepicker', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -30,6 +30,7 @@ jQuery(document).ready(function($) {
 		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.relatedField, data.dateFieldContext);
 		var next = $(data.nextField, data.dateFieldContext);
 		var doingstart = data.context == 'start-dtt' || data.context == 'start-ticket' ? true : false;
+		console.log(doingstart);
 		dttPickerHelper.picker(start, end, next, doingstart);
 	});
 
