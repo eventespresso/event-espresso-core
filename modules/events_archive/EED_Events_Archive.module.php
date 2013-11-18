@@ -529,7 +529,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	string
 	 */
 	private function _get_template( $which = 'part' ) {
-		return EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php';		
+		return EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php';		
 	}
 
 
@@ -655,8 +655,8 @@ class EED_Events_Archive  extends EED_Module {
 		$CFG->display_expired_events = isset( $CFG->display_expired_events ) && ! empty( $CFG->display_expired_events ) ? $CFG->display_expired_events : FALSE;
 		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
 		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
-		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php';
-		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-grid-view.php';
+		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php';
+		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-grid-view.php';
 		return $CFG;
 	}
 
@@ -692,18 +692,18 @@ class EED_Events_Archive  extends EED_Module {
 		$CFG->EED_Events_Archive->default_type = isset( $REQ['default_type'] ) ? sanitize_text_field( $REQ['default_type'] ) : 'grid';
 		$CFG->EED_Events_Archive->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'medium';
 		$CFG->EED_Events_Archive->templates = array(
-				'full'  => EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php'
+				'full'  => EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php'
 			);
 		
 		switch ( $CFG->EED_Events_Archive->default_type ) {
 			case 'dates' :
-					$CFG->EED_Events_Archive->templates['part'] = EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-dates-view.php';
+					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-dates-view.php';
 				break;
 			case 'text' :
-					$CFG->EED_Events_Archive->templates['part'] = EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-text-view.php';
+					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-text-view.php';
 				break;
 			default :
-					$CFG->EED_Events_Archive->templates['part'] = EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-grid-view.php';
+					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-grid-view.php';
 		}
 		
 		return $CFG;
@@ -750,7 +750,7 @@ class EED_Events_Archive  extends EED_Module {
 			'elf_show_expired' => $this->_show_expired,
 			'elf_type' => $this->_type
 		);
-		EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-filters.php', $args );		
+		EEH_Template::display_template( EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events-filters.php', $args );		
 	}
 
 

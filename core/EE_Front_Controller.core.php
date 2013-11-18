@@ -662,7 +662,7 @@ final class EE_Front_Controller {
 		if(apply_filters('FHEE__EE_Front_Controller__display_errors',true)){
 			echo EE_Error::get_notices();
 			$this->EE->load_helper( 'Template' );
-			EEH_Template::display_template( EVENT_ESPRESSO_TEMPLATES . 'espresso-ajax-notices.template.php' );
+			EEH_Template::display_template( EE_TEMPLATES . 'espresso-ajax-notices.template.php' );
 		}
 		do_action('AHEE__EE_Front_Controller__display_errors__end');
 	}

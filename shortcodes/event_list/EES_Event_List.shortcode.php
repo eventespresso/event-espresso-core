@@ -106,7 +106,7 @@ class EES_Event_List  extends EES_Shortcode {
 		if ( file_exists( get_stylesheet_directory() . 'espresso_events/' . $template_part )) {
 			include( get_stylesheet_directory() . 'espresso_events/' . $template_part );
 		} else {
-			include( EVENT_ESPRESSO_TEMPLATES . 'espresso_events/' . $template_part );
+			include( EE_TEMPLATES . 'espresso_events/' . $template_part );
 		}
 		// now reset the query and postdata
 		wp_reset_query();

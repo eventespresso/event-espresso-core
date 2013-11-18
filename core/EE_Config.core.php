@@ -1298,7 +1298,7 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 		$this->display_expired_events = FALSE;
 		$this->default_type = 'grid';
 		$this->event_list_grid_size = 'medium';
-		$this->templates = array( 'full'  => EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php' );
+		$this->templates = array( 'full'  => EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php' );
 	}
 }
 

@@ -36,7 +36,7 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		EE_Config::register_route( 'event', 'Event_Single', 'run' );
-		EE_Config::register_view( 'event', 0, EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'single-espresso_events.php' );
+		EE_Config::register_view( 'event', 0, EE_TEMPLATES . 'espresso_events' . DS . 'single-espresso_events.php' );
 	}
 
 	/**
@@ -183,13 +183,13 @@ class EED_Event_Single  extends EED_Module {
 				// check if the template file exists in the theme first
 				if ( ! $template_path = locate_template( array( 'single-espresso_events.php' ))) {
 					// otherwise get it from 
-					$template_path = EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'single-espresso_events.php';
+					$template_path = EE_TEMPLATES . 'espresso_events' . DS . 'single-espresso_events.php';
 				}
 			} else if ( is_archive() ) {
 				// check if the template file exists in the theme first
 				if ( ! $template_path = locate_template( array( 'archive-espresso_events.php' ))) {
 					// otherwise get it from 
-					$template_path = EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events.php';
+					$template_path = EE_TEMPLATES . 'event_list' . DS . 'archive-espresso_events.php';
 				}
 			} 
 		}
