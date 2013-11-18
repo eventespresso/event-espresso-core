@@ -33,10 +33,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_next_step = '';
 	// erg_url_link for a previously saved registration
 	private $_reg_url_link = '';
+	// pass recaptcha?
+	private $_continue_reg = TRUE;
 	// array of tempate paths
 	private $_templates = array();
 	// info for each of the reg steps
 	private static $_reg_steps = array();
+
 	/**
 	 * 	$_transaction - the current transaction object
 	 * 	@access private
@@ -98,8 +101,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			add_action( 'wp_ajax_espresso_' . $reg_step_details['process_func'], array( 'EED_Single_Page_Checkout', $reg_step_details['process_func'] ));
 			add_action( 'wp_ajax_nopriv_espresso_' . $reg_step_details['process_func'], array( 'EED_Single_Page_Checkout', $reg_step_details['process_func'] ));
 		}
-//		add_action( 'wp_ajax_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
-//		add_action( 'wp_ajax_nopriv_espresso_finalize_registration', array( 'EED_Single_Page_Checkout', 'finalize_registration' ));
+//		add_action( 'wp_ajax_espresso_process_recaptcha_response', array( 'EED_Single_Page_Checkout', 'process_recaptcha_response' ));
+//		add_action( 'wp_ajax_nopriv_espresso_process_recaptcha_response', array( 'EED_Single_Page_Checkout', 'process_recaptcha_response' ));
 	}
 
 
@@ -254,6 +257,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( $this->EE->REQ )) {
 			$this->EE->load_core( 'Request_Handler' );
 		}
+		$this->_continue_reg = TRUE;
+		// verify recaptcha
+		if ( $this->EE->REQ->is_set( 'recaptcha_response_field' )) {
+			$this->_continue_reg = $this->process_recaptcha_response();
+		}
 
 		$this->set_templates();
 		$this->_reg_page_base_url = get_permalink( $this->EE->CFG->core->reg_page_id );
@@ -352,7 +360,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_js', '__return_true' );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 10 );
-		add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Single_Page_Checkout', 'display_recaptcha' ), 10, 2 );
 		$this->registration_checkout();
 
 	}
@@ -758,6 +765,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'next_step_text' => $next_step_text
 				) 
 			);
+			if ( $step_nmbr == 1 ) {
+				add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Single_Page_Checkout', 'display_recaptcha' ), 10, 2 );	
+			}
+			
 			//d( $step_args );
 			$registration_steps .= EEH_Template::display_template( $this->_templates[ $reg_step_details['template'] ], $step_args, TRUE);
 			// pass step info to js
@@ -791,32 +802,26 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public function display_recaptcha( $current_step, $next_step ) {
 
-		$recaptcha = '';
-		if ( $next_step == 'finalize_registration' ) {
-			if ( EE_Registry::instance()->CFG->registration->use_captcha && ( empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
+		if ( EE_Registry::instance()->CFG->registration->use_captcha && ( empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
 
-				if (!function_exists('recaptcha_get_html')) {
-					require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
-				}
+			if (!function_exists('recaptcha_get_html')) {
+				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
+			}
 
-				// the error code from reCAPTCHA, if any
-				$error = null;
-				$recaptcha = '
+			// the error code from reCAPTCHA, if any
+			$error = null;
+			echo '
 <script type="text/javascript">
 /* <! [CDATA [ */
-	var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration->recaptcha_theme . '", lang : "' . EE_Registry::instance()->CFG->registration->recaptcha_language . '" };
+var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration->recaptcha_theme . '", lang : "' . EE_Registry::instance()->CFG->registration->recaptcha_language . '" };
 /*  ] ]>  */
 </script>
 <p class="reg-page-form-field-wrap-pg" id="spc-captcha">
-	' . __('Anti-Spam Measure: Please enter the following phrase', 'event_espresso') . '
-	' . recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_publickey, $error, is_ssl() ? true : false ) . '
+' . __('Anti-Spam Measure: Please enter the following phrase', 'event_espresso') . '
+' . recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_publickey, $error, is_ssl() ? true : false ) . '
 </p>
 ';
-			}
-		}
-		
-		echo $recaptcha;
-		
+		}	
 	}
 
 
@@ -1079,166 +1084,169 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// attendee counter
 			$att_nmbr = 0;
 
-			if ( $this->_transaction instanceof EE_Transaction ) {
-				$registrations = $this->_transaction->registrations();
-				if ( ! empty( $registrations )) {
-					// grab the saved registrations from the transaction				
-					foreach ( $this->_transaction->registrations()  as $registration ) {			
-						// verify object
-						if ( $registration instanceof EE_Registration ) {
-							// reg_url_link / line item ID exists ?
-							if ( $line_item_id = $registration->reg_url_link() ) {
-								// Houston, we have a registration!
-								$att_nmbr++;
-								// grab related answer objects
-								$answers = $registration->answers();
-								//printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-								$attendee_data = array();
-								// do we need to copy basic info from primary attendee ?
-								$copy_primary = isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
-								unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
-								if ( isset( $valid_data[ $line_item_id ] )) {
-									// now loop through our array of valid post data && process attendee reg forms
-									foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
-										
-										//echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-										
-										// check for critical inputs
-										if ( empty( $input_value )) {
+			if ( $this->_continue_reg ) {
+				if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
+					$registrations = $this->_transaction->registrations();
+					if ( ! empty( $registrations )) {
+						// grab the saved registrations from the transaction				
+						foreach ( $this->_transaction->registrations()  as $registration ) {			
+							// verify object
+							if ( $registration instanceof EE_Registration ) {
+								// reg_url_link / line item ID exists ?
+								if ( $line_item_id = $registration->reg_url_link() ) {
+									// Houston, we have a registration!
+									$att_nmbr++;
+									// grab related answer objects
+									$answers = $registration->answers();
+									//printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+									$attendee_data = array();
+									// do we need to copy basic info from primary attendee ?
+									$copy_primary = isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
+									unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
+									if ( isset( $valid_data[ $line_item_id ] )) {
+										// now loop through our array of valid post data && process attendee reg forms
+										foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
 											
+											//echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+											
+											// check for critical inputs
+											if ( empty( $input_value )) {
+												
+												switch( $form_input ) {
+													case 'fname' :
+														EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+													break;
+													case 'lname' :
+														EE_Error::add_error( __( 'Last Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+													break;
+													case 'email' :
+														EE_Error::add_error( __( 'Email Address is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+													break;
+												}
+												
+											} elseif ( $form_input == 'email' ) {
+												// clean the email address
+												$valid_email = sanitize_email( $input_value );
+												// check if it matches
+												if ( $input_value != $valid_email ) {
+													// whoops!!!
+													EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+												}
+											}
+										
+											// store a bit of data about the primary attendee
+											if ( $att_nmbr == 1 && $line_item_id == $primary_attendee['line_item_id'] && ! empty( $input_value )) {
+												$primary_attendee[ $form_input ] = $input_value;
+											} else if ( $copy_primary ) {
+												$input_value = isset( $primary_attendee[ $form_input ] ) ? $primary_attendee[ $form_input ] : $input_value;
+											}
+											
+											// $answer_cache_id is the key used to find the EE_Answer we want
+											$answer_cache_id = $form_input . '-' . $line_item_id;
+											$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
+										
+											$attendee_property = FALSE;
+											//rename a couple of form_inputs
 											switch( $form_input ) {
-												case 'fname' :
-													EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+												case 'state' :
+													$form_input = 'STA_ID';
+													$attendee_property = TRUE;
 												break;
-												case 'lname' :
-													EE_Error::add_error( __( 'Last Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+												case 'country' :
+													$form_input = 'CNT_ISO';
+													$attendee_property = TRUE;
 												break;
-												case 'email' :
-													EE_Error::add_error( __( 'Email Address is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-												break;
+												default :
+													$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
+													$form_input = 'ATT_' . $form_input;
 											}
-											
-										} elseif ( $form_input == 'email' ) {
-											// clean the email address
-											$valid_email = sanitize_email( $input_value );
-											// check if it matches
-											if ( $input_value != $valid_email ) {
-												// whoops!!!
-												EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+						
+											// if this form input has a corresponding attendee property
+											if ( $attendee_property ) {
+												$attendee_data[ $form_input ] = $input_value;
+												if (  $answer_is_obj ) {
+													// and delete the corresponding answer since we won't be storing this data in that object
+													$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
+												}
+											} elseif (  $answer_is_obj ) {
+												// save this data to the attendee object
+												$answers[ $answer_cache_id ]->set_value( $input_value );
+											} else {
+												EE_Error::add_error( __( 'Unable to save registration form data.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 											}
+
 										}
-									
-										// store a bit of data about the primary attendee
-										if ( $att_nmbr == 1 && $line_item_id == $primary_attendee['line_item_id'] && ! empty( $input_value )) {
-											$primary_attendee[ $form_input ] = $input_value;
-										} else if ( $copy_primary ) {
-											$input_value = isset( $primary_attendee[ $form_input ] ) ? $primary_attendee[ $form_input ] : $input_value;
+									} else {
+										EE_Error::add_error( __( 'No form data or invalid data was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+									}
+
+									// this registration does not require additional attendee information ?
+									if ( $copy_primary && $att_nmbr > 1 ) {
+										// add relation to new attendee
+										$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
+	//									echo '$copy_primary attendee <br/>';
+									} else {									
+										// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
+										$existing_attendee = $this->EE->LIB->EEM_Attendee->find_existing_attendee( array(
+											'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
+											'ATT_lname' => isset( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : '',
+											'ATT_email' => isset( $attendee_data['ATT_email'] ) ? $attendee_data['ATT_email'] : ''
+										));
+										// did we find an already existing record for this attendee ?
+										if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {		
+											// add relation to existing attendee
+											$registration->_add_relation_to( $existing_attendee, 'Attendee' );
+	//										echo '$existing_attendee <br/>';
+										} else {
+											// add relation to new attendee
+											$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );
+	//										echo 'new attendee <br/>';
 										}
 										
-										// $answer_cache_id is the key used to find the EE_Answer we want
-										$answer_cache_id = $form_input . '-' . $line_item_id;
-										$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
-									
-										$attendee_property = FALSE;
-										//rename a couple of form_inputs
-										switch( $form_input ) {
-											case 'state' :
-												$form_input = 'STA_ID';
-												$attendee_property = TRUE;
-											break;
-											case 'country' :
-												$form_input = 'CNT_ISO';
-												$attendee_property = TRUE;
-											break;
-											default :
-												$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
-												$form_input = 'ATT_' . $form_input;
-										}
-					
-										// if this form input has a corresponding attendee property
-										if ( $attendee_property ) {
-											$attendee_data[ $form_input ] = $input_value;
-											if (  $answer_is_obj ) {
-												// and delete the corresponding answer since we won't be storing this data in that object
-												$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
-											}
-										} elseif (  $answer_is_obj ) {
-											// save this data to the attendee object
-											$answers[ $answer_cache_id ]->set_value( $input_value );
-										} else {
-											EE_Error::add_error( __( 'Unable to save registration form data.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-										}
-
+										// who's the man ?
+										if ( $att_nmbr == 1 ) {
+	//										echo '$primary_attendee_obj<br/>';
+											$primary_attendee_obj = $registration->get_first_related( 'Attendee' );
+										}									
 									}
+
+
 								} else {
-									EE_Error::add_error( __( 'No form data or invalid data was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+									EE_Error::add_error( __( 'An invalid or missing line item ID was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+									// remove malformed data
+									unset( $valid_data[ $line_item_id ] );
 								}
 
-								// this registration does not require additional attendee information ?
-								if ( $copy_primary && $att_nmbr > 1 ) {
-									// add relation to new attendee
-									$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
-//									echo '$copy_primary attendee <br/>';
-								} else {									
-									// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
-									$existing_attendee = $this->EE->LIB->EEM_Attendee->find_existing_attendee( array(
-										'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
-										'ATT_lname' => isset( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : '',
-										'ATT_email' => isset( $attendee_data['ATT_email'] ) ? $attendee_data['ATT_email'] : ''
-									));
-									// did we find an already existing record for this attendee ?
-									if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {		
-										// add relation to existing attendee
-										$registration->_add_relation_to( $existing_attendee, 'Attendee' );
-//										echo '$existing_attendee <br/>';
-									} else {
-										// add relation to new attendee
-										$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );
-//										echo 'new attendee <br/>';
-									}
-									
-									// who's the man ?
-									if ( $att_nmbr == 1 ) {
-//										echo '$primary_attendee_obj<br/>';
-										$primary_attendee_obj = $registration->get_first_related( 'Attendee' );
-									}									
-								}
-
-
-							} else {
-								EE_Error::add_error( __( 'An invalid or missing line item ID was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-								// remove malformed data
-								unset( $valid_data[ $line_item_id ] );
 							}
+	//						$registration->attendee()->dropEE();						
+	//						printr( $registration->attendee(), '
+	//$registration->attendee()
+	//' . __FILE__ . '<br />line no: ' . __LINE__ . '
+	//', 'auto' );
+	//						echo '
+	//attendee()->fname: ' . $registration->attendee()->fname() . '
+	//						
+	//';
+	//						$registration->dropEE();
+	//						$registration->_remove_relation_to( $registration->event(), 'Event' );
+	//						$registration->_remove_relation_to( $registration->ticket(), 'Ticket' );
+	//						printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 						}
-//						$registration->attendee()->dropEE();						
-//						printr( $registration->attendee(), '
-//$registration->attendee()
-//' . __FILE__ . '<br />line no: ' . __LINE__ . '
-//', 'auto' );
-//						echo '
-//attendee()->fname: ' . $registration->attendee()->fname() . '
-//						
-//';
-//						$registration->dropEE();
-//						$registration->_remove_relation_to( $registration->event(), 'Event' );
-//						$registration->_remove_relation_to( $registration->ticket(), 'Ticket' );
-//						printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
+	//					$this->EE->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee, 'transaction' => $this->_transaction ));
+	//					printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	//					echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+	//					$this->EE->SSN->update();
+						
+					} else {
+						EE_Error::add_error( __( 'Your form data could not be applied to any valid registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 					}
-
-//					$this->EE->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee, 'transaction' => $this->_transaction ));
-//					printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//					echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//					$this->EE->SSN->update();
-					
 				} else {
-					EE_Error::add_error( __( 'Your form data could not be applied to any valid registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );				
 				}
-			} else {
-					EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );				
-			}
+
+			} 
 
 			// grab any errors
 			$notices = EE_Error::get_notices( FALSE, FALSE, TRUE );
@@ -1324,32 +1332,77 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$success_msg = FALSE;
 		$error_msg = FALSE;
 
+		if ( $this->_continue_reg ) {
+			if ( $this->_transaction->total() == 0 ) {
+				
+				// FREE EVENT !!! YEAH : )
+				if ( $this->EE->SSN->set_session_data( array( 'billing_info' => 'no payment required' ))) {
+	//				echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+					$success_msg = __( 'no payment required.', 'event_espresso' );
+					EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );	
+				} 
 
-		if ( $this->_transaction->total() == 0 ) {
-			
-			// FREE EVENT !!! YEAH : )
-			if ( $this->EE->SSN->set_session_data( array( 'billing_info' => 'no payment required' ))) {
-//				echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-				$success_msg = __( 'no payment required.', 'event_espresso' );
-				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );	
-			} 
-
-		} else { 
-			
-			// PAID EVENT !!!  BOO  : (
-			$this->EE->LIB->EEM_Gateways->process_gateway_selection();
-			// update the session to ensure any changes made in the gateways are not lost
-//			$this->EE->SSN->update();			
-			
-			//grab notices
-			$notices = EE_Error::get_notices(FALSE);
-			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
-			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
-
+			} else { 			
+				// PAID EVENT !!!  BOO  : (
+				$this->EE->LIB->EEM_Gateways->process_gateway_selection();
+			}
 		}
+		
+		//grab notices
+		$notices = EE_Error::get_notices(FALSE);
+		$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
+		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
+
 
 		$this->go_to_next_step( $success_msg, $error_msg );
 
+	}
+
+
+
+
+	
+	/**
+	 * 	process_recaptcha
+	 *
+	 * 	@access public
+	 * 	@return 	void
+	 */
+	public function process_recaptcha_response() {
+		
+		$response_data = array(
+			'success' => TRUE,
+			'error' => FALSE
+		);
+		
+		// check recaptcha
+		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
+			if ( ! function_exists( 'recaptcha_check_answer' )) {
+				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
+			}
+			$response = recaptcha_check_answer(
+					$this->EE->CFG->registration->recaptcha_privatekey, 
+					$_SERVER["REMOTE_ADDR"],
+					$this->EE->REQ->is_set( 'recaptcha_challenge_field' ) ? $this->EE->REQ->get( 'recaptcha_challenge_field' ) : '',
+					$this->EE->REQ->is_set( 'recaptcha_response_field' ) ? $this->EE->REQ->get( 'recaptcha_response_field' ) : ''
+			);
+			// ohhh soo sorry... it appears you can't read gibberish chicken scratches !!!
+			if ( ! $response->is_valid ) {
+				$response_data['success'] = FALSE;
+				$response_data['recaptcha_reload'] = TRUE;
+//				$response_data['error'] = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
+				$response_data['error'] = sprintf( __('Sorry, but you did not enter the correct anti-spam phrase.%sPlease try again with the new phrase that has been generated for you.', 'event_espresso'), '<br/>' );
+			}
+		}
+		if ( $this->EE->REQ->ajax ) {
+			echo json_encode( $response_data );
+			die();
+		} elseif ( $response_data['error'] ) {
+			EE_Error::add_error( $response_data['error'], __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		} else {
+			return TRUE;
+		}
 	}
 
 
@@ -1368,52 +1421,44 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
-		$continue_reg = TRUE;
 
-		// check recaptcha
-		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
-			if ( ! function_exists( 'recaptcha_check_answer' )) {
-				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
-			}
-			$response = recaptcha_check_answer(
-					$this->EE->CFG->registration->recaptcha_privatekey, 
-					$_SERVER["REMOTE_ADDR"],
-					$this->EE->REQ->is_set( 'recaptcha_challenge_field' ) ? $this->EE->REQ->get( 'recaptcha_challenge_field' ) : '',
-					$this->EE->REQ->is_set( 'recaptcha_response_field' ) ? $this->EE->REQ->get( 'recaptcha_response_field' ) : ''
-			);
-			// ohhh soo sorry... it appears you can't read gibberish chicken scratches !!!
-			if ( ! $response->is_valid ) {
-				$continue_reg = FALSE;
-				$error_msg = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
-			}
-		}
-		
-		if ($continue_reg) {
+		if ( $this->_continue_reg ) {
 
 			//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 			$this->_transaction->save_new_cached_related_model_objs();
 			// and save the txn to the db
 			$this->_transaction->save();
-//			$this->_transaction->dropEE();
-//			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+	//			$this->_transaction->dropEE();
+	//			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			$this->EE->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 
 			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
 			// attempt to perform transaction via payment gateway
 			$response = $this->EE->LIB->EEM_Gateways->process_payment_start( $this->EE->CART->get_grand_total(), $this->_transaction );
 			$this->_thank_you_page_url = $response['forward_url'];
+			
 			if ( isset( $response['msg']['success'] )) {
 				$response_data = array(
 						'success' => $response['msg']['success'],
 						'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
 				);
-				echo json_encode($response_data);
-				die();
+				if ( $this->EE->REQ->ajax ) {
+					echo json_encode( $response_data );
+					die();
+				} else {
+					wp_safe_redirect( $this->_thank_you_page_url );
+					exit(); 
+				}			
+			
 			} else {
 				$error_msg = $response['msg']['error'];
 			}
-			
+		} else {
+			$notices = EE_Error::get_notices(FALSE);
+			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
+			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 		}
+			
 
 		$this->go_to_next_step( $success_msg, $error_msg );
 		
