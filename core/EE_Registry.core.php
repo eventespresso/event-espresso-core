@@ -175,7 +175,6 @@ final class EE_Registry {
 		$paths = array(
 			EE_CORE,
 			EE_CORE . 'CPTs' . DS,
-			EE_CORE . 'messages' . DS,
 		);
 		// retreive instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments );
@@ -199,6 +198,62 @@ final class EE_Registry {
 		// retreive instantiated class
 		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $load_only );
 	}
+
+
+
+
+
+
+	/**
+	 *	generic class loader
+	 * 
+	 *	@param string $path_to_file - directory path to file location, not including filename
+	 *	@param string $class_name - full class name  ie:  My_Class
+	 *	@param string $type - file type - core? class? helper? model?
+	 *	@return instantiated class object
+	 */	
+	public function load_file ( $path_to_file, $class_name, $type = 'class', $arguments = array(), $load_only = TRUE ) {
+		// set path to class file
+		$path_to_file = rtrim( $path_to_file, '/\\' ) . DS;
+		$type = trim( $type, '. ' );
+		// retreive instantiated class
+		return $this->_load( $path_to_file, '', $class_name, $type, $arguments, FALSE, TRUE, $load_only );
+	}
+
+
+
+
+
+	/**
+	 * 	loads helper classes - must be singletons
+	 * 
+	 *	@param string $class_name - simple class name ie: price
+	 *	@return instantiated class object
+	 */	
+	public function load_helper ( $class_name, $arguments = array(), $load_only = TRUE ) {
+		// retreive instantiated class
+		return $this->_load( EE_HELPERS, 'EEH_', $class_name, 'helper', $arguments, FALSE, TRUE, $load_only );
+	}
+
+
+
+
+	/**
+	 *	loads core classes - must be singletons
+	 * 
+	 * 	@access 	public
+	 *	@param string $class_name - simple class name ie: session
+	 *	@return instantiated class object
+	 */	
+	public function load_lib ( $class_name, $arguments = array() ) {
+		$paths = array(
+			EE_LIBRARIES,
+			EE_LIBRARIES . 'messages' . DS,
+		);
+		// retreive instantiated class
+		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments );
+	}
+
 
 
 
@@ -230,40 +285,6 @@ final class EE_Registry {
 		);
 		// retreive instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, '', $arguments, FALSE, TRUE, $load_only );
-	}
-
-
-
-
-
-	/**
-	 * 	loads helper classes - must be singletons
-	 * 
-	 *	@param string $class_name - simple class name ie: price
-	 *	@return instantiated class object
-	 */	
-	public function load_helper ( $class_name, $arguments = array(), $load_only = TRUE ) {
-		// retreive instantiated class
-		return $this->_load( EE_HELPERS, 'EEH_', $class_name, 'helper', $arguments, FALSE, TRUE, $load_only );
-	}
-
-
-
-
-	/**
-	 *	generic class loader
-	 * 
-	 *	@param string $path_to_file - directory path to file location, not including filename
-	 *	@param string $class_name - full class name  ie:  My_Class
-	 *	@param string $type - file type - core? class? helper? model?
-	 *	@return instantiated class object
-	 */	
-	public function load_file ( $path_to_file, $class_name, $type = 'class', $arguments = array(), $load_only = TRUE ) {
-		// set path to class file
-		$path_to_file = rtrim( $path_to_file, '/\\' ) . DS;
-		$type = trim( $type, '. ' );
-		// retreive instantiated class
-		return $this->_load( $path_to_file, '', $class_name, $type, $arguments, FALSE, TRUE, $load_only );
 	}
 
 
