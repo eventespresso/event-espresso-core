@@ -526,23 +526,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _event_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/magnifier.png',
+				'icon' => EE_PLUGIN_DIR_URL . 'images/magnifier.png',
 				'desc' => __('View Event', 'event_espresso')
 			),
 			'edit_event' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/calendar_edit.png',
+				'icon' => EE_PLUGIN_DIR_URL . 'images/calendar_edit.png',
 				'desc' => __('Edit Event Details', 'event_espresso')
 			),
 			'view_attendees' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/group.png',
+				'icon' => EE_PLUGIN_DIR_URL . 'images/group.png',
 				'desc' => __('View Registrations for Event', 'event_espresso')
 			),
 			'excel_export' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/excel_icon.png',
+				'icon' => EE_PLUGIN_DIR_URL . 'images/excel_icon.png',
 				'desc' => __('Export Event details to excel', 'event_espresso')
 			),
 			'csv_export' => array(
-				'icon' => EVENT_ESPRESSO_PLUGINFULLURL . 'images/csv_icon_sm.gif',
+				'icon' => EE_PLUGIN_DIR_URL . 'images/csv_icon_sm.gif',
 				'desc' => __('Export Event details to csv', 'event_espresso')
 			)
 		);

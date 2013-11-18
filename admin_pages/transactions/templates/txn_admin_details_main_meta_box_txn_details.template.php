@@ -1,7 +1,7 @@
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 	
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
-		<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/invoice-1-16x16.png" alt="" /><?php _e( 'Transaction Items', 'event_espresso' );?>
+		<img src="<?php echo EE_PLUGIN_DIR_URL;?>images/invoice-1-16x16.png" alt="" /><?php _e( 'Transaction Items', 'event_espresso' );?>
 	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
@@ -51,14 +51,14 @@
 
 
 	<a id="display-additional-transaction-session-info" class="display-the-hidden" rel="additional-transaction-session-info">
-		<img id="additional-info-img" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/additional_info-10x10.png" alt="" />
+		<img id="additional-info-img" src="<?php echo EE_PLUGIN_DIR_URL;?>images/additional_info-10x10.png" alt="" />
 		<?php _e( 'view additional transaction session details', 'event_espresso' );?>
 	</a>
 
 	<div id="additional-transaction-session-info-dv" class="hidden">
 
 		<a id="hide-additional-transaction-session-info" class="hide-the-displayed hidden" rel="additional-transaction-session-info">
-			<img id="close-additional-info-img" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/close_additional_info-10x10.png" alt="" />
+			<img id="close-additional-info-img" src="<?php echo EE_PLUGIN_DIR_URL;?>images/close_additional_info-10x10.png" alt="" />
 		<?php _e( 'hide additional transaction session details', 'event_espresso' );?>
 		</a>
 	<br class="clear"/>	
@@ -86,7 +86,7 @@
 	<?php if ( $grand_raw_total > 0 || $TXN_status != 'TCM' ) : ?>
 
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
-		<img id="cash-single" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/cash-single-16x16.png" alt="" /><?php _e( 'Payment Details', 'event_espresso' );?>
+		<img id="cash-single" src="<?php echo EE_PLUGIN_DIR_URL;?>images/cash-single-16x16.png" alt="" /><?php _e( 'Payment Details', 'event_espresso' );?>
 	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
@@ -116,12 +116,12 @@
 						<ul class="txn-overview-actions-ul">
 							<li>
 								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
-									<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/edit.png" alt="" width="13" height="13" />
+									<img src="<?php echo EE_PLUGIN_DIR_URL;?>images/edit.png" alt="" width="13" height="13" />
 								</a>
 							</li>
 							<li>
 								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
-									<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/trash-16x16.png" alt="" width="13" height="13" />
+									<img src="<?php echo EE_PLUGIN_DIR_URL;?>images/trash-16x16.png" alt="" width="13" height="13" />
 								</a>
 							</li>
 						</ul>
@@ -202,12 +202,12 @@
 						<ul class="txn-overview-actions-ul">
 							<li>
 								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="PAY_ID">
-									<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/edit.png" alt="" width="13" height="13" />
+									<img src="<?php echo EE_PLUGIN_DIR_URL;?>images/edit.png" alt="" width="13" height="13" />
 								</a>
 							</li>
 							<li>
 								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="PAY_ID">
-									<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/trash-16x16.png" alt="" width="13" height="13" />
+									<img src="<?php echo EE_PLUGIN_DIR_URL;?>images/trash-16x16.png" alt="" width="13" height="13" />
 								</a>
 							</li>
 						</ul>
@@ -274,17 +274,17 @@
 	<div id="txn-admin-apply-payment-dv" class="txn-admin-payment-option auto-hide" style="display: none;">
 
 		<h2 id="admin-modal-dialog-apply-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
-			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/cash-single-add-24x24.png" alt="" />
+			<img src="<?php echo EE_PLUGIN_DIR_URL;?>images/cash-single-add-24x24.png" alt="" />
 			<?php echo __( 'Apply a Payment to Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
 
 		<h2 id="admin-modal-dialog-edit-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
-			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/cash-single-edit-24x24.png" alt="" />
+			<img src="<?php echo EE_PLUGIN_DIR_URL;?>images/cash-single-edit-24x24.png" alt="" />
 			<?php echo __( 'Edit Payment #', 'event_espresso' ) . '<span></span>' . __( ' for Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
 		
 		<h2 id="admin-modal-dialog-apply-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
-			<img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL;?>images/cash-single-remove-24x24.png" alt="" />
+			<img src="<?php echo EE_PLUGIN_DIR_URL;?>images/cash-single-remove-24x24.png" alt="" />
 			<?php echo __( 'Apply a Refund to Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
 		

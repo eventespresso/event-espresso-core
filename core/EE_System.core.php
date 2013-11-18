@@ -412,7 +412,7 @@ final class EE_System {
 				// is the URL accessible ?
 				$test_url = @fopen( $jquery_validate_url, 'r' );
 				// use CDN URL or local fallback ?
-				$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.validate.min.js';
+				$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EE_PLUGIN_DIR_URL . 'scripts/jquery.validate.min.js';
 				// register jQuery Validate
 				wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);			
 			}

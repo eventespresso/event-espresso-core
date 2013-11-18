@@ -498,7 +498,7 @@ final class EE_Front_Controller {
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' )) {
 					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' );
 				} else {
-					wp_register_style( 'espresso_default', EVENT_ESPRESSO_PLUGINFULLURL . 'css/espresso_default.css' );
+					wp_register_style( 'espresso_default', EE_PLUGIN_DIR_URL . 'css/espresso_default.css' );
 				}
 				wp_enqueue_style('espresso_default');
 				
@@ -522,7 +522,7 @@ final class EE_Front_Controller {
 				}
 			}
 			// load core js
-			wp_register_script( 'espresso_core', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_register_script( 'espresso_core', EE_PLUGIN_DIR_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
 			
 			if ( ! function_exists( 'wp_head' )) {

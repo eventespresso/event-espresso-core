@@ -94,11 +94,11 @@ final class EE_Admin {
 	 */
 	private function _define_all_constants() {
 		define( 'EE_CORE_ADMIN', EE_CORE . 'admin' . DS );
-		define( 'EE_CORE_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'includes/core/admin/' );
+		define( 'EE_CORE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'includes/core/admin/' );
 		define( 'EE_CORE_ADMIN_TEMPLATE', EE_CORE_ADMIN . 'templates' . DS );
 		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
 		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
-		define( 'JQPLOT_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jqplot/' );
+		define( 'JQPLOT_URL', EE_PLUGIN_DIR_URL . 'scripts/jqplot/' );
 	}
 
 
@@ -457,17 +457,17 @@ final class EE_Admin {
 			// is the URL accessible ?
 			$test_url = @fopen( $jquery_validate_url, 'r' );
 			// use CDN URL or local fallback ?
-			$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.validate.min.js';
+			$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EE_PLUGIN_DIR_URL . 'scripts/jquery.validate.min.js';
 			// register jQuery Validate
 			wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);			
 		}
 
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
-			$joyride_js = EVENT_ESPRESSO_PLUGINFULLURL . 'tpc/joyride/jquery.joyride-2.1.js';
-			$joyride_cookie_js = EVENT_ESPRESSO_PLUGINFULLURL . 'tpc/joyride/jquery.cookie.js';
-			$joyride_modenizr_js = EVENT_ESPRESSO_PLUGINFULLURL . 'tpc/joyride/modernizr.mq.js';
-			$joyride_css = EVENT_ESPRESSO_PLUGINFULLURL . 'tpc/joyride/joyride-2.1.css';
+			$joyride_js = EE_PLUGIN_DIR_URL . 'tpc/joyride/jquery.joyride-2.1.js';
+			$joyride_cookie_js = EE_PLUGIN_DIR_URL . 'tpc/joyride/jquery.cookie.js';
+			$joyride_modenizr_js = EE_PLUGIN_DIR_URL . 'tpc/joyride/modernizr.mq.js';
+			$joyride_css = EE_PLUGIN_DIR_URL . 'tpc/joyride/joyride-2.1.css';
 
 			//joyride style
 			wp_register_style('joyride-css', $joyride_css, array(), '2.1');
@@ -557,7 +557,7 @@ final class EE_Admin {
 		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab;
 		$icon_style = empty( $help_text ) ? ' help_img' : '';
 		$help_text = ! empty( $help_text ) ? $help_text : 'click for help';
-	//	$help_icon_img = $custom_image ? $custom_image : '<img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/subtle_help.png" width="16" height="16" alt="help" />';
+	//	$help_icon_img = $custom_image ? $custom_image : '<img src="' . EE_PLUGIN_DIR_URL . 'images/subtle_help.png" width="16" height="16" alt="help" />';
 		
 		echo '
 		<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon_style . '" title="click to open the \'Help\' tab for more information about this feature" > ' . $help_text . ' </a>';

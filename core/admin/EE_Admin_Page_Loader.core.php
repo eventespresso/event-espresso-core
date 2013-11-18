@@ -129,7 +129,7 @@ class EE_Admin_Page_Loader {
 	 */
 	private function _define_caffeinated_constants() {
 		define( 'EE_CORE_CAF_ADMIN', EE_PLUGIN_DIR_PATH . 'caffeinated/admin/');
-		define( 'EE_CORE_CAF_ADMIN_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'caffeinated/admin/');
+		define( 'EE_CORE_CAF_ADMIN_URL', EE_PLUGIN_DIR_URL . 'caffeinated/admin/');
 		define( 'EE_CORE_CAF_ADMIN_NEW', EE_CORE_CAF_ADMIN . 'new/');
 		define( 'EE_CORE_CAF_ADMIN_EXTEND', EE_CORE_CAF_ADMIN . 'extend/');
 		define( 'EE_CORE_CAF_ADMIN_EXTEND_URL', EE_CORE_CAF_ADMIN_URL . 'extend/');
@@ -329,7 +329,7 @@ class EE_Admin_Page_Loader {
 			//if we've got $add_main_menu || $temp_ref then we need to add_menu_page on current item
 			if ( isset($temp_ref) || $add_main_menu ) {
 				$title = __('Event Espresso', 'event_espresso');
-					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters('FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), $parent_slug, array($installed_page, 'initialize_admin_page'), EVENT_ESPRESSO_PLUGINFULLURL . 'images/events_icon_16.png');
+					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters('FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), $parent_slug, array($installed_page, 'initialize_admin_page'), EE_PLUGIN_DIR_URL . 'images/events_icon_16.png');
 				
 				//make sure we add initial header if present
 				if ( isset($temp_ref) ) {

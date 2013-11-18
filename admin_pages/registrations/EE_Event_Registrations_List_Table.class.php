@@ -186,7 +186,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->attendee_ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>';
-		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
+		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_PLUGIN_DIR_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
@@ -275,7 +275,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( $item->count() == 1 ) {
 			
 			if ( $item->transaction()->paid() >= $item->transaction()->total() ) {
-				return '<span class="reg-pad-rght"><img class="" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
+				return '<span class="reg-pad-rght"><img class="" src="' . EE_PLUGIN_DIR_URL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
 				return '
@@ -310,7 +310,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_actions( EE_Registration $item ) {
 		$view_link_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID()));
 
-		$view_lnk = '<li><a href="' . $view_link_url . '" title="' . __('View Attendee Check-in Records', 'event_espresso' ) . '"><img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EVENT_ESPRESSO_PLUGINFULLURL .'/images/magnifier.png"></a></li>';
+		$view_lnk = '<li><a href="' . $view_link_url . '" title="' . __('View Attendee Check-in Records', 'event_espresso' ) . '"><img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EE_PLUGIN_DIR_URL .'/images/magnifier.png"></a></li>';
 
 		return '<ul class="reg-overview-actions-ul">' . $view_lnk . '</ul>';
 	}

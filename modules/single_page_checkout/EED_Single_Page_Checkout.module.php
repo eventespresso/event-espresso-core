@@ -711,7 +711,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 //	d( $event_queue );
 		$template_args['event_queue'] = $event_queue;
-		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
+		$template_args['images_dir_url'] = EE_PLUGIN_DIR_URL . 'images/';
 		$template_args['reg_url_link'] = $this->_reg_url_link;
 
 		$template_args['return_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
@@ -986,7 +986,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 		$template_args['event_queue'] = $event_queue;
-		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
+		$template_args['images_dir_url'] = EE_PLUGIN_DIR_URL . 'images/';
 		$template = REG_TEMPLATE_PATH . 'registration_page_registration_questions.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}

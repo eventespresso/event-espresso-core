@@ -62,7 +62,7 @@ class Invoice {
 		if (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) {
 			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/';
 		} else {
-			$template_args['base_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/lib/templates/';
+			$template_args['base_url'] = EE_PLUGIN_DIR_URL . 'gateways/invoice/lib/templates/';
 		}
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		
@@ -225,7 +225,7 @@ class Invoice {
 				$this->registration->reg_code(),
 				$this->transaction->ID(),
 				$primary_attendee->full_name(),
-				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/' : EVENT_ESPRESSO_PLUGINFULLURL . 'gateways/invoice/lib/templates/',
+				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/' : EE_PLUGIN_DIR_URL . 'gateways/invoice/lib/templates/',
 				$this->registration->invoice_url(),//home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
 				$invoice_logo_image,
 				empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2,

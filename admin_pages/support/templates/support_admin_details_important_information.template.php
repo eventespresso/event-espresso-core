@@ -56,7 +56,7 @@
 			<dt>
 <?php _e('Event Espresso Plugin URL:', 'event_espresso'); ?>
 			</dt>
-			<dd><?php echo EVENT_ESPRESSO_PLUGINFULLURL ?></dd>
+			<dd><?php echo EE_PLUGIN_DIR_URL ?></dd>
 			<dt>
 <?php _e('Event Espresso Plugin Path:', 'event_espresso'); ?>
 			</dt>

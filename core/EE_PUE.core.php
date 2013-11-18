@@ -175,8 +175,8 @@ class EE_PUE {
 	 * @return void
 	 */
 	function espresso_data_collection_enqueue_scripts() {
-		wp_register_script( 'ee-data-optin-js', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ee-data-optin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_style( 'ee-data-optin-css', EVENT_ESPRESSO_PLUGINFULLURL . 'css/ee-data-optin.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_register_script( 'ee-data-optin-js', EE_PLUGIN_DIR_URL . 'scripts/ee-data-optin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_style( 'ee-data-optin-css', EE_PLUGIN_DIR_URL . 'css/ee-data-optin.css', array(), EVENT_ESPRESSO_VERSION );
 
 		wp_enqueue_script('ee-data-optin-js');
 		wp_enqueue_style('ee-data-optin-css');
