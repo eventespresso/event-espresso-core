@@ -60,8 +60,8 @@ define( 'EE_ADMIN_PAGES', EVENT_ESPRESSO_INCLUDES_DIR . 'admin_pages' . DS );
 define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
 define( 'EE_TEMPLATES', EE_PLUGIN_DIR_PATH . 'templates' . DS );
 // core system paths
-define( 'EE_CLASSES', EVENT_ESPRESSO_INCLUDES_DIR . 'classes' . DS );
-define( 'EE_MODELS', EVENT_ESPRESSO_INCLUDES_DIR . 'models' . DS );
+define( 'EE_CLASSES', EVENT_ESPRESSO_INCLUDES_DIR . 'db_classes' . DS );
+define( 'EE_MODELS', EVENT_ESPRESSO_INCLUDES_DIR . 'db_models' . DS );
 define( 'EE_HELPERS', EE_PLUGIN_DIR_PATH . 'helpers' . DS );
 define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
 define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
