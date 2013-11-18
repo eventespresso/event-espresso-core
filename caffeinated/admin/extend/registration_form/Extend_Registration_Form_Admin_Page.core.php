@@ -599,7 +599,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$additional_hidden_fields=array('QSG_ID'=>array('type'=>'hidden','value'=>$ID));
 			$this->_set_add_edit_form_tags('update_question_group', $additional_hidden_fields);
 		}else{
-			$questionGroup = EE_Question_Group::new_instance();
+			$questionGroup = EEM_Question_Group::instance()->create_default_object();
 			$questionGroup->set_order_to_latest();
 			$this->_set_add_edit_form_tags('insert_question_group');
 		}
@@ -655,9 +655,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
 				$question_group->add_question($question_ID);
 			}else{
-				//not found, remove it (but only if not a system question)
-				if ( ! $question->is_system_question() )
-					$question_group->remove_question($question_ID);
+				//not found, remove it (but only if not a system question for the personal group)
+				if ( $question->is_system_question() && $question_group->get('QSG_system') === 1  )
+					continue;
+				$question_group->remove_question($question_ID);
 			}
 		}
 		//save new related questions

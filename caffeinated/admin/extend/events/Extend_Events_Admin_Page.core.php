@@ -42,10 +42,61 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
 
+
+		$new_page_routes = array(
+			'ticket_list_table' => '_tickets_overview_list_table',
+			'trash_ticket' => array(
+				'func' => '_trash_or_restore_ticket',
+				'noheader' => TRUE,
+				'args' => array( 'trash' => TRUE )
+				),
+			'trash_tickets' => array(
+				'func' => '_trash_or_restore_ticket',
+				'noheader' => TRUE,
+				'args' => array( 'trash' => TRUE )
+				),
+			'restore_ticket' => array(
+				'func' => '_trash_or_restore_ticket',
+				'noheader' => TRUE
+				),
+			'restore_tickets' => array(
+				'func' => '_trash_or_restore_ticket',
+				'noheader' => TRUE
+				),
+			'delete_ticket' => array(
+				'func' => '_delete_ticket',
+				'noheader' => TRUE
+				),
+			'delete_tickets' => array(
+				'func' => '_delete_ticket',
+				'noheader' => TRUE
+				),
+			);
+
+		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
+
+
 		//partial route/config override
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
 		$this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+
+		//add tickets tab but only if there are more than one default ticket!
+		$tkt_count = EEM_Ticket::instance()->count_deleted_and_undeleted(array( array('TKT_is_default' => 1 ) ), 'TKT_ID', TRUE );
+		if ( $tkt_count > 1 ) {
+			$new_page_config = array(
+				'ticket_list_table' => array(
+					'nav' => array(
+						'label' => __('Default Tickets', 'event_espresso'),
+						'order' => 60
+						),
+					'list_table' => 'Tickets_List_Table',
+					'require_nonce' => FALSE
+					)
+				);
+
+			$this->_page_config = array_merge( $this->_page_config, $new_page_config );
+		}
 
 		//add filters and actions
 		//modifying _views
@@ -63,6 +114,37 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//event settings
 		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
 
+	}
+
+
+
+	protected function _add_screen_options_ticket_list_table() {
+		$this->_per_page_screen_option();
+	}
+
+
+
+
+	public function _set_list_table_views_ticket_list_table() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('All', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'trash_tickets' => __('Move to Trash', 'event_espresso')
+					)
+				),
+			'trashed' => array(
+				'slug' => 'trashed',
+				'label' => __('Trash', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_tickets' => __('Restore from Trash' , 'event_espresso'),
+					'delete_tickets' => __('Delete Permanently', 'event_espresso')
+					)
+				)
+			);
 	}
 
 
@@ -183,7 +265,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
-		$template_args['allow_overflow'] = EEH_Form_Fields::select_input('allow_overflow', $yes_no_values, $this->_cpt_model_obj->allow_overflow() );
 		$template_args['require_pre_approval'] = EEH_Form_Fields::select_input('require_pre_approval', $yes_no_values, $this->_cpt_model_obj->require_pre_approval() );
 		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
@@ -546,6 +627,181 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
 
 		return $events;
+	}
+
+
+
+
+	/** DEFAULT TICKETS STUFF **/
+
+	public function _tickets_overview_list_table() {
+		$this->_search_btn_label = __('Tickets', 'event_espresso');
+		$this->display_admin_list_table_page_with_no_sidebar();
+	}
+
+
+
+
+	public function get_default_tickets( $per_page = 10, $count = FALSE, $trashed = FALSE ) {
+
+		$orderby= empty( $this->_req_data['orderby'] ) ? 'TKT_name' : $this->_req_data['orderby'];
+		$order = empty( $this->_req_data['order'] ) ? 'ASC' : $order;
+
+		switch ( $orderby ) {
+			case 'TKT_name' :
+				$orderby = array( 'TKT_name' => $order );
+				break;
+
+			case 'TKT_price' :
+				$orderby = array( 'TKT_price' => $order );
+				break;
+
+			case 'TKT_uses' :
+				$orderby = array( 'TKT_uses' => $order );
+				break;
+
+			case 'TKT_min' :
+				$orderby = array( 'TKT_min' => $order );
+				break;
+
+			case 'TKT_max' :
+				$orderby = array( 'TKT_max' => $order );
+				break;
+
+			case 'TKT_qty' :
+				$orderby = array( 'TKT_qty' => $order );
+				break;
+		}
+
+		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
+		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
+
+		$_where = array(
+			'TKT_is_default' => 1,
+			'TKT_deleted' => $trashed
+			);
+
+		$offset = ($current_page-1)*$per_page;
+		$limit = array( $offset, $per_page );
+
+		if ( isset( $this->_req_data['s'] ) ) {
+			$sstr = '%' . $this->_req_data['s'] . '%';
+			$_where['OR'] = array(
+				'TKT_name' => array('LIKE',$sstr ),
+				'TKT_description' => array('LIKE',$sstr )
+				);
+		}
+
+		$query_params = array(
+			$_where,
+			'order_by'=>$orderby,
+			'limit'=>$limit,
+			'group_by'=>'TKT_ID'
+			);
+
+		if($count){
+			return EEM_Ticket::instance()->count_deleted_and_undeleted(array($_where));
+		}else{
+			return EEM_Ticket::instance()->get_all_deleted_and_undeleted($query_params);
+		}
+
+	}
+
+
+
+
+
+	protected function _trash_or_restore_ticket(  $trash = FALSE ) {
+		$success = 1;
+
+		$TKT = EEM_Ticket::instance();
+
+		//checkboxes?
+		if ( !empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] ) ) {
+			//if array has more than one element then success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+
+			//cycle thru the boxes
+			while ( list( $TKT_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {
+				if ( $trash ) {
+					if ( ! $TKT->delete_by_ID( $TKT_ID ) )
+						$success = 0;
+				} else {
+					if ( ! $TKT->restore_by_ID( $TKT_ID ) )
+						$success = 0;
+				}
+			}
+		} else {
+			//grab single id and trash
+			$TKT_ID = absint( $this->_req_data['TKT_ID'] );
+
+			if ( $trash ) {
+				if ( ! $TKT->delete_by_ID( $TKT_ID ) )
+					$success = 0;
+			} else {
+				if ( ! $TKT->restore_by_ID( $TKT_ID ) )
+					$success = 0;
+			}
+		}
+
+		$action_desc = $trash ? 'moved to the trash' : 'restored';
+		$query_args = array(
+			'action' => 'ticket_list_table',
+			'status' => $trash ? '' : 'trashed'
+			);
+		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args ); 
+	}
+
+
+
+	
+
+	protected function _delete_ticket() {
+		$success = 1;
+
+		$TKT = EEM_Ticket::instance();
+
+		//checkboxes?
+		if ( !empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] ) ) {
+			//if array has more than one element then success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+
+			//cycle thru the boxes
+			while ( list( $TKT_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {
+				//delete 
+				if ( ! $this->_delete_the_ticket( $TKT_ID ) ) {
+					$success = 0;
+				}
+			}
+		} else {
+			//grab single id and trash
+			$TKT_ID = absint( $this->_req_data['TKT_ID'] );
+			if ( ! $this->_delete_the_ticket( $TKT_ID ) ) {
+					$success = 0;
+				}
+		}
+
+		$action_desc = 'deleted';
+		$query_args = array(
+			'action' => 'ticket_list_table',
+			'status' => 'trashed'
+			);
+
+		//failsafe.  If the default ticket count === 1 then we need to redirect to event overview.
+		if ( EEM_Ticket::instance()->count_deleted_and_undeleted( array( array( 'TKT_is_default' => 1 ) ), 'TKT_ID', TRUE ) )
+			$query_args = array();
+		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args ); 
+	}
+
+
+
+
+	protected function _delete_the_ticket( $TKT_ID ) {
+		$tkt = EEM_Ticket::instance()->get_one_by_ID( $TKT_ID );
+
+		//delete all related prices first
+		$tkt->delete_related_permanently('Price');
+		return $tkt->delete_permanently();
 	}
 
 

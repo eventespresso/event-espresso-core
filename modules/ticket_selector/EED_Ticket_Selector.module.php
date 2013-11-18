@@ -12,6 +12,14 @@
  * @ version		4.0
  *
  * ------------------------------------------------------------------------
+ */
+function espresso_ticket_selector( $event = NULL ) {
+	if (  ! apply_filters( 'FHEE_disable_espresso_ticket_selector', FALSE )) {
+		echo EED_Ticket_Selector::display_ticket_selector( $event );
+	}
+}
+ /**
+ * ------------------------------------------------------------------------
  *
  * Ticket Selector  class
  *
@@ -33,15 +41,6 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-	/**
-	* whether the registration is being added by an admin
-	*
-	* @access protected
-	* @var boolean
-	*/
-	protected $_added_by_admin = NULL;
-
-
 
 
 
@@ -57,7 +56,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
-		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
+		add_action( 'AHEE_after_ticket_selector', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
 	}
@@ -106,10 +105,9 @@ class EED_Ticket_Selector extends  EED_Module {
 	*
 	*	@access public
 	* 	@param	object 		$event  
-	* 	@param	boolean 		$added_by_admin  whether the registration is being added by an admin
 	* 	@return 	string	
 	*/
-	public static function display_ticket_selector( $event = NULL, $added_by_admin = FALSE ) {
+	public static function display_ticket_selector( $event = NULL ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');	
 
 //		d( $event );
@@ -152,12 +150,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
 		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
-		$content = EEH_Template::display_template($templates['ticket_selector'], $template_args, true);
+		return EEH_Template::display_template($templates['ticket_selector'], $template_args, true);
 
-		if ( $added_by_admin )
-			return $content;
-
-		echo $content;
 	}
 
 

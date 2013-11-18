@@ -1276,5 +1276,32 @@ class EE_Gateway_Config extends EE_Config_Base{
 }
 
 
+
+
+/**
+ * stores Events_Archive settings
+ */
+class EE_Events_Archive_Config extends EE_Config_Base{
+
+	public $display_description;
+	public $display_addresss;
+	public $display_venue_details;
+	public $display_expired_events;
+	public $default_type;
+	public $event_list_grid_size;
+	public $templates;
+	
+	public function __construct(){
+		$this->display_description = 1;
+		$this->display_address = TRUE;
+		$this->display_venue_details = TRUE;
+		$this->display_expired_events = FALSE;
+		$this->default_type = 'grid';
+		$this->event_list_grid_size = 'medium';
+		$this->templates = array( 'full'  => EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php' );
+	}
+}
+
+
 // End of file EE_Config.core.php
 // Location: /core/EE_Config.core.php

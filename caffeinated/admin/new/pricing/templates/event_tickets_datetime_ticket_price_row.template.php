@@ -24,7 +24,6 @@
 	</td>
 	<td>
 		<!-- <span class="gear-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"></span> -->
-		<span class="hidden gear-icon" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"></span>
 		<span class="trash-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"<?php echo $show_trash_icon; ?>></span>
 		<button data-ticket-row="<?php echo $tkt_row; ?>" data-price-row="<?php echo $PRC_order; ?>" data-context="price" class="ee-create-button"<?php echo $show_create_button; ?>><strong>+</strong></button>
 	</td>
