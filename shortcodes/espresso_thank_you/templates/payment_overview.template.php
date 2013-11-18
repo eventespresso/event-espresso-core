@@ -1,6 +1,7 @@
 <?php
 EEH_Template_Validator::verify_instanceof($transaction, '$transaction', 'EE_Transaction');
 EEH_Template_Validator::verify_instanceof($primary_registrant, '$primary_registrant', 'EE_Registration');
+EEH_Template_Validator::verify_instanceof($primary_registrant->attendee(), '$primary_registrant', 'EE_Attendee');
 EEH_Template_Validator::verify_is_array_of($payments, '$payments', 'EE_Payment');
 EEH_Template_Validator::verify_is_array($event_names, '$event_names');
 EEH_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
@@ -146,7 +147,8 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 					<td>
 						<?php 
 						//printr( $primary_registrant, '$primary_registrant  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						 echo htmlentities( $primary_registrant->attendee()->get('ATT_fname') . ' ' . $primary_registrant->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' ); ?>
+						echo htmlentities( $primary_registrant->attendee()->get('ATT_fname') . ' ' . $primary_registrant->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' ); 
+						?>
 					</td>
 				</tr>
 			</tbody>
