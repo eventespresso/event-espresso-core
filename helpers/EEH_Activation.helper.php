@@ -58,7 +58,7 @@ class EEH_Activation {
 	 * of running migration scripts
 	 */
 	public static function initialize_db_content(){
-		echo"init reg content";
+//		echo"init reg content";
 		EEH_Activation::initialize_system_questions();
 //		EEH_Activation::insert_default_prices();
 //		EEH_Activation::insert_defaulinsert_default_pricest_price_types();
