@@ -2303,7 +2303,7 @@ abstract class EEM_Base extends EE_Base{
 				
 		//get the required info to instantiate the class which relates to this model.
 		$className=$this->_get_class_name();
-		$classInstance = EE_REGISTRY::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
+		$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
 
 		//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
 		$this->set_timezone( $classInstance->get_timezone() );
