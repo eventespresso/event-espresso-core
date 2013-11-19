@@ -1,53 +1,182 @@
-	
-	#espresso-event-details-wrap-dv {  clear: both; margin: 1em auto;  /*width:65%;*/ }	
-	#espresso-event-details-dv { position: relative; padding: 0; margin: 0 auto; }	
-	#event-details-h1 { z-index:10; /*margin:.5em  0 1em;*/
-		font-size: 2em; line-height:1.1em; /*font-weight: bold; color: #464549;
-		text-shadow: 1px 1px 0px #fff;*/ word-break: keep-all; white-space: wrap; 
-		-webkit-hyphens:none; -moz-hyphens:none; hyphens:none;
-	}	
-	.espresso_events {
-		position: relative; width: 95%; height: auto; padding:0; margin: 2%;
-	}
-	.ee-event-img-dv { width:100%; overflow: hidden; margin:0 0 1em; }
-	.ee-event-img { width:100%; height: 100%; }	
-	.espresso-event-wrapper-dv { position: relative; }	
-	/*.espresso-event-wrapper-dv.has-img { margin:0 1em; }	*/
+header.event-header.has-img {
+	margin-top:-120px;
+	text-shadow: 1px 1px 0 #FFFFFF;
+	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.9);
+	position: relative;
+	padding-left: 10px;
+	height: 100%;
+}
+header.event-header.has-excerpt {
+	margin-top:-160px;
+}
+header.event-header.has-img h1 {
+	margin: 10px 0;
+	padding-top: 20px;
+}
+header.event-header.has-img p {
+	margin:0;
+	padding-bottom: 20px;
+}
+.about-event-h3 {
+	background: url(images/details-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
+	text-shadow: 1px 1px 0 #FFFFFF;
+	padding: 10px 0 10px 50px;
+}
+.tkt-slctr-tbl .tckt-slctr-tbl-td-price, .tkt-slctr-tbl .tckt-slctr-tbl-td-status {
+	padding: 1em !important;
+}
+.ticket-selector-h3 {
+	background: url(images/ticket-options-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
+	text-shadow: 1px 1px 0 #FFFFFF;
+	padding: 10px 0 10px 50px;
+}
+.event-datetimes-h3 {
+	background: url(images/location-pin-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
+	text-shadow: 1px 1px 0 #FFFFFF;
+	padding: 10px 0 10px 50px;
+}
+table {
+	border: 1px solid #EDEDED;
+}
+th, td {
+	border: 1px solid #EDEDED;
+	padding-left: 5px;
+}
+#espresso-event-details-wrap-dv {
+	clear: both;
+	margin: 1em auto;  /*width:65%;*/
+}
+#espresso-event-details-dv {
+	position: relative;
+	padding: 0;
+	margin: 0 auto;
+}
+#event-details-h1 {
+	z-index:10; /*margin:.5em  0 1em;*/
+	font-size: 2em;
+	line-height:1.1em; /*font-weight: bold; color: #464549;
+		text-shadow: 1px 1px 0px #fff;*/
+	word-break: keep-all;
+	white-space: wrap;
+	-webkit-hyphens:none;
+	-moz-hyphens:none;
+	hyphens:none;
+}
+.espresso_events {
+	position: relative;
+	width: 95%;
+	height: auto;
+	padding:0;
+	margin: 2%;
+}
+.ee-event-img-dv {
+	width:100%;
+	overflow: hidden;
+	margin:0 0 1em;
+}
+.ee-event-img {
+	width:100%;
+	height: 100%;
+}
+.espresso-event-wrapper-dv {
+	position: relative;
+}
+/*.espresso-event-wrapper-dv.has-img { margin:0 1em; }	*/
 /*	.espresso-event-wrapper-dv .event-header { padding:1.1em 1.5em 1em; text-shadow: 1px 1px 0px #fff; }	
 	.espresso-event-wrapper-dv  .event-title { font-size:1.5em; margin: 0; line-height: 1em; }	
 	.espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; }*/
-	.espresso-event-wrapper-dv  .event-content { padding: 0 0 .25em; }	
-	.espresso-event-wrapper-dv  .event-content p { /*margin: 0 0 1em; font-size: 1.1em; color: #666; line-height: 1.5em;*/	}	
-	.espresso-event-wrapper-dv  .event-meta { text-align: right; margin: 0 0 1em; }	
+	.espresso-event-wrapper-dv .event-content {
+	padding: 0 0 .25em;
+}
+.espresso-event-wrapper-dv .event-content p { /*margin: 0 0 1em; font-size: 1.1em; color: #666; line-height: 1.5em;*/
+}
+.espresso-event-wrapper-dv .event-meta {
+	text-align: right;
+	margin: 0 0 1em;
+}
+.espresso-event-details .event-datetimes {
+	padding: 0 0 1em;
+}
+.espresso-event-details .event-datetimes-h3 {/* margin-bottom: 0;*/
+}
+.espresso-event-details .ee-event-datetimes-ul {
+	list-style: none;
+}
+.espresso-event-details .ee-event-datetimes-li {
+}
+.espresso-event-details .ee-register-button-lnk {
+	display: inline-block;
+	float: right;
+	position: relative;
+	padding: .5em 1em;
+	margin: .5em 0 1.5em;
+	background: #7DBD29;
+	border-radius: 3px;
+	text-align: center;
+	border: 1px solid #6CBA00;
+	border-top-color: #96E430;
+	border-bottom-color: #5A861C;
+	font-weight: bold;
+	font-size:16px;
+	color:#fff;
+	text-shadow:1px 1px 0px rgba(0, 0, 0, .5);
+	text-decoration: none;
+}
+.espresso-event-details .ee-register-button-lnk:hover {
+	background: #6CBA00;
+	color:#fff;
+}
+.espresso-event-details .ee-register-button-lnk:visited {
+	color:#fff;
+}
+.espresso-event-details .ee-register-button-lnk:active {
+	top:-1px;
+}
+.espresso-event-details .edit-event-lnk {
+	margin:0 1em;
+}
+.espresso-venue-dv {
+	padding: 1em 2em;
+	margin:1em 0;
+	border:1px solid #eee;
+	background: #f8f8f8;
+}
+/*.espresso-address-dv div:first-child { margin:.5em 0 0 2em; }*/
 	
-	.espresso-event-details .event-datetimes { padding: 0 0 1em; }
-	.espresso-event-details .event-datetimes-h3  {/* margin-bottom: 0;*/ }	
-	.espresso-event-details  .ee-event-datetimes-ul { list-style: none; }
-	.espresso-event-details  .ee-event-datetimes-li {}
-	
-
-	.espresso-event-details .ee-register-button-lnk {
-		display: inline-block; float: right; position: relative; padding: .5em 1em; margin: .5em 0 1.5em;
-		background: #7DBD29; border-radius: 3px; text-align: center;
-		border: 1px solid #6CBA00; border-top-color: #96E430; border-bottom-color: #5A861C; 
-		font-weight: bold; font-size:16px; color:#fff; text-shadow:1px 1px 0px rgba(0,0,0,.5); text-decoration: none;
-	}
-	.espresso-event-details .ee-register-button-lnk:hover { background: #6CBA00; color:#fff; }
-	.espresso-event-details .ee-register-button-lnk:visited { color:#fff; }
-	.espresso-event-details .ee-register-button-lnk:active { top:-1px; }
-	.espresso-event-details .edit-event-lnk { margin:0 1em; }
-	
-	.espresso-venue-dv { padding: 1em 2em; margin:1em 0; border:1px solid #eee; background: #f8f8f8; }
-	/*.espresso-address-dv div:first-child { margin:.5em 0 0 2em; }*/
-	
-	.tiny-txt { font-size:.5em; letter-spacing:1px; }
-	.smaller-txt { font-size:.7em; letter-spacing:.6px; }
-	.small-txt { font-size:.85em; letter-spacing:.3px; }
-	.big-txt { font-size:1.2em; }
-	.bigger-txt { font-size:1.5em; letter-spacing:-1px; }
-	.huge-txt { font-size:2em; letter-spacing:-2px; }
-	
-	.highlight-bg { padding:1em 20px; background:#ffffdd; border-radius:3px; }
-	.hidden { display:none; }
-	.left { float: left; }
-	.right { float: right; }
+	.tiny-txt {
+	font-size:.5em;
+	letter-spacing:1px;
+}
+.smaller-txt {
+	font-size:.7em;
+	letter-spacing:.6px;
+}
+.small-txt {
+	font-size:.85em;
+	letter-spacing:.3px;
+}
+.big-txt {
+	font-size:1.2em;
+}
+.bigger-txt {
+	font-size:1.5em;
+	letter-spacing:-1px;
+}
+.huge-txt {
+	font-size:2em;
+	letter-spacing:-2px;
+}
+.highlight-bg {
+	padding:1em 20px;
+	background:#ffffdd;
+	border-radius:3px;
+}
+.hidden {
+	display:none;
+}
+.left {
+	float: left;
+}
+.right {
+	float: right;
+}
