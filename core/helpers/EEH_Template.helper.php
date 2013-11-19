@@ -51,7 +51,7 @@ class EEH_Template {
 			$template_args = array( $template_args );
 		}
 
-		extract( (array)$template_args);
+		extract( (array) $template_args);
 
 		if ($return_string) {
 			// becuz we want to return a string, we are going to capture the output
