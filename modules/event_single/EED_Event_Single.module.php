@@ -151,7 +151,7 @@ class EED_Event_Single  extends EED_Module {
 				if ( file_exists( get_stylesheet_directory() . 'espresso_events/single-espresso_events.css' )) {
 					wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . 'espresso_events/single-espresso_events.css', array() );
 				} else {
-					wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . 'espresso_events/single-espresso_events.css', array() );
+					wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . 'espresso_default/espresso_events/single-espresso_events.css', array() );
 				}
 				if ( file_exists( get_stylesheet_directory() . 'espresso_events/single-espresso_events.js' )) {
 					wp_register_script( 'single-espresso_events', get_stylesheet_directory_uri() . 'espresso_events/single-espresso_events.js', array('espresso_core'), '1.0', TRUE  );

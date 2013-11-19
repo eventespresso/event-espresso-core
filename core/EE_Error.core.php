@@ -799,7 +799,7 @@ class EE_Error extends Exception {
  */
 function espresso_error_enqueue_scripts() {
 	// js for error handling
-	wp_register_script( 'ee_error_js', EE_PLUGIN_DIR_URL . 'scripts/EE_Error.js', array('espresso_core'), EVENT_ESPRESSO_VERSION, FALSE );
+	wp_register_script( 'ee_error_js', EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js', array('espresso_core'), EVENT_ESPRESSO_VERSION, FALSE );
 }
 add_action( 'wp_enqueue_scripts', 'espresso_error_enqueue_scripts', 2 );
 
