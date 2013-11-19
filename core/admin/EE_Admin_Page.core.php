@@ -455,7 +455,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		//require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
+		$this->EE->load_helper('Template');
 
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
@@ -1420,12 +1420,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		
 		//register all styles
-		wp_register_style('jquery-ui-style', EE_PLUGIN_DIR_URL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
-		wp_register_style('jquery-ui-style-datepicker-css', EE_PLUGIN_DIR_URL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
+		wp_register_style('jquery-ui-style', EE_GLOBAL_ASSETS_URL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
+		wp_register_style('jquery-ui-style-datepicker-css', EE_GLOBAL_ASSETS_URL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('jquery-jq-plot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array('jquery'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('ee-admin-css', EE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 		//helpers styles
-		wp_register_style('ee-text-links', EE_PLUGIN_DIR_URL . 'helpers/assets/ee_text_list_helper.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_register_style('ee-text-links', EE_HELPERS . 'assets/ee_text_list_helper.css', array(), EVENT_ESPRESSO_VERSION );
 		//enqueue global styles
 		wp_enqueue_style('ee-admin-css');
 
@@ -1436,7 +1436,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script('ee-dialog', EE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script('ee_admin_js', EE_ADMIN_URL . 'assets/ee-admin-page.js', array('ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true );
 		//wp_register_script('jquery-ui-datepicker', EE_PLUGIN_DIR_URL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
-		wp_register_script('jquery-ui-timepicker-addon', EE_PLUGIN_DIR_URL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker', 'jquery-ui-slider'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script('jquery-ui-timepicker-addon', EE_GLOBAL_ASSETS_URL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker', 'jquery-ui-slider'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		add_filter('FHEE_load_joyride', '__return_true');
@@ -1444,12 +1444,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//script for sorting tables
 		wp_register_script('espresso_ajax_table_sorting', EE_ADMIN_URL . "assets/espresso_ajax_table_sorting.js", array('ee_admin_js', 'jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE);
 		//script for parsing uri's
-		wp_register_script( 'ee-parse-uri', EE_PLUGIN_DIR_URL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-parse-uri', EE_GLOBAL_ASSETS_URL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 		//and parsing associative serialized form elements
-		wp_register_script( 'ee-serialize-full-array', EE_PLUGIN_DIR_URL . 'scripts/jquery.serializefullarray.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-serialize-full-array', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.serializefullarray.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		//helpers scripts
-		wp_register_script('ee-text-links', EE_PLUGIN_DIR_URL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script( 'ee-moment', EE_PLUGIN_DIR_URL . 'scripts/moment.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('ee-text-links', EE_GLOBAL_ASSETS_URL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-moment', EE_GLOBAL_ASSETS_URL . 'scripts/moment.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-datepicker', EE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		//excanvas
@@ -2653,7 +2653,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url );
 
-		require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
 		$button = EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
 
 		return $button;
