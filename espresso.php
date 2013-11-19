@@ -69,9 +69,14 @@ define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
 define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
 define( 'EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS );
+define( 'EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets' . DS );
+
 // asset URL paths
-define( 'EE_IMAGES_URL', EE_PLUGIN_DIR_URL . 'images' . DS );
 define( 'EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'templates' . DS );
+define( 'EE_GLOBAL_ASSETS_URL', EE_TEMPLATES_URL . 'global_assets' . DS );
+define( 'EE_IMAGES_URL',  EE_GLOBAL_ASSETS_URL . 'images' . DS );
+define( 'EE_THIRD_PARTY_URL', EE_PLUGIN_DIR_URL . 'third_party_libs' . DS );
+
 // define upload paths
 $uploads = wp_upload_dir();
 // define the uploads directory and URL
