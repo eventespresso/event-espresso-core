@@ -1,9 +1,8 @@
 <?php
 
 function espresso_display_return_payment_template($data) {
-	global $org_options;
 	if ($data->payment_status == "Pending") {
-		if ($org_options['show_pending_payment_options']) {
+		if ( isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ) {
 			echo '<div class="event_espresso_attention"><strong class="payment_details payment_pending">' . __('Pending Payment', 'event_espresso') . "</strong><br />Would you like to choose a different payment option?</div>";
 			do_action('AHEE_display_payment_gateways');
 		}

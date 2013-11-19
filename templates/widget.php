@@ -18,7 +18,8 @@ if (!class_exists('Event_Espresso_Widget')) {
 
 			extract( $args );
 
-			global $wpdb, $org_options;
+			global $wpdb;
+			EE_Registry::instance()->load_helper( 'Formatter' );
 			/* Our variables from the widget settings. */
 
 			$title = apply_filters('widget_title', $instance['title'] );
@@ -33,8 +34,6 @@ if (!class_exists('Event_Espresso_Widget')) {
 				if ($instance['category_name'] != ''){
 					$type = 'category';
 				}
-
-					$event_page_id =$org_options['event_page_id'];
 
 					$show_expired = $instance['show_expired'] == 'false' ? " AND (e.start_date >= '".date ( 'Y-m-d' )."' OR e.event_status = 'O' OR e.registration_end >= '".date ( 'Y-m-d' )."') " : '';
 					$show_secondary = $instance['show_secondary'] == 'false' ? " AND e.event_status != 'S' " : '';
@@ -72,7 +71,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 							$category_name = $event->category_name !=''?$event->category_name:'';
 							$category_desc = $event->category_desc !=''?$event->category_desc:'';
 							$externalURL = $event->externalURL;
-							$ext_url = add_query_arg( array( 'page_id'=>$event_page_id, 'e_reg'=>'register', 'event_id'=>$event_id, 'name_of_event'=>$event_name ), home_url() );
+							$ext_url = add_query_arg( array( 'page_id'=>EE_Registry::instance()->CFG->core->reg_page_id, 'e_reg'=>'register', 'event_id'=>$event_id, 'name_of_event'=>$event_name ), home_url() );
 							$registration_url = $externalURL != '' ? $externalURL :  $ext_url;
 
 							if ( isset( $event->venue_city ) && $event->venue_city != '' )
@@ -117,7 +116,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 										?>
 							<li class="upcmng-evnt-wdgt-li-item">
 								<h6 class="upcmng-evnt-wdgt-hdr-link"><a href="<?php echo $registration_url;?>"><?php echo $event_name?></a></h6>
-								<span class="upcmng-evnt-wdgt-date"><?php echo $event_city . $event_state; ?><em><?php echo event_date_display($start_date)?></em></span>
+								<span class="upcmng-evnt-wdgt-date"><?php echo $event_city . $event_state; ?><em><?php echo EEH_Formatter::event_date_display($start_date)?></em></span>
 								<?php /* These are custom messages that can be displayed based on the event status. Just comment the one you want to use. */?>
 								<?php //echo $status_display; //Turn this on to display the overall status of the event. ?>
 								<?php //echo $status_display_ongoing; //Turn this on to display the ongoing message. ?>

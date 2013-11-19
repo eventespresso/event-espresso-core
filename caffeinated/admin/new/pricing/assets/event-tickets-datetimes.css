@@ -1,0 +1,421 @@
+.espresso-help-tab-lnk.help_img {
+    top: 0;
+}
+
+
+.event-tickets-datetimes-title {
+    display: inline-block;
+    font-size: 1.2em;
+    margin: 2em 0 0.5em;
+    padding: 0;
+}
+
+.event-datetimes-container {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+/*.event-datetime-row {
+    border-bottom: 2px solid #eee;
+    /*padding-top: 15px;
+    padding-bottom: 11px;*/
+}/**/
+
+.datetime-title {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.datetime-summary {
+    border-bottom: 1px solid #EEEEEE;
+    height: 28px;
+    margin: 1em;
+    margin-left: -10px;
+    padding-bottom: 1em;
+}
+
+
+.datetime-edit-table {
+    width: 72%;
+    float: left;
+}
+
+#add-new-event-datetime-table {
+    width: 83%;
+}
+
+
+.datetime-edit-table td:nth-child(3) {
+    width: 10%
+}
+
+@media all and (min-width: 1277px) {
+
+    .table-padding-top  {
+        position: relative;
+        top: 4px;
+    }
+
+}
+
+@media all and (min-width: 900px) {
+     .table-padding-top {
+        position: relative;
+        top: 20px;
+    }
+}
+
+@media all and (min-width: 896px) and (max-width: 899px) {
+    .table-padding-top {
+        position: relative;
+        top: 3px;
+    }
+}
+
+@media all and (max-width: 896px) {
+    .table-padding-top {
+        position: relative;
+        top: 20px;
+    }
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.ticket-archived td {
+    background-color: #e6e6e6;
+}
+
+
+
+.gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
+    display: inline-block;
+    height: 16px;
+    margin-left: 8px;
+    padding: 0;
+    vertical-align: middle;
+    width: 16px;
+}
+
+.gear-icon {
+    background: transparent url(../../../../../templates/global_assets/images/settings-16x16.png) 0 0 no-repeat;
+}
+
+.trash-icon {
+    background: transparent url(../../../../../templates/global_assets/images/trash-small-16x16.png) 0 0 no-repeat;
+}
+
+.ticket-icon {
+    background: transparent url(../../../../../templates/global_assets/images/tickets.png) 0 0 no-repeat;
+}
+
+.clone-icon {
+    background: transparent url(../../../../../templates/global_assets/images/clone-trooper-16x16.png) 0 0 no-repeat;
+}
+
+.lock-icon {
+    background: transparent url(../../../../../templates/global_assets/images/lock.png) 0 0 no-repeat;
+}
+
+.datetime-tickets-sold {
+    font-size: 1em;
+    float: right;
+}
+
+.datetime-tickets-edit h5 {
+    margin: 0;
+}
+
+.button-column {
+   padding-left: 10px;
+}
+
+
+.ee-text-inp, .ee-small-text-inp {
+    width: 100%;
+}
+
+.ee-small-text-inp {
+    min-width: 50px;
+    max-width: 100%;
+}
+
+.ee-large-text-inp {
+    width: 100%;
+}
+
+.ee-full-textarea-inp {
+    width: 100%;
+    height: 100px;
+}
+
+.edit-price-PRC_desc {
+    height: 70px;
+}
+
+
+.datetime-tickets-heading, .tickets-heading {
+    display: inline-block;
+    font-size: 1.1em;
+    margin: 2em 0 0.25em
+}
+
+.datetime-ticket {
+    display: inline-block;
+    padding: 5px;
+    margin-left: 5px;
+    background-color: #ccc;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.ticket-selected {
+    background-color: #9d7;
+}
+
+.event-tickets-container {
+    width: 100%;
+}
+
+.ticket-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.ticket-table thead {
+    border-bottom: 2px solid #eee;
+    font-weight: bold;
+}
+
+.ticket-table tbody tr td {
+    padding-top: .3em;
+    padding-bottom: .3em;
+}
+
+
+.ticket-fieldset {
+    background-color: #F8F8F8;
+    border: 1px solid #EEEEEE;
+    border-radius: 3px 3px 3px 3px;
+    padding: 1em 1.5em 2em;
+}
+
+.ticket-fieldset legend {
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 1.2em
+}
+
+.edit-ticket-TKT_name {
+    padding: 0.5em;
+    margin-bottom: 10px;
+    font-size: 1.25em;
+    width: 70%;
+}
+
+.total-price-container .currency-code {
+    margin-top: 5px;
+    display: inline-block;
+}
+
+.edit-ticket-TKT_description {
+    font-size: 1.25em;
+    padding: 0.5em;
+}
+
+.edit-ticket-TKT_start_date, .edit-ticket-TKT_end_date {
+    width: 180px;
+}
+
+.total-price-container {
+    float:right;
+    margin-top: 10px;
+    line-height: 10px;
+}
+
+.ticket-price-amount {
+    font-weight: bold;
+    font-size: 1.5em;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.basic-ticket-info, .price-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.basic-ticket-info thead, .price-table thead {
+    font-weight: normal;
+    border: none;
+}
+
+.basic-ticket-info tbody tr td, .price-table tbody tr td {
+    padding: 0;
+}
+
+.basic-ticket-info input {
+   text-align: right;
+}
+
+.basic-ticket-info tbody td:nth-child(1) input, .basic-ticket-info tbody td:nth-child(2) input {
+    width: 90%;
+    text-align: left;
+    margin: 0;
+}
+
+.basic-ticket-info tbody td:nth-child(1), .basic-ticket-info tbody td:nth-child(2) {
+    width: 28%;
+}
+
+basic-ticket-info tbody td:nth-child(3), .basic-ticket-info tbody td:nth-child(4), .basic-ticket-info tbody td:nth-child(5), .basic-ticket-info tbody td:nth-child(6) {
+    width: 11%
+}
+
+.basic-ticket-info .ee-text-inp, .basic-ticket-info .ee-small-text-inp {
+    margin: 0;
+    width: 90%;
+}
+
+
+.price-table thead tr td {
+    padding-bottom: 5px;
+    font-size: 1.1em;
+}
+
+.price-table thead tr td:first-child {
+    text-align: right;
+}
+
+.price-table td {
+    padding-left: 10px;
+}
+
+.price-table tbody td:first-child, .price-table tfoot td {
+    text-align: right;
+}
+
+.price-table tbody tr:last-child td {
+    padding-bottom: 7px;
+}
+
+.price-table tbody tr:last-child {
+    border-bottom: 2px solid #ddd;
+}
+
+.save-cancel-button-container {
+    float: right;
+    margin-top: 10px;
+}
+
+.save-cancel-button-container .button-secondary {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.save-cancel-button-container input {
+    margin-right: 10px;
+    margin-left: 6px;
+}
+
+.add-new-ticket-table {
+    float: left;
+    width: 75%;
+}
+
+.th-adjust {
+    margin-top: 20px;
+}
+
+@media all and (min-width: 960px) and (max-width: 1182px) {
+    .add-new-ticket-table, .datetime-edit-table {
+        width: 100%;
+    }
+    
+    .save-cancel-button-container {
+        margin-top: -10px;
+    }
+    
+    .th-adjust {
+        margin-top: 10px;
+    }
+}
+
+@media all and (max-width: 770px)  {
+    .add-new-ticket-table, .datetime-edit-table, #add-new-event-datetime-table {
+        width: 100%;
+    }
+    
+    .save-cancel-button-container {
+        margin-top: -10px;
+    }
+    
+    .th-adjust, #add-new-event-datetime-table {
+        margin-top: 10px;
+    }
+}
+
+.add-new-ticket-table td:first-child {
+    width: 40%;
+}
+
+.add-new-ticket-table td:nth-child(2), .add-new-ticket-table td:nth-child(3) {
+    width: 20%
+}
+
+.add-new-ticket-table td:nth-child(4), .add-new-ticket-table td:nth-child(5) {
+    width: 10%;
+}
+
+.add-datetime-ticket-container .save-cancel-button-container {
+    padding-top: 14px;
+}
+
+.add-edit {
+    padding-top: 3px;
+}
+
+.ticket-price-info-display {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+}
+
+.price-table tbody td:nth-child(4) {
+    padding: 0;
+    margin: 0;
+    text-align:right;
+}
+
+.price-table tbody td:nth-child(2) input, .price-table tbody:nth-child(3) input {
+    width: 90%
+}
+
+.price-table tbody td:nth-child(5) input {
+    width: 90%;
+    text-align: right;
+}
+
+.ticket-price-info-display.ticket-price-percentage {
+    text-align: left;
+    margin-right: 0;
+}
+
+.price-table .price-total-row td, .price-table .price-subtotal-row td {
+    padding-top: 10px;
+}
+
+.edit-price-PRC_amount {
+    text-align: right;
+    margin: 0;
+    margin-left: 4px;
+    padding-right: 5px;
+    width: 75px;
+}
+
+.ee-active-price .ee-create-button {
+    margin-left: 4px;
+}
