@@ -369,7 +369,8 @@ final class EE_Config {
 		$modules_to_register = apply_filters( 'FHEE__Front_Controller__register_modules__modules_to_register', $modules_to_register );
 		// loop through folders
 		foreach ( $modules_to_register as $module_path ) {
-			if ( $module_path != EE_MODULES . 'zzz-copy-this-module-template' ) {
+			/**TEMPORARILY EXCLUDE gateways from modules for time being**/
+			if ( $module_path != EE_MODULES . 'zzz-copy-this-module-template' && $module_path != EE_MODULES . 'gateways' ) {
 				// add to list of installed modules
 				EE_Config::register_module( $module_path );
 			}
