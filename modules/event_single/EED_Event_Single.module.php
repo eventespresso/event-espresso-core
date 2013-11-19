@@ -36,7 +36,7 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		EE_Config::register_route( 'event', 'Event_Single', 'run' );
-		EE_Config::register_view( 'event', 0, EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'single-espresso_events.php' );
+		EE_Config::register_view( 'event', 0, EE_TEMPLATES . parent::get_current_theme() . DS . 'espresso_events' . DS . 'single-espresso_events.php' );
 	}
 
 	/**
@@ -151,7 +151,7 @@ class EED_Event_Single  extends EED_Module {
 				if ( file_exists( get_stylesheet_directory() . 'espresso_events/single-espresso_events.css' )) {
 					wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . 'espresso_events/single-espresso_events.css', array() );
 				} else {
-					wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . 'espresso_events/single-espresso_events.css', array() );
+					wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . $this->theme . '/espresso_events/single-espresso_events.css', array() );
 				}
 				if ( file_exists( get_stylesheet_directory() . 'espresso_events/single-espresso_events.js' )) {
 					wp_register_script( 'single-espresso_events', get_stylesheet_directory_uri() . 'espresso_events/single-espresso_events.js', array('espresso_core'), '1.0', TRUE  );
@@ -183,13 +183,13 @@ class EED_Event_Single  extends EED_Module {
 				// check if the template file exists in the theme first
 				if ( ! $template_path = locate_template( array( 'single-espresso_events.php' ))) {
 					// otherwise get it from 
-					$template_path = EVENT_ESPRESSO_TEMPLATES . 'espresso_events' . DS . 'single-espresso_events.php';
+					$template_path = EE_TEMPLATES . $this->theme . 'espresso_events' . DS . 'single-espresso_events.php';
 				}
 			} else if ( is_archive() ) {
 				// check if the template file exists in the theme first
 				if ( ! $template_path = locate_template( array( 'archive-espresso_events.php' ))) {
 					// otherwise get it from 
-					$template_path = EVENT_ESPRESSO_TEMPLATES . 'event_list' . DS . 'archive-espresso_events.php';
+					$template_path = EE_TEMPLATES . $this->theme . 'espresso_events' . DS . 'archive-espresso_events.php';
 				}
 			} 
 		}

@@ -48,6 +48,16 @@ abstract class EED_Module extends EE_Base {
 	protected $ouput = '';
 
 	/**
+	 * 	the current active espresso tempalte theme
+	 *	@var 	string
+	 * 	@access 	protected
+	 */
+	protected $theme = '';
+
+
+
+
+	/**
 	 * 	run - initial module setup
 	 * 	this method is primarily used for activating resources in the EE_Front_Controller thru the use of filters
 	 *
@@ -56,6 +66,7 @@ abstract class EED_Module extends EE_Base {
 	 *  @return 	void
 	 */
 	public abstract function run( $WP );
+
 
 	
 	/**
@@ -67,7 +78,21 @@ abstract class EED_Module extends EE_Base {
 	*/
 	final public function __construct() {
 		$this->EE = EE_Registry::instance();
+		$this->theme = isset( $this->EE->CFG->template_settings->current_espresso_theme ) ? $this->EE->CFG->template_settings->current_espresso_theme : 'espresso_default';
 	}
+
+
+
+
+	/**
+	 * use to get the current theme if needed from static context
+	 * @return string current theme set.
+	 */
+	public static function get_current_theme() {
+		return isset( EE_Registry::instance()->CFG->template_settings->current_espresso_theme ) ? $EE_Registry::instance()->CFG->template_settings->current_espresso_theme : 'espresso_default';
+	}
+
+
 	
 }
 // End of file EED_Module.module.php

@@ -89,6 +89,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 	
 		
 		$this->_template_args['values'] = $this->_yes_no_values;
+		$default_map_settings = new stdClass();
 		$default_map_settings->use_google_maps = TRUE;
 		// for event details pages (reg page)
 		$default_map_settings->event_details_map_width = 585; 			// ee_map_width_single

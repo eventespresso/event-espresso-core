@@ -711,7 +711,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 //	d( $event_queue );
 		$template_args['event_queue'] = $event_queue;
-		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
+		$template_args['images_dir_url'] = EE_GLOBAL_ASSETS_URL . 'images/';
 		$template_args['reg_url_link'] = $this->_reg_url_link;
 
 		$template_args['return_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
@@ -805,7 +805,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( EE_Registry::instance()->CFG->registration->use_captcha && ( empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
 
 			if (!function_exists('recaptcha_get_html')) {
-				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
+				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
 			}
 
 			// the error code from reCAPTCHA, if any
@@ -986,7 +986,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 		$template_args['event_queue'] = $event_queue;
-		$template_args['images_dir_url'] = EVENT_ESPRESSO_PLUGINFULLURL . 'images/';
+		$template_args['images_dir_url'] = EE_GLOBAL_ASSETS_URL . 'images/';
 		$template = REG_TEMPLATE_PATH . 'registration_page_registration_questions.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -1380,7 +1380,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		// check recaptcha
 		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
 			if ( ! function_exists( 'recaptcha_check_answer' )) {
-				require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'tpc' . DS . 'recaptchalib.php' );
+				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
 			}
 			$response = recaptcha_check_answer(
 					$this->EE->CFG->registration->recaptcha_privatekey, 
@@ -1710,7 +1710,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		// check recaptcha
 		if ( $this->EE->CFG->registration->use_captcha && ! is_user_logged_in() ) {
 			if ( ! function_exists( 'recaptcha_check_answer' )) {
-				$this->EE->load_file( EVENT_ESPRESSO_PLUGINFULLPATH . DS . 'tpc', 'recaptchalib', '' );
+				$this->EE->load_file( EE_PLUGIN_DIR_PATH . DS . 'tpc', 'recaptchalib', '' );
 				$response = recaptcha_check_answer(
 						$this->EE->CFG->registration->recaptcha_privatekey, 
 						$_SERVER["REMOTE_ADDR"], 

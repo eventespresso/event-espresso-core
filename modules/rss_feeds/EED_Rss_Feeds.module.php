@@ -96,7 +96,7 @@ class EED_Rss_Feeds  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function the_event_feed_content( $content ) {
+	public static function the_event_feed_content( $content ) {
 		if ( is_feed() ) {
 			$this->EE->load_helper( 'Event_View' );
 			EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $EE->CFG->template_settings->EED_Events_Archive );
@@ -120,7 +120,7 @@ class EED_Rss_Feeds  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function the_venue_feed_content( $content ) {
+	public static function the_venue_feed_content( $content ) {
 		if ( is_feed() ) {
 			$this->EE->load_helper( 'Venue_View' );
 			$ID = get_the_ID();  

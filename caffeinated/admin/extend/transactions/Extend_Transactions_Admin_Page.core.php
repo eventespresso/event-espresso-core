@@ -88,7 +88,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
 		
-		$template_path = EE_CORE_ADMIN_TEMPLATE . 'admin_reports.template.php';
+		$template_path = EE_ADMIN_TEMPLATE . 'admin_reports.template.php';
 		$this->_admin_page_title = __('Transactions', 'event_espresso');
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
 		
@@ -115,7 +115,6 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 	 	
 		if( $results = $TXN->get_revenue_per_day_report( $period ) ) {	
@@ -169,7 +168,6 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 	 
 		if( $results = $TXN->get_revenue_per_event_report( $period ) ) {		

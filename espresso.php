@@ -52,50 +52,54 @@ if( ! defined( 'SP' ) ){
 }
 
 // define the plugin directory and URL
-define("EVENT_ESPRESSO_PLUGINPATH", DS . plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) . DS);
-define("EVENT_ESPRESSO_PLUGINFULLPATH", plugin_dir_path( EVENT_ESPRESSO_MAIN_FILE ));
-define("EVENT_ESPRESSO_PLUGINFULLURL", plugin_dir_url( EVENT_ESPRESSO_MAIN_FILE ));
-//  includes and templates paths
-define("EVENT_ESPRESSO_INCLUDES_DIR", EVENT_ESPRESSO_PLUGINFULLPATH . 'includes' . DS );
-define("EVENT_ESPRESSO_TEMPLATES", EVENT_ESPRESSO_PLUGINFULLPATH . 'templates' . DS );
-// asset URL paths
-define( 'EE_IMAGES_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'images/' );
-define( 'EE_TEMPLATES_URL', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/' );
+define( 'EE_PLUGINPATH', DS . plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) . DS );
+define( 'EE_PLUGIN_DIR_PATH', plugin_dir_path( EVENT_ESPRESSO_MAIN_FILE ));
+define( 'EE_PLUGIN_DIR_URL', plugin_dir_url( EVENT_ESPRESSO_MAIN_FILE ));
+// main root folder paths
+define( 'EE_ADMIN_PAGES', EE_PLUGIN_DIR_PATH . 'admin_pages' . DS );
+define( 'EE_CORE', EE_PLUGIN_DIR_PATH . 'core' . DS );
+define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
+define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
+define( 'EE_TEMPLATES', EE_PLUGIN_DIR_PATH . 'templates' . DS );
 // core system paths
-define( 'EE_CORE', EVENT_ESPRESSO_INCLUDES_DIR . 'core' . DS );
-define( 'EE_CLASSES', EVENT_ESPRESSO_INCLUDES_DIR . 'classes' . DS );
-define( 'EE_MODELS', EVENT_ESPRESSO_INCLUDES_DIR . 'models' . DS );
-define( 'EE_HELPERS', EVENT_ESPRESSO_PLUGINFULLPATH . 'helpers' . DS );
-define( 'EE_MODULES', EVENT_ESPRESSO_PLUGINFULLPATH . 'modules' . DS );
-define( 'EE_SHORTCODES', EVENT_ESPRESSO_PLUGINFULLPATH . 'shortcodes' . DS );
-define( 'EE_REGISTRY', EE_CORE . 'EE_Registry.core.php');
-// Define upload paths
+define( 'EE_ADMIN', EE_CORE . 'admin' . DS );
+define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );
+define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
+define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
+define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
+define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
+define( 'EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS );
+define( 'EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets' . DS );
+
+// asset URL paths
+define( 'EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'templates' . DS );
+define( 'EE_GLOBAL_ASSETS_URL', EE_TEMPLATES_URL . 'global_assets' . DS );
+define( 'EE_IMAGES_URL',  EE_GLOBAL_ASSETS_URL . 'images' . DS );
+define( 'EE_THIRD_PARTY_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'third_party_libs' . DS );
+
+// define upload paths
 $uploads = wp_upload_dir();
-//Define the uploads directory and URL
-define("EVENT_ESPRESSO_UPLOAD_DIR", $uploads['basedir'] . DS . 'espresso' . DS);
-define("EVENT_ESPRESSO_UPLOAD_URL", $uploads['baseurl'] . '/espresso/' );
-//Define the templates dirrectory and URL
-define("EVENT_ESPRESSO_TEMPLATE_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS);
-define("EVENT_ESPRESSO_TEMPLATE_URL", $uploads['baseurl'] . '/espresso/templates/' );
-//Define the gateway directory and URL
-define("EVENT_ESPRESSO_GATEWAY_DIR", $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS);
-define("EVENT_ESPRESSO_GATEWAY_URL", $uploads['baseurl'] .'/espresso/gateways/' );
-
-//Languages folder/path
-define( 'EE_LANGUAGES_SAFE_LOC', '../uploads/espresso/languages/');
-define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages/');
-
+// define the uploads directory and URL
+define( 'EVENT_ESPRESSO_UPLOAD_DIR', $uploads['basedir'] . DS . 'espresso' . DS );
+define( 'EVENT_ESPRESSO_UPLOAD_URL', $uploads['baseurl'] . DS . 'espresso' . DS );
+// define the templates dirrectory and URL
+define( 'EVENT_ESPRESSO_TEMPLATE_DIR', $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS );
+define( 'EVENT_ESPRESSO_TEMPLATE_URL', $uploads['baseurl'] . DS . 'espresso' . DS . 'templates' . DS );
+// define the gateway directory and URL
+define( 'EVENT_ESPRESSO_GATEWAY_DIR', $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS );
+define( 'EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS );
+// languages folder/path
+define( 'EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 'languages' . DS );
+define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
 
 //ajax constants
-define('EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) ? TRUE : FALSE );
-define('EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) ? TRUE : FALSE );
-
-
+define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) ? TRUE : FALSE );
+define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) ? TRUE : FALSE );
 
 // define versions
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
-	define("EVENT_ESPRESSO_VERSION", espresso_version());
-	define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);	
+	define( 'EVENT_ESPRESSO_VERSION', espresso_version());
+	define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );	
 } else {
 	wp_die( __( 'Can not run multiple versions of Event Espresso.', 'event_espresso' ));
 }

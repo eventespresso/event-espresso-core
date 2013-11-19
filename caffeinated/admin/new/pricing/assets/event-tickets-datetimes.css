@@ -99,23 +99,23 @@
 }
 
 .gear-icon {
-    background: transparent url(../../../../../images/settings-16x16.png) 0 0 no-repeat;
+    background: transparent url(../../../../../templates/global_assets/images/settings-16x16.png) 0 0 no-repeat;
 }
 
 .trash-icon {
-    background: transparent url(../../../../../images/trash-small-16x16.png) 0 0 no-repeat;
+    background: transparent url(../../../../../templates/global_assets/images/trash-small-16x16.png) 0 0 no-repeat;
 }
 
 .ticket-icon {
-    background: transparent url(../../../../../images/tickets.png) 0 0 no-repeat;
+    background: transparent url(../../../../../templates/global_assets/images/tickets.png) 0 0 no-repeat;
 }
 
 .clone-icon {
-    background: transparent url(../../../../../images/clone-trooper-16x16.png) 0 0 no-repeat;
+    background: transparent url(../../../../../templates/global_assets/images/clone-trooper-16x16.png) 0 0 no-repeat;
 }
 
 .lock-icon {
-    background: transparent url(../../../../../images/lock.png) 0 0 no-repeat;
+    background: transparent url(../../../../../templates/global_assets/images/lock.png) 0 0 no-repeat;
 }
 
 .datetime-tickets-sold {
