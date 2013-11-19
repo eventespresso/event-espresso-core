@@ -3,7 +3,7 @@
 .espresso-admin .regular-text { max-width:99%!important; min-width:40%!important; }
 textarea { width:25em; }
 .espresso-admin textarea { max-width:99%!important; min-width:40%!important; }
-#icon-options-event { background: url("../../../../../images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
+#icon-options-event { background: url("../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
 #entries-per-page-dv { display:inline; }
 
 .wrap .nav-tab-wrapper { margin-bottom:1em; }

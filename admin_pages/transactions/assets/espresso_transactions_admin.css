@@ -1,7 +1,7 @@
 .espresso-admin .form-table th { max-width:!important 30%; min-width:!important 20%; }
 .espresso-admin .form-table td { max-width:!important 79%; min-width:!important 69%; }
 .espresso-admin .regular-text { width:!important 98%; }
-#icon-options-event { background: url("../../../../../images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
+#icon-options-event { background: url("../../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
 #entries-per-page-dv { display:inline; }
 
 .wrap .nav-tab-wrapper { margin-bottom:1em; }

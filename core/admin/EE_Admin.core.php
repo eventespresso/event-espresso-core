@@ -94,6 +94,7 @@ final class EE_Admin {
 	 */
 	private function _define_all_constants() {
 		define( 'EE_ADMIN_URL', EE_PLUGIN_DIR_URL . 'core/admin/' );
+		define( 'EE_ADMIN_PAGES_URL', EE_PLUGIN_DIR_URL . 'admin_pages/' );
 		define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
 		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
 		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );

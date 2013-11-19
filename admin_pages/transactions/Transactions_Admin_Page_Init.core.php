@@ -41,9 +41,9 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'TXN_ADMIN', EE_ADMIN . 'transactions' . DS );	
 		define( 'TXN_ADMIN_URL', admin_url( 'admin.php?page=' . TXN_PG_SLUG ));	
 		define( 'TXN_ASSETS_PATH', TXN_ADMIN . 'assets' . DS );		
-		define( 'TXN_ASSETS_URL', str_replace( '\\', '/', EE_ADMIN_URL . 'transactions/assets' . DS ));	
+		define( 'TXN_ASSETS_URL', str_replace( '\\', '/', EE_ADMIN_PAGES_URL . 'transactions/assets' . DS ));	
 		define( 'TXN_TEMPLATE_PATH', TXN_ADMIN . 'templates' . DS );	
-		define( 'TXN_TEMPLATE_URL', str_replace( '\\', '/', EE_ADMIN_URL . 'transactions/templates' . DS ));
+		define( 'TXN_TEMPLATE_URL', str_replace( '\\', '/', EE_ADMIN_PAGES_URL . 'transactions/templates' . DS ));
 
 		parent::__construct();
 	}
