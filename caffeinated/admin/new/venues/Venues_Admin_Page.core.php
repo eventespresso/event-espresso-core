@@ -1061,8 +1061,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		if ( file_exists( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php') ) {
-			require_once( EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Export.class.php');
+		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
+			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );
 			$EE_Export->export();
 		}
@@ -1075,7 +1075,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _import_categories() {
 
-		require_once(EVENT_ESPRESSO_INCLUDES_DIR . 'classes/EE_Import.class.php');
+		require_once(EE_CLASSES . 'EE_Import.class.php');
 		EE_Import::instance()->import();
 
 	}

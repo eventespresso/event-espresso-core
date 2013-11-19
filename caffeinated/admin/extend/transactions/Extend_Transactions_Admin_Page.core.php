@@ -115,7 +115,6 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 	 	
 		if( $results = $TXN->get_revenue_per_day_report( $period ) ) {	
@@ -169,7 +168,6 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-	    require_once ( EVENT_ESPRESSO_INCLUDES_DIR . 'models/EEM_Transaction.model.php' );
 	    $TXN = EEM_Transaction::instance();
 	 
 		if( $results = $TXN->get_revenue_per_event_report( $period ) ) {		
