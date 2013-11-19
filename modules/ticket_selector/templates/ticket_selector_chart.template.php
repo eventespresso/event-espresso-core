@@ -190,7 +190,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->reg_limit() - $datetime->sold(); ?>
 									<td class="cntr"><?php echo $datetime->reg_limit() ? $tkts_left : __( 'unlimited ', 'event_espresso' ); ?></td>
 								</tr>
-								<?php endif; ?>
+								<?php endforeach; ?>
 								</tbody>
 							</table>
 						</div>
