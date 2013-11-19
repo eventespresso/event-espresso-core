@@ -144,6 +144,16 @@ final class EE_Config {
 
 
 
+	/**
+	 * use to get the current theme if needed from static context
+	 * @return string current theme set.
+	 */
+	public static function get_current_theme() {
+		return isset( self::$_instance->template_settings->current_espresso_theme ) ? self::$_instance->template_settings->current_espresso_theme : 'espresso_default';
+	}
+
+
+
 
 	/**
 	 * 		load EE organization options
