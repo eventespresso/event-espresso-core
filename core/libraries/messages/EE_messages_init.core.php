@@ -45,52 +45,50 @@ class EE_Messages_Init extends EE_Base {
 
 
 	public static function set_autoloaders() {
-		spl_autoload_register( 'self::_autoload_messages' );
+		spl_autoload_register( 'EE_Messages_Init::autoload_messages' );
 	}
 
 
 
 
 	/**
-	 * 		_autoload_messages
+	 * 		autoload_messages
 	 *
-	 * 		@access 	private
+	 * 		@access 	public
 	 * 		@return 		void
 	 */
-	private static function _autoload_messages( $className ) {
+	public static function autoload_messages( $className ) {
 		//let's just work with EE_ files!
 		if ( !preg_match( '/EE_/', $className ) )
 			return;
 
-		//let's setup an array of paths to check (for each subsystem)
-		$root = EE_PLUGIN_DIR_PATH;
-		$core = 'includes/core/';	
 		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 		$dir_ref = array(
-			$core . 'messages/' => 'core',
-			$core . 'messages/message_type/' => 'class',
-			$core . 'messages/messenger/' => 'class',
-			$core . 'messages/defaults/' => array('class', 'core'),
-			$core . 'messages/defaults/email/' => 'class',
-			$core . 'messages/data_class/' => array('core','class'),
-			$core . 'messages/validators/' => array('core', 'class'),
-			$core . 'messages/validators/email/' => 'class',
-			'libraries/shortcodes/' => 'lib'
+			'messages/' => 'core',
+			'messages/message_type/' => 'class',
+			'messages/messenger/' => 'class',
+			'messages/defaults/' => array('class', 'core'),
+			'messages/defaults/email/' => 'class',
+			'messages/data_class/' => array('core','class'),
+			'messages/validators/' => array('core', 'class'),
+			'messages/validators/email/' => 'class',
+			'shortcodes/' => 'lib'
 		);
 
 		//assemble a list of filenames
 		foreach ( $dir_ref as $dir => $types ) {
 			if ( is_array( $types )) {
 				foreach ( $types as $type ) {
-					$filenames[] = $root . $dir . $className . '.' . $type . '.php';
+					$filenames[] = EE_LIBRARIES . $className . '.' . $type . '.php';
 				}
 			} else {
-				$filenames[] = $root . $dir . $className . '.' . $types . '.php';
+				$filenames[] = EE_LIBRARIES . $className . '.' . $types . '.php';
 			}
 		}
 		//now loop through assembled filenames and require as available
 		foreach ( $filenames as $filename ) {
 			if ( is_readable( $filename )) {
+				echo '<h4>$filename : ' . $filename . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				require_once( $filename );
 			}				
 		}
