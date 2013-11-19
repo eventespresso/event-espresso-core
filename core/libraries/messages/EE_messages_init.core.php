@@ -61,7 +61,6 @@ class EE_Messages_Init extends EE_Base {
 		//let's just work with EE_ files!
 		if ( !preg_match( '/EE_/', $className ) )
 			return;
-
 		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 		$dir_ref = array(
 			'messages/' => 'core',
@@ -79,16 +78,15 @@ class EE_Messages_Init extends EE_Base {
 		foreach ( $dir_ref as $dir => $types ) {
 			if ( is_array( $types )) {
 				foreach ( $types as $type ) {
-					$filenames[] = EE_LIBRARIES . $className . '.' . $type . '.php';
+					$filenames[] = EE_LIBRARIES . $dir . $className . '.' . $type . '.php';
 				}
 			} else {
-				$filenames[] = EE_LIBRARIES . $className . '.' . $types . '.php';
+				$filenames[] = EE_LIBRARIES . $dir . $className . '.' . $types . '.php';
 			}
 		}
 		//now loop through assembled filenames and require as available
 		foreach ( $filenames as $filename ) {
 			if ( is_readable( $filename )) {
-				echo '<h4>$filename : ' . $filename . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 				require_once( $filename );
 			}				
 		}
