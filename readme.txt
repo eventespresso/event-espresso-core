@@ -7,9 +7,9 @@ Donate link: http://eventespresso.com
 
 Tags: event management, event registration, paypal event registration, paypal ipn
 
-Requires at least: 3.0
+Requires at least: 3.7
 
-Tested up to: 3.1
+Tested up to: 3.7.1
 
 == Description ==
 
@@ -25,7 +25,7 @@ I have made several changes to this plugin in the last few months. Quite a bit h
 == Support ==
 Please visit the forums http://www.eventespresso.com/forums/
 
-Current Version: 3.0.19
+Current Version: 4.1
 
 Author: Seth Shoultes
 Author URI: http://eventespresso.com
