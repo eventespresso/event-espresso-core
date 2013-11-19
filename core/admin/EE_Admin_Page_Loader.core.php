@@ -205,7 +205,7 @@ class EE_Admin_Page_Loader {
 		$installed_refs = array();
 		$exclude = array( 'assets', 'templates' );
 		// grab everything in the  admin core directory
-		if ( $admin_screens = glob( EE_ADMIN . '*', GLOB_ONLYDIR )) {
+		if ( $admin_screens = glob( EE_ADMIN_PAGES . '*', GLOB_ONLYDIR )) {
 			foreach( $admin_screens as $admin_screen ) {
 				// files and anything in the exclude array need not apply
 				if ( is_dir( $admin_screen ) && !in_array( basename($admin_screen), $exclude )) {
@@ -217,7 +217,7 @@ class EE_Admin_Page_Loader {
 
 		if ( empty( $installed_refs ) ) {
 			$error_msg[] = __('There are no EE_Admin pages detected, it looks like EE did not install properly', 'event_espresso');
-			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __('Check that the %s folder exists and is writable. Maybe try deactivating, then reactivating Event Espresso again.', 'event_espresso'), EE_ADMIN );
+			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __('Check that the %s folder exists and is writable. Maybe try deactivating, then reactivating Event Espresso again.', 'event_espresso'), EE_ADMIN_PAGES );
 			throw new EE_Error( implode( '||', $error_msg ));
 		}
 
@@ -439,7 +439,7 @@ class EE_Admin_Page_Loader {
 	private function _set_caffeinated( $installed_refs ) {
 
 		//first let's check if there IS a caffeinated folder. If there is not then lets get out.
-		if ( !is_dir( EE_PLUGIN_DIR_PATH . 'caffeinated/admin' ) || defined('EE_DECAF') ) return $installed_refs;
+		if ( !is_dir( EE_PLUGIN_DIR_PATH . 'caffeinated/admin' ) || defined('EE_DECAF')) return $installed_refs;
 
 		$this->_define_caffeinated_constants();
 
@@ -447,7 +447,6 @@ class EE_Admin_Page_Loader {
 
 		//okay let's setup an "New" pages first (we'll return installed refs later)
 		if ( $new_admin_screens = glob( EE_CORE_CAF_ADMIN . 'new/*', GLOB_ONLYDIR ) ) {
-
 			foreach( $new_admin_screens as $admin_screen ) {
 				// files and anything in the exclude array need not apply
 				if ( is_dir( $admin_screen ) && !in_array( basename($admin_screen), $exclude )) {
@@ -456,7 +455,7 @@ class EE_Admin_Page_Loader {
 					$this->_caf_autoloader[] = array(
 						'dir' => 'new',
 						'folder' => basename( $admin_screen )
-						);
+					);
 				}
 			}
 		}
@@ -474,7 +473,7 @@ class EE_Admin_Page_Loader {
 					$this->_caf_autoloader[] = array(
 						'dir' => 'extend',
 						'folder' => $extend_ref
-						);/**/
+					);
 				}
 			}
 		}
@@ -515,10 +514,9 @@ class EE_Admin_Page_Loader {
 	 * @return void
 	 */
 	public function init_autoloaders( $className ) {
-		$root = EE_ADMIN;
 		$dir_ref = array(
-			$root => array('core', 'class') // 'controller', 
-			);
+			EE_ADMIN => array('core', 'class')
+		);
 		EE_Registry::instance()->load_helper( 'Autoloader' );
 		EEH_Autoloader::try_autoload($dir_ref, $className );
 	}
@@ -536,11 +534,9 @@ class EE_Admin_Page_Loader {
 	 */
 	public function caffeinated_autoloaders( $className ) {
 		//let's setup an array of paths to check (for each subsystem)
-		$root = EE_CORE_CAF_ADMIN;
-
 		$dir_ref = array();
 		foreach ( $this->_caf_autoloader as $pathinfo) {
-			$dir_ref[$root . $pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
+			$dir_ref[ EE_CORE_CAF_ADMIN . $pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
 		}
 
 		EE_Registry::instance()->load_helper( 'Autoloader' );

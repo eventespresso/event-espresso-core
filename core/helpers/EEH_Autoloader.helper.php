@@ -195,8 +195,9 @@ class EEH_Autoloader {
 		}
 		//now loop through assembled filenames and require as available
 		foreach ( $filenames as $filename ) {
-			if ( is_readable($filename) )
+			if ( is_readable( $filename )) {
 				require_once( $filename );
+			}				
 		}
 	}
 
@@ -211,8 +212,8 @@ class EEH_Autoloader {
 	 */
 	public static function load_admin_core( $folder, $className ) {
 		$classfile = $className . '.core.php';
-		if ( is_readable( EE_ADMIN . $folder . DS . $classfile )) {
-			require_once( EE_ADMIN . $folder . DS . $classfile );
+		if ( is_readable( EE_ADMIN_PAGES . $folder . DS . $classfile )) {
+			require_once( EE_ADMIN_PAGES . $folder . DS . $classfile );
 		}			
 	}
 

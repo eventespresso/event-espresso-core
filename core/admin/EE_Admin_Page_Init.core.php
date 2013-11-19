@@ -241,7 +241,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 			}
 		}
 
-		$this->_folder_path = EE_ADMIN . $this->_folder_name . DS;
+		$this->_folder_path = EE_ADMIN_PAGES . $this->_folder_name . DS;
 
 		$this->_file_name = preg_replace( '/^ee/' , 'EE', $this->_folder_name );
 		$this->_file_name = ucwords( str_replace('_', ' ', $this->_file_name) );
