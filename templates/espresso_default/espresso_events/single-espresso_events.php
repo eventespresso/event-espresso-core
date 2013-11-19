@@ -21,47 +21,40 @@ get_header();
 		<div id="espresso-event-details-dv" class="" role="main">
 			<?php if ( have_posts() ) : ?>
 			<?php while ( have_posts() ) : the_post();?>
-			<?php global $post;?>
+			<?php 
+			global $post;
+			$wrap_class = '';
+			if (has_excerpt( $post->ID )){ $wrap_class .= ' has-excerpt';}
+			?>
 			<?php do_action( 'AHEE_event_details_before_post', $post ); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class('espresso-event-details'); ?>>
-				<header class="event-header">
-					<?php do_action( 'AHEE_event_details_header_top', $post ); ?>
-					<p>
-						<?php the_terms( $post->ID, 'espresso_event_categories' ); ?>
-					</p>
-					<h1 id="event-details-h1">
-						<?php the_title(); ?>
-					</h1>
-					<p id="event-date-p">
-						<?php espresso_event_date_range(); ?>
-					</p>
-					<?php do_action( 'AHEE_event_details_header_bottom', $post ); ?>
-				</header>
-				<!-- .event-header -->
-				
 				<?php do_action( 'AHEE_event_details_before_featured_img', $post ); ?>
 				<?php				
-				$wrap_class = '';
 				if ( has_post_thumbnail( $post->ID )) :
 					if ( $img_ID = get_post_thumbnail_id( $post->ID )) :
 						if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'large' )) :
-							//d($featured_img);
 							$caption = esc_attr( get_post( get_post( $img_ID ))->post_excerpt );
-							$wrap_class = ' has-img';
-							
-				?>
+							$wrap_class .= ' has-img';
+							?>
 				<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv"> <img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/> </div>
 				<?php 
-						endif;			
-					endif;			
+						endif;
+					endif;
 				endif;
+				?>
+				<?php do_action( 'AHEE_event_details_after_featured_img', $post );?>
+				<header class="event-header<?php echo $wrap_class;?>">
+					<h1 id="event-details-h1">
+						<?php the_title(); ?>
+					</h1>
+					<?php if (has_excerpt( $post->ID )): the_excerpt(); endif;?>
+					<p id="event-date-p">
+						<?php espresso_event_date_range(); ?>
+					</p>
+				</header>
+				<!-- .event-header -->
 				
-				do_action( 'AHEE_event_details_after_featured_img', $post );
-				
-				espresso_ticket_selector( $post );
-							
-			?>
-				<div class="espresso-event-wrapper-dv <?php echo $wrap_class;?>">
+				<div class="espresso-event-wrapper-dv">
 					<div class="event-content">
 						<h3 class="about-event-h3">
 							<?php _e( 'Details', 'event_espresso' ); ?>
@@ -69,6 +62,13 @@ get_header();
 						<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
 						<?php the_content(); ?>
 						<?php do_action( 'AHEE_event_details_after_the_content', $post ); ?>
+						<p>
+							<?php the_terms( $post->ID, 'espresso_event_categories', 'Categories: ', ' / ' ); ?>
+						</p>
+						<h3 class="ticket-selector-h3">
+							<?php _e( 'Ticket Options', 'event_espresso' ); ?>
+						</h3>
+						<?php espresso_ticket_selector( $post ); ?>
 						<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
 						<?php if ( espresso_event_phone() != '' ) : ?>
 						<p> <strong>
@@ -81,15 +81,15 @@ get_header();
 					<?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
 					<div class="event-datetimes">
 						<h3 class="event-datetimes-h3">
-							<?php _e( 'Event Dates and Times', 'event_espresso' ); ?>
+							<?php _e( 'Date, Time, and Location', 'event_espresso' ); ?>
 						</h3>
 						<?php espresso_list_of_event_dates();?>
 						<?php do_action( 'AHEE_event_details_after_event_date', $post ); ?>
 					</div>
 					<!-- .event-datetimes -->
 					
-					<?php do_action( 'AHEE_event_details_before_venue_details', $post ); ?>
 					<?php if ( espresso_display_venue_address_in_event_details() ) : ?>
+					<?php do_action( 'AHEE_event_details_before_venue_details', $post ); ?>
 					<div class="espresso-venue-dv">
 						<p> <strong>
 							<?php _e( 'Location:', 'event_espresso' ); ?>
@@ -116,6 +116,7 @@ get_header();
 							</strong> <?php echo espresso_venue_phone(); ?> </p>
 					</div>
 					<!-- .espresso-venue-dv -->
+					<?php do_action( 'AHEE_event_details_after_venue_details', $post ); ?>
 					<?php endif; ?>
 					<footer class="event-meta">
 						<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>
@@ -154,8 +155,7 @@ get_header();
 		</div>
 		<!-- #content --> 
 	</div>
-	<!-- #primary -->
-	
+	<!-- #primary --> 
 	
 </div>
 <?php get_sidebar(); ?>
