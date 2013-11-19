@@ -375,7 +375,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$ref = str_replace(' ', '_', ucwords($ref) ) . '_Admin_Page'; //take the message -> The_Message
 
 		//first default file (if exists)
-		$decaf_file = EE_ADMIN . $this->_name . DS . $ref . '.core.php';
+		$decaf_file = EE_ADMIN_PAGES . $this->_name . DS . $ref . '.core.php';
 		if ( is_readable( $decaf_file ) )
 		require_once( $decaf_file );
 

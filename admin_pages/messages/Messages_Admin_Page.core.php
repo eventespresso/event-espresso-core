@@ -52,7 +52,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function __construct( $routing = TRUE ) {
 		//make sure messages autoloader is running
-		$this->EE->load_lib( 'Messages_Init' );
+		EE_Registry::instance()->load_lib( 'Messages_Init' );
 		EE_Messages_Init::set_autoloaders();
 		parent::__construct($routing);
 	}
@@ -98,7 +98,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$ref = ucwords( str_replace( '_' , ' ', $messenger) );
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_messenger';
-			require_once( EE_CORE . 'messages'. DS .'messenger' . DS . $classname . '.class.php' );
+			require_once( EE_LIBRARIES . 'messages'. DS .'messenger' . DS . $classname . '.class.php' );
 			if ( !class_exists($classname) )
 				throw new EE_Error( sprintf( __('There is no messenger for the given classname (%s)', 'event_espresso'), $classname ) );
 

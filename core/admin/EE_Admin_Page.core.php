@@ -455,7 +455,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
+		//require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
 
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
@@ -1027,7 +1027,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				foreach( $config['help_tour'] as $tour ) {
 					$file_path = $this->_get_dir() . '/help_tours/' . $tour . '.class.php';
 					//let's see if we can get that file... if not its possible this is a decaf route not set in caffienated so lets try and get the caffeinated equivalent
-					$file_path = !is_readable($file_path) ? EE_ADMIN . basename($this->_get_dir()) . '/help_tours/' . $tour . '.class.php' : $file_path;
+					$file_path = !is_readable($file_path) ? EE_ADMIN_PAGES . basename($this->_get_dir()) . '/help_tours/' . $tour . '.class.php' : $file_path;
 
 					//if file is STILL not readable then let's do a EE_Error so its more graceful than a fatal error.
 					if ( !is_readable($file_path) ) {
