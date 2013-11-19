@@ -103,10 +103,10 @@ class EES_Event_List  extends EES_Shortcode {
 		ob_start();
 		// load our template
 		$template_part = EED_Events_Archive::get_template_part();
-		if ( file_exists( get_stylesheet_directory() . 'espresso_events/' . $template_part )) {
-			include( get_stylesheet_directory() . 'espresso_events/' . $template_part );
+		if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'espresso_events' . DS . $template_part )) {
+			include( get_stylesheet_directory() . $this->theme . DS . 'espresso_events' . DS . $template_part );
 		} else {
-			include( EE_TEMPLATES . 'espresso_events/' . $template_part );
+			include( EE_TEMPLATES . $this->theme . DS . 'espresso_events' . DS . $template_part );
 		}
 		// now reset the query and postdata
 		wp_reset_query();
