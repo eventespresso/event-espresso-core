@@ -310,7 +310,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
 			</a>';
 		$actionlinks[] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">
-				<img width="16" height="16" alt="trash" src="' . EE_PLUGIN_DIR_URL . 'images/trash-small-16x16.png" style="margin-top:3px;">			
+				<img width="16" height="16" alt="trash" src="' . EE_GLOBAL_ASSETS_URL . 'images/trash-small-16x16.png" style="margin-top:3px;">			
 			</a>' . "\n\t";
 
 		$actionlinks = apply_filters('FHEE_list_table_events_actions_column_action_links', $actionlinks, $item );

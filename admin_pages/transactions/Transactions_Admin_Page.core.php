@@ -323,19 +323,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transaction_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'images/magnifier.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'images/magnifier.png',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
 			'download_invoice' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'images/invoice-1-16x16.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'images/invoice-1-16x16.png',
 				'desc' => __('Download Invoice for Transaction.', 'event_espresso')
 				),
 			'send_payment_reminder' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'images/payment-reminder-20x20.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'images/payment-reminder-20x20.png',
 				'desc' => __('Send Payment Reminder', 'event_espresso')
 				),
 			'view_registration' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'images/edit.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'images/edit.png',
 				'desc' => __('View Registration Details', 'event_espresso')
 				)
 		);

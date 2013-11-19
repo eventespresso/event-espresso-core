@@ -300,7 +300,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
    		$attendee = $item->attendee();
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->attendee_ID() ), REG_ADMIN_URL );
 		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . $attendee instanceof EE_Attendee ? $attendee->full_name() : '' . '</a>';
-		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_PLUGIN_DIR_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
+		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 		return $link;
 	}
 
@@ -398,7 +398,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$transaction = $item->transaction() ? $item->transaction() : EE_Transaction::new_instance();
 			
 			if ( $transaction->paid() >= $transaction->total() ) {
-				return '<span class="reg-pad-rght"><img class="" src="' . EE_PLUGIN_DIR_URL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
+				return '<span class="reg-pad-rght"><img class="" src="' . EE_GLOBAL_ASSETS_URL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
 				return '<span class="reg-pad-rght"><a class="status-'. $transaction->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $item->transaction()->pretty_paid() . '</a><span>';
@@ -433,28 +433,28 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	        $view_lnk = '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EE_PLUGIN_DIR_URL .'/images/magnifier.png">
+				<img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/magnifier.png">
 			</a>
 		</li>';
 
 	       $edit_lnk = '
 		<li>
 			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Edit Attendee Details', 'event_espresso' ) . '" src="'. EE_PLUGIN_DIR_URL .'/images/user_edit.png">
+				<img width="16" height="16" alt="' . __( 'Edit Attendee Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/user_edit.png">
 			</a>
 		</li>';
 
 	         $resend_reg_lnk = '
 		<li>
 			<a href="'.$resend_reg_lnk_url.'" title="' . __( 'Resend Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Resend Registration Details', 'event_espresso' ) . '" src="'. EE_PLUGIN_DIR_URL .'/images/email_go.png">
+				<img width="16" height="16" alt="' . __( 'Resend Registration Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/email_go.png">
 			</a>
 		</li>';
 
 	         $dl_tckt_lnk = '
 		<li>
 			<a href="' . add_query_arg( array( 'ticket_launch'=>'true', '_REG_ID'=>$item->reg_url_link(),  'html'=>'true' ), site_url() ) . '" target="_blank" title="' . __( 'Download Ticket', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Download Ticket', 'event_espresso' ) . '" src="'. EE_PLUGIN_DIR_URL .'/images/ticket-arrow-icon.png">
+				<img width="16" height="16" alt="' . __( 'Download Ticket', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/ticket-arrow-icon.png">
 			</a>
 		</li>';
 
@@ -463,7 +463,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$view_txn_lnk = '
 		<li>
 			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="View Transaction" src="'. EE_PLUGIN_DIR_URL .'/images/money.png">
+				<img width="16" height="16" alt="View Transaction" src="'. EE_GLOBAL_ASSETS_URL .'/images/money.png">
 			</a>
 		</li>';
 

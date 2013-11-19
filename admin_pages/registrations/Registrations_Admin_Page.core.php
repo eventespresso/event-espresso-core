@@ -608,23 +608,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registration_legend_items() {
 		$items = array(
 			'star-icon' => array(
-				'icon' => EE_PLUGIN_DIR_URL . 'images/star-8x8.png',
+				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
 				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'view_details' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'/images/magnifier.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'/images/magnifier.png',
 				'desc' => __('View Registration Details', 'event_espresso')
 				),
 			'edit_attendee' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'/images/user_edit.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'/images/user_edit.png',
 				'desc' => __('Edit Attendee Details', 'event_espresso')
 				),
 			'resend_registration' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'/images/email_go.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'/images/email_go.png',
 				'desc' => __('Resend registration details to attendee', 'event_espresso')
 				),
 			'view_transaction' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'/images/money.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'/images/money.png',
 				'desc' => __('View Transaction details.', 'event_espresso')
 				)
 			);
@@ -1325,7 +1325,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				<td class="reg-admin-edit-attendee-question-td">
 					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . __( 'click to edit attendee question', 'event_espresso' ) . '">
 						<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __( 'edit the above question group', 'event_espresso' ) . '</span>
-						<img width="16" height="16" alt="' . __( 'Edit Attendee Question', 'event_espresso' ) . '" src="'. EE_PLUGIN_DIR_URL .'/images/pencil-16x16.png">		
+						<img width="16" height="16" alt="' . __( 'Edit Attendee Question', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/pencil-16x16.png">		
 					</a>
 				</td>
 			</tr>
@@ -1959,7 +1959,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$legend_items = array(
 			'star-icon' => array(
-				'icon' => EE_PLUGIN_DIR_URL . 'images/star-8x8.png',
+				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
 				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'checkin' => array(
@@ -1975,7 +1975,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'desc' => __('This indicates that no Check-in record has been created for this attendee', 'event_espresso')
 				),
 			'view_details' => array(
-				'icon' => EE_PLUGIN_DIR_URL .'/images/magnifier.png',
+				'icon' => EE_GLOBAL_ASSETS_URL .'/images/magnifier.png',
 				'desc' => __('View All Check-in records for this attendee', 'event_espresso')
 				),
 			);

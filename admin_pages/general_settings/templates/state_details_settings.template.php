@@ -22,7 +22,7 @@
 			 ?>
 				<td class="delete-state-td">
 					<a id="delete-state-<?php echo $STA_ID; ?>-lnk" class="delete-state-lnk" rel="<?php echo $STA_ID; ?>" title="Delete State #<?php echo $STA_ID; ?>?" href="<?php echo $state['delete_state_url']; ?>">
-						<img width="16" height="16" style="margin-top:3px;" src="<?php echo EE_PLUGIN_DIR_URL;?>/images/trash-small-16x16.png" alt="delete state">
+						<img width="16" height="16" style="margin-top:3px;" src="<?php echo EE_GLOBAL_ASSETS_URL;?>/images/trash-small-16x16.png" alt="delete state">
 					</a>
 				</td>
 			</tr>

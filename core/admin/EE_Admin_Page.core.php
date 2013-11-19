@@ -1435,7 +1435,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//register all scripts
 		wp_register_script('ee-dialog', EE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script('ee_admin_js', EE_ADMIN_URL . 'assets/ee-admin-page.js', array('ee-parse-uri', 'ee-dialog'), EVENT_ESPRESSO_VERSION, true );
-		//wp_register_script('jquery-ui-datepicker', EE_PLUGIN_DIR_URL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, true );
+		
 		wp_register_script('jquery-ui-timepicker-addon', EE_GLOBAL_ASSETS_URL . 'scripts/jquery-ui-timepicker-addon.js', array('jquery-ui-datepicker', 'jquery-ui-slider'), EVENT_ESPRESSO_VERSION, true );
 		// register jQuery Validate - see /includes/functions/wp_hooks.php
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
@@ -2029,7 +2029,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _add_admin_page_ajax_loading_img() {
 		?>
 			<div id="espresso-admin-page-ajax-loading" class="hidden">
-				<img src="<?php echo EE_PLUGIN_DIR_URL; ?>images/ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?>'</span>
+				<img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?>'</span>
 			</div>
 		<?php
 	}

@@ -121,7 +121,7 @@ $fields = $question->get_model()->field_settings();
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 									<a class="remove-option remove-item">
-										<img src="<?php echo EE_PLUGIN_DIR_URL ?>images/trash-16x16.png"/>
+										<img src="<?php echo EE_GLOBAL_ASSETS_URL ?>images/trash-16x16.png"/>
 									</a>
 								</td>
 							</tr>
@@ -141,7 +141,7 @@ $fields = $question->get_model()->field_settings();
 									<?php if( $count > 0 ){ ?>
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
 										<a class="remove-option remove-item">
-											<img src="<?php echo EE_PLUGIN_DIR_URL ?>images/trash-16x16.png"/>
+											<img src="<?php echo EE_GLOBAL_ASSETS_URL ?>images/trash-16x16.png"/>
 										</a>
 									</td>
 									<?php } ?>
