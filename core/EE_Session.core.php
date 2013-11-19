@@ -669,42 +669,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 	/**
-	 *   get the real "now" time
-	 *   @access private
-	 *   @return	 string
-	 */
-	private function _session_time() {
-
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-////		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
-		// what time is it Mr Wolf?
-		$now = time();
-
-		$date_format = get_option('date_format');
-		$time_format = get_option('time_format');
-		$time_format = $date_format . ', ' . $time_format;
-
-		$offset = get_option('gmt_offset');
-		$timezone_string = get_option('timezone_string');
-		// if timezone string is empty
-		if ( ! $timezone_string ) {
-			// set it to EST
-			$timezone_string = 'America/New_York';
-		}
-		//date_default_timezone_set($timezone_string);
-
-		// generate the user time, taking the gmt offset into consideration
-		$time = mktime(gmdate("H", $now)+$offset, gmdate("i", $now), gmdate("s", $now), gmdate("m", $now), gmdate("d", $now), gmdate("Y", $now));
-
-		return mktime(gmdate('H'), gmdate('i'), gmdate('s'), gmdate('m'), gmdate('d'), gmdate('Y') );
-	}
-
-
-
-
-
-	/**
 	 *   wp_loaded
 	 *   @access public
 	 *   @return	 string
