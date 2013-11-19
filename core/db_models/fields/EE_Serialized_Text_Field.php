@@ -23,6 +23,14 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 	 * @return array
 	 */
 	function prepare_for_set_from_db($value_found_in_db_for_model_object) {
-		return maybe_unserialize($value_found_in_db_for_model_object);
+		$data = maybe_unserialize($value_found_in_db_for_model_object);
+		//it's possible that this still has serialized data if its the session.  WP has a bug, http://core.trac.wordpress.org/ticket/26118 that doesnt' unserialize this automatically.
+		$token = 'C';
+		$data = is_string($data) ? trim($data) : $data;
+		if ( is_string($data) && strlen($data) > 1 && $data[0] == $token  && preg_match( "/^{$token}:[0-9]+:/s", $data ) ) {
+			return unserialize($data);
+		} else {
+			return $data;
+		}
 	}
 }

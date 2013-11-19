@@ -22,7 +22,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * ------------------------------------------------------------------------
  */
- class EE_Session {
+ class EE_Session implements Serializable {
 
 
   // instance of the EE_Session object
@@ -415,6 +415,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 //		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
 //			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 //		}
+//				
 
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
@@ -715,8 +716,48 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	}
 
 
+	/**
+	 * implementations from the Serializable PHP interface
+	 */
+
+	/**
+	 * Clean up object before EE_Session is saved to the db
+	 * @return string serialized object
+	 */
+	public function serialize() {
+		//first reduce the 'pages_visited' count, we'll only save the last 10 page visits.
+		$this->_session_data['pages_visited'] = array_slice( $this->_session_data['pages_visited'], -10 );
+
+		//data to serialize
+		$serialized = array(
+			'sid' => $this->_sid,
+			'session_data' => $this->_session_data,
+			'expiration' => $this->_expiration,
+			'time' => $this->_time,
+			'use_encryption' => $this->_use_encryption,
+			'user_agent' => $this->_user_agent,
+			'ip_address' => $this->_ip_address 
+			);
+
+		return serialize( $serialized );
+		
+	}
 
 
+
+
+	/**
+	 * return unserialized object from the db
+	 * @param  string $data serialized object
+	 * @return EE_Session   this object
+	 */
+	public function unserialize( $data ) {
+		$serialized = unserialize( $data );
+		foreach ( $serialized as $prop_name => $prop_value ) {
+			$prop_name = '_' . $prop_name;
+			$this->$prop_name = $prop_value;
+		}
+	}
 
 
 }
