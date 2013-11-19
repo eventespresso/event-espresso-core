@@ -1,5 +1,5 @@
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv" >
-	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="1" cellspacing="0" cellpadding="0">		
+	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="0" cellspacing="0" cellpadding="0">		
 		<thead>
 			<tr>
 				<th scope="col" width="65%"><h3><?php _e( 'Ticket Options', 'event_espresso' ); ?></h3></th>

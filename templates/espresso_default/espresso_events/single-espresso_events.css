@@ -35,10 +35,20 @@ header.event-header.has-img p {
 	text-shadow: 1px 1px 0 #FFFFFF;
 	padding: 10px 0 10px 50px;
 }
-table {
+.tkt-slctr-tbl table {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.tkt-slctr-tbl th, .tkt-slctr-tbl td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.tkt-slctr-tbl table {
 	border: 1px solid #EDEDED;
 }
-th, td {
+.tkt-slctr-tbl th, .tkt-slctr-tbl th, .tkt-slctr-tbl td {
 	border: 1px solid #EDEDED;
 	padding-left: 5px;
 }
