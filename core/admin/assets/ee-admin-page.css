@@ -187,11 +187,11 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .trash-icon {
-    background: transparent url(../../../../images/trash-small-16x16.png) 0 0 no-repeat;
+    background: transparent url(../../../templates/global_assets/images/trash-small-16x16.png) 0 0 no-repeat;
 }
 
 .lock-icon {
-    background: transparent url(../../../../images/lock.png) 0 0 no-repeat;
+    background: transparent url(../../../templates/global_assets/images/lock.png) 0 0 no-repeat;
 }
 
 .check-column .lock-icon {
@@ -202,12 +202,12 @@ table .espresso-radio-btn-options-ul .big-lbl,
 
 .espresso-help-tab-lnk.help_img {
 	display: inline-block; position: relative; top:3px; width: 16px; height: 16px; margin: 0 0 0 .25em;
-	background: transparent url(../../../../images/help.png) bottom left no-repeat; text-indent:-999em; overflow: hidden;
+	background: transparent url(../../../templates/global_assets/images/help.png) bottom left no-repeat; text-indent:-999em; overflow: hidden;
     padding: 0px;
 }
 .espresso-help-tab-lnk.help_img:hover { background-position: top left; }
-.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../../images/help2.png); }
-.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../../images/help2.png); }
+.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../templates/global_assets/images/help2.png); }
+.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../templates/global_assets/images/help2.png); }
 
 
 
@@ -243,7 +243,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .ee-help-popup-question {
-	background: transparent url(../../../../images/subtle_help.png) top left no-repeat;
+	background: transparent url(../../../templates/global_assets/images/subtle_help.png) top left no-repeat;
 	display: inline-block;
 	margin-left: 3px;
 	width: 26px;
@@ -321,7 +321,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/magnifier.png) no-repeat;
+	background: url(../../../templates/global_assets/images/magnifier.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -335,7 +335,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/calendar_edit.png) no-repeat;
+	background: url(../../../templates/global_assets/images/calendar_edit.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -350,7 +350,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/btn_sprite.png) no-repeat -126px 0;
+	background: url(../../../templates/global_assets/images/btn_sprite.png) no-repeat -126px 0;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -363,7 +363,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/group.png) no-repeat;
+	background: url(../../../templates/global_assets/images/group.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -378,7 +378,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/btn_sprite.png) no-repeat -54px 0;
+	background: url(../../../templates/global_assets/images/btn_sprite.png) no-repeat -54px 0;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -392,7 +392,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/cog.png) no-repeat;
+	background: url(../../../templates/global_assets/images/cog.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -406,7 +406,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/excel_icon.png) no-repeat;
+	background: url(../../../templates/global_assets/images/excel_icon.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -420,7 +420,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/csv_icon_sm.gif) no-repeat;
+	background: url(../../../templates/global_assets/images/csv_icon_sm.gif) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -434,7 +434,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/email_go.png) no-repeat;
+	background: url(../../../templates/global_assets/images/email_go.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -448,7 +448,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/chart_bar.png) no-repeat;
+	background: url(../../../templates/global_assets/images/chart_bar.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -458,7 +458,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 	width: 18px;
 	height: 18px;
 	margin: 2px 3px 0 0;
-	background: url(../../../../images/tag.png) no-repeat;
+	background: url(../../../templates/global_assets/images/tag.png) no-repeat;
 	text-indent: -9000px;
 	outline: none;
 }
@@ -574,7 +574,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 .ajax-loader-grey {
-	background: transparent url(../../../../../images/ajax-loader-grey.gif) no-repeat top left;
+	background: transparent url(../../../templates/global_assets/images/ajax-loader-grey.gif) no-repeat top left;
 	padding: 31px;
 	display: none;
 }
