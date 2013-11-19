@@ -516,7 +516,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 		//first get inline css (will be empty if the messenger doesn't use it)
 		$this->_template_args['inline_style'] = file_get_contents( $this->get_inline_css_template(FALSE, $preview), TRUE );
-		$base_path = EE_CORE . 'messages/messenger/assets/' . $this->name . '/';
+		$base_path = EE_LIBRARIES . 'messages/messenger/assets/' . $this->name . '/';
 
 		//figure out main template path
 		$wrapper_template = !$preview ? $base_path . $this->name . '-messenger-main-wrapper.template.php' : $base_path . $this->name . '-messenger-preview-wrapper.template.php';

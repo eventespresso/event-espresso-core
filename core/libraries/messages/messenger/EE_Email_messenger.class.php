@@ -144,7 +144,7 @@ class EE_Email_messenger extends EE_messenger  {
 				break;
 		}
 		
-		return $url ? EE_PLUGIN_DIR_URL . 'includes/core/' . $base : EE_CORE . $base;
+		return $url ? EE_PLUGIN_DIR_URL . 'core/libraries/' . $base : EE_LIBRARIES . $base;
 	}
 
 
@@ -380,12 +380,12 @@ class EE_Email_messenger extends EE_messenger  {
 
 		//now if this isn't a preview, let's setup the body so it has inline styles
 		if ( !$preview ) {
-			require_once EE_CORE . 'messages/messenger/assets/email/CssToInlineStyles.php';
+			require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
 			$CSS = new CssToInlineStyles( $body );
 			$CSS->setUseInlineStylesBlock();
 			$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
 		} else if ( $preview && defined('DOING_AJAX' ) ) {
-			require_once EE_CORE . 'messages/messenger/assets/email/CssToInlineStyles.php';
+			require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
 			$style = file_get_contents( $this->get_inline_css_template( FALSE, TRUE ) );
 			$CSS = new CssToInlineStyles( $body, $style );
 			$body = ltrim( $CSS->convert(), ">\n" );

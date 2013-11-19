@@ -31,7 +31,7 @@
 
 
 .ajax-loader-grey {
-    background: transparent url(../../../../../images/ajax-loader-grey.gif) no-repeat left;
+    background: transparent url(../../../templates/global_assets/images/ajax-loader-grey.gif) no-repeat left;
     padding: 31px;
     display: none;
     padding-right: 5px;

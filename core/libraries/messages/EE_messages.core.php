@@ -98,7 +98,7 @@ class EE_messages {
 	 */
 	private function _load_files($kind, $actives) {
 		$active_names = array();
-		$base_path = EE_CORE . 'messages' . DS . $kind . DS;
+		$base_path = EE_LIBRARIES . 'messages' . DS . $kind . DS;
 		if ( empty($actives) ) return false;
 
 		//make sure $actives is an array
@@ -373,7 +373,7 @@ class EE_messages {
 	public function get_installed( $type = 'all' ) {
 		$installed = array();
 
-		$message_base = EVENT_ESPRESSO_INCLUDES_DIR . "core" . DS . "messages" . DS;
+		$message_base = EE_LIBRARIES . "messages" . DS;
 
 		$messenger_files = $type == 'all' || $type == 'messengers' ? scandir( $message_base . "messenger", 1) : NULL;
 		$messagetype_files = $type == 'all' || $type == 'message_types' ? scandir( $message_base . "message_type", 1) : NULL;
