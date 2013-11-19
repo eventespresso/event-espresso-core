@@ -110,7 +110,7 @@
 							$odd = !$odd;
 								ee_invoice_display_line_item($child_line_item,$show_line_item_description,$odd);
 							}?>
-							<tr><td colspan="2"></td><td colspan="3"><hr></td></tr>
+							<tr><td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td><td colspan="3"><hr></td></tr>
 							<tr id="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
@@ -124,7 +124,7 @@
 								$odd = !$odd;
 								ee_invoice_display_line_item($child_line_item, $show_line_item_description, $odd);
 							}?>
-							<tr><td colspan="2"></td><td colspan="3"><hr></td></tr>
+							<tr><td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td><td colspan="3"><hr></td></tr>
 							<tr id="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
