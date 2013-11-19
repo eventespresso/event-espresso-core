@@ -455,7 +455,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
+		//require_once EE_PLUGIN_DIR_PATH . 'helpers/EEH_Template.helper.php';
 
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
