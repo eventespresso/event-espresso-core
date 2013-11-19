@@ -36,7 +36,7 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		EE_Config::register_route( 'event', 'Event_Single', 'run' );
-		EE_Config::register_view( 'event', 0, EE_TEMPLATES . parent::get_current_theme() . DS . 'espresso_events' . DS . 'single-espresso_events.php' );
+		EE_Config::register_view( 'event', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'espresso_events' . DS . 'single-espresso_events.php' );
 	}
 
 	/**

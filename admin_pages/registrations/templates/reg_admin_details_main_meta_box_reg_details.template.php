@@ -57,14 +57,14 @@
 	</div>	
 
 	<a id="display-additional-registration-session-info" class="display-the-hidden" rel="additional-registration-session-info">
-		<img src="<?php echo EE_PLUGIN_DIR_URL; ?>images/additional_info-10x10.png" alt="" />
+		<img src="<?php echo EE_IMAGES_URL;?>additional_info-10x10.png" alt="" />
 		<?php _e( 'view additional registration session details', 'event_espresso' );?>
 	</a>
 
 	<div id="additional-registration-session-info-dv" class="hidden">
 
 		<a id="hide-additional-registration-session-info" class="hide-the-displayed hidden" rel="additional-registration-session-info">
-			<img src="<?php echo EE_PLUGIN_DIR_URL; ?>images/close_additional_info-10x10.png" alt="" />
+			<img src="<?php echo EE_IMAGES_URL;?>close_additional_info-10x10.png" alt="" />
 			<?php _e( 'hide additional registration session details', 'event_espresso' );?>			
 		</a>
 	<br class="clear"/>	
