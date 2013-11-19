@@ -1425,7 +1425,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_style('jquery-jq-plot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array('jquery'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('ee-admin-css', EE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 		//helpers styles
-		wp_register_style('ee-text-links', EE_HELPERS . 'assets/ee_text_list_helper.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_register_style('ee-text-links', EE_PLUGIN_DIR_URL . 'core/helpers/assets/ee_text_list_helper.css', array(), EVENT_ESPRESSO_VERSION );
 		//enqueue global styles
 		wp_enqueue_style('ee-admin-css');
 
@@ -1448,7 +1448,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//and parsing associative serialized form elements
 		wp_register_script( 'ee-serialize-full-array', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.serializefullarray.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		//helpers scripts
-		wp_register_script('ee-text-links', EE_GLOBAL_ASSETS_URL . 'helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('ee-text-links', EE_PLUGIN_DIR_URL . 'core/helpers/assets/ee_text_list_helper.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-moment', EE_GLOBAL_ASSETS_URL . 'scripts/moment.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-datepicker', EE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
 
