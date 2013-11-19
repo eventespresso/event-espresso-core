@@ -22,7 +22,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * ------------------------------------------------------------------------
  */
- class EE_Session {
+ class EE_Session implements Serializable {
 
 
   // instance of the EE_Session object
@@ -415,6 +415,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 //		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
 //			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 //		}
+//				
 
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
@@ -668,42 +669,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 	/**
-	 *   get the real "now" time
-	 *   @access private
-	 *   @return	 string
-	 */
-	private function _session_time() {
-
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-////		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
-		// what time is it Mr Wolf?
-		$now = time();
-
-		$date_format = get_option('date_format');
-		$time_format = get_option('time_format');
-		$time_format = $date_format . ', ' . $time_format;
-
-		$offset = get_option('gmt_offset');
-		$timezone_string = get_option('timezone_string');
-		// if timezone string is empty
-		if ( ! $timezone_string ) {
-			// set it to EST
-			$timezone_string = 'America/New_York';
-		}
-		//date_default_timezone_set($timezone_string);
-
-		// generate the user time, taking the gmt offset into consideration
-		$time = mktime(gmdate("H", $now)+$offset, gmdate("i", $now), gmdate("s", $now), gmdate("m", $now), gmdate("d", $now), gmdate("Y", $now));
-
-		return mktime(gmdate('H'), gmdate('i'), gmdate('s'), gmdate('m'), gmdate('d'), gmdate('Y') );
-	}
-
-
-
-
-
-	/**
 	 *   wp_loaded
 	 *   @access public
 	 *   @return	 string
@@ -715,8 +680,48 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	}
 
 
+	/**
+	 * implementations from the Serializable PHP interface
+	 */
+
+	/**
+	 * Clean up object before EE_Session is saved to the db
+	 * @return string serialized object
+	 */
+	public function serialize() {
+		//first reduce the 'pages_visited' count, we'll only save the last 10 page visits.
+		$this->_session_data['pages_visited'] = array_slice( $this->_session_data['pages_visited'], -10 );
+
+		//data to serialize
+		$serialized = array(
+			'sid' => $this->_sid,
+			'session_data' => $this->_session_data,
+			'expiration' => $this->_expiration,
+			'time' => $this->_time,
+			'use_encryption' => $this->_use_encryption,
+			'user_agent' => $this->_user_agent,
+			'ip_address' => $this->_ip_address 
+			);
+
+		return serialize( $serialized );
+		
+	}
 
 
+
+
+	/**
+	 * return unserialized object from the db
+	 * @param  string $data serialized object
+	 * @return EE_Session   this object
+	 */
+	public function unserialize( $data ) {
+		$serialized = unserialize( $data );
+		foreach ( $serialized as $prop_name => $prop_value ) {
+			$prop_name = '_' . $prop_name;
+			$this->$prop_name = $prop_value;
+		}
+	}
 
 
 }
