@@ -1122,6 +1122,11 @@ class EE_Template_Config extends EE_Config_Base {
 	*/
 	public $use_custom_templates;
 
+	/**
+	* @var string $current_espresso_theme
+	*/
+	public $current_espresso_theme;
+
 
 	/**
 	 * 	class constructor
@@ -1135,6 +1140,7 @@ class EE_Template_Config extends EE_Config_Base {
 		$this->display_address_in_regform = TRUE;
 		$this->display_description_on_multi_reg_page = FALSE;
 		$this->use_custom_templates = FALSE;
+		$this->current_espresso_theme = 'espresso_default';
 	}
 
 }
