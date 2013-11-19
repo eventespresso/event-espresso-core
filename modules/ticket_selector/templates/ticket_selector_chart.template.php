@@ -152,20 +152,22 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span>
 						<br/>						
 						
+						<?php if ( isset( $min ) && isset( $max )) : ?>
 						<h5><?php _e( 'Purchasable Quantities', 'event_espresso' ); ?></h5>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Min Qty:', 'event_espresso' ); ?></span><?php echo $min > 0 ? $min : 0; ?><br/>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Max Qty:', 'event_espresso' ); ?></span><?php echo $max > 0 ? $max : __( 'no limit', 'event_espresso' ); ?><br/>
 						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The number of tickets that can be purchased per transaction.', 'event_espresso' ); ?></span>
 						<br/>
+						<?php endif; ?>
 						
-						<?php if ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE ) { ?>							
+						<?php if ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE ) : ?>							
 						<h5><?php _e( 'Ticket Uses', 'event_espresso' ); ?></h5>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# of Uses:', 'event_espresso' ); ?></span><?php echo $ticket->uses() > 1 ? $ticket->uses() : 1; ?><br/>
 						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The number of times this ticket can be used to gain entrance to this event.', 'event_espresso' ); ?></span>
 						<br/>
-						<?php } ?>
+						<?php endif; ?>
 						
-						<?php if ( $datetimes = $ticket->get_many_related( 'Datetime' )) { ?>
+						<?php if ( $datetimes = $ticket->get_many_related( 'Datetime' )) : ?>
 						<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
 						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times:', 'event_espresso' ); ?></span><br/>
 						<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
@@ -179,7 +181,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									</tr>
 								</thead>
 								<tbody>
-								<?php foreach ( $datetimes as $datetime ) { ?>
+								<?php foreach ( $datetimes as $datetime ) : ?>
 								
 								<tr>
 									<td><?php echo $datetime->start_date('l F jS, Y'); ?></td>
@@ -188,11 +190,11 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->reg_limit() - $datetime->sold(); ?>
 									<td class="cntr"><?php echo $datetime->reg_limit() ? $tkts_left : __( 'unlimited ', 'event_espresso' ); ?></td>
 								</tr>
-								<?php } ?>
+								<?php endif; ?>
 								</tbody>
 							</table>
 						</div>
-						<?php } ?>
+						<?php endif; ?>
 						
 					</div>					
 				</td>
