@@ -82,6 +82,12 @@ abstract class EED_Module extends EE_Base {
 	}
 
 
+
+	public static function get_current_theme() {
+		return isset( EE_Registry::instance()->CFG->template_settings->current_espresso_theme ) ? $EE_Registry::instance()->CFG->template_settings->current_espresso_theme : 'espresso_default';
+	}
+
+
 	
 }
 // End of file EED_Module.module.php
