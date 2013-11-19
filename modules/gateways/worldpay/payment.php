@@ -130,13 +130,13 @@ function espresso_display_worldpay($attendee_id, $event_id, $event_cost) {
 			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/worldpay/WorldPaylogoBluetrans.png")) {
 				$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/worldpay/WorldPaylogoBluetrans.png";
 			} else {
-				$button_url = EE_PLUGIN_DIR_URL . "gateways/worldpay/WorldPaylogoBluetrans.png";
+				$button_url = EE_MODULES . "gateways/worldpay/WorldPaylogoBluetrans.png";
 			}
 		} elseif (file_exists($worldpay_settings['button_url'])) {
 			$button_url = $worldpay_settings['button_url'];
 		} else {
 			//If no other buttons exist, then use the default location
-			$button_url = EE_PLUGIN_DIR_URL . "gateways/worldpay/WorldPaylogoBluetrans.png";
+			$button_url = EE_MODULES . "gateways/worldpay/WorldPaylogoBluetrans.png";
 		}
 		$myworldpay->submitButton($button_url, 'worldpay'); //Display payment button
 	}

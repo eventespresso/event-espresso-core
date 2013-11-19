@@ -56,7 +56,7 @@ Class EE_Authnet extends EE_Offsite_Gateway {
 		$this->_button_base = 'authnet-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
 		$this->_gatewayUrl = 'https://secure.authorize.net/gateway/transact.dll';
-		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_PLUGIN_DIR_URL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 

@@ -35,7 +35,7 @@ function espresso_display_nab($payor_data, $event_cost, $attendee_id, $event_id)
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "nab/nab_logo.png")) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "nab/nab_logo.png";
 		} else {
-			$button_url = EE_PLUGIN_DIR_URL . "gateways/nab/nab_logo.png";
+			$button_url = EE_MODULES . "gateways/nab/nab_logo.png";
 		}
 	} else {
 		$button_url = $nab_settings['button_url'];

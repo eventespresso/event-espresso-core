@@ -25,7 +25,7 @@ function event_espresso_firstdata_connect_2_payment_settings() {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/firstdata_connect_2/lib/standard_button.gif")) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/firstdata_connect_2/lib/standard_button.gif";
 		} else {
-			$button_url = EE_PLUGIN_DIR_URL . "gateways/firstdata_connect_2/lib/standard_button.gif";
+			$button_url = EE_MODULES . "gateways/firstdata_connect_2/lib/standard_button.gif";
 		}
 		$payment_settings['firstdata_connect_2']['storename'] = '';
 		$payment_settings['firstdata_connect_2']['sharedSecret'] = '';

@@ -59,13 +59,13 @@ if (!empty($mwarrior_settings['bypass_payment_page'])) {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/btn_checkout.png")) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/btn_checkout.png";
 		} else {
-			$button_url = EE_PLUGIN_DIR_URL . "gateways/mwarrior/btn_checkout.png";
+			$button_url = EE_MODULES . "gateways/mwarrior/btn_checkout.png";
 		}
 	} elseif (file_exists($mwarrior_settings['button_url'])) {
 		$button_url = $mwarrior_settings['button_url'];
 	} else {
 		//If no other buttons exist, then use the default location
-		$button_url = EE_PLUGIN_DIR_URL . "gateways/mwarrior/btn_checkout.png";
+		$button_url = EE_MODULES . "gateways/mwarrior/btn_checkout.png";
 	}
 	$mwarrior->submitButton($button_url, 'mwarrior'); //Display payment button
 }

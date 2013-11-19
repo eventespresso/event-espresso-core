@@ -42,7 +42,7 @@ Class EE_Stripe extends EE_Onsite_Gateway {
 		$this->_gateway_name = 'Stripe';
 		$this->_button_base = 'stripe-logo.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
-		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_PLUGIN_DIR_URL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 

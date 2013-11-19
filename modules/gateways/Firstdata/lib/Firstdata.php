@@ -20,7 +20,7 @@ if (!$r || $wpdb->num_rows == 0) {
 
 $firstdata_settings = $payment_settings['firstdata'];
 
-$pem_file = EE_PLUGIN_DIR_PATH . "gateways/firstdata/" . $firstdata_settings['firstdata_store_id'] . ".pem";
+$pem_file = EE_MODULES . "gateways/firstdata/" . $firstdata_settings['firstdata_store_id'] . ".pem";
 
 if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "firstdata/" . $firstdata_settings['firstdata_store_id'] . ".pem")) {
 

@@ -43,7 +43,7 @@ Class EE_2checkout extends EE_Offsite_Gateway {
 		$this->_gateway_name = '2Checkout';
 		$this->_button_base = '2checkout-logo.png';
 		$this->_path =  str_replace( '\\', '/', __FILE__ );
-		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_PLUGIN_DIR_URL . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 

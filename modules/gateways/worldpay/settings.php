@@ -27,7 +27,7 @@ function event_espresso_worldpay_payment_settings() {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/worldpay/WorldPaylogoBluetrans.png")) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/worldpay/WorldPaylogoBluetrans.png";
 		} else {
-			$button_url = EE_PLUGIN_DIR_URL . "gateways/worldpay/WorldPaylogoBluetrans.png";
+			$button_url = EE_MODULES . "gateways/worldpay/WorldPaylogoBluetrans.png";
 		}
 		$payment_settings['worldpay']['active'] = false;
 		$payment_settings['worldpay']['worldpay_id'] = '';

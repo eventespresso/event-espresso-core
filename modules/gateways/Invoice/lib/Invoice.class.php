@@ -62,7 +62,7 @@ class Invoice {
 		if (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) {
 			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/';
 		} else {
-			$template_args['base_url'] = EE_PLUGIN_DIR_URL . 'gateways/invoice/lib/templates/';
+			$template_args['base_url'] = EE_MODULES . 'gateways/invoice/lib/templates/';
 		}
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		
@@ -153,7 +153,7 @@ class Invoice {
 			define('DOMPDF_ENABLE_REMOTE', TRUE);
 			define('DOMPDF_ENABLE_JAVASCRIPT', FALSE);
 			define('DOMPDF_ENABLE_CSS_FLOAT', TRUE);
-			require_once(EE_PLUGIN_DIR_PATH . '/tpc/dompdf/dompdf_config.inc.php');
+			require_once(EE_THIRD_PARTY . 'dompdf/dompdf_config.inc.php');
 			$dompdf = new DOMPDF();
 			$dompdf->load_html($content);
 			$dompdf->render();		

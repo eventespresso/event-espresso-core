@@ -27,7 +27,7 @@ function event_espresso_mwarrior_payment_settings() {
 		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/btn_checkout.png")) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_DIR . "/mwarrior/btn_checkout.png";
 		} else {
-			$button_url = EE_PLUGIN_DIR_URL . "gateways/mwarrior/btn_checkout.png";
+			$button_url = EE_MODULES . "gateways/mwarrior/btn_checkout.png";
 		}
 		$payment_settings['mwarrior']['active'] = false;
 		$payment_settings['mwarrior']['mwarrior_id'] = '';
