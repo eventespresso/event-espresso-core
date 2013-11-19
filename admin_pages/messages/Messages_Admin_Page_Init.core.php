@@ -37,7 +37,7 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init  {
 
 		define( 'EE_MSG_PG_SLUG', 'espresso_messages' );	
 		define( 'EE_MSG_PG_NAME', ucwords( str_replace( '_', '', EE_MSG_PG_SLUG )));	
-		define( 'EE_MSG_ADMIN', EE_ADMIN . 'messages' . DS );	
+		define( 'EE_MSG_ADMIN', EE_ADMIN_PAGES . 'messages' . DS );	
 		define( 'EE_MSG_ADMIN_URL', admin_url( 'admin.php?page=' . EE_MSG_PG_SLUG ));	
 		define( 'EE_MSG_ASSETS_PATH', EE_MSG_ADMIN . 'assets' . DS );		
 		define( 'EE_MSG_ASSETS_URL', EE_ADMIN_PAGES_URL  . 'messages/assets/' );	
