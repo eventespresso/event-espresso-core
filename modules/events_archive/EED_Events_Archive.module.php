@@ -121,7 +121,7 @@ class EED_Events_Archive  extends EED_Module {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
 		// set config
 		if ( ! isset( $EE->CFG->template_settings->EED_Events_Archive ) || ! $EE->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
-			$EE->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+			$this->EE->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
 		}
 		// grid, text or dates ?
 		EED_Events_Archive::set_type();
