@@ -481,7 +481,7 @@ abstract class EE_Gateway {
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway_name]) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway_name . '/lib/' . $this->_button_base;
 		} else {
-			$button_url = EE_MODULES . "gateways/" . $this->_gateway_name . '/lib/' . $this->_button_base;
+			$button_url = EE_GATEWAYS_URL . $this->_gateway_name . '/lib/' . $this->_button_base;
 		}
 		$this->_payment_settings['button_url'] = $button_url;
 		// change windows style filepaths to Unix style filepaths
