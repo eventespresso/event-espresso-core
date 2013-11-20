@@ -782,16 +782,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			throw new EE_Error("not yet supported");
 		}
 
-
 		if ( isset( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
-				'Event.status' => 'draft',
-				'Event.status*' => 'trash',
-				'Event.status**' => 'publish',
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
@@ -807,6 +803,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
 				'Ticket.TKT_description' => array( 'LIKE', $sstr )		
+				);
+
+			$_where['OR*'] = array(
+				'Event.status' => 'draft',
+				'Event.status*' => 'trash',
+				'Event.status**' => 'publish',
 				);
 		}
 
