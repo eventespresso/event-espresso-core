@@ -4,7 +4,7 @@
 			<tr>
 				<th scope="col" width="65%"><h3><?php _e( 'Ticket Options', 'event_espresso' ); ?></h3></th>
 				<th scope="col" width="20%"><?php _e( 'Price', 'event_espresso' ); ?> <span class="small-text no-bold"><?php _e( '(each)', 'event_espresso' ); ?></span></th>
-				<th scope="col" width="15%" class="cntr"><?php _e( 'Quantity*', 'event_espresso' ); ?></th>
+				<th scope="col" width="15%" class="cntr"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>

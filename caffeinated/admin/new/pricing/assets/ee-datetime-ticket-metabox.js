@@ -578,6 +578,13 @@ jQuery(document).ready(function($) {
 
 				if ( $(this).hasClass('starting-ticket-datetime-rows') )
 					$(this).val('');
+
+				//TKT date fields
+				if( $(this).hasClass('edit-ticket-TKT_start_date' ) )
+					$(this).data('dateFieldContext', '#edit-ticketrow-' + newrownum);
+
+				if( $(this).hasClass('edit-ticket-TKT_end_date') )
+					$(this).data('dateFieldContext', '#edit-ticketrow-' + newrownum);
 			});
 
 			//textarea

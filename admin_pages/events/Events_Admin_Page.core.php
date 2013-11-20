@@ -610,7 +610,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_values = array(
 			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => !empty( $this->_req_data['display_reg_form'] ) ? 1 : 0,
-			'EVT_allow_multiple' => !empty( $this->_req_data['allow_multiple'] ) ? 1 : 0,
 			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
 			'EVT_require_pre_approval' => !empty( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
 			'EVT_member_only' => !empty( $this->_req_data['member_only'] ) ? 1 : 0,
@@ -1208,8 +1207,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//$template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
-		$template_args['allow_group_reg_select'] = EEH_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
-		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
+		$template_args['additional_limit'] = (int) $this->_cpt_model_obj->additional_limit() < 1 ? 1 : $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
