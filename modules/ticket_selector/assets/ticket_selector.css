@@ -98,7 +98,7 @@
 	border-width: 1px;
 	border-color: #eee;
 }
-.tkt-slctr-tbl .tckt-slctr-tkt-details-tr td {
+.tkt-slctr-tbl .tckt-slctr-tkt-details-td {
 	padding: 0 !important;
 }
 
@@ -171,29 +171,29 @@
 .tckt-slctr-tkt-details-tbl-wrap-dv .tckt-slctr-tkt-details-tbl {
 	width: 100%;
 	margin: 0;
-	background: #fcfcfc;
-	border-style: solid none none solid;
+	background: #fefefe;
+	border-style: none none solid solid;
 	border-width: 1px;
 	border-color: #eee;
+	text-shadow: 1px 1px 0px #fff;
 }
-.tckt-slctr-tkt-details-tbl thead {
-	padding: 0;
-	background: #fff;
+.tckt-slctr-tkt-details-tbl th {
+	padding: 5px;
 	font-size: 1em;
 }
-.tckt-slctr-tkt-details-tbl thead th:first-child,
+/*.tckt-slctr-tkt-details-tbl thead th:first-child,
 .tckt-slctr-tkt-details-tbl thead th:last-child {
 	font-size: 1em;
-}
+}*/
 .tckt-slctr-tkt-details-tbl thead th {
 	font-weight: bold;
-	border-style: none solid solid none;
+	border-style: solid solid none none;
 	border-width: 1px;
 	border-color: #eee;
 }
 .tckt-slctr-tkt-details-tbl td {
 	padding: 5px;
-	border-style: none solid solid none;
+	border-style: solid solid none none;
 	border-width: 1px;
 	border-color: #eee;
 }

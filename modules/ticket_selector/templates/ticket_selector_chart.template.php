@@ -140,7 +140,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				</td>
 			</tr>
 			<tr class="tckt-slctr-tkt-details-tr">
-				<td colspan="4">
+				<td class="tckt-slctr-tkt-details-td" colspan="4">
 					<div id="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>-dv" class="tckt-slctr-tkt-details-dv hidden">
 						
 						<h3><?php _e( 'Ticket Details', 'event_espresso' ); ?></h3>
