@@ -47,6 +47,7 @@ Specific Theme Fixes: This section will use !important much more than it should.
 
 #espresso_calendar tr:hover td {
 	background: none; /* expound theme */
+	background-color: transparent; /* spun theme */
 }
 
 #espresso_calendar .thumb-wrap img {
@@ -127,6 +128,7 @@ RESET SELECT
 	border-radius: 0.3em;
 	font-size: 0.85em;
 	line-height: 1.6em; /* ticket 4163 */
+	min-height: 18px;
 	color: #777;
 	overflow: hidden;
 	-webkit-transition: box-shadow 200ms, border-color 200ms;
@@ -377,13 +379,13 @@ The Buttons and related paraphenalia
 #espresso_calendar .time-display-block {
 	margin: 0;
 	padding: 4px;
-	display:block;
+	display: block;
 }
 
 #espresso_calendar .thumb-wrap {
 	display: block;
 	overflow: hidden;
-	padding: 10px 0 0;
+	padding: 5px 0 0;
 	max-width: 150px;
 	vertical-align: middle;
 }
