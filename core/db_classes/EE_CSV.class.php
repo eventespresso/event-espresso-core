@@ -37,7 +37,7 @@
 	 */	
  	private function __construct() {
 		
-		$this->EE = EE_Registry::instance();
+		
 		global $wpdb;
 
 		$this->_primary_keys = array(
@@ -315,7 +315,7 @@
 	   }
 		foreach ( $csv_data_array as $model_name_in_csv_data => $model_data_from_import ) {	
 			//now check that assumption was correct. If
-			if ( $this->EE->is_model_name($model_name_in_csv_data)) {
+			if ( EE_Registry::instance()->is_model_name($model_name_in_csv_data)) {
 				$model_name = $model_name_in_csv_data;
 			}else {
 				// no table info in the array and no table name passed to the function?? FAIL
@@ -323,7 +323,7 @@
 				return FALSE;
 			}
 			
-			$model = $this->EE->load_model($model_name);
+			$model = EE_Registry::instance()->load_model($model_name);
 		
 			
 			//so without further ado, scanning all the data provided for primary keys and their inital values
@@ -520,7 +520,7 @@
 	 * @param resource $filehandle
 	 */
 	public function write_metadata_to_csv($filehandle){
-		$this->EE->load_helper('DTT_helper');
+		EE_Registry::instance()->load_helper('DTT_helper');
 		$data_row = array(EE_CSV::metadata_header);//do NOT translate because this exact string is used when importing
 		$this->fputcsv2($filehandle, $data_row);
 		$meta_data = array( 0=> array(
@@ -542,7 +542,7 @@
 	 * @return boolean if we successfully wrote to the CSV or not. If there's no $data, we consider that a success (because we wrote everything there was...nothing)
 	 */
 	public function write_data_array_to_csv($filehandle, $data){
-		$this->EE->load_helper('Array');
+		EE_Registry::instance()->load_helper('Array');
 
 		
 		//determine if $data is actually a 2d array
@@ -635,7 +635,7 @@
 //				echo "no data to write... so jsut write the headers";
 				//so there's actually NO model objects for taht model.
 				//probably still want to show the columns
-				$model = $this->EE->load_model($model_name);
+				$model = EE_Registry::instance()->load_model($model_name);
 				$column_names = array();
 				foreach($model->field_settings() as $field){
 					$column_names[$field->get_nicename()."[".$field->get_name()."]"] = null ;

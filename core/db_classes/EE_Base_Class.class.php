@@ -31,7 +31,7 @@ class EE_Base_Class{
 	 *	@var 	EE_Registry		$EE
 	 * 	@access 	protected
 	 */
-	protected $EE;
+	//protected $EE;
 	
 	/**
 	 * This is an array of the original properties and values provided during construction
@@ -98,7 +98,7 @@ class EE_Base_Class{
 	 * 
 	 */
 	protected function __construct($fieldValues=null, $bydb = FALSE, $timezone = NULL ){
-		$this->EE = EE_Registry::instance();
+		//
 		$className=get_class($this);
 		//set default formats for date and time
 		$this->_dt_frmt = get_option('date_format');
@@ -1319,11 +1319,11 @@ class EE_Base_Class{
 	}
 	
 	public function dropEE() {
-		$this->EE = NULL;
+		
 	}
 	
 	public function getEE() {
-		$this->EE = EE_Registry::instance();
+		
 	}
 	
 	

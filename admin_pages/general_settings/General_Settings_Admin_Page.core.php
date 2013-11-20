@@ -354,23 +354,23 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		// Check to make sure all of the main pages are setup properly,
 		// if not create the default pages and display an admin notice
-		$this->EE->load_helper( 'Activation' );
+		EE_Registry::instance()->load_helper( 'Activation' );
 		EEH_Activation::verify_default_pages_exist();
 
 		$this->_transient_garbage_collection();
 		$this->_template_args['values'] = $this->_yes_no_values;
 
-		$this->_template_args['reg_page_id'] = isset($this->EE->CFG->core->reg_page_id ) ?$this->EE->CFG->core->reg_page_id : NULL;
-		$this->_template_args['reg_page_obj'] = isset($this->EE->CFG->core->reg_page_id ) ? get_page($this->EE->CFG->core->reg_page_id ) : FALSE;
+		$this->_template_args['reg_page_id'] = isset(EE_Registry::instance()->CFG->core->reg_page_id ) ?EE_Registry::instance()->CFG->core->reg_page_id : NULL;
+		$this->_template_args['reg_page_obj'] = isset(EE_Registry::instance()->CFG->core->reg_page_id ) ? get_page(EE_Registry::instance()->CFG->core->reg_page_id ) : FALSE;
 
-		$this->_template_args['txn_page_id'] = isset($this->EE->CFG->core->txn_page_id) ?$this->EE->CFG->core->txn_page_id : NULL;
-		$this->_template_args['txn_page_obj'] = isset($this->EE->CFG->core->txn_page_id ) ? get_page($this->EE->CFG->core->txn_page_id ) : FALSE;
+		$this->_template_args['txn_page_id'] = isset(EE_Registry::instance()->CFG->core->txn_page_id) ?EE_Registry::instance()->CFG->core->txn_page_id : NULL;
+		$this->_template_args['txn_page_obj'] = isset(EE_Registry::instance()->CFG->core->txn_page_id ) ? get_page(EE_Registry::instance()->CFG->core->txn_page_id ) : FALSE;
 
-		$this->_template_args['thank_you_page_id'] = isset($this->EE->CFG->core->thank_you_page_id ) ?$this->EE->CFG->core->thank_you_page_id : NULL;
-		$this->_template_args['thank_you_page_obj'] = isset($this->EE->CFG->core->thank_you_page_id ) ? get_page($this->EE->CFG->core->thank_you_page_id ) : FALSE;
+		$this->_template_args['thank_you_page_id'] = isset(EE_Registry::instance()->CFG->core->thank_you_page_id ) ?EE_Registry::instance()->CFG->core->thank_you_page_id : NULL;
+		$this->_template_args['thank_you_page_obj'] = isset(EE_Registry::instance()->CFG->core->thank_you_page_id ) ? get_page(EE_Registry::instance()->CFG->core->thank_you_page_id ) : FALSE;
 
-		$this->_template_args['cancel_page_id'] = isset($this->EE->CFG->core->cancel_page_id ) ?$this->EE->CFG->core->cancel_page_id : NULL;
-		$this->_template_args['cancel_page_obj'] = isset($this->EE->CFG->core->cancel_page_id ) ? get_page($this->EE->CFG->core->cancel_page_id ) : FALSE;
+		$this->_template_args['cancel_page_id'] = isset(EE_Registry::instance()->CFG->core->cancel_page_id ) ?EE_Registry::instance()->CFG->core->cancel_page_id : NULL;
+		$this->_template_args['cancel_page_obj'] = isset(EE_Registry::instance()->CFG->core->cancel_page_id ) ? get_page(EE_Registry::instance()->CFG->core->cancel_page_id ) : FALSE;
 		
 		$this->_set_add_edit_form_tags( 'update_espresso_page_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -381,15 +381,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_espresso_page_settings() {
 		
-		$this->EE->CFG->core->reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : $this->EE->CFG->core->reg_page_id;
-		$this->EE->CFG->core->txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : $this->EE->CFG->core->txn_page_id;
-		$this->EE->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : $this->EE->CFG->core->thank_you_page_id;
-		$this->EE->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : $this->EE->CFG->core->cancel_page_id;
+		EE_Registry::instance()->CFG->core->reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : EE_Registry::instance()->CFG->core->reg_page_id;
+		EE_Registry::instance()->CFG->core->txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : EE_Registry::instance()->CFG->core->txn_page_id;
+		EE_Registry::instance()->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : EE_Registry::instance()->CFG->core->thank_you_page_id;
+		EE_Registry::instance()->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : EE_Registry::instance()->CFG->core->cancel_page_id;
 
-		$this->EE->CFG->core = apply_filters( 'FHEE_page_settings_save', $this->EE->CFG->core, $this->_req_data );
+		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE_page_settings_save', EE_Registry::instance()->CFG->core, $this->_req_data );
 		
 		$what = 'Critical Pages & Shortcodes';
-		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG->core, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->core, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, 'Template Settings', 'updated', array() );
 		
 	}
@@ -409,8 +409,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 		
 		$this->_template_args['display_address_in_regform'] = 
-				isset( $this->EE->CFG->template_settings->display_address_in_regform ) && ! empty( $this->EE->CFG->template_settings->display_address_in_regform ) 
-				? $this->EE->CFG->template_settings->display_address_in_regform
+				isset( EE_Registry::instance()->CFG->template_settings->display_address_in_regform ) && ! empty( EE_Registry::instance()->CFG->template_settings->display_address_in_regform ) 
+				? EE_Registry::instance()->CFG->template_settings->display_address_in_regform
 				: TRUE;
 		
 		$this->_template_args = apply_filters( 'FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
@@ -426,15 +426,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_template_settings() {
 		
-		$this->EE->CFG->template_settings->display_address_in_regform = 
+		EE_Registry::instance()->CFG->template_settings->display_address_in_regform = 
 				 isset( $this->_req_data['display_address_in_regform'] ) 
 				? absint( $this->_req_data['display_address_in_regform'] ) 
-				: $this->EE->CFG->template_settings->display_address_in_regform;
+				: EE_Registry::instance()->CFG->template_settings->display_address_in_regform;
 		
-		$this->EE->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', $this->EE->CFG->template_settings, $this->_req_data );
+		EE_Registry::instance()->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
 		
 		$what = 'Template Settings';
-		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'template_settings' ) );
 		
 	}
@@ -447,26 +447,26 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _your_organization_settings() {
 	
-		$this->_template_args['site_license_key'] = isset( $this->EE->CFG->core->site_license_key ) ? $this->_display_nice( $this->EE->CFG->core->site_license_key ) : '';
-		$this->_template_args['organization_name'] = isset( $this->EE->CFG->organization->name ) ? $this->_display_nice( $this->EE->CFG->organization->name ) : '';
-		$this->_template_args['organization_address_1'] = isset( $this->EE->CFG->organization->address_1 ) ? $this->_display_nice( $this->EE->CFG->organization->address_1 ) : '';
-		$this->_template_args['organization_address_2'] = isset( $this->EE->CFG->organization->address_2 ) ? $this->_display_nice( $this->EE->CFG->organization->address_2 ) : '';
-		$this->_template_args['organization_city'] = isset( $this->EE->CFG->organization->city ) ? $this->_display_nice( $this->EE->CFG->organization->city ) : '';
-		$this->_template_args['organization_zip'] = isset( $this->EE->CFG->organization->zip ) ? $this->_display_nice( $this->EE->CFG->organization->zip ) : '';
-		$this->_template_args['organization_email'] = isset( $this->EE->CFG->organization->email ) ? $this->_display_nice( $this->EE->CFG->organization->email ) : '';
-		$this->_template_args['currency_sign'] = isset( $this->EE->CFG->currency->sign ) ? $this->_display_nice( $this->EE->CFG->currency->sign ) : '$';
-		$this->_template_args['organization_logo_url'] = isset( $this->EE->CFG->organization->logo_url ) ? $this->_display_nice( $this->EE->CFG->organization->logo_url ) : FALSE;
-		$this->_template_args['organization_facebook'] = isset( $this->EE->CFG->organization->facebook ) ? $this->_display_nice( $this->EE->CFG->organization->facebook ) : '';
-		$this->_template_args['organization_twitter'] = isset( $this->EE->CFG->organization->twitter ) ? $this->_display_nice( $this->EE->CFG->organization->twitter ) : '';
-		$this->_template_args['organization_linkedin'] = isset( $this->EE->CFG->organization->linkedin ) ? $this->_display_nice( $this->EE->CFG->organization->linkedin ) : '';
-		$this->_template_args['organization_pinterest'] = isset( $this->EE->CFG->organization->pinterest ) ? $this->_display_nice( $this->EE->CFG->organization->pinterest ) : '';
-		$this->_template_args['organization_google'] = isset( $this->EE->CFG->organization->google ) ? $this->_display_nice( $this->EE->CFG->organization->google ) : '';
-		$this->_template_args['organization_instagram'] = isset( $this->EE->CFG->organization->instagram ) ? $this->_display_nice( $this->EE->CFG->organization->instagram ) : '';
+		$this->_template_args['site_license_key'] = isset( EE_Registry::instance()->CFG->core->site_license_key ) ? $this->_display_nice( EE_Registry::instance()->CFG->core->site_license_key ) : '';
+		$this->_template_args['organization_name'] = isset( EE_Registry::instance()->CFG->organization->name ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->name ) : '';
+		$this->_template_args['organization_address_1'] = isset( EE_Registry::instance()->CFG->organization->address_1 ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->address_1 ) : '';
+		$this->_template_args['organization_address_2'] = isset( EE_Registry::instance()->CFG->organization->address_2 ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->address_2 ) : '';
+		$this->_template_args['organization_city'] = isset( EE_Registry::instance()->CFG->organization->city ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->city ) : '';
+		$this->_template_args['organization_zip'] = isset( EE_Registry::instance()->CFG->organization->zip ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->zip ) : '';
+		$this->_template_args['organization_email'] = isset( EE_Registry::instance()->CFG->organization->email ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->email ) : '';
+		$this->_template_args['currency_sign'] = isset( EE_Registry::instance()->CFG->currency->sign ) ? $this->_display_nice( EE_Registry::instance()->CFG->currency->sign ) : '$';
+		$this->_template_args['organization_logo_url'] = isset( EE_Registry::instance()->CFG->organization->logo_url ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->logo_url ) : FALSE;
+		$this->_template_args['organization_facebook'] = isset( EE_Registry::instance()->CFG->organization->facebook ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->facebook ) : '';
+		$this->_template_args['organization_twitter'] = isset( EE_Registry::instance()->CFG->organization->twitter ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->twitter ) : '';
+		$this->_template_args['organization_linkedin'] = isset( EE_Registry::instance()->CFG->organization->linkedin ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->linkedin ) : '';
+		$this->_template_args['organization_pinterest'] = isset( EE_Registry::instance()->CFG->organization->pinterest ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->pinterest ) : '';
+		$this->_template_args['organization_google'] = isset( EE_Registry::instance()->CFG->organization->google ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->google ) : '';
+		$this->_template_args['organization_instagram'] = isset( EE_Registry::instance()->CFG->organization->instagram ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->instagram ) : '';
 		//UXIP settings
 		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin', TRUE );
 		
-		$this->EE->load_helper( 'Form_Fields' );
-		$STA_ID = isset( $this->EE->CFG->organization->STA_ID ) ? $this->EE->CFG->organization->STA_ID : 4;
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
+		$STA_ID = isset( EE_Registry::instance()->CFG->organization->STA_ID ) ? EE_Registry::instance()->CFG->organization->STA_ID : 4;
 		$this->_template_args['states'] = new EE_Question_Form_Input(
 				EE_Question::new_instance ( array(
 					'QST_ID'=> 0,
@@ -485,7 +485,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				)
 			);
 
-		$CNT_ISO = isset( $this->EE->CFG->organization->CNT_ISO ) ? $this->EE->CFG->organization->CNT_ISO : 'US';
+		$CNT_ISO = isset( EE_Registry::instance()->CFG->organization->CNT_ISO ) ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
 		$this->_template_args['countries'] = new EE_Question_Form_Input(
 				EE_Question::new_instance ( array(
 					'QST_ID'=> 0,
@@ -521,28 +521,28 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_your_organization_settings() {
 		
-		$this->EE->CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : $this->EE->CFG->core->site_license_key;
-		$this->EE->CFG->organization->name = isset( $this->_req_data['organization_name'] ) ? sanitize_text_field( $this->_req_data['organization_name'] ) : $this->EE->CFG->organization->name;
-		$this->EE->CFG->organization->address_1 = isset( $this->_req_data['organization_address_1'] ) ? sanitize_text_field( $this->_req_data['organization_address_1'] ) : $this->EE->CFG->organization->address_1;
-		$this->EE->CFG->organization->address_2 = isset( $this->_req_data['organization_address_2'] ) ? sanitize_text_field( $this->_req_data['organization_address_2'] ) : $this->EE->CFG->organization->address_2;
-		$this->EE->CFG->organization->city = isset( $this->_req_data['organization_city'] ) ? sanitize_text_field( $this->_req_data['organization_city'] ) : $this->EE->CFG->organization->city;
-		$this->EE->CFG->organization->STA_ID = isset( $this->_req_data['organization_state'] ) ? absint( $this->_req_data['organization_state'] ) : $this->EE->CFG->organization->STA_ID;
-		$this->EE->CFG->organization->CNT_ISO = isset( $this->_req_data['organization_country'] ) ? sanitize_text_field( $this->_req_data['organization_country'] ) : $this->EE->CFG->organization->CNT_ISO;
-		$this->EE->CFG->organization->zip = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : $this->EE->CFG->organization->zip;
-		$this->EE->CFG->organization->email = isset( $this->_req_data['organization_email'] ) ? sanitize_email( $this->_req_data['organization_email'] ) : $this->EE->CFG->organization->email;
-		$this->EE->CFG->organization->logo_url = isset( $this->_req_data['organization_logo_url'] ) ? esc_url_raw( $this->_req_data['organization_logo_url'] ) : $this->EE->CFG->organization->logo_url;
-		$this->EE->CFG->organization->facebook = isset( $this->_req_data['organization_facebook'] ) ? esc_url_raw( $this->_req_data['organization_facebook'] ) : $this->EE->CFG->organization->facebook;
-		$this->EE->CFG->organization->twitter = isset( $this->_req_data['organization_twitter'] ) ? esc_url_raw( $this->_req_data['organization_twitter'] ) : $this->EE->CFG->organization->twitter;
-		$this->EE->CFG->organization->linkedin = isset( $this->_req_data['organization_linkedin'] ) ? esc_url_raw( $this->_req_data['organization_linkedin'] ) : $this->EE->CFG->organization->linkedin;
-		$this->EE->CFG->organization->pinterest = isset( $this->_req_data['organization_pinterest'] ) ? esc_url_raw( $this->_req_data['organization_pinterest'] ) : $this->EE->CFG->organization->pinterest;
-		$this->EE->CFG->organization->google = isset( $this->_req_data['organization_google'] ) ? esc_url_raw( $this->_req_data['organization_google'] ) : $this->EE->CFG->organization->google;
-		$this->EE->CFG->organization->instagram = isset( $this->_req_data['organization_instagram'] ) ? esc_url_raw( $this->_req_data['organization_instagram'] ) : $this->EE->CFG->organization->instagram;
-		$this->EE->CFG->core->ee_ueip_optin = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : $this->EE->CFG->core->ee_ueip_optin; 
+		EE_Registry::instance()->CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : EE_Registry::instance()->CFG->core->site_license_key;
+		EE_Registry::instance()->CFG->organization->name = isset( $this->_req_data['organization_name'] ) ? sanitize_text_field( $this->_req_data['organization_name'] ) : EE_Registry::instance()->CFG->organization->name;
+		EE_Registry::instance()->CFG->organization->address_1 = isset( $this->_req_data['organization_address_1'] ) ? sanitize_text_field( $this->_req_data['organization_address_1'] ) : EE_Registry::instance()->CFG->organization->address_1;
+		EE_Registry::instance()->CFG->organization->address_2 = isset( $this->_req_data['organization_address_2'] ) ? sanitize_text_field( $this->_req_data['organization_address_2'] ) : EE_Registry::instance()->CFG->organization->address_2;
+		EE_Registry::instance()->CFG->organization->city = isset( $this->_req_data['organization_city'] ) ? sanitize_text_field( $this->_req_data['organization_city'] ) : EE_Registry::instance()->CFG->organization->city;
+		EE_Registry::instance()->CFG->organization->STA_ID = isset( $this->_req_data['organization_state'] ) ? absint( $this->_req_data['organization_state'] ) : EE_Registry::instance()->CFG->organization->STA_ID;
+		EE_Registry::instance()->CFG->organization->CNT_ISO = isset( $this->_req_data['organization_country'] ) ? sanitize_text_field( $this->_req_data['organization_country'] ) : EE_Registry::instance()->CFG->organization->CNT_ISO;
+		EE_Registry::instance()->CFG->organization->zip = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : EE_Registry::instance()->CFG->organization->zip;
+		EE_Registry::instance()->CFG->organization->email = isset( $this->_req_data['organization_email'] ) ? sanitize_email( $this->_req_data['organization_email'] ) : EE_Registry::instance()->CFG->organization->email;
+		EE_Registry::instance()->CFG->organization->logo_url = isset( $this->_req_data['organization_logo_url'] ) ? esc_url_raw( $this->_req_data['organization_logo_url'] ) : EE_Registry::instance()->CFG->organization->logo_url;
+		EE_Registry::instance()->CFG->organization->facebook = isset( $this->_req_data['organization_facebook'] ) ? esc_url_raw( $this->_req_data['organization_facebook'] ) : EE_Registry::instance()->CFG->organization->facebook;
+		EE_Registry::instance()->CFG->organization->twitter = isset( $this->_req_data['organization_twitter'] ) ? esc_url_raw( $this->_req_data['organization_twitter'] ) : EE_Registry::instance()->CFG->organization->twitter;
+		EE_Registry::instance()->CFG->organization->linkedin = isset( $this->_req_data['organization_linkedin'] ) ? esc_url_raw( $this->_req_data['organization_linkedin'] ) : EE_Registry::instance()->CFG->organization->linkedin;
+		EE_Registry::instance()->CFG->organization->pinterest = isset( $this->_req_data['organization_pinterest'] ) ? esc_url_raw( $this->_req_data['organization_pinterest'] ) : EE_Registry::instance()->CFG->organization->pinterest;
+		EE_Registry::instance()->CFG->organization->google = isset( $this->_req_data['organization_google'] ) ? esc_url_raw( $this->_req_data['organization_google'] ) : EE_Registry::instance()->CFG->organization->google;
+		EE_Registry::instance()->CFG->organization->instagram = isset( $this->_req_data['organization_instagram'] ) ? esc_url_raw( $this->_req_data['organization_instagram'] ) : EE_Registry::instance()->CFG->organization->instagram;
+		EE_Registry::instance()->CFG->core->ee_ueip_optin = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : EE_Registry::instance()->CFG->core->ee_ueip_optin; 
 
-		$this->EE->CFG = apply_filters('FHEE_your_organization_settings_save', $this->EE->CFG );	
+		EE_Registry::instance()->CFG = apply_filters('FHEE_your_organization_settings_save', EE_Registry::instance()->CFG );	
 		
 		$what = 'Your Organization Settings';
-		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
 		
 	}
@@ -554,16 +554,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _admin_option_settings() {
 	
 		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args['use_personnel_manager'] = isset( $this->EE->CFG->admin->use_personnel_manager ) ? absint( $this->EE->CFG->admin->use_personnel_manager ) : FALSE;
-		$this->_template_args['use_dashboard_widget'] = isset( $this->EE->CFG->admin->use_dashboard_widget ) ? absint( $this->EE->CFG->admin->use_dashboard_widget ) : TRUE;
-		$this->_template_args['events_in_dasboard'] = isset( $this->EE->CFG->admin->events_in_dasboard ) ? absint( $this->EE->CFG->admin->events_in_dasboard ) : 30;
-		$this->_template_args['use_event_timezones'] = isset( $this->EE->CFG->admin->use_event_timezones ) ? absint( $this->EE->CFG->admin->use_event_timezones ) : FALSE;
-		$this->_template_args['use_full_logging'] = isset( $this->EE->CFG->admin->use_full_logging ) ? absint( $this->EE->CFG->admin->use_full_logging ) : FALSE;
-		$this->_template_args['use_remote_logging'] = isset( $this->EE->CFG->admin->use_remote_logging ) ? absint( $this->EE->CFG->admin->use_remote_logging ) : FALSE;
-		$this->_template_args['remote_logging_url'] = isset( $this->EE->CFG->admin->remote_logging_url ) && ! empty( $this->EE->CFG->admin->remote_logging_url ) ? stripslashes( $this->EE->CFG->admin->remote_logging_url ) : '';
-		$this->_template_args['show_reg_footer'] = isset( $this->EE->CFG->admin->show_reg_footer ) ? absint( $this->EE->CFG->admin->show_reg_footer ) : TRUE;
-		$this->_template_args['affiliate_id'] = isset( $this->EE->CFG->admin->affiliate_id ) ? $this->_display_nice( $this->EE->CFG->admin->affiliate_id ) : '';
-		$this->_template_args['help_tour_activation'] = isset( $this->EE->CFG->admin->help_tour_activation ) ? absint( $this->EE->CFG->admin->help_tour_activation ): 1;
+		$this->_template_args['use_personnel_manager'] = isset( EE_Registry::instance()->CFG->admin->use_personnel_manager ) ? absint( EE_Registry::instance()->CFG->admin->use_personnel_manager ) : FALSE;
+		$this->_template_args['use_dashboard_widget'] = isset( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) ? absint( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) : TRUE;
+		$this->_template_args['events_in_dasboard'] = isset( EE_Registry::instance()->CFG->admin->events_in_dasboard ) ? absint( EE_Registry::instance()->CFG->admin->events_in_dasboard ) : 30;
+		$this->_template_args['use_event_timezones'] = isset( EE_Registry::instance()->CFG->admin->use_event_timezones ) ? absint( EE_Registry::instance()->CFG->admin->use_event_timezones ) : FALSE;
+		$this->_template_args['use_full_logging'] = isset( EE_Registry::instance()->CFG->admin->use_full_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_full_logging ) : FALSE;
+		$this->_template_args['use_remote_logging'] = isset( EE_Registry::instance()->CFG->admin->use_remote_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_remote_logging ) : FALSE;
+		$this->_template_args['remote_logging_url'] = isset( EE_Registry::instance()->CFG->admin->remote_logging_url ) && ! empty( EE_Registry::instance()->CFG->admin->remote_logging_url ) ? stripslashes( EE_Registry::instance()->CFG->admin->remote_logging_url ) : '';
+		$this->_template_args['show_reg_footer'] = isset( EE_Registry::instance()->CFG->admin->show_reg_footer ) ? absint( EE_Registry::instance()->CFG->admin->show_reg_footer ) : TRUE;
+		$this->_template_args['affiliate_id'] = isset( EE_Registry::instance()->CFG->admin->affiliate_id ) ? $this->_display_nice( EE_Registry::instance()->CFG->admin->affiliate_id ) : '';
+		$this->_template_args['help_tour_activation'] = isset( EE_Registry::instance()->CFG->admin->help_tour_activation ) ? absint( EE_Registry::instance()->CFG->admin->help_tour_activation ): 1;
 		
 		$this->_set_add_edit_form_tags( 'update_admin_option_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -573,21 +573,21 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _update_admin_option_settings() {
-		$this->EE->CFG->admin->use_personnel_manager = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : $this->EE->CFG->admin->use_personnel_manager;
-		$this->EE->CFG->admin->use_dashboard_widget = isset( $this->_req_data['use_dashboard_widget'] ) ? absint( $this->_req_data['use_dashboard_widget'] ) : $this->EE->CFG->admin->use_dashboard_widget;
-		$this->EE->CFG->admin->events_in_dasboard = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : $this->EE->CFG->admin->events_in_dasboard;
-		$this->EE->CFG->admin->use_event_timezones = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : $this->EE->CFG->admin->use_event_timezones;
-		$this->EE->CFG->admin->use_full_logging = isset( $this->_req_data['use_full_logging'] ) ? absint( $this->_req_data['use_full_logging'] ) : $this->EE->CFG->admin->use_full_logging;
-		$this->EE->CFG->admin->use_remote_logging = isset( $this->_req_data['use_remote_logging'] ) ? absint( $this->_req_data['use_remote_logging'] ) : $this->EE->CFG->admin->use_remote_logging;
-		$this->EE->CFG->admin->remote_logging_url = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : $this->EE->CFG->admin->remote_logging_url;
-		$this->EE->CFG->admin->show_reg_footer = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : $this->EE->CFG->admin->show_reg_footer;
-		$this->EE->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : $this->EE->CFG->admin->affiliate_id;
-		$this->EE->CFG->admin->help_tour_activation = isset( $this->_req_data['help_tour_activation'] ) ? absint( $this->_req_data['help_tour_activation'] ) : $this->EE->CFG->admin->help_tour_activation;
+		EE_Registry::instance()->CFG->admin->use_personnel_manager = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : EE_Registry::instance()->CFG->admin->use_personnel_manager;
+		EE_Registry::instance()->CFG->admin->use_dashboard_widget = isset( $this->_req_data['use_dashboard_widget'] ) ? absint( $this->_req_data['use_dashboard_widget'] ) : EE_Registry::instance()->CFG->admin->use_dashboard_widget;
+		EE_Registry::instance()->CFG->admin->events_in_dasboard = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : EE_Registry::instance()->CFG->admin->events_in_dasboard;
+		EE_Registry::instance()->CFG->admin->use_event_timezones = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : EE_Registry::instance()->CFG->admin->use_event_timezones;
+		EE_Registry::instance()->CFG->admin->use_full_logging = isset( $this->_req_data['use_full_logging'] ) ? absint( $this->_req_data['use_full_logging'] ) : EE_Registry::instance()->CFG->admin->use_full_logging;
+		EE_Registry::instance()->CFG->admin->use_remote_logging = isset( $this->_req_data['use_remote_logging'] ) ? absint( $this->_req_data['use_remote_logging'] ) : EE_Registry::instance()->CFG->admin->use_remote_logging;
+		EE_Registry::instance()->CFG->admin->remote_logging_url = isset( $this->_req_data['remote_logging_url'] ) ? esc_url_raw( $this->_req_data['remote_logging_url'] ) : EE_Registry::instance()->CFG->admin->remote_logging_url;
+		EE_Registry::instance()->CFG->admin->show_reg_footer = isset( $this->_req_data['show_reg_footer'] ) ? absint( $this->_req_data['show_reg_footer'] ) : EE_Registry::instance()->CFG->admin->show_reg_footer;
+		EE_Registry::instance()->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : EE_Registry::instance()->CFG->admin->affiliate_id;
+		EE_Registry::instance()->CFG->admin->help_tour_activation = isset( $this->_req_data['help_tour_activation'] ) ? absint( $this->_req_data['help_tour_activation'] ) : EE_Registry::instance()->CFG->admin->help_tour_activation;
 		
-		$this->EE->CFG->admin = apply_filters( 'FHEE_admin_option_settings_save', $this->EE->CFG->admin );	
+		EE_Registry::instance()->CFG->admin = apply_filters( 'FHEE_admin_option_settings_save', EE_Registry::instance()->CFG->admin );	
 		
 		$what = 'Admin Options';
-		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG->admin, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->admin, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'admin_option_settings' ) );
 		
 	}
@@ -601,11 +601,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _country_settings() {
 	
-		$CNT_ISO = isset( $this->EE->CFG->organization->CNT_ISO ) ? $this->EE->CFG->organization->CNT_ISO : 'US';
+		$CNT_ISO = isset( EE_Registry::instance()->CFG->organization->CNT_ISO ) ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 
 		//load field generator helper
-		$this->EE->load_helper( 'Form_Fields' );
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		
 		$this->_template_args['values'] = $this->_yes_no_values;
 				
@@ -655,7 +655,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			return '';
 		}
 		// for ajax
-		$this->EE->load_helper( 'Form_Fields' );
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		remove_all_filters( 'FHEE_form_field_label_html' );
 		remove_all_filters( 'FHEE_form_field_input_html' );
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 1 );
@@ -710,7 +710,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			return '';
 		}
 		// for ajax
-		$this->EE->load_helper( 'Form_Fields' );
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		remove_all_filters( 'FHEE_form_field_label_html' );
 		remove_all_filters( 'FHEE_form_field_input_html' );
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'state_form_field_label_wrap' ), 10, 1 );

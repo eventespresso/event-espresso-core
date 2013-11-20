@@ -318,7 +318,7 @@ class EEM_Transaction extends EEM_Base {
 	 */
 	public function get_transaction_from_reg_url_link( $reg_url_link = NULL ){
 		if( $reg_url_link === NULL ){
-			$reg_url_link = $this->EE->REQ->get( 'e_reg_url_link' );
+			$reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
 		}
 		$transaction = $this->get_one(array(array('Registration.REG_url_link'=>$reg_url_link)));
 		return $transaction;
@@ -338,7 +338,7 @@ class EEM_Transaction extends EEM_Base {
 	 */
 	public function update_based_on_payments($transaction_obj_or_id){
 		$transaction = $this->ensure_is_obj($transaction_obj_or_id);
-		$PAY = $this->EE->load_model( 'Payment' );
+		$PAY = EE_Registry::instance()->load_model( 'Payment' );
 		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_approved );
 		//$total_pending = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_pending );
 		$transaction->set_paid( $total_paid );

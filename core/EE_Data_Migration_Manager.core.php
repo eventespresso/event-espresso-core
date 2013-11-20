@@ -27,7 +27,7 @@ class EE_Data_Migration_Manager{
 	 *
 	 * @var EE_Registry
 	 */
-	protected $EE;
+	//protected $EE;
 	/**
 	 * name of the wordpress option which stores an array of data about
 	 */
@@ -79,14 +79,14 @@ class EE_Data_Migration_Manager{
 	var $stati_that_indicate_to_continue_single_migration_script = array();
 	var $stati_that_indicate_to_stop_single_migration_script = array();
 	private function __construct(){
-		$this->EE = EE_Registry::instance();
+		
 		$this->stati_that_indicate_to_continue_migrations = array(self::status_continue,self::status_completed);
 		$this->stati_that_indicate_to_stop_migrations = array(self::status_fatal_error,self::status_no_more_migration_scripts);
 		$this->stati_that_indicate_to_continue_single_migration_script = array(self::status_continue);
 		$this->stati_that_indicate_to_stop_single_migration_script = array(self::status_completed,self::status_fatal_error);//note: status_no_more_migration_scripts doesn't apply
 		//make sure we've included teh base migration script, because we may need the EE_Data_Migration_Script_Error class
 		//to be defined, because right now it doesn't get autoloaded on its own
-		$this->EE->load_core('Data_Migration_Script_Base');
+		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
 	}
 	/**
 	 * Gets the array describing what data migrations have run
@@ -275,7 +275,7 @@ class EE_Data_Migration_Manager{
 				if( ! $scripts ){
 					//huh, no more scripts to run... apparently we're done!
 					//but dont forget to make sure intial data is there
-					$this->EE->load_helper('Activation');
+					EE_Registry::instance()->load_helper('Activation');
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 					EEH_Activation::initialize_db_content();
@@ -338,7 +338,7 @@ class EE_Data_Migration_Manager{
 						EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 						////huh, no more scripts to run... apparently we're done!
 						//but dont forget to make sure intial data is there
-						$this->EE->load_helper('Activation');
+						EE_Registry::instance()->load_helper('Activation');
 						EEH_Activation::initialize_db_content();
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}

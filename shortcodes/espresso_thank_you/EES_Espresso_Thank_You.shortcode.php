@@ -74,10 +74,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function run( WP $WP ) {
 		
 		// only do thank you page stuff if we have a REG_url_link in the url
-		if ( $this->EE->REQ->is_set( 'e_reg_url_link' )) {			
-			$this->_current_txn = $this->EE->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-			$this->EE->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
-			$this->EE->LIB->EEM_Gateways->reset_session_data();
+		if ( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {			
+			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
+			EE_Registry::instance()->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
+			EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
 			add_filter( 'FHEE_load_css', '__return_true' );
 			add_filter( 'FHEE_load_js', '__return_true' );
 		} else {
@@ -107,7 +107,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				$event_names[ $registration->event_name() ] = $registration->event_name();
 			}
 			//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
-			$this->_current_txn = $this->EE->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
+			$this->_current_txn = EE_Registry::instance()->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
 			//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			$template_args = array();
 			//update the trsansaction, in case we just updated it.
@@ -124,10 +124,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				$template_args['show_try_pay_again_link'] = TRUE;
 			} else {
 				// its pending
-				$template_args['show_try_pay_again_link'] = isset( $this->EE->CFG->registration->show_pending_payment_options ) && $this->EE->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
+				$template_args['show_try_pay_again_link'] = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
 			}
 			
-			$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'payment_options', 'e_reg_url_link'=>$this->EE->REQ->get( 'e_reg_url_link' )), get_permalink( $this->EE->CFG->core->reg_page_id ));
+			$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'payment_options', 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
 			
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
@@ -144,10 +144,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 			
 			
-			$this->EE->REQ->add_output( EEH_Template::display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));			
+			EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));			
 		}
 
-		return $this->EE->REQ->get_output();		
+		return EE_Registry::instance()->REQ->get_output();		
 		
 	}
 

@@ -439,7 +439,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Payment[]
 	 */
 	public function approved_payments(){
-		$this->EE->load_model( 'Payment' );
+		EE_Registry::instance()->load_model( 'Payment' );
 		return $this->get_many_related('Payment', array(array('STS_ID'=>  EEM_Payment::status_id_approved), 'order_by'=>array('PAY_timestamp' =>'DESC')));
 	}
 	
@@ -668,13 +668,13 @@ class EE_Transaction extends EE_Base_Class{
 		foreach ( $this->get_many_related('Registration') as $registration ) {
 			$registration->finalize();
 		}
-		if (( ! is_admin() || $this->EE->REQ->is_set( 'ee_front_ajax' ) && $this->EE->REQ->get( 'ee_front_ajax' )) && ! $this->EE->REQ->is_set( 'e_reg_url_link' )) {
+		if (( ! is_admin() || EE_Registry::instance()->REQ->is_set( 'ee_front_ajax' ) && EE_Registry::instance()->REQ->get( 'ee_front_ajax' )) && ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
 			//remove the session from the transaction before saving it to the db to minimize recursive relationships
 			$this->set_txn_session_data( NULL );
 			// save registrations and transaction to the session
-			$this->EE->SSN->set_session_data( array( 'transaction' => $this ));
+			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this ));
 			// save the transactionless session back to this transaction
-			$this->set_txn_session_data( $this->EE->SSN );
+			$this->set_txn_session_data( EE_Registry::instance()->SSN );
 			// save the transaction to the db
 			$this->save();
 		}

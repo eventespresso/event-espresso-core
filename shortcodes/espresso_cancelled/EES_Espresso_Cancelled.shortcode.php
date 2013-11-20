@@ -49,8 +49,8 @@ class EES_Espresso_Cancelled  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		$this->EE->load_core( 'Session' ); 
-		$this->EE->SSN->clear_session(); 
+		EE_Registry::instance()->load_core( 'Session' ); 
+		EE_Registry::instance()->SSN->clear_session(); 
 	}
 
 	/**
@@ -61,7 +61,7 @@ class EES_Espresso_Cancelled  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes ) {
-		return $this->EE->REQ->get_output();		
+		return EE_Registry::instance()->REQ->get_output();		
 	}
 
 }

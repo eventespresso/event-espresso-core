@@ -106,10 +106,10 @@ class EE_Taxes extends EE_BASE {
 	public function __construct( EE_Ticket_Cost $grand_total ) {
 
 		// load registry and models
-		$this->EE = EE_Registry::instance();	
-		$this->_PRC_MDL = $this->EE->load_model( 'Price' );
-		$this->_PRT_MDL = $this->EE->load_model( 'Price_Type' );
-		$this->EE->load_class( 'EE_Cost_Calculator' );
+			
+		$this->_PRC_MDL = EE_Registry::instance()->load_model( 'Price' );
+		$this->_PRT_MDL = EE_Registry::instance()->load_model( 'Price_Type' );
+		EE_Registry::instance()->load_class( 'EE_Cost_Calculator' );
 		
 		$this->_grand_total = $grand_total;
 		$this->_taxes = $this->_PRC_MDL->get_all_prices_that_are_taxes();

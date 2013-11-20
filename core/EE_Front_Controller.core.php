@@ -55,7 +55,7 @@ final class EE_Front_Controller {
 	 */
 	public function __construct() {
 		// grab registry
-		$this->EE = EE_Registry::instance();
+		
 		// early init
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
@@ -226,7 +226,7 @@ final class EE_Front_Controller {
 	
 
 			//random debug code added by mike.
-//			$this->EE->load_class('Attendee',false,false,false);
+//			EE_Registry::instance()->load_class('Attendee',false,false,false);
 //			$att = EE_Attendee::new_instance(array('ATT_lname'=>'nelson','ATT_ID'=>15));
 //			echo 'echodump of $att';
 //			var_dump($att);
@@ -255,7 +255,7 @@ final class EE_Front_Controller {
 	 * @return array
 	 */
 	public function remove_pages_from_wp_list_pages( $exclude_array ) {
-		return  array_merge( $exclude_array, $this->EE->CFG->core->get_critical_pages_array() );
+		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
 	}
 
 
@@ -270,7 +270,7 @@ final class EE_Front_Controller {
 	 */
 	public function employ_CPT_Strategy() {
 		if ( apply_filters('FHEE__EE_Front_Controller__employ_CPT_Strategy',true)){
-			$this->EE->load_core( 'CPT_Strategy' );
+			EE_Registry::instance()->load_core( 'CPT_Strategy' );
 		}
 	}
 
@@ -293,7 +293,7 @@ final class EE_Front_Controller {
 	public function wp_loaded() {
 		// messages loading is turned OFF by default, but prior to the wp_loaded hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
-			$this->EE->load_lib( 'Messages_Init' );
+			EE_Registry::instance()->load_lib( 'Messages_Init' );
 		}
 
 	}
@@ -316,7 +316,7 @@ final class EE_Front_Controller {
 	public function get_request( WP $WP ) {
 //		d( $WP );
 		do_action( 'AHEE__EE_ront_Controller__get_request__before_Request_Handler_loaded' );
-		$this->EE->load_core( 'Request_Handler', $WP );	
+		EE_Registry::instance()->load_core( 'Request_Handler', $WP );	
 		do_action( 'AHEE__EE_Front_Controller__get_request__after_Request_Handler_loaded' );
 	}
 
@@ -332,9 +332,9 @@ final class EE_Front_Controller {
 	public function _initialize_shortcodes( WP $WP ) {
 		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__begin',$this);
 		// make sure post_name is set on REQ
-		if ( $this->EE->REQ->is_set( 'post_name' )) {
+		if ( EE_Registry::instance()->REQ->is_set( 'post_name' )) {
 			// grab post_name from request
-			$current_post = apply_filters('FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',$this->EE->REQ->get( 'post_name' ));
+			$current_post = apply_filters('FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',EE_Registry::instance()->REQ->get( 'post_name' ));
 //			d( $current_post );
 			// if it's not set, then check if frontpage is blog
 			if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
@@ -368,10 +368,10 @@ final class EE_Front_Controller {
 				}
 			}
 			// make sure shortcodes are set
-			if ( isset( $this->EE->CFG->core->post_shortcodes )) {
-//				d( $this->EE->CFG->core->post_shortcodes );
+			if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
+//				d( EE_Registry::instance()->CFG->core->post_shortcodes );
 				// cycle thru all posts with shortcodes set
-				foreach ( $this->EE->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
+				foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 					// are we on this page ?
 					$term_exists = is_array( term_exists( $current_post, 'category' ));
 					// if on the current page, or the current page is a category
@@ -383,14 +383,14 @@ final class EE_Front_Controller {
 						// now cycle thru shortcodes
 						foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 							// verify shortcode is in list of registered shortcodes
-							if ( ! isset( $this->EE->shortcodes[ $shortcode_class ] )) {
+							if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
 								$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 								break;
 							}
 							//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-							if ( isset( $this->EE->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
+							if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
 								// let's pause to reflect on this...
 								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
 								// ensure that class is actually a shortcode
@@ -401,7 +401,7 @@ final class EE_Front_Controller {
 									break;
 								}
 								// and pass the request object to the run method
-								$shortcode = $sc_reflector->newInstance( $this->EE );
+								$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
 								// fire the shortcode class's run method, so that it can activate resources
 								$shortcode->run( $WP );
 //								d( $shortcode );
@@ -412,7 +412,7 @@ final class EE_Front_Controller {
 			}
 		}
 		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__end',$this);
-//		printr( $this->EE->shortcodes, '$this->EE->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( EE_Registry::instance()->shortcodes, 'EE_Registry::instance()->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -426,7 +426,7 @@ final class EE_Front_Controller {
 	 */
 	public function pre_get_posts( $WP_Query ) {
 		// load module request router
-		$Module_Request_Router = $this->EE->load_core( 'Module_Request_Router' );
+		$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
 		while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
 //			d( $route );
@@ -435,7 +435,7 @@ final class EE_Front_Controller {
 			// get registered view for route
 			$this->_view_template = $Module_Request_Router->get_view( $route );
 			// map the routes to the module objects
-			$this->EE->modules[ $route ] = $module;
+			EE_Registry::instance()->modules[ $route ] = $module;
 		}
 		// if a view was registered for the last called route, then hook into template_include
 		if ( ! empty( $this->_view_template )) {
@@ -462,7 +462,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp() {
-		$this->EE->load_helper( 'Template' );
+		EE_Registry::instance()->load_helper( 'Template' );
 	}
 
 
@@ -482,15 +482,15 @@ final class EE_Front_Controller {
 		// css is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_css', '__return_false' );
 		if ( apply_filters( 'FHEE_load_css', TRUE )) {
 			
-			$this->EE->CFG->template_settings->enable_default_style = TRUE;
+			EE_Registry::instance()->CFG->template_settings->enable_default_style = TRUE;
 			//Load the ThemeRoller styles if enabled
-			if ( isset( $this->EE->CFG->template_settings->enable_default_style ) && $this->EE->CFG->template_settings->enable_default_style ) {
+			if ( isset( EE_Registry::instance()->CFG->template_settings->enable_default_style ) && EE_Registry::instance()->CFG->template_settings->enable_default_style ) {
 
 				add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
 
 				//Load custom style sheet if available
-				if ( isset( $this->EE->CFG->style_settings['css_name'] )) {
-					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . $this->EE->CFG->style_settings['css_name']);
+				if ( isset( EE_Registry::instance()->CFG->style_settings['css_name'] )) {
+					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->style_settings['css_name']);
 					wp_enqueue_style('espresso_custom_css');
 				}
 				
@@ -570,7 +570,7 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function the_content( $the_content ) {
-//		$this->EE->load_model('Attendee', false, false, false);
+//		EE_Registry::instance()->load_model('Attendee', false, false, false);
 //		EEM_Attendee::instance()->show_next_x_db_queries(1);
 //		$attendees = EEM_Attendee::instance()->get_all(array(array('Registration.Event.EVT_ID'=>1),'default_where_conditions'=>'all'));
 //		echo 'echodump of $answers';
@@ -578,11 +578,11 @@ final class EE_Front_Controller {
 		
 		
 //		
-//		$this->EE->load_class('Attendee', false, false, false);
+//		EE_Registry::instance()->load_class('Attendee', false, false, false);
 //		$a1 = EE_Attendee::new_instance(array('ATT_fname'=>'mike','ATT_address'=>'monkey town'));
 //		$a1->save();
 //		
-//		$this->EE->load_class('Registration',false,false,false);
+//		EE_Registry::instance()->load_class('Registration',false,false,false);
 //		$r1 = EE_Registration::new_instance(array('ATT_ID'=>$a1->ID(),'PRC_ID'=>1,'DTT_ID'=>1));
 //		$r1->save();
 //		
@@ -597,7 +597,7 @@ final class EE_Front_Controller {
 		
 		
 		
-//		$this->EE->load_model('Question',false,false,false);
+//		EE_Registry::instance()->load_model('Question',false,false,false);
 //		EEM_Question::instance()->show_next_x_db_queries(1);
 //		$q  = EEM_Question::instance()->get_one_deleted_or_undeleted();
 //		echo 'echodump of $q';
@@ -642,7 +642,7 @@ final class EE_Front_Controller {
 	 */
 	public function display_registration_footer() {
 		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
-		if ( apply_filters('FHEE__EE_Front__Controller__show_reg_footer',$this->EE->CFG->admin->show_reg_footer )) {
+		if ( apply_filters('FHEE__EE_Front__Controller__show_reg_footer',EE_Registry::instance()->CFG->admin->show_reg_footer )) {
 			return apply_filters('FHEE__EE_Front_Controller__display_registration_footer','<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>');
 		}
 	}
@@ -660,7 +660,7 @@ final class EE_Front_Controller {
 		do_action('AHEE__EE_Front_Controller__display_errors__begin');
 		if(apply_filters('FHEE__EE_Front_Controller__display_errors',true)){
 			echo EE_Error::get_notices();
-			$this->EE->load_helper( 'Template' );
+			EE_Registry::instance()->load_helper( 'Template' );
 			EEH_Template::display_template( EE_TEMPLATES . 'espresso-ajax-notices.template.php' );
 		}
 		do_action('AHEE__EE_Front_Controller__display_errors__end');
