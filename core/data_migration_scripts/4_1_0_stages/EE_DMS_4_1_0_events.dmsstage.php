@@ -362,7 +362,6 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'%d',//EVT_display_desc
 			'%d',//EVT_display_reg_form
 			'%s',//EVT_visible_on
-			'%d',//EVT_allow_mutliple
 			'%d',//EVT_additional_limit
 			'%s',//EVT_default_registration_status
 			'%d',//EVT_rqeuire_pre_approval
