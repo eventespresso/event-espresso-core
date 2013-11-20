@@ -3,14 +3,9 @@
 	<?php echo $active_status; ?>
 </p>
 
-<p class="clearfix" style="clear: both;">
-	<label for="group-reg"><?php _e('Allow group registrations? ', 'event_espresso'); ?></label>
-	<?php echo $allow_group_reg_select; ?>
-</p>
-
 <p>
-	<label for="max-registrants"><?php _e('Max Group Registrants: ', 'event_espresso'); ?></label>
-	<input type="text" id="max-registrants" name="additional_limit" value="<?php echo $_event->additional_limit(); ?>" size="4" />
+	<label for="max-registrants"><?php _e('Maximum number of tickets or registrations that can be purchased in a single transaction?: ', 'event_espresso'); ?></label>
+	<input type="text" id="max-registrants" name="additional_limit" value="<?php echo $additional_limit; ?>" size="4" />
 </p>
 
 <?php echo $additional_registration_options; ?>
