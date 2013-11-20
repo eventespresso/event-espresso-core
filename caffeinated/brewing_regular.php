@@ -28,6 +28,15 @@ EE_Registry::instance(); //makes sure EE_Base gets loaded.
 class EE_Brewing_Regular extends EE_Base {
 
 	public function __construct() {
+		//defined some new constants related to caffeinated folder
+		if ( !defined('EE_CAF_PATH') ) {
+			define('EE_CAF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS);
+			define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
+			define('EE_CAF_CORE', EE_CAF_PATH . 'core' . DS);
+			define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS);
+		}
+
+
 		$this->_run_now();
 		add_action( 'init', array( $this, 'on_init' ), 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'on_wp_enqueue_scripts'), 10 );
