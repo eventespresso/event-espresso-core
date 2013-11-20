@@ -121,25 +121,26 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		if ( !empty( $this->reg_objs ) ) {
 			$event_attendee_count = array(); 
 			foreach ( $this->reg_objs as $reg ) {
-				$events[$reg->ID()] = $reg;
-				$event_attendee_count[$reg->ID()] = isset( $event_attendee_count[$reg->ID()] ) ? $event_attendee_count[$reg->ID()] + 1 : 0;
-				$attendees[$reg->attendee_ID()]['line_ref'][] = $reg->ID();
+				$events[$reg->event_ID()] = $reg;
+				$event_attendee_count[$reg->event_ID()] = isset( $event_attendee_count[$reg->event_ID()] ) ? $event_attendee_count[$reg->event_ID()] + 1 : 0;
+				$attendees[$reg->attendee_ID()]['line_ref'][] = $reg->event_ID();
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->ID()] = $reg;
+				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->event_ID()] = $reg;
 			}
 
 			//let's loop through the unique event=>reg items and setup data on them
 
 
 			if ( !empty( $events) ) {
-				foreach ( $events as $regid => $reg ) {
+				foreach ( $events as $eid => $reg ) {
 					/*@var $reg EE_Registration */
 					$event = $reg->event_obj();
 					$first_datetime = $event->first_datetime();
-					$tkt = $reg->ticket();
-					$events[$regid] = array(
+					$tkt = $reg->get_first_related('Ticket');
+					$events[$eid] = array(
 						'ID' => $reg->event_ID(),
-						'line_ref' => $reg->ID(),
+						'line_ref' => $reg->event_ID(),
+						'reg' => $reg,
 						'name' => $event->name(),
 						'daytime_id' => $first_datetime  ? $first_datetime->ID() : 0,
 						'ticket_price' => $tkt->get_ticket_subtotal(),
@@ -149,7 +150,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 						'ticket_id' => $tkt->ID(),
 						'meta' => null, //used to be maybe_unserialize( $event->event_meta ), but htere is now NO event meta column
 						'line_total' => $this->txn->total(),
-						'total_attendees' => $event_attendee_count[$regid]
+						'total_attendees' => $event_attendee_count[$eid]
 					);
 				}
 			}	

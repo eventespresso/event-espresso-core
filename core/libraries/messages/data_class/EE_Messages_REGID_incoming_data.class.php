@@ -75,7 +75,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 	 * This will just setup the _events property in the expected format.
 	 * @return void
 	 */
-	private function _setup_data() {
+	protected function _setup_data() {
 
 		$this->reg_obj = $this->_EEM_reg->get_one_by_ID( $this->_reg_id );
 
@@ -101,6 +101,15 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		$this->ip_address = isset( $session_data['ip_address'] ) ? $session_data['ip_address'] : '';
 		$this->user_agent = isset( $session_data['user_agent'] ) ? $session_data['user_agent'] : '';
 		$this->init_access = $this->last_access = '';
+
+		$this->payment = $this->txn->get_first_related('Payment');
+		$this->payment = empty( $this->payment ) ? EE_Payment::new_instance( array(
+			'STS_ID' => EEM_Payment::status_id_pending,
+			'PAY_timestamp' => (int) current_time('timestamp'),
+			'PAY_gateway' => $this->txn->selected_gateway(),
+			'PAY_gateway_response' => $this->txn->gateway_response_on_transaction(),
+			)
+		 ) : $this->payment; //if there is no payments associated with the transaction then we just create a default payment object for potential parsing.
 
 		$this->billing = $this->payment->details();
 		EE_Registry::instance()->load_helper('Template');
@@ -130,25 +139,26 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		if ( !empty( $this->reg_objs ) ) {
 			$event_attendee_count = array(); 
 			foreach ( $this->reg_objs as $reg ) {
-				$events[$reg->ID()] = $reg;
-				$event_attendee_count[$reg->ID()] = isset( $event_attendee_count[$reg->ID()] ) ? $event_attendee_count[$reg->ID()] + 1 : 0;
-				$attendees[$reg->attendee_ID()]['line_ref'][] = $reg->ID();
+				$events[$reg->event_ID()] = $reg;
+				$event_attendee_count[$reg->event_ID()] = isset( $event_attendee_count[$reg->event_ID()] ) ? $event_attendee_count[$reg->event_ID()] + 1 : 0;
+				$attendees[$reg->attendee_ID()]['line_ref'][] = $reg->event_ID();
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->ID()] = $reg;
+				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->event_ID()] = $reg;
 			}
 
 			//let's loop through the unique event=>reg items and setup data on them
 
 
 			if ( !empty( $events) ) {
-				foreach ( $events as $regid => $reg ) {
+				foreach ( $events as $eid => $reg ) {
 					/*@var $reg EE_Registration */
 					$event = $reg->event_obj();
 					$first_datetime = $event->first_datetime();
 					$tkt = $reg->get_first_related('Ticket');
-					$events[$regid] = array(
+					$events[$eid] = array(
 						'ID' => $reg->event_ID(),
-						'line_ref' => $reg->reg_ID(),
+						'line_ref' => $reg->event_ID(),
+						'reg' => $reg,
 						'name' => $event->name(),
 						'daytime_id' => $first_datetime  ? $first_datetime->ID() : 0,
 						'ticket_price' => $tkt->get_ticket_subtotal(),
@@ -158,7 +168,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 						'ticket_id' => $tkt->ID(),
 						'meta' => null, //used to be maybe_unserialize( $event->event_meta ), but htere is now NO event meta column
 						'line_total' => $this->txn->total(),
-						'total_attendees' => $event_attendee_count[$regid]
+						'total_attendees' => $event_attendee_count[$eid]
 					);
 				}
 			}	
