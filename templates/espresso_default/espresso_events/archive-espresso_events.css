@@ -135,38 +135,6 @@
 /******************* GLOBAL STYLES ****************** */
 
 
-.tiny-txt {
-	font-size: .5em;
-	letter-spacing: 1px;
-}
-.smaller-txt {
-	font-size: .7em;
-	letter-spacing: .6px;
-}
-.small-txt {
-	font-size: .85em;
-	letter-spacing: .3px;
-}
-.big-txt {
-	font-size: 1.2em;
-}
-.bigger-txt {
-	font-size: 1.5em;
-	letter-spacing: -1px;
-}
-.huge-txt {
-	font-size: 2em;
-	letter-spacing: -2px;
-}
-.highlight-bg {
-	padding: 1em 20px;
-	background: #ffffdd;
-	border-radius: 3px;
-}
-.hidden {
-	display: none;
-}
-
 
 .espresso-events-list-wrap-dv {
 	padding: 0 0 2em;/* font-size:12px;*/

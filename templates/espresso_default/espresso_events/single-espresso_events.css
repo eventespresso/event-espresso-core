@@ -17,41 +17,22 @@ header.event-header.has-img p {
 	margin:0;
 	padding-bottom: 20px;
 }
+.ee-event-h3 {
+	text-shadow: 1px 1px 0 #FFFFFF;
+	padding: 10px 0 10px 40px;
+	
+}
 .about-event-h3 {
 	background: url(images/details-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
-	text-shadow: 1px 1px 0 #FFFFFF;
-	padding: 10px 0 10px 50px;
 }
-.tkt-slctr-tbl .tckt-slctr-tbl-td-price, .tkt-slctr-tbl .tckt-slctr-tbl-td-status {
-	padding: 1em !important;
-}
+
 .ticket-selector-h3 {
 	background: url(images/ticket-options-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
-	text-shadow: 1px 1px 0 #FFFFFF;
-	padding: 10px 0 10px 50px;
 }
 .event-datetimes-h3 {
 	background: url(images/location-pin-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
-	text-shadow: 1px 1px 0 #FFFFFF;
-	padding: 10px 0 10px 50px;
 }
-.tkt-slctr-tbl table {
-	margin: 0;
-	padding: 0;
-	border: 0;
-}
-.tkt-slctr-tbl th, .tkt-slctr-tbl td {
-	margin: 0;
-	padding: 0;
-	border: 0;
-}
-.tkt-slctr-tbl table {
-	border: 1px solid #EDEDED;
-}
-.tkt-slctr-tbl th, .tkt-slctr-tbl th, .tkt-slctr-tbl td {
-	border: 1px solid #EDEDED;
-	padding-left: 5px;
-}
+
 #espresso-event-details-wrap-dv {
 	clear: both;
 	margin: 1em auto;  /*width:65%;*/
@@ -91,11 +72,7 @@ header.event-header.has-img p {
 .espresso-event-wrapper-dv {
 	position: relative;
 }
-/*.espresso-event-wrapper-dv.has-img { margin:0 1em; }	*/
-/*	.espresso-event-wrapper-dv .event-header { padding:1.1em 1.5em 1em; text-shadow: 1px 1px 0px #fff; }	
-	.espresso-event-wrapper-dv  .event-title { font-size:1.5em; margin: 0; line-height: 1em; }	
-	.espresso-event-wrapper-dv  .event-header p { margin:0 0 .5em; font-size: 1em; color: #999; }*/
-	.espresso-event-wrapper-dv .event-content {
+.espresso-event-wrapper-dv .event-content {
 	padding: 0 0 .25em;
 }
 .espresso-event-wrapper-dv .event-content p { /*margin: 0 0 1em; font-size: 1.1em; color: #666; line-height: 1.5em;*/
@@ -151,42 +128,6 @@ header.event-header.has-img p {
 	border:1px solid #eee;
 	background: #f8f8f8;
 }
-/*.espresso-address-dv div:first-child { margin:.5em 0 0 2em; }*/
-	
-	.tiny-txt {
-	font-size:.5em;
-	letter-spacing:1px;
-}
-.smaller-txt {
-	font-size:.7em;
-	letter-spacing:.6px;
-}
-.small-txt {
-	font-size:.85em;
-	letter-spacing:.3px;
-}
-.big-txt {
-	font-size:1.2em;
-}
-.bigger-txt {
-	font-size:1.5em;
-	letter-spacing:-1px;
-}
-.huge-txt {
-	font-size:2em;
-	letter-spacing:-2px;
-}
-.highlight-bg {
-	padding:1em 20px;
-	background:#ffffdd;
-	border-radius:3px;
-}
-.hidden {
-	display:none;
-}
-.left {
-	float: left;
-}
-.right {
-	float: right;
-}
+
+
+
