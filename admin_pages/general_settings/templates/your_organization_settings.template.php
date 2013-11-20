@@ -100,6 +100,16 @@
 					<input class="regular-text" type="text" name="organization_email" value="<?php echo $organization_email; ?>" />
 				</td>
 			</tr>
+			<tr>
+				<th>
+					<label for="organization_vat">
+						<?php _e('VAT/Tax Number:', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input class="regular-text" type="text" name="organization_vat" value="<?php echo $organization_vat; ?>" />
+				</td>
+			</tr>
 		</tbody>
 	</table>
 

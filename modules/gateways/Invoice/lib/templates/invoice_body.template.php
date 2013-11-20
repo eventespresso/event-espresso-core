@@ -16,6 +16,7 @@
 						</div>
 						<!-- adr -->
 						<div class="email">[email]</div>
+						<div class="vat">VAT/Tax Number: [vat]</div>
 					</div>
 				</td>
 				<td>
