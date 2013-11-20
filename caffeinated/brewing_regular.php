@@ -201,6 +201,7 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Register_CPTs__get_taxonomies', array( $this, 'filter_taxonomies' ), 10 );
 		add_filter('FHEE__EE_Register_CPTs__get_CPTs', array( $this, 'filter_cpts' ), 10 );
 		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
+		add_filter('FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( $this, 'messages_autoload_paths'), 10 );
 	}
 
 
@@ -232,6 +233,17 @@ class EE_Brewing_Regular extends EE_Base {
 			'description' => __('Archive page for all venues.', 'event_espresso')
 			);
 		return $menuitems;
+	}
+
+
+	/**
+	 * This just allows us to add additional paths to the autoloader (EE_Messages_Init::autoload_messages()) for the messages system.
+	 * @param  array  $dir_ref original array of paths
+	 * @return array           appended paths
+	 */
+	public function messages_autoload_paths( $dir_ref ) {
+		$dir_ref[EE_CAF_LIBRARIES . 'shortcodes/'] = 'lib';
+		return $dir_ref;
 	}
 }
 $brewing = new EE_Brewing_Regular();
