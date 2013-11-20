@@ -32,10 +32,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 
-	//some specific properties we need for this class
-	private $_events = array();
-	private $_attendees = array();
-
 	//will hold any incoming data that might be available here
 	private $_reg_id;
 
@@ -70,8 +66,6 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		$this->_EEM_att = EEM_Attendee::instance();	
 		$this->_EEM_reg = EEM_Registration::instance();
 
-		//made it here so lets continue!
-		$this->_setup_attendees_events();
 		parent::__construct($data);
 	}
 
@@ -81,9 +75,9 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 	 * This will just setup the _events property in the expected format.
 	 * @return void
 	 */
-	private function _setup_attendees_events() {
+	private function _setup_data() {
 
-		$events = $this->_get_some_events();
+		$this->reg_obj = $this->_EEM_reg->get_one_by_ID( $this->_reg_id );
 
 
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
@@ -94,105 +88,86 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		//get txn
 		$this->txn = $this->reg_obj->transaction();
 
+		$this->taxes = $this->txn->tax();
+
+		$this->grand_total_price_object = '';
+
+		//possible session stuff?
+		$session = $this->txn->session_data();
+		$session_data =  $session instanceof EE_Session ? $session->get_session_data() : array();		
+
+		//other data from the session (if possible)
+		$this->user_id = isset( $session_data['user_id'] ) ? $session_data['user_id'] : '';
+		$this->ip_address = isset( $session_data['ip_address'] ) ? $session_data['ip_address'] : '';
+		$this->user_agent = isset( $session_data['user_agent'] ) ? $session_data['user_agent'] : '';
+		$this->init_access = $this->last_access = '';
+
+		$this->billing = $this->payment->details();
+		EE_Registry::instance()->load_helper('Template');
+		$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
+
 		//get reg_objs for txn
 		$this->reg_objs = $this->txn->registrations();
 
-		//we'll actually use the generated line_item identifiers for our loop
-		foreach( $events as $id => $event ) {
-			$line_item = $id . '_reg';
-			$this->_events[$line_item]['ID'] = $id;
-			$this->_events[$line_item]['line_ref'] = $line_item;
-			$this->_events[$line_item]['name'] = $event->get('EVT_name');
+		//now we can set things up like we do for other handlers
+		//let's get just the primary_attendee_data!  First we get the primary registration object.
+		$primary_reg = $this->txn->primary_registration(TRUE);
 
-			$daytime_id = $event->get_first_related('Datetime')->ID();
-			$this->_events[$line_item]['daytime_id'] = $daytime_id;
-			
-			$TKT = $this->reg_obj->get_first_related('Ticket');
+		$primary_att = $primary_reg->attendee();
 
-			$this->_events[$line_item]['ticket_obj'] = $TKT;
-			$this->_events[$line_item]['ticket_price'] = $TKT->get_ticket_subtotal();
-			$this->_events[$line_item]['ticket_id'] = $TKT->ID();
-			$this->_events[$line_item]['ticket_desc'] = $TKT->get('TKT_description');
-			$this->_events[$line_item]['pre_approval'] = $event->get('EVT_require_pre_approval'); 
-			$this->_events[$line_item]['meta'] = array();
-
-			
-			$att_count = 0;
-			if ( !empty( $this->reg_objs ) ) {
-				foreach ( $this->reg_objs as $reg ) {
-					$this->_attendees[$att_count]['line_ref'][] = $line_item;
-					$this->_attendees[$att_count]['att_obj'] = $this->_EEM_att->get_one_by_ID( $reg->attendee_ID() );
-					$this->_attendees[$att_count]['reg_objs'][$id] = $reg;
-					$att_count++;
-				}
-			}
-
-			$line_total = $att_count * $TKT->get_ticket_subtotal() ;
-			$this->_events[$line_item]['line_total'] = $line_total;
-			$running_total = $running_total + $line_total;
-
-		}
-
-		$this->_running_total = $running_total;
-
-	}
-
-
-
-	/**
-	 * Return an array of event objects from the database
-	 * 
-	 * @return array    An array of event objects from the db.
-	 */
-	private function _get_some_events() {
-		global $wpdb;
-		$events = array();
-
-		$this->reg_obj = $this->_EEM_reg->get_one_by_ID( $this->_reg_id );
-		$events = $this->reg_obj->get_many_related('Event');
-		
-		return $events;
-	}
-
-
-
-
-
-
-	protected function _setup_data() {
-
-		$payment = $this->txn->get_first_related('Payment');
-
-		$this->taxes = $this->txn->tax();
-		$grand_total = $this->txn->total();
-		$this->billing = !empty( $payment ) ? $payment->details() : array();
-
-
-		//events and attendees
-		$this->events = $this->_events;
-		$this->attendees = $this->_attendees;
-
-		//setup primary attendee property
-		$this->primary_attendee = array(
-			'fname' => $this->_attendees[0]['att_obj']->fname(),
-			'lname' => $this->_attendees[0]['att_obj']->lname(),
-			'email' => $this->_attendees[0]['att_obj']->email()
+		//now we can setup the primary_attendee_data array
+		$this->primary_attendee_data = array(
+			'fname' => $primary_att->fname(),
+			'lname' => $primary_att->lname(),
+			'email' => $primary_att->email(),
+			'primary_attendee_email' => $primary_att->email(),
+			'registration_id' => $primary_reg->ID()
 			);
 
-		//reg_info property
-		//note this isn't referenced by any shortcode parsers so we'll ignore for now.
-		$this->reg_info = array();
+		//get all attendee and events associated with the registrations in this transaction
+		$events = array();
+		$attendees = array();
+		if ( !empty( $this->reg_objs ) ) {
+			$event_attendee_count = array(); 
+			foreach ( $this->reg_objs as $reg ) {
+				$events[$reg->ID()] = $reg;
+				$event_attendee_count[$reg->ID()] = isset( $event_attendee_count[$reg->ID()] ) ? $event_attendee_count[$reg->ID()] + 1 : 0;
+				$attendees[$reg->attendee_ID()]['line_ref'][] = $reg->ID();
+				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
+				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->ID()] = $reg;
+			}
 
-		//get txn session data
-		$session = $this->txn->session_data()->get_session_data();
+			//let's loop through the unique event=>reg items and setup data on them
 
-		$this->user_id = isset($session['user_id']) ? $session['user_id'] : NULL;
-		$this->ip_address =	isset($session['ip_address']) ? $session['ip_address'] : NULL;
-		$this->user_agent = isset($session['user_agent']) ? $session['user_agent'] : NULL;
-		$this->init_access = isset($session['init_access']) ? $session['init_access'] : NULL;
-		$this->last_access = isset($session['last_access']) ? $session['last_access'] : NULL;
+
+			if ( !empty( $events) ) {
+				foreach ( $events as $regid => $reg ) {
+					/*@var $reg EE_Registration */
+					$event = $reg->event_obj();
+					$first_datetime = $event->first_datetime();
+					$tkt = $reg->get_first_related('Ticket');
+					$events[$regid] = array(
+						'ID' => $reg->event_ID(),
+						'line_ref' => $reg->reg_ID(),
+						'name' => $event->name(),
+						'daytime_id' => $first_datetime  ? $first_datetime->ID() : 0,
+						'ticket_price' => $tkt->get_ticket_subtotal(),
+						'ticket_obj' => $tkt,
+						'ticket_desc' => $tkt->get('TKT_description'),
+						'pre_approval' => $event->require_pre_approval(),// $event->require_pre_approval,
+						'ticket_id' => $tkt->ID(),
+						'meta' => null, //used to be maybe_unserialize( $event->event_meta ), but htere is now NO event meta column
+						'line_total' => $this->txn->total(),
+						'total_attendees' => $event_attendee_count[$regid]
+					);
+				}
+			}	
+		}
+
+		//lets set the attendees and events properties
+		$this->attendees = $attendees;
+		$this->events = $events;
 
 	}
-
 
 } //end EE_Messages_REGID_incoming_data class
