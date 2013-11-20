@@ -850,14 +850,14 @@ Class EEM_Gateways {
 		//get thank you page url
 		$return_page_url = rtrim( get_permalink( $this->EE->CFG->core->thank_you_page_id ), '/' );
 		
-		$reg = $transaction->get_first_related( 'Registration' );
+		$registration = $transaction->get_first_related( 'Registration' );
 		//$reg = $transaction->primary_registration();
 //		printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		die();
-		if ( $reg ) {		
-			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$reg->reg_url_link() ), $return_page_url );
+		if ( $registration instanceof EE_Registration ) {		
+			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$registration->reg_url_link() ), $return_page_url );
 		}else{
-			throw new EE_Error(sprintf(__("Cant get return page because no current transaction is specified", "event_espresso")));
+			throw new EE_Error(sprintf(__('Could not find a valid primary registration for this transaction', "event_espresso")));
 		}
 		return $return_page_url;
 	}

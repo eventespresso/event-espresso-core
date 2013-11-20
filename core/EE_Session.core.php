@@ -22,7 +22,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * ------------------------------------------------------------------------
  */
- class EE_Session implements Serializable {
+ class EE_Session {
 
 
   // instance of the EE_Session object
@@ -348,7 +348,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				case 'pages_visited' :
 					// set pages visited where the first will be the http referrer
 					$this->_session_data[ 'pages_visited' ][ $this->_time ] = $this->_get_page_visit();
-					$session_data[ 'pages_visited' ] = $this->_session_data[ 'pages_visited' ];						
+					// we'll only save the last 10 page visits.
+					$session_data[ 'pages_visited' ] = array_slice( $this->_session_data['pages_visited'], -10 );	
 				break;
 
 				default :
@@ -688,24 +689,24 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * Clean up object before EE_Session is saved to the db
 	 * @return string serialized object
 	 */
-	public function serialize() {
-		//first reduce the 'pages_visited' count, we'll only save the last 10 page visits.
-		$this->_session_data['pages_visited'] = array_slice( $this->_session_data['pages_visited'], -10 );
-
-		//data to serialize
-		$serialized = array(
-			'sid' => $this->_sid,
-			'session_data' => $this->_session_data,
-			'expiration' => $this->_expiration,
-			'time' => $this->_time,
-			'use_encryption' => $this->_use_encryption,
-			'user_agent' => $this->_user_agent,
-			'ip_address' => $this->_ip_address 
-			);
-
-		return serialize( $serialized );
-		
-	}
+//	public function serialize() {
+//		//first reduce the 'pages_visited' count, we'll only save the last 10 page visits.
+//		$this->_session_data['pages_visited'] = array_slice( $this->_session_data['pages_visited'], -10 );
+//
+//		//data to serialize
+//		$serialized = array(
+//			'sid' => $this->_sid,
+//			'session_data' => $this->_session_data,
+//			'expiration' => $this->_expiration,
+//			'time' => $this->_time,
+//			'use_encryption' => $this->_use_encryption,
+//			'user_agent' => $this->_user_agent,
+//			'ip_address' => $this->_ip_address 
+//			);
+//
+//		return serialize( $serialized );
+//		
+//	}
 
 
 
@@ -715,13 +716,13 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @param  string $data serialized object
 	 * @return EE_Session   this object
 	 */
-	public function unserialize( $data ) {
-		$serialized = unserialize( $data );
-		foreach ( $serialized as $prop_name => $prop_value ) {
-			$prop_name = '_' . $prop_name;
-			$this->$prop_name = $prop_value;
-		}
-	}
+//	public function unserialize( $data ) {
+//		$serialized = unserialize( $data );
+//		foreach ( $serialized as $prop_name => $prop_value ) {
+//			$prop_name = '_' . $prop_name;
+//			$this->$prop_name = $prop_value;
+//		}
+//	}
 
 
 }

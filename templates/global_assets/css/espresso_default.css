@@ -160,11 +160,12 @@
 
 
 
-
+.right,
 .float-right {
 	float: right;
 }
-.left {
+.left,
+.float-left {
 	float: left;
 }
 .clear, .clear-float {
@@ -233,6 +234,11 @@
 .important-notice {
 	font-weight: bold;
 	color: #f59200;
+}
+.highlight-bg {
+	padding:1em 20px;
+	background:#ffffdd;
+	border-radius:3px;
 }
 .tiny-link {
 	display: block;

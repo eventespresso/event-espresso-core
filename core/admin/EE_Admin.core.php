@@ -172,7 +172,7 @@ final class EE_Admin {
 			add_action( 'wp_ajax_event_list_load_state', array( $this, 'event_list_load_state_callback' ));
 			add_action( 'action_hook_espresso_help', array( $this, 'help_tab_links' ), 10, 4 );
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
-			add_action( 'edit_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
+			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			// bring out the pidgeons!!!
 			$this->EE->load_lib( 'Messages_Init' );
@@ -825,7 +825,6 @@ final class EE_Admin {
 
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
-//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 			// post on frontpage ?
 			$show_on_front = get_option('show_on_front');
 			$update_post_shortcodes = FALSE;
@@ -835,7 +834,6 @@ final class EE_Admin {
 			foreach ( $this->EE->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
 				$EES_Shortcode = strtoupper( $EES_Shortcode );
-				//$shortcode = strtoupper( str_replace( 'EES_', '', $EES_Shortcode ));
 				// is the shortcode in the post_content ?
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
 					// map shortcode to post
@@ -845,7 +843,6 @@ final class EE_Admin {
 					$update_post_shortcodes = TRUE;
 				} 
 			}
-//			printr( $this->EE->CFG->core->post_shortcodes, '$this->EE->CFG->core->post_shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			if ( $update_post_shortcodes ) {
 				$this->EE->CFG->update_post_shortcodes();

@@ -918,7 +918,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$base_type = wp_strip_all_tags( $this->_req_data['base_type'] );
-		$name = ucwords( strtolower( wp_strip_all_tags( $this->_req_data['PRT_name'] )));
 	
 		switch ($base_type) {
 	
@@ -926,54 +925,22 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				$this->_req_data['PBT_ID'] = 1;
 				$this->_req_data['PRT_is_percent'] = 0;
 				$this->_req_data['PRT_order'] = 0;
-	
-				/*$pos = strpos($name, ' Price');
-				$trunc = strlen($name) - 6;
-				if ($pos == $trunc) {
-					$name = substr($name, 0, $trunc);
-				}
-				$name = trim($name) . ' Price';
-				$this->_req_data['PRT_name'] = $name;/**/
 				break;
 	
 			case 'Discount' :
 				$this->_req_data['PBT_ID'] = 2;
-				/*$pos = strpos($name, ' Discount');
-				$trunc = strlen($name) - 9;
-				if ($pos == $trunc) {
-					$name = substr($name, 0, $trunc);
-				}
-				$name = trim($name) . ' Discount';
-				$this->_req_data['PRT_name'] = $name;/**/
 				break;
 	
 			case 'Surcharge' :
 				$this->_req_data['PBT_ID'] = 3;
-				/*$pos = strpos($name, ' Surcharge');
-				$trunc = strlen($name) - 10;
-				if ($pos == $trunc) {
-					$name = substr($name, 0, $trunc);
-				}
-				$name = trim($name) . ' Surcharge';
-				$this->_req_data['PRT_name'] = $name;/**/
 				break;
 	
 			case 'Tax' :
 				$this->_req_data['PBT_ID'] = 4;
 				$this->_req_data['PRT_is_percent'] = 1;
-				/*$pos = strpos($name, ' Tax');
-				$trunc = strlen($name) - 4;
-				if ($pos == $trunc) {
-					$name = substr($name, 0, $trunc);
-				}
-				$name = trim($name) . ' Tax';
-				$this->_req_data['PRT_name'] = $name;/**/
 				break;
 		}/**/
 
-	
-		$this->_req_data['PRT_name'] = $this->_req_data['PRT_name'];
-		//$this->_req_data['PRT_name'] = $this->_req_data['PRT_name'];
 		$set_column_values = array(
 				'PRT_name' => $this->_req_data['PRT_name'],
 				'PBT_ID' => absint($this->_req_data['PBT_ID']),
@@ -982,9 +949,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'PRT_deleted' => 0
 		);
 	
-		return $set_column_values;
-	//		echo printr( $set_column_values, '$set_column_values' );	
-	//		echo printr( $where_cols_n_values, '$where_cols_n_values' );	
+		return $set_column_values;	
 	}
 
 

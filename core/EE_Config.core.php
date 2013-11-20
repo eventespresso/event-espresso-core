@@ -252,8 +252,6 @@ final class EE_Config {
 	public function update_post_shortcodes() {
 		do_action('AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes);
 		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
-		
-		
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it

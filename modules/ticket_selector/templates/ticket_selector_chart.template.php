@@ -2,7 +2,7 @@
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="0" cellspacing="0" cellpadding="0">		
 		<thead>
 			<tr>
-				<th scope="col" width="65%"><h3><?php _e( 'Ticket Options', 'event_espresso' ); ?></h3></th>
+				<th scope="col" width="65%"><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
 				<th scope="col" width="20%"><?php _e( 'Price', 'event_espresso' ); ?> <span class="small-text no-bold"><?php _e( '(each)', 'event_espresso' ); ?></span></th>
 				<th scope="col" width="15%" class="cntr"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
 			</tr>
@@ -140,7 +140,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				</td>
 			</tr>
 			<tr class="tckt-slctr-tkt-details-tr">
-				<td colspan="4">
+				<td class="tckt-slctr-tkt-details-td" colspan="4">
 					<div id="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>-dv" class="tckt-slctr-tkt-details-dv hidden">
 						
 						<h3><?php _e( 'Ticket Details', 'event_espresso' ); ?></h3>
@@ -217,7 +217,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<input type="hidden" name="tkt-slctr-event-<?php echo $EVT_ID; ?>" value="<?php echo base64_encode( serialize( $event )); ?>" />
 
 <?php if ( $max_atndz > 0 ) { ?>
-	<p class="small-txt lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased per transaction for this event.', 'event_espresso' ), $max_atndz );?></p>
+	<p class="smaller-text lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased per transaction for this event.', 'event_espresso' ), $max_atndz );?></p>
 <?php } ?>
 
 	<?php do_action( 'AHEE_after_ticket_selector' ); ?>
