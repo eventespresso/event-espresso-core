@@ -1,4 +1,4 @@
-#icon-options-event { background: url("../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
+#icon-options-event, #icon-espresso_events { background: url("../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
 .button.add-new-h2 { margin-left: 15px; }
 
 .tablenav div { margin-right:15px; }
