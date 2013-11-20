@@ -29,7 +29,7 @@
 			</tr>
 			<tr>
 				<td id="instructions" colspan="2">
-					[instructions]
+					<p>[instructions]</p>
 				</td>
 			</tr>
 		</table>
@@ -110,7 +110,7 @@
 							$odd = !$odd;
 								ee_invoice_display_line_item($child_line_item,$show_line_item_description,$odd);
 							}?>
-							<tr><td colspan="2"></td><td colspan="3"><hr></td></tr>
+							<tr><td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td><td colspan="3"><hr></td></tr>
 							<tr id="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
@@ -124,7 +124,7 @@
 								$odd = !$odd;
 								ee_invoice_display_line_item($child_line_item, $show_line_item_description, $odd);
 							}?>
-							<tr><td colspan="2"></td><td colspan="3"><hr></td></tr>
+							<tr><td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td><td colspan="3"><hr></td></tr>
 							<tr id="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
@@ -251,30 +251,6 @@
 					<td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd)?></td>
 				</tr>
 			</tfoot>
-		</table>
-		<!-- invoice-amount -->
-		
-		<table class="not-really-a-table">
-			<tr>
-				<td id="payment-details">
-					<div class="wrapper">
-						<h3><?php _e('Payment Details', 'event_espresso'); ?></h3>
-						<div id="bank_name">Bank Name</div>
-						<div id="sort-code"><strong>Bank/Sort Code:</strong> 32-75-97</div>
-						<div id="account-number"><strong>Account Number:</strong> 28270761</div>
-						<div id="iban"><strong>IBAN:</strong> 973547</div>
-						<div id="bic"><strong>BIC:</strong> 220197</div>
-						<div id="payment-reference"><strong><?php _e('Payment Reference:', 'event_espresso'); ?></strong> INV001</div>
-					</div>
-				</td>
-				<td id="invoice-other">
-					<div class="wrapper">
-						<h3><?php _e('Other Information', 'event_espresso'); ?></h3>
-						<div id="company-reg-number"><strong>Company Registration Number:</strong> 9273109</div>
-						<div id="contract-number"><strong>Contract/PO:</strong> PO 87227643</div>
-					</div>
-				</td>
-			</tr>
 		</table>
 		
 	</div>

@@ -578,6 +578,13 @@ jQuery(document).ready(function($) {
 
 				if ( $(this).hasClass('starting-ticket-datetime-rows') )
 					$(this).val('');
+
+				//TKT date fields
+				if( $(this).hasClass('edit-ticket-TKT_start_date' ) )
+					$(this).data('dateFieldContext', '#edit-ticketrow-' + newrownum);
+
+				if( $(this).hasClass('edit-ticket-TKT_end_date') )
+					$(this).data('dateFieldContext', '#edit-ticketrow-' + newrownum);
 			});
 
 			//textarea
@@ -1724,7 +1731,7 @@ jQuery(document).ready(function($) {
 			$('.ticket-price-dollar-sign-display', parentContainer).show();
 
 		//recalculate price
-		var data = $(this).parent().parent().find('.gear-icon').data();
+		var data = $(this).parent().parent().find('.trash-icon').data();
 		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
 	});
 
@@ -1734,7 +1741,7 @@ jQuery(document).ready(function($) {
 	$('#event-and-ticket-form-content').on('keyup', '.edit-price-PRC_amount', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		var data = $(this).parent().parent().find('.gear-icon').data();
+		var data = $(this).parent().parent().find('.trash-icon').data();
 		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
 	});
 

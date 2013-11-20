@@ -141,11 +141,6 @@ class EE_Event extends EE_CPT_Base{
 	protected $_EVT_visible_on;
 	
 	/**
-	 * flag indicating whehter to allwo group registrations
-	 * @var boolean
-	 */
-	protected $_EVT_allow_multiple;
-	/**
 	 * how many extra people user can register
 	 * @var int
 	 */
@@ -277,9 +272,6 @@ class EE_Event extends EE_CPT_Base{
 		return $this->get('EVT_additional_limit');
 	}
 	
-	function allow_multiple(){
-		return $this->get('EVT_allow_multiple');
-	}
 	function allow_overflow(){
 		return $this->get('EVT_allow_overflow');
 	}
@@ -343,9 +335,6 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_additional_limit($limit){
 		return $this->set('EVT_additional_limit',$limit);
-	}
-	function set_allow_multiple($allow_multiple) {
-		return $this->set('EVT_allow_multiple', $allow_multiple);
 	}
 	function set_created($created) {
 		return $this->set('EVT_created', $created);

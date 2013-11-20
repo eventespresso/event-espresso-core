@@ -49,10 +49,10 @@ Class EEM_Gateways {
 	 * 		@access public
 	 * 		@return EEM_Gateways
 	 */
-	public static function instance() {
+	public static function instance($activation = false) {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or ! ( self::$_instance instanceof EEM_Gateways )) {
-			self::$_instance = new self();
+			self::$_instance = new self($activation);
 		}
 		return self::$_instance;
 	}
@@ -64,7 +64,7 @@ Class EEM_Gateways {
 	 * 		@access private
 	 * 		@return void
 	 */
-	private function __construct() {
+	private function __construct($activation = false) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		$this->EE = EE_Registry::instance();
@@ -76,7 +76,7 @@ Class EEM_Gateways {
 		$this->EE->load_class( 'Onsite_Gateway' );	
 		$this->EE->load_core( 'Session' );	
 		define('ESPRESSO_GATEWAYS', TRUE);
-		$this->set_ajax();		
+		$this->set_ajax($activation);		
 		$this->_load_session_gateway_data();
 		$this->_load_payment_settings();
 		$this->_scan_and_load_all_gateways();
@@ -605,17 +605,21 @@ Class EEM_Gateways {
 	 * 		@access public
 	 * 		@return 	void
 	 */
-	public function set_ajax() {
+	public function set_ajax($activation = false) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if ( ! isset( $this->EE->REQ )) {
-			$this->EE->load_core( 'Request_Handler' );		
+		if($activation){
+			$this->_ajax = false;
+		}else{
+			if ( ! isset( $this->EE->REQ )) {
+				$this->EE->load_core( 'Request_Handler' );		
+			}
+			if ( ! is_bool( $this->EE->REQ->ajax )) {
+				$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
+				$this->_ajax = FALSE;
+			} else {
+				$this->_ajax = $this->EE->REQ->ajax;
+			}	
 		}
-		if ( ! is_bool( $this->EE->REQ->ajax )) {
-			$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
-			$this->_ajax = FALSE;
-		} else {
-			$this->_ajax = $this->EE->REQ->ajax;
-		}		
 	}
 
 
