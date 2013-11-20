@@ -353,12 +353,14 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	becomes 
 	 *					|	SQL >> "PAY_timestamp !=  4234232", ignoring the first two PAY_timestmap conditions).
 	 * 
-	 *					|	To overcome this, you can add '*' characters to the end of the field's name.
+	 *					|	To overcome this, you can add a '*' character to the end of the field's name, followed by anything.
 	 *					|	These will be removed when generating the SQL string, but allow for the array keys to be unique.
 	 *					|	eg: you could rewrite the previous query as:
-	 *					|	array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*'=>array('<',$end_date),'PAY_timestamp**'=>array('!=',$special_date))
+	 *					|	array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*1st'=>array('<',$end_date),'PAY_timestamp*2nd'=>array('!=',$special_date))
 	 *					|	which correctlybecomes 
 	 *					|	SQL >> "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
+	 *					|	This can be applied to condition operators too, 
+	 *					|	eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
 	 * 
 	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become 
 	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
@@ -1256,7 +1258,8 @@ abstract class EEM_Base extends EE_Base{
 				//indicate needed joins. Eg, array('NOT'=>array('Registration.TXN_ID'=>23)). In this case, we tried
 				//extracting models out of the 'NOT', which obviously wasn't successful, and then we recurse into the value
 				//of array('Registration.TXN_ID'=>23)
-				if(in_array($param, $this->_logic_query_param_keys,true)){
+				$query_param_sans_stars = $this->_remove_stars_and_anything_after_from_condition_query_param_key($param);
+				if(in_array($query_param_sans_stars, $this->_logic_query_param_keys,true)){
 					if (! is_array($possibly_array_of_params)){
 						throw new EE_Error(sprintf(__("You used a special where query param %s, but the value isnt an array of where query params, it's just %s'. It should be an array, eg array('EVT_ID'=>23,'OR'=>array('Venue.VNU_ID'=>32,'Venue.VNU_name'=>'monkeyland'))", "event_espresso"),
 							$param,$possibly_array_of_params));
