@@ -260,13 +260,13 @@ class EE_Email_messenger extends EE_messenger  {
 						'shortcodes_required' => array('[EVENT_LIST]')
 						),
 					'ticket_list' => array(
-						'input' => 'wp_editor',
+						'input' => 'textarea',
 						'label' => __('Ticket List', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'format' => '%s',
-						'rows' => '15',
+						'rows' => '10',
 						'shortcodes_required' => array('[TICKET_LIST]')
 						),
 					'main' => array(
