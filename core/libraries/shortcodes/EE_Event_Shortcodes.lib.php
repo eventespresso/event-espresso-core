@@ -52,11 +52,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_URL]' => __('A link to the event set up on the host site.', 'event_espresso'),
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
-			'[EVENT_START_DATE]' => __('This is the date the event starts', 'event_espresso'),
-			'[EVENT_START_TIME]' => __('This is the event start time', 'event_espresso'),
-			'[EVENT_END_DATE]' => __('This is the event end date', 'event_espresso'),
-			'[EVENT_END_TIME]' => __('This is the event end time', 'event_espresso'),
-			'[EVENT_PRICE]' => __('The price of the given event', 'event_espresso')
 			);
 	}
 
@@ -105,27 +100,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			case '[VIRTUAL_PHONE]' :
 				$venue = $this->_venue($event);
 				return $venue->get('VNU_virtual_phone');
-				break;
-
-			case '[EVENT_START_DATE]' :
-				return $this->_event_date( 'event_start_date' );
-				break;
-
-			case '[EVENT_END_DATE]' :
-				return $this->_event_date(  'event_end_date' );
-				break;
-
-			case '[EVENT_START_TIME]' :
-				return $this->_event_date( 'event_start_time' );
-				break;
-
-			case '[EVENT_END_TIME]' :
-				return $this->_event_date( 'event_end_time' );
-				break;
-
-			case '[EVENT_PRICE]' :
-				EE_Registry::instance()->load_helper( 'Template' );
-				return isset( $this->_data['ticket_price'] ) ? EEH_Template::format_currency( $this->_data['ticket_price'] ) : '';
 				break;
 		}
 	}
