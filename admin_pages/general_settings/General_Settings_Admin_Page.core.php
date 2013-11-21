@@ -290,6 +290,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Select a Country', 'event_espresso'),
 						'callback' => 'country_select_info_help_tab'
 						),
+					'country_details_info' => array(
+						'title' => __('Country Details', 'event_espresso'),
+						'callback' => 'country_details_info_help_tab'
+						),
+					'country_states_info' => array(
+						'title' => __('States / Provinces', 'event_espresso'),
+						'callback' => 'country_states_info_help_tab'
+						),
 					),
 				//'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'require_nonce' => FALSE
@@ -438,6 +446,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EEH_Template::display_template( $template );
 	}
 	public function country_select_info_help_tab() {
+		$this->countries_help_tabs( __FUNCTION__ );
+	}
+	public function country_details_info_help_tab() {
+		$this->countries_help_tabs( __FUNCTION__ );
+	}
+	public function country_states_info_help_tab() {
 		$this->countries_help_tabs( __FUNCTION__ );
 	}
 	
