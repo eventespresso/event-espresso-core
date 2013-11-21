@@ -150,7 +150,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
 				'help_tabs' => array(
 					'registration_page_info' => array(
-						'title' => __('Registration Checkout Page', 'event_espresso'),
+						'title' => __('Registration Page', 'event_espresso'),
 						'callback' => 'registration_page_info_help_tab'
 						),
 					'notify_url_info' => array(
@@ -172,6 +172,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					),
 				'require_nonce' => FALSE
 				),
+			
+			//template settings
 			'template_settings' => array(
 				'nav' => array(
 					'label' => __('Templates'),
@@ -179,8 +181,46 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'help_tour' => array( 'Templates_Help_Tour' ),
+				'help_tabs' => array(
+					/*'event_list_settings_info' => array(
+						'title' => __('Event List Settings', 'event_espresso'),
+						'callback' => 'event_list_settings_info_help_tab'
+						),*/
+					'template_settings_info' => array(
+						'title' => __('Default Event List Type', 'event_espresso'),
+						'callback' => 'default_event_list_type_info_help_tab'
+						),
+					'grid_size_info' => array(
+						'title' => __('Grid Size', 'event_espresso'),
+						'callback' => 'grid_size_info_help_tab'
+						),
+					'display_description_info' => array(
+						'title' => __('Display Descriptions', 'event_espresso'),
+						'callback' => 'display_description_info_help_tab'
+						),
+					'display_address_info' => array(
+						'title' => __('Display Address', 'event_espresso'),
+						'callback' => 'display_address_info_help_tab'
+						),
+					'display_venue_details_info' => array(
+						'title' => __('Display Venue Details', 'event_espresso'),
+						'callback' => 'display_venue_details_info_help_tab'
+						),
+					'display_expired_events_info' => array(
+						'title' => __('Display Expired Events', 'event_espresso'),
+						'callback' => 'display_expired_events_info_help_tab'
+						),
+					'event_listings_url_info' => array(
+						'title' => __('Event Listings URL', 'event_espresso'),
+						'callback' => 'event_listings_url_info_help_tab'
+						),
+					'display_addresses_in_reg_form_info' => array(
+						'title' => __('Display Addresses', 'event_espresso'),
+						'callback' => 'display_addresses_in_reg_form_info_help_tab'
+						),
+					),					
 				'require_nonce' => FALSE
-				),
+				),			
 			'your_organization_settings' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
@@ -188,6 +228,24 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					),
 				'help_tour' => array( 'Your_Organization_Help_Tour' ),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'site_license_key_info' => array(
+						'title' => __('Site License Key', 'event_espresso'),
+						'callback' => 'site_license_key_info_help_tab'
+						),
+					'contact_info_info' => array(
+						'title' => __('Contact Information', 'event_espresso'),
+						'callback' => 'contact_info_info_help_tab'
+						),
+					'organization_logo_info' => array(
+						'title' => __("Company Logo", 'event_espresso'),
+						'callback' => 'organization_logo_info_help_tab'
+						),
+					'social_links_info' => array(
+						'title' => __('Social Links', 'event_espresso'),
+						'callback' => 'social_links_info_help_tab'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 			'admin_option_settings' => array(
@@ -213,6 +271,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'affiliate_info' => array(
 						'title' => __('Affiliate', 'event_espresso'),
 						'callback' => 'affiliate_info_help_tab'
+						),
+					'help_tour_activation_info' => array(
+						'title' => __('Help Tour Activation', 'event_espresso'),
+						'callback' => 'help_tour_activation_info_help_tab'
 						),
 					),
 				'require_nonce' => FALSE
@@ -257,13 +319,78 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
 	}
 
-
-
-
+	/**
+	 * template settings help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function template_settings_help_tabs( $tab ) {
+		require_once GEN_SET_TEMPLATE_PATH . 'template_settings_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template($template);
+	}
+	public function event_list_settings_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function default_event_list_type_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function grid_size_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function display_description_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function display_address_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function display_venue_details_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function display_expired_events_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function display_addresses_in_reg_form_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	public function event_listings_url_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
+	}
+	
+	
+	/**
+	 * google map settings help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
 	public function gmaps_info_help_tab() {
 		$template = GEN_SET_TEMPLATE_PATH . 'map_confg_help.php';
 		EEH_Template::display_template( $template );
 	}
+	
+	/**
+	 * your organization help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for tab 
+	 */
+	public function your_organization_help_tabs( $tab ) {
+		require_once GEN_SET_TEMPLATE_PATH . 'your_organization_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template( $template );
+	}
+	public function site_license_key_info_help_tab() {
+		$this->your_organization_help_tabs( __FUNCTION__ );
+	}
+	public function contact_info_info_help_tab() {
+		$this->your_organization_help_tabs( __FUNCTION__ );
+	}
+	public function organization_logo_info_help_tab() {
+		$this->your_organization_help_tabs( __FUNCTION__ );
+	}
+	public function social_links_info_help_tab() {
+		$this->your_organization_help_tabs( __FUNCTION__ );
+	}
+
 
 
 
@@ -289,7 +416,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function affiliate_info_help_tab() {
 		$this->admin_options_help_tabs( __FUNCTION__ );
 	}
-
+	public function help_tour_activation_info_help_tab() {
+		$this->admin_options_help_tabs( __FUNCTION__ );
+	}
 
 
 	protected function _add_screen_options() {

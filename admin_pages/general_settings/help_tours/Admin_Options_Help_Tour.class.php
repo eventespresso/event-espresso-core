@@ -59,7 +59,7 @@ class Admin_Options_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			40 => array(
-				'id' => 'show_reg_footer',
+				'id' => 'affiliate_info',
 				'content' => $this->_show_reg_footer_stop(),
 				'options' => array(
 					'tipLocation' => 'right',
@@ -67,9 +67,10 @@ class Admin_Options_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => 15
 					)
 				),
-			50 => array(
-				'id' => 'affiliate_id',
-				'content' => $this->_affiliate_id_stop(),
+			
+			60 => array(
+				'id' => 'help_tour_activation',
+				'content' => $this->_help_tour_activation_stop(),
 				'options' => array(
 					'tipLocation' => 'right',
 					'tipAdjustmentY' => -50,
@@ -81,29 +82,28 @@ class Admin_Options_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Admin Options page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Admin Options', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('Miscellaneous settings, such as logging, help tour settings, and promoting Event Espresso.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	
 
 	protected function _use_full_logging_stop() {
-		return '<p>' . __('about setting', 'event_espresso') . '</p>';
+		return '<p>' . __('When enabled, it creates a log file useful for debugging. Please only use if it is necessary.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _use_remote_logging_stop() {
-		return '<p>' . __('about setting', 'event_espresso') . '</p>';
+		return '<p>' . __(' This option sends all Event Espresso debugging data and get/post variables to the specified URL below.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _show_reg_footer_stop() {
-		return '<p>' . __('about setting', 'event_espresso') . '</p>';
+		return '<p>' . __('Support us by adding a small link to Event Espresso in your event pages. You can even generate money for yourself by adding your affiliate link there!', 'event_espresso') . '</p>';
 	}
-
-
-	protected function _affiliate_id_stop() {
-		return '<p>' . __('about setting', 'event_espresso') . '</p>';
+	
+	protected function _help_tour_activation_stop() {
+		return '<p>' . __('Turn these help tours on/off globally.', 'event_espresso') . '</p>';
 	}
 }

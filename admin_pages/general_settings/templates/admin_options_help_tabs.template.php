@@ -27,7 +27,7 @@ function remote_logging_info_help_tab_html() {
 	<?php _e('Remote Logging', 'event_espresso'); ?>
 </h2>
 <p>
-	<?php _e("Every time a page is accessed on your site. This option will send all Event Espresso registration form data, your server details, and debugging information to a remote server.", 'event_espresso'); ?>
+	<?php _e("Every time a page is accessed on your site, this option will send all Event Espresso registration form data, your server details, and debugging information to a remote server.", 'event_espresso'); ?>
 </p>
 <p>
 	<?php _e('To see for yourself, "Make a PostBin" at <a href="http://www.postbin.org/" target="_blank">PostBin</a>. Then enter the PostBin URL into the "Remote Logging URL" field.', 'event_espresso'); ?>
@@ -73,7 +73,7 @@ function affiliate_info_help_tab_html() {
 <h2>
 	<?php _e('Affiliate Details', 'event_espresso'); ?>
 </h2>
-<p> Promote Event Espresso and earn cash! </p>
+<p>Promote Event Espresso and earn cash!</p>
 <p>Get paid by helping other event mangers understand the power of Event Espresso by becoming an affiliate.</p>
 <ol>
 	<li>Go to the <a href="http://eventespresso.com/wp-content/plugins/wp-affiliate-platform/affiliates/register.php" target="_blank">affiliate sign up page</a> to get your affiliate link</li>
@@ -84,5 +84,15 @@ function affiliate_info_help_tab_html() {
 	<li>You can create your own banner or use the ones below</li>
 </ol>
 <p> <a href="http://eventespresso.com/affiliates/" target="_blank">Banners and More Info &gt;&gt;</a> </p>
+<?php
+}
+
+
+function help_tour_activation_info_help_tab_html() {
+	?>
+<h2>
+	<?php _e('Help Tour Global Activation', 'event_espresso'); ?>
+</h2>
+<p><?php _e('Turn the help tours on/off globally.', 'event_espresso'); ?></p>
 <?php
 }

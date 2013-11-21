@@ -10,13 +10,13 @@
 			<tr <?php echo isset($_REQUEST['license_key']) && $_REQUEST['license_key'] == true ? 'class="yellow_alert"' : '' ?>>
 				<th>
 					<label for="site_license_key">
-						<?php _e('Support License Key', 'event_espresso'); ?>
+						<?php _e('Support License Key', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('site_license_key_info');?>
 					</label>
 				</th>
 				<td>
 					<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo $site_license_key; ?>" /><?php echo $site_license_key_verified; ?><br/>
 					<p class="description">
-						<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons.'); ?>
+						<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons. If this is a Development or Test site, <strong>DO NOT</strong> enter your Support License Key.'); ?>
 					</p>			
 				</td>
 			</tr>
@@ -24,13 +24,11 @@
 		</tbody>
 	</table>
 
-	<p class="ee-attention">
-		<?php _e('If this is a Development or Test site, <strong>DO NOT</strong> enter your Support License Key . Save it for the Live Production Site, otherwise you will unnecessarily run into issues with needing to have your Key reset.', 'event_espresso'); ?>
-	</p>		
+	
 
 	
-	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Contact Information', 'event_espresso'); ?>
+	<h4 id="contact_info_h4" class="ee-admin-settings-hdr">
+		<?php _e('Contact Information', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('contact_info_info');?>
 	</h4>
 
 	<table class="form-table">
@@ -98,6 +96,9 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_email" value="<?php echo $organization_email; ?>" />
+					<p class="description">
+						<?php _e('This where all notifications will go to so make sure its correct.'); ?>
+					</p>
 				</td>
 			</tr>
 			<tr>
@@ -108,13 +109,16 @@
 				</th>
 				<td>
 					<input class="regular-text" type="text" name="organization_vat" value="<?php echo $organization_vat; ?>" />
+					<p class="description">
+						<?php _e('The VAT/Tax Number may be displayed on invoices and receipts.'); ?>
+					</p>	
 				</td>
 			</tr>
 		</tbody>
 	</table>
 
 	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Company Logo', 'event_espresso'); ?>
+		<?php _e('Company Logo', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('organization_logo_info');?>
 	</h4>
 
 	<table class="form-table">
@@ -129,7 +133,7 @@
 					<input id="upload_image" type="text" class="regular-text" name="organization_logo_url" value="<?php echo $organization_logo_url ?>" />
 					<input id="upload_image_button" type="button" value="<?php _e('Upload Image', 'event_espresso'); ?>" />
 					<p class="description">
-						<?php echo __('Your logo will be used on custom invoices, tickets, certificates, and payment templates.', 'event_espresso'); ?>
+						<?php _e('Your logo will be used on custom invoices, tickets, certificates, and payment templates.', 'event_espresso'); ?>
 					</p>
 				</td>
 			</tr>
@@ -160,7 +164,7 @@
 	<br/><br/>
 
 	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Social Links', 'event_espresso'); ?>
+		<?php _e('Social Links', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('social_links_info');?>
 	</h4>
 	<p class="description"><?php _e('Enter any links to social accounts for your organization here', 'event_espresso'); ?></p>
 
@@ -247,7 +251,7 @@
 			<tr>
 				<th>
 					<label for="ueip_optin">
-						<?php _e('UXIP Opt In?', 'event_espresso'); ?>
+						<?php _e('UXIP Opt In?', 'event_espresso'); ?> 
 					</label>
 				</th>
 				<td>
