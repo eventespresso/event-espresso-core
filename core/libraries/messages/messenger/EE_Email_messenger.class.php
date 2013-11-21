@@ -110,10 +110,11 @@ class EE_Email_messenger extends EE_messenger  {
 				'shortcodes' => array('event_list','attendee_list', 'organization')
 				),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'event_list', 'registration')
+				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'venue')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue'),
+			'ticket_list' => array('event_list', 'attendee_list', 'ticket', 'registration')
 				)
 			);
 	}
@@ -258,6 +259,16 @@ class EE_Email_messenger extends EE_messenger  {
 						'rows' => '15',
 						'shortcodes_required' => array('[EVENT_LIST]')
 						),
+					'ticket_list' => array(
+						'input' => 'wp_editor',
+						'label' => __('Ticket List', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'rows' => '15',
+						'shortcodes_required' => array('[TICKET_LIST]')
+						),
 					'main' => array(
 						'input' => 'wp_editor',
 						'label' => __('Main Content', 'event_espresso'),
@@ -288,9 +299,10 @@ class EE_Email_messenger extends EE_messenger  {
 			'from' => '[EVENT_AUTHOR_EMAIL]',
 			'subject' => '',
 			'content' => array(
-				'main' => 'This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template',
-				'attendee_list' => 'This contains the formatting for each attendee in a attendee list',
-				'event_list' => 'This contains the formatting for each event in an event list'
+				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
+				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
+				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
+				'ticket_list' => __('this contains the formatting for each ticket in a ticket list', 'event_espresso')
 				)
 			);
 	}
