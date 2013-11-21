@@ -108,8 +108,8 @@ class Templates_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Transaction overview page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Template Settings!', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This section deals with the general front end settings.', 'event_espresso') . '</p>';
 		return $content;
 	}
 

@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Your_Organization_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Your Organization Tour', 'event_espresso');
+		$this->_label = __('Organization Settings Tour', 'event_espresso');
 		$this->_slug = 'your-organization-joyride';
 	}
 
@@ -81,8 +81,9 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Your Organization Settings page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Organization Settings', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('The general settings page covers most of the site wide settings that you will need. It is split up into 6 tabbed areas.
+', 'event_espresso') . '</p>';
 		return $content;
 	}
 

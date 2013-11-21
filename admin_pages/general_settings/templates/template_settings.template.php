@@ -14,7 +14,7 @@
 			<tr>
 				<th>
 					<label for="display_address_in_regform">
-						<?php _e('Display Addresses', 'event_espresso'); ?>
+						<?php _e('Display Addresses', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('display_addresses_in_reg_form_info');?>
 					</label>
 				</th>
 				<td>
