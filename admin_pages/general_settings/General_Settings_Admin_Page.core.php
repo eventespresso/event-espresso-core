@@ -285,6 +285,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 70
 					),
 				'help_tour' => array( 'Countries_Help_Tour' ),
+				'help_tabs' => array(
+					'country_select_info' => array(
+						'title' => __('Select a Country', 'event_espresso'),
+						'callback' => 'country_select_info_help_tab'
+						),
+					),
 				//'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'require_nonce' => FALSE
 				)
@@ -419,6 +425,23 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function help_tour_activation_info_help_tab() {
 		$this->admin_options_help_tabs( __FUNCTION__ );
 	}
+	
+	
+	/**
+	 * countries help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for tab 
+	 */
+	public function countries_help_tabs( $tab ) {
+		require_once GEN_SET_TEMPLATE_PATH . 'countries_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template( $template );
+	}
+	public function country_select_info_help_tab() {
+		$this->countries_help_tabs( __FUNCTION__ );
+	}
+	
+	
 
 
 	protected function _add_screen_options() {

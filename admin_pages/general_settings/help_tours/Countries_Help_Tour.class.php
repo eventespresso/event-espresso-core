@@ -72,24 +72,24 @@ class Countries_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Countries Settings page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Countries Settings', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('Event Espresso is worldwide! These localisation settings will make the process perfect no matter where you live.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	
 
 	protected function _country_selector_stop() {
-		return '<p>' . __('about setting', 'event_espresso') . '</p>';
+		return '<p>' . __('Add the country where your business is located.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _country_details_stop() {
-		return '<p>' . __('about setting', 'event_espresso') . '</p>';
+		return '<p>' . __('Here you can fine tune currency and contact data for your own country.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _country_states_settings_stop() {
-		return '<p>' . __('about setting', 'event_espresso') . '</p>';
+		return '<p>' . __('Used in certain areas of the plugin, here you can define what states/provinces will be displayed in case you do not do business in certain areas.', 'event_espresso') . '</p>';
 	}
 }
