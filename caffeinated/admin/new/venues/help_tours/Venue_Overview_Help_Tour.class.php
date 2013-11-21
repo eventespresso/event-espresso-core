@@ -50,6 +50,51 @@ class Venue_Overview_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			30 => array(
+				'id' => 'id',
+				'content' => $this->_id_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => -15
+					)
+				),
+			40 => array(
+				'id' => 'name',
+				'content' => $this->_name_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => -15
+					)
+				),
+			50 => array(
+				'id' => 'address',
+				'content' => $this->_address_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => -15
+					)
+				),
+			60 => array(
+				'id' => 'city',
+				'content' => $this->_city_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => -15
+					)
+				),
+			70 => array(
+				'id' => 'capacity',
+				'content' => $this->_capacity_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => -15
+					)
+				),
+			80 => array(
 				'id' => 'shortcode',
 				'content' => $this->_shortcode_stop(),
 				'options' => array(
@@ -57,7 +102,7 @@ class Venue_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -40
 					)
 				),
-			40 => array(
+			90 => array(
 				'id' => 'contextual-help-link',
 				'content' => $this->_end(),
 				'button_text' => __('End Tour', 'event_espresso'),
@@ -72,8 +117,8 @@ class Venue_Overview_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Venue Overview Page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction to the Venue Admin.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Venue Overview', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This section allows you to create and edit your event venues.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -82,10 +127,29 @@ class Venue_Overview_Help_Tour extends EE_Help_Tour {
 	protected function _search_stop() {
 		return '<p>' . __('Fields that will be searched with the value from the search are: Venue Name, Venue Description, Venue Short Description, Venue address, Venue city, Venue zip, Venue phone, Venue url, Venue virtual phone, Venue google map link, Event Name, Event description, Event Phone, Event external url', 'event_espresso') . '</p>';
 	}
-
+	
+	protected function _id_stop() {
+		return '<p>' . __('This column shows the ID of each venue. Can be used in your custom templates and shortcodes to output detail about a single venue.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _name_stop() {
+		return '<p>' . __('This column shows the name of each venue.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _address_stop() {
+		return '<p>' . __('This column shows the address of each venue.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _city_stop() {
+		return '<p>' . __('This column shows the city of each venue.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _capacity_stop() {
+		return '<p>' . __('This column shows the capacity of each venue.', 'event_espresso') . '</p>';
+	}
 
 	protected function _shortcode_stop() {
-		return '<p>' . __('about the Venue Shortcodes column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column shows the specific venue shortcode should you need to add it to an event, post or page.', 'event_espresso') . '</p>';
 	}
 
 
