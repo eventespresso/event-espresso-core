@@ -242,10 +242,18 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return TRUE on success, FALSE on fail 
 	 */	
 	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1 ) {
+		$datetimes = $ticket->datetimes();
+		$event_names = array();
+		foreach($datetimes as $datetime){
+			$event = $datetime->event();
+			$event_names[$event->ID()] = $event->name();
+		}
+		$description_addition = " (For ".implode(", ",$event_names).")";
+		$full_description = $ticket->description().$description_addition;
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_name'=>$ticket->name(),
-			'LIN_desc'=>$ticket->description(),
+			'LIN_desc'=>$full_description,
 			'LIN_unit_price'=>$ticket->price(),
 			'LIN_quantity'=>$qty,
 			'LIN_is_taxable'=>$ticket->taxable(),

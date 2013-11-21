@@ -770,6 +770,12 @@ class EE_Organization_Config extends EE_Config_Base {
 	*/ 
 	public $email;
 	
+	/**
+	 * @var string $vat 
+	 * VAT/Tax Number
+	 */
+	public $vat;
+	
 	/** 
 	* @var string  $logo_url 
 	* eg http://www.somedomain.com/wp-content/uploads/kittehs.jpg
@@ -843,6 +849,7 @@ class EE_Organization_Config extends EE_Config_Base {
 		$this->CNT_ISO = 'US';
 		$this->zip = '12345';
 		$this->email = get_bloginfo('admin_email');
+		$this->vat = '383j3yh4';
 		$this->logo_url = '';
 		$this->facebook = '';
 		$this->twitter = '';

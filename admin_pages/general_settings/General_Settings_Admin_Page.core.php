@@ -446,7 +446,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _your_organization_settings() {
-	
 		$this->_template_args['site_license_key'] = isset( $this->EE->CFG->core->site_license_key ) ? $this->_display_nice( $this->EE->CFG->core->site_license_key ) : '';
 		$this->_template_args['organization_name'] = isset( $this->EE->CFG->organization->name ) ? $this->_display_nice( $this->EE->CFG->organization->name ) : '';
 		$this->_template_args['organization_address_1'] = isset( $this->EE->CFG->organization->address_1 ) ? $this->_display_nice( $this->EE->CFG->organization->address_1 ) : '';
@@ -454,6 +453,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_city'] = isset( $this->EE->CFG->organization->city ) ? $this->_display_nice( $this->EE->CFG->organization->city ) : '';
 		$this->_template_args['organization_zip'] = isset( $this->EE->CFG->organization->zip ) ? $this->_display_nice( $this->EE->CFG->organization->zip ) : '';
 		$this->_template_args['organization_email'] = isset( $this->EE->CFG->organization->email ) ? $this->_display_nice( $this->EE->CFG->organization->email ) : '';
+		$this->_template_args['organization_vat'] = isset( $this->EE->CFG->organization->vat ) ? $this->_display_nice( $this->EE->CFG->organization->vat ) : '';
 		$this->_template_args['currency_sign'] = isset( $this->EE->CFG->currency->sign ) ? $this->_display_nice( $this->EE->CFG->currency->sign ) : '$';
 		$this->_template_args['organization_logo_url'] = isset( $this->EE->CFG->organization->logo_url ) ? $this->_display_nice( $this->EE->CFG->organization->logo_url ) : FALSE;
 		$this->_template_args['organization_facebook'] = isset( $this->EE->CFG->organization->facebook ) ? $this->_display_nice( $this->EE->CFG->organization->facebook ) : '';
@@ -530,6 +530,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->EE->CFG->organization->CNT_ISO = isset( $this->_req_data['organization_country'] ) ? sanitize_text_field( $this->_req_data['organization_country'] ) : $this->EE->CFG->organization->CNT_ISO;
 		$this->EE->CFG->organization->zip = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : $this->EE->CFG->organization->zip;
 		$this->EE->CFG->organization->email = isset( $this->_req_data['organization_email'] ) ? sanitize_email( $this->_req_data['organization_email'] ) : $this->EE->CFG->organization->email;
+		$this->EE->CFG->organization->vat = isset( $this->_req_data['organization_vat'] ) ? sanitize_text_field( $this->_req_data['organization_vat'] ) : $this->EE->CFG->organization->vat;
 		$this->EE->CFG->organization->logo_url = isset( $this->_req_data['organization_logo_url'] ) ? esc_url_raw( $this->_req_data['organization_logo_url'] ) : $this->EE->CFG->organization->logo_url;
 		$this->EE->CFG->organization->facebook = isset( $this->_req_data['organization_facebook'] ) ? esc_url_raw( $this->_req_data['organization_facebook'] ) : $this->EE->CFG->organization->facebook;
 		$this->EE->CFG->organization->twitter = isset( $this->_req_data['organization_twitter'] ) ? esc_url_raw( $this->_req_data['organization_twitter'] ) : $this->EE->CFG->organization->twitter;
@@ -538,7 +539,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->EE->CFG->organization->google = isset( $this->_req_data['organization_google'] ) ? esc_url_raw( $this->_req_data['organization_google'] ) : $this->EE->CFG->organization->google;
 		$this->EE->CFG->organization->instagram = isset( $this->_req_data['organization_instagram'] ) ? esc_url_raw( $this->_req_data['organization_instagram'] ) : $this->EE->CFG->organization->instagram;
 		$this->EE->CFG->core->ee_ueip_optin = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : $this->EE->CFG->core->ee_ueip_optin; 
-
 		$this->EE->CFG = apply_filters('FHEE_your_organization_settings_save', $this->EE->CFG );	
 		
 		$what = 'Your Organization Settings';
