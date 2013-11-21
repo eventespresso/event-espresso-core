@@ -108,54 +108,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * This just figures out the event date for the incoming data according to what date type we are requesting
-	 *
-	 * @access private
-	 * @param string $type what we're requesting (see switch for examples )
-	 * @return string the date/time requested
-	 */
-	private function _event_date( $type ) {
-		//check if we have the daytime_id that we need to retrieve the date stuff, otherwise we just return an empty string
-		if ( !isset( $this->_data['daytime_id'] ) )
-			return '';
-
-		//let's get the DTT Model and retrieve the Date Time object
-		$DTT = EE_Registry::instance()->load_model('Datetime')->get_one_by_ID( $this->_data['daytime_id'] );
-
-		//if empty|false let's get out
-		if ( empty( $DTT ) || !is_object( $DTT ) ) return '';
-
-		switch ( $type ) {
-			case 'event_start_date' :
-				return $DTT->start_date();
-				break;
-			case 'event_end_date' :
-				return $DTT->end_date();
-				break;
-			case 'event_end_time' :
-				return $DTT->end_time();
-				break;
-			case 'event_start_time' :
-				return $DTT->start_time();
-				break;
-		}
-
-	}
-
-
-	/**
-	 * Return a venue object
-	 * @param  EE_Event $event 
-	 * @return EE_Venue        
-	 */
-	private function _venue( $event ) {
-		$venue = !empty( $this->_data['ID'] ) ? $event->get_first_related('Venue') : NULL;
-		$venue = empty( $venue ) ? EE_Registry::instance()->load_model('Venue')->create_default_object() : $venue;
-	}
-
-
-
-	/**
 	 * return the event details for a given key
 	 * @param  string $type what to return
 	 * @return string       returned value if present, empty string if not
