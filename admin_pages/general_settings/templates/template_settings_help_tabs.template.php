@@ -1,5 +1,12 @@
 <?php
 
+function event_list_settings_info_help_tab_html() { 
+	?>
+	<h2><?php _e('Event List Pages', 'event_espresso'); ?></h2>
+	<p><?php _e('Define how your basic event list will look.', 'event_espresso'); ?></p>
+	<?php
+}
+
 function default_event_list_type_info_help_tab_html() { 
 	?>
 	<h2><?php _e('Default Event List Type', 'event_espresso'); ?></h2>

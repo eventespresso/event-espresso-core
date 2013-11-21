@@ -184,6 +184,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				
 			//Help Tabs
 				'help_tabs' => array(
+					/*'event_list_settings_info' => array(
+						'title' => __('Event List Settings', 'event_espresso'),
+						'callback' => 'event_list_settings_info_help_tab'
+						),*/
 					'template_settings_info' => array(
 						'title' => __('Default Event List Type', 'event_espresso'),
 						'callback' => 'default_event_list_type_info_help_tab'
@@ -309,6 +313,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		require_once GEN_SET_TEMPLATE_PATH . 'template_settings_help_tabs.template.php';
 		$template = call_user_func( $tab . '_html' );
 		EEH_Template::display_template($template);
+	}
+	public function event_list_settings_info_help_tab(){
+		$this->template_settings_help_tabs( __FUNCTION__ );
 	}
 	public function default_event_list_type_info_help_tab(){
 		$this->template_settings_help_tabs( __FUNCTION__ );

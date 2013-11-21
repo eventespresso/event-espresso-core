@@ -23,7 +23,7 @@ $grid_sizes = array(
 
 	<!--*************************   Event Listings  ****************************-->
 	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Event List Pages', 'event_espresso'); ?>
+		<?php _e('Event List Pages', 'event_espresso'); ?>  <?php //echo EEH_Template::get_help_tab_link('event_list_settings_info');?>
 	</h4>
 	<table class="form-table">
 		<tbody>
@@ -101,7 +101,7 @@ $grid_sizes = array(
 					</label>
 				</th>
 				<td>
-					<a class="ee-admin-settings-hdr-lnk small-text" href="<?php echo home_url('/') . __('events', 'event_espresso'); ?>"><?php  echo home_url('/') . __('events', 'event_espresso'); ?></a>
+					<a id="event_listings_url" class="ee-admin-settings-hdr-lnk small-text" href="<?php echo home_url('/') . __('events', 'event_espresso'); ?>"><?php  echo home_url('/') . __('events', 'event_espresso'); ?></a>
 				</td>
 			</tr>
 
