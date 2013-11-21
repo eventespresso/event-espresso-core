@@ -177,7 +177,7 @@ class EE_Question_Form_Input {
 	 * @return void
 	 */
 	private function _set_input_id( $qstn_id ) {
-		$input_id = isset( $this->_QST_meta['input_id'] ) && ! empty( $this->_QST_meta['input_id'] ) ? $this->_QST_meta['input_id'] : sanitize_key( $this->_QST->get('QST_display_text') );
+		$input_id = isset( $this->_QST_meta['input_id'] ) && ! empty( $this->_QST_meta['input_id'] ) ? $this->_QST_meta['input_id'] : sanitize_key( strip_tags( $this->_QST->get( 'QST_display_text' )));
 		$this->QST_input_id = $this->_QST_meta['append_qstn_id'] && ! empty( $qstn_id ) ? $input_id . '-' . $qstn_id : $input_id;
 	}
 	

@@ -257,12 +257,15 @@ final class EE_Config {
 			// skip the posts page, because we want all shortcodes registered for it
 			if ( $post_name != 'posts' ) {
 				foreach( $shortcodes as $shortcode => $post_id ){
+					// make sure post still exists
 					if ( $post = get_post( $post_id )) {
+						// check that the post name matches what we have saved
 						if ( $post->post_name == $post_name ) {
-//							echo '<h4>$post_name : ' . $post_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+							// if so, then break before hitting the unset below
 							break;
 						}
 					}
+					// we don't like missing posts around here >:(
 					unset( $this->core->post_shortcodes[ $post_name ] );
 				}
 			}
@@ -656,6 +659,7 @@ class EE_Core_Config extends EE_Config_Base {
 	public $site_license_key;
 	public $ee_ueip_optin;
 	public $post_shortcodes;
+	public $post_id_shortcodes;
 	public $module_route_map;
 	public $module_forward_map;
 	public $module_view_map;
@@ -677,6 +681,7 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->site_license_key = NULL;
 		$this->ee_ueip_optin = TRUE;
 		$this->post_shortcodes = array();
+		$this->post_id_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
 		$this->module_view_map = array();
@@ -692,7 +697,7 @@ class EE_Core_Config extends EE_Config_Base {
 			$this->txn_page_id,
 			$this->thank_you_page_id,
 			$this->cancel_page_id
-			);
+		);
 	}
 
 }

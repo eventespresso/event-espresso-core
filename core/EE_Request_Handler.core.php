@@ -79,14 +79,33 @@ final class EE_Request_Handler {
 		if ( ! is_admin() ) {
 			// get current post name from URL
 			EE_Registry::instance()->load_helper( 'URL' );
-			// set request post name
+			// set request post name or post_id
 			if ( isset( $wp->query_vars['name'] )) {
 				$this->set( 'post_name', $wp->query_vars['name'] );
 			} else if ( isset( $wp->query_vars['pagename'] )) {
 				$this->set( 'post_name', $wp->query_vars['pagename'] );
+			} else if ( isset( $wp->query_vars['p'] )) {
+				$this->set( 'post_id', $wp->query_vars['p'] );
+			} else if ( isset( $wp->query_vars['page_id'] )) {
+				$this->set( 'post_id', $wp->query_vars['page_id'] );
 			} else if ( isset( $wp->request )) {
-				$this->set( 'post_name', basename( $wp->request ));
+				$request = basename( $wp->request );
+				is_numeric( $request ) ? $this->set( 'post_id', $request ) : $this->set( 'post_name', $request );
 			} 
+//			d( $this->get( 'post_id' ) );
+//			d( $this->get( 'post_name' ) );
+			// post id but no post_name ? somebody's using numeric permalinks
+			if ( $this->get( 'post_id' ) && ! $this->get( 'post_name' )) {
+				global $wpdb;
+				$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_status="publish" AND ID=%d';
+				if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )))) {
+					// set the current post slug to what it actually is
+					$this->set( 'post_name', $post_slug );
+				}					
+			} else if ( ! $this->get( 'post_id' ) && ! $this->get( 'post_name' )) {
+				$this->set( 'post_name', 'front_page' );
+			}
+//			d( $this->_params );
 			// set post type
 			$post_type = isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : 'post';
 			$this->set( 'post_type', $post_type );	

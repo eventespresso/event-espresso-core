@@ -1392,14 +1392,14 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			if ( ! $response->is_valid ) {
 				$response_data['success'] = FALSE;
 				$response_data['recaptcha_reload'] = TRUE;
-//				$response_data['error'] = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
 				$response_data['error'] = sprintf( __('Sorry, but you did not enter the correct anti-spam phrase.%sPlease try again with the new phrase that has been generated for you.', 'event_espresso'), '<br/>' );
+				if ( $this->EE->REQ->ajax ) {
+					echo json_encode( $response_data );
+					die();
+				}
 			}
 		}
-		if ( $this->EE->REQ->ajax ) {
-			echo json_encode( $response_data );
-			die();
-		} elseif ( $response_data['error'] ) {
+		if ( $response_data['error'] ) {
 			EE_Error::add_error( $response_data['error'], __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		} else {
