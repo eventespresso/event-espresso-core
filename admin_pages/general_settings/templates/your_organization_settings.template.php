@@ -29,7 +29,7 @@
 	</p>		
 
 	
-	<h4 class="ee-admin-settings-hdr">
+	<h4 id="contact_info_h4" class="ee-admin-settings-hdr">
 		<?php _e('Contact Information', 'event_espresso'); ?>
 	</h4>
 

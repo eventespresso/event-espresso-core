@@ -50,10 +50,10 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			30 => array(
-				'id' => 'organization_city',
+				'id' => 'contact_info_h4',
 				'content' => $this->_contact_information_stop(),
 				'options' => array(
-					'tipLocation' => 'right',
+					'tipLocation' => 'left',
 					'tipAdjustmentY' => -50,
 					'tipAdjustmentX' => 15
 					)
@@ -82,28 +82,27 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Organization Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('The general settings page covers most of the site wide settings that you will need. It is split up into 6 tabbed areas.
-', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('Make sure that your business details are correct, and help promote your own brand!', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	
 
 	protected function _site_license_key_stop() {
-		return '<p>' . __('about site license keys', 'event_espresso') . '</p>';
+		return '<p>' . __('Insert your licence key here to benefit from one click updates.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _contact_information_stop() {
-		return '<p>' . __('about the setting', 'event_espresso') . '</p>';
+		return '<p>' . __('Your business details. These are used in other areas of the site, so keep them updated!', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _upload_image_stop() {
-		return '<p>' . __('about the setting', 'event_espresso') . '</p>';
+		return '<p>' . __('Add a logo. This can be used for invoice and tickets.', 'event_espresso') . '</p>';
 	}
 
 	protected function _ueip_option_stop() {
-		return '<p>' . __('about the setting', 'event_espresso') . '</p>';
+		return '<p>' . __('Help us to help you! Sign up to the User eXperience Improvement Program and send us anonymous data that will help us improve Event Espresso.', 'event_espresso') . '</p>';
 	}
 }
