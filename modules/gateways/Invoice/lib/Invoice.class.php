@@ -210,6 +210,7 @@ class Invoice {
 				"[state]",
 				"[zip]",
 				"[email]",
+				"[vat]",
 				"[registration_date]",
 				"[instructions]",
 		);
@@ -233,6 +234,7 @@ class Invoice {
 				$org_state_name,
 				$EE->CFG->organization->zip,
 				$EE->CFG->organization->email,
+				$EE->CFG->organization->vat,
 				$this->registration->date(),
 				$this->invoice_settings['pdf_instructions']
 		);
