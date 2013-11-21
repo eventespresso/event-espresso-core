@@ -181,8 +181,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'help_tour' => array( 'Templates_Help_Tour' ),
-				
-			//Help Tabs
 				'help_tabs' => array(
 					/*'event_list_settings_info' => array(
 						'title' => __('Event List Settings', 'event_espresso'),
@@ -220,14 +218,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Display Addresses', 'event_espresso'),
 						'callback' => 'display_addresses_in_reg_form_info_help_tab'
 						),
-					),
-				//end Help Tabs
-					
-					
+					),					
 				'require_nonce' => FALSE
-				),
-			//end template settings
-			
+				),			
 			'your_organization_settings' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
@@ -235,6 +228,24 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					),
 				'help_tour' => array( 'Your_Organization_Help_Tour' ),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'site_license_key_info' => array(
+						'title' => __('Site License Key', 'event_espresso'),
+						'callback' => 'site_license_key_info_help_tab'
+						),
+					'contact_info_info' => array(
+						'title' => __('Contact Information', 'event_espresso'),
+						'callback' => 'contact_info_info_help_tab'
+						),
+					'organization_logo_info' => array(
+						'title' => __("Company Logo", 'event_espresso'),
+						'callback' => 'organization_logo_info_help_tab'
+						),
+					'social_links_info' => array(
+						'title' => __('Social Links', 'event_espresso'),
+						'callback' => 'social_links_info_help_tab'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 			'admin_option_settings' => array(
@@ -352,6 +363,30 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$template = GEN_SET_TEMPLATE_PATH . 'map_confg_help.php';
 		EEH_Template::display_template( $template );
 	}
+	
+	/**
+	 * your organization help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for tab 
+	 */
+	public function your_organization_help_tabs( $tab ) {
+		require_once GEN_SET_TEMPLATE_PATH . 'your_organization_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template( $template );
+	}
+	public function site_license_key_info_help_tab() {
+		$this->your_organization_help_tabs( __FUNCTION__ );
+	}
+	public function contact_info_info_help_tab() {
+		$this->your_organization_help_tabs( __FUNCTION__ );
+	}
+	public function organization_logo_info_help_tab() {
+		$this->your_organization_help_tabs( __FUNCTION__ );
+	}
+	public function social_links_info_help_tab() {
+		$this->your_organization_help_tabs( __FUNCTION__ );
+	}
+
 
 
 
