@@ -40,6 +40,15 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 			10 => array(
 				'content' => $this->_stop_one(),
 				),
+			15 => array(
+				'id' => 'add-new-event',
+				'content' => $this->_add_new_event_stop(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 20
+					)
+				),
 			20 => array(
 				'class' => 'nav-tab-wrapper',
 				'content' => $this->_stop_two(),
@@ -125,7 +134,12 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 		$content .= '<p>' . __('This brief tour of the event overview, will go over all the different areas of this screen, to help you understand how to use Event Espresso.', 'event_espresso') . '</p>';
 		return $content;
 	}
-
+	
+	protected function _add_new_event_stop() {
+		$content .= '<p>' . __('Click here to add a new event.', 'event_espresso') . '</p>';
+		return $content;
+	}
+	
 	protected function _stop_two() {
 		return '<p>You can click on any of these navigation tabs whenever you are on any admin page to visit different sections of that page.</p>';
 	}

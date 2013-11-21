@@ -40,6 +40,15 @@ class Venue_Overview_Help_Tour extends EE_Help_Tour {
 			10 => array(
 				'content' => $this->_start(),
 				),
+			15 => array(
+				'id' => 'add-new-venue',
+				'content' => $this->_new_venue_stop(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 10
+					)
+				),
 			20 => array(
 				'id' => 'event-espresso_page_espresso_venues-search-input',
 				'content' => $this->_search_stop(),
@@ -126,6 +135,10 @@ class Venue_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _search_stop() {
 		return '<p>' . __('Fields that will be searched with the value from the search are: Venue Name, Venue Description, Venue Short Description, Venue address, Venue city, Venue zip, Venue phone, Venue url, Venue virtual phone, Venue google map link, Event Name, Event description, Event Phone, Event external url', 'event_espresso') . '</p>';
+	}
+	
+	protected function _new_venue_stop() {
+		return '<p>' . __('Click here to add a new venue.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _id_stop() {
