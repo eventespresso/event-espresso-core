@@ -530,24 +530,7 @@ abstract class EE_Gateway {
 	 * @return boolean
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction){
-
-		$session_data = EE_Registry::instance()->SSN->get_session_data();
-		//update the session as if we just updated the session
-		//...actually, I'm not sure if there's much to save. 
-//		unset($session_data['transaction']);
-//		$transaction->set_txn_session_data($session_data);
-//		$transaction->save();
-//		//now, restore the session and transaction to exactly how they were beforehand. The transaction might nto be complete
-//		$transaction->set_txn_session_data(null);
-//		$session_data['transaction'] = $transaction;
-		
-		//remove the session from the transaction before saving it to the db to minimize recursive relationships
-		$transaction->set_txn_session_data( NULL );
-		// save registrations and transaction to the session
-		EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $transaction ));
-		// save the transactionless session back to this transaction
-		$transaction->set_txn_session_data( EE_Registry::instance()->SSN );
-		// save the transaction to the db
+		// save the transaction to the db in case anything changed
 		$transaction->save();		
 		return true;
 	}
