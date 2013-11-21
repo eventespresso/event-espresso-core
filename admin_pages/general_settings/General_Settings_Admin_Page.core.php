@@ -272,6 +272,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						'title' => __('Affiliate', 'event_espresso'),
 						'callback' => 'affiliate_info_help_tab'
 						),
+					'help_tour_activation_info' => array(
+						'title' => __('Help Tour Activation', 'event_espresso'),
+						'callback' => 'help_tour_activation_info_help_tab'
+						),
 					),
 				'require_nonce' => FALSE
 				),
@@ -412,7 +416,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function affiliate_info_help_tab() {
 		$this->admin_options_help_tabs( __FUNCTION__ );
 	}
-
+	public function help_tour_activation_info_help_tab() {
+		$this->admin_options_help_tabs( __FUNCTION__ );
+	}
 
 
 	protected function _add_screen_options() {
