@@ -22,18 +22,16 @@ $grid_sizes = array(
 ?>
 
 	<!--*************************   Event Listings  ****************************-->
-
 	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Event Listings', 'event_espresso'); ?> <a class="ee-admin-settings-hdr-lnk small-text" href="<?php echo home_url('/') . __('events', 'event_espresso'); ?>"><?php  echo home_url('/') . __('events', 'event_espresso');; ?></a>
+		<?php _e('Event List Pages', 'event_espresso'); ?>  <?php //echo EEH_Template::get_help_tab_link('event_list_settings_info');?>
 	</h4>
-
 	<table class="form-table">
 		<tbody>
 
 			<tr>
 				<th>
 					<label for="default_type">
-						<?php _e('Default Event List Type', 'event_espresso'); ?>
+						<?php _e('Default Event List Type', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('template_settings_info');?>
 					</label>
 				</th>
 				<td>
@@ -44,7 +42,7 @@ $grid_sizes = array(
 			<tr>
 				<th>
 					<label for="event_list_grid_size">
-						<?php _e('Grid Size', 'event_espresso'); ?>
+						<?php _e('Grid Size', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('grid_size_info');?>
 					</label>
 				</th>
 				<td>
@@ -55,7 +53,7 @@ $grid_sizes = array(
 			<tr>
 				<th>
 					<label for="display_description_in_event_list">
-						<?php _e('Display Descriptions', 'event_espresso'); ?>
+						<?php _e('Display Descriptions', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('display_description_info');?>
 					</label>
 				</th>
 				<td>
@@ -66,7 +64,7 @@ $grid_sizes = array(
 			<tr>
 				<th>
 					<label for="display_address_in_event_list">
-						<?php _e('Display Address', 'event_espresso'); ?>
+						<?php _e('Display Address', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('display_address_info');?>
 					</label>
 				</th>
 				<td>
@@ -77,7 +75,7 @@ $grid_sizes = array(
 			<tr>
 				<th>
 					<label for="display_venue_details_in_event_list">
-						<?php _e('Display Venue Details', 'event_espresso'); ?>
+						<?php _e('Display Venue Details', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('display_venue_details_info');?>
 					</label>
 				</th>
 				<td>
@@ -88,11 +86,22 @@ $grid_sizes = array(
 			<tr>
 				<th>
 					<label for="display_expired_events">
-						<?php _e('Display Expired Events', 'event_espresso'); ?>
+						<?php _e('Display Expired Events', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('display_expired_events_info');?>
 					</label>
 				</th>
 				<td>
 					<?php echo EEH_Form_Fields::select_input('display_expired_events', $values, $display_expired_events, 'id="display_expired_events"'); ?>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>
+					<label for="">
+						<?php _e('Event Listings URL', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('event_listings_url_info');?>
+					</label>
+				</th>
+				<td>
+					<a id="event_listings_url" class="ee-admin-settings-hdr-lnk small-text" href="<?php echo home_url('/') . __('events', 'event_espresso'); ?>"><?php  echo home_url('/') . __('events', 'event_espresso'); ?></a>
 				</td>
 			</tr>
 

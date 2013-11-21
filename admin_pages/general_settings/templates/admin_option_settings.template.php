@@ -38,7 +38,7 @@
 	 
 <?php * 
 	 */
-/* @todo: implement in 4.2 or whenver timezones-per-event get implemented. 
+/* @todo: implement in 4.2 or whenever timezones-per-event get implemented. 
  * When implementing this, it would probably be more proper to add a filter here
  * and use it from general_settings in the caffeinated folder
 
@@ -118,7 +118,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 	</table>
 
 	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Promote Event Espresso', 'event_espresso'); ?>
+		<?php _e('Promote Event Espresso', 'event_espresso'); ?> <span id="affiliate_info"><?php echo EEH_Template::get_help_tab_link('affiliate_info'); ?></span>
 	</h4>
 
 	<table class="form-table">
@@ -128,7 +128,6 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 				<th>
 					<label>
 						<?php _e('Link to Event Espresso from your Registration Page footer?', 'event_espresso'); ?>
-						<?php echo EEH_Template::get_help_tab_link('affiliate_info'); ?>
 					</label>
 				</th>
 				<td>
@@ -153,7 +152,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 	</table>
 
 	<h4 class="ee-admin-settings-hdr">
-		<?php _e('Help Tour Global Activation', 'event_espresso'); ?>
+		<?php _e('Help Tour Global Activation', 'event_espresso'); ?> <span id="help_tour_activation"><?php echo EEH_Template::get_help_tab_link('help_tour_activation_info'); ?></span>
 	</h4>
 
 	<table class="form-table">
@@ -162,7 +161,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 			<tr>
 				<th>
 					<label>
-						<?php _e('This toggles whether ee help tours are active globally or not', 'event_espresso'); ?>
+						<?php _e('This toggles whether the Event Espresso help tours are active globally or not', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
