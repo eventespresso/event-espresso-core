@@ -90,41 +90,41 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 			);
 
 		//get all attendee and events associated with the registrations in this transaction
-		$events = array();
+		$events = $event_setup = $evt_cache = array();
 		$attendees = array();
 		if ( !empty( $this->reg_objs ) ) {
 			$event_attendee_count = array(); 
 			foreach ( $this->reg_objs as $reg ) {
-				$events[$reg->event_ID()] = $reg;
-				$event_attendee_count[$reg->event_ID()] = isset( $event_attendee_count[$reg->event_ID()] ) ? $event_attendee_count[$reg->event_ID()] + 1 : 0;
-				$attendees[$reg->attendee_ID()]['line_ref'][] = $reg->event_ID();
+				$evt_id = $reg->event_ID();
+				$event = EEM_Event::instance()->get_one_by_ID($evt_id);
+				$evtcache[$evt_id] = $event;
+				$eventsetup[$evt_id]['reg_objs'][] = $reg;
+				$eventsetup[$evt_id]['tkt_objs'][] = $reg->get_first_related('TKT');
+				$eventsetup[$evt_id]['att_objs'][] = $reg->attendee();
+				$event_attendee_count[$evt_id] = isset( $event_attendee_count[$evt_id] ) ? $event_attendee_count[$evt_id] + 1 : 0;
+				$attendees[$reg->attendee_ID()]['line_ref'][] = $evt_id;
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->event_ID()] = $reg;
+				$attendees[$reg->attendee_ID()]['reg_objs'][$evt_id] = $reg;
+				$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
+				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee()->email();
+				$attendees[$reg->attendee_ID()]['tkt_objs'][$evt_id] = $reg->ticket();
+				$attendees[$reg->attendee_ID()]['evt_objs'][$evt_id] = $event;
 			}
 
 			//let's loop through the unique event=>reg items and setup data on them
 
 
 			if ( !empty( $events) ) {
-				foreach ( $events as $eid => $reg ) {
-					/*@var $reg EE_Registration */
-					$event = $reg->event_obj();
-					$first_datetime = $event->first_datetime();
-					$tkt = $reg->get_first_related('Ticket');
+				foreach ( $eventsetup as $eid => $items ) {
 					$events[$eid] = array(
-						'ID' => $reg->event_ID(),
-						'line_ref' => $reg->event_ID(),
-						'reg' => $reg,
+						'ID' => $eid,
+						'event' => $evtcache[$eid],
 						'name' => $event->name(),
-						'daytime_id' => $first_datetime  ? $first_datetime->ID() : 0,
-						'ticket_price' => $tkt->get_ticket_subtotal(),
-						'ticket_obj' => $tkt,
-						'ticket_desc' => $tkt->get('TKT_description'),
 						'pre_approval' => $event->require_pre_approval(),// $event->require_pre_approval,
-						'ticket_id' => $tkt->ID(),
-						'meta' => null, //used to be maybe_unserialize( $event->event_meta ), but htere is now NO event meta column
-						'line_total' => $this->txn->total(),
-						'total_attendees' => $event_attendee_count[$eid]
+						'total_attendees' => $event_attendee_count[$eid],
+						'reg_objs' => $items['reg_objs'],
+						'tkt_objs' => $items['tkt_objs'],
+						'att_objs' => $items['att_objs']
 					);
 				}
 			}	

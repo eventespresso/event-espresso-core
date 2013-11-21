@@ -169,23 +169,22 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 		$add = array();
 		$multi_same_att_check = array();
 		
-		foreach ( $this->_data->attendees as $index => $values ) {
+		foreach ( $this->_data->attendees as $att_id => $details ) {
 			//ONLY continue if this attendee matches the registration
-			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $this->_data->attendees[$index]['att_obj']->ID() ) ) continue;
+			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) ) continue;
 
-			$attendee_id = isset( $this->_data->reg_obj ) ? $this->_data->reg_obj->attendee_ID() : NULL;
-			if ( !empty( $multi_same_att_check ) && in_array($attendee_id, $multi_same_att_check) )
+			if ( !empty( $multi_same_att_check ) && in_array($att_id, $multi_same_att_check) )
 				continue; //we're not going to send multiple attendee emails to the same person!
 
-			$multi_same_att_check[$attendee_id] = $attendee_id;
+			$multi_same_att_check[] = $att_id;
 
 			//set the attendee array to blank on each loop;
 			$aee = array();
-			foreach ( $values as $field => $value ) {
-				$aee[$field] = $value;
-				if ( $field == 'line_ref' ) {
-					foreach ( $value as $line_ref ) {
-						$aee['events'][$line_ref] = $this->_data->events[$line_ref];
+			foreach ( $details as $item => $value ) {
+				$aee[$item] = $value;
+				if ( $item == 'line_ref' ) {
+					foreach ( $value as $event_id ) {
+						$aee['events'][$event_id] = $this->_data->events[$event_id];
 					}
 				}
 			}
