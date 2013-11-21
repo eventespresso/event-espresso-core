@@ -217,26 +217,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	ajax_process_registration_steps
 	 */
 	public static function process_attendee_information() {
-		$SPCO = EED_Single_Page_Checkout::instance();
-		$SPCO->_current_step = 'attendee_information';
-		$SPCO->init();
-		$SPCO->_process_attendee_information();
+		EED_Single_Page_Checkout::instance()->_current_step = 'attendee_information';
+		EED_Single_Page_Checkout::instance()->init();
+		EED_Single_Page_Checkout::instance()->_process_attendee_information();
 	}
 	
 	
 	public static function process_payment_options() {
-		$SPCO = EED_Single_Page_Checkout::instance();
-		$SPCO->_current_step = 'payment_options';
-		$SPCO->init();
-		$SPCO->_process_payment_options();
+		EED_Single_Page_Checkout::instance()->_current_step = 'payment_options';
+		EED_Single_Page_Checkout::instance()->init();
+		EED_Single_Page_Checkout::instance()->_process_payment_options();
 	}
 	
 	
 	public static function process_registration_confirmation() {
-		$SPCO = EED_Single_Page_Checkout::instance();
-		$SPCO->_current_step = 'registration_confirmation';
-		$SPCO->init();
-		$SPCO->_process_registration_confirmation();
+		EED_Single_Page_Checkout::instance()->_current_step = 'registration_confirmation';
+		EED_Single_Page_Checkout::instance()->init();
+		EED_Single_Page_Checkout::instance()->_process_registration_confirmation();
 	}
 
 
@@ -302,7 +299,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		
 //		printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		$this->_transaction->dropEE();
 //		d( $this->_transaction );
 
 		
@@ -1090,7 +1086,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					$registrations = $this->_transaction->registrations();
 					if ( ! empty( $registrations )) {
 						// grab the saved registrations from the transaction				
-						foreach ( $this->_transaction->registrations()  as $registration ) {			
+						foreach ( $this->_transaction->registrations()  as $registration ) {	
 							// verify object
 							if ( $registration instanceof EE_Registration ) {
 								// reg_url_link / line item ID exists ?
@@ -1170,13 +1166,14 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
 												}
 											} elseif (  $answer_is_obj ) {
-												// save this data to the attendee object
+												// save this data to the answer object
 												$answers[ $answer_cache_id ]->set_value( $input_value );
 											} else {
 												EE_Error::add_error( __( 'Unable to save registration form data.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 											}
 
-										}
+										}  // end of foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) 
+										
 									} else {
 										EE_Error::add_error( __( 'No form data or invalid data was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 									}
@@ -1194,7 +1191,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											'ATT_email' => isset( $attendee_data['ATT_email'] ) ? $attendee_data['ATT_email'] : ''
 										));
 										// did we find an already existing record for this attendee ?
-										if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {		
+										if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {
+											// TODO: add $attendee_data to $existing_attendee
 											// add relation to existing attendee
 											$registration->_add_relation_to( $existing_attendee, 'Attendee' );
 	//										echo '$existing_attendee <br/>';
@@ -1217,32 +1215,19 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									// remove malformed data
 									unset( $valid_data[ $line_item_id ] );
 								}
+								
+								if ( ! $registration->attendee() instanceof EE_Attendee ) {
+									EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $line_item_id ), __FILE__, __FUNCTION__, __LINE__ );
+								}
 
-							}
-	//						$registration->attendee()->dropEE();						
-	//						printr( $registration->attendee(), '
-	//$registration->attendee()
-	//' . __FILE__ . '<br />line no: ' . __LINE__ . '
-	//', 'auto' );
-	//						echo '
-	//attendee()->fname: ' . $registration->attendee()->fname() . '
-	//						
-	//';
-	//						$registration->dropEE();
-	//						$registration->_remove_relation_to( $registration->event(), 'Event' );
-	//						$registration->_remove_relation_to( $registration->ticket(), 'Ticket' );
-	//						printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-						}
-
-	//					EE_Registry::instance()->SSN->set_session_data( array( 'primary_attendee' => $primary_attendee, 'transaction' => $this->_transaction ));
-	//					printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-	//					echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-	//					EE_Registry::instance()->SSN->update();
+							} // end of if ( $registration instanceof EE_Registration )
+							
+						} // end of foreach ( $this->_transaction->registrations()  as $registration )
 						
 					} else {
 						EE_Error::add_error( __( 'Your form data could not be applied to any valid registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 					}
+					
 				} else {
 						EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );				
 				}
@@ -1333,17 +1318,14 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
-
+		
 		if ( $this->_continue_reg ) {
-			if ( $this->_transaction->total() == 0 ) {
-				
+			if ( $this->_transaction->total() == 0 ) {				
 				// FREE EVENT !!! YEAH : )
 				if ( EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ))) {
-	//				echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 					$success_msg = __( 'no payment required.', 'event_espresso' );
 					EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );	
 				} 
-
 			} else { 			
 				// PAID EVENT !!!  BOO  : (
 				EE_Registry::instance()->LIB->EEM_Gateways->process_gateway_selection();
@@ -1354,7 +1336,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$notices = EE_Error::get_notices(FALSE);
 		$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
-
 
 		$this->go_to_next_step( $success_msg, $error_msg );
 
@@ -1394,12 +1375,13 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				$response_data['recaptcha_reload'] = TRUE;
 //				$response_data['error'] = __('Sorry, but you did not enter the correct anti-spam phrase.<br/>Please refresh the ReCaptcha (the top button of the three), and try again.', 'event_espresso');
 				$response_data['error'] = sprintf( __('Sorry, but you did not enter the correct anti-spam phrase.%sPlease try again with the new phrase that has been generated for you.', 'event_espresso'), '<br/>' );
+				if ( EE_Registry::instance()->REQ->ajax ) {
+					echo json_encode( $response_data );
+					die();
+				}
 			}
 		}
-		if ( EE_Registry::instance()->REQ->ajax ) {
-			echo json_encode( $response_data );
-			die();
-		} elseif ( $response_data['error'] ) {
+		if ( $response_data['error'] ) {
 			EE_Error::add_error( $response_data['error'], __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		} else {
@@ -1420,7 +1402,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	private function _process_finalize_registration() {
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
+		
 		$success_msg = FALSE;
 		$error_msg = FALSE;
 
@@ -1430,8 +1412,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			$this->_transaction->save_new_cached_related_model_objs();
 			// and save the txn to the db
 			$this->_transaction->save();
-	//			$this->_transaction->dropEE();
-	//			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			EE_Registry::instance()->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 
 			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
