@@ -71,6 +71,14 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -20
 					)
+				),
+			60 => array(
+				'id' => 'description',
+				'content' => $this->_description_column_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20
+					)
 				)
 			);
 	}
@@ -100,5 +108,9 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _messenger_column_stop() {
 		return '<p>' . __('Each message can be sent to multiple recipients, and this column shows which ones will receive the message.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _description_column_stop() {
+		return '<p>' . __('A short description of each message type.', 'event_espresso') . '</p>';
 	}
 }
