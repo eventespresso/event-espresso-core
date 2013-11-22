@@ -122,7 +122,7 @@ final class EE_Config {
 		//set defaults
 		$this->core = new EE_Core_Config();
 		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();
+		$this->currency = new EE_Currency_Config();		
 		$this->registration = new EE_Registration_Config();
 		$this->admin = new EE_Admin_Config();
 		$this->template_settings = new EE_Template_Config();
@@ -834,7 +834,7 @@ class EE_Organization_Config extends EE_Config_Base {
 		$this->CNT_ISO = 'US';
 		$this->zip = '12345';
 		$this->email = get_bloginfo('admin_email');
-		$this->vat = '383j3yh4';
+		$this->vat = '123456789';
 		$this->logo_url = '';
 		$this->facebook = '';
 		$this->twitter = '';
@@ -913,16 +913,32 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct() {
-		// set default currency settings
-		$this->code = 'USD'; 	// currency code: USD, CAD, EUR
-		$this->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
-		$this->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
-		$this->sign =  '$'; 	// currency sign: $
-		$this->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
-		$this->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
-		$this->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-		$this->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+	public function __construct( $CNT_ISO = NULL ) {
+		
+		if ( $CNT_ISO ) {
+			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( EE_Registry::instance()->CFG->organization->CNT_ISO )) {
+				if ( $country instanceof EE_Country ) {
+					$this->code = $country->currency_code(); 			// currency code: USD, CAD, EUR
+					$this->name = $country->currency_name_single();	// Dollar
+					$this->plural = $country->currency_name_plural(); 	// Dollars
+					$this->sign =  $country->currency_sign(); 			// currency sign: $
+					$this->sign_b4 = $country->currency_sign_before(); 		// currency sign before or after: $TRUE  or  FALSE$
+					$this->dec_plc = $country->currency_decimal_places();	// decimal places: 2 = 0.00  3 = 0.000
+					$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+					$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+				}
+			}			
+		} else {
+			// set default currency settings
+			$this->code = 'USD'; 	// currency code: USD, CAD, EUR
+			$this->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
+			$this->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
+			$this->sign =  '$'; 	// currency sign: $
+			$this->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
+			$this->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
+			$this->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+			$this->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+		}
 	}
 }
 

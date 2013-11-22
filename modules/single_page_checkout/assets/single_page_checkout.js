@@ -311,7 +311,7 @@
 
 
 	// submit registraion form
-	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {	
+	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		// re-enable submit btn in case it was disabled
@@ -329,15 +329,17 @@
 			}
 			form_to_check = '#spco-registration-'+step+'-frm';
 			if ( next_step == 'finalize_registration' && $('#reg-page-off-site-gateway').val() == 1 ) {
-	//			alert( 'off-site-gateway' );
-				$('#spco-registration-'+step+'-frm').submit();
-				return;
+				if ( eei18n.wp_debug == 1 ) {
+					console.log( JSON.stringify( 'single-page-checkout on click -> off-site-gateway: ' + $('#reg-page-off-site-gateway').val(), null, 4 ));
+				}	
+				//$('#spco-registration-'+step+'-frm').submit();
+				//return;
 			} else if ( step == 'payment_options' ) {
 				form_to_check = process_selected_gateway();
 			} 
 			process_reg_step ( step, next_step, form_to_check );			
 		}
-
+		return false;
 	});
 
 
@@ -356,9 +358,14 @@
 		var off_site_gateway = '#reg-page-gateway-off-site-'+selected_gateway;
 		var off_site_payment = $( off_site_gateway ).val(); 
 		var selected_gateway_dv = '#reg-page-billing-info-'+selected_gateway+'-dv';
+
 		if ( eei18n.wp_debug == 1 ) {
-			console.log( JSON.stringify( 'selected_gateway: ' + selected_gateway, null, 4 ));
+			console.log( JSON.stringify( 'process_selected_gateway -> selected_gateway: ' + selected_gateway, null, 4 ));
+			console.log( JSON.stringify( 'process_selected_gateway -> off_site_gateway: ' + off_site_gateway, null, 4 ));
+			console.log( JSON.stringify( 'process_selected_gateway -> off_site_payment: ' + off_site_payment, null, 4 ));
+			console.log( JSON.stringify( 'process_selected_gateway -> selected_gateway_dv: ' + selected_gateway_dv, null, 4 ));
 		}
+		
 		// set off-site-gateway status
 		if ( off_site_payment == 1 ) {
 			$('#reg-page-off-site-gateway').val( 1 );
@@ -379,7 +386,6 @@
 		
 		if ( good_to_go === true ) {
 
-			//$('#spco-'+step+'-ajax').val(1);
 			$('#spco-'+step+'-noheader').val('true');
 			$('#spco-'+step+'-action').attr( 'name', 'action' );		
 			var form_data = $('#spco-registration-'+step+'-frm').serialize();
@@ -401,11 +407,13 @@
 					if ( eei18n.wp_debug == 1 ) {
 						console.log( JSON.stringify( 'step: ' + step, null, 4 ));
 						console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ));
-						console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
 						console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
 						console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
+						for ( key in response.return_data ) {
+							console.log( JSON.stringify( key +': ' + response.return_data[key], null, 4 ));
+						}
 					}
-
+					
 					if ( response.recaptcha_reload != undefined ) {
 						$('#recaptcha_reload').trigger('click');
 						show_event_queue_ajax_error_msg( response.error );
@@ -454,7 +462,8 @@
 			if ( key == 'reg-page-confirmation-dv' ) {
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 			} else if ( key == 'redirect-to-thank-you-page' ) {
-				window.location.replace( response.return_data[key] );
+				//window.location.replace( response.return_data[key] );
+				console.log( JSON.stringify( key +': ' + response.return_data[key], null, 4 ));
 				return;
 			} else if ( key == 'off-site-redirect') {
 				$( '#spco-extra-finalize_registration-inputs-dv' ).html( response.return_data[key] );
