@@ -201,7 +201,12 @@ abstract class EE_Shortcodes extends EE_Base {
 		if ( !isset( $this->_data['data'] ) )
 			throw new EE_Error( __('The incoming data does not have the required data index in its array', 'event_espresso') );
 
-		//all is well
+		//all is well let's just reformat the _extra_data() array if present
+		//let's make sure that extra_data includes all templates (for later parsing if necessary)
+		if ( !empty( $this->_extra_data ) && is_object($this->_extra_data ) ) {
+			$this->_extra_data['data'] = $this->_extra_data;
+			$this->_extra_data['templates'] = $this->_data['template'];
+		}
 
 	}
 
