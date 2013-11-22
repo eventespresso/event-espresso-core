@@ -104,7 +104,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	public function import() {
 	
 		require_once( EE_PLUGIN_DIR_PATH . 'includes/classes/EE_CSV.class.php' );
-		EE_Registry::instance()_CSV = EE_CSV::instance();
+		$this->EE_CSV = EE_CSV::instance();
 
 		if ( isset( $_REQUEST['import'] )) {	
 			if( isset( $_POST['csv_submitted'] )) {
@@ -149,7 +149,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	
 					if ( $file_ext=='csv' ) {
 					
-						$max_upload = EE_Registry::instance()_CSV->get_max_upload_size();
+						$max_upload = $this->EE_CSV->get_max_upload_size();
 						
 						if ( $filesize < $max_upload ) { 
 
@@ -164,7 +164,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 //								}
 													
 								// convert csv to array
-								$this->csv_array = EE_Registry::instance()_CSV->import_csv_to_model_data_array( $path_to_file );
+								$this->csv_array = $this->EE_CSV->import_csv_to_model_data_array( $path_to_file );
 									
 								// was data successfully stored in an array?
 								if ( is_array( $this->csv_array ) ) {
@@ -189,7 +189,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 									
 									}
 									// save processed codes to db
-									if ( EE_Registry::instance()_CSV->save_csv_to_db( $processed_data, $this->columns_to_save ) ) {
+									if ( $this->EE_CSV->save_csv_to_db( $processed_data, $this->columns_to_save ) ) {
 										return TRUE;
 																		
 									}
