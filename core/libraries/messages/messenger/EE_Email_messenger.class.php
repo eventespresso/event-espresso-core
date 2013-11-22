@@ -110,11 +110,16 @@ class EE_Email_messenger extends EE_messenger  {
 				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization')
 				),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration')
+				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration'),
+				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
 				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue'),
-			'ticket_list' => array('event_list', 'attendee_list', 'ticket', 'registration')
+				'required' => array('[EVENT_LIST]')
+				),
+			'ticket_list' => array(
+				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'registration'),
+				'required' => array('[TICKET_LIST]')
 				)
 			);
 	}

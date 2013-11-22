@@ -382,12 +382,12 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 		$valid_shortcodes = $_VLD->get_validators();
 
 		//let's make sure we're only getting the shortcode part of the validators
-		$shortcodes = array();
+		$shortcodes = $fields = array();
 		foreach( $valid_shortcodes as $field => $validators ) {
 			$shortcodes[$field] = $validators['shortcodes'];
+			$fields[] = $field;
 		}
 		$valid_shortcodes = $shortcodes;
-
 
 		//if not all fields let's make sure we ONLY include the shortcodes for the specified fields.
 		if ( !empty( $fields ) ) {

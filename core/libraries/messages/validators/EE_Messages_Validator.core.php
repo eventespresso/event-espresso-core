@@ -184,7 +184,6 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//get messenger validator_config
 		$msgr_validator = $this->_MSGR->get_validator_config();
 
-
 		
 		//we only want the valid shortcodes for the given context!
 		$context = $this->_context;
@@ -205,7 +204,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//okay now we've got our grps. Let's get the codes from the objects into an array indexed by group for easy retrieval later.
 		$codes_from_objs = array();
-		$shrtcode_grps = array_unique($shrtcode_grps);
+
 		foreach ( $shrtcode_grps as $group ) {
 			$ref = ucwords( str_replace('_', ' ', $group ) );
 			$ref = str_replace( ' ', '_', $ref );
@@ -230,8 +229,12 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//k now in this next loop we're going to loop through $msgr_validator again and setup the _validators property from the data we've setup so far.
 		foreach ( $msgr_validator as $field => $config ) {
-			//if empty config then we're assuming we're just going to use the shortcodes from the message type context
+			//if required shortcode is not in our list of codes for the given field, then we skip this field.
+			$required = isset($config['required']) ? array_intersect($config['required'], $mt_codes) : true;
+			if ( empty($required) )
+				continue;
 
+			//if empty config then we're assuming we're just going to use the shortcodes from the message type context
 			if ( empty( $config ) ) {
 				$this->_validators[$field]['shortcodes'] = $mt_codes;
 			}
