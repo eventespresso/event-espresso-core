@@ -156,11 +156,11 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 
 
 	private function _get_tickets_from_event( EE_Event $event ) {
-		return isset($this->_extra_data->events) ? $this->_extra_data->events[$event->ID()]['tkt_objs'] : array(); 
+		return isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['tkt_objs'] : array(); 
 	}
 
 	private function _get_tickets_from_attendee( EE_Attendee $attendee ) {
-		return isset($this->_extra_data->attendees) ? $this->_extra_data->attendees[$attendee->ID()]['tkt_objs'] : array();
+		return isset($this->_extra_data['data']->attendees) ? $this->_extra_data['data']->attendees[$attendee->ID()]['tkt_objs'] : array();
 	}
 
 
