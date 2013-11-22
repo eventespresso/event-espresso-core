@@ -32,7 +32,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 		/*@var $registration EE_Registration */
 		$url=add_query_arg(array('e_reg_url_link'=>$registration->reg_url_link(),
 					'ee_gateway'=>$this->_gateway_name),
-				get_permalink($this->EE->CFG->core->txn_page_id));
+				get_permalink(EE_Registry::instance()->CFG->core->txn_page_id));
 		if($urlencode){
 			$url=urlencode($url);
 		}

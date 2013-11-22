@@ -33,43 +33,35 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 			<tr>
 				<th>
 					<label for="QSG_name">
-						<?php _e('Group Name','event_espresso');?>
+						<?php _e('Group Name','event_espresso');?> <?php echo EEH_Template::get_help_tab_link('group_name_info');?>
 					</label>
 				</th>
 				<td>
 					<input name="QSG_name" value="<?php echo $question_group->name()?>" type="text" class="regular-text"><br/>
-					<p class="description">
-						<?php _e('A name or heading for this group of questions that can be used to organize your Registration Form. For example: Address Information.','event_espresso')?>
-					</p>
-					<?php if ( ! empty( $QSG_system )) { ?>
-					<span class="description" style="color:#D54E21;">
-						<?php if ( $QSG_system === 1 ) : ?>
-							<?php _e('This is a system question group so you are able to modify everything with this group except the identifier and the system questions attached to the group.','event_espresso')?>
-						<?php else : ?>
-							<?php _e('This is a system question group so you are able to modify everything with this group except the identifier.','event_espresso')?>
-						<?php endif; ?>
-					</span><br/>
-					<?php } ?>
+					
 				</td>
 			</tr>
 			
 			<tr>
 				<th>
 					<label for="QSG_identifier">
-						<?php _e('Group Identifier','event_espresso');?>
+						<?php _e('Group Identifier','event_espresso');?> <?php echo EEH_Template::get_help_tab_link('group_identifier_info');?>
 					</label>
 				</th>
 				<td>
-					<input name="QSG_identifier<?php echo $id; ?>" value="<?php echo $question_group->identifier()?>" type="text" class="regular-text"<?php echo $disabled; ?>><br/>
-					<p class="description">
-						<?php _e('The "Group Identifier" is a unique name for this group that can be used to distinguish it from all other groups in the system. A Group Identifier therefore can not be the same as any other. It will NOT be displayed to site visitors. If left blank, one will be automagically generated for you, ie: address-info-12345.','event_espresso')?>
-					</p>
+					<input name="QSG_identifier<?php echo $id; ?>" value="<?php echo $question_group->identifier()?>" type="text" class="regular-text"<?php echo $disabled; ?>>
+					<?php if ( ! empty( $QSG_system )) { ?>
+					<p><span class="description" style="color:#D54E21;">
+							<?php _e('System question group! This field cannot be changed.','event_espresso')?>
+					</span><br/></p>
+					<?php } ?>
+					
 				</td>
 			</tr>		
 			<tr>
 				<th>
 					<label for="QSG_desc">
-						<?php _e('Description','event_espresso');?>
+						<?php _e('Description','event_espresso');?> <?php echo EEH_Template::get_help_tab_link('group_description_info');?>
 					</label>
 				</th>
 				<td>
@@ -80,7 +72,7 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 			<tr>
 				<th>
 					<label>
-						<?php _e('Show Group Name','event_espresso');?>
+						<?php _e('Show Name','event_espresso');?> <?php echo EEH_Template::get_help_tab_link('show_group_name_info');?>
 					</label>
 				</th>
 				<td>
@@ -95,7 +87,7 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 			<tr>
 				<th>
 					<label>
-						<?php _e(' Show Group Description','event_espresso');?>
+						<?php _e(' Show Description','event_espresso');?> <?php echo EEH_Template::get_help_tab_link('show_group_description_info');?>
 					</label>
 				</th>
 				<td>

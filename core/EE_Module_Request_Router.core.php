@@ -54,7 +54,7 @@ final class EE_Module_Request_Router {
 	 *  @return 	void
 	 */
 	public function __construct() {
-		$this->EE = EE_Registry::instance();
+		
 	}
 
 
@@ -99,11 +99,11 @@ final class EE_Module_Request_Router {
 		} else {
 			// first route called		
 			// check request for module route
-			if ( ! $this->EE->REQ->is_set( 'ee' )) {
+			if ( ! EE_Registry::instance()->REQ->is_set( 'ee' )) {
 				return NULL;
 			}
 			// grab and sanitize module route
-			$current_route = $this->EE->REQ->get( 'ee' );
+			$current_route = EE_Registry::instance()->REQ->get( 'ee' );
 		}
 		//echo '<h4>$current_route : ' . $current_route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// sorry, but I can't read what you route !
@@ -191,7 +191,7 @@ final class EE_Module_Request_Router {
 			return FALSE;
 		}
 		// and pass the request object to the run method
-		$module = $mod_reflector->newInstance( $this->EE );
+		$module = $mod_reflector->newInstance( EE_Registry::instance() );
 		// now call whatever action the route was for
 		call_user_func( array( $module, $method ), $this->WP );
 		return $module;

@@ -220,7 +220,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	public function _system_status(){
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
 		$this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
-		$this->EE->load_helper('Array');
+		EE_Registry::instance()->load_helper('Array');
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
 	}

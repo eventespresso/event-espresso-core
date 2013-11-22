@@ -85,8 +85,9 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 		$this->grand_total_price_object = ''; //not available and not needed?
 
-		$session = $this->txn->session_data();
-		$session_data =  $session instanceof EE_Session ? $session->get_session_data() : array();		
+		$session_data = $this->txn->session_data();
+//		$session = $this->txn->session_data();
+//		$session_data =  $session instanceof EE_Session ? $session->get_session_data() : array();		
 
 		//other data from the session (if possible)
 		$this->user_id = isset( $session_data['user_id'] ) ? $session_data['user_id'] : '';
@@ -103,8 +104,46 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 		//let's get just the primary_attendee_data!  First we get the primary registration object.
 		$primary_reg = $this->txn->primary_registration(TRUE);
+		// verify
+		if( $primary_reg instanceof EE_Registration ) {
 
-		$primary_att = $primary_reg->attendee();
+			// get attendee object
+			if( $primary_reg->attendee() instanceof EE_Attendee ) {
+
+				//now we can setup the primary_attendee_data array
+				$this->primary_attendee_data = array(
+					'fname' => $primary_reg->attendee()->fname(),
+					'lname' => $primary_reg->attendee()->lname(),
+					'email' => $primary_reg->attendee()->email(),
+					'primary_attendee_email' => $primary_reg->attendee()->email(),
+					'registration_id' => $primary_reg->ID()
+				);
+
+			} else {				
+				EE_Error::add_error( __('Incoming data for the Gateways data handler does not have a valid Attendee object for the primary registrant.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			}
+
+		} else {
+			EE_Error::add_error( __('Incoming data for the Gateways data handler does not have a valid Registration object for the primary registrant.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		//get all attendee and events associated with the registrations in this transaction
+		$events = array();
+		$attendees = array();
+		if ( !empty( $this->reg_objs ) ) {
+			$event_attendee_count = array(); 
+			foreach ( $this->reg_objs as $reg ) {
+				if( $reg instanceof EE_Registration ) {	
+					$events[$reg->event_ID()] = $reg;
+					$event_attendee_count[$reg->event_ID()] = isset( $event_attendee_count[$reg->event_ID()] ) ? $event_attendee_count[$reg->event_ID()] + 1 : 0;
+					$attendees[$reg->attendee_ID()]['line_ref'][] = $reg->event_ID();
+					$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
+					$attendees[$reg->attendee_ID()]['reg_objs'][$reg->event_ID()] = $reg;
+				}
+			}
+
+			//let's loop through the unique event=>reg items and setup data on them
+
 
 		//now we can setup the primary_attendee_data array
 		$this->primary_attendee_data = array(

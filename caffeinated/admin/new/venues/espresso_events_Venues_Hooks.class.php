@@ -134,7 +134,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 	
 
 	public function caf_venue_update( $evtobj, $data ) {
-		$this->EE->load_model('Venue');
+		EE_Registry::instance()->load_model('Venue');
 		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
 
 

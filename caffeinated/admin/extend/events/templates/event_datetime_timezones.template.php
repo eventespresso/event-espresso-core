@@ -1,4 +1,4 @@
-<?php if ( $this->EE->CFG->admin->use_event_timezones ) : ?>
+<?php if ( EE_Registry::instance()->CFG->admin->use_event_timezones ) : ?>
 <div id="timezones-datetimes-dv" class="">
 	<span class="run-in"> <?php _e('Current Time for Event Timezone:', 'event_espresso'); ?> </span>
 	<span class="current-date"> <?php echo $current_date; ?></span>
