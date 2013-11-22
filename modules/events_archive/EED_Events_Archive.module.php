@@ -77,7 +77,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		EE_Config::register_route( __( 'events', 'event_espresso' ), 'Events_Archive', 'run' );
-		EE_Config::register_route( 'espresso_events', 'Events_Archive', 'espresso_events' );		
+		EE_Config::register_route( 'event_list', 'Events_Archive', 'event_list' );		
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
 	}
 
@@ -143,12 +143,12 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 * 	espresso_events
+	 * 	event_list
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function espresso_events() {	
+	public function event_list() {	
 		// load other required components
 		$this->_load_assests();
 	}
