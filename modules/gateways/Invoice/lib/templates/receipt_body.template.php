@@ -69,8 +69,8 @@ $tax_total_line_item;
 									<td><?php echo $line_item->desc()?></td>
 									<td><?php echo $ticket->uses()?></td>
 									<td><?php echo $line_item->quantity()?></td>
-									<td><?php echo $line_item->unit_price()?></td>
-									<td><?php echo $line_item->total()?></td>
+									<td><?php echo $line_item->unit_price_float()?></td>
+									<td><?php echo $line_item->total_float()?></td>
 								</tr>
 								<?php }else{?>
 									<tr>
@@ -85,14 +85,14 @@ $tax_total_line_item;
 											<td class="item_r"><?php echo $sub_line_item->name()?></td>
 											<td colspan="2"><?php echo $sub_line_item->desc()?></td>
 											<td><?php echo $is_percent ? '' : $sub_line_item->quantity()?></td>
-											<td><?php echo $is_percent ? $sub_line_item->percent()."%" : $sub_line_item->unit_price()?></td>
-											<td><?php echo $sub_line_item->total()?></td>
+											<td><?php echo $is_percent ? $sub_line_item->percent()."%" : $sub_line_item->unit_price_float()?></td>
+											<td><?php echo $sub_line_item->total_float()?></td>
 										</tr>
 									<?php } ?>
 									<tr>
 										<td colspan="4"></td>
 										<td><?php _e("Ticket Total:", "event_espresso");?></td>
-										<td><?php echo $line_item->total()?></td>
+										<td><?php echo $line_item->total_float()?></td>
 									</tr>
 								<?php }?>
 							</tbody>
@@ -171,13 +171,13 @@ $tax_total_line_item;
 						<td><?php echo $child_tax->name()?></td>
 						<td><?php echo $child_tax->desc()?></td>
 						<td><?php echo $child_tax->percent()?>%</td>
-						<td><?php echo $child_tax->total()?></td>
+						<td><?php echo $child_tax->total_float()?></td>
 					</tr>
 					<?php } ?>
 					<tr>
 						<td colspan="2"></td>
 						<td><?php	_e("Tax Total", "event_espresso");?></td>
-						<td><?php echo $tax_total_line_item->total()?></td>
+						<td><?php echo $tax_total_line_item->total_float()?></td>
 					</tr>
 					<?php
 					/* foreach($transaction->registrations() as $registration){

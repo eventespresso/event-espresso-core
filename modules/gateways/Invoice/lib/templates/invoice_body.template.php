@@ -101,7 +101,7 @@
 							<tr id="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
-								<td class="total"><?php echo $line_item->total();?></td>
+								<td class="total"><?php echo $line_item->total_float();?></td>
 							</tr>
 						<?php break;
 						
@@ -115,7 +115,7 @@
 							<tr id="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
-								<td class="total"><?php echo $line_item->total();?></td>
+								<td class="total"><?php echo $line_item->total_float();?></td>
 							</tr>
 						<?php break;
 						
@@ -129,7 +129,7 @@
 							<tr id="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
-								<td class="total"><?php echo $line_item->total();?></td>
+								<td class="total"><?php echo $line_item->total_float();?></td>
 							</tr>
 						<?php break;
 						
@@ -153,18 +153,18 @@
 							} ?>
 							<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td>
-								<td class="item_l "><?php echo $line_item->unit_price()?></td>
+								<td class="item_l "><?php echo $line_item->unit_price_float()?></td>
 								<td class="item_l"><?php echo $line_item->quantity();?></td>
-								<td class="item_r <?php echo $has_subitems ? 'total':''?>"> <?php echo $line_item->total(); echo $line_item->is_taxable() ? '*' : ''?> </td>
+								<td class="item_r <?php echo $has_subitems ? 'total':''?>"> <?php echo $line_item->total_float(); echo $line_item->is_taxable() ? '*' : ''?> </td>
 								<?php //<td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?>
 							</tr>
 							<?php }else{//no subitems - just show this line item ?>
 								<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
 									<td class="item_l"><?php echo $line_item->name()?></td>
 									<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
-									<td class="item_l"><?php echo $line_item->unit_price()?></td>
+									<td class="item_l"><?php echo $line_item->unit_price_float()?></td>
 									<td class='item_l'><?php echo $line_item->quantity()?></td>
-									<td class="item_r"> <?php echo $line_item->total(); echo $line_item->is_taxable() ? '*' : ''?> </td>
+									<td class="item_r"> <?php echo $line_item->total_float(); echo $line_item->is_taxable() ? '*' : ''?> </td>
 									<?php //<td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?>
 								</tr>
 							<?php }
@@ -179,10 +179,10 @@
 								<td class="item_l"><?php echo $line_item->percent();?>%</td>
 								<td/>
 							<?php }else{//flat discount/surcharge ?>
-								<td class="item_l"><?php echo $line_item->unit_price();?></td>
+								<td class="item_l"><?php echo $line_item->unit_price_float();?></td>
 								<td/>
 							<?php } ?>
-							<td class="item_r"><?php echo $line_item->total();?></td>
+							<td class="item_r"><?php echo $line_item->total_float();?></td>
 						</tr>
 						<?php break;
 					case EEM_Line_Item::type_tax:							
@@ -192,7 +192,7 @@
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<td class="item_l"><?php echo $line_item->percent() ?>%</td>
 							<td class="item_l"></td>
-							<td class="item_r"><?php echo $line_item->total();?></td>
+							<td class="item_r"><?php echo $line_item->total_float();?></td>
 						</tr><?php break;
 					}
 				}
