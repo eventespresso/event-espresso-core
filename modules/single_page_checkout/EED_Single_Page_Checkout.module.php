@@ -1293,7 +1293,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		//all is good so let's continue with finalizing the registration.
 		$this->_transaction->save_new_cached_related_model_objs();
 		EE_Registry::instance()->SSN->set_session_data(array('transaction', NULL ) );
-		$this->_transaction->set('TXN_session_data', EE_Registry::instance()->SSN );
+		$this->_transaction->set_txn_session_data(EE_Registry::instance()->SSN );
 		$this->_transaction->finalize();
 		$this->_transaction->save();
 		EE_Registry::instance()->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
