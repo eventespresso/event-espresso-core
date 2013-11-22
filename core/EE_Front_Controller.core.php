@@ -335,75 +335,77 @@ final class EE_Front_Controller {
 		if ( EE_Registry::instance()->REQ->is_set( 'post_name' )) {
 			// grab post_name from request
 			$current_post = apply_filters('FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',EE_Registry::instance()->REQ->get( 'post_name' ));
-		// we gotta have one
-		//d( $current_post_name );
-		if ( $current_post_name ) {
-			// if it's not set, then check if frontpage is blog
-			if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
-				// yup.. this is the posts page, prepare to load all shortcode modules
-				$current_post = 'posts';
-			} else if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'page' ) {
-				// some other page is set as the homepage
-				if ( $page_on_front = get_option( 'page_on_front' )) {
-					// k now we need to find the slug for this page
-					global $wpdb;
-					$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
-					if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
-						// set the current post slug to what it actually is
-						$current_post = $post_slug;
-					}					
-				}
-			} else if ( get_option( 'show_on_front' ) == 'page' ) {
-				// we're not on the homepage, but some "other" page is set as the posts page... 
-				if ( $page_for_posts = get_option( 'page_for_posts' )) {
-					// better get the ID for the current post
-					global $wpdb;
-					$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND post_name=%s';
-					$current_post_id = $wpdb->get_var( $wpdb->prepare( $SQL, $current_post ));
-					// is the current post the "page_for_posts" ???
-					if ( $current_post_id === $page_for_posts ) {
-						$current_post = 'posts';
-					}					
-				}
-			}
-			// are we on a category page?
-			$term_exists = is_array( term_exists( $current_post, 'category' ));
-			// make sure shortcodes are set
-			if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
-//				d( EE_Registry::instance()->CFG->core->post_shortcodes );
-				// cycle thru all posts with shortcodes set
-				foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
-					// are we on this page ?
-					if ( $current_post == $post_name || $term_exists ) {
-//						d( $post_name );
-						// filter shortcodes so 
-						$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
-//						d( $post_shortcodes );
-						// now cycle thru shortcodes
-						foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
-							// verify shortcode is in list of registered shortcodes
-							if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
-								$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
-								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-								break;
-							}
-							//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-							if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
-								// let's pause to reflect on this...
-								$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
-								// ensure that class is actually a shortcode
-								if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
-									$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
-									EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-									add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-									break;
+			// we gotta have one
+			//d( $current_post_name );
+			if ( $current_post ) {
+				// if it's not set, then check if frontpage is blog
+				if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
+					// yup.. this is the posts page, prepare to load all shortcode modules
+					$current_post = 'posts';
+				} else if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'page' ) {
+					// some other page is set as the homepage
+					if ( $page_on_front = get_option( 'page_on_front' )) {
+						// k now we need to find the slug for this page
+						global $wpdb;
+						$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
+						if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
+							// set the current post slug to what it actually is
+							$current_post = $post_slug;
+						}					
+					}
+				} else if ( get_option( 'show_on_front' ) == 'page' ) {
+					// we're not on the homepage, but some "other" page is set as the posts page... 
+					if ( $page_for_posts = get_option( 'page_for_posts' )) {
+						// better get the ID for the current post
+						global $wpdb;
+						$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND post_name=%s';
+						$current_post_id = $wpdb->get_var( $wpdb->prepare( $SQL, $current_post ));
+						// is the current post the "page_for_posts" ???
+						if ( $current_post_id === $page_for_posts ) {
+							$current_post = 'posts';
+						}					
+					}
+				} else {
+					// are we on a category page?
+					$term_exists = is_array( term_exists( $current_post, 'category' ));
+					// make sure shortcodes are set
+					if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
+		//				d( EE_Registry::instance()->CFG->core->post_shortcodes );
+						// cycle thru all posts with shortcodes set
+						foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
+							// are we on this page ?
+							if ( $current_post == $post_name || $term_exists ) {
+		//						d( $post_name );
+								// filter shortcodes so 
+								$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
+		//						d( $post_shortcodes );
+								// now cycle thru shortcodes
+								foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
+									// verify shortcode is in list of registered shortcodes
+									if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
+										$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
+										EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+										add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+										break;
+									}
+									//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
+									if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
+										// let's pause to reflect on this...
+										$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
+										// ensure that class is actually a shortcode
+										if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
+											$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
+											EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+											add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+											break;
+										}
+										// and pass the request object to the run method
+										$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
+										// fire the shortcode class's run method, so that it can activate resources
+										$shortcode->run( $WP );
+		//								d( $shortcode );
+									}
 								}
-								// and pass the request object to the run method
-								$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
-								// fire the shortcode class's run method, so that it can activate resources
-								$shortcode->run( $WP );
-//								d( $shortcode );
 							}
 						}
 					}
