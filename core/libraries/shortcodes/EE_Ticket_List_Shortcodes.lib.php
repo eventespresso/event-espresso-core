@@ -83,7 +83,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * This returns the parsed attendee list for main template;
+	 * This returns the parsed ticket list for main template;
 	 */
 	private function _get_ticket_list_for_main() {
 		$valid_shortcodes = array('ticket', 'event_list', 'attendee_list', 'registration');
@@ -120,7 +120,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 
 		//each ticket in this case should be an ticket object.
 		foreach ( $tickets as $ticket ) {
-			$tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template($template, $ticket, $valid_shortcodes, $this->_extra_data);
+			$tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template($template, $ticket['ticket'], $valid_shortcodes, $this->_extra_data);
 		}
 
 		return $tkt_parsed;
@@ -137,8 +137,8 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 		$template = $this->_data['template']['ticket_list'];
 		$event = $this->_data['data'];
 
-		//let's remove any existing [ATTENDEE] shortcode from the ticket list template so that we don't get recursion.
-		$template = str_replace('[ATTENDEE]', '', $template);
+		//let's remove any existing [ATTENDEE_LIST] shortcode from the ticket list template so that we don't get recursion.
+		$template = str_replace('[ATTENDEE_LIST]', '', $template);
 
 		//here we're setting up the tickets for the ticket list template for THIS attendee.
 		$tkt_parsed = '';
