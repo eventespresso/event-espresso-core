@@ -74,9 +74,9 @@ class EEH_Parse_Shortcodes {
 
 	/**
 	 * This kicks off the parsing of shortcodes in message templates
-	 * @param  string $template         This is the incoming string to be parsed
-	 * @param  object $data             This is the incoming data object
-	 * @param  array $valid_shortcodes  An array of strings that correspond to EE_Shortcode libraries
+	 * @param  string 				 $template         This is the incoming string to be parsed
+	 * @param  EE_Messages_Addressee $data             This is the incoming data object
+	 * @param  array 				 $valid_shortcodes  An array of strings that correspond to EE_Shortcode libraries
 	 * @return string                   The parsed template string
 	 */
 	public function parse_message_template( $template, EE_Messages_Addressee $data, $valid_shortcodes) {
@@ -105,6 +105,16 @@ class EEH_Parse_Shortcodes {
 		$this->_init_data( $template, $event, $valid_shortcodes, $extra_data );
 
 		$this->_template = is_array($template) ? $template['event_list'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+
+	public function parse_ticket_list_template( $template, EE_Ticket $event, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $event, $valid_shortcodes, $extra_data );
+
+		$this->_template = is_array($template) ? $template['ticket_list'] : $template;
 
 		$parsed = $this->_parse_message_template();
 		return $parsed;
