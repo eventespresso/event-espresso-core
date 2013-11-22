@@ -159,6 +159,28 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'persistent' => FALSE
 					),
 				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'question_text_info' => array(
+						'title' => __('Question Text', 'event_espresso'),
+						'callback' => 'question_text_info_help_tab'
+						),
+					'question_label_info' => array(
+						'title' => __('Question Label', 'event_espresso'),
+						'callback' => 'question_label_info_help_tab'
+						),
+					'question_type_info' => array(
+						'title' => __('Question Type', 'event_espresso'),
+						'callback' => 'question_type_info_help_tab'
+						),
+					'required_question_info' => array(
+						'title' => __('Required Question', 'event_espresso'),
+						'callback' => 'required_question_info_help_tab'
+						),
+					'required_text_info' => array(
+						'title' => __('Required Text', 'event_espresso'),
+						'callback' => 'required_text_info_help_tab'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 

@@ -193,14 +193,11 @@ $fields = $question->get_model()->field_settings();
 			
 			<tr>
 				<th>
-					<label for="QST_required_text"><?php echo $fields['QST_required_text']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('required_text_info');?>
+					<label for="QST_required_text"><?php _e('Required Text', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('required_text_info');?>
 				</th>
 				<td>
 					<input type="text" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php echo $question->required_text()?>"/>
-					<br/>
-					<p class="description">
-						<?php _e("Text to display when the registrant does not answer the question but is required to",'event_espresso');?>
-					</p>					
+									
 				</td>
 			</tr>
 					

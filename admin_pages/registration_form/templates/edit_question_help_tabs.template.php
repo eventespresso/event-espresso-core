@@ -61,7 +61,7 @@ function required_text_info_help_tab_html() {
 		<?php _e('Required Text', 'event_espresso'); ?>
 	</h2>
 	<p>
-		<?php _e("Text to display when the registrant does not answer the question but is required to ", 'event_espresso'); ?>
+		<?php _e("Text to display when the registrant does not answer the question but is required to.", 'event_espresso'); ?>
 	</p>
 <?php
 }
