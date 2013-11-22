@@ -73,6 +73,9 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 		else if ( $this->_data['data'] instanceof EE_Event )
 			return $this->_get_attendee_list_for_event();
 
+		else if ( $this->_data['data'] instanceof EE_Ticket )
+			return $this->_get_attendee_list_for_ticket();
+
 		//prevent recursive loop
 		else
 			return '';
@@ -83,7 +86,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 	 * This returns the parsed attendee list for main template;
 	 */
 	private function _get_attendee_list_for_main() {
-		$valid_shortcodes = array('attendee', 'event_list', 'registration', 'questions_answers');
+		$valid_shortcodes = array('attendee', 'event_list', 'registration', 'ticket_list');
 		$template = $this->_data['template'];
 		$data = $this->_data['data'];
 		$attnds = '';
@@ -104,9 +107,8 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_attendee_list_for_event() {
-		$valid_shortcodes = array('attendee', 'questions_answers');
+		$valid_shortcodes = array('attendee', 'ticket_list');
 		$template = $this->_data['template']['attendee_list'];
-		$txn = $this->_extra_data->txn;
 		$event = $this->_data['data'];
 
 		//let's remove any existing [EVENT_LIST] shortcode from the attendee list template so that we don't get recursion.
@@ -126,9 +128,35 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 
 
 
+	/**
+	 * return parsed list of attendees for a ticket
+	 * @return string 
+	 */
+	private function _get_attendee_list_for_ticket() {
+		$valid_shortcodes = array( 'attendee', 'event_list' );
+		$template = $this->_data['template']['attendee_list'];
+		$ticket = $this->_data['data'];
+
+		//let's remove any existing [TICKET_LIST] shortcode from the attendee list template so that we don't get recursion.
+		$template = str_replace('[TICKET_LIST]', '', $template);
+
+		//here we're setting up the attendees for the attendee_list template for THIS ticket.
+		$att_result = '';
+		$attendees = isset( $this->_extra_data['data']->tickets ) ? $this->_extra_data['data']->tickets[$ticket->ID()]['att_objs'] : array();
+
+		//each attendee in this case should be an attendee object.
+		foreach ( $attendees as $attendee ) {
+			$att_result .= $this->_shortcode_helper->parse_attendee_list_template($template, $attendee, $valid_shortcodes, $this->_extra_data);
+		}
+
+		return $att_result;
+	}
+
+
+
 
 	private function _get_attendees_from_event( EE_Event $event ) {
-		return isset($this->_extra_data->events) ? $this->_extra_data->events[$event->ID()]['att_objs'] : array(); 
+		return isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['att_objs'] : array(); 
 	}
 
 
