@@ -147,6 +147,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
+				
 				'require_nonce' => FALSE
 				),
 
@@ -158,13 +159,62 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'question_text_info' => array(
+						'title' => __('Question Text', 'event_espresso'),
+						'callback' => 'question_text_info_help_tab'
+						),
+					'question_label_info' => array(
+						'title' => __('Question Label', 'event_espresso'),
+						'callback' => 'question_label_info_help_tab'
+						),
+					'question_type_info' => array(
+						'title' => __('Question Type', 'event_espresso'),
+						'callback' => 'question_type_info_help_tab'
+						),
+					'required_question_info' => array(
+						'title' => __('Required Question', 'event_espresso'),
+						'callback' => 'required_question_info_help_tab'
+						),
+					'required_text_info' => array(
+						'title' => __('Required Text', 'event_espresso'),
+						'callback' => 'required_text_info_help_tab'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 			);
 	}
-
-
-
+	
+	/**
+	 * add/edit question help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function edit_question_help_tabs( $tab ) {
+		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template($template);
+	}
+	public function question_text_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	public function question_label_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	public function question_type_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	public function required_question_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	public function required_text_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	
+	
+	
+	
 	protected function _add_screen_options() {
 		//todo
 	}

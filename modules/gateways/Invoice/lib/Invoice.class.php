@@ -29,12 +29,6 @@ class Invoice {
 	}
 
 	public function send_invoice( $download = FALSE ) {
-
-//printr($this->registration);
-//printr($this->transaction);
-//printr($this->session_data);
-//printr($this->invoice_settings);
-//exit;
 		$template_args = array();
 		$EE = EE_Registry::instance();
 
@@ -122,13 +116,48 @@ class Invoice {
 		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
+		if(isset($_GET['receipt'])){
+			//receipt-specific stuff
+			$events_for_txn = EEM_Event::instance()->get_all(array(array('Registration.TXN_ID'=>$this->transaction->ID())));
+			$ticket_line_items_per_event = array();
+			$registrations_per_line_item = array();
+			$venues_for_events = array();
+			foreach($events_for_txn as $event_id => $event){
+				$line_items_for_this_event = EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>$event_id,'TXN_ID'=>$this->transaction->ID())));
+				$ticket_line_items_per_event[$event_id] = $line_items_for_this_event;
+				foreach($line_items_for_this_event as $line_item_id => $line_item){
+					$ticket = $line_item->ticket();
+					$registrations_for_this_ticket = EEM_Registration::instance()->get_all(array(array('TKT_ID'=>$ticket->ID(),'TXN_ID'=>$this->transaction->ID())));
+					$registrations_per_line_item[$line_item_id] = $registrations_for_this_ticket;
+				}
+				$venues_for_events = array_merge($venues_for_events, $event->venues());
+			}
+			$tax_total_line_item = EEM_Line_Item::instance()->get_one(array(array('TXN_ID'=>$this->transaction->ID(),'LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
+			$attendee_columns_to_show = array('ATT_fname','ATT_lname','ATT_email','ATT_address','ATT_address2','ATT_city','STA_ID','CNT_ISO','ATT_zip','ATT_phone');
+			
+			$template_args['events_for_txn'] = $events_for_txn;
+			$template_args['ticket_line_items_per_event'] = $ticket_line_items_per_event;
+			$template_args['registrations_per_line_item'] = $registrations_per_line_item;
+			$template_args['venues_for_events'] = $venues_for_events;
+			$template_args['tax_total_line_item'] = $tax_total_line_item;
+			$template_args['attendee_columns_to_show'] = $attendee_columns_to_show;
+//			d($template_args);
+		}
+		
+		
+		
 		//require helpers
 		$EE->load_helper( 'Formatter' );
 		
 		//Get the HTML as an object
 		EE_Registry::instance()->load_helper('Template');
 		$template_header = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
-		$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
+		if(isset($_GET['receipt'])){
+			$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/receipt_body.template.php', $template_args, TRUE );
+		}else{
+			$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
+		}
+		
 		$template_footer = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_footer.template.php', $template_args, TRUE );
 		
 		$copies =  ! empty( $_REQUEST['copies'] ) ? $_REQUEST['copies'] : 1;

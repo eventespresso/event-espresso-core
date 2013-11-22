@@ -63,45 +63,25 @@ class Price_Types_Default_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 60
+					'tipAdjustmentX' => 100
 					)
 				),
 			50 => array(
-				'id' => 'member',
-				'content' => $this->_member_column_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 60
-					)
-				),
-			60 => array(
 				'id' => 'percent',
 				'content' => $this->_percent_column_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 60
+					'tipAdjustmentX' => 100
 					)
 				),
-			70 => array(
+			60 => array(
 				'id' => 'order',
 				'content' => $this->_order_column_stop(),
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentY' => -30,
-					'tipAdjustmentX' => 60,
-					)
-				),
-			
-			80 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
+					'tipAdjustmentX' => 100,
 					)
 				)
 			);
@@ -109,8 +89,8 @@ class Price_Types_Default_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Price Types Page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction to the Price Type page!', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Price Types', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This section allows you to create new discounts and surcharges to add to your events.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -122,31 +102,27 @@ class Price_Types_Default_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _name_column_stop() {
-		return '<p>' . __('about the Price Type name column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column shows you the name of the price type. It is visible to your customers.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _base_type_stop() {
-		return '<p>' . __('about the Base Price Types', 'event_espresso') . '</p>';
+		return '<p>' . __('Here you can see whether the price type is a discount or a surcharge.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _member_column_stop() {
-		return '<p>' . __('about the members only column', 'event_espresso') . '</p>';
+		return '<p>' . __('Here you can see if the discount/surcharge is percentage based or a flat monetary amount.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _percent_column_stop() {
-		return '<p>' . __('about the applied as % or $ column', 'event_espresso') . '</p>';
+		return '<p>' . __('Here you can see if the discount/surcharge is percentage based or a flat monetary amount.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _order_column_stop() {
-		return '<p>' . __('About the order of application column', 'event_espreso') . '</p>';
+		return '<p>' . __('This column shows you the order in which each discount or surcharge will be applied to the base ticket cost. Zero (0) means it will be applied first. Any number can be set here.', 'event_espreso') . '</p>';
 	}
 
-
-	protected function _end() {
-		return '<p>' . __('That\'s it for the tour through the Price Type Admin!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Price Types Tour button.  All the best with your events!', 'event_espresso') . '</p>';
-	}
 }

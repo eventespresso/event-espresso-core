@@ -821,8 +821,6 @@ final class EE_Admin {
 		// add CPTs
 		$CPTs = EE_Register_CPTs::get_CPTs();
 		$post_types = array_merge( $post_types, $CPTs );
-//		printr( $post_types, '$post_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
 			// post on frontpage ?

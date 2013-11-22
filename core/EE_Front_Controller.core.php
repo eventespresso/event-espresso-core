@@ -330,17 +330,18 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function _initialize_shortcodes( WP $WP ) {
-		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__begin',$this);
-		// make sure post_name is set on REQ
+		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
+		//d( $this->EE->REQ );
 		if ( EE_Registry::instance()->REQ->is_set( 'post_name' )) {
 			// grab post_name from request
 			$current_post = apply_filters('FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',EE_Registry::instance()->REQ->get( 'post_name' ));
-//			d( $current_post );
+		// we gotta have one
+		//d( $current_post_name );
+		if ( $current_post_name ) {
 			// if it's not set, then check if frontpage is blog
 			if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
 				// yup.. this is the posts page, prepare to load all shortcode modules
 				$current_post = 'posts';
-//				d( $current_post );
 			} else if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'page' ) {
 				// some other page is set as the homepage
 				if ( $page_on_front = get_option( 'page_on_front' )) {
@@ -350,7 +351,6 @@ final class EE_Front_Controller {
 					if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
 						// set the current post slug to what it actually is
 						$current_post = $post_slug;
-//						d( $current_post );								
 					}					
 				}
 			} else if ( get_option( 'show_on_front' ) == 'page' ) {
@@ -363,18 +363,17 @@ final class EE_Front_Controller {
 					// is the current post the "page_for_posts" ???
 					if ( $current_post_id === $page_for_posts ) {
 						$current_post = 'posts';
-//						d( $current_post );
 					}					
 				}
 			}
+			// are we on a category page?
+			$term_exists = is_array( term_exists( $current_post, 'category' ));
 			// make sure shortcodes are set
 			if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
 //				d( EE_Registry::instance()->CFG->core->post_shortcodes );
 				// cycle thru all posts with shortcodes set
 				foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 					// are we on this page ?
-					$term_exists = is_array( term_exists( $current_post, 'category' ));
-					// if on the current page, or the current page is a category
 					if ( $current_post == $post_name || $term_exists ) {
 //						d( $post_name );
 						// filter shortcodes so 

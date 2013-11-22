@@ -81,29 +81,30 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Transaction overview page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Critical Pages', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This section lists the pages that Event Espresso needs in order to function. Should you wish to change a page that is used you will need to move the shortcode to the new page and then allocate it here. Otherwise your registrations will not work correctly.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This section also provides a status of the page to show you at a glance if something is not right.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	
 
 	protected function _reg_page_id_stop() {
-		return '<p>' . __('about reg page', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the page that displays all your events and is required, even if it is not visible in your menus. ', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _txn_page_id_stop() {
-		return '<p>' . __('about transactions page', 'event_espresso') . '</p>';
+		return '<p>' . __('This processes the payments. It should not be visible on your menus, and the page should not contain anything other than the shortcode.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _thank_you_page_id_stop() {
-		return '<p>' . __('about the thank you page', 'event_espresso') . '</p>';
+		return '<p>' . __('This page is displayed after a successful transaction. Feel free to add extra content to this page to personalise it!', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _cancel_page_id_stop() {
-		return '<p>' . __('about the about the cancel page', 'event_espresso') . '</p>';
+		return '<p>' . __('This page is displayed after an unsuccessful transaction. Feel free to add extra content to this page to personalise it!', 'event_espresso') . '</p>';
 	}
 }

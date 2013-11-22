@@ -252,7 +252,6 @@ final class EE_Config {
 	public function update_post_shortcodes() {
 		do_action('AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes);
 		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
-		$this->core->post_id_shortcodes = isset( $this->core->post_id_shortcodes ) && is_array( $this->core->post_id_shortcodes ) ? $this->core->post_id_shortcodes : array();
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it
@@ -268,20 +267,6 @@ final class EE_Config {
 					}
 					// we don't like missing posts around here >:(
 					unset( $this->core->post_shortcodes[ $post_name ] );
-				}
-			}
-		}
-		// cycle thru post_id_shortcodes
-		foreach( $this->core->post_id_shortcodes as $ID => $shortcodes ){
-			// skip the posts page, because we want all shortcodes registered for it
-			if ( $ID != 'posts' ) {
-				foreach( $shortcodes as $shortcode => $post_id ){
-					// make sure post still exists
-					if ( $post = get_post( $post_id )) {
-						// it does? then don't unset it
-						break;
-					}
-					unset( $this->core->post_id_shortcodes[ $ID ] );
 				}
 			}
 		}
