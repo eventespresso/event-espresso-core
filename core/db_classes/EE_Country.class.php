@@ -108,13 +108,45 @@ class EE_Country extends EE_Base_Class{
 	}
 	
 	/**
-	 * CUrrency name plural
+	 * Currency name plural
 	 * @return string
 	 */
 	public function currency_name_plural(){
 		return $this->get('CNT_cur_plural');
 	}
+	
+	/**
+	 * currency_sign_before - ie: $TRUE  or  FALSE$
+	 * @return boolean
+	 */
+	public function currency_sign_before(){
+		return $this->get('CNT_cur_sign_b4');
+	}
+	
+	/**
+	 * currency_decimal_places : 2 = 0.00   3 = 0.000
+	 * @return integer
+	 */
+	public function currency_decimal_places(){
+		return $this->get('CNT_cur_dec_plc');
+	}
+	
+	/**
+	 * currency_decimal_mark :   (comma) ',' = 0,01   or   (decimal) '.' = 0.01
+	 * @return string
+	 */
+	public function currency_decimal_mark(){
+		return $this->get('CNT_cur_dec_mrk');
+	}
+	
+	/**
+	 * currency thousands separator:   (comma) ',' = 1,000   or   (decimal) '.' = 1.000
+	 * @return string
+	 */
+	public function currency_thousands_separator(){
+		return $this->get('CNT_cur_thsnds');
+	}
+	
 }
-
 /* End of file EE_Country.class.php */
 /* Location: /includes/classes/EE_Country.class.php */
