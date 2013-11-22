@@ -45,7 +45,7 @@ Created by Roan Lavery
 /*=========================== TABLES =========================*/
 
 #invoice table th {text-align:left;padding: 4px 5px 4px 5px;}
-#invoice #header_row{background-color:#000; color:#fff}
+#invoice .header_row{background-color:#000; color:#fff}
 #invoice-amount td.action{border-bottom:0}
 #invoice-amount tr.odd td{background-color:#F4F4F4} 
 

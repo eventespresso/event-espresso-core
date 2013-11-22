@@ -38,3 +38,37 @@ td { vertical-align:top!important; }
 .float-left { float:left; }
 .float-right { float:right; }
 .clear { clear:both; }
+
+.ticket-time-and-place-details>div{
+	width:49%;
+	display:inline-block;
+}
+.no-bottom-margin{
+	margin-bottom:0px;
+}
+* {
+ padding:0;
+  margin:0
+}
+dl {
+ width:100%;
+ overflow:hidden;
+}
+dt {
+ float:left;
+ width:50%; /* adjust the width; make sure the total of both is 100% */
+}
+dd {
+ float:left;
+ width:50%; /* adjust the width; make sure the total of both is 100% */
+}
+dt:nth-child(4n-1),dd:nth-child(4n){
+	background-color:#fee;
+}
+.ticket-registrations-list>li{
+	margin-top:2em;
+}
+/* classes from registration and transaction stati */
+.RNA,.RCN,.RPN, .TPN, .TIN{
+	color:red;
+}
