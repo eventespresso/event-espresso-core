@@ -161,6 +161,24 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
+		$pricing_help_tabs = array(
+						'type_field_info' => array(
+							'title' => __('Type', 'event_espresso'),
+							'callback' => 'type_field_info_help_tab'
+							),
+						'name_field_info' => array(
+							'title' => __('Name', 'event_espresso'),
+							'callback' => 'name_field_info_help_tab'
+							),
+						'description_field_info' => array(
+							'title' => __('Description', 'event_espresso'),
+							'callback' => 'description_field_info_help_tab'
+							),
+						'amount_field_info' => array(
+							'title' => __('Amount', 'event_espresso'),
+							'callback' => 'amount_field_info_help_tab'
+							)
+						);
 		$this->_page_config = array(
 			'default' => array(
 					'nav' => array(
@@ -184,6 +202,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'persistent' => FALSE
 						),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
+					'help_tabs' => $pricing_help_tabs,
 					'require_nonce' => FALSE
 				),
 			'edit_price' => array(
@@ -194,25 +213,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'persistent' => FALSE
 						),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
-					'help_tabs' => array(
-						'type_field_info' => array(
-							'title' => __('Type', 'event_espresso'),
-							'callback' => 'type_field_info_help_tab'
-							),
-						'name_field_info' => array(
-							'title' => __('Name', 'event_espresso'),
-							'callback' => 'name_field_info_help_tab'
-							),
-						'description_field_info' => array(
-							'title' => __('Description', 'event_espresso'),
-							'callback' => 'description_field_info_help_tab'
-							),
-						'amount_field_info' => array(
-							'title' => __('Amount', 'event_espresso'),
-							'callback' => 'amount_field_info_help_tab'
-							),
-						),
-						
+					'help_tabs' => $pricing_help_tabs,
 					'require_nonce' => FALSE
 				),
 			'price_types' => array(
