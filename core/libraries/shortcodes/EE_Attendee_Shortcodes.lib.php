@@ -45,6 +45,8 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			'[FNAME]' => __('First Name of an attendee', 'event_espresso'),
 			'[LNAME]' => __('Last Name of an attendee', 'event_espresso'),
 			'[EDIT_ATTENDEE_LINK]' => __('Edit Attendee Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso'),
+			'[TICKET_LIST]' => __('This will return the tickets that the attendee has', 'event_espresso'),
+			'[EVENT_LIST]' => __('This will return the events that the attendee is registered for', 'event_espresso')
 			);
 	}
 
@@ -66,6 +68,14 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 			case '[EDIT_ATTENDEE_LINK]' :
 				return $this->_get_attendee_edit_link();
+				break;
+
+			case '[TICKET_LIST]' :
+				return $this->_get_ticket_list_for_attendee();
+				break;
+
+			case '[EVENT_LIST]' :
+				return $this->_get_event_list_for_attendee();
 				break;
 		}
 	}
@@ -92,6 +102,60 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 		return $url;
 	}
+
+
+
+
+	private function _get_ticket_list_for_attendee() {
+		$this->_set_shortcode_helper();
+
+		//first verify that the incoming $data property is EE_Attendee
+		if ( ! $this->_data instanceof EE_Attendee )
+			return '';
+
+		$template = $this->_extra_data['template']['ticket_list'];
+		$valid_shortcodes = array('ticket', 'event_list');
+		$attendee = $this->_data;
+
+		//let's remove any existing [ATTENDEE_LIST] shortcode from the ticket_list template so that we dont' get recursion
+		$template = str_replace( '[ATTENDEE_LIST]', '', $template );
+
+		//parsin
+		$tkt_parsed = '';
+		$tickets = isset( $this->_extra_data['data']->attendees ) ? $this->_extra_data['data']->attendees['tkt_objs'] : array();
+
+		foreach ( $tickets as $ticket ) {
+			$tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template( $template, $ticket, $valid_shortcodes, $this->_extra_data );
+		}
+		return $tkt_parsed;
+	}
+
+
+
+	private function _get_event_list_for_attendee() {
+		$this->_set_shortcode_helper();
+
+		//first verify that the incoming $data property is EE_Attendee
+		if ( ! $this->_data instanceof EE_Attendee )
+			return '';
+
+		$template = $this->_extra_data['template']['event_list'];
+		$valid_shortcodes = array('event', 'ticket_list');
+		$attendee = $this->_data;
+
+		//let's remove any existing [ATTENDEE_LIST] shortcode from the event_list template so that we dont' get recursion
+		$template = str_replace( '[ATTENDEE_LIST]', '', $template );
+
+		//parsin
+		$evt_parsed = '';
+		$events = isset( $this->_extra_data['data']->attendees ) ? $this->_extra_data['data']->attendees['evt_objs'] : array();
+
+		foreach ( $events as $event ) {
+			$evt_parsed .= $this->_shortcode_helper->parse_event_list_template( $template, $event, $valid_shortcodes, $this->_extra_data );
+		}
+		return $evt_parsed;
+	}
+
 
 
 
