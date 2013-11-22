@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 			4.1.028.dev
+  Version: 			4.1.028.alpha
 
   Author: 				Seth Shoultes
   Author URI: 		http://www.eventespresso.com
@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.028.dev';
+	return '4.1.028.alpha';
 }
 //Returns the template version
 function espresso_template_version() {
