@@ -72,42 +72,36 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
 		
 
-		//some variable for tracking things we can use later;
-		$running_total = 0;
-
 		//we'll actually use the generated line_item identifiers for our loop
 		foreach( $events as $id => $event ) {
-			$line_item = $id . '_dummy';
-			$this->_events[$line_item]['ID'] = $id;
-			$this->_events[$line_item]['line_ref'] = $line_item;
-			$this->_events[$line_item]['name'] = $event->get('EVT_name');
-			$this->_events[$line_item]['daytime_id'] = $event->primary_datetime()->ID();
-			
-			//we need to get the price details for this event (including the price objects etc);
-			//first get all Ticket Objects for given event and pick the first ticket as the one we'll use.
-			$TKT = $event->get_first_related('Datetime')->get_first_related('Ticket');
-
-			//for the purpose of our example we're just going select the first price object as the one we'll use.
-			$this->_events[$line_item]['ticket_obj'] = $TKT;
-			$this->_events[$line_item]['ticket_price'] = $TKT->get_ticket_subtotal();
-			$this->_events[$line_item]['ticket_id'] = $TKT->ID();
-			$this->_events[$line_item]['ticket_desc'] = $TKT->get('TKT_description');
-			$this->_events[$line_item]['pre_approval'] = 0; //we're going to ignore the event settings for this.
-			$this->_events[$line_item]['meta'] = array(); //for now leaving as blank... we'll have the shortcode parser using the get_post_meta function.
-			$line_total = count( $attendees ) * $TKT->get_ticket_subtotal();
-			$this->_events[$line_item]['line_total'] = $line_total;
-			$this->_events[$line_item]['total_attendees'] = count( $attendees );
-
-			$running_total = $running_total + $line_total;
+			$this->_events[$id]['ID'] = $id;
+			$this->_events[$id]['name'] = $event->get('EVT_name');
+			$tickets = $event->get_first_related('Datetime')->get_many_related('Ticket');
+			$this->_events[$id]['event'] = $event;
+			$this->_events[$id]['reg_objs'] = array();
+			$this->_events[$id]['tkt_objs'] = $tickets;
+			$this->_events[$id]['pre_approval'] = 0; //we're going to ignore the event settings for this.
+			$this->_events[$id]['total_attendees'] = count( $attendees );
+			$this->_events[$id]['att_objs'] = $attendees;
 
 			//let's also setup the dummy attendees property!
 			foreach ( $attendees as $att_key => $attendee ) {
-				$this->_attendees[$att_key]['line_ref'][] = $line_item;  //so later it can be determined what events this attendee registered for!
+				$this->_attendees[$att_key]['line_ref'][] = $id;  //so later it can be determined what events this attendee registered for!
+				$this->_attendees[$att_key]['evt_objs'][] = $event;
 				$this->_attendees[$att_key]['att_obj'] = $attendee;
+				$this->_attendees[$att_key]['reg_objs'] = NULL;
+				$this->_attendees[$att_key]['registration_id'] = 0;
+				$this->_attendees[$att_key]['attendee_email'] = $attendee->email();
+				$this->_attendees[$att_key]['tkt_objs'] = $tickets;
 			}
 		}
 
-		$this->_running_total = $running_total;
+		foreach ( $tickets as $ticket ) {
+			$tkts[$ticket->ID()]['ticket'] = $ticket;
+			$tkts[$ticket->ID()]['att_objs'] = $attendees;
+		}
+
+		$this->tickets = $tkts;
 
 	}
 
@@ -183,7 +177,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
-			$attendees[] = EE_Attendee::new_instance(
+			$attendees[$attid] = EE_Attendee::new_instance(
 				array(
 					'ATT_fname' => $fname,
 					'ATT_lname' => $lname,
@@ -237,15 +231,15 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 	protected function _setup_data() {
 
-		//okay we can now calculate the taxes and setup a "grand_total" we'll use in the dummy txn object
-		EE_Registry::instance()->load_class( 'Taxes', array(), FALSE, TRUE, TRUE );
-		$this->taxes = EE_Taxes::calculate_taxes( $this->_running_total );
-		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $this->_running_total );
+		//need to figure out the running total for test purposes so... we're going to create a temp cart and add the tickets to it!
+		$cart = EE_Cart::instance();
 
-		//guess what?  The EE_Session now has the grand total object and other stuff!  Why, because EE_Taxes::_calculate_taxes added the info to it.
-		$session_data = EE_Registry::instance()->SSN->get_session_data();
-		$this->grand_total_price_object = $session_data['grand_total_price_object'];
+		//add tickets to cart
+		foreach ( $this->tickets as $ticket ) {
+			$cart->add_ticket_to_cart($ticket['ticket']);
+		}
 
+		$grand_total = EEH_Template::format_currency($cart->get_cart_grand_total(), true);
 
 
 		//setup billing property
@@ -262,7 +256,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			'ccv code' => 'xxx',
 			'credit card #' => '999999xxxxxxxx',
 			'expiry date' => '12 / 3000',
-			'total_due' => $grand_total 
+			'total_due' => $grand_total
 			);
 
 
@@ -276,7 +270,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'STS_ID' => 'PAP', //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
 				'TXN_hash_salt' => NULL, //hash salt blank as well
-				'TXN_tax_data' => $this->taxes,
+				'TXN_tax_data' => $cart->get_applied_taxes(),
 				'TXN_ID' => 999999
 			)
 		);
@@ -286,26 +280,31 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->reg_objs = array();
 		foreach ( $this->_attendees as $key => $attendee ) {
 			//note we need to setup reg_objects for each event this attendee belongs to
-			foreach ( $attendee['line_ref'] as $line_ref ) {
-				$reg_array = array(
-					'EVT_ID' => $this->_events[$line_ref]['ID'],
-					'ATT_ID' => $attendee['att_obj']->ID(),
-					'TXN_ID' => $this->txn->ID(),
-					'TKT_ID' => $this->_events[$line_ref]['ticket_id'],
-					'STS_ID' => 'RAP',
-					'REG_date' => current_time('mysql'),
-					'REG_final_price' => $this->_events[$line_ref]['ticket_price'],
-					'REG_session' => 'dummy_session_id',
-					'REG_code' => '1-dummy_generated_reg_code',
-					'REG_url_link' => 'http://dummyregurllink.com',
-					'REG_count' => $key,
-					'REG_group_size' => $this->_events[$line_ref]['total_attendees'],
-					'REG_att_is_going' => TRUE,
-					'REG_ID' => 9999990 + (int) $line_ref
-					);
-				$REG_OBJ =  EE_Registration::new_instance( $reg_array );
-				$this->_attendees[$key]['reg_objs'][$this->_events[$line_ref]['ID']] = $REG_OBJ;
-				$this->reg_objs[] = $REG_OBJ;
+			foreach ( $attendee['line_ref'] as $evtid ) {
+				$regid = 9999990;
+				foreach ( $this->_events[$evtid]['tkt_objs'] as $ticket ) {
+					$reg_array = array(
+						'EVT_ID' => $evtid,
+						'ATT_ID' => $attendee['att_obj']->ID(),
+						'TXN_ID' => $this->txn->ID(),
+						'TKT_ID' => $ticket->ID(),
+						'STS_ID' => 'RAP',
+						'REG_date' => current_time('mysql'),
+						'REG_final_price' => $ticket->get('TKT_price'),
+						'REG_session' => 'dummy_session_id',
+						'REG_code' => $regid . '-dummy_generated_reg_code',
+						'REG_url_link' => '#',
+						'REG_count' => $key,
+						'REG_group_size' => $this->_events[$evtid]['total_attendees'],
+						'REG_att_is_going' => TRUE,
+						'REG_ID' => $regid
+						);
+					$REG_OBJ =  EE_Registration::new_instance( $reg_array );
+					$this->_attendees[$key]['reg_objs'][$evtid][] = $REG_OBJ;
+					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
+					$this->reg_objs[] = $REG_OBJ;
+					$regid++;
+				}
 			}
 		}
 
@@ -315,9 +314,9 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//setup primary attendee property
 		$this->primary_attendee = array(
-			'fname' => $this->_attendees[0]['att_obj']->fname(),
-			'lname' => $this->_attendees[0]['att_obj']->lname(),
-			'email' => $this->_attendees[0]['att_obj']->email()
+			'fname' => $this->_attendees[999999991]['att_obj']->fname(),
+			'lname' => $this->_attendees[999999991]['att_obj']->lname(),
+			'email' => $this->_attendees[999999991]['att_obj']->email()
 			);
 
 		//reg_info property

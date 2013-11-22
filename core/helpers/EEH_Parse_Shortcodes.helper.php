@@ -74,9 +74,9 @@ class EEH_Parse_Shortcodes {
 
 	/**
 	 * This kicks off the parsing of shortcodes in message templates
-	 * @param  string $template         This is the incoming string to be parsed
-	 * @param  object $data             This is the incoming data object
-	 * @param  array $valid_shortcodes  An array of strings that correspond to EE_Shortcode libraries
+	 * @param  string 				 $template         This is the incoming string to be parsed
+	 * @param  EE_Messages_Addressee $data             This is the incoming data object
+	 * @param  array 				 $valid_shortcodes  An array of strings that correspond to EE_Shortcode libraries
 	 * @return string                   The parsed template string
 	 */
 	public function parse_message_template( $template, EE_Messages_Addressee $data, $valid_shortcodes) {
@@ -91,8 +91,9 @@ class EEH_Parse_Shortcodes {
 	}
 
 
-	public function parse_attendee_list_template( $template, EE_Attendee $attendee, $valid_shortcodes ) {
-		$this->_init_data( $template, $attendee, $valid_shortcodes );
+	public function parse_attendee_list_template( $template, EE_Attendee $attendee, $valid_shortcodes, $extra_data = array() ) {
+
+		$this->_init_data( $template, $attendee, $valid_shortcodes, $extra_data );
 
 		$this->_template = is_array($template) ? $template['attendee_list'] : $template;
 
@@ -100,8 +101,8 @@ class EEH_Parse_Shortcodes {
 		return $parsed;
 	}
 
-	public function parse_event_list_template( $template, $event, $valid_shortcodes ) {
-		$this->_init_data( $template, $event, $valid_shortcodes );
+	public function parse_event_list_template( $template, EE_Event $event, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $event, $valid_shortcodes, $extra_data );
 
 		$this->_template = is_array($template) ? $template['event_list'] : $template;
 
@@ -110,10 +111,21 @@ class EEH_Parse_Shortcodes {
 	}
 
 
-	private function _init_data( $template, $data, $valid_shortcodes ) {
+	public function parse_ticket_list_template( $template, EE_Ticket $ticket, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $ticket, $valid_shortcodes, $extra_data );
+
+		$this->_template = is_array($template) ? $template['ticket_list'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+
+	private function _init_data( $template, $data, $valid_shortcodes, $extra_data = array() ) {
 		$this->_reset_props();
 		$this->_data['template'] = $template;
 		$this->_data['data'] = $data;
+		$this->_data['extra_data'] = $extra_data;
 
 		$this->_set_shortcodes( $valid_shortcodes );
 	}
@@ -137,7 +149,6 @@ class EEH_Parse_Shortcodes {
 		$possible_shortcodes = preg_match_all( '/(\[.+?\])/', $this->_template, $matches );
 		$shortcodes = (array) $matches[0]; //this should be an array of shortcodes in the template string.
 
-
 		$matched_code = array();
 		$sc_values = array();
 		//now lets go ahead and loop through our parsers for each shortcode and setup the values
@@ -153,14 +164,14 @@ class EEH_Parse_Shortcodes {
 
 				
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
-				if ( $shortcode != '[ATTENDEE_LIST]' && $shortcode != '[EVENT_LIST]' ) {
+				if ( $shortcode != '[ATTENDEE_LIST]' && $shortcode != '[EVENT_LIST]' && $shortcode !== '[TICKET_LIST]' ) {
 					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
 				} else {
 					$data_send = $this->_data;
 				}
 
 
-				if ( $parsed = $sc_obj->parser( $shortcode, $data_send ) ) {
+				if ( $parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] ) ) {
 					$matched_code[] = $shortcode;
 					$sc_values[] = $parsed;
 				} else {

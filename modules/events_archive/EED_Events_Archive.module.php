@@ -77,7 +77,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		EE_Config::register_route( __( 'events', 'event_espresso' ), 'Events_Archive', 'run' );
-		EE_Config::register_route( 'espresso_events', 'Events_Archive', 'espresso_events' );		
+		EE_Config::register_route( 'event_list', 'Events_Archive', 'event_list' );		
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
 	}
 
@@ -120,8 +120,8 @@ class EED_Events_Archive  extends EED_Module {
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
 		// set config
-		if ( ! isset( $this->EE->CFG->template_settings->EED_Events_Archive ) || ! $this->EE->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
-			$this->EE->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive ) || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
+			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
 		}
 		// grid, text or dates ?
 		EED_Events_Archive::set_type();
@@ -143,12 +143,12 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 * 	espresso_events
+	 * 	event_list
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function espresso_events() {	
+	public function event_list() {	
 		// load other required components
 		$this->_load_assests();
 	}
@@ -240,7 +240,7 @@ class EED_Events_Archive  extends EED_Module {
 		$this->_elf_month = EED_Events_Archive::_display_month();
 		$this->_elf_category = EED_Events_Archive::_event_category_slug();
 		$this->_show_expired = EED_Events_Archive::_show_expired( TRUE );
-//		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		echo '<h4>$this->_elf_month : ' . $this->_elf_month . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->_elf_category : ' . $this->_elf_category . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		printr( $this->_elf_category, '$this->_elf_category  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -515,7 +515,7 @@ class EED_Events_Archive  extends EED_Module {
 			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 		}
 		//add_filter( 'the_excerpt', array( $this, 'the_excerpt' ), 999 );
-		$this->EE->load_helper( 'Event_View' );
+		EE_Registry::instance()->load_helper( 'Event_View' );
 	}
 
 
@@ -584,7 +584,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 //	public function the_excerpt( $the_excerpt ) {
-//		$display_address = isset( $this->EE->CFG->template_settings->EED_Events_Archive['display_description'] ) ? $this->EE->CFG->template_settings->EED_Events_Archive['display_description'] : TRUE;
+//		$display_address = isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive['display_description'] ) ? EE_Registry::instance()->CFG->template_settings->EED_Events_Archive['display_description'] : TRUE;
 //		return $display_address ? $the_excerpt : '';			
 //	}
 
@@ -615,8 +615,22 @@ class EED_Events_Archive  extends EED_Module {
 			wp_enqueue_style( 'archive-espresso_events' );
 			wp_enqueue_script( 'jquery-masonry' );
 			wp_enqueue_script( 'archive-espresso_events' );
-			wp_localize_script( 'archive-espresso_events', 'espresso_grid_event_lists', EED_Events_Archive::$espresso_grid_event_lists );
+			add_action( 'wp_footer', array( 'EED_Events_Archive', 'localize_grid_event_lists' ), 1 );
 		}
+	}
+
+
+
+
+	/**
+	 * 	template_settings_form
+	 *
+	 *  @access 	public
+	 *  @static
+	 *  @return 	void
+	 */
+	public static function localize_grid_event_lists() {
+		wp_localize_script( 'archive-espresso_events', 'espresso_grid_event_lists', EED_Events_Archive::$espresso_grid_event_lists );
 	}
 
 
@@ -857,14 +871,15 @@ class EED_Events_Archive  extends EED_Module {
 
 function espresso_get_event_list_ID() {
 	EED_Events_Archive::$espresso_event_list_ID++;
+	EED_Events_Archive::$espresso_grid_event_lists[] = EED_Events_Archive::$espresso_event_list_ID;	
 	return EED_Events_Archive::$espresso_event_list_ID;
 }
 
 
-function espresso_grid_event_list( $ID ) {
-	EED_Events_Archive::$espresso_grid_event_lists[] = $ID;	
-	return $ID;
-}
+//function espresso_grid_event_list( $ID ) {
+//	
+//	return $ID;
+//}
 
 
 function espresso_event_list_title() {

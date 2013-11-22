@@ -136,7 +136,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 	}
 	
 	protected function _add_new_event_stop() {
-		$content .= '<p>' . __('Click here to add a new event.', 'event_espresso') . '</p>';
+		$content = '<p>' . __('Click here to add a new event.', 'event_espresso') . '</p>';
 		return $content;
 	}
 	

@@ -73,7 +73,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 
 
 	public function restore_revision( $post_id, $revision_id ) {
-		$EVT_MDL = $this->EE->load_model('Event');
+		$EVT_MDL = EE_Registry::instance()->load_model('Event');
 		$post_evt = $EVT_MDL->get_one_by_ID( $post_id );
 		//restore revision for primary questions
 		$post_evt->restore_revision($revision_id, array('Question_Group'), array('Question_Group' => array('Event_Question_Group.EQG_primary' => 1 ) ) );

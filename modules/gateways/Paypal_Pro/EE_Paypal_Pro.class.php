@@ -336,7 +336,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 //	public function espresso_gateway_process_step_3() {
 	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
 
-		$session_data = $this->EE->SSN->get_session_data();
+		$session_data = EE_Registry::instance()->SSN->get_session_data();
 
 		$billing_info = $session_data['billing_info'];
 		if( ! $transaction){
@@ -417,7 +417,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					// Phone Number of payer.  20 char max.
 					'phonenum' => empty($billing_info['reg-page-billing-phone-' . $this->_gateway_name ]['value']) ? '' : $billing_info['reg-page-billing-phone-' . $this->_gateway_name ]['value']
 			);
-			$this->EE->load_helper('Template');
+			EE_Registry::instance()->load_helper('Template');
 			$PaymentDetails = array(
 					// Required.  Total amount of order, including shipping, handling, and tax.
 					'amt' => EEH_Template::format_currency($grand_total,true),
@@ -573,7 +573,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 								'PAY_details' => $e));
 				$payment->save();
 				$this->update_transaction_with_payment($transaction, $payment);
-				$this->EE->SSN->set_session_data( array( 'txn_results' => $txn_results ));
+				EE_Registry::instance()->SSN->set_session_data( array( 'txn_results' => $txn_results ));
 				
 				$return = array('error'=>$e->getMessage());
 			}

@@ -14,7 +14,7 @@
 
 do_action( 'AHEE_before_event_list' );
 $ELID = espresso_get_event_list_ID();
-espresso_grid_event_list( $ELID );
+//espresso_grid_event_list( $ELID );
 ?>
 
 <div id="grid-event-list-<?php echo $ELID; ?>-dv" class="grid-event-list-dv entry-content max-width maxwidth row">

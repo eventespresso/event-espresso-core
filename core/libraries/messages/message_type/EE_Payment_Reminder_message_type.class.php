@@ -99,6 +99,7 @@ class EE_Payment_Reminder_message_type extends EE_message_type {
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
 			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-event-list.template.php');
+			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-ticket-list.template.php');
 		}
 
 		return $tcontent;
@@ -139,8 +140,8 @@ class EE_Payment_Reminder_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('transaction','event','organization','registration','event_list'),
-			'primary_attendee' => array('transaction', 'event', 'organization','registration', 'event_list')
+			'admin' => array('transaction','event','organization','registration','event_list', 'ticket_list'),
+			'primary_attendee' => array('transaction', 'event', 'organization','registration', 'event_list', 'ticket_list')
 			);
 	}
 
@@ -159,7 +160,7 @@ class EE_Payment_Reminder_message_type extends EE_message_type {
 	protected function _admin_addressees() {
 		$admin_ids = array();
 		$admin_events = array();
-		$addresees = array();
+		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {

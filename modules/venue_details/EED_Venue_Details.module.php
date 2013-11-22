@@ -198,7 +198,7 @@ class EED_Venue_Details  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function the_content( $content ) {
-		//$content .= printr( $this->EE, 'EE_Registry  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//$content .= printr( EE_Registry::instance(), 'EE_Registry  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$content .= $this->ouput;
 		return $content;
 	}

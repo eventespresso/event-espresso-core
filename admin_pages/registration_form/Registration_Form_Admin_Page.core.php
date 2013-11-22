@@ -147,6 +147,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
+				
 				'require_nonce' => FALSE
 				),
 
@@ -158,13 +159,62 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'help_tabs' => array(
+					'question_text_info' => array(
+						'title' => __('Question Text', 'event_espresso'),
+						'callback' => 'question_text_info_help_tab'
+						),
+					'question_label_info' => array(
+						'title' => __('Question Label', 'event_espresso'),
+						'callback' => 'question_label_info_help_tab'
+						),
+					'question_type_info' => array(
+						'title' => __('Question Type', 'event_espresso'),
+						'callback' => 'question_type_info_help_tab'
+						),
+					'required_question_info' => array(
+						'title' => __('Required Question', 'event_espresso'),
+						'callback' => 'required_question_info_help_tab'
+						),
+					'required_text_info' => array(
+						'title' => __('Required Text', 'event_espresso'),
+						'callback' => 'required_text_info_help_tab'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 			);
 	}
-
-
-
+	
+	/**
+	 * add/edit question help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function edit_question_help_tabs( $tab ) {
+		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template($template);
+	}
+	public function question_text_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	public function question_label_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	public function question_type_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	public function required_question_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	public function required_text_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
+	}
+	
+	
+	
+	
 	protected function _add_screen_options() {
 		//todo
 	}
@@ -583,12 +633,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	
 		$this->_template_args['values'] = $this->_yes_no_values;
 		
-		$this->_template_args['use_captcha'] = isset( $this->EE->CFG->registration->use_captcha ) ? $this->EE->CFG->registration->use_captcha : FALSE;
+		$this->_template_args['use_captcha'] = isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE;
 		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': ''; 
 		
-		$this->_template_args['recaptcha_publickey'] = isset( $this->EE->CFG->registration->recaptcha_publickey ) ? stripslashes( $this->EE->CFG->registration->recaptcha_publickey ) : '';
-		$this->_template_args['recaptcha_privatekey'] = isset( $this->EE->CFG->registration->recaptcha_privatekey ) ? stripslashes( $this->EE->CFG->registration->recaptcha_privatekey ) : '';
-		$this->_template_args['recaptcha_width'] = isset( $this->EE->CFG->registration->recaptcha_width ) ? absint( $this->EE->CFG->registration->recaptcha_width ) : 500;
+		$this->_template_args['recaptcha_publickey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : '';
+		$this->_template_args['recaptcha_privatekey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : '';
+		$this->_template_args['recaptcha_width'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_width ) ? absint( EE_Registry::instance()->CFG->registration->recaptcha_width ) : 500;
 		
 		$this->_template_args['recaptcha_theme_options'] = array(
 				array('id'  => 'red','text'=> __('Red', 'event_espresso')),
@@ -596,7 +646,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
 				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
 			);
-		$this->_template_args['recaptcha_theme'] = isset( $this->EE->CFG->registration->recaptcha_theme ) ? $this->_display_nice( $this->EE->CFG->registration->recaptcha_theme ) : 'clean';
+		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? $this->_display_nice( EE_Registry::instance()->CFG->registration->recaptcha_theme ) : 'clean';
 	
 		$this->_template_args['recaptcha_language_options'] = array(
 				array('id'  => 'en','text'=> __('English', 'event_espresso')),
@@ -608,7 +658,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
 				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
 			);		
-		$this->_template_args['recaptcha_language'] = isset( $this->EE->CFG->registration->recaptcha_language ) ? $this->EE->CFG->registration->recaptcha_language : 'en';
+		$this->_template_args['recaptcha_language'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en';
 
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -618,17 +668,17 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_reg_form_settings() {
 
-		$this->EE->CFG->registration->use_captcha = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
-		$this->EE->CFG->registration->recaptcha_publickey = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
-		$this->EE->CFG->registration->recaptcha_privatekey = isset( $this->_req_data['recaptcha_privatekey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_privatekey'] ) : NULL;
-		$this->EE->CFG->registration->recaptcha_width = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
-		$this->EE->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
-		$this->EE->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
+		EE_Registry::instance()->CFG->registration->use_captcha = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
+		EE_Registry::instance()->CFG->registration->recaptcha_publickey = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
+		EE_Registry::instance()->CFG->registration->recaptcha_privatekey = isset( $this->_req_data['recaptcha_privatekey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_privatekey'] ) : NULL;
+		EE_Registry::instance()->CFG->registration->recaptcha_width = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
+		EE_Registry::instance()->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
+		EE_Registry::instance()->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
 		
-		$this->EE->CFG = apply_filters( 'FHEE_reg_form_settings_save', $this->EE->CFG );	
+		EE_Registry::instance()->CFG = apply_filters( 'FHEE_reg_form_settings_save', EE_Registry::instance()->CFG );	
 		
 		$what = 'Registration Options';
-		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
 		
 	}

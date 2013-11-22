@@ -52,11 +52,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_URL]' => __('A link to the event set up on the host site.', 'event_espresso'),
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
-			'[EVENT_START_DATE]' => __('This is the date the event starts', 'event_espresso'),
-			'[EVENT_START_TIME]' => __('This is the event start time', 'event_espresso'),
-			'[EVENT_END_DATE]' => __('This is the event end date', 'event_espresso'),
-			'[EVENT_END_TIME]' => __('This is the event end time', 'event_espresso'),
-			'[EVENT_PRICE]' => __('The price of the given event', 'event_espresso')
 			);
 	}
 
@@ -65,7 +60,9 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 		EE_Registry::instance()->load_helper( 'Formatter' );
 
-		$event = !empty( $this->_data['ID'] ) ? EE_Registry::instance()->load_model('Event')->get_one_by_ID($this->_data['ID'] ) : EE_Registry::instance()->load_model('Event')->create_default_object();
+		$event = $this->_data instanceof EE_Event ? $this->_data : null;
+		if ( empty( $event ) )
+			return '';
 
 		switch ( $shortcode ) {
 			
@@ -106,78 +103,9 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				$venue = $this->_venue($event);
 				return $venue->get('VNU_virtual_phone');
 				break;
-
-			case '[EVENT_START_DATE]' :
-				return $this->_event_date( 'event_start_date' );
-				break;
-
-			case '[EVENT_END_DATE]' :
-				return $this->_event_date(  'event_end_date' );
-				break;
-
-			case '[EVENT_START_TIME]' :
-				return $this->_event_date( 'event_start_time' );
-				break;
-
-			case '[EVENT_END_TIME]' :
-				return $this->_event_date( 'event_end_time' );
-				break;
-
-			case '[EVENT_PRICE]' :
-				EE_Registry::instance()->load_helper( 'Template' );
-				return isset( $this->_data['ticket_price'] ) ? EEH_Template::format_currency( $this->_data['ticket_price'] ) : '';
-				break;
 		}
 	}
 
-
-
-
-	/**
-	 * This just figures out the event date for the incoming data according to what date type we are requesting
-	 *
-	 * @access private
-	 * @param string $type what we're requesting (see switch for examples )
-	 * @return string the date/time requested
-	 */
-	private function _event_date( $type ) {
-		//check if we have the daytime_id that we need to retrieve the date stuff, otherwise we just return an empty string
-		if ( !isset( $this->_data['daytime_id'] ) )
-			return '';
-
-		//let's get the DTT Model and retrieve the Date Time object
-		$DTT = EE_Registry::instance()->load_model('Datetime')->get_one_by_ID( $this->_data['daytime_id'] );
-
-		//if empty|false let's get out
-		if ( empty( $DTT ) || !is_object( $DTT ) ) return '';
-
-		switch ( $type ) {
-			case 'event_start_date' :
-				return $DTT->start_date();
-				break;
-			case 'event_end_date' :
-				return $DTT->end_date();
-				break;
-			case 'event_end_time' :
-				return $DTT->end_time();
-				break;
-			case 'event_start_time' :
-				return $DTT->start_time();
-				break;
-		}
-
-	}
-
-
-	/**
-	 * Return a venue object
-	 * @param  EE_Event $event 
-	 * @return EE_Venue        
-	 */
-	private function _venue( $event ) {
-		$venue = !empty( $this->_data['ID'] ) ? $event->get_first_related('Venue') : NULL;
-		$venue = empty( $venue ) ? EE_Registry::instance()->load_model('Venue')->create_default_object() : $venue;
-	}
 
 
 

@@ -78,8 +78,8 @@ class EED_Invoice  extends EED_Module {
 	 */
 	public function launch_invoice() {
 		$this->run(null);
-		if ( $this->EE->REQ->is_set( 'id' )) {
-			$id = sanitize_key( $this->EE->REQ->get( 'id' ));
+		if ( EE_Registry::instance()->REQ->is_set( 'id' )) {
+			$id = sanitize_key( EE_Registry::instance()->REQ->get( 'id' ));
 			$invoice = new Invoice( $id );
 			$invoice->send_invoice();
 		}
@@ -95,8 +95,8 @@ class EED_Invoice  extends EED_Module {
 	 */
 	public function download_invoice() {
 		$this->run(null);
-		if ( $this->EE->REQ->is_set( 'id' )) {
-			$id = sanitize_key( $this->EE->REQ->get( 'id' ));
+		if ( EE_Registry::instance()->REQ->is_set( 'id' )) {
+			$id = sanitize_key( EE_Registry::instance()->REQ->get( 'id' ));
 			$invoice = new Invoice($_REQUEST['id']);
 			// send invoice but force download
 			$invoice->send_invoice( TRUE ); 

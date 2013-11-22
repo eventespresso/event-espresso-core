@@ -68,7 +68,7 @@ class EED_Csv  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function export() {
-		$Export = $this->EE->load_class( 'Export' );
+		$Export = EE_Registry::instance()->load_class( 'Export' );
 		$Export->export();
 	}
 
@@ -82,7 +82,7 @@ class EED_Csv  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function import() {
-		$Import = $this->EE->load_class( 'Import' );
+		$Import = EE_Registry::instance()->load_class( 'Import' );
 		$Import->import();
 	}
 

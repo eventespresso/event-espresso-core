@@ -88,7 +88,7 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 */
 	public function process_shortcode( $attributes ) {
 
-		return $this->EE->REQ->get_output();		
+		return EE_Registry::instance()->REQ->get_output();		
 		
 	}
 

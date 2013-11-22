@@ -140,7 +140,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	*		@return 		array		
 	*/	
 	public function get_all_question_groups() {
-		return $this->EE->load_model( 'Question_Group' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
 			array( 'QSG_deleted' => FALSE ),
 			'order_by' => array( 'QSG_order' => 'ASC' )
 		));
@@ -163,7 +163,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
-		return $this->EE->load_model( 'Event_Question_Group' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
 			array( 'EVT_ID' => $EVT_ID )
 		));
 	}
@@ -185,7 +185,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
-		return $this->EE->load_model( 'Event_Question_Group' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
 			array( 'EVT_ID' => $EVT_ID, 'EQG_primary' => $for_primary_attendee )
 		));
 	}
@@ -221,7 +221,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params['QSG_system'] = array( '<' =>$system_ID, '!=' => 0 );
 		}
 		
-		return $this->EE->load_model( 'Question_Group' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
 			$where_params,
 			'order_by' => 'QSG_order'
 		));
@@ -248,7 +248,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			return false;
 		}
 
-		return $this->EE->load_model( 'Question' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Question' )->get_all( array(
 			array(
 				'Question_Group.QSG_ID' => array( 'IN', $QSG_IDs ),
 				'QST_deleted' => FALSE,
@@ -279,7 +279,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			return false;
 		}
 
-		return $this->EE->load_model( 'Question_Option' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Question_Option' )->get_all( array(
 			array(
 				'Question.QST_ID' => array( 'IN', $QST_IDs ),
 				'QSO_deleted' => FALSE
