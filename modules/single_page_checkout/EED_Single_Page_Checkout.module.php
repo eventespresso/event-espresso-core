@@ -254,6 +254,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
+
 		$this->_continue_reg = TRUE;
 		// verify recaptcha
 		if ( EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' )) {
@@ -282,8 +283,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				EE_Registry::instance()->CART->set_grand_total_line_item($transaction->total_line_item());
 				$this->_transaction = $transaction;
 			}
-			
-			
 		
 		} else{
 			$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
@@ -306,7 +305,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( empty( self::$_reg_steps )) {
 			EED_Single_Page_Checkout::setup_reg_steps_array();
 		}
-
+echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'translate_js_strings' ), 1 );
 	}
 
@@ -420,6 +419,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return void
 	 */
 	private function _initialize_transaction() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		d( $this->EE->CART );
 		// create new TXN
 		$transaction = EE_Transaction::new_instance( array( 
 				'TXN_timestamp' => current_time('mysql'),
@@ -762,6 +763,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				) 
 			);
 			if ( $step_nmbr == 1 ) {
+				$template_args['selected_gateway'] = '';
 				add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Single_Page_Checkout', 'display_recaptcha' ), 10, 2 );	
 			}
 			
@@ -1354,7 +1356,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	public function process_recaptcha_response() {
 		
 		$response_data = array(
-			'success' => TRUE,
+			//'success' => TRUE,
 			'error' => FALSE
 		);
 		
@@ -1428,7 +1430,9 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					echo json_encode( $response_data );
 					die();
 				} else {
-					wp_safe_redirect( $this->_thank_you_page_url );
+					printr( $response_data, '$response_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					echo '<h4>$this->_thank_you_page_url : ' . $this->_thank_you_page_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+					//wp_safe_redirect( $this->_thank_you_page_url );
 					exit(); 
 				}			
 			
@@ -1532,7 +1536,9 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		} else {
 			$redirect = $this->_thank_you_page_url;
 		}
-		wp_safe_redirect( $redirect );
+		echo '<h4>$next_step : ' . $next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		echo '<h4>$redirect : ' . $redirect . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//wp_safe_redirect( $redirect );
 		exit();
 	}
 
