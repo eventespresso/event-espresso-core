@@ -88,12 +88,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			//let's also setup the dummy attendees property!
 			foreach ( $attendees as $att_key => $attendee ) {
 				$this->_attendees[$att_key]['line_ref'][] = $id;  //so later it can be determined what events this attendee registered for!
-				$this->_attendees[$att_key]['evt_objs'][$id] = $event;
+				$this->_attendees[$att_key]['evt_objs'] = $event;
 				$this->_attendees[$att_key]['att_obj'] = $attendee;
-				$this->_attendees[$att_key]['reg_objs'][$id] = NULL;
+				$this->_attendees[$att_key]['reg_objs'] = NULL;
 				$this->_attendees[$att_key]['registration_id'] = 0;
 				$this->_attendees[$att_key]['attendee_email'] = $attendee->email();
-				$this->_attendees[$att_key]['tkt_objs'][$id] = $tickets;
+				$this->_attendees[$att_key]['tkt_objs'] = $tickets;
 			}
 		}
 
@@ -178,7 +178,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
-			$attendees[] = EE_Attendee::new_instance(
+			$attendees[$attid] = EE_Attendee::new_instance(
 				array(
 					'ATT_fname' => $fname,
 					'ATT_lname' => $lname,
@@ -236,13 +236,11 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$cart = EE_Cart::instance();
 
 		//add tickets to cart
-		foreach ( $this->_attendees as $attid => $details ) {
-			foreach ( $details['tkt_objs'] as $evt_id => $tkts ) {
-				foreach ( $tkts as $tkt ) {
-					$cart->add_ticket_to_cart($tkt);
-				}
-			}
+		foreach ( $this->tickets as $ticket ) {
+			$cart->add_ticket_to_cart($ticket['ticket']);
 		}
+
+		$grand_total = EEH_Template::format_currency($cart->get_cart_grand_total(), true);
 
 
 		//setup billing property
@@ -259,7 +257,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			'ccv code' => 'xxx',
 			'credit card #' => '999999xxxxxxxx',
 			'expiry date' => '12 / 3000',
-			'total_due' => $cart->get_cart_grand_total() 
+			'total_due' => $grand_total
 			);
 
 
@@ -268,8 +266,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->txn = EE_Transaction::new_instance(
 			array(
 				'TXN_timestamp' => current_time('mysql'), //unix timestamp
-				'TXN_total' => $cart->get_cart_grand_total(), //txn_total
-				'TXN_paid' => $cart->get_cart_grand_total(), //txn_paid
+				'TXN_total' => $grand_total, //txn_total
+				'TXN_paid' => $grand_total, //txn_paid
 				'STS_ID' => 'PAP', //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
 				'TXN_hash_salt' => NULL, //hash salt blank as well
@@ -317,9 +315,9 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//setup primary attendee property
 		$this->primary_attendee = array(
-			'fname' => $this->_attendees[0]['att_obj']->fname(),
-			'lname' => $this->_attendees[0]['att_obj']->lname(),
-			'email' => $this->_attendees[0]['att_obj']->email()
+			'fname' => $this->_attendees[999999991]['att_obj']->fname(),
+			'lname' => $this->_attendees[999999991]['att_obj']->lname(),
+			'email' => $this->_attendees[999999991]['att_obj']->email()
 			);
 
 		//reg_info property

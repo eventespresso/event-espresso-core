@@ -60,7 +60,9 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 		EE_Registry::instance()->load_helper( 'Formatter' );
 
-		$event = !empty( $this->_data['ID'] ) ? EE_Registry::instance()->load_model('Event')->get_one_by_ID($this->_data['ID'] ) : EE_Registry::instance()->load_model('Event')->create_default_object();
+		$event = $this->_data instanceof EE_Event ? $this->_data : null;
+		if ( empty( $event ) )
+			return '';
 
 		switch ( $shortcode ) {
 			

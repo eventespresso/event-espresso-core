@@ -220,11 +220,11 @@ abstract class EE_Messages_incoming_data {
 				$event_attendee_count[$evt_id] = isset( $event_attendee_count[$evt_id] ) ? $event_attendee_count[$evt_id] + 1 : 0;
 				$attendees[$reg->attendee_ID()]['line_ref'][] = $evt_id;
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_objs'][$evt_id] = $reg;
+				$attendees[$reg->attendee_ID()]['reg_objs'][] = $reg;
 				$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
 				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee()->email();
-				$attendees[$reg->attendee_ID()]['tkt_objs'][$evt_id] = $ticket;
-				$attendees[$reg->attendee_ID()]['evt_objs'][$evt_id] = $event;
+				$attendees[$reg->attendee_ID()]['tkt_objs'][] = $ticket;
+				$attendees[$reg->attendee_ID()]['evt_objs'][] = $event;
 			}
 
 			//let's loop through the unique event=>reg items and setup data on them

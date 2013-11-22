@@ -66,7 +66,6 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 		$this->_validate_list_requirements();
 		$this->_set_shortcode_helper();
 
-
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_attendee_list_for_main();
 
@@ -94,7 +93,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 
 		//now we need to loop through the attendee list and send data to the EE_Parser helper.
 		foreach ( $data->attendees as $attendee ) {
-			$attnds .= $this->_shortcode_helper->parse_attendee_list_template($template, $attendee['att_obj'], $valid_shortcodes, $this->_data['data']);
+			$attnds .= $this->_shortcode_helper->parse_attendee_list_template($template, $attendee['att_obj'], $valid_shortcodes, $this->_data);
 		}
 
 		return $attnds;
@@ -108,7 +107,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_attendee_list_for_event() {
 		$valid_shortcodes = array('attendee', 'ticket_list');
-		$template = $this->_data['template']['attendee_list'];
+		$template = isset($this->_data['template']['attendee_list']) ? $this->_data['template']['attendee_list'] : $this->_extra_data['template']['attendee_list'];
 		$event = $this->_data['data'];
 
 		//let's remove any existing [EVENT_LIST] shortcode from the attendee list template so that we don't get recursion.
@@ -134,7 +133,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_attendee_list_for_ticket() {
 		$valid_shortcodes = array( 'attendee', 'event_list' );
-		$template = $this->_data['template']['attendee_list'];
+		$template = isset($this->_data['template']['attendee_list']) ? $this->_data['template']['attendee_list'] : $this->_extra_data['template']['attendee_list'];
 		$ticket = $this->_data['data'];
 
 		//let's remove any existing [TICKET_LIST] shortcode from the attendee list template so that we don't get recursion.

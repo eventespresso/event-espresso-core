@@ -94,7 +94,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 
 		//now we need to loop through the ticket list and send data to the EE_Parser helper.
 		foreach ( $data->tickets as $ticket ) {
-			$tktparsed .= $this->_shortcode_helper->parse_ticket_list_template($template, $ticket, $valid_shortcodes, $this->_data['data']);
+			$tktparsed .= $this->_shortcode_helper->parse_ticket_list_template($template, $ticket['ticket'], $valid_shortcodes, $this->_data);
 		}
 
 		return $tktparsed;
@@ -108,7 +108,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_ticket_list_for_event() {
 		$valid_shortcodes = array('ticket', 'attendee_list');
-		$template = $this->_data['template']['ticket_list'];
+		$template = isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
 		$event = $this->_data['data'];
 
 		//let's remove any existing [EVENT_LIST] shortcode from the ticket list template so that we don't get recursion.
@@ -120,7 +120,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 
 		//each ticket in this case should be an ticket object.
 		foreach ( $tickets as $ticket ) {
-			$tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template($template, $ticket['ticket'], $valid_shortcodes, $this->_extra_data);
+			$tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template($template, $ticket, $valid_shortcodes, $this->_extra_data);
 		}
 
 		return $tkt_parsed;
@@ -134,8 +134,9 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_ticket_list_for_attendee() {
 		$valid_shortcodes = array('ticket', 'event_list');
-		$template = $this->_data['template']['ticket_list'];
-		$event = $this->_data['data'];
+		
+		$template = isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
+		$attendee = $this->_data['data'];
 
 		//let's remove any existing [ATTENDEE_LIST] shortcode from the ticket list template so that we don't get recursion.
 		$template = str_replace('[ATTENDEE_LIST]', '', $template);

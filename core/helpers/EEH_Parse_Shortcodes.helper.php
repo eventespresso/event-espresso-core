@@ -111,8 +111,8 @@ class EEH_Parse_Shortcodes {
 	}
 
 
-	public function parse_ticket_list_template( $template, EE_Ticket $event, $valid_shortcodes, $extra_data = array() ) {
-		$this->_init_data( $template, $event, $valid_shortcodes, $extra_data );
+	public function parse_ticket_list_template( $template, EE_Ticket $ticket, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $ticket, $valid_shortcodes, $extra_data );
 
 		$this->_template = is_array($template) ? $template['ticket_list'] : $template;
 
@@ -164,7 +164,7 @@ class EEH_Parse_Shortcodes {
 
 				
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
-				if ( $shortcode != '[ATTENDEE_LIST]' && $shortcode != '[EVENT_LIST]' ) {
+				if ( $shortcode != '[ATTENDEE_LIST]' && $shortcode != '[EVENT_LIST]' && $shortcode !== '[TICKET_LIST]' ) {
 					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
 				} else {
 					$data_send = $this->_data;

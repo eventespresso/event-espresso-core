@@ -107,7 +107,7 @@ class EE_Email_messenger extends EE_messenger  {
 				'shortcodes' => array('organization')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'organization')
+				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration')
@@ -249,6 +249,17 @@ class EE_Email_messenger extends EE_messenger  {
 						'rows' => '5',
 						'shortcodes_required' => array('[ATTENDEE_LIST]')
 					),
+					'ticket_list' => array(
+						'input' => 'textarea',
+						'label' => __('Ticket List', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '10',
+						'shortcodes_required' => array('[TICKET_LIST]')
+						),
 					'event_list' => array(
 						'input' => 'wp_editor',
 						'label' => __('Event List', 'event_espresso'),
@@ -258,16 +269,6 @@ class EE_Email_messenger extends EE_messenger  {
 						'format' => '%s',
 						'rows' => '15',
 						'shortcodes_required' => array('[EVENT_LIST]')
-						),
-					'ticket_list' => array(
-						'input' => 'textarea',
-						'label' => __('Ticket List', 'event_espresso'),
-						'type' => 'string',
-						'required' => TRUE,
-						'validation' => TRUE,
-						'format' => '%s',
-						'rows' => '10',
-						'shortcodes_required' => array('[TICKET_LIST]')
 						),
 					'main' => array(
 						'input' => 'wp_editor',
