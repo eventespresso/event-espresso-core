@@ -365,46 +365,45 @@ final class EE_Front_Controller {
 							$current_post = 'posts';
 						}					
 					}
-				} else {
-					// are we on a category page?
-					$term_exists = is_array( term_exists( $current_post, 'category' ));
-					// make sure shortcodes are set
-					if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
-		//				d( EE_Registry::instance()->CFG->core->post_shortcodes );
-						// cycle thru all posts with shortcodes set
-						foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
-							// are we on this page ?
-							if ( $current_post == $post_name || $term_exists ) {
-		//						d( $post_name );
-								// filter shortcodes so 
-								$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
-		//						d( $post_shortcodes );
-								// now cycle thru shortcodes
-								foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
-									// verify shortcode is in list of registered shortcodes
-									if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
-										$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
+				} 
+				// are we on a category page?
+				$term_exists = is_array( term_exists( $current_post, 'category' ));
+				// make sure shortcodes are set
+				if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
+	//				d( EE_Registry::instance()->CFG->core->post_shortcodes );
+					// cycle thru all posts with shortcodes set
+					foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
+						// are we on this page ?
+						if ( $current_post == $post_name || $term_exists ) {
+	//						d( $post_name );
+							// filter shortcodes so 
+							$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
+	//						d( $post_shortcodes );
+							// now cycle thru shortcodes
+							foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
+								// verify shortcode is in list of registered shortcodes
+								if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
+									$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
+									EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+									add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+									break;
+								}
+								//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
+								if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
+									// let's pause to reflect on this...
+									$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
+									// ensure that class is actually a shortcode
+									if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
+										$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
 										EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 										add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 										break;
 									}
-									//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-									if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
-										// let's pause to reflect on this...
-										$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
-										// ensure that class is actually a shortcode
-										if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
-											$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
-											EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-											add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-											break;
-										}
-										// and pass the request object to the run method
-										$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
-										// fire the shortcode class's run method, so that it can activate resources
-										$shortcode->run( $WP );
-		//								d( $shortcode );
-									}
+									// and pass the request object to the run method
+									$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
+									// fire the shortcode class's run method, so that it can activate resources
+									$shortcode->run( $WP );
+	//								d( $shortcode );
 								}
 							}
 						}
