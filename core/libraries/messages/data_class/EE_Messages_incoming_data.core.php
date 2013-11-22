@@ -198,13 +198,16 @@ abstract class EE_Messages_incoming_data {
 	 * @return void
 	 */
 	protected function _assemble_data() {
+		$regchk = array_values($this->reg_objs);
+		$regchk = array_shift($regchk);
 		//verify that reg_objs is set
-		if ( !is_array( $this->reg_objs) && ! ( array_shift(array_values($array)) instanceof EE_Registration ) )
+		if ( !is_array( $this->reg_objs) && ! $regchk instanceof EE_Registration )
 			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
 
 		//get all attendee and events associated with the registrations in this transaction
 		$events = $event_setup = $evt_cache = $tickets = array();
 		$attendees = array();
+		
 		if ( !empty( $this->reg_objs ) ) {
 			$event_attendee_count = array(); 
 			foreach ( $this->reg_objs as $reg ) {
@@ -230,7 +233,7 @@ abstract class EE_Messages_incoming_data {
 			//let's loop through the unique event=>reg items and setup data on them
 
 
-			if ( !empty( $events) ) {
+			if ( !empty( $eventsetup) ) {
 				foreach ( $eventsetup as $eid => $items ) {
 					$events[$eid] = array(
 						'ID' => $eid,

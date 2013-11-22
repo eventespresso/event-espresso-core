@@ -76,7 +76,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		foreach( $events as $id => $event ) {
 			$this->_events[$id]['ID'] = $id;
 			$this->_events[$id]['name'] = $event->get('EVT_name');
-			$this->_events[$id]['daytime_id'] = $event->primary_datetime()->ID();
 			$tickets = $event->get_first_related('Datetime')->get_many_related('Ticket');
 			$this->_events[$id]['event'] = $event;
 			$this->_events[$id]['reg_objs'] = array();
@@ -88,7 +87,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			//let's also setup the dummy attendees property!
 			foreach ( $attendees as $att_key => $attendee ) {
 				$this->_attendees[$att_key]['line_ref'][] = $id;  //so later it can be determined what events this attendee registered for!
-				$this->_attendees[$att_key]['evt_objs'] = $event;
+				$this->_attendees[$att_key]['evt_objs'][] = $event;
 				$this->_attendees[$att_key]['att_obj'] = $attendee;
 				$this->_attendees[$att_key]['reg_objs'] = NULL;
 				$this->_attendees[$att_key]['registration_id'] = 0;
