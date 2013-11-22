@@ -319,7 +319,10 @@
 		var step = $(this).attr('rel');
 		if ( step != undefined && step != '' ) {
 			next_step = get_next_step( step );
-	//		alert( 'step = ' + step + '\n' + 'next_step = ' + next_step );
+			if ( eei18n.wp_debug == 1 ) {
+				console.log( JSON.stringify( 'single-page-checkout on click > step; ' + step, null, 4 ));
+				console.log( JSON.stringify( 'single-page-checkout on click > next_step: ' + next_step, null, 4 ));
+			}
 			// disable submit btn
 			if ( next_step == 'finalize_registration' ) {
 				$( this ).prop( 'disabled', true ).attr( 'rel', '' );
@@ -353,8 +356,9 @@
 		var off_site_gateway = '#reg-page-gateway-off-site-'+selected_gateway;
 		var off_site_payment = $( off_site_gateway ).val(); 
 		var selected_gateway_dv = '#reg-page-billing-info-'+selected_gateway+'-dv';
-		//alert( 'selected_gateway : ' + selected_gateway + '\n' + 'off_site_gateway : ' + off_site_gateway + '\n' + 'off_site_payment : ' + off_site_payment + '\n' + 'selected_gateway_dv : ' + selected_gateway_dv );
-		
+		if ( eei18n.wp_debug == 1 ) {
+			console.log( JSON.stringify( 'selected_gateway: ' + selected_gateway, null, 4 ));
+		}
 		// set off-site-gateway status
 		if ( off_site_payment == 1 ) {
 			$('#reg-page-off-site-gateway').val( 1 );
@@ -372,37 +376,6 @@
 	function process_reg_step ( step, next_step, form_to_check ) { 
 	
 		var good_to_go = verify_all_questions_answered( form_to_check );
-
-		// check for recaptcha
-//		if ( $('#recaptcha_response_field').val() ) {
-//			$.ajax({
-//				type: "POST",
-//				url:  eei18n.ajax_url,
-//				data: 'action=espresso_process_recaptcha_response&noheader=true&recaptcha_response_field='+$('#recaptcha_response_field').val()+'&ee_front_ajax=1';,
-//				dataType: "json",
-//				beforeSend: function() {
-//					do_before_event_queue_ajax();
-//				}, 
-//				success: function( response ){	
-////					console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
-////					console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
-//					if ( response.error != false && response.error != '' && response.error != undefined ) {
-//						show_event_queue_ajax_error_msg( response.error );
-//						good_to_go = false;
-//					} 
-//				},
-//				error: function(response) {
-//					//console.log( dump( response ) );
-//					msg = new Object();
-//					msg.error = eei18n.recaptcha_response_error;
-//					if ( eei18n.wp_debug == 1 ) {
-//						msg.error = msg.error + ' ( process_reg_step >recaptcha_response )';
-//					}
-//					show_event_queue_ajax_error_msg( msg );
-//					good_to_go = false;
-//				}			
-//			});				
-//		}
 		
 		if ( good_to_go === true ) {
 
@@ -423,12 +396,16 @@
 				beforeSend: function() {
 					do_before_event_queue_ajax();
 				}, 
-				success: function( response ){	
-//					console.log( JSON.stringify( 'step: ' + step, null, 4 ));
-//					console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ));
-//					console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
-//					console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
-//					console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
+				success: function( response ){
+					
+					if ( eei18n.wp_debug == 1 ) {
+						console.log( JSON.stringify( 'step: ' + step, null, 4 ));
+						console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ));
+						console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
+						console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
+						console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
+					}
+
 					if ( response.recaptcha_reload != undefined ) {
 						$('#recaptcha_reload').trigger('click');
 						show_event_queue_ajax_error_msg( response.error );

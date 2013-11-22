@@ -88,7 +88,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	private function __construct() {
 		// EE registry
-		$this->EE = EE_Registry::instance();
+		
 		// get CPT data
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
@@ -138,16 +138,16 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function _possibly_set_ee_request_var( $WP_Query ){
 
-		if ( ! $this->EE->REQ->is_set( 'ee' ) && isset( $WP_Query->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Query->query_vars['post_type'] ] )) {
+		if ( ! EE_Registry::instance()->REQ->is_set( 'ee' ) && isset( $WP_Query->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Query->query_vars['post_type'] ] )) {
 			// check that route exists for CPT archive slug
 			$cpt = $this->_CPTs[ $WP_Query->query_vars['post_type'] ];
 			if ( is_archive() && EE_Config::get_route( $cpt['plural_slug'] )) {
 				// ie: set "ee" to "events"
-				$this->EE->REQ->set( 'ee', $cpt['plural_slug'] );
+				EE_Registry::instance()->REQ->set( 'ee', $cpt['plural_slug'] );
 			// or does it match a single page CPT like /event/
 			} else if ( is_single() && EE_Config::get_route( $cpt['singular_slug'] )) {
 				// ie: set "ee" to "event"
-				$this->EE->REQ->set( 'ee', $cpt['singular_slug'] );
+				EE_Registry::instance()->REQ->set( 'ee', $cpt['singular_slug'] );
 			}
 		}
 	}
@@ -181,29 +181,29 @@ class EE_CPT_Strategy extends EE_BASE {
 				// we can just inject directly into the WP_Query object
 				$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
 				// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
-				$this->EE->REQ->set( 'ee', $this->_CPTs[ $WP_Query->query_vars['post_type'] ]['singular_slug'] );
+				EE_Registry::instance()->REQ->set( 'ee', $this->_CPTs[ $WP_Query->query_vars['post_type'] ]['singular_slug'] );
 			}
 			// grab details for the CPT the current query is for
 			$this->CPT = $this->_CPTs[ $WP_Query->query_vars['post_type'] ];
 			// set post type
 			$this->CPT['post_type'] = $WP_Query->query_vars['post_type'];
 			// the post or category or term that is triggering EE
-			$this->CPT['espresso_page'] = $this->EE->REQ->is_espresso_page();
+			$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
 			// requested post name
-			$this->CPT['post_name'] = $this->EE->REQ->get( 'post_name' );
+			$this->CPT['post_name'] = EE_Registry::instance()->REQ->get( 'post_name' );
 			//d( $this->CPT );
 			//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// make sure CPT name is set or things is gonna break
 			if ( isset( $this->CPT['singular_name'] )) {
 				// get CPT table data via CPT Model
-				$this->CPT_model = $this->EE->load_model( $this->CPT['singular_name'] );
+				$this->CPT_model = EE_Registry::instance()->load_model( $this->CPT['singular_name'] );
 				$this->CPT['tables'] = $this->CPT_model->get_tables();
 				// is there a Meta Table for this CPT?
 				$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;		
 				// creates classname like:  EE_CPT_Event_Strategy
 				$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
 				// load and instantiate
-				 $CPT_Strategy = $this->EE->load_core ( $CPT_Strategy_class_name, array( 'EE' => $this->EE, 'CPT' =>$this->CPT ));	
+				 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'EE' => EE_Registry::instance(), 'CPT' =>$this->CPT ));	
 
 				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 				add_filter( 'posts_join',	array( $this, 'posts_join' ));
@@ -323,7 +323,7 @@ class EE_CPT_Default_Strategy {
 	 *  @return 	void
 	 */
 	private function __construct( EE_Registry $EE, $CPT ) {
-		$this->EE = $EE;
+		
 		$this->CPT = $CPT;
 		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
@@ -362,7 +362,7 @@ class EE_CPT_Default_Strategy {
 	 *  @return 	void
 	 */
 	public function the_posts(  $posts, $WP_Query ) {
-//		$EVT = $this->EE->load_model( 'Event' );
+//		$EVT = EE_Registry::instance()->load_model( 'Event' );
 //		$EVT_IDs = array();
 //		foreach( $WP_Query->posts as $WP_Post ) {
 //			$EVT_IDs[] = $WP_Post->ID;

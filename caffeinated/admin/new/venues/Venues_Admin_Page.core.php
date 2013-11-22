@@ -455,8 +455,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	public function venue_address_metabox() {
 
 		//states and countries 
-		$states = $this->EE->load_model( 'State' )->get_all_active_states();
-		$countries = $this->EE->load_model( 'Country' )->get_all_active_countries();
+		$states = EE_Registry::instance()->load_model( 'State' )->get_all_active_states();
+		$countries = EE_Registry::instance()->load_model( 'Country' )->get_all_active_countries();
 
 		//prepare state/country arrays
 		foreach ( $states as $id => $obj ) {

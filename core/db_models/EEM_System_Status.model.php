@@ -32,7 +32,7 @@ class EEM_System_Status{
 		return self::$_instance;
 	}
 	private function __construct(){
-		$this->EE = EE_Registry::instance();
+		
 	}
 	/**
 	 * 

@@ -68,8 +68,8 @@ class EED_Certificate  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function certificate_launch() {
-		if ( $this->EE->REQ->is_set( 'id' ) && $this->EE->REQ->is_set( 'r_id' )) {
-			echo espresso_certificate_launch( $this->EE->REQ->get( 'id' ), $this->EE->REQ->get( 'r_id' ));
+		if ( EE_Registry::instance()->REQ->is_set( 'id' ) && EE_Registry::instance()->REQ->is_set( 'r_id' )) {
+			echo espresso_certificate_launch( EE_Registry::instance()->REQ->get( 'id' ), EE_Registry::instance()->REQ->get( 'r_id' ));
 		}
 	}
 

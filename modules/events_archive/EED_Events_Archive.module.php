@@ -120,8 +120,8 @@ class EED_Events_Archive  extends EED_Module {
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
 		// set config
-		if ( ! isset( $this->EE->CFG->template_settings->EED_Events_Archive ) || ! $this->EE->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
-			$this->EE->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive ) || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
+			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
 		}
 		// grid, text or dates ?
 		EED_Events_Archive::set_type();
@@ -240,7 +240,7 @@ class EED_Events_Archive  extends EED_Module {
 		$this->_elf_month = EED_Events_Archive::_display_month();
 		$this->_elf_category = EED_Events_Archive::_event_category_slug();
 		$this->_show_expired = EED_Events_Archive::_show_expired( TRUE );
-//		printr( $this->EE->REQ, '$this->EE->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		echo '<h4>$this->_elf_month : ' . $this->_elf_month . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->_elf_category : ' . $this->_elf_category . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		printr( $this->_elf_category, '$this->_elf_category  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -515,7 +515,7 @@ class EED_Events_Archive  extends EED_Module {
 			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 		}
 		//add_filter( 'the_excerpt', array( $this, 'the_excerpt' ), 999 );
-		$this->EE->load_helper( 'Event_View' );
+		EE_Registry::instance()->load_helper( 'Event_View' );
 	}
 
 
@@ -584,7 +584,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 //	public function the_excerpt( $the_excerpt ) {
-//		$display_address = isset( $this->EE->CFG->template_settings->EED_Events_Archive['display_description'] ) ? $this->EE->CFG->template_settings->EED_Events_Archive['display_description'] : TRUE;
+//		$display_address = isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive['display_description'] ) ? EE_Registry::instance()->CFG->template_settings->EED_Events_Archive['display_description'] : TRUE;
 //		return $display_address ? $the_excerpt : '';			
 //	}
 

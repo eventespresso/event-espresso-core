@@ -70,15 +70,23 @@ abstract class EE_Messages_incoming_data {
 
 	/**
 	 * will hold an array of events assembled from $reg_info
-	 * @var array
+	 * @var EE_Event[]
 	 */
 	public $events;
 
 
 
 	/**
+	 * holds an array of tickets assembled from the incomign data.
+	 * @var EE_Ticket[]
+	 */
+	public $tickets;
+
+
+
+	/**
 	 * will hold an array of attendees assembled from the $reg_info
-	 * @var array
+	 * @var EE_Attendee[]
 	 */
 	public $attendees;
 
@@ -112,7 +120,7 @@ abstract class EE_Messages_incoming_data {
 
 	/**
 	 * Will hold the final transaction object (EE_Transaction)
-	 * @var array (of EE_Transaction objects);
+	 * @var EE_Transaction;
 	 */
 	public $txn;
 
@@ -130,7 +138,7 @@ abstract class EE_Messages_incoming_data {
 
 	/**
 	 * Will hold the final registration object (EE_Registration)
-	 * @var array (of EE_Registration objects)
+	 * @var EE_Registration[]
 	 */
 	public $reg_objs;
 
@@ -182,6 +190,69 @@ abstract class EE_Messages_incoming_data {
 	 */
 	public function data() {
 		return $this->_data;
+	}
+
+
+	/**
+	 * This helper method can be used by any incoming data handlers to setup the data correctly.  All that is required is that $this->reg_objs be set.
+	 * @return void
+	 */
+	protected function _assemble_data() {
+		$regchk = array_values($this->reg_objs);
+		$regchk = array_shift($regchk);
+		//verify that reg_objs is set
+		if ( !is_array( $this->reg_objs) && ! $regchk instanceof EE_Registration )
+			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
+
+		//get all attendee and events associated with the registrations in this transaction
+		$events = $event_setup = $evt_cache = $tickets = array();
+		$attendees = array();
+		
+		if ( !empty( $this->reg_objs ) ) {
+			$event_attendee_count = array(); 
+			foreach ( $this->reg_objs as $reg ) {
+				$evt_id = $reg->event_ID();
+				$ticket = $reg->get_first_related('Ticket');
+				$tickets[$ticket->ID()]['ticket'] = $ticket;
+				$tickets[$ticket->ID()]['att_objs'][] = $reg->attendee();
+				$event = $reg->event();
+				$evtcache[$evt_id] = $event;
+				$eventsetup[$evt_id]['reg_objs'][] = $reg;
+				$eventsetup[$evt_id]['tkt_objs'][] = $ticket;
+				$eventsetup[$evt_id]['att_objs'][] = $reg->attendee();
+				$event_attendee_count[$evt_id] = isset( $event_attendee_count[$evt_id] ) ? $event_attendee_count[$evt_id] + 1 : 0;
+				$attendees[$reg->attendee_ID()]['line_ref'][] = $evt_id;
+				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
+				$attendees[$reg->attendee_ID()]['reg_objs'][] = $reg;
+				$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
+				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee()->email();
+				$attendees[$reg->attendee_ID()]['tkt_objs'][] = $ticket;
+				$attendees[$reg->attendee_ID()]['evt_objs'][] = $event;
+			}
+
+			//let's loop through the unique event=>reg items and setup data on them
+
+
+			if ( !empty( $eventsetup) ) {
+				foreach ( $eventsetup as $eid => $items ) {
+					$events[$eid] = array(
+						'ID' => $eid,
+						'event' => $evtcache[$eid],
+						'name' => $event->name(),
+						'pre_approval' => $event->require_pre_approval(),// $event->require_pre_approval,
+						'total_attendees' => $event_attendee_count[$eid],
+						'reg_objs' => $items['reg_objs'],
+						'tkt_objs' => $items['tkt_objs'],
+						'att_objs' => $items['att_objs']
+					);
+				}
+			}	
+		}
+
+		//lets set the attendees and events properties
+		$this->attendees = $attendees;
+		$this->events = $events;
+		$this->tickets = $tickets;
 	}
 
 

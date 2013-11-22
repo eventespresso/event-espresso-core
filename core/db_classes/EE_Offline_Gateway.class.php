@@ -66,49 +66,6 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 		
 		do_action( 'AHEE_EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		parent::thank_you_page_logic($transaction);
-		//check that there's still a transaction in the session.
-		//if there isn't, maybe we've cleared it (session ended with the thank you page)
-		//or something wack's going on...
-		/*if(!array_key_exists('transaction',$session)){
-			return;
-		}
-		$txn_results = array(
-				'gateway' => $this->_payment_settings['display_name'],
-				'approved' => FALSE,
-				'response_msg' => __('Your registration will be marked as complete once your payment is received.', 'event_espresso'),
-				'status' => 'Incomplete',
-				'raw_response' => serialize($_REQUEST),
-				'amount' => 0.00,
-				'method' => 'Off-line',
-				'auth_code' => '',
-				'md5_hash' => '',
-				'invoice_number' => '',
-				'transaction_id' => ''
-		);*/
-		
-		
-//		printr( $session, 'session data ( ' . __FUNCTION__ . ' on line: ' .  __LINE__ . ' )' ); die();
-//		die();	
-
-		/*$success = $txn_results['approved'];
-		do_action( 'AHEE_after_payment', $EE_Session, $success );
-		
-		require_once ( EE_MODELS . 'EEM_Transaction.model.php' );
-		$transaction = $session['transaction'];
-		
-		$transaction->set_paid($txn_results['amount']);
-		$transaction->set_details( $txn_results );
-		//$txn_status = $this->_TXN->pending_status_code;//'TPN';
-		$transaction->set_status(EEM_Transaction::open_status_code);
-		//update our local session data with what's in teh session singleton
-		$session = $EE_Session->get_session_data();
-		unset( $session['transaction'] );
-		$transaction->set_txn_session_data( $session );
-		if (isset($session['taxes'])) {
-			$tax_data = array('taxes' => $session['taxes'], 'tax_totals' => $session['tax_totals']);
-			$transaction->set_tax_data($tax_data);
-		}
-		$transaction->update();*/
 		
 	}
 	

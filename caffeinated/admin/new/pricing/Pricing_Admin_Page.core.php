@@ -161,6 +161,24 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
+		$pricing_help_tabs = array(
+						'type_field_info' => array(
+							'title' => __('Type', 'event_espresso'),
+							'callback' => 'type_field_info_help_tab'
+							),
+						'name_field_info' => array(
+							'title' => __('Name', 'event_espresso'),
+							'callback' => 'name_field_info_help_tab'
+							),
+						'description_field_info' => array(
+							'title' => __('Description', 'event_espresso'),
+							'callback' => 'description_field_info_help_tab'
+							),
+						'amount_field_info' => array(
+							'title' => __('Amount', 'event_espresso'),
+							'callback' => 'amount_field_info_help_tab'
+							)
+						);
 		$this->_page_config = array(
 			'default' => array(
 					'nav' => array(
@@ -184,6 +202,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'persistent' => FALSE
 						),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
+					'help_tabs' => $pricing_help_tabs,
 					'require_nonce' => FALSE
 				),
 			'edit_price' => array(
@@ -194,6 +213,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'persistent' => FALSE
 						),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
+					'help_tabs' => $pricing_help_tabs,
 					'require_nonce' => FALSE
 				),
 			'price_types' => array(
@@ -222,21 +242,51 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'persistent' => FALSE
 						),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' ),
+					
 					'require_nonce' => FALSE
 				)
 		);
 	}
 
+	/**
+	 * edit price help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function edit_price_info_help_tabs( $tab ) {
+		require_once PRICING_TEMPLATE_PATH . 'edit_price_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template($template);
+	}
+	public function type_field_info_help_tab(){
+		$this->edit_price_info_help_tabs( __FUNCTION__ );
+	}
+	public function name_field_info_help_tab(){
+		$this->edit_price_info_help_tabs( __FUNCTION__ );
+	}
+	public function description_field_info_help_tab(){
+		$this->edit_price_info_help_tabs( __FUNCTION__ );
+	}
+	public function amount_field_info_help_tab(){
+		$this->edit_price_info_help_tabs( __FUNCTION__ );
+	}
 
+	
+	/**
+	 * edit price type help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function price_type_info_help_tab() {
+		$template = PRICING_TEMPLATE_PATH . 'price_type_info_help_tab.template.php';
+		EEH_Template::display_template( $template, array() );
+	}
 
 
 
 	protected function _add_screen_options() {
 		//todo
 	}
-
-
-
 
 
 	protected function _add_screen_options_default() {
@@ -348,18 +398,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				)
 		);
 	}
-
-
-
-
-	public function price_type_info_help_tab() {
-		$template = PRICING_TEMPLATE_PATH . 'price_type_info_help_tab.template.php';
-		EEH_Template::display_template( $template, array() );
-	}
-
-
-
-
 
 
 	/**

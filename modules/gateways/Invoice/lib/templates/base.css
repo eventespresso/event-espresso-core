@@ -38,3 +38,18 @@ td { vertical-align:top!important; }
 .float-left { float:left; }
 .float-right { float:right; }
 .clear { clear:both; }
+
+.ticket-time-and-place-details>div{
+	width:49%;
+	display:inline-block;
+}
+.no-bottom-margin{
+	margin-bottom:0px;
+}
+.ticket-registrations-list>li{
+	margin-top:2em;
+}
+/* classes from registration and transaction stati */
+.RNA,.RCN,.RPN, .TPN, .TIN{
+	color:red;
+}

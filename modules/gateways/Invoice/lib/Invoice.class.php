@@ -16,11 +16,11 @@ class Invoice {
 	private $invoice_settings;
 	private $EE;
 	public function __construct($url_link = 0) {
-		$this->EE = EE_Registry::instance();
+		
 		if ( $this->registration = EE_Registry::instance()->load_model( 'Registration' )->get_registration_for_reg_url_link( $url_link)) {
 			$this->transaction = $this->registration->transaction();
 			
-			$payment_settings = EE_Config::instance()->gateway->payment_settings;//get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
+			$payment_settings = EE_Config::instance()->gateway->payment_settings;//get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings', TRUE);
 			$this->invoice_settings = $payment_settings['Invoice'];
 		} else {
 			EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
@@ -29,12 +29,6 @@ class Invoice {
 	}
 
 	public function send_invoice( $download = FALSE ) {
-
-//printr($this->registration);
-//printr($this->transaction);
-//printr($this->session_data);
-//printr($this->invoice_settings);
-//exit;
 		$template_args = array();
 		$EE = EE_Registry::instance();
 
@@ -69,8 +63,8 @@ class Invoice {
 		$template_args['organization'] = stripslashes( $EE->CFG->organization->name );
 		$template_args['street'] = empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2;
 		$template_args['city'] = $EE->CFG->organization->city;
-		$template_args['state'] = $this->EE->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
-		$template_args['country'] = $this->EE->load_model( 'Country' )->get_one_by_ID( $EE->CFG->organization->CNT_ISO );
+		$template_args['state'] = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
+		$template_args['country'] = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $EE->CFG->organization->CNT_ISO );
 		$template_args['zip'] = $EE->CFG->organization->zip;
 		$template_args['email'] = $EE->CFG->organization->email;
 		$template_args['download_link'] = $this->registration->invoice_url();
@@ -122,13 +116,48 @@ class Invoice {
 		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 
+		if(isset($_GET['receipt'])){
+			//receipt-specific stuff
+			$events_for_txn = EEM_Event::instance()->get_all(array(array('Registration.TXN_ID'=>$this->transaction->ID())));
+			$ticket_line_items_per_event = array();
+			$registrations_per_line_item = array();
+			$venues_for_events = array();
+			foreach($events_for_txn as $event_id => $event){
+				$line_items_for_this_event = EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>$event_id,'TXN_ID'=>$this->transaction->ID())));
+				$ticket_line_items_per_event[$event_id] = $line_items_for_this_event;
+				foreach($line_items_for_this_event as $line_item_id => $line_item){
+					$ticket = $line_item->ticket();
+					$registrations_for_this_ticket = EEM_Registration::instance()->get_all(array(array('TKT_ID'=>$ticket->ID(),'TXN_ID'=>$this->transaction->ID())));
+					$registrations_per_line_item[$line_item_id] = $registrations_for_this_ticket;
+				}
+				$venues_for_events = array_merge($venues_for_events, $event->venues());
+			}
+			$tax_total_line_item = EEM_Line_Item::instance()->get_one(array(array('TXN_ID'=>$this->transaction->ID(),'LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
+			$attendee_columns_to_show = array('ATT_fname','ATT_lname','ATT_email','ATT_address','ATT_address2','ATT_city','STA_ID','CNT_ISO','ATT_zip','ATT_phone');
+			
+			$template_args['events_for_txn'] = $events_for_txn;
+			$template_args['ticket_line_items_per_event'] = $ticket_line_items_per_event;
+			$template_args['registrations_per_line_item'] = $registrations_per_line_item;
+			$template_args['venues_for_events'] = $venues_for_events;
+			$template_args['tax_total_line_item'] = $tax_total_line_item;
+			$template_args['attendee_columns_to_show'] = $attendee_columns_to_show;
+//			d($template_args);
+		}
+		
+		
+		
 		//require helpers
 		$EE->load_helper( 'Formatter' );
 		
 		//Get the HTML as an object
-		$this->EE->load_helper('Template');
+		EE_Registry::instance()->load_helper('Template');
 		$template_header = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
-		$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
+		if(isset($_GET['receipt'])){
+			$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/receipt_body.template.php', $template_args, TRUE );
+		}else{
+			$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
+		}
+		
 		$template_footer = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_footer.template.php', $template_args, TRUE );
 		
 		$copies =  ! empty( $_REQUEST['copies'] ) ? $_REQUEST['copies'] : 1;
@@ -215,7 +244,7 @@ class Invoice {
 				"[instructions]",
 		);
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
-		$org_state = $this->EE->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
+		$org_state = EE_Registry::instance()->load_model( 'State' )->get_one_by_ID( $EE->CFG->organization->STA_ID );
 		if($org_state){
 			$org_state_name = $org_state->name();
 		}else{
