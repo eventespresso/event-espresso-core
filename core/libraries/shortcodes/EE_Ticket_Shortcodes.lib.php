@@ -39,8 +39,7 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 			'[TICKET_ID]' => __('Will be replaced by the ticket ID of a ticket', 'event_espresso'),
 			'[TICKET_NAME]' => __('The name of the ticket', 'event_espresso'),
 			'[TICKET_DESCRIPTION]' => __('The description of the ticket', 'event_espresso'),
-			'[TICKET_PRICE]' => __('The price of the ticket', 'event_espresso'),
-			'[ATTENDEE_LIST]' => __('This will be replace by all the attendees for this ticket.', 'event_espresso')
+			'[TICKET_PRICE]' => __('The price of the ticket', 'event_espresso')
 			);
 	}
 
@@ -68,41 +67,7 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 			case '[TICKET_PRICE]' :
 				return EEH_Template::format_currency( $this->_data->get('TKT_price') );
 				break;
-
-			case '[ATTENDEE_LIST]' :
-				return $this->_get_attendee_list_for_ticket();
-				break;
 		}
-
-	}
-
-
-	/**
-	 * it is possible that there will be a attendee_list shortcode when parsing tickets.  If so then we need to trigger the parsing of the attendee list and return its content
-	 * @return string
-	 */
-	private function _get_attendee_list_for_ticket() {
-		$this->_set_shortcode_helper();
-		//first verify that the incoming $data property is EE_Ticket
-		if ( ! $this->_data instanceof EE_Ticket )
-			return '';
-
-		$template = $this->_extra_data['template']['attendee_list'];
-		$valid_shortcodes = array('attendee', 'event_list');
-		$ticket = $this->_data;
-
-		//lets' remove any existing [TICKET_LIST] shortcode from the attendee_list template so that we don't get recursion
-		$template = str_replace('[TICKET_LIST]', '', $template);
-
-		//parsin
-		$att_parsed = '';
-		$attendees = isset( $this->_extra_data['data']->tickets ) ? $this->_extra_data['data']->tickets['att_objs'] : array();
-
-		foreach ( $attendee as $attendee ) {
-			$att_parsed .= $this->_shortcode_helper->parse_attendee_list_template( $template, $attendee, $valid_shortcodes, $this->_extra_data );
-		}
-
-		return $att_parsed;
 
 	}
 

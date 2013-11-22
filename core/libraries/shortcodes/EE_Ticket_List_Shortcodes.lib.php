@@ -70,7 +70,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_ticket_list_for_main();
 
-		if ( $this->_data['data'] instanceof EE_Attendee )
+		else if ( $this->_data['data'] instanceof EE_Attendee )
 			return $this->_get_ticket_list_for_attendee();
 
 		else if ( $this->_data['data'] instanceof EE_Event )
