@@ -6,15 +6,27 @@ class EE_Money_Field extends EE_Float_Field{
 	function get_wpdb_data_type(){
 		return '%f';
 	}
+	/**
+	 * Schemas: 
+	 *	'localized_float': "3,023.00"
+	 *	'no_currency': "$3,023.00"
+	 *	null: "$3,023.00<span>USD</span>"
+	 * @param type $value_on_field_to_be_outputted
+	 * @param type $schema
+	 * @return string
+	 */
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted,$schema = null){
+		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
+		if($schema == 'localized_float'){
+			return $pretty_float;
+		}
 		EE_Registry::instance()->load_helper( 'Template' );
-		if($schema == 'schema_no_currency'){
+		if($schema == 'no_currency'){
 //			echo "schema no currency!";
 			$display_code = false;
 		}else{
 			$display_code = true;
 		}
-		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
 		return EEH_Template::format_currency( $pretty_float, false, $display_code );
 	}
 	

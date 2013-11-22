@@ -62,7 +62,7 @@ li.mt-tab {
 }
 
 #inactive-message-types li.mt-tab {
-    width: 100%%;
+    width: 100%;
 }
 
 .mt-content, li {
@@ -89,7 +89,7 @@ li.mt-tab .mt-handlediv {
 }
 
 li.mt-tab:hover .mt-handlediv {
-    background: transparent url(../../../../../../../../wp-admin/images/arrows.png) no-repeat top right;
+    background: transparent url(../../../../../../wp-admin/images/arrows.png) no-repeat top right;
     cursor: pointer;
 }
 

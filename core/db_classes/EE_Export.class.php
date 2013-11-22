@@ -72,7 +72,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	public function export() {
 	
 		require_once( EE_PLUGIN_DIR_PATH . 'includes/classes/EE_CSV.class.php' );
-		EE_Registry::instance()_CSV= EE_CSV::instance();
+//		$this->EE_CSV= EE_CSV::instance();
 
 		$this->today = date("Y-m-d",time());
 		
@@ -150,7 +150,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		
 		$filename = $this->generate_filename ( 'full-db-export' );
 
-		if ( ! EE_Registry::instance()_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
 			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
 		}
 	}	
@@ -174,7 +174,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 		$filename = $this->_req_data['all_events'] == "true" || count($event_ids) > 1 ? __('multiple-events', 'event_espresso') :	$filename;
 		$filename .= "-" . $this->today ;
-		if ( ! EE_Registry::instance()_CSV->export_array_to_csv( $table_data, $filename )) {
+		if ( ! $this->EE_CSV->export_array_to_csv( $table_data, $filename )) {
 			EE_Error::add_error(__('An error occured and the Event details could not be exported from the database.', "event_espresso"));
 		}
 	}
@@ -253,7 +253,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		
 		$filename = $this->generate_filename ( $filename );
 
-		if ( ! EE_Registry::instance()_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
 			EE_Error::add_error(__("'An error occured and the Event details could not be exported from the database.'", "event_espresso"));
 		}
 	}
@@ -272,7 +272,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$model_data = $this->_get_export_data_for_models( $models_to_export );
 		$filename = $this->generate_filename ( 'all-attendees' );
 
-		if ( ! EE_Registry::instance()_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
 			EE_Error::add_error(__('An error occured and the Attendee data could not be exported from the database.','event_espresso'));
 		}
 	}
@@ -321,7 +321,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			foreach($reg_fields_to_include as $field_name){
 				$field = $reg_model->field_settings_for($field_name);
 				if($field_name == 'REG_final_price'){
-					$value = $registration->get_pretty($field_name,'schema_no_currency');
+					$value = $registration->get_pretty($field_name,'no_currency');
 				}else{
 					$value = $registration->get_pretty($field->get_name());
 				}
@@ -404,9 +404,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$event = EEM_Event::instance()->get_one_by_ID($event_id);
 		$filename = sprintf("registrations-for-%s",$event->slug());
 
-		$handle = EE_Registry::instance()_CSV->begin_sending_csv( $filename);
-		EE_Registry::instance()_CSV->write_data_array_to_csv($handle, $registrations_csv_ready_array);
-		EE_Registry::instance()_CSV->end_sending_csv($handle);
+		$handle = $this->EE_CSV->begin_sending_csv( $filename);
+		$this->EE_CSV->write_data_array_to_csv($handle, $registrations_csv_ready_array);
+		$this->EE_CSV->end_sending_csv($handle);
 	}
 	
 	/**
@@ -452,7 +452,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$table_data = $this->_get_export_data_for_models( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-categories' );
 
-		if ( ! EE_Registry::instance()_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
 			EE_Error::add_error(__('An error occured and the Category details could not be exported from the database.','event_espresso'));
 		}
 	}
