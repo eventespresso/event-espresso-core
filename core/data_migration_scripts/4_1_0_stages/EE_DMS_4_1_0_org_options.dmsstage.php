@@ -152,9 +152,24 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'default_payment_status': 
 			  $c->registration->default_STS_ID =  $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID($value);break;
 		  case 'organization_country': 
-			  $c->organization->CNT_ISO = $this->get_migration_script()->get_iso_from_3_1_country_id($value);break;
-		  case 'currency_symbol': 
-			  $c->currency->sign = $value;break;
+			  $iso =$this->get_migration_script()->get_iso_from_3_1_country_id($value);
+			  $c->organization->CNT_ISO = $iso;
+			  $country_row = $this->get_migration_script()->get_or_create_country($iso);
+			  if( ! $country_row){
+				  $this->add_error(sprintf(__("Could not set country's currency config because no country exists for ISO %s", "event_espresso"),$iso));
+			  }
+			  //can't use EE_Currency_Config's handy constructor because the models are off-limits right now (and it uses them)
+			$c->currency->code = $country_row['CNT_cur_code']; 			// currency code: USD, CAD, EUR
+			$c->currency->name = $country_row['CNT_cur_single'];	// Dollar
+			$c->currency->plural = $country_row['CNT_cur_plural']; 	// Dollars
+			$c->currency->sign =  $country_row['CNT_cur_sign']; 			// currency sign: $
+			$c->currency->sign_b4 = intval($country_row['CNT_cur_sign_b4']); 		// currency sign before or after: $TRUE  or  FALSE$
+			$c->currency->dec_plc = intval($country_row['CNT_cur_dec_plc']);	// decimal places: 2 = 0.00  3 = 0.000
+			$c->currency->dec_mrk = $country_row['CNT_cur_dec_mrk'];	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+			$c->currency->thsnds = $country_row['CNT_cur_thsnds'];	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+//			  $c->currency = new EE_Currency_Config($c->organization->CNT_ISO);break;
+//		  case 'currency_symbol': ignore the currency symbol. we'll just go by their country.
+//			  $c->currency->sign = $value;break;
 		  case 'show_pending_payment_options': 
 			  $c->registration->show_pending_payment_options = 'Y' == $value;break;
 		  case 'display_address_in_regform': 
@@ -281,7 +296,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 	  'surcharge',//unused?
 	  'country_id',//unused?
 	  'organization_country',
-	  'currency_symbol',
+//	  'currency_symbol',
 	  'expire_on_registration_end',
 	  'email_before_payment',
 	  'email_fancy_headers',
