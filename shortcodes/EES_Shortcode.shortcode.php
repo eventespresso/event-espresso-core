@@ -82,8 +82,8 @@ abstract class EES_Shortcode extends EE_Base {
 	*	@return 	void
 	*/
 	final public function __construct( EE_Registry $EE = NULL ) {
-		$this->EE = $EE;
-		$this->theme = isset( $this->EE->CFG->template_settings->current_espresso_theme ) ? $this->EE->CFG->template_settings->current_espresso_theme : 'espresso_default';
+		
+		$this->theme = isset( EE_Registry::instance()->CFG->template_settings->current_espresso_theme ) ? EE_Registry::instance()->CFG->template_settings->current_espresso_theme : 'espresso_default';
 		// get classname, remove EES_prefix, and convert to UPPERCASE
 		$classname = get_class( $this );
 		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this ) ));

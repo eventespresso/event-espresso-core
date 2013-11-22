@@ -62,7 +62,7 @@ final class EE_Admin {
      */
 	protected function __construct() {
 		// grab registry
-		$this->EE = EE_Registry::instance();
+		
 		// define global EE_Admin constants
 		$this->_define_all_constants();
 		
@@ -135,9 +135,9 @@ final class EE_Admin {
 	 *	@return void
 	 */
 	public function get_request() {
-		$this->EE->load_helper( 'URL' );	
-		$this->EE->load_core( 'CPT_Strategy' );
-		$this->EE->load_core( 'Request_Handler' );
+		EE_Registry::instance()->load_helper( 'URL' );	
+		EE_Registry::instance()->load_core( 'CPT_Strategy' );
+		EE_Registry::instance()->load_core( 'Request_Handler' );
 	}
 
 
@@ -175,14 +175,14 @@ final class EE_Admin {
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			// bring out the pidgeons!!!
-			$this->EE->load_lib( 'Messages_Init' );
+			EE_Registry::instance()->load_lib( 'Messages_Init' );
 		}
 		
 		// run the admin page factory but ONLY if we are doing an ee admin ajax request
 		if ( !defined('DOING_AJAX') || EE_ADMIN_AJAX ) {
 			try {
 				//this loads the controller for the admin pages which will setup routing etc
-				$this->EE->load_core( 'Admin_Page_Loader' );
+				EE_Registry::instance()->load_core( 'Admin_Page_Loader' );
 			} catch ( EE_Error $e ) {
 				$e->get_error();
 			}			
@@ -211,7 +211,7 @@ final class EE_Admin {
 		if ( $post_type->name !== 'page' )
 			return $post_type;
 
-		$critical_pages = $this->EE->CFG->core->get_critical_pages_array();
+		$critical_pages = EE_Registry::instance()->CFG->core->get_critical_pages_array();
 
 		$post_type->_default_query = array(
 			'post__not_in' => $critical_pages );
@@ -412,7 +412,7 @@ final class EE_Admin {
 	public function route_admin_request() {
 		// messages loading is turned OFF by default, but prior to the AHEE__EE_Admin_Page__route_admin_request hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
-			$this->EE->load_lib( 'Messages_Init' );
+			EE_Registry::instance()->load_lib( 'Messages_Init' );
 		}
 	}
 
@@ -435,7 +435,7 @@ final class EE_Admin {
 	*/
 	public function admin_init() {
 		// pew pew pew
-		$this->EE->load_core( 'PUE' );	
+		EE_Registry::instance()->load_core( 'PUE' );	
 	}
 
 
@@ -827,25 +827,29 @@ final class EE_Admin {
 			$show_on_front = get_option('show_on_front');
 			$update_post_shortcodes = FALSE;
 			// array of shortcodes indexed by post name
-			$this->EE->CFG->core->post_shortcodes = isset( $this->EE->CFG->core->post_shortcodes ) ? $this->EE->CFG->core->post_shortcodes : array();
-			// start with a clean slate
-			$this->EE->CFG->core->post_shortcodes[ $post->post_name ] = array();
+			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
+			// array of shortcodes indexed by post ID
+			EE_Registry::instance()->CFG->core->post_id_shortcodes = isset( EE_Registry::instance()->CFG->core->post_id_shortcodes ) ? EE_Registry::instance()->CFG->core->post_id_shortcodes : array();
+			// empty both arrays
+			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
+			EE_Registry::instance()->CFG->core->post_id_shortcodes[ $post_ID ] = array();
 			// loop thru shortcodes
-			foreach ( $this->EE->shortcodes as $EES_Shortcode => $shortcode_dir ) {
+			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
 				$EES_Shortcode = strtoupper( $EES_Shortcode );
 				// is the shortcode in the post_content ?
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
-					// map shortcode to post names
-					$this->EE->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
+					// map shortcode to post names and post IDs
+					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
+					EE_Registry::instance()->CFG->core->post_id_shortcodes[ $post_ID ][ $EES_Shortcode ] = $post_ID;
 					// and to frontpage in case it's displaying latest posts (don't need to track IDs for this)
-					$this->EE->CFG->core->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
+					EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
 					$update_post_shortcodes = TRUE;
 				} 
 			}
 			
 			if ( $update_post_shortcodes ) {
-				$this->EE->CFG->update_post_shortcodes();
+				EE_Registry::instance()->CFG->update_post_shortcodes();
 			}			
 		}
 	}

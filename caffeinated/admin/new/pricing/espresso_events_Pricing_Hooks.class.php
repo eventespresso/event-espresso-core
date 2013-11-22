@@ -147,7 +147,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 			
 			if ( !empty( $dtt['DTT_ID'] ) ) {
-				$DTM = $this->EE->load_model('Datetime', array($timezone) )->get_one_by_ID($dtt['DTT_ID'] );
+				$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) )->get_one_by_ID($dtt['DTT_ID'] );
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
@@ -155,7 +155,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[$DTM->ID()] = $DTM;
 			} else {
-				$DTM = $this->EE->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
+				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
 			}
 			
 			$DTM->save();			
@@ -164,7 +164,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
-				$this->EE->load_helper('DTT_Helper');
+				EE_Registry::instance()->load_helper('DTT_Helper');
 				$DTT = EEH_DTT_helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
 			}
@@ -187,7 +187,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				if ( empty( $id ) )
 					continue;
 
-				$dtt_to_remove = $this->EE->load_model('Datetime')->get_one_by_ID($id);
+				$dtt_to_remove = EE_Registry::instance()->load_model('Datetime')->get_one_by_ID($id);
 
 				//remove tkt relationships.
 				$related_tickets = $dtt_to_remove->get_many_related('Ticket');
@@ -267,7 +267,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
 			
 			if ( !empty( $TKT_values['TKT_ID'] ) ) {
-				$TKT = $this->EE->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
+				$TKT = EE_Registry::instance()->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
 
 				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
 
@@ -309,7 +309,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			} else {
 				//no TKT_id so a new TKT
 				$TKT_values['TKT_price'] = $ticket_price;
-				$TKT = $this->EE->load_class('Ticket', array( $TKT_values, $timezone ), FALSE, FALSE );
+				$TKT = EE_Registry::instance()->load_class('Ticket', array( $TKT_values, $timezone ), FALSE, FALSE );
 				$update_prices = TRUE;
 			}
 
@@ -382,7 +382,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$id = absint( $id );
 
 			//get the ticket for this id
-			$tkt_to_remove = $this->EE->load_model('Ticket')->get_one_by_ID($id);
+			$tkt_to_remove = EE_Registry::instance()->load_model('Ticket')->get_one_by_ID($id);
 
 			//if this tkt is a default tkt we leave it alone cause it won't be attached to the datetime
 			if ( $tkt_to_remove->get('TKT_is_default') )
@@ -431,9 +431,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			if ( $new_prices || empty( $PRC_values['PRC_ID'] ) ) {
 				$PRC_values['PRC_ID'] = 0;
-				$PRC = $this->EE->load_class('Price', array( $PRC_values ), FALSE, FALSE);
+				$PRC = EE_Registry::instance()->load_class('Price', array( $PRC_values ), FALSE, FALSE);
 			} else {
-				$PRC = $this->EE->load_model( 'Price' )->get_one_by_ID( $prc['PRC_ID'] );
+				$PRC = EE_Registry::instance()->load_model( 'Price' )->get_one_by_ID( $prc['PRC_ID'] );
 				//update this price with new values
 				foreach ( $PRC_values as $field => $newprc ) {
 					$PRC->set( $field, $newprc );
@@ -500,7 +500,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 * 3. For each ticket get related prices
 		 */
 		
-		$DTM = $this->EE->load_model('Datetime', array($timezone) );
+		$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) );
 		$times = $DTM->get_all_event_dates( $event_id );
 
 		
@@ -516,7 +516,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
 			if ( empty ( $related_tickets ) && empty( $event_id ) ) {
-				$related_tickets = $this->EE->load_model('Ticket')->get_all_default_tickets();
+				$related_tickets = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
 			}
 
 
@@ -692,7 +692,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'ticket_template_id' => $default ? 1 : $ticket->get('TTM_ID'),
 			'TKT_taxable' => !empty( $ticket ) && $ticket->get('TKT_taxable') ? ' checked="checked"' : '',
 			'display_subtotal' => !empty( $ticket ) && $ticket->get('TKT_taxable') ? '' : ' style="display:none"',
-			'price_currency_symbol' => $this->EE->CFG->currency->sign,
+			'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
 			'TKT_subtotal_amount_display' => EEH_Template::format_currency($ticket_subtotal, FALSE, FALSE ),
 			'TKT_subtotal_amount' => $ticket_subtotal,
 			'tax_rows' => $this->_get_tax_rows( $tktrow, $ticket ),
@@ -784,7 +784,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'PRC_ID' => $default && empty($price) ? 0 : $price->ID(),
 			'PRC_is_default' => $default && empty($price) ? 0 : $price->get('PRC_is_default'),
 			'PRC_name' => $default && empty($price) ? '' : $price->get('PRC_name'),
-			'price_currency_symbol' => $this->EE->CFG->currency->sign,
+			'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
 			'show_plus_or_minus' => $default && empty($price) ? '' : ' style="display:none;"',
 			'show_plus' => $default && empty( $price ) ? ' style="display:none;"' : ( $price->is_discount() || $price->is_base_price() ? ' style="display:none;"' : ''),
 			'show_minus' => $default && empty( $price ) ? ' style="display:none;"' : ($price->is_discount() ? '' : ' style="display:none;"'),
@@ -830,7 +830,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	private function _get_price_modifier_template( $tktrow, $prcrow, $price, $default ) {
 		$select_name = $default && empty( $price ) ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]' : 'edit_prices[' . $tktrow . '][' . $prcrow . '][PRT_ID]';
-		$price_types = $this->EE->load_model('Price_Type')->get_all(array( array('OR' => array('PBT_ID' => '2', 'PBT_ID*' => '3' ) ) ) );
+		$price_types = EE_Registry::instance()->load_model('Price_Type')->get_all(array( array('OR' => array('PBT_ID' => '2', 'PBT_ID*' => '3' ) ) ) );
 		$price_option_span_template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_option_span.template.php';
 		$all_price_types = $default && empty( $price ) ? array(array('id' => 0, 'text' => __('Select Modifier', 'event_espresso')) ) : array();
 		$selected_price_type_id = $default && empty( $price ) ? 0 : $price->type();
@@ -914,7 +914,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dttrow++;
 		}
 
-		$default_prices = $this->EE->load_model('Price')->get_all_default_prices();
+		$default_prices = EE_Registry::instance()->load_model('Price')->get_all_default_prices();
 		$prcrow = 1;
 		foreach ( $default_prices as $price ) {
 			$show_trash = ( count( $default_prices ) > 1 && $prcrow === 1 ) || count( $default_prices ) === 1  ? FALSE : TRUE;

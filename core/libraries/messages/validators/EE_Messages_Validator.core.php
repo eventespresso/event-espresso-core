@@ -184,6 +184,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//get messenger validator_config
 		$msgr_validator = $this->_MSGR->get_validator_config();
 
+
 		
 		//we only want the valid shortcodes for the given context!
 		$context = $this->_context;
@@ -199,6 +200,8 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 			$shrtcode_grps = array_merge( $config['shortcodes'], $shrtcode_grps );
 		}
+
+		$shrtcode_grps = array_unique($shrtcode_grps);
 
 		//okay now we've got our grps. Let's get the codes from the objects into an array indexed by group for easy retrieval later.
 		$codes_from_objs = array();

@@ -210,7 +210,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @param EE_Admin_Page $admin_page the calling admin_page_object
 	 */
 	public function __construct( EE_Admin_Page $adminpage ) {
-		$this->EE = EE_Registry::instance();
+		
 		$this->_adminpage_obj = $adminpage;
 		$this->_req_data = array_merge($_GET, $_POST);
 		$this->_set_defaults();

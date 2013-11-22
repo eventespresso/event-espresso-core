@@ -747,7 +747,7 @@ class EE_Event extends EE_CPT_Base{
 	public function get_ticket_with_earliest_start_time() {
 		$where['Datetime.EVT_ID'] = $this->ID();
 		$query_params = array( $where, 'order_by' => array('TKT_start_date' => 'ASC' ) );
-		return $this->EE->load_model('Ticket')->get_one($query_params);
+		return EE_Registry::instance()->load_model('Ticket')->get_one($query_params);
 	}
 
 

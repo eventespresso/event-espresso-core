@@ -88,8 +88,6 @@ class EE_Maintenance_Mode {
 	 *@return void
 	 */	
 	private function __construct() {
-		// EE registry
-		$this->EE = EE_Registry::instance();
 	}
 
 

@@ -49,7 +49,7 @@ Created by Roan Lavery
 
 #invoice table { border-collapse:collapse; width:100%;clear:both;}
 #invoice table th {text-align:left;padding:3px 4px}
-#invoice #header_row th{background-color:#67A30F; color:#fff; border-top:1px solid #67A30F}
+#invoice .header_row th{background-color:#67A30F; color:#fff; border-top:1px solid #67A30F}
 #invoice-amount td.action{border-bottom:0}
 #invoice-amount tr.odd td{background-color:#F2F2F2} 
 

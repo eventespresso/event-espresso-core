@@ -727,7 +727,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 		if ( !$billing_info){
 			return null;
 		}
-		$gateway_model = $this->EE->load_model('Gateways');
+		$gateway_model = EE_Registry::instance()->load_model('Gateways');
 		$gateway = $gateway_model->get_gateway($gateway_name);
 		if ( ! $gateway instanceof EE_Onsite_Gateway){
 			return null;

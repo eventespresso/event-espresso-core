@@ -49,7 +49,7 @@ class EE_CPT_Attendee_Strategy {
 	 */
 	public function __construct( $arguments) {
 		extract($arguments);
-		$this->EE = $EE;
+		
 		$this->CPT = $CPT;
 //		printr( $CPT, '$CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
@@ -88,7 +88,7 @@ class EE_CPT_Attendee_Strategy {
 	 *  @return 	void
 	 */
 	public function the_posts( $posts, WP_Query $wp_query) {
-		//$EVT = $this->EE->load_model( 'Event' );
+		//$EVT = EE_Registry::instance()->load_model( 'Event' );
 //		printr( $EVT, '$EVT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		$EVT_IDs = array();
 //		foreach( $WP_Query->posts as $WP_Post ) {

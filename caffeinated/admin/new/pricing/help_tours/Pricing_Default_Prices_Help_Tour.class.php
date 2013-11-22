@@ -81,35 +81,14 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -50,
 					'tipAdjustmentX' => 0,
 					)
-				),
-			70 => array(
-				'id' => 'the-list',
-				'content' => $this->_tbody_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'nubPosition' => 'left',
-					'tipAdjustmentY' => 100,
-					'tipAdjustmentX' => 200
-					)
-				),
-			
-			80 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
-					)
 				)
 			);
 	}
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Prices Admin Pages!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction to the Price Admin page!', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Pricing Admin', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('Create and edit new ticket prices you can use for your events.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -121,30 +100,22 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _name_column_stop() {
-		return '<p>' . __('about the Price name column', 'event_espresso') . '</p>';
+		return '<p>' . __('The name of your discount or surcharge, this will be seen by your customers.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _type_column_stop() {
-		return '<p>' . __('about the Price type column', 'event_espresso') . '</p>';
+		return '<p>' . __('Price Types are a way of categorizing a price and indicating how that price gets applied to a running total when a transaction occurs.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _description_column_stop() {
-		return '<p>' . __('about the Price description column', 'event_espresso') . '</p>';
+		return '<p>' . __('This is a brief description for this Price option. This is not currently not displayed to your customers.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _amount_column_stop() {
-		return '<p>' . __('about the Price amount column', 'event_espresso') . '</p>';
+		return '<p>' . __('The ticket amount before any deductions.', 'event_espresso') . '</p>';
 	}
 
-
-	protected function _tbody_stop() {
-		return '<p>' . __('about the price table in general including things like how you can sort etc.', 'event_espresso') . '</p>';
-	}
-
-	protected function _end() {
-		return '<p>' . __('That\'s it for the tour through the Price Admin!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Default Prices Tour button.  All the best with your events!', 'event_espresso') . '</p>';
-	}
 }
