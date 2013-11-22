@@ -80,6 +80,26 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$this->_events[$id]['event'] = $event;
 			$this->_events[$id]['reg_objs'] = array();
 			$this->_events[$id]['tkt_objs'] = $tickets;
+
+			$dtts = array();
+			$dttcache = array();
+			foreach ( $tickets as $ticket ) {
+				$tkts[$ticket->ID()]['ticket'] = $ticket;
+				$reldatetime = $ticket->get_many_related('Datetime');
+				$tkts[$ticket->ID()]['dtt_objs'] = $reldatetime;
+				$tkts[$ticket->ID()]['att_objs'] = $attendees;
+				foreach ( $reldatetime as $datetime ) {
+					if ( !isset( $dtts[$datetime->ID()] ) ) {
+						$this->_events[$id]['dtt_objs'][$datetime->ID()] = $datetime;
+						$dtts[$datetime->ID()]['datetime'] = $datetime;
+						$dtts[$datetime->ID()]['tkt_objs'][] = $ticket;
+						$dtts[$datetime->ID()]['evt_objs'][] = $event;
+						$dttcache[$datetime->ID()] = $datetime;
+					}
+				}
+			}
+
+
 			$this->_events[$id]['pre_approval'] = 0; //we're going to ignore the event settings for this.
 			$this->_events[$id]['total_attendees'] = count( $attendees );
 			$this->_events[$id]['att_objs'] = $attendees;
@@ -96,12 +116,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			}
 		}
 
-		foreach ( $tickets as $ticket ) {
-			$tkts[$ticket->ID()]['ticket'] = $ticket;
-			$tkts[$ticket->ID()]['att_objs'] = $attendees;
-		}
-
 		$this->tickets = $tkts;
+		$this->datetimes = $dtts;
 
 	}
 
