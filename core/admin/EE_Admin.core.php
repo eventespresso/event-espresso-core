@@ -821,14 +821,14 @@ final class EE_Admin {
 		// add CPTs
 		$CPTs = EE_Register_CPTs::get_CPTs();
 		$post_types = array_merge( $post_types, $CPTs );
-//		printr( $post_types, '$post_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
 			// post on frontpage ?
 			$show_on_front = get_option('show_on_front');
 			$update_post_shortcodes = FALSE;
+			// array of shortcodes indexed by post name
 			$this->EE->CFG->core->post_shortcodes = isset( $this->EE->CFG->core->post_shortcodes ) ? $this->EE->CFG->core->post_shortcodes : array();
+			// start with a clean slate
 			$this->EE->CFG->core->post_shortcodes[ $post->post_name ] = array();
 			// loop thru shortcodes
 			foreach ( $this->EE->shortcodes as $EES_Shortcode => $shortcode_dir ) {
@@ -836,9 +836,9 @@ final class EE_Admin {
 				$EES_Shortcode = strtoupper( $EES_Shortcode );
 				// is the shortcode in the post_content ?
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
-					// map shortcode to post
+					// map shortcode to post names
 					$this->EE->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
-					// and to frontpage in case it's displaying latest posts
+					// and to frontpage in case it's displaying latest posts (don't need to track IDs for this)
 					$this->EE->CFG->core->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
 					$update_post_shortcodes = TRUE;
 				} 
