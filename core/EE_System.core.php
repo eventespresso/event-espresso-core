@@ -124,6 +124,7 @@ final class EE_System {
 		//we gave addons a chance to register themselves before detecting the request type
 		//and deciding whether or nto to set maintenance mode
 		// check for plugin activation/upgrade/installation
+		
 		$this->_manage_activation_process();
 		
 		// let's get it started		
@@ -186,6 +187,10 @@ final class EE_System {
 	* @return void
 	*/
 	private function _manage_activation_process() {
+		//let's ONLY do this method IF we're in admin and user IS logged in.
+		if ( !is_admin() || ( is_admin() && !is_user_logged_in() ) )
+			return;
+
 		// check if db has been updated, or if its a brand-new installation
 		
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
