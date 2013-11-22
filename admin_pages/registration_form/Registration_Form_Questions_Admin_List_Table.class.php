@@ -64,7 +64,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 			'admin_label' => __('Admin Label', 'event_espresso'),
 			'type' => __('Type', 'event_espresso'),
 			'values' => __('Values', 'event_espresso'),
-			'required' => __('Required', 'event_espresso')
+			'required' => __('Req', 'event_espresso')
 			);
 
 		$this->_sortable_columns = array(

@@ -79,7 +79,17 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_type_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => -15
+					)
+				),
+			55 => array(
+				'id' => 'values',
+				'content' => $this->_values_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => -15
 					)
 				),
 			60 => array(
@@ -96,8 +106,8 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Registration Form Questions overview page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ... ', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Registration Questions', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('Creating the perfect registration form has never been easier. Manage and organize (using drag and drop) your questions and question groups here.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
@@ -109,26 +119,30 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _add_new_question_stop() {
-		return '<p>' . __("click here to add a new question.", 'event_espresso') . '</p>';
+		return '<p>' . __("Click here to add a new question.", 'event_espresso') . '</p>';
 	}
 
 
 	protected function _display_text_stop() {
-		return '<p>' . __('about the question column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column lists all your available questions. Questions can be reordered by dragging and dropping them to the desired location. The question title is what is seen on your registration form.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _admin_label_stop() {
-		return '<p>' . __('about the admin label column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column shows you the admin name for the question alongside any other pertinent data such as informing you that it is a system question.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _type_stop() {
-		return '<p>' . __('about the question type column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column will inform you about the type of input field used by the question, such as drop down, text or text area.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _values_stop() {
+		return '<p>' . __('This column will display the stored values for checkboxes, radio buttons, and select boxes.', 'event_espresso') . '</p>';
 	}
 
 	protected function _required_stop() {
-		return '<p>' . __('about the required column', 'event_espresso') . '</p>';
+		return '<p>' . __('Here you can see if a question is a required question or not.', 'event_espresso') . '</p>';
 	}
 
 }

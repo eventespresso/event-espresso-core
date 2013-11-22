@@ -55,7 +55,7 @@ div#company-address strong { color:#fff }
 #invoice-amount { border-collapse:collapse; width:100%; clear:both; background-color:#eee; border-right:1px solid #000; border-left:1px solid #000; border-top:1px solid #000 }
 
 #invoice table th { text-align:left;padding: 4px 5px 4px 5px }
-#invoice #header_row th{ color:#000; border-bottom:1px solid #000 }
+#invoice .header_row th{ color:#000; border-bottom:1px solid #000 }
 #invoice-amount td.action { border-bottom:0 }
 
 #invoice-amount #total_tr td { border-bottom:0; background-color:#000; color:#fff }
