@@ -610,7 +610,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_values = array(
 			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => !empty( $this->_req_data['display_reg_form'] ) ? 1 : 0,
-			'EVT_allow_multiple' => !empty( $this->_req_data['allow_multiple'] ) ? 1 : 0,
 			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
 			'EVT_require_pre_approval' => !empty( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
 			'EVT_member_only' => !empty( $this->_req_data['member_only'] ) ? 1 : 0,
@@ -675,7 +674,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _default_venue_update( $evtobj, $data ) {
 		require_once( EE_MODELS . 'EEM_Venue.model.php' );
-		$venue_model = $this->EE->load_model('Venue');
+		$venue_model = EE_Registry::instance()->load_model('Venue');
 		$rows_affected = NULL;
 		$venue_id = !empty( $data['venue_id'] ) ? $data['venue_id'] : NULL;
 
@@ -746,7 +745,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 			
 			if ( !empty( $dtt['DTT_ID'] ) ) {
-				$DTM = $this->EE->load_model('Datetime')->get_one_by_ID($dtt['DTT_ID'] );
+				$DTM = EE_Registry::instance()->load_model('Datetime')->get_one_by_ID($dtt['DTT_ID'] );
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
@@ -755,7 +754,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[$DTM->ID()] = $DTM;
 			} else {
-				$DTM = $this->EE->load_class('Datetime', array( $datetime_values ), FALSE, FALSE );
+				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values ), FALSE, FALSE );
 			}
 			
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
@@ -812,7 +811,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
 			
 			if ( !empty( $tkt['TKT_ID'] ) ) {
-				$TKT = $this->EE->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
+				$TKT = EE_Registry::instance()->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
 
 
 				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
@@ -851,7 +850,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			} else {
 				//no TKT_id so a new TKT
 				$TKT_values['TKT_price'] = $ticket_price;
-				$TKT = $this->EE->load_class('Ticket', array( $TKT_values ), FALSE, FALSE );
+				$TKT = EE_Registry::instance()->load_class('Ticket', array( $TKT_values ), FALSE, FALSE );
 				$update_prices = TRUE;
 			}
 
@@ -881,7 +880,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$id = absint( $id );
 
 			//get the ticket for this id
-			$tkt_to_remove = $this->EE->load_model('Ticket')->get_one_by_ID($id);
+			$tkt_to_remove = EE_Registry::instance()->load_model('Ticket')->get_one_by_ID($id);
 
 			//need to get all the related datetimes on this ticket and remove from every single one of them (remember this process can ONLY kick off if there are NO tkts_sold)
 			$dtts = $tkt_to_remove->get_many_related('Datetime');
@@ -924,9 +923,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			if ( $new_prices || empty( $PRC_values['PRC_ID'] ) ) {
 				$PRC_values['PRC_ID'] = 0;
-				$PRC = $this->EE->load_class('Price', array( $PRC_values ), FALSE, FALSE);
+				$PRC = EE_Registry::instance()->load_class('Price', array( $PRC_values ), FALSE, FALSE);
 			} else {
-				$PRC = $this->EE->load_model( 'Price' )->get_one_by_ID( $prc['PRC_ID'] );
+				$PRC = EE_Registry::instance()->load_model( 'Price' )->get_one_by_ID( $prc['PRC_ID'] );
 				//update this price with new values
 				foreach ( $PRC_values as $field => $newprc ) {
 					$PRC->set( $field, $newprc );
@@ -1107,7 +1106,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		 * 3. For each ticket get related prices
 		 */
 		
-		$DTM_MDL = $this->EE->load_model('Datetime' );
+		$DTM_MDL = EE_Registry::instance()->load_model('Datetime' );
 		$times = $DTM_MDL->get_all_event_dates( $event_id );
 
 		require_once(EE_MODELS . 'EEM_Datetime.model.php');
@@ -1133,13 +1132,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					}
 				} else {
 					$template_args['total_ticket_rows'] = 1;
-					$ticket = $this->EE->load_model('Ticket')->create_default_object();
+					$ticket = EE_Registry::instance()->load_model('Ticket')->create_default_object();
 					$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket );
 				}
 			}
 		} else {
 			$template_args['time'] = $times[0];
-			$ticket = $this->EE->load_model('Ticket')->get_all_default_tickets();
+			$ticket = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
 			$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket[1] ); //note we're just sending the first default row (decaf can't manage default tickets so this should be sufficent);
 		}
 
@@ -1147,7 +1146,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['ticket_options_help_link'] = $this->_get_help_tab_link('ticket_options_info');
 		$template_args['existing_datetime_ids'] = implode(',', $existing_datetime_ids);
 		$template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
-		$template_args['ticket_js_structure'] = $this->_get_ticket_row( $this->EE->load_model('Ticket')->create_default_object(), TRUE );
+		$template_args['ticket_js_structure'] = $this->_get_ticket_row( EE_Registry::instance()->load_model('Ticket')->create_default_object(), TRUE );
 		$template = apply_filters( 'FHEE__Events_Admin_Page__ticket_metabox__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php' );
 		EEH_Template::display_template($template, $template_args);
 	}
@@ -1178,11 +1177,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 
-		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none')) : $this->EE->load_model('Price')->create_default_object();
+		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none')) : EE_Registry::instance()->load_model('Price')->create_default_object();
 
 
 		$price_args = array(
-			'price_currency_symbol' => $this->EE->CFG->currency->sign,
+			'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
 			'PRC_amount' => $price->get('PRC_amount'),
 			'PRT_ID' => $price->get('PRT_ID'),
 			'PRC_ID' => $price->get('PRC_ID'),
@@ -1208,8 +1207,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//$template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
-		$template_args['allow_group_reg_select'] = EEH_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
-		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
+		$template_args['additional_limit'] = (int) $this->_cpt_model_obj->additional_limit() < 1 ? 1 : $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
@@ -1232,8 +1230,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 
 		//states and countries model
-		$states = $this->EE->load_model('State')->get_all_active_states();
-		$countries = $this->EE->load_model('Country')->get_all_active_countries();
+		$states = EE_Registry::instance()->load_model('State')->get_all_active_states();
+		$countries = EE_Registry::instance()->load_model('Country')->get_all_active_countries();
 
 		//prepare state/country arrays
 		foreach ( $states as $id => $obj ) {
@@ -1244,7 +1242,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$ctry_ary[$id] = $obj->name();
 		}
 
-		$VNM = $this->EE->load_model('Venue');
+		$VNM = EE_Registry::instance()->load_model('Venue');
 		//first let's see if we have a venue already
 		$evnt_id = $this->_cpt_model_obj->ID();
 		$venue = !empty( $evnt_id ) ? $this->_cpt_model_obj->venues() : NULL;
@@ -1691,10 +1689,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['values'] = $this->_yes_no_values;
 
 		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array('RCN', 'RNA'));
-		$this->_template_args['default_reg_status'] = isset( $this->EE->CFG->registration->default_STS_ID ) ? sanitize_text_field( $this->EE->CFG->registration->default_STS_ID ) : 'RPN';
-		$this->_template_args['pending_counts_reg_limit'] = isset( $this->EE->CFG->registration->pending_counts_reg_limit ) ? sanitize_text_field( $this->EE->CFG->registration->pending_counts_reg_limit ) : TRUE;
+		$this->_template_args['default_reg_status'] = isset( EE_Registry::instance()->CFG->registration->default_STS_ID ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID ) : 'RPN';
+		$this->_template_args['pending_counts_reg_limit'] = isset( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ) : TRUE;
 
-		$this->_template_args['use_attendee_pre_approval'] = isset( $this->EE->CFG->registration->use_attendee_pre_approval ) ? $this->EE->CFG->registration->use_attendee_pre_approval : FALSE;
+		$this->_template_args['use_attendee_pre_approval'] = isset( EE_Registry::instance()->CFG->registration->use_attendee_pre_approval ) ? EE_Registry::instance()->CFG->registration->use_attendee_pre_approval : FALSE;
 
 		$this->_set_add_edit_form_tags('update_default_event_settings');
 		$this->_set_publish_post_box_vars(NULL, FALSE, FALSE, NULL, FALSE);

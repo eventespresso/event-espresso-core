@@ -546,8 +546,7 @@ class EEH_Form_Fields {
 		if ( isset( $QFI->QST_admin_only) && $QFI->QST_admin_only && ! is_admin() ) {
 			return;
 		}
-//		if ( $QFI->get('QST_display_text') == 'Currency Sign' ) 
-//		printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 		$QFI = self::_load_system_dropdowns( $QFI );
 
 		$display_text = $QFI->get('QST_display_text');
@@ -1011,7 +1010,18 @@ class EEH_Form_Fields {
 	 * @return string 
 	 */
 	static function prep_question( $question ){
-		return htmlspecialchars( trim( stripslashes( str_replace( '&#039;', "'", $question ))), ENT_QUOTES, 'UTF-8' );
+		
+		$link = '';
+		// does this label have a help link attached ?
+		if ( strpos( $question, '<a ' ) !== FALSE ) {
+			$qbits = explode( '<a ', $question );
+			foreach ( $qbits as $qbit ) {
+				$link = strpos( $qbit, 'title="' ) !== FALSE ? $qbit : $link;
+				$question = strpos( $qbit, 'title="' ) === FALSE ? $qbit : $question;
+			}
+			$link = '<a ' . $link;
+		}		
+		return htmlspecialchars( trim( stripslashes( str_replace( '&#039;', "'", $question ))), ENT_QUOTES, 'UTF-8' ) . ' ' . $link;
 	}
 
 

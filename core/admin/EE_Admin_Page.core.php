@@ -141,7 +141,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 		);
 
-		$this->EE = EE_Registry::instance();
+		
 
 		//set the _req_data property.
 		$this->_req_data = array_merge( $_GET, $_POST );
@@ -455,7 +455,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		$this->EE->load_helper('Template');
+		EE_Registry::instance()->load_helper('Template');
 
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
@@ -1013,7 +1013,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_help_tour = array();
 		
 		//exit early if help tours are turned off globally
-		if ( ! $this->EE->CFG->admin->help_tour_activation )
+		if ( ! EE_Registry::instance()->CFG->admin->help_tour_activation )
 			return;
 
 		//loop through _page_config to find any help_tour defined

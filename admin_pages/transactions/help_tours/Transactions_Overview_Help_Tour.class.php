@@ -70,7 +70,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_status_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => -10
 					)
 				),
 			50 => array(
@@ -78,7 +79,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_total_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentY' => -20,
+					'tipAdjustmentX' => 5
 					)
 				),
 			60 => array(
@@ -87,7 +89,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => -15
+					'tipAdjustmentX' => 5
 					)
 				),
 			70 => array(
@@ -111,7 +113,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_event_name_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentY' => -15
 					)
 				),
 			100 => array(
@@ -135,8 +137,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Transaction overview page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Transaction Overview', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('The transactions page provides you with all the information about the tickets purchased for your events.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -148,42 +150,42 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _stop_about_filters() {
-		return '<p>' . __('You can filter the transactions in this list by blah blah blah', 'event_espresso') . '</p>';
+		return '<p>' . __('Use these date fields to filter your results by purchase date.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _txn_timestamp_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column lists the date the transaction was made.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _txn_status_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('Here you will see the current status of the transaction, whether it is complete, pending or incomplete.', 'event_espresso') . '</p>';
 	}
 
+	protected function _txn_total_stop() {
+		return '<p>' . __('This amount is for all the events and tickets purchased in the single transaction.', 'event_espresso') . '</p>';
+	}
+	
 	protected function _txn_paid_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column will show you how much has been paid. If the value matches the value in the Total column, then they have fully paid.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the name of the primary registrant.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_email_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('The primary registrants email address.', 'event_espresso') . '</p>';
 	}
 
 	protected function _event_name_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
-	}
-
-	protected function _txn_total_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('The name of the event.', 'event_espresso') . '</p>';
 	}
 
 	protected function _actions_stop() {
-		return '<p>' . __('about the actions column', 'event_espresso') . '</p>';
+		return '<p>' . __('These actions provide extra functionality such as seeing the customers invoice, or sending a payment reminder.', 'event_espresso') . '</p>';
 	}
 
 	protected function _legend_stop() {

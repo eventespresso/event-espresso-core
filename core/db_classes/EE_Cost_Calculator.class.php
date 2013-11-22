@@ -76,9 +76,9 @@ class EE_Cost_Calculator extends EE_BASE {
 			return FALSE;
 		}
 		// load registry and models
-		$this->EE = EE_Registry::instance();	
-		$this->_PRC_MDL = $this->EE->load_model( 'Price' );
-		$this->_PRT_MDL = $this->EE->load_model( 'Price_Type' );
+			
+		$this->_PRC_MDL = EE_Registry::instance()->load_model( 'Price' );
+		$this->_PRT_MDL = EE_Registry::instance()->load_model( 'Price_Type' );
 		
 		$this->_get_all_event_prices_and_modifiers( $EVT_ID );
 		

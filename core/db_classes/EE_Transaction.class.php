@@ -85,14 +85,14 @@ class EE_Transaction extends EE_Base_Class{
 	
 	
 	
-    /**
-    *	session data
+	/**
+	*	session data
 	* 
-    *	dump off the entire session object 
+	*	EE_Sesssion session_data array from when this txn was generated
 	* 
 	*	@access	protected
-    *	@var string	
-    */
+	*	@var array	
+	*/
 	protected $_TXN_session_data = NULL;	
 	
 	
@@ -251,10 +251,15 @@ class EE_Transaction extends EE_Base_Class{
 	*		Set session data within the TXN object
 	* 
 	* 		@access		public		
-	*		@param		string		$details 		dump off the entire session object 
+	*		@param		NULL  $session_data 
 	*/	
-	public function set_txn_session_data( $session_data = FALSE ) {	
-		return	$this->set('TXN_session_data',$session_data);
+	public function set_txn_session_data( $session_data ) {
+		if ( $session_data instanceof EE_Session ) {
+			return $this->set( 'TXN_session_data', $session_data->get_session_data() );
+		} else {
+			return $this->set( 'TXN_session_data', $session_data );
+		}
+		return FALSE;			
 	}
 
 
@@ -439,7 +444,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Payment[]
 	 */
 	public function approved_payments(){
-		$this->EE->load_model( 'Payment' );
+		EE_Registry::instance()->load_model( 'Payment' );
 		return $this->get_many_related('Payment', array(array('STS_ID'=>  EEM_Payment::status_id_approved), 'order_by'=>array('PAY_timestamp' =>'DESC')));
 	}
 	
@@ -668,13 +673,13 @@ class EE_Transaction extends EE_Base_Class{
 		foreach ( $this->get_many_related('Registration') as $registration ) {
 			$registration->finalize();
 		}
-		if (( ! is_admin() || $this->EE->REQ->is_set( 'ee_front_ajax' ) && $this->EE->REQ->get( 'ee_front_ajax' )) && ! $this->EE->REQ->is_set( 'e_reg_url_link' )) {
-			//remove the session from the transaction before saving it to the db to minimize recursive relationships
+		if (( ! is_admin() || EE_Registry::instance()->REQ->is_set( 'ee_front_ajax' ) && EE_Registry::instance()->REQ->get( 'ee_front_ajax' )) && ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+//			//remove the session from the transaction before saving it to the db to minimize recursive relationships
 			$this->set_txn_session_data( NULL );
-			// save registrations and transaction to the session
-			$this->EE->SSN->set_session_data( array( 'transaction' => $this ));
-			// save the transactionless session back to this transaction
-			$this->set_txn_session_data( $this->EE->SSN );
+//			// save this transaction and it's registrations to the session
+			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this ));
+			// save the session (with it's sessionless transaction) back to this transaction... we need to go deeper!
+			$this->set_txn_session_data( EE_Registry::instance()->SSN );
 			// save the transaction to the db
 			$this->save();
 		}
@@ -721,6 +726,39 @@ class EE_Transaction extends EE_Base_Class{
 	}
 
 
+
+	
+	/**
+	 * process EE_Transaction object prior to serialization
+	 * @return array
+	 */
+	public function __sleep() {
+		// the transaction stores a record of the session_data array, and the session_data array has a copy of the transaction
+		if ( isset( $this->_TXN_session_data['transaction'] ) && $this->_TXN_session_data['transaction'] instanceof EE_Transaction ) {
+			// but we don't want that copy of the transaction
+			$this->_TXN_session_data['transaction'] = NULL;
+		}		
+		
+		$properties_to_serialize = array(
+			'_TXN_ID',
+			'_TXN_timestamp',
+			'_TXN_total',
+			'_TXN_paid',
+			'_STS_ID',
+			'_TXN_session_data',
+			'_TXN_hash_salt',
+			'_TXN_tax_data',
+			'dt_frmt',
+			'_Registration',
+			'_Payment',
+			'_Status',
+			'_Promotion_Object',
+			'_Line_Item',
+			'_Extra_Meta'
+		);
+
+		return $properties_to_serialize;
+	}
 
 
 

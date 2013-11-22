@@ -44,7 +44,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[FNAME]' => __('First Name of an attendee', 'event_espresso'),
 			'[LNAME]' => __('Last Name of an attendee', 'event_espresso'),
-			'[EDIT_ATTENDEE_LINK]' => __('Edit Attendee Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso'),
+			'[EDIT_ATTENDEE_LINK]' => __('Edit Attendee Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso')
 			);
 	}
 
@@ -66,6 +66,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 			case '[EDIT_ATTENDEE_LINK]' :
 				return $this->_get_attendee_edit_link();
+				break;
 		}
 	}
 
@@ -91,6 +92,5 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 		return $url;
 	}
-
 
 } //end EE_Attendee_Shortcodes class

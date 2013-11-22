@@ -782,16 +782,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			throw new EE_Error("not yet supported");
 		}
 
-
 		if ( isset( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
-				'Event.status' => 'draft',
-				'Event.status*' => 'trash',
-				'Event.status**' => 'publish',
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
@@ -807,6 +803,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
 				'Ticket.TKT_description' => array( 'LIKE', $sstr )		
+				);
+
+			$_where['OR*'] = array(
+				'Event.status' => 'draft',
+				'Event.status*' => 'trash',
+				'Event.status**' => 'publish',
 				);
 		}
 
@@ -882,10 +884,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( is_object( $this->_registration )) {
 			$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
-			$session_object = $transaction->session_data();
-			if ( empty( $session_object ) || ! $session_object instanceof EE_Session )
-				throw new EE_Error( __('Something is wrong with the session stored on the transaction', 'event_espresso') );
-			$this->_session = $session_object->get_session_data();
+			$this->_session = $transaction->get_session_data();
 
 			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 			// add PRC_ID to title if editing 
@@ -1535,7 +1534,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['attendees'] = array();
 		$this->_template_args['attendee_notice'] = '';
-		$this->EE->load_helper('Array');
+		EE_Registry::instance()->load_helper('Array');
 		if ( empty( $registrations)  || ( is_array($registrations) &&  ! EEH_Array::get_one_item_from_array($registrations) ) ) {
 			EE_Error::add_error( __('There are no attendees attached to this registration. Something may have gone wrong with the registration', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['attendee_notice'] = EE_Error::get_notices();
@@ -1691,7 +1690,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		// gotta start with a clean slate if we're not coming here via ajax
 		if ( !defined('DOING_AJAX' ) && ( !isset($this->_req_data['processing_registration']) || isset( $this->_req_data['step_error'] ) ) )
-			$this->EE->SSN->clear_session( __CLASS__, __FUNCTION__ );
+			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		
 		$this->_template_args['event_name'] = '' ;
 		// event name
@@ -1748,7 +1747,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			);
 		
 		//if the cart is empty then we know we're at step one so we'll display ticket selector
-		$cart = $this->EE->SSN->get_session_data('cart');
+		$cart = EE_Registry::instance()->SSN->get_session_data('cart');
 		$step = empty( $cart ) ? 'ticket' : 'questions';
 
 		switch ( $step ) {
@@ -1875,7 +1874,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function _process_registration_step() {
 		$this->_set_reg_event();
 		//what step are we on?
-		$cart = $this->EE->SSN->get_session_data( 'cart' );
+		$cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
 		$step = empty( $cart ) ? 'ticket' : 'questions';
 
 		//if doing ajax then we need to verify the nonce

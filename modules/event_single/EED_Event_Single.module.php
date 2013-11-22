@@ -72,7 +72,7 @@ class EED_Event_Single  extends EED_Module {
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 //		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
-		$this->EE->load_helper( 'Venue_View' );
+		EE_Registry::instance()->load_helper( 'Venue_View' );
 	}
 
 
@@ -205,7 +205,7 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function the_content( $content ) {
-		//$content .= printr( $this->EE, 'EE_Registry  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//$content .= printr( EE_Registry::instance(), 'EE_Registry  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$content .= $this->ouput;
 		return $content;
 	}

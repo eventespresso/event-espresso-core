@@ -28,6 +28,15 @@ EE_Registry::instance(); //makes sure EE_Base gets loaded.
 class EE_Brewing_Regular extends EE_Base {
 
 	public function __construct() {
+		//defined some new constants related to caffeinated folder
+		if ( !defined('EE_CAF_PATH') ) {
+			define('EE_CAF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS);
+			define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
+			define('EE_CAF_CORE', EE_CAF_PATH . 'core' . DS);
+			define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS);
+		}
+
+
 		$this->_run_now();
 		add_action( 'init', array( $this, 'on_init' ), 2 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'on_wp_enqueue_scripts'), 10 );
@@ -192,6 +201,7 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Register_CPTs__get_taxonomies', array( $this, 'filter_taxonomies' ), 10 );
 		add_filter('FHEE__EE_Register_CPTs__get_CPTs', array( $this, 'filter_cpts' ), 10 );
 		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
+		add_filter('FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( $this, 'messages_autoload_paths'), 10 );
 	}
 
 
@@ -223,6 +233,17 @@ class EE_Brewing_Regular extends EE_Base {
 			'description' => __('Archive page for all venues.', 'event_espresso')
 			);
 		return $menuitems;
+	}
+
+
+	/**
+	 * This just allows us to add additional paths to the autoloader (EE_Messages_Init::autoload_messages()) for the messages system.
+	 * @param  array  $dir_ref original array of paths
+	 * @return array           appended paths
+	 */
+	public function messages_autoload_paths( $dir_ref ) {
+		$dir_ref[EE_CAF_LIBRARIES . 'shortcodes/'] = 'lib';
+		return $dir_ref;
 	}
 }
 $brewing = new EE_Brewing_Regular();

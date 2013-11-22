@@ -102,8 +102,7 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
 				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
-				'EVT_allow_multiple'=>new EE_Boolean_Field('EVT_allow_multiple', __("Allow Multiple Registrations on Same Transaction Flag", "event_espresso"), false, false),
-				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
+				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true, 1),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending, EEM_Registration::reg_status_array()),
 				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
@@ -141,7 +140,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	*		@return 		array		
 	*/	
 	public function get_all_question_groups() {
-		return $this->EE->load_model( 'Question_Group' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
 			array( 'QSG_deleted' => FALSE ),
 			'order_by' => array( 'QSG_order' => 'ASC' )
 		));
@@ -164,7 +163,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
-		return $this->EE->load_model( 'Event_Question_Group' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
 			array( 'EVT_ID' => $EVT_ID )
 		));
 	}
@@ -186,7 +185,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
-		return $this->EE->load_model( 'Event_Question_Group' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
 			array( 'EVT_ID' => $EVT_ID, 'EQG_primary' => $for_primary_attendee )
 		));
 	}
@@ -222,7 +221,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params['QSG_system'] = array( '<' =>$system_ID, '!=' => 0 );
 		}
 		
-		return $this->EE->load_model( 'Question_Group' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
 			$where_params,
 			'order_by' => 'QSG_order'
 		));
@@ -249,7 +248,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			return false;
 		}
 
-		return $this->EE->load_model( 'Question' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Question' )->get_all( array(
 			array(
 				'Question_Group.QSG_ID' => array( 'IN', $QSG_IDs ),
 				'QST_deleted' => FALSE,
@@ -280,7 +279,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			return false;
 		}
 
-		return $this->EE->load_model( 'Question_Option' )->get_all( array(
+		return EE_Registry::instance()->load_model( 'Question_Option' )->get_all( array(
 			array(
 				'Question.QST_ID' => array( 'IN', $QST_IDs ),
 				'QSO_deleted' => FALSE

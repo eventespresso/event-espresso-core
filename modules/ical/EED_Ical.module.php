@@ -63,20 +63,20 @@ class EED_Ical  extends EED_Module {
 	 */
 	public function iCal() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
-		$name = $this->EE->REQ->get( 'event_summary' ) . ".ics";
+		$name = EE_Registry::instance()->REQ->get( 'event_summary' ) . ".ics";
 		$output = "BEGIN:VCALENDAR\n" .
 						"PRODID:-//xyz Corp//NONSGML PDA Calendar Version 1.0//EN\n" .
 						"VERSION:2.0\n" .
 						"BEGIN:VEVENT\n" .
-						"DTSTAMP:" . $this->EE->REQ->get( 'currentyear' ) . $this->EE->REQ->get( 'currentmonth' ) . $this->EE->REQ->get( 'currentday' ) . "T" . $this->EE->REQ->get( 'currenttime' ) . "\n" .
-						"UID:" . $this->EE->REQ->get( 'attendee_id' ) . "@" . $this->EE->REQ->get( 'event_id' ) . "\n" .
-						"ORGANIZER:MAILTO:" . $this->EE->REQ->get( 'contact' ) . "\n" .
-						"DTSTART:" . $this->EE->REQ->get( 'startyear' ) . $this->EE->REQ->get( 'startmonth' ) . $this->EE->REQ->get( 'startday' ) . "T" . $this->EE->REQ->get( 'starttime' ) . "\n" .
-						"DTEND:" . $this->EE->REQ->get( 'endyear' ) . $this->EE->REQ->get( 'endmonth' ) . $this->EE->REQ->get( 'endday' ) . "T" . $this->EE->REQ->get( 'endtime' ) . "\n" .
+						"DTSTAMP:" . EE_Registry::instance()->REQ->get( 'currentyear' ) . EE_Registry::instance()->REQ->get( 'currentmonth' ) . EE_Registry::instance()->REQ->get( 'currentday' ) . "T" . EE_Registry::instance()->REQ->get( 'currenttime' ) . "\n" .
+						"UID:" . EE_Registry::instance()->REQ->get( 'attendee_id' ) . "@" . EE_Registry::instance()->REQ->get( 'event_id' ) . "\n" .
+						"ORGANIZER:MAILTO:" . EE_Registry::instance()->REQ->get( 'contact' ) . "\n" .
+						"DTSTART:" . EE_Registry::instance()->REQ->get( 'startyear' ) . EE_Registry::instance()->REQ->get( 'startmonth' ) . EE_Registry::instance()->REQ->get( 'startday' ) . "T" . EE_Registry::instance()->REQ->get( 'starttime' ) . "\n" .
+						"DTEND:" . EE_Registry::instance()->REQ->get( 'endyear' ) . EE_Registry::instance()->REQ->get( 'endmonth' ) . EE_Registry::instance()->REQ->get( 'endday' ) . "T" . EE_Registry::instance()->REQ->get( 'endtime' ) . "\n" .
 						"STATUS:CONFIRMED\n" .
-						"CATEGORIES:" . $this->EE->REQ->get( 'event_categories' ) . "\n" .
-						"SUMMARY:" . $this->EE->REQ->get( 'event_summary' ) . "\n" .
-						"DESCRIPTION:" . $this->EE->REQ->get( 'event_description' ) . "\n" .
+						"CATEGORIES:" . EE_Registry::instance()->REQ->get( 'event_categories' ) . "\n" .
+						"SUMMARY:" . EE_Registry::instance()->REQ->get( 'event_summary' ) . "\n" .
+						"DESCRIPTION:" . EE_Registry::instance()->REQ->get( 'event_description' ) . "\n" .
 						"END:VEVENT\n" .
 						"END:VCALENDAR";
 		if (ob_get_length())
@@ -114,7 +114,7 @@ class EED_Ical  extends EED_Module {
 		$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ea.event_id = ed.id";
 		$sql .= " WHERE ea.id = '" . $attendee_id . "'";
 		$data = $wpdb->get_row($sql, OBJECT);
-		$contact = $this->EE->CFG->contact_email;
+		$contact = EE_Registry::instance()->CFG->contact_email;
 		$start_date = strtotime($data->start_date . ' ' . $data->event_time);
 		$end_date = strtotime($data->end_date . ' ' . $data->end_time);
 		$sql = "SELECT ec.category_name FROM " . EVENTS_CATEGORY_TABLE . " ec ";

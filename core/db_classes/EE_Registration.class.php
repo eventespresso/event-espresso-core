@@ -546,7 +546,7 @@ class EE_Registration extends EE_Base_Class {
 		}else{
 			$route = 'launch_invoice';
 		}
-		return add_query_arg(array('ee'=>$route,'id'=>$this->reg_url_link()),get_permalink($this->EE->CFG->core->thank_you_page_id));
+		return add_query_arg(array('ee'=>$route,'id'=>$this->reg_url_link()),get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
 	}
 	
 	
@@ -988,7 +988,7 @@ class EE_Registration extends EE_Base_Class {
 			$update_reg = TRUE;
 		}		
 		// does this registration count towards the reg limits ?
-		if ( $this->EE->CFG->registration->pending_counts_reg_limit  || $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) {
+		if ( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit  || $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) {
 			$this->reserve_registration_space();
 		}
 			

@@ -32,11 +32,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class EE_Venue_Shortcodes extends EE_Shortcodes {
 
 
-	public function __construct() {
-		parent::__construct();
-	}
-
-
 
 	protected function _init_props() {
 		$this->label = __('Venue Shortcodes', 'event_espresso');
@@ -123,10 +118,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 	private function _venue( $db_ref ) {
 		global $wpdb;
 
-		if ( empty( $this->_data['ID'] ) )
+		if ( ! $this->_data instanceof EE_Event )
 			return ''; //we need the event in order to get a venue!
 
-		$venue = EE_Registry::instance()->load_model('Event')->get_one_by_ID($this->_data['ID'])->get_first_related('Venue');
+		$venue = $this->_data->get_first_related('Venue');
 
 		if ( empty( $venue ) )
 			return ''; //no venue so get out.

@@ -57,14 +57,6 @@ class EE_Registration_Shortcodes extends EE_Shortcodes {
 				$id = !empty($this->_data->attendee_registration_id) ? $this->_data->attendee_registration_id : '';
 				return isset( $this->_data['registration_id'] ) ? $this->_data['registration_id'] : $id;
 				break;
-
-			case '[ATTENDEE_LIST]' :
-				return isset( $this->_data->attendee_list ) ? $this->_data->attendee_list : '';
-				break;
-
-			case '[EVENT_LIST]' :
-				return isset( $this->_data->event_list ) ? $this->_data->event_list : '';
-				break;
 		}
 	}
 

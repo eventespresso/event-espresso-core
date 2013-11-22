@@ -45,7 +45,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso'),
 			'[ATTENDEE_EMAIL]' => __('Will be replaced with a properly formatted list of attendee emails who have been registered for an event', 'event_espresso'),
 			'[PRIMARY_ATTENDEE_EMAIL]' => __('This will be replaced with the properly formatted email for the primary registrant of an event', 'event_espresso'),
-			'[ADMIN_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the events in a registration', 'event_espresso')
+			'[EVENT_AUTHOR_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the events in a registration', 'event_espresso')
 			);
 	}
 
@@ -66,7 +66,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 				return $this->_data->primary_attendee_email;
 				break;
 
-			case '[ADMIN_EMAIL]' :
+			case '[EVENT_AUTHOR_EMAIL]' :
 				return $this->_get_event_admin_emails();
 				break;
 				
@@ -114,7 +114,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	/**
 	 * Returns the properly formatted admin email of a given event (or multiple events if present)
 	 *
-	 * If there is more than one event in the incoming data, we will parse the "[ADMIN_EMAIL]" shortcode so it returns the properly formatted list of all event admin emails.
+	 * If there is more than one event in the incoming data, we will parse the "[EVENT_AUTHOR_EMAIL]" shortcode so it returns the properly formatted list of all event admin emails.
 	 *
 	 *	@todo: once we have a proper event model in place let's make sure that we use it!
 	 * 	@access private

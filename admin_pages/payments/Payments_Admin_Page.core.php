@@ -143,7 +143,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 
 		$gateway_instances = EEM_Gateways::instance()->get_gateway_instances();
-		$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
+		$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
 		
 
 	
@@ -172,7 +172,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		
 		$gateway_instances = $EEM_Gateways->get_gateway_instances();
-		$payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($current_user->ID, 'payment_settings', true);
+		$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta($current_user->ID, 'payment_settings', true);
 		//lets add all the metaboxes
 		foreach( $gateway_instances as $gate_obj ) {
 			$gate_obj->add_settings_page_meta_box();
@@ -203,7 +203,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 			$gateways[$gateway] = array(
 				'label' => isset($settings['display_name']) ? $settings['display_name'] : ucwords( str_replace( '_', ' ', $gateway ) ),
-				'class' => isset($this->EE->CFG->gateway->active_gateways[$gateway])  ? 'gateway-active' : '',
+				'class' => isset(EE_Registry::instance()->CFG->gateway->active_gateways[$gateway])  ? 'gateway-active' : '',
 				'href' => 'espresso_' . str_replace(' ', '_', $gateway) . '_payment_settings',
 				'title' => __('Modify this Gateway', 'event_espresso'),
 				'slug' => $gateway
@@ -230,7 +230,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _payment_settings() {
 		
 		$this->_template_args['values'] = $this->_yes_no_values;		
-		$this->_template_args['show_pending_payment_options'] = isset( $this->EE->CFG->registration->show_pending_payment_options ) ? absint( $this->EE->CFG->registration->show_pending_payment_options ) : FALSE;
+		$this->_template_args['show_pending_payment_options'] = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) ? absint( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) : FALSE;
 
 		$this->_set_add_edit_form_tags( 'update_payment_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -248,12 +248,12 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	*		@return array
 	*/
 	protected function _update_payment_settings() {	
-		$this->EE->CFG->registration->show_pending_payment_options = isset( $this->_req_data['show_pending_payment_options'] ) ? $this->_req_data['show_pending_payment_options'] : FALSE;
-		$this->EE->CFG = apply_filters('FHEE_payment_settings_save', $this->EE->CFG );	
+		EE_Registry::instance()->CFG->registration->show_pending_payment_options = isset( $this->_req_data['show_pending_payment_options'] ) ? $this->_req_data['show_pending_payment_options'] : FALSE;
+		EE_Registry::instance()->CFG = apply_filters('FHEE_payment_settings_save', EE_Registry::instance()->CFG );	
 
 		
 		$what = __('Payment Settings','event_espresso');
-		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, __('updated','event_espresso'), array( 'action' => 'payment_settings' ) );
 				
 	}

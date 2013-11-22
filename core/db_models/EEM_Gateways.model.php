@@ -49,10 +49,10 @@ Class EEM_Gateways {
 	 * 		@access public
 	 * 		@return EEM_Gateways
 	 */
-	public static function instance() {
+	public static function instance($activation = false) {
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or ! ( self::$_instance instanceof EEM_Gateways )) {
-			self::$_instance = new self();
+			self::$_instance = new self($activation);
 		}
 		return self::$_instance;
 	}
@@ -64,19 +64,19 @@ Class EEM_Gateways {
 	 * 		@access private
 	 * 		@return void
 	 */
-	private function __construct() {
+	private function __construct($activation = false) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
-		$this->EE = EE_Registry::instance();
+		
 		
 		//so client code can check for instatiation b4 including
-		$this->EE->load_class( 'Gateway' );
-		$this->EE->load_class( 'Offline_Gateway' );
-		$this->EE->load_class( 'Offsite_Gateway' );
-		$this->EE->load_class( 'Onsite_Gateway' );	
-		$this->EE->load_core( 'Session' );	
+		EE_Registry::instance()->load_class( 'Gateway' );
+		EE_Registry::instance()->load_class( 'Offline_Gateway' );
+		EE_Registry::instance()->load_class( 'Offsite_Gateway' );
+		EE_Registry::instance()->load_class( 'Onsite_Gateway' );	
+		EE_Registry::instance()->load_core( 'Session' );	
 		define('ESPRESSO_GATEWAYS', TRUE);
-		$this->set_ajax();		
+		$this->set_ajax($activation);		
 		$this->_load_session_gateway_data();
 		$this->_load_payment_settings();
 		$this->_scan_and_load_all_gateways();
@@ -93,7 +93,7 @@ Class EEM_Gateways {
 	private function _load_session_gateway_data() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
-		$this->_session_gateway_data = $this->EE->SSN->get_session_data( 'gateway_data' );
+		$this->_session_gateway_data = EE_Registry::instance()->SSN->get_session_data( 'gateway_data' );
 		if (!empty($this->_session_gateway_data['selected_gateway'])) {
 			$this->_selected_gateway = $this->_session_gateway_data['selected_gateway'];
 		}
@@ -118,7 +118,7 @@ Class EEM_Gateways {
 	 */
 	private function _load_payment_settings() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		$this->_payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($this->EE->CFG->wp_user, 'payment_settings', TRUE);
+		$this->_payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings', TRUE);
 		if (!is_array($this->_payment_settings)) {
 			$this->_payment_settings = array();
 		}
@@ -146,12 +146,12 @@ Class EEM_Gateways {
 			$this->_load_all_gateway_files();
 		} else {
 			// if something went wrong, fail gracefully
-			if ( ! is_array($this->EE->CFG->gateway->active_gateways)) {	
+			if ( ! is_array(EE_Registry::instance()->CFG->gateway->active_gateways)) {	
 				$msg = __( 'There are no active payment gateways. Please configure at least one gateway in the Event Espresso Payment settings page.', 'event_espresso'); 
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return;
 			}
-			foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
+			foreach (EE_Registry::instance()->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 				$classname = 'EE_' . $gateway;
 				$filename = $classname . '.class.php';
 				if ($in_uploads) {
@@ -283,12 +283,12 @@ Class EEM_Gateways {
 		//$this->_payment_settings[$gateway] = $new_gateway_settings;
 		
 		//echo "updateing usermeta with paymetn settings";var_dump($this->_payment_settings);
-		$old_payment_settings = $this->EE->CFG->gateway->payment_settings;//get_user_meta($this->EE->CFG->wp_user, 'payment_settings',true);
+		$old_payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings',true);
 		$old_payment_settings[$gateway] = $new_gateway_settings;
 		$this->_payment_settings = $old_payment_settings;
-		$this->EE->CFG->gateway->payment_settings = $this->_payment_settings;
+		EE_Registry::instance()->CFG->gateway->payment_settings = $this->_payment_settings;
 
-		if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
+		if (EE_Registry::instance()->CFG->update_espresso_config( FALSE, FALSE )) {
 
 			$msg = __('Payment Settings Updated!', 'event_espresso');
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -313,8 +313,8 @@ Class EEM_Gateways {
 		if (!$gateway) {
 			return FALSE;
 		}
-		if (array_key_exists($gateway, $this->EE->CFG->gateway->active_gateways)) {
-			return array($gateway => $this->EE->CFG->gateway->active_gateways[$gateway]);
+		if (array_key_exists($gateway, EE_Registry::instance()->CFG->gateway->active_gateways)) {
+			return array($gateway => EE_Registry::instance()->CFG->gateway->active_gateways[$gateway]);
 		} else {
 			return FALSE;
 		}
@@ -356,8 +356,8 @@ Class EEM_Gateways {
 
 
 		if (array_key_exists($gateway, $this->_all_gateways)) {
-			$this->EE->CFG->gateway->active_gateways[$gateway] = $this->_all_gateways[$gateway];
-			if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
+			EE_Registry::instance()->CFG->gateway->active_gateways[$gateway] = $this->_all_gateways[$gateway];
+			if (EE_Registry::instance()->CFG->update_espresso_config( FALSE, FALSE )) {
 				$msg = sprintf( __('%s Gateway Activated!', 'event_espresso'), $this->_payment_settings[$gateway]['display_name'] );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
@@ -385,9 +385,9 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 
-		if (array_key_exists($gateway, $this->EE->CFG->gateway->active_gateways)) {
-			unset($this->EE->CFG->gateway->active_gateways[$gateway]);
-			if ($this->EE->CFG->update_espresso_config( FALSE, FALSE )) {
+		if (array_key_exists($gateway, EE_Registry::instance()->CFG->gateway->active_gateways)) {
+			unset(EE_Registry::instance()->CFG->gateway->active_gateways[$gateway]);
+			if (EE_Registry::instance()->CFG->update_espresso_config( FALSE, FALSE )) {
 				$msg = sprintf( __('%s Gateway Deactivated!', 'event_espresso'), $this->_payment_settings[$gateway]['display_name'] );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return TRUE;
@@ -411,14 +411,14 @@ Class EEM_Gateways {
 	 */
 	public function set_selected_gateway($gateway = FALSE) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (!$gateway || !array_key_exists($gateway, $this->EE->CFG->gateway->active_gateways)) {
+		if (!$gateway || !array_key_exists($gateway, EE_Registry::instance()->CFG->gateway->active_gateways)) {
 			return FALSE;
 		} 
 		
 		$this->_selected_gateway = $gateway;
 		$this->_hide_other_gateways = TRUE;
 		$this->_set_session_data();
-		foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
+		foreach (EE_Registry::instance()->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 			if ($this->_selected_gateway == $gateway) {
 				$this->_gateway_instances[$gateway]->set_selected();
 			} else {
@@ -459,7 +459,7 @@ Class EEM_Gateways {
 		$this->_selected_gateway = NULL;
 		$this->_hide_other_gateways = FALSE;
 		$this->_set_session_data();
-		foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
+		foreach (EE_Registry::instance()->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 			$this->_gateway_instances[$gateway]->unset_selected();
 		}
 		return TRUE;
@@ -484,7 +484,7 @@ Class EEM_Gateways {
 	public function selected_gateway_obj(){
 		$gateway_exists = isset($this->_gateway_instances[$this->selected_gateway()]);
 		if ( ! $gateway_exists ){
-			throw new EE_Error(sprintf(__("Payment Gateway error. Gateway %s is not available. Available gateways are: %s", "event_espresso"),$this->selected_gateway(),implode(array_keys($this->EE->CFG->gateway->active_gateways))));
+			throw new EE_Error(sprintf(__("Payment Gateway error. Gateway %s is not available. Available gateways are: %s", "event_espresso"),$this->selected_gateway(),implode(array_keys(EE_Registry::instance()->CFG->gateway->active_gateways))));
 		}
 		return $this->_gateway_instances[$this->selected_gateway()];
 	}
@@ -498,8 +498,8 @@ Class EEM_Gateways {
 	 */
 	public function set_form_url() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
-		if ( $base_url = get_permalink( $this->EE->CFG->core->reg_page_id ) ) {
-			foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
+		if ( $base_url = get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ) ) {
+			foreach (EE_Registry::instance()->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 				if (!empty($this->_gateway_instances[$gateway])) {
 					$this->_gateway_instances[$gateway]->set_form_url($base_url);
 				} else {
@@ -594,7 +594,7 @@ Class EEM_Gateways {
 						'ajax' => $this->_ajax
 				);
 		// returns TRUE or FALSE
-		return $this->EE->SSN->set_session_data( array( 'gateway_data' => $session_data ));		
+		return EE_Registry::instance()->SSN->set_session_data( array( 'gateway_data' => $session_data ));		
 
 	}
 
@@ -605,17 +605,21 @@ Class EEM_Gateways {
 	 * 		@access public
 	 * 		@return 	void
 	 */
-	public function set_ajax() {
+	public function set_ajax($activation = false) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if ( ! isset( $this->EE->REQ )) {
-			$this->EE->load_core( 'Request_Handler' );		
+		if($activation){
+			$this->_ajax = false;
+		}else{
+			if ( ! isset( EE_Registry::instance()->REQ )) {
+				EE_Registry::instance()->load_core( 'Request_Handler' );		
+			}
+			if ( ! is_bool( EE_Registry::instance()->REQ->ajax )) {
+				$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
+				$this->_ajax = FALSE;
+			} else {
+				$this->_ajax = EE_Registry::instance()->REQ->ajax;
+			}	
 		}
-		if ( ! is_bool( $this->EE->REQ->ajax )) {
-			$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
-			$this->_ajax = FALSE;
-		} else {
-			$this->_ajax = $this->EE->REQ->ajax;
-		}		
 	}
 
 
@@ -641,7 +645,7 @@ Class EEM_Gateways {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 	
-		foreach ($this->EE->CFG->gateway->active_gateways as $gateway => $in_uploads) {
+		foreach (EE_Registry::instance()->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 			if (!empty($this->_gateway_instances[$gateway])) {
 				$this->_gateway_instances[$gateway]->reset_session_data();
 			} else {
@@ -655,8 +659,8 @@ Class EEM_Gateways {
 		$this->_ajax = TRUE;
 		$this->_payment_settings = array();
 		
-		$this->EE->SSN->clear_session();
-		$this->EE->SSN->set_session_data(
+		EE_Registry::instance()->SSN->clear_session();
+		EE_Registry::instance()->SSN->set_session_data(
 			array(
 				'selected_gateway' => $this->_selected_gateway,
 				'hide_other_gateways' => $this->_hide_other_gateways,
@@ -844,16 +848,16 @@ Class EEM_Gateways {
 	private function _get_return_page_url( EE_Transaction $transaction ) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//get thank you page url
-		$return_page_url = rtrim( get_permalink( $this->EE->CFG->core->thank_you_page_id ), '/' );
+		$return_page_url = rtrim( get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ), '/' );
 		
-		$reg = $transaction->get_first_related( 'Registration' );
+		$registration = $transaction->get_first_related( 'Registration' );
 		//$reg = $transaction->primary_registration();
 //		printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		die();
-		if ( $reg ) {		
-			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$reg->reg_url_link() ), $return_page_url );
+		if ( $registration instanceof EE_Registration ) {		
+			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$registration->reg_url_link() ), $return_page_url );
 		}else{
-			throw new EE_Error(sprintf(__("Cant get return page because no current transaction is specified", "event_espresso")));
+			throw new EE_Error(sprintf(__('Could not find a valid primary registration for this transaction', "event_espresso")));
 		}
 		return $return_page_url;
 	}
@@ -968,7 +972,7 @@ Class EEM_Gateways {
 			//echo "current gateway in debug mode:";var_dump($current_gateway->debug_mode_active());
 			if($current_gateway->debug_mode_active()){		
 				$debug_output=$current_gateway->get_debug_log();
-				$success=wp_mail($this->EE->CFG->organization->email,"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,true)." output is".$debug_output);
+				$success=wp_mail(EE_Registry::instance()->CFG->organization->email,"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,true)." output is".$debug_output);
 				//echo "successful sent email?".$success;
 			}
 			

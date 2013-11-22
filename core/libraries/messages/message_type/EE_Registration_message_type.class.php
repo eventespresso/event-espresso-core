@@ -147,8 +147,9 @@ class EE_Registration_message_type extends EE_message_type {
 		
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );;
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-event-list.template.php', TRUE );;
+			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
+			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-event-list.template.php', TRUE );
+			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-ticket-list.template.php', TRUE );
 		}
 
 
@@ -199,9 +200,9 @@ class EE_Registration_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list'),
-			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list')
+			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list'),
+			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list'),
+			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list')
 			);
 	}
 
@@ -280,22 +281,30 @@ class EE_Registration_message_type extends EE_message_type {
 	protected function _attendee_addressees() {
 		$add = array();
 		//we just have to loop through the attendees.  We'll also set the attached events for each attendee.
-		foreach ( $this->_data->attendees as $index => $values ) {
+		//use to verify unique attendee emails... we don't want to sent multiple copies to the same attendee do we?
+		$already_processed = array();
+		foreach ( $this->_data->attendees as $att_id => $details ) {
 			//set the attendee array to blank on each loop;
 			$aee = array();
-			foreach ( $values as $field => $value ) {
-				$aee[$field] = $value;
+			
+			if ( in_array( $details['attendee_email'], $already_processed ) )
+				continue;
+
+			$already_processed[] = $details['attendee_email'];
+
+			foreach ( $details as $item => $value ) {
+				$aee[$item] = $value;
 				if ( $field == 'line_ref' ) {
-					foreach ( $value as $line_ref ) {
-						$aee['events'][$line_ref] = $this->_data->events[$line_ref];
+					foreach ( $value as $event_id ) {
+						$aee['events'][$event_id] = $this->_data->events[$event_id];
 					}
 				}
 
-				if ( $field == 'email' ) {
+				if ( $item == 'attendee_email' ) {
 					$aee['attendee_email'] = $value;
 				}
 
-				if ( $field == 'registration_id' ) {
+				if ( $item == 'registration_id' ) {
 					$aee['attendee_registration_id'] = $value;
 				}
 			}

@@ -75,6 +75,14 @@ abstract class EE_Shortcodes extends EE_Base {
 
 
 
+	/**
+	 * some shortcodes may require extra data to parse.  This property is provided for that.
+	 * @var array
+	 */
+	protected $_extra_data;
+
+
+
 
 	/**
 	 * This will hold an instance of the EEH_Parse_Shortcodes helper that will be used when handling list type shortcodes
@@ -115,14 +123,16 @@ abstract class EE_Shortcodes extends EE_Base {
 	/**
 	 * This is the public method for kicking of the parser included with each child.  It can be overridden by child classes if necessary (see EE_Questions_Answers for example)
 	 * @param  string $shortcode incoming shortcode to be parsed
-	 * @param  mixed (object|data) $data      incoming data to be be used for parsing
+	 * @param  mixed (object|array) $data      incoming data to be be used for parsing
+	 * @param  mixed (object|array) $extra_data extra incoming data (usually EE_Messages_Addressee)
 	 * @return string            parsed shortcode.
 	 */
-	public function parser($shortcode, $data) {
+	public function parser($shortcode, $data, $extra_data = array() ) {
 		//first we want to make sure this is a valid shortcode
 		if ( !array_key_exists($shortcode, $this->_shortcodes ) )
 			return false; //get out, this parser doesn't handle the incoming shortcode.
 		$this->_data = $data;
+		$this->_extra_data = $extra_data;
 		return $this->_parser($shortcode);
 	}
 
@@ -191,7 +201,12 @@ abstract class EE_Shortcodes extends EE_Base {
 		if ( !isset( $this->_data['data'] ) )
 			throw new EE_Error( __('The incoming data does not have the required data index in its array', 'event_espresso') );
 
-		//all is well
+		//all is well let's just reformat the _extra_data() array if present
+		//let's make sure that extra_data includes all templates (for later parsing if necessary)
+		if ( !empty( $this->_extra_data ) && is_object($this->_extra_data ) ) {
+			$this->_extra_data['data'] = $this->_extra_data;
+			$this->_extra_data['templates'] = $this->_data['template'];
+		}
 
 	}
 

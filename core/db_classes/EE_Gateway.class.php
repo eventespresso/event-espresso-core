@@ -87,7 +87,7 @@ abstract class EE_Gateway {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//echo '<h4>$this->_gateway_name : ' . $this->_gateway_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
-		$this->EE = EE_Registry::instance();
+		
 		if (!defined('GATEWAYS_ADMIN_URL')) {
 			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=espresso_payment_settings'));
 		}
@@ -156,7 +156,7 @@ abstract class EE_Gateway {
 	private function _handle_payment_settings() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//handle merging settings if we introduce new settings in the future
-		$all_payment_settings = $this->EE->CFG->gateway->payment_settings;
+		$all_payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;
 		$saved_settings = isset($all_payment_settings[$this->_gateway_name]) ? $all_payment_settings[$this->_gateway_name] : array();//$this->_EEM_Gateways->payment_settings($this->_gateway_name);
 		//get default settings
 		$this->_default_settings();
@@ -233,7 +233,7 @@ abstract class EE_Gateway {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		add_action('AHEE_display_payment_gateways', array(&$this, 'espresso_display_payment_gateways'));
 		// grab session data for this gateway
-		if ( $gateway_data = $this->EE->SSN->get_session_data( 'gateway_data' )) {
+		if ( $gateway_data = EE_Registry::instance()->SSN->get_session_data( 'gateway_data' )) {
 			if ( isset( $gateway_data[ $this->_gateway_name ] )) {
 				$this->_session_gateway_data = $gateway_data[ $this->_gateway_name ];
 				if (!empty($this->_session_gateway_data['form_url'])) {
@@ -276,7 +276,7 @@ abstract class EE_Gateway {
 		//get a registration that's currently getting processed
 		/*@var $registration EE_Registration */
 		$url=add_query_arg(array('e_reg_url_link'=>$registration->reg_url_link()),
-				get_permalink($this->EE->CFG->core->thank_you_page_id));
+				get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
 		if($urlencode){
 			$url=urlencode($url);
 		}
@@ -453,7 +453,7 @@ abstract class EE_Gateway {
 	private function _set_session_data() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
 		// get existing gateway data
-		$gateway_data = $this->EE->SSN->get_session_data( 'gateway_data' );
+		$gateway_data = EE_Registry::instance()->SSN->get_session_data( 'gateway_data' );
 		// add this gateway
 		$gateway_data[ $this->_gateway_name ] = array(
 			'form_url' => $this->_form_url,
@@ -461,7 +461,7 @@ abstract class EE_Gateway {
 			'css_class' => $this->_css_class,
 			'css_link_class' => $this->_css_link_class
 		);		
-		$this->EE->SSN->set_session_data( array( 'gateway_data' => $gateway_data ));
+		EE_Registry::instance()->SSN->set_session_data( array( 'gateway_data' => $gateway_data ));
 	}
 
 	public function reset_session_data() {
@@ -530,24 +530,7 @@ abstract class EE_Gateway {
 	 * @return boolean
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction){
-
-		$session_data = $this->EE->SSN->get_session_data();
-		//update the session as if we just updated the session
-		//...actually, I'm not sure if there's much to save. 
-//		unset($session_data['transaction']);
-//		$transaction->set_txn_session_data($session_data);
-//		$transaction->save();
-//		//now, restore the session and transaction to exactly how they were beforehand. The transaction might nto be complete
-//		$transaction->set_txn_session_data(null);
-//		$session_data['transaction'] = $transaction;
-		
-		//remove the session from the transaction before saving it to the db to minimize recursive relationships
-		$transaction->set_txn_session_data( NULL );
-		// save registrations and transaction to the session
-		$this->EE->SSN->set_session_data( array( 'transaction' => $transaction ));
-		// save the transactionless session back to this transaction
-		$transaction->set_txn_session_data( $this->EE->SSN );
-		// save the transaction to the db
+		// save the transaction to the db in case anything changed
 		$transaction->save();		
 		return true;
 	}
@@ -602,7 +585,7 @@ abstract class EE_Gateway {
 	 * @return string
 	 */
 	protected function _get_cancel_url(){
-		return get_permalink($this->EE->CFG->core->cancel_page_id);
+		return get_permalink(EE_Registry::instance()->CFG->core->cancel_page_id);
 	}
 } 
 

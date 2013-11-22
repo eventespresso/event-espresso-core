@@ -45,7 +45,7 @@ Created by Roan Lavery
 
 #invoice table { border-collapse:collapse; width:100%;font-family:"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif}
 #invoice table th {text-align:left;padding: 2px 2px 5px 2px; }
-#invoice #header_row th {color:#5F7C91; border-bottom:1px solid #3E596C}
+#invoice .header_row th {color:#5F7C91; border-bottom:1px solid #3E596C}
 #invoice table tr.odd{background-color:#EBECEB}
 #invoice-amount td.action{border-bottom:0}
 #invoice-amount #discount_tr{background-color:#F8F8F8}

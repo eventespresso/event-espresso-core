@@ -22,7 +22,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * ------------------------------------------------------------------------
  */
- class EE_Session implements Serializable {
+ class EE_Session {
 
 
   // instance of the EE_Session object
@@ -218,6 +218,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				EE_Error::add_error( sprintf( __( 'Sorry! %s is a default session datum and can not be reset.', 'event_espresso' ), $key ), __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
 			} else {
+				// are we saving a copy of the transaction ?
+				if ( $key == 'transaction' && $value instanceof EE_Transaction ) {
+					// then let's remove the session data from the transaction before we save the transaction in the session_data
+					$value->set_txn_session_data( NULL );
+				}
 				$this->_session_data[ $key ] = $value;				
 			}
 		}
@@ -346,9 +351,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 				break;
 
 				case 'pages_visited' :
-					// set pages visited where the first will be the http referrer
-					$this->_session_data[ 'pages_visited' ][ $this->_time ] = $this->_get_page_visit();
-					$session_data[ 'pages_visited' ] = $this->_session_data[ 'pages_visited' ];						
+					if ( $page_visit = $this->_get_page_visit() ) {
+						// set pages visited where the first will be the http referrer
+						$this->_session_data[ 'pages_visited' ][ $this->_time ] = $this->_get_page_visit();
+						// we'll only save the last 10 page visits.
+						$session_data[ 'pages_visited' ] = array_slice( $this->_session_data['pages_visited'], -10 );					
+					}
 				break;
 
 				default :
@@ -539,8 +547,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			} else {
 				$page_id = '?';
 			}
-			//echo '<h1>$page_id   ' . $page_id . '</h1>';
-
 			// check for $e_reg in SERVER REQUEST
 			if ( isset( $_REQUEST['ee'] )) {
 				// rebuild $e_reg without any of the extra paramaters
@@ -548,17 +554,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			} else {
 				$e_reg = '';
 			}
-			//echo '<h1>$e_reg   ' . $e_reg . '</h1>';
-
 
 			$page_visit = rtrim( $http_host . $request_uri . $page_id . $e_reg, '?' );
-			//echo '<h1>$last_page   ' . $page_visit . '</h1>';
-			
-			// if the page hasn't really changed (because of a refresh or something),
-			// then we will keep the last page that was different than the current page
-//			if ( $last_page != $prev_page ) {
-//				$this->_session_data[ 'last_page' ] = $last_page;
-//			}
 
 		}
 		
@@ -688,24 +685,24 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * Clean up object before EE_Session is saved to the db
 	 * @return string serialized object
 	 */
-	public function serialize() {
-		//first reduce the 'pages_visited' count, we'll only save the last 10 page visits.
-		$this->_session_data['pages_visited'] = array_slice( $this->_session_data['pages_visited'], -10 );
-
-		//data to serialize
-		$serialized = array(
-			'sid' => $this->_sid,
-			'session_data' => $this->_session_data,
-			'expiration' => $this->_expiration,
-			'time' => $this->_time,
-			'use_encryption' => $this->_use_encryption,
-			'user_agent' => $this->_user_agent,
-			'ip_address' => $this->_ip_address 
-			);
-
-		return serialize( $serialized );
-		
-	}
+//	public function serialize() {
+//		//first reduce the 'pages_visited' count, we'll only save the last 10 page visits.
+//		$this->_session_data['pages_visited'] = array_slice( $this->_session_data['pages_visited'], -10 );
+//
+//		//data to serialize
+//		$serialized = array(
+//			'sid' => $this->_sid,
+//			'session_data' => $this->_session_data,
+//			'expiration' => $this->_expiration,
+//			'time' => $this->_time,
+//			'use_encryption' => $this->_use_encryption,
+//			'user_agent' => $this->_user_agent,
+//			'ip_address' => $this->_ip_address 
+//			);
+//
+//		return serialize( $serialized );
+//		
+//	}
 
 
 
@@ -715,13 +712,13 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @param  string $data serialized object
 	 * @return EE_Session   this object
 	 */
-	public function unserialize( $data ) {
-		$serialized = unserialize( $data );
-		foreach ( $serialized as $prop_name => $prop_value ) {
-			$prop_name = '_' . $prop_name;
-			$this->$prop_name = $prop_value;
-		}
-	}
+//	public function unserialize( $data ) {
+//		$serialized = unserialize( $data );
+//		foreach ( $serialized as $prop_name => $prop_value ) {
+//			$prop_name = '_' . $prop_name;
+//			$this->$prop_name = $prop_value;
+//		}
+//	}
 
 
 }

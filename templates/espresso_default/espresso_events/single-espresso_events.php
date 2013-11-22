@@ -36,7 +36,9 @@ get_header();
 							$caption = esc_attr( get_post( get_post( $img_ID ))->post_excerpt );
 							$wrap_class .= ' has-img';
 							?>
-				<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv"> <img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/> </div>
+				<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
+					<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>
+				</div>
 				<?php 
 						endif;
 					endif;
@@ -56,7 +58,7 @@ get_header();
 				
 				<div class="espresso-event-wrapper-dv">
 					<div class="event-content">
-						<h3 class="about-event-h3">
+						<h3 class="about-event-h3 ee-event-h3">
 							<?php _e( 'Details', 'event_espresso' ); ?>
 						</h3>
 						<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
@@ -65,7 +67,7 @@ get_header();
 						<p>
 							<?php the_terms( $post->ID, 'espresso_event_categories', 'Categories: ', ' / ' ); ?>
 						</p>
-						<h3 class="ticket-selector-h3">
+						<h3 class="ticket-selector-h3 ee-event-h3">
 							<?php _e( 'Ticket Options', 'event_espresso' ); ?>
 						</h3>
 						<?php espresso_ticket_selector( $post ); ?>
@@ -80,7 +82,7 @@ get_header();
 					
 					<?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
 					<div class="event-datetimes">
-						<h3 class="event-datetimes-h3">
+						<h3 class="event-datetimes-h3 ee-event-h3">
 							<?php _e( 'Date, Time, and Location', 'event_espresso' ); ?>
 						</h3>
 						<?php espresso_list_of_event_dates();?>

@@ -130,9 +130,9 @@ class EED_Ticket_Selector extends  EED_Module {
 		$template_args['EVT_ID'] = self::$_event->ID();
 		$template_args['event'] = self::$_event;
 
-		if ( self::$_event->allow_multiple() ) {
+		if ( self::$_event->additional_limit() > 1 ) {
 			// make sure additional_limit is set and that it is at least 1
-			$additional_limit = self::$_event->additional_limit() < 1 ? 1 : self::$_event->additional_limit();
+			$additional_limit = self::$_event->additional_limit();
 			// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
 			$max_tickets = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', 16 );
 			// let's make the max amount of attendees somebody can select a little more reasonable
@@ -300,7 +300,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						} else {
 							EE_Registry::instance()->CART->save_cart();
 							EE_Registry::instance()->SSN->update();
-							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( $this->EE->CFG->core->reg_page_id )));
+							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
 							exit();
 						}
 					} else {

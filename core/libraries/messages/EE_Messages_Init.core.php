@@ -74,14 +74,23 @@ class EE_Messages_Init extends EE_Base {
 			'shortcodes/' => 'lib'
 		);
 
+		//prepend EE_LIBRARIES TO EACH OF THE PATHS (this is so we can filter the paths)
+		foreach ( $dir_ref as $dir => $types ) {
+			$dir = EE_LIBRARIES . $dir;
+			$dir_ref[$dir] = $types;
+		}
+
+		//let's allow hooking into the autoloader to add additional paths
+		$dir_ref = apply_filters('FHEE__EE_Messages_Init__autoload_messages__dir_ref', $dir_ref );
+
 		//assemble a list of filenames
 		foreach ( $dir_ref as $dir => $types ) {
 			if ( is_array( $types )) {
 				foreach ( $types as $type ) {
-					$filenames[] = EE_LIBRARIES . $dir . $className . '.' . $type . '.php';
+					$filenames[] = $dir . $className . '.' . $type . '.php';
 				}
 			} else {
-				$filenames[] = EE_LIBRARIES . $dir . $className . '.' . $types . '.php';
+				$filenames[] = $dir . $className . '.' . $types . '.php';
 			}
 		}
 		//now loop through assembled filenames and require as available

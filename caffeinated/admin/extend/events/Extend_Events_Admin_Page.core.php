@@ -199,8 +199,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function additional_registration_options( $html, $template_args, $yes_no_values, $default_reg_status_values ) {
-		$template_args['use_attendee_pre_approval'] = $this->EE->CFG->registration->use_attendee_pre_approval;
-		$template_args['attendee_pre_approval_required'] = $this->EE->CFG->registration->use_attendee_pre_approval ? EEH_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
+		$template_args['use_attendee_pre_approval'] = EE_Registry::instance()->CFG->registration->use_attendee_pre_approval;
+		$template_args['attendee_pre_approval_required'] = EE_Registry::instance()->CFG->registration->use_attendee_pre_approval ? EEH_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
 		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
 	}
 
@@ -240,7 +240,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//add_meta_box('espresso_event_editor_promo_box', __('Event Promotions', 'event_espresso'), array( $this, 'promotions_meta_box' ), $this->_current_screen->id, 'side', 'core');
 
 		//todo, this will morph into the "Person" metabox once events are converted to cpts and we have the persons cpt in place.
-		/*if ( $this->EE->CFG->admin->use_personnel_manager ) {
+		/*if ( EE_Registry::instance()->CFG->admin->use_personnel_manager ) {
 			add_meta_box('espresso_event_editor_personnel_box', __('Event Staff / Speakers', 'event_espresso'), array( $this, 'personnel_metabox' ), $this->page_slug, 'side', 'default');
 		}/**/
 	}
@@ -260,8 +260,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
-		$template_args['allow_group_reg_select'] = EEH_Form_Fields::select_input('allow_multiple', $yes_no_values, $this->_cpt_model_obj->allow_multiple(), 'id="group-reg"', '', false);
-		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
+		$template_args['additional_limit'] = (int) $this->_cpt_model_obj->additional_limit() < 1 ? 1 : $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);

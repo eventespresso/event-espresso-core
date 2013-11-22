@@ -44,8 +44,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_URL]' => __('This is a link to make a payment for the event', 'event_espresso'),
 			'[INVOICE_LINK]' => __('This is a full html link to the invoice', 'event_espresso'),
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
-			'[TOTAL_COST]' => __('The total cost for the registration', 'event_espresso'),
-			'[EVENT_PRICE]' => __('The price of the given event', 'event_espresso'),
+			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
 			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
@@ -83,10 +82,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			case "[TOTAL_COST]" :
 				$total = $this->_data->txn->total();
 				return ! empty($total) ? EEH_Template::format_currency( $total ) : '';
-				break;
-
-			case "[EVENT_PRICE]" :
-				return isset($this->_data['ticket_price']) ? EEH_Template::format_currency( $this->_data['ticket_price'] ) : '';
 				break;
 
 			case "[PAYMENT_STATUS]" :

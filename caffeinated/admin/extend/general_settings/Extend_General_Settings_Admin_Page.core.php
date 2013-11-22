@@ -109,8 +109,8 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$default_map_settings->event_list_map_align = 'center'; 			// ee_map_align
 		
 		$this->_template_args['map_settings'] = 
-				isset( $this->EE->CFG->map_settings ) && ! empty( $this->EE->CFG->map_settings ) 
-				? (object)array_merge( (array)$default_map_settings, (array)$this->EE->CFG->map_settings )
+				isset( EE_Registry::instance()->CFG->map_settings ) && ! empty( EE_Registry::instance()->CFG->map_settings ) 
+				? (object)array_merge( (array)$default_map_settings, (array)EE_Registry::instance()->CFG->map_settings )
 				: $default_map_settings;		
 
 		$this->_set_add_edit_form_tags( 'update_google_map_settings' );
@@ -121,85 +121,85 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 	protected function _update_google_map_settings() {
 
-		$this->EE->CFG->map_settings->use_google_maps = 
+		EE_Registry::instance()->CFG->map_settings->use_google_maps = 
 				 isset( $this->_req_data['use_google_maps'] ) 
 				? absint( $this->_req_data['use_google_maps'] ) 
-				: $this->EE->CFG->map_settings->use_google_maps;
+				: EE_Registry::instance()->CFG->map_settings->use_google_maps;
 
-		$this->EE->CFG->map_settings->event_details_map_width = 
+		EE_Registry::instance()->CFG->map_settings->event_details_map_width = 
 				 isset( $this->_req_data['event_details_map_width'] ) 
 				? absint( $this->_req_data['event_details_map_width'] ) 
-				: $this->EE->CFG->map_settings->event_details_map_width;
+				: EE_Registry::instance()->CFG->map_settings->event_details_map_width;
 
-		$this->EE->CFG->map_settings->event_details_map_height = 
+		EE_Registry::instance()->CFG->map_settings->event_details_map_height = 
 				 isset( $this->_req_data['event_details_map_height'] ) 
 				? absint( $this->_req_data['event_details_map_height'] ) 
-				: $this->EE->CFG->map_settings->event_details_map_height;
+				: EE_Registry::instance()->CFG->map_settings->event_details_map_height;
 
-		$this->EE->CFG->map_settings->event_details_map_zoom = 
+		EE_Registry::instance()->CFG->map_settings->event_details_map_zoom = 
 				 isset( $this->_req_data['event_details_map_zoom'] ) 
 				? absint( $this->_req_data['event_details_map_zoom'] ) 
-				: $this->EE->CFG->map_settings->event_details_map_zoom;
+				: EE_Registry::instance()->CFG->map_settings->event_details_map_zoom;
 
-		$this->EE->CFG->map_settings->event_details_display_nav = 
+		EE_Registry::instance()->CFG->map_settings->event_details_display_nav = 
 				 isset( $this->_req_data['event_details_display_nav'] ) 
 				? absint( $this->_req_data['event_details_display_nav'] ) 
-				: $this->EE->CFG->map_settings->event_details_display_nav;
+				: EE_Registry::instance()->CFG->map_settings->event_details_display_nav;
 
-		$this->EE->CFG->map_settings->event_details_nav_size = 
+		EE_Registry::instance()->CFG->map_settings->event_details_nav_size = 
 				 isset( $this->_req_data['event_details_nav_size'] ) 
 				? absint( $this->_req_data['event_details_nav_size'] ) 
-				: $this->EE->CFG->map_settings->event_details_nav_size;
+				: EE_Registry::instance()->CFG->map_settings->event_details_nav_size;
 
-		$this->EE->CFG->map_settings->event_details_control_type = 
+		EE_Registry::instance()->CFG->map_settings->event_details_control_type = 
 				 isset( $this->_req_data['event_details_control_type'] ) 
 				? sanitize_text_field( $this->_req_data['event_details_control_type'] ) 
-				: $this->EE->CFG->map_settings->event_details_control_type;
+				: EE_Registry::instance()->CFG->map_settings->event_details_control_type;
 
-		$this->EE->CFG->map_settings->event_details_map_align = 
+		EE_Registry::instance()->CFG->map_settings->event_details_map_align = 
 				 isset( $this->_req_data['event_details_map_align'] ) 
 				? sanitize_text_field( $this->_req_data['event_details_map_align'] ) 
-				: $this->EE->CFG->map_settings->event_details_map_align;
+				: EE_Registry::instance()->CFG->map_settings->event_details_map_align;
 
-		$this->EE->CFG->map_settings->event_list_map_width = 
+		EE_Registry::instance()->CFG->map_settings->event_list_map_width = 
 				 isset( $this->_req_data['event_list_map_width'] ) 
 				? absint( $this->_req_data['event_list_map_width'] ) 
-				: $this->EE->CFG->map_settings->event_list_map_width;
+				: EE_Registry::instance()->CFG->map_settings->event_list_map_width;
 
-		$this->EE->CFG->map_settings->event_list_map_height = 
+		EE_Registry::instance()->CFG->map_settings->event_list_map_height = 
 				 isset( $this->_req_data['event_list_map_height'] ) 
 				? absint( $this->_req_data['event_list_map_height'] ) 
-				: $this->EE->CFG->map_settings->event_list_map_height;
+				: EE_Registry::instance()->CFG->map_settings->event_list_map_height;
 
-		$this->EE->CFG->map_settings->event_list_map_zoom = 
+		EE_Registry::instance()->CFG->map_settings->event_list_map_zoom = 
 				 isset( $this->_req_data['event_list_map_zoom'] ) 
 				? absint( $this->_req_data['event_list_map_zoom'] ) 
-				: $this->EE->CFG->map_settings->event_list_map_zoom;
+				: EE_Registry::instance()->CFG->map_settings->event_list_map_zoom;
 
-		$this->EE->CFG->map_settings->event_list_display_nav = 
+		EE_Registry::instance()->CFG->map_settings->event_list_display_nav = 
 				 isset( $this->_req_data['event_list_display_nav'] ) 
 				? absint( $this->_req_data['event_list_display_nav'] ) 
-				: $this->EE->CFG->map_settings->event_list_display_nav;
+				: EE_Registry::instance()->CFG->map_settings->event_list_display_nav;
 
-		$this->EE->CFG->map_settings->event_list_nav_size = 
+		EE_Registry::instance()->CFG->map_settings->event_list_nav_size = 
 				 isset( $this->_req_data['event_list_nav_size'] ) 
 				? absint( $this->_req_data['event_list_nav_size'] ) 
-				: $this->EE->CFG->map_settings->event_list_nav_size;
+				: EE_Registry::instance()->CFG->map_settings->event_list_nav_size;
 
-		$this->EE->CFG->map_settings->event_list_control_type = 
+		EE_Registry::instance()->CFG->map_settings->event_list_control_type = 
 				 isset( $this->_req_data['event_list_control_type'] ) 
 				? sanitize_text_field( $this->_req_data['event_list_control_type'] ) 
-				: $this->EE->CFG->map_settings->event_list_control_type;
+				: EE_Registry::instance()->CFG->map_settings->event_list_control_type;
 
-		$this->EE->CFG->map_settings->event_list_map_align = 
+		EE_Registry::instance()->CFG->map_settings->event_list_map_align = 
 				 isset( $this->_req_data['event_list_map_align'] ) 
 				? sanitize_text_field( $this->_req_data['event_list_map_align'] ) 
-				: $this->EE->CFG->map_settings->event_list_map_align;
+				: EE_Registry::instance()->CFG->map_settings->event_list_map_align;
 
-		$this->EE->CFG->map_settings = apply_filters('FHEE_google_map_settings_save', $this->EE->CFG->map_settings);	
+		EE_Registry::instance()->CFG->map_settings = apply_filters('FHEE_google_map_settings_save', EE_Registry::instance()->CFG->map_settings);	
 		
 		$what = 'Google Map Settings';
-		$success = $this->_update_espresso_configuration( $what, $this->EE->CFG->map_settings, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->map_settings, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'google_map_settings' ) );
 		
 	}

@@ -47,15 +47,15 @@ Class EE_Invoice extends EE_Offline_Gateway {
 	}
 
 	protected function _default_settings() {
-		$org_config = $this->EE->CFG->organization;
+		$org_config = EE_Registry::instance()->CFG->organization;
 		$default_address = trim($org_config->address_1);
 		$default_address .= empty($org_config->address_2) ? '' : '<br />' . trim($org_config->address_2);
 		$default_address .= '<br />' . trim($org_config->city);
-		$state_obj = $this->EE->load_model('State')->get_one_by_ID($org_config->STA_ID);
+		$state_obj = EE_Registry::instance()->load_model('State')->get_one_by_ID($org_config->STA_ID);
 		if($state_obj){
 			$default_address .= ',' . $state_obj->name();
 		}
-		$country_obj = $this->EE->load_model('Country')->get_one_by_ID($org_config->CNT_ISO);
+		$country_obj = EE_Registry::instance()->load_model('Country')->get_one_by_ID($org_config->CNT_ISO);
 		if($country_obj){
 			$default_address .= '<br />' . $country_obj->name();
 		}
@@ -270,7 +270,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 			}
 
 			?>
-			<p><a href="<?php echo $registration->invoice_url(true) ?>" class="inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
+			<p><a href="<?php echo $registration->invoice_url(true) ?>" class="ee-button-lnk inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
 					<?php _e('Download PDF Invoice', 'event_espresso'); ?>
 				</a></p>
 			<?php

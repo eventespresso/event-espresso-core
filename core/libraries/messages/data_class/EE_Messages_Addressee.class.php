@@ -60,8 +60,9 @@ class EE_Messages_Addressee extends EE_Base {
 	/**
 	 * event related
 	 */
-	public $events; //this will hold all event info
-	public $attendees; //holds all the attendees for an event.
+	public $events; //this will hold all event info (EE_Event[])
+	public $attendees; //holds all the attendees for an event. (EE_Attendee[])
+	public $tickets; //holds all the purchased tickets for an event (EE_Ticket[])
 
 
 
