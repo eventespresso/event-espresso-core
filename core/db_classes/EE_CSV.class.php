@@ -741,14 +741,17 @@
 		$enclosure_esc = preg_quote($enclosure, '/');
 		
 		$output = array();
-		foreach ($row as $field) {
-			if ($field === null && $mysql_null) {
+		foreach ($row as $field_value) {
+			if(is_object($field_value) || is_array($field_value)){
+				$field_value = serialize($field_value);
+			}
+			if ($field_value === null && $mysql_null) {
 				$output[] = 'NULL';
 				continue;
 			}
 			
-			$output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field) ?
-				( $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure ) : $field;
+			$output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field_value) ?
+				( $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure ) : $field_value;
 		}
 		
 		fwrite($fh, join($delimiter, $output) . PHP_EOL);
