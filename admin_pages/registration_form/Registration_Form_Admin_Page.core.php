@@ -147,6 +147,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
+				
 				'require_nonce' => FALSE
 				),
 
@@ -186,7 +187,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	}
 	
 	/**
-	 * edit question help tabs
+	 * add/edit question help tabs
 	 * @param  string $tab what tab content to retrieve
 	 * @return string      html content for help tab
 	 */
@@ -210,8 +211,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	public function required_text_info_help_tab(){
 		$this->edit_question_help_tabs( __FUNCTION__ );
 	}
-
-
+	
+	
+	
+	
 	protected function _add_screen_options() {
 		//todo
 	}
