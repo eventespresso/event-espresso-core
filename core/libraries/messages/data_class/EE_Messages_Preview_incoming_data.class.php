@@ -77,9 +77,10 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$this->_events[$id]['ID'] = $id;
 			$this->_events[$id]['name'] = $event->get('EVT_name');
 			$this->_events[$id]['daytime_id'] = $event->primary_datetime()->ID();
+			$tickets = $event->get_first_related('Datetime')->get_many_related('Ticket');
 			$this->_events[$id]['event'] = $event;
 			$this->_events[$id]['reg_objs'] = array();
-			$this->_events[$id]['tkt_objs'] = $event->get_first_related('Datetime')->get_many_related('Ticket');
+			$this->_events[$id]['tkt_objs'] = $tickets;
 			$this->_events[$id]['pre_approval'] = 0; //we're going to ignore the event settings for this.
 			$this->_events[$id]['total_attendees'] = count( $attendees );
 			$this->_events[$id]['att_objs'] = $attendees;
@@ -92,9 +93,11 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				$this->_attendees[$att_key]['reg_objs'][$id] = NULL;
 				$this->_attendees[$att_key]['registration_id'] = 0;
 				$this->_attendees[$att_key]['attendee_email'] = $attendee->email();
-				$this->_attendees[$att_key]['tkt_objs'][$id] = $this->_events[$id]['tkt_objs'];
+				$this->_attendees[$att_key]['tkt_objs'][$id] = $tickets;
 			}
 		}
+
+		$this->tickets = $tickets;
 
 	}
 
