@@ -97,7 +97,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			}
 		}
 
-		$this->tickets = $tickets;
+		foreach ( $tickets as $ticket ) {
+			$tkts[$ticket->ID()]['ticket'] = $ticket;
+			$tkts[$ticket->ID()]['att_objs'] = $attendees;
+		}
+
+		$this->tickets = $tkts;
 
 	}
 

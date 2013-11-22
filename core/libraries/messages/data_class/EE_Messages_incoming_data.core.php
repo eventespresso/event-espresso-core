@@ -210,8 +210,9 @@ abstract class EE_Messages_incoming_data {
 			foreach ( $this->reg_objs as $reg ) {
 				$evt_id = $reg->event_ID();
 				$ticket = $reg->get_first_related('Ticket');
-				$tickets[] = $ticket;
-				$event = EEM_Event::instance()->get_one_by_ID($evt_id);
+				$tickets[$ticket->ID()]['ticket'] = $ticket;
+				$tickets[$ticket->ID()]['att_objs'][] = $reg->attendee();
+				$event = $reg->event();
 				$evtcache[$evt_id] = $event;
 				$eventsetup[$evt_id]['reg_objs'][] = $reg;
 				$eventsetup[$evt_id]['tkt_objs'][] = $ticket;
