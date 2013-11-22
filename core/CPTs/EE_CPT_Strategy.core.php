@@ -140,14 +140,14 @@ class EE_CPT_Strategy extends EE_BASE {
 
 		if ( ! EE_Registry::instance()->REQ->is_set( 'ee' ) && isset( $WP_Query->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Query->query_vars['post_type'] ] )) {
 			// check that route exists for CPT archive slug
-			$cpt = $this->_CPTs[ $WP_Query->query_vars['post_type'] ];
-			if ( is_archive() && EE_Config::get_route( $cpt['plural_slug'] )) {
+			if ( is_archive() && EE_Config::get_route( $this->CPT['plural_slug'] )) {
 				// ie: set "ee" to "events"
-				EE_Registry::instance()->REQ->set( 'ee', $cpt['plural_slug'] );
+				EE_Registry::instance()->REQ->set( 'ee', $this->CPT['plural_slug'] );
+//				d( EE_Registry::instance()->REQ );
 			// or does it match a single page CPT like /event/
-			} else if ( is_single() && EE_Config::get_route( $cpt['singular_slug'] )) {
+			} else if ( is_single() && EE_Config::get_route( $this->CPT['singular_slug'] )) {
 				// ie: set "ee" to "event"
-				EE_Registry::instance()->REQ->set( 'ee', $cpt['singular_slug'] );
+				EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
 			}
 		}
 	}
@@ -162,9 +162,6 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function pre_get_posts( $WP_Query ) {
 		
-		$this->_possibly_set_ee_request_var( $WP_Query );
-		
-//		printr( $WP_Object, '$WP_Object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		d( $WP_Query );
 		// is current query for an EE CPT ?
 		if ( isset( $WP_Query->query_vars['post_type'] ) && isset( $this->_CPTs[ $WP_Query->query_vars['post_type'] ] )) {
@@ -176,13 +173,6 @@ class EE_CPT_Strategy extends EE_BASE {
 				}
 				return;
 			}
-			// add support for viewing 'private', 'draft', or 'pending' posts
-			if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {			
-				// we can just inject directly into the WP_Query object
-				$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
-				// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
-				EE_Registry::instance()->REQ->set( 'ee', $this->_CPTs[ $WP_Query->query_vars['post_type'] ]['singular_slug'] );
-			}
 			// grab details for the CPT the current query is for
 			$this->CPT = $this->_CPTs[ $WP_Query->query_vars['post_type'] ];
 			// set post type
@@ -191,8 +181,15 @@ class EE_CPT_Strategy extends EE_BASE {
 			$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
 			// requested post name
 			$this->CPT['post_name'] = EE_Registry::instance()->REQ->get( 'post_name' );
-			//d( $this->CPT );
-			//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			d( $this->CPT );
+			// add support for viewing 'private', 'draft', or 'pending' posts
+			if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {			
+				// we can just inject directly into the WP_Query object
+				$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
+				// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
+				EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
+			}
+			$this->_possibly_set_ee_request_var( $WP_Query );		
 			// make sure CPT name is set or things is gonna break
 			if ( isset( $this->CPT['singular_name'] )) {
 				// get CPT table data via CPT Model

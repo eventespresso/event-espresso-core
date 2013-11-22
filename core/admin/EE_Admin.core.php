@@ -135,7 +135,6 @@ final class EE_Admin {
 	 *	@return void
 	 */
 	public function get_request() {
-		EE_Registry::instance()->load_helper( 'URL' );	
 		EE_Registry::instance()->load_core( 'CPT_Strategy' );
 		EE_Registry::instance()->load_core( 'Request_Handler' );
 	}
