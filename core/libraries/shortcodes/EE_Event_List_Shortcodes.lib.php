@@ -106,10 +106,9 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_event_list_for_attendee() {
-		$valid_shortcodes = array('event');
+		$valid_shortcodes = array('event', 'ticket_list');
 		$template = $this->_data['template']['event_list'];
 		$attendee = $this->_data['data'];
-		$txn = $this->_extra_data['txn'];
 
 		//let's remove any existing [ATTENDEE_LIST] shortcode from the event list template so that we don't get recursion.
 		$template = str_replace('[ATTENDEE_LIST]', '', $template);
@@ -130,9 +129,8 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 
 
 
-
 	private function _get_events_from_attendee( EE_Attendee $attendee ) {
-		return isset( $this->_extra_data->attendees ) ? $this->_extra_data->attendees[$attendee->ID()]['evt_objs'] : array();
+		return isset( $this->_extra_data['data']->attendees ) ? $this->_extra_data['data']->attendees[$attendee->ID()]['evt_objs'] : array();
 	}
 
 
