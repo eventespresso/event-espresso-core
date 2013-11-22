@@ -615,8 +615,22 @@ class EED_Events_Archive  extends EED_Module {
 			wp_enqueue_style( 'archive-espresso_events' );
 			wp_enqueue_script( 'jquery-masonry' );
 			wp_enqueue_script( 'archive-espresso_events' );
-			wp_localize_script( 'archive-espresso_events', 'espresso_grid_event_lists', EED_Events_Archive::$espresso_grid_event_lists );
+			add_action( 'wp_footer', array( 'EED_Events_Archive', 'localize_grid_event_lists' ), 1 );
 		}
+	}
+
+
+
+
+	/**
+	 * 	template_settings_form
+	 *
+	 *  @access 	public
+	 *  @static
+	 *  @return 	void
+	 */
+	public static function localize_grid_event_lists() {
+		wp_localize_script( 'archive-espresso_events', 'espresso_grid_event_lists', EED_Events_Archive::$espresso_grid_event_lists );
 	}
 
 
@@ -857,14 +871,15 @@ class EED_Events_Archive  extends EED_Module {
 
 function espresso_get_event_list_ID() {
 	EED_Events_Archive::$espresso_event_list_ID++;
+	EED_Events_Archive::$espresso_grid_event_lists[] = EED_Events_Archive::$espresso_event_list_ID;	
 	return EED_Events_Archive::$espresso_event_list_ID;
 }
 
 
-function espresso_grid_event_list( $ID ) {
-	EED_Events_Archive::$espresso_grid_event_lists[] = $ID;	
-	return $ID;
-}
+//function espresso_grid_event_list( $ID ) {
+//	
+//	return $ID;
+//}
 
 
 function espresso_event_list_title() {
