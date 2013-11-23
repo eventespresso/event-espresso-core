@@ -92,6 +92,24 @@ abstract class EE_Messages_incoming_data {
 
 
 
+	/**
+	 * will hold an array of answers assembled from the $reg_info
+	 * @var EE_Answer[]
+	 */
+	public $answers;
+
+
+
+
+	/**
+	 * will hold an array of questions assembled from the $reg_info (indexed by Answer ID);
+	 * @var EE_Question[]
+	 */
+	public $questions;
+
+
+
+
 
 	/**
 	 * Will hold billing data assembled from $billing_info (if present)
@@ -205,7 +223,7 @@ abstract class EE_Messages_incoming_data {
 			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
 
 		//get all attendee and events associated with the registrations in this transaction
-		$events = $event_setup = $evt_cache = $tickets = $datetimes = array();
+		$events = $event_setup = $evt_cache = $tickets = $datetimes = $answers = $questions = array();
 		$attendees = array();
 		
 		if ( !empty( $this->reg_objs ) ) {
@@ -230,6 +248,16 @@ abstract class EE_Messages_incoming_data {
 				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee()->email();
 				$attendees[$reg->attendee_ID()]['tkt_objs'][$ticket->ID()] = $ticket;
 				$attendees[$reg->attendee_ID()]['evt_objs'][$evt_id] = $event;
+
+				//setup up answer objects
+				$rel_ans = $reg->get_many_related('Answer');
+				foreach ( $rel_ans as $ansid => $answer ) {
+					if ( !isset( $questions[$ansid] ) ) {
+						$questions[$ansid] = $answer->get_first_related('Question');
+					}
+					$answers[$ans_id] = $answer;
+					$attendees[$reg->attendee_ID()]['ans_objs'][$ansid] = $answer;
+				}
 
 				foreach ( $related_datetime as $dtt_id => $datetime ) {
 					if ( isset( $datetimes[$dtt_id] ) )
