@@ -151,6 +151,7 @@ class EE_Registration_message_type extends EE_message_type {
 			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-event-list.template.php', TRUE );
 			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-ticket-list.template.php', TRUE );
 			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-datetime-list.template.php', TRUE );
+			$tcontent[$context]['question_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
 		}
 
 
@@ -201,9 +202,9 @@ class EE_Registration_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list'),
-			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
+			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list', 'question_list'),
+			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list', 'question_list'),
+			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list','question_list')
 			);
 	}
 
