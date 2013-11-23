@@ -230,7 +230,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//k now in this next loop we're going to loop through $msgr_validator again and setup the _validators property from the data we've setup so far.
 		foreach ( $msgr_validator as $field => $config ) {
 			//if required shortcode is not in our list of codes for the given field, then we skip this field.
-			$required = isset($config['required']) ? array_intersect($config['required'], $mt_codes) : true;
+			$required = isset($config['required']) ? array_intersect($config['required'], array_keys($mt_codes)) : true;
 			if ( empty($required) )
 				continue;
 
