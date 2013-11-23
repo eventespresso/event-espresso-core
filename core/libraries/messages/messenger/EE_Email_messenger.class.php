@@ -122,7 +122,7 @@ class EE_Email_messenger extends EE_messenger  {
 				'required' => array('[TICKET_LIST]')
 				),
 			'datetime_list' => array(
-				'shortcodes' => array('ticket_list', 'datetime'),
+				'shortcodes' => array('datetime'),
 				'required' => array('[DATETIME_LIST]')
 				)
 			);
