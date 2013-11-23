@@ -53,3 +53,7 @@ td { vertical-align:top!important; }
 .RNA,.RCN,.RPN, .TPN, .TIN{
 	color:red;
 }
+.venue-details-part{
+	display:inline-block;
+	vertical-align:top;
+}

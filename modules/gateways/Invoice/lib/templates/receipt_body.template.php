@@ -253,8 +253,9 @@ $tax_total_line_item;
 				<?php foreach($venues_for_events as $venue){?>
 					<li class="venue-details">
 						<h3><?php echo $venue->name()?></h3>
-						<?php echo  EEH_Address::format($venue);?>
-						<?php echo EEH_Venue_View::espresso_google_static_map($venue)?>
+						<div class="venue-details-part"><?php echo  EEH_Address::format($venue);?></div>
+						<div class="venue-details-part"><?php echo EEH_Venue_View::espresso_google_static_map($venue)?></div>
+						
 					</li>
 				<?php }?>
 			</ul>

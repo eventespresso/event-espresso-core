@@ -471,6 +471,7 @@ class EEH_Venue_View extends EEH_Base {
 	 * @return string
 	 */
 	public static function espresso_google_static_map(EE_Venue $venue,$atts = array()){
+		EE_Registry::instance()->load_helper('Maps');
 		$state = $venue->state_obj();
 		$country = $venue->country_obj();
 		$atts = shortcode_atts(
