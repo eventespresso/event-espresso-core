@@ -54,6 +54,8 @@ class EE_Messages_Addressee extends EE_Base {
 	 */
 	public $att_obj; //holds the attendee object for an attendee
 	public $reg_obj; //holds the registration object for an attendee
+	public $questions; //EE_Question[] (indexed by EE_Answer->ID())
+	public $answers; //EE_Answer[]
 
 
 

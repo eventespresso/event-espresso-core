@@ -348,6 +348,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'reg_objs' => $this->_data->reg_objs,
 			'datetimes' => $this->_data->datetimes,
 			'tickets' => $this->_data->tickets,
+			'questions' => $this->_data->questions,
+			'answers' => $this->_data->answers,
 			'txn_status' => $this->_data->txn_status
 			);
 
