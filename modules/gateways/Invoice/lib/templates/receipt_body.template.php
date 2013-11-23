@@ -119,7 +119,7 @@ $tax_total_line_item;
 						<?php }?>
 					</div>
 					<div class="ticket-registrations-area">
-						<h4><?php _e("Registration(s):", "event_espresso");?></h4>
+						<h4><?php _e("Registration(s):", "event_espresso");?></h4><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php _e("Edit Registration", "event_espresso");?></a>
 						<ul class="ticket-registrations-list">
 							<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
 								$attendee = $registration->attendee();
@@ -179,23 +179,11 @@ $tax_total_line_item;
 						<td><?php	_e("Tax Total", "event_espresso");?></td>
 						<td><?php echo $tax_total_line_item->total_float()?></td>
 					</tr>
-					<?php
-					/* foreach($transaction->registrations() as $registration){
-						 ?>
-						<tr class="item <?php echo ($c = !$c) ? ' odd' : ''; ?>">
-							<td class="item_l">1</td>
-							<td class="item_l"><?php echo $registration->event_name() ?></td>
-							<td class="item_l"><?php echo $registration->ticket()->name() ?></td>
-							<td class="item_l"><?php $datetimes = $registration->ticket()->datetimes(); $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?></td>
-							<td class="item_l"><?php echo $registration->attendee()->full_name() ?></td>
-							<td class="item_r"><?php echo EEH_Template::format_currency($registration->price_paid())?></td>
-						</tr>
-					<?php } */ ?>
 				</tbody>
 
 			</table>
 		<?php }?>
-		<p><?php _e("* Items with a * are taxable", "event_espresso");?></p>
+		<p><?php _e("* taxable items", "event_espresso");?></p>
 		<h2><?php printf(__("Grand Total: %s", "event_espresso"),EEH_Template::format_currency($total_cost));?></h2>
 		<h2><?php _e("Payments",'event_espresso')?></h2>
 		<table id="invoice-amount">
@@ -227,7 +215,8 @@ $tax_total_line_item;
 					<?php }
 				}else{?>
 					<tr class='item'>
-						<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received",'event_espresso')?></td>
+						<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received.",'event_espresso')?> <?php if($amount_owed){?><a class="noPrint" href='<?php echo $retry_payment_url?>'><?php _e("Please make payment", "event_espresso");}?></a></td>
+						
 					</tr>
 				<?php }
 ?>
@@ -241,7 +230,7 @@ $tax_total_line_item;
 				<tr id="total_tr">
 					<td colspan="4">&nbsp;</td>
 					<td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
-					<td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd)?></td>
+					<td class="total"><?php echo EEH_Template::format_currency($amount_owed)?></td>
 				</tr>
 			</tfoot>
 		</table>
@@ -253,7 +242,9 @@ $tax_total_line_item;
 				<?php foreach($venues_for_events as $venue){?>
 					<li class="venue-details">
 						<h3><?php echo $venue->name()?></h3>
-						<?php echo  EEH_Address::format($venue);?>
+						<div class="venue-details-part"><?php echo  EEH_Address::format($venue);?></div>
+						<div class="venue-details-part"><?php echo EEH_Venue_View::espresso_google_static_map($venue)?></div>
+						
 					</li>
 				<?php }?>
 			</ul>

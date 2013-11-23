@@ -65,7 +65,7 @@ class EEH_Maps {
 			$map_align = 'ee-gmap-align-none';
 		}
 
-
+		
 		// Determine whether user has set a hardoded url to use and
 		// if so display a Google static iframe map else run V3 api
 		if( $static_url ) {
@@ -111,9 +111,7 @@ class EEH_Maps {
 		wp_register_script( 'gmap_api', 'http://maps.google.com/maps/api/js?sensor=false', array('jquery'), NULL, TRUE );
 		wp_register_script( 'ee_gmap', plugin_dir_url(__FILE__) . 'assets/ee_gmap.js', array('gmap_api'), '1.0', TRUE );
 	}
-
-
-
+	
 	/**
 	 * creates a Google Map Link
 	 * @param  array $atts aray of attributes required for the map link generation

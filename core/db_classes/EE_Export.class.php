@@ -46,7 +46,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
  	private function __construct( $request_data = array() ) {
 		$this->_req_data = $request_data;
-		
 	}
 
 
@@ -71,8 +70,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	public function export() {
 	
-		require_once( EE_PLUGIN_DIR_PATH . 'includes/classes/EE_CSV.class.php' );
-//		$this->EE_CSV= EE_CSV::instance();
+		require_once( EE_CLASSES . 'EE_CSV.class.php' );
+		$this->EE_CSV= EE_CSV::instance();
 
 		$this->today = date("Y-m-d",time());
 		
@@ -193,32 +192,35 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		// are any Event IDs set?
 		$event_query_params = array();
 		$related_models_query_params = array();
-		$attendee_query_params = array();
+		$related_through_reg_query_params = array();
 		$datetime_ticket_query_params = array();
+		$price_query_params = array();
+		$price_type_query_params = array();
 		$term_query_params  = array();
 		if ( isset( $this->_req_data['EVT_ID'] )) {
 			// do we have an array of IDs ?
+			
 			if ( is_array( $this->_req_data['EVT_ID'] )) {
-				
 				$EVT_IDs =  array_map( 'sanitize_text_field', $this->_req_data['EVT_ID'] );
-				$event_query_params[0]['EVT_ID'] = array('IN',$EVT_IDs);
-				$related_models_query_params[0]['Event.EVT_ID'] = array('IN',$EVT_IDs);
-				$attendee_query_params[0]['Registration.EVT_ID'] = array('IN',$EVT_IDs);
-				$datetime_ticket_query_params[0]['Datetime.EVT_ID'] = array('IN',$EVT_IDs);
-				$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = array('IN',$EVT_IDs);
+				$value_to_equal = array('IN',$EVT_IDs);
 				$filename = 'events';
 			} else {
 				// generate regular where = clause
 				$EVT_ID = absint( $this->_req_data['EVT_ID'] );
+				$value_to_equal = $EVT_ID;
 				$event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($EVT_ID);
-				
+
 				$filename = 'event-' . ($event ? $event->slug() : 'unknown');
-				$event_query_params[0]['EVT_ID'] = $EVT_ID;
-				$related_models_query_params[0]['Event.EVT_ID'] = $EVT_ID;
-				$attendee_query_params[0]['Registration.EVT_ID'] = $EVT_ID;
-				$datetime_ticket_query_params[0]['Datetime.EVT_ID'] = $EVT_ID;
-				$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $EVT_ID;
+				
 			}
+			$event_query_params[0]['EVT_ID'] =$value_to_equal;
+			$related_models_query_params[0]['Event.EVT_ID'] = $value_to_equal;
+			$related_through_reg_query_params[0]['Registration.EVT_ID'] = $value_to_equal;
+			$datetime_ticket_query_params[0]['Datetime.EVT_ID'] = $value_to_equal;
+			$price_query_params[0]['Ticket.Datetime.EVT_ID'] = $value_to_equal;
+			$price_type_query_params[0]['Price.Ticket.Datetime.EVT_ID'] = $value_to_equal;
+			$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $value_to_equal;
+			
 		} else {
 			$filename = 'all-events';
 		}
@@ -230,22 +232,17 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				'Datetime'=>$related_models_query_params,
 				'Datetime_Ticket'=>$datetime_ticket_query_params,
 				'Ticket'=>$datetime_ticket_query_params,
-				//'Price'=>$related_models_query_params,
+				'Price'=>$price_query_params,
+				'Price_Type'=>$price_type_query_params,
 				'Term'=>$term_query_params,
 				'Term_Taxonomy'=>$related_models_query_params,
 				'Term_Relationship'=>$related_models_query_params, //model has NO primary key...
 				'Venue'=>$related_models_query_params,
 				'Event_Venue'=>$related_models_query_params,
-				'Registration'=>$related_models_query_params,
-				'Attendee'=>$attendee_query_params,
-//				$wpdb->prefix . 'events_detail'	=> ' WHERE id ' . $EVT_ID,
-//				$wpdb->prefix . 'esp_datetime'	=> ' WHERE EVT_ID ' . $EVT_ID,
-//				//$wpdb->prefix . 'esp_event_question_group'	=> ' WHERE EVT_ID ' . $EVT_ID,				
-//				$wpdb->prefix . 'esp_price'	=> ' WHERE EVT_ID ' . $EVT_ID,
-//				$wpdb->prefix . 'events_category_detail'	=> FALSE,
-//				$wpdb->prefix . 'events_category_rel'	=> ' WHERE event_id ' . $EVT_ID,
-//				$wpdb->prefix . 'events_venue'	=> FALSE,
-//				$wpdb->prefix . 'events_venue_rel' =>  ' WHERE event_id ' . $EVT_ID,
+//				'Transaction'=>$related_through_reg_query_params,
+//				'Registration'=>$related_models_query_params,
+//				'Attendee'=>$related_through_reg_query_params,
+//				'Line_Item'=>
 
 			);
 			

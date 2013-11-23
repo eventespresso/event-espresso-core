@@ -462,7 +462,7 @@
 			if ( key == 'reg-page-confirmation-dv' ) {
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 			} else if ( key == 'redirect-to-thank-you-page' ) {
-				//window.location.replace( response.return_data[key] );
+				window.location.replace( response.return_data[key] );
 				console.log( JSON.stringify( key +': ' + response.return_data[key], null, 4 ));
 				return;
 			} else if ( key == 'off-site-redirect') {

@@ -92,8 +92,11 @@ class Invoice {
 		$template_args['total_cost'] = number_format($this->transaction->total(), 2, '.', '');
 		$template_args['transaction'] = $this->transaction;
 		$template_args['amount_pd'] = $this->transaction->paid();
+		$template_args['amount_owed'] = $this->transaction->total() - $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
 		$template_args['net_total'] = '';
+		$template_args['edit_reg_info_url'] = $this->registration->payment_overview_url();
+		$template_args['retry_payment_url'] = add_query_arg('step','payment_options',$this->registration->payment_overview_url());
 		$template_args['show_line_item_description'] = $this->check_if_any_line_items_have_a_description($this->transaction->total_line_item());
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			//$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
@@ -141,6 +144,7 @@ class Invoice {
 			$template_args['venues_for_events'] = $venues_for_events;
 			$template_args['tax_total_line_item'] = $tax_total_line_item;
 			$template_args['attendee_columns_to_show'] = $attendee_columns_to_show;
+			$EE->load_helper( 'Venue_View' );
 //			d($template_args);
 		}
 		
@@ -148,7 +152,7 @@ class Invoice {
 		
 		//require helpers
 		$EE->load_helper( 'Formatter' );
-		
+
 		//Get the HTML as an object
 		EE_Registry::instance()->load_helper('Template');
 		$template_header = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
