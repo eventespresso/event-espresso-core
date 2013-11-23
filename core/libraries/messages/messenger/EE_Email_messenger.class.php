@@ -114,12 +114,16 @@ class EE_Email_messenger extends EE_messenger  {
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue'),
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list'),
 				'required' => array('[EVENT_LIST]')
 				),
 			'ticket_list' => array(
-				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'registration'),
+				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'registration', 'datetime_list'),
 				'required' => array('[TICKET_LIST]')
+				),
+			'datetime_list' => array(
+				'shortcodes' => array('ticket_list', 'datetime'),
+				'required' => array('[DATETIME_LIST]')
 				)
 			);
 	}
@@ -243,17 +247,25 @@ class EE_Email_messenger extends EE_messenger  {
 			'content' => '', //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
 			'extra' => array(
 				'content' => array(
-					'attendee_list' => array(
-						'input' => 'textarea',
-						'label' => __('Attendee List', 'event_espresso'),
+					'main' => array(
+						'input' => 'wp_editor',
+						'label' => __('Main Content', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'format' => '%s',
-						'css_class' => 'large-text',
-						'rows' => '5',
-						'shortcodes_required' => array('[ATTENDEE_LIST]')
+						'rows' => '15'
 					),
+					'event_list' => array(
+						'input' => 'wp_editor',
+						'label' => __('Event List', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'rows' => '15',
+						'shortcodes_required' => array('[EVENT_LIST]')
+						),
 					'ticket_list' => array(
 						'input' => 'textarea',
 						'label' => __('Ticket List', 'event_espresso'),
@@ -265,24 +277,27 @@ class EE_Email_messenger extends EE_messenger  {
 						'rows' => '10',
 						'shortcodes_required' => array('[TICKET_LIST]')
 						),
-					'event_list' => array(
-						'input' => 'wp_editor',
-						'label' => __('Event List', 'event_espresso'),
+					'datetime_list' => array(
+						'input' => 'textarea',
+						'label' => __('Datetime List', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'format' => '%s',
-						'rows' => '15',
-						'shortcodes_required' => array('[EVENT_LIST]')
+						'css_class' => 'large-text',
+						'rows' => '10',
+						'shortcodes_required' => array('[DATETIME_LIST]')
 						),
-					'main' => array(
-						'input' => 'wp_editor',
-						'label' => __('Main Content', 'event_espresso'),
+					'attendee_list' => array(
+						'input' => 'textarea',
+						'label' => __('Attendee List', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'format' => '%s',
-						'rows' => '15'
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[ATTENDEE_LIST]')
 					)
 				)
 			)
@@ -308,7 +323,8 @@ class EE_Email_messenger extends EE_messenger  {
 				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
 				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
 				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
-				'ticket_list' => __('this contains the formatting for each ticket in a ticket list', 'event_espresso')
+				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
+				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso')
 				)
 			);
 	}
