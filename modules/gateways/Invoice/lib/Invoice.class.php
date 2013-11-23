@@ -141,6 +141,7 @@ class Invoice {
 			$template_args['venues_for_events'] = $venues_for_events;
 			$template_args['tax_total_line_item'] = $tax_total_line_item;
 			$template_args['attendee_columns_to_show'] = $attendee_columns_to_show;
+			$EE->load_helper( 'Venue_View' );
 //			d($template_args);
 		}
 		
@@ -148,7 +149,7 @@ class Invoice {
 		
 		//require helpers
 		$EE->load_helper( 'Formatter' );
-		
+
 		//Get the HTML as an object
 		EE_Registry::instance()->load_helper('Template');
 		$template_header = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );

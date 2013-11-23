@@ -254,6 +254,7 @@ $tax_total_line_item;
 					<li class="venue-details">
 						<h3><?php echo $venue->name()?></h3>
 						<?php echo  EEH_Address::format($venue);?>
+						<?php echo EEH_Venue_View::espresso_google_static_map($venue)?>
 					</li>
 				<?php }?>
 			</ul>

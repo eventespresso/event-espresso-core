@@ -463,6 +463,31 @@ class EEH_Venue_View extends EEH_Base {
 		return;
 
 	}
+	
+	/**
+	 * Gets the HTML to display a static map of the venue
+	 * @param EE_Venue $venue
+	 * @param array $atts like EEH_Maps::google_map_link
+	 * @return string
+	 */
+	public static function espresso_google_static_map(EE_Venue $venue,$atts = array()){
+		$state = $venue->state_obj();
+		$country = $venue->country_obj();
+		$atts = shortcode_atts(
+				array(
+					'id' => $venue->ID(),
+					'address' => $venue->get('VNU_address'),
+					'city' => $venue->get('VNU_city'),
+					'state' => $state ? $state->name() : '',
+					'zip' => $venue->get('VNU_zip'),
+					'country' => $country ? $country->name() : '',
+					'type' => 'map',
+					'map_w' => 200,
+					'map_h' => 200
+					),
+			$atts);
+		return EEH_Maps::google_map_link($atts);
+	}
 
 
 
