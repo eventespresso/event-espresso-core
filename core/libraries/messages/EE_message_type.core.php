@@ -346,7 +346,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'txn' => $this->_data->txn,
 			'payment' => isset($this->_data->payment) ? $this->_data->payment : NULL,
 			'reg_objs' => $this->_data->reg_objs,
-			'txn_objs' => $this->_data->txn_objs,
 			'datetimes' => $this->_data->datetimes,
 			'tickets' => $this->_data->tickets,
 			'txn_status' => $this->_data->txn_status

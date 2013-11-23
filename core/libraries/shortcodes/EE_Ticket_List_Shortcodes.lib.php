@@ -86,7 +86,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 * This returns the parsed ticket list for main template;
 	 */
 	private function _get_ticket_list_for_main() {
-		$valid_shortcodes = array('ticket', 'event_list', 'attendee_list', 'registration');
+		$valid_shortcodes = array('ticket', 'event_list', 'attendee_list','datetime_list', 'registration');
 		$template = $this->_data['template'];
 		$data = $this->_data['data'];
 		$tktparsed = '';
@@ -107,7 +107,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_ticket_list_for_event() {
-		$valid_shortcodes = array('ticket', 'attendee_list');
+		$valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list');
 		$template = isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
 		$event = $this->_data['data'];
 
@@ -133,7 +133,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_ticket_list_for_attendee() {
-		$valid_shortcodes = array('ticket', 'event_list');
+		$valid_shortcodes = array('ticket', 'event_list', 'datetime_list');
 		
 		$template = isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
 		$attendee = $this->_data['data'];
