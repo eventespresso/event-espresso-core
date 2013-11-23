@@ -29,7 +29,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EE_Question_Answers_Shortcodes extends EE_Shortcodes {
+class EE_Questions_Answers_Shortcodes extends EE_Shortcodes {
 
 
 	public function __construct() {
@@ -42,8 +42,7 @@ class EE_Question_Answers_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Questions and Answers Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes related to custom questions and answers', 'event_espresso');
 		$this->_shortcodes = array(
-			'[CUSTOM_Q_A]' => __('Use this if you want a list of all the custom Questions and Answers attached to an attendee listed. If you want just the specific Question and Answer then you must use the shortcode listed with on the Questions admin page.', 'event_espresso'),
-			'[QUESTION_*]' => __('To output a specific question, replace the "*" in the example shortcode with the exact text in your Question Text field.', 'event_espresso'),
+			'[CUSTOM_Q_A]' => __('This is used to output the custom questions and answers as a list for an attendee', 'event_espresso'),
 			'[ANSWER_*]' => __('To output a specific answer, replace the "*" in the example shortcode with the exact text from the Question Text field for which you want the answer displayed.', 'event_espresso')
 			);
 	}
@@ -55,11 +54,11 @@ class EE_Question_Answers_Shortcodes extends EE_Shortcodes {
 	 * @param  mixed (array|object) $data      incoming data object/array
 	 * @return string            parsed code.
 	 */
-	public function parser( $shortcode, $data ) {
+	public function parser( $shortcode, $data, $extra_data = array() ) {
 		$match = TRUE;
 
 		//note we're matching on whether the shortcode contains "question" or "answer" 
-		if ( !stristr($shortcode, 'question') || !stristr($shortcode, 'answer') )
+		if ( !stristr($shortcode, 'answer') )
 			$match = FALSE; 
 
 		//but wait a minute, maybe the shortcode is in the _shortcodes property array
@@ -68,8 +67,10 @@ class EE_Question_Answers_Shortcodes extends EE_Shortcodes {
 
 		//now we should know whether to proceed or not
 		if ( !$match ) return FALSE;
+
 		
 		$this->_data = $data;
+		$this->_extra_data = $extra_data;
 		return $this->_parser($shortcode);
 		
 	}
@@ -77,14 +78,9 @@ class EE_Question_Answers_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 
-		//first let's check for the custom q a thing
-		if ( $shortcode == '[CUSTOM_Q_A]' ) {
-			return $this->_custom_questions_answers();
-		}
 
-		//custom dynamic question shortcodes
-		if ( stristr( $shortcode, 'question_' ) ) {
-			return $this->_parse_custom_question( $shortcode );
+		if ( $shortcode == '[CUSTOM_Q_A]' ) {
+			return $this->_custom_question_answer_list();
 		}
 
 		//custom dynamic answer shortcodes
@@ -96,35 +92,31 @@ class EE_Question_Answers_Shortcodes extends EE_Shortcodes {
 	}
 
 
+
 	/**
-	 * Will return a list of custom questions and answers for the given attendee_id
-	 *
-	 * @access private
-	 * @return string a formatted list of questions and answers.
+	 * parses the [CUSTOM_Q_A] shortcode and sets up the questions and answers for the incoming attendee.
+	 * @return string - the parsed list.
 	 */
-	private function _custom_questions_answers() {
-		//todo, we need to actually do this dude!
-		return 'This is a coming feature. Stay tuned';
+	private function _custom_question_answer_list() {
+		d($this->_extra_data);
+		return 'parsed';
 	}
 
 
 
+
 	/**
-	 * Used to retrieve custom questions from the database that have been answered by the given attendee id.
-	 *
-	 * @todo: this should be replaced with the Questions model when its ready.
-	 * @access private
-	 * @return array  an array of questions 
+	 * Used to parse a custom answer shortcode
+	 * @param  string $shortcode The shortcode being parsed
+	 * @return [type]            [description]
 	 */
-	private function _get_questions( $attendee_id ) {
-		global $wpdb;
+	private function _parse_custom_answer( $shortcode ) {
 
-		$questions = $wpdb->get_results("select qst.question as question, ans.answer as answer from " . EVENTS_ANSWER_TABLE . " ans inner join " . EVENTS_QUESTION_TABLE . " qst on ans.question_id = qst.id where ans.attendee_id = " . $attendee_id, ARRAY_A);
 
-		if ( $wpdb->num_rows > 0 && $wpdb->last_result[0]->question != NULL )
-			return $questions;
-		else
-			return FALSE;
+		$answer_text = str_replace('ANSWER_', '', $shortcode);
+		$answer_text = str_replace('[', '', $shortcode);
+		$answer_text = str_replace(']', '', $shortcode);
+
 	}
 
 
