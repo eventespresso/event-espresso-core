@@ -464,7 +464,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$message = new stdClass();
 
 		//get what shortcodes are supposed to be used
-		$mt_shortcodes = $this->_valid_shortcodes;
+		$mt_shortcodes = $this->get_valid_shortcodes();
 		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
 

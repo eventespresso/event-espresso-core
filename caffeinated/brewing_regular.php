@@ -201,7 +201,8 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Register_CPTs__get_taxonomies', array( $this, 'filter_taxonomies' ), 10 );
 		add_filter('FHEE__EE_Register_CPTs__get_CPTs', array( $this, 'filter_cpts' ), 10 );
 		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
-		add_filter('FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( $this, 'messages_autoload_paths'), 10 );
+
+		$this->_messages_caf();
 	}
 
 
@@ -236,6 +237,23 @@ class EE_Brewing_Regular extends EE_Base {
 	}
 
 
+
+
+	/******************************
+	 * EE_Messages_Caf functionality
+	 *******************************
+	 */
+	
+	private function _messages_caf() {
+		add_filter('FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( $this, 'messages_autoload_paths'), 10 );
+		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 10, 2 );
+		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 10, 2 );
+		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 10, 2 );
+		add_filter('FHEE__EE_Messages_Base__get_default_field_content', array( $this, 'message_types_default_field_content'), 10, 2 );
+		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes', 10, 2 ) );
+	}
+
+
 	/**
 	 * This just allows us to add additional paths to the autoloader (EE_Messages_Init::autoload_messages()) for the messages system.
 	 * @param  array  $dir_ref original array of paths
@@ -244,6 +262,90 @@ class EE_Brewing_Regular extends EE_Base {
 	public function messages_autoload_paths( $dir_ref ) {
 		$dir_ref[EE_CAF_LIBRARIES . 'shortcodes/'] = 'lib';
 		return $dir_ref;
+	}
+
+
+
+	public function email_messenger_validator_config( $validator_config, EE_Email_messenger $messenger ) {
+		$validator_config['attendee_list'] = array(
+				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration', 'question_list'),
+				'required' => array('[ATTENDEE_LIST]')
+				);
+		$validator_config['question_list'] = array(
+				'shortcodes' => array('question'),
+				'required' => array('[QUESTION_LIST]')
+				);
+		return $validator_config;
+	}
+
+
+
+
+	public function email_messenger_template_fields( $template_fields, EE_Email_messenger $messenger ) {
+		$template_fields['extra']['content']['question_list'] = array(
+						'input' => 'textarea',
+						'label' => __('Questions and Answers List', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[QUESTION_LIST]')
+					);
+		return $template_fields;
+	}
+
+
+
+	public function email_default_field_content( $default_field_content, EE_Email_messenger $messenger ) {
+		$default_field_content['content']['question_list'] = __('This contains the formatting for each question and answer in a list of questions and answers for an attendee', 'evnt_espresso');
+		return $default_field_content;
+	}
+
+
+
+	public function message_types_default_field_content( $default_field_content, EE_Messages_Base $msg ) {
+
+		switch ( get_class( $msg ) ) {
+
+			case 'EE_Registration_message_type' :
+			case 'EE_Resend_Registration_message_type' :
+				$contexts = array_keys($msg->get_contexts());
+				foreach ( $contexts as $context ) {
+					$default_field_content[$context]['question_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
+					$default_field_content[$context]['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
+				}
+				break;
+
+			default : 
+				return $default_field_content;
+				break;
+		}
+
+		return $default_field_content;
+
+	}
+
+
+
+	public function message_types_valid_shortcodes( $valid_shortcodes, EE_Messages_Base $msg ) {
+		switch( get_class( $msg ) ) {
+
+			case 'EE_Registration_message_type' :
+			case 'EE_Resend_Registration_message_type' :
+				$contexts = array_keys($msg->get_contexts());
+				foreach ( $contexts as $context ) {
+					$valid_shortcodes[$context][] = 'question_list';
+				}
+				break;
+
+
+			default :
+				return $valid_shortcodes;
+				break;
+		}
+		return $valid_shortcodes;
 	}
 }
 $brewing = new EE_Brewing_Regular();

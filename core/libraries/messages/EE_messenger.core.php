@@ -257,7 +257,11 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array
 	 */
 	public function get_validator_config() {
-		return $this->_validator_config;
+		$class = get_class($this);
+
+		$config = apply_filters('FHEE__' . $class . '__get_validator_config', $this->_validator_config, $this );
+		$config = apply_filters('FHEE__EE_messenger__get_validator_config', $config, $this );
+		return $config;
 	}
 
 
@@ -423,7 +427,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array $this->_template_fields
 	 */
 	public function get_template_fields() {
-		return $this->_template_fields;
+		$template_fields = apply_filters('FHEE__' . get_class($this) . '__get_template_fields', $this->_template_fields, $this );
+		$template_fields = apply_filters('FHEE__EE_messenger__get_template_fields', $template_fields, $this );
+		return $template_fields;
 	}
 
 
@@ -496,7 +502,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 		if ( !is_object( $message ) )
 			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
 
-		foreach ( $this->_template_fields as $template => $value ) {
+		$template_fields = $this->get_template_fields();
+
+		foreach ( $template_fields as $template => $value ) {
 			if ( $template !== 'extra' )
 				$this->_set_template_value($template, $message->$template);
 		}
