@@ -227,7 +227,8 @@ $tax_total_line_item;
 					<?php }
 				}else{?>
 					<tr class='item'>
-						<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received",'event_espresso')?></td>
+						<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received.",'event_espresso')?> <?php if($amount_owed){?><a class="noPrint" href='<?php $transaction->primary_registration()->e_payment_overview_url()?>'><?php _e("Please make payment", "event_espresso");}?></a></td>
+						
 					</tr>
 				<?php }
 ?>
@@ -241,7 +242,7 @@ $tax_total_line_item;
 				<tr id="total_tr">
 					<td colspan="4">&nbsp;</td>
 					<td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
-					<td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd)?></td>
+					<td class="total"><?php echo EEH_Template::format_currency($amount_owed)?></td>
 				</tr>
 			</tfoot>
 		</table>

@@ -92,6 +92,7 @@ class Invoice {
 		$template_args['total_cost'] = number_format($this->transaction->total(), 2, '.', '');
 		$template_args['transaction'] = $this->transaction;
 		$template_args['amount_pd'] = $this->transaction->paid();
+		$template_args['amount_owed'] = $this->transaction->total() - $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
 		$template_args['net_total'] = '';
 		$template_args['show_line_item_description'] = $this->check_if_any_line_items_have_a_description($this->transaction->total_line_item());
