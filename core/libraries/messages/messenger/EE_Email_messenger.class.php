@@ -110,7 +110,7 @@ class EE_Email_messenger extends EE_messenger  {
 				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization')
 				),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration'),
+				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration', 'question_list'),
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
@@ -123,6 +123,10 @@ class EE_Email_messenger extends EE_messenger  {
 			'datetime_list' => array(
 				'shortcodes' => array('datetime'),
 				'required' => array('[DATETIME_LIST]')
+				),
+			'question_list' => array(
+				'shortcodes' => array('question'),
+				'required' => array('[QUESTION_LIST]')
 				)
 			);
 	}
@@ -265,6 +269,17 @@ class EE_Email_messenger extends EE_messenger  {
 						'rows' => '15',
 						'shortcodes_required' => array('[EVENT_LIST]')
 						),
+					'attendee_list' => array(
+						'input' => 'textarea',
+						'label' => __('Attendee List', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[ATTENDEE_LIST]')
+					),
 					'ticket_list' => array(
 						'input' => 'textarea',
 						'label' => __('Ticket List', 'event_espresso'),
@@ -287,16 +302,16 @@ class EE_Email_messenger extends EE_messenger  {
 						'rows' => '10',
 						'shortcodes_required' => array('[DATETIME_LIST]')
 						),
-					'attendee_list' => array(
+					'question_list' => array(
 						'input' => 'textarea',
-						'label' => __('Attendee List', 'event_espresso'),
+						'label' => __('Questions and Answers List', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'format' => '%s',
 						'css_class' => 'large-text',
 						'rows' => '5',
-						'shortcodes_required' => array('[ATTENDEE_LIST]')
+						'shortcodes_required' => array('[QUESTION_LIST]')
 					)
 				)
 			)
@@ -323,7 +338,8 @@ class EE_Email_messenger extends EE_messenger  {
 				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
 				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
 				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
-				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso')
+				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso'),
+				'question_list' => __('This contains the formatting for each question and answer in a list of questions and answers for an attendee', 'evnt_espresso')
 				)
 			);
 	}
