@@ -250,7 +250,7 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 10, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 10, 2 );
 		add_filter('FHEE__EE_Messages_Base__get_default_field_content', array( $this, 'message_types_default_field_content'), 10, 2 );
-		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes', 10, 2 ) );
+		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 10, 2 );
 
 		//shortcode parsers
 		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 10 );
@@ -356,18 +356,18 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function additional_attendee_shortcodes( $shortcodes ) {
-		$shortcodes['[ANSWER_*]'] = __('This is a special dynamic shortcode.  Replace the "*" with the exact text of a existing question, and if there is an answer for that question for this attendee, that will take the place of this shortcode.', 'event_espresso');
+		$shortcodes['[ANSWER_*]'] = __('This is a special dynamic shortcode. Right after the "*", add the exact text of a existing question, and if there is an answer for that question for this attendee, that will take the place of this shortcode.', 'event_espresso');
 		return $shortcodes;
 	}
 
 
 
 	public function additional_attendee_parser( $parsed, $shortcode, $data, $extra_data ) {
-		if ( !strpos( '[ANSWER_' ) || !isset( $data->questions) || !isset( $data->attendees) )
+		if ( !strpos( '[ANSWER_*' ) || !isset( $data->questions) || !isset( $data->attendees) )
 			return '';
 
 		//let's get the question from the code.
-		$shortcode = str_replace('[ANSWER_', '', $shortcode);
+		$shortcode = str_replace('[ANSWER_*', '', $shortcode);
 		$shortcode = str_replace(']', '', $shortcode);
 
 		//now let's figure out which question has this text.

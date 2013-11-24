@@ -1647,9 +1647,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			} else {
 				//first validate all fields!
 				$validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
-
+				
 				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response.
-				if ( is_array($validates) ) {
+				if ( is_array($validates) && !empty($validates) ) {
 					//add the transient so when the form loads we know which fields to highlight
 					$this->_add_transient( 'edit_message_template', $validates );
 
