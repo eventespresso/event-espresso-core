@@ -253,7 +253,7 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 10, 2 );
 
 		//shortcode parsers
-		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 10 );
+		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 10, 2 );
 		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 4 );
 	}
 
@@ -355,7 +355,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 
-	public function additional_attendee_shortcodes( $shortcodes ) {
+	public function additional_attendee_shortcodes( $shortcodes, $shortcode_parser ) {
 		$shortcodes['[ANSWER_*]'] = __('This is a special dynamic shortcode. Right after the "*", add the exact text of a existing question, and if there is an answer for that question for this attendee, that will take the place of this shortcode.', 'event_espresso');
 		return $shortcodes;
 	}
@@ -363,21 +363,22 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function additional_attendee_parser( $parsed, $shortcode, $data, $extra_data ) {
-		if ( !strpos( '[ANSWER_*' ) || !isset( $data->questions) || !isset( $data->attendees) )
-			return '';
+
+		if ( strpos( $shortcode, '[ANSWER_*' ) === FALSE || !isset( $extra_data['data']->questions) || !isset( $extra_data['data']->attendees) )
+			return $parsed;
 
 		//let's get the question from the code.
 		$shortcode = str_replace('[ANSWER_*', '', $shortcode);
 		$shortcode = str_replace(']', '', $shortcode);
 
 		//now let's figure out which question has this text.
-		foreach ( $data->questions as $ansid => $question ) {
-			if ( $question->get('QST_display_text') == $shortcode )
-				return $data->attendees[$data->ID()]['ans_objs'][$ansid];
+		foreach ( $extra_data['data']->questions as $ansid => $question ) {
+			if ( $question->get('QST_display_text') == $shortcode && isset($extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]) )
+				return $extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]->get('ANS_value');
 		}
 
 		//nothing!
-		return '';
+		return $parsed;
 	}
 }
 $brewing = new EE_Brewing_Regular();
