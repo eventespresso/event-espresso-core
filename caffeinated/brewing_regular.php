@@ -317,8 +317,8 @@ class EE_Brewing_Regular extends EE_Base {
 			case 'EE_Resend_Registration_message_type' :
 				$contexts = array_keys($msg->get_contexts());
 				foreach ( $contexts as $context ) {
-					$default_field_content[$context]['question_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
-					$default_field_content[$context]['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
+					$default_field_content['content'][$context]['question_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
+					$default_field_content['content'][$context]['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
 				}
 				break;
 
