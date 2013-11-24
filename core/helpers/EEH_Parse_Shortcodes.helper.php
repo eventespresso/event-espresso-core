@@ -132,7 +132,7 @@ class EEH_Parse_Shortcodes {
 
 
 	public function parse_question_list_template( $template, EE_Answer $answer, $valid_shortcodes, $extra_data = array() ) {
-		$this->_init_data( $template, $datetime, $valid_shortcodes, $extra_data );
+		$this->_init_data( $template, $answer, $valid_shortcodes, $extra_data );
 
 		$this->_template = is_array($template) ? $template['question_list'] : $template;
 

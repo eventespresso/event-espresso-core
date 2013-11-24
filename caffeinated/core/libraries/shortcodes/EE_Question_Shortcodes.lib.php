@@ -44,24 +44,21 @@ class EE_Question_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-
-		if ( ! $this->_data instanceof EE_Answer || !isset( $this->_extra_data->questions ) )
+		
+		if ( ! $this->_data instanceof EE_Answer || !isset( $this->_extra_data['data'] ) || ! $this->_extra_data['data'] instanceof EE_Messages_Addressee )
 			return '';
 
 		switch ( $shortcode ) {
 
 			case '[QUESTION]' :
-				return $this->_extra_data->questions[$this->_data->ID()];
+				return $this->_extra_data['data']->questions[$this->_data->ID()]->get('QST_display_text');
 				break;
 
 			case '[ANSWER]' :
 				return $this->_data->get('ANS_value');
 				break;
-
-			default :
-				return '';
-				break;
 		}
+		return '';
 	}
 
 } //end EE_Question_Shortcodes class

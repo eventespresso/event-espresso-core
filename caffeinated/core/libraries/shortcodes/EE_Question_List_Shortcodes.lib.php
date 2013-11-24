@@ -66,7 +66,7 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 
 		//note this shortcode can only be used within the attendee list field so we'll only have an attendee object for parsing with.
 		if ( $this->_data['data'] instanceof EE_Attendee )
-			return $this->_get_question_list_for_attendee();
+			return $this->_get_question_answer_list_for_attendee();
 		else
 			return '';
 	}
@@ -88,6 +88,8 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 		foreach ( $answers as $answer ) {
 			$ans_result .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $this->_extra_data);
 		}
+
+		return $ans_result;
 	}
 
 

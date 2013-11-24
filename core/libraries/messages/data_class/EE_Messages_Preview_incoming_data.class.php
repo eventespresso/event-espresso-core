@@ -290,7 +290,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				),
 			5 => array(
 				1004,
-				557,
+				556,
 				'Water'
 				),
 			6 => array(
