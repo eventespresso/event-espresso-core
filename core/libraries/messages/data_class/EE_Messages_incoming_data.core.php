@@ -255,11 +255,11 @@ abstract class EE_Messages_incoming_data {
 					if ( !isset( $questions[$ansid] ) ) {
 						$questions[$ansid] = $answer->get_first_related('Question');
 					}
-					$answers[$ans_id] = $answer;
+					$answers[$ansid] = $answer;
 					$attendees[$reg->attendee_ID()]['ans_objs'][$ansid] = $answer;
 				}
 
-				foreach ( $related_datetime as $dtt_id => $datetime ) {
+				foreach ( $relateddatetime as $dtt_id => $datetime ) {
 					if ( isset( $datetimes[$dtt_id] ) )
 						continue; //already have this info in the datetimes array.
 
@@ -295,6 +295,8 @@ abstract class EE_Messages_incoming_data {
 		$this->events = $events;
 		$this->tickets = $tickets;
 		$this->datetimes = $datetimes;
+		$this->questions = $questions;
+		$this->answers = $answers;
 	}
 
 
