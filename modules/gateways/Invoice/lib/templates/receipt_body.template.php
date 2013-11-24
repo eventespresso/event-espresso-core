@@ -89,9 +89,9 @@ $tax_total_line_item;
 											<td><?php echo $sub_line_item->total_float()?></td>
 										</tr>
 									<?php } ?>
-									<tr>
+									<tr class="total_tr">
 										<td colspan="4"></td>
-										<td><?php _e("Ticket Total:", "event_espresso");?></td>
+										<td class="total" nowrap="nowrap"><?php _e("Ticket Total:", "event_espresso");?></td>
 										<td><?php echo $line_item->total_float()?></td>
 									</tr>
 								<?php }?>
@@ -175,8 +175,8 @@ $tax_total_line_item;
 					</tr>
 					<?php } ?>
 					<tr>
-						<td colspan="2"></td>
-						<td><?php	_e("Tax Total", "event_espresso");?></td>
+						<td class="total_tr" colspan="2"></td>
+						<td class="total"><?php	_e("Tax Total:", "event_espresso");?></td>
 						<td><?php echo $tax_total_line_item->total_float()?></td>
 					</tr>
 				</tbody>
@@ -222,14 +222,14 @@ $tax_total_line_item;
 ?>
 			</tbody>
 			<tfoot>
-				<tr id='total_tr'><td colspan="4">&nbsp;</td>
+				<tr class='total_tr'><td colspan="4">&nbsp;</td>
 					<td class="item_r"><?php _e('Total Paid','event_espresso')?></td>
 					<td class="item_r"><?php echo EEH_Template::format_currency($amount_pd)?> </td>
 				</tr>
 				<?php //echo $discount; ?>
-				<tr id="total_tr">
+				<tr class="total_tr">
 					<td colspan="4">&nbsp;</td>
-					<td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
+					<td class="total" id="total_currency"><?php _e('Amount Owed:', 'event_espresso'); ?></td>
 					<td class="total"><?php echo EEH_Template::format_currency($amount_owed)?></td>
 				</tr>
 			</tfoot>

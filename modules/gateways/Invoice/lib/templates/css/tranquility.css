@@ -51,7 +51,7 @@ Created by Roan Lavery
 #invoice-amount #discount_tr{background-color:#F8F8F8}
 #invoice-amount #net_total_tr{background-color:#F8F8F8}
 #invoice-amount #vat_tr{background-color:#F8F8F8}
-#invoice-amount #total_tr td{border-bottom:0;background-color:#eee}
+#invoice-amount .total_tr td{border-bottom:0;background-color:#eee}
 #invoice-amount #vat_tr td{border-bottom:1px solid #3E596C; }
 #invoice-amount td {white-space: nowrap;margin: 0;padding: 2px; vertical-align: center; border-bottom:1px solid #ddd}
 

@@ -45,18 +45,18 @@ Created by Roan Lavery
 /*=========================== TABLES =========================*/
 
 #invoice table th {text-align:left;padding: 4px 5px 4px 5px;}
-#invoice .header_row{background-color:#000; color:#fff}
+/*#invoice .header_row{background-color:#000; color:#fff}*/
 #invoice-amount td.action{border-bottom:0}
 #invoice-amount tr.odd td{background-color:#F4F4F4} 
 
-#invoice-amount #total_tr td{border-bottom:0}
+#invoice-amount .total_tr td{border-bottom:0}
 #invoice-amount #vat_tr td{border-bottom:1px solid #000}
 #invoice-amount td {white-space: nowrap;margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
 
 #invoice-amount td {margin: 0;padding: 5px; vertical-align: top; }
 #invoice-amount td.item_r{text-align: right;}
 #invoice-amount td.item_l{text-align: left;white-space: normal; }
-#invoice-amount td.total{text-align: right;font-weight: bold; }
+#invoice-amount td.total, td.total {text-align: right;font-weight: bold; }
 
 
 
