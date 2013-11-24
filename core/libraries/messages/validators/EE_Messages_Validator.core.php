@@ -381,6 +381,12 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//get a diff of the shortcodes in the string vs the valid shortcodes
 		$diff = array_diff( $incoming_shortcodes, array_keys($valid_shortcodes) );
 
+		//we need to account for custom codes so let's loop through the diff and remove any of those type of codes
+		foreach ( $diff as $ind => $code ) {
+			if ( preg_match('/(\[[A-Za-z0-9]+_\*)/', $code ) )
+				unset( $diff[$ind] );
+		}
+
 		if ( empty( $diff ) ) return FALSE; //there is no diff, we have no invalid shortcodes, so return
 
 		//made it here? then let's assemble the error message
