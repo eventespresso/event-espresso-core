@@ -8,9 +8,7 @@
 		<?php _e('Helpful Links:', 'event_espresso'); ?>
 		</strong></p>
 	<ul>
-		<li><a href="http://recaptcha.net/" target="_blank">reCAPTCHA Home Page</a></li>
 		<li><a href="http://recaptcha.net/learnmore.html" target="_blank">What is reCAPTCHA</a></li>
-		<li><a href="https://admin.recaptcha.net/accounts/login/?next=/recaptcha/sites/" target="_blank">reCAPTCHA Account</a></li>
-		<li><a href="http://recaptcha.net/apidocs/captcha/client.html" target="_blank">reCAPTCHA Client API Documentation</a></li>
+		<li><a href="http://recaptcha.net/" target="_blank">reCAPTCHA Home Page</a></li>
 	</ul>
 </div>
