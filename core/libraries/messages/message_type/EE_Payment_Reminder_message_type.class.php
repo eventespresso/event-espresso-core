@@ -80,7 +80,6 @@ class EE_Payment_Reminder_message_type extends EE_message_type {
 			'subject' => $this->_default_template_field_subject(),
 			'content' => $this->_default_template_field_content(),
 		);
-		$this->_default_field_content = apply_filters('FHEE_default_field_content_'.$this->name, $this->_default_field_content);
 	}
 
 
