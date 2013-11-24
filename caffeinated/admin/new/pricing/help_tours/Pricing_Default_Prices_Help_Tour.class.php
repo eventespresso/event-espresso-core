@@ -110,7 +110,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _description_column_stop() {
-		return '<p>' . __('This is a brief description for this Price option. This is not currently not displayed to your customers.', 'event_espresso') . '</p>';
+		return '<p>' . __('Brief description for this Price option. This is not currently displayed to your customers.', 'event_espresso') . '</p>';
 	}
 
 
