@@ -100,7 +100,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _name_column_stop() {
-		return '<p>' . __('The name of your price, discount, tax, or surcharge, that will be seen by your customers.', 'event_espresso') . '</p>';
+		return '<p>' . __('The name of the price, discount, tax, or surcharge, that will be seen by your customers.', 'event_espresso') . '</p>';
 	}
 
 
