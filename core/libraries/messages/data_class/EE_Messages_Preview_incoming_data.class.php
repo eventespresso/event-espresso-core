@@ -319,7 +319,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//first the questions
 		foreach ( $quests_array as $qst ) {
 			$qstobj = array_combine( $qst_columns, $qst );
-			$qsts[$qst['QST_ID']] = EE_Question::new_instance($qstobj);
+			$qsts[$qstobj['QST_ID']] = EE_Question::new_instance($qstobj);
 		}
 
 		//now the answers (and we'll setup our arrays)
@@ -327,8 +327,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		foreach ( $ans_array as $ans ) {
 			$ansobj = array_combine( $ans_columns, $ans );
 			$ansobj = EE_Answer::new_instance($ansobj);
-			$q_n_as['answers'][$ans['ANS_ID']] = $ansobj;
-			$q_n_as['questions'][$ans['ANS_ID']] = $qst[$ans['QST_ID']];
+			$q_n_as['answers'][$ansobj->ID()] = $ansobj;
+			$q_n_as['questions'][$ansobj->ID()] = $qsts[$ansobj->get('QST_ID')];
 		}
 
 		return $q_n_as;
