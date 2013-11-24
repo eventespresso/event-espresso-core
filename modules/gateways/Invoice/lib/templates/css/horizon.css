@@ -56,7 +56,7 @@ Created by Roan Lavery
 #invoice-amount .quantity_th{border-left:1px solid #67A30F}
 #invoice-amount .subtotal_th{border-right:1px solid #67A30F}
 
-#invoice-amount #total_tr td{border-bottom:0}
+#invoice-amount .total_tr td{border-bottom:0}
 #invoice-amount #vat_tr td{border-bottom:1px solid #999}
 #invoice-amount tbody{border-right:1px solid #C9C9C9}
 #invoice-amount tbody td {white-space: nowrap;margin: 0;vertical-align: center; border-bottom:1px solid #C9C9C9;border-left:1px solid #C9C9C9}
