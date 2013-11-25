@@ -118,7 +118,7 @@ class Invoice {
 		
 		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
-
+		$template_args['shameless_plug'] = apply_filters('FHEE_Invoice__send_invoice__shameless_plug',true);
 		if(isset($_GET['receipt'])){
 			//receipt-specific stuff
 			$events_for_txn = EEM_Event::instance()->get_all(array(array('Registration.TXN_ID'=>$this->transaction->ID())));
@@ -136,7 +136,7 @@ class Invoice {
 				$venues_for_events = array_merge($venues_for_events, $event->venues());
 			}
 			$tax_total_line_item = EEM_Line_Item::instance()->get_one(array(array('TXN_ID'=>$this->transaction->ID(),'LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
-			$attendee_columns_to_show = array('ATT_fname','ATT_lname','ATT_email','ATT_address','ATT_address2','ATT_city','STA_ID','CNT_ISO','ATT_zip','ATT_phone');
+			$attendee_columns_to_show = array('ATT_address','ATT_address2','ATT_city','STA_ID','CNT_ISO','ATT_zip','ATT_phone');
 			
 			$template_args['events_for_txn'] = $events_for_txn;
 			$template_args['ticket_line_items_per_event'] = $ticket_line_items_per_event;

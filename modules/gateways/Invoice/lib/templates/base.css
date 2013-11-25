@@ -39,8 +39,12 @@ td { vertical-align:top!important; }
 .float-right { float:right; }
 .clear { clear:both; }
 
-.ticket-time-and-place-details>div{
-	width:49%;
+.ticket-time-details{
+	width:70%;
+	display:inline-block;
+}
+.ticket-place-details{
+	width:29%;
 	display:inline-block;
 }
 .no-bottom-margin{
@@ -56,7 +60,11 @@ td { vertical-align:top!important; }
 .venue-details-part{
 	display:inline-block;
 	vertical-align:top;
+	width:30%
 }
 .reg-details-for-ticket{
 	margin-left:4em;
+}
+.grand-total{
+	text-align:right;
 }
