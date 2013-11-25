@@ -98,53 +98,55 @@ $tax_total_line_item;
 							</tbody>
 						</table>
 					</div>
-					<div class="ticket-time-and-place-details">
-						<div class="ticket-time-details">
-							<h4 class="no-bottom-margin"><?php _e("Datetime(s):", "event_espresso");?></h4>
-							<ul>
-								<?php foreach($ticket->datetimes() as $datetime){?>
-								<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
-								<?php }?>
-							</ul>
+					<div class="reg-details-for-ticket">
+						<div class="ticket-time-and-place-details">
+							<div class="ticket-time-details">
+								<h4 class="no-bottom-margin"><?php _e("Datetime(s):", "event_espresso");?></h4>
+								<ul>
+									<?php foreach($ticket->datetimes() as $datetime){?>
+									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
+									<?php }?>
+								</ul>
+							</div>
+							<?php if ($event->venues()){?>
+							<div class="ticket-place-details">
+								<h4 class="no-bottom-margin"><?php _e("Venue(s):", "event_espresso");?></h4>
+								<ul>
+									<?php foreach($event->venues() as $venue){?>
+									<li><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></li>
+									<?php } ?>
+								</ul>
+							</div>
+							<?php }?>
 						</div>
-						<?php if ($event->venues()){?>
-						<div class="ticket-place-details">
-							<h4 class="no-bottom-margin"><?php _e("Venue(s):", "event_espresso");?></h4>
-							<ul>
-								<?php foreach($event->venues() as $venue){?>
-								<li><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></li>
+						<div class="ticket-registrations-area">
+							<h4><?php _e("Registration(s):", "event_espresso");?></h4><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php _e("Edit Registration", "event_espresso");?></a>
+							<ul class="ticket-registrations-list">
+								<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
+									$attendee = $registration->attendee();
+									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
+								<li>
+									<dl class="registration-details">
+										<dt><?php	_e("Registration Code: ", "event_espresso");?></dt>
+										<dd><?php echo $registration->reg_code();?> <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></dd>
+										<?php foreach($attendee_columns_to_show as $field_name){
+											if( ! $attendee->get($field_name)){
+												continue;
+											}
+											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);?>
+										<dt><?php echo $field_info->get_nicename()?>: </dt>
+										<dd><?php echo $attendee->get($field_name)?></dd>
+										<?php }?>
+										<?php foreach($answers as $ans_id => $answer){
+											$question = $answer->question();?>
+											<dt><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </dt>
+											<dd><?php echo $answer->value()?></dd>
+										<?php }?>
+									</dl>
+								</li>
 								<?php } ?>
 							</ul>
 						</div>
-						<?php }?>
-					</div>
-					<div class="ticket-registrations-area">
-						<h4><?php _e("Registration(s):", "event_espresso");?></h4><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php _e("Edit Registration", "event_espresso");?></a>
-						<ul class="ticket-registrations-list">
-							<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
-								$attendee = $registration->attendee();
-								$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
-							<li>
-								<dl class="registration-details">
-									<dt><?php	_e("Registration Code: ", "event_espresso");?></dt>
-									<dd><?php echo $registration->reg_code();?> <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></dd>
-									<?php foreach($attendee_columns_to_show as $field_name){
-										if( ! $attendee->get($field_name)){
-											continue;
-										}
-										$field_info = EEM_Attendee::instance()->field_settings_for($field_name);?>
-									<dt><?php echo $field_info->get_nicename()?>: </dt>
-									<dd><?php echo $attendee->get($field_name)?></dd>
-									<?php }?>
-									<?php foreach($answers as $ans_id => $answer){
-										$question = $answer->question();?>
-										<dt><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </dt>
-										<dd><?php echo $answer->value()?></dd>
-									<?php }?>
-								</dl>
-							</li>
-							<?php } ?>
-						</ul>
 					</div>
 				</li>
 			<?php }?>
