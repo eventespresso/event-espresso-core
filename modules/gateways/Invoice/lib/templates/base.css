@@ -38,7 +38,15 @@ td { vertical-align:top!important; }
 .float-left { float:left; }
 .float-right { float:right; }
 .clear { clear:both; }
-
+th.number-column{
+	width:5em;
+}
+th.name-column{
+	width:15em;
+}
+td{
+	text-align:center;
+}
 .ticket-time-details{
 	width:70%;
 	display:inline-block;
@@ -59,12 +67,16 @@ td { vertical-align:top!important; }
 }
 .venue-details-part{
 	display:inline-block;
-	vertical-align:top;
-	width:30%
+	float:left;
+	margin-left:1em;
+	margin-top:4em;
 }
 .reg-details-for-ticket{
 	margin-left:4em;
 }
 .grand-total{
 	text-align:right;
+}
+h3{
+	font-size:12pt;
 }
