@@ -103,7 +103,7 @@ $tax_total_line_item;
 							<h4 class="no-bottom-margin"><?php _e("Datetime(s):", "event_espresso");?></h4>
 							<ul>
 								<?php foreach($ticket->datetimes() as $datetime){?>
-									<li><?php echo $datetime->start_date_and_time()?> - <?php echo $datetime->end_date_and_time()?></li>
+								<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
 								<?php }?>
 							</ul>
 						</div>
