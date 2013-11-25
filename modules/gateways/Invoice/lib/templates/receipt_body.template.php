@@ -256,6 +256,7 @@ $tax_total_line_item;
 				<?php foreach($venues_for_events as $venue){?>
 					<li class="venue-details">
 						<h3><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></h3>
+						<p><?php echo $venue->description()?></p>
 						<div class="venue-details-part"><?php echo  EEH_Address::format($venue);?></div>
 						<div class="venue-details-part"><?php echo EEH_Venue_View::espresso_google_static_map($venue)?></div>
 						
@@ -265,4 +266,9 @@ $tax_total_line_item;
 			<?php } ?>
 		</div>
 		
+		<?php if($shameless_plug){?>
+		<div class='aln-cntr'><?php 
+			printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>"); 
+		?></div>
+<?php } ?>
 	</div>

@@ -60,6 +60,7 @@ td { vertical-align:top!important; }
 .venue-details-part{
 	display:inline-block;
 	vertical-align:top;
+	width:30%
 }
 .reg-details-for-ticket{
 	margin-left:4em;
