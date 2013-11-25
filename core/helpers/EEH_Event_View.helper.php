@@ -404,7 +404,7 @@ class EEH_Event_View extends EEH_Base {
 	public static function event_link_url() {
 		global $post;
 		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
-			$url = $post->EE_Event->external_url() !== NULL && $post->EE_Event->external_url() !== '' ? $post->EE_Event->external_url() : the_permalink( $post->ID );
+			$url = $post->EE_Event->external_url() !== NULL && $post->EE_Event->external_url() !== '' ? $post->EE_Event->external_url() : get_permalink( $post->ID );
 			return preg_match( "~^(?:f|ht)tps?://~i", $url ) ? $url : 'http://' . $url;
 		}
 		return NULL;
