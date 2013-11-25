@@ -370,15 +370,21 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	protected function _setup_data() {
 
 		//need to figure out the running total for test purposes so... we're going to create a temp cart and add the tickets to it!
+		
+		EE_Registry::instance()->SSN->clear_session();
+
 		$cart = EE_Cart::instance();
+
 
 		//add tickets to cart
 		foreach ( $this->tickets as $ticket ) {
 			$cart->add_ticket_to_cart($ticket['ticket']);
 		}
 
-		$grand_total = EEH_Template::format_currency($cart->get_cart_grand_total(), true);
+		$grand_total = $cart->get_cart_grand_total();
 
+
+		//EEH_Template::format_currency($cart->get_grand_total(), true);
 
 		//setup billing property
 		//todo:  I'm only using this format for the array because its how the gateways currently setup this data.  I HATE IT and it needs fixed but I have no idea how many places in the code this data structure currently touches.  Once its fixed we'll have to fix it here and in the shortcode parsing where this particular property is accessed.  (See https://events.codebasehq.com/projects/event-espresso/tickets/2271) for related ticket.
