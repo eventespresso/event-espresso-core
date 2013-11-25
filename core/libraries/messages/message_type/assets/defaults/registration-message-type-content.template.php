@@ -1,84 +1,102 @@
-<table border="0" cellpadding="0" cellspacing="0" width="720" id="templateContainer">
-	<tr>
-    	<td align="center" valign="top">
-            <!-- // Begin Template Header \\ -->
-        	<table border="0" cellpadding="0" cellspacing="0" width="720" id="templateHeader">
+<!-- HEADER -->
+<table class="head-wrap" bgcolor="#999999">
+    <tr>
+        <td></td>
+        <td class="header container">
+            
+            <div class="content">
+            <table bgcolor="#999999" class="">
                 <tr>
-                    <td class="headerContent">
-                    	
-                    	<!-- // Begin Module: Standard Header Image \\ -->
-                        <!-- this shortcode should automatically output the img tags and the "headerImage" id that is handled by the default inline css. -->
-                        [CO_LOGO] 
-                    	<!-- // End Module: Standard Header Image \\ -->
-                    
-                    </td>
+                    <td>[CO_LOGO]</td>
+                    <td align="right"><h6 class="collapse">[COMPANY]</h6></td>
                 </tr>
             </table>
-            <!-- // End Template Header \\ --> 
+            </div>
+            
         </td>
+        <td></td>
     </tr>
-	<tr>
-    	<td align="center" valign="top">
-            <!-- // Begin Template Body \\ -->
-        	<table border="0" cellpadding="0" cellspacing="0" width="720" id="templateBody">
-            	<tr>
-                    <td valign="top" class="bodyContent">
-        
-                        <!-- // Begin Module: Standard Content \\ -->
-                        <table border="0" cellpadding="20" cellspacing="0" width="100%">
-                            <tr>    
-                                <td valign="top" colspan="2">
-                                    <h3>Your Registration Details:</h3>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" valign="top">
-                                [EVENT_LIST]
-                                </td>                                
-                            </tr>
-                         	<tr>
-                                <td valign="top" colspan="2">
-                                    <div>
-                                        <h4>Thank you for registering!</h4>
-                                        <blockquote>If you have any questions about your registration, please contact us!</blockquote>
-                                    </div>
-								</td>
-                            </tr>
-                       </table>
-                        <!-- // End Module: Standard Content \\ -->
-                        
-                    </td>
-                </tr>
-            </table>
-            <!-- // End Template Body \\ -->
+</table>  
+<!-- END HEADER -->
+<!-- BODY -->
+<table class="body-wrap">
+    <tr>
+        <td></td>
+        <td class="container" bgcolor="#FFFFFF">
+            
+            <!-- content -->
+            <div class="content">
+                <table>
+                    <tr>
+                        <td>
+                            <h1>Hello, [FNAME]</h1>
+                            <p class="lead">This is a copy of your registration details!</p>
+                            
+    
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            [EVENT_LIST]
         </td>
+        <td></td>
     </tr>
+</table> <!-- END BODY -->
 
+<!-- FOOTER -->
+<table class="footer-wrap">
+    <tr>
+        <td class="container">
+            <table class="social" width="100%">
+                    <tbody>
+                        <tr>
+                            <td>  
+                                <!-- column 1 -->
+                                <table align="left" class="column">
+                                    <tbody><tr>
+                                        <td>                
+                                            
+                                            <h5 class="">Connect with Us:</h5>
+                                            <p class=""><a href="[CO_FACEBOOK_URL]" class="soc-btn fb">Facebook</a> <a href="[CO_TWITTER_URL]" class="soc-btn tw">Twitter</a> <a href="CO_GOOGLE_URL]" class="soc-btn gp">Google+</a></p>
 
-	<!--TODO: This is another template field that could possible be created?-->
-	<tr>
-    	<td align="center" valign="top">	                            		
-            <!-- // Begin Template Footer \\ -->
-        	<table border="0" cellpadding="10" cellspacing="0" width="720" id="templateFooter">
-            	<tr>
-                	<td valign="top" class="footerContent">
-                    
-                        <!-- // Begin Module: Standard Footer \\ -->
-                        <table border="0" cellpadding="10" cellspacing="0" width="100%">
-                            <tr>
-                                <td colspan="2" valign="middle" id="social">
-                                    <div mc:edit="std_social">
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                        <!-- // End Module: Standard Footer \\ -->
-                    
-                    </td>
-                </tr>
-            </table>
-            <!-- // End Template Footer \\ --> 
+                                            
+                                        </td>
+                                    </tr>
+                                </tbody></table><!-- /column 1 -->  
+                                
+                                <!-- column 2 -->
+                                <table align="left" class="column">
+                                    <tbody><tr>
+                                        <td>                
+                                                                        
+                                            <h5 class="">Contact Info:</h5>                                             
+                                            <p>Phone: <strong>[CO_PHONE]</strong><br>
+                        Email: <strong><a href="ehttps://mail.google.com/mail/?view=cm&amp;fs=1&amp;tf=1&amp;to=hseldon@trantor.com" target="_blank">[CO_EMAIL]</a></strong></p>
+
+                                        </td>
+                                    </tr>
+                                </tbody></table><!-- /column 2 -->
+                                
+                                <span class="clear"></span> 
+                                
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> <!-- end social table -->
+                <!-- content -->
+                <div class="content">
+                    <table>
+                        <tr>
+                            <td align="center">
+                                <p>
+                                    <a href="[TERMS_URL]">Terms</a> | <a href="[PRIVACY_URL]">Privacy</a>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div><!-- /content -->
+                
         </td>
+        <td></td>
     </tr>
-</table>
-<br />  
+</table><!-- /FOOTER -->
