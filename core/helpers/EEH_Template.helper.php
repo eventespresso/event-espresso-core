@@ -122,7 +122,7 @@ class EEH_Template {
 		if ( ! $return_raw ) {
 			// add currency sign
 			if($mny->sign_b4){
-				if($amount > 0){
+				if($amount >= 0){
 					$amount_formatted = $mny->sign . $amount_formatted;
 				}else{
 					$amount_formatted = "-".$mny->sign . str_replace("-","",$amount_formatted);
