@@ -754,6 +754,15 @@ class EE_Organization_Config extends EE_Config_Base {
 	* eg support@eventespresso.com
 	*/ 
 	public $email;
+
+
+
+	/**
+	 * @var string $phone
+	 * eg. 111-111-1111
+	 */
+	public $phone;
+
 	
 	/**
 	 * @var string $vat 
@@ -834,6 +843,7 @@ class EE_Organization_Config extends EE_Config_Base {
 		$this->CNT_ISO = 'US';
 		$this->zip = '12345';
 		$this->email = get_bloginfo('admin_email');
+		$this->phone = '';
 		$this->vat = '123456789';
 		$this->logo_url = '';
 		$this->facebook = '';
