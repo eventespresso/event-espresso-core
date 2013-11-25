@@ -211,14 +211,13 @@
 .ee-status {
 	display: block;
    	padding: 2.5px 5px;
-   	-webkit-border-radius: 5px;
-   	-moz-border-radius: 5px;
-   	border-radius: 5px;
+   	-webkit-border-radius: 3px;
+   	-moz-border-radius: 3px;
+   	border-radius: 3px;
    	color: white;
    	font-size: 10px;
-   	/*font-family: Georgia, serif;*/
    	text-decoration: none;
-   	font-weight: 400;
+   	font-weight: 500;
    	width:50px;
    	text-align: center;
    }
@@ -228,11 +227,11 @@
 }
 
 .ee-status.active {
-	background-color: #70CC50;		/*#87c442*/
+	background-color: #62B660;	/*	#70CC50	#87c442	*/
 }
 
 .ee-status.upcoming {
-	background-color: #007BAE;  /*#e5ff00*/
+	background-color: #49afcd;  /*		#007BAE 	#e5ff00 	*/
 }
 
 .ee-status.expired {
