@@ -145,6 +145,7 @@
 	margin: 0 auto;
 }
 .espresso-events-list-dv .espresso-event-list-event {
+	padding: 1em 0 2em;
 	height: auto;
 }
 .espresso-events-list-wrap-dv .event-list-h1 {
@@ -259,7 +260,7 @@
 	display: block;
 	padding: 1px 0 0 24px;
 	margin: .25em 0;
-	background: url("../../images/calendar_year-16x16.png") no-repeat left top transparent;
+	background: url("../../global_assets/images/calendar_year-16x16.png") no-repeat left top transparent;
 	font-size: 1.4em;
 	line-height: 1.5em; /*color:#A39D9C;*/
 }
