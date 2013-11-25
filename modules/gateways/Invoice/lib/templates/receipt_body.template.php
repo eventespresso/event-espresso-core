@@ -101,7 +101,7 @@ $tax_total_line_item;
 					<div class="reg-details-for-ticket">
 						<div class="ticket-time-and-place-details">
 							<div class="ticket-time-details">
-								<h4 class="no-bottom-margin"><?php _e("Datetime(s):", "event_espresso");?></h4>
+								<h4 class="no-bottom-margin"><?php echo _n("Datetime:","Datetimes:",count($ticket->datetimes()), "event_espresso");?></h4>
 								<ul>
 									<?php foreach($ticket->datetimes() as $datetime){?>
 									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
@@ -110,7 +110,7 @@ $tax_total_line_item;
 							</div>
 							<?php if ($event->venues()){?>
 							<div class="ticket-place-details">
-								<h4 class="no-bottom-margin"><?php _e("Venue(s):", "event_espresso");?></h4>
+								<h4 class="no-bottom-margin"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h4>
 								<ul>
 									<?php foreach($event->venues() as $venue){?>
 									<li><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></li>
@@ -120,7 +120,7 @@ $tax_total_line_item;
 							<?php }?>
 						</div>
 						<div class="ticket-registrations-area">
-							<h4><?php _e("Registration(s):", "event_espresso");?></h4><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php _e("Edit Registration", "event_espresso");?></a>
+							<h4><?php echo _n("Registration:","Registrations:",count($registrations_per_line_item[$line_item_id]), "event_espresso");?></h4><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php _e("Edit Registration", "event_espresso");?></a>
 							<ul class="ticket-registrations-list">
 								<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
 									$attendee = $registration->attendee();
