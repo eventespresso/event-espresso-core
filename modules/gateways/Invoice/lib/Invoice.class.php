@@ -54,9 +54,9 @@ class Invoice {
 		}
 
 		if (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) {
-			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/';
+			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'Invoice/lib/templates/';
 		} else {
-			$template_args['base_url'] = EE_GATEWAYS . '/invoice/lib/templates/';
+			$template_args['base_url'] = EE_GATEWAYS . '/Invoice/lib/templates/';
 		}
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		
