@@ -64,3 +64,6 @@ td { vertical-align:top!important; }
 .reg-details-for-ticket{
 	margin-left:4em;
 }
+.grand-total{
+	text-align:right;
+}

@@ -123,26 +123,38 @@ $tax_total_line_item;
 							<h4><?php echo _n("Registration:","Registrations:",count($registrations_per_line_item[$line_item_id]), "event_espresso");?></h4><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php _e("Edit Registration", "event_espresso");?></a>
 							<ul class="ticket-registrations-list">
 								<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
+									/* @var $registration EE_Registration */
 									$attendee = $registration->attendee();
 									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
 								<li>
-									<dl class="registration-details">
-										<dt><?php	_e("Registration Code: ", "event_espresso");?></dt>
-										<dd><?php echo $registration->reg_code();?> <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></dd>
+									<table class="registration-details">
+										<tr>
+											<th><?php	_e("Registration Code: ", "event_espresso");?></th>
+											<td><?php echo $registration->reg_code();?> <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></td>
+										</tr>
+										<tr>
+											<th><?php _e("Attendee:", "event_espresso");?></th>
+											<td><?php echo $attendee->full_name();?> <?php echo $attendee->email();?></td>
+										</tr>
+										
 										<?php foreach($attendee_columns_to_show as $field_name){
 											if( ! $attendee->get($field_name)){
 												continue;
 											}
 											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);?>
-										<dt><?php echo $field_info->get_nicename()?>: </dt>
-										<dd><?php echo $attendee->get($field_name)?></dd>
+											<tr>
+												<th><?php echo $field_info->get_nicename()?>: </th>
+												<td><?php echo $attendee->get($field_name)?></td>
+											</tr>
 										<?php }?>
 										<?php foreach($answers as $ans_id => $answer){
 											$question = $answer->question();?>
-											<dt><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </dt>
-											<dd><?php echo $answer->value()?></dd>
+											<tr>
+												<th><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </th>
+												<td><?php echo $answer->value()?></td>
+											</tr>
 										<?php }?>
-									</dl>
+									</table>
 								</li>
 								<?php } ?>
 							</ul>
@@ -186,7 +198,7 @@ $tax_total_line_item;
 			</table>
 		<?php }?>
 		<p><?php _e("* taxable items", "event_espresso");?></p>
-		<h2><?php printf(__("Grand Total: %s", "event_espresso"),EEH_Template::format_currency($total_cost));?></h2>
+		<h2 class="grand-total"><?php printf(__("Grand Total: %s", "event_espresso"),EEH_Template::format_currency($total_cost));?></h2>
 		<h2><?php _e("Payments",'event_espresso')?></h2>
 		<table id="invoice-amount">
 			<thead>
