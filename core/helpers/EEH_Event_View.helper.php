@@ -126,13 +126,27 @@
 
 
 	/**
+	 * espresso_event_link_url	 
+	 *
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_event_link_url' )) {
+		function espresso_event_link_url() {
+			echo EEH_Event_View::event_link_url();
+		}		
+	}
+
+
+
+
+	/**
 	 * espresso_event_phone	 
 	 *
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_phone' )) {
 		function espresso_event_phone() {
-			EEH_Event_View::event_phone();
+			echo EEH_Event_View::event_phone();
 		}		
 	}
 
@@ -146,7 +160,7 @@
 	 */
 	if ( ! function_exists( 'espresso_edit_event_link' )) {
 		function espresso_edit_event_link() {
-			EEH_Event_View::edit_event_link();
+			echo EEH_Event_View::edit_event_link();
 		}		
 	}
 
@@ -377,6 +391,24 @@ class EEH_Event_View extends EEH_Base {
 		}
 	}
 
+
+
+
+	/**
+	 * 	event_link_url
+	 *
+	 *  @access 	public
+	 *  @param	string $text 
+	 *  @return 	string
+	 */
+	public static function event_link_url() {
+		global $post;
+		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
+			$url = $post->EE_Event->external_url() !== NULL && $post->EE_Event->external_url() !== '' ? $post->EE_Event->external_url() : the_permalink( $post->ID );
+			return preg_match( "~^(?:f|ht)tps?://~i", $url ) ? $url : 'http://' . $url;
+		}
+		return NULL;
+	}
 
 
 
