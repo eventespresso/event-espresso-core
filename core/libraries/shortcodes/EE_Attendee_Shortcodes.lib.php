@@ -50,18 +50,33 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
+		//setup _data appropriately
+		if ( !empty( $this->_data->fname ) ) {
+			//we're parsing admin details... let's setup a pseudo attendee object
+			$this->_data = EE_Attendee::new_instance( array(
+				'ATT_fname' => $this->_data->fname,
+				'ATT_lname' => $this->_data->lname,
+				'ATT_email' => $this->_data->admin_email
+				));
+		} else if ( empty( $this->_data->fname ) && $this->_data instanceof EE_Messages_Addressee && !empty( $this->_data->att_obj ) ) {
+			$this->_data = $this->_data->att_obj;
+		}
+
+		if ( ! $this->_data instanceof EE_Attendee )
+			return '';
+
 		switch ( $shortcode ) {
 			
 			case '[FNAME]' :
-				$fname = !empty( $this->_data->fname ) ? $this->_data->fname : '';
-				$fname = is_object($this->_data) && method_exists( $this->_data, 'fname') ? $this->_data->fname() : $fname;
-				return isset($this->_data->att_obj) && is_object($this->_data->att_obj) ? $this->_data->att_obj->fname() : $fname;
+				return $this->_data->fname();
 				break;
 
 			case '[LNAME]' :
-				$lname = !empty( $this->_data->lname ) ? $this->_data->lname : '';
-				$lname = is_object($this->_data) && method_exists( $this->_data, 'lname') ? $this->_data->lname() : $lname;
-				return isset($this->_data->att_obj) && is_object($this->_data->att_obj) ? $this->_data->att_obj->lname() : $lname;
+				return $this->_data->lname();
+				break;
+
+			case '[ATTENDEE_EMAIL]' :
+				return $this->_data->email();
 				break;
 
 			case '[EDIT_ATTENDEE_LINK]' :

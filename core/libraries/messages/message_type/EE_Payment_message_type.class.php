@@ -204,7 +204,7 @@ class EE_Payment_message_type extends EE_message_type {
 		$aee = $this->_default_addressee_data;
 		$aee['events'] = $this->_data->events;
 		$aee['attendees'] = $this->_data->attendees;
-		$aee['att_obj'] = $this->_data->primary_attendee_data;
+		$aee['att_obj'] = $this->_data->primary_attendee_data['att_obj'];
 
 		//great now we can instantiate the $addressee object and return (as an array);
 		$add[] = new EE_Messages_Addressee( $aee );
