@@ -381,7 +381,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$cart->add_ticket_to_cart($ticket['ticket']);
 		}
 
-		$grand_total = $cart->get_cart_grand_total();
+		$grand_total = $cart->get_cart_grand_total() * count($this->_attendees);
 
 
 		//EEH_Template::format_currency($cart->get_grand_total(), true);
