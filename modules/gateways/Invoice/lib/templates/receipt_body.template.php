@@ -112,7 +112,7 @@ $tax_total_line_item;
 							<h4 class="no-bottom-margin"><?php _e("Venue(s):", "event_espresso");?></h4>
 							<ul>
 								<?php foreach($event->venues() as $venue){?>
-									<li><?php echo $venue->name()?></li>
+								<li><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></li>
 								<?php } ?>
 							</ul>
 						</div>
@@ -241,7 +241,7 @@ $tax_total_line_item;
 			<ul class="venue-list">
 				<?php foreach($venues_for_events as $venue){?>
 					<li class="venue-details">
-						<h3><?php echo $venue->name()?></h3>
+						<h3><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></h3>
 						<div class="venue-details-part"><?php echo  EEH_Address::format($venue);?></div>
 						<div class="venue-details-part"><?php echo EEH_Venue_View::espresso_google_static_map($venue)?></div>
 						
