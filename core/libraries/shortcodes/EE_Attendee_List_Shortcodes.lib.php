@@ -108,7 +108,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_attendee_list_for_event() {
 		$valid_shortcodes = array('attendee', 'ticket_list', 'question_list');
-		$template = isset($this->_data['template']['attendee_list']) ? $this->_data['template']['attendee_list'] : $this->_extra_data['template']['attendee_list'];
+		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['attendee_list']) ? $this->_data['template']['attendee_list'] : $this->_extra_data['template']['attendee_list'];
 		$event = $this->_data['data'];
 
 		//let's remove any existing [EVENT_LIST] shortcode from the attendee list template so that we don't get recursion.
@@ -134,7 +134,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_attendee_list_for_ticket() {
 		$valid_shortcodes = array( 'attendee', 'event_list', 'question_list' );
-		$template = isset($this->_data['template']['attendee_list']) ? $this->_data['template']['attendee_list'] : $this->_extra_data['template']['attendee_list'];
+		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['attendee_list']) ? $this->_data['template']['attendee_list'] : $this->_extra_data['template']['attendee_list'];
 		$ticket = $this->_data['data'];
 
 		//let's remove any existing [TICKET_LIST] shortcode from the attendee list template so that we don't get recursion.

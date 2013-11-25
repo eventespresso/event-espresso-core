@@ -80,7 +80,7 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_datetime_list_for_event() {
 		$valid_shortcodes = array('datetime');
-		$template = isset($this->_data['template']['datetime_list']) ? $this->_data['template']['datetime_list'] : $this->_extra_data['template']['datetime_list'];
+		$template = is_array($this->_data['template'] ) && isset($this->_data['template']['datetime_list']) ? $this->_data['template']['datetime_list'] : $this->_extra_data['template']['datetime_list'];
 		$event = $this->_data['data'];
 
 		//here we're setting up the datetimes for the datetime list template for THIS event.
@@ -104,7 +104,7 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes {
 	private function _get_datetime_list_for_ticket() {
 		$valid_shortcodes = array('datetime');
 		
-		$template = isset($this->_data['template']['datetime_list']) ? $this->_data['template']['datetime_list'] : $this->_extra_data['template']['datetime_list'];
+		$template = is_array($this->_data['template'] ) && isset($this->_data['template']['datetime_list']) ? $this->_data['template']['datetime_list'] : $this->_extra_data['template']['datetime_list'];
 		$ticket = $this->_data['data'];
 
 		//here we're setting up the datetimes for the datetime list template for THIS ticket.
