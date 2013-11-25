@@ -59,6 +59,7 @@
 <!-- FOOTER -->
 <table class="footer-wrap">
     <tr>
+        <td></td>
         <td class="container">
             <table class="social" width="100%">
                     <tbody>
@@ -96,18 +97,6 @@
                         </tr>
                     </tbody>
                 </table> <!-- end social table -->
-                <!-- content -->
-                <div class="content">
-                    <table>
-                        <tr>
-                            <td align="center">
-                                <p>
-                                    <a href="[TERMS_URL]">Terms</a> | <a href="[PRIVACY_URL]">Privacy</a>
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
-                </div><!-- /content -->
                 
         </td>
         <td></td>
