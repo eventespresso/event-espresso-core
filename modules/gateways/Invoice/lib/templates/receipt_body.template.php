@@ -42,7 +42,7 @@ $tax_total_line_item;
 		</table>
 		<div class="events">
 		<?php foreach($events_for_txn as $event_id => $event){
-			?><h2><?php echo $event->name()?></h2>
+			?><h2><a href='<?php echo $event->get_permalink()?>'><?php echo $event->name()?></a></h2>
 			<p><?php echo $event->description()?></p>
 			<ul class="tickets-per-event">
 			<?php foreach($ticket_line_items_per_event[$event_id] as $line_item_id => $line_item){
