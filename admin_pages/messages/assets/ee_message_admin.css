@@ -30,7 +30,7 @@
 
 #mtp_valid_shortcodes .ee-shortcode-table-scroll {
 	max-height: 400px;
-	overflow: scroll;
+	overflow: auto;
 }
 
 #ee-msg-context-switcher-frm {

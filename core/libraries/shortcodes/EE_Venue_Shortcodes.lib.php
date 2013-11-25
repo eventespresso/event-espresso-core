@@ -116,7 +116,6 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 	 * @return string       What was retrieved!
 	 */
 	private function _venue( $db_ref ) {
-		global $wpdb;
 
 		if ( ! $this->_data instanceof EE_Event )
 			return ''; //we need the event in order to get a venue!

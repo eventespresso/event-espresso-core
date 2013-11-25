@@ -884,7 +884,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( is_object( $this->_registration )) {
 			$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
-			$this->_session = $transaction->get_session_data();
+			$this->_session = $transaction->session_data();
 
 			$title = __( ucwords( str_replace( '_', ' ', $this->_req_action )), 'event_espresso' );
 			// add PRC_ID to title if editing 

@@ -68,6 +68,8 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 				return $this->_get_attendee_edit_link();
 				break;
 		}
+
+		return '';
 	}
 
 

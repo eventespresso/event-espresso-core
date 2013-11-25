@@ -99,11 +99,11 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Registration Form Question Groups overview page!', 'event_espresso') . '</h3>';
+		$content = '<h3>' . __('Registration Form Question Groups', 'event_espresso') . '</h3>';
 		if ( $this->_is_caf ) {
-			$content .= '<p>' . __('An introduction ... ', 'event_espresso') . '</p>';
+			$content .= '<p>' . __('Grouping questions can help you create modular and re-useable registration forms for your events.', 'event_espresso') . '</p>';
 		} else {
-			$content .= '<p>' . __('Event Espresso Decaf does not have this feature.  This page merely provides a preview screenshot of what you get with question groups', 'event_espresso') . '</p>';
+			$content .= '<p>' . __('Sorry, Event Espresso Decaf does not have this feature. Please purchase a support license to get access to this feature.', 'event_espresso') . '</p>';
 		}
 		
 		return $content;
@@ -111,24 +111,24 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _add_new_question_group_stop() {
-		return '<p>' . __("click here to add a new question group.", 'event_espresso') . '</p>';
+		return '<p>' . __("Click here to create a new question group.", 'event_espresso') . '</p>';
 	}
 
 
 	protected function _name_stop() {
-		return '<p>' . __('about the group name column', 'event_espresso') . '</p>';
+		return '<p>' . __('Here you can see the question group by name. This name can be customer facing if you wish.', 'event_espresso') . '</p>';
 	}
 
 	protected function _description_stop() {
-		return '<p>' . __('about the description column', 'event_espresso') . '</p>';
+		return '<p>' . __('Shows the question group description.', 'event_espresso') . '</p>';
 	}
 
 	protected function _show_group_name_stop() {
-		return '<p>' . __('about the show name column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column lets you know if the name of the question group is shown to the customers or not.', 'event_espresso') . '</p>';
 	}
 
 	protected function _show_group_description_stop() {
-		return '<p>' . __('about the show description column', 'event_espresso') . '</p>';
+		return '<p>' . __('This column lets you know if the description of the question group is shown to the customers or not.', 'event_espresso') . '</p>';
 	}
 
 

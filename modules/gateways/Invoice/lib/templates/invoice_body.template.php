@@ -98,7 +98,7 @@
 								ee_invoice_display_line_item($child_line_item,$show_line_item_description);
 								}?>
 							<tr><td colspan="<?php echo $show_line_item_description ? 5 : 4 ?>"><hr></td></tr>
-							<tr id="total_tr">
+							<tr class="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total_float();?></td>
@@ -112,7 +112,7 @@
 								ee_invoice_display_line_item($child_line_item,$show_line_item_description,$odd);
 							}?>
 							<tr><td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td><td colspan="3"><hr></td></tr>
-							<tr id="total_tr">
+							<tr class="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total_float();?></td>
@@ -126,7 +126,7 @@
 								ee_invoice_display_line_item($child_line_item, $show_line_item_description, $odd);
 							}?>
 							<tr><td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td><td colspan="3"><hr></td></tr>
-							<tr id="total_tr">
+							<tr class="total_tr">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total_float();?></td>
@@ -251,12 +251,12 @@
 ?>
 			</tbody>
 			<tfoot>
-				<tr id='total_tr'><td colspan="4">&nbsp;</td>
+				<tr class='total_tr'><td colspan="4">&nbsp;</td>
 					<td class="item_r"><?php _e('Total Paid','event_espresso')?></td>
 					<td class="item_r"><?php echo EEH_Template::format_currency($amount_pd)?> </td>
 				</tr>
 				<?php //echo $discount; ?>
-				<tr id="total_tr">
+				<tr class="total_tr">
 					<td colspan="4">&nbsp;</td>
 					<td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
 					<td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd)?></td>

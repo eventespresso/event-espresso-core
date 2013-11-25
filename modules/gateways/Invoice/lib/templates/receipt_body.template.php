@@ -42,7 +42,7 @@ $tax_total_line_item;
 		</table>
 		<div class="events">
 		<?php foreach($events_for_txn as $event_id => $event){
-			?><h2><?php echo $event->name()?></h2>
+			?><h2><a href='<?php echo $event->get_permalink()?>'><?php echo $event->name()?></a></h2>
 			<p><?php echo $event->description()?></p>
 			<ul class="tickets-per-event">
 			<?php foreach($ticket_line_items_per_event[$event_id] as $line_item_id => $line_item){
@@ -89,62 +89,64 @@ $tax_total_line_item;
 											<td><?php echo $sub_line_item->total_float()?></td>
 										</tr>
 									<?php } ?>
-									<tr>
+									<tr class="total_tr">
 										<td colspan="4"></td>
-										<td><?php _e("Ticket Total:", "event_espresso");?></td>
+										<td class="total" nowrap="nowrap"><?php _e("Ticket Total:", "event_espresso");?></td>
 										<td><?php echo $line_item->total_float()?></td>
 									</tr>
 								<?php }?>
 							</tbody>
 						</table>
 					</div>
-					<div class="ticket-time-and-place-details">
-						<div class="ticket-time-details">
-							<h4 class="no-bottom-margin"><?php _e("Datetime(s):", "event_espresso");?></h4>
-							<ul>
-								<?php foreach($ticket->datetimes() as $datetime){?>
-									<li><?php echo $datetime->start_date_and_time()?> - <?php echo $datetime->end_date_and_time()?></li>
-								<?php }?>
-							</ul>
+					<div class="reg-details-for-ticket">
+						<div class="ticket-time-and-place-details">
+							<div class="ticket-time-details">
+								<h4 class="no-bottom-margin"><?php _e("Datetime(s):", "event_espresso");?></h4>
+								<ul>
+									<?php foreach($ticket->datetimes() as $datetime){?>
+									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
+									<?php }?>
+								</ul>
+							</div>
+							<?php if ($event->venues()){?>
+							<div class="ticket-place-details">
+								<h4 class="no-bottom-margin"><?php _e("Venue(s):", "event_espresso");?></h4>
+								<ul>
+									<?php foreach($event->venues() as $venue){?>
+									<li><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></li>
+									<?php } ?>
+								</ul>
+							</div>
+							<?php }?>
 						</div>
-						<?php if ($event->venues()){?>
-						<div class="ticket-place-details">
-							<h4 class="no-bottom-margin"><?php _e("Venue(s):", "event_espresso");?></h4>
-							<ul>
-								<?php foreach($event->venues() as $venue){?>
-									<li><?php echo $venue->name()?></li>
+						<div class="ticket-registrations-area">
+							<h4><?php _e("Registration(s):", "event_espresso");?></h4><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php _e("Edit Registration", "event_espresso");?></a>
+							<ul class="ticket-registrations-list">
+								<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
+									$attendee = $registration->attendee();
+									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
+								<li>
+									<dl class="registration-details">
+										<dt><?php	_e("Registration Code: ", "event_espresso");?></dt>
+										<dd><?php echo $registration->reg_code();?> <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></dd>
+										<?php foreach($attendee_columns_to_show as $field_name){
+											if( ! $attendee->get($field_name)){
+												continue;
+											}
+											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);?>
+										<dt><?php echo $field_info->get_nicename()?>: </dt>
+										<dd><?php echo $attendee->get($field_name)?></dd>
+										<?php }?>
+										<?php foreach($answers as $ans_id => $answer){
+											$question = $answer->question();?>
+											<dt><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </dt>
+											<dd><?php echo $answer->value()?></dd>
+										<?php }?>
+									</dl>
+								</li>
 								<?php } ?>
 							</ul>
 						</div>
-						<?php }?>
-					</div>
-					<div class="ticket-registrations-area">
-						<h4><?php _e("Registration(s):", "event_espresso");?></h4>
-						<ul class="ticket-registrations-list">
-							<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
-								$attendee = $registration->attendee();
-								$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
-							<li>
-								<dl class="registration-details">
-									<dt><?php	_e("Registration Code: ", "event_espresso");?></dt>
-									<dd><?php echo $registration->reg_code();?> <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></dd>
-									<?php foreach($attendee_columns_to_show as $field_name){
-										if( ! $attendee->get($field_name)){
-											continue;
-										}
-										$field_info = EEM_Attendee::instance()->field_settings_for($field_name);?>
-									<dt><?php echo $field_info->get_nicename()?>: </dt>
-									<dd><?php echo $attendee->get($field_name)?></dd>
-									<?php }?>
-									<?php foreach($answers as $ans_id => $answer){
-										$question = $answer->question();?>
-										<dt><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </dt>
-										<dd><?php echo $answer->value()?></dd>
-									<?php }?>
-								</dl>
-							</li>
-							<?php } ?>
-						</ul>
 					</div>
 				</li>
 			<?php }?>
@@ -175,27 +177,15 @@ $tax_total_line_item;
 					</tr>
 					<?php } ?>
 					<tr>
-						<td colspan="2"></td>
-						<td><?php	_e("Tax Total", "event_espresso");?></td>
+						<td class="total_tr" colspan="2"></td>
+						<td class="total"><?php	_e("Tax Total:", "event_espresso");?></td>
 						<td><?php echo $tax_total_line_item->total_float()?></td>
 					</tr>
-					<?php
-					/* foreach($transaction->registrations() as $registration){
-						 ?>
-						<tr class="item <?php echo ($c = !$c) ? ' odd' : ''; ?>">
-							<td class="item_l">1</td>
-							<td class="item_l"><?php echo $registration->event_name() ?></td>
-							<td class="item_l"><?php echo $registration->ticket()->name() ?></td>
-							<td class="item_l"><?php $datetimes = $registration->ticket()->datetimes(); $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?></td>
-							<td class="item_l"><?php echo $registration->attendee()->full_name() ?></td>
-							<td class="item_r"><?php echo EEH_Template::format_currency($registration->price_paid())?></td>
-						</tr>
-					<?php } */ ?>
 				</tbody>
 
 			</table>
 		<?php }?>
-		<p><?php _e("* Items with a * are taxable", "event_espresso");?></p>
+		<p><?php _e("* taxable items", "event_espresso");?></p>
 		<h2><?php printf(__("Grand Total: %s", "event_espresso"),EEH_Template::format_currency($total_cost));?></h2>
 		<h2><?php _e("Payments",'event_espresso')?></h2>
 		<table id="invoice-amount">
@@ -227,21 +217,22 @@ $tax_total_line_item;
 					<?php }
 				}else{?>
 					<tr class='item'>
-						<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received",'event_espresso')?></td>
+						<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received.",'event_espresso')?> <?php if($amount_owed){?><a class="noPrint" href='<?php echo $retry_payment_url?>'><?php _e("Please make payment", "event_espresso");}?></a></td>
+						
 					</tr>
 				<?php }
 ?>
 			</tbody>
 			<tfoot>
-				<tr id='total_tr'><td colspan="4">&nbsp;</td>
+				<tr class='total_tr'><td colspan="4">&nbsp;</td>
 					<td class="item_r"><?php _e('Total Paid','event_espresso')?></td>
 					<td class="item_r"><?php echo EEH_Template::format_currency($amount_pd)?> </td>
 				</tr>
 				<?php //echo $discount; ?>
-				<tr id="total_tr">
+				<tr class="total_tr">
 					<td colspan="4">&nbsp;</td>
-					<td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
-					<td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd)?></td>
+					<td class="total" id="total_currency"><?php _e('Amount Owed:', 'event_espresso'); ?></td>
+					<td class="total"><?php echo EEH_Template::format_currency($amount_owed)?></td>
 				</tr>
 			</tfoot>
 		</table>
@@ -252,8 +243,10 @@ $tax_total_line_item;
 			<ul class="venue-list">
 				<?php foreach($venues_for_events as $venue){?>
 					<li class="venue-details">
-						<h3><?php echo $venue->name()?></h3>
-						<?php echo  EEH_Address::format($venue);?>
+						<h3><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></h3>
+						<div class="venue-details-part"><?php echo  EEH_Address::format($venue);?></div>
+						<div class="venue-details-part"><?php echo EEH_Venue_View::espresso_google_static_map($venue)?></div>
+						
 					</li>
 				<?php }?>
 			</ul>

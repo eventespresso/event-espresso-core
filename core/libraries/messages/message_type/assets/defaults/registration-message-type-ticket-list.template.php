@@ -1,1 +1,6 @@
-<li>[TICKET_NAME]</li>
+<li>
+	[TICKET_NAME]
+	<ul>
+		[DATETIME_LIST]
+	</ul>
+</li>

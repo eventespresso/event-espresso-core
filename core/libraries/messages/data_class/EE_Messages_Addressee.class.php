@@ -54,6 +54,8 @@ class EE_Messages_Addressee extends EE_Base {
 	 */
 	public $att_obj; //holds the attendee object for an attendee
 	public $reg_obj; //holds the registration object for an attendee
+	public $questions; //EE_Question[] (indexed by EE_Answer->ID())
+	public $answers; //EE_Answer[]
 
 
 
@@ -63,6 +65,7 @@ class EE_Messages_Addressee extends EE_Base {
 	public $events; //this will hold all event info (EE_Event[])
 	public $attendees; //holds all the attendees for an event. (EE_Attendee[])
 	public $tickets; //holds all the purchased tickets for an event (EE_Ticket[])
+	public $datetimes; //holds all the datetimes accessed via the tickets purchased for the event (EE_Datetime[]);
 
 
 

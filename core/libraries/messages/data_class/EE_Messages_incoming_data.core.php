@@ -92,6 +92,24 @@ abstract class EE_Messages_incoming_data {
 
 
 
+	/**
+	 * will hold an array of answers assembled from the $reg_info
+	 * @var EE_Answer[]
+	 */
+	public $answers;
+
+
+
+
+	/**
+	 * will hold an array of questions assembled from the $reg_info (indexed by Answer ID);
+	 * @var EE_Question[]
+	 */
+	public $questions;
+
+
+
+
 
 	/**
 	 * Will hold billing data assembled from $billing_info (if present)
@@ -205,7 +223,7 @@ abstract class EE_Messages_incoming_data {
 			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
 
 		//get all attendee and events associated with the registrations in this transaction
-		$events = $event_setup = $evt_cache = $tickets = array();
+		$events = $event_setup = $evt_cache = $tickets = $datetimes = $answers = $questions = array();
 		$attendees = array();
 		
 		if ( !empty( $this->reg_objs ) ) {
@@ -213,21 +231,43 @@ abstract class EE_Messages_incoming_data {
 			foreach ( $this->reg_objs as $reg ) {
 				$evt_id = $reg->event_ID();
 				$ticket = $reg->get_first_related('Ticket');
+				$relateddatetime = $ticket->get_many_related('Datetime');
 				$tickets[$ticket->ID()]['ticket'] = $ticket;
-				$tickets[$ticket->ID()]['att_objs'][] = $reg->attendee();
+				$tickets[$ticket->ID()]['att_objs'][$reg->attendee_ID()] = $reg->attendee();
+				$tickets[$ticket->ID()]['dtt_objs'] = $relateddatetime;
 				$event = $reg->event();
 				$evtcache[$evt_id] = $event;
-				$eventsetup[$evt_id]['reg_objs'][] = $reg;
-				$eventsetup[$evt_id]['tkt_objs'][] = $ticket;
-				$eventsetup[$evt_id]['att_objs'][] = $reg->attendee();
+				$eventsetup[$evt_id]['reg_objs'][$reg->ID()] = $reg;
+				$eventsetup[$evt_id]['tkt_objs'][$ticket->ID()] = $ticket;
+				$eventsetup[$evt_id]['att_objs'][$reg->attendee_ID()] = $reg->attendee();
 				$event_attendee_count[$evt_id] = isset( $event_attendee_count[$evt_id] ) ? $event_attendee_count[$evt_id] + 1 : 0;
 				$attendees[$reg->attendee_ID()]['line_ref'][] = $evt_id;
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_objs'][] = $reg;
+				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->ID()] = $reg;
 				$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
 				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee()->email();
-				$attendees[$reg->attendee_ID()]['tkt_objs'][] = $ticket;
-				$attendees[$reg->attendee_ID()]['evt_objs'][] = $event;
+				$attendees[$reg->attendee_ID()]['tkt_objs'][$ticket->ID()] = $ticket;
+				$attendees[$reg->attendee_ID()]['evt_objs'][$evt_id] = $event;
+
+				//setup up answer objects
+				$rel_ans = $reg->get_many_related('Answer');
+				foreach ( $rel_ans as $ansid => $answer ) {
+					if ( !isset( $questions[$ansid] ) ) {
+						$questions[$ansid] = $answer->get_first_related('Question');
+					}
+					$answers[$ansid] = $answer;
+					$attendees[$reg->attendee_ID()]['ans_objs'][$ansid] = $answer;
+				}
+
+				foreach ( $relateddatetime as $dtt_id => $datetime ) {
+					if ( isset( $datetimes[$dtt_id] ) )
+						continue; //already have this info in the datetimes array.
+
+					$eventsetup[$evt_id]['dtt_objs'][$dtt_id] = $datetime;
+					$datetimes[$dtt_id]['tkt_objs'][] = $ticket;
+					$datetimes[$dtt_id]['datetime'] = $datetime;
+					$datetimes[$dtt_id]['evt_objs'][$evt_id] = $event;
+				}
 			}
 
 			//let's loop through the unique event=>reg items and setup data on them
@@ -243,7 +283,8 @@ abstract class EE_Messages_incoming_data {
 						'total_attendees' => $event_attendee_count[$eid],
 						'reg_objs' => $items['reg_objs'],
 						'tkt_objs' => $items['tkt_objs'],
-						'att_objs' => $items['att_objs']
+						'att_objs' => $items['att_objs'],
+						'dtt_objs' => $items['dtt_objs']
 					);
 				}
 			}	
@@ -253,6 +294,9 @@ abstract class EE_Messages_incoming_data {
 		$this->attendees = $attendees;
 		$this->events = $events;
 		$this->tickets = $tickets;
+		$this->datetimes = $datetimes;
+		$this->questions = $questions;
+		$this->answers = $answers;
 	}
 
 

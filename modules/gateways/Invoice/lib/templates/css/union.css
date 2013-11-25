@@ -48,7 +48,7 @@ Created by Olly Headey
 #invoice-amount td.item_l{text-align: left;white-space: normal;}
 #invoice-amount td.total{text-align: right;font-weight: bold; /*color: #a10000;*/}
 #invoice-amount td.action{background-color: #FFF; width:7%;padding-right:0; white-space:nowrap;text-align:center}
-#invoice-amount tr#total_tr {background-color: #F2F2F2;}
+#invoice-amount tr.total_tr {background-color: #F2F2F2;}
 #invoice-amount td {border-top: 1px solid #F2F2F2;}
 #invoice-amount tr#discount_tr, #invoice-amount tr#net_total_tr, #invoice-amount tr#vat_tr {color: #777;}
 

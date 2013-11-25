@@ -63,6 +63,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//if empty $data we'll do a query to get some events from the server. otherwise we'll retrieve the event data for the given ids.
 		$events = empty($this->_data) ? $this->_get_some_events() : $this->_get_some_events($this->_data);
 
+		$answers_n_questions = $this->_get_some_q_and_as();
+
 		if ( count( $events ) < 1 ) {
 			throw new EE_Error( __('We can\'t generate a preview for you because there are no active events in your database', 'event_espresso' ) );
 		}
@@ -80,6 +82,26 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$this->_events[$id]['event'] = $event;
 			$this->_events[$id]['reg_objs'] = array();
 			$this->_events[$id]['tkt_objs'] = $tickets;
+
+			$dtts = array();
+			$dttcache = array();
+			foreach ( $tickets as $ticket ) {
+				$tkts[$ticket->ID()]['ticket'] = $ticket;
+				$reldatetime = $ticket->get_many_related('Datetime');
+				$tkts[$ticket->ID()]['dtt_objs'] = $reldatetime;
+				$tkts[$ticket->ID()]['att_objs'] = $attendees;
+				foreach ( $reldatetime as $datetime ) {
+					if ( !isset( $dtts[$datetime->ID()] ) ) {
+						$this->_events[$id]['dtt_objs'][$datetime->ID()] = $datetime;
+						$dtts[$datetime->ID()]['datetime'] = $datetime;
+						$dtts[$datetime->ID()]['tkt_objs'][] = $ticket;
+						$dtts[$datetime->ID()]['evt_objs'][] = $event;
+						$dttcache[$datetime->ID()] = $datetime;
+					}
+				}
+			}
+
+
 			$this->_events[$id]['pre_approval'] = 0; //we're going to ignore the event settings for this.
 			$this->_events[$id]['total_attendees'] = count( $attendees );
 			$this->_events[$id]['att_objs'] = $attendees;
@@ -93,15 +115,26 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				$this->_attendees[$att_key]['registration_id'] = 0;
 				$this->_attendees[$att_key]['attendee_email'] = $attendee->email();
 				$this->_attendees[$att_key]['tkt_objs'] = $tickets;
+				if ( $att_key == 999999991 ) {
+					$this->_attendees[$att_key]['ans_objs'][999] = $answers_n_questions['answers'][999];
+					$this->_attendees[$att_key]['ans_objs'][1002] = $answers_n_questions['answers'][1002];
+					$this->_attendees[$att_key]['ans_objs'][1005] = $answers_n_questions['answers'][1005];
+				} elseif ( $att_key == 999999992 ) {
+					$this->_attendees[$att_key]['ans_objs'][1000] = $answers_n_questions['answers'][1000];
+					$this->_attendees[$att_key]['ans_objs'][1003] = $answers_n_questions['answers'][1003];
+					$this->_attendees[$att_key]['ans_objs'][1006] = $answers_n_questions['answers'][1006];
+				} elseif ( $att_key == 999999993 ) {
+					$this->_attendees[$att_key]['ans_objs'][1001] = $answers_n_questions['answers'][1001];
+					$this->_attendees[$att_key]['ans_objs'][1004] = $answers_n_questions['answers'][1004];
+					$this->_attendees[$att_key]['ans_objs'][1007] = $answers_n_questions['answers'][1007];
+				}
 			}
 		}
 
-		foreach ( $tickets as $ticket ) {
-			$tkts[$ticket->ID()]['ticket'] = $ticket;
-			$tkts[$ticket->ID()]['att_objs'] = $attendees;
-		}
-
 		$this->tickets = $tkts;
+		$this->datetimes = $dtts;
+		$this->answers = $answers_n_questions['answers'];
+		$this->questions = $answers_n_questions['questions'];
 
 	}
 
@@ -201,6 +234,111 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	}
 
 
+
+
+	/**
+	 * Return an array of dummy question objects indexed by answer id and dummy answer objects indexed by answer id.  This will be used in our dummy data setup
+	 * @return array
+	 */
+	private function _get_some_q_and_as() {
+
+
+		$quests_array = array(
+			0 => array(
+				555,
+				__('What is your favorite planet?', 'event_espresso'),
+				0
+				),
+			1 => array(
+				556,
+				__('What is your favorite food?', 'event_espresso'),
+				0
+				),
+			2 => array(
+				557,
+				__('How many lightyears have you travelled', 'event_espresso'),
+				0
+				)
+			);
+
+
+		$ans_array = array(
+			0 => array(
+				999,
+				555,
+				'Tattoine'
+				),
+			1 => array(
+				1000,
+				555,
+				'Alderaan'
+				),
+			2 => array(
+				1001,
+				555,
+				'Dantooine'
+				),
+			3 => array(
+				1002,
+				556,
+				'Fish Fingers'
+				),
+			4 => array(
+				1003,
+				556,
+				'Sushi'
+				),
+			5 => array(
+				1004,
+				556,
+				'Water'
+				),
+			6 => array(
+				1005,
+				557,
+				'A lot',
+				),
+			7 => array(
+				1006,
+				557,
+				"That's none of your business."
+				),
+			8 => array(
+				1007,
+				557,
+				"People less travel me then."
+				)
+		);
+
+		$qst_columns = array('QST_ID', 'QST_display_text', 'QST_system');
+		$ans_columns = array('ANS_ID', 'QST_ID', 'ANS_value');
+
+		EE_Registry::instance()->load_class( 'Question', array(), FALSE, TRUE, TRUE );
+		EE_Registry::instance()->load_class( 'Answer', array(), FALSE, TRUE, TRUE );
+
+		//first the questions
+		foreach ( $quests_array as $qst ) {
+			$qstobj = array_combine( $qst_columns, $qst );
+			$qsts[$qstobj['QST_ID']] = EE_Question::new_instance($qstobj);
+		}
+
+		//now the answers (and we'll setup our arrays)
+		$q_n_as = array();
+		foreach ( $ans_array as $ans ) {
+			$ansobj = array_combine( $ans_columns, $ans );
+			$ansobj = EE_Answer::new_instance($ansobj);
+			$q_n_as['answers'][$ansobj->ID()] = $ansobj;
+			$q_n_as['questions'][$ansobj->ID()] = $qsts[$ansobj->get('QST_ID')];
+		}
+
+		return $q_n_as;
+
+	}
+
+
+
+
+
 	/**
 	 * Return an array of event objects from the database
 	 *
@@ -232,15 +370,21 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	protected function _setup_data() {
 
 		//need to figure out the running total for test purposes so... we're going to create a temp cart and add the tickets to it!
+		
+		EE_Registry::instance()->SSN->clear_session();
+
 		$cart = EE_Cart::instance();
+
 
 		//add tickets to cart
 		foreach ( $this->tickets as $ticket ) {
 			$cart->add_ticket_to_cart($ticket['ticket']);
 		}
 
-		$grand_total = EEH_Template::format_currency($cart->get_cart_grand_total(), true);
+		$grand_total = $cart->get_cart_grand_total() * count($this->_attendees);
 
+
+		//EEH_Template::format_currency($cart->get_grand_total(), true);
 
 		//setup billing property
 		//todo:  I'm only using this format for the array because its how the gateways currently setup this data.  I HATE IT and it needs fixed but I have no idea how many places in the code this data structure currently touches.  Once its fixed we'll have to fix it here and in the shortcode parsing where this particular property is accessed.  (See https://events.codebasehq.com/projects/event-espresso/tickets/2271) for related ticket.

@@ -82,7 +82,6 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 			'subject' => $this->_default_template_field_subject(),
 			'content' => $this->_default_template_field_content(),
 		);
-		$this->_default_field_content = apply_filters('FHEE_default_field_content_'.$this->name, $this->_default_field_content);
 	}
 
 
@@ -110,6 +109,7 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
 			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-event-list.template.php', TRUE );
 			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-ticket-list.template.php', TRUE );
+			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-datetime-list.template.php', TRUE );
 		}
 
 
@@ -152,7 +152,7 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list')
+			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'question_list')
 			);
 	}
 

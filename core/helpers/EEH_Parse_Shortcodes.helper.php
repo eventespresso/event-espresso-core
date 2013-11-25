@@ -121,6 +121,26 @@ class EEH_Parse_Shortcodes {
 	}
 
 
+	public function parse_datetime_list_template( $template, EE_Datetime $datetime, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $datetime, $valid_shortcodes, $extra_data );
+
+		$this->_template = is_array($template) ? $template['datetime_list'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+
+	public function parse_question_list_template( $template, EE_Answer $answer, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $answer, $valid_shortcodes, $extra_data );
+
+		$this->_template = is_array($template) ? $template['question_list'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+
 	private function _init_data( $template, $data, $valid_shortcodes, $extra_data = array() ) {
 		$this->_reset_props();
 		$this->_data['template'] = $template;
@@ -157,14 +177,19 @@ class EEH_Parse_Shortcodes {
 
 			foreach ( $this->_shortcode_objs as $sc_obj ) {
 				$data_send = '';
+
+				//we need to setup any dynamic shortcodes so that they work with the array_key_exists
+				$sc = preg_match_all( '/(\[[A-Za-z0-9]+_\*)/', $shortcode, $matches );
+				$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
 				
-				if ( !array_key_exists( $shortcode, $sc_obj->get_shortcodes() ) ) { 
+				if ( !array_key_exists( $sc_to_verify, $sc_obj->get_shortcodes() ) ) { 
 					continue; //the given shortcode isn't in this object
 				}
 
+
 				
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
-				if ( $shortcode != '[ATTENDEE_LIST]' && $shortcode != '[EVENT_LIST]' && $shortcode !== '[TICKET_LIST]' ) {
+				if ( $shortcode != '[ATTENDEE_LIST]' && $shortcode != '[EVENT_LIST]' && $shortcode !== '[TICKET_LIST]' && $shortcode !== '[DATETIME_LIST]' && $shortcode !== '[QUESTION_LIST]' ) {
 					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
 				} else {
 					$data_send = $this->_data;

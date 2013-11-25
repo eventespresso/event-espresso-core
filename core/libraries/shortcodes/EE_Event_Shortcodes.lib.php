@@ -96,14 +96,19 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[VIRTUAL_URL]' :
-				$venue = $this->_venue($event);
+				$venue = $this->_data->get_first_related('Venue');
+				if ( empty( $venue ) )
+					return '';
 				return $venue->get('VNU_virtual_url');
 
 			case '[VIRTUAL_PHONE]' :
-				$venue = $this->_venue($event);
+				$venue = $this->_data->get_first_related('Venue');
+				if ( empty( $venue ) )
+					return '';
 				return $venue->get('VNU_virtual_phone');
 				break;
 		}
+		return '';
 	}
 
 

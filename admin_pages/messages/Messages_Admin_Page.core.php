@@ -425,7 +425,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_register_style('espresso_ee_msg', EE_MSG_ASSETS_URL . 'ee_message_admin.css', EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_ee_msg');
 
-		wp_register_script('ee-messages-settings', EE_MSG_ASSETS_URL . 'ee-messages-settings.js', array('jquery-ui-droppable', 'ee-serialize-full-array', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('ee-messages-settings', EE_MSG_ASSETS_URL . 'ee-messages-settings.js', array('jquery-ui-droppable', 'ee-serialize-full-array'), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
@@ -1647,9 +1647,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			} else {
 				//first validate all fields!
 				$validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
-
+				
 				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response.
-				if ( is_array($validates) ) {
+				if ( is_array($validates) && !empty($validates) ) {
 					//add the transient so when the form loads we know which fields to highlight
 					$this->_add_transient( 'edit_message_template', $validates );
 

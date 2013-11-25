@@ -169,6 +169,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'help_tabs' => array(
+					'question_groups_tab_overview_info' => array(
+						'title' => __('Question Groups', 'event_espresso'),
+						'callback' => 'question_groups_tab_overview_info_help_tab'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 
@@ -273,6 +279,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_group_help_tabs.template.php';
 		$template = call_user_func( $tab . '_html' );
 		EEH_Template::display_template($template);
+	}
+	public function question_groups_tab_overview_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
 	}
 	public function group_name_info_help_tab(){
 		$this->edit_question_group_help_tabs( __FUNCTION__ );
