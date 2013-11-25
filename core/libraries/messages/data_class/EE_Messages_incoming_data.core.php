@@ -297,6 +297,35 @@ abstract class EE_Messages_incoming_data {
 		$this->datetimes = $datetimes;
 		$this->questions = $questions;
 		$this->answers = $answers;
+
+
+		//setup primary registration
+
+		//let's get just the primary_attendee_data!  First we get the primary registration object.
+		$primary_reg = $this->txn->primary_registration(TRUE);
+		// verify
+		if( $primary_reg instanceof EE_Registration ) {
+
+			// get attendee object
+			if( $primary_reg->attendee() instanceof EE_Attendee ) {
+
+				//now we can setup the primary_attendee_data array
+				$this->primary_attendee_data = array(
+					'fname' => $primary_reg->attendee()->fname(),
+					'lname' => $primary_reg->attendee()->lname(),
+					'email' => $primary_reg->attendee()->email(),
+					'primary_attendee_email' => $primary_reg->attendee()->email(),
+					'registration_id' => $primary_reg->ID(),
+					'att_obj' => $primary_reg->attendee()
+				);
+
+			} else {				
+				EE_Error::add_error( __('Incoming data does not have a valid Attendee object for the primary registrant.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			}
+
+		} else {
+			EE_Error::add_error( __('Incoming data does not have a valid Registration object for the primary registrant.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
 	}
 
 

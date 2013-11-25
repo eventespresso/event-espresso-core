@@ -119,19 +119,6 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		$this->reg_objs = $this->txn->registrations();
 
 		//now we can set things up like we do for other handlers
-		//let's get just the primary_attendee_data!  First we get the primary registration object.
-		$primary_reg = $this->txn->primary_registration(TRUE);
-
-		$primary_att = $primary_reg->attendee();
-
-		//now we can setup the primary_attendee_data array
-		$this->primary_attendee_data = array(
-			'fname' => $primary_att->fname(),
-			'lname' => $primary_att->lname(),
-			'email' => $primary_att->email(),
-			'primary_attendee_email' => $primary_att->email(),
-			'registration_id' => $primary_reg->ID()
-			);
 
 		$this->_assemble_data();
 
