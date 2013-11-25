@@ -17,6 +17,7 @@ class EE_Money_Field extends EE_Float_Field{
 	 */
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted,$schema = null){
 		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
+
 		if($schema == 'localized_float'){
 			return $pretty_float;
 		}
@@ -27,7 +28,8 @@ class EE_Money_Field extends EE_Float_Field{
 		}else{
 			$display_code = true;
 		}
-		return EEH_Template::format_currency( $pretty_float, false, $display_code );
+		//we don't use the $pretty_float because format_currency will take care of it.
+		return EEH_Template::format_currency( $value_on_field_to_be_outputted, false, $display_code );
 	}
 	
 	/**
