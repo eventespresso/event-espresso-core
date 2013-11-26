@@ -573,16 +573,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						'input_id' => $line_item_ID,
 						'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
 					);
+					
 					$Question_Groups = EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array( 
 						array( 
 							'Event.EVT_ID' => $registration->event()->ID(), 
 							'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
-						)
+						),
+						'order_by'=>array( 'QSG_order'=>'ASC' )
 					));
-					//d( $Question_Groups );
-					foreach ( $Question_Groups as $Question_Group ) {
-						$Questions = $Question_Group->get_many_related( 'Question' );
-						//d( $Questions );
+					
+					foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
+						$Questions = $Question_Group->get_many_related( 'Question', array( 'order_by'=>array( 'QST_order'=>'ASC' )));
 						foreach ( $Questions as $Question ) {
 							/*@var $Question EE_Question */
 							if( !  $this->_reg_url_link ){
@@ -590,20 +591,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									'QST_ID'=> $Question->ID(),
 									'REG_ID'=> $registration->ID()
 								 ));
-								$answer->_add_relation_to( $Question, 'Question' );
+								$answer->cache( 'Question', $Question );
 								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-								$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
+								$registration->cache( 'Answer', $answer, $answer_cache_id );
 							}else{
 								$answer_to_question = EEM_Answer::instance()->get_answer_value_to_question($registration,$Question->ID());
 								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer_to_question;
-							}
-
-						}
-						
+							}							
+							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
+						}						
 					}
-
-					
-					//printr( $question_meta, '$question_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
 					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
@@ -611,8 +608,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 					// show this attendee form?
 					if ( empty( $attendee_questions )) {				
-						//$attendee_questions .= '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>';
-//						$attendee_questions .= '
 						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '
 							<input
 									type="hidden"
