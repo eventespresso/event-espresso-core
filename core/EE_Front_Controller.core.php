@@ -82,17 +82,6 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
-//		$t = EE_Ticket::new_instance(array('TKT_name'=>'prog1',));
-//		$p = EEM_Price::instance()->get_one();
-//		$d = EEM_Datetime::instance()->get_one();
-//		$t->save();
-//		$t->_add_relation_to($p, 'Price');
-//		$t->_add_relation_to($d, 'Datetime');
-//		d($t);
-//		d($t->datetimes());
-//		d($t->prices());
-//		$t->_remo
-//		$t->delete_permanently();
 //		$em = EEM_Event::instance();
 //		$event = $em->get_one(array(array('Term_Taxonomy.term_taxonomy_id'=>array('IS NOT NULL'))));
 //		d($event);

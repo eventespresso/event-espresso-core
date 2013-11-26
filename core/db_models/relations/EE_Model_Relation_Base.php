@@ -236,6 +236,20 @@ abstract class EE_Model_Relation_Base{
 	abstract function remove_relation_to($this_obj_or_id, $other_obj_or_id);
 	
 	/**
+	 * Removes ALL relation instances for this relation obj
+	 * @param EE_Base_Class|int $this_obj_or_id
+	 * @param array $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
+	 * @return EE_Base_Class[]
+	 */
+	public function remove_relations($this_obj_or_id,$where_query_param = array()){
+		$related_things = $this->get_all_related($this_obj_or_id,array($where_query_param));
+		$objs_removed = array();
+		foreach($related_things as $related_thing){
+			$objs_removed[] = $this->remove_relation_to($this_obj_or_id, $related_thing);
+		}
+		return $objs_removed;
+	}
+	/**
 	 * If you aren't allowed to delete this model when there are related models across this
 	 * relation object, return true. Otherwise, if you can delete this model even though 
 	 * related objects exist, returns false.

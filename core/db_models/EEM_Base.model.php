@@ -914,6 +914,18 @@ abstract class EEM_Base extends EE_Base{
 		return $relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj, $where_query );
 	}
 	
+	/**
+	 * 
+	 * @param type $id_or_obj
+	 * @param type $relationName
+	 * @param type $where_query_params
+	 * @return EE_Base_Class[] objects to which relations were removed
+	 */
+	public function remove_relations($id_or_obj,$relationName,$where_query_params = array()){
+		$relation_obj = $this->related_settings_for($relationName);
+		return $relation_obj->remove_relations($id_or_obj, $where_query_params );
+	}
+	
 	
 	/**
 	 * Gets all the related items of the specified $model_name, using $query_params.

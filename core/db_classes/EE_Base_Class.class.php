@@ -1072,6 +1072,21 @@ class EE_Base_Class{
 	}
 	
 	/**
+	 * Removes ALL the related things for teh $relationName.
+	 * @param string $relationName
+	 * @param array $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
+	 * @return EE_Base_Class
+	 */
+	public function _remove_relations($relationName,$where_query_params = array()){
+		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
+			$otherObjects = $this->get_model()->remove_relations($this, $relationName, $where_query_params );
+			$this->clear_cache($relationName,null,true);
+		}else{//this doesn't exist in teh DB, just remove it from the cache
+			$otherObjects = $this->clear_cache($relationName,null,true);
+		}
+		return $otherObjects;
+	}
+	/**
 	 * Gets all the related model objects of the specified type. Eg, if the current class if
 	 * EE_Event, you could call $this->get_many_related('Registration') to get an array of all the
 	 * EE_Registration objects which related to this event. Note: by default, we remove the "default query params"
