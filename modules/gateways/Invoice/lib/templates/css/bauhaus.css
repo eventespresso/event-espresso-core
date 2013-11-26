@@ -44,7 +44,7 @@ Created by Roan Lavery
 
 /*=========================== TABLES =========================*/
 
-#invoice table th {text-align:left;padding: 4px 5px 4px 5px;}
+#invoice table th {text-align:left;padding: 4px 5px 4px 5px; border-bottom: #666 1px solid}
 .ticket-details table th, .taxes table th {border-bottom:1px solid #666;}
 /*#invoice .header_row{background-color:#000; color:#fff}*/
 #invoice-amount td.action{border-bottom:0}
