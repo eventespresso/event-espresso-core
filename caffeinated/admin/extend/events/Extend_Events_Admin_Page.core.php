@@ -797,7 +797,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _delete_the_ticket( $TKT_ID ) {
 		$tkt = EEM_Ticket::instance()->get_one_by_ID( $TKT_ID );
-
+		$tkt->_remove_relations('Datetime');
 		//delete all related prices first
 		$tkt->delete_related_permanently('Price');
 		return $tkt->delete_permanently();

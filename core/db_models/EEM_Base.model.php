@@ -695,6 +695,7 @@ abstract class EEM_Base extends EE_Base{
 				}else{
 					$related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id);
 				}
+				
 				if($related_model_objects){
 					EE_Error::add_error($relation_obj->get_deletion_error_message(), __FILE__, __FUNCTION__, __LINE__);
 					$is_blocked = true;
