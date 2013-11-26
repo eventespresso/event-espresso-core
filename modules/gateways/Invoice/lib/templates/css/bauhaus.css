@@ -44,12 +44,8 @@ Created by Roan Lavery
 
 /*=========================== TABLES =========================*/
 
-<<<<<<< HEAD
-#invoice table th {text-align:left;padding: 4px 5px 4px 5px; border-bottom: #666 1px solid}
-=======
 table th {text-align:left;padding: 4px 5px 4px 5px;}
->>>>>>> 956c760... Removing the ids in the table css. [touch:4098,4097]
-.ticket-details table th, .taxes table th {border-bottom:1px solid #666;}
+
 td.action{border-bottom:0}
 tr.odd td, tr.odd th{background-color:#F4F4F4} 
 
