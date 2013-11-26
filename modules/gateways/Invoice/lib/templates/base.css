@@ -44,8 +44,8 @@ td { vertical-align:top!important; }
 }
 .tickets-per-event>li{
 	margin-bottom:3em;
-	margin-left:1em;
-	margin-right:1em;
+	/*margin-left:1em;
+	margin-right:1em;*/
 	/*border:1px dotted gray;*/
 }
 th.number-column{
@@ -55,7 +55,7 @@ th.name-column{
 	width:15em;
 }
 td{
-	text-align:center;
+	/*text-align:center;*//*Seth*/
 }
 .ticket-time-details{
 	width:70%;
@@ -86,7 +86,7 @@ td{
 	width:500px;
 }*/
 .reg-details-for-ticket{
-	margin-left:4em;
+	/*margin-left:4em;*//*Seth*/
 }
 .grand-total{
 	text-align:right;

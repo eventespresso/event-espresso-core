@@ -173,7 +173,7 @@
 						case EEM_Line_Item::type_sub_line_item:							
 							?>
 						<tr class="item sub-item">
-							<td class="item_r"><?php echo $line_item->name() ?></td>
+							<td class="item_l"><?php echo $line_item->name() ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<?php if ($line_item->is_percent()) { ?>
 								<td class="item_l"><?php echo $line_item->percent();?>%</td>

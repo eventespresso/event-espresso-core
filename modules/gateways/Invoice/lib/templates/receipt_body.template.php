@@ -50,58 +50,9 @@ $tax_total_line_item;
 				$taxable_html = $ticket->taxable() ? '*': '';
 				$subitems = $line_item->children();?>
 				<li class="event-ticket">
-					<div class="ticket-details">
-						<table>
-							<thead>
-								<tr class="header_row">
-									<th class="name-column"><?php			_e("Ticket", "event_espresso");?></th>
-									<th class="desc-column"><?php			_e("Description", "event_espresso");?></th>
-									<th class="number-column"><?php			_e("Total Uses", "event_espresso");?></th>
-									<th class="number-column"><?php			_e("Quantity", "event_espresso");?></th>
-									<th class="number-column"><?php			_e("Price", "event_espresso");?></th>
-									<th class="number-column"><?php			_e("Line Total", "event_espresso");?></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php if( count($subitems) < 2){?>
-								<tr>
-									<td><?php echo $line_item->name().$taxable_html?></td>
-									<td><?php echo $line_item->desc()?></td>
-									<td><?php echo $ticket->uses()?></td>
-									<td><?php echo $line_item->quantity()?></td>
-									<td><?php echo $line_item->unit_price_no_code()?></td>
-									<td><?php echo $line_item->total_no_code()?></td>
-								</tr>
-								<?php }else{?>
-									<tr>
-										<td class="aln-left"><?php echo $line_item->name().$taxable_html?></td>
-										<td><?php echo $line_item->desc()?></td>
-										<td><?php echo $ticket->uses()?></td>
-										<td colspan="3"></td>
-									</tr>
-									<?php foreach($subitems as $sub_line_item){
-										$is_percent = $sub_line_item->is_percent();?>
-										<tr>
-											<td class="subitem"><?php echo $sub_line_item->name()?></td>
-											<td colspan="2"><?php echo $sub_line_item->desc()?></td>
-											<td><?php echo $is_percent ? '' : $sub_line_item->quantity()?></td>
-											<td><?php echo $is_percent ? $sub_line_item->percent()."%" : $sub_line_item->unit_price_no_code()?></td>
-											<td><?php echo $sub_line_item->total_no_code()?></td>
-										</tr>
-									<?php } ?>
-									<tr class="total_tr">
-										<td colspan="4"></td>
-										<td class="total" nowrap="nowrap"><?php _e("Ticket Total:", "event_espresso");?></td>
-										<td><?php echo $line_item->total_no_code()?></td>
-									</tr>
-								<?php }?>
-							</tbody>
-						</table>
-					</div>
-					<div class="reg-details-for-ticket">
-						<div class="ticket-time-and-place-details">
+					<div class="ticket-time-and-place-details">
 							<div class="ticket-time-details">
-								<h3 class="sub-section-title no-bottom-margin"><?php echo _n("Datetime:","Datetimes:",count($ticket->datetimes()), "event_espresso");?></h3>
+								<h3 class="sub-section-title no-bottom-margin"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h3>
 								<ul class="event-dates">
 									<?php foreach($ticket->datetimes() as $datetime){?>
 									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
@@ -119,8 +70,58 @@ $tax_total_line_item;
 							</div>
 							<?php }?>
 						</div>
+					<div class="ticket-details">
+						<table id="invoice-amount">
+							<thead>
+								<tr class="header_row">
+									<th class="name-column"><?php			_e("Ticket", "event_espresso");?></th>
+									<th class="desc-column"><?php			_e("Description", "event_espresso");?></th>
+									<th class="number-column"><?php			_e("Total Uses", "event_espresso");?></th>
+									<th class="number-column"><?php			_e("Quantity", "event_espresso");?></th>
+									<th class="number-column"><?php			_e("Price", "event_espresso");?></th>
+									<th class="number-column"><?php			_e("Line Total", "event_espresso");?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php if( count($subitems) < 2){?>
+								<tr class="item odd">
+									<td><?php echo $line_item->name().$taxable_html?></td>
+									<td><?php echo $line_item->desc()?></td>
+									<td><?php echo $ticket->uses()?></td>
+									<td><?php echo $line_item->quantity()?></td>
+									<td><?php echo $line_item->unit_price_no_code()?></td>
+									<td><?php echo $line_item->total_no_code()?></td>
+								</tr>
+								<?php }else{?>
+									<tr class="item odd">
+										<td class="aln-left"><?php echo $line_item->name().$taxable_html?></td>
+										<td><?php echo $line_item->desc()?></td>
+										<td><?php echo $ticket->uses()?></td>
+										<td colspan="3"></td>
+									</tr>
+									<?php foreach($subitems as $sub_line_item){
+										$is_percent = $sub_line_item->is_percent();?>
+										<tr>
+											<td class="subitem"><?php echo $sub_line_item->name()?></td>
+											<td colspan="2"><?php echo $sub_line_item->desc()?></td>
+											<td><?php echo $is_percent ? '' : $sub_line_item->quantity()?></td>
+											<td><?php echo $is_percent ? $sub_line_item->percent()."%" : $sub_line_item->unit_price_no_code()?></td>
+											<td><?php echo $sub_line_item->total_no_code()?></td>
+										</tr>
+									<?php } ?>
+									<tr class="total_tr odd">
+										<td colspan="4"></td>
+										<td class="total" nowrap="nowrap"><?php _e("Ticket Total:", "event_espresso");?></td>
+										<td><?php echo $line_item->total_no_code()?></td>
+									</tr>
+								<?php }?>
+							</tbody>
+						</table>
+					</div>
+					<div class="reg-details-for-ticket">
+						
 						<div class="ticket-registrations-area">
-							<h3 class="sub-section-title"><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php echo _n("Registration:","Registrations:",count($registrations_per_line_item[$line_item_id]), "event_espresso");?></a></h3>
+							<h3 class="sub-section-title"><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php echo __("Registration Details:", "event_espresso");?></a></h3>
 							<ul class="ticket-registrations-list">
 								<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
 									/* @var $registration EE_Registration */
@@ -169,7 +170,7 @@ $tax_total_line_item;
 		<div class="taxes">
 			<?php if ($tax_total_line_item && $tax_total_line_item->children()){?>
 				<h3 class="section-title"><?php _e("Taxes",'event_espresso')?></h3>
-				<table>
+				<table id="invoice-amount">
 
 					<thead>
 						<tr class="header_row">
@@ -189,7 +190,7 @@ $tax_total_line_item;
 							<td><?php echo $child_tax->total_no_code()?></td>
 						</tr>
 						<?php } ?>
-						<tr>
+						<tr class="total_tr odd">
 							<td class="total_tr" colspan="2"></td>
 							<td class="total"><?php	_e("Tax Total:", "event_espresso");?></td>
 							<td><?php echo $tax_total_line_item->total_no_code()?></td>
@@ -245,7 +246,7 @@ $tax_total_line_item;
 						<td class="item_r"><?php echo EEH_Template::format_currency($amount_pd,false,false)?> </td>
 					</tr>
 					<?php //echo $discount; ?>
-					<tr class="total_tr">
+					<tr class="total_tr odd">
 						<td colspan="4">&nbsp;</td>
 						<td class="total" id="total_currency"><?php _e('Amount Owed:', 'event_espresso'); ?></td>
 						<td class="total"><?php echo EEH_Template::format_currency($amount_owed)?></td>
