@@ -47,17 +47,17 @@
 	background: url('../../images/calendar_year-16x16.png') center left no-repeat;
 }
 
-.ee-clock-icon-big {
+.ee-users-icon-big {
 	padding-left: 48px; 
-	background: url('../../images/clock-32x32.png') center left no-repeat;
+	background: url('../../images/users-32x32.png') center left no-repeat;
 }
-.ee-clock-icon-med {
+.ee-users-icon-med {
 	padding-left: 36px; 
-	background: url('../../images/clock-24x24.png') center left no-repeat;
+	background: url('../../images/users-24x24.png') center left no-repeat;
 }
-.ee-clock-icon-small {
+.ee-users-icon-small {
 	padding-left: 24px; 
-	background: url('../../images/clock-16x16.png') center left no-repeat;
+	background: url('../../images/users-16x16.png') center left no-repeat;
 }
 
 .ee-external-link-icon {
