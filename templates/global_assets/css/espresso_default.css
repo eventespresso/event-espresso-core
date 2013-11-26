@@ -8,6 +8,66 @@
 /****                                                                           ****/
 /*******************************************************/
 
+.ee-clock-icon-big {
+	padding-left: 48px; 
+	background: url('../../images/clock-32x32.png') center left no-repeat;
+}
+.ee-clock-icon-med {
+	padding-left: 36px; 
+	background: url('../../images/clock-24x24.png') center left no-repeat;
+}
+.ee-clock-icon-small {
+	padding-left: 24px; 
+	background: url('../../images/clock-16x16.png') center left no-repeat;
+}
+
+.ee-location-pin-icon-big {
+	padding-left: 48px; 
+	background: url('../../images/location-pin-32x32.png') center left no-repeat;
+}
+.ee-location-pin-icon-med {
+	padding-left: 36px; 
+	background: url('../../images/location-pin-24x24.png') center left no-repeat;
+}
+.ee-location-pin-icon-small {
+	padding-left: 24px; 
+	background: url('../../images/location-pin-16x16.png') center left no-repeat;
+}
+
+.ee-calendar_year-icon-big {
+	padding-left: 48px; 
+	background: url('../../images/calendar_year-32x32.png') center left no-repeat;
+}
+.ee-calendar_year-icon-med {
+	padding-left: 36px; 
+	background: url('../../images/calendar_year-24x24.png') center left no-repeat;
+}
+.ee-calendar_year-icon-small {
+	padding-left: 24px; 
+	background: url('../../images/calendar_year-16x16.png') center left no-repeat;
+}
+
+.ee-clock-icon-big {
+	padding-left: 48px; 
+	background: url('../../images/clock-32x32.png') center left no-repeat;
+}
+.ee-clock-icon-med {
+	padding-left: 36px; 
+	background: url('../../images/clock-24x24.png') center left no-repeat;
+}
+.ee-clock-icon-small {
+	padding-left: 24px; 
+	background: url('../../images/clock-16x16.png') center left no-repeat;
+}
+
+.ee-external-link-icon {
+	padding-right: 24px; 
+	background: url('../../images/external-link-32x32.png') center right no-repeat;
+}
+
+
+
+
 
 .ee-button-lnk {
 	display: inline-block;
