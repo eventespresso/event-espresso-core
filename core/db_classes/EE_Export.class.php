@@ -46,6 +46,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
  	private function __construct( $request_data = array() ) {
 		$this->_req_data = $request_data;
+		$this->today = date("Y-m-d",time());
+		require_once( EE_CLASSES . 'EE_CSV.class.php' );
+		$this->EE_CSV= EE_CSV::instance();
 	}
 
 
@@ -69,11 +72,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	public function export() {
-	
-		require_once( EE_CLASSES . 'EE_CSV.class.php' );
-		$this->EE_CSV= EE_CSV::instance();
-
-		$this->today = date("Y-m-d",time());
 		
 		// in case of bulk exports, the "actual" action will be in action2, but first check regular action for "export" keyword
 		if ( isset( $this->_req_data['action'] ) && strpos( $this->_req_data['action'], 'export' ) === FALSE ) {

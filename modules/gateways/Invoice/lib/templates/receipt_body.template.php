@@ -34,15 +34,16 @@ $tax_total_line_item;
 				<td>
 					<div id="invoice-info">
 						<h2 id="invoice-hdr"><?php _e('Order Confirmation', 'event_espresso')?></h2>
-						<h3 id="invoice-date"><b><?php _e('Date:', 'event_espresso')?></b> <span>[registration_date]</span></h3>
-						<h3 id="invoice-txn-id"><b><?php _e('Transaction ID:', 'event_espresso')?></b> <span>[transaction_id]</span> <span class="<?php echo $transaction->status_ID()?>"><?php echo $transaction->pretty_status();?></span></h3>
+						<h3 id="invoice-date"><?php _e('Date:', 'event_espresso')?> <span class="plain-text">[registration_date]</span></h3>
+						<h3 id="invoice-txn-id"><?php _e('Transaction ID:', 'event_espresso')?> <span class="plain-text">[transaction_id]</span></h3>
+						<h3 id="invoice-txn-status"><?php _e('Status:', 'event_espresso')?> <span class="<?php echo $transaction->status_ID()?> plain-text"><?php echo $transaction->pretty_status();?></span></h3>
 					</div>
 				</td>
 			</tr>
 		</table>
 		<div class="events">
 		<?php foreach($events_for_txn as $event_id => $event){
-			?><h3 class="scetion-title event-name"><a href='<?php echo $event->get_permalink()?>'><?php printf(__("Event Name: %s","event_espresso"), $event->name())?></a></h3>
+			?><h3 class="scetion-title event-name"><?php _e("Event Name:","event_espresso")?> <span class="plain-text"><?php echo $event->name();?></span> <span class="small-text link">[ <a href='<?php echo $event->get_permalink()?>'><?php _e('view', 'event_espresso'); ?></a> ]</span></h3>
 			<?php if (strlen($event->description()>1)){?><p class="event-description"><?php $event->description()?></p><?php }?>
 			<ul class="tickets-per-event">
 			<?php foreach($ticket_line_items_per_event[$event_id] as $line_item_id => $line_item){
@@ -50,61 +51,39 @@ $tax_total_line_item;
 				$taxable_html = $ticket->taxable() ? '*': '';
 				$subitems = $line_item->children();?>
 				<li class="event-ticket">
-					<div class="ticket-time-and-place-details">
-							<div class="ticket-time-details">
-								<h3 class="sub-section-title no-bottom-margin"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h3>
-								<ul class="event-dates">
-									<?php foreach($ticket->datetimes() as $datetime){?>
-									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
-									<?php }?>
-								</ul>
-							</div>
-							<?php if ($event->venues()){?>
-							<div class="ticket-place-details">
-								<h3 class="sub-section-title no-bottom-margin"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h3>
-								<ul class="event-venues">
-									<?php foreach($event->venues() as $venue){?>
-									<li><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></li>
-									<?php } ?>
-								</ul>
-							</div>
-							<?php }?>
-						</div>
 					<div class="ticket-details">
 						<table id="invoice-amount">
 							<thead>
 								<tr class="header_row">
-									<th class="name-column"><?php			_e("Ticket", "event_espresso");?></th>
-									<th class="desc-column"><?php			_e("Description", "event_espresso");?></th>
-									<th class="number-column"><?php			_e("Total Uses", "event_espresso");?></th>
-									<th class="number-column"><?php			_e("Quantity", "event_espresso");?></th>
-									<th class="number-column"><?php			_e("Price", "event_espresso");?></th>
-									<th class="number-column"><?php			_e("Line Total", "event_espresso");?></th>
+									<th class="name-column"><?php _e("Ticket", "event_espresso");?></th>
+									<th colspan="2" class="desc-column"><?php _e("Description", "event_espresso");?></th>
+									<th class="number-column item_c"><?php _e("Quantity", "event_espresso");?></th>
+									<th class="number-column item_c"><?php _e("Price", "event_espresso");?></th>
+									<th class="number-column"><?php _e("Line Total", "event_espresso");?></th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php if( count($subitems) < 2){?>
-								<tr class="item odd">
+								<tr class="item">
 									<td><?php echo $line_item->name().$taxable_html?></td>
-									<td><?php echo $line_item->desc()?></td>
-									<td class="item_c"><?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'unlimited ', 'event_espresso' ); /*$ticket->uses();*/ ?></td>
+									<td colspan="2"><?php echo $line_item->desc();?><p class="ticket-note">This ticket can be use once at <?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'any ', 'event_espresso' ); ?> of the dates/times below.</p></td>
 									<td class="item_c"><?php echo $line_item->quantity()?></td>
 									<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
 									<td class="item_r"><?php echo $line_item->total_no_code()?></td>
 								</tr>
 								<?php }else{?>
-									<tr class="item odd">
+									<tr class="item">
 										<td class="aln-left"><?php echo $line_item->name().$taxable_html?></td>
-										<td><?php echo $line_item->desc()?></td>
-										<td class="item_c"><?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'unlimited ', 'event_espresso' ); /*$ticket->uses();*/ ?></td>
-										<td colspan="3"></td>
+										<td><?php echo $line_item->desc();?><p class="ticket-note">This ticket can be use once at <?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'any ', 'event_espresso' ); ?> of the dates/times below.</p></td>
+										<td colspan="2" class="item_c"><?php echo $line_item->quantity()?></td>
+										<td colspan="2"></td>
 									</tr>
 									<?php foreach($subitems as $sub_line_item){
 										$is_percent = $sub_line_item->is_percent();?>
 										<tr>
 											<td class="subitem"><?php echo $sub_line_item->name()?></td>
 											<td colspan="2"><?php echo $sub_line_item->desc()?></td>
-											<td class="item_c"><?php echo $is_percent ? '' : $sub_line_item->quantity()?></td>
+											<td class="item_c"><?php //echo $is_percent ? '' : $sub_line_item->quantity()?></td>
 											<td class="item_c"><?php echo $is_percent ? $sub_line_item->percent()."%" : $sub_line_item->unit_price_no_code()?></td>
 											<td class="item_r"><?php echo $sub_line_item->total_no_code()?></td>
 										</tr>
@@ -117,13 +96,33 @@ $tax_total_line_item;
 								<?php }?>
 							</tbody>
 						</table>
+						
 					</div>
 					<div class="reg-details-for-ticket">
-						
+						<div class="ticket-time-and-place-details">
+							<div class="ticket-time-details">
+								<h4 class="sub-section-title no-bottom-margin"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h3>
+								<ul class="event-dates">
+									<?php foreach($ticket->datetimes() as $datetime){?>
+									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
+									<?php }?>
+								</ul>
+							</div>
+							<?php if ($event->venues()){?>
+							<div class="ticket-place-details">
+								<h4 class="sub-section-title no-bottom-margin"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h3>
+								<ul class="event-venues">
+									<?php foreach($event->venues() as $venue){?>
+									<li><?php echo $venue->name()?> <span class="small-text">[ <a href='<?php echo $venue->get_permalink()?>'><?php _e('view', 'event_espresso'); ?></a> ]</span></li>
+									<?php } ?>
+								</ul>
+							</div>
+							<?php }?>
+						</div>
 						<div class="ticket-registrations-area">
-							<h3 class="sub-section-title"><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php echo __("Registration Details:", "event_espresso");?></a></h3>
+							<h4 class="sub-section-title"><?php echo __("Registration Details", "event_espresso");?> <span class="small-text link">[ <a class="print_button noPrint" href="<?php echo $edit_reg_info_url; ?>"><?php _e('edit', 'event_espresso'); ?></a> ]</span></h3>
 							<ul class="ticket-registrations-list">
-								<?php foreach($registrations_per_line_item[$line_item_id]	 as $registration){
+								<?php foreach($registrations_per_line_item[$line_item_id] as $registration){
 									/* @var $registration EE_Registration */
 									$attendee = $registration->attendee();
 									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
@@ -142,13 +141,22 @@ $tax_total_line_item;
 												if( ! $attendee->get($field_name)){
 													continue;
 												}
-											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);?>
+											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);
+											if($field_info->get_name() == 'STA_ID'){
+												$state_obj = $attendee->state_obj();
+												$value = $state_obj ? $state_obj->name() : '';
+											}elseif($field_info->get_name() == 'CNT_ISO'){
+												$country_obj  = $attendee->country_obj();
+												$value = $country_obj ? $country_obj->name() : '';
+											}else{
+												$value = $attendee->get($field_name);
+											 }?>
 											<tr>
 												<th><?php echo $field_info->get_nicename()?>: </th>
-												<td><?php echo $attendee->get($field_name)?></td>
+												<td><?php echo $value;?></td>
 											</tr>
-										<?php }?>
-										<?php foreach($answers as $ans_id => $answer){
+										 <?php }
+										 foreach($answers as $ans_id => $answer){
 											$question = $answer->question();?>
 											<tr>
 												<th><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </th>
@@ -176,7 +184,7 @@ $tax_total_line_item;
 						<tr class="header_row">
 							<th class="left ticket_th"><?php _e("Tax Name", "event_espresso");?></th>
 							<th class="left"><?php _e('Description', 'event_espresso');?></th>
-							<th class="left event_th"><?php _e('Rate', 'event_espresso'); ?></th>
+							<th class="event_th item_c"><?php _e('Rate', 'event_espresso'); ?></th>
 							<th class="subtotal_th"><?php _e('Tax Amount', 'event_espresso'); ?></th>
 						</tr>
 					</thead>

@@ -101,7 +101,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'add-attendee' => __('Add New Attendee Contact Info', 'event_espresso'),
 					'edit' => __('Edit Attendee', 'event_espresso'),
 					'delete_attendees' => __('Delete Attendee', 'event_espresso'),
-					'report'=>  __("Registrations CSV Report", "event_espresso")
+					'report'=>  __("Registrations CSV Report", "event_espresso"),
+					'contact_list_export'=>  __("Contact List CSV Export", "event_espresso"),
 				),
 			'publishbox' => array(
 				'edit_attendee' => __("Update Attendee Record", 'event_espresso')
@@ -253,6 +254,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'registrations_report'=>array(
 					'func'=>'_registrations_report',
 					'noheader'=> TRUE
+				),
+				'contact_list_export'=>array(
+					'func'=>'_contact_list_export',
+					'noheader'=>TRUE
 				)
 		);
 		
@@ -2450,6 +2455,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
 			$EE_Export->export();
+		}
+	}
+	public function _contact_list_export(){
+
+		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+			require_once(EE_CLASSES . 'EE_Export.class.php');
+			$EE_Export = EE_Export::instance($this->_req_data);
+			$EE_Export->export_attendees();
 		}
 	}
 
