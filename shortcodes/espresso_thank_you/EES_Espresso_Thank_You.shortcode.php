@@ -128,7 +128,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			}
 			
 			$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'payment_options', 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
-			
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
 			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));
