@@ -98,6 +98,8 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		EE_Registry::instance()->load_helper('Template');
 		$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
 
+		$this->reg_objs = $this->txn->get_many_related('Registration');
+
 		$this->_assemble_data();
 
 	}
