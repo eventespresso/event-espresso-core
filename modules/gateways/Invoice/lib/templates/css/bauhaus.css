@@ -44,20 +44,23 @@ Created by Roan Lavery
 
 /*=========================== TABLES =========================*/
 
+<<<<<<< HEAD
 #invoice table th {text-align:left;padding: 4px 5px 4px 5px; border-bottom: #666 1px solid}
+=======
+table th {text-align:left;padding: 4px 5px 4px 5px;}
+>>>>>>> 956c760... Removing the ids in the table css. [touch:4098,4097]
 .ticket-details table th, .taxes table th {border-bottom:1px solid #666;}
-/*#invoice .header_row{background-color:#000; color:#fff}*/
-#invoice-amount td.action{border-bottom:0}
-#invoice-amount tr.odd td, #invoice tr.odd td{background-color:#F4F4F4} 
+td.action{border-bottom:0}
+tr.odd td, tr.odd th{background-color:#F4F4F4} 
 
-#invoice-amount .total_tr td{border-bottom:0}
-#invoice-amount #vat_tr td{border-bottom:1px solid #000}
-#invoice-amount td {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
+.total_tr td{border-bottom:0}
+#vat_tr td{border-bottom:1px solid #000}
+td {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
 
-#invoice-amount td {margin: 0;padding: 5px; vertical-align: top; }
-#invoice-amount td.item_r{text-align: right;}
-#invoice-amount td.item_l{text-align: left;white-space: normal; }
-#invoice-amount td.total, td.total {text-align: right;font-weight: bold; }
+td {margin: 0;padding: 5px; vertical-align: top; }
+td.item_r{text-align: right;}
+td.item_l{text-align: left;white-space: normal; }
+td.total, td.total {text-align: right;font-weight: bold; }
 
 
 

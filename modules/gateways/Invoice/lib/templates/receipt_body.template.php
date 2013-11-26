@@ -129,7 +129,7 @@ $tax_total_line_item;
 									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
 								<li class="ticket-registration">
 									<table class="registration-details">
-										<tr>
+										<tr class="odd">
 											<th><?php	_e("Registration Code:", "event_espresso");?></th>
 											<td><?php echo $registration->reg_code();?> - <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></td>
 										</tr>
@@ -139,9 +139,9 @@ $tax_total_line_item;
 										</tr>
 										
 										<?php foreach($attendee_columns_to_show as $field_name){
-											if( ! $attendee->get($field_name)){
-												continue;
-											}
+												if( ! $attendee->get($field_name)){
+													continue;
+												}
 											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);?>
 											<tr>
 												<th><?php echo $field_info->get_nicename()?>: </th>
