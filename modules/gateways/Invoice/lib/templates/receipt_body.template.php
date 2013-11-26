@@ -87,10 +87,10 @@ $tax_total_line_item;
 								<tr class="item odd">
 									<td><?php echo $line_item->name().$taxable_html?></td>
 									<td><?php echo $line_item->desc()?></td>
-									<td class="item_c"><?php echo $ticket->uses()?></td>
-									<td><?php echo $line_item->quantity()?></td>
-									<td><?php echo $line_item->unit_price_no_code()?></td>
-									<td><?php echo $line_item->total_no_code()?></td>
+									<td class="item_c"><?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'unlimited ', 'event_espresso' ); /*$ticket->uses();*/ ?></td>
+									<td class="item_c"><?php echo $line_item->quantity()?></td>
+									<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
+									<td class="item_r"><?php echo $line_item->total_no_code()?></td>
 								</tr>
 								<?php }else{?>
 									<tr class="item odd">
