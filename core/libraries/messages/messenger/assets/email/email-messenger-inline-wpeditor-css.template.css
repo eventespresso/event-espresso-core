@@ -1,20 +1,20 @@
 /* ------------------------------------- 
 		GLOBAL 
 ------------------------------------- */
-.mceEditor * { 
+.mceContentBody * { 
 	margin:0;
 	padding:0;
 }
-.mceEditor * { font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif; }
+.mceContentBody * { font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif; }
 
-.mceEditor img { 
+.mceContentBody img { 
 	max-width: 100%; 
 }
-.mceEditor .collapse {
+.mceContentBody .collapse {
 	margin:0;
 	padding:0;
 }
-.mceEditor body {
+.mceContentBody body {
 	-webkit-font-smoothing:antialiased; 
 	-webkit-text-size-adjust:none; 
 	width: 100%!important; 
@@ -25,9 +25,9 @@
 /* ------------------------------------- 
 		ELEMENTS 
 ------------------------------------- */
-.mceEditor a { color: #2BA6CB;}
+.mceContentBody a { color: #2BA6CB;}
 
-.mceEditor .btn {
+.mceContentBody .btn {
 	text-decoration:none;
 	color: #FFF;
 	background-color: #666;
@@ -39,22 +39,22 @@
 	display: inline-block;
 }
 
-.mceEditor p.callout {
+.mceContentBody p.callout {
 	padding:15px;
 	background-color:#ECF8FF;
 	margin-bottom: 15px;
 }
-.mceEditor .callout a {
+.mceContentBody .callout a {
 	font-weight:bold;
 	color: #2BA6CB;
 }
 
-.mceEditor table.social {
+.mceContentBody table.social {
 /* 	padding:15px; */
 	background-color: #ebebeb;
 	
 }
-.mceEditor .social .soc-btn {
+.mceContentBody .social .soc-btn {
 	padding: 3px 7px;
 	font-size:12px;
 	margin-bottom:10px;
@@ -63,12 +63,12 @@
 	display:block;
 	text-align:center;
 }
-.mceEditor a.fb { background-color: #3B5998!important; }
-.mceEditor a.tw { background-color: #1daced!important; }
-.mceEditor a.gp { background-color: #DB4A39!important; }
-.mceEditor a.ms { background-color: #000!important; }
+.mceContentBody a.fb { background-color: #3B5998!important; }
+.mceContentBody a.tw { background-color: #1daced!important; }
+.mceContentBody a.gp { background-color: #DB4A39!important; }
+.mceContentBody a.ms { background-color: #000!important; }
 
-.mceEditor .sidebar .soc-btn { 
+.mceContentBody .sidebar .soc-btn { 
 	display:block;
 	width:100%;
 }
@@ -76,25 +76,25 @@
 /* ------------------------------------- 
 		HEADER 
 ------------------------------------- */
-.mceEditor table.head-wrap { width: 100%;}
+.mceContentBody table.head-wrap { width: 100%;}
 
-.mceEditor .header.container table td.logo { padding: 15px; }
-.mceEditor .header.container table td.label { padding: 15px; padding-left:0px;}
+.mceContentBody .header.container table td.logo { padding: 15px; }
+.mceContentBody .header.container table td.label { padding: 15px; padding-left:0px;}
 
 
 /* ------------------------------------- 
 		BODY 
 ------------------------------------- */
-.mceEditor table.body-wrap { width: 100%;}
+.mceContentBody table.body-wrap { width: 100%;}
 
 
 /* ------------------------------------- 
 		FOOTER 
 ------------------------------------- */
-.mceEditor table.footer-wrap { width: 100%;	clear:both!important;
+.mceContentBody table.footer-wrap { width: 100%;	clear:both!important;
 }
-.mceEditor .footer-wrap .container td.content  p { border-top: 1px solid rgb(215,215,215); padding-top:15px;}
-.mceEditor .footer-wrap .container td.content p {
+.mceContentBody .footer-wrap .container td.content  p { border-top: 1px solid rgb(215,215,215); padding-top:15px;}
+.mceContentBody .footer-wrap .container td.content p {
 	font-size:10px;
 	font-weight: bold;
 	
@@ -104,30 +104,30 @@
 /* ------------------------------------- 
 		TYPOGRAPHY 
 ------------------------------------- */
-.mceEditor h1,.mceEditor h2,.mceEditor h3,.mceEditor h4,.mceEditor h5,.mceEditor h6 {
+.mceContentBody h1,.mceContentBody h2,.mceContentBody h3,.mceContentBody h4,.mceContentBody h5,.mceContentBody h6 {
 font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; line-height: 1.1; margin-bottom:15px; color:#000;
 }
-.mceEditor h1 small, .mceEditor h2 small, .mceEditor h3 small, .mceEditor h4 small, .mceEditor h5 small, .mceEditor h6 small { font-size: 60%; color: #6f6f6f; line-height: 0; text-transform: none; }
+.mceContentBody h1 small, .mceContentBody h2 small, .mceContentBody h3 small, .mceContentBody h4 small, .mceContentBody h5 small, .mceContentBody h6 small { font-size: 60%; color: #6f6f6f; line-height: 0; text-transform: none; }
 
-.mceEditor h1 { font-weight:200; font-size: 44px;}
-.mceEditor h2 { font-weight:200; font-size: 37px;}
-.mceEditor h3 { font-weight:500; font-size: 27px;}
-.mceEditor h4 { font-weight:500; font-size: 23px;}
-.mceEditor h5 { font-weight:900; font-size: 17px;}
-.mceEditor h6 { font-weight:900; font-size: 14px; text-transform: uppercase; color:#444;}
+.mceContentBody h1 { font-weight:200; font-size: 44px;}
+.mceContentBody h2 { font-weight:200; font-size: 37px;}
+.mceContentBody h3 { font-weight:500; font-size: 27px;}
+.mceContentBody h4 { font-weight:500; font-size: 23px;}
+.mceContentBody h5 { font-weight:900; font-size: 17px;}
+.mceContentBody h6 { font-weight:900; font-size: 14px; text-transform: uppercase; color:#444;}
 
-.mceEditor .collapse { margin:0!important;}
+.mceContentBody .collapse { margin:0!important;}
 
-.mceEditor p, .mceEditor ul { 
+.mceContentBody p, .mceContentBody ul { 
 	margin-bottom: 10px; 
 	font-weight: normal; 
 	font-size:14px; 
 	line-height:1.6;
 }
-.mceEditor p.lead { font-size:17px; }
-.mceEditor p.last { margin-bottom:0px;}
+.mceContentBody p.lead { font-size:17px; }
+.mceContentBody p.last { margin-bottom:0px;}
 
-.mceEditor ul li {
+.mceContentBody ul li {
 	margin-left:5px;
 	list-style-position: inside;
 }
@@ -135,13 +135,13 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 /* ------------------------------------- 
 		SIDEBAR 
 ------------------------------------- */
-.mceEditor ul.sidebar {
+.mceContentBody ul.sidebar {
 	background:#ebebeb;
 	display:block;
 	list-style-type: none;
 }
-.mceEditor ul.sidebar li { display: block; margin:0;}
-.mceEditor ul.sidebar li a {
+.mceContentBody ul.sidebar li { display: block; margin:0;}
+.mceContentBody ul.sidebar li a {
 	text-decoration:none;
 	color: #666;
 	padding:10px 16px;
@@ -154,8 +154,8 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 	display:block;
 	margin:0;
 }
-.mceEditor ul.sidebar li a.last { border-bottom-width:0px;}
-.mceEditor ul.sidebar li a h1,.mceEditor ul.sidebar li a h2,.mceEditor ul.sidebar li a h3,.mceEditor ul.sidebar li a h4,.mceEditor ul.sidebar li a h5,.mceEditor ul.sidebar li a h6,.mceEditor ul.sidebar li a p { margin-bottom:0!important;}
+.mceContentBody ul.sidebar li a.last { border-bottom-width:0px;}
+.mceContentBody ul.sidebar li a h1,.mceContentBody ul.sidebar li a h2,.mceContentBody ul.sidebar li a h3,.mceContentBody ul.sidebar li a h4,.mceContentBody ul.sidebar li a h5,.mceContentBody ul.sidebar li a h6,.mceContentBody ul.sidebar li a p { margin-bottom:0!important;}
 
 
 
@@ -165,7 +165,7 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 ------------------------------------------------------ */
 
 /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
-.mceEditor .container {
+.mceContentBody .container {
 	display:block!important;
 	max-width:600px!important;
 	margin:0 auto!important; /* makes it centered */
@@ -173,7 +173,7 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 }
 
 /* This should also be a block element, so that it will fill 100% of the .container */
-.mceEditor .content {
+.mceContentBody .content {
 	padding:15px;
 	max-width:600px;
 	margin:0 auto;
@@ -181,22 +181,22 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 }
 
 /* Let's make sure tables in the content area are 100% wide */
-.mceEditor .content table { width: 100%; }
+.mceContentBody .content table { width: 100%; }
 
 
 /* Odds and ends */
-.mceEditor .column {
+.mceContentBody .column {
 	width: 300px;
 	float:left;
 }
-.mceEditor .column tr td { padding: 15px; }
-.mceEditor .column-wrap { 
+.mceContentBody .column tr td { padding: 15px; }
+.mceContentBody .column-wrap { 
 	padding:0!important; 
 	margin:0 auto; 
 	max-width:600px!important;
 }
-.mceEditor .column table { width:100%;}
-.mceEditor .social .column {
+.mceContentBody .column table { width:100%;}
+.mceContentBody .social .column {
 	width: 280px;
 	min-width: 279px;
 	float:left;
@@ -213,11 +213,11 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 -------------------------------------------- */
 @media only screen and (max-width: 600px) {
 	
-	.mceEditor a[class="btn"] { display:block!important; margin-bottom:10px!important; background-image:none!important; margin-right:0!important;}
+	.mceContentBody a[class="btn"] { display:block!important; margin-bottom:10px!important; background-image:none!important; margin-right:0!important;}
 
-	.mceEditor div[class="column"] { width: auto!important; float:none!important;}
+	.mceContentBody div[class="column"] { width: auto!important; float:none!important;}
 	
-	.mceEditor table.social div[class="column"] {
+	.mceContentBody table.social div[class="column"] {
 		width:auto!important;
 	}
 
