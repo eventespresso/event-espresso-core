@@ -96,7 +96,7 @@ $tax_total_line_item;
 									<tr class="item odd">
 										<td class="aln-left"><?php echo $line_item->name().$taxable_html?></td>
 										<td><?php echo $line_item->desc()?></td>
-										<td class="item_c"><?php echo $ticket->uses()?></td>
+										<td class="item_c"><?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'unlimited ', 'event_espresso' ); /*$ticket->uses();*/ ?></td>
 										<td colspan="3"></td>
 									</tr>
 									<?php foreach($subitems as $sub_line_item){
