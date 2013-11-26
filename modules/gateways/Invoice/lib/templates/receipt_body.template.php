@@ -34,15 +34,16 @@ $tax_total_line_item;
 				<td>
 					<div id="invoice-info">
 						<h2 id="invoice-hdr"><?php _e('Order Confirmation', 'event_espresso')?></h2>
-						<h3 id="invoice-date"><b><?php _e('Date:', 'event_espresso')?></b> <span>[registration_date]</span></h3>
-						<h3 id="invoice-txn-id"><b><?php _e('Transaction ID:', 'event_espresso')?></b> <span>[transaction_id]</span> <span class="<?php echo $transaction->status_ID()?>"><?php echo $transaction->pretty_status();?></span></h3>
+						<h3 id="invoice-date"><?php _e('Date:', 'event_espresso')?> <span class="plain-text">[registration_date]</span></h3>
+						<h3 id="invoice-txn-id"><?php _e('Transaction ID:', 'event_espresso')?> <span class="plain-text">[transaction_id]</span></h3>
+						<h3 id="invoice-txn-status"><?php _e('Status:', 'event_espresso')?> <span class="<?php echo $transaction->status_ID()?> plain-text"><?php echo $transaction->pretty_status();?></span></h3>
 					</div>
 				</td>
 			</tr>
 		</table>
 		<div class="events">
 		<?php foreach($events_for_txn as $event_id => $event){
-			?><h3 class="scetion-title event-name"><?php _e("Event Name:","event_espresso")?> <a href='<?php echo $event->get_permalink()?>'><?php echo $event->name();?></a></h3>
+			?><h3 class="scetion-title event-name"><?php _e("Event Name:","event_espresso")?> <span class="plain-text"><?php echo $event->name();?></span> <span class="small-text link">[ <a href='<?php echo $event->get_permalink()?>'><?php _e('view', 'event_espresso'); ?></a> ]</span></h3>
 			<?php if (strlen($event->description()>1)){?><p class="event-description"><?php $event->description()?></p><?php }?>
 			<ul class="tickets-per-event">
 			<?php foreach($ticket_line_items_per_event[$event_id] as $line_item_id => $line_item){
@@ -100,7 +101,7 @@ $tax_total_line_item;
 					<div class="reg-details-for-ticket">
 						<div class="ticket-time-and-place-details">
 							<div class="ticket-time-details">
-								<h3 class="sub-section-title no-bottom-margin"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h3>
+								<h4 class="sub-section-title no-bottom-margin"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h3>
 								<ul class="event-dates">
 									<?php foreach($ticket->datetimes() as $datetime){?>
 									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
@@ -109,17 +110,17 @@ $tax_total_line_item;
 							</div>
 							<?php if ($event->venues()){?>
 							<div class="ticket-place-details">
-								<h3 class="sub-section-title no-bottom-margin"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h3>
+								<h4 class="sub-section-title no-bottom-margin"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h3>
 								<ul class="event-venues">
 									<?php foreach($event->venues() as $venue){?>
-									<li><a href='<?php echo $venue->get_permalink()?>'><?php echo $venue->name()?></a></li>
+									<li><?php echo $venue->name()?> <span class="small-text">[ <a href='<?php echo $venue->get_permalink()?>'><?php _e('view', 'event_espresso'); ?></a> ]</span></li>
 									<?php } ?>
 								</ul>
 							</div>
 							<?php }?>
 						</div>
 						<div class="ticket-registrations-area">
-							<h3 class="sub-section-title"><a class="print_button noPrint" href="<?php echo $edit_reg_info_url?>"><?php echo __("Registration Details", "event_espresso");?></a></h3>
+							<h4 class="sub-section-title"><?php echo __("Registration Details", "event_espresso");?> <span class="small-text link">[ <a class="print_button noPrint" href="<?php echo $edit_reg_info_url; ?>"><?php _e('edit', 'event_espresso'); ?></a> ]</span></h3>
 							<ul class="ticket-registrations-list">
 								<?php foreach($registrations_per_line_item[$line_item_id] as $registration){
 									/* @var $registration EE_Registration */

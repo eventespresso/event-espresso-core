@@ -35,6 +35,8 @@ td { vertical-align:top!important; }
 .aln-rght { text-align:right; }
 
 .small-text { font-size:.8em; }
+.small-text.link { font-weight:normal; }
+.plain-text { font-weight:normal; }
 .float-left { float:left; }
 .float-right { float:right; }
 .clear { clear:both; }
@@ -75,6 +77,9 @@ td{
 /* classes from registration and transaction stati */
 .RNA,.RCN,.RPN, .TPN, .TIN{
 	color:red;
+}
+.TCM {
+	color: green;
 }
 /*.venue-details-part{
 	display:inline-block;

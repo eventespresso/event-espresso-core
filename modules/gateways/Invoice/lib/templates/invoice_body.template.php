@@ -22,9 +22,9 @@
 				<td>
 					<div id="invoice-info">
 						<h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso')?></h2>
-						<h3><b><?php _e('Date:', 'event_espresso')?></b> <span>[registration_date]</span></h3>
-						<h3><b><?php _e('Registration Code:', 'event_espresso')?></b> <span>[registration_code]</span></h3>
-						<h3><b><?php _e('Transaction ID:', 'event_espresso')?></b> <span>[transaction_id]</span></h3>
+						<h3><?php _e('Date:', 'event_espresso')?> <span>[registration_date]</span></h3>
+						<h3><?php _e('Registration Code:', 'event_espresso')?> <span>[registration_code]</span></h3>
+						<h3><?php _e('Transaction ID:', 'event_espresso')?> <span>[transaction_id]</span></h3>
 					</div>
 				</td>
 			</tr>
@@ -98,7 +98,7 @@
 								ee_invoice_display_line_item($child_line_item,$show_line_item_description);
 								}?>
 							<tr><td colspan="<?php echo $show_line_item_description ? 5 : 4 ?>"><hr></td></tr>
-							<tr class="total_tr">
+							<tr class="total_tr odd">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total_no_code();?></td>
@@ -108,11 +108,11 @@
 						
 						case EEM_Line_Item::type_sub_total:
 							foreach($line_item->children() as $child_line_item){
-							$odd = !$odd;
+							//$odd = !$odd;
 								ee_invoice_display_line_item($child_line_item,$show_line_item_description,$odd);
 							}?>
 							<tr><td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td><td colspan="3"><hr></td></tr>
-							<tr class="total_tr">
+							<tr class="total_tr odd">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total_no_code();?></td>
@@ -126,7 +126,7 @@
 								ee_invoice_display_line_item($child_line_item, $show_line_item_description, $odd);
 							}?>
 							<tr><td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>"></td><td colspan="3"><hr></td></tr>
-							<tr class="total_tr">
+							<tr class="total_tr odd">
 								<td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
 								<td colspan="2" class="total" id="total_currency"><?php _e('Tax Total', 'event_espresso'); ?></td>
 								<td class="total"><?php echo $line_item->total_no_code();?></td>
@@ -173,14 +173,14 @@
 						case EEM_Line_Item::type_sub_line_item:							
 							?>
 						<tr class="item sub-item">
-							<td class="item_l"><?php echo $line_item->name() ?></td>
+							<td class="item_l"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<?php if ($line_item->is_percent()) { ?>
-								<td class="item_l"><?php echo $line_item->percent();?>%</td>
-								<td/>
+									<td class="item_l"><?php echo $line_item->percent();?>%</td>
+									<td></td>
 							<?php }else{//flat discount/surcharge ?>
 								<td class="item_l"><?php echo $line_item->unit_price_no_code();?></td>
-								<td/>
+								<td></td>
 							<?php } ?>
 							<td class="item_r"><?php echo $line_item->total_no_code();?></td>
 						</tr>
@@ -188,9 +188,9 @@
 					case EEM_Line_Item::type_tax:							
 							?>
 						<tr class="item sub-item">
-							<td class="item_l"><?php echo $line_item->name() ?></td>
+							<td class="item_l"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
-							<td class="item_l"><?php echo $line_item->percent() ?>%</td>
+							<td class="item_l"><?php echo $line_item->percent(); ?>%</td>
 							<td class="item_l"></td>
 							<td class="item_r"><?php echo $line_item->total_no_code();?></td>
 						</tr><?php break;
