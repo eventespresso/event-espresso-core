@@ -146,10 +146,10 @@ class Invoice {
 			$template_args['attendee_columns_to_show'] = $attendee_columns_to_show;
 			$EE->load_helper( 'Venue_View' );
 //			d($template_args);
-			$template_args['download_link'] = $this->registration->receipt_url();
+			$template_args['download_link'] = $this->registration->receipt_url('download');
 		}else{
 			//it's just an invoice we're accessing
-			$template_args['download_link'] = $this->registration->invoice_url();
+			$template_args['download_link'] = $this->registration->invoice_url('download');
 		}
 		
 		

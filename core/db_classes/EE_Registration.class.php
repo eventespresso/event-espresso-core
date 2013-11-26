@@ -538,24 +538,29 @@ class EE_Registration extends EE_Base_Class {
 	/**
 	 * Gets the string which represents the URL for the invoice PDF for this registration (according to EED_Invoice)
 	 * Dependant on code in ee/includes/functions/init espresso_export_invoice
+	 * @param string $type 'download','launch', or 'html' (default is 'launch')
 	 * @return string
 	 */
-	public function invoice_url($force_download = false){
-		if($force_download){
+	public function invoice_url($type = 'launch'){
+		if($type == 'download'){
 			$route = 'download_invoice';
 		}else{
 			$route = 'launch_invoice';
 		}
-		return add_query_arg(array('ee'=>$route,'id'=>$this->reg_url_link()),get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
+		$query_args = array('ee'=>$route,'id'=>$this->reg_url_link());
+		if($type=='html'){
+			$query_args['html'] = true;
+		}
+		return add_query_arg($query_args,get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
 	}
 	/**
 	 * Gets the string which represents the URL for the 'receipt' PDF, which is currently 
 	 * just a variant of the invoice
-	 * @param boolean $force_download
+	 * @param string $type  'download','launch', or 'html' (default is 'launch')
 	 * @return string
 	 */
-	public function receipt_url($force_download = false){
-		return add_query_arg(array('receipt'=>'true'),$this->invoice_url($force_download));
+	public function receipt_url($type = 'launch'){
+		return add_query_arg(array('receipt'=>'true'),$this->invoice_url($type));
 	}
 	
 	
@@ -565,10 +570,11 @@ class EE_Registration extends EE_Base_Class {
 	
 	/**
 	 * Echoes out invoice_url()
+	 * @param string $type  'download','launch', or 'html' (default is 'launch')
 	 * @return void
 	 */
-	public function e_invoice_url($force_download = false){
-		echo $this->invoice_url($force_download);
+	public function e_invoice_url($type = 'launch'){
+		echo $this->invoice_url($type);
 	}
 	
 	

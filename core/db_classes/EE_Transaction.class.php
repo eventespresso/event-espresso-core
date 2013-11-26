@@ -540,14 +540,24 @@ class EE_Transaction extends EE_Base_Class{
 
 	/**
 	 * This returns the url for the invoice of this transaction
-	 *
+	 * @param string $type  'download','launch', or 'html' (default is 'launch')
 	 * @access public
 	 * @return string
 	 */
-	public function invoice_url($force_download = false) {
+	public function invoice_url($type = 'launch') {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) return false;
-		return $REG->invoice_url($force_download);
+		return $REG->invoice_url($type);
+	}
+	/**
+	 * Gets the URL for viewing the 
+	 * @param string $type  'download','launch', or 'html' (default is 'launch')
+	 * @return string
+	 */
+	public function receipt_url($type = 'launch'){
+		$REG = $this->primary_registration();
+		if ( empty( $REG ) ) return false;
+		return $REG->receipt_url($type);
 	}
 
 

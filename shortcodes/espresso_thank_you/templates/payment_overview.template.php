@@ -1,4 +1,5 @@
 <?php
+/* @var $transaction EE_Transaction */
 EEH_Template_Validator::verify_instanceof($transaction, '$transaction', 'EE_Transaction');
 EEH_Template_Validator::verify_instanceof($primary_registrant, '$primary_registrant', 'EE_Registration');
 EEH_Template_Validator::verify_instanceof($primary_registrant->attendee(), '$primary_registrant', 'EE_Attendee');
@@ -96,7 +97,9 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 	</div>
 	<br/>
 	
-
+	<div class="highlight-bg bigger-text cntr">
+		<a href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
+	</div>
 	<h3>
 		<?php _e('Transaction Status', 'event_espresso'); ?>
 	</h3>
@@ -105,18 +108,18 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 			<tbody>
 				<tr>
 					<td>
-						<label><?php _e('Amount Paid: ', 'event_espresso'); ?></label>
-					</td>
-					<td class='<?php echo ($transaction->paid() == $transaction->total()) ? 'ee-transaction-paid' : 'ee-transaction-unpaid' ?>'>
-						<?php echo EEH_Template::format_currency( $transaction->paid() ); ?> 
-					</td>
-				</tr>
-				<tr>
-					<td>
 						<label><?php _e('Total Cost: ', 'event_espresso'); ?></label>
 					</td>
 					<td>
 						<?php echo EEH_Template::format_currency( $transaction->total() ); ?>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label><?php _e('Amount Owed: ', 'event_espresso'); ?></label>
+					</td>
+					<td class='<?php echo ($transaction->paid() == $transaction->total()) ? 'ee-transaction-paid' : 'ee-transaction-unpaid' ?>'>
+						<?php echo EEH_Template::format_currency( $transaction->remaining() ); ?> 
 					</td>
 				</tr>
 				<tr>
