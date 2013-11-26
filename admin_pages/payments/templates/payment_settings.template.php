@@ -5,7 +5,7 @@
 			<tr>
 				<th>
 					<label>
-						<?php _e('Allow Payment-retry for Pending and Deffered Payments?', 'event_espresso'); ?>
+						<?php _e('Allow Payment-retry for Pending and Deferred Payments?', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
