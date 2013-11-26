@@ -48,7 +48,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
 			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
-			'[TOTAL_OWING]' => __('The total oweing on a transaction', 'event_espresso')
+			'[TOTAL_OWING]' => __('The total oweing on a transaction', 'event_espresso'),
+			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso')
 			);
 	}
 
@@ -101,7 +102,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			case "[TOTAL_OWING]" :
 				$total_owing = isset( $this->_data->txn ) && is_object($this->_data->txn) ? $this->_data->txn->remaining() : $this->_data->txn->total();
 				return EEH_Template::format_currency( $total_owing );
+				break;
+
+			case "[TKT_QTY_PURCHASED]" :
+				return $this->_data->total_ticket_count;
+				break;
 		}
+		return '';
 	}
 
 

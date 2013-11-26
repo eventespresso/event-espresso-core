@@ -49,7 +49,15 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			'[CO_STATE]' => __('State the organization is located in', 'event_espresso'),
 			'[CO_ZIP]' => __('The zip code for the organization', 'event_espresso'),
 			'[CO_LOGO]' => __('The logo image for the organization', 'event_espresso'),
-			'[CO_LOGO_URL]' => __('Just the link to the image used as the logo for the organization', 'event_espresso')
+			'[CO_EMAIL]' => __('The primary email address for the organization', 'event_espresso'),
+			'[CO_PHONE]' => __('The phone number for the organization', 'event_espresso'),
+			'[CO_LOGO_URL]' => __('Just the link to the image used as the logo for the organization', 'event_espresso'),
+			'[CO_FACEBOOK_URL]' => __('Link to organization Facebook page', 'event_espresso'),
+			'[CO_TWITTER_URL]' => __('Link to organization Twitter page', 'event_espresso'),
+			'[CO_PINTEREST_URL]' => __('Link to organization Pinterest page', 'event_espresso'),
+			'[CO_GOOGLE_URL]' => __('Link to organization Google page', 'event_espresso'),
+			'[CO_LINKEDIN_URL]' => __('Link to organization Linkedin page', 'event_espresso'),
+			'[CO_INSTAGRAM_URL]' => __('Link to organization Instagram page', 'event_espresso')
 			);
 	}
 
@@ -83,6 +91,14 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 				return EE_Registry::instance()->CFG->organization->zip;
 				break;
 
+			case '[CO_EMAIL]' :
+				return EE_Registry::instance()->CFG->organization->email;
+				break;
+
+			case '[CO_PHONE]' :
+				return EE_Registry::instance()->CFG->organization->phone;
+				break;
+
 			case '[CO_LOGO]' :
 				return '<img src="' . EE_Registry::instance()->CFG->organization->logo_url . '" style="width:720px;" id="headerImage" />';
 				break;
@@ -91,7 +107,33 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 				return EE_Registry::instance()->CFG->organization->logo_url;
 				break;
 
+			case '[CO_FACEBOOK_URL]' :
+				return EE_Registry::instance()->CFG->organization->facebook;
+				break;
+
+			case '[CO_TWITTER_URL]' :
+				return EE_Registry::instance()->CFG->organization->twitter;
+				break;
+
+			case '[CO_PINTEREST_URL]' :
+				return EE_Registry::instance()->CFG->organization->pinterest;
+				break;
+
+			case '[CO_LINKEDIN_URL]' :
+				return EE_Registry::instance()->CFG->organization->linkedin;
+				break;
+
+			case '[CO_GOOGLE_URL]' :
+				return EE_Registry::instance()->CFG->organization->google;
+				break;
+
+			case '[CO_INSTAGRAM_URL]' :
+				return EE_Registry::instance()->CFG->organization->instagram;
+				break;
+
 		}
+
+		return '';
 	}
 
 

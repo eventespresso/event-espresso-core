@@ -1,4 +1,6 @@
 <li>
-	<p>[FNAME] [LNAME]
-	Tickets: <ul>[TICKET_LIST]</ul></p>
+	<p>[FNAME] [LNAME]<br />
+		Tickets: <br />
+		<ul>[TICKET_LIST]</ul>
+	</p>
 </li>
