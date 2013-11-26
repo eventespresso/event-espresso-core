@@ -74,13 +74,14 @@ $tax_total_line_item;
 								<?php }else{?>
 									<tr class="item">
 										<td class="aln-left"><?php echo $line_item->name().$taxable_html?></td>
-										<td><?php echo $line_item->desc();?><p class="ticket-note">This ticket can be use once at <?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'any ', 'event_espresso' ); ?> of the dates/times below.</p></td>
-										<td colspan="2" class="item_c"><?php echo $line_item->quantity()?></td>
-										<td colspan="2"></td>
+										<td colspan="2"><?php echo $line_item->desc();?><p class="ticket-note">This ticket can be use once at <?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'any ', 'event_espresso' ); ?> of the dates/times below.</p></td>
+										<td class="item_c"><?php echo $line_item->quantity()?></td>
+										<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
+										<td class="item_r"><?php echo $line_item->total_no_code()?></td>
 									</tr>
 									<?php foreach($subitems as $sub_line_item){
 										$is_percent = $sub_line_item->is_percent();?>
-										<tr>
+										<tr class="subitem-row">
 											<td class="subitem"><?php echo $sub_line_item->name()?></td>
 											<td colspan="2"><?php echo $sub_line_item->desc()?></td>
 											<td class="item_c"><?php //echo $is_percent ? '' : $sub_line_item->quantity()?></td>
