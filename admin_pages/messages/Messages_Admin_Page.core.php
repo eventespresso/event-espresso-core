@@ -849,7 +849,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$css_class = isset( $extra_array['css_class'] ) ? $extra_array['css_class'] : '';
 							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
 							$content = $message_templates[$context][$reference_field]->get('MTP_content');
-							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field]) ? $content[$extra_field] : '';
+							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field]) ? stripslashes($content[$extra_field]) : '';
 
 							//do we have a validation error?  if we do then let's use that value instead
 							$template_form_fields[$field_id]['value'] = isset($validators[$extra_field]) ? $validators[$extra_field]['value'] : $template_form_fields[$field_id]['value'];
@@ -867,7 +867,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 								}
 
 								//with or without ajax we want to decode the entities
-								$template_form_fields[$field_id]['value'] = $template_form_fields[$field_id]['value'];
+								$template_form_fields[$field_id]['value'] = stripslashes($template_form_fields[$field_id]['value']);
 
 							}/**/
 						}
@@ -1315,7 +1315,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//setup display of preview.
 		$this->_admin_page_title = $preview_title;
-		$this->_template_args['admin_page_content'] = $preview_button . '<br />' . html_entity_decode(stripslashes($preview));
+		$this->_template_args['admin_page_content'] = $preview_button . '<br />' .stripslashes($preview);
 		$this->_template_args['data']['force_json'] = TRUE;
 
 		$this->display_admin_page_with_no_sidebar();
@@ -1569,10 +1569,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//first we need to make sure we run the content through html_entities
 		if ( is_array($this->_req_data['MTP_template_fields'][$index]['content'] ) ) {
 			foreach ( $this->_req_data['MTP_template_fields'][$index]['content'] as $field => $value ) {
-				$this->_req_data['MTP_template_fields'][$index]['content'][$field] = htmlentities( $value );
+				$this->_req_data['MTP_template_fields'][$index]['content'][$field] = $value;
 			}
 		} else {
-			$this->_req_data['MTP_template_fields'][$index]['content'] = htmlentities( $this->_req_data['MTP_template_fields'][$index]['content'] );
+			$this->_req_data['MTP_template_fields'][$index]['content'] = $this->_req_data['MTP_template_fields'][$index]['content'];
 		}
 
 
