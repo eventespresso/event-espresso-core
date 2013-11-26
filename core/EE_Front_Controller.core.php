@@ -91,7 +91,8 @@ final class EE_Front_Controller {
 //		d($t);
 //		d($t->datetimes());
 //		d($t->prices());
-//		$t->_remo
+//		$t->_remove_relations('Datetime');
+//		$t->delete_related_permanently('Price');
 //		$t->delete_permanently();
 //		$em = EEM_Event::instance();
 //		$event = $em->get_one(array(array('Term_Taxonomy.term_taxonomy_id'=>array('IS NOT NULL'))));

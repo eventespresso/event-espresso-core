@@ -695,6 +695,7 @@ abstract class EEM_Base extends EE_Base{
 				}else{
 					$related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id);
 				}
+				
 				if($related_model_objects){
 					EE_Error::add_error($relation_obj->get_deletion_error_message(), __FILE__, __FUNCTION__, __LINE__);
 					$is_blocked = true;
@@ -912,6 +913,18 @@ abstract class EEM_Base extends EE_Base{
 	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName, $where_query= array() ){
 		$relation_obj = $this->related_settings_for($relationName);
 		return $relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj, $where_query );
+	}
+	
+	/**
+	 * 
+	 * @param type $id_or_obj
+	 * @param type $relationName
+	 * @param type $where_query_params
+	 * @return EE_Base_Class[] objects to which relations were removed
+	 */
+	public function remove_relations($id_or_obj,$relationName,$where_query_params = array()){
+		$relation_obj = $this->related_settings_for($relationName);
+		return $relation_obj->remove_relations($id_or_obj, $where_query_params );
 	}
 	
 	

@@ -78,7 +78,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	 * Sets the other model object's foreign key to its default, instead of pointing to this model object
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
-	 * @return void
+	 * @return EE_Base_Class
 	 */
 	 function remove_relation_to($this_obj_or_id, $other_obj_or_id){
 	 	$this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id);
