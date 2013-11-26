@@ -234,11 +234,10 @@ $tax_total_line_item;
 						<?php }
 					}else{?>
 						<tr class='item'>
-							<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received.",'event_espresso')?> <?php if($amount_owed){?><a class="noPrint" href='<?php echo $retry_payment_url?>'><?php _e("Please make payment", "event_espresso");}?></a></td>
-
+							<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received.",'event_espresso')?> </td>
 						</tr>
 					<?php }
-	?>
+					?><tr class="item" ><td class='aln-cntr' colspan=6><?php if($amount_owed){?><a class="noPrint" href='<?php echo $retry_payment_url?>'><?php _e("Please make payment", "event_espresso");}?></a></td></tr>
 				</tbody>
 				<tfoot>
 					<tr class='total_tr'><td colspan="4">&nbsp;</td>
