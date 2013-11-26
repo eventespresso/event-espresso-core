@@ -87,7 +87,7 @@ $tax_total_line_item;
 								<tr class="item odd">
 									<td><?php echo $line_item->name().$taxable_html?></td>
 									<td><?php echo $line_item->desc()?></td>
-									<td><?php echo $ticket->uses()?></td>
+									<td class="item_c"><?php echo $ticket->uses()?></td>
 									<td><?php echo $line_item->quantity()?></td>
 									<td><?php echo $line_item->unit_price_no_code()?></td>
 									<td><?php echo $line_item->total_no_code()?></td>
@@ -96,7 +96,7 @@ $tax_total_line_item;
 									<tr class="item odd">
 										<td class="aln-left"><?php echo $line_item->name().$taxable_html?></td>
 										<td><?php echo $line_item->desc()?></td>
-										<td><?php echo $ticket->uses()?></td>
+										<td class="item_c"><?php echo $ticket->uses()?></td>
 										<td colspan="3"></td>
 									</tr>
 									<?php foreach($subitems as $sub_line_item){
@@ -104,15 +104,15 @@ $tax_total_line_item;
 										<tr>
 											<td class="subitem"><?php echo $sub_line_item->name()?></td>
 											<td colspan="2"><?php echo $sub_line_item->desc()?></td>
-											<td><?php echo $is_percent ? '' : $sub_line_item->quantity()?></td>
-											<td><?php echo $is_percent ? $sub_line_item->percent()."%" : $sub_line_item->unit_price_no_code()?></td>
-											<td><?php echo $sub_line_item->total_no_code()?></td>
+											<td class="item_c"><?php echo $is_percent ? '' : $sub_line_item->quantity()?></td>
+											<td class="item_c"><?php echo $is_percent ? $sub_line_item->percent()."%" : $sub_line_item->unit_price_no_code()?></td>
+											<td class="item_r"><?php echo $sub_line_item->total_no_code()?></td>
 										</tr>
 									<?php } ?>
 									<tr class="total_tr odd">
 										<td colspan="4"></td>
 										<td class="total" nowrap="nowrap"><?php _e("Ticket Total:", "event_espresso");?></td>
-										<td><?php echo $line_item->total_no_code()?></td>
+										<td class="item_r"><?php echo $line_item->total_no_code()?></td>
 									</tr>
 								<?php }?>
 							</tbody>
@@ -186,14 +186,14 @@ $tax_total_line_item;
 						<tr>
 							<td><?php echo $child_tax->name()?></td>
 							<td><?php echo $child_tax->desc()?></td>
-							<td><?php echo $child_tax->percent()?>%</td>
-							<td><?php echo $child_tax->total_no_code()?></td>
+							<td class="item_c"><?php echo $child_tax->percent()?>%</td>
+							<td class="item_r"><?php echo $child_tax->total_no_code()?></td>
 						</tr>
 						<?php } ?>
 						<tr class="total_tr odd">
 							<td class="total_tr" colspan="2"></td>
 							<td class="total"><?php	_e("Tax Total:", "event_espresso");?></td>
-							<td><?php echo $tax_total_line_item->total_no_code()?></td>
+							<td class="item_r"><?php echo $tax_total_line_item->total_no_code()?></td>
 						</tr>
 					</tbody>
 

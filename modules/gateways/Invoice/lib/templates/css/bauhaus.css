@@ -55,5 +55,6 @@ td {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
 
 td {margin: 0;padding: 5px; vertical-align: top; }
 td.item_r{text-align: right;}
+td.item_c{text-align: center;}
 td.item_l{text-align: left;white-space: normal; }
 td.total, td.total {text-align: right;font-weight: bold; }
