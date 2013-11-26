@@ -816,8 +816,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$message_templates = $message_template_group->context_templates();
 
+
 		//if we have the extra key.. then we need to remove the content index from the template_field_structure as it will get handled in the "extra" array.
-		if ( isset( $template_field_structure[$context]['extra']) ) {
+		if ( is_array($template_field_structure[$context]) && isset( $template_field_structure[$context]['extra']) ) {
 			foreach ( $template_field_structure[$context]['extra'] as $reference_field => $new_fields ) {
 				unset( $template_field_structure[$context][$reference_field] );
 			}
@@ -833,8 +834,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					foreach ( $field_setup_array as $reference_field => $new_fields_array ) {
 						foreach ( $new_fields_array as $extra_field =>  $extra_array ) {
 							//let's verify if we need this extra field via the shortcodes parameter.
+							$continue = FALSE;
 							if ( isset( $extra_array['shortcodes_required'] ) ) {
-								$continue = FALSE;
 								foreach ( (array) $extra_array['shortcodes_required'] as $shortcode ) {
 									if ( !array_key_exists( $shortcode, $this->_shortcodes ) )
 										$continue = TRUE;
@@ -848,10 +849,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$css_class = isset( $extra_array['css_class'] ) ? $extra_array['css_class'] : '';
 							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
 							$content = $message_templates[$context][$reference_field]->get('MTP_content');
-							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field]) ? stripslashes($content[$extra_field]) : '';
+							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field]) ? $content[$extra_field] : '';
 
 							//do we have a validation error?  if we do then let's use that value instead
 							$template_form_fields[$field_id]['value'] = isset($validators[$extra_field]) ? $validators[$extra_field]['value'] : $template_form_fields[$field_id]['value'];
+
 
 							$template_form_fields[$field_id]['db-col'] = 'MTP_content';	
 
@@ -865,7 +867,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 								}
 
 								//with or without ajax we want to decode the entities
-								$template_form_fields[$field_id]['value'] = html_entity_decode(stripslashes($template_form_fields[$field_id]['value']));
+								$template_form_fields[$field_id]['value'] = $template_form_fields[$field_id]['value'];
 
 							}/**/
 						}
@@ -903,7 +905,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$field_id = $template_field . '-content';
 					$template_form_fields[$field_id] = $field_setup_array;
 					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
-					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]) ?$message_templates[$context][$template_field]->get('MTP_content') : '';
+					$template_form_fields[$field_id]['value'] = !empty($message_templates) && is_array($message_templates[$context]) && isset($message_templates[$context][$template_field]) ?$message_templates[$context][$template_field]->get('MTP_content') : '';
 
 					//do we have a validator error for this field?  if we do then we'll use that value instead
 					$template_form_fields[$field_id]['value'] = isset($validators[$template_field]) ? $validators[$template_field]['value'] : $template_form_fields[$field_id]['value'];
@@ -922,7 +924,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						}
 
 						//with or without ajax we want to decode the entities
-						$template_form_fields[$field_id]['value'] = html_entity_decode(stripslashes($template_form_fields[$field_id]['value']));
+						$template_form_fields[$field_id]['value'] = $template_form_fields[$field_id]['value'];
 					}/**/
 				}
 

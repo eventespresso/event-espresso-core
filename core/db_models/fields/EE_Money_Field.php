@@ -9,7 +9,7 @@ class EE_Money_Field extends EE_Float_Field{
 	/**
 	 * Schemas: 
 	 *	'localized_float': "3,023.00"
-	 *	'no_currency': "$3,023.00"
+	 *	'no_currency_code': "$3,023.00"
 	 *	null: "$3,023.00<span>USD</span>"
 	 * @param type $value_on_field_to_be_outputted
 	 * @param type $schema
@@ -22,7 +22,7 @@ class EE_Money_Field extends EE_Float_Field{
 			return $pretty_float;
 		}
 		EE_Registry::instance()->load_helper( 'Template' );
-		if($schema == 'no_currency'){
+		if($schema == 'no_currency_code'){
 //			echo "schema no currency!";
 			$display_code = false;
 		}else{

@@ -318,7 +318,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			foreach($reg_fields_to_include as $field_name){
 				$field = $reg_model->field_settings_for($field_name);
 				if($field_name == 'REG_final_price'){
-					$value = $registration->get_pretty($field_name,'no_currency');
+					$value = $registration->get_pretty($field_name,'no_currency_code');
 				}else{
 					$value = $registration->get_pretty($field->get_name());
 				}

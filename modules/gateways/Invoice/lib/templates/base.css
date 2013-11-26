@@ -38,7 +38,25 @@ td { vertical-align:top!important; }
 .float-left { float:left; }
 .float-right { float:right; }
 .clear { clear:both; }
-
+#invoice>div{
+	margin-bottom:5em;
+	/*border:1px dotted gray;*/
+}
+.tickets-per-event>li{
+	margin-bottom:3em;
+	margin-left:1em;
+	margin-right:1em;
+	/*border:1px dotted gray;*/
+}
+th.number-column{
+	width:5em;
+}
+th.name-column{
+	width:15em;
+}
+td{
+	text-align:center;
+}
 .ticket-time-details{
 	width:70%;
 	display:inline-block;
@@ -51,20 +69,32 @@ td { vertical-align:top!important; }
 	margin-bottom:0px;
 }
 .ticket-registrations-list>li{
-	margin-top:2em;
+	margin-top:1em;
+	margin-bottom:1em;
 }
 /* classes from registration and transaction stati */
 .RNA,.RCN,.RPN, .TPN, .TIN{
 	color:red;
 }
-.venue-details-part{
+/*.venue-details-part{
 	display:inline-block;
+	margin-left:1em;
+	margin-top:4em;
 	vertical-align:top;
-	width:30%
-}
+}*/
+/*.venue-address-dv{
+	width:500px;
+}*/
 .reg-details-for-ticket{
 	margin-left:4em;
 }
 .grand-total{
 	text-align:right;
+}
+h3{
+	font-size:12pt;
+}
+.subitem{
+	padding-left:1em;
+	text-align:left;
 }
