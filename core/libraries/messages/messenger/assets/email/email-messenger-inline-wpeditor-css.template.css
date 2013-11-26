@@ -1,5 +1,5 @@
 /* ------------------------------------- 
-	GLOBAL 
+		GLOBAL 
 ------------------------------------- */
 .mceEditor * { 
 	margin:0;
@@ -39,22 +39,22 @@
 	display: inline-block;
 }
 
-p.callout {
+.mceEditor p.callout {
 	padding:15px;
 	background-color:#ECF8FF;
 	margin-bottom: 15px;
 }
-.callout a {
+.mceEditor .callout a {
 	font-weight:bold;
 	color: #2BA6CB;
 }
 
-table.social {
+.mceEditor table.social {
 /* 	padding:15px; */
 	background-color: #ebebeb;
 	
 }
-.social .soc-btn {
+.mceEditor .social .soc-btn {
 	padding: 3px 7px;
 	font-size:12px;
 	margin-bottom:10px;
@@ -63,12 +63,12 @@ table.social {
 	display:block;
 	text-align:center;
 }
-a.fb { background-color: #3B5998!important; }
-a.tw { background-color: #1daced!important; }
-a.gp { background-color: #DB4A39!important; }
-a.ms { background-color: #000!important; }
+.mceEditor a.fb { background-color: #3B5998!important; }
+.mceEditor a.tw { background-color: #1daced!important; }
+.mceEditor a.gp { background-color: #DB4A39!important; }
+.mceEditor a.ms { background-color: #000!important; }
 
-.sidebar .soc-btn { 
+.mceEditor .sidebar .soc-btn { 
 	display:block;
 	width:100%;
 }
@@ -78,8 +78,8 @@ a.ms { background-color: #000!important; }
 ------------------------------------- */
 .mceEditor table.head-wrap { width: 100%;}
 
-.header.container table td.logo { padding: 15px; }
-.header.container table td.label { padding: 15px; padding-left:0px;}
+.mceEditor .header.container table td.logo { padding: 15px; }
+.mceEditor .header.container table td.label { padding: 15px; padding-left:0px;}
 
 
 /* ------------------------------------- 
@@ -93,8 +93,8 @@ a.ms { background-color: #000!important; }
 ------------------------------------- */
 .mceEditor table.footer-wrap { width: 100%;	clear:both!important;
 }
-.footer-wrap .container td.content  p { border-top: 1px solid rgb(215,215,215); padding-top:15px;}
-.footer-wrap .container td.content p {
+.mceEditor .footer-wrap .container td.content  p { border-top: 1px solid rgb(215,215,215); padding-top:15px;}
+.mceEditor .footer-wrap .container td.content p {
 	font-size:10px;
 	font-weight: bold;
 	
@@ -124,8 +124,8 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 	font-size:14px; 
 	line-height:1.6;
 }
-p.lead { font-size:17px; }
-p.last { margin-bottom:0px;}
+.mceEditor p.lead { font-size:17px; }
+.mceEditor p.last { margin-bottom:0px;}
 
 .mceEditor ul li {
 	margin-left:5px;
