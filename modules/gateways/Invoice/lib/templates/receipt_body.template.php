@@ -130,7 +130,7 @@ $tax_total_line_item;
 								<li class="ticket-registration">
 									<table class="registration-details">
 										<tr>
-											<th><?php	_e("Registration Code: ", "event_espresso");?></th>
+											<th><?php	_e("Registration Code:", "event_espresso");?></th>
 											<td><?php echo $registration->reg_code();?> - <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></td>
 										</tr>
 										<tr>
