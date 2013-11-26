@@ -163,6 +163,20 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 	/**
+	 * This uses the wp "wp_get_attachment_image_src()" function to return the feature image for the current class using the given size params.
+	 * @param  string|array $size can either be a string: 'thumbnail', 'medium', 'large', 'full' OR 2-item array representing width and height in pixels eg. array(32,32).
+	 * @return string|boolean       	  the url of the image or false if not found
+	 */
+	public function feature_image_url( $size = 'thumbnail' ) {
+		$attachment =  wp_get_attachment_image_src( get_post_thumbnail_id( $this->ID() ), $size );
+		return !empty($attachment) ? $attachment[0] : false;
+	}
+
+
+
+
+
+	/**
 	 * This is a method for restoring this_obj using details from the given $revision_id
 	 * @param  string|array $related_obj_names if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
 	 * @param  int    $revision_id      ID of the revision we're gettting data from

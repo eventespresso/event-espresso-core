@@ -4,7 +4,7 @@
 		<tr>
 			<td>
 				<!-- A Real Hero (and a real human being) -->
-				<p>[EVENT_FEATURE_IMAGE]</p><!-- /hero -->
+				<p>[EVENT_IMAGE]</p><!-- /hero -->
 				<h2>[EVENT_NAME]</h2>
 				<!-- Callout Panel -->
 				<p class="callout">
@@ -41,8 +41,8 @@
 						<li>
 							<a>
 								<h5>Venue &raquo;</h5>
-								<p>See below for location details:</p>
 							</a>
+							[VENUE_IMAGE]<br />
 							<p>
 								[VENUE_TITLE]<br />
 					        	[VENUE_ADDRESS]<br />

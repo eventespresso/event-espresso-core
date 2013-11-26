@@ -135,10 +135,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case 'image':
-				$image_id = get_post_thumbnail_id( $venue->ID() );
-				if ( empty( $image_id ) ) return '';
-				$image = wp_get_attachment_image_src( $image_id );
-				return $image['src'];
+				return '<img src="' . $venue->feature_image_url(array(200,200) ) . '" alt="' . $venue->get('VNU_name') . ' Feature Image" />';
 				break;
 
 			case 'phone':
