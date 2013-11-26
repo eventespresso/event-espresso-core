@@ -1,6 +1,6 @@
 /* Base CSS styles DO NOT CHANGE OR REMOVE */
 
-body { margin: 0!important;padding: 0!important;font:62.5%/1.5 Helvetica, Arial, Verdana, sans-serif; background-color:#eee; }
+body { margin: 0!important;padding: 0!important;font:82.5%/1.5 Helvetica, Arial, Verdana, sans-serif; background-color:#eee; }
 ul, ul li, p, div, ol {margin:0;padding:0;list-style:none;}
 
 #invoice { width:740px; min-height:21.5cm; padding:0; margin:0 auto; overflow:hidden; background-color:#fff; }
@@ -95,21 +95,19 @@ h3{
 	font-size:12pt;
 }
 .subitem{
-	padding-left:1em;
+	padding-left:1.8em;
 	text-align:left;
 }
 
 /*=========================== TABLES =========================*/
 
 table th {text-align:left;padding: 4px 5px 4px 5px;}
-.ticket-details table th, .taxes table th, #invoice-amount th{border-bottom:1px solid #666;}
+.ticket-details table th, .taxes table th, #invoice-amount th {border-bottom:1px solid #666;}
 td.action{border-bottom:0}
 tr.odd td, tr.odd th{background-color:#F4F4F4} 
-
 .total_tr td{border-bottom:0}
 #vat_tr td{border-bottom:1px solid #000}
-td {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
-
+td, .registration-details tr th {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
 td {margin: 0;padding: 5px; vertical-align: top; }
 td.item_r{text-align: right;}
 td.item_c{text-align: center;}
