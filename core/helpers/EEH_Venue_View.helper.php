@@ -427,7 +427,7 @@ class EEH_Venue_View extends EEH_Base {
 				
 				$details_page = is_single();
 				$options = array();			
-				$options['map_ID'] = $map_ID . '-' . $venue->ID() . '-' . $static_map_id;
+				$options['map_ID'] = $map_ID && $map_ID != $venue->ID() ? $map_ID . '-' . $venue->ID() . '-' . $static_map_id : $venue->ID() . '-' . $static_map_id;
 				$static_map_id++;
 
 				$options['location'] = EEH_Address::format( $venue, 'inline', FALSE, FALSE );
@@ -454,7 +454,7 @@ class EEH_Venue_View extends EEH_Base {
 				$options['ee_map_align'] =  isset( $gmap['ee_map_align'] ) && ! empty( $gmap['ee_map_align'] )? $gmap['ee_map_align'] : $options['ee_map_align'];
 				
 				$options['ee_static_url'] =  isset( $gmap['ee_static_url'] ) && ! empty( $gmap['ee_static_url'] ) ? (bool)absint( $gmap['ee_static_url'] ) : $venue->google_map_link();
-				
+
 				return EEH_Maps::google_map( $options );
 				
 			}
@@ -501,21 +501,22 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @return 	string
 	 */
 	public static function edit_venue_link( $VNU_ID = FALSE, $link = '', $before = '<p class="edit-venue-lnk small-txt">', $after = '</p>' ) {
-		if ( $VNU_ID ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
+		if ( $venue instanceof EE_Venue ) {
 			// can the user edit this post ?
-			if ( current_user_can( 'edit_post', $VNU_ID )) {
+			if ( current_user_can( 'edit_post', $venue->ID() )) {
 				// set link text
 				$link = ! empty( $link ) ? $link : __('edit this venue');
 				// generate nonce
 				$nonce = wp_create_nonce( 'edit_nonce' );
 				// generate url to venue editor for this venue
-				$url = add_query_arg( array( 'page' => 'espresso_venues', 'action' => 'edit', 'post' => $VNU_ID, 'edit_nonce' => $nonce ), admin_url() );
+				$url = add_query_arg( array( 'page' => 'espresso_venues', 'action' => 'edit', 'post' => $venue->ID(), 'edit_nonce' => $nonce ), admin_url() );
 				// get edit CPT text
-				$post_type_obj = get_post_type_object( $post->post_type );
+				$post_type_obj = get_post_type_object( 'espresso_venues' );
 				// build final link html
 				$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
 				// put it all together 
-				return $before . apply_filters( 'edit_post_link', $link, $VNU_ID ) . $after;			
+				return $before . apply_filters( 'edit_post_link', $link, $venue->ID() ) . $after;			
 			}
 		}
 	}

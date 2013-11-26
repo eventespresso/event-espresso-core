@@ -37,7 +37,7 @@ $ELID = espresso_get_event_list_ID();
 					
 						<header class="event-header">
 							<h3 class="event-title">
-								<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
+								<a href="<?php espresso_event_link_url(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
 									<?php the_title(); ?>							
 								</a>
 							</h3>
@@ -107,7 +107,7 @@ $ELID = espresso_get_event_list_ID();
 					<footer class="event-meta">
 						<?php do_action( 'AHEE_events_list_footer', $post ); ?>
 						<p class="event-categories-pg"><?php _e( 'category:', 'event_espresso' ) . the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
-						<a class="ee-register-button-lnk ee-button-lnk button" href="<?php the_permalink( $post->ID ); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>	
+						<a class="ee-register-button-lnk ee-button-lnk button" href="<?php espresso_event_link_url(); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>	
 						<?php espresso_edit_event_link(); ?>
 					</footer>
 					<!-- .entry-meta -->

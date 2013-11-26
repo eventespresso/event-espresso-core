@@ -273,4 +273,12 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 		}
 		return add_post_meta($this->ID(),$meta_key,$meta_value,$unique);
 	}
+	
+	/**
+	 * Gets the URL for viewing this event on the front-end
+	 * @return string
+	 */
+	public function get_permalink(){
+		return get_permalink($this->ID());
+	}
 }

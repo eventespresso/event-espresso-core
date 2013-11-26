@@ -49,6 +49,8 @@ class EE_Brewing_Regular extends EE_Base {
 		 */
 		do_action('AHEE__EE_Brewing_Regular__run_now');
 		add_action('AHEE__EEH_Activation__initialize_db_content',array($this,'initialize_caf_db_content'));
+		//make it so the PDF receipt doesn't show our shameless plug
+		add_filter('FHEE_Invoice__send_invoice__shameless_plug','__return_false');
 	}
 	
 	/**
