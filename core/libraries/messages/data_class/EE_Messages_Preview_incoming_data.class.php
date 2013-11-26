@@ -90,6 +90,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				$reldatetime = $ticket->get_many_related('Datetime');
 				$tkts[$ticket->ID()]['dtt_objs'] = $reldatetime;
 				$tkts[$ticket->ID()]['att_objs'] = $attendees;
+				$tkts[$ticket->ID()]['count'] = count($attendees);
 				foreach ( $reldatetime as $datetime ) {
 					if ( !isset( $dtts[$datetime->ID()] ) ) {
 						$this->_events[$id]['dtt_objs'][$datetime->ID()] = $datetime;
@@ -135,6 +136,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->datetimes = $dtts;
 		$this->answers = $answers_n_questions['answers'];
 		$this->questions = $answers_n_questions['questions'];
+		$this->total_ticket_count = count($tkts) * count($this->_attendees);
 
 	}
 

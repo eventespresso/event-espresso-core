@@ -39,7 +39,8 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 			'[TICKET_ID]' => __('Will be replaced by the ticket ID of a ticket', 'event_espresso'),
 			'[TICKET_NAME]' => __('The name of the ticket', 'event_espresso'),
 			'[TICKET_DESCRIPTION]' => __('The description of the ticket', 'event_espresso'),
-			'[TICKET_PRICE]' => __('The price of the ticket', 'event_espresso')
+			'[TICKET_PRICE]' => __('The price of the ticket', 'event_espresso'),
+			'[TKT_QTY_PURCHASED]' => __('The total quantity of the current ticket in the list that has been purchased in this transaction', 'event_espresso')
 			);
 	}
 
@@ -66,6 +67,10 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 
 			case '[TICKET_PRICE]' :
 				return EEH_Template::format_currency( $this->_data->get('TKT_price') );
+				break;
+
+			case '[TKT_QTY_PURCHASED]' :
+				return $this->_extra_data['data']->tickets[$this->_data->ID()]['count'];
 				break;
 		}
 

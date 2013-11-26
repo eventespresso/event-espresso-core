@@ -225,6 +225,7 @@ abstract class EE_Messages_incoming_data {
 		//get all attendee and events associated with the registrations in this transaction
 		$events = $event_setup = $evt_cache = $tickets = $datetimes = $answers = $questions = array();
 		$attendees = array();
+		$tickets_count = array();
 		
 		if ( !empty( $this->reg_objs ) ) {
 			$event_attendee_count = array(); 
@@ -232,7 +233,9 @@ abstract class EE_Messages_incoming_data {
 				$evt_id = $reg->event_ID();
 				$ticket = $reg->get_first_related('Ticket');
 				$relateddatetime = $ticket->get_many_related('Datetime');
+				$total_ticket_count++;
 				$tickets[$ticket->ID()]['ticket'] = $ticket;
+				$tickets[$ticket->ID()]['count'] = is_array($tickets[$ticket->ID()]) && isset( $tickets[$ticket->ID()]['count'] ) ? $tickets[$ticket->ID()]['count'] + 1 : 0;
 				$tickets[$ticket->ID()]['att_objs'][$reg->attendee_ID()] = $reg->attendee();
 				$tickets[$ticket->ID()]['dtt_objs'] = $relateddatetime;
 				$event = $reg->event();
@@ -297,6 +300,7 @@ abstract class EE_Messages_incoming_data {
 		$this->datetimes = $datetimes;
 		$this->questions = $questions;
 		$this->answers = $answers;
+		$this->total_ticket_count = $total_ticket_count;
 
 
 		//setup primary registration

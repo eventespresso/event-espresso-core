@@ -78,7 +78,7 @@
                                 </tbody></table><!-- /column 1 -->  
                                 
                                 <!-- column 2 -->
-                                <table align="left" class="column">
+                                <table align="left">
                                     <tbody><tr>
                                         <td>                
                                                                         
