@@ -141,13 +141,22 @@ $tax_total_line_item;
 												if( ! $attendee->get($field_name)){
 													continue;
 												}
-											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);?>
+											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);
+											if($field_info->get_name() == 'STA_ID'){
+												$state_obj = $attendee->state_obj();
+												$value = $state_obj ? $state_obj->name() : '';
+											}elseif($field_info->get_name() == 'CNT_ISO'){
+												$country_obj  = $attendee->country_obj();
+												$value = $country_obj ? $country_obj->name() : '';
+											}else{
+												$value = $attendee->get($field_name);
+											 }?>
 											<tr>
 												<th><?php echo $field_info->get_nicename()?>: </th>
-												<td><?php echo $attendee->get($field_name)?></td>
+												<td><?php echo $value;?></td>
 											</tr>
-										<?php }?>
-										<?php foreach($answers as $ans_id => $answer){
+										 <?php }
+										 foreach($answers as $ans_id => $answer){
 											$question = $answer->question();?>
 											<tr>
 												<th><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </th>
