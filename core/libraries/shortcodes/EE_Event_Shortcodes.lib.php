@@ -52,6 +52,10 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_URL]' => __('A link to the event set up on the host site.', 'event_espresso'),
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
+			'[EVENT_IMAGE]' => __('This will parse to the Feature image for the event.', 'event_espresso'),
+			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event.', 'event_espresso'),
+			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event.', 'event_espresso'),
+			'[EVENT_AUTHOR_EMAIL]' => __('This will return the email for the author of the event.', 'event_espresso')
 			);
 	}
 
@@ -107,6 +111,26 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 					return '';
 				return $venue->get('VNU_virtual_phone');
 				break;
+
+			case '[EVENT_IMAGE]' :
+				// @todo: eventually we should make this an attribute shortcode so that em can send along what size they want returned.
+				return '<img src="' . $this->_data->feature_image_url(array(600,300) ) . '" alt="' . $this->_data->get('EVT_name') . ' Feature Image" />';
+				break;
+
+			case '[EVENT_FACEBOOK_URL]' :
+				return $this->_data->get_post_meta('event_facebook', true );
+				break;
+
+			case '[EVENT_TWITTER_URL]' :
+				return $this->_data->get_post_meta('event_twitter', true);
+				break;
+
+			case '[EVENT_AUTHOR_EMAIL]' :
+				$author_id = $this->_data->get('EVT_wp_user');
+				$user_data = get_userdata( (int) $author_id );
+				return $user_data->user_email;
+				break;
+
 		}
 		return '';
 	}

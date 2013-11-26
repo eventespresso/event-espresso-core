@@ -74,8 +74,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_valid_shortcodes() {
 		//remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
 		$this->_valid_shortcodes = array(
-			'to' => array('email'),
-			'from' => array('email')
+			'to' => array('email', 'attendee'),
+			'from' => array('email', 'attendee')
 			);
 	}
 
@@ -105,17 +105,17 @@ class EE_Email_messenger extends EE_messenger  {
 				'type' => 'email'
 				),
 			'subject' => array(
-				'shortcodes' => array('organization')
+				'shortcodes' => array('organization', 'attendee')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization')
+				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'attendee')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration'),
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee')
 				),
 			'ticket_list' => array(
 				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'registration', 'datetime_list'),

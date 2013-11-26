@@ -350,7 +350,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'tickets' => $this->_data->tickets,
 			'questions' => $this->_data->questions,
 			'answers' => $this->_data->answers,
-			'txn_status' => $this->_data->txn_status
+			'txn_status' => $this->_data->txn_status,
+			'total_ticket_count' => $this->_data->total_ticket_count
 			);
 
 		if ( is_array( $this->_data->primary_attendee_data ) ) {
