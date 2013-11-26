@@ -80,3 +80,7 @@ td{
 h3{
 	font-size:12pt;
 }
+.subitem{
+	padding-left:1em;
+	text-align:left;
+}

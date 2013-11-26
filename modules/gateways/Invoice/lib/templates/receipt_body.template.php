@@ -74,7 +74,7 @@ $tax_total_line_item;
 								</tr>
 								<?php }else{?>
 									<tr>
-										<td><?php echo $line_item->name().$taxable_html?></td>
+										<td class="aln-left"><?php echo $line_item->name().$taxable_html?></td>
 										<td><?php echo $line_item->desc()?></td>
 										<td><?php echo $ticket->uses()?></td>
 										<td colspan="3"></td>
@@ -82,7 +82,7 @@ $tax_total_line_item;
 									<?php foreach($subitems as $sub_line_item){
 										$is_percent = $sub_line_item->is_percent();?>
 										<tr>
-											<td class="item_r"><?php echo $sub_line_item->name()?></td>
+											<td class="subitem"><?php echo $sub_line_item->name()?></td>
 											<td colspan="2"><?php echo $sub_line_item->desc()?></td>
 											<td><?php echo $is_percent ? '' : $sub_line_item->quantity()?></td>
 											<td><?php echo $is_percent ? $sub_line_item->percent()."%" : $sub_line_item->unit_price_no_code()?></td>
