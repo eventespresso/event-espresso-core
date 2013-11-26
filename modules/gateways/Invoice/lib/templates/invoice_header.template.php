@@ -3,6 +3,8 @@
 <head>
 <title>[organization]<?php __(' Invoice #', 'event_espresso'); ?>[registration_code]<?php __(' for ', 'event_espresso'); ?>[name]</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- Global EE Stylesheet -->
+<link rel="stylesheet" type="text/css" href="<?php echo EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css';?>" media="screen"/>
 <!-- Base Stylesheet do not change or remove -->
 <link rel="stylesheet" type="text/css" href="[base_url]base.css" media="screen" />
 <!-- Print Style Sheet -->
