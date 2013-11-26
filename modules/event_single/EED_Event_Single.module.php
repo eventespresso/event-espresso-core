@@ -36,7 +36,7 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		EE_Config::register_route( 'event', 'Event_Single', 'run' );
-		EE_Config::register_view( 'event', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'espresso_events' . DS . 'single-espresso_events.php' );
+		EE_Config::register_view( 'event', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_events.php' );
 	}
 
 	/**
@@ -143,30 +143,26 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function wp_enqueue_scripts() {
-
 		// get some style
-		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE )) {
-			if ( is_single() ) {
-				// first check uploads folder
-				if ( file_exists( get_stylesheet_directory() . 'espresso_events/single-espresso_events.css' )) {
-					wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . 'espresso_events/single-espresso_events.css', array() );
-				} else {
-					wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . $this->theme . '/espresso_events/single-espresso_events.css', array() );
-				}
-				if ( file_exists( get_stylesheet_directory() . 'espresso_events/single-espresso_events.js' )) {
-					wp_register_script( 'single-espresso_events', get_stylesheet_directory_uri() . 'espresso_events/single-espresso_events.js', array('espresso_core'), '1.0', TRUE  );
-				} else {
-					wp_register_script( 'single-espresso_events', EVENT_SINGLE_ASSETS_URL . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE );
-				}
-				wp_enqueue_style( 'single-espresso_events' );
-				wp_enqueue_script( 'single-espresso_events' );
-				if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-					EE_Registry::instance()->load_helper( 'Maps' );
-					add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
-				}
+		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && is_single() ) {
+			// first check uploads folder
+			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css' )) {
+				wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array() );
+			} else {
+				wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array() );
+			}
+			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_events.js' )) {
+				wp_register_script( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE  );
+			} else {
+				wp_register_script( 'single-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE );
+			}
+			wp_enqueue_style( 'single-espresso_events' );
+			wp_enqueue_script( 'single-espresso_events' );
+			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
+				EE_Registry::instance()->load_helper( 'Maps' );
+				add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 			}
 		}
-
 	}
 
 
