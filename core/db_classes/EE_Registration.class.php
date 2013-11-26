@@ -548,6 +548,15 @@ class EE_Registration extends EE_Base_Class {
 		}
 		return add_query_arg(array('ee'=>$route,'id'=>$this->reg_url_link()),get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
 	}
+	/**
+	 * Gets the string which represents the URL for the 'receipt' PDF, which is currently 
+	 * just a variant of the invoice
+	 * @param boolean $force_download
+	 * @return string
+	 */
+	public function receipt_url($force_download = false){
+		return add_query_arg(array('receipt'=>'true'),$this->invoice_url($force_download));
+	}
 	
 	
 	

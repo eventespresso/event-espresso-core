@@ -67,7 +67,7 @@ class Invoice {
 		$template_args['country'] = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $EE->CFG->organization->CNT_ISO );
 		$template_args['zip'] = $EE->CFG->organization->zip;
 		$template_args['email'] = $EE->CFG->organization->email;
-		$template_args['download_link'] = $this->registration->invoice_url();
+		
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = $this->registration->date();
 		$template_args['name'] = $primary_attendee->full_name();
@@ -146,6 +146,10 @@ class Invoice {
 			$template_args['attendee_columns_to_show'] = $attendee_columns_to_show;
 			$EE->load_helper( 'Venue_View' );
 //			d($template_args);
+			$template_args['download_link'] = $this->registration->receipt_url();
+		}else{
+			//it's just an invoice we're accessing
+			$template_args['download_link'] = $this->registration->invoice_url();
 		}
 		
 		
