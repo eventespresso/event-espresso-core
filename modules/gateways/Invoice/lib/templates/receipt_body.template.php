@@ -252,10 +252,12 @@ $tax_total_line_item;
 		<div class="additional-info">
 			<p>[instructions]</p>
 			<?php if($venues_for_events){?>
-			<ul class="venue-list">
+			<div class="venue-list">
 				<?php foreach($venues_for_events as $venue){?>
-					<li class="venue-details">
-						<div class="venue-details-part"><?php echo EEH_Venue_View::espresso_google_static_map($venue)?></div>
+					<div class="venue-details">
+						<?php if($venue->enable_for_gmap()){?>
+							<div class="venue-details-part"><?php echo EEH_Venue_View::espresso_google_static_map($venue)?></div>
+						<?php } ?>
 						<div class="venue-details-part">
 							<h3><a href='<?php echo $venue->get_permalink()?>'><?php 
 								echo $venue->name()
@@ -264,9 +266,9 @@ $tax_total_line_item;
 							<?php echo  EEH_Address::format($venue);?></div>
 						
 						
-					</li>
+					</div>
 				<?php }?>
-			</ul>
+			</div>
 			<?php } ?>
 		</div>
 		

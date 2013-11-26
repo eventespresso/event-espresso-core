@@ -67,9 +67,9 @@ td{
 }
 .venue-details-part{
 	display:inline-block;
-	float:left;
 	margin-left:1em;
 	margin-top:4em;
+	vertical-align:top;
 }
 .reg-details-for-ticket{
 	margin-left:4em;
