@@ -1611,7 +1611,7 @@ jQuery(document).ready(function($) {
 				break;
 			
 			case 'short-ticket' :
-				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').TicketEditToggle().scrollTo();
+				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').scrollTo();
 				break;
 
 			case 'price' :
