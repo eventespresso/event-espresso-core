@@ -313,41 +313,40 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$update_prices = TRUE;
 			}
 
-			//update ticket.
-			
-			$TKT->save();
-
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
 				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
-				$TKT->save();
 			}
 
 			//possible this is a new ticket because of edited prices when ticket was sold, so let's make sure we attache the datetimes from the archived ticket
 			foreach ( $dtts_on_existing as $adddtt ) {
-				$adddtt->_add_relation_to( $TKT, 'Ticket' );
+				$TKT = $adddtt->_add_relation_to( $TKT, 'Ticket' );
 			}
+
+			$TKT->save();
 
 			$saved_tickets[$TKT->ID()] = $TKT;
 
 			//add prices to ticket
-			$this->_add_prices_to_ticket( $data['edit_prices'][$row], $TKT, $update_prices );
+			$TKT = $this->_add_prices_to_ticket( $data['edit_prices'][$row], $TKT, $update_prices );
 
 
 			//handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
 			if ( ! defined('DOING_AUTOSAVE' ) ) {
 				if ( !empty($tkt['TKT_is_default_selector'] ) ) {
-					$new_default = $TKT;
+					$new_default = clone $TKT;
 					$new_default->set( 'TKT_ID', 0 );
 					$new_default->set( 'TKT_is_default', 1 );
 					$new_default->set( 'TKT_order', 0 );
 					$new_default->set( 'TKT_row', 1 );
-					$new_default->SET( 'TKT_price', $ticket_price );
+					$new_default->set( 'TKT_price', $ticket_price );
+					//remove any dtt relations cause we DON'T want dtt relations attached (note this is just removing the cached relations in the object)
 					$new_default->save();
+					$new_default->_remove_relations('Datetime');
 
 					//todo we need to add the current attached prices as new prices to the new default ticket.
-					$this->_add_prices_to_ticket($data['edit_prices'][$row], $new_default, $update_prices);
+					$new_default = $this->_add_prices_to_ticket($data['edit_prices'][$row], $new_default, $update_prices);
 				}
 			}
 
@@ -358,12 +357,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && ( isset( $dtts_added[0] ) && $dtts_added[0] == '' ) ) ? array() : $dtts_added;
 			foreach ( $dtts_added as $dttrow ) {
 				$saved_dtts[$dttrow]->_add_relation_to( $TKT, 'Ticket' );
+				$saved_dtts[$dttrow]->save();
 			}
 
 			$dtts_removed = empty( $dtts_added ) || ( is_array( $dtts_removed ) && isset( $dtts_removed[0] ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
 				$saved_dtts[$dttrow]->_remove_relation_to( $TKT, 'Ticket' );
+				$saved_dtts[$dttrow]->save();
 			}
 
 
@@ -441,8 +442,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$PRC->save();
 			}
 
-			$PRC = $ticket->_add_relation_to( $PRC, 'Price' );
+			$ticket->_add_relation_to( $PRC, 'Price' );
 		}
+		$ticket->save();
+		return $ticket;
 	}
 
 
