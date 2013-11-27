@@ -132,7 +132,7 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	function column_TKT_qty($item) {
-		return $item->get('TKT_qty');
+		return $item->get('TKT_qty') == -1 ? __('Unlimited', 'event_espresso') : $item->get('TKT_qty');
 	}
 
 
