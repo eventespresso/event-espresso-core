@@ -758,7 +758,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function event_list_template_filters() {
 		$args = array(
-			'form_url' => add_query_arg( array( ), home_url( __( 'events', 'event_espresso' )) ),
+			'form_url' => add_query_arg( array( 'post_type' => 'espresso_events' ), home_url() ),
 			'elf_month' => $this->_elf_month,
 			'elf_category' => $this->_elf_category,
 			'elf_show_expired' => $this->_show_expired,
