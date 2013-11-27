@@ -6,8 +6,11 @@
 .event-tickets-datetimes-title {
     display: inline-block;
     font-size: 1.2em;
-    margin: 2em 0 0.5em;
     padding: 0;
+}
+
+.available-tickets-container {
+    margin: 2em 0 0.5em;
 }
 
 .event-datetimes-container {
@@ -190,6 +193,20 @@
 
 .event-tickets-container {
     width: 100%;
+}
+
+.ee-collapsible {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.ee-collapsible-open {
+    background: transparent url('../../../../../templates/global_assets/images/minus-16X16.png') 0 0 no-repeat;
+}
+
+.ee-collapsible-closed {
+    background: transparent url('../../../../../templates/global_assets/images/plus-16X16.png') 0 0 no-repeat;
 }
 
 .ticket-table {

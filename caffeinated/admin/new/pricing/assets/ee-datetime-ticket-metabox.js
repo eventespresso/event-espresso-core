@@ -1682,6 +1682,25 @@ jQuery(document).ready(function($) {
 	});
 
 
+	/**
+	 * collapsible click
+	 */
+	$('#event-and-ticket-form-content').on('click', '.ee-collapsible', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var item = this;
+		$('.event-tickets-container').slideToggle(245, function() {
+			if ( $(this).is(':visible' ) ) {
+				$(item).removeClass('ee-collapsible-closed');
+				$(item).addClass('ee-collapsible-open');
+			} else {
+				$(item).removeClass('ee-collapsible-open');
+				$(item).addClass('ee-collapsible-closed');
+			}
+		});
+	});
+
+
 
 	/**
 	 * datetime/ticket list item clicked to attach/detach from related item.
