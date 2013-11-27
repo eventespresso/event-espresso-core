@@ -81,15 +81,7 @@ td{
 .TCM {
 	color: green;
 }
-/*.venue-details-part{
-	display:inline-block;
-	margin-left:1em;
-	margin-top:4em;
-	vertical-align:top;
-}*/
-/*.venue-address-dv{
-	width:500px;
-}*/
+
 .reg-details-for-ticket{
 	/*margin-left:4em;*//*Seth*/
 }
@@ -108,15 +100,19 @@ h3{
 }
 /*=========================== TABLES =========================*/
 
-table th {text-align:left;padding: 4px 5px 4px 5px;}
+table th {text-align:left;padding: 6px 5px 6px 5px;}
 .ticket-details table th, .taxes table th, #invoice-amount th {border-bottom:1px solid #666;}
 td.action{border-bottom:0}
 tr.odd td, tr.odd th, tr.header_row{background-color:#F4F4F4}
 .total_tr td{border-bottom:0}
 #vat_tr td{border-bottom:1px solid #000}
 td, .registration-details tr th {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
-td {margin: 0;padding: 5px; vertical-align: top; }
+td {margin: 0;padding: 8px 5px 8px 5px; vertical-align: top; }
 .item_r{text-align: right;}
 .item_c{text-align: center;}
 .item_l{text-align: left;white-space: normal; }
 .total {text-align: right;font-weight: bold; }
+tr.tax-total td {border-top:1px solid #000;}
+.subitem-row {
+	color: #666;
+}
