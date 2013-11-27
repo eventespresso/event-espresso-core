@@ -342,6 +342,7 @@ jQuery(document).ready(function($) {
 			var queryparts = $($item).serializeFullArray();
 			queryparts.page = 'espresso_messages';
 			queryparts.action = 'ee_msgs_save_settings';
+			queryparts.ee_admin_ajax = true;
 
 			$('.ajax-loader-grey').toggle();
 
