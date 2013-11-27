@@ -1471,7 +1471,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//taking care of metaboxes
 		if ( ( isset($this->_route_config['metaboxes'] ) || isset($this->_route_config['has_metaboxes']) ) && empty( $this->_cpt_route) ) {
-			wp_enqueue_script('underscore', 'dashboard');
+			wp_enqueue_script('dashboard');
 		}
 
 		//enqueue thickbox for ee help popups.  default is to enqueue unless its explicitly set to false since we're assuming all EE pages will have popups

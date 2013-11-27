@@ -387,8 +387,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _headers() {
 		$headers = array(
 			'MIME-Version: 1.0',
-			'From:' . html_entity_decode( $this->_from ),
-			'Reply-To:' . html_entity_decode( $this->_from ),
+			'From:' . $this->_from,
+			'Reply-To:' . $this->_from,
 			'Content-Type:text/html; charset=utf-8'
 			);
 		return $headers;

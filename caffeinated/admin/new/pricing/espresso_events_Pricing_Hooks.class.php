@@ -335,7 +335,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
 			if ( ! defined('DOING_AUTOSAVE' ) ) {
 				if ( !empty($tkt['TKT_is_default_selector'] ) ) {
-					
 					$new_default = clone $TKT;
 					$new_default->set( 'TKT_ID', 0 );
 					$new_default->set( 'TKT_is_default', 1 );
@@ -484,11 +483,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'total_dtt_rows' => 1,
 			'add_new_dtt_help_link' => EEH_Template::get_help_tab_link('add_new_dtt_info', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add this help info id to the Events_Admin_Page core file so we can access it here.
 			'datetime_rows' => '',
-			'show_tickets_container' => ' style="display:none;"',
+			'show_tickets_container' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 1 ? ' style="display:none;"' : '',
 			'ticket_rows' => '',
 			'existing_ticket_ids' => '',
 			'total_ticket_rows' => 1,
-			'ticket_js_structure' => ''
+			'ticket_js_structure' => '',
+			'ee_collapsible_status' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' ee-collapsible-closed' : ' ee-collapsible-open'
 			);
 
 		$event_id = is_object( $evtobj ) ? $evtobj->ID() : NULL;
@@ -546,7 +546,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
 		$main_template_args['existing_ticket_ids'] = implode( ',', $existing_ticket_ids );
 		$main_template_args['existing_datetime_ids'] = implode( ',', $existing_datetime_ids );
-		$main_template_args['show_tickets_container'] = '';
 
 		//k NOW we have all the data we need for setting up the dtt rows and ticket rows so we start our dtt loop again.
 		$dttrow = 1;
@@ -601,7 +600,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_dtt_edit_row( $dttrow, $dtt, $default ) {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
-			'display_dtt_edit_row' => 'style="display:none;"',
+			'display_dtt_edit_row' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? 'style="display:none;"' : '',
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
 			'DTT_ID' => $default ? '' : $dtt->ID(),
 			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
@@ -669,6 +668,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
+			'display_edit_tkt_row' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 || $default ? ' style="display:none"' : '',
+			'edit_tkt_expanded' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
 			'edit_tickets_name' => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_name' => $default ? '' : $ticket->get('TKT_name'),
 			'TKT_start_date' => $default ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
