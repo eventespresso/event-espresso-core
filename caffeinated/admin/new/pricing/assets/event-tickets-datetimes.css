@@ -202,11 +202,11 @@
 }
 
 .ee-collapsible-open {
-    background: transparent url('../../../../../templates/global_assets/images/minus-16X16.png') 0 0 no-repeat;
+    background: transparent url('../../../../../templates/global_assets/images/minus-16x16.png') 0 0 no-repeat;
 }
 
 .ee-collapsible-closed {
-    background: transparent url('../../../../../templates/global_assets/images/plus-16X16.png') 0 0 no-repeat;
+    background: transparent url('../../../../../templates/global_assets/images/plus-16x16.png') 0 0 no-repeat;
 }
 
 .ticket-table {
