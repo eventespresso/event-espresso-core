@@ -49,28 +49,3 @@ div#company-address strong { color:#fff }
 
 #comments { padding:0; }
 #comments .wrapper { padding:1cm; margin:0 -1cm 0 60%; background-color:#000;}
-
-/*=========================== TABLES =========================*/
-
-#invoice-amount { border-collapse:collapse; width:100%; clear:both; background-color:#eee; border-right:1px solid #000; border-left:1px solid #000; border-top:1px solid #000 }
-
-#invoice table th { text-align:left;padding: 4px 5px 4px 5px }
-#invoice .header_row th{ color:#000; border-bottom:1px solid #000 }
-#invoice-amount td.action { border-bottom:0 }
-
-#invoice-amount .total_tr td { border-bottom:0; background-color:#000; color:#fff }
-#invoice-amount td {white-space: nowrap;margin: 0;vertical-align: center }
-
-#invoice-amount td {margin: 0;padding: 4px 5px 4px 5px; vertical-align: top }
-#invoice-amount td.item_r { text-align:right }
-#invoice-amount td.item_l { text-align:left; white-space:normal }
-#invoice-amount td.total { text-align:right; font-weight:bold }
-
-/*#invoice-amount .details_th { width:44% }
-#invoice-amount .details_notax_th { width:52% }
-#invoice-amount .quantity_th { width:13% }
-#invoice-amount .subtotal_th { width:18%; text-align:right }
-#invoice-amount .unitprice_th { width:17%; text-align:right }
-#invoice-amount .salestax_th { width:8%; text-align:center }*/
-
-#invoice-amount tr#discount_tr, #invoice-amount tr#net_total_tr, #invoice-amount tr#vat_tr { color: #777 }

@@ -49,7 +49,9 @@ $tax_total_line_item;
 			<?php foreach($ticket_line_items_per_event[$event_id] as $line_item_id => $line_item){
 				$ticket = $line_item->ticket();
 				$taxable_html = $ticket->taxable() ? '*': '';
-				$subitems = $line_item->children();?>
+				$subitems = $line_item->children();
+				$ticket_uses = $ticket->uses() >= 0 ? $ticket->uses() : __( 'any ', 'event_espresso' );
+			?>
 				<li class="event-ticket">
 					<div class="ticket-details">
 						<table id="invoice-amount">
@@ -59,14 +61,14 @@ $tax_total_line_item;
 									<th colspan="2" class="desc-column"><?php _e("Description", "event_espresso");?></th>
 									<th class="number-column item_c"><?php _e("Quantity", "event_espresso");?></th>
 									<th class="number-column item_c"><?php _e("Price", "event_espresso");?></th>
-									<th class="number-column"><?php _e("Line Total", "event_espresso");?></th>
+									<th class="number-column item_r"><?php _e("Total", "event_espresso");?></th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php if( count($subitems) < 2){?>
 								<tr class="item">
 									<td><?php echo $line_item->name().$taxable_html?></td>
-									<td colspan="2"><?php echo $line_item->desc();?><p class="ticket-note">This ticket can be use once at <?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'any ', 'event_espresso' ); ?> of the dates/times below.</p></td>
+									<td colspan="2"><?php echo $line_item->desc();?><p class="ticket-note"><?php echo sprintf(__('This ticket can be used once at %s of the dates/times below.', 'event_espresso'), $ticket_uses); ?></p></td>
 									<td class="item_c"><?php echo $line_item->quantity()?></td>
 									<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
 									<td class="item_r"><?php echo $line_item->total_no_code()?></td>
@@ -74,7 +76,7 @@ $tax_total_line_item;
 								<?php }else{?>
 									<tr class="item">
 										<td class="aln-left"><?php echo $line_item->name().$taxable_html?></td>
-										<td colspan="2"><?php echo $line_item->desc();?><p class="ticket-note">This ticket can be use once at <?php echo $ticket->uses() >= 0 ? $ticket->uses() : __( 'any ', 'event_espresso' ); ?> of the dates/times below.</p></td>
+										<td colspan="2"><?php echo $line_item->desc();?><p class="ticket-note"><?php echo sprintf(__('This ticket can be used once at %s of the dates/times below.', 'event_espresso'), $ticket_uses); ?></p></td>
 										<td class="item_c"><?php echo $line_item->quantity()?></td>
 										<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
 										<td class="item_r"><?php echo $line_item->total_no_code()?></td>

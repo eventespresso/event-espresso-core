@@ -170,7 +170,7 @@
 						<tr class="item sub-item tax-total">
 							<td class="item_l"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
-							<td colspan="2" class="item_l"><?php echo $line_item->percent(); ?>%</td>
+							<td colspan="2" class="item_c"><?php echo $line_item->percent(); ?>%</td>
 							
 							<td class="item_r"><?php echo $line_item->total_no_code();?></td>
 						</tr><?php break;
