@@ -602,7 +602,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_dtt_edit_row( $dttrow, $dtt, $default ) {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
-			'display_dtt_edit_row' => 'style="display:none;"',
+			'display_dtt_edit_row' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? 'style="display:none;"' : '',
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
 			'DTT_ID' => $default ? '' : $dtt->ID(),
 			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
