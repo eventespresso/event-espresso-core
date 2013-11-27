@@ -214,14 +214,11 @@ class EE_Base_Class{
 			 foreach($fields_on_model as $field_obj){
 				 if( ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
 						&& $field_obj->get_name() != $field_name ){
-				 
-					$privateAttributeName=$this->_get_private_attribute_name($field_obj->get_name());
 					
 					$this->set($field_obj->get_name(),$obj_in_db->get($field_obj->get_name()));
 				 }
 			 }
 		 }
-
 		 //let's unset any cache for this field_name from the $_cached_properties property.
 		 $this->_clear_cached_property( $privateAttributeName );
 	}
@@ -845,8 +842,7 @@ class EE_Base_Class{
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
-				$this->set(self::_get_primary_key_name( get_class($this) ),$results);//for some reason the new ID is returned as part of an array,
-				//where teh only key is 'new-ID', and it's value is the new ID.
+				$this->set(self::_get_primary_key_name( get_class($this) ),$results);
 			}
 		}
 		//restore the old assumption about values being prepared by the model obejct
@@ -1034,6 +1030,7 @@ class EE_Base_Class{
 	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
 		//if this thing exists in the DB, save the relation to the DB
 		if($this->ID()){
+			
 			$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );

@@ -335,6 +335,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//handle CREATING a default tkt from the incoming tkt but ONLY if this isn't an autosave.
 			if ( ! defined('DOING_AUTOSAVE' ) ) {
 				if ( !empty($tkt['TKT_is_default_selector'] ) ) {
+					
 					$new_default = clone $TKT;
 					$new_default->set( 'TKT_ID', 0 );
 					$new_default->set( 'TKT_is_default', 1 );
@@ -342,9 +343,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$new_default->set( 'TKT_row', 1 );
 					$new_default->set( 'TKT_price', $ticket_price );
 					//remove any dtt relations cause we DON'T want dtt relations attached (note this is just removing the cached relations in the object)
-					$new_default->save();
 					$new_default->_remove_relations('Datetime');
-
+					$new_default->save();
 					//todo we need to add the current attached prices as new prices to the new default ticket.
 					$new_default = $this->_add_prices_to_ticket($data['edit_prices'][$row], $new_default, $update_prices);
 				}
@@ -429,7 +429,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
 				'PRC_order' => $row
 				);
-
 			if ( $new_prices || empty( $PRC_values['PRC_ID'] ) ) {
 				$PRC_values['PRC_ID'] = 0;
 				$PRC = EE_Registry::instance()->load_class('Price', array( $PRC_values ), FALSE, FALSE);

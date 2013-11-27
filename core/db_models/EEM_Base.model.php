@@ -1127,7 +1127,7 @@ abstract class EEM_Base extends EE_Base{
 		//insert the new entry
 		$old_show_errors_value = $wpdb->show_errors;
 		$wpdb->show_errors(false);
-		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);	
+		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);
 		$wpdb->show_errors($old_show_errors_value);
 		$this->show_db_query_if_previously_requested($wpdb->last_query);
 		if(!$result){
