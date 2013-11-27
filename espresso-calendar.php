@@ -543,6 +543,10 @@ class EE_Calendar {
 			$events[ $cntr ]['color'] = '';
 			$events[ $cntr ]['textColor'] = '';
 
+			global $this_event_id;
+
+			$this_event_id = $event->id;
+
 			//Get details about the category of the event
 			if ($use_categories) {
 				// extract info from separate array of category data ?
