@@ -47,6 +47,7 @@
 	
 	<div class="available-tickets-container">
 		<h4 class="event-tickets-datetimes-title"><span class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"></span><?php _e('Available Tickets', 'event_espresso'); ?></h4>
+		<div class="save-cancel-button-container"<?php echo $show_tickets_container; ?>><button class="button-secondary ee-create-button" data-context="ticket"><?php _e('Create Ticket', 'event_espresso'); ?></button></div>
 		<div class="event-tickets-container"<?php echo $show_tickets_container; ?>>
 			<table class="ticket-table">
 				<thead>
@@ -67,7 +68,6 @@
 
 			<input type="hidden" name="ticket_IDs" id="ticket-IDs" value="<?php echo $existing_ticket_ids; ?>">
 			<input type="hidden" name="ticket_total_rows" id="ticket-total-rows" value="<?php echo $total_ticket_rows; ?>">
-			<div class="save-cancel-button-container"><button class="button-secondary ee-create-button" data-context="ticket"><?php _e('Create Ticket', 'event_espresso'); ?></button></div>
 		</div> <!-- end .event-tickets-container -->
 		<div style="clear:both"></div>
 	</div>

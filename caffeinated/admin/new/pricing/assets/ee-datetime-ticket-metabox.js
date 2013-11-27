@@ -1428,7 +1428,15 @@ jQuery(document).ready(function($) {
 		},
 
 
-
+		setSelector: function() {
+			switch ( this.context ) {
+				case 'ticket' :
+				case 'short-ticket' :
+					this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
+					break;
+			}
+			return this;
+		},
 
 		/**
 		 * This toggles the display of the edit form for a Ticket row.
@@ -1437,7 +1445,7 @@ jQuery(document).ready(function($) {
 		 */
 		TicketEditToggle: function( trash ) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
-			this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
+			this.setSelector();
 			var edit_container = $('#display-ticketrow-' + this.ticketRow).find('.ee-editing-container');
 			this.selector.slideToggle(250, function() {
 				if ( tktHelper.selector.is(':visible') ) {
@@ -1530,7 +1538,7 @@ jQuery(document).ready(function($) {
 				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow().setCreating();
 				break;
 			case 'ticket' :
-				tktHelper.setcontext('ticket').newTicketRow().TicketEditToggle().setCreating().scrollTo();
+				tktHelper.setcontext('ticket').newTicketRow().setSelector().setCreating().scrollTo();
 				break;
 			case 'price' :
 				tktHelper.setcontext('price').setitemdata(data).newPriceRow();
@@ -1607,11 +1615,11 @@ jQuery(document).ready(function($) {
 				break;
 
 			case 'ticket' :
-				tktHelper.setticketRow(data.ticketRow).TicketEditToggle();
+				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
 				break;
 			
 			case 'short-ticket' :
-				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').scrollTo();
+				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').setSelector().scrollTo();
 				break;
 
 			case 'price' :
@@ -1693,9 +1701,11 @@ jQuery(document).ready(function($) {
 			if ( $(this).is(':visible' ) ) {
 				$(item).removeClass('ee-collapsible-closed');
 				$(item).addClass('ee-collapsible-open');
+				$('.save-cancel-button-container', '.available-tickets-container').show();
 			} else {
 				$(item).removeClass('ee-collapsible-open');
 				$(item).addClass('ee-collapsible-closed');
+				$('.save-cancel-button-container', '.available-tickets-container').hide();
 			}
 		});
 	});
