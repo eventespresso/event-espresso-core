@@ -102,6 +102,19 @@
     background: transparent url(../../../../../templates/global_assets/images/settings-16x16.png) 0 0 no-repeat;
 }
 
+.ee-editing-container {
+    display: inline-block;
+}
+
+.ee-edit-editing {
+    background-color: #f8f8f8;
+    height: 30px;
+    padding-right: 5px;
+    border-top: 1px solid #EEEEEE;
+    border-left: 1px solid #EEEEEE;
+    border-right: 1px solid #EEEEEE;
+}
+
 .trash-icon {
     background: transparent url(../../../../../templates/global_assets/images/trash-small-16x16.png) 0 0 no-repeat;
 }
@@ -184,6 +197,14 @@
     width: 100%;
 }
 
+.ticket-table .ticket-row td {
+    padding-top: 5px;
+}
+
+.ticket-table .ticket-row td:last-child {
+    padding-top: 2px;
+}
+
 .ticket-table thead {
     border-bottom: 2px solid #eee;
     font-weight: bold;
@@ -200,6 +221,7 @@
     border: 1px solid #EEEEEE;
     border-radius: 3px 3px 3px 3px;
     padding: 1em 1.5em 2em;
+    margin-top: -18px;
 }
 
 .ticket-fieldset legend {

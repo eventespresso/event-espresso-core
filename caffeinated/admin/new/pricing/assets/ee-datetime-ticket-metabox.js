@@ -1420,7 +1420,7 @@ jQuery(document).ready(function($) {
 				this.selector.slideToggle( 250 );
 			} else if ( this.context == 'datetime-create' ) {
 				this.selector = $('#add-event-datetime');
-				if ( trash ) 
+				if ( trash )
 					this.selector.find('input').val('');
 				this.selector.slideToggle( 250 );
 			}
@@ -1438,7 +1438,14 @@ jQuery(document).ready(function($) {
 		TicketEditToggle: function( trash ) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
-			this.selector.slideToggle(250);
+			var edit_container = $('#display-ticketrow-' + this.ticketRow).find('.ee-editing-container');
+			this.selector.slideToggle(250, function() {
+				if ( tktHelper.selector.is(':visible') ) {
+					edit_container.addClass('ee-edit-editing');
+				} else {
+					edit_container.removeClass('ee-edit-editing');
+				}
+			});
 
 			/**
 			 * if creating is true, then we need to remove the existing row and related items from the dom.
