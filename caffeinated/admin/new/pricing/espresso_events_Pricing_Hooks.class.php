@@ -485,7 +485,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'total_dtt_rows' => 1,
 			'add_new_dtt_help_link' => EEH_Template::get_help_tab_link('add_new_dtt_info', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add this help info id to the Events_Admin_Page core file so we can access it here.
 			'datetime_rows' => '',
-			'show_tickets_container' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 1 ? ' style="display:none;' : '',
+			'show_tickets_container' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 1 ? ' style="display:none;"' : '',
 			'ticket_rows' => '',
 			'existing_ticket_ids' => '',
 			'total_ticket_rows' => 1,
