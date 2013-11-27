@@ -670,7 +670,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
-			'display_edit_tkt_row' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' style="display:none"' : '',
+			'display_edit_tkt_row' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 || $default ? ' style="display:none"' : '',
 			'edit_tkt_expanded' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
 			'edit_tickets_name' => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_name' => $default ? '' : $ticket->get('TKT_name'),
