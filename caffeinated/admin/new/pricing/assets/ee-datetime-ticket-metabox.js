@@ -1410,12 +1410,18 @@ jQuery(document).ready(function($) {
 		 * This toggles the display of the edit form for a dtt row depending on the context and row num properties set.
 		 *
 		 */
-		DateTimeEditToggle: function() {
+		DateTimeEditToggle: function( trash ) {
+			trash = typeof(trash) === 'undefined' ? false : trash;
 			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
 				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
 				this.selector.slideToggle( 250 );
 			} else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
+				this.selector.slideToggle( 250 );
+			} else if ( this.context == 'datetime-create' ) {
+				this.selector = $('#add-event-datetime');
+				if ( trash ) 
+					this.selector.find('input').val('');
 				this.selector.slideToggle( 250 );
 			}
 			return this;
@@ -1507,8 +1513,11 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		switch ( data.context ) {
+			case 'datetime-create' :
+				tktHelper.newDTTrow().setcontext('datetime-create').DateTimeEditToggle(true).setcontext('ticket').DateTimeEditToggle().scrollTo();
+				break;
 			case 'datetime' :
-				tktHelper.newDTTrow().setcontext('ticket').DateTimeEditToggle().scrollTo();
+				tktHelper.setcontext('datetime-create').DateTimeEditToggle();
 				break;
 			case 'short-ticket' :
 				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow().setCreating();
@@ -1561,6 +1570,11 @@ jQuery(document).ready(function($) {
 			case 'datetime' :
 				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
+			case 'datetime-create' :
+				//clear inputs
+				tktHelper.setcontext('datetime-create').DateTimeEditToggle(true);
+				break;
+
 		}
 		return false;
 	});

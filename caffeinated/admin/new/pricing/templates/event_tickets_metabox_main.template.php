@@ -1,5 +1,10 @@
 <div id="event-and-ticket-form-content">
 	<h4 class="event-tickets-datetimes-title"><?php _e('Event Datetimes', 'event_espresso'); ?></h4><?php echo $event_datetime_help_link; ?>
+	<div class="save-cancel-button-container">
+		<button class="button-secondary ee-create-button" data-context="datetime">
+			<?php _e('Add Datetime', 'event_espresso'); ?>
+		</button>
+	</div>
 	<div class="event-datetimes-container">
 		<!-- these are the ids for the current displayed datetimes (on create new this is blank -->
 		<input type="hidden" name="datetime_IDs" id="datetime-IDs" value="<?php echo $existing_datetime_ids; ?>">
@@ -9,7 +14,7 @@
 
 		<?php echo $datetime_rows; ?>
 	</div> <!-- end .event-datetimes-container -->
-	<div id="add-event-datetime" class="event-datetime-row add-dtt-row">
+	<div id="add-event-datetime" class="event-datetime-row add-dtt-row" style="display:none;">
 		<h5 class="datetime-tickets-heading"><?php _e('Add New Datetime', 'event_espresso'); ?></h5><?php echo $add_new_dtt_help_link; ?>
 		<div>
 			<table id="add-new-event-datetime-table" class="datetime-edit-table">
@@ -29,8 +34,11 @@
 				</tr>
 			</table>
 			<div class="save-cancel-button-container th-adjust">
-				<button data-context="datetime" class="button-primary ee-create-button">
+				<button data-context="datetime-create" class="button-primary ee-create-button">
 					<?php _e('Create Datetime', 'event_espresso'); ?>
+				</button>
+				<button data-context="datetime-create" class="button-secondary ee-cancel-button">
+					<?php _e('Cancel', 'event_espresso'); ?>
 				</button>
 			</div>
 			<div style="clear:both"></div>
