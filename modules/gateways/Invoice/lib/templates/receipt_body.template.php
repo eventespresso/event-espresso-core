@@ -102,7 +102,7 @@ $tax_total_line_item;
 					<div class="reg-details-for-ticket">
 						<div class="ticket-time-and-place-details">
 							<div class="ticket-time-details">
-								<h4 class="sub-section-title no-bottom-margin"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h3>
+								<h4 class="sub-section-title no-bottom-margin"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h4>
 								<ul class="event-dates">
 									<?php foreach($ticket->datetimes() as $datetime){?>
 									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
@@ -111,7 +111,7 @@ $tax_total_line_item;
 							</div>
 							<?php if ($event->venues()){?>
 							<div class="ticket-place-details">
-								<h4 class="sub-section-title no-bottom-margin"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h3>
+								<h4 class="sub-section-title no-bottom-margin"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h4>
 								<ul class="event-venues">
 									<?php foreach($event->venues() as $venue){?>
 									<li><?php echo $venue->name()?> <span class="small-text">[ <a href='<?php echo $venue->get_permalink()?>'><?php _e('view', 'event_espresso'); ?></a> ]</span></li>
@@ -121,7 +121,7 @@ $tax_total_line_item;
 							<?php }?>
 						</div>
 						<div class="ticket-registrations-area">
-							<h4 class="sub-section-title"><?php echo __("Registration Details", "event_espresso");?> <span class="small-text link">[ <a class="print_button noPrint" href="<?php echo $edit_reg_info_url; ?>"><?php _e('edit', 'event_espresso'); ?></a> ]</span></h3>
+							<h4 class="sub-section-title"><?php echo __("Registration Details", "event_espresso");?> <span class="small-text link">[ <a class="print_button noPrint" href="<?php echo $edit_reg_info_url; ?>"><?php _e('edit', 'event_espresso'); ?></a> ]</span></h4>
 							<ul class="ticket-registrations-list">
 								<?php foreach($registrations_per_line_item[$line_item_id] as $registration){
 									/* @var $registration EE_Registration */
