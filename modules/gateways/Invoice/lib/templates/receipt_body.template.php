@@ -218,12 +218,12 @@ $tax_total_line_item;
 			<table id="invoice-amount">
 				<thead>
 					<tr class="header_row">
-						<th ><span class=""><?php _e('Payment Method', 'event_espresso'); ?></span></th>
+						<th><span class=""><?php _e('Payment Method', 'event_espresso'); ?></span></th>
 						<th class='left datetime_th'><?php _e("Date",'event_espresso')?></th>
-						<th ><span class=""><?php _e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
-						<th ><span class=""><?php _e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
-						<th ><span class=""><?php _e('Status', 'event_espresso'); ?></span></th>
-						<th ><?php _e('Amount', 'event_espresso'); ?></th>
+						<th><span class=""><?php _e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
+						<th><span class=""><?php _e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
+						<th><span class=""><?php _e('Status', 'event_espresso'); ?></span></th>
+						<th><?php _e('Amount', 'event_espresso'); ?></th>
 					</tr>
 				</thead>
 				<tbody>

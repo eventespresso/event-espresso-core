@@ -156,10 +156,10 @@
 							<td class="item_l subitem"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<?php if ($line_item->is_percent()) { ?>
-									<td>&nbsp;</td>
+									<td></td>
 									<td class="item_c"><?php echo $line_item->percent();?>%</td>
 							<?php }else{//flat discount/surcharge ?>
-									<td>&nbsp;</td>
+									<td></td>
 									<td class="item_c"><?php echo $line_item->unit_price_no_code();?></td>
 							<?php } ?>
 							<td class="item_r"><?php echo $line_item->total_no_code();?></td>
@@ -231,13 +231,13 @@
 ?>
 			</tbody>
 			<tfoot>
-				<tr class='total_tr'><td colspan="4">&nbsp;</td>
+				<tr class='total_tr'><td colspan="4"></td>
 					<td class="item_r"><?php _e('Total Paid','event_espresso')?></td>
 					<td class="item_r"><?php echo EEH_Template::format_currency($amount_pd)?> </td>
 				</tr>
 				<?php //echo $discount; ?>
 				<tr class="total_tr">
-					<td colspan="4">&nbsp;</td>
+					<td colspan="4"></td>
 					<td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
 					<td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd)?></td>
 				</tr>
