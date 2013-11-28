@@ -83,6 +83,13 @@ final class EE_Registry {
 	public $modules = array();
 
 	/**
+	 * 	$widgets
+	 * 	@access 	public
+	 *	@var 	array	$widgets
+	 */
+	public $widgets = array();
+
+	/**
 	 * 	$models
 	 * 	@access 	public
 	 *	@var 	array	$models
