@@ -9,60 +9,123 @@
 /*******************************************************/
 
 .ee-clock-icon-big {
+	min-height: 32px; 
 	padding-left: 48px; 
-	background: url('../../images/clock-32x32.png') center left no-repeat;
+	background: url('../images/clock-32x32.png') top left no-repeat;
 }
 .ee-clock-icon-med {
+	min-height: 24px; 
 	padding-left: 36px; 
-	background: url('../../images/clock-24x24.png') center left no-repeat;
+	background: url('../images/clock-24x24.png') top left no-repeat;
 }
 .ee-clock-icon-small {
+	min-height: 16px; 
 	padding-left: 24px; 
-	background: url('../../images/clock-16x16.png') center left no-repeat;
+	background: url('../images/clock-16x16.png') top left no-repeat;
 }
 
 .ee-location-pin-icon-big {
+	min-height: 32px; 
 	padding-left: 48px; 
-	background: url('../../images/location-pin-32x32.png') center left no-repeat;
+	background: url('../images/location-pin-32x32.png') top left no-repeat;
 }
 .ee-location-pin-icon-med {
+	min-height: 24px; 
 	padding-left: 36px; 
-	background: url('../../images/location-pin-24x24.png') center left no-repeat;
+	background: url('../images/location-pin-24x24.png') top left no-repeat;
 }
 .ee-location-pin-icon-small {
+	min-height: 16px; 
 	padding-left: 24px; 
-	background: url('../../images/location-pin-16x16.png') center left no-repeat;
+	background: url('../images/location-pin-16x16.png') top left no-repeat;
 }
 
 .ee-calendar_year-icon-big {
+	min-height: 32px; 
 	padding-left: 48px; 
-	background: url('../../images/calendar_year-32x32.png') center left no-repeat;
+	background: url('../images/calendar_year-32x32.png') top left no-repeat;
 }
 .ee-calendar_year-icon-med {
+	min-height: 24px; 
 	padding-left: 36px; 
-	background: url('../../images/calendar_year-24x24.png') center left no-repeat;
+	background: url('../images/calendar_year-24x24.png') top left no-repeat;
 }
 .ee-calendar_year-icon-small {
+	min-height: 16px; 
 	padding-left: 24px; 
-	background: url('../../images/calendar_year-16x16.png') center left no-repeat;
+	background: url('../images/calendar_year-16x16.png') top left no-repeat;
 }
 
 .ee-users-icon-big {
+	min-height: 32px; 
 	padding-left: 48px; 
-	background: url('../../images/users-32x32.png') center left no-repeat;
+	background: url('../images/users-32x32.png') top left no-repeat;
 }
 .ee-users-icon-med {
+	min-height: 24px; 
 	padding-left: 36px; 
-	background: url('../../images/users-24x24.png') center left no-repeat;
+	background: url('../images/users-24x24.png') top left no-repeat;
 }
 .ee-users-icon-small {
+	min-height: 16px; 
 	padding-left: 24px; 
-	background: url('../../images/users-16x16.png') center left no-repeat;
+	background: url('../images/users-16x16.png') top left no-repeat;
 }
 
 .ee-external-link-icon {
+	min-height: 16px; 
 	padding-right: 24px; 
-	background: url('../../images/external-link-32x32.png') center right no-repeat;
+	background: url('../images/external-link.png') top right no-repeat;
+}
+
+
+.ee-upcoming-events-widget-li {
+	padding: 0 0 4em; 
+}
+.ee-upcoming-events-widget-header-dv {
+	position: relative;
+	width:100%;
+	min-height: 2.2em;
+	margin: 0 0 1em;
+}.ee-upcoming-events-widget-header-dv.two-line {
+	min-height: 3.5em;
+}
+.ee-upcoming-events-widget-header-dv.three-line {
+	min-height: 4.8em;
+}
+.ee-upcoming-events-widget-header-dv img {
+	width:100%;
+}
+
+.ee-upcoming-events-widget-h5 {
+	margin: 0;
+}
+.ee-upcoming-events-widget-h5 a {
+	position: absolute;
+	bottom: 4.5%;
+	left: 0;
+	width: 90%;
+	padding: 2.5% 5%; 
+	background: rgba(232, 232, 232, 0.9);
+	border: 1px solid rgba(232, 232, 232, 0.9);
+	line-height: 1.2em;
+	color:#333 !important;
+	text-shadow: 1px 1px 0 #FFFFFF;
+	text-decoration: none;
+}
+.ee-upcoming-events-widget-h5 a:hover {
+	background: rgba(224, 224, 224, 0.9);
+	border: 1px solid rgba(224, 224, 224, 0.9);
+}
+.ee-upcoming-events-widget-li h6 {
+	margin: 1em 0 .25em;
+}
+.ee-upcoming-events-widget-details-dv,
+.ee-upcoming-events-widget-details-dv p {
+	line-height: 1.4em !important;
+}
+.ee-upcoming-events-widget-li .ee-event-datetimes-ul {
+	/*margin-left:0 !important;*/
 }
 
 
