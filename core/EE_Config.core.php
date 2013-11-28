@@ -424,7 +424,10 @@ final class EE_Config {
 		} else {
 			// delay until other systems are online
 			add_action( 'wp_loaded', array( $shortcode_class,'set_hooks' ), 1 );
-		}		
+		}
+		// convert classname to UPPERCASE and create WP shortcode. 
+		// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes() 
+		add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fall_back_shortcode' ));
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
