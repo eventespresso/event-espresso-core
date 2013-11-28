@@ -793,6 +793,7 @@ class EED_Events_Archive  extends EED_Module {
 
 
 
+
 	/**
 	 * 	event_categories
 	 *
@@ -944,6 +945,24 @@ function espresso_display_venue_address_in_event_list() {
 
 function espresso_event_list_pagination() {
 	return EED_Events_Archive::pagination();
+}
+
+function espresso_event_list_grid_size_btn() {
+	switch( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->event_list_grid_size ) {
+		case 'tiny' :
+		case 'small' :
+			return 'small';
+			break;
+		case 'medium' :
+			return 'medium';
+			break;
+		case 'large' :
+			return 'big';
+			break;
+		case 'huge' :
+			return 'huge';
+			break;
+	}
 }
 
 
