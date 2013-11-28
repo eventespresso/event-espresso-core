@@ -10,77 +10,76 @@
 
 .ee-clock-icon-big {
 	min-height: 32px; 
-	padding-left: 48px; 
+	padding:0 0 0 48px;
 	background: url('../images/clock-32x32.png') top left no-repeat;
 }
 .ee-clock-icon-med {
 	min-height: 24px; 
-	padding-left: 36px; 
+	padding:0 0 0 36px;
 	background: url('../images/clock-24x24.png') top left no-repeat;
 }
 .ee-clock-icon-small {
 	min-height: 16px; 
-	padding-left: 24px; 
+	padding:0 0 0 24px;
 	background: url('../images/clock-16x16.png') top left no-repeat;
 }
 
 .ee-location-pin-icon-big {
 	min-height: 32px; 
-	padding-left: 48px; 
+	padding:0 0 0 48px;
 	background: url('../images/location-pin-32x32.png') top left no-repeat;
 }
 .ee-location-pin-icon-med {
 	min-height: 24px; 
-	padding-left: 36px; 
+	padding:0 0 0 36px;
 	background: url('../images/location-pin-24x24.png') top left no-repeat;
 }
 .ee-location-pin-icon-small {
 	min-height: 16px; 
-	padding-left: 24px; 
+	padding:0 0 0 24px;
 	background: url('../images/location-pin-16x16.png') top left no-repeat;
 }
 
 .ee-calendar_year-icon-big {
 	min-height: 32px; 
-	padding-left: 48px; 
+	padding:0 0 0 48px;
 	background: url('../images/calendar_year-32x32.png') top left no-repeat;
 }
 .ee-calendar_year-icon-med {
 	min-height: 24px; 
-	padding-left: 36px; 
+	padding:0 0 0 36px;
 	background: url('../images/calendar_year-24x24.png') top left no-repeat;
 }
 .ee-calendar_year-icon-small {
 	min-height: 16px; 
-	padding-left: 24px; 
+	padding:0 0 0 24px;
 	background: url('../images/calendar_year-16x16.png') top left no-repeat;
 }
 
 .ee-users-icon-big {
 	min-height: 32px; 
-	padding-left: 48px; 
+	padding:0 0 0 48px;
 	background: url('../images/users-32x32.png') top left no-repeat;
 }
 .ee-users-icon-med {
 	min-height: 24px; 
-	padding-left: 36px; 
+	padding:0 0 0 36px;
 	background: url('../images/users-24x24.png') top left no-repeat;
 }
 .ee-users-icon-small {
 	min-height: 16px; 
-	padding-left: 24px; 
+	padding:0 0 0 24px;
 	background: url('../images/users-16x16.png') top left no-repeat;
 }
 
 .ee-external-link-icon {
 	min-height: 16px; 
-	padding-right: 24px; 
+	padding:0 24px 0 0;
 	background: url('../images/external-link.png') top right no-repeat;
 }
 
 
 .ee-upcoming-events-widget-li {
-	padding: 0 0 4em; 
 }
 .ee-upcoming-events-widget-header-dv {
 	position: relative;
@@ -114,8 +113,8 @@
 	text-decoration: none;
 }
 .ee-upcoming-events-widget-h5 a:hover {
-	background: rgba(224, 224, 224, 0.9);
-	border: 1px solid rgba(224, 224, 224, 0.9);
+	background: rgba(255, 255, 255, 0.9);
+	border: 1px solid rgba(255, 255, 255, 0.9);
 }
 .ee-upcoming-events-widget-li h6 {
 	margin: 1em 0 .25em;
