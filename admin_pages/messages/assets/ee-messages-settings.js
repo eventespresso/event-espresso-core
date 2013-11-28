@@ -93,7 +93,7 @@ jQuery(document).ready(function($) {
 			}
 
 			var $list = status == 'activate' ? $( "ul.messenger-activation", $active_mts ) : $( "ul", $inactive_mts),
-				css_width = status == 'activate' ? '25%' : '75%',
+				css_width = status == 'activate' ? '31%' : '75%',
 				list_width = $list.width();
 
 			$item.fadeOut(function() {
