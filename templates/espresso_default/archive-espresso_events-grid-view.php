@@ -21,11 +21,12 @@ $ELID = espresso_get_event_list_ID();
 	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
 	
 		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
-		
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
 		<?php if ( have_posts() ) : ?>
-		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">				
+		<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
+		
+		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">
 			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
 			<article id="<?php echo 'post-' . $ELID . '-' . $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
@@ -120,10 +121,13 @@ $ELID = espresso_get_event_list_ID();
 			<!-- #post -->
 
 			<?php endwhile; ?>
+			
 			<div class="clear"></div>
 		</div>
 		<!-- #espresso-events-list-dv -->
-
+		
+		<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
+			
 
 		<?php else : ?>
 
@@ -144,8 +148,6 @@ $ELID = espresso_get_event_list_ID();
 
 		<?php endif; // end have_posts() check ?>
 
-		<div class="ee-pagination-dv"><?php  //echo paginate_links( $pagination_args ); ?></div>
-			
 		<div class="clear"></div>
 	</div>
 	<!-- #espresso-events-list-wrap-dv -->
