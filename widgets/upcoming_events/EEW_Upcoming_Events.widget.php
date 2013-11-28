@@ -218,93 +218,92 @@ class EEW_Upcoming_Events  extends WP_Widget {
 	public function widget( $args, $instance ) {
 		
 		global $post;
-		
-		if ( ! ( $post->post_type == 'espresso_events' && is_archive() )) {
-			EE_Registry::instance()->load_helper( 'Event_View' );
-
-			// make separate vars out of attributes
-			extract($args);
-			// filter the title
-			$title = apply_filters('widget_title', $instance['title']);
-			// Before widget (defined by themes). 
-			echo $before_widget;
-			// Display the widget title if one was input (before and after defined by themes). 
-			if ( ! empty( $title )) {
-				echo $before_title . $title . $after_title;
-			}	
-
-			$category = isset( $instance['category_name'] ) && ! empty( $instance['category_name'] ) ? $instance['category_name'] : FALSE;
-			$show_expired = isset( $instance['show_expired'] ) ? (bool) absint( $instance['show_expired'] ) : FALSE;
-			$image_size = isset( $instance['image_size'] ) && ! empty( $instance['image_size'] ) ? $instance['image_size'] : 'medium';
-			$show_desc = isset( $instance['show_desc'] ) ? (bool) absint( $instance['show_desc'] ) : TRUE;
-			$show_dates = isset( $instance['show_dates'] ) ? (bool) absint( $instance['show_dates'] ) : TRUE;
-
-
-			$where = array(
-				'Datetime.DTT_is_primary' => 1,
-				'status' => 'publish' 
-			);
-				
-			if ( $category ) {
-				$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
-				$where['Term_Taxonomy.Term.slug'] = $category;
-			}
-			
-			if ( ! $show_expired ) {
-				$where['Datetime.DTT_EVT_start'] = array( '>=', date( 'Y-m-d' ));
-			}
-
-			$events = EE_Registry::instance()->load_model( 'Event' )->get_all( array(
-				$where,		
-				'limit' => $instance['limit'] > 0 ? '0,' . $instance['limit'] : '0,10', 
-				'order_by' => 'Datetime.DTT_EVT_start', 
-				'order' => 'ASC', 
-				'group_by' => 'EVT_ID' 
-			));
-
-			if ( ! empty( $events )) {
-				echo '<ul class="ee-upcoming-events-widget-ul">';
-				foreach ( $events as $event ) {
-					if ( $event instanceof EE_Event && $post->ID != $event->ID() ) {
-						//printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						echo '<li class="ee-upcoming-events-widget-li">';
-						// how big is the event name ?
-						$name_length = strlen( $event->name() );
-						switch( $name_length ) {
-							case $name_length > 70 :
-								$len_class =  'three-line';
-								break;
-							case $name_length > 35 :
-								$len_class =  'two-line';
-								break;
-							default :
-								$len_class =  'one-line';
-						}
-						echo '<div id="ee-upcoming-events-widget-header-dv-' . $event->ID() . '" class="ee-upcoming-events-widget-header-dv '. $len_class . '">';
-						
-						echo '<h5 class="ee-upcoming-events-widget-h5"><a href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
-						if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {						
-							echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';		
-						}							
-						echo '</div>';
-						if ( $show_desc && $desc = $event->short_description( 25 )) {
-							echo  '<h6 class="">' . __('Event Details: ', 'event_espresso') . '</h6><p>' . $desc . '</p>';
-						}
-						if ( $show_dates ) {
-							echo  '<h6 class="ee-calendar_year-icon-small">' . __('Event Dates: ', 'event_espresso') . '</h6>';
-							echo espresso_list_of_event_dates( 'D M jS, Y', '@ g:i a', $event->ID(), FALSE );
-						}
-						echo '<br/><br/><br/></li>';
-					}
+		// make sure there is some kinda post object
+		if ( $post instanceof WP_Post ) {
+			// but NOT an events archives page, cuz that would be like two event lists on the same page
+			if ( ! ( $post->post_type == 'espresso_events' && is_archive() )) {
+				// let's use some of the event helper functions'
+				EE_Registry::instance()->load_helper( 'Event_View' );
+				// make separate vars out of attributes
+				extract($args);
+				// filter the title
+				$title = apply_filters('widget_title', $instance['title']);
+				// Before widget (defined by themes). 
+				echo $before_widget;
+				// Display the widget title if one was input (before and after defined by themes). 
+				if ( ! empty( $title )) {
+					echo $before_title . $title . $after_title;
+				}	
+				// grab widget settings
+				$category = isset( $instance['category_name'] ) && ! empty( $instance['category_name'] ) ? $instance['category_name'] : FALSE;
+				$show_expired = isset( $instance['show_expired'] ) ? (bool) absint( $instance['show_expired'] ) : FALSE;
+				$image_size = isset( $instance['image_size'] ) && ! empty( $instance['image_size'] ) ? $instance['image_size'] : 'medium';
+				$show_desc = isset( $instance['show_desc'] ) ? (bool) absint( $instance['show_desc'] ) : TRUE;
+				$show_dates = isset( $instance['show_dates'] ) ? (bool) absint( $instance['show_dates'] ) : TRUE;
+				// start to build our where clause
+				$where = array(
+					'Datetime.DTT_is_primary' => 1,
+					'status' => 'publish' 
+				);
+				// add category
+				if ( $category ) {
+					$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+					$where['Term_Taxonomy.Term.slug'] = $category;
 				}
-				echo '</ul>';
+				// if NOT expired then we want events that start today or in the future
+				if ( ! $show_expired ) {
+					$where['Datetime.DTT_EVT_start'] = array( '>=', date( 'Y-m-d' ));
+				}
+				// run the query
+				$events = EE_Registry::instance()->load_model( 'Event' )->get_all( array(
+					$where,		
+					'limit' => $instance['limit'] > 0 ? '0,' . $instance['limit'] : '0,10', 
+					'order_by' => 'Datetime.DTT_EVT_start', 
+					'order' => 'ASC', 
+					'group_by' => 'EVT_ID' 
+				));
+
+				if ( ! empty( $events )) {
+					echo '<ul class="ee-upcoming-events-widget-ul">';
+					foreach ( $events as $event ) {
+						if ( $event instanceof EE_Event && $post->ID != $event->ID() ) {
+							//printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							echo '<li class="ee-upcoming-events-widget-li">';
+							// how big is the event name ?
+							$name_length = strlen( $event->name() );
+							switch( $name_length ) {
+								case $name_length > 70 :
+									$len_class =  'three-line';
+									break;
+								case $name_length > 35 :
+									$len_class =  'two-line';
+									break;
+								default :
+									$len_class =  'one-line';
+							}
+							echo '<div id="ee-upcoming-events-widget-header-dv-' . $event->ID() . '" class="ee-upcoming-events-widget-header-dv '. $len_class . '">';
+							
+							echo '<h5 class="ee-upcoming-events-widget-h5"><a href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
+							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {						
+								echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';		
+							}							
+							echo '</div>';
+							if ( $show_desc && $desc = $event->short_description( 25 )) {
+								echo  '<h6 class="">' . __('Event Details: ', 'event_espresso') . '</h6><p>' . $desc . '</p>';
+							}
+							if ( $show_dates ) {
+								echo  '<h6 class="ee-calendar_year-icon-small">' . __('Event Dates: ', 'event_espresso') . '</h6>';
+								echo espresso_list_of_event_dates( 'D M jS, Y', '@ g:i a', $event->ID(), FALSE );
+							}
+							echo '<br/><br/><br/></li>';
+						}
+					}
+					echo '</ul>';
+				}			
+				// After widget (defined by themes). 
+				echo $after_widget;				
 			}
-		
-			// After widget (defined by themes). 
-			echo $after_widget;
-			
-		}
-		
+		}		
 	}
 
 }
