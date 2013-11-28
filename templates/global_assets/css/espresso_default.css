@@ -8,6 +8,10 @@
 /****                                                                           ****/
 /*******************************************************/
 
+
+/******************* HEADER ICONS ****************** */
+
+
 .ee-clock-icon-big {
 	min-height: 32px; 
 	padding:0 0 0 48px;
@@ -79,6 +83,9 @@
 }
 
 
+/******************* UPCOMING EVENTS WIDGET ****************** */
+
+
 .ee-upcoming-events-widget-li {
 }
 .ee-upcoming-events-widget-header-dv {
@@ -129,37 +136,107 @@
 
 
 
+/******************* PAGINATION ****************** */
+
+
+.ee-pagination-dv {
+	text-align: right;
+}
+.ee-pagination-dv .page-numbers,
+.ee-pagination-dv .page-numbers:visited {
+	display: inline-block;
+	padding: 0 .5em;
+	margin: 0 0 0 .1em;
+	border: 1px solid #EEE;
+	background: #EEE;
+	font-size: .8em;
+	line-height: 2em;
+	color: #736F58;
+	text-decoration: none;
+	font-weight: normal;
+}
+.ee-pagination-dv .page-numbers:hover {
+	border-color: #49AFCD;
+	background: #49AFCD;
+	color: #FFF;
+}
+.ee-pagination-dv .current,
+.ee-pagination-dv .page-numbers.current:hover {
+	border-color: #49AFCD;
+	background: #49AFCD;
+	color: #FFF;
+	font-weight: bold;
+	cursor: default;
+}
+
+
+
+/******************* BUTTONS ****************** */
 
 
 .ee-button-lnk {
 	display: inline-block;
 	position: relative;
-	padding: 5px .75em 6px;
+	padding: 5px 10px 5px;
 	margin: 0 0 1em;
-	background: #fff;
-	border: 1px solid #a39d9c;
-	border-radius: 3px;
+	background: #49AFCD;
+	border-top: 1px solid rgba(255,255,255,0.4);
+	border-bottom: 1px solid rgba(0,0,0,0.1);
 	font-weight: normal;
 	font-size: 10px;
 	line-height: 10px;
-	color: #464549;
-	text-shadow: 1px 1px 0px rgba(255,255,255,.9);
+	/*text-shadow: 0 -1px 0px rgba(0,0,0,0.25);*/
+	color: #fff !important;
 	text-decoration: none;
 	text-align: center;
 	box-shadow: none;
 }
 .ee-button-lnk:hover {
-	background: #fcfcfc;
-	color: #464549;
+	background: #4EBFDE;
+	color: #fff !important;
 }
 .ee-button-lnk:visited {
-	color: #464549;
+	color: #fff !important;
 }
 .ee-button-lnk:active {
-	
+	color: #fff !important;
 }
 
-/** AJAX **/
+
+
+.ee-register-button-lnk {
+	display: inline-block;
+	position: relative;
+	width: auto;
+	height: auto;
+	padding: 5px 10px 7px;
+	margin: 0;
+	background: #7DBD29;
+	border-top: 1px solid rgba(255,255,255,0.4);
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	font-size: 14px;
+	line-height: 24px;
+	color: #fff !important;
+	font-weight: bold;
+	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
+	text-decoration: none;
+	text-align: center;
+}
+.ee-register-button-lnk:hover {
+	background: #6CBA00;
+	color: #fff !important;
+}
+.ee-register-button-lnk:active {
+	color: #fff !important;
+}
+.ee-register-button-lnk:visited {
+	color: #fff !important;
+}
+
+
+
+/******************* AJAX ****************** */
+
 
 #espresso-ajax-loading {
 	display: none;
@@ -180,7 +257,7 @@
 }
 
 
-/** Errors and notices **/
+/******************* ERRORS AND NOTICES ****************** */
 
 
 #espresso-notices,
@@ -203,7 +280,7 @@
 	margin: 0 auto 2em;
 	z-index: 999;
 	background: #fff;
-	border-radius: 1px;
+	/*border-radius: 1px;*/
 	border-width: 2px;
 	border-style: solid;
 	font-size: 1em;
@@ -255,7 +332,7 @@
 	line-height: 12px;
 	text-align: center;
 	text-shadow: .5px .5px 0px rgba( 255,255,255, .8 );
-	border-radius: 1px;
+	/*border-radius: 1px;*/
 }
 #espresso-notices-success .close-espresso-notice,
 #espresso-ajax-notices-success .close-espresso-notice {
@@ -280,6 +357,8 @@
 	border-color: #000 !important;
 }
 
+
+/******************* GENERAL ****************** */
 
 
 .right,
@@ -360,7 +439,7 @@
 .highlight-bg {
 	padding:1em 20px;
 	background:#ffffdd;
-	border-radius:3px;
+	/*border-radius:3px;*/
 }
 .tiny-link {
 	display: block;
