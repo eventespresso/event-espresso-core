@@ -98,14 +98,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_labels = array(
 			'buttons' => array(
 					'add-registrant' => __('Register New Attendee', 'event_espresso'),
-					'add-attendee' => __('Add New Attendee Contact Info', 'event_espresso'),
-					'edit' => __('Edit Attendee', 'event_espresso'),
-					'delete_attendees' => __('Delete Attendee', 'event_espresso'),
+					'add-attendee' => __('Add Contact', 'event_espresso'),
+					'edit' => __('Edit Contact', 'event_espresso'),
+					'delete_attendees' => __('Delete Contact', 'event_espresso'),
 					'report'=>  __("Registrations CSV Report", "event_espresso"),
 					'contact_list_export'=>  __("Contact List CSV Export", "event_espresso"),
 				),
 			'publishbox' => array(
-				'edit_attendee' => __("Update Attendee Record", 'event_espresso')
+				'edit_attendee' => __("Update Contact Record", 'event_espresso')
 				),
 			'hide_add_button_on_cpt_route' => array(
 				'edit_attendee' => true
@@ -331,7 +331,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				
 			'add_new_attendee' => array(
 				'nav' => array(
-					'label' => __('Add Attendee', 'event_espresso'),
+					'label' => __('Add Contact', 'event_espresso'),
 					'order' => 15,
 					'persistent' => FALSE
 					),
@@ -341,7 +341,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				
 			'edit_attendee' => array(
 				'nav' => array(
-					'label' => __('Edit Attendee', 'event_espresso'),
+					'label' => __('Edit Contact', 'event_espresso'),
 					'order' => 15,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['ATT_ID']) ? add_query_arg(array('ATT_ID' => $this->_req_data['ATT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
@@ -418,7 +418,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _add_screen_options_contact_list() {
 		$page_title = $this->_admin_page_title;
-		$this->_admin_page_title = __("Attendees", 'event_espresso');
+		$this->_admin_page_title = __("Contacts", 'event_espresso');
 		$this->_per_page_screen_option();
 		$this->_admin_page_title = $page_title;
 	}
@@ -622,7 +622,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'edit_attendee' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL .'/images/user_edit.png',
-				'desc' => __('Edit Attendee Details', 'event_espresso')
+				'desc' => __('Edit Contact Details', 'event_espresso')
 				),
 			'resend_registration' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL .'/images/email_go.png',
@@ -2528,12 +2528,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		remove_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core' );
-		add_meta_box('commentsdiv', __('Notes on the Attendee', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
+		add_meta_box('commentsdiv', __('Notes on the Contact', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		add_meta_box('attendee_contact_info', __('Contact Info', 'event_espresso'), array( $this, 'attendee_contact_info'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 		add_meta_box('attendee_details_address', __('Address Details', 'event_espresso'), array($this, 'attendee_address_details'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 		add_meta_box('attendee_details_social', __('Social Info', 'event_espresso'), array( $this, 'attendee_social_details'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 		add_meta_box('attendee_notes_comments', __('Alternative Notes/Comments', 'event_espresso'), array( $this, 'attendee_old_notes_comments'), $this->_cpt_routes[$this->_req_action], 'side', 'core');
-		add_meta_box('attendee_registrations', __('Registrations for this Attendee', 'event_espresso'), array( $this, 'attendee_registrations_meta_box'), $this->_cpt_routes[$this->_req_action], 'normal', 'high');
+		add_meta_box('attendee_registrations', __('Registrations for this Contact', 'event_espresso'), array( $this, 'attendee_registrations_meta_box'), $this->_cpt_routes[$this->_req_action], 'normal', 'high');
 	}
 
 	
@@ -2701,7 +2701,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = 0;
 		}
 		
-		$this->_redirect_after_action( $success, __( 'Attendee', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'post' => $this->_req_data['ATT_ID'] ) );
+		$this->_redirect_after_action( $success, __( 'Contact', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'post' => $this->_req_data['ATT_ID'] ) );
 			
 	}
  
@@ -2744,7 +2744,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			
 		}
 
-		$what = $success > 1 ? __( 'Attendees', 'event_espresso' ) : __( 'Attendee', 'event_espresso' );
+		$what = $success > 1 ? __( 'Contacts', 'event_espresso' ) : __( 'Contact', 'event_espresso' );
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
 		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'contact_list' ) );
 		
@@ -2786,7 +2786,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			}
 			
 		}
-		$what = $success > 1 ? __( 'Attendees', 'event_espresso' ) : __( 'Attendee', 'event_espresso' );
+		$what = $success > 1 ? __( 'Contacts', 'event_espresso' ) : __( 'Contact', 'event_espresso' );
 		$this->_redirect_after_action( $success, $what, __( 'deleted', 'event_espresso' ), array( 'action' => 'contact_list' ) );
 		
 	}
