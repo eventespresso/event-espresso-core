@@ -1,4 +1,5 @@
 <div id="single-page-checkout" class="ui-widget">
+	<?php do_action('after_spco-attendee_information-hdr')?>
 	<div id="spco-attendee_information-dv" class="spco-step-dv">
 		
 		<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
@@ -10,35 +11,35 @@
 		</p>	
 						
 	<?php
-
+	global $css_class;
 	$att_nmbr = 0;
 	$prev_event = '';
-	$print_copy_info = count( $additional_event_attendees ) ? TRUE : FALSE;
 
 	if ( $event_queue['total_items'] > 0 ) {
 		foreach ( $event_queue['items'] as $line_item => $item ) {
+			$att_nmbr++;
+			if ( $item['attendee_questions'] != '' ) {
 	?>
 
 			<div id="spco-attendee-panel-dv-<?php echo $line_item;?>" class="spco-attendee-panel-dv">		
 				
 				<?php if ( $item['ticket']->name() != $prev_event ) { ?>
-				<p>
-				<?php 
-					echo $item['ticket']->name() . ':  ' . EEH_Template::format_currency( $item['ticket']->price() ) . '<br/>';
-					echo $item['ticket']->description() ? __('Ticket Details: ', 'event_espresso') . $item['ticket']->description() : ''; 
-				?>				
-				</p>
+			<p class="spco-ticket-info-pg">
+			<?php 
+				echo $item['ticket']->name() . ':  ' . EEH_Template::format_currency( $item['ticket']->price(), FALSE, FALSE );
+				echo $item['ticket']->qty() ? ' &nbsp; x &nbsp; ' . $ticket_count[ $item['ticket']->ID() ] . __(' tickets', 'event_espresso') . ' &nbsp; = &nbsp; ' . EEH_Template::format_currency( $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ] ) : ''; 
+				echo $item['ticket']->description() ? '<br/>' . __('Ticket Details: ', 'event_espresso') . $item['ticket']->description() : ''; 
+			?>				
+			</p>
 
-				<?php 
-						$att_nmbr = 0;
-					} 
-					$att_nmbr++;			
-				?>
+			<?php 
+				} 
+			?>
 				
 				<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
 	  				<legend class="spco-attendee-lgnd smaller-text lt-grey-text"><?php echo __('Attendee #', 'event_espresso') . $att_nmbr;?></legend>
 
-			<?php if ( ! empty( $item['attendee_questions'] )) { 
+			<?php
 				//do an action before the questions output, including the item and count 
 				echo do_action( 'AHEE_registration_page_attendee_information_before_questions', $item, $att_nmbr );
 				echo $item['attendee_questions'];
@@ -93,30 +94,45 @@
 						</div>
 				<?php
 							$print_copy_info = FALSE;
-						}
 						
-					} else {
-						 if ( $att_nmbr == 1 ) {
+					} else if ( $att_nmbr == 1 ) {
 				?>
-					<br />
-					<h3><?php _e('No information is required to attend this event. Please proceed to the next Step', 'event_espresso'); ?></h3>
-					<input
-							type="hidden"
-							id="no-questions"
-							name="qstn[]"
-							value="0"
-					/>					
-				<?php
-						} 
+					<p id="spco-auto-copy-attendee-pg" class="smaller-text lt-grey-text">
+						<?php _e('The above information will be used for any additional tickets/attendees.', 'event_espresso'); ?>								
+					</p>						
+				<?php	
+						
 					}
-				?>			
+			?>				
 				</fieldset>
 				
 			</div>			
 	<?php	
-				$prev_event = $item['ticket']->name(); 
-			 } // $event_queue['items'] as $line_item 
-		 } // $event_queue['total_items'] 
+			} else {
+				 if ( $att_nmbr == 1 ) {
+			?>
+		<div id="spco-attendee-panel-dv-<?php echo $line_item;?>" class="spco-attendee-panel-dv">		
+			<h3 id="event_title-<?php echo $item['ticket']->ID() ?>" class="big-event-title-hdr">
+				<?php echo $item['event']->name(); ?>				
+			</h3>
+			<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
+ 				<h6><?php _e('No information is required to attend this event. Please proceed to the next Step', 'event_espresso'); ?></h6>
+				<input
+						type="hidden"
+						id="no-questions"
+						name="qstn[]"
+						value="0"
+				/>					
+			</fieldset>			
+		</div>			
+		<?php
+					
+				}
+			}
+			echo $item['additional_attendee_reg_info'];
+			$prev_event = $item['ticket']->name(); 
+		 } // $event_queue['items'] as $line_item 
+	 } // $event_queue['total_items'] 
 	?>	
 		<div><a id="spco-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right" ><?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?></a></div>
 	</div>
