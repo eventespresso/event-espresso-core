@@ -263,19 +263,20 @@ class EEM_Transaction extends EEM_Base {
 	*/
 	public function get_revenue_per_day_report( $period = '-1 month' ) {
 
-		global $wpdb;
-		$date_mod = strtotime( $period );
-
-		$SQL = 'SELECT DATE(FROM_UNIXTIME(TXN_timestamp)) AS txnDate, SUM(TXN_paid) AS revenue';
-		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name();
-		$SQL .= ' WHERE TXN_timestamp >= %d';
-		$SQL .= ' GROUP BY `txnDate`';
-		$SQL .= ' ORDER BY TXN_timestamp DESC';
-
-		//echo '<h3>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-
-		return $wpdb->get_results( $wpdb->prepare( $SQL, $date_mod ));
-
+		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
+		$results = $this->_get_all_wpdb_results(
+			array(
+				array(
+					'TXN_timestamp' => array('>=', $sql_date)),
+					'group_by' => 'txnDate',
+					'order_by' => array('TXN_timestamp' => 'DESC' )
+					),
+				OBJECT,
+				array(
+					'txnDate' => array('DATE(Transaction.TXN_timestamp)','%s'),
+					'revenue' => array('SUM(Transaction.TXN_paid)', '%d')
+					));
+		return $results;
 	}
 
 

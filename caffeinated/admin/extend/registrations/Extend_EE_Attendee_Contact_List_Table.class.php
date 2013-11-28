@@ -27,7 +27,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-dd("extend ee contact list");
 class Extend_EE_Attendee_Contact_List_Table extends EE_Attendee_Contact_List_Table {
 	
 	protected function _set_properties() {
@@ -37,6 +36,5 @@ class Extend_EE_Attendee_Contact_List_Table extends EE_Attendee_Contact_List_Tab
 				'route' => 'contact_list_export',
 				)
 		);
-		echo "extend!";
 	}
 }

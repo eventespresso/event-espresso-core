@@ -1416,7 +1416,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$alt = 0;
 			?>
-			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('These are the shortcodes you can use in the templates: ', 'event_espresso' ); ?></p>
+			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('This is a list of shortcodes organized by content areas they are valid in: ', 'event_espresso' ); ?></p>
 			
 			<?php foreach ( $shortcodes as $field => $allshortcodes ) : ?>
 				<div class="shortcode-field-table">
@@ -1566,7 +1566,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param int $index This helps us know which template field to select from the request array.
 	 */
 	protected function _set_message_template_column_values($index) {
-		//first we need to make sure we run the content through html_entities
 		if ( is_array($this->_req_data['MTP_template_fields'][$index]['content'] ) ) {
 			foreach ( $this->_req_data['MTP_template_fields'][$index]['content'] as $field => $value ) {
 				$this->_req_data['MTP_template_fields'][$index]['content'][$field] = $value;

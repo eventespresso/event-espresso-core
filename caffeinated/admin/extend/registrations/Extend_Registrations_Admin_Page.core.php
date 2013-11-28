@@ -61,7 +61,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			);
 
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
-
+		$this->_page_config['contact_list']['list_table'] = 'Extend_EE_Attendee_Contact_List_Table';
 	}
 
 

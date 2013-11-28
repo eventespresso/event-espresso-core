@@ -1410,19 +1410,33 @@ jQuery(document).ready(function($) {
 		 * This toggles the display of the edit form for a dtt row depending on the context and row num properties set.
 		 *
 		 */
-		DateTimeEditToggle: function() {
+		DateTimeEditToggle: function( trash ) {
+			trash = typeof(trash) === 'undefined' ? false : trash;
 			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
 				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
 				this.selector.slideToggle( 250 );
 			} else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
 				this.selector.slideToggle( 250 );
+			} else if ( this.context == 'datetime-create' ) {
+				this.selector = $('#add-event-datetime');
+				if ( trash )
+					this.selector.find('input').val('');
+				this.selector.slideToggle( 250 );
 			}
 			return this;
 		},
 
 
-
+		setSelector: function() {
+			switch ( this.context ) {
+				case 'ticket' :
+				case 'short-ticket' :
+					this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
+					break;
+			}
+			return this;
+		},
 
 		/**
 		 * This toggles the display of the edit form for a Ticket row.
@@ -1431,8 +1445,15 @@ jQuery(document).ready(function($) {
 		 */
 		TicketEditToggle: function( trash ) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
-			this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
-			this.selector.slideToggle(250);
+			this.setSelector();
+			var edit_container = $('#display-ticketrow-' + this.ticketRow).find('.ee-editing-container');
+			this.selector.slideToggle(250, function() {
+				if ( tktHelper.selector.is(':visible') ) {
+					edit_container.addClass('ee-edit-editing');
+				} else {
+					edit_container.removeClass('ee-edit-editing');
+				}
+			});
 
 			/**
 			 * if creating is true, then we need to remove the existing row and related items from the dom.
@@ -1507,14 +1528,17 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		switch ( data.context ) {
+			case 'datetime-create' :
+				tktHelper.newDTTrow().setcontext('datetime-create').DateTimeEditToggle(true).setcontext('ticket').DateTimeEditToggle().scrollTo();
+				break;
 			case 'datetime' :
-				tktHelper.newDTTrow().setcontext('ticket').DateTimeEditToggle().scrollTo();
+				tktHelper.setcontext('datetime-create').DateTimeEditToggle();
 				break;
 			case 'short-ticket' :
 				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow().setCreating();
 				break;
 			case 'ticket' :
-				tktHelper.setcontext('ticket').newTicketRow().TicketEditToggle().setCreating().scrollTo();
+				tktHelper.setcontext('ticket').newTicketRow().setCreating().TicketEditToggle().scrollTo();
 				break;
 			case 'price' :
 				tktHelper.setcontext('price').setitemdata(data).newPriceRow();
@@ -1561,6 +1585,11 @@ jQuery(document).ready(function($) {
 			case 'datetime' :
 				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
+			case 'datetime-create' :
+				//clear inputs
+				tktHelper.setcontext('datetime-create').DateTimeEditToggle(true);
+				break;
+
 		}
 		return false;
 	});
@@ -1586,7 +1615,7 @@ jQuery(document).ready(function($) {
 				break;
 
 			case 'ticket' :
-				tktHelper.setticketRow(data.ticketRow).TicketEditToggle();
+				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
 				break;
 			
 			case 'short-ticket' :
@@ -1658,6 +1687,27 @@ jQuery(document).ready(function($) {
 		}
 		UNSAVED_DATA_MSG.inputChanged=1;
 		return false;
+	});
+
+
+	/**
+	 * collapsible click
+	 */
+	$('#event-and-ticket-form-content').on('click', '.ee-collapsible', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var item = this;
+		$('.event-tickets-container').slideToggle(245, function() {
+			if ( $(this).is(':visible' ) ) {
+				$(item).removeClass('ee-collapsible-closed');
+				$(item).addClass('ee-collapsible-open');
+				$('.save-cancel-button-container', '.available-tickets-container').show();
+			} else {
+				$(item).removeClass('ee-collapsible-open');
+				$(item).addClass('ee-collapsible-closed');
+				$('.save-cancel-button-container', '.available-tickets-container').hide();
+			}
+		});
 	});
 
 

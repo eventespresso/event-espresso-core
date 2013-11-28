@@ -7,11 +7,11 @@
 	<td><span class="ticket-display-row-TKT_price"><?php echo $TKT_price; ?></span></td>
 	<td><span class="ticket-display-row-TKT_qty"><?php echo $TKT_qty; ?></span></td>
 	<td><span class="ticket-display-row-TKT_sold"><?php echo $TKT_sold; ?></span></td>
-	<td><span class="gear-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="<?php echo $clone_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="<?php echo $trash_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"<?php echo $trash_hidden; ?>></span></td>
+	<td><div class="ee-editing-container <?php echo $edit_tkt_expanded; ?>"><span class="gear-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span></div><span class="<?php echo $clone_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="<?php echo $trash_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"<?php echo $trash_hidden; ?>></span></td>
 </tr>
 <tr id="edit-ticketrow-<?php echo $tkt_row; ?>" class="edit-ticket-row">
 	<td colspan="9">
-		<fieldset id="fieldset-edit-ticketrow-<?php echo $tkt_row; ?>" class="ticket-fieldset" style="display:none">
+		<fieldset id="fieldset-edit-ticketrow-<?php echo $tkt_row; ?>" class="ticket-fieldset"<?php echo $display_edit_tkt_row; ?>>
 			<legend><?php _e('Edit Ticket', 'event_espresso'); ?></legend>
 			<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_ID]" class="edit-ticket-TKT_ID" value="<?php echo $TKT_ID; ?>">
 			<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_row]" class="edit-ticket-TKT_row" value="<?php echo $tkt_row; ?>">
@@ -136,6 +136,8 @@
  * $trash_icon
  * $trash_hidden
  * $clone_icon
+ * $display_edit_tkt_row
+ * $edit_tkt_expanded
  * 
  * $TKT_taxable
  * $display_subtotal
