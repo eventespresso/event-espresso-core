@@ -187,7 +187,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<td><?php echo $datetime->start_date('l F jS, Y'); ?></td>
 									<td><?php echo $datetime->time_range(); ?></td>
 									<td class="cntr"><?php echo $datetime->sold(); ?></td>									
-									<?php $tkts_left = isset( $max ) && $max < $datetime->tickets_remaining() ? $max : $datetime->tickets_remaining(); ?>
+									<?php $tkts_left = isset( $max ) && $max < $datetime->spaces_remaining() ? $max : $datetime->spaces_remaining(); ?>
 									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $tkts_left; ?>
 									<td class="cntr"><?php echo $tkts_left >= 0 ? $tkts_left : __( 'unlimited ', 'event_espresso' ); ?></td>
 								</tr>

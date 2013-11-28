@@ -307,6 +307,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
+	function column_ATT_email( EE_Registration $item ) {
+		return $item->get_first_related('Attendee')->email();
+	}
+
+
+
+
 
 	/**
 	 * 		column_REG_count
@@ -439,8 +446,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 	       $edit_lnk = '
 		<li>
-			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Edit Attendee Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/user_edit.png">
+			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact Details', 'event_espresso' ) . '">
+				<img width="16" height="16" alt="' . __( 'Edit Contact Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/user_edit.png">
 			</a>
 		</li>';
 

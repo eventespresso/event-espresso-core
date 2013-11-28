@@ -82,6 +82,40 @@ class EE_Term extends EE_Base_Class{
 		return new self( $props_n_values, TRUE );
 	}
 
+	/**
+	 * Gets name
+	 * @return string
+	 */
+	function name() {
+		return $this->get('name');
+	}
+
+	/**
+	 * Sets name
+	 * @param string $name
+	 * @return boolean
+	 */
+	function set_name($name) {
+		return $this->set('name', $name);
+	}
+	/**
+	 * Gets slug
+	 * @return string
+	 */
+	function slug() {
+		return $this->get('slug');
+	}
+
+	/**
+	 * Sets slug
+	 * @param string $slug
+	 * @return boolean
+	 */
+	function set_slug($slug) {
+		return $this->set('slug', $slug);
+	}
+
+
 }
 
 /* End of file EE_Answer.class.php */

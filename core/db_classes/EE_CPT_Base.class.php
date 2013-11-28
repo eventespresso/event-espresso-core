@@ -68,14 +68,6 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Gets the term_taxonomies for this CPT
-	 * @param type $query_params
-	 * @return EE_Term_Taxonomy[]
-	 */
-	function term_taxonomies($query_params = array()){
-		return $this->get_many_related('Term_Taxonomy', $query_params);
-	}
-	/**
 	 * Removes the relation to the specified term taxonomy, and maintains the 
 	 * data integrity of the term taxonomy rpovided
 	 * @param EE_Term_Taxonomy $term_taxonomy
@@ -153,7 +145,12 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 
-
+	/**
+	 * See _get_feature_image. Returns the HTML to displya a featured image
+	 * @param string $size
+	 * @param string|array $attr
+	 * @return string of html
+	 */
 	public function feature_image( $size = 'thumbnail', $attr = '' ) {
 		return $this->_get_feature_image( $size, $attr );
 	}
@@ -171,6 +168,7 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 		$attachment =  wp_get_attachment_image_src( get_post_thumbnail_id( $this->ID() ), $size );
 		return !empty($attachment) ? $attachment[0] : false;
 	}
+	
 
 
 
@@ -280,5 +278,14 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	 */
 	public function get_permalink(){
 		return get_permalink($this->ID());
+	}
+	
+	/**
+	 * Gets all the term-taxonomies for thsi CPT
+	 * @param array $query_params
+	 * @return EE_Term_Taxonomy
+	 */
+	public function term_taxonomies($query_params){
+		return $this->get_many_related('Term_Taxonomy', $query_params);
 	}
 }

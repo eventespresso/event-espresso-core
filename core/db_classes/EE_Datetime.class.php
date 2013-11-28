@@ -385,7 +385,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	*		get event start date
+	*		get event start date.  Provide either the date format, or NULL to re-use the
+	 * last-used format, or '' to use teh default date format
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
@@ -395,7 +396,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		return $this->_show_datetime( 'D', 'start', $dt_frmt );
 	}
 
-
+	/**
+	 * Echoes start_date()
+	 * @param string $dt_frmt
+	 */
 	public function e_start_date( $dt_frmt = NULL ) {
 		$this->_show_datetime( 'D', 'start', $dt_frmt, NULL, TRUE );
 	}
@@ -404,7 +408,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	*		get end date
+	*		get end date. Provide either the date format, or NULL to re-use the
+	 * last-used format, or '' to use teh default date format
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
@@ -413,7 +418,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	public function end_date( $dt_frmt = NULL ) {		
 		return $this->_show_datetime( 'D', 'end', $dt_frmt );
 	}
-
+	/**
+	 * Echoes the end date. See end_date()
+	 * @param string $dt_frmt
+	 */
 	public function e_end_date( $dt_frmt = NULL ) {		
 		$this->_show_datetime( 'D', 'end', $dt_frmt, NULL, TRUE );
 	}
@@ -508,6 +516,36 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		$this->_show_datetime( '', 'start', $dt_frmt, $tm_format, TRUE);
 	}
 
+	/**
+	 * Shows the length of the event (start to end time). 
+	 * Can be shown in 'seconds','minutes','hours', or 'days'.
+	 * By default, rounds up. (So if you use 'days', and then event 
+	 * only occurs for 1 hour, it will return 1 day).
+	 * @param string $units 'seconds','minutes','hours','days'
+	 */
+	public function length($units = 'seconds',$round_up = false){
+		$start = $this->get_raw('DTT_EVT_start');
+		$end = $this->get_raw('DTT_EVT_end');
+		$length_in_units = $end - $start;
+		switch($units){
+			//NOTE: We purposefully don't use "break;"
+			//in order to chain the divisions
+			case 'days':
+				$length_in_units /= 24;
+			case 'hours':
+				$length_in_units /= 60;
+			case 'minutes':
+				$length_in_units /= 60;
+			case 'seconds':
+			default:
+				$length_in_units = ceil($length_in_units);
+		}
+		if($round_up){
+			$length_in_units = max($length_in_units, 1);
+		}
+		return $length_in_units;
+		
+	}
 
 
 
@@ -601,12 +639,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	*	return the total number of tickets available for purchase for this datetime
+	*	return the total number of spaces remaining at this venue.
+	 *  This only takes the venue's capacity into account, NOT the tickets available for sale
 	* 
 	* 	@access		public		
 	*	@return 		int
 	*/	
-	public function tickets_remaining() {
+	public function spaces_remaining() {
 		// is there a reg limit set ?
 		if ( $this->_DTT_reg_limit < 1 ) {
 			// unlimited tickets available
