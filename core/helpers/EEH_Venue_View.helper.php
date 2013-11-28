@@ -190,7 +190,7 @@ class EEH_Venue_View extends EEH_Base {
 			// grab this for later in case we need it
 			$VNU_ID = $post->ID;
 		
-		} else if ( $post->post_type == 'espresso_events' || $VNU_ID ) {
+		} else if ( isset( $post->post_type ) && $post->post_type == 'espresso_events' || $VNU_ID ) {
 			// grab the events related venues
 			$venues = EEH_Venue_View::get_event_venues();
 			// make sure the result is an array
