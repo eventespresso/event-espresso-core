@@ -639,12 +639,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	*	return the total number of tickets available for purchase for this datetime
+	*	return the total number of spaces remaining at this venue.
+	 *  This only takes the venue's capacity into account, NOT the tickets available for sale
 	* 
 	* 	@access		public		
 	*	@return 		int
 	*/	
-	public function tickets_remaining() {
+	public function spaces_remaining() {
 		// is there a reg limit set ?
 		if ( $this->_DTT_reg_limit < 1 ) {
 			// unlimited tickets available

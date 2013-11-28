@@ -396,8 +396,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 			$tickets_remaining = $this->_TKT_qty - $this->_TKT_sold;
 			foreach ( $datetimes as $datetime ) {
 				// if datetime reg limit is not unlimited
-				if ( $datetime->tickets_remaining() > -1 ) {
-					$tickets_remaining = $tickets_remaining > 0 ? min( $tickets_remaining, $datetime->tickets_remaining() ) : $datetime->tickets_remaining();
+				if ( $datetime->spaces_remaining() > -1 ) {
+					$tickets_remaining = $tickets_remaining > 0 ? min( $tickets_remaining, $datetime->spaces_remaining() ) : $datetime->spaces_remaining();
 				}
 			}
 			$tickets_remaining = $tickets_remaining < 0 ? -1 : $tickets_remaining;
