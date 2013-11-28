@@ -1416,7 +1416,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$alt = 0;
 			?>
-			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('These are the shortcodes you can use in the templates: ', 'event_espresso' ); ?></p>
+			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('This is a list of shortcodes organized by content areas they are valid in: ', 'event_espresso' ); ?></p>
 			
 			<?php foreach ( $shortcodes as $field => $allshortcodes ) : ?>
 				<div class="shortcode-field-table">
