@@ -51,7 +51,7 @@ get_header();
 					</h1>
 					<?php if (has_excerpt( $post->ID )): the_excerpt(); endif;?>
 					<p id="event-date-p">
-						<?php espresso_event_date_range(); ?>
+						<?php echo $post->EE_Event->primary_datetime()->start_date_and_time(); ?>
 					</p>
 				</header>
 				<!-- .event-header -->
