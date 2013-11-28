@@ -315,8 +315,15 @@ class EE_Event extends EE_CPT_Base{
 	function default_registration_status() {
 		return $this->get('EVT_default_registration_status');
 	}
-	function short_description(){
-		return $this->get('EVT_short_desc');
+	function short_description( $num_words = 55, $more = NULL ){
+		$short_desc = $this->get('EVT_short_desc');
+		if ( ! empty( $short_desc )) {
+			return $short_desc;
+		} else {
+			$full_desc = $this->get('EVT_desc');
+			return wp_trim_words ( $full_desc, $num_words, $more );
+		}
+		
 	}
 	function slug(){
 		return $this->get('EVT_slug');
