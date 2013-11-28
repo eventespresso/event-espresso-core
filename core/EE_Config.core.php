@@ -427,7 +427,7 @@ final class EE_Config {
 		}
 		// convert classname to UPPERCASE and create WP shortcode. 
 		// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes() 
-		add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fall_back_shortcode' ));
+		add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
