@@ -54,12 +54,11 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function __construct() {
-		// grab registry
-		
 		// early init
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
+		// action hook EE
 		do_action('AHEE__EE_Front_Controller__construct__done',$this);
 	}
 
@@ -285,6 +284,7 @@ final class EE_Front_Controller {
 			EE_Registry::instance()->load_core( 'CPT_Strategy' );
 		}
 	}
+
 
 
 
