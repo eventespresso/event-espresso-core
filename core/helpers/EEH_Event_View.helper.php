@@ -309,7 +309,7 @@ class EEH_Event_View extends EEH_Base {
 		$EVT_ID = absint( $EVT_ID );
 //		d( $EVT_ID );
 		// do we already have the Event  you are looking for?
-		if ( EEH_Event_View::$_event instanceof EE_Event && EEH_Event_View::$_event->ID() === $EVT_ID ) {
+		if ( EEH_Event_View::$_event instanceof EE_Event && $EVT_ID && EEH_Event_View::$_event->ID() === $EVT_ID ) {
 			return EEH_Event_View::$_event;
 		}
 		EEH_Event_View::$_event = NULL;
@@ -317,8 +317,9 @@ class EEH_Event_View extends EEH_Base {
 		global $post;
 		// if this is being called from an EE_Event post, then we can just grab the attached EE_Event object
 		 if ( isset( $post->post_type ) && $post->post_type == 'espresso_events' || $EVT_ID ) {
+//			d( $post );
 			// grab the event we're looking for
-			if ( isset( $post->EE_Event ) && $post->EE_Event->ID() === $EVT_ID) {
+			if ( isset( $post->EE_Event ) && (( $EVT_ID && $post->EE_Event->ID() === $EVT_ID ) || ! $EVT_ID )) {
 				EEH_Event_View::$_event = $post->EE_Event;
 //				d( EEH_Event_View::$_event );
 			}
@@ -463,7 +464,7 @@ class EEH_Event_View extends EEH_Base {
 	public static function event_link_url( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
-			$url = $event->external_url() !== NULL && $event->external_url() !== '' ? $event->external_url() : get_permalink( $post->ID );
+			$url = $event->external_url() !== NULL && $event->external_url() !== '' ? $event->external_url() : get_permalink( $event->ID() );
 			return preg_match( "~^(?:f|ht)tps?://~i", $url ) ? $url : 'http://' . $url;
 		}
 		return NULL;
@@ -507,7 +508,7 @@ class EEH_Event_View extends EEH_Base {
 				// generate url to event editor for this event
 				$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'post' => $event->ID(), 'edit_nonce' => $nonce ), admin_url() );
 				// get edit CPT text
-				$post_type_obj = get_post_type_object( $post->post_type );
+				$post_type_obj = get_post_type_object( 'espresso_events' );
 				// build final link html
 				$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
 				// put it all together 
