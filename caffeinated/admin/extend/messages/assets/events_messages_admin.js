@@ -2,6 +2,8 @@ jQuery(document).ready(function($) {
 
 
 	var EE_messages_evt_helper = {
+
+		selectedCache : {},
 		
 		parseurl: function(url, mode) {
 			if ( typeof(mode) === 'undefined' ) mode = 'loose';
@@ -11,11 +13,27 @@ jQuery(document).ready(function($) {
 			return parseUri(url);
 		},
 
-		get_template_content: function(selected, type) {
-			//if type is form then we use serializeFullArray
-			var queryparts = type == 'form' ? $(selected).serializeFullArray() : this.parseurl($(selected).attr('href'));
+		get_template_content: function(selected, type, action) {
+			var queryparts = {};
+			switch ( type ) {
+				case 'form' :
+					queryparts = $(selected).serializeFullArray();
+					break;
 
-			queryobj = type != 'form' ? queryparts.queryKey : queryparts;
+				case 'cached_url' :
+					queryparts = this.parseurl($(this.selectedCache).attr('href'));
+					break;
+
+				default :
+					this.selectedCache = selected;
+					queryparts = this.parseurl($(selected).attr('href'));
+					break;
+			}
+
+			queryobj = type != 'form' && type != 'cached' ? queryparts.queryKey : queryparts;
+
+			//if action is set then we define that for th queryobj.route.  Otherwise we leave alone
+			queryobj.action = typeof(action) !== 'undefined' ? action : queryobj.action;
 
 
 			//lets reset and add a couple of new vars to the queryKey object
@@ -24,7 +42,6 @@ jQuery(document).ready(function($) {
 			queryobj.page = 'espresso_events';
 			queryobj.ee_admin_ajax = true;
 
-			
 		
 			$('.ajax-loader-grey').toggle().show();
 
@@ -83,6 +100,7 @@ jQuery(document).ready(function($) {
 			var messages_content = $('#messages-change-edit-templates-dv').html();
 			dialogHelper.displayModal().addContent(messages_content);
 			overlay.on('click', function() {
+				EE_messages_evt_helper.get_template_content('#ee-msg-edit-form','cached_url','force_switch_template');
 				EE_messages_evt_helper.close_modal();
 				$('.messages-change-edit-templates-content', '.ee-admin-dialog-container').html('');
 			});
