@@ -307,6 +307,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
+	function column_ATT_email( EE_Registration $item ) {
+		return $item->get_first_related('Attendee')->email();
+	}
+
+
+
+
 
 	/**
 	 * 		column_REG_count
