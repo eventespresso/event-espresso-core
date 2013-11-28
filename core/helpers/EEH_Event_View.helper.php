@@ -22,9 +22,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_categories' )) {
-		function espresso_event_categories() {
-			global $post;
-			the_terms( $post->ID, 'espresso_event_categories' );
+		function espresso_event_categories( $EVT_ID = FALSE ) {
+			EEH_Event_View::event_categories( $EVT_ID );
 		}		
 	}
 
@@ -36,8 +35,8 @@
 	 * @return object
 	 */
 	if ( ! function_exists( 'espresso_event_date_obj' )) {
-		function espresso_event_date_obj() {
-			return EEH_Event_View::get_primary_date_obj();
+		function espresso_event_date_obj( $EVT_ID = FALSE ) {
+			return EEH_Event_View::get_primary_date_obj( $EVT_ID );
 		}		
 	}
 
@@ -49,8 +48,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_date' )) {
-		function espresso_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
-			echo EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt );
+		function espresso_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
+			echo EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID );
 		}		
 	}
 
@@ -62,18 +61,23 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_list_of_event_dates' )) {
-		function espresso_list_of_event_dates( $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a' ) {
-			$datetimes = EEH_Event_View::get_all_date_obj( $dt_frmt, $tm_frmt );
+		function espresso_list_of_event_dates( $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a', $EVT_ID = FALSE, $echo = TRUE ) {
+			$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID );
 			//d( $datetimes );
 			if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 				global $post;
-				echo '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">';
+				$html = '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">';
 				foreach ( $datetimes as $datetime ) {
-					echo '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';	
-					echo $datetime->start_date_and_time( $dt_frmt, $tm_frmt );	
-					echo '</li>';	
+					$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';	
+					$html .= $datetime->start_date_and_time( $dt_frmt, $tm_frmt );	
+					$html .= '</li>';	
 				}
-				echo '</ul>';
+				$html .= '</ul>';
+				if ( $echo ) {
+					echo $html;
+				} else {
+					return $html;
+				}
 			}
 		}		
 	}
@@ -86,8 +90,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_end_date' )) {
-		function espresso_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
-			echo EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt );
+		function espresso_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
+			echo EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID );
 		}		
 	}
 
@@ -98,13 +102,13 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_date_range' )) {
-		function espresso_event_date_range( $dt_frmt = 'M jS', $tm_frmt = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a' ) {
-			$the_event_date = EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt );
-			$the_event_end_date = EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt );
+		function espresso_event_date_range( $dt_frmt = 'M jS', $tm_frmt = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
+			$the_event_date = EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID );
+			$the_event_end_date = EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID );
 			if ( $the_event_date != $the_event_end_date ) {
-				echo $the_event_date . __( ' - ', 'event_espresso' ) . EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt );
+				echo $the_event_date . __( ' - ', 'event_espresso' ) . EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt, $EVT_ID );
 			} else {
-				echo EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt );
+				echo EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID );
 			}
 		}		
 	}
@@ -117,8 +121,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_date_as_calendar_page' )) {
-		function espresso_event_date_as_calendar_page() {
-			EEH_Event_View::event_date_as_calendar_page();
+		function espresso_event_date_as_calendar_page( $EVT_ID = FALSE ) {
+			EEH_Event_View::event_date_as_calendar_page( $EVT_ID );
 		}		
 	}
 
@@ -131,8 +135,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_link_url' )) {
-		function espresso_event_link_url() {
-			echo EEH_Event_View::event_link_url();
+		function espresso_event_link_url( $EVT_ID = FALSE ) {
+			echo EEH_Event_View::event_link_url( $EVT_ID );
 		}		
 	}
 
@@ -145,8 +149,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_phone' )) {
-		function espresso_event_phone() {
-			echo EEH_Event_View::event_phone();
+		function espresso_event_phone( $EVT_ID = FALSE ) {
+			echo EEH_Event_View::event_phone( $EVT_ID );
 		}		
 	}
 
@@ -159,8 +163,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_edit_event_link' )) {
-		function espresso_edit_event_link() {
-			echo EEH_Event_View::edit_event_link();
+		function espresso_edit_event_link( $EVT_ID = FALSE ) {
+			echo EEH_Event_View::edit_event_link( $EVT_ID );
 		}		
 	}
 
@@ -291,6 +295,43 @@
  */
 class EEH_Event_View extends EEH_Base {
 
+	private static $_event = NULL;
+
+
+	/**
+	 * 	get_event
+	* 	attempts to retrieve an EE_Event object any way it can
+	 *
+	 *  @access 	private
+	 *  @return 	object
+	 */
+	private static function get_event( $EVT_ID = FALSE ) {
+		$EVT_ID = absint( $EVT_ID );
+//		d( $EVT_ID );
+		// do we already have the Event  you are looking for?
+		if ( EEH_Event_View::$_event instanceof EE_Event && EEH_Event_View::$_event->ID() === $EVT_ID ) {
+			return EEH_Event_View::$_event;
+		}
+		EEH_Event_View::$_event = NULL;
+		// international newspaper?
+		global $post;
+		// if this is being called from an EE_Event post, then we can just grab the attached EE_Event object
+		 if ( isset( $post->post_type ) && $post->post_type == 'espresso_events' || $EVT_ID ) {
+			// grab the event we're looking for
+			if ( isset( $post->EE_Event ) && $post->EE_Event->ID() === $EVT_ID) {
+				EEH_Event_View::$_event = $post->EE_Event;
+//				d( EEH_Event_View::$_event );
+			}
+			// now if we STILL do NOT have an EE_Event model object, BUT we have an Event ID...
+			if ( ! EEH_Event_View::$_event instanceof EE_Event && $EVT_ID ) {
+				// sigh... pull it from the db
+				EEH_Event_View::$_event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
+//				d( EEH_Event_View::$_event );
+			}
+		}
+		return EEH_Event_View::$_event;
+	}
+
 
 
 
@@ -300,9 +341,26 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function the_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
-		$datetime = EEH_Event_View::get_primary_date_obj();
-		return $datetime->start_date_and_time( $dt_frmt, $tm_frmt );			
+	public static function event_categories( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
+			the_terms( $event->ID, 'espresso_event_categories' );
+		}		
+	}
+
+
+
+
+	/**
+	 * 	the_event_date
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function the_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
+		if ( $datetime = EEH_Event_View::get_primary_date_obj( $EVT_ID )) {
+			return $datetime->start_date_and_time( $dt_frmt, $tm_frmt );
+		}		
 	}
 
 
@@ -313,9 +371,10 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function the_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a' ) {
-		$datetime = EEH_Event_View::get_last_date_obj();
-		return $datetime->end_date_and_time( $dt_frmt, $tm_frmt );
+	public static function the_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
+		if ( $datetime = EEH_Event_View::get_last_date_obj( $EVT_ID )) {
+			return $datetime->end_date_and_time( $dt_frmt, $tm_frmt );
+		}		
 	}
 
 
@@ -326,14 +385,15 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function event_date_as_calendar_page() {
-		$datetime = EEH_Event_View::get_primary_date_obj();
+	public static function event_date_as_calendar_page( $EVT_ID = FALSE ) {
+		if ( $datetime = EEH_Event_View::get_primary_date_obj( $EVT_ID )) {
 	?>
 		<div class="event-date-calendar-page-dv">
 			<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
 			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
 		</div>
 	<?php	
+		}
 	}
 
 
@@ -345,11 +405,10 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function get_primary_date_obj() {
-		global $post;
-//		d( $post );
-		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
-			$datetimes = $post->EE_Event->get_many_related('Datetime');
+	public static function get_primary_date_obj( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
+			$datetimes = $event->get_many_related('Datetime');
 			return reset( $datetimes );
 		} else {
 			 return FALSE;
@@ -364,10 +423,10 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function get_last_date_obj() {
-		global $post;
-		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
-			$datetimes = $post->EE_Event->get_many_related('Datetime');
+	public static function get_last_date_obj( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
+			$datetimes = $event->get_many_related('Datetime');
 			return end( $datetimes );
 		} else {
 			 return FALSE;
@@ -382,10 +441,10 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function get_all_date_obj() {
-		global $post;
-		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
-			return $post->EE_Event->get_many_related('Datetime');
+	public static function get_all_date_obj( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
+			return $event->get_many_related('Datetime');
 		} else {
 			 return FALSE;
 		}
@@ -401,10 +460,10 @@ class EEH_Event_View extends EEH_Base {
 	 *  @param	string $text 
 	 *  @return 	string
 	 */
-	public static function event_link_url() {
-		global $post;
-		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
-			$url = $post->EE_Event->external_url() !== NULL && $post->EE_Event->external_url() !== '' ? $post->EE_Event->external_url() : get_permalink( $post->ID );
+	public static function event_link_url( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
+			$url = $event->external_url() !== NULL && $event->external_url() !== '' ? $event->external_url() : get_permalink( $post->ID );
 			return preg_match( "~^(?:f|ht)tps?://~i", $url ) ? $url : 'http://' . $url;
 		}
 		return NULL;
@@ -419,11 +478,11 @@ class EEH_Event_View extends EEH_Base {
 	 *  @param	string $text 
 	 *  @return 	string
 	 */
-	public static function event_phone() {
-		global $post;
-		if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
+	public static function event_phone( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
-			return EEH_Schema::telephone( $post->EE_Event->phone() );
+			return EEH_Schema::telephone( $event->phone() );
 		}
 		return NULL;
 	}
@@ -437,24 +496,22 @@ class EEH_Event_View extends EEH_Base {
 	 *  @return 	string
 	 */
 	public static function edit_event_link( $link = '', $before = '<p class="edit-event-lnk small-txt">', $after = '</p>', $EVT_ID = FALSE ) {
-		global $post;
-		if ( $post->post_type == 'espresso_events' ) {
-			// get EVT_ID either from passed value or global $post var
-			$EVT_ID = $EVT_ID ? $EVT_ID : $post->ID;
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
 			// can the user edit this post ?
-			if ( current_user_can( 'edit_post', $EVT_ID )) {
+			if ( current_user_can( 'edit_post', $event->ID() )) {
 				// set link text
 				$link = ! empty( $link ) ? $link : __('edit this event');
 				// generate nonce
 				$nonce = wp_create_nonce( 'edit_nonce' );
 				// generate url to event editor for this event
-				$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'post' => $EVT_ID, 'edit_nonce' => $nonce ), admin_url() );
+				$url = add_query_arg( array( 'page' => 'espresso_events', 'action' => 'edit', 'post' => $event->ID(), 'edit_nonce' => $nonce ), admin_url() );
 				// get edit CPT text
 				$post_type_obj = get_post_type_object( $post->post_type );
 				// build final link html
 				$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
 				// put it all together 
-				echo $before . apply_filters( 'edit_post_link', $link, $EVT_ID ) . $after;			
+				echo $before . apply_filters( 'edit_post_link', $link, $event->ID() ) . $after;			
 			}
 		}
 	}

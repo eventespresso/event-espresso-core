@@ -12,7 +12,7 @@ EEH_Template_Validator::verify_instanceof( $attendee, '$attendee', 'EE_Attendee'
 			<td>
 				<label for="ATT_social"><?php _e('Social Networking Accounts', 'event_espresso'); ?></label>
 				<textarea class="ee-width-100" id="ATT_social" name="ATT_social" cols="30" rows="4" ><?php echo $attendee->social(); ?></textarea><br/>
-				<p class="description"><?php _e('Social networking contacts for the attendee such as Facebook page, Twitter account, LinkedIn account, etc. One per line please', 'event_espresso'); ?></p>
+				<p class="description"><?php _e('Social networking contacts for the contact such as Facebook page, Twitter account, LinkedIn account, etc. One per line please', 'event_espresso'); ?></p>
 			</td>							
 		</tr>
 	</tbody>

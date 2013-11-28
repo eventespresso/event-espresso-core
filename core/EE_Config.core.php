@@ -137,7 +137,10 @@ final class EE_Config {
 
 		// load existing EE site settings
 		$this->_load_config();
+		//  register shortcodes and modules
 		add_action( 'init', array( $this, 'init' ), 10 );
+		// register widgets
+		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		do_action('AHEE__EE_Config__construct__end',$this);
 	}
 
@@ -293,6 +296,71 @@ final class EE_Config {
 
 
 	/**
+	 * 	widgets_init
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	public function widgets_init() {
+		// grab list of installed widgets
+		$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
+		// filter list of modules to register
+		$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
+		// cycle thru widget folders
+		foreach ( $widgets_to_register as $widget_path ) {
+			// add to list of installed widget modules
+			EE_Config::register_ee_widget( $widget_path );
+		}
+		// filter list of installed modules
+		EE_Registry::instance()->widgets = apply_filters( 'FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
+	}
+
+
+
+	/**
+	 * 	register_ee_widget - makes core aware of this widget
+	 *
+	 *  @access 	public
+	 *  @param 	string 	$widget_path - full path up to and including widget folder
+	 *  @return 	void
+	 */
+	public static function register_ee_widget( $widget_path = NULL ) {
+		do_action( 'AHEE__EE_Config__register_widget__begin', $widget_path );
+		$widget_ext = '.widget.php';
+		// make all separators match
+		$widget_path = rtrim( str_replace( '/\\', DS, $widget_path ), DS );
+		// grab and sanitize widget directory name
+		$widget_dir = sanitize_key( basename( $widget_path ));
+		// create classname from widget directory name
+		$widget = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $widget_dir )));
+		// add class prefix
+		$widget_class = 'EEW_' . $widget;
+		// does the widget exist ?
+		if ( ! is_readable( $widget_path . DS . $widget_class . $widget_ext )) {
+			$msg = sprintf( __( 'The requested %s widget file could not be found or is not readable due to file permissions.', 'event_espresso' ), $widget_class );
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		// load the widget class file
+		require_once( $widget_path . DS . $widget_class . $widget_ext );
+		// verfiy that class exists
+		if ( ! class_exists( $widget_class )) {
+			$msg = sprintf( __( 'The requested %s widget class does not exist.', 'event_espresso' ), $widget_class );
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}		
+		if ( register_widget( $widget_class )) {
+			// add to array of registered widgets
+			EE_Registry::instance()->widgets[ $widget_class ] = $widget_path . DS . $widget_class . $widget_ext;			
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}	
+	
+
+
+	/**
 	 * 		_register_shortcodes
 	 *
 	 * 		@access private
@@ -304,14 +372,14 @@ final class EE_Config {
 		// grab list of installed shortcodes
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$shortcodes_to_register = apply_filters( 'FHEE__Front_Controller__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
+		$shortcodes_to_register = apply_filters( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
 		// cycle thru shortcode folders
 		foreach ( $shortcodes_to_register as $shortcode_path ) {
 			// add to list of installed shortcode modules
 			EE_Config::register_shortcode( $shortcode_path );
 		}
 		// filter list of installed modules
-		EE_Registry::instance()->shortcodes = apply_filters( 'FHEE__Front_Controller__register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
+		EE_Registry::instance()->shortcodes = apply_filters( 'FHEE__EE_Config__register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
 	}
 
 
@@ -356,7 +424,10 @@ final class EE_Config {
 		} else {
 			// delay until other systems are online
 			add_action( 'wp_loaded', array( $shortcode_class,'set_hooks' ), 1 );
-		}		
+		}
+		// convert classname to UPPERCASE and create WP shortcode. 
+		// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes() 
+		add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
@@ -377,7 +448,7 @@ final class EE_Config {
 		// grab list of installed modules
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$modules_to_register = apply_filters( 'FHEE__Front_Controller__register_modules__modules_to_register', $modules_to_register );
+		$modules_to_register = apply_filters( 'FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
 		// loop through folders
 		foreach ( $modules_to_register as $module_path ) {
 			/**TEMPORARILY EXCLUDE gateways from modules for time being**/
@@ -387,7 +458,7 @@ final class EE_Config {
 			}
 		}
 		// filter list of installed modules
-		EE_Registry::instance()->modules = apply_filters( 'FHEE__Front_Controller__register_modules__installed_modules', EE_Registry::instance()->modules );
+		EE_Registry::instance()->modules = apply_filters( 'FHEE__EE_Config__register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
 
 

@@ -26,6 +26,7 @@ $ELID = espresso_get_event_list_ID();
 		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">
 				
 		<?php if ( have_posts() ) : ?>
+			<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
 			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
 			
@@ -34,7 +35,7 @@ $ELID = espresso_get_event_list_ID();
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 				
 				<div class="event-datetimes">
-					<?php $datetime = espresso_event_date_obj();?>
+					<?php $datetime = espresso_event_date_obj( $post->ID );?>
 					<div class="event-date-calendar-page-dv">
 						<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
 						<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
@@ -125,6 +126,8 @@ $ELID = espresso_get_event_list_ID();
 			<!-- #post -->
 
 			<?php endwhile; ?>
+
+			<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
 
 		<?php else : ?>
 

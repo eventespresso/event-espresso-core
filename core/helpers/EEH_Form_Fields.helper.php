@@ -715,7 +715,6 @@ class EEH_Form_Fields {
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
 		}
-
 		// prep the answer
 		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
@@ -1047,7 +1046,13 @@ class EEH_Form_Fields {
 	static function prep_answer_options( $QSOs = array() ){
 		$options = array();
 		if ( is_array( $QSOs ) && ! empty( $QSOs )) {
-			foreach( $QSOs as $QSO ) {
+			foreach( $QSOs as $key => $QSO ) {
+				if ( ! $QSO instanceof EE_Question_Option ) {
+					EE_Question_Option::new_instance( array( 
+						'QSO_name' => $key,
+						'QSO_value' => $QSO
+					));
+				}
 				if ( ! $QSO->deleted() ) {
 					if ( $QSO->opt_group() ) {
 						$options[ $QSO->opt_group() ][] = $QSO;

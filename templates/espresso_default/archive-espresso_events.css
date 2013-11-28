@@ -14,11 +14,14 @@
 	position: relative;
 	padding: 1em 1.25em;
 	margin: 0;
-	background: #EEEEE6;
+	background: #EEE;
 }
 #espresso-events-list-filters-frm {
 	padding: 0;
 	margin: 0;
+}
+#espresso-events-list-filters-frm a {
+	margin-bottom: 0;
 }
 #espresso-events-list-filters-dv select,
 #espresso-events-list-filters-dv input[type="text"] {
@@ -28,10 +31,6 @@
 	margin: 0;
 	border: 1px solid #A39D9C;
 	vertical-align: middle;
-	border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
 }
 #espresso-events-list-filters-dv label {
 	display: inline-block;
@@ -46,7 +45,7 @@
 #espresso-events-list-filters-view-dv {
 	display: inline-block;
 	float: right;
-	margin: .35em 0 0;
+	margin: .1em 0 0;
 }
 #espresso-events-list-filters-view-dv .events-list-filter-view-lnk {
 	display: inline-block;
@@ -65,71 +64,6 @@
 }
 
 
-/******************* PAGINATION ****************** */
-
-.ee-pagination-dv {
-	height: 1.25em;
-	padding: 0;
-}
-.ee-pagination-dv .page-numbers {
-	display: inline-block;
-	padding: 0 .5em;
-	margin: 0 0 0 .1em;
-	border: 1px solid #eee;
-	font-size: .8em;
-	line-height: 2em;
-	color: #bcc1c6;
-	border-radius: 2px;
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-}
-.ee-pagination-dv .current,
-.ee-pagination-dv .page-numbers.current:hover {
-	border-color: #fff;
-	color: #444;
-	font-weight: bold;
-	cursor: default;
-}
-.ee-pagination-dv .page-numbers:hover {
-	border-color: #d3cec9;
-	color: #444;
-}
-
-#ee-filters-btm-dv {
-	margin: 2em 20px 1em 0;
-}
-.ee-filters-dv {
-	clear: both;
-	padding: .5em 1em;
-	margin: 1em 20px 2em 0;
-	background: #f5f2ef;
-	-webkit-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	color: #444;
-	font-size: .9em;
-	line-height: 1.25em;
-	vertical-align: middle;
-}
-.ee-filters-dv a {
-	color: #444;
-}
-.ee-filters-dv a:hover {
-	color: #0093D0;
-}
-.ee-filters-dv span {
-	color: #aa9d91;
-}
-
-.ee-filters-dv select {
-	margin: 0;
-	border: 1px solid #d3cfcb;
-	border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-}
 
 
 /******************* GLOBAL STYLES ****************** */
@@ -173,34 +107,6 @@
 	/*margin-top:1em;*/
 }
 
-.espresso-events-list-wrap-dv a.ee-register-button-lnk {
-	display: inline-block;
-	position: relative;
-	width: auto;
-	height: auto;
-	padding: 6px 1.5em 5px;
-	margin: 0;
-	background: #7DBD29;
-	border: 1px solid #6CBA00;
-	border-top-color: #96E430;
-	border-bottom-color: #5A861C;
-	font-size: 14px;
-	line-height: 24px;
-	color: #fff;
-	font-weight: bold;
-	text-shadow: 1px 1px 0px rgba(0,0,0,.3);
-	box-shadow: 0px 1px 1px rgba(0,0,0,.5), 0px 1px 7px -1px rgba(0,0,0,.3);
-}
-.espresso-events-list-wrap-dv a.ee-register-button-lnk:hover {
-	background: #6CBA00;
-	color: #fff;
-}
-.espresso-events-list-wrap-dv a.ee-register-button-lnk:visited {
-	color: #fff;
-}
-.espresso-events-list-wrap-dv a.ee-register-button-lnk:active {
-	
-}
 .espresso-events-list-wrap-dv a.edit-event-lnk {
 	margin: 0 1em;
 }

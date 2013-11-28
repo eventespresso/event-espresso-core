@@ -176,7 +176,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'edit_message_template'	=> '_edit_message_template',
 				'preview_message' => '_preview_message',
 				'insert_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE ), 'noheader' => TRUE ),
-				'update_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE ), 'noheader' => TRUE ),
+				'update_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE ), 'noheader' => TRUE ),
+				'force_switch_template' => array( 'func' => '_check_template_switch', 'args' => array('force' => TRUE ), 'noheader' => TRUE ),
 				'trash_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE ), 'noheader' => TRUE ),
 				'trash_message_template_context' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE ), 'noheader' => TRUE ),
 				'restore_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE, 'all' => TRUE ), 'noheader' => TRUE ),
@@ -238,6 +239,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				),
 				'require_nonce' => FALSE
 			),
+			'force_switch_template' => array(
+				'require_nonce' => FALSE
+				),
 			'add_new_message_template' => array(
 				'nav' => array(
 					'label' => __('Add New Message Templates', 'event_espresso'),
@@ -1416,7 +1420,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$alt = 0;
 			?>
-			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('These are the shortcodes you can use in the templates: ', 'event_espresso' ); ?></p>
+			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('This is a list of shortcodes organized by content areas they are valid in: ', 'event_espresso' ); ?></p>
 			
 			<?php foreach ( $shortcodes as $field => $allshortcodes ) : ?>
 				<div class="shortcode-field-table">
@@ -1791,16 +1795,20 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This ajax method is called during ajax requests and checks to see if a template switch has been triggered (via edit_event notifications meta box.  If it has then we want to regenerate the switching ui to reflect the change and assign that to the 'admin_page_content' template arg key
 	 *
-	 * 
+	 * @param bool  $force just allows us to skip the normal check for the _req_data['template_switch'] param.
 	 * @return void 
 	 */
-	protected function _check_template_switch() {
+	protected function _check_template_switch($force = FALSE) {
+		if ( $force ) $this->_req_data['template_switch'] = TRUE;
 		if ( defined('DOING_AJAX') && isset($this->_req_data['template_switch']) && $this->_req_data['template_switch'] ) {
 			if ( isset($this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID']) )
 				$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
 			$this->_template_args['admin_page_content'] = $this->_hook_obj->messages_metabox('', array());
 			$this->_template_args['data']['what'] = 'clear';
 			$this->_template_args['data']['where'] = 'main';
+
+			if ( $force )
+				$this->_return_json();
 		}
 	}
 

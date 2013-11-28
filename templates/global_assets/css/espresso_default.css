@@ -8,96 +8,235 @@
 /****                                                                           ****/
 /*******************************************************/
 
+
+/******************* HEADER ICONS ****************** */
+
+
 .ee-clock-icon-big {
-	padding-left: 48px; 
-	background: url('../images/clock-32x32.png') center left no-repeat;
+	min-height: 32px; 
+	padding:0 0 0 48px;
+	background: url('../images/clock-32x32.png') top left no-repeat;
 }
 .ee-clock-icon-med {
-	padding-left: 36px; 
-	background: url('../images/clock-24x24.png') center left no-repeat;
+	min-height: 24px; 
+	padding:0 0 0 36px;
+	background: url('../images/clock-24x24.png') top left no-repeat;
 }
 .ee-clock-icon-small {
-	padding-left: 24px; 
-	background: url('../images/clock-16x16.png') center left no-repeat;
+	min-height: 16px; 
+	padding:0 0 0 24px;
+	background: url('../images/clock-16x16.png') top left no-repeat;
 }
 
 .ee-location-pin-icon-big {
-	padding-left: 48px; 
-	background: url('../images/location-pin-32x32.png') center left no-repeat;
+	min-height: 32px; 
+	padding:0 0 0 48px;
+	background: url('../images/location-pin-32x32.png') top left no-repeat;
 }
 .ee-location-pin-icon-med {
-	padding-left: 36px; 
-	background: url('../images/location-pin-24x24.png') center left no-repeat;
+	min-height: 24px; 
+	padding:0 0 0 36px;
+	background: url('../images/location-pin-24x24.png') top left no-repeat;
 }
 .ee-location-pin-icon-small {
-	padding-left: 24px; 
-	background: url('../images/location-pin-16x16.png') center left no-repeat;
+	min-height: 16px; 
+	padding:0 0 0 24px;
+	background: url('../images/location-pin-16x16.png') top left no-repeat;
 }
 
 .ee-calendar_year-icon-big {
-	padding-left: 48px; 
-	background: url('../images/calendar_year-32x32.png') center left no-repeat;
+	min-height: 32px; 
+	padding:0 0 0 48px;
+	background: url('../images/calendar_year-32x32.png') top left no-repeat;
 }
 .ee-calendar_year-icon-med {
-	padding-left: 36px; 
-	background: url('../images/calendar_year-24x24.png') center left no-repeat;
+	min-height: 24px; 
+	padding:0 0 0 36px;
+	background: url('../images/calendar_year-24x24.png') top left no-repeat;
 }
 .ee-calendar_year-icon-small {
-	padding-left: 24px; 
-	background: url('../images/calendar_year-16x16.png') center left no-repeat;
+	min-height: 16px; 
+	padding:0 0 0 24px;
+	background: url('../images/calendar_year-16x16.png') top left no-repeat;
 }
 
 .ee-users-icon-big {
-	padding-left: 48px; 
-	background: url('../images/users-32x32.png') center left no-repeat;
+	min-height: 32px; 
+	padding:0 0 0 48px;
+	background: url('../images/users-32x32.png') top left no-repeat;
 }
 .ee-users-icon-med {
-	padding-left: 36px; 
-	background: url('../images/users-24x24.png') center left no-repeat;
+	min-height: 24px; 
+	padding:0 0 0 36px;
+	background: url('../images/users-24x24.png') top left no-repeat;
 }
 .ee-users-icon-small {
-	padding-left: 24px; 
-	background: url('../images/users-16x16.png') center left no-repeat;
+	min-height: 16px; 
+	padding:0 0 0 24px;
+	background: url('../images/users-16x16.png') top left no-repeat;
 }
 
 .ee-external-link-icon {
-	padding-right: 24px; 
-	background: url('../images/external-link-32x32.png') center right no-repeat;
+	min-height: 16px; 
+	padding:0 24px 0 0;
+	background: url('../images/external-link.png') top right no-repeat;
+}
+
+
+/******************* UPCOMING EVENTS WIDGET ****************** */
+
+
+.ee-upcoming-events-widget-li {
+}
+.ee-upcoming-events-widget-header-dv {
+	position: relative;
+	width:100%;
+	min-height: 2.2em;
+	margin: 0 0 1em;
+}.ee-upcoming-events-widget-header-dv.two-line {
+	min-height: 3.5em;
+}
+.ee-upcoming-events-widget-header-dv.three-line {
+	min-height: 4.8em;
+}
+.ee-upcoming-events-widget-header-dv img {
+	width:100%;
+}
+
+.ee-upcoming-events-widget-h5 {
+	margin: 0;
+}
+.ee-upcoming-events-widget-h5 a {
+	position: absolute;
+	bottom: 4.5%;
+	left: 0;
+	width: 90%;
+	padding: 2.5% 5%; 
+	background: rgba(232, 232, 232, 0.9);
+	border: 1px solid rgba(232, 232, 232, 0.9);
+	line-height: 1.2em;
+	color:#333 !important;
+	text-shadow: 1px 1px 0 #FFFFFF;
+	text-decoration: none;
+}
+.ee-upcoming-events-widget-h5 a:hover {
+	background: rgba(255, 255, 255, 0.9);
+	border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.ee-upcoming-events-widget-li h6 {
+	margin: 1em 0 .25em;
+}
+.ee-upcoming-events-widget-details-dv,
+.ee-upcoming-events-widget-details-dv p {
+	line-height: 1.4em !important;
+}
+.ee-upcoming-events-widget-li .ee-event-datetimes-ul {
+	/*margin-left:0 !important;*/
 }
 
 
 
+/******************* PAGINATION ****************** */
+
+
+.ee-pagination-dv {
+	text-align: right;
+}
+.ee-pagination-dv .page-numbers,
+.ee-pagination-dv .page-numbers:visited {
+	display: inline-block;
+	padding: 0 .5em;
+	margin: 0 0 0 .1em;
+	border: 1px solid #EEE;
+	background: #EEE;
+	font-size: .8em;
+	line-height: 2em;
+	color: #736F58;
+	text-decoration: none;
+	font-weight: normal;
+}
+.ee-pagination-dv .page-numbers:hover {
+	border-color: #49AFCD;
+	background: #49AFCD;
+	color: #FFF;
+}
+.ee-pagination-dv .current,
+.ee-pagination-dv .page-numbers.current:hover {
+	border-color: #49AFCD;
+	background: #49AFCD;
+	color: #FFF;
+	font-weight: bold;
+	cursor: default;
+}
+
+
+
+/******************* BUTTONS ****************** */
 
 
 .ee-button-lnk {
 	display: inline-block;
 	position: relative;
-	padding: 5px .75em 6px;
+	padding: 5px 10px 5px;
 	margin: 0 0 1em;
-	background: #fff;
-	border: 1px solid #a39d9c;
-	border-radius: 3px;
+	background: #49AFCD;
+	border-top: 1px solid rgba(255,255,255,0.4);
+	border-bottom: 1px solid rgba(0,0,0,0.1);
 	font-weight: normal;
 	font-size: 10px;
 	line-height: 10px;
-	color: #464549;
-	text-shadow: 1px 1px 0px rgba(255,255,255,.9);
+	/*text-shadow: 0 -1px 0px rgba(0,0,0,0.25);*/
+	color: #fff !important;
 	text-decoration: none;
 	text-align: center;
 	box-shadow: none;
 }
 .ee-button-lnk:hover {
-	background: #fcfcfc;
-	color: #464549;
+	background: #4EBFDE;
+	color: #fff !important;
 }
 .ee-button-lnk:visited {
-	color: #464549;
+	color: #fff !important;
 }
 .ee-button-lnk:active {
-	
+	color: #fff !important;
 }
 
-/** AJAX **/
+
+
+.ee-register-button-lnk {
+	display: inline-block;
+	position: relative;
+	width: auto;
+	height: auto;
+	padding: 5px 10px 7px;
+	margin: 0;
+	background: #7DBD29;
+	border-top: 1px solid rgba(255,255,255,0.4);
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	font-size: 14px;
+	line-height: 24px;
+	color: #fff !important;
+	font-weight: bold;
+	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
+	text-decoration: none;
+	text-align: center;
+}
+.ee-register-button-lnk:hover {
+	background: #6CBA00;
+	color: #fff !important;
+}
+.ee-register-button-lnk:active {
+	color: #fff !important;
+}
+.ee-register-button-lnk:visited {
+	color: #fff !important;
+}
+
+
+
+/******************* AJAX ****************** */
+
 
 #espresso-ajax-loading {
 	display: none;
@@ -118,7 +257,7 @@
 }
 
 
-/** Errors and notices **/
+/******************* ERRORS AND NOTICES ****************** */
 
 
 #espresso-notices,
@@ -141,7 +280,7 @@
 	margin: 0 auto 2em;
 	z-index: 999;
 	background: #fff;
-	border-radius: 1px;
+	/*border-radius: 1px;*/
 	border-width: 2px;
 	border-style: solid;
 	font-size: 1em;
@@ -193,7 +332,7 @@
 	line-height: 12px;
 	text-align: center;
 	text-shadow: .5px .5px 0px rgba( 255,255,255, .8 );
-	border-radius: 1px;
+	/*border-radius: 1px;*/
 }
 #espresso-notices-success .close-espresso-notice,
 #espresso-ajax-notices-success .close-espresso-notice {
@@ -218,6 +357,8 @@
 	border-color: #000 !important;
 }
 
+
+/******************* GENERAL ****************** */
 
 
 .right,
@@ -298,7 +439,7 @@
 .highlight-bg {
 	padding:1em 20px;
 	background:#ffffdd;
-	border-radius:3px;
+	/*border-radius:3px;*/
 }
 .tiny-link {
 	display: block;

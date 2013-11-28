@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 		4.1.0367alpha
+  Version: 		4.1.042.alpha
 
   Author: 			Seth Shoultes
   Author URI: 		http://www.eventespresso.com
@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.037.alpha';
+	return '4.1.042.alpha';
 }
 //Returns the template version
 function espresso_template_version() {
@@ -61,6 +61,7 @@ define( 'EE_CORE', EE_PLUGIN_DIR_PATH . 'core' . DS );
 define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
 define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
 define( 'EE_TEMPLATES', EE_PLUGIN_DIR_PATH . 'templates' . DS );
+define( 'EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets' . DS );
 // core system paths
 define( 'EE_ADMIN', EE_CORE . 'admin' . DS );
 define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );

@@ -758,7 +758,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function event_list_template_filters() {
 		$args = array(
-			'form_url' => add_query_arg( array( ), home_url( __( 'events', 'event_espresso' )) ),
+			'form_url' => add_query_arg( array( 'post_type' => 'espresso_events' ), home_url() ),
 			'elf_month' => $this->_elf_month,
 			'elf_category' => $this->_elf_category,
 			'elf_show_expired' => $this->_show_expired,
@@ -852,6 +852,34 @@ class EED_Events_Archive  extends EED_Module {
 
 
 
+	/**
+	 * 	pagination
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function pagination() {
+		global $wp_query;
+		$big = 999999999; // need an unlikely integer
+		echo paginate_links( array(
+			'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+			'format' => '?paged=%#%',
+			'current' => max( 1, get_query_var('paged') ),
+			'total' => $wp_query->max_num_pages,
+			'show_all'     => TRUE,
+			'end_size'     => 10,
+			'mid_size'     => 6,
+			'prev_next'    => TRUE,
+			'prev_text'    => __( '&lsaquo; PREV', 'event_espresso' ),
+			'next_text'    => __( 'NEXT &rsaquo;', 'event_espresso' ),
+			'type'         => 'plain',
+			'add_args'     => FALSE,
+			'add_fragment' => ''
+		));
+	}
+
+
+
 
 
 	/**
@@ -912,6 +940,10 @@ function espresso_display_venue_details_in_event_list() {
 
 function espresso_display_venue_address_in_event_list() {
 	return EED_Events_Archive::display_address();
+}
+
+function espresso_event_list_pagination() {
+	return EED_Events_Archive::pagination();
 }
 
 
