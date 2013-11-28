@@ -109,7 +109,7 @@ $ELID = espresso_get_event_list_ID();
 						<footer class="event-meta">
 							<p><?php the_terms( $post->ID, 'espresso_event_categories' );// the_terms( $post->ID, 'category' );  ?></p>
 							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
-							<a class="ee-register-button-lnk ee-button-lnk button" href="<?php espresso_event_link_url(); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
+							<a class="ee-button ee-register-button big ee-green" href="<?php espresso_event_link_url(); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
 							<?php espresso_edit_event_link(); ?>
 						</footer>
 						<!-- .entry-meta -->
