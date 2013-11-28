@@ -281,6 +281,13 @@ class EE_Event extends EE_CPT_Base{
 	function description(){
 		return $this->get('EVT_desc');
 	}
+	/**
+	 * Runs do_shortcode and wpautop on the descrption
+	 * @return string of html
+	 */
+	function description_filtered(){
+		return $this->get_pretty('EVT_desc');
+	}
 	function display_description(){
 		return $this->get('EVT_display_desc');
 	}
@@ -750,7 +757,26 @@ class EE_Event extends EE_CPT_Base{
 		return EE_Registry::instance()->load_model('Ticket')->get_one($query_params);
 	}
 
-
+	/**
+	 * Gets the URL for viewing this event on the front-end. Overrides parent
+	 * to check for an external URL first
+	 * @return string
+	 */
+	public function get_permalink() {
+		if($this->external_url()){
+			return $this->external_url();
+		}else{
+			parent::get_permalink();
+		}
+	}
+	/**
+	 * Gets teh first term taxonomy we can find
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Term_Taxonomy
+	 */
+	public function first_term_taxonomy($query_params = array()){
+		return $this->get_first_related('Term_Taxonomy',$query_params);
+	}
 
 
 
