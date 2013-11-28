@@ -288,10 +288,10 @@ class EEW_Upcoming_Events  extends WP_Widget {
 						}							
 						echo '</div>';
 						if ( $show_desc && $desc = $event->short_description( 25 )) {
-							echo  '<h6 class="small-text grey-text">' . __('Event Details: ', 'event_espresso') . '</h6><p>' . $desc . '</p>';
+							echo  '<h6 class="">' . __('Event Details: ', 'event_espresso') . '</h6><p>' . $desc . '</p>';
 						}
 						if ( $show_dates ) {
-							echo  '<h6 class="ee-calendar_year-icon-small small-text grey-text">' . __('Event Dates: ', 'event_espresso') . '</h6>';
+							echo  '<h6 class="ee-calendar_year-icon-small">' . __('Event Dates: ', 'event_espresso') . '</h6>';
 							echo espresso_list_of_event_dates( 'D M jS, Y', '@ g:i a', $event->ID(), FALSE );
 						}
 						echo '</li>';
