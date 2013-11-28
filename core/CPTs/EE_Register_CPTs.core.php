@@ -165,10 +165,10 @@ class EE_Register_CPTs {
 				'args' => array()
 				),/**/ //temporarily disable personsCPT because not in use.
 			'espresso_attendees' => array(
-				'singular_name' => __("Attendee", "event_espresso"),
-				'plural_name' => __("Attendees", "event_espresso"),
-				'singular_slug' => __("attendee", "event_espresso"),
-				'plural_slug' => __("attendees", "event_espresso"),
+				'singular_name' => __("Contact", "event_espresso"),
+				'plural_name' => __("Contacts", "event_espresso"),
+				'singular_slug' => __("contact", "event_espresso"),
+				'plural_slug' => __("contacts", "event_espresso"),
 				'args' => array(
 					'public'=> FALSE,
 					'publicly_queryable'=> FALSE,
