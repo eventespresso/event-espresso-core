@@ -562,7 +562,7 @@ class EE_Base_Class{
 	 *
 	 * @access protected
 	 * @param  string                $field_name  Field on the instantiated EE_Base_Class child object
-	 * @param  mixed(null|string) $date_format valid datetime format used for date (if empty then we just use the default on the field)
+	 * @param  mixed(null|string) $date_format valid datetime format used for date (if '' then we just use the default on the field, if NULL we use the last-used format)
 	 * @param  mixed(null|string) $time_format Same as above except this is for time format
 	 * @param string $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time. 
 	 * @param  boolean $echo        Whether the dtt is echoing using pretty echoing or just returned using vanilla get
