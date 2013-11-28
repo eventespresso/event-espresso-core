@@ -528,6 +528,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		$end = $this->get_raw('DTT_EVT_end');
 		$length_in_units = $end - $start;
 		switch($units){
+			//NOTE: We purposefully don't use "break;"
+			//in order to chain the divisions
 			case 'days':
 				$length_in_units /= 24;
 			case 'hours':
@@ -652,7 +654,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		return $this->_DTT_reg_limit > $this->_DTT_sold ? $this->_DTT_reg_limit - $this->_DTT_sold : 0;
 	}
 
-	public function tickets_remaining_yeah 
 
 
 
