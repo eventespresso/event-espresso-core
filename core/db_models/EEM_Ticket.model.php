@@ -132,7 +132,30 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		return $tickets;
 	}
 
-
+	/**
+	 * Gets the total number of tickets available at a particular datetime (does 
+	 * NOT take int account the datetime's spaces available)
+	 * @param int $DTT_ID
+	 * @param array $query_params
+	 * @return int
+	 */
+	public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array()){
+		$sum = 0;
+		$query_params[0]['Datetime.DTT_ID'] = $DTT_ID;
+		$remaining_per_ticket = $this->_get_all_wpdb_results(
+				$query_params, 
+				ARRAY_A, 
+				array(
+					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold'=>'%d'),
+					'initially_available'=>array('Ticket.TKT_qty'=>'%d')));
+		foreach($remaining_per_ticket as $remaining_per_ticket){
+			if(intval($remaining_per_ticket['initially_available'])==-1){//infinite
+				return -1;
+			}
+			$sum+=intval($remaining_per_ticket['tickets_remaining']);
+		}
+		return $sum;
+	}
 
 } 
 //end EEM_Ticket model
