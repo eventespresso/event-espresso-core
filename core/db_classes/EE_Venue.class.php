@@ -47,7 +47,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	protected $_CNT_ISO;
 	protected $_VNU_zip;
 	protected $_VNU_phone;
-	protected $_VNU_capacity;//unlimited is -1
+	protected $_VNU_capacity;
 	protected $_VNU_url;
 	protected $_VNU_virtual_phone;
 	protected $_VNU_virtual_url;

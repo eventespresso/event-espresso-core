@@ -137,8 +137,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * NOT take int account the datetime's spaces available)
 	 * @param int $DTT_ID
 	 * @param array $query_params
-	 * @return int of tickets available. If sold out, always returns 0 (even if oversold);
-	 * -1 indicates infinite tickets available.
+	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns INF
 	 */
 	public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array()){
 		$sum = 0;
@@ -150,8 +149,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold'=>'%d'),
 					'initially_available'=>array('Ticket.TKT_qty'=>'%d')));
 		foreach($remaining_per_ticket as $remaining_per_ticket){
-			if(intval($remaining_per_ticket['initially_available'])==-1){//infinite
-				return -1;
+			if(intval($remaining_per_ticket['initially_available'])==EE_INF_IN_DB){//infinite in DB
+				return INF;
 			}
 			$sum+=intval($remaining_per_ticket['tickets_remaining']);
 		}

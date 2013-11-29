@@ -106,7 +106,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30),
 						'DTT_is_primary' => 1,
 						'DTT_order' => 1,
-						'DTT_reg_limit' => -1
+						'DTT_reg_limit' => INF
 						/*NULL,
 						NULL*/
 					)

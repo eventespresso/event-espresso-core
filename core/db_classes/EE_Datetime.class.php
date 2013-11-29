@@ -101,7 +101,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	@access	protected
     *	@var int	
     */
-	protected $_DTT_reg_limit = -1;
+	protected $_DTT_reg_limit = INF;
 
 
 
@@ -646,13 +646,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	@return 		int
 	*/	
 	public function spaces_remaining() {
-		// is there a reg limit set ?
-		if ( $this->_DTT_reg_limit < 1 ) {
-			// unlimited tickets available
-			return -1;
-		}
 		// tickets remaining availalbe for purchase
-		return $this->_DTT_reg_limit > $this->_DTT_sold ? $this->_DTT_reg_limit - $this->_DTT_sold : 0;
+		//no need for special checks for infinite, becuase if DTT_reg_limit == INF
+		//this INF - x = INF
+		return $this->_DTT_reg_limit - $this->_DTT_sold ;
 	}
 
 	/**
