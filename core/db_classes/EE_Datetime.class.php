@@ -655,7 +655,34 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		return $this->_DTT_reg_limit > $this->_DTT_sold ? $this->_DTT_reg_limit - $this->_DTT_sold : 0;
 	}
 
-
+	/**
+	 * Counts the total tickets available (from all the different types of tickets which are available for
+	 * this datetime). 
+	 * @param array $query_params  like EEM_Base::get_all's 
+	 * @return count
+	 */
+	public function tickets_remaining($query_params = array()){
+		return EEM_Ticket::instance()->sum_tickets_currently_available_at_datetime($this->ID(),$query_params);
+	}
+	
+	/**
+	 * Gets the count of all teh tickets available at this datetime (not ticket types)
+	 * before any were sold
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return int
+	 */
+	public function sum_tickets_initially_available($query_params){
+		return $this->sum_related('Ticket',$query_params,'TKT_qty');
+	}
+	/**
+	 * Returns the lesser-of-the two: spaces remaining at this datetime, or
+	 * the total tickets remaining (a sum of the tickets remaining for each ticket type
+	 * that is available for this datetime).
+	 * @return int
+	 */
+	public function total_tickets_available_at_this_datetime(){
+		return min(array($this->tickets_remaining(),$this->spaces_remaining()));
+	}
 
 
 	/**
@@ -736,6 +763,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 */
 	public function tickets($query_params = array()){
 		return $this->get_many_related('Ticket', $query_params);
+	}
+	
+	/**
+	 * Gets all the ticket types currently available for purchase
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return EE_Ticket[]
+	 */
+	public function ticket_types_available_for_purchase($query_params = array()){
+		$query_params[0]['TK_start_date'] = array('<=',current_time('mysql'));
+		$query_params[0]['TKT_end_date'] = array('>=',current_time('mysql'));
+		return $this->tickets($query_params);
 	}
 
 	/**

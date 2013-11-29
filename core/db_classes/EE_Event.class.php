@@ -540,6 +540,29 @@ class EE_Event extends EE_CPT_Base{
 
 		return TRUE;
 	}
+	
+	/**
+	 * Checks if the event is set to sold out
+	 * @return boolean
+	 */
+	public function is_sold_out(){
+		return $this->status() == 'sold_out';
+	}
+	
+	/**
+	 * Checks if the event is marked as postponed
+	 * @return boolean
+	 */
+	public function is_postponed(){
+		return $this->status() == 'postponed';
+	}
+	/**
+	 * Checks if the event is marked as cancelled
+	 * @return boolean
+	 */
+	public function is_cancelled(){
+		return $this->status() == 'cancelled';
+	}
 
 
 
