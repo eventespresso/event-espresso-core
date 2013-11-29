@@ -867,7 +867,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
-					$total_items = $registration->count();
+					$total_items += $registration->count();
 					$ticket_count[ $registration->ticket()->ID() ] = isset( $ticket_count[ $registration->ticket()->ID() ] ) ? $ticket_count[ $registration->ticket()->ID() ] + 1 : 1;
 
 					$question_meta = array(
@@ -883,25 +883,25 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 						array( 
 							'Event.EVT_ID' => $registration->event()->ID(), 
 							'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
-						)
+						),
+						'order_by'=>array( 'QSG_order' => 'ASC' )
 					));
 					
-					foreach ( $Question_Groups as $Question_Group ) {
-						$Questions = $Question_Group->get_many_related( 'Question' );
+					foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
+						$Questions = $Question_Group->get_many_related( 'Question', array( 'order_by'=>array( 'QST_order'=>'ASC' )) );
 						//d( $Questions );
 						
 						foreach ( $Questions as $Question ) {
 							/*@var $Question EE_Question */
 							$answer = EE_Answer::new_instance ( array( 
-								'QST_ID'=> $Question->ID(),
-								'REG_ID'=> $registration->ID()
-							 ));
-							$answer->_add_relation_to( $Question, 'Question' );
+									'QST_ID'=> $Question->ID(),
+									'REG_ID'=> $registration->ID()
+								 ));
+							$answer->cache( 'Question', $Question );
 							$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-							$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
-
-						}
-						
+							$registration->cache( 'Answer', $answer, $answer_cache_id );
+							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
+						}		
 					}
 
 					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );

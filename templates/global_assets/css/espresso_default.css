@@ -156,14 +156,14 @@
 	font-weight: normal;
 }
 .ee-pagination-dv .page-numbers:hover {
-	border-color: #49AFCD;
-	background: #49AFCD;
+	border-color: #00B1CA;
+	background: #00B1CA;
 	color: #FFF;
 }
 .ee-pagination-dv .current,
 .ee-pagination-dv .page-numbers.current:hover {
-	border-color: #49AFCD;
-	background: #49AFCD;
+	border-color: #00B1CA;
+	background: #00B1CA;
 	color: #FFF;
 	font-weight: bold;
 	cursor: default;
@@ -174,64 +174,99 @@
 /******************* BUTTONS ****************** */
 
 
-.ee-button-lnk {
+.ee-button,
+.ee-button:active,
+.ee-button:visited {
 	display: inline-block;
 	position: relative;
 	padding: 5px 10px 5px;
 	margin: 0 0 1em;
-	background: #49AFCD;
+	background: #00B1CA;
 	border-top: 1px solid rgba(255,255,255,0.4);
 	border-bottom: 1px solid rgba(0,0,0,0.1);
 	font-weight: normal;
-	font-size: 10px;
-	line-height: 10px;
-	/*text-shadow: 0 -1px 0px rgba(0,0,0,0.25);*/
+	cursor: pointer;
 	color: #fff !important;
 	text-decoration: none;
 	text-align: center;
+	line-height: 1;
 	box-shadow: none;
 }
-.ee-button-lnk:hover {
+.ee-button:hover {
 	background: #4EBFDE;
 	color: #fff !important;
 }
-.ee-button-lnk:visited {
-	color: #fff !important;
-}
-.ee-button-lnk:active {
-	color: #fff !important;
-}
 
 
+/* REGISTER BUTTON */
 
-.ee-register-button-lnk {
-	display: inline-block;
-	position: relative;
-	width: auto;
-	height: auto;
-	padding: 5px 10px 7px;
+.ee-button.ee-register-button,
+.ee-button.ee-register-button:active,
+.ee-button.ee-register-button:visited {
 	margin: 0;
-	background: #7DBD29;
-	border-top: 1px solid rgba(255,255,255,0.4);
-	border-bottom: 1px solid rgba(0,0,0,0.1);
-	font-size: 14px;
-	line-height: 24px;
-	color: #fff !important;
 	font-weight: bold;
 	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
-	text-decoration: none;
-	text-align: center;
 }
-.ee-register-button-lnk:hover {
-	background: #6CBA00;
-	color: #fff !important;
+
+
+/* BUTTON SIZES */
+
+.small.ee-button, .small.ee-button:visited {
+	font-size: 11px
 }
-.ee-register-button-lnk:active {
-	color: #fff !important;
+.ee-button, .ee-button:visited,
+.medium.ee-button, .medium.ee-button:visited {
+	font-size: 13px;
 }
-.ee-register-button-lnk:visited {
-	color: #fff !important;
+.big.ee-button, .big.ee-button:visited {
+	font-size: 14px;
+	padding: 8px 16px 9px;
 }
+.huge.ee-button, .huge.ee-button:visited {
+	font-size: 18px;
+	padding: 10px 20px 11px;
+}
+
+/* ROUND BUTTONS */
+.ee-round.ee-button {
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+}
+.ee-roundish.ee-button {
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+/* SHADOWY BUTTONS */
+.ee-shadow.ee-button {
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* BUTTON COLOURS */
+.ee-pink.ee-button, .ee-pink.ee-button:visited { background-color: #E44064; }
+.ee-pink.ee-button:hover { background-color: #F65077; }
+
+/*.green.ee-button, .green.ee-button:visited { background-color: #7DBD29; }
+.green.ee-button:hover { background-color: #6CBA00; }*/
+.ee-green.ee-button, .ee-green.ee-button:visited { background-color: #70CC50; }
+.ee-green.ee-button:hover { background-color: #80DD5E; }
+
+.ee-red.ee-button, .ee-red.ee-button:visited { background-color: #B4113F; }
+.ee-red.ee-button:hover { 	background-color: #C8194E; }
+
+.ee-orange.ee-button, .ee-orange.ee-button:visited { background-color: #E76700; }
+.ee-orange.ee-button:hover { background-color: #FA730B; }
+
+.ee-blue.ee-button, .ee-blue.ee-button:visited { background-color: #005B9E; }
+.ee-blue.ee-button:hover { background-color: #066DB1; }
+
+.ee-yellow.ee-button, .ee-yellow.ee-button:visited { background-color: #F8D755; }
+.ee-yellow.ee-button:hover { background-color: #FEDF6C; }
+
 
 
 

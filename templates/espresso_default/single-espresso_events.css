@@ -91,34 +91,7 @@ header.event-header.has-img p {
 }
 .espresso-event-details .ee-event-datetimes-li {
 }
-.espresso-event-details .ee-register-button-lnk {
-	display: inline-block;
-	float: right;
-	position: relative;
-	padding: .5em 1em;
-	margin: .5em 0 1.5em;
-	background: #7DBD29;
-	border-radius: 3px;
-	text-align: center;
-	border: 1px solid #6CBA00;
-	border-top-color: #96E430;
-	border-bottom-color: #5A861C;
-	font-weight: bold;
-	font-size:16px;
-	color:#fff;
-	text-shadow:1px 1px 0px rgba(0, 0, 0, .5);
-	text-decoration: none;
-}
-.espresso-event-details .ee-register-button-lnk:hover {
-	background: #6CBA00;
-	color:#fff;
-}
-.espresso-event-details .ee-register-button-lnk:visited {
-	color:#fff;
-}
-.espresso-event-details .ee-register-button-lnk:active {
-	top:-1px;
-}
+
 .espresso-event-details .edit-event-lnk {
 	margin:0 1em;
 }
