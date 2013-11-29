@@ -27,4 +27,27 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 			return $intval;
 		}
 	}
+	
+	/**
+	 * For outputting this field's value. If you want to output it into an input or something,
+	 * use $schema=='input', as it will replace INF with ''. If you want a readable version, use $schema=='text'
+	 * as it will replace INF with i18n Infinite
+	 * @param type $value_on_field_to_be_outputted
+	 * @param type $schema
+	 * @return string
+	 */
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null) {
+		if($value_on_field_to_be_outputted == INF){
+			switch($schema){
+			case 'input':
+				return '';
+			case 'text':
+			default:
+				return __("Infinite", "event_espresso");
+		}
+			
+		}else{
+			return $value_on_field_to_be_outputted;
+		}
+	}
 }
