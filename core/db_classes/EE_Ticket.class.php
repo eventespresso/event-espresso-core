@@ -370,7 +370,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * return the total number of tickets available for purchase
-	 * @param  int    $DTT_ID the primary key for a particular datetime
+	 * @param  int    $DTT_ID the primary key for a particular datetime. set to null for 
+	 * all related datetimes
 	 * @return int
 	 */
 	public function remaining( $DTT_ID = 0 ) {
