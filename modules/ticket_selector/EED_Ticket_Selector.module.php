@@ -189,7 +189,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/	
 	public static function display_ticket_selector_submit() {
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE )) {
-			echo '<input id="" class="ee-button ee-register-button" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
+			echo '<input id="" class="ee-button ee-register-button ee-green big" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
 			<div class="clear"></div>';
 		}
 	}
