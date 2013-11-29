@@ -44,6 +44,314 @@
  *
  * ------------------------------------------------------------------------
  */
+
+/**
+		 * Class for containing info about how to display an event  datetime in the calendar
+		 */
+class EE_Datetime_In_Calendar {
+
+	/**
+	 * @var EE_Event $_Event
+	 */
+	protected $_event;
+	protected $_datetime;
+	protected $_color = '';
+	protected $_textColor = '';
+	protected $_classname = '';
+	protected $_event_time = '';
+	protected $_event_time_no_tags = '';
+	protected $_event_img_thumb = '';
+	protected $_eventType = '';
+	protected $_description = null;
+	protected $_tooltip = null;
+	protected $_tooltip_my = null;
+	protected $_tooltip_at = null;
+	protected $_tooltip_style = null;
+	protected $_show_tooltips = null;
+	public function __construct(EE_Datetime $datetime) {
+		$this->_datetime = $datetime;
+		$this->_event = $datetime->event();
+	}
+	
+	public function get($variable_name){
+		return $this->$variable_name;
+	}
+	public function set($variable_name,$value){
+		return $this->$variable_name = $value;
+	}
+
+	/**
+	 * Gets color
+	 * @return string
+	 */
+	function color() {
+		return $this->get('_color');
+	}
+
+	/**
+	 * Sets color
+	 * @param string $color
+	 * @return boolean
+	 */
+	function set_color($color) {
+		return $this->set('_color', $color);
+	}
+
+	/**
+	 * Gets textColor
+	 * @return string
+	 */
+	function textColor() {
+		return $this->get('_textColor');
+	}
+
+	/**
+	 * Sets textColor
+	 * @param string $textColor
+	 * @return boolean
+	 */
+	function set_textColor($textColor) {
+		return $this->set('_textColor', $textColor);
+	}
+
+	/**
+	 * Gets datetime
+	 * @return EE_Datetime
+	 */
+	function datetime() {
+		return $this->get('_datetime');
+	}
+
+	/**
+	 * Sets datetime
+	 * @param EE_Datetime $datetime
+	 * @return boolean
+	 */
+	function set_datetime($datetime) {
+		return $this->set('_datetime', $datetime);
+	}
+
+	/**
+	 * Gets event
+	 * @return EE_Event
+	 */
+	function event() {
+		return $this->get('_event');
+	}
+
+	/**
+	 * Sets event
+	 * @param EE_Event $event
+	 * @return boolean
+	 */
+	function set_event($event) {
+		return $this->set('_event', $event);
+	}
+	/**
+	 * Gets classname
+	 * @return string
+	 */
+	function classname() {
+		return $this->get('_classname');
+	}
+
+	/**
+	 * Sets classname
+	 * @param string $classname
+	 * @return boolean
+	 */
+	function set_classname($classname) {
+		return $this->set('_classname', $classname);
+	}
+	/**
+	 * Just adds $classname to th eexisting classname attribute
+	 * @param string $classname
+	 * @return string
+	 */
+	function add_classname($classname){
+		return $this->set('_classname',$this->get('_classname')." ".$classname);
+	}
+	/**
+	 * Gets event_time html
+	 * @return string
+	 */
+	function event_time() {
+		return $this->get('_event_time');
+	}
+
+	/**
+	 * Sets event_time html
+	 * @param string $event_time
+	 * @return boolean
+	 */
+	function set_event_time($event_time) {
+		$this->set('_event_time_no_tags',strip_tags($event_time));
+		return $this->set('_event_time', $event_time);
+	}
+	/**
+	 * Gets event_time_no_tags 
+	 * @return string
+	 */
+	function event_time_no_tags() {
+		return $this->get('_event_time_no_tags');
+	}
+
+	/**
+	 * Gets event_img_thumb HTML
+	 * @return string
+	 */
+	function event_img_thumb() {
+		return $this->get('_event_img_thumb');
+	}
+
+	/**
+	 * Sets event_img_thumb HTML
+	 * @param string $event_img_thumb
+	 * @return boolean
+	 */
+	function set_event_img_thumb($event_img_thumb) {
+		return $this->set('_event_img_thumb', $event_img_thumb);
+	}
+	/**
+	 * Gets eventType
+	 * @return string
+	 */
+	function eventType() {
+		return $this->get('_eventType');
+	}
+
+	/**
+	 * Sets eventType
+	 * @param string $eventType
+	 * @return boolean
+	 */
+	function set_eventType($eventType) {
+		return $this->set('_eventType', $eventType);
+	}
+	
+	/**
+	 * Gets description
+	 * @return string
+	 */
+	function description() {
+		return $this->get('_description');
+	}
+
+	/**
+	 * Sets description
+	 * @param string $description
+	 * @return boolean
+	 */
+	function set_description($description) {
+		return $this->set('_description', $description);
+	}
+	/**
+	 * Gets tooltip
+	 * @return string
+	 */
+	function tooltip() {
+		return $this->get('_tooltip');
+	}
+
+	/**
+	 * Sets tooltip
+	 * @param string $tooltip
+	 * @return boolean
+	 */
+	function set_tooltip($tooltip) {
+		return $this->set('_tooltip', $tooltip);
+	}
+	/**
+	 * Gets tooltip_my
+	 * @return string
+	 */
+	function tooltip_my() {
+		return $this->get('_tooltip_my');
+	}
+
+	/**
+	 * Sets tooltip_my
+	 * @param string $tooltip_my
+	 * @return boolean
+	 */
+	function set_tooltip_my($tooltip_my) {
+		return $this->set('_tooltip_my', $tooltip_my);
+	}
+	/**
+	 * Gets tooltip_at
+	 * @return string
+	 */
+	function tooltip_at() {
+		return $this->get('_tooltip_at');
+	}
+
+	/**
+	 * Sets tooltip_at
+	 * @param string $tooltip_at
+	 * @return boolean
+	 */
+	function set_tooltip_at($tooltip_at) {
+		return $this->set('_tooltip_at', $tooltip_at);
+	}
+	/**
+	 * Gets tooltip_style
+	 * @return string
+	 */
+	function tooltip_style() {
+		return $this->get('_tooltip_style');
+	}
+
+	/**
+	 * Sets tooltip_style
+	 * @param string $tooltip_style
+	 * @return boolean
+	 */
+	function set_tooltip_style($tooltip_style) {
+		return $this->set('_tooltip_style', $tooltip_style);
+	}
+	/**
+	 * Gets show_tooltips
+	 * @return boolean
+	 */
+	function show_tooltips() {
+		return $this->get('_show_tooltips');
+	}
+
+	/**
+	 * Sets show_tooltips
+	 * @param boolean $show_tooltips
+	 * @return boolean
+	 */
+	function set_show_tooltips($show_tooltips) {
+		return $this->set('_show_tooltips', $show_tooltips);
+	}
+
+	
+	/**
+	 * 
+	 * @return array which can be used for converting to json
+	 */
+	function to_array_for_json(){
+		return array(
+			'url'=>$this->_event->get_permalink(),
+			'start'=>$this->_datetime->start_date('c'),
+			'end'=>$this->_datetime->end_date('c'),
+			'event_days'=>$this->_datetime->length('days', true),
+			'event_time'=>$this->event_time(),
+			'event_time_no_tags'=>$this->event_time_no_tags(),
+			'event_img_thumb'=>$this->event_img_thumb(),
+			'eventType'=>$this->eventType(),
+			'description'=>$this->description(),
+			'tooltip'=>$this->tooltip(),
+			'tooltip_my'=>$this->tooltip_my(),
+			'tooltip_at'=>$this->tooltip_at(),
+			'tooltip_style'=>$this->tooltip_style(),
+			'show_tooltips'=>$this->show_tooltips(),
+		);
+	}
+
+}
+
 class EE_Calendar {
 
    /**
@@ -373,8 +681,8 @@ class EE_Calendar {
 		$today = date( 'Y-m-d' );
 		$month = date('m' );
 		$year = date('Y' );
-		$start_date = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d', absint( $_REQUEST['start_date'] )) : date('Y-m-d', mktime( 0, 0, 0, $month, 1, $year ));
-		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d', absint( $_REQUEST['end_date'] )) : date('Y-m-t', mktime( 0, 0, 0, $month, 1, $year ));
+		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
+		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $this->_show_expired;
 //		echo '<h4>$show_expired : ' . $show_expired . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		
@@ -382,55 +690,43 @@ class EE_Calendar {
 		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
 		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 
-		//Build the SQL to run
-		$SQL = "SELECT e.*, ese.start_time, ese.end_time ";
-		//Get the categories
-		$SQL .= $event_category_id ? ", c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc " : '';
-		$SQL .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
-		$SQL .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		//Get the categories
-		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id " : '';
-		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id " : '';
+//		//Build the SQL to run
+//		$SQL = "SELECT e.*, ese.start_time, ese.end_time ";
+//		//Get the categories
+//		$SQL .= $event_category_id ? ", c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc " : '';
+//		$SQL .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
+//		$SQL .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+//		//Get the categories
+//		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id " : '';
+//		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id " : '';
+//		
+//		$SQL .= "WHERE e.is_active != 'N' ";
+//		$SQL .= " AND e.event_status NOT IN ( 'D', 'S', 'P', 'X', 'R' ) "; //Deleted, Secondary/Waitlist, Pending, X?,  Draft
+//		$SQL .= $event_category_id ?  " AND c.category_identifier = '$event_category_id' " : '';
+//		
+////	//	$SQL .= " AND (( e.start_date >= %s AND e.start_date <= %s ) OR e.event_status != 'O' ) ";		
+//		$SQL .= " AND ( e.start_date >= %s AND e.start_date <= %s ) ";		
+//		
+//		if ($show_expired == "false") {
+//			$SQL .= " AND ( e.start_date >= '$today' AND e.registration_end >= '$today' ) ";
+//		}
+//
+//		$SQL .= " GROUP BY e.id ORDER BY e.start_date ASC "; // . $throttle;
+//		// grab event data with event IDs as the array keys
+//		$events_data = $wpdb->get_results( $wpdb->prepare( $SQL, $start_datetime, $end_date ), OBJECT_K );
 		
-		$SQL .= "WHERE e.is_active != 'N' ";
-		$SQL .= " AND e.event_status NOT IN ( 'D', 'S', 'P', 'X', 'R' ) "; //Deleted, Secondary/Waitlist, Pending, X?,  Draft
-		$SQL .= $event_category_id ?  " AND c.category_identifier = '$event_category_id' " : '';
-		
-//		$SQL .= " AND (( e.start_date >= %s AND e.start_date <= %s ) OR e.event_status != 'O' ) ";		
-		$SQL .= " AND ( e.start_date >= %s AND e.start_date <= %s ) ";		
-		
-		if ($show_expired == "false") {
-			$SQL .= " AND ( e.start_date >= '$today' AND e.registration_end >= '$today' ) ";
+		$where_params['Event.status'] = 'publish';
+		$where_params['Event.Term_Taxonomy.term_taxonomy_id'] = $event_category_id;
+		$where_params['DTT_EVT_start*1']= array('>=',$start_datetime);
+		$where_params['DTT_EVT_start*2'] = array('<=',$end_date);
+		if($show_expired == 'false'){
+			$where_params['DTT_EVT_start*3'] = array('>=',$today);
+			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
-
-		$SQL .= " GROUP BY e.id ORDER BY e.start_date ASC "; // . $throttle;
-		// grab event data with event IDs as the array keys
-		$events_data = $wpdb->get_results( $wpdb->prepare( $SQL, $start_date, $end_date ), OBJECT_K );
 		
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
-//	$this->timer->start();
-
-//		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h3>$events_data</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events_data, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
-
-		$event_categories = array();
-		//Do we need to get Category data ?
-		if ( $use_categories ) {
-			// grab event_ids from query results above to use in category query
-			$EVT_IDs = array_keys($events_data);
-			$SQL = "SELECT event_id, c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc";
-			$SQL .= " FROM " . EVENTS_CATEGORY_REL_TABLE . ' r ';
-			$SQL .= " LEFT JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
-			$SQL .= " WHERE event_id IN ( '" . implode("', '", $EVT_IDs) . "' )";
-			$categories = $wpdb->get_results( $wpdb->prepare( $SQL, NULL ));
-//			echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			foreach ($categories as $category) {
-				$event_categories[$category->event_id][] = $category;
-			}
-		}
-//		echo '<h3>$event_categories</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $event_categories, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
-
+		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
+		/* @var $datetime_objs EE_Datetime[] */
+	
 		 $enable_cat_classes = isset( $this->_calendar_options['enable_cat_classes'] ) && $this->_calendar_options['enable_cat_classes'] ? TRUE : FALSE;
 		 $show_attendee_limit = isset( $this->_calendar_options['show_attendee_limit'] ) && $this->_calendar_options['show_attendee_limit'] ? TRUE : FALSE;
 		 $show_time = isset( $this->_calendar_options['show_time'] ) && $this->_calendar_options['show_time'] ? TRUE : FALSE;
@@ -445,157 +741,70 @@ class EE_Calendar {
 		}
 		$enable_calendar_thumbs = isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ? TRUE : FALSE;
 		
-		if ( $enable_calendar_thumbs ) {
-			$thumbnail_size_w = get_option( 'thumbnail_size_w' );
-			$thumbnail_size_h = get_option( 'thumbnail_size_h' );
-			$upload_dir = wp_upload_dir();
-		}
-
 //	$this->timer->stop();
 //	echo $this->timer->get_elapse( __LINE__ );
 		
-		$events = array();
-		$cntr = 0;
-		foreach ( $events_data as $event ) {
-
+		$calendar_datetimes_for_json = array();
+		foreach ( $datetime_objs as $datetime ) {
+			/* @var $datetime EE_Datetime */
+			$calendar_datetime = new EE_Datetime_In_Calendar($datetime);
 //	$this->timer->start();
-
-			//Reset category colors
-			$events[ $cntr ]['color'] = '';
-			$events[ $cntr ]['textColor'] = '';
-
+			$event = $datetime->event();
+			/* @var $event EE_Event */
+			if( ! $event ){
+				EE_Error::add_error(sprintf(__("Datetime data for datetime with ID %d has no associated event!", "event_espresso"),$datetime->ID()));
+				continue;
+			}
 			//Get details about the category of the event
 			if ($use_categories) {
-				// extract info from separate array of category data ?
-				if ( isset( $event_categories[$event->id] ) ) {
-					// get first element of array without modifying original array
-					$primary_cat = array_shift(array_values($event_categories[$event->id]));
-					$category_data['category_meta'] = unserialize($primary_cat->category_meta);
-				} else {
-					$category_data['category_meta'] = array();
+				$primary_cat = $event->first_term_taxonomy();
+				//any term_taxonmies set for this event?
+				if ( $primary_cat ) {
+					if($primary_cat->get_extra_meta('use_pickers',true,false)){
+						$calendar_datetime->set_color($primary_cat->get_extra_meta('color',true,null));
+						$calendar_datetime->set_textColor($primary_cat->get_extra_meta('text_color',true,null));
+						
+					}
+					$calendar_datetime->set_eventType($primary_cat->slug());
+					if ( $enable_cat_classes ) {
+						foreach ( $event->term_taxonomies() as $term_taxonomy ) {
+							$calendar_datetime->add_classname($term_taxonomy->slug());
+						}				
+					} else {
+						$calendar_datetime->add_classname($primary_cat->slug());
+					}
 				}
-
-				//Assign colors to events by category
-				if ( $enable_cat_classes && isset($category_data['category_meta']['use_pickers']) && $category_data['category_meta']['use_pickers'] == 'Y') {
-					$events[ $cntr ]['color'] = $category_data['category_meta']['event_background'];
-					$events[ $cntr ]['textColor'] = $category_data['category_meta']['event_text_color'];
-				}
+				
 			}
 
-			//Gets the URL of the event and links the event to the registration form.
-			$this->_calendar_options['espresso_page_post'] = isset( $this->_calendar_options['espresso_page_post'] ) ? $this->_calendar_options['espresso_page_post'] : 'R';
-			$registration_url = $this->_calendar_options['espresso_page_post'] == 'P' ? get_permalink( $event->post_id ) : add_query_arg( 'ee', $event->id, get_permalink( $org_options['event_page_id'] ));
-			$events[ $cntr ]['url'] = $event->externalURL != '' ? htmlspecialchars_decode($event->externalURL) : $registration_url;
-			
-
-			//Id of the event
-			$events[ $cntr ]['id'] = $event->id;
-			//Get the title of the event
-			$events[ $cntr ]['title'] = htmlspecialchars_decode(stripslashes($event->event_name ), ENT_QUOTES);
-
-
-			//Get the start and end times for each event
-			//important! time must be in iso8601 format 2010-05-10T08:30!!
-			$events[ $cntr ]['start'] = date("c", strtotime($event->start_date . ' ' . event_date_display($event->start_time, get_option('time_format'))));
-			$events[ $cntr ]['end'] = date("c", strtotime($event->end_date . ' ' . event_date_display($event->end_time, get_option('time_format'))));
-			
-			$start = strtotime( $event->start_date . ' ' . $event->start_time );
-			$end = strtotime( $event->end_date . ' ' . $event->end_time );
-			$events[ $cntr ]['event_days'] = max( ceil(( $end - $start ) / ( 60*60*24 )), 1 );
-
-			$expired = $events[ $cntr ]['end'] < date('Y-m-d') && $event->event_status != 'O' ? TRUE : FALSE;
-			if ( $expired ) {
-				$events[ $cntr ]['className'] = 'expired';
-			} else {
-				$events[ $cntr ]['className'] = '';
+			if ( $datetime->is_expired() ) {
+				$calendar_datetime->set_classname('expired');
 			}
 			
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
-//	$this->timer->start();
 
-			$startTime = ! empty($event->start_time) ? '<span class="event-start-time">' . event_date_display($event->start_time, $this->_calendar_options['time_format']) . '</span>' : FALSE;
-			$endTime = ! empty($event->end_time) ? '<span class="event-end-time">' . event_date_display($event->end_time, $this->_calendar_options['time_format']) . '</span>' : FALSE;
+			$startTime = ! empty($datetime->start_time($this->_calendar_options['time_format'])) ? '<span class="event-start-time">' . $datetime->start_time($this->_calendar_options['time_format']) . '</span>' : FALSE;
+			$endTime = ! empty($datetime->end_time($this->_calendar_options['time_format'])) ? '<span class="event-end-time">' . $datetime->end_time($this->_calendar_options['time_format']) . '</span>' : FALSE;
 
 			if ( $show_time && $startTime ) {
-				$events[ $cntr ]['event_time'] = '<span class="time-display-block">' . $startTime;
-				$events[ $cntr ]['event_time'] .= $endTime ? ' - ' . $endTime : '';
-				$events[ $cntr ]['event_time'] .= '</span>';
+				$event_time_html = '<span class="time-display-block">' . $startTime;
+				$event_time_html .= $endTime ? ' - ' . $endTime : '';
+				$event_time_html .= '</span>';
 			} else {
-				$events[ $cntr ]['event_time'] = FALSE;
+				$event_time_html = FALSE;
 			}
+			$calendar_datetime->set_event_time($event_time_html);
 			
-			$events[ $cntr ]['event_time_no_tags'] = wp_strip_all_tags( $events[ $cntr ]['event_time'] );
-
-			$event_meta = unserialize($event->event_meta);
-
-			// Add thumb to eventArray
-			if ( $enable_calendar_thumbs && isset( $event_meta['event_thumbnail_url'] ) && ! empty( $event_meta['event_thumbnail_url'] )) {
+					
+			// Add thumb to event
+			if ( $enable_calendar_thumbs ) {
 				
-				// get pathinfo
-				$pathinfo = pathinfo( $event_meta['event_thumbnail_url'] );
-				// get dirname
-				$dirname = $pathinfo['dirname'] . '/';
-				// now get filename without path or extension
-				$filename = $pathinfo['filename'];
-				// and extension
-				$ext = $pathinfo['extension'];
-				// generate thumbnail size string ie: -150x150
-				$thumbnail_size = '-' . $thumbnail_size_w . 'x' . $thumbnail_size_h;
-				// check that thumbnail dimesions are not already included in filename
-				$thumbnail_size = strpos( $filename, $thumbnail_size ) === FALSE ? $thumbnail_size : '';
-				$path_to_thumbnail = $dirname . $filename . $thumbnail_size . '.' . $ext;
-				
-				$events[ $cntr ]['thumbnail_size_w'] = $thumbnail_size_w;
-				$events[ $cntr ]['thumbnail_size_h'] = $thumbnail_size_h;
-				
-				// check if file exists
-				if ( $pathinfo['dirname'] == $upload_dir['baseurl'] ) {
-					// since the above is true we know the file is in the uploads so we can use file_exists() to verify it
-					if ( ! file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . $thumbnail_size . '.' . $ext )) {
-						// hmmm...  the scaled thumbnail doesn't exist, so better check that the original is still there, or set path to FALSE
-						$path_to_thumbnail = file_exists( $uploads['basedir'] . DIRECTORY_SEPARATOR . $filename . '.' . $ext ) ? $event_meta['event_thumbnail_url'] : FALSE;
-					}			
-				}
-				
-//				echo '<h4>event_thumbnail_url : ' . $event_meta['event_thumbnail_url'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//				echo '<h4>$thumbnail_size : ' . $thumbnail_size . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//				echo '<h4>$path_to_thumbnail : ' . $path_to_thumbnail . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				
-				
-				if ( $path_to_thumbnail ) { 
-					$events[ $cntr ]['event_img_thumb'] = '
+				$thumbnail_url = $event->feature_image_url('thumbnail');
+				if ( $thumbnail_url ) { 
+					$calendar_datetime->set_event_img_thumb( '
 					<span class="thumb-wrap">
-						<img id="ee-event-thumb-' . $event->id . '" class="ee-event-thumb" src="' . $path_to_thumbnail . '" alt="image of ' . $events[ $cntr ]['title'] . '" />
-					</span>';
-					$events[ $cntr ]['className'] .= ' event-has-thumb';
-				}
-			}
-
-
-
-
-
-			//Custom fields:
-			//These can be used to perform special functions in your display.
-			//This decalares the category ID as the CSS class name
-			$events[ $cntr ]['eventType'] = '';
-			if ( $use_categories ) {
-				if ( $enable_cat_classes ) {
-
-					if ( isset( $event_categories[$event->id] ) && ! $event_category_id ) {
-						foreach ( $event_categories[$event->id] as $cat ) {
-							//This is the css class name
-							$events[ $cntr ]['className'] .= ' ' . $cat->category_identifier;
-						}
-						// set event type to the category id
-						$events[ $cntr ]['eventType'] = isset($primary_cat->category_name) && !empty($primary_cat->category_name) ? $primary_cat->category_name : '';
-					} else {
-						//This is the css class name
-						$events[ $cntr ]['className'] .= isset($event->category_identifier) ? ' ' . $event->category_identifier : '';
-						// set event type to the category id
-						$events[ $cntr ]['eventType'] .= isset($event->category_name) ? ' ' . $event->category_name : '';
-					}
+						<img id="ee-event-thumb-' . $datetime->ID() . '" class="ee-event-thumb" src="' . $thumbnail_url . '" alt="image of ' . $event->name() . '" />
+					</span>');
+					$calendar_datetime->add_classname('event-has-thumb');
 				}
 			}
 
@@ -605,69 +814,74 @@ class EE_Calendar {
 
 			if ( $show_tooltips ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-				$events[ $cntr ]['description'] = wpautop( stripslashes( do_shortcode( $event->event_desc )));
+				$description = $event->description_filtered();
+				
 				//Supports 3.1 short descriptions
-				if ( isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
-					$events[ $cntr ]['description'] = array_shift( explode( '<!--more-->', $events[ $cntr ]['description'] ));
-				}
+//				if ( false ){// isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
+				$description = array_shift( explode( '<!--more-->', $description));
+//				}
 				// and just in case it's still too long, or somebody forgot to use the more tag...
-				$events[ $cntr ]['description'] = $tooltip_word_count ? wp_trim_words( $events[ $cntr ]['description'], $tooltip_word_count ) : $events[ $cntr ]['description'];
-				// tooltip wrapper
-				$events[ $cntr ]['tooltip'] = '<div class="qtip_info">';
+				$calendar_datetime->set_description($description);			
+// tooltip wrapper
+				$tooltip_html = '<div class="qtip_info">';
 				// show time ?
-				$events[ $cntr ]['tooltip'] .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
-				// check attendee reg limit
+				$tooltip_html .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
+				
+				
+// check attendee reg limit
 				$num_completed = 0;
 				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id=%d AND (payment_status='Completed' OR payment_status='Pending' OR payment_status='Refund') ";
-				$wpdb->get_results( $wpdb->prepare( $a_sql, $event->id ), ARRAY_A);
+				$wpdb->get_results( $wpdb->prepare( $a_sql, $datetime->id ), ARRAY_A);
 				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
 					$num_completed = $wpdb->last_result[0]->quantity;
 				}
-				$reg_limit = $event->reg_limit; 
+				$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
 
 				// add attendee limit if set
 				if ( $show_attendee_limit ) {
-					$attendee_limit = $reg_limit >= 999999 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $num_completed . ' / ' . $reg_limit;
-					$events[ $cntr ]['tooltip'] .= ' <p class="attendee_limit_qtip">' . $attendee_limit . '</p>';
+					$tickets_sold = $datetime->sold();
+					$attendee_limit_text = $datetime->total_tickets_available_at_this_datetime() == -1 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $tickets_sold . ' / ' . $tickets_initially_available_at_datetime;
+					$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
 				}
 
 				//add link
-				$regButtonText = $event->display_reg_form == 'Y' ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
+				$regButtonText = $event->display_reg_form() ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
 				// reg open
-				if ( $num_completed < $reg_limit && ! $expired ) {
-					$events[ $cntr ]['tooltip'] .= '<a class="reg-now-btn" href="' . $events[ $cntr ]['url'] . '">' . $regButtonText . '</a>';				
-				} else if ( $num_completed >= $reg_limit && ! $expired ) {
-					$events[ $cntr ]['tooltip'] .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';				
-				} else {
-					$events[ $cntr ]['tooltip'] .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';				
+				if ( $event->is_sold_out() || $datetime->sold_out() || $datetime->total_tickets_available_at_this_datetime() == 0) {
+					$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';				
+				} else if($event->is_cancelled()){
+					$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';				
+				}else{
+					'<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';				
 				}
 
-				$events[ $cntr ]['tooltip'] .= '<div class="clear"></div>';
-				$events[ $cntr ]['tooltip'] .= '</div>';
-				 
+				$tooltip_html .= '<div class="clear"></div>';
+				$tooltip_html .= '</div>';
+				$calendar_datetime->set_tooltip($tooltip_html);
+				
+				
 				// Position my top left...
-				$events[ $cntr ]['tooltip_my'] = $tooltip_my;
-				$events[ $cntr ]['tooltip_at'] = $tooltip_at;
-				$events[ $cntr ]['tooltip_style'] = $tooltip_style;
-
+				$calendar_datetime->set_tooltip_my($tooltip_my);
+				$calendar_datetime->set_tooltip_at($tooltip_at);
+				$calendar_datetime->set_tooltip_style( $tooltip_style );
+				$calendar_datetime->set_show_tooltips(true);
 			} else {
-				$events[ $cntr ]['show_tooltips'] = FALSE;
+				$calendar_datetime->set_show_tooltips(FALSE);
 			}
-
-			// If set to true, events will be shown as all day events
-			$events[ $cntr ]['allDay'] = FALSE;
-			$cntr++;
+			$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
 			
 //	$this->timer->stop();
 //	echo $this->timer->get_elapse( __LINE__ );
 
 		}
 //		echo '<h3>$events</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
-
-		echo json_encode( $events );
+		
+		echo json_encode( $calendar_datetimes_for_json );
 		die();
 
 	}
+	
+	
 
 
 
