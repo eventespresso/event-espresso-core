@@ -43,7 +43,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 				return '';
 			case 'text':
 			default:
-				return __("Infinite", "event_espresso");
+				return __("Unlimited", "event_espresso");
 		}
 			
 		}else{
