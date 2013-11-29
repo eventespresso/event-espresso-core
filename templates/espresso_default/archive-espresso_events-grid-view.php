@@ -33,7 +33,7 @@ $ELID = espresso_get_event_list_ID();
 				
 				
 				<div class="event-datetimes">
-					<h4><?php espresso_event_date_range(); ?></h4>
+					<h4 class="ee-calendar_year-icon-small"><?php espresso_event_date_range(); ?></h4>
 				</div>				
 				<!-- .event-datetimes -->
 
