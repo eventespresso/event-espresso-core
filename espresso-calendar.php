@@ -672,61 +672,9 @@ class EE_Calendar {
 	public function get_calendar_events() {
 		
 //	$this->timer->start();
-		
-		global $wpdb, $org_options;
 		remove_shortcode('LISTATTENDEES');
 		// get calendar options
 		$this->_calendar_options = $this->_get_calendar_options();
-		
-		$today = date( 'Y-m-d' );
-		$month = date('m' );
-		$year = date('Y' );
-		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
-		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
-		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $this->_show_expired;
-//		echo '<h4>$show_expired : ' . $show_expired . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		
-		// set boolean for categories 
-		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
-		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
-
-//		//Build the SQL to run
-//		$SQL = "SELECT e.*, ese.start_time, ese.end_time ";
-//		//Get the categories
-//		$SQL .= $event_category_id ? ", c.category_meta, c.category_identifier, c.category_name, c.category_desc, c.display_desc " : '';
-//		$SQL .= "FROM " . EVENTS_DETAIL_TABLE . " e ";
-//		$SQL .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-//		//Get the categories
-//		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id " : '';
-//		$SQL .= $event_category_id ? "JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id " : '';
-//		
-//		$SQL .= "WHERE e.is_active != 'N' ";
-//		$SQL .= " AND e.event_status NOT IN ( 'D', 'S', 'P', 'X', 'R' ) "; //Deleted, Secondary/Waitlist, Pending, X?,  Draft
-//		$SQL .= $event_category_id ?  " AND c.category_identifier = '$event_category_id' " : '';
-//		
-////	//	$SQL .= " AND (( e.start_date >= %s AND e.start_date <= %s ) OR e.event_status != 'O' ) ";		
-//		$SQL .= " AND ( e.start_date >= %s AND e.start_date <= %s ) ";		
-//		
-//		if ($show_expired == "false") {
-//			$SQL .= " AND ( e.start_date >= '$today' AND e.registration_end >= '$today' ) ";
-//		}
-//
-//		$SQL .= " GROUP BY e.id ORDER BY e.start_date ASC "; // . $throttle;
-//		// grab event data with event IDs as the array keys
-//		$events_data = $wpdb->get_results( $wpdb->prepare( $SQL, $start_datetime, $end_date ), OBJECT_K );
-		
-		$where_params['Event.status'] = 'publish';
-		$where_params['Event.Term_Taxonomy.term_taxonomy_id'] = $event_category_id;
-		$where_params['DTT_EVT_start*1']= array('>=',$start_datetime);
-		$where_params['DTT_EVT_start*2'] = array('<=',$end_date);
-		if($show_expired == 'false'){
-			$where_params['DTT_EVT_start*3'] = array('>=',$today);
-			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
-		}
-		
-		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
-		/* @var $datetime_objs EE_Datetime[] */
-	
 		 $enable_cat_classes = isset( $this->_calendar_options['enable_cat_classes'] ) && $this->_calendar_options['enable_cat_classes'] ? TRUE : FALSE;
 		 $show_attendee_limit = isset( $this->_calendar_options['show_attendee_limit'] ) && $this->_calendar_options['show_attendee_limit'] ? TRUE : FALSE;
 		 $show_time = isset( $this->_calendar_options['show_time'] ) && $this->_calendar_options['show_time'] ? TRUE : FALSE;
@@ -740,7 +688,31 @@ class EE_Calendar {
 			$tooltip_word_count = isset( $this->_calendar_options['tooltip_word_count'] ) ? $this->_calendar_options['tooltip_word_count'] : 50;
 		}
 		$enable_calendar_thumbs = isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ? TRUE : FALSE;
+
 		
+		$today = date( 'Y-m-d' );
+		$month = date('m' );
+		$year = date('Y' );
+		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
+		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
+		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $this->_show_expired;	
+		// set boolean for categories 
+		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
+		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
+	
+		$where_params['Event.status'] = 'publish';
+		$where_params['Event.Term_Taxonomy.term_taxonomy_id'] = $event_category_id;
+		$where_params['DTT_EVT_start*1']= array('>=',$start_datetime);
+		$where_params['DTT_EVT_start*2'] = array('<=',$end_date);
+		if($show_expired == 'false'){
+			$where_params['DTT_EVT_start*3'] = array('>=',$today);
+			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
+		}
+		
+		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
+		/* @var $datetime_objs EE_Datetime[] */
+	
+				
 //	$this->timer->stop();
 //	echo $this->timer->get_elapse( __LINE__ );
 		
@@ -827,14 +799,6 @@ class EE_Calendar {
 				// show time ?
 				$tooltip_html .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 				
-				
-// check attendee reg limit
-				$num_completed = 0;
-				$a_sql = "SELECT SUM(quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id=%d AND (payment_status='Completed' OR payment_status='Pending' OR payment_status='Refund') ";
-				$wpdb->get_results( $wpdb->prepare( $a_sql, $datetime->id ), ARRAY_A);
-				if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {
-					$num_completed = $wpdb->last_result[0]->quantity;
-				}
 				$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
 
 				// add attendee limit if set
