@@ -26,5 +26,5 @@ include( espresso_event_list_template_part() );
  * archive-espresso_events-grid-view.php
  * archive-espresso_events-text-view.php
 */
-get_sidebar();
+
 get_footer(); 	
