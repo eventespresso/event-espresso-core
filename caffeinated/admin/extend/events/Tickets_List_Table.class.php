@@ -132,13 +132,13 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	function column_TKT_qty($item) {
-		return $item->get('TKT_qty') == -1 ? __('Unlimited', 'event_espresso') : $item->get('TKT_qty');
+		return $item->get_pretty('TKT_qty','text');
 	}
 
 
 
 	function column_TKT_uses($item) {
-		return $item->get('TKT_uses') < 0 ? __('Unlimited', 'event_espresso') : $item->get('TKT_uses');
+		return $item->get('TKT_uses','text');
 	}
 
 
@@ -149,7 +149,7 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	function column_TKT_max($item) {
-		return $item->get('TKT_max') < 0 ? __('Unlimited', 'event_espresso') : $item->get('TKT_max');
+		return $item->get_pretty('TKT_max','text');
 	}
 
 

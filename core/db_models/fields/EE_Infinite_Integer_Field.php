@@ -33,7 +33,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 	 * use $schema=='input', as it will replace INF with ''. If you want a readable version, use $schema=='text'
 	 * as it will replace INF with i18n Infinite
 	 * @param type $value_on_field_to_be_outputted
-	 * @param type $schema
+	 * @param string $schema input, symbol, text; or any string you want to show if the value equals INF
 	 * @return string
 	 */
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null) {
@@ -41,9 +41,13 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 			switch($schema){
 			case 'input':
 				return '';
+			case 'symbol':
+				return "&infin;";
 			case 'text':
-			default:
+			case null:
 				return __("Unlimited", "event_espresso");
+			default:
+				return $schema;
 		}
 			
 		}else{

@@ -146,7 +146,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				$query_params, 
 				ARRAY_A, 
 				array(
-					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold'=>'%d'),
+					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold'=>'%d'),//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
 					'initially_available'=>array('Ticket.TKT_qty'=>'%d')));
 		foreach($remaining_per_ticket as $remaining_per_ticket){
 			if(intval($remaining_per_ticket['initially_available'])==EE_INF_IN_DB){//infinite in DB
