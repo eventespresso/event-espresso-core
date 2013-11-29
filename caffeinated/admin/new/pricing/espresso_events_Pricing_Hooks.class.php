@@ -139,7 +139,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'DTT_ID' => !empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
-				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? -1 : $dtt['DTT_reg_limit'],
+				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
 				'DTT_order' => $row,
 				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
@@ -606,7 +606,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
 			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
-			'DTT_reg_limit' => $default ? '' : $dtt->get('DTT_reg_limit')
+			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input')
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';

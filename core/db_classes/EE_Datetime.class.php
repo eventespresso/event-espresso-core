@@ -274,7 +274,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$reg_limit 	
 	*/	
 	public function set_reg_limit( $reg_limit ) {
-		$this->set('DTT_reg_limit', absint( $reg_limit ));
+		$this->set('DTT_reg_limit', $reg_limit);
 	}
 
 
