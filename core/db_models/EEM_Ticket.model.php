@@ -137,7 +137,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * NOT take int account the datetime's spaces available)
 	 * @param int $DTT_ID
 	 * @param array $query_params
-	 * @return int
+	 * @return int of tickets available. If sold out, always returns 0 (even if oversold);
+	 * -1 indicates infinite tickets available.
 	 */
 	public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array()){
 		$sum = 0;
