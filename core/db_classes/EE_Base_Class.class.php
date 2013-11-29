@@ -193,7 +193,7 @@ class EE_Base_Class{
 		if ( method_exists( $field_obj, 'set_timezone' ) )
 			$field_obj->set_timezone( $this->_timezone );
 		 $holder_of_value = $field_obj->prepare_for_set($field_value);
-		 if( ($holder_of_value === NULL || $holder_of_value ==='') && $use_default){
+		 if( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
 			 $this->$privateAttributeName = $field_obj->get_default_value();
 		 }else{
 			$this->$privateAttributeName = $holder_of_value; 
