@@ -1176,7 +1176,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'disabled' => $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted' ) ) ? '' : ' disabled=disabled'
 			);
 
-
 		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none')) : EE_Registry::instance()->load_model('Price')->create_default_object();
 
 

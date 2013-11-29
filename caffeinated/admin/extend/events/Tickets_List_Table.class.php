@@ -138,7 +138,7 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	function column_TKT_uses($item) {
-		return $item->get('TKT_uses','text');
+		return $item->get_pretty('TKT_uses','text');
 	}
 
 
