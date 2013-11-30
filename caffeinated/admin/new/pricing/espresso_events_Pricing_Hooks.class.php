@@ -139,7 +139,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'DTT_ID' => !empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
-				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? -1 : $dtt['DTT_reg_limit'],
+				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
 				'DTT_order' => $row,
 				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
@@ -243,10 +243,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
 				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
-				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? -1 : $tkt['TKT_qty'],
-				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? -1 : $tkt['TKT_uses'],
+				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? INF : $tkt['TKT_qty'],
+				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
-				'TKT_max' => empty( $tkt['TKT_max'] ) ? -1 : $tkt['TKT_max'],
+				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
 				'TKT_taxable' => isset( $tkt['TKT_taxable'] ) ? 1 : 0
@@ -606,7 +606,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
 			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
-			'DTT_reg_limit' => $default ? '' : $dtt->get('DTT_reg_limit')
+			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input')
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';
@@ -677,10 +677,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_status' => $default ? '' : $ticket->ticket_status(TRUE),
 			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get_ticket_total_with_taxes()),
 			'TKT_price_amount' => $default ? 0 : $ticket->get('TKT_price'),
-			'TKT_qty' => $default ? '' : ( $ticket->get('TKT_qty') === -1 ? '' : $ticket->get('TKT_qty') ),
-			'TKT_uses' => $default ? '' : ( $ticket->get('TKT_uses') === -1 ? '' : $ticket->get('TKT_uses') ),
+			'TKT_qty' => $default ? '' : $ticket->get_pretty('TKT_qty','symbol'),
+			'TKT_qty_for_input'=> $default ? '' : $ticket->get_pretty('TKT_qty','input'),
+			'TKT_uses' => $default ? '' : $ticket->get_pretty('TKT_uses','input'),
 			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 ? '' : $ticket->get('TKT_min') ),
-			'TKT_max' => $default ? '' : ( $ticket->get('TKT_max') === -1 ? '' : $ticket->get('TKT_max') ),
+			'TKT_max' => $default ? '' :  $ticket->get_pretty('TKT_max','input'),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
