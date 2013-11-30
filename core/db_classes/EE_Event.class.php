@@ -23,6 +23,8 @@
  */
 require_once( EE_CLASSES . 'EE_CPT_Base.class.php');
 class EE_Event extends EE_CPT_Base{ 	
+
+
 	/**
 	 * All registrations for this event
 	 * @var EE_Registration[] 
@@ -435,133 +437,155 @@ class EE_Event extends EE_CPT_Base{
 
 
 	/**
+	 * check if event id is present and if event is published
+	 * @access public
+	 * @return boolean true yes, false no
+	 */
+	private function _has_ID_and_is_published() {
+		// first check if event id is present and not NULL, then check if this event is published 
+		return ( $this->ID() && $this->ID() !== NULL && $this->_status == 'publish' ) ? TRUE : FALSE;		
+	}
+
+
+	/**
 	 * This simply compares the internal dates with NOW and determines if the event is upcoming or not.
 	 * @access public
 	 * @return boolean true yes, false no
 	 */
 	public function is_upcoming() {
-		$upcoming = FALSE;
-
-		//first check if event id is present on this object
-		$evt_id = $this->ID();
-		if ( empty( $evt_id) )
+		// check if event id is present and if this event is published
+		if ( ! $this->_has_ID_and_is_published() ) {
 			return FALSE;
-
-		//first we determine if this event is published.  If it isn't then we return false right away.
-		if ( $this->_status != 'publish' ) return FALSE;
-
+		}
+		// set initial value
+		$upcoming = FALSE;
 		//next let's get all datetimes and loop through them 
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
 		foreach ( $dtts as $dtt ) {
 			//if this dtt is expired then we continue cause one of the other datetimes might be upcoming.
 			if ( $dtt->is_expired() ) continue;
-
 			//if this dtt is active then we return false.
 			if ( $dtt->is_active() ) return FALSE;
-
 			//otherwise let's check upcoming status
 			$upcoming = $dtt->is_upcoming();
 		}
-
 		return $upcoming;
 	}
 
 
 
 	public function is_active() {
-		$active = FALSE;
-
-		//first check if event id is present on this object
-		$evt_id = $this->ID();
-		if ( empty( $evt_id) )
+		// check if event id is present and if this event is published
+		if ( ! $this->_has_ID_and_is_published() ) {
 			return FALSE;
-
-		//first we determine if this event is published.  If it isn't then we return false right away.
-		if ( $this->_status != 'publish' ) return FALSE;
-
+		}
+		// set initial value
+		$active = FALSE;
 		//next let's get all datetimes and loop through them 
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
 		foreach ( $dtts as $dtt ) {
 			//if this dtt is expired then we continue cause one of the other datetimes might be active.
 			if ( $dtt->is_expired() ) continue;
-
 			//if this dtt is upcoming then we return false.
 			if ( $dtt->is_upcoming() ) return FALSE;
-
 			//otherwise let's check active status
 			$active = $dtt->is_active();
 		}
-
 		return $active;
 	}
 
 
 
 	public function is_expired() {
-		$expired = FALSE;
-
-		//first check if event id is present on this object
-		$evt_id = $this->ID();
-		if ( empty( $evt_id) )
+		// check if event id is present and if this event is published
+		if ( ! $this->_has_ID_and_is_published() ) {
 			return FALSE;
-
+		}
+		// set initial value
+		$expired = FALSE;
 		//first let's get all datetimes and loop through them 
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
 		foreach ( $dtts as $dtt ) {
-
 			//if this dtt is upcoming or active then we return false.
 			if ( $dtt->is_upcoming() || $dtt->is_active() ) return FALSE;
-
 			//otherwise let's check active status
 			$expired = $dtt->is_expired();
 		}
-
 		return $expired;
 	}
 
 
 
 	public function is_inactive() {
-
-		//first check if event id is present on this object
-		$evt_id = $this->ID();
-		if ( empty( $evt_id) )
-			return TRUE;
-
-		//first let's determine if the status is "publish" if it is then it can be returned cause it is NOT inactive
-		if ( $this->_status == 'publish' ) return FALSE;
-
+		// check if event id is present and if this event is published
+		if ( ! $this->_has_ID_and_is_published() ) {
+			return FALSE;
+		}
 		//next let's get all datetimes and loop through them 
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
 		foreach ( $dtts as $dtt ) {
 			//all we're checking for is expire status cause if its expired then that's what we use.
 			if ( $dtt->is_expired() ) return FALSE;
 		}
-
 		return TRUE;
 	}
-	
+
+
+
+	/**
+	 * 	perform_sold_out_status_check
+	 * 	checks all of this events's datetime  reg_limit - sold values to determine if ANY datetimes have spaces available...
+	 * 	if NOT, then the event status will get toggled to 'sold_out'
+	 * 
+	 * 	@access public
+	 * 	@return void
+	 */
+	public function perform_sold_out_status_check() {
+		// set initial value
+		$spaces_remaining = 0;
+		//next let's get all datetimes and loop through them 
+		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' )));
+		foreach ( $datetimes as $datetime ) {
+			// if datetime has unlimited reg limit then the event can never be sold out
+			if ( $datetime->spaces_remaining() < 0 ) {
+				return;
+			} else {
+				$spaces_remaining = max( $datetime->spaces_remaining(), $spaces_remaining );
+			}			
+		}
+		if ( $spaces_remaining === 0 ) {
+			$this->set_status( EEM_Event::sold_out );
+		}
+	}
+
+
+
 	/**
 	 * Checks if the event is set to sold out
 	 * @return boolean
 	 */
 	public function is_sold_out(){
-		return $this->status() == 'sold_out';
+		return $this->status() == EEM_Event::sold_out;
 	}
-	
+
+
+
 	/**
 	 * Checks if the event is marked as postponed
 	 * @return boolean
 	 */
 	public function is_postponed(){
-		return $this->status() == 'postponed';
+		return $this->status() == EEM_Event::postponed;
 	}
+
+
+
 	/**
 	 * Checks if the event is marked as cancelled
 	 * @return boolean
 	 */
 	public function is_cancelled(){
-		return $this->status() == 'cancelled';
+		return $this->status() == EEM_Event::cancelled;
 	}
 
 
