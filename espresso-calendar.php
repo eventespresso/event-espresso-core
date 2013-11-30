@@ -333,8 +333,9 @@ class EE_Datetime_In_Calendar {
 	 */
 	function to_array_for_json(){
 		return array(
-			'url'=>$this->_event->get_permalink(),
-			'start'=>$this->_datetime->start_date('c'),
+			'allDay'=>false,
+			'className'=>$this->classname(),
+			'color'=>$this->color(),
 			'end'=>$this->_datetime->end_date('c'),
 			'event_days'=>$this->_datetime->length('days', true),
 			'event_time'=>$this->event_time(),
@@ -342,11 +343,17 @@ class EE_Datetime_In_Calendar {
 			'event_img_thumb'=>$this->event_img_thumb(),
 			'eventType'=>$this->eventType(),
 			'description'=>$this->description(),
+			'id'=>$this->_event->ID(),
+			'show_tooltips'=>$this->show_tooltips(),
+			'start'=>$this->_datetime->start_date('c'),
+			'textColor'=>$this->textColor(),
 			'tooltip'=>$this->tooltip(),
 			'tooltip_my'=>$this->tooltip_my(),
 			'tooltip_at'=>$this->tooltip_at(),
 			'tooltip_style'=>$this->tooltip_style(),
-			'show_tooltips'=>$this->show_tooltips(),
+			'title'=>$this->_event->name(),
+			
+			'url'=>$this->_event->get_permalink(),
 		);
 	}
 
@@ -652,7 +659,7 @@ class EE_Calendar {
 		return '
 	<div id="espresso_calendar" class="'. $calendar_class . '">
 		<div id="ee-calendar-ajax-loader-dv">
-			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/ajax-loader-large.gif">
+			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EE_IMAGES_URL . 'ajax-loader.gif">
 		</div>
 	</div>
 	<div style="clear:both;" ></div>
@@ -699,19 +706,19 @@ class EE_Calendar {
 		// set boolean for categories 
 		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
 		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
-	
+		if($event_category_id){
+			$where_params['Event.Term_Taxonomy.term_taxonomy_id'] = $event_category_id;
+		}
 		$where_params['Event.status'] = 'publish';
-		$where_params['Event.Term_Taxonomy.term_taxonomy_id'] = $event_category_id;
+		
 		$where_params['DTT_EVT_start*1']= array('>=',$start_datetime);
 		$where_params['DTT_EVT_start*2'] = array('<=',$end_date);
-		if($show_expired == 'false'){
-			$where_params['DTT_EVT_start*3'] = array('>=',$today);
-			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
-		}
-		
+//		if($show_expired == 'false'){
+//			$where_params['DTT_EVT_start*3'] = array('>=',$today);
+//			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
+//		}
 		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
 		/* @var $datetime_objs EE_Datetime[] */
-	
 				
 //	$this->timer->stop();
 //	echo $this->timer->get_elapse( __LINE__ );
@@ -754,8 +761,8 @@ class EE_Calendar {
 			}
 			
 
-			$startTime = ! empty($datetime->start_time($this->_calendar_options['time_format'])) ? '<span class="event-start-time">' . $datetime->start_time($this->_calendar_options['time_format']) . '</span>' : FALSE;
-			$endTime = ! empty($datetime->end_time($this->_calendar_options['time_format'])) ? '<span class="event-end-time">' . $datetime->end_time($this->_calendar_options['time_format']) . '</span>' : FALSE;
+			$startTime = $datetime->start_time($this->_calendar_options['time_format']) ? '<span class="event-start-time">' . $datetime->start_time($this->_calendar_options['time_format']) . '</span>' : FALSE;
+			$endTime = $datetime->end_time($this->_calendar_options['time_format']) ? '<span class="event-end-time">' . $datetime->end_time($this->_calendar_options['time_format']) . '</span>' : FALSE;
 
 			if ( $show_time && $startTime ) {
 				$event_time_html = '<span class="time-display-block">' . $startTime;
@@ -790,7 +797,10 @@ class EE_Calendar {
 				
 				//Supports 3.1 short descriptions
 //				if ( false ){// isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
-				$description = array_shift( explode( '<!--more-->', $description));
+				$desciption_parts =  explode( '<!--more-->', $description);
+				if(is_array($desciption_parts)){
+					$description = array_shift($desciption_parts);
+				}
 //				}
 				// and just in case it's still too long, or somebody forgot to use the more tag...
 				$calendar_datetime->set_description($description);			
@@ -839,7 +849,6 @@ class EE_Calendar {
 
 		}
 //		echo '<h3>$events</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
-		
 		echo json_encode( $calendar_datetimes_for_json );
 		die();
 
