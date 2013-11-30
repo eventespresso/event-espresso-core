@@ -33,13 +33,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 */
 	const inactive = 0;
 	/**
-	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
-	 */
-	const active = 2;
-	/**
 	 * constant used by get_active_status, indicating the datetime cannot be used for registrations yet, but has not expired
 	 */
 	const upcoming = 1;
+	/**
+	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
+	 */
+	const active = 2;
 	
     /**
     *	Datetime ID
