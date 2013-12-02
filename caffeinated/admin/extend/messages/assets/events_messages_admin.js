@@ -69,7 +69,7 @@ jQuery(document).ready(function($) {
 
 					if ( ct.indexOf('json') > -1 || isjson ) {
 						/*console.log('json');
-						console.log(response);*/
+						console.log(response);/**/
 
 						resp = resp === '' ? response : resp;
 
@@ -136,7 +136,7 @@ jQuery(document).ready(function($) {
 				return;
 			
 			var main_container = type == 'content' ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox') : $('.ee-notices', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox');
-			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.messages-change-edit-templates-content', '.ee-admin-dialog-container').find('.ee-notices');
+			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.ee-notices', '.ee-admin-dialog-container');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
 			$('.ajax-loader-grey').toggle().hide();
