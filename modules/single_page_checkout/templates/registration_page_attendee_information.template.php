@@ -159,14 +159,14 @@ if ( $event_queue['total_items'] > 0 ) {
 		
 		<div id="spco-attendee_information-whats-next-buttons-dv" class="spco-whats-next-buttons">
 		
-			<a href =""  id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="attendee_information" >
+			<a href =""  id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn ee-button ee-register-button huge ee-green hide-if-no-js" rel="attendee_information" >
 				<?php echo $next_step_text; ?>
 			</a>
 
 			<noscript>
 				<input type="submit" 
 					id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
-					class="spco-next-step-btn spco-register-btn no-js-btn"
+					class="spco-next-step-btn ee-button ee-register-button huge ee-green no-js-btn"
 					name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
 					value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;"							
 				/>				

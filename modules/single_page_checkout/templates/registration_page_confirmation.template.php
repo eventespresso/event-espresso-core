@@ -27,14 +27,14 @@
 
 				<div id="spco-registration_confirmation-whats-next-buttons-dv" class="mer-whats-next-buttons">
 
-					<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn spco-register-btn hide-if-no-js" rel="registration_confirmation" >
+					<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn ee-button ee-register-button huge ee-green hide-if-no-js" rel="registration_confirmation" >
 						<strong><?php echo $next_step_text; ?></strong>
 					</a>
 
 					<noscript>
 						<input type="submit" 
 									id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
-									class="spco-next-step-btn spco-register-btn no-js-btn"
+									class="spco-next-step-btn ee-button ee-register-button huge ee-green no-js-btn"
 									name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
 									value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;" 
 							/>				
