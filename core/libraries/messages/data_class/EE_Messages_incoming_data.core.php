@@ -225,7 +225,8 @@ abstract class EE_Messages_incoming_data {
 		//get all attendee and events associated with the registrations in this transaction
 		$events = $event_setup = $evt_cache = $tickets = $datetimes = $answers = $questions = array();
 		$attendees = array();
-		$tickets_count = array();
+		$total_ticket_count = 0;
+
 		
 		if ( !empty( $this->reg_objs ) ) {
 			$event_attendee_count = array(); 

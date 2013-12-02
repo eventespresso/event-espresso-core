@@ -48,4 +48,56 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 		$this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
+
+
+	public function column_display_text(EE_Question $item) {
+		$system_question = $item->is_system_question();
+		
+		if ( !defined('REG_ADMIN_URL') )
+			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
+
+		$edit_query_args = array(
+				'action' => 'edit_question',
+				'QST_ID' => $item->ID()
+			);
+
+		$trash_query_args = array(
+				'action' => 'trash_question',
+				'QST_ID' => $item->ID()
+			);
+
+		$restore_query_args = array(
+			'action' => 'restore_questions',
+			'QST_ID' => $item->ID()
+			);
+
+		$delete_query_args = array(
+			'action' => 'delete_questions',
+			'QST_ID' => $item->ID()
+			);
+
+
+		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
+		$trash_link = EE_Admin_Page::add_query_args_and_nonce( $trash_query_args, EE_FORMS_ADMIN_URL );
+		$restore_link = EE_Admin_Page::add_query_args_and_nonce( $restore_query_args, EE_FORMS_ADMIN_URL );
+		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_FORMS_ADMIN_URL );
+		
+		$actions = array(
+			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Question', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+			);
+
+		if ( ! $system_question && $this->_view != 'trash' )
+			$actions['delete'] = '<a href="' . $trash_link . '" title="' . __('Trash Question', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
+
+		if ( $this->_view == 'trash' ) {
+			$actions['restore'] = '<a href="' . $restore_link . '" title="' . __('Restore Question', 'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
+			if ( $item->count_related('Answer') === 0 )
+				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+		}
+
+		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
+		$content .= $this->row_actions($actions);
+		return $content;	
+	}
+
 }

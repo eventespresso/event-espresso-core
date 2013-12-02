@@ -249,6 +249,22 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 
 
+
+	/**
+	 * Basically this is method just returns whether the question group has any questions with answers.  This is used by the admin currently to determine whether we should display the ui for deleting permanently or not b/c question groups with questions that have answers shouldn't be possible to delete permanently
+	 * @return boolean true if has questions with answers, false if not.
+	 */
+	public function has_questions_with_answers() {
+		$has_answers = FALSE;
+		$questions = $this->get_many_related('Question');
+		foreach ( $questions as $question ) {
+			if ( $question->count_related('Answer') > 0 )
+				$has_answers = TRUE;
+		}
+		return $has_answers;
+	}
+
+
 	/**
 	 * The purpose of this method is set the question group order for this question group to be the max out of all question groups
 	 *

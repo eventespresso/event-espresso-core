@@ -255,6 +255,7 @@ class EE_messages {
 		$message_type = strtolower(str_replace(' ', '_', $message_type) );
 		$messenger = strtolower(str_replace(' ', '_', $messenger));
 
+
 		//setup messenger and message_type object
 		$this->_messenger = isset($this->_active_messengers[$messenger]) ? $this->_active_messengers[$messenger] : null;
 
@@ -270,12 +271,16 @@ class EE_messages {
 			throw new EE_Error( sprintf( __(' The %s messenger or the %s message_type are not active. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
 		
 		//is given message_type valid for given messenger (if this is not a global save)
+		$types_to_check = array();
 		if ( !$is_global ) {
 			foreach ( $this->_messenger->active_templates as $template ) {
-				if ( $template->message_type() != $message_type )
-					EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $messenger, $message_type), __FILE__, __FUNCTION__, __LINE__ );
+				$types_to_check[] = $template->message_type();
+			}
+			if ( !in_array($message_type, $types_to_check ) ) {
+				EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $message_type, $messenger), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
+
 		}
 		return true;
 	}
