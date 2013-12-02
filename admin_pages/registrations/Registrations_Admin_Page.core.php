@@ -461,10 +461,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function load_scripts_styles_view_registration() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
+		wp_enqueue_style('espresso-ui-theme');
 		//scripts
-		;
 		EE_Registry::$i18n_js_strings['update_att_qstns'] = __( 'click "Update Attendee Questions" to save your changes', 'event_espresso' );
 		wp_localize_script( 'espresso_reg', 'eei18n', EE_Registry::$i18n_js_strings );
 	}

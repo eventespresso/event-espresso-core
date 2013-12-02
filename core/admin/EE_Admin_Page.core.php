@@ -1420,8 +1420,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		
 		//register all styles
-		wp_register_style('jquery-ui-style', EE_GLOBAL_ASSETS_URL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
-		wp_register_style('jquery-ui-style-datepicker-css', EE_GLOBAL_ASSETS_URL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
+		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(),EVENT_ESPRESSO_VERSION );
+
 		wp_register_style('jquery-jq-plot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array('jquery'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('ee-admin-css', EE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 		//helpers styles

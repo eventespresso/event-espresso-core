@@ -359,7 +359,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function load_scripts_styles_forms() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espresso-ui-theme');
 		//scripts
 		wp_enqueue_script('ee_admin_js');
 	}

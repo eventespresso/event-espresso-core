@@ -336,13 +336,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function load_scripts_styles_edit_category() {
-		//styles
-		//wp_enqueue_style('jquery-ui-style');
-
 		//scripts
 		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
-		
-		;
 		EE_Registry::$i18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
 		wp_localize_script( 'ee_cat_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
 
@@ -354,7 +349,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function load_scripts_styles_edit() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espresso-ui-theme');
 		wp_register_style( 'espresso_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_venues');
 

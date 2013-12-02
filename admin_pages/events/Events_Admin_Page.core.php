@@ -423,9 +423,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function load_scripts_styles_edit() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
+		wp_enqueue_style('espresso-ui-theme');
 		wp_register_style('event-editor-css', EVENTS_ASSETS_URL . 'event-editor.css', array('ee-admin-css'), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('event-editor-css');
 
@@ -451,7 +449,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function load_scripts_styles_edit_category() {
 		//styles
-		//wp_enqueue_style('jquery-ui-style');
+		//wp_enqueue_style('espresso-ui-theme');
 
 		//scripts
 		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );

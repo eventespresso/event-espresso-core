@@ -975,11 +975,9 @@ class EEH_Form_Fields {
 		$input_html = apply_filters( 'FHEE_form_field_input_html', $input_html );
 		
 		// enqueue scripts
-		wp_register_style('jquery-ui-style', EE_PLUGIN_DIR_URL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
-		wp_register_style('jquery-ui-style-datepicker-css', EE_PLUGIN_DIR_URL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
-		wp_register_script('jquery-ui-datepicker', EE_PLUGIN_DIR_URL . 'scripts/jquery-ui-datepicker.js', array('jquery-ui-core'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script('jquery-ui-datepicker');
+		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style( 'espresso-ui-theme');
+		wp_enqueue_script( 'jquery-ui-datepicker' );
 		
 		return $label_html . $input_html;		
 		

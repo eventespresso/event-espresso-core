@@ -257,9 +257,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_view_transaction() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
+		wp_enqueue_style('espresso-ui-theme');
 		//scripts
 	}
 
@@ -269,9 +267,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_default() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
+		wp_enqueue_style('espresso-ui-theme');
 	}
 
 
