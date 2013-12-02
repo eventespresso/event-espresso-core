@@ -796,7 +796,7 @@ class EE_Event extends EE_CPT_Base{
 		if($this->external_url()){
 			return $this->external_url();
 		}else{
-			parent::get_permalink();
+			return parent::get_permalink();
 		}
 	}
 	/**
