@@ -260,9 +260,17 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	function export_attendees() {
+		
+		$states_that_have_an_attendee = EEM_State::instance()->get_all(array('force_join'=>array('Attendee')));
+		$countries_that_have_an_attendee = EEM_Country::instance()->get_all(array('force_join'=>array('Attendee')));
+//		$states_to_export_query_params
 		$models_to_export = array( 
-				'Attendee'
+				'Attendee'=>array(),
+				'State'=>array(array('STA_ID'=>array('IN',array_keys($states_that_have_an_attendee)))),
+				'Country'=>array(array('CNT_ISO'=>array('IN',array_keys($countries_that_have_an_attendee)))),
 			);
+		
+		
 																				
 		$model_data = $this->_get_export_data_for_models( $models_to_export );
 		$filename = $this->generate_filename ( 'all-attendees' );

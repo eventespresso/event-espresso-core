@@ -52,6 +52,12 @@ class EE_Country extends EE_Base_Class{
 	 * @var EE_State[]
 	 */
 	protected $_State;
+	
+	/**
+	 * All the attendees in this country
+	 * @var EE_Attendee[]
+	 */
+	protected $_Attendee;
 
 
 	public static function new_instance( $props_n_values = array() ) {
