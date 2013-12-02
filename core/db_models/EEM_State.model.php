@@ -68,8 +68,9 @@ class EEM_State extends EEM_Base {
 				'STA_active'=> new EE_Boolean_Field('STA_active', __("State Active Flag", "event_espresso"), false, false)
 				));
 		$this->_model_relations = array(
+			'Attendee'=>new EE_Has_Many_Relation(),
 			'Country' => new EE_Belongs_To_Relation(),
-			'Venue'=>new EE_Has_Many_Relation()
+			'Venue'=>new EE_Has_Many_Relation(),
 		);
 		parent::__construct();
 		
