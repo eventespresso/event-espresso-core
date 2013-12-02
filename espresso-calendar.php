@@ -214,10 +214,10 @@ class EE_Calendar {
 		wp_register_script( 'espresso_calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), ESPRESSO_CALENDAR_VERSION, TRUE ); 
 
 		// get the current post
-		global $post;
+		global $post, $is_espresso_calendar;
 		if ( isset( $post->post_content )) {
 			 // check the post content for the short code
-			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE ) {
+			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE || $is_espresso_calendar ) {
 				if ( $show_tooltips ) {
 					wp_enqueue_style('qtip');
 					wp_enqueue_script('jquery-qtip');
