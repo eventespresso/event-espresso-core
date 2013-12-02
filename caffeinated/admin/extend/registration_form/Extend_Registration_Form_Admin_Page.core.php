@@ -100,6 +100,18 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'noheader' => TRUE
 				),
 
+			'trash_question_group' => array(
+				'func' => '_trash_or_restore_question_groups',
+				'args' => array( 'trash' => TRUE ),
+				'noheader' => TRUE
+				),
+
+			'restore_question_group' => array(
+				'func' => '_trash_or_restore_question_groups',
+				'args' => array( 'trash' => FALSE ),
+				'noheader' => TRUE
+				),
+
 			'insert_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => TRUE),

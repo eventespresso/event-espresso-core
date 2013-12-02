@@ -968,7 +968,9 @@ class EE_Registration extends EE_Base_Class {
 		foreach ( $datetimes as $datetime ) {
 			$datetime->increase_sold();
 			$datetime->save();
-		}	
+		}
+		// possibly set event status to sold out
+		$this->get_first_related( 'Event' )->perform_sold_out_status_check();
 	}
 
 
