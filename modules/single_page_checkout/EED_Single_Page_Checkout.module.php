@@ -1125,6 +1125,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													// whoops!!!
 													EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 												}
+											} elseif ( is_array( $input_value )) {
+												$input_value = implode( ',', $input_value );
 											}
 										
 											// store a bit of data about the primary attendee
