@@ -5,14 +5,32 @@
 	// clear firefox and safari cache
 	$(window).unload( function() {});
 	
-	//	var date_tester = document.createElement( 'input' );
-	// date_tester.setAttribute( 'type', 'date' );
-	// if type is text then and only then should you call the fallback
-	/*if( date_tester.type === 'text' ){
-		$( '#date' ).datepicker({
-			dateFormat: 'dd-mm-yy'
-		});
-	}/**/
+	$( ".datepicker" ).datepicker({
+		changeMonth: true,
+		changeYear: true
+	});
+	// to internationalize the datepicker, copy the following to somewhere safe, then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key. 
+	// Multiple languages can be added this way
+//	$.datepicker.regional['fr_FR'] = {
+//		closeText: 'Fermer',
+//		prevText: 'Précédent',
+//		nextText: 'Suivant',
+//		currentText: 'Aujourd\'hui',
+//		monthNames: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+//		'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+//		monthNamesShort: ['janv.', 'févr.', 'mars', 'avril', 'mai', 'juin',
+//		'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+//		dayNames: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+//		dayNamesShort: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+//		dayNamesMin: ['D','L','M','M','J','V','S'],
+//		weekHeader: 'Sem.',
+//		dateFormat: 'dd/mm/yy',
+//		firstDay: 1,
+//		isRTL: false,
+//		showMonthAfterYear: false,
+//		yearSuffix: ''
+//	};
+//	$.datepicker.setDefaults($.datepicker.regional[ eei18n.language ]);  	//	will automagically produce something like:	$.datepicker.setDefaults($.datepicker.regional['fr_FR']);
 
 	$('#spco-copy-all-attendee-chk').prop( 'checked', false );
 
@@ -36,7 +54,7 @@
 
 
 	/**
-	*		trigger click event on all checkboxes if the Copy All option is selected
+	*	if the Copy All option is checked off, trigger click event on all checkboxes 
 	*/
 	$('#spco-copy-all-attendee-chk').on( 'click', function() {
 		$('.spco-copy-attendee-chk').each(function(index) {
@@ -90,11 +108,11 @@
 				var att_nmbr = input_id_array[0];		 
 				var line_item_id = input_id_array[1];		 
 				var input_name = input_id_array[2];	
+				var answer_id = input_id_array[3];	
 				// and it's value'
 				input_value = $(this).val();
 //				console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
 //				console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
-//				console.log( JSON.stringify( 'event_id: ' + event_id, null, 4 ));
 							
 				// if the input is required but has not been filled out
 				if ( $(this).hasClass('required') && input_value == '' ) {  
@@ -120,17 +138,20 @@
 				} else {
 	
 					new_input_id = '#' + trgt_att_input + '-' +  input_name;
-//					if ( answer_id != undefined ) {
-//						new_input_id = new_input_id + '-' + answer_id;
-//					}
+					if ( answer_id != undefined ) {
+						new_input_id = new_input_id + '-' + answer_id;
+					}
 //					console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
 					
 					if ( $(new_input_id).length > 0 ){
 						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
-					       $(new_input_id).prop('checked', true);
-					    } else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
-					        $(new_input_id).prop('checked', true);
-					    } else {
+//							console.log( JSON.stringify( 'radio: ', null, 4 ));
+							$(new_input_id).prop('checked', true);
+						} else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
+//							console.log( JSON.stringify( 'checkbox: ' , null, 4 ));
+							$(new_input_id).prop('checked', true);
+						} else {
+//							console.log( JSON.stringify( 'other: ', null, 4 ));
 							$(new_input_id).val(input_value);
 						}						
 					}
@@ -501,13 +522,15 @@
 		 if ( whch_form == '' ){
 			whch_form = '#spco-registration-' + eei18n.reg_step_1 + '-frm';
 		}
-		//console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
 		
+//		console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
+			
 		var good_to_go = true;
 		
 		$( whch_form + ' .required' ).each( function(index) {
 
-			//console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
+//			console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
+//			console.log( JSON.stringify( 'input value: ' + $(this).val(), null, 4 ));		
 			
 			// empty field
 			if ( $(this).val() == '' ) {

@@ -668,7 +668,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @param array $query_params like EEM_Base::get_all's
 	 * @return int
 	 */
-	public function sum_tickets_initially_available($query_params){
+	public function sum_tickets_initially_available($query_params = array()){
 		return $this->sum_related('Ticket',$query_params,'TKT_qty');
 	}
 	/**

@@ -234,8 +234,8 @@ input.ee-register-button {
 	padding: 8px 16px 9px;
 }
 .huge.ee-button, .huge.ee-button:visited {
-	font-size: 18px;
-	padding: 10px 20px 11px;
+	font-size: 16px;
+	padding: 14px 32px 16px;
 }
 
 /* ROUND BUTTONS */
@@ -261,8 +261,6 @@ input.ee-register-button {
 .ee-pink.ee-button, .ee-pink.ee-button:visited { background-color: #E44064; background-image: -moz-linear-gradient( center top , #F65077, #E44064 ); }
 .ee-pink.ee-button:hover { background-color: #F65077; background-image: none; }
 
-/*.green.ee-button, .green.ee-button:visited { background-color: #7DBD29; }
-.green.ee-button:hover { background-color: #6CBA00; }*/
 .ee-green.ee-button, .ee-green.ee-button:visited { background-color: #70CC50; background-image: -moz-linear-gradient( center top , #80DD5E, #70CC50 ); }
 .ee-green.ee-button:hover { background-color: #80DD5E; background-image: none; }
 
@@ -326,7 +324,6 @@ input.ee-register-button {
 	margin: 0 auto 2em;
 	z-index: 999;
 	background: #fff;
-	/*border-radius: 1px;*/
 	border-width: 2px;
 	border-style: solid;
 	font-size: 1em;
@@ -344,21 +341,21 @@ input.ee-register-button {
 	background: #70CC50;
 	border-color: #70CC50;
 	color: #fff !important;
-	text-shadow: .5px .5px 0px rgba( 0,0,0, .5 );
+	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
 }
 #espresso-notices-error,
 #espresso-ajax-notices-error {
 	background: #E44064;
 	border-color: #E44064;
 	color: #fff !important;
-	text-shadow: .5px .5px 0px rgba( 0,0,0, .3 );
+	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
 }
 #espresso-notices-attention,
 #espresso-ajax-notices-attention {
 	background: #F8D755;
 	border-color: #F8D755;
-	color: #6B5B27 !important;
-	text-shadow: .5px .5px 0px rgba( 255,255,255, .8 );
+	color: #3f3021 !important;
+	text-shadow: 0 1px 0px rgba(255,255,255,0.25);
 	font-weight: normal;
 }
 
@@ -368,41 +365,35 @@ input.ee-register-button {
 	top: 3px;
 	right: 3px;
 	cursor: pointer;
-	width: 12px;
-	height: 12px;
+	width: 14px;
+	height: 14px;
 	padding: 0 0 0 .5px;
-	border-width: 1px;
-	border-style: groove;
 	font-weight: bold;
-	font-size: 12px;
-	line-height: 12px;
+	font-size: 14px;
+	line-height: 14px;
 	text-align: center;
-	text-shadow: .5px .5px 0px rgba( 255,255,255, .8 );
-	/*border-radius: 1px;*/
-}
-#espresso-notices-success .close-espresso-notice,
-#espresso-ajax-notices-success .close-espresso-notice {
-	color: #4A763A;
-	border-color: #72AE55;
 }
 
+#espresso-notices-success .close-espresso-notice,
+#espresso-ajax-notices-success .close-espresso-notice,
 #espresso-notices-error .close-espresso-notice,
 #espresso-ajax-notices-error .close-espresso-notice {
-	color: #753947;
-	border-color: #BD687F;
+	color:#fff;
 }
 
 #espresso-notices-attention .close-espresso-notice,
 #espresso-ajax-notices-attention .close-espresso-notice {
-	color: #746739;
-	border-color: #D0BB75;
+	color: #fff;
+	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
 }
-
-.close-espresso-notice:hover {
-	color: #000 !important;
-	border-color: #000 !important;
+#espresso-notices-attention .close-espresso-notice,
+#espresso-ajax-notices-attention .close-espresso-notice,
+#espresso-notices-success .close-espresso-notice:hover,
+#espresso-ajax-notices-success .close-espresso-notice:hover,
+#espresso-notices-error .close-espresso-notice:hover,
+#espresso-ajax-notices-error .close-espresso-notice:hover {
+	color: #fff !important;
 }
-
 
 /******************* GENERAL ****************** */
 
@@ -485,7 +476,6 @@ input.ee-register-button {
 .highlight-bg {
 	padding:1em 20px;
 	background:#ffffdd;
-	/*border-radius:3px;*/
 }
 .tiny-link {
 	display: block;

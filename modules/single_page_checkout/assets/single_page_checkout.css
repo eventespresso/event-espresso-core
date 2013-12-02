@@ -4,31 +4,7 @@ span.ui-icon {
 .icon-right span.ui-icon {
 	margin: 0.7em 0.3em 0 0;
 }
-#single-page-checkout .spco-register-btn {
-	padding: .75em 1.5em;
-	margin:1em 0;
-	background: #7DBD29;
-	border: 1px solid #6CBA00;
-	border-top-color: #96E430;
-	border-bottom-color: #5A861C;
-	font-size:14px;
-	line-height:24px;
-	color:#fff;
-	font-weight: bold;
-	text-shadow:1px 1px 0px rgba(0, 0, 0, .3);
-	text-decoration: none;
-	box-shadow:0px 1px 1px rgba(0, 0, 0, .5), 0px 1px 7px -1px rgba(0, 0, 0, .3);
-}
-#single-page-checkout .spco-register-btn:hover {
-	background: #6CBA00;
-	color:#fff;
-}
-#single-page-checkout .spco-register-btn:visited {
-	color:#fff;
-}
-#single-page-checkout .spco-register-btn:active {
-	top:1px;
-}
+
 .mini-btn {
 	display: inline-block;
 	position: relative;
@@ -184,6 +160,7 @@ span.ui-icon {
 	font-size:40px;
 	font-weight:bold;
 	line-height:1em;
+	color: #00B1CA;
 }
 #single-page-checkout .spco-step-big-nmbr:hover {
 	text-decoration:none;

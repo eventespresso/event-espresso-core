@@ -203,12 +203,12 @@ final class EE_System {
 			case EE_System::req_type_new_activation:
 				
 				do_action('AHEE__EE_System__manage_activation_process__new_activation');
-				$this->_handle_as_activation();			
+				$this->handle_as_activation();			
 //				echo "done activation";die;
 				break;
 			case EE_System::req_type_reactivation:
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
-				$this->_handle_as_activation();
+				$this->handle_as_activation();
 //				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
@@ -218,7 +218,16 @@ final class EE_System {
 					//so the database doesnt look old (ie, there are no migration scripts
 					//taht say they need to upgrade it)
 					//THEN, we just want to still give the system a chance to setup new default data
-					$this->_handle_as_activation();
+					//first: double-check if this was called via an activation hook or a normal reqeust
+					if(self::$_activation){
+						//if via activation hook, we need to run the code right away, because the
+						//init hook was called before this activation hook
+						$this->handle_as_activation();
+					}else{
+						//if via a normal request, then we need to wait to run activation-type-code
+						//until we_rewrite is defined by WP (on init hook) otherwise we'll have troubles
+						add_action('init',array($this,'_handle_as_activation'),2);
+					}
 				}
 //				echo "done upgrade";die;
 				break;
@@ -241,7 +250,7 @@ final class EE_System {
 	 * If migration script/process didn't exist, this is what woudl happen on every activation/reactivation/upgrade.
 	 * @return void
 	 */
-	private function _handle_as_activation(){
+	public function handle_as_activation(){
 		EEH_Activation::system_initialization();
 		EEH_Activation::initialize_db_and_folders();
 		EEH_Activation::initialize_db_content();

@@ -154,11 +154,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	public function load_scripts_styles_edit() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
-		
+		wp_enqueue_style('espresso-ui-theme');		
 		wp_enqueue_script('event_editor_js');
+		
 		$new_strings = array(
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
 			'event_starts_on' => __('Event Starts on', 'event_espresso'),
@@ -170,8 +168,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'clone_trooper_img_alt' => __('clone', 'event_espresso'),
 			'trash_img_src' => EE_PLUGIN_DIR_URL .'images/trash-16x16.png',
 			'trash_img_alt' => __('trash', 'event_espresso')
-			);
-
+		);
 		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
 
 	}

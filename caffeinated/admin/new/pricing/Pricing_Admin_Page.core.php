@@ -312,7 +312,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espresso-ui-theme');
 		wp_register_style( 'espresso_PRICING', PRICING_ASSETS_URL . 'espresso_pricing_admin.css', array(), EVENT_ESPRESSO_VERSION );		
 		wp_enqueue_style('espresso_PRICING');
 

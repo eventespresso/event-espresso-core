@@ -52,7 +52,7 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 		// SPCO is large and resource intensive, so it's better to do a double check before loading it up, so let's grab the post_content for the requested post
 		global $wpdb;
 		$SQL = 'SELECT post_content from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND post_name=%s';
-		if( $post_content = $wpdb->get_var( $wpdb->prepare( $SQL, $WP->request ))) {
+		if( $post_content = $wpdb->get_var( $wpdb->prepare( $SQL, EE_Registry::instance()->REQ->get( 'post_name' )))) {
 			// generate shortcode to search for
 			$EES_Shortcode = '[' . str_replace( 'EES_', '', strtoupper( get_class( $this )));
 			// now check for this shortcode

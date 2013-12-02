@@ -31,6 +31,11 @@ class EE_State extends EE_Base_Class{
 	protected $_STA_active;
 	
 	/**
+	 * All the attendees in this state
+	 * @var EE_Attendee[]
+	 */
+	protected $_Attendee;
+	/**
 	 * Related Country, lazy-loaded
 	 * @access protected
 	 * @var EE_Country 
