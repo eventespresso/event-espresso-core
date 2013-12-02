@@ -100,7 +100,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'add-registrant' => __('Register New Attendee', 'event_espresso'),
 					'add-attendee' => __('Add Contact', 'event_espresso'),
 					'edit' => __('Edit Contact', 'event_espresso'),
-					'delete_attendees' => __('Delete Contact', 'event_espresso'),
 					'report'=>  __("Registrations CSV Report", "event_espresso"),
 					'contact_list_export'=>  __("Contact List CSV Export", "event_espresso"),
 				),
@@ -234,11 +233,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'args' => array( 
 						'trash' => FALSE 
 					), 
-					'noheader' => TRUE 
-				),
-				
-				'delete_attendees'	=> array( 
-					'func' => '_delete_attendees', 
 					'noheader' => TRUE 
 				),
 				
@@ -2749,51 +2743,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'contact_list' ) );
 		
 	}
-
-
-
-
-
-
-	/**
-	 * 		_delete_attendee
-	*		@access protected
-	*		@return void
-	*/
-	protected function _delete_attendees() {
-	
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$ATT_MDL = EEM_Attendee::instance();
-				
-		$success = 1;
-		//Checkboxes
-		if ( ! empty($this->_req_data['checkbox']) && is_array( $this->_req_data['checkbox'] )) {
-			// if array has more than one element than success message should be plural
-			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
-			// cycle thru bulk action checkboxes
-			while ( list( $ATT_ID, $value ) = each( $this->_req_data['checkbox'] )) {
-				if ( ! $ATT_MDL->delete_by_ID( $ATT_ID ) ) {
-					$success = 0;
-				}
-			}
-	
-		} else {
-			// grab single id and delete
-			$ATT_ID = absint( $this->_req_data['ATT_ID'] );
-			if ( ! $ATT_MDL->delete_by_ID( $ATT_ID )) {
-				$success = 0;
-			}
-			
-		}
-		$what = $success > 1 ? __( 'Contacts', 'event_espresso' ) : __( 'Contact', 'event_espresso' );
-		$this->_redirect_after_action( $success, $what, __( 'deleted', 'event_espresso' ), array( 'action' => 'contact_list' ) );
-		
-	}
-
-
-
-
   
 }
 
