@@ -215,7 +215,7 @@ class EE_Calendar {
 
 		// get the current post
 		global $post, $is_espresso_calendar;
-		if ( isset( $post->post_content )) {
+		if ( isset( $post->post_content ) || $is_espresso_calendar ) {
 			 // check the post content for the short code
 			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE || $is_espresso_calendar ) {
 				if ( $show_tooltips ) {
