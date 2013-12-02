@@ -58,11 +58,11 @@
 			</span>
 			
 			<span>
-				<a class="submit-this ee-button-lnk" href="#" ><?php _e( 'Filter Events' );?></a>
+				<a class="submit-this ee-button small" href="#" ><?php _e( 'Filter Events' );?></a>
 			</span>
 			
 			<span>
-				<a class="ee-button-lnk" href="<?php echo $form_url;?>" ><?php _e( 'Reset' );?></a>
+				<a class="ee-button small" href="<?php echo $form_url;?>" ><?php _e( 'Reset' );?></a>
 			</span>
 
 			<input type="hidden" id="elf_type" name="elf_type" value="<?php echo $elf_type;?>"/>						

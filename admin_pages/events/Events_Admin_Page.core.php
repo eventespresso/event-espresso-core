@@ -737,7 +737,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'DTT_ID' => !empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
-				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? -1 : $dtt['DTT_reg_limit'],
+				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
 				'DTT_order' => $row,
 				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
@@ -787,10 +787,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
 				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
-				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? -1 : $tkt['TKT_qty'],
-				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? -1 : $tkt['TKT_uses'],
+				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? INF : $tkt['TKT_qty'],
+				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
-				'TKT_max' => empty( $tkt['TKT_max'] ) ? -1 : $tkt['TKT_max'],
+				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
 				'TKT_price' => $ticket_price
@@ -1169,13 +1169,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'TKT_start_date' => $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
 			'TKT_end_date' => $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
 			'TKT_is_default' => $ticket->get('TKT_is_default'),
-			'TKT_qty' => $ticket->get('TKT_qty') === -1 ? '' : $ticket->get('TKT_qty'),
+			'TKT_qty' => $ticket->get_pretty('TKT_qty','input'),
 			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_sold' => $skeleton ? 0 : $ticket->get('TKT_sold'),
 			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon clickable' : 'lock-icon',
 			'disabled' => $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted' ) ) ? '' : ' disabled=disabled'
 			);
-
 
 		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none')) : EE_Registry::instance()->load_model('Price')->create_default_object();
 

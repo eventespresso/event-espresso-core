@@ -164,11 +164,9 @@
 
 .grid-event-list-dv  .event-datetimes h4 {
 	display: block;
-	padding: 1px 0 0 24px;
 	margin: .25em 0;
-	background: url("../../global_assets/images/calendar_year-16x16.png") no-repeat left top transparent;
 	font-size: 1.4em;
-	line-height: 1.5em; /*color:#A39D9C;*/
+	line-height: 1.5em; 
 }
 .grid-event-list-dv  .event-datetimes h4 + h4 {
 	padding-left: 5px;
@@ -266,9 +264,8 @@
 	line-height: 1.2em;
 }
 .grid-event-list-dv .tiny-event-list-grid a.ee-register-button-lnk {
-	padding: 3px 1.2em 2px;
+	padding: 3px 6px 2px;
 	font-size: 10px;
-	line-height: 15px;
 }
 
 .grid-event-list-dv .small-event-list-grid.espresso-event-list-event {
@@ -305,9 +302,8 @@
 	line-height: 1.3em;
 }
 .grid-event-list-dv .small-event-list-grid a.ee-register-button-lnk {
-	padding: 4px 1.3em 3px;
+	padding: 4px 8px 3px;
 	font-size: 11px;
-	line-height: 18px;
 }
 
 .grid-event-list-dv .med-event-list-grid.espresso-event-list-event {
@@ -340,9 +336,7 @@
 	line-height: 1.4em;
 }
 .grid-event-list-dv .med-event-list-grid a.ee-register-button-lnk {
-	padding: 5px 1.4em 4px;
 	font-size: 12px;
-	line-height: 21px;
 }
 
 .grid-event-list-dv  .large-event-list-grid {

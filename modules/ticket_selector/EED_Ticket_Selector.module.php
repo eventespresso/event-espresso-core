@@ -189,7 +189,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/	
 	public static function display_ticket_selector_submit() {
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE )) {
-			echo '<input id="" class="ee-register-button-lnk" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
+			echo '<input id="" class="ee-button ee-register-button ee-green big" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
 			<div class="clear"></div>';
 		}
 	}
@@ -583,7 +583,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		// get the number of spaces left for this event
-		$available_spaces = self::get_available_spaces( $ticket );
+		$available_spaces = $ticket->remaining();
 		// compare availalbe spaces against the number of tickets being purchased
 		if ( $available_spaces >= $qty ) {
 			// add event to cart
@@ -608,35 +608,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			}
 			return FALSE;
 		}
-	}
-
-
-
-
-	
-	/**
-	* 	get number of available spaces for event
-	*
-	*	@access 		public
-	*	@param 		EE_Ticket 	$ticket
-	* 	@return 		int
-	*/
-	public static function get_available_spaces( EE_Ticket $ticket ) {
-		
-		// one meeeeeeellion spaces
-		$available_spaces = 1000000;
-		// get all datetimes associated with this ticket, then loop thru them 
-		if ( $datetimes = $ticket->get_many_related( 'Datetime' )) {
-			foreach ( $datetimes as $datetime ) {
-				// if a reg limit has been set for this datetime
-				if ( $datetime->reg_limit() > 0 ) {
-					// calculate the spaces left, then compare that with the previous results (or the initial), and take the lesser value
-					$available_spaces = min( $datetime->reg_limit() - $datetime->sold(), $available_spaces );
-				}
-			}
-		}
-		// final result should be the lowest number of available spaces for any of the datetimes
-		return $available_spaces;
 	}
 
 

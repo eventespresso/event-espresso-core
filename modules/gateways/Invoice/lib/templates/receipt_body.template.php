@@ -50,7 +50,7 @@ $tax_total_line_item;
 				$ticket = $line_item->ticket();
 				$taxable_html = $ticket->taxable() ? '*': '';
 				$subitems = $line_item->children();
-				$ticket_uses = $ticket->uses() >= 0 ? $ticket->uses() : __( 'any ', 'event_espresso' );
+				$ticket_uses = $ticket->get_pretty('TKT_uses',  __("any", "event_espresso"));
 			?>
 				<li class="event-ticket">
 					<div class="ticket-details">

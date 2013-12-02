@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 		4.1.043.alpha
+  Version: 		4.1.045.alpha
 
   Author: 			Seth Shoultes
   Author URI: 		http://www.eventespresso.com
@@ -31,7 +31,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.043.alpha';
+	return '4.1.045.alpha';
 }
 //Returns the template version
 function espresso_template_version() {
@@ -98,7 +98,10 @@ define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
 //ajax constants
 define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) ? TRUE : FALSE );
 define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) ? TRUE : FALSE );
-
+//just a handy constant occasionally needed for finding values reprsenting infinity in the DB
+//you're better to use this than its straight value (currently -1) in case you ever
+//want to change its default value! or find when -1 means infinity
+define('EE_INF_IN_DB', -1);
 // define versions
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 	define( 'EVENT_ESPRESSO_VERSION', espresso_version());

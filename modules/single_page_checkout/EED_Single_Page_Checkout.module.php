@@ -583,7 +583,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					));
 					
 					foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
-						$Questions = $Question_Group->get_many_related( 'Question', array( 'order_by'=>array( 'QST_order'=>'ASC' )));
+						$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_deleted' => 0 ), 'order_by'=>array( 'QST_order' =>'ASC' )));
 						foreach ( $Questions as $Question ) {
 							/*@var $Question EE_Question */
 							if( !  $this->_reg_url_link ){
