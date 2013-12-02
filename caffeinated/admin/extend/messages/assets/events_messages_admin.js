@@ -62,7 +62,7 @@ jQuery(document).ready(function($) {
 						} catch (e) {
 							EE_messages_evt_helper.display_modal();
 							EE_messages_evt_helper.display_content(response, 'dialog', 'clear');
-							isjson = FALSE;
+							isjson = false;
 						}
 						
 					}
