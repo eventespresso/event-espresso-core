@@ -851,7 +851,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
 							$css_class = isset( $extra_array['css_class'] ) ? $extra_array['css_class'] : '';
-							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
+							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && ( is_array($validators[$extra_field] ) && isset( $validators[$extra_field]['msg'] ) ) ? 'validate-error ' . $css_class : $css_class;
 							$content = $message_templates[$context][$reference_field]->get('MTP_content');
 							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field]) ? stripslashes($content[$extra_field]) : '';
 
@@ -866,7 +866,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 								if ( defined('DOING_AJAX') ) {
 									$template_form_fields[$field_id]['input'] = 'textarea';
-									$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) ? 'large-text validate-error' : 'large-text';
+									$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && ( is_array($validators[$extra_field] ) && isset( $validators[$extra_field]['msg'] ) ) ? 'large-text validate-error' : 'large-text';
 									$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
 								}
 
@@ -1653,7 +1653,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				//first validate all fields!
 				$validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
 				
-				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response.
+				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response. HMM, dang this isn't correct, $validates will ALWAYS be an array.  WE need to make sure there is no actual error messages in validates.
 				if ( is_array($validates) && !empty($validates) ) {
 					//add the transient so when the form loads we know which fields to highlight
 					$this->_add_transient( 'edit_message_template', $validates );

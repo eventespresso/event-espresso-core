@@ -288,7 +288,10 @@ abstract class EE_Messages_Validator extends EE_Base {
 			$field_label = '';
 
 			//if field is not present in the _validators array then we continue
-			if ( !isset( $this->_validators[$field] ) ) continue;
+			if ( !isset( $this->_validators[$field] ) ) {
+				unset( $this->_errors[$field] );
+				continue;
+			}
 
 			//get the translated field label!
 			//first check if it's in the main fields list
@@ -348,7 +351,6 @@ abstract class EE_Messages_Validator extends EE_Base {
 			} else {
 				unset( $this->_errors[$field] );
 			}
-
 		}
 
 		//if we have ANY errors, then we want to make sure we return the values for ALL the fields so the user doesn't have to retype them all.
