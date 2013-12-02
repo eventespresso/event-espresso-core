@@ -2716,23 +2716,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$ATT_MDL = EEM_Attendee::instance();
 	
 		$success = 1;
-		$ATT_deleted = $trash ? TRUE : FALSE;
 		//Checkboxes
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
 			while (list( $ATT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array(array('ATT_ID' => absint($ATT_ID))))) {
+				$updated = $trash ? $ATT_MDL->delete_by_ID($ATT_ID) : $ATT_MDL->restore_by_ID($ATT_ID);
+				if ( !$updated ) {
 					$success = 0;
 				}
 			}
 			
 		} else {
 			// grab single id and delete
-			//@todo verifywe actually want to delete by 'id', not 'ATT_ID'. This was different between 4.0-BETA and 4.1-DEV
-			$ATT_ID = absint($this->_req_data['id']);
-			if ( ! $ATT_MDL->update(array('ATT_deleted' => $ATT_deleted), array(array('ATT_ID' => $ATT_ID)))) {
+			$ATT_ID = absint($this->_req_data['ATT_ID']);
+			$updated = $trash ? $ATT_MDL->delete_by_ID($ATT_ID) : $ATT_MDL->restore_by_ID($ATT_ID);
+			if ( ! $updated ) {
 				$success = 0;
 			}
 			
