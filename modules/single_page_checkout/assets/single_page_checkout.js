@@ -36,7 +36,7 @@
 
 
 	/**
-	*		trigger click event on all checkboxes if the Copy All option is selected
+	*	if the Copy All option is checked off, trigger click event on all checkboxes 
 	*/
 	$('#spco-copy-all-attendee-chk').on( 'click', function() {
 		$('.spco-copy-attendee-chk').each(function(index) {
@@ -90,11 +90,11 @@
 				var att_nmbr = input_id_array[0];		 
 				var line_item_id = input_id_array[1];		 
 				var input_name = input_id_array[2];	
+				var answer_id = input_id_array[3];	
 				// and it's value'
 				input_value = $(this).val();
 //				console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
 //				console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
-//				console.log( JSON.stringify( 'event_id: ' + event_id, null, 4 ));
 							
 				// if the input is required but has not been filled out
 				if ( $(this).hasClass('required') && input_value == '' ) {  
@@ -120,17 +120,20 @@
 				} else {
 	
 					new_input_id = '#' + trgt_att_input + '-' +  input_name;
-//					if ( answer_id != undefined ) {
-//						new_input_id = new_input_id + '-' + answer_id;
-//					}
+					if ( answer_id != undefined ) {
+						new_input_id = new_input_id + '-' + answer_id;
+					}
 //					console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
 					
 					if ( $(new_input_id).length > 0 ){
 						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
-					       $(new_input_id).prop('checked', true);
-					    } else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
-					        $(new_input_id).prop('checked', true);
-					    } else {
+//							console.log( JSON.stringify( 'radio: ', null, 4 ));
+							$(new_input_id).prop('checked', true);
+						} else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
+//							console.log( JSON.stringify( 'checkbox: ' , null, 4 ));
+							$(new_input_id).prop('checked', true);
+						} else {
+//							console.log( JSON.stringify( 'other: ', null, 4 ));
 							$(new_input_id).val(input_value);
 						}						
 					}
@@ -501,13 +504,15 @@
 		 if ( whch_form == '' ){
 			whch_form = '#spco-registration-' + eei18n.reg_step_1 + '-frm';
 		}
-		//console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
 		
+//		console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
+			
 		var good_to_go = true;
 		
 		$( whch_form + ' .required' ).each( function(index) {
 
-			//console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
+//			console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
+//			console.log( JSON.stringify( 'input value: ' + $(this).val(), null, 4 ));		
 			
 			// empty field
 			if ( $(this).val() == '' ) {
