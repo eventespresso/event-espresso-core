@@ -46,7 +46,7 @@
 }
 
 .add-new-ticket-table td:first-child {
-    width: 1%;
+    width: 5px;
 }
 
 .add-new-ticket-table td:nth-child(2) {
