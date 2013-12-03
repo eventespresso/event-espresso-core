@@ -30,9 +30,34 @@ jQuery(document).ready(function($) {
 		var end = data.context == 'end-dtt' || data.context == 'end-ticket' ? $(this, data.dateFieldContext) : $(data.relatedField, data.dateFieldContext);
 		var next = $(data.nextField, data.dateFieldContext);
 		var doingstart = data.context == 'start-dtt' || data.context == 'start-ticket' ? true : false;
-		console.log(doingstart);
 		dttPickerHelper.picker(start, end, next, doingstart);
 	});
+
+
+	$('.event-tickets-container').on('focusout', '.ee-datepicker', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var status = '';
+
+		//we need to determine what status to show.
+		var now = moment();
+		var tktStart = moment($(this).parent().parent().find('.edit-ticket-TKT_start_date').val(), 'YYYY-MM-DD h:mm a');
+		var tktEnd = moment($(this).parent().parent().find('.edit-ticket-TKT_end_date').val(), 'YYYY-MM-DD h:mm a');
+
+		//now we have moment objects to do some calcs and determine what status we're setting.
+		if ( now.isBefore(tktStart) )
+			status = 'tkt-status-1';
+		if ( now.isAfter(tktEnd) )
+			status = 'tkt-status--1';
+		if ( now.isAfter(tktStart) && now.isBefore(tktEnd) )
+			status = 'tkt-status-2';
+
+		//now we have status so let's set the pip
+		$(this).parent().parent().find('.ee-tkt-status').removeClass().addClass('ee-tkt-status ' + status);
+
+	});
+
 
 	$('.add-new-ticket-table').on('click', '.trash-icon', function(e) {
 		e.preventDefault();
