@@ -351,12 +351,12 @@ class EE_Base_Class{
 	protected function _get_cached_property( $propertyname, $pretty = FALSE, $extra_cache_ref = NULL ) {
 	
 		//first make sure this property exists
-		if ( !property_exists( $this, $propertyname ) )
+		if ( !property_exists( $this, $propertyname )) {
 			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
+		}
 
 		$cache_type = $pretty ? 'pretty' : 'standard';
 		$cache_type .= !empty( $extra_cache_ref ) ? '_' . $extra_cache_ref : '';
-
 
 		if ( isset( $this->_cached_properties[$propertyname][$cache_type] ) ) {
 			return $this->_cached_properties[$propertyname][$cache_type];
@@ -365,7 +365,6 @@ class EE_Base_Class{
 		//otherwise let's return the property
 		$field_name = ltrim( $propertyname, '_' );
 		$field_obj = $this->get_model()->field_settings_for($field_name);
-//		echo "getting $propertyname $extra_cache_ref<br>";
 		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname, $extra_cache_ref) : $field_obj->prepare_for_get($this->$propertyname );
 		$this->_set_cached_property( $propertyname, $value, $cache_type );
 		return $value;
