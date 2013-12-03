@@ -13,7 +13,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 		return '%d';
 	}
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		if($value_inputted_for_field_on_model_object == INF){
+		if($value_inputted_for_field_on_model_object === INF){
 			return EE_INF_IN_DB;
 		}else{
 			return intval($value_inputted_for_field_on_model_object);
