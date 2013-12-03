@@ -821,7 +821,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 				'PRC_order' => $default && empty( $price ) ? 'PRICENUM' : $prcrow,
 				'PRT_ID' => $default && empty( $price ) ? 1 : $price->get('PRT_ID'),
-				'PRT_name' => __('Base Price', 'event_espresso'),
+				'PRT_name' => __('Price', 'event_espresso'),
 				'price_selected_operator' => '+',
 				'price_selected_is_percent' => 0
 			);
