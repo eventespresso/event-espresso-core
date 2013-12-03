@@ -2477,4 +2477,45 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return array($this->get_primary_key_field());
 	}
+	
+	/**
+	 * Finds all model objects in the DB that appear to be a copy of $model_object_or_attributes_array.
+	 * We consider something to be a copy if all the attributes match (except the ID, of course).
+	 * @param EE_Base_Class|array $model_object_or_attributes_array If its an array, it's field-value pairs
+	 * @param array $query_params like EEM_Base::get_all's query_params.
+	 */
+	public function get_all_copies($model_object_or_attributes_array, $query_params = array()){
+		$attributes_array = array();
+		if($model_object_or_attributes_array instanceof EE_Base_Class){
+			$attributes_array = $model_object_or_attributes_array->model_field_array();
+		}elseif(is_array($model_object_or_attributes_array)){
+			$attributes_array = $model_object_or_attributes_array;
+		}else{
+			throw new EE_Error(sprintf(__("get_all_copies should be providd with either a model object or an array of field-value-pairs, but was given %s", "event_espresso"),$model_object_or_attributes_array));
+		}
+		if(isset($attributes_array[$this->primary_key_name()])){
+			unset($attributes_array[$this->primary_key_name()]);
+		}
+		if(isset($query_params[0])){
+			$query_params[0] = array_merge($attributes_array,$query_params);
+		}else{
+			$query_params[0] = $attributes_array;
+		}
+		return $this->get_all($query_params);
+	}
+	/**
+	 * Gets the first copy we find. See get_all_copies for more details
+	 * @param type $model_object_or_attributes_array
+	 * @param type $query_params
+	 * @return EE_Base_Class
+	 */
+	function get_one_copy($model_object_or_attributes_array,$query_params = array()){
+		$query_params['limit'] = 1;
+		$copies = $this->get_all_copies($model_object_or_attributes_array,$query_params);
+		if(is_array($copies)){
+			return array_shift($copies);
+		}else{
+			return null;
+		}
+	}
 }

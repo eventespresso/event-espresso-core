@@ -1029,7 +1029,7 @@ jQuery(document).ready(function($) {
 				// selectors
 				var selected_price_type_val = 1;
 
-				newTKTrow.find('.price-title-text', '.price-row-' + row).text('Base Price');
+				newTKTrow.find('.price-title-text', '.price-row-' + row).text('Price');
 				newTKTrow.find('.edit-price-PRC_name', '.price-row-' + row).val(pricename);
 				$('add-datetime-ticket-container', '#edit-event-datetime-tickets-' + this.dateTimeRow ).find('.gear-icon').hide(); //reset cog visibility.
 

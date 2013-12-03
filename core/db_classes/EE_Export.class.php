@@ -265,10 +265,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$countries_that_have_an_attendee = EEM_Country::instance()->get_all(array('force_join'=>array('Attendee')));
 //		$states_to_export_query_params
 		$models_to_export = array( 
-				'Attendee'=>array(),
-				'State'=>array(array('STA_ID'=>array('IN',array_keys($states_that_have_an_attendee)))),
-				'Country'=>array(array('CNT_ISO'=>array('IN',array_keys($countries_that_have_an_attendee)))),
-			);
+			'Country'=>array(array('CNT_ISO'=>array('IN',array_keys($countries_that_have_an_attendee)))),
+			'State'=>array(array('STA_ID'=>array('IN',array_keys($states_that_have_an_attendee)))),
+			'Attendee'=>array(),		
+		);
 		
 		
 																				

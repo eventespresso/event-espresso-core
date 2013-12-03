@@ -147,15 +147,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_views['all']['count'] = $this->_total_registrations();
 		$this->_views['month']['count'] = $this->_total_registrations_this_month();
 		$this->_views['today']['count'] = $this->_total_registrations_today();
+		$this->_views['trash']['count'] = $this->_total_registrations(TRUE);
 	}
 
 
 
 
-	protected function _total_registrations(){
+	protected function _total_registrations($trashed = FALSE){
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$_where = $EVT_ID ? array( 'EVT_ID' => $EVT_ID ) : array();
-		return EEM_Registration::instance()->count(array( $_where ) );
+		return $trashed ? EEM_Registration::instance()->count_deleted(array($_where) ) :EEM_Registration::instance()->count(array( $_where ) );
 	}
 
 
@@ -214,7 +215,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_cb
 	*/
     function column_cb(EE_Registration $item){
-        return sprintf( '<input type="checkbox" name="REG_ID[]" value="%1$s" />', $item->ID() );
+        return sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
 
@@ -232,14 +233,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$actions = array();
 
         //Build row actions
- 		$check_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-		$actions['check_in'] = '
-			<a href="'.$check_in_url.'" title="' . __( 'The Check In List allows you to easily toggle attendee check in status for this event', 'event_espresso' ) . '">' . __( 'View Check-ins', 'event_espresso' ) . '</a>';
-		
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );	
 		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
 
-		return sprintf('%1$s %2$s', $REG_date, $this->row_actions($actions) );		
+		return $REG_date;		
 
 	}
 
@@ -276,14 +273,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$datetime_strings = array();
 		$remove_defaults = array('default_where_conditions' => 'none');
 		$datetimes = $item->ticket($remove_defaults)->datetimes($remove_defaults);
-		$query_args = array(
-			'action'=>'event_registrations',
-			'event_id'=>$item->event_ID()
-			);
 		foreach($datetimes as $datetime){
-			$query_args['DTT_ID'] = $datetime->ID();
-			$checkin_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, REG_ADMIN_URL );
-			$datetime_strings[] = '<a href="' . $checkin_url . '">' . $datetime->start_date_and_time() . '</a>';
+			$datetime_strings[] = $datetime->start_date_and_time();
 		}
 		return implode("<br />",$datetime_strings);
     }
@@ -299,9 +290,24 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
    	function column_ATT_fname(EE_Registration $item){
    		$attendee = $item->attendee();
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->attendee_ID() ), REG_ADMIN_URL );
-		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . $attendee instanceof EE_Attendee ? $attendee->full_name() : '' . '</a>';
+		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
+		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . $attendee_name . '</a>';
 		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
-		return $link;
+
+		//trash/restore/delete actions
+		$actions = array();
+		if ( $this->_view != 'trash' ) {
+			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
+			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Trash Registration', 'event_espresso' ) . '">' . __( 'Trash', 'event_espresso' ) . '</a>';
+		} else {
+			// restore registration link
+			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
+			$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
+			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Registration', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
+			$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Registration Permanently', 'event_espresso' ). '">' . __( 'Delete', 'event_espresso' ) . '</a>';
+		}
+
+		return sprintf('%1$s %2$s', $link, $this->row_actions($actions) );
 	}
 
 

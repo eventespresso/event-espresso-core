@@ -226,7 +226,7 @@ final class EE_System {
 					}else{
 						//if via a normal request, then we need to wait to run activation-type-code
 						//until we_rewrite is defined by WP (on init hook) otherwise we'll have troubles
-						add_action('init',array($this,'_handle_as_activation'),2);
+						add_action('init',array($this,'handle_as_activation'),2);
 					}
 				}
 //				echo "done upgrade";die;

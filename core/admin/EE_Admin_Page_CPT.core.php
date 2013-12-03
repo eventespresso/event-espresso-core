@@ -577,6 +577,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 			//$post_id
 			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
+			add_action('trashed_post', array( $this, 'dont_permanently_delete_ee_cpts'), 10 );
 			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
 			add_action('after_delete_post', array( $this, 'delete_cpt_item'), 10 );
 		}
@@ -610,8 +611,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function insert_update( $post_id, $post ) {
 
-		//make sure that if this is a revision action that we don't do any updates!
-		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] == 'restore' )
+		//make sure that if this is a revision OR trash action that we don't do any updates!
+		if ( isset( $this->_req_data['action'] ) && ( $this->_req_data['action'] == 'restore' || $this->_req_data['action'] == 'trash' ) )
 			return;
 
 		//check for autosave and update our req_data property accordingly.
@@ -628,6 +629,24 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return; //TODO we'll remove this after reimplementing autosave in 4.2
 		$this->_insert_update_cpt_item( $post_id, $post );
+	}
+
+
+
+
+
+
+	/**
+	 * This hooks into the wp_trash_post() function and removes the `_wp_trash_meta_status` and `_wp_trash_meta_time` post meta IF the trashed post is one of our CPT's - note this method should only be called with our cpt routes so we don't have to check for our CPT.
+	 * @param  int    $post_id ID of the post
+	 * @return void          
+	 */
+	public function dont_permanently_delete_ee_cpts( $post_id ) {
+		delete_post_meta( $post_id, '_wp_trash_meta_status' );
+		delete_post_meta($post_id, '_wp_trash_meta_time');
+
+		//our cpts may have comments so let's take care of that too
+		delete_post_meta($post_id, '_wp_trash_meta_comments_status');
 	}
 
 

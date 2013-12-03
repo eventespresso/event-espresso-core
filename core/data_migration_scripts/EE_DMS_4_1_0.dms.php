@@ -502,6 +502,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  REG_count tinyint(4) DEFAULT '1',
 					  REG_group_size tinyint(4) DEFAULT '1',
 					  REG_att_is_going tinyint(1) DEFAULT '0',
+					  REG_deleted tinyint(1) DEFAULT '0',
 					  PRIMARY KEY  (REG_ID),
 					  KEY EVT_ID (EVT_ID),
 					  KEY ATT_ID (ATT_ID),
