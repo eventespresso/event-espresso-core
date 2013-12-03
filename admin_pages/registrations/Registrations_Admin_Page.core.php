@@ -152,6 +152,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'noheader' => TRUE
 					),
 
+				'delete_registrations' => array(
+					'func' => '_delete_registrations',
+					'noheader' => TRUE
+					),
 					
 				'update_attendee_registration_form'	=> array( 
 						'func' => '_update_attendee_registration_form', 
@@ -1724,6 +1728,120 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
 		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ) );
 	}
+
+
+
+
+
+	/**
+	 * This is used to permanently delete registrations.  Note, this will handle not only deleting permanently the registration but also.
+	 *
+	 * 1. Deleting permanently any related Attendees IF that attendee has no other registrations attached to it.
+	 * 2. Deleting permanently the related transaction, but ONLY if all related registrations to the transaction are ALSO trashed.
+	 * 3. Deleting permanently any related Line items but only if the above conditions are met.
+	 * 4. Removing relationships between all tickets and the related registrations
+	 * 5. Deleting permanently any related Answers (and the answers for other related registrations that were deleted.)
+	 * 6. Deleting permanently any related Checkins.
+	 * @return void
+	 */
+	protected function _delete_registrations() {
+		$REG_MDL = EEM_Registration::instance();
+
+		$success = 1;
+		//Checkboxes
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+			// if array has more than one element than success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			// cycle thru checkboxes 
+			while (list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
+				$REG = $REG_MDL->get_one_by_ID($REG_ID);
+				$deleted = $this->_delete_registration($REG);
+				if ( !$deleted ) {
+					$success = 0;
+				}
+			}
+			
+		} else {
+			// grab single id and delete
+			$REG_ID = absint($this->_req_data['REG_ID']);
+			$REG = $REG_MDL->get_one_by_ID($REG_ID);
+			$deleted = $this->_delete_registration($REG);
+			if ( ! $deleted ) {
+				$success = 0;
+			}
+			
+		}
+
+		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Registration', 'event_espresso' );
+		$action_desc = __( 'permanently deleted.', 'event_espresso' );
+		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'contact_list' ), TRUE );
+	}
+
+
+
+
+	
+	/**
+	 * handles the permanent deletion of a registration.  See comments with _delete_registrations() for details on what models get affected.
+	 * @param  EE_Registration $REG registration to be deleted permenantly
+	 * @return boolean              true = successful deletion, false = fail.
+	 */
+	protected function _delete_registration( EE_Registration $REG ) {
+		//first we start with the transaction... ultimately, we WILL not delete permanently if there are any related registrations on the transaction that are NOT trashed.
+		$TXN = $REG->get_first_related('Transaction');
+		$REGS = $TXN->get_many_related('Registration');
+
+		$all_trashed = TRUE;
+		foreach ( $REGS as $registration ) {
+			if ( ! $registration->get('REG_deleted') )
+				$all_trashed = FALSE;
+		}
+
+		if ( ! $all_trashed ) {
+			EE_Error::add_error( __('Unable to permanently delete this registration. Before this registration can be permanently deleted, all registrations made in the same transaction must be trashed as well.  These registrations will be permanently deleted in the same action.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+
+		//k made it here so that means we can delete all the related transactions and their answers (but let's do them separately from THIS one).
+		foreach ( $REGS as $registration ) {
+
+			//delete related answers
+			$registration->delete_related_permanently('Answer');
+
+			//delete Attendee (if this registration is the only one on the attendee ).
+			$attendee = $registration->get_first_related('Attendee');
+			if ( $attendee->count_related('Registration') > 1 )
+				$registration->remove_relation_to($attendee, 'Attendee');
+			else
+				$registration->delete_related_permanently('Attendee');
+
+			//now remove relationships to tickets on this registration.
+			$registration->_remove_relations('Ticket');
+
+			//now delete permanently the checkins related to this registration.
+			$registration->delete_related_permanently('Checkin');
+
+			if ( $registration->ID() === $reg->ID() )
+				continue; //we don't want to delete permanently the existing registration just yet.
+
+			//remove relation to transaction for these registrations if NOT the existing registrations
+			$registration->remove_relations('Transaction');
+
+			//now delete this registration permanently
+			$registration->delete_permanently();
+		}
+
+		//now all related registrations on the transaction are handled.  So let's just handle this registration itself (the transaction and line items should be all that's left).
+		//delete the line items related to the transaction for this registration.
+		$TXN->delete_related_permanently('Line_Item');
+
+		//now we can delete this REG permanently (and the transaction of course)
+		$REG->delete_related_permanently('Transaction');
+		return $REG->delete_permanently();
+	}
+
+
+
 
 
 
