@@ -52,7 +52,7 @@ class EEM_Promotion_Object extends EEM_Base {
 		$this->_tables = array(
 			'Promotion_Object'=> new EE_Primary_Table('esp_promotion_object', 'POB_ID')
 		);
-		$relations = array('Event','Venue','Datetime','Ticket');
+		$relations = array('Event','Venue','Datetime','Ticket','Transaction');
 		$this->_fields = array(
 			'Promotion_Object'=>array(
 				'POB_ID'=>new EE_Primary_Key_Int_Field('POB_ID', __("Price-to-Object ID", "event_espresso")),
