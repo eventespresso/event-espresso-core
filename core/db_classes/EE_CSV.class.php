@@ -342,15 +342,6 @@
 				
 				//now we need to decide if we're going to add a new model object given the $model_object_data,
 				//or just update.
-				//to decide that, first we want to know if this import has added
-				//a related model object this one depends on (eg, if we're currently
-				//deciding whether or not to add a Datetime, we ask did we JUST add
-				//its event? Because if we just added a new event, and datetimes DEPEND 
-				//on events for their existence, then we know we want to add a new datetime.
-				//...because even if there IS a datetime with the same ID, it COULDN'T have
-				//been for this same event, (because the event was JUST added), and therefore
-				//it's only a COINCIDENCE that a datetime with teh same ID exists
-				
 				if($export_from_site_a_to_b){
 					//if it's a site-to-site export-and-import, see if this modelobject's id
 					//in the old data that we know of
@@ -358,7 +349,18 @@
 						$id_in_csv = $old_db_to_new_db_mapping[$model_name][$id_in_csv];
 						$do_insert = false;
 					}else{
-						$do_insert = true;
+						//check if this new DB has an exact copy of this model object (eg, a country or state that we don't want to duplicate)
+						$copy_in_db = $model->get_one_copy($model_object_data);
+						if( $copy_in_db ){
+							//so basically this already exists in the DB...
+							//remember the mapping
+							$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $copy_in_db->ID();
+							//and don't bother trying to update or insert, beceause 
+							//we JUST asserted that it's the exact same as what's in teh DB
+							continue;
+						}else{
+							$do_insert = true;
+						}
 					}
 					//loop through all its related models, and see if we can swap their OLD foreign keys
 					//(ie, idsin teh OLD db) for  new foreign key (ie ids in the NEW db)
@@ -407,7 +409,6 @@
 						$new_id = $model->insert($model_object_data);
 						if($new_id){
 							$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $new_id;
-							d($old_db_to_new_db_mapping);
 							$total_inserts++;
 							EE_Error::add_success( sprintf(__("Successfully added new %s (with id %s) with csv data %s", "event_espresso"),$model_name,$new_id, implode(",",$model_object_data)));
 						}else{

@@ -560,7 +560,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				foreach ( $this->_transaction->registrations() as $registration ) {
 					
 					$line_item_ID = $registration->reg_url_link();	
-//					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
 					$total_items += $registration->count();
@@ -586,22 +585,31 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
 						$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_deleted' => 0 ), 'order_by'=>array( 'QST_order' =>'ASC' )));
 						foreach ( $Questions as $Question ) {
-							/*@var $Question EE_Question */
-							if( !  $this->_reg_url_link ){
+							// if this question was for an attendee detail, then check for that answer
+							$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
+							if( $this->_reg_url_link || ! $answer_value ){
+								$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$Question->ID(), 'REG_ID'=>$registration->ID() )));
+							}
+							// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
+							if( ! $this->_reg_url_link || $answer_value || ! $answer instanceof EE_Answer ) {
+								// create an EE_Answer object for storing everything in
 								$answer = EE_Answer::new_instance ( array( 
 									'QST_ID'=> $Question->ID(),
 									'REG_ID'=> $registration->ID()
 								 ));
+							} 	
+							
+							if( $answer instanceof EE_Answer ){
+								$answer->set( 'ANS_value', $answer_value );
+								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer->value();
 								$answer->cache( 'Question', $Question );
 								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
 								$registration->cache( 'Answer', $answer, $answer_cache_id );
-							}else{
-								$answer_to_question = EEM_Answer::instance()->get_answer_value_to_question($registration,$Question->ID());
-								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer_to_question;
-							}							
+							}								
 							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
 						}						
 					}
+		
 
 					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
 					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
@@ -893,6 +901,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 						//d( $Questions );
 						
 						foreach ( $Questions as $Question ) {
+							
 							/*@var $Question EE_Question */
 							$answer = EE_Answer::new_instance ( array( 
 									'QST_ID'=> $Question->ID(),
@@ -1092,6 +1101,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									$att_nmbr++;
 									// grab related answer objects
 									$answers = $registration->answers();
+//									printr( $answers, '$answers[ $answer_cache_id ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 									//printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 									$attendee_data = array();
 									// do we need to copy basic info from primary attendee ?
@@ -1099,10 +1109,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
 									if ( isset( $valid_data[ $line_item_id ] )) {
 										// now loop through our array of valid post data && process attendee reg forms
-										foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
-											
-											//echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-											
+										foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {											
 											// check for critical inputs
 											if ( empty( $input_value )) {
 												
@@ -1127,7 +1134,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 												}
 											} elseif ( is_array( $input_value )) {
-												$input_value = implode( ',', $input_value );
+												$input_value = maybe_serialize( $input_value );
 											}
 										
 											// store a bit of data about the primary attendee
@@ -1157,6 +1164,9 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													$form_input = 'ATT_' . $form_input;
 											}
 						
+//											echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//											echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+											
 											// if this form input has a corresponding attendee property
 											if ( $attendee_property ) {
 												$attendee_data[ $form_input ] = $input_value;
