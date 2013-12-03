@@ -530,7 +530,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending', 'event_espresso'),
 					'activate_registration' => __('Activate Registrations', 'event_espresso'),
-					'cancel_registration' => __('Cancel Registrations', 'event_espresso')
+					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
+					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
 				),
 			'month' => array(
@@ -542,7 +543,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending', 'event_espresso'),
 					'activate_registration' => __('Activate Registrations', 'event_espresso'),
-					'cancel_registration' => __('Cancel Registrations', 'event_espresso')
+					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
+					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
 				),
 			'today' => array(
@@ -554,7 +556,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending', 'event_espresso'),
 					'activate_registration' => __('Activate Registrations', 'event_espresso'),
-					'cancel_registration' => __('Cancel Registrations', 'event_espresso')
+					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
+					'trash_registrations' => __('Trash Registrations', 'event_espresso')
+					)
+				),
+			'trash' => array(
+				'slug' => 'trash',
+				'label' => __('Trashed', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_registrations' => __('Restore Registrations', 'event_espresso'),
+					'delete_registrations' => __('Delete Registrations Permanently', 'event_espresso')
 					)
 				)
 			);
@@ -571,6 +583,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => !isset( $this->_req_data['event_id'] ) ? array() : array(
 					'toggle_checkin_status' => __('Toggle Attendees Check In', 'event_espresso'),
+					'trash_registrations' => __('Trash Registrations', 'event_espresso')
+					)
+				),
+			'trash' => array(
+				'slug' => 'trash',
+				'label' => __('Trashed', 'event_espresso'),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_registrations' => __('Restore Registrations', 'event_espresso'),
+					'delete_registrations' => __('Delete Registrations Permanently', 'event_espresso')
 					)
 				)
 			);
@@ -705,7 +727,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @param  boolean $all      whether to ignore all query params and just return ALL registrations (or count if count is set)
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
-	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE  ) {
+	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
@@ -716,6 +738,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$start_date = FALSE;
 		$end_date = FALSE;
 		$_where = array();
+		$trash = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'trash' ? TRUE : FALSE;
 
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -831,11 +854,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			return EEM_Registration::instance()->count(array($_where));
 		}else{
 			//make sure we remove default where conditions cause all registrations matching query are returned
-			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'default_where_conditions' => 'none' );
+			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ) );
 			if ( $per_page !== -1 ) {
 				$query_params['limit'] = $limit;
 			}
-			$registrations =  EEM_Registration::instance()->get_all($query_params);
+			$registrations =  $trash ? EEM_Registration::instance()->get_all_deleted($query_params) : EEM_Registration::instance()->get_all($query_params);
 			global $wpdb;
 	
 
@@ -1061,7 +1084,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		// still don't have one?
 		if ( ! $REG_ID ) {
 			// then check req data for an array of REG_IDs
-			$REG_IDs = isset( $this->_req_data['REG_ID'] ) ? (array) $this->_req_data['REG_ID'] : array();
+			$REG_IDs = isset( $this->_req_data['_REG_ID'] ) ? (array) $this->_req_data['_REG_ID'] : array();
 			$success = TRUE;
 			// loop thru REG_IDs and set each reg status separately
 			foreach ( $REG_IDs as $REG_ID ) {
@@ -1141,39 +1164,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 
-
-
-
-
-
-
-	/**
-	 * 		set reg status to approved
-	*		@access public
-	*		@param string	$REG_status
-	*		@return void
-	*/
-//	public function _approve_or_decline_reg_status( $REG_status = FALSE ) {
-//		$override = FALSE;
-//		$success = FALSE;
-//		$REG_ID = ( ! empty( $this->_req_data['_REG_ID'] )) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;			
-//		if ( $REG_ID && array_key_exists( $REG_status, self::$_reg_status )) {
-//			if ( $registration = EEM_Registration::instance()->get_registration_by_ID( $REG_ID )) {
-//				$registration->set_status( $REG_status );
-//				$success = $registration->update();		
-//			}
-//		}
-//
-//		if ( $success && $REG_status == 'RAP' ) {
-//			$override = TRUE;
-//			EE_Error::overwrite_success();
-//			$this->_process_resend_registration();
-//		}
-//		
-//		$what = 'Attendee Registration Status';
-//		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
-//		$this->_redirect_after_action( $success, $what, 'updated', $route, $override );
-//	}
 
 
 
@@ -1702,21 +1692,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$success = 1;
 
 		//Checkboxes
-		//Checkboxes
-		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+		if (!empty($this->_req_data['_REG_ID']) && is_array($this->_req_data['_REG_ID'])) {
 			// if array has more than one element than success message should be plural
-			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			$success = count( $this->_req_data['_REG_ID'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
-			while (list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
+			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
 				$updated = $trash ? $REG->delete_by_ID($REG_ID) : $REG->restore_by_ID($REG_ID);
 				if ( !$updated ) {
 					$success = 0;
-				}
+				}/**/
 			}
 			
 		} else {
 			// grab single id and delete
-			$REG_ID = absint($this->_req_data['REG_ID']);
+			$REG_ID = absint($this->_req_data['_REG_ID']);
 			$updated = $trash ? $REG->delete_by_ID($REG_ID) : $REG->restore_by_ID($REG_ID);
 			if ( ! $updated ) {
 				$success = 0;
@@ -1724,7 +1713,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			
 		}
 
-		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Contact', 'event_espresso' );
+		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Registration', 'event_espresso' );
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
 		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ) );
 	}
@@ -1748,12 +1737,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$REG_MDL = EEM_Registration::instance();
 
 		$success = 1;
+
 		//Checkboxes
-		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+		if (!empty($this->_req_data['_REG_ID']) && is_array($this->_req_data['_REG_ID'])) {
 			// if array has more than one element than success message should be plural
-			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			$success = count( $this->_req_data['_REG_ID'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
-			while (list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
+			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
 				$REG = $REG_MDL->get_one_by_ID($REG_ID);
 				$deleted = $this->_delete_registration($REG);
 				if ( !$deleted ) {
@@ -1763,7 +1753,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			
 		} else {
 			// grab single id and delete
-			$REG_ID = absint($this->_req_data['REG_ID']);
+			$REG_ID = $this->_req_data['_REG_ID'];
 			$REG = $REG_MDL->get_one_by_ID($REG_ID);
 			$deleted = $this->_delete_registration($REG);
 			if ( ! $deleted ) {
@@ -1774,7 +1764,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Registration', 'event_espresso' );
 		$action_desc = __( 'permanently deleted.', 'event_espresso' );
-		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'contact_list' ), TRUE );
+		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ), TRUE );
 	}
 
 
@@ -1810,8 +1800,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			//delete Attendee (if this registration is the only one on the attendee ).
 			$attendee = $registration->get_first_related('Attendee');
-			if ( $attendee->count_related('Registration') > 1 )
-				$registration->remove_relation_to($attendee, 'Attendee');
+			if ( $attendee instanceof EE_Attendee && $attendee->count_related('Registration') > 1 )
+				$registration->_remove_relation_to($attendee, 'Attendee');
 			else
 				$registration->delete_related_permanently('Attendee');
 
@@ -1821,11 +1811,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			//now delete permanently the checkins related to this registration.
 			$registration->delete_related_permanently('Checkin');
 
-			if ( $registration->ID() === $reg->ID() )
+			if ( $registration->ID() === $REG->ID() )
 				continue; //we don't want to delete permanently the existing registration just yet.
 
 			//remove relation to transaction for these registrations if NOT the existing registrations
-			$registration->remove_relations('Transaction');
+			$registration->_remove_relations('Transaction');
 
 			//now delete this registration permanently
 			$registration->delete_permanently();
@@ -1834,6 +1824,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//now all related registrations on the transaction are handled.  So let's just handle this registration itself (the transaction and line items should be all that's left).
 		//delete the line items related to the transaction for this registration.
 		$TXN->delete_related_permanently('Line_Item');
+
+		//we need to remove all the relationships on the transaction
+		$TXN->delete_related_permanently('Payment');
+		$TXN->_remove_relations('Promotion_Object');
+		$TXN->delete_related_permanently('Extra_Meta');
 
 		//now we can delete this REG permanently (and the transaction of course)
 		$REG->delete_related_permanently('Transaction');
