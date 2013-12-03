@@ -1808,6 +1808,37 @@ jQuery(document).ready(function($) {
 
 
 	/**
+	 * Live TKT status pip update
+	 */
+	$('.available-tickets-container').on('focusout', '.ee-datepicker', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var status = '';
+		var id = $(this).parents('.ticket-fieldset').attr('id').replace('fieldset-edit-ticketrow-', '');
+		var displayrow = $('#display-ticketrow-'+id);
+		var now = moment();
+		var tktStart = moment($(this).parent().parent().find('.edit-ticket-TKT_start_date').val(), 'YYYY-MM-DD h:mm a');
+		var tktEnd = moment($(this).parent().parent().find('.edit-ticket-TKT_end_date').val(), 'YYYY-MM-DD h:mm a');
+
+		//now we have moment objects to do some calcs and determine what status we're setting.
+		if ( now.isBefore(tktStart) ) {
+			status = 'tkt-status-1';
+		} else if ( now.isAfter(tktEnd) ) {
+			status = 'tkt-status--1';
+		} else if ( now.isAfter(tktStart) && now.isBefore(tktEnd) ) {
+			status = 'tkt-status-2';
+		} else {
+			status = 'tkt-status-0';
+		}
+
+		//we have status so let's set the pip
+		displayrow.find('.ee-tkt-status').removeClass().addClass('ee-tkt-status ' + status);
+	});
+
+
+
+	/**
 	 * Datepicker functionality
 	 */
 	
