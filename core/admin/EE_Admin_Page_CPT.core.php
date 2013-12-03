@@ -577,7 +577,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 			//$post_id
 			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
-			add_action('trashed_post', array( $this, 'dont_permanently_delete_ee_cpts', 10 ) );
+			add_action('trashed_post', array( $this, 'dont_permanently_delete_ee_cpts'), 10 );
 			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
 			add_action('after_delete_post', array( $this, 'delete_cpt_item'), 10 );
 		}
