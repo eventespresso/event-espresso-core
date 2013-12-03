@@ -46,12 +46,15 @@ jQuery(document).ready(function($) {
 		var tktEnd = moment($(this).parent().parent().find('.edit-ticket-TKT_end_date').val(), 'YYYY-MM-DD h:mm a');
 
 		//now we have moment objects to do some calcs and determine what status we're setting.
-		if ( now.isBefore(tktStart) )
+		if ( now.isBefore(tktStart) ) {
 			status = 'tkt-status-1';
-		if ( now.isAfter(tktEnd) )
+		} else if ( now.isAfter(tktEnd) ) {
 			status = 'tkt-status--1';
-		if ( now.isAfter(tktStart) && now.isBefore(tktEnd) )
+		} else if ( now.isAfter(tktStart) && now.isBefore(tktEnd) ) {
 			status = 'tkt-status-2';
+		} else {
+			status = 'tkt-status-0';
+		}
 
 		//now we have status so let's set the pip
 		$(this).parent().parent().find('.ee-tkt-status').removeClass().addClass('ee-tkt-status ' + status);
