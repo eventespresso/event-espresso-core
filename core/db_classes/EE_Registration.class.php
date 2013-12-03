@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
-class EE_Registration extends EE_Base_Class {
+require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
+class EE_Registration extends EE_Soft_Delete_Base_Class {
 	
     /**
     *	Registration ID
@@ -182,7 +182,18 @@ class EE_Registration extends EE_Base_Class {
 	*	@access	protected
     *	@var boolean	
     */
-	protected $_REG_att_is_going = 0;	
+	protected $_REG_att_is_going = 0;
+
+
+
+
+	/**
+	 * This is the soft delete field for Registrations
+	 *
+	 * @access protected
+	 * @var integer
+	 */
+	protected $_REG_deleted = 0;
 	
 	
 
