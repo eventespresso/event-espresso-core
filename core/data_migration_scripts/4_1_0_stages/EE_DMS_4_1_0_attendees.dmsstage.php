@@ -454,7 +454,8 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'REG_url_link'=>$old_attendee['registration_id'].'-'.$count,
 				'REG_count'=>$regs_on_this_event_and_txn,
 				'REG_group_size'=>$this->_sum_old_attendees_with_registration_id($old_attendee['registration_id']),
-				'REG_att_is_going'=>true
+				'REG_att_is_going'=>true,
+				'REG_deleted'=>false
 			);
 			$datatypes = array(
 				'%d',//EVT_ID
@@ -470,6 +471,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'%d',//REG_count
 				'%d',//REG_group_size
 				'%d',//REG_att_is_going
+				'%d',//REG_deleted
 			);
 			$success = $wpdb->insert($this->_new_reg_table,$cols_n_values,$datatypes);
 			if ( ! $success){
