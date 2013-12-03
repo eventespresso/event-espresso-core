@@ -233,14 +233,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$actions = array();
 
         //Build row actions
- 		$check_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-		$actions['check_in'] = '
-			<a href="'.$check_in_url.'" title="' . __( 'The Check In List allows you to easily toggle attendee check in status for this event', 'event_espresso' ) . '">' . __( 'View Check-ins', 'event_espresso' ) . '</a>';
-		
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );	
 		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
 
-		return sprintf('%1$s %2$s', $REG_date, $this->row_actions($actions) );		
+		return $REG_date;		
 
 	}
 
@@ -277,14 +273,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$datetime_strings = array();
 		$remove_defaults = array('default_where_conditions' => 'none');
 		$datetimes = $item->ticket($remove_defaults)->datetimes($remove_defaults);
-		$query_args = array(
-			'action'=>'event_registrations',
-			'event_id'=>$item->event_ID()
-			);
 		foreach($datetimes as $datetime){
-			$query_args['DTT_ID'] = $datetime->ID();
-			$checkin_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, REG_ADMIN_URL );
-			$datetime_strings[] = '<a href="' . $checkin_url . '">' . $datetime->start_date_and_time() . '</a>';
+			$datetime_strings[] = $datetime->start_date_and_time();
 		}
 		return implode("<br />",$datetime_strings);
     }
