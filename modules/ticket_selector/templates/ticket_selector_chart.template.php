@@ -12,11 +12,30 @@
 
 $row = 1;
 foreach ( $tickets as $TKT_ID => $ticket ) {
-	
-	
 	//d( $ticket );
-	
+	$max = 0;
+	if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
+		if ( $max_atndz > 1 ) { 
+			// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
+			$max = min( $ticket->remaining(), $max_atndz );
+			// but... we also want to restrict the number of tickets by the ticket max setting,
+			// however, the max still can't be higher than what was just set above
+			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
+			// and we also want to restrict the minimum number of tickets by the ticket min setting
+			$min = $ticket->min() > 0 ? $ticket->min() : 1;
+		}
+	} 				
+	if ( $max > 0 ) { 
+		// display submit button since we have tickets availalbe
+		add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
+	}
+	// check ticket status
 	switch ( $ticket->ticket_status() ) {
+		// sold_out
+		case -2 :
+			$ticket_status = '<span class="ticket-sales-sold-out">' . $ticket->ticket_status( TRUE ) . '</span>';
+			$status_class = 'ticket-sales-sold-out lt-grey-text';
+		break;
 		// expired
 		case -1 :
 			$ticket_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( TRUE ) . '</span>';
@@ -38,12 +57,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$status_class = 'ticket-on-sale';
 		break;
 	}
+
 ?>
 			<tr class="tckt-slctr-tbl-tr <?php echo $status_class; ?>">		
 				<td class="tckt-slctr-tbl-td-name">
-					<?php //d( $TKT_ID ); ?>
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
-					<?php if ( $ticket->ticket_status() > 0 ) { ?>
+					<?php if ( $ticket->ticket_status() > 0 || $max > 0 ) { ?>
 					<a 
 						id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
 						class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text" 
@@ -69,52 +88,37 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				?>
 				</td>	
 				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
-				<!--<td class="tckt-slctr-tbl-td-status"><?php echo $ticket_status; ?></td>-->
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
-				
-				if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
-					// display submit button since we have tickets availalbe
-					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
-					// if more than one attendee is allowed
-					if ( $max_atndz > 1 ) { 
-						$tickets_remaining = $ticket->remaining();
-						// if $tickets_remaining equals -1, then there are unlimited tickets for sale, so use $max_atndz, 
-						// otherwise offer however many tickets are left, as long as that is still less than $max_atndz
-						$max = $tickets_remaining < 0 ? $max_atndz : min( $tickets_remaining, $max_atndz );
-						// but... we also want to restrict the number of tickets by the ticket max setting,
-						// however, the max still can't be higher than what was just set above
-						$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
-						// and we also want to restrict the minimum number of tickets by the ticket min setting
-						$min = $ticket->min() > 0 ? $ticket->min() : 1;
+				// if more than one attendee is allowed
+				if ( $max > 1 ) { 
 
+			?>
+				<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
+					<option value="0">&nbsp;0&nbsp;</option>
+				<?php
+					// offer ticket quantities from the min to the max
+					for ( $i = $min; $i <= $max; $i++) { 
 				?>
-					<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
-						<option value="0">&nbsp;0&nbsp;</option>
-					<?php
-						// offer ticket quantities from the min to the max
-						for ( $i = $min; $i <= $max; $i++) { 
-					?>
-						<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;</option>
-					<?php } ?>
-					</select>
-				<?php 
-					} else { 
-				?>
-					<input 
-						type="radio" 
-						name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" 
-						id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
-						class="ticket-selector-tbl-qty-slct"
-						value="<?php echo $row . '-'; ?>1"
-						<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
-					/>
-			<?php
-					} 
+					<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;</option>
+				<?php } ?>
+				</select>
+			<?php 
+				} else if ( $max == 1 ) {
+			?>
+				<input 
+					type="radio" 
+					name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" 
+					id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
+					class="ticket-selector-tbl-qty-slct"
+					value="<?php echo $row . '-'; ?>1"
+					<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
+				/>
+		<?php
 					
 				} else {
 					// sold out or other status ?
-					if ( ! $ticket->is_remaining() && $ticket->ticket_status() >= 0 ) {
+					if ( $max < 1 ) {
 						echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
 					} else if ( $ticket->is_pending() ) {
 					?>	
