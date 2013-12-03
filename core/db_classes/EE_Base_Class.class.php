@@ -267,47 +267,49 @@ class EE_Base_Class{
 
 	
 	/**
-	 * Remembers the model object on the current model object. In certain circumstances,
-	 * we can use this cached model object instead of querying for another one entirely.
-	 * @param EE_Base_Class $object_to_cache that has a relation to this model object. (Eg, 
-	 * if this is a Transaction, that could be a payment or a registration)
-	 * @param string $relationName one of the keys in the _model_relations array on the model. Eg 'Registration'
-	 * assocaited with this model object
-	 * @return mixed index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one related thing, no array)
+	 * cache
+	 * stores the passed model object on the current model object. 
+	 * In certain circumstances, we can use this cached model object instead of querying for another one entirely.
+	 * 
+	 * @param string $relationName 	one of the keys in the _model_relations array on the model. Eg 'Registration' assocaited with this model object
+	 * @param EE_Base_Class $object_to_cache 	that has a relation to this model object. (Eg, if this is a Transaction, that could be a payment or a registration)
+	 * @param mixed int|string $cache_id 	a string or number that will be used as the key for any Belongs_To_Many items which will be stored in an array on this object
+	 * @return mixed 	index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one related thing, no array)
 	 */
-	public function cache($relationName,$object_to_cache, $cache_id = NULL ){
-		if ( empty( $object_to_cache ) ) return; //its entirely possible that there IS no related object yet in which case there is nothing to cache.
-		
-		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
-		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
-		if( ! $relationship_to_model){
-			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot cache it",'event_espresso'),$relationName,get_class($this)));
+	public function cache( $relationName = '', $object_to_cache = NULL, $cache_id = NULL ){
+		// its entirely possible that there IS no related object yet in which case there is nothing to cache.
+		if ( ! $object_to_cache instanceof EE_Base_Class ) {
+			return;
 		}
-		if($relationship_to_model instanceof EE_Belongs_To_Relation){
-			//if it's a belongs to relationship, there's only one of those model objects
-			//for each of these model objects (eg, if this is a registration, there's only 1 attendee for it)
-			//so, just set it to be cached
-			$this->$relationNameClassAttribute = $object_to_cache;
+		// get the class name (minus the prefix) for the related object
+		$relationNameClassAttribute = $this->_get_private_attribute_name( $relationName );
+		// also get "how" the object is related, or throw an error
+		if( ! $relationship_to_model = $this->get_model()->related_settings_for( $relationName )) {
+			throw new EE_Error( sprintf( __( 'There is no relationship to %s on a %s. Cannot cache it', 'event_espresso' ), $relationName, get_class( $this )));
+		}
+		// how many things are related ?
+		if( $relationship_to_model instanceof EE_Belongs_To_Relation ){
+			// if it's a "belongs to" relationship, then there's only one related model object  eg, if this is a registration, there's only 1 attendee for it
+			// so for these model objects just set it to be cached
+			$this->{$relationNameClassAttribute} = $object_to_cache;
 			$return = true;
-		}else{
-			//there can be many of those other objects for this one.
-			//just add it to the array of related objects of that type.
-			//eg: if this is an event, there are many registrations to that event
-			if( ! is_array($this->$relationNameClassAttribute)){
-				$this->$relationNameClassAttribute = array();
+		} else {
+			// otherwise, this is the "many" side of a one to many relationship, so we'll add the object to the array of related objects for that type.
+			// eg: if this is an event, there are many registrations to that event
+			if( ! is_array( $this->{$relationNameClassAttribute} )) {
+				$this->{$relationNameClassAttribute} = array();
 			}
-			
-			if($this->ID()){
-				$return = $object_to_cache->ID();
-				$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
-			}else{
-				if ( empty( $cache_id )) {
-					$return = count($this->$relationNameClassAttribute);
-					$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
-				} else {
-					$this->{$relationNameClassAttribute}[$cache_id]=$object_to_cache;
-					$return = $cache_id;
-				}
+			// first check for a cache_id which is normally empty
+			if ( ! empty( $cache_id )) {
+				// if the cache_id exists, then it means we are purposely trying to cache this with a known key that can then be used to retrieve the object later on
+				$this->{$relationNameClassAttribute}[ $cache_id ] = $object_to_cache;
+				$return = $cache_id;
+			} elseif ( $return = $object_to_cache->ID() ) {
+				// OR the cached object originally came from the db, so let's just use it's PK for an ID	
+				$this->{$relationNameClassAttribute}[$return] = $object_to_cache;
+			} else {
+				// OR it's a new object with no ID, so just throw it in the array with an autoincremented ID
+				$this->{$relationNameClassAttribute}[] = $object_to_cache;
 			}
 			
 		}
@@ -1027,20 +1029,24 @@ class EE_Base_Class{
 	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
+	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
 		//if this thing exists in the DB, save the relation to the DB
-		if($this->ID()){
-			
-			$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
+		if( $this->ID() ){			
+			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
-		}else{//this thing doesn't exist in the DB, just cache it
+		} else {
+			//this thing doesn't exist in the DB,  so just cache it
 			if( ! $otherObjectModelObjectOrID instanceof EE_Base_Class){
-				throw new EE_Error(sprintf(__("Before a model object is saved to the database, calls to _add_relation_to must be passed an actual object, not just an ID. You provideed %s as the model object to a %s", "event_espresso"),$otherObjectModelObjectOrID,get_class($this)));
-			}else{
+				throw new EE_Error( sprintf(
+					__( 'Before a model object is saved to the database, calls to _add_relation_to must be passed an actual object, not just an ID. You provideed %s as the model object to a %s', 'event_espresso' ),
+					$otherObjectModelObjectOrID,
+					get_class( $this )
+				));
+			} else {
 				$otherObject = $otherObjectModelObjectOrID;
 			}
-			$this->cache($relationName, $otherObjectModelObjectOrID, $cache_id );
+			$this->cache( $relationName, $otherObjectModelObjectOrID, $cache_id );
 		}
 		
 		
