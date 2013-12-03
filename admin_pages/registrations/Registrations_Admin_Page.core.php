@@ -139,6 +139,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'noheader' => TRUE 
 						
 					),
+
+				'trash_registrations' => array(
+					'func' => '_trash_or_restore_registrations',
+					'args' => array('trash' => TRUE),
+					'noheader' => TRUE
+					),
+
+				'restore_registrations' => array(
+					'func' => '_trash_or_restore_registrations',
+					'args' => array( 'trash' => FALSE ),
+					'noheader' => TRUE
+					),
+
 					
 				'update_attendee_registration_form'	=> array( 
 						'func' => '_update_attendee_registration_form', 
@@ -1669,6 +1682,49 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_box_billing_info.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
+
+
+
+
+	/**
+	 * trash or restore registrations
+	 * @param  boolean $trash whether to archive or restore
+	 * @access protected
+	 * @return void         
+	 */
+	protected function _trash_or_restore_registrations( $trash = TRUE ) {
+		$REG = EEM_Registration::instance();
+
+		$success = 1;
+
+		//Checkboxes
+		//Checkboxes
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+			// if array has more than one element than success message should be plural
+			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
+			// cycle thru checkboxes 
+			while (list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
+				$updated = $trash ? $REG->delete_by_ID($REG_ID) : $REG->restore_by_ID($REG_ID);
+				if ( !$updated ) {
+					$success = 0;
+				}
+			}
+			
+		} else {
+			// grab single id and delete
+			$REG_ID = absint($this->_req_data['REG_ID']);
+			$updated = $trash ? $REG->delete_by_ID($REG_ID) : $REG->restore_by_ID($REG_ID);
+			if ( ! $updated ) {
+				$success = 0;
+			}
+			
+		}
+
+		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Contact', 'event_espresso' );
+		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
+		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ) );
+	}
+
 
 
 
