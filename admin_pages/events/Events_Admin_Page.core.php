@@ -1161,6 +1161,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */	
 	private function _get_ticket_row( $ticket, $skeleton = FALSE, $row = 0 ) {
 		$template_args = array(
+			'tkt_status_class' => $ticket->ticket_status() !== EE_Ticket::archived ? ' tkt-status-' . $ticket->ticket_status() : '',
+			'tkt_archive_class' => $ticket->ticket_status() == EE_Ticket::archived ? ' tkt-archived' : '',
 			'ticketrow' => $skeleton ? 'TICKETNUM' : $row,
 			'TKT_ID' => $ticket->get('TKT_ID'),
 			'TKT_name' => $ticket->get('TKT_name'),
