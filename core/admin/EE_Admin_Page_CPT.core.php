@@ -611,8 +611,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function insert_update( $post_id, $post ) {
 
-		//make sure that if this is a revision action that we don't do any updates!
-		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] == 'restore' )
+		//make sure that if this is a revision OR trash action that we don't do any updates!
+		if ( isset( $this->_req_data['action'] ) && ( $this->_req_data['action'] == 'restore' || $this->_req_data['action'] = 'trash' ) )
 			return;
 
 		//check for autosave and update our req_data property accordingly.
