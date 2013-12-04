@@ -46,15 +46,15 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 	protected function _set_properties() {
 		$this->_wp_list_args = array(
-			'singular' => __('checkin', 'event_espresso'),
-			'plural' => __('checkin', 'event_espresso'),
+			'singular' => __('check-in', 'event_espresso'),
+			'plural' => __('check-ins', 'event_espresso'),
 			'ajax' => TRUE,
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 		$this->_columns = array(
 			'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-			'CHK_in' => __('Check In', 'event_espresso'),
+			'CHK_in' => __('Check-In', 'event_espresso'),
 			'CHK_timestamp' => __('Timestamp', 'event_espresso')
 			);
 
@@ -97,7 +97,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 	function column_CHK_timestamp( EE_Checkin $item ) {
 		$actions = array();
 		$delete_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'delete_checkin_row', 'DTT_ID' => $this->_req_data['DTT_ID'], 'REGID' => $this->_req_data['REGID'], 'CHK_ID' => $item->ID() ) );
-		$actions['delete_checkin'] = '<a href="' . $delete_url . '" title="' . __('Click here to delete this check in record', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
+		$actions['delete_checkin'] = '<a href="' . $delete_url . '" title="' . __('Click here to delete this check-in record', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
 
 		return sprintf( '%1$s %2$s', $item->get_datetime('CHK_timestamp'), $this->row_actions($actions) );
 	}

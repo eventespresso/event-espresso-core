@@ -143,7 +143,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 		if ( isset( $this->_req_data['event_id'] ) ) {
 			$content .= '<p>' . __('An introduction to the Event Check-in page. Since you are viewing the Check-in for a specific event, you are able to toggle the Check-in status for registrations for the displayed datetime.', 'event_espresso') . '</p>';
 		} else {
-			$content .= '<p>' . __('An introduction to the Event Check-in page. This shows the check in status of all registrations in the system. You cannot toggle the Check-in status via this view.  In order to toggle check in status select an event from the dropdown.', 'event_espresso') . '</p>';
+			$content .= '<p>' . __('An introduction to the Event Check-in page. This shows the check-in status of all registrations in the system. You cannot toggle the Check-in status via this view.  In order to toggle check-in status select an event from the dropdown.', 'event_espresso') . '</p>';
 		}
 		return $content;
 	}
@@ -157,11 +157,11 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _event_selector_stop() {
-		return '<p>' . __('Select an event from this dropdown and click the filter button to see the Check-in registration list for a specific event.  Then you will be able to toggle the check in status for a registration.', 'event_espresso') . '</p>';
+		return '<p>' . __('Select an event from this dropdown and click the filter button to see the Check-in registration list for a specific event.  Then you will be able to toggle the check-in status for a registration.', 'event_espresso') . '</p>';
 	}
 
 	protected function _dtt_selector_stop() {
-		return '<p>' . __('This dropdown not only shows you the datetime the displayed registrations are attached to (and which you can toggle the check in status for) but also allows you to switch to a different datetime to check in and out registrations on.', 'event_espresso') . '</p>';
+		return '<p>' . __('This dropdown not only shows you the datetime the displayed registrations are attached to (and which you can toggle the check-in status for) but also allows you to switch to a different datetime to check-in and out registrations on.', 'event_espresso') . '</p>';
 	}
 
 
