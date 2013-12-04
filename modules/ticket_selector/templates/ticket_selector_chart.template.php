@@ -87,6 +87,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 //echo '<br/><b>$ticket->available() : ' . $ticket->available() . '</b>';
 //echo '<br/><b>$ticket->remaining() : ' . $ticket->remaining() . '</b>';
 //echo '<br/><b> $ticket->ticket_status() : ' .  $tkt_status . '</b>';
+//echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
 				?>
 				</td>	
 				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
@@ -172,7 +173,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						
 						<?php if ( $datetimes = $ticket->get_many_related( 'Datetime' )) : ?>
 						<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
-						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. Remaing shows the number of this ticket type left:', 'event_espresso' ); ?></span><br/>
+						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. Remaing shows the number of this ticket type left:', 'event_espresso' ); ?></span>
 						<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
 							<table class="tckt-slctr-tkt-details-tbl">
 								<thead>
@@ -197,13 +198,13 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								</tbody>
 							</table>
 						</div>
+						<br/>
 						<?php endif; ?>
 						
-						<?php if ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE ) : ?>							
+						<?php if ( $ticket->uses() !== INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) : ?>							
 						<h5><?php _e( 'Event Date Ticket Uses', 'event_espresso' ); ?></h5>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# of Event Date Uses:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
-						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The number of datetimes (see table above) that this ticket can be used for. So for example, this ticket may have access to 4 different datetimes but can only be used once.', 'event_espresso' ); ?></span>
-						<br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# of Uses:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
+						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The number of separate event datetimes (see table above) that this ticket can be used to gain admittance to.<br/> <strong>Admission is always one person per ticket.</strong>', 'event_espresso' ); ?></span>
 						<?php endif; ?>
 						
 						
