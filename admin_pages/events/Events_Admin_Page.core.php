@@ -812,7 +812,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
 
 
-				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
+				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
 				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
