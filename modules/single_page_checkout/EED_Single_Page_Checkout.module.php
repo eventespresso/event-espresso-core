@@ -1192,7 +1192,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 										// add relation to new attendee
 										$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
 	//									echo '$copy_primary attendee <br/>';
-									} else {									
+									} else {							
 										// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
 										$existing_attendee = EE_Registry::instance()->LIB->EEM_Attendee->find_existing_attendee( array(
 											'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
@@ -1201,10 +1201,22 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 										));
 										// did we find an already existing record for this attendee ?
 										if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {
-											// TODO: add $attendee_data to $existing_attendee
+											// update attendee data in case it has changed since last time they registered for an event
+											// first remove fname, lname, and email from attendee data
+											unset( $attendee_data['ATT_fname'] );
+											unset( $attendee_data['ATT_lname'] );
+											unset( $attendee_data['ATT_email'] );
+											// now loop thru what' sleft and add to attendee CPT
+											foreach ( $attendee_data as $property_name => $property_value ) {
+												if ( property_exists( $existing_attendee,  '_' . $property_name )) {
+													$existing_attendee->set( $property_name, $property_value );
+												}												
+											}
+											// better save that now
+											$existing_attendee->save();
 											// add relation to existing attendee
 											$registration->_add_relation_to( $existing_attendee, 'Attendee' );
-	//										echo '$existing_attendee <br/>';
+
 										} else {
 											$attendee_data['ATT_author'] = $registration->event()->wp_user();
 											// add relation to new attendee
