@@ -222,21 +222,12 @@
    	text-align: center;
    }
 
-.ee-status.inactive {
-	background-color: #E44064;
-}
+.ee-status.sold-out { background-color: #E44064; }
+.ee-status.expired { background-color: #A39D9C; }
+.ee-status.inactive { background-color: #E44064; }
+.ee-status.upcoming { background-color: #00B1CA; }
+.ee-status.active { background-color: #70CC50; }
 
-.ee-status.active {
-	background-color: #62B660;	/*	#70CC50	#87c442	*/
-}
-
-.ee-status.upcoming {
-	background-color: #49afcd;  /*		#007BAE 	#e5ff00 	*/
-}
-
-.ee-status.expired {
-	background-color: #A39D9C;
-}
 
 .inside .ee-status {
 	float: right;
