@@ -12,13 +12,20 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 	function get_wpdb_data_type(){
 		return '%d';
 	}
-	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		if($value_inputted_for_field_on_model_object === INF){
+	function prepare_for_use_in_db($value_of_field_on_model_object) {
+		if($value_of_field_on_model_object === INF){
 			return EE_INF_IN_DB;
 		}else{
-			return intval($value_inputted_for_field_on_model_object);
+			return intval($value_of_field_on_model_object);
 		}
 	}
+//	function prepare_for_set($value_inputted_for_field_on_model_object) {
+//		if($value_inputted_for_field_on_model_object === INF){
+//			return EE_INF_IN_DB;
+//		}else{
+//			return intval($value_inputted_for_field_on_model_object);
+//		}
+//	}
 	function prepare_for_set_from_db($value_inputted_for_field_on_model_object) {
 		$intval = intval($value_inputted_for_field_on_model_object);
 		if($intval == EE_INF_IN_DB){
