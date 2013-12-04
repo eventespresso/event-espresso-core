@@ -416,7 +416,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function extra_misc_actions_publish_box() {
 		$extra_rows = array(
-			'vnu_capacity' => $this->_cpt_model_obj->capacity(),
+			'vnu_capacity' => $this->_cpt_model_obj->get_pretty('VNU_capacity', 'input'),
 			'vnu_url' => $this->_cpt_model_obj->venue_url(),
 			'vnu_phone' => $this->_cpt_model_obj->phone()
 			);
@@ -517,7 +517,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'CNT_ISO' => !empty( $this->_req_data['cnt_iso'] ) ? $this->_req_data['cnt_iso'] : NULL,
 			'VNU_zip' => !empty( $this->_req_data['vnu_zip'] ) ? $this->_req_data['vnu_zip'] : NULL,
 			'VNU_phone' => !empty( $this->_req_data['vnu_phone'] ) ? $this->_req_data['vnu_phone'] : NULL,
-			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? $this->_req_data['vnu_capacity'] : NULL,
+			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? $this->_req_data['vnu_capacity'] : INF,
 			'VNU_url' => !empty( $this->_req_data['vnu_url'] ) ? $this->_req_data['vnu_url'] : NULL,
 			'VNU_virtual_phone' => !empty( $this->_req_data['vnu_virtual_phone'] ) ? $this->_req_data['vnu_virtual_phone'] : NULL,
 			'VNU_virtual_url' => !empty( $this->_req_data['vnu_virtual_url'] ) ? $this->_req_data['vnu_virtual_url'] : NULL,
@@ -715,7 +715,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * todo ... move this to parent (pretty much the same logic as in Events Admin) (same with delete_venues and permanently delete venue)
 	 * @param  boolean $redirect_after [description]
 	 * @return [type]                  [description]
 	 */
@@ -771,8 +770,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			return FALSE;
 		}
 		
-		$this->_cpt_model_obj = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
-		$success = $this->_cpt_model_obj->count_related('Event') > 0 ? $this->_cpt_model_obj->delete() : $this->_cpt_model_obj->delete_permanently();
+
+		$venue = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
+		//first need to remove all term relationships
+		$venue->_remove_relations('Term_Taxonomy');
+		$success = $venue->delete_permanently();
 		// did it all go as planned ?
 		if ($success) {
 			$msg = sprintf(__('Venue ID # %d has been deleted.', 'event_espresso'), $VNU_ID);

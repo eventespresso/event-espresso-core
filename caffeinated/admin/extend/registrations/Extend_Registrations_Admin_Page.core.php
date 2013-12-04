@@ -74,7 +74,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			'event_registrations' => array(
 				'nav' => array(
-					'label' => __('Event Check In', 'event_espresso'),
+					'label' => __('Event Check-In', 'event_espresso'),
 					'order' => 10,
 					'persistent' => true
 					),
@@ -85,7 +85,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			'registration_checkins' => array(
 				'nav' => array(
-					'label' => __('Attendee Check In Records', 'event_espresso'),
+					'label' => __('Attendee Check-In Records', 'event_espresso'),
 					'order' => 15,
 					'persistent' => FALSE
 					),
@@ -131,7 +131,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	protected function _add_screen_options_registration_checkins() {
 		$page_title = $this->_admin_page_title;
-		$this->_admin_page_title = __('Check In Records', 'event_espresso');
+		$this->_admin_page_title = __('Check-In Records', 'event_espresso');
 		$this->_per_page_screen_option();
 		$this->_admin_page_title = $page_title;
 	}
@@ -147,7 +147,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => !isset( $this->_req_data['event_id'] ) ? array() : array(
-					'toggle_checkin_status' => __('Toggle Attendees Check In', 'event_espresso'),
+					'toggle_checkin_status' => __('Toggle Attendees Check-In', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
 				),
@@ -173,7 +173,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'slug' => 'all',
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
-				'bulk_action' => array( 'delete_checkin_rows' => __('Delete Check In Rows', 'event_espresso') )
+				'bulk_action' => array( 'delete_checkin_rows' => __('Delete Check-In Rows', 'event_espresso') )
 				),
 			);
 	}
@@ -485,12 +485,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		if ( !empty( $this->_req_data['CHK_ID'] ) ) {
 			if ( ! EEM_Checkin::instance()->delete_by_ID($this->_req_data['CHK_ID'] ) ) {
-				EE_Error::add_error(__('Something went wrong and this check in record was not deleted', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(__('Something went wrong and this check-in record was not deleted', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			} else {
-				EE_Error::add_success( __('Check In record successfully deleted', 'event_espresso') );
+				EE_Error::add_success( __('Check-In record successfully deleted', 'event_espresso') );
 			}
 		} else {
-			EE_Error::add_error(__('In order to delete a Check-in record, there must be a Check In ID available. There is not. It is not your fault, there is just a gremlin living in the code', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(__('In order to delete a Check-in record, there must be a Check-In ID available. There is not. It is not your fault, there is just a gremlin living in the code', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 	}
@@ -506,7 +506,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	*/
 	protected function _event_registrations_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $this->_req_data['event_id']), 'button add-new-h2');
+		$this->_admin_page_title .= isset( $this->_req_data['event_id'] ) ? $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $this->_req_data['event_id']), 'button add-new-h2') : '';
 
 		$legend_items = array(
 			'star-icon' => array(

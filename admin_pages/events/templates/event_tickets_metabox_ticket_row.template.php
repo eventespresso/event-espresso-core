@@ -1,4 +1,5 @@
-<tr valign="top" id="edit-ticketrow-<?php echo $ticketrow; ?>" class="edit-ticket-row">
+<tr valign="top" id="edit-ticketrow-<?php echo $ticketrow; ?>" class="edit-ticket-row<?php echo $tkt_archive_class; ?>">
+	<td class="ee-tkt-status<?php echo $tkt_status_class; ?>">
 	<td>
 		<input type="hidden" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_ID]" class="edit-ticket-TKT_ID" value="<?php echo $TKT_ID; ?>">
 		<input type="hidden" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_is_default]" class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>">
@@ -45,6 +46,8 @@
 /**
  * template args
  *
+ * $tkt_status_class
+ * $tkt_archive_class
  * $ticketrow
  * $TKT_ID
  * $TKT_is_default

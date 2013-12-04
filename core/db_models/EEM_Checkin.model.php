@@ -66,8 +66,8 @@ class EEM_Checkin extends EEM_Base {
 	 * 		@return void
 	 */
 	protected function __construct( $timezone ) {
-		$this->singlular_item = __('Check In','event_espresso');
-		$this->plural_item = __('Check Ins','event_espresso');		
+		$this->singlular_item = __('Check-In','event_espresso');
+		$this->plural_item = __('Check-Ins','event_espresso');		
 
 		$this->_tables = array(
 			'Checkin'=>new EE_Primary_Table('esp_checkin','CHK_ID')

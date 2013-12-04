@@ -126,7 +126,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	 * Gets capacity
 	 */
 	function capacity() {
-		return $this->get('VNU_capacity');
+		return $this->get_pretty('VNU_capacity', 'symbol');
 	}
 
 	/**

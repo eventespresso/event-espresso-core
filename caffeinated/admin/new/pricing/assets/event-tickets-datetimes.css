@@ -232,6 +232,30 @@
     padding-bottom: .3em;
 }
 
+.ee-tkt-status {
+    width: 5px;
+}
+
+.ticket-display-row-TKT_name {
+    margin-left: 5px;
+}
+
+.tkt-status-0 {
+    background-color: #e6e6e6;
+}
+
+.tkt-status--1 {
+   background-color: #A39D9C;
+}
+
+.tkt-status-1 {
+    background-color: #49afcd;
+}
+
+.tkt-status-2 {
+    background-color: #62B660;
+}
+
 
 .ticket-fieldset {
     background-color: #F8F8F8;
@@ -310,7 +334,7 @@
     width: 28%;
 }
 
-basic-ticket-info tbody td:nth-child(3), .basic-ticket-info tbody td:nth-child(4), .basic-ticket-info tbody td:nth-child(5), .basic-ticket-info tbody td:nth-child(6) {
+.basic-ticket-info tbody td:nth-child(3), .basic-ticket-info tbody td:nth-child(4), .basic-ticket-info tbody td:nth-child(5), .basic-ticket-info tbody td:nth-child(6) {
     width: 11%
 }
 

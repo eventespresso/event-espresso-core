@@ -825,7 +825,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * This method simply returns the check in status for this registration and the given datetime.
+	 * This method simply returns the check-in status for this registration and the given datetime.
 	 * @param  int         $DTT_ID  The ID of the datetime we're checking against (if empty we'll get the primary datetime for this registration (via event) and use it's ID);
 	 * @param 	EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
 	 * @return int            Integer representing Check-in status.
@@ -921,7 +921,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		$attendee = $this->get_first_related('Attendee');
 
 		if ( $error ) {
-			return sprintf( __("%s's check in status was not changed.", "event_espresso"), $attendee->full_name() );
+			return sprintf( __("%s's check-in status was not changed.", "event_espresso"), $attendee->full_name() );
 		}
 
 		//what is the status message going to be?
