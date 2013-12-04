@@ -1206,6 +1206,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											$registration->_add_relation_to( $existing_attendee, 'Attendee' );
 	//										echo '$existing_attendee <br/>';
 										} else {
+											$attendee_data['ATT_author'] = $registration->event()->wp_user();
 											// add relation to new attendee
 											$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );
 	//										echo 'new attendee <br/>';
