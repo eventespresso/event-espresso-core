@@ -110,6 +110,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
 		add_filter('FHEE_list_table_views_espresso_events_default', array( $this, 'additional_views'), 10 );
+		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//event settings
 		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
@@ -217,6 +218,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$views['today']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');
 		$views['month']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');*/
 		return $views;
+	}
+
+
+
+
+	public function extra_list_table_actions( $actionlinks, $event ) {
+		$reports_query_args = array(
+				'action' => 'reports',
+				'EVT_ID' => $event->ID()
+			);
+		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
+		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
+		return $actionlinks;
 	}
 
 
