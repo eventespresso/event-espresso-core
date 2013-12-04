@@ -68,7 +68,12 @@
 
 /******************* GLOBAL STYLES ****************** */
 
-
+.ee-status {
+ 	display: inline-block;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
 
 .espresso-events-list-wrap-dv {
 	padding: 0 0 2em;/* font-size:12px;*/
@@ -139,8 +144,7 @@
 .grid-event-list-dv .espresso-events-list-dv {
 	/*display: none;*/
 }
-.grid-event-list-dv /
-*.espresso-events-list-wrap-dv*/ .espresso-event-list-event {
+.grid-event-list-dv .espresso-event-list-event {
 	display: inline-block;
 	float: left;
 	position: relative;
@@ -153,6 +157,7 @@
 	-ms-transition: top 1s ease, left 1s ease;
 }
 .grid-event-list-dv  .events-list-event-wrap-dv {
+	position: relative;
 	width: auto;
 	height: auto;
 	padding: 0 0 10px;

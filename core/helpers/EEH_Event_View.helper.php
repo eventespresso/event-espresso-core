@@ -16,6 +16,63 @@
 
 
 	/**
+	 * espresso_event_reg_button
+	 * returns the "Register Now" button if event is active, 
+	 * an inactive button like status banner if the event is not active
+ 	 * or a "Read More" button if so desired
+	 * 
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_event_reg_button' )) {
+		function espresso_event_reg_button( $btn_text_if_active = NULL, $btn_text_if_inactive = FALSE, $EVT_ID = FALSE ) {
+			$event_status = EEH_Event_View::event_active_status( $EVT_ID );	
+			switch ( $event_status ) {
+				case EE_Datetime::sold_out :
+					$btn_text = __('Sold Out', 'event_espresso');
+					$class = 'ee-pink';
+					break;
+				case EE_Datetime::expired :
+					$btn_text = __('Event is Over', 'event_espresso');
+					$class = 'ee-grey';
+					break;
+				case EE_Datetime::inactive :
+					$btn_text = __('Event Not Active', 'event_espresso');
+					$class = 'ee-grey';
+					break;
+				case EE_Datetime::upcoming :
+				case EE_Datetime::active : 
+				default :
+					$btn_text =! empty( $btn_text_if_active ) ? $btn_text_if_active : __( 'Register Now', 'event_espresso' );
+					$class = 'ee-green';
+			}
+			if ( $event_status < 1 && ! empty( $btn_text_if_inactive )) {
+				$btn_text = $btn_text_if_inactive;
+				$class = 'ee-grey';
+			} 
+			?>
+			<a class="ee-button ee-register-button <?php echo $class . ' ' . espresso_event_list_grid_size_btn(); ?>" href="<?php espresso_event_link_url(); ?>">
+				<?php echo $btn_text; ?>								
+			</a>
+			<?php
+		}		
+	}
+
+
+
+	/**
+	 * espresso_event_status
+	 * returns a banner showing the event status if it is sold out, expired, or inactive
+	* 
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_event_status' )) {
+		function espresso_event_status( $EVT_ID = FALSE ) {
+			return EEH_Event_View::event_status( $EVT_ID );
+		}		
+	}
+
+
+	/**
 	 * espresso_event_categories
 	 * returns the terms associated with an event
 	* 
@@ -30,7 +87,7 @@
 
 	/**
 	 * espresso_event_date
-	* returns the primary date for an event
+	* returns the primary date object for an event
 	* 
 	 * @return object
 	 */
@@ -56,7 +113,7 @@
 
 	/**
 	 * espresso_list_of_event_dates
-	* returns the primary date for an event
+	* returns a unordered list of dates for an event
 	* 
 	 * @return string
 	 */
@@ -331,6 +388,33 @@ class EEH_Event_View extends EEH_Base {
 			}
 		}
 		return EEH_Event_View::$_event;
+	}
+
+
+
+
+	/**
+	 * 	event_status
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function event_status( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		return $event instanceof EE_Event ? $event->pretty_active_status( FALSE, FALSE ) : '';
+	}
+
+
+
+	/**
+	 * 	event_active_status
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function event_active_status( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		return $event instanceof EE_Event ? $event->get_active_status() : EE_Datetime::inactive;
 	}
 
 

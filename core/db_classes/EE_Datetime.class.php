@@ -25,6 +25,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	
 	/**
+	 * constant used by get_active_status, indicates datetime has no more available spaces
+	 */
+	const sold_out = -2;
+	/**
 	 * constant used by get_active_status, indicates datetime has expired (event is over)
 	 */
 	const expired = -1;
@@ -724,9 +728,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This returns the active status for whether an event is active, upcoming, or expired
-	 * @return int       return value will be one of three ints: -1 = expired, 0 = upcoming, 1 = active.
+	 * @return int       return value will be one of four ints: -2 = sold_out, -1 = expired, 0 = upcoming, 1 = active.
 	 */
 	public function get_active_status() {
+		if ( $this->total_tickets_available_at_this_datetime() < 1 ) return EE_Datetime::sold_out;
 		if ( $this->is_expired() ) return EE_Datetime::expired;
 		if ( $this->is_upcoming() ) return EE_Datetime::upcoming;
 		if ( $this->is_active() ) return EE_Datetime::active;

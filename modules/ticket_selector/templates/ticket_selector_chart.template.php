@@ -15,6 +15,7 @@ $ticket_count = count( $tickets );
 foreach ( $tickets as $TKT_ID => $ticket ) {
 //	d( $ticket );
 	$max = 0;
+	$min = 0;
 	if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 		if ( $max_atndz > 1 ) { 
 			// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
@@ -26,12 +27,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$min = $ticket->min() > 0 ? $ticket->min() : 1;
 		}
 	} 				
-	if ( $max > 0 ) { 
-		// display submit button since we have tickets availalbe
-		add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
-	}
+
+	$tkt_status = $ticket->ticket_status();
 	// check ticket status
-	switch ( $ticket->ticket_status() ) {
+	switch ( $tkt_status ) {
 		// sold_out
 		case -2 :
 			$ticket_status = '<span class="ticket-sales-sold-out">' . $ticket->ticket_status( TRUE ) . '</span>';
@@ -63,7 +62,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			<tr class="tckt-slctr-tbl-tr <?php echo $status_class; ?>">		
 				<td class="tckt-slctr-tbl-td-name">
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
-					<?php if ( $ticket->ticket_status() > 0 || $max > 0 ) { ?>
+					<?php if ( $tkt_status > 0 || $max > 0 ) { ?>
 					<a 
 						id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
 						class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text" 
@@ -87,6 +86,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 //echo '<br/><b>$ticket->is_on_sale() : ' . $ticket->is_on_sale() . '</b>';
 //echo '<br/><b>$ticket->available() : ' . $ticket->available() . '</b>';
 //echo '<br/><b>$ticket->remaining() : ' . $ticket->remaining() . '</b>';
+//echo '<br/><b> $ticket->ticket_status() : ' .  $tkt_status . '</b>';
 				?>
 				</td>	
 				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
@@ -94,6 +94,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			<?php 
 				// if only one attendee is allowed to register at a time
 				if ( $max_atndz  == 1 ) {
+					// display submit button since we have tickets availalbe
+					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 			?>
 				<input 
 					type="radio" 
@@ -103,9 +105,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					value="<?php echo $row . '-'; ?>1"
 					<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
 				/>
-		<?php
-					
+		<?php			
 				} elseif ( $max > 0 ) { 
+					// display submit button since we have tickets availalbe
+					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 
 			?>
 				<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
@@ -118,19 +121,19 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<?php } ?>
 				</select>
 			<?php 
-				} else  {
+				} else {
 					// sold out or other status ?
-					if ( $ticket->ticket_status() == -2 && $max < 1 ) {
+					if ( $tkt_status == -2 || $ticket->remaining() == 0 ) {
 						echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
-					} else if ( $ticket->is_pending() ) {
+					} else if ( $tkt_status == -1 || $tkt_status == 0 ) {
+						echo $ticket_status;
+					} else if ( $tkt_status == 1 ) {
 					?>	
 					<p class="ticket-pending-pg">
 						<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
 						<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
 					</p>
 					<?php
-					} else {
-						echo $ticket_status;
 					} 
 					// depending on group reg we need to change the format for qty
 					if (  $max_atndz > 1 ) {
@@ -161,7 +164,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<?php if ( isset( $min ) && isset( $max )) : ?>
 						<h5><?php _e( 'Purchasable Quantities', 'event_espresso' ); ?></h5>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Min Qty:', 'event_espresso' ); ?></span><?php echo $min > 0 ? $min : 0; ?><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Max Qty:', 'event_espresso' ); ?></span><?php echo $max > 0 ? $max : __( 'no limit', 'event_espresso' ); ?><br/>
+						<?php $max = min( $max, $max_atndz );?>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Max Qty:', 'event_espresso' ); ?></span><?php echo $max === INF ? __( 'no limit', 'event_espresso' ) : max( $max, 1 ); ?><br/>
 						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The number of tickets that can be purchased per transaction.', 'event_espresso' ); ?></span>
 						<br/>
 						<?php endif; ?>
@@ -185,10 +189,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								<tr>
 									<td><?php echo $datetime->start_date('l F jS, Y'); ?></td>
 									<td><?php echo $datetime->time_range(); ?></td>
-									<td class="cntr"><?php echo $datetime->sold(); ?></td>									
-									<?php $tkts_left = isset( $max ) && $max < $datetime->spaces_remaining() ? $max : $datetime->spaces_remaining(); ?>
-									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $tkts_left; ?>
-									<td class="cntr"><?php echo $tkts_left >= 0 ? $tkts_left : __( 'unlimited ', 'event_espresso' ); ?></td>
+									<td class="cntr"><?php echo $datetime->sold(); ?></td>		
+									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
+									<td class="cntr"><?php echo $tkts_left === INF ? __( 'unlimited ', 'event_espresso' ) : $tkts_left; ?></td>
 								</tr>
 								<?php endforeach; ?>
 								</tbody>

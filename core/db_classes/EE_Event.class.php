@@ -612,57 +612,73 @@ class EE_Event extends EE_CPT_Base{
 		foreach ( $dtts as $dtt ) {
 			$status_array[] = $dtt->get_active_status();
 		}
-
 		//now we can conditionally determine status
 		if ( $this->_status == 'publish' ) {
-			if ( in_array(EE_Datetime::active, $status_array ) )
+			if ( in_array( EE_Datetime::sold_out, $status_array )) {
+				return EE_Datetime::sold_out;
+			} else if ( in_array( EE_Datetime::active, $status_array )) {
 				return EE_Datetime::active;
-			if ( in_array(EE_Datetime::upcoming, $status_array ) )
+			} else if ( in_array( EE_Datetime::upcoming, $status_array )) {
 				return EE_Datetime::upcoming;
-			return EE_Datetime::expired;
-		} else {
-			if ( in_array( EE_Datetime::expired, $status_array) )
+			} else {
 				return EE_Datetime::expired;
+			}			
+		} else {
+			if ( in_array( EE_Datetime::expired, $status_array )) {
+				return EE_Datetime::expired;
+			}				
 		}
-
 		return EE_Datetime::inactive;
 	}
 
 
 
-
-	public function pretty_active_status( $echo = TRUE ) {
+	/**
+	 * 	pretty_active_status
+	 *
+	 *  @access public
+	 *  @param boolean 	$echo  whether to return (FALSE), or echo out the result (TRUE)
+	 *  @param boolean	$show_all  whether to only return/show all stati or ONLY those with values less than 1 ie: only return negative/bad/warning stati like "sold out""
+	 *  return string
+	 */
+	public function pretty_active_status( $echo = TRUE, $show_all = TRUE ) {
 		$active_status = $this->get_active_status();
-		$status = FALSE; 
+		$status = ''; 
+		if ( $active_status < 1 || $show_all ) {
+			switch ( $active_status ) {
+				case EE_Datetime::sold_out :
+					$status = __('Sold Out', 'event_espresso');
+					$class = 'sold-out';
+					break;
+				case EE_Datetime::expired :
+					$status = __('Expired', 'event_espresso');
+					$class = 'expired';
+					break;
+				case EE_Datetime::inactive :
+					$status = __('Inactive', 'event_espresso');
+					$class = 'inactive';
+					break;
 
-		switch ( $active_status ) {
-			case EE_Datetime::expired :
-				$status = __('Expired', 'event_espresso');
-				$class = 'expired';
-				break;
-			case EE_Datetime::inactive :
-				$status = __('Inactive', 'event_espresso');
-				$class = 'inactive';
-				break;
+				case EE_Datetime::upcoming :
+					$status = __('Upcoming', 'event_espresso');
+					$class = 'upcoming';
+					break;
 
-			case EE_Datetime::upcoming :
-				$status = __('Upcoming', 'event_espresso');
-				$class = 'upcoming';
-				break;
+				case EE_Datetime::active : 
+					$status = __('Active', 'event_espresso');
+					$class = 'active';
+					break;
 
-			case EE_Datetime::active : 
-				$status = __('Active', 'event_espresso');
-				$class = 'active';
-				break;
+				default :
+					$status = __('Inactive', 'event_espresso');
+					$class = 'inactive';
+					break;
 
-			default :
-				$status = __('Inactive', 'event_espresso');
-				$class = 'inactive';
-				break;
+			}
 
+			$status = '<span class="ee-status ' . $class . '">' . $status . '</span>';
 		}
-
-		$status = '<span class="ee-status ' . $class . '">' . $status . '</span>';
+		
 		if ( $echo ) {
 			echo $status;
 		} else {
