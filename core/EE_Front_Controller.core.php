@@ -254,18 +254,18 @@ final class EE_Front_Controller {
 //		EE_Error::add_attention('This is an attention message. You should prolly read this... but... meh... do whatcha want!');
 //		EE_Error::add_error('Ermehgerd!!! MOAR ERRORS!!! Seff n Garf aw gonna be maaaaad at you!!!');
 
-//		$regs = EEM_Datetime::instance()->get_all( array(
-//			array( 'DTT_reg_limit' => -1 ),
-//			'limit'=>1,
-//			'order_by'=>array( 
-//				'DTT_EVT_start'=>'ASC',		
-//				'DTT_is_primary'=>'DESC'
-//			)
-//		));
-//		$reg = reset( $regs );
-//		d( $reg );		
-//		$reg->save();
-//		d( $reg );
+		$regs = EEM_Datetime::instance()->get_all( array(
+			array( 'DTT_reg_limit' => INF ),
+			'limit'=>1,
+			'order_by'=>array( 
+				'DTT_EVT_start'=>'ASC',		
+				'DTT_is_primary'=>'DESC'
+			)
+		));
+		$reg = reset( $regs );
+		d( $reg );		
+		$reg->save();
+		d( $reg );
 		
 //		$d = EE_Datetime::new_instance(array('DTT_reg_limit'=>INF));
 //		d($d);
