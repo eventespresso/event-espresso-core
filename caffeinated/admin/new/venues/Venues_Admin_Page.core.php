@@ -715,7 +715,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * todo ... move this to parent (pretty much the same logic as in Events Admin) (same with delete_venues and permanently delete venue)
 	 * @param  boolean $redirect_after [description]
 	 * @return [type]                  [description]
 	 */
@@ -771,8 +770,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			return FALSE;
 		}
 		
-		$this->_cpt_model_obj = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
-		$success = $this->_cpt_model_obj->count_related('Event') > 0 ? $this->_cpt_model_obj->delete() : $this->_cpt_model_obj->delete_permanently();
+
+		$venue = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
+		//first need to remove all term relationships
+		$venue->_remove_relations('Term_Taxonomy');
+		$success = $venue->delete_permanently();
 		// did it all go as planned ?
 		if ($success) {
 			$msg = sprintf(__('Venue ID # %d has been deleted.', 'event_espresso'), $VNU_ID);
