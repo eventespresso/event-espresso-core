@@ -34,6 +34,8 @@ $ELID = espresso_get_event_list_ID();
 			
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 				
+				<?php echo espresso_event_status(); ?>
+
 				<div class="event-datetimes">
 					<?php $datetime = espresso_event_date_obj( $post->ID );?>
 					<div class="event-date-calendar-page-dv">
@@ -111,7 +113,7 @@ $ELID = espresso_get_event_list_ID();
 
 						<footer class="event-meta">
 							
-							<a class="ee-button ee-register-button big ee-green" href="<?php espresso_event_link_url(); ?>" title=""><?php _e( 'Register Now', 'event_espresso' ); ?></a>
+							<?php espresso_event_reg_button( __( 'Register Now', 'event_espresso' ), __( 'Read More', 'event_espresso' ), $post->ID ); ?>
 							<p class="event-categories-pg"><?php _e( 'category:', 'event_espresso' ) . espresso_event_categories(); ?></p>
 							
 							<?php espresso_edit_event_link(); ?>
