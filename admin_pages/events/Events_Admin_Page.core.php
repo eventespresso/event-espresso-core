@@ -1706,16 +1706,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _update_default_event_settings() {
 
-		$data = array();
-		$data['default_reg_status'] = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
-		$data['pending_counts_reg_limit'] = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
-		$data['use_attendee_pre_approval'] = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
-
-		$data = apply_filters('FHEE_default_event_settings_save', $data);
+		$old_pending_counts_reg_limit =  EE_Config::instance()->registration->pending_counts_reg_limit;
+		EE_Config::instance()->registration->default_STS_ID = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
+		EE_Config::instance()->registration->pending_counts_reg_limit = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
+		EE_Config::instance()->registration->use_attendee_pre_approval = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
+		//if we're changing the policy for when to count registrations towards teh
+		//TKT_sold and DTT_sold attributes on tickets and datetimes, then we need to update them
+		if(EE_Config::instance()->registration->pending_counts_reg_limit != $old_pending_counts_reg_limit){
+			$this->_update_sold_counts();
+			EE_Error::add_success(__("Updated ticket sales based on new policy for counting pending registrations towards registration limits and ticket sales", "event_espresso"));
+		}
 
 		$what = 'Default Event Settings';
-		$success = $this->_update_espresso_configuration($what, $data, __FILE__, __FUNCTION__, __LINE__);
+		$success = $this->_update_espresso_configuration($what, EE_Config::instance(), __FILE__, __FUNCTION__, __LINE__);		
 		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
+	}
+	
+	/**
+	 * Updates the TKT_sold and DTT_sold counts on all tickets and datetimes. 
+	 * Use this when their counts should be synced.
+	 */
+	private function _update_sold_counts(){
+		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
+		EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all());
 	}
 
 	
