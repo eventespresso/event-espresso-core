@@ -13,7 +13,7 @@
 	color: #333;
 	cursor: default;
 }
-.admin-color-fresh .ee_menu_group {
+.version-3-8.admin-color-fresh .ee_menu_group {
 	padding-left: 8px;
 	margin: 3px -12px -3px -12px;
 	border-left: 3px solid #2EA2CC;
@@ -21,7 +21,7 @@
 	color: #fff;
 	font-weight: normal;
 }
-.admin-color-blue .ee_menu_group {
+.version-3-8.admin-color-blue .ee_menu_group {
 	padding-left: 8px;
 	margin: 3px -12px -3px -12px;
 	border-left: 3px solid #74B6CE;
@@ -29,7 +29,7 @@
 	color: #fff;
 	font-weight: normal;
 }
-.admin-color-light .ee_menu_group {
+.version-3-8.admin-color-light .ee_menu_group {
 	padding-left: 8px;
 	margin: 3px -12px -3px -12px;
 	border-left: 3px solid #D64E07;
@@ -37,7 +37,7 @@
 	color: #D64E07;
 	font-weight: normal;
 }
-.admin-color-midnight .ee_menu_group {
+.version-3-8.admin-color-midnight .ee_menu_group {
 	padding-left: 8px;
 	margin: 3px -12px -3px -12px;
 	background-color: #363B3F;
