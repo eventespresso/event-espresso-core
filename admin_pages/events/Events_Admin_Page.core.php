@@ -1771,21 +1771,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _import_page(){
 		
-		$title = __('Import Events', 'event_espresso');
-		$intro = __('If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
+		$title = __('Import', 'event_espresso');
+		$intro = __('If you have a previously exported Event Espresso 4 information in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
 		$form_url = EVENTS_ADMIN_URL;
 		$action = 'import_events';
 		$type = 'csv';
 		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
 		
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
-
-		$title_cat = __( 'Import Event Categories', 'event_espresso' );
-		$intro_cat = __( 'If you have a previously exported list of Event Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
-		$form_url_cat = EVENTS_ADMIN_URL;
-		$action_cat = 'import_categories';
-		$type_cat = 'csv';
-		$content .= EE_Import::instance()->upload_form( $title_cat, $intro_cat, $form_url_cat, $action_cat, $type_cat );
 
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
