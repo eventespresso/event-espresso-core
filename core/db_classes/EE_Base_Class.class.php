@@ -292,24 +292,30 @@ class EE_Base_Class{
 			// if it's a "belongs to" relationship, then there's only one related model object  eg, if this is a registration, there's only 1 attendee for it
 			// so for these model objects just set it to be cached
 			$this->{$relationNameClassAttribute} = $object_to_cache;
-			$return = true;
+			$return = TRUE;
 		} else {
 			// otherwise, this is the "many" side of a one to many relationship, so we'll add the object to the array of related objects for that type.
-			// eg: if this is an event, there are many registrations to that event
+			// eg: if this is an event, there are many registrations for that event, so we cache the registrations in an array
 			if( ! is_array( $this->{$relationNameClassAttribute} )) {
-				$this->{$relationNameClassAttribute} = array();
+				// if for some reason, the cached item is a model object, then stick that in the array, otherwise start with an empty array
+				$this->{$relationNameClassAttribute} = $this->{$relationNameClassAttribute} instanceof EE_Base_Class ? array( $this->{$relationNameClassAttribute} ) : array();
 			}
 			// first check for a cache_id which is normally empty
 			if ( ! empty( $cache_id )) {
 				// if the cache_id exists, then it means we are purposely trying to cache this with a known key that can then be used to retrieve the object later on
 				$this->{$relationNameClassAttribute}[ $cache_id ] = $object_to_cache;
 				$return = $cache_id;
-			} elseif ( $return = $object_to_cache->ID() ) {
+			} elseif ( $object_to_cache->ID() ) {
 				// OR the cached object originally came from the db, so let's just use it's PK for an ID	
-				$this->{$relationNameClassAttribute}[$return] = $object_to_cache;
+				$this->{$relationNameClassAttribute}[ $object_to_cache->ID() ] = $object_to_cache;
+				$return = $object_to_cache->ID();
 			} else {
 				// OR it's a new object with no ID, so just throw it in the array with an autoincremented ID
 				$this->{$relationNameClassAttribute}[] = $object_to_cache;
+				  // move the internal pointer to the end of the array
+				end( $this->{$relationNameClassAttribute} );
+				// and grab the key so that we can return it
+				$return = key( $this->{$relationNameClassAttribute} );
 			}
 			
 		}
