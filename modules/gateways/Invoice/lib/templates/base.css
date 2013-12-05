@@ -116,3 +116,8 @@ tr.tax-total td {border-top:1px solid #000;}
 .subitem-row {
 	color: #666;
 }
+
+img.icon{
+	margin-left:1em;
+	margin-right:1em;
+}
