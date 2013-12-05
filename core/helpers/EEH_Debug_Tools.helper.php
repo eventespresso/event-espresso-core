@@ -142,6 +142,20 @@ class EEH_Debug_Tools{
 
 
 	
+	/**
+	 * This basically mimics the WordPress _doing_it_wrong() function except adds our own messaging etc.  Very useful for providing helpful messages to developers when the method of doing something has been deprecated, or we want to make sure they use something the right way.
+	 *
+	 * @access public
+	 * @param  string $function The function that was called
+	 * @param  string $message  A message explaining what has been done incorrectly
+	 * @param  string $version  The version of Event Espresso where the error was added
+	 * @return trigger_error()
+	 */
+	public function doing_it_wrong( $function, $message, $version ) {
+		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
+		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s.', 'event_espresso' ), $version );
+		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ) );
+	}
 	
 	
 	
