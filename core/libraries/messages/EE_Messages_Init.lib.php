@@ -63,7 +63,7 @@ class EE_Messages_Init extends EE_Base {
 			return;
 		//todo:  more subsystems could be added in this array OR even better this array can be defined somewhere else!
 		$dir_ref = array(
-			'messages/' => 'core',
+			'messages/' => 'lib',
 			'messages/message_type/' => 'class',
 			'messages/messenger/' => 'class',
 			'messages/defaults/' => array('class', 'core'),
