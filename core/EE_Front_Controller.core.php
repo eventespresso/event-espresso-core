@@ -552,6 +552,13 @@ final class EE_Front_Controller {
 			}
 		}
 
+
+		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
+		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
+			EE_Registry::instance()->load_helper('Qtip');
+			EEH_Qtip::register_and_enqueue();
+		}
+
 	}
 
 
