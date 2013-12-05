@@ -5,10 +5,13 @@
 	// clear firefox and safari cache
 	$(window).unload( function() {});
 	
-	$( ".datepicker" ).datepicker({
-		changeMonth: true,
-		changeYear: true
-	});
+	// if datepicker is active
+	if ( $.fn.datepicker ) {
+		$( '.datepicker' ).datepicker({
+			changeMonth: true,
+			changeYear: true
+		});
+	}
 	// to internationalize the datepicker, copy the following to somewhere safe, then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key. 
 	// Multiple languages can be added this way
 //	$.datepicker.regional['fr_FR'] = {
