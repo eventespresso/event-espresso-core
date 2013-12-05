@@ -1155,7 +1155,6 @@ class EE_Base_Class{
 	 */
 	public function get_first_related($relationName,$query_params = array()){
 		if($this->ID()){//this exists in the DB, get from the cache OR the DB
-			
 		
 			//if they've provided some query parameters, don't bother trying to cache teh result
 			//also make sure we're not caching the result of get_first_related
