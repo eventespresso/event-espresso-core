@@ -319,6 +319,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
 			}
 
+
+
 			//possible this is a new ticket because of edited prices when ticket was sold, so let's make sure we attache the datetimes from the archived ticket
 			foreach ( $dtts_on_existing as $adddtt ) {
 				$TKT = $adddtt->_add_relation_to( $TKT, 'Ticket' );
@@ -351,9 +353,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//now we just have to add the ticket to all the datetimes its supposed to be with and removing the ticket from datetimes it got removed from.
 			
-			
 			//first let's do the add_relation_to()
 			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && ( isset( $dtts_added[0] ) && $dtts_added[0] == '' ) ) ? array() : $dtts_added;
+
 			foreach ( $dtts_added as $dttrow ) {
 				$saved_dtts[$dttrow]->_add_relation_to( $TKT, 'Ticket' );
 				$saved_dtts[$dttrow]->save();
@@ -658,9 +660,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_ticket_row( $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default = FALSE, $all_tickets = array() ) {
 		$prices = !empty($ticket) && !$default ? $ticket->get_many_related('Price', array('default_where_conditions' => 'none') ) : array();
 
-
-		// check if we're dealing with a default dtt (in which we want to link the first ticket(s) with it BUT not indicate it as a starting ticket (otherwise there won't be any new relationships created))
-		$default_dtt = isset( $all_dtts[0] ) && $all_dtts[0] instanceof EE_Datetime && $all_dtts[0]->ID() === 0 ? TRUE : FALSE;
+		// check if we're dealing with a default ticket in which case we don't want any starting_ticket_datetime_row values set (otherwise there won't be any new relationships created for tickets based off of the default ticket).  This will future proof in case there is ever any behaviour change between what the primary_key defaults to.
+		$default_dtt = $default || ($ticket instanceof EE_Ticket && $ticket->get('TKT_is_default') ) ? TRUE : FALSE;
 
 		$tkt_dtts = $ticket instanceof EE_Ticket && isset( $ticket_datetimes[$ticket->ID()] ) ? $ticket_datetimes[$ticket->ID()] : array();
 
