@@ -184,6 +184,16 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		return $this->_get_all_wpdb_results( $query_params, OBJECT, $columns_to_select );
 	}
 
+	/**
+	 * Updates the DTT_sold attribute on each datetime (based on the registrations
+	 * for the tickets for each datetime)
+	 * @param EE_Datetime[] $datetimes
+	 */
+	public function update_sold($datetimes){
+		foreach($datetimes as $datetime){
+			$datetime->update_sold();
+		}
+	}
 
 }
 // End of file EEM_Datetime.model.php
