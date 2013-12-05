@@ -786,7 +786,25 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		return $this->get_first_related('Event');
 	}
 
-
+	/**
+	 * Updates the DTT_sold attribute (and saves) based on the number of registrations
+	 * for this datetime (via the tickets). Takes the current EE_Config setting for 'pending_counts_reg_limit' 
+	 * into account
+	 * @return int
+	 */
+	public function update_sold(){
+		$stati_to_include = array(EEM_Registration::status_id_approved);
+		if(EE_Config::instance()->registration->pending_counts_reg_limit){
+			$stati_to_include[] = EEM_Registration::status_id_pending;
+		}
+		$count_regs_for_this_datetime = EEM_Registration::instance()->count(array(
+			array(
+				'STS_ID'=>array('IN',$stati_to_include),
+				'Ticket.Datetime.DTT_ID'=>$this->ID())));
+		$this->set('DTT_sold',$count_regs_for_this_datetime);
+		$this->save();
+		return $count_regs_for_this_datetime;
+	}
 
 
 }
