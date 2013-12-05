@@ -92,11 +92,28 @@ class EEH_Qtip_Loader extends EEH_Base {
 		wp_register_script('qtip-map', $qtip_map, array(), '3', TRUE );
 		wp_register_script('qtip-images-loaded', $qtip_images_loaded, array(), '2.2.0', TRUE );
 		wp_register_script('qtip', $qtip_js, array('jquery', 'qtip-map', 'qtip-images-loaded'), '2.2.0', TRUE );
+		wp_register_script('ee-qtip-helper', EE_HELPERS_ASSETS . 'ee-qtip-helper.js', array('qtip'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		wp_register_style('qtip-css', $qtipcss, array(), '2.2' );
 
-		wp_enqueue_script('qtip');
-		wp_enqueue_style('qtip-css');
+		//k now let's see if there are any registered qtips.  If there are, then we need to setup the localized script for ee-qtip-helper.js (and enqueue ee-qtip-helper.js of course!)
+		if ( !empty( $this->_qtips ) ) {
+			wp_enqueue_script('ee-qtip-helper');
+
+			foreach ( $this->_qtips as $qtip ) {
+				$qtips[] = array(
+					'id' => $qtip->get_slug(),
+					'options' => $qtip->get_options()
+					);
+			}
+
+			wp_localize_script('ee-qtip-helper', 'EE_QTIP_HELPER', array( 'qtips' => $qtips ) );
+
+		} else {
+			//qtips has been requested without any registration (so assuming its just directly used in the admin).
+			wp_enqueue_script('qtip');
+			wp_enqueue_style('qtip-css');
+		}
 	}
 
 
@@ -200,22 +217,28 @@ class EEH_Qtip_Loader extends EEH_Base {
 		if ( empty( $this->_qtips ) )
 			return; //no qtips!
 
-		foreach ( $this->_qtips as $qtip ) {
+		$content = array();
 
+		foreach ( $this->_qtips as $qtip ) {
+			$content[] $this->_generate_content_container($qtip);
 		}
+
+		echo implode('<br />', $content);
 	}
 
 
 	/**
-	 * Generates the content containers from all the EE_Qtip_Config objects in the $_qtips property.  Called either by the WP admin_footer or wp_footer hooks (depending on whether in admin or not).
-	 * @return string
+	 * Generates a content container from a given EE_Qtip_Config object.
+	 *
+	 * @param  EE_Qtip_Config $qtip
+	 * @return string  (html content container for qtip);
 	 */
-	private function _generate_content_container() {}
+	private function _generate_content_container($qtip) {
+		$id = $qtip->get_slug();
+		$content = $qtip->get_content();
 
-
-
-
-
+		return '<div class="ee-qtip-helper-content hidden" id="' . $id . '">' . $content . '</div>';
+	}
 
 
 } //end EEH_Qtip_Loader class
