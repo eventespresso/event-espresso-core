@@ -192,64 +192,25 @@ class EEM_Attendee extends EEM_CPT_Base {
 	*		Search for an existing Attendee record in the DB
 	* 		@access		public
 	*/	
-	public function find_existing_attendee( $where_cols_n_values = FALSE ) {
-
-		// no search params means attendee object already exists
-		if ( ! $where_cols_n_values ) {
-			// search by combo of first and last names plus the email address
-			$where_cols_n_values = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );  	 
-		}
+	public function find_existing_attendee( $where_cols_n_values = NULL ) {
+		// search by combo of first and last names plus the email address
+		$attendee_data_keys = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );
+		// no search params means attendee object already exists. 
+		$where_cols_n_values = is_array( $where_cols_n_values ) && ! empty( $where_cols_n_values ) ? $where_cols_n_values : $attendee_data_keys;  	 
 		$valid_data = TRUE;
 		// check for required values
 		$valid_data = isset( $where_cols_n_values['ATT_fname'] ) && ! empty( $where_cols_n_values['ATT_fname'] ) ? $valid_data : FALSE;
 		$valid_data = isset( $where_cols_n_values['ATT_lname'] ) && ! empty( $where_cols_n_values['ATT_lname'] ) ? $valid_data : FALSE;
 		$valid_data = isset( $where_cols_n_values['ATT_email'] ) && ! empty( $where_cols_n_values['ATT_email'] ) ? $valid_data : FALSE;
 		
-		if ( $valid_data && $attendee = $this->get_attendee( $where_cols_n_values )) {
-			return $attendee;
-		} else {
-			return FALSE;
-		}
+		if ( $valid_data ) {
+			if ( $attendee = $this->get_attendee( $where_cols_n_values )) {
+				return $attendee;
+			}
+		} 
+		return FALSE;
 
 	}
-
-	/**
-	*		delete  a single attendee from db via their ID, PERMANENTLY,
-	 * provided there are no registrations using this attendee
-	* 
-	* 		@access		public
-	* 		@param		$ATT_ID		
-	*		@return 		mixed		array on success, FALSE on fail
-	*/	
-//	public function delete_by_ID( $ATT_ID = FALSE ) {
-//
-//		if ( ! $ATT_ID ) {
-//			return FALSE;
-//		}
-//		
-//		$query_params[0] = array( 'ATT_ID' => $ATT_ID, 'STS_ID' => array('IN',array( 'RAP', 'RNA', 'RPN' )));
-//		$query_params['order_by'] = array('REG_date' => 'ASC');
-//		
-//		require_once(EE_MODELS . 'EEM_Registration.model.php');
-//		$REG_MDL = EEM_Registration::instance();
-//		//check if the attendee is associated with any registrations
-////		if ( $registrations = $REG_MDL->get_all_registrations_for_attendee( $ATT_ID, $status_array )) {
-//		if ( $registrations = $REG_MDL->get_all($query_params)) {
-//			$msg = __( 'The Attendee could not be deleted because there are existing Registrations associated with this Attendee.', 'event_espresso' );
-//			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-//			return FALSE;
-//		} 
-				
-		// retreive a particular transaction
-//		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
-//		if ( $attendee = $this->delete ( $where_cols_n_values )) {
-//		if ( $this->delete_by_ID ( $ATT_ID )) {
-//			return TRUE;
-//		} else {
-//			return FALSE;
-//		}
-//
-//	}
 
 
 

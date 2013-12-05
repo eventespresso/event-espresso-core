@@ -465,17 +465,17 @@ input.ee-register-button {
 
 .tiny-text {
 	font-size: .5em;
-	line-height: .8em;
+	line-height: 1.1em;
 	letter-spacing: .75px;
 }
 .smaller-text {
 	font-size: .7em;
-	line-height: 1em;
+	line-height: 1.2em;
 	letter-spacing: .5px;
 }
 .small-text {
 	font-size: .85em;
-	line-height: 1.2em;
+	line-height: 1.4em;
 	letter-spacing: .25px;
 }
 .big-text {

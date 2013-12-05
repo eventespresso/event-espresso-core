@@ -871,4 +871,20 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 			}
 		return $this->name()." @ ".implode(", ",$times)." for ".$this->price();
 	}
+	/**
+	 * Gets all the registrations for this ticket
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return EE_Registration[]
+	 */
+	public function registrations($query_params = array()){
+		return $this->get_many_related('Registration', $query_params);
+	}
+	/**
+	 * Counts the registrations for this ticket
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return int
+	 */
+	public function count_registrations($query_params = array()){
+		return $this->count_related('Registration', $query_params);
+	}
 } //end EE_Ticket class

@@ -156,6 +156,26 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		}
 		return $sum;
 	}
+	
+	/**
+	 * Updates the TKT_sold quantity on all the tickets matching $query_params
+	 * @param array $query_params
+	 * @return void
+	 */
+	public function update_tickets_sold($query_params = array()){
+		$tickets = $this->get_all($query_params);
+		$count_pending_regs = EE_Config::instance()->registration->pending_counts_reg_limit;
+		foreach($tickets as $ticket){
+			/* @var  $ticket EE_Ticket */
+			$stati_to_include = array(EEM_Registration::status_id_approved);
+			if($count_pending_regs){
+				$stati_to_include[] = EEM_Registration::status_id_pending;
+			}
+			$count_regs_for_this_ticket = $ticket->count_registrations(array(array('STS_ID'=>array('IN',$stati_to_include))));
+			$ticket->set_sold($count_regs_for_this_ticket);
+			$ticket->save();
+		}
+	}
 
 } 
 //end EEM_Ticket model
