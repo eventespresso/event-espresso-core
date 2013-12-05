@@ -81,7 +81,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			
 		<p class="ee-attention">
 			<b><?php _e( 'Attention', 'event_espresso' );?></b><br/>
-			<?php echo sprintf( __( 'Accepts .%s file types only. Maximum file name length (minus extension) is 15 characters. Anything over that will be truncated to 15 characters.', 'event_espresso' ), $type ) ;?>	
+			<?php echo sprintf( __( 'Accepts .%s file types only.', 'event_espresso' ), $type ) ;?>	
 			<?php echo __( 'Please note that you may have to experiment with the import/export settings in your particular spreadsheet program before you find ones that work the best for you.', 'event_espresso' );?>	
 		</p>
 

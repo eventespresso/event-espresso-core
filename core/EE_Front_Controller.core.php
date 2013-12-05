@@ -81,6 +81,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+//		EEM_Ticket::instance()->update_tickets_sold();
 //		$t = EE_Ticket::new_instance(array('TKT_name'=>'prog1',));
 //		$p = EEM_Price::instance()->get_one();
 //		$d = EEM_Datetime::instance()->get_one();
@@ -567,6 +568,13 @@ final class EE_Front_Controller {
 				);
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
+		}
+
+
+		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
+		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
+			EE_Registry::instance()->load_helper('Qtip');
+			EEH_Qtip::register_and_enqueue();
 		}
 
 	}
