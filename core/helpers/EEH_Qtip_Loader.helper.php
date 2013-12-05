@@ -101,10 +101,16 @@ class EEH_Qtip_Loader extends EEH_Base {
 			wp_enqueue_script('ee-qtip-helper');
 
 			foreach ( $this->_qtips as $qtip ) {
-				$qtips[] = array(
-					'id' => $qtip->get_slug(),
-					'options' => $qtip->get_options()
-					);
+				$qts = $qtip->get_tips();
+				foreach ( $qts as $qt ) {
+					if ( ! $qt instanceof EE_Qtip )
+						continue;
+					$qtips[] = array(
+						'content_id' => $qt->content_id,
+						'options' => $qt->options,
+						'target' => $qtip->target,
+						);
+				}
 			}
 
 			wp_localize_script('ee-qtip-helper', 'EE_QTIP_HELPER', array( 'qtips' => $qtips ) );
@@ -220,7 +226,7 @@ class EEH_Qtip_Loader extends EEH_Base {
 		$content = array();
 
 		foreach ( $this->_qtips as $qtip ) {
-			$content[] $this->_generate_content_container($qtip);
+			$content[] = $this->_generate_content_container($qtip);
 		}
 
 		echo implode('<br />', $content);
@@ -234,10 +240,15 @@ class EEH_Qtip_Loader extends EEH_Base {
 	 * @return string  (html content container for qtip);
 	 */
 	private function _generate_content_container($qtip) {
-		$id = $qtip->get_slug();
-		$content = $qtip->get_content();
+		$qts = $qtip->get_tips();
+		$content = array();
+		foreach ( $qts as $qt ) {
+			if ( ! $qt instanceof EE_Qtip )
+				continue;
+			$content[] = '<div class="ee-qtip-helper-content hidden" id="' . $qt->content_id . '">' . $qt->content . '</div>';
+		}
 
-		return '<div class="ee-qtip-helper-content hidden" id="' . $id . '">' . $content . '</div>';
+		return implode('<br />', $content);
 	}
 
 
