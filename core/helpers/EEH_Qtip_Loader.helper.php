@@ -165,7 +165,7 @@ class EEH_Qtip_Loader extends EEH_Base {
 		EE_Registry::load_lib( 'Qtip_Config', array(), TRUE );
 
 
-		if !empty( $paths ) {
+		if ( !empty( $paths ) ) {
 			$paths = (array) $paths;
 			foreach ( $paths as $path ) {
 				$path = $path . $config . '.lib.php';
