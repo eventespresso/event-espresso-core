@@ -256,10 +256,12 @@ final class EE_Registry {
 	public function load_lib ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		$paths = array(
 			EE_LIBRARIES,
-			EE_LIBRARIES . 'messages' . DS
+			EE_LIBRARIES . 'messages' . DS,
+			EE_LIBRARIES . 'shortcodes' . DS,
+			EE_LIBRARIES . 'qtips' . DS
 		);
 		// retreive instantiated class
-		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments, FALSE, TRUE, $load_only );
+		return $this->_load( $paths, 'EE_' , $class_name, array('core', 'lib'), $arguments, FALSE, TRUE, $load_only );
 	}
 
 
@@ -318,12 +320,12 @@ final class EE_Registry {
 	 *	@param string $file_path - file path including file name
 	 *	@param string $class_prefix - EE  or EEM or... ???
 	 *	@param string $class_name - $class name
-	 *	@param string $type - file type - core? class? helper? model?
+	 *	@param string $type - file type - core? class? helper? model? (note this can be an array).
 	 *	@param boolean $arguments - an array of arguments to pass to the class upon instantiation 
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@return instantiated class object
 	 */	
-	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
+	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = array('class'), $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
 		// make sure $class_prefix is uppercase
 		$class_prefix = strtoupper( trim( $class_prefix ));
 		// add class prefix ONCE!!!
@@ -349,18 +351,36 @@ final class EE_Registry {
 		$path = FALSE;
 		// make sure $file_paths is an array
 		$file_paths = is_array( $file_paths ) ? $file_paths : array( $file_paths );
+		
+		//make sure type is an array
+		$types = !empty( $type ) ? (array) $type : $type;
+
+
 		// cycle thru paths 
 		foreach ( $file_paths as $file_path ) {
 			// convert all separators to proper DS, if no filepth, then use EE_CLASSES
 			$file_path = $file_path ? str_replace( array( '/', '\\' ), DS, $file_path ) : EE_CLASSES;
-			// prep file type
-			$type = ! empty( $type ) ? trim( $type, '.' ) . '.' : '';
-			// build full file path
-			$file_path = rtrim( $file_path, DS ) . DS . $class_name . '.' . $type . 'php';
-			//does the file exist and can be read ?
-			if ( is_readable( $file_path )) {
-				$path = $file_path;
-				break;
+
+			if ( !empty( $types ) ) {
+
+				foreach ( $types as $type ) {
+					// prep file type
+					$type = ! empty( $type ) ? trim( $type, '.' ) . '.' : '';
+					// build full file path
+					$file_path = rtrim( $file_path, DS ) . DS . $class_name . '.' . $type . 'php';
+					//does the file exist and can be read ?
+					if ( is_readable( $file_path )) {
+						$path = $file_path;
+						break 2;
+					}
+				}
+			} else {
+				$file_path = rtrim( $file_path, DS ) . DS . $class_name . '.php';
+				//does the file exist and can be read ?
+				if ( is_readable( $file_path )) {
+					$path = $file_path;
+					break;
+				}
 			}
 		}
 		
