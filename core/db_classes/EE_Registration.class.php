@@ -684,12 +684,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * Gets the ticket this registration is for
 	 * @return EE_Ticket
 	 */
-	public function ticket($query_params = array()){
-		//we're going to assume that when this method is called we always want to receive the attached ticket EVEN if that ticket is archived.  This can be overridden via the incoming $query_params argument
-		$remove_defaults = array('default_where_conditions' => 'none');
-		$query_params = array_merge($remove_defaults, $query_params);
-
-		return $this->get_first_related('Ticket', $query_params);
+	public function ticket(){
+		return $this->get_first_related('Ticket');
 	}
 	
 

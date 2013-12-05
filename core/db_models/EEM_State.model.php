@@ -62,7 +62,7 @@ class EEM_State extends EEM_Base {
 		$this->_fields = array(
 			'State'=>array(
 				'STA_ID'=> new EE_Primary_Key_String_Field('STA_ID', __('State ID','event_espresso')),
-				'CNT_ISO'=> new EE_Foreign_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso'), false, 1, 'Country'),
+				'CNT_ISO'=> new EE_Foreign_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso'), false, NULL, 'Country'),
 				'STA_abbrev' => new EE_Plain_Text_Field('STA_abbrev', __('State Abbreviation','event_espresso'), false, ''),
 				'STA_name' => new EE_Plain_Text_Field('STA_name', __('State Name','event_espresso'), false, ''),
 				'STA_active'=> new EE_Boolean_Field('STA_active', __("State Active Flag", "event_espresso"), false, false)

@@ -483,8 +483,8 @@ final class EE_Admin {
 
 		//qtip is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
-			EE_Registry::instance()->load_helper('Qtip');
-			EEH_Qtip::register_and_enqueue();
+			EE_Registry::instance()->load_helper('Qtip_Loader');
+			EEH_Qtip_Loader::register_and_enqueue();
 		}
 	}
 
