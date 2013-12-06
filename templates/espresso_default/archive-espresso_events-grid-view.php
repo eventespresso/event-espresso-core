@@ -156,3 +156,5 @@ $ELID = espresso_get_event_list_ID();
 
 </div>
 
+<?php
+do_action( 'AHEE_after_event_list' );

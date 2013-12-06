@@ -138,6 +138,8 @@ class EED_Events_Archive  extends EED_Module {
 		remove_all_filters( 'excerpt_length' );
 		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );
+		add_action( 'AHEE_before_event_list', 'get_header' );
+		add_action( 'AHEE_after_event_list', 'get_footer' );
 	}
 
 

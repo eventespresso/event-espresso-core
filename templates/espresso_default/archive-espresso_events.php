@@ -13,7 +13,7 @@
  * @ link			http://www.eventespresso.com
  * @ version		4+
  */
-get_header();
+//get_header();
 include( espresso_event_list_template_part() );
 /*
 *** IMPORTANT ***
