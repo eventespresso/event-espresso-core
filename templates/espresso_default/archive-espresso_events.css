@@ -68,13 +68,6 @@
 
 /******************* GLOBAL STYLES ****************** */
 
-.ee-status {
- 	display: inline-block;
-	position: absolute;
-	top: 0px;
-	right: 0px;
-}
-
 .espresso-events-list-wrap-dv {
 	padding: 0 0 2em;/* font-size:12px;*/
 }
@@ -165,6 +158,13 @@
 	box-shadow: 0 1px 3px rgba(34,25,25,0.4);
 	-moz-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
 	-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+}
+
+.grid-event-list-dv .ee-status {
+ 	display: inline-block;
+	position: absolute;
+	top: 0px;
+	right: 0px;
 }
 
 .grid-event-list-dv  .event-datetimes h4 {
@@ -363,23 +363,47 @@
 
 
 .text-event-list-dv .espresso-event-list-event {
-	padding: 2em 1em 3em;
-	margin: 1em;
-	border: none;
-	border-bottom: 1px dotted #EEEEE6;
+	width: 100%;
+	clear: both;
 }
 
-.text-event-list-dv .espresso-event-wrapper-dv {
+.text-event-list-dv .espresso-event-wrapper-dv .event-header {
+	display: block;
+	margin: 3em 0 2em;
+	background: #eee;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 0;
+	box-shadow: none;
 }
 .text-event-list-dv  .espresso-event-wrapper-dv  .event-title {
-	margin-top: 0; /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.8em; margin: 0 0 .5em; line-height: 1em;*/
+	display: inline-block;
+	margin: 0;
+	font-size: 1em;
+	line-height: 1;
 }
-.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a {
-	/*text-decoration: none; */
+.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a,
+.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a:visited {
+	display: inline-block;
+	padding: 0.5em 1.5em 0.6em;
+	text-decoration: none;
+	color: #444 !important;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+	font-size: 1.5em;
+	line-height: 1;
+	font-weight: bold;	
 }
 
+.text-event-list-dv .ee-status {
+ 	display: inline-block;
+	margin: 0.55em;
+	float: right;
+}
+
+
 .text-event-list-dv .event-datetimes h4 {
-	/*margin:0 0 1em; font-size:1.2em; color: #999; */
+	clear:none;
+	display: inline-block;
+	margin-top: 0;
 }
 
 .text-event-list-dv .ee-event-img-dv {
@@ -455,6 +479,9 @@
 .dates-event-list-dv .espresso-event-wrapper-dv {
 	margin-left: 180px;
 }
+.dates-event-list-dv .ee-status {
+	margin: 0 1em 0 0;
+ }
 .dates-event-list-dv  .espresso-event-wrapper-dv  .event-title {
 	margin-top: 0; /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; margin: 0 0 .25em; line-height: 1em;*/
 }

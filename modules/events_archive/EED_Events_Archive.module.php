@@ -125,8 +125,6 @@ class EED_Events_Archive  extends EED_Module {
 		}
 		// grid, text or dates ?
 		EED_Events_Archive::set_type();
-		// grab POST data
-		$this->get_post_data();		
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		$this->_filter_query_parts();		
 		// load other required components
@@ -138,6 +136,8 @@ class EED_Events_Archive  extends EED_Module {
 		remove_all_filters( 'excerpt_length' );
 		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );
+		add_action( 'AHEE_before_event_list', 'get_header' );
+		add_action( 'AHEE_after_event_list', 'get_footer' );
 	}
 
 
@@ -184,11 +184,10 @@ class EED_Events_Archive  extends EED_Module {
 		do_action( 'AHEE__EED_Events_Archive__before_set_type' );
 		EED_Events_Archive::$_types = apply_filters( 'EED_Events_Archive__set_type__types', EED_Events_Archive::$_types );
 		$view = isset( EE_Registry::instance()->CFG->EED_Events_Archive['default_type'] ) ? EE_Registry::instance()->CFG->EED_Events_Archive['default_type'] : 'grid';
-		$view = EE_Registry::instance()->REQ->is_set( 'elf_type' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_type' )) : $view;
+		$elf_type = EE_Registry::instance()->REQ->is_set( 'elf_type' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_type' )) : '';
+		$view = ! empty( $elf_type ) ? $elf_type : $view;
 		$view = apply_filters( 'EED_Events_Archive__set_type__type', $view );
 		if ( ! empty( $view ) && in_array( $view, EED_Events_Archive::$_types )) {
-//			echo '<h4>$view : ' . $view . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//			printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			self::$_type = $view;
 		} 
 	}
@@ -367,7 +366,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	string
 	 */
 	public static function posts_where_sql_for_show_expired( $show_expired = FALSE ) {
-		return  $show_expired != FALSE ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . date('Y-m-d H:s:i') . '" ' : '';
+		return  ! $show_expired ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > "' . date('Y-m-d H:s:i') . '" ' : '';
 	}
 
 
@@ -758,15 +757,14 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function event_list_template_filters() {
 		$args = array(
-			'form_url' => add_query_arg( array( 'post_type' => 'espresso_events' ), home_url() ),
-			'elf_month' => $this->_elf_month,
-			'elf_category' => $this->_elf_category,
-			'elf_show_expired' => $this->_show_expired,
-			'elf_type' => $this->_type
+			'form_url' => get_post_type_archive_link( 'espresso_events' ), //add_query_arg( array( 'post_type' => 'espresso_events' ), home_url() ),
+			'elf_month' => EED_Events_Archive::_display_month(),
+			'elf_category' => EED_Events_Archive::_event_category_slug(),
+			'elf_show_expired' => EED_Events_Archive::_show_expired(),
+			'elf_type' => self::$_type
 		);
 		EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-filters.php', $args );		
 	}
-
 
 
 

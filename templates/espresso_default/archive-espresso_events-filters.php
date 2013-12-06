@@ -13,8 +13,7 @@
 				</a>&nbsp;
 				<a id="events-list-filter-dates-view-lnk" class="events-list-filter-view-lnk submit-this" rel="dates" href="<?php echo add_query_arg( array( 'elf_type' => 'dates' ), $form_url );?>"   title="<?php _e( 'Click to view the events as a list of dates.' );?>">
 					<img src="<?php echo EE_IMAGES_URL;?>event-list-dates.png" width="16" height="16" alt="<?php _e( 'Dates List View' );?>" />
-				</a><!--&nbsp;
-				<a id="events-list-filter-cal-view-lnk" class="events-list-filter-view-lnk submit-this" rel="list" href="<?php echo $form_url;?>"   title="<?php _e( 'click to view the events as a calendar' );?>"><img src="<?php echo EE_IMAGES_URL;?>calendar_year-16x16.png" width="16" height="16" alt="<?php _e( 'Calendar View' );?>" /></a>-->
+				</a>
 			</div>
 
 			<span>
@@ -58,14 +57,14 @@
 			</span>
 			
 			<span>
-				<a class="submit-this ee-button small" href="#" ><?php _e( 'Filter Events' );?></a>
+				<a class="submit-this ee-button small" ><?php _e( 'Filter Events' );?></a>
 			</span>
 			
 			<span>
 				<a class="ee-button small" href="<?php echo $form_url;?>" ><?php _e( 'Reset' );?></a>
 			</span>
 
-			<input type="hidden" id="elf_type" name="elf_type" value="<?php echo $elf_type;?>"/>						
+			<input type="hidden" id="elf_type" name="elf_type" value="<?php echo $elf_type;?>"/>				
 
 		</form>
 	</div>
