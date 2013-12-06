@@ -3,7 +3,9 @@ jQuery(document).ready(function($) {
 	$('#espresso-events-list-filters-dv').on( 'click', '.submit-this', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		$('#elf_type').val( $(this).attr('rel') );
+		if ( $(this).hasClass('events-list-filter-view-lnk') ) {
+			$('#elf_type').val( $(this).attr('rel') );
+		}
 		$(this).closest('form').submit();
 	});
 
