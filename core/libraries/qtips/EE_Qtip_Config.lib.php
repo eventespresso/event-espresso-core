@@ -107,8 +107,8 @@ abstract class EE_Qtip_Config extends EE_Base {
 			'overwrite' => false, //if qtip already exists for called element then original overwritten.
 			'suppress' => true, //whether default browser tooltips are suppressed.
 			'content' => array(
-				'text' => 'No content has been set' //by default, when the js constructs the tooltips, it will be replacing this with a jquery object using the 'content_id' as the selector.
 				'button' => false, //what you want for the close button text/link.
+				'title' => true, //Options: "string", true.  If TRUE then the title attribute of the target will be used (if available). If "string" then we'll use that as the title.
 				),
 			'position' => array(
 				'my' => 'top left', //top left || top center || top right || right top || right center || right bottom || bottom right || bottom center || bottom left || left bottom || left center || left top
