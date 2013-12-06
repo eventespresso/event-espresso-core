@@ -40,7 +40,6 @@ $ELID = espresso_get_event_list_ID();
 						<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
 						<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
 					</div>	
-					<?php echo espresso_event_status(); ?>	
 				</div>		
 				<!-- .event-datetimes -->
 
@@ -59,6 +58,7 @@ $ELID = espresso_get_event_list_ID();
 					<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
 						<header class="event-header">							
 							<h3 class="event-title">
+								<?php echo espresso_event_status(); ?>	
 								<a href="<?php espresso_event_link_url(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
 									<?php the_title(); ?>							
 								</a>
