@@ -81,9 +81,11 @@ class EEH_Qtip_Loader extends EEH_Base {
 
 	/**
 	 * Call this from wp_enqueue_scripts or admin_enqueue_scripts to setup and enqueue the qtip library
+	 *
+	 * @access public
 	 * @return void
 	 */
-	public static function register_and_enqueue() {
+	public function register_and_enqueue() {
 		$qtips_js = !defined('SCRIPT_DEBUG') ? EE_THIRD_PARTY_URL . 'qtip/jquery.qtip.min.js' : EE_THIRD_PARTY_URL . 'qtip/jquery.qtip.js';
 		$qtip_imagesloaded = EE_THIRD_PARTY_URL . 'qtip/imagesloaded.pkg.min.js';
 		$qtip_map = EE_THIRD_PARTY_URL . 'qtip/jquery.qtip.min.map';
