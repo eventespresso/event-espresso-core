@@ -829,7 +829,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$limit = array($offset, $per_page);
 
 		$where = array(
-			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : 'publish'
+			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : array('IN', array('publish', 'draft') )
 			//todo add filter by category
 			);
 

@@ -617,9 +617,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 			call_user_func( array( $this, '_add_screen_options_' . $this->_current_view ) );
 
 
-		//add help tab(s) and tour- set via page_config.
+		//add help tab(s) and tours- set via page_config and qtips.
 		$this->_add_help_tour();
 		$this->_add_help_tabs();
+		$this->_add_qtips();
 
 		//add feature_pointers - global, page child class, and view specific
 		$this->_add_feature_pointers();
@@ -1059,6 +1060,28 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_help_tour['tours'] = $tours;
 
 		//thats it!  Now that the $_help_tours property is set (or not) the scripts and html should be taken care of automatically.
+	}
+
+
+
+
+	/**
+	 * This simply sets up any qtips that have been defined in the page config
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _add_qtips() {
+		if ( isset( $this->_route_config['qtips'] ) ) {
+			$qtips = (array) $this->_route_config['qtips'];
+			//load qtip loader
+			EE_Registry::instance()->load_helper('Qtip_Loader', array(), TRUE);
+			$path = array( 
+				$this->_get_dir() . '/qtips/',
+				EE_ADMIN_PAGES . basename($this->_get_dir()) . '/qtips/'
+				);
+			EEH_Qtip_Loader::instance()->register($qtips, $path);
+		}
 	}
 
 

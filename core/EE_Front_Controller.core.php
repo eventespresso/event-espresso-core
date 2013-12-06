@@ -575,7 +575,16 @@ final class EE_Front_Controller {
 		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
 			EE_Registry::instance()->load_helper('Qtip_Loader');
-			EEH_Qtip_Loader::register_and_enqueue();
+			EEH_Qtip_Loader::instance()->register_and_enqueue();
+		}
+
+
+		//accounting.js library
+		// @link http://josscrowcroft.github.io/accounting.js/
+		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
+			$acct_js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? EE_THIRD_PARTY_URL . 'accounting/accounting.js' : EE_THIRD_PARTY_URL . 'accounting/accounting.min.js';
+			wp_register_script( 'ee-accounting', $acct_js, array(), '0.3.2', TRUE );
+			wp_enqueue_script( 'ee-accounting' );
 		}
 
 	}
