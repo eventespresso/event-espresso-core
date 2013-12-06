@@ -61,8 +61,8 @@ abstract class EE_Qtip_Config extends EE_Base {
 	public function __construct() {
 		$this->_qtipsa = $this->_qtips = array();
 		$this->_set_default_options();
-		$this->_set_tip_array();
-		$this->_construct_tips;
+		$this->_set_tips_array();
+		$this->_construct_tips();
 	}
 
 
@@ -72,7 +72,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 	 *
 	 * $qtipsa = array(
 	 * 		0 => array(
-	 * 			'content_id' => 'some_unique_id_for_referencing_content',
+	 * 			'content_id' => 'some_unique_id_for_referencing_content', //just the string
 	 * 			'content' => 'html/text content for the qtip',
 	 * 			'target' => '#target-element', //use the same schema as jQuery selectors.  This will match what the target is for the qTip in the dom (i.e. if class then '.some-class').
 	 * 			'options' => array() //use this to override any of the default options for this specific qtip.
@@ -115,7 +115,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 				'at' => 'bottom right', //same options as above.
 				'target' => 'event', //if u use jQuery::#selector, js will parse to a jQuery selector || 'mouse' (at mouse cursor position) || 'event' (position at target that triggered the tooltip), or an array containing an absolute x/y position on page.
 				'container' => false, //what HTML element the tooltip is appended to (it's containing element). jquery object.  Use 'jQuery::#selector' and js will parse'
-				'viewport' => false, // @link http://qtip2.com/plugins#viewport
+				'viewport' => true, // @link http://qtip2.com/plugins#viewport
 				'adjust' => array(
 					'x' => 0, //adjust position on x axis by 0 pixels.
 					'y' => 0, //adjust position on y axis by 0 pixels.
@@ -147,7 +147,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 				'distance' => false, //if integer, distance in pixels that the tooltip hides when the mouse is moved from the point it triggered the tooltip.
 				),
 			'style' => array(
-				'classes' => '', //Options "string", false.  A space separated string containing all class names which should be added ot the main qTip element. See options for styles in comment block at end of this class.
+				'classes' => 'qtip-tipsy', //Options "string", false.  A space separated string containing all class names which should be added ot the main qTip element. See options for styles in comment block at end of this class.
 				'def' => true, //set to false and the default qtip class does not get applied
 				'widget' => false, //whether ui-widget classes of the themeroller UI styles are applied to tooltip.
 				'width' => false, // Options: "string", integer, false.  with this you can override all applied CSS width styles for tooltip.  Can be any valid width CSS value. (does not override min/max width styles)
@@ -174,7 +174,6 @@ abstract class EE_Qtip_Config extends EE_Base {
 	 * @return void
 	 */
 	protected function _construct_tips() {
-
 		foreach ( $this->_qtipsa as $qt ) {
 			//make sure we have what we need.
 			if ( !isset( $qt['content_id'] ) || !isset( $qt['options'] ) || !isset( $qt['target'] ) || !isset( $qt['content'] ) )
@@ -182,7 +181,6 @@ abstract class EE_Qtip_Config extends EE_Base {
 
 			//make sure the options include defaults and just override via set config.
 			$options = array_merge_recursive( $this->_default_options, $qt['options'] );
-			
 			$setup = array(
 				'content_id' => $qt['content_id'],
 				'options' => $options,
@@ -264,7 +262,7 @@ class EE_Qtip extends EE_Base {
 	public $target;
 	public $content;
 
-	public function _construct( $setup_array ) {
+	public function __construct( $setup_array ) {
 		foreach ( $setup_array as $prop => $value ) {
 			if ( property_exists( $this, $prop ) )
 				$this->$prop = $value;
