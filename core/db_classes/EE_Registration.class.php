@@ -684,12 +684,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * Gets the ticket this registration is for
 	 * @return EE_Ticket
 	 */
-	public function ticket($query_params = array()){
-		//we're going to assume that when this method is called we always want to receive the attached ticket EVEN if that ticket is archived.  This can be overridden via the incoming $query_params argument
-		$remove_defaults = array('default_where_conditions' => 'none');
-		$query_params = array_merge($remove_defaults, $query_params);
-
-		return $this->get_first_related('Ticket', $query_params);
+	public function ticket(){
+		return $this->get_first_related('Ticket');
 	}
 	
 
@@ -973,12 +969,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return void
 	 */
 	public function reserve_registration_space() {
-		$this->ticket()->increase_sold();
-		$this->ticket()->save();
-		$datetimes = $this->ticket()->datetimes();
-		foreach ( $datetimes as $datetime ) {
-			$datetime->increase_sold();
-			$datetime->save();
+		$ticket = $this->ticket();
+		$ticket->increase_sold();
+		$ticket->save();
+		$datetimes = $ticket->datetimes();
+		if ( is_array( $datetimes )) {
+			foreach ( $datetimes as $datetime ) {
+				$datetime->increase_sold();
+				$datetime->save();
+			}
 		}
 		// possibly set event status to sold out
 		$this->get_first_related( 'Event' )->perform_sold_out_status_check();
@@ -991,12 +990,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return void
 	 */
 	public function release_registration_space() {
-		$this->ticket()->decrease_sold();
-		$this->ticket()->save();
-		$datetimes = $this->ticket()->datetimes();
-		foreach ( $datetimes as $datetime ) {
-			$datetime->decrease_sold();
-			$datetime->save();
+		$ticket = $this->ticket();
+		$ticket->decrease_sold();
+		$ticket->save();
+		$datetimes = $ticket->datetimes();
+		if ( is_array( $datetimes )) {
+			foreach ( $datetimes as $datetime ) {
+				$datetime->decrease_sold();
+				$datetime->save();
+			}	
 		}	
 	}
 

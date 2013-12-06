@@ -57,7 +57,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table {
    	function column_DTT_EVT_start(EE_Registration $item){
 		$datetime_strings = array();
 		$remove_defaults = array('default_where_conditions' => 'none');
-		$datetimes = $item->ticket($remove_defaults)->datetimes($remove_defaults);
+		$datetimes = $item->ticket()->datetimes($remove_defaults);
 		$query_args = array(
 			'action'=>'event_registrations',
 			'event_id'=>$item->event_ID()

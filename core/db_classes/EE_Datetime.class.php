@@ -290,8 +290,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->_DTT_sold;
-		$sold = $sold + $qty;
+		$sold = $this->_DTT_sold + $qty;
 		return $this->set( 'DTT_sold', $sold );
 	}
 	
@@ -301,8 +300,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->_DTT_sold;
-		$sold = $sold - $qty;
+		$sold = $this->_DTT_sold - $qty;
+		// sold can not go below zero
+		$sold = max( 0, $sold );
 		return $this->set( 'DTT_sold', $sold );
 	}
 
@@ -651,8 +651,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*/	
 	public function spaces_remaining() {
 		// tickets remaining availalbe for purchase
-		//no need for special checks for infinite, becuase if DTT_reg_limit == INF
-		//this INF - x = INF
+		//no need for special checks for infinite, becuase if DTT_reg_limit == INF, then INF - x = INF
 		return $this->_DTT_reg_limit - $this->_DTT_sold ;
 	}
 

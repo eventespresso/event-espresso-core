@@ -4,6 +4,9 @@ class EE_Primary_Key_String_Field extends EE_Primary_Key_Field_Base{
 	function get_wpdb_data_type(){
 		return '%s';
 	}
+	public function __construct($table_column, $nicename) {
+		parent::__construct($table_column, $nicename, NULL);
+	}
 	/**
 	 * removes all tags when setting
 	 * @param string $value_inputted_for_field_on_model_object

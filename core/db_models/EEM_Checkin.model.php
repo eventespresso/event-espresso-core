@@ -75,8 +75,8 @@ class EEM_Checkin extends EEM_Base {
 		$this->_fields = array(
 			'Checkin'=> array(
 				'CHK_ID'=>new EE_Primary_Key_Int_Field('CHK_ID', 'Check-in ID'),
-				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', 'Registration Id', false, 1, 'Registration'),
-				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime Id', false, 1, 'Datetime'),
+				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', 'Registration Id', false, 0, 'Registration'),
+				'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime Id', false, 0, 'Datetime'),
 				'CHK_in'=>new EE_Boolean_Field('CHK_in', 'Whether a person has checked in or checked out', false, true),
 				'CHK_timestamp'=>new EE_Datetime_Field('CHK_timestamp', __('When the row was modified','event_espresso'), false, current_time('timestamp'), $timezone )
 			)
