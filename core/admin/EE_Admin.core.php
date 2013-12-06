@@ -74,7 +74,7 @@ final class EE_Admin {
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 15 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 		
