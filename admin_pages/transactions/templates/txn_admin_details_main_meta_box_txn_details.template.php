@@ -162,8 +162,7 @@
 					<td class=" jst-rght">
 						<?php $payment_class = $payment->amount() > 0 ? 'txn-admin-payment-status-' . $payment->STS_ID() : 'txn-admin-payment-status-PDC'; ?>
 						<span class="<?php echo $payment_class;?>">
-							<?php echo $currency_sign; ?>&nbsp;
-							<div id="payment-amount-<?php echo $PAY_ID;?>" style="display:inline;"><?php echo number_format( $payment->amount(), 2 );?></div>
+							<div id="payment-amount-<?php echo $PAY_ID;?>" style="display:inline;"><?php echo EEH_Template::format_currency($payment->amount() ); ?></div>
 						</span>
 					</td>
 				</tr>
@@ -172,7 +171,6 @@
 			?>
 			<?php endforeach; // $payment?>
 			<?php 
-				$payment_total = number_format( $payment_total, 2 );
 				$pay_totals_class = $payment_total > $grand_raw_total ? ' red-text' : '';
 				$overpaid = $payment_total > $grand_raw_total ? '<span id="overpaid">' . __( 'This transaction has been overpaid ! ', 'event_espresso' ) . '</span>' : '';
 			?>
@@ -183,7 +181,7 @@
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr<?php echo $pay_totals_class;?>">
 					<th class=" jst-rght" colspan="10"><span id="payments-total-spn"><?php echo $overpaid . __( 'Payments Total', 'event_espresso' );?></span></th>
-					<th class=" jst-rght"><?php echo $currency_sign;?>&nbsp;<span id="txn-admin-payment-total"><?php echo number_format( $payment_total, 2 );?></span></th>
+					<th class=" jst-rght"><span id="txn-admin-payment-total"><?php echo EEH_Template::format_currency($payment_total);?></span></th>
 				</tr>			
 		<?php else : ?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
@@ -193,7 +191,7 @@
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
 					<th class=" jst-rght" colspan="10"><span id="payments-total-spn"><?php echo __( 'Payments Total', 'event_espresso' );?></span></th>
-					<th class=" jst-rght"><?php echo $currency_sign;?> <span id="txn-admin-payment-total"></span></th>
+					<th class=" jst-rght"><span id="txn-admin-payment-total"></span></th>
 				</tr>				
 		<?php endif; // $payments?>
 
@@ -246,7 +244,6 @@
 					</td>	
 					<td class=" jst-rght">
 						<span class="">
-							<?php echo $currency_sign; ?>&nbsp;
 							<div id="payment-amount-PAY_ID" style="display:inline;">
 							</div>
 						</span>
