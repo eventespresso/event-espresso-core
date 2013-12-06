@@ -16,42 +16,36 @@ do_action( 'AHEE_before_event_list' );
 $ELID = espresso_get_event_list_ID();
 ?>
 
-<div id="text-event-list-<?php echo $ELID; ?>-dv" class="text-event-list-dv entry-content max-width maxwidth row">
-	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
+<div id="text-event-list-dv-<?php echo $ELID; ?>" class="text-event-list-dv entry-content max-width maxwidth row">
+	<div id="espresso-events-list-wrap-dv-<?php echo $ELID; ?>" class="espresso-events-list-wrap-dv container">
 	
-		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
-		
+		<h1  id="event-list-h1-<?php echo $ELID; ?>" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
+				
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
-		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">
+		<div id="espresso-events-list-dv-<?php echo $ELID; ?>" class="espresso-events-list-dv column columns" role="main">
 				
 		<?php if ( have_posts() ) : ?>
 			<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
 			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
 			
-			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
+			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() . ' clear' ); ?>>
 			
-				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
-			
-					<?php echo espresso_event_status(); ?>
+				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">					
 
 					<div class="espresso-event-wrapper-dv">
 					
-						<header class="event-header">
+						<header class="event-header">							
 							<h3 class="event-title">
 								<a href="<?php espresso_event_link_url(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
 									<?php the_title(); ?>							
 								</a>
 							</h3>
+							<?php echo espresso_event_status(); ?>
 						</header>
 						<!-- .event-header -->
-						
-						<div class="event-datetimes">
-							<h4><?php espresso_event_date_range( 'F jS', ' ', 'l F jS @ ', ' g:i a' ); ?></h4>
-						</div>
-						<!-- .event-datetimes -->
-						
+
 						<?php
 							$wrap_class = '';
 							if ( has_post_thumbnail( $post->ID )) :
@@ -64,6 +58,11 @@ $ELID = espresso_get_event_list_ID();
 						
 						<div class="event-content <?php echo $wrap_class;?>">						
 
+							<div class="event-datetimes">
+								<h4 class="ee-calendar_year-icon-med"><?php espresso_event_date_range( 'F jS', ' ', 'l F jS @ ', ' g:i a' ); ?></h4>
+							</div>
+							<!-- .event-datetimes -->
+						
 						<?php 
 							if( espresso_display_full_description_in_event_list() ) :
 								the_content(); 
@@ -122,8 +121,6 @@ $ELID = espresso_get_event_list_ID();
 
 			<?php endwhile; ?>
 
-			<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
-
 		<?php else : ?>
 
 			<article id="post-0" class="no-espresso-events-found">
@@ -147,10 +144,12 @@ $ELID = espresso_get_event_list_ID();
 		</div>
 		<!-- #espresso-events-list-dv -->
 
-		<div class="ee-pagination-dv"><?php  //echo paginate_links( $pagination_args ); ?></div>
+		<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
 			
 		<div class="clear"></div>
 	</div>
 	<!-- #espresso-events-list-wrap-dv -->
 
 </div>
+
+<?php do_action( 'AHEE_after_event_list' ); ?>
