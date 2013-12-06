@@ -27,4 +27,4 @@ include( espresso_event_list_template_part() );
  * archive-espresso_events-text-view.php
 */
 
-get_footer(); 	
+//get_footer(); 	
