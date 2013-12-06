@@ -716,8 +716,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->_TKT_sold;
-		$sold = $sold + $qty;
+		$sold = $this->_TKT_sold + $qty;
 		return $this->set( 'TKT_sold', $sold );
 	}
 	
@@ -727,8 +726,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->_TKT_sold;
-		$sold = $sold - $qty;
+		$sold = $this->_TKT_sold - $qty;
+		// sold can not go below zero
+		$sold = max( 0, $sold );
 		return $this->set( 'TKT_sold', $sold );
 	}
 	

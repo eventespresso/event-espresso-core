@@ -177,10 +177,11 @@ jQuery(document).ready(function($) {
 		formURL = formURL + '&noheader=true&ee_admin_ajax=true';
 		$('#espresso-ajax').val(1);
 		$('#txn-admin-noheader-inp').val('true');
-		var formData = $('#txn-admin-apply-payment-frm').serialize();
+
+		var formData = $('#txn-admin-apply-payment-frm').serializeFullArray();
 		formData.ee_admin_ajax = true;
 		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
-//		console.log(formData);
+		formData.txn_admin_payment.amount = accounting.unformat(formData.txn_admin_payment.amount);
 //		response = new Object();
 
 		$.ajax({
@@ -188,7 +189,7 @@ jQuery(document).ready(function($) {
 					url:  formURL,
 					data: formData,
 					dataType: "json",
-					beforeSend: function() {
+					beforeSend: function(jqXHR, obj) {
 						do_before_admin_page_ajax();
 					},
 					success: function( response ) {

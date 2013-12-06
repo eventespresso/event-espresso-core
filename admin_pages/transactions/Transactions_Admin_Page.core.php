@@ -239,7 +239,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('espresso_txn');
 
 		//scripts
-		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'ee-datepicker', 'jquery-ui-datepicker', 'jquery-ui-draggable', 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE);
+		add_filter('FHEE_load_accounting_js', '__return_true');
+
+		//scripts
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'ee-datepicker', 'jquery-ui-datepicker', 'jquery-ui-draggable', 'ee-dialog', 'ee-accounting', 'ee-serialize-full-array'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso_txn');	
 
 		;
@@ -258,7 +261,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_view_transaction() {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
-		//scripts
 	}
 
 

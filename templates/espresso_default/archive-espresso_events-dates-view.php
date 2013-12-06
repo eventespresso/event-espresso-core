@@ -16,7 +16,7 @@ do_action( 'AHEE_before_event_list' );
 $ELID = espresso_get_event_list_ID();
 ?>
 
-<div id="dates-event-list-<?php echo $ELID; ?>-dv" class="dates-event-list-dv entry-content max-width maxwidth row">
+<div id="dates-event-list-dv-<?php echo $ELID; ?>" class="dates-event-list-dv entry-content max-width maxwidth row">
 	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
 	
 		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
@@ -34,14 +34,12 @@ $ELID = espresso_get_event_list_ID();
 			
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 				
-				<?php echo espresso_event_status(); ?>
-
-				<div class="event-datetimes">
+				<div class="event-datetimes">				
 					<?php $datetime = espresso_event_date_obj( $post->ID );?>
 					<div class="event-date-calendar-page-dv">
 						<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
 						<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
-					</div>		
+					</div>	
 				</div>		
 				<!-- .event-datetimes -->
 
@@ -58,8 +56,9 @@ $ELID = espresso_get_event_list_ID();
 			?>
 
 					<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
-						<header class="event-header">
+						<header class="event-header">							
 							<h3 class="event-title">
+								<?php echo espresso_event_status(); ?>	
 								<a href="<?php espresso_event_link_url(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
 									<?php the_title(); ?>							
 								</a>
@@ -129,8 +128,6 @@ $ELID = espresso_get_event_list_ID();
 
 			<?php endwhile; ?>
 
-			<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
-
 		<?php else : ?>
 
 			<article id="post-0" class="no-espresso-events-found">
@@ -154,10 +151,12 @@ $ELID = espresso_get_event_list_ID();
 		</div>
 		<!-- #espresso-events-list-dv -->
 
-		<div class="ee-pagination-dv"><?php  //echo paginate_links( $pagination_args ); ?></div>
-			
+		<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
+		
 		<div class="clear"></div>
 	</div>
 	<!-- #espresso-events-list-wrap-dv -->
 
 </div>
+
+<?php do_action( 'AHEE_after_event_list' ); ?>

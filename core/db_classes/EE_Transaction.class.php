@@ -679,14 +679,15 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return void
 	 */
 	public function finalize(){
-		//$registrations = $this->get_many_related('Registration');
-		foreach ( $this->get_many_related('Registration') as $registration ) {
+		
+		$registrations = $this->get_many_related('Registration');
+		foreach ( $registrations as $registration ) {
 			$registration->finalize();
 		}
 		if (( ! is_admin() || EE_Registry::instance()->REQ->is_set( 'ee_front_ajax' ) && EE_Registry::instance()->REQ->get( 'ee_front_ajax' )) && ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
-//			//remove the session from the transaction before saving it to the db to minimize recursive relationships
+			// remove the session from the transaction before saving it to the db to minimize recursive relationships
 			$this->set_txn_session_data( NULL );
-//			// save this transaction and it's registrations to the session
+			// save this transaction and it's registrations to the session
 			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this ));
 			// save the session (with it's sessionless transaction) back to this transaction... we need to go deeper!
 			$this->set_txn_session_data( EE_Registry::instance()->SSN );
@@ -694,6 +695,9 @@ class EE_Transaction extends EE_Base_Class{
 			$this->save();
 		}
 	}
+
+
+
 	
 	/**
 	 * Gets the last payment made

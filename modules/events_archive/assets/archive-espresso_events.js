@@ -3,8 +3,10 @@ jQuery(document).ready(function($) {
 	$('#espresso-events-list-filters-dv').on( 'click', '.submit-this', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		$('#elf_type').val( $(this).attr('rel') );
-		$(this).closest('form').submit();		
+		if ( $(this).hasClass('events-list-filter-view-lnk') ) {
+			$('#elf_type').val( $(this).attr('rel') );
+		}
+		$(this).closest('form').submit();
 	});
 
 
@@ -66,11 +68,11 @@ jQuery(document).ready(function($) {
 		});
 		
 		$( espresso_grid_event_lists ).each( function( index, grid_ID ) {
-			var $container = $('#espresso-events-list-' + grid_ID + '-dv');		   
+			var $container = $('#espresso-events-list-dv-' + grid_ID );		   
 			$container.imagesLoaded( function(){
 				$container.masonry({
 					columnWidth: eventWidth,
-					itemSelector: '#espresso-events-list-' + grid_ID + '-dv .espresso-event-list-event',
+					itemSelector: '#espresso-events-list-dv-' + grid_ID + ' .espresso-event-list-event',
 					gutter: 10,
 					isFitWidth: true
 				});
