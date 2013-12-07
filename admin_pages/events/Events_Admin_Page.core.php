@@ -922,6 +922,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
 				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
+				'PRC_is_default' => 0, //make sure prices are NOT set as default from this context
 				'PRC_order' => $row
 				);
 
