@@ -28,6 +28,7 @@
 .manual-venue { width: 33%; }
 .manual-venue input,
 .manual-venue textarea { width: 90%; }
+.form-table td.manual-venue { vertical-align: top }
 
 @media only screen and (max-width: 1425px) { #event-dates-and-times .dtm-inp { width:175px; } }
 @media only screen and (max-width: 1325px) { #event-dates-and-times .dtm-inp { width:150px; } }
