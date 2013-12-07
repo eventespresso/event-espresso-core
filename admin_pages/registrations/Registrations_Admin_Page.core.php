@@ -1081,10 +1081,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	public function _reg_details_meta_box() {
-		
-		$this->_template_args['line_items'] = $this->_session['transaction']->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
-
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
+		
+		$this->_template_args['line_items'] = $transaction->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
+
+		
 
 		$event = $this->_registration->get_first_related('Event');
 		$this->_template_args['event'] = $event;
