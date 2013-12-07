@@ -361,8 +361,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _transaction_details() {
-
-		global $wpdb;
 		
 		$this->_get_transaction_status_array();
 
@@ -500,11 +498,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
 		$this->_template_args['txn_details']['registration_session']['class'] = 'regular-text';
 		
-		$this->_template_args['txn_details']['ip_address']['value'] = $this->_session['ip_address'];
+		$this->_template_args['txn_details']['ip_address']['value'] = isset( $this->_session['ip_address'] ) ? $this->_session['ip_address'] : '';
 		$this->_template_args['txn_details']['ip_address']['label'] = __( 'Transaction placed from IP', 'event_espresso' );
 		$this->_template_args['txn_details']['ip_address']['class'] = 'regular-text';
 		
-		$this->_template_args['txn_details']['user_agent']['value'] = $this->_session['user_agent'];
+		$this->_template_args['txn_details']['user_agent']['value'] = isset( $this->_session['user_agent'] ) ? $this->_session['user_agent'] : '';
 		$this->_template_args['txn_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
 		$this->_template_args['txn_details']['user_agent']['class'] = 'large-text';
 
