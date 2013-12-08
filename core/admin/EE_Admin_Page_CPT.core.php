@@ -846,7 +846,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( !isset( $this->_req_data['action'] ) || !isset( $this->_cpt_routes[$this->_req_data['action']] ) || $post->post_type !== $this->_cpt_routes[$this->_req_data['action']] )
 			return $link;
 		$query_args = array(
-			'action' => 'edit',
+			'action' => isset($this->_cpt_edit_routes[$post->post_type]) ? $this->_cpt_edit_routes[$post->post_type] : 'edit',
 			'post' => $id
 			);
 
