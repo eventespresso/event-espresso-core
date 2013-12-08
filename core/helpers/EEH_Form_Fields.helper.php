@@ -1339,8 +1339,8 @@ class EEH_Form_Fields {
 
 
 		if ( !empty ( $evt_category ) ) {
-			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
-			$where['Term_Taxonomy.term_id'] = $category;
+			$where['Event.Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+			$where['Event.Term_Taxonomy.term_id'] = $evt_category;
 		}
 
 		//what about active status for the event?
