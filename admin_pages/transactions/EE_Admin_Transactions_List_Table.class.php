@@ -301,7 +301,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 				<img width="20" height="20" alt="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/payment-reminder-20x20.png">
 			</a>
 		</li>';
-		$send_pay_lnk = $item->get('STS_ID') == 'TPN' ? $send_pay_lnk : '';
+		$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
 		
 	        $view_reg_lnk = '
 		<li>
