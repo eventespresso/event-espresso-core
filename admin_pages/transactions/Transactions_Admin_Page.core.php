@@ -381,6 +381,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
+
+		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __('Send Payment Reminder'), 'button secondary-button right ee-email-icon' ) : '';
 		
 		$amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
 		$this->_template_args['amount_due'] =  ' <span id="txn-admin-total-amount-due">' . EEH_Template::format_currency( $amount_due, TRUE ) . '</span>';
@@ -836,8 +838,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _send_payment_reminder() {
 	    $TXN_ID = ( ! empty( $this->_req_data['TXN_ID'] )) ? absint( $this->_req_data['TXN_ID'] ) : FALSE;
 		$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+		$query_args = isset($this->_req_data['redirect_to'] ) ? array('action' => $this->_req_data['redirect_to'], 'TXN_ID' => $this->_req_data['TXN_ID'] ) : array();
 		do_action( 'AHEE_process_admin_payment_reminder', $transaction );
-		$this->_redirect_after_action( FALSE, 'payment reminder', 'sent', array(), TRUE );
+
+		$this->_redirect_after_action( FALSE, __('payment reminder', 'event_espresso'), __('sent', 'event_espresso'), $query_args, TRUE );
 	}
 
 

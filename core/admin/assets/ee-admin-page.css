@@ -596,3 +596,13 @@ label.error  { display: block; color: #FE2A00 !important; }
 .button-primary.trigger-ee-help-tour {
 	margin: 5px;
 }
+
+/** NEW ICONS **/
+.ee-email-icon:before {
+	content: "\f157";
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 16px/1 'dashicons';
+	vertical-align: top;
+	margin-top: 3px;
+}
