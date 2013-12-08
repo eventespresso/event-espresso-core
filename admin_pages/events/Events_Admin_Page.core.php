@@ -802,6 +802,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+
 			//if this is a default TKT, then we need to set the TKT_ID to 0 and update accordingly, which means in turn that the prices will become new prices as well.
 			if ( isset( $tkt['TKT_is_default'] ) && $tkt['TKT_is_default'] ) {
 				$TKT_values['TKT_ID'] = 0;
@@ -1173,8 +1174,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'ticketrow' => $skeleton ? 'TICKETNUM' : $row,
 			'TKT_ID' => $ticket->get('TKT_ID'),
 			'TKT_name' => $ticket->get('TKT_name'),
-			'TKT_start_date' => $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
-			'TKT_end_date' => $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
+			'TKT_start_date' => $skeleton ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
+			'TKT_end_date' => $skeleton ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
 			'TKT_is_default' => $ticket->get('TKT_is_default'),
 			'TKT_qty' => $ticket->get_pretty('TKT_qty','input'),
 			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
@@ -1193,6 +1194,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'PRC_ID' => $price->get('PRC_ID'),
 			'PRC_is_default' => $price->get('PRC_is_default'),
 			);
+
+		//make sure we have default start and end dates if skeleton
+		//handle rows that should NOT be empty
+		if ( empty( $template_args['TKT_start_date'] ) ) {
+			//if empty then the start date will be now.
+			$template_args['TKT_start_date'] = date('Y-m-d h:i a', current_time('timestamp'));
+		}
+
+		if ( empty( $template_args['TKT_end_date'] ) ) {
+			//get the earliest datetime (if present);
+			$earliest_dtt = $this->_cpt_model_obj->ID() > 0 ? $this->_cpt_model_obj->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
+
+			if ( !empty( $earliest_dtt ) )
+				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
+			else
+				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(0, 0, 0, date("m"), date("d")+7, date("Y") ) );
+		}
 
 		$template_args = array_merge( $template_args, $price_args );
 		$template = apply_filters('FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
