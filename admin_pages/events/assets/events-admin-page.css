@@ -238,3 +238,8 @@
 .inside .ee-status {
 	float: right;
 }
+
+#espresso_event_editor_event_options label {
+	width: 75%;
+	display: inline-block;
+}
