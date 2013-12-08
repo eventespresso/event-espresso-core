@@ -316,6 +316,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
 			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
 
+		//add preview button
+		add_filter('get_sample_permalink_html', array($this, 'preview_button_html'), 5, 4 );
+		
+
 		//insert our own post_stati dropdown
 		add_action('post_submitbox_misc_actions', array($this, 'custom_post_stati_dropdown' ), 10 );
 
@@ -337,6 +341,27 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
+	}
+
+
+
+
+	/**
+	 * if this post is a draft or scheduled post then we provide a preview button for user to click
+	 *
+	 * Method is called from parent and is hooked into the wp 'get_sample_permalink_html' filter.
+	 * @param  string $return    the current html
+	 * @param  int    $id        the post id for the page
+	 * @param  string $new_title What the title is
+	 * @param  string $new_slug  what the slug is
+	 * @return string            The new html string for the permalink area
+	 */
+	public function preview_button_html( $return, $id, $new_title, $new_slug ) {
+		$post = get_post( $id );
+		if ( 'publish' != get_post_status( $post ) ) {
+			$return .= '<span_id="view-post-btn"><a href="' . wp_get_shortlink($id, $post->post_type) . '" class="button button-small">' . __('Preview', 'event_espresso') . '</a></span>' . "\n";
+		}
+		return $return;
 	}
 
 
@@ -976,7 +1001,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			7 => sprintf( __( '%1$s saved.', 'event_espresso'), $this->_cpt_object->labels->singular_name ),
 			8 => sprintf( __('%1$s submitted. <a target="_blank" href="%s">Preview %1$s</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) ),
 			9 => sprintf( __('%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %1$s</a>'), $this->_cpt_object->labels->singular_name, date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink($id) ) ),
-			10 => sprintf( __('%1$s draft updated. <a target="_blank" href="%s">Preview page</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) )
+			10 => sprintf( __('%1$s draft updated. <a target="_blank" href="%2$s">Preview page</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) )
 			);
 
 		return $messages;
