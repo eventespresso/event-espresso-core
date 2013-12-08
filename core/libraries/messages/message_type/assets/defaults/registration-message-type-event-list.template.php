@@ -8,7 +8,7 @@
 				<h2>[EVENT_NAME]</h2>
 				<!-- Callout Panel -->
 				<p class="callout">
-					[EVENT_DESCRIPTION]<a href="#">View Event &raquo;</a>
+					[EVENT_DESCRIPTION] <a href="[EVENT_URL]">View Event &raquo;</a>
 				</p><!-- /Callout Panel -->
 
 			</td>
