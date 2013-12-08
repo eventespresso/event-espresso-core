@@ -406,7 +406,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price', 'add', array(), 'add-new-h2');
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
 		$this->_search_btn_label = __('Prices', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -792,7 +792,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_types_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price_type', 'add_type', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price_type', 'add_type', array(), 'add-new-h2');
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
 		$this->_search_btn_label = __('Price Types', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
