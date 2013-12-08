@@ -606,3 +606,20 @@ label.error  { display: block; color: #FE2A00 !important; }
 	vertical-align: top;
 	margin-top: 3px;
 }
+
+
+.ee-collapsible:before {
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 22px/1 'dashicons';
+	vertical-align: top;
+	margin-top: -3px;
+}
+
+.ee-collapsible-open:before {
+    content: "\f142";
+}
+
+.ee-collapsible-closed:before {
+	content: "\f140";
+}

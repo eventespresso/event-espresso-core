@@ -195,20 +195,6 @@
     width: 100%;
 }
 
-.ee-collapsible {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-}
-
-.ee-collapsible-open {
-    background: transparent url('../../../../../templates/global_assets/images/minus-16x16.png') 0 0 no-repeat;
-}
-
-.ee-collapsible-closed {
-    background: transparent url('../../../../../templates/global_assets/images/plus-16x16.png') 0 0 no-repeat;
-}
-
 .ticket-table {
     border-collapse: collapse;
     width: 100%;

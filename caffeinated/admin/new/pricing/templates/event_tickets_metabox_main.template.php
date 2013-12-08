@@ -46,7 +46,7 @@
 	</div> <!-- end #add-event-datetime -->
 	
 	<div class="available-tickets-container">
-		<h4 class="event-tickets-datetimes-title"><span class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"></span><?php _e('Available Tickets', 'event_espresso'); ?></h4>
+		<h4 class="event-tickets-datetimes-title"><span class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><?php _e('Available Tickets', 'event_espresso'); ?></span></h4>
 		<div class="save-cancel-button-container"<?php echo $show_tickets_container; ?>><button class="button-secondary ee-create-button" data-context="ticket"><?php _e('Create Ticket', 'event_espresso'); ?></button></div>
 		<div class="event-tickets-container"<?php echo $show_tickets_container; ?>>
 			<table class="ticket-table">
