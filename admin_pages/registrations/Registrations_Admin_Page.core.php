@@ -844,6 +844,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			
 			$this->_template_args['approve_decline_reg_status_buttons'] = $this->_set_approve_or_decline_reg_status_buttons();
 
+			$this->_template_args['resend_registration_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __('Resend Registration'), 'button secondary-button ee-email-icon' );
+
 			$this->_template_args['grand_total'] = $transaction->total();
 
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
@@ -2121,10 +2123,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _resend_registration() {
 		$success = $this->_process_resend_registration();
-		$query_args = array(
+		$query_args = isset($this->_req_data['redirect_to'] ) ? array('action' => $this->_req_data['redirect_to'], '_REG_ID' => $this->_req_data['_REG_ID'] ) : array(
 			'action' => 'default'
 		);
-		$this->_redirect_after_action(FALSE, '', '', array(), TRUE );
+		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE );
 	}
 
 
