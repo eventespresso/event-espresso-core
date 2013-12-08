@@ -291,7 +291,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
    		$attendee = $item->attendee();
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->attendee_ID() ), REG_ADMIN_URL );
 		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
-		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . $attendee_name . '</a>';
+		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Contact Details', 'event_espresso' ) . '">' . $attendee_name . '</a>';
 		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 
 		//trash/restore/delete actions
