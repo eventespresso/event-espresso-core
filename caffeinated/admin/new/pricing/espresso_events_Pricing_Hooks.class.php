@@ -574,8 +574,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _get_datetime_row( $dttrow, EE_Datetime $dtt, $datetime_tickets, $all_tickets, $default = FALSE, $all_dtts = array() ) {
 
 		$dtt_display_template_args = array(
-			'dtt_display_row' => $this->_get_dtt_display_row( $dttrow, $dtt, $default, $all_dtts ),
-			'dtt_edit_row' => $this->_get_dtt_edit_row( $dttrow, $dtt, $default ),
+			'dtt_edit_row' => $this->_get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ),
 			'dtt_attached_tickets_row' => $this->_get_dtt_attached_tickets_row( $dttrow, $dtt, $datetime_tickets, $all_tickets, $default ),
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow
 			);
@@ -584,7 +583,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}	
 
 
-	private function _get_dtt_display_row( $dttrow, $dtt, $default = FALSE, $all_dtts = array() ) {
+	/*private function _get_dtt_display_row( $dttrow, $dtt, $default = FALSE, $all_dtts = array() ) {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_name' => $default ? '' : $dtt->get_dtt_display_name(),
@@ -596,20 +595,24 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'lock-icon' ? ' style="display:none"' : '';
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_display_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE);
-	}
+	}/**/
 
 
-	private function _get_dtt_edit_row( $dttrow, $dtt, $default ) {
+	private function _get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ) {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
-			'display_dtt_edit_row' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? 'style="display:none;"' : '',
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
 			'DTT_ID' => $default ? '' : $dtt->ID(),
 			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
 			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
-			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input')
+			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input'),
+			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
+			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon clickable',
+			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'lock-icon' : 'trash-icon clickable'
 			);
+
+		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'lock-icon' ? ' style="display:none"' : '';
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
@@ -894,13 +897,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 	private function _get_ticket_js_structure($all_dtts, $all_tickets) {
 		$template_args = array(
-			'default_datetime_edit_row' => $this->_get_dtt_edit_row('DTTNUM', NULL, TRUE),
+			'default_datetime_edit_row' => $this->_get_dtt_edit_row('DTTNUM', NULL, TRUE, $all_dtts),
 			'default_ticket_row' => $this->_get_ticket_row( 'TICKETNUM', NULL, array(), array(), TRUE),
 			'default_price_row' => $this->_get_ticket_price_row( 'TICKETNUM', 'PRICENUM', NULL, TRUE, NULL ),
 			'default_price_rows' => '',
 			'default_price_modifier_selector_row' => $this->_get_price_modifier_template( 'TICKETNUM', 'PRICENUM', NULL, TRUE ),
 			'default_available_tickets_for_datetime' => $this->_get_dtt_attached_tickets_row( 'DTTNUM', NULL, array(), array(), TRUE ),
-			'default_datetime_display_row' => $this->_get_dtt_display_row( 'DTTNUM', NULL, TRUE ),
 			'existing_available_datetime_tickets_list' => '',
 			'existing_available_ticket_datetimes_list' => '',
 			'new_available_datetime_ticket_list_item' => $this->_get_datetime_tickets_list_item( 'DTTNUM', 'TICKETNUM', NULL, NULL, array(), TRUE ),
