@@ -1646,7 +1646,7 @@ jQuery(document).ready(function($) {
 					$('.ee-collapsible', '.available-tickets-container').removeClass('ee-collapsible-closed').addClass('ee-collapsible-open');
 				}
 
-				if ( ! $('#fieldset-edit-ticketrow-' + data.ticketRow ).is(':visible') ) {
+				if ( $('#fieldset-edit-ticketrow-' + data.ticketRow ).is(':visible') ) {
 					tktHelper.setcontext('ticket').setticketRow(data.ticketRow).scrollTo($('#fieldset-edit-ticketrow-' + data.ticketRow ) );
 				} else {
 					tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
