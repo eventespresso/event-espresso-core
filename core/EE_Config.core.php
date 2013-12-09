@@ -32,6 +32,54 @@ final class EE_Config {
 	private static $_instance = NULL;
 
 	/**
+	 *
+	 * @var array
+	 */
+	public $addons;
+
+	/**
+	 *
+	 * @var EE_Admin_Config
+	 */
+	public $admin;
+	
+	/**
+	 *
+	 * @var EE_Core_Config
+	 */
+	public $core;
+	
+	/**
+	 * 
+	 * @var EE_Currency_Config 
+	 */
+	public $currency;
+
+	/**
+	 *
+	 * @var EE_Gateway_Config
+	 */
+	public $gateway;
+
+	/**
+	 *
+	 * @var EE_Organization_Config
+	 */
+	public $organization;
+	
+	/**
+	 *
+	 * @var EE_Registration_Config
+	 */
+	public $registration;
+
+	/**
+	 *
+	 * @var EE_Template_Config 
+	 */
+	public $template_settings;
+
+	/**
 	 * 	_module_route_map
 	 *	@var 	array	$_module_route_map
 	 * 	@access 	private
@@ -51,47 +99,6 @@ final class EE_Config {
 	 * 	@access 	private
 	 */
 	private static $_module_view_map = array();
-	
-	/**
-	 *
-	 * @var EE_Core_Config
-	 */
-	public $core;
-
-	/**
-	 *
-	 * @var EE_Admin_Config
-	 */
-	public $admin;
-	/**
-	 *
-	 * @var EE_Organization_Config
-	 */
-	public $organization;
-	
-	/**
-	 * 
-	 * @var EE_Currency_Config 
-	 */
-	public $currency;
-	
-	/**
-	 *
-	 * @var EE_Registration_Config
-	 */
-	public $registration;
-
-	/**
-	 *
-	 * @var EE_Gateway_Config
-	 */
-	public $gateway;
-	/**
-	 *
-	 * @var EE_Template_Config 
-	 */
-	public $template_settings;
-
 
 
 
@@ -128,19 +135,20 @@ final class EE_Config {
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
+		$this->addons = array();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
 		// set _module_forward_map
 		EE_Config::$_module_forward_map = array();
 		// set _module_view_map
 		EE_Config::$_module_view_map = array();
-
 		// load existing EE site settings
 		$this->_load_config();
 		//  register shortcodes and modules
 		add_action( 'init', array( $this, 'init' ), 10 );
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
+		// construct__end hook
 		do_action('AHEE__EE_Config__construct__end',$this);
 	}
 

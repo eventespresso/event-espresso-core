@@ -278,6 +278,9 @@ input.ee-register-button {
 .ee-grey.ee-button, .ee-grey.ee-button:visited { background-color: #A39D9C; background-image: -moz-linear-gradient( center top , #B5B3B3, #A39D9C ); }
 .ee-grey.ee-button:hover { background-color: #B5B3B3; background-image: none; }
 
+.ee-dark-grey.ee-button, .ee-dark-grey.ee-button:visited { background-color: #464549; background-image: -moz-linear-gradient( center top , #59595B, #464549 ); }
+.ee-dark-grey.ee-button:hover { background-color: #59595B; background-image: none; }
+
 .ee-black.ee-button, .ee-black.ee-button:visited { background-color: #2F3334; background-image: -moz-linear-gradient( center top , #424646, #2F3334 ); }
 .ee-black.ee-button:hover { background-color: #424646; background-image: none; }
 

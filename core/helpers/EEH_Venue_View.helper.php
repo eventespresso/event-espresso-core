@@ -118,8 +118,13 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_phone' )) {
-		function espresso_venue_phone() {
-			echo EEH_Venue_View::venue_phone();
+		function espresso_venue_phone( $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Venue_View::venue_phone();
+			} else {
+				return EEH_Venue_View::venue_phone();
+			}
+			
 		}		
 	}
 
