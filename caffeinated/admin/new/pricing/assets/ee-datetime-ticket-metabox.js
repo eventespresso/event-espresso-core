@@ -983,6 +983,7 @@ jQuery(document).ready(function($) {
 
 			initialPRCrow.find('.ticket-price-plus-minus').hide();
 			initialPRCrow.find('.ticket-price-dollar-sign-display').show();
+			initialPRCrow.find('.trash-icon').hide();
 
 			//if this is triggered via the "short-ticket" context then we need to get the values from the create ticket form and add to the new row.
 			if ( incomingcontext == 'short-ticket' ) {
@@ -1029,6 +1030,8 @@ jQuery(document).ready(function($) {
 				});
 
 				newTKTrow.find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
+
+				newTKTrow.find('.ee-editing-container').removeClass('ee-edit-editing');
 
 				// selectors
 				var selected_price_type_val = 1;

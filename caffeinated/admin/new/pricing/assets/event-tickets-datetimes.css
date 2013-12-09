@@ -357,15 +357,12 @@
 }
 
 .price-table thead tr td:first-child {
-    text-align: right;
-}
-
-.price-table td {
-    padding-left: 10px;
+    text-align: left;
+    width: 20%;
 }
 
 .price-table tbody td:first-child, .price-table tfoot td {
-    text-align: right;
+    text-align: left;
 }
 
 .price-table tbody tr:last-child td {

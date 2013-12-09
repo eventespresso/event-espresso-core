@@ -695,7 +695,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),
 			'TKT_is_default_selector' => '',
 			'ticket_price_rows' => '',
-			'total_price_rows' => count($prices),
+			'total_price_rows' => count($prices) > 1 ? count($prices) : 1,
 			'ticket_datetimes_list' => $default ? '<li class="hidden"></li>' : '',
 			'starting_ticket_datetime_rows' => $default || $default_dtt ? '' : implode(',', $tkt_dtts),
 			'ticket_datetime_rows' => $default ? '' : implode(',', $tkt_dtts),
