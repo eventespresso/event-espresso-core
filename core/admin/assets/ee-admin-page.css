@@ -1,5 +1,5 @@
 #icon-options-event, #icon-espresso_events { background: url("../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
-.button.add-new-h2 { margin-left: 15px; }
+.add-new-h2 { margin-left: 15px; }
 
 .tablenav div { margin-right:15px; }
 .tablenav select { margin:0 1em 0 0 !important; }
@@ -595,4 +595,31 @@ label.error  { display: block; color: #FE2A00 !important; }
 
 .button-primary.trigger-ee-help-tour {
 	margin: 5px;
+}
+
+/** NEW ICONS **/
+.ee-email-icon:before {
+	content: "\f157";
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 16px/1 'dashicons';
+	vertical-align: top;
+	margin-top: 3px;
+}
+
+
+.ee-collapsible:before {
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 22px/1 'dashicons';
+	vertical-align: top;
+	margin-top: -3px;
+}
+
+.ee-collapsible-open:before {
+    content: "\f142";
+}
+
+.ee-collapsible-closed:before {
+	content: "\f140";
 }

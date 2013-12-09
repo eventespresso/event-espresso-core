@@ -92,11 +92,11 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_LINK]' :
-				return $this->_get_event_link();
+				return $this->_get_event_link($event);
 				break;
 
 			case '[EVENT_URL]' :
-				return $this->_get_event_link(FALSE);
+				return $this->_get_event_link($event, FALSE);
 				break;
 
 			case '[VIRTUAL_URL]' :
@@ -137,46 +137,15 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 
 
-
-	/**
-	 * return the event details for a given key
-	 * @param  string $type what to return
-	 * @return string       returned value if present, empty string if not
-	 */
-	private function _event( $type ) {
-		$what = '';
-		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
-		
-		//FIRST get the event
-		$event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($this->_data['ID']);
-
-		//we're using a switch here because I anticipate there will eventually be more types coming in here!
-		switch ( $type ) {
-			case 'desc' :
-				$result = $event->get('EVT_desc');
-				break;
-			case 'slug' :
-				$result = $event->get('EVT_slug');
-				break;
-		}
-
-		return $result;
-
-	}
-
-
-
-
 	/**
 	 * returns the link to the event
 	 * @param  boolean $full_link if TRUE (default) we return the html for the name of the event linked to the event.  Otherwise we just return the url of the event.
 	 * @return string             
 	 */
-	private function _get_event_link( $full_link = TRUE ) {
-		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
-		$url = get_permalink($this->_data['ID']);
+	private function _get_event_link( $event, $full_link = TRUE ) {
+		$url = get_permalink($event->ID());
 
-		return $full_link ? '<a href="' . $url . '">' . $this->_data['name'] . '</a>' : $url;
+		return $full_link ? '<a href="' . $url . '">' . $event->get('EVT_name') . '</a>' : $url;
 	}
 
 

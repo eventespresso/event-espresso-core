@@ -591,7 +591,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), __("View Event Archive Page", "event_espresso"), 'button' ) .
 													$this->_display_legend($this->_event_legend_items());
-		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -802,6 +802,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+
 			//if this is a default TKT, then we need to set the TKT_ID to 0 and update accordingly, which means in turn that the prices will become new prices as well.
 			if ( isset( $tkt['TKT_is_default'] ) && $tkt['TKT_is_default'] ) {
 				$TKT_values['TKT_ID'] = 0;
@@ -922,6 +923,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
 				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
+				'PRC_is_default' => 0, //make sure prices are NOT set as default from this context
 				'PRC_order' => $row
 				);
 
@@ -1032,9 +1034,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//load formatter helper
   		EE_Registry::instance()->load_helper( 'Formatter' );
+
+  		//args for getting related registrations
+  		$query_args = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(EEM_Registration::status_id_pending, EEM_Registration::status_id_approved ) ) ) ) : array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
+
+
 		// publish box
 		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID() ), REG_ADMIN_URL);
-		$publish_box_extra_args['attendees_reg_limit'] = $this->_cpt_model_obj->get_number_of_tickets_sold();
+		$publish_box_extra_args['attendees_reg_limit'] = $this->_cpt_model_obj->count_related('Registration', $query_args);
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('FHEE_event_editor_email_attendees_class', 'misc-pub-section');
 		//$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_cpt_model_obj->id), 'admin.php?page=espresso_registrations');
 		$publish_box_extra_args['event_editor_overview_add'] = do_action('AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj);
@@ -1172,8 +1179,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'ticketrow' => $skeleton ? 'TICKETNUM' : $row,
 			'TKT_ID' => $ticket->get('TKT_ID'),
 			'TKT_name' => $ticket->get('TKT_name'),
-			'TKT_start_date' => $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
-			'TKT_end_date' => $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
+			'TKT_start_date' => $skeleton ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
+			'TKT_end_date' => $skeleton ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
 			'TKT_is_default' => $ticket->get('TKT_is_default'),
 			'TKT_qty' => $ticket->get_pretty('TKT_qty','input'),
 			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
@@ -1192,6 +1199,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'PRC_ID' => $price->get('PRC_ID'),
 			'PRC_is_default' => $price->get('PRC_is_default'),
 			);
+
+		//make sure we have default start and end dates if skeleton
+		//handle rows that should NOT be empty
+		if ( empty( $template_args['TKT_start_date'] ) ) {
+			//if empty then the start date will be now.
+			$template_args['TKT_start_date'] = date('Y-m-d h:i a', current_time('timestamp'));
+		}
+
+		if ( empty( $template_args['TKT_end_date'] ) ) {
+			//get the earliest datetime (if present);
+			$earliest_dtt = $this->_cpt_model_obj->ID() > 0 ? $this->_cpt_model_obj->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
+
+			if ( !empty( $earliest_dtt ) )
+				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
+			else
+				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(0, 0, 0, date("m"), date("d")+7, date("Y") ) );
+		}
 
 		$template_args = array_merge( $template_args, $price_args );
 		$template = apply_filters('FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
@@ -1797,7 +1821,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$type = 'csv';
 		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
 		
-		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
@@ -1875,7 +1899,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_search_btn_label = __('Categories', 'event_espresso');
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 

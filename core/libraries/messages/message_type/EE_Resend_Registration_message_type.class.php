@@ -152,7 +152,7 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'question_list')
+			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list')
 			);
 	}
 

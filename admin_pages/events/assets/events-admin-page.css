@@ -1,14 +1,19 @@
-
-
-#toplevel_page_espresso_events-table-frm .column-id { width:40px; text-align: right; }
-#toplevel_page_espresso_events-table-frm .column-name { }
-#toplevel_page_espresso_events-table-frm .column-venue  { width:17.5%; }
-#toplevel_page_espresso_events-table-frm .column-start_date { width:10%; }
-#toplevel_page_espresso_events-table-frm .column-start_time { width:7.5%; }
+#toplevel_page_espresso_events-table-frm .check-column { width: 4%; max-width: 30px; }
+#toplevel_page_espresso_events-table-frm .column-id { width:5%; max-width: 40px; }
+#toplevel_page_espresso_events-table-frm .column-name { width: 20%;  }
+#toplevel_page_espresso_events-table-frm .column-venue  { width:15%; }
+#toplevel_page_espresso_events-table-frm .column-start_date_time { width:15%; }
 #toplevel_page_espresso_events-table-frm .column-reg_begins { width:15%; }
 #toplevel_page_espresso_events-table-frm .column-status  { width:9%; max-width:84px; }
-#toplevel_page_espresso_events-table-frm .column-attendees { width:5%; }
-#toplevel_page_espresso_events-table-frm .column-actions { width:10%; }
+#toplevel_page_espresso_events-table-frm .ee-att-icon:before {
+	content: "\f307";
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 16px/1 'dashicons';
+	vertical-align: top;
+ }
+#toplevel_page_espresso_events-table-frm .column-attendees { width: 5%; max-width: 40px;}
+#toplevel_page_espresso_events-table-frm .column-actions { width: 10%; }
 
 
 .remove-item { cursor: pointer; vertical-align: middle; }
@@ -28,6 +33,7 @@
 .manual-venue { width: 33%; }
 .manual-venue input,
 .manual-venue textarea { width: 90%; }
+.form-table td.manual-venue { vertical-align: top }
 
 @media only screen and (max-width: 1425px) { #event-dates-and-times .dtm-inp { width:175px; } }
 @media only screen and (max-width: 1325px) { #event-dates-and-times .dtm-inp { width:150px; } }
@@ -231,4 +237,9 @@
 
 .inside .ee-status {
 	float: right;
+}
+
+#espresso_event_editor_event_options label {
+	width: 75%;
+	display: inline-block;
 }

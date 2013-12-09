@@ -1611,6 +1611,10 @@ jQuery(document).ready(function($) {
 				break;
 
 			case 'datetime-ticket' :
+				if ( ! $('.event-tickets-container').is(':visible') ) {
+					$('.event-tickets-container').slideToggle(245);
+					$('.ee-collapsible', '.available-tickets-container').removeClass('ee-collapsible-closed').addClass('ee-collapsible-open');
+				}
 				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
 				break;
 

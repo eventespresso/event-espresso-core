@@ -58,12 +58,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
-			'start_date' => __('Start Date', 'event_espresso'),
-			'start_time' => __('Start Time', 'event_espresso'),
+			'start_date_time' => __('Event Start', 'event_espresso'),
 			'reg_begins' => __('Reg Begins', 'event_espresso'),
 			'status' => __('Status', 'event_espresso'),
-			'attendees' => __('Attendees', 'event_espresso'),
-			'tkts_sold' => __('Tickets Sold', 'event_espresso'),
+			'attendees' => '<span class="ee-att-icon"></span>',
+			//'tkts_sold' => __('Tickets Sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
 			);
 
@@ -71,9 +70,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_sortable_columns = array(
 			'id' => array( 'EVT_ID' => true ),
 			'name' => array( 'EVT_name' => false ),
-			'venue' => array( 'VNU_name' => false ),
-			'start_date' => array('Datetime.DTT_EVT_start' => false),
-			'start_time' => array('Datetime.DTT_EVT_start' => false),
+			'venue' => array( 'Venue.VNU_name' => false ),
+			'start_date_time' => array('Datetime.DTT_EVT_start' => false),
 			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
 			//'status' => array('Event.status' => false)
 			);
@@ -208,20 +206,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_start_date($item) {
-		!empty( $this->_dtt ) ? $this->_dtt->e_start_date() : _e('No Date was saved for this Event', 'event_espresso');
+	public function column_start_date_time($item) {
+		!empty( $this->_dtt ) ? $this->_dtt->e_start_date_and_time() : _e('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_date', '', 'My Timezone: ' ) : '';
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_datetime', '', 'My Timezone: ' ) : '';
 
-	}
-
-
-
-
-	public function column_start_time($item) {
-		!empty( $this->_dtt ) ? $this->_dtt->e_start_time() : _e('No Date was saved for this Event', 'event_espresso');
-		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone( 'DTT_EVT_start', 'get_time', '', 'My Timezone: ' ) : '';
 	}
 
 

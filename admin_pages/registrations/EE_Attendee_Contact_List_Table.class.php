@@ -116,7 +116,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Attendee', 'event_espresso' ) . '">' . $item->lname() . '</a>';
+		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->lname() . '</a>';
 		return $name_link;
 
 	}
@@ -139,7 +139,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 		} else {
 			// restore attendee link
 			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_attendees', 'ATT_ID'=>$item->ID() ), REG_ADMIN_URL );
-			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Attendee', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
+			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Contact', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 		}
 
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->ID() ), REG_ADMIN_URL );

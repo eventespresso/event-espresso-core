@@ -360,7 +360,19 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function session_data() {
-		return $this->get('TXN_session_data' );
+		$session_data = $this->get('TXN_session_data');
+		if ( empty( $session_data ) ) {
+			$session_data = array(
+				'id' => NULL,
+				'user_id' => NULL,
+				'ip_address' => NULL,
+				'user_agent' => NULL,
+				'init_access' => NULL,
+				'last_access' => NULL,
+				'pages_visited' => array()
+				);
+		}
+		return $session_data;
 	}
 
 

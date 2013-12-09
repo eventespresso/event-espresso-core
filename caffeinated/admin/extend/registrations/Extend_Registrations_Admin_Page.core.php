@@ -315,7 +315,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 */
 	protected function _registration_checkin_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $this->_req_data['event_id']), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $this->_req_data['event_id']), 'add-new-h2');
 
 		$legend_items = array(
 			'checkin' => array(
@@ -506,7 +506,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	*/
 	protected function _event_registrations_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= isset( $this->_req_data['event_id'] ) ? $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $this->_req_data['event_id']), 'button add-new-h2') : '';
+		$this->_admin_page_title .= isset( $this->_req_data['event_id'] ) ? $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $this->_req_data['event_id']), 'add-new-h2') : '';
 
 		$legend_items = array(
 			'star-icon' => array(

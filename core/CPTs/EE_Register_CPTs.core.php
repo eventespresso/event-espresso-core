@@ -175,7 +175,7 @@ class EE_Register_CPTs {
 					'hierarchical'=> FALSE,
 					'has_archive' => FALSE,
 					'taxonomies' => array( 'post_tag' ),
-					'supports' => array( 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
+					'supports' => array( 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
 				))
 			);
 	}

@@ -331,21 +331,16 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@param boolean $for_incomplete_payments
 	 *		@return int
 	 */
-	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {		
-		$query_params = array(
-			array(
-				'EVT_ID'=>$EVT_ID,
-				'STS_ID' => EEM_Registration::status_id_approved
-			),
-			'default_where_conditions' => 'none'
-		);
+	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {	
+
+		$query_params = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(self::status_id_pending, self::status_id_approved ) ) ) ) : array( array( 'STS_ID' => self::status_id_approved ) );
+
+		$query_params[0]['EVT_ID'] = $EVT_ID;
+
 		if( $for_incomplete_payments ){
 			$query_params[0]['Transaction.STS_ID']=array('!=',  EEM_Transaction::complete_status_code);
 		}
 
-		if( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ){
-			$query_params[0]['OR'] = array( 'STS_ID' => EEM_Registration::status_id_pending, 'STS_ID*' => EEM_Registration::status_id_approved );
-		}
 		return $this->count($query_params);	
 	}
 
