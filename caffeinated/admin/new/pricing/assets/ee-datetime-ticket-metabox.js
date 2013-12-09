@@ -298,12 +298,12 @@ jQuery(document).ready(function($) {
 			$('#add-event-datetime').find('input').each(function() { $(this).val(''); });
 
 			//create new DTT display row.
-			var DTT_display_row = $('#dtt_new_display_row_holder').clone().html().replace(/DTTNUM/g, row);
-			DTT_display_row = $(DTT_display_row).prependTo(DTT_row_container);
+			/*var DTT_display_row = $('#dtt_new_display_row_holder').clone().html().replace(/DTTNUM/g, row);
+			DTT_display_row = $(DTT_display_row).prependTo(DTT_row_container);/**/
 
 			//replace Date text
 			DTT_display_text = this.DTT_display_text(DTT_start_time, DTT_end_time);
-			$(DTT_display_row).find('.datetime-title').text(DTT_display_text);
+			/*$(DTT_display_row).find('.datetime-title').text(DTT_display_text);/**/
 
 			//apply existing tickets
 			this.applyExistingTKTorDTTitems(DTT_row_container);
@@ -322,9 +322,9 @@ jQuery(document).ready(function($) {
 
 			//verify that there isn't only one DTT row.  If there is then let's remove the trash icon from this element.  If there ISNT' then let's show all trash elements.
 			if ( $('.event-datetime-row', '.event-datetimes-container').length === 1 ) {
-				DTT_display_row.find('.trash-icon').hide();
+				DTTeditform.find('.trash-icon').hide();
 			} else {
-				$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon', '.datetime-summary').show();
+				$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon', '.datetime-edit').show();
 			}
 			return this;
 		},
@@ -652,7 +652,7 @@ jQuery(document).ready(function($) {
 			//need to update the displayed datetime string for the datetime title...
 			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end', '#edit-event-datetime-' + this.dateTimeRow).val() );
 
-			$('.datetime-title', '#display-event-datetime-' + this.dateTimeRow).text(DTT_display_text);
+			/*$('.datetime-title', '#display-event-datetime-' + this.dateTimeRow).text(DTT_display_text);/**/
 
 			//... and in all related dtt list rows!
 			$('.datetime-tickets-list').find('li[data-datetime-row="' + tktHelper.dateTimeRow + '"]').each( function() {
@@ -741,7 +741,8 @@ jQuery(document).ready(function($) {
 			//replace all instances of DTTNUM with dttrow
 			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.dateTimeRow);
 			//get name for dtt and add to the new li item
-			var dttname = $('.datetime-title', '#display-event-datetime-' + this.dateTimeRow ).text();
+			var dttname = this.DTT_display_text( $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end', '#edit-event-datetime-' + this.dateTimeRow).val() );
+			/*var dttname = $('.datetime-title', '#display-event-datetime-' + this.dateTimeRow ).text();/**/
 			new_dtt_list_row = new_dtt_list_row.replace(/DTTNAME/g,dttname);
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
@@ -1415,10 +1416,10 @@ jQuery(document).ready(function($) {
 			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
 				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
 				this.selector.slideToggle( 250 );
-			} else if ( this.context == 'datetime' ) {
+			} /*else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
 				this.selector.slideToggle( 250 );
-			} else if ( this.context == 'datetime-create' ) {
+			}/**/ else if ( this.context == 'datetime-create' ) {
 				this.selector = $('#add-event-datetime');
 				if ( trash )
 					this.selector.find('input').val('');
@@ -1556,9 +1557,9 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		switch ( data.context ) {
-			case 'datetime' :
+			/*case 'datetime' :
 				tktHelper.updateDTTrow(data.datetimeRow);
-				break;
+				break;/**/
 
 			case 'ticket' :
 				tktHelper.updateTKTrow(data.ticketRow);
@@ -1566,6 +1567,13 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
+
+	$('.datetime-edit').on('focusout', '.ee-datepicker', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var data = $(this).data();
+		tktHelper.updateDTTrow(data.datetimeRow);
+	});
 
 
 	/**
@@ -1582,9 +1590,9 @@ jQuery(document).ready(function($) {
 			case 'short-ticket' :
 				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
-			case 'datetime' :
+			/*case 'datetime' :
 				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
-				break;
+				break;/**/
 			case 'datetime-create' :
 				//clear inputs
 				tktHelper.setcontext('datetime-create').DateTimeEditToggle(true);
@@ -1602,9 +1610,6 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		switch ( data.context ) {
-			case 'datetime' :
-				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
-				break;
 
 			case 'ticket-datetime' :
 				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle().scrollTo();
