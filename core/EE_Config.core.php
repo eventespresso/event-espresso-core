@@ -33,7 +33,7 @@ final class EE_Config {
 
 	/**
 	 *
-	 * @var array
+	 * @var EE_Config_Base[]
 	 */
 	public $addons;
 
@@ -696,7 +696,8 @@ final class EE_Config {
 			'admin',
 			'template_settings',
 			'map_settings',
-			'gateway'
+			'gateway',
+			'addons'
 		));
 	}
 
