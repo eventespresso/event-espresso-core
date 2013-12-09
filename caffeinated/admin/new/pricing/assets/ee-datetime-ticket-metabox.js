@@ -981,6 +981,9 @@ jQuery(document).ready(function($) {
 
 			initialPRCrow = incomingcontext == 'short-ticket' ? $(initialPRCrow).appendTo(newTKTrow.find('.ticket-price-rows')) : $(newTKTrow).find('.ticket-price-rows').html(initialPRCrow);
 
+			initialPRCrow.find('.ticket-price-plus-minus').hide();
+			initialPRCrow.find('.ticket-price-dollar-sign-display').show();
+
 			//if this is triggered via the "short-ticket" context then we need to get the values from the create ticket form and add to the new row.
 			if ( incomingcontext == 'short-ticket' ) {
 				// inputs
