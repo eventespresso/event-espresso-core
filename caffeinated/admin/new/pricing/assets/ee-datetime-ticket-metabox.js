@@ -1415,7 +1415,6 @@ jQuery(document).ready(function($) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
 				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
-				this.selector.slideToggle( 250 );
 			} /*else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
 				this.selector.slideToggle( 250 );
@@ -1423,8 +1422,9 @@ jQuery(document).ready(function($) {
 				this.selector = $('#add-event-datetime');
 				if ( trash )
 					this.selector.find('input').val('');
-				this.selector.slideToggle( 250 );
 			}
+			this.context = 'datetime';
+			this.slideToggler();
 			return this;
 		},
 
@@ -1447,17 +1447,10 @@ jQuery(document).ready(function($) {
 		TicketEditToggle: function( trash ) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			this.setSelector();
-			var edit_container = $('#display-ticketrow-' + this.ticketRow).find('.ee-editing-container');
-			this.selector.slideToggle(250, function() {
-				if ( tktHelper.selector.is(':visible') ) {
-					edit_container.addClass('ee-edit-editing');
-				} else {
-					edit_container.removeClass('ee-edit-editing');
-				}
-			});
+			this.slideToggler();
 
 			/**
-			 * if creating is true, then we need to remove the existing row and related items from the dom.
+			 * if creating is true (and trashing), then we need to remove the existing row and related items from the dom.
 			 */
 			if ( this.creating && trash &&  _.indexOf(this.createdItems, this.ticketRow) > -1 )
 				this.setcontext('ticket').trash(this.ticketRow);
@@ -1468,13 +1461,40 @@ jQuery(document).ready(function($) {
 		},
 
 
+		/**
+		 * wrapper for jQuery slideToggle so we can do our common stuff in it
+		 * @param  {int}    delay how long the toggle animation should take to complete in milliseconds
+		 * @return {tktHelper}       this object
+		 */
+		slideToggler: function( delay ) {
+			var edit_container;
+			switch ( this.context ) {
+				case 'ticket' :
+					edit_container = $('#display-ticketrow-' + this.ticketRow).find('.ee-editing-container');
+					break;
+				case 'datetime' :
+					edit_container = $('#edit-event-datetime-' + this.dateTimeRow).find('.ee-editing-container');
+					break;
+			}
+
+			delay = typeof(delay) === 'undefined' ? 200 : delay;
+			this.selector.slideToggle(delay, function() {
+				if ( tktHelper.selector.is(':visible') ) {
+					edit_container.addClass('ee-edit-editing');
+				} else {
+					edit_container.removeClass('ee-edit-editing');
+				}
+			});
+			return this;
+		},
+
 
 		/**
 		 * This toggles the display of the edit form for a Price Row.
 		 */
 		PriceEditToggle: function() {
 			this.selector = $('.extra-price-row', '#extra-price-row-' + this.ticketRow + '-' + this.priceRow);
-			this.selector.slideToggle(250);
+			this.selector.slideToggle(200);
 			return this;
 		},
 
@@ -1620,7 +1640,12 @@ jQuery(document).ready(function($) {
 					$('.event-tickets-container').slideToggle(245);
 					$('.ee-collapsible', '.available-tickets-container').removeClass('ee-collapsible-closed').addClass('ee-collapsible-open');
 				}
-				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
+
+				if ( $('#fieldset-edit-ticketrow-' + data.ticketRow ).is(':visible') ) {
+					tktHelper.setcontext('ticket').setticketRow(data.ticketRow).scrollTo($('#fieldset-edit-ticketrow-' + data.ticketRow ) );
+				} else {
+					tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
+				}
 				break;
 
 			case 'ticket' :

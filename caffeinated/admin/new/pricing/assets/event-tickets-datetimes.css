@@ -147,7 +147,21 @@
 }
 
 .datetime-tickets-edit h5 {
-    margin: 0;
+    margin-top: 1em;
+}
+
+.datetime-tickets-edit {
+    background-color: #F8F8F8;
+    border: 1px solid #EEEEEE;
+    border-radius: 3px 3px 3px 3px;
+    padding: 1em 1.5em 2em;
+    margin-top: -5px;
+}
+
+.datetime-edit .ee-edit-editing {
+    height: 35px;
+    margin-top: 15px;
+    padding-top: -10px;
 }
 
 .button-column {
