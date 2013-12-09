@@ -1357,7 +1357,7 @@ abstract class EEM_Base extends EE_Base{
 
 
 		//set limit
-		if(array_key_exists('limit',$query_params) && $query_params['limit']){
+		if(array_key_exists('limit',$query_params) && $query_params['limit'] !== NULL){
 			if(is_array($query_params['limit'])){
 				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
 				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);

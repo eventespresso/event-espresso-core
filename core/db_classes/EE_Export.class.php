@@ -55,7 +55,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	/**
 	 *		@ singleton method used to instantiate class object
 	 *		@ access public
-	 *		@ return class instance
+	 *		@ return EE_Export
 	 */	
 	public static function instance( $request_data = array() ) {
 		// check if class object is instantiated
@@ -151,6 +151,42 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
 		}
 	}	
+	
+	/**
+	 * Downloads a CSV file with all the columns, but no data. This should be used for importing
+	 * @return null kills execution
+	 */
+	function export_sample(){
+		$models_to_export = array(
+			'Event',
+			'Datetime',
+			'Ticket',
+			'Datetime_Ticket',
+			'Price',
+			'Price_Type',
+			'Question_Group',
+			'Event_Question_Group',
+			'Question',
+			'Question_Option',
+			'Venue',
+			'Event_Venue',
+			'State',
+			'Country',
+			'Term',
+			'Term_Taxonomy',
+			'Term_Relationship');
+		$model_names_and_impossible_query_params = array();
+		foreach($models_to_export as $model_name){
+			$model_names_and_impossible_query_params[$model_name] = array('limit'=>0);
+		}
+		$table_data = $this->_get_export_data_for_models( $model_names_and_impossible_query_params );
+		
+		$filename = $this->generate_filename ( 'sample-export-file' );
+
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
+			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
+		}
+	}
 
 
 	/**

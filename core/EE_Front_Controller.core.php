@@ -81,6 +81,8 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+//		$e = EE_Export::instance();
+//		$e->export_sample();
 //		EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all());
 //		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
 //		$t = EE_Ticket::new_instance(array('TKT_name'=>'prog1',));
