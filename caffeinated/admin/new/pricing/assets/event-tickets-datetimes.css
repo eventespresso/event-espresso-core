@@ -39,7 +39,7 @@
 
 
 .datetime-edit-table {
-    width: 72%;
+    width: 100%;
     float: left;
 }
 
@@ -49,7 +49,15 @@
 
 
 .datetime-edit-table td:nth-child(3) {
-    width: 10%
+    width: 10%;
+}
+
+.datetime-edit-table td:nth-child(4) {
+   padding-top: 15px;
+}
+
+.datetime-edit-table td:last-child {
+    padding-top: 20px;
 }
 
 @media all and (min-width: 1277px) {
@@ -136,7 +144,6 @@
 
 .datetime-tickets-sold {
     font-size: 1em;
-    float: right;
 }
 
 .datetime-tickets-edit h5 {
