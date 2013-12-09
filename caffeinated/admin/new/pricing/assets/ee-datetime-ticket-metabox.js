@@ -1413,12 +1413,11 @@ jQuery(document).ready(function($) {
 		 */
 		DateTimeEditToggle: function( trash ) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
-			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
-				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
-			} /*else if ( this.context == 'datetime' ) {
+			this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
+			/*else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
-				this.selector.slideToggle( 250 );
-			}/**/ else if ( this.context == 'datetime-create' ) {
+				this.selector.slideToggle( 250 );/**/
+			if ( this.context == 'datetime-create' ) {
 				this.selector = $('#add-event-datetime');
 				if ( trash )
 					this.selector.find('input').val('');
@@ -1479,7 +1478,7 @@ jQuery(document).ready(function($) {
 
 			delay = typeof(delay) === 'undefined' ? 200 : delay;
 			this.selector.slideToggle(delay, function() {
-				if ( tktHelper.selector.is(':visible') ) {
+				if ( $(this).is(':visible') ) {
 					edit_container.addClass('ee-edit-editing');
 				} else {
 					edit_container.removeClass('ee-edit-editing');
@@ -1641,7 +1640,7 @@ jQuery(document).ready(function($) {
 					$('.ee-collapsible', '.available-tickets-container').removeClass('ee-collapsible-closed').addClass('ee-collapsible-open');
 				}
 
-				if ( $('#fieldset-edit-ticketrow-' + data.ticketRow ).is(':visible') ) {
+				if ( ! $('#fieldset-edit-ticketrow-' + data.ticketRow ).is(':visible') ) {
 					tktHelper.setcontext('ticket').setticketRow(data.ticketRow).scrollTo($('#fieldset-edit-ticketrow-' + data.ticketRow ) );
 				} else {
 					tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
