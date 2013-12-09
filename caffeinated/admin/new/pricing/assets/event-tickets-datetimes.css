@@ -56,7 +56,7 @@
    padding-top: 15px;
 }
 
-.datetime-edit-table td:last-child {
+.datetime-edit .datetime-edit-table td:last-child {
     padding-top: 20px;
 }
 
@@ -428,6 +428,10 @@
 
 .add-datetime-ticket-container .save-cancel-button-container {
     padding-top: 14px;
+}
+
+#add-event-datetime .save-cancel-button-container {
+    padding-top: 3px;
 }
 
 .add-edit {
