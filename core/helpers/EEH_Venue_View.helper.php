@@ -39,8 +39,25 @@
 	 *  @return 	string
 	 */
 	if ( ! function_exists( 'espresso_venue_name' )) {
-		function espresso_venue_name( $link_to = 'details' ) {
-			echo EEH_Venue_View::venue_name( $link_to );
+		function espresso_venue_name( $VNU_ID = FALSE, $link_to = 'details'  ) {
+			echo EEH_Venue_View::venue_name( $link_to, $VNU_ID );
+		}		
+	}
+
+
+
+
+	/**
+	 * 	espresso_venue_name
+	 *
+	 *  @access 	public
+	 *  @param 	string 	$text
+	 *  @param 	int 	$VNU_ID
+	 *  @return 	string
+	 */
+	if ( ! function_exists( 'espresso_venue_link' )) {
+		function espresso_venue_link( $VNU_ID = FALSE, $text = '' ) {
+			return EEH_Venue_View::venue_details_link( $text, $VNU_ID );
 		}		
 	}
 
@@ -66,8 +83,12 @@
 	 *  @return 	string
 	 */
 	if ( ! function_exists( 'espresso_venue_excerpt' )) {
-		function espresso_venue_excerpt( $VNU_ID = FALSE ) {
-			echo EEH_Venue_View::venue_excerpt( $VNU_ID );
+		function espresso_venue_excerpt( $VNU_ID = FALSE,  $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+			} else {
+				return EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+			}
 		}		
 	}
 
@@ -80,8 +101,12 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_categories' )) {
-		function espresso_venue_categories( $VNU_ID = FALSE ) {
-			EEH_Venue_View::venue_categories( $VNU_ID );
+		function espresso_venue_categories( $VNU_ID = FALSE, $hide_uncategorized = TRUE,  $echo = TRUE ) { 			
+			if ( $echo ) {
+				echo EEH_Venue_View::venue_categories( $VNU_ID, $hide_uncategorized );
+			} else {
+				return EEH_Venue_View::venue_categories( $VNU_ID, $hide_uncategorized );
+			}
 		}		
 	}
 
@@ -106,8 +131,12 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_gmap' )) {
-		function espresso_venue_gmap( $map_ID = FALSE, $gmap = array(), $VNU_ID = FALSE ) {
-			echo EEH_Venue_View::venue_gmap( $map_ID, $gmap, $VNU_ID );
+		function espresso_venue_gmap( $map_ID = FALSE, $gmap = array(), $VNU_ID = FALSE, $echo = TRUE  ) {
+			if ( $echo ) {
+				echo EEH_Venue_View::venue_gmap( $map_ID, $gmap, $VNU_ID );
+			} else {
+				return EEH_Venue_View::venue_gmap( $map_ID, $gmap, $VNU_ID );
+			}
 		}		
 	}
 
@@ -118,13 +147,12 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_phone' )) {
-		function espresso_venue_phone( $echo = TRUE ) {
+		function espresso_venue_phone( $VNU_ID = FALSE, $echo = TRUE ) {
 			if ( $echo ) {
-				echo EEH_Venue_View::venue_phone();
+				echo EEH_Venue_View::venue_phone( $VNU_ID );
 			} else {
-				return EEH_Venue_View::venue_phone();
-			}
-			
+				return EEH_Venue_View::venue_phone( $VNU_ID );
+			}			
 		}		
 	}
 
@@ -134,8 +162,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_website' )) {
-		function espresso_venue_website() {
-			echo EEH_Venue_View::venue_website_link();
+		function espresso_venue_website( $VNU_ID = FALSE ) {
+			echo EEH_Venue_View::venue_website_link( $VNU_ID );
 		}		
 	}
 
@@ -271,12 +299,9 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_excerpt( $VNU_ID = FALSE ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			 if ( $venue->excerpt() != NULL && $venue->excerpt() ) {
-				$excerpt = $venue->excerpt() . EEH_Venue_View::venue_details_link( __( ' more', 'event_espresso' ) . '&hellip;' );
-			} else {
-				$excerpt = $venue->description();
-			}
-			return $venue->excerpt() != NULL && $venue->excerpt() ? $excerpt : '';			
+			$excerpt = $venue->excerpt() != NULL && $venue->excerpt() ? $venue->excerpt() : $venue->description();
+			$venue_link = ' ' . EEH_Venue_View::venue_details_link( __( 'more', 'event_espresso' ) . '&hellip;', $venue->ID() );
+			return ! empty( $excerpt ) ? wp_trim_words( $excerpt, 25, '' ) . $venue_link : '';			
 		}
 		return '';
 	}
@@ -290,11 +315,21 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function venue_categories( $VNU_ID = FALSE ) {
+	public static function venue_categories( $VNU_ID = FALSE, $hide_uncategorized = TRUE ) {
+		$category_links = array();
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
-		if ( $venue instanceof EE_Venue ) {			
-			the_terms( $venue->ID(), 'espresso_venue_categories' );
+		if ( $venue instanceof EE_Venue ) {
+			// get category terms
+			$venue_categories = get_the_terms( $venue->ID(), 'espresso_venue_categories' );
+			// loop thru terms and create links
+			foreach ( $venue_categories as $term ) {
+				$url = get_term_link( $term, 'espresso_venue_categories' );
+				if ( ! is_wp_error( $url ) && (( $hide_uncategorized && $term->name != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
+					$category_links[] = '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a> ';
+				}					
+			}
 		}
+		return implode( ' ', $category_links );		
 	}
 
 
@@ -327,19 +362,19 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @param 	string 	$link_to - options( details, website, none ) whether to turn Venue name into a clickable link to the Venue's details page or website
 	 *  @return 	string
 	 */
-	public static function venue_name( $link_to = 'details' ) {
-		$venue = EEH_Venue_View::get_venue();
+	public static function venue_name( $link_to = 'details', $VNU_ID = FALSE ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			$venue_name = EEH_Schema::name( EEH_Venue_View::$_venue->name() );
 			switch( $link_to ) {
 				
 				case 'details' :
-					return EEH_Venue_View::venue_details_link( $venue_name );
+					return EEH_Venue_View::venue_details_link( $venue_name, $venue->ID() );
 				break;
 				
 				case 'website' :
-					return EEH_Venue_View::venue_website_link( $venue_name );
+					return EEH_Venue_View::venue_website_link( $venue_name, $venue->ID() );
 				break;
 				
 				default :
@@ -359,8 +394,8 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @param	string $text 
 	 *  @return 	string
 	 */
-	public static function venue_details_link( $text = '' ) {
-		$venue = EEH_Venue_View::get_venue();
+	public static function venue_details_link( $text = '', $VNU_ID = FALSE ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			return EEH_Schema::url( get_permalink( $venue->ID() ), $text );
 		}
@@ -376,8 +411,8 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @param	string $text 
 	 *  @return 	string
 	 */
-	public static function venue_website_link( $text = '' ) {
-		$venue = EEH_Venue_View::get_venue();
+	public static function venue_website_link( $text = '', $VNU_ID = FALSE ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			$url = $venue->venue_url();
@@ -397,8 +432,8 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @param	string $text 
 	 *  @return 	string
 	 */
-	public static function venue_phone() {
-		$venue = EEH_Venue_View::get_venue();
+	public static function venue_phone( $VNU_ID = FALSE) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Schema::telephone( $venue->phone() );
@@ -420,7 +455,7 @@ class EEH_Venue_View extends EEH_Base {
 		
 		static $static_map_id = 1;		
 		
-		$venue = EEH_Venue_View::get_venue();
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			
 			$map_cfg = EE_Registry::instance()->CFG->map_settings;
@@ -465,7 +500,7 @@ class EEH_Venue_View extends EEH_Base {
 			}
 		}
 	
-		return;
+		return FALSE;
 
 	}
 	
@@ -475,7 +510,7 @@ class EEH_Venue_View extends EEH_Base {
 	 * @param array $atts like EEH_Maps::google_map_link
 	 * @return string
 	 */
-	public static function espresso_google_static_map(EE_Venue $venue,$atts = array()){
+	public static function espresso_google_static_map( EE_Venue $venue, $atts = array() ){
 		EE_Registry::instance()->load_helper('Maps');
 		$state = $venue->state_obj();
 		$country = $venue->country_obj();
@@ -515,7 +550,7 @@ class EEH_Venue_View extends EEH_Base {
 				// generate nonce
 				$nonce = wp_create_nonce( 'edit_nonce' );
 				// generate url to venue editor for this venue
-				$url = add_query_arg( array( 'page' => 'espresso_venues', 'action' => 'edit', 'post' => $venue->ID(), 'edit_nonce' => $nonce ), admin_url() );
+				$url = add_query_arg( array( 'page' => 'espresso_venues', 'action' => 'edit', 'post' => $venue->ID(), 'edit_nonce' => $nonce ), admin_url( 'admin.php' ) );
 				// get edit CPT text
 				$post_type_obj = get_post_type_object( 'espresso_venues' );
 				// build final link html
