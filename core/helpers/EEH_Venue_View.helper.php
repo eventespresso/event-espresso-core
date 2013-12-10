@@ -320,13 +320,14 @@ class EEH_Venue_View extends EEH_Base {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			// get category terms
-			$venue_categories = get_the_terms( $venue->ID(), 'espresso_venue_categories' );
-			// loop thru terms and create links
-			foreach ( $venue_categories as $term ) {
-				$url = get_term_link( $term, 'espresso_venue_categories' );
-				if ( ! is_wp_error( $url ) && (( $hide_uncategorized && $term->name != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
-					$category_links[] = '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a> ';
-				}					
+			if ( $venue_categories = get_the_terms( $venue->ID(), 'espresso_venue_categories' )) {
+				// loop thru terms and create links
+				foreach ( $venue_categories as $term ) {
+					$url = get_term_link( $term, 'espresso_venue_categories' );
+					if ( ! is_wp_error( $url ) && (( $hide_uncategorized && strtolower( $term->name ) != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
+						$category_links[] = '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a> ';
+					}					
+				}
 			}
 		}
 		return implode( ' ', $category_links );		

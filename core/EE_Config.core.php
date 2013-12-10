@@ -739,7 +739,6 @@ class EE_Core_Config extends EE_Config_Base {
 	public $site_license_key;
 	public $ee_ueip_optin;
 	public $post_shortcodes;
-	public $post_id_shortcodes;
 	public $module_route_map;
 	public $module_forward_map;
 	public $module_view_map;
@@ -761,7 +760,6 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->site_license_key = NULL;
 		$this->ee_ueip_optin = TRUE;
 		$this->post_shortcodes = array();
-		$this->post_id_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
 		$this->module_view_map = array();

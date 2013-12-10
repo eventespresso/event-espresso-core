@@ -65,9 +65,34 @@
 	* 
 	 * @return string
 	 */
+	if ( ! function_exists( 'espresso_event_status_banner' )) {
+		function espresso_event_status_banner( $EVT_ID = FALSE ) {
+			return EEH_Event_View::event_status( $EVT_ID );
+		}		
+	}
+
+
+	/**
+	 * espresso_event_status
+	 * returns the event status if it is sold out, expired, or inactive
+	* 
+	 * @return string
+	 */
 	if ( ! function_exists( 'espresso_event_status' )) {
 		function espresso_event_status( $EVT_ID = FALSE ) {
-			return EEH_Event_View::event_status( $EVT_ID );
+			switch ( EEH_Event_View::event_active_status( $EVT_ID )) {
+				case EE_Datetime::sold_out :
+					return 'sold-out';
+				case EE_Datetime::expired :
+					return 'expired';
+				case EE_Datetime::upcoming :
+					return 'upcoming';
+				case EE_Datetime::active : 
+					return 'active';
+				case EE_Datetime::inactive :
+				default :
+					return 'inactive';
+			}
 		}		
 	}
 
@@ -426,17 +451,18 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function event_categories( $EVT_ID = FALSE, $hide_uncategorized = FALSE ) {
+	public static function event_categories( $EVT_ID = FALSE, $hide_uncategorized = TRUE ) {
 		$category_links = array();
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
-			$event_categories = get_the_terms( $event->ID, 'espresso_event_categories' );
-			// loop thru terms and create links
-			foreach ( $event_categories as $term ) {
-				$url = get_term_link( $term, 'espresso_venue_categories' );
-				if ( ! is_wp_error( $url ) && (( $hide_uncategorized && $term->name != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
-					$category_links .= '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a>';
-				}					
+			if ( $event_categories = get_the_terms( $event->ID, 'espresso_event_categories' )) {
+				// loop thru terms and create links
+				foreach ( $event_categories as $term ) {
+					$url = get_term_link( $term, 'espresso_venue_categories' );
+					if ( ! is_wp_error( $url ) && (( $hide_uncategorized && strtolower( $term->name ) != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
+						$category_links[] = '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a>';
+					}					
+				}
 			}
 		}		
 		return implode( ' ', $category_links );		

@@ -49,15 +49,24 @@
 
 
 .datetime-edit-table td:nth-child(3) {
-    width: 10%;
+    width: 3%;
 }
 
 .datetime-edit-table td:nth-child(4) {
    padding-top: 15px;
+   min-width :80px
+   
 }
 
 .datetime-edit .datetime-edit-table td:last-child {
     padding-top: 20px;
+    min-width: 40px;
+}
+
+@media all and (max-width: 1363px) {
+    #add-new-event-datetime-table {
+        width: 100%;
+    }
 }
 
 @media all and (min-width: 1277px) {

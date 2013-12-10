@@ -38,15 +38,15 @@ $ELID = espresso_get_event_list_ID();
 
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 				
-				<?php echo espresso_event_status(); ?>
+				<?php echo espresso_event_status_banner( $post->ID ); ?>
 
 					<?php
-						$wrap_class = '';
+						$wrap_class = 'no-img';
 						if ( has_post_thumbnail( $post->ID )) {
 							if ( $img_ID = get_post_thumbnail_id( $post->ID )) {
 								if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'medium' )) {
 									$caption = esc_attr( get_post( get_post_thumbnail_id( $post->ID ))->post_excerpt );
-									$wrap_class = ' has-img';
+									$wrap_class = 'has-img';
 						?>
 							<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 								<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>		
@@ -56,7 +56,7 @@ $ELID = espresso_get_event_list_ID();
 							}			
 						}				
 					?>
-					<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
+					<div class="espresso-event-wrapper-dv <?php echo $wrap_class . ' ' . espresso_event_status( $post->ID );?>">
 						<header class="event-header">
 							<h3 class="event-title">
 								<a href="<?php espresso_event_link_url(); ?>" title="<?php echo esc_attr( sprintf( __( 'Go to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
@@ -91,12 +91,11 @@ $ELID = espresso_get_event_list_ID();
 							<?php endif; ?>
 							<?php if ( espresso_display_venue_details_in_event_list() ) : ?>
 							<p>
-								<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
-								<?php echo espresso_venue_excerpt(); ?>								
+								<span class="tags-links"><?php echo espresso_venue_categories(); ?></span>
 							</p>
 							<p>
-								<strong><?php _e( 'Categories:', 'event_espresso' ); ?></strong>
-								<?php echo espresso_venue_categories(); ?>
+								<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
+								<?php echo espresso_venue_excerpt(); ?>								
 							</p>
 							<p>
 								<strong><?php _e( 'Phone:', 'event_espresso' ); ?></strong>
@@ -108,7 +107,7 @@ $ELID = espresso_get_event_list_ID();
 						<?php endif;/**/ ?>
 
 						<footer class="event-meta">
-							<p><?php the_terms( $post->ID, 'espresso_event_categories' );// the_terms( $post->ID, 'category' );  ?></p>
+							<span class="tags-links"><?php the_terms( $post->ID, 'espresso_event_categories' ); ?></span><br/>
 							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
 							<?php espresso_event_reg_button( __( 'Register Now', 'event_espresso' ), __( 'Read More', 'event_espresso' ), $post->ID ); ?>
 							<span class="edit-link"><?php espresso_edit_event_link(); ?></span>
