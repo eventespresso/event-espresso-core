@@ -567,6 +567,15 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin-top: 3px;
 }
 
+.ee-view-icon:before {
+	content: "\f177";
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 16px/1 'dashicons';
+	vertical-align: top;
+	margin-top: 3px;
+}
+
 
 .ee-collapsible:before {
 	display: inline-block;

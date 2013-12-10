@@ -1101,6 +1101,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['taxes'] = FALSE;
 		}
 
+		$this->_template_args['view_transaction_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __('View Transaction'), 'button secondary-button right ee-view-icon' );
+
 		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
