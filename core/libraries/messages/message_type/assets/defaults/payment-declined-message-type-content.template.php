@@ -39,7 +39,7 @@
                                 <li>Payment status: [PAYMENT_STATUS]</li>
                                 <li>Payment gateway: [PAYMENT_GATEWAY]</li>
                                 <li>Total Cost: [TOTAL_COST]</li>
-                                <li>Total Oweing: [TOTAL_OWING]</li>
+                                <li>Total Owing: [TOTAL_OWING]</li>
                             </ol>
                             
                             <!-- Callout Panel -->

@@ -31,7 +31,7 @@
                     <tr>
                         <td>
                             <h1>Hello, [FNAME] [LNAME]</h1>
-                            <p class="lead">We're just reminding you that there is still money oweing for the following transaction:</p>
+                            <p class="lead">We're just reminding you that there is still money owing for the following transaction:</p>
 
                             <ul>[TICKET_LIST]</ul>
 

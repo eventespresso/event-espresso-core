@@ -40,12 +40,12 @@
                                 <li>Payment gateway: [PAYMENT_GATEWAY]</li>
                                 <li>Total Cost: [TOTAL_COST]</li>
                                 <li>Payment Made: [AMOUNT_PAID]</li>
-                                <li>Total Oweing: [TOTAL_OWING]</li>
+                                <li>Total Owing: [TOTAL_OWING]</li>
                             </ol>
                             
                             <!-- Callout Panel -->
                             <p class="callout">
-                                If there is still money oweing on your transaction, you can make another payment by <a href="[PAYMENT_URL]">going here &raquo;</a>
+                                If there is still money owed on your transaction, you can make another payment by <a href="[PAYMENT_URL]">going here &raquo;</a>
                             </p><!-- /Callout Panel -->
     
                         </td>

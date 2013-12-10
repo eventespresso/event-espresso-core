@@ -260,7 +260,7 @@ class EE_Messages_Init extends EE_Base {
 		if ( $reg_success ) {
 			EE_Error::add_success( __('Complete payment has been made for the transaction so registration confirmations have been sent', 'event_espresso') );
 		} else {
-			EE_Error::add_success( __('Registration confirmations are delayed until the amount oweing has been completely paid.', 'event_espresso') );
+			EE_Error::add_success( __('Registration confirmations are delayed until the amount owing has been completely paid.', 'event_espresso') );
 		}
 		return $success;
 	}

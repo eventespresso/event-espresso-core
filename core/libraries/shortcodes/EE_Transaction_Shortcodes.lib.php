@@ -48,7 +48,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
 			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
-			'[TOTAL_OWING]' => __('The total oweing on a transaction', 'event_espresso'),
+			'[TOTAL_OWING]' => __('The total owing on a transaction', 'event_espresso'),
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso')
 			);
 	}
