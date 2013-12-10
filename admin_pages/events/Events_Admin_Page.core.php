@@ -523,10 +523,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/group.png',
 				'desc' => __('View Registrations for Event', 'event_espresso')
 			),
-			'excel_export' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/excel_icon.png',
-				'desc' => __('Export Event details to excel', 'event_espresso')
-			),
 			'csv_export' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/csv_icon_sm.gif',
 				'desc' => __('Export Event details to csv', 'event_espresso')
