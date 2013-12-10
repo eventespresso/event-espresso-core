@@ -425,22 +425,9 @@ label.error  { display: block; color: #FE2A00 !important; }
 	text-indent: -9000px;
 	outline: none;
 }
-.shortcode_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/tag.png) no-repeat;
-	text-indent: -9000px;
-	outline: none;
-}
-.shortcode_btn:hover {
-	margin: 4px 3px 0 0;
-	height: 20px;
-}
+
 /*fixing this -  what does this mean?*/
-.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .shortcode_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {
+.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {
 	height: 18px;
 	margin: 2px 3px 0 0;
 }
