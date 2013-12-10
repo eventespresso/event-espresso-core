@@ -44,9 +44,9 @@ $ELID = espresso_get_event_list_ID();
 				<!-- .event-datetimes -->
 
 			<?php
-				$wrap_class = '';
+				$wrap_class = 'no-img';
 				if ( has_post_thumbnail( $post->ID )) {
-					$wrap_class = ' has-img';
+					$wrap_class = 'has-img';
 				?>
 					<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 						<?php the_post_thumbnail( array( 60, 60 ));?>
@@ -55,10 +55,10 @@ $ELID = espresso_get_event_list_ID();
 				}				
 			?>
 
-					<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
+					<div class="espresso-event-wrapper-dv<?php echo $wrap_class . ' ' . espresso_event_status( $post->ID );?>">
 						<header class="event-header">							
 							<h3 class="event-title">
-								<?php echo espresso_event_status(); ?>	
+								<?php echo espresso_event_status_banner( $post->ID ); ?>
 								<a href="<?php espresso_event_link_url(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
 									<?php the_title(); ?>							
 								</a>

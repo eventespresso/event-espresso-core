@@ -38,15 +38,15 @@ $ELID = espresso_get_event_list_ID();
 
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 				
-				<?php echo espresso_event_status(); ?>
+				<?php echo espresso_event_status_banner( $post->ID ); ?>
 
 					<?php
-						$wrap_class = '';
+						$wrap_class = 'no-img';
 						if ( has_post_thumbnail( $post->ID )) {
 							if ( $img_ID = get_post_thumbnail_id( $post->ID )) {
 								if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'medium' )) {
 									$caption = esc_attr( get_post( get_post_thumbnail_id( $post->ID ))->post_excerpt );
-									$wrap_class = ' has-img';
+									$wrap_class = 'has-img';
 						?>
 							<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 								<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>		
@@ -56,7 +56,7 @@ $ELID = espresso_get_event_list_ID();
 							}			
 						}				
 					?>
-					<div class="espresso-event-wrapper-dv<?php echo $wrap_class;?>">
+					<div class="espresso-event-wrapper-dv <?php echo $wrap_class . ' ' . espresso_event_status( $post->ID );?>">
 						<header class="event-header">
 							<h3 class="event-title">
 								<a href="<?php espresso_event_link_url(); ?>" title="<?php echo esc_attr( sprintf( __( 'Go to %s', 'event_espresso' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">

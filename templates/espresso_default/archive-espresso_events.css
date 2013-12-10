@@ -198,8 +198,13 @@
 	background: #fff;
 	background: rgba(255, 255, 255, 0.9);
 }
+.grid-event-list-dv  .espresso-event-wrapper-dv.no-img.expired,
+.grid-event-list-dv  .espresso-event-wrapper-dv.no-img.sold-out {
+	padding-top:2em;
+}
 .grid-event-list-dv  .espresso-event-wrapper-dv.has-img {
 }
+
 .grid-event-list-dv  .espresso-event-wrapper-dv .event-header {
 	padding: 1em 1em 1em;
 	text-shadow: 1px 1px 0px #fff;

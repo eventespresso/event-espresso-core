@@ -24,23 +24,26 @@
 		<table align="left">
 			<tr>
 				<td><h3>Attendees</h3>
-					<ol>
 						[ATTENDEE_LIST]
-					</ol></td>
+					</td>
 			</tr>
 		</table>
 	</div>
 	<div class="column">
 		<table align="left">
 			<tr>
-				<td><h5>Venue &raquo;</h5>
-					[VENUE_IMAGE]<br />
-					<p> [VENUE_TITLE]<br />
-						[VENUE_ADDRESS]<br />
-						[VENUE_CITY]<br />
-						[VENUE_STATE], [VENUE_ZIP]<br />
-					</p>
-					<p>[GOOGLE_MAP_IMAGE]</p>
+				<td><ul class="sidebar">
+						<li>
+							<h5>Venue &raquo;</h5>
+							[VENUE_IMAGE]<br />
+							<p> [VENUE_TITLE]<br />
+								[VENUE_ADDRESS]<br />
+								[VENUE_CITY]<br />
+								[VENUE_STATE], [VENUE_ZIP]<br />
+							</p>
+							<p>[GOOGLE_MAP_IMAGE]</p>
+						</li>
+					</ul>
 					
 					<!-- social & contact -->
 					

@@ -42,21 +42,21 @@ $ELID = espresso_get_event_list_ID();
 									<?php the_title(); ?>							
 								</a>
 							</h3>
-							<?php echo espresso_event_status(); ?>
+							<?php echo espresso_event_status_banner( $post->ID ); ?>
 						</header>
 						<!-- .event-header -->
 
 						<?php
-							$wrap_class = '';
+							$wrap_class = 'no-img';
 							if ( has_post_thumbnail( $post->ID )) :
-								$wrap_class = ' has-img';
+								$wrap_class = 'has-img';
 						?>
 						<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 							<?php the_post_thumbnail( 'medium' ); // array( 300, 100 )?>
 						</div>
 						<?php endif; ?>
 						
-						<div class="event-content <?php echo $wrap_class;?>">						
+						<div class="event-content <?php echo $wrap_class . ' ' . espresso_event_status( $post->ID );?>">						
 
 							<div class="event-datetimes">
 								<h4 class="ee-calendar_year-icon-med"><?php espresso_event_date_range( 'F jS', ' ', 'l F jS @ ', ' g:i a' ); ?></h4>

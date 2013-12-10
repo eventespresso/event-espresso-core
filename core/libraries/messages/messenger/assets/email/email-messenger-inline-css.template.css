@@ -116,6 +116,9 @@ h4 { font-weight:500; font-size: 23px;}
 h5 { font-weight:900; font-size: 17px;}
 h6 { font-weight:900; font-size: 14px; text-transform: uppercase; color:#444;}
 
+h4.attendee-name {
+	margin: 10px 0;
+}
 .collapse { margin:0!important;}
 
 p, ul { 
@@ -140,17 +143,11 @@ ul.sidebar {
 	display:block;
 	list-style-type: none;
 }
-ul.sidebar li { display: block; margin:0;}
-ul.sidebar li a {
+#ee-message-preview-container ul.sidebar li { display: block; margin:0; padding:10px 16px;}
+#ee-message-preview-container ul.sidebar li h5 {
 	text-decoration:none;
-	color: #666;
-	padding:10px 16px;
-/* 	font-weight:bold; */
-	margin-right:10px;
-/* 	text-align:center; */
-	cursor:pointer;
-	border-bottom: 1px solid #777777;
-	border-top: 1px solid #FFFFFF;
+	color: #000;
+	padding:10px 0 20px 0;
 	display:block;
 	margin:0;
 }
