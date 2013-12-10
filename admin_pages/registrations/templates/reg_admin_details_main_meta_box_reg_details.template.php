@@ -23,7 +23,7 @@
 					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Date', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Ticket Option', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Price Paid', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( 'Price', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Qty', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Line Total', 'event_espresso' );?></th>
 				</tr>
