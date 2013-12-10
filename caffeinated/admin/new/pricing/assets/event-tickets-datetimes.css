@@ -39,7 +39,7 @@
 
 
 .datetime-edit-table {
-    width: 72%;
+    width: 100%;
     float: left;
 }
 
@@ -49,7 +49,15 @@
 
 
 .datetime-edit-table td:nth-child(3) {
-    width: 10%
+    width: 10%;
+}
+
+.datetime-edit-table td:nth-child(4) {
+   padding-top: 15px;
+}
+
+.datetime-edit .datetime-edit-table td:last-child {
+    padding-top: 20px;
 }
 
 @media all and (min-width: 1277px) {
@@ -136,11 +144,24 @@
 
 .datetime-tickets-sold {
     font-size: 1em;
-    float: right;
 }
 
 .datetime-tickets-edit h5 {
-    margin: 0;
+    margin-top: 1em;
+}
+
+.datetime-tickets-edit {
+    background-color: #F8F8F8;
+    border: 1px solid #EEEEEE;
+    border-radius: 3px 3px 3px 3px;
+    padding: 1em 1.5em 2em;
+    margin-top: -5px;
+}
+
+.datetime-edit .ee-edit-editing {
+    height: 35px;
+    margin-top: 15px;
+    padding-top: -10px;
 }
 
 .button-column {
@@ -336,15 +357,12 @@
 }
 
 .price-table thead tr td:first-child {
-    text-align: right;
-}
-
-.price-table td {
-    padding-left: 10px;
+    text-align: left;
+    width: 20%;
 }
 
 .price-table tbody td:first-child, .price-table tfoot td {
-    text-align: right;
+    text-align: left;
 }
 
 .price-table tbody tr:last-child td {
@@ -421,6 +439,10 @@
 
 .add-datetime-ticket-container .save-cancel-button-container {
     padding-top: 14px;
+}
+
+#add-event-datetime .save-cancel-button-container {
+    padding-top: 3px;
 }
 
 .add-edit {
