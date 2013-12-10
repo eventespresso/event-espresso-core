@@ -28,7 +28,7 @@
 						<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp ee-datepicker" data-context="end-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_start" data-next-field="#add-new-event-datetime-DTT_reg_limit">
 					</td>
 					<td class="event-datetime-column reg-limit-column">
-						<label for="add-new-event-datetime-DTT_reg_limit"><?php _e('Reg Limit', 'event_espresso'); ?></label>
+						<label for="add-new-event-datetime-DTT_reg_limit"><?php _e('Limit', 'event_espresso'); ?></label>
 						<input type="text" name="add_new_datetime[DTT_reg_limit]" id="add-new-event-datetime-DTT_reg_limit" class="ee-small-text-inp">
 					</td>
 				</tr>

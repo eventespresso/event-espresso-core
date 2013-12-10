@@ -1427,6 +1427,8 @@ jQuery(document).ready(function($) {
 				this.selector = $('#add-event-datetime');
 				if ( trash )
 					this.selector.find('input').val('');
+				this.slideToggler();
+				return this;
 			}
 			this.context = 'datetime';
 			this.slideToggler();
@@ -1484,10 +1486,12 @@ jQuery(document).ready(function($) {
 
 			delay = typeof(delay) === 'undefined' ? 200 : delay;
 			this.selector.slideToggle(delay, function() {
-				if ( $(this).is(':visible') ) {
-					edit_container.addClass('ee-edit-editing');
-				} else {
-					edit_container.removeClass('ee-edit-editing');
+				if ( typeof( edit_container ) !== 'undefined' ) {
+					if ( $(this).is(':visible') ) {
+						edit_container.addClass('ee-edit-editing');
+					} else {
+						edit_container.removeClass('ee-edit-editing');
+					}
 				}
 			});
 			return this;

@@ -12,14 +12,14 @@
 				<input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_EVT_end]" id="event-datetime-DTT_EVT_end-<?php echo $dtt_row; ?>" class="ee-text-inp event-datetime-DTT_EVT_end ee-datepicker"  data-datetime-row="<?php echo $dtt_row; ?>" data-context="end-dtt" data-date-field-context="#edit-event-datetime-<?php echo $dtt_row; ?>" data-related-field=".event-datetime-DTT_EVT_start" data-next-field=".event-datetime-DTT_reg_limit" value="<?php echo $DTT_EVT_end; ?>">
 			</td>
 			<td class="event-datetime-column small-txt-column">
-				<label for="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>"><?php _e('Reg Limit', 'event_espresso'); ?></label>
+				<label for="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>"><?php _e('Limit', 'event_espresso'); ?></label>
 				<input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-<?php echo $dtt_row; ?>" class="ee-small-text-inp event-datetime-DTT_reg_limit" value="<?php echo $DTT_reg_limit; ?>">
 			</td>
 			<td>
 				<div class="ee-editing-container<?php echo $edit_dtt_expanded; ?>"><span data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="ticket-icon clickable"></span></div><span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $clone_icon; ?>"></span><span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $trash_icon; ?>"<?php echo $show_trash; ?>></span>
 			</td>
 			<td>
-				<span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="datetime-tickets-sold"><?php printf( __('Tickets Sold: %s', 'event_espresso'), $dtt_sold ); ?></span>
+				<span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="datetime-tickets-sold"><?php printf( __('Sold: %s', 'event_espresso'), $dtt_sold ); ?></span>
 			</td>
 		</tr>
 	</table>
