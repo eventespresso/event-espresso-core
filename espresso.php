@@ -1,4 +1,4 @@
-'<?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
 /*
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://eventespresso.com/
