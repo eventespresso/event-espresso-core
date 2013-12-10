@@ -623,3 +623,9 @@ label.error  { display: block; color: #FE2A00 !important; }
 .ee-collapsible-closed:before {
 	content: "\f140";
 }
+
+/* Admin Sidebar*/
+.espresso-rss-display a.rsswidget {
+	font-size: 13px;
+	font-weight: normal;
+}
