@@ -66,7 +66,7 @@ get_header();
 							<?php the_content(); ?>
 							<?php do_action( 'AHEE_event_details_after_the_content', $post ); ?>
 							<p>
-								<?php the_terms( $post->ID, 'espresso_event_categories', 'Categories: ', ' / ' ); ?>
+								<span class="tags-links"><?php the_terms( $post->ID, 'espresso_event_categories', 'Categories: ', ' / ' ); ?></span>
 							</p>
 							<h3 class="ticket-selector-h3 ee-event-h3">
 								<?php _e( 'Ticket Options', 'event_espresso' ); ?>
@@ -107,13 +107,13 @@ get_header();
 							<?php espresso_venue_gmap( $post->ID ); ?>
 							<div class="clear"><br/>
 							</div>
-							<p> <strong>
-								<?php _e( 'Description:', 'event_espresso' ); ?>
-								</strong><br/>
-								<?php echo espresso_venue_description(); ?> </p>
-							<p> <strong>
-								<?php _e( 'Categories:', 'event_espresso' ); ?>
-								</strong> <?php echo espresso_venue_categories(); ?> </p>
+							<p>
+								<span class="tags-links"><?php echo espresso_venue_categories(); ?></span>
+							 </p>
+							<p>
+								<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
+								<?php echo espresso_venue_description(); ?>									
+							</p>
 							<p> <strong>
 								<?php _e( 'Phone:', 'event_espresso' ); ?>
 								</strong> <?php echo espresso_venue_phone(); ?> </p>

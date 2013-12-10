@@ -863,11 +863,8 @@ final class EE_Admin {
 			$update_post_shortcodes = FALSE;
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
-			// array of shortcodes indexed by post ID
-			EE_Registry::instance()->CFG->core->post_id_shortcodes = isset( EE_Registry::instance()->CFG->core->post_id_shortcodes ) ? EE_Registry::instance()->CFG->core->post_id_shortcodes : array();
 			// empty both arrays
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
-			EE_Registry::instance()->CFG->core->post_id_shortcodes[ $post_ID ] = array();
 			// loop thru shortcodes
 			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
@@ -876,7 +873,6 @@ final class EE_Admin {
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
 					// map shortcode to post names and post IDs
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
-					EE_Registry::instance()->CFG->core->post_id_shortcodes[ $post_ID ][ $EES_Shortcode ] = $post_ID;
 					// and to frontpage in case it's displaying latest posts (don't need to track IDs for this)
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
 					$update_post_shortcodes = TRUE;

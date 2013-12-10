@@ -134,6 +134,10 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 	list-style-position: inside;
 }
 
+#ee-message-preview-container hr {
+	margin: 10px 0;
+}
+
 /* ------------------------------------- 
 		SIDEBAR 
 ------------------------------------- */
