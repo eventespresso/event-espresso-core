@@ -5,7 +5,7 @@
 			<td>
 				<!-- A Real Hero (and a real human being) -->
 				<p>[EVENT_IMAGE]</p><!-- /hero -->
-				<h2>[EVENT_NAME]</h2>
+				<h3>[EVENT_NAME]</h3>
 				<!-- Callout Panel -->
 				<p class="callout">
 					[EVENT_DESCRIPTION] <a href="[EVENT_URL]">View Event &raquo;</a>
