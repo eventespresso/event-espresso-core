@@ -89,7 +89,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	           	'REG_ID' => __( 'ID', 'event_espresso' ),  	
 				'REG_count' => __('Att #', 'event_espresso'),
 	           	'ATT_fname' => __( 'Name', 'event_espresso' ),
-				'REG_date' => __( 'Reg Date', 'event_espresso' ),
+				'REG_date' => __( 'TXN Date', 'event_espresso' ),
 				'event_name' => __( 'Event', 'event_espresso' ),
 	   	       	'DTT_EVT_start' => __( 'Event Date', 'event_espresso' ),
 				'REG_code' => __( 'Reg Code', 'event_espresso' ),
@@ -233,7 +233,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$actions = array();
 
         //Build row actions
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );	
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );	
 		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
 
 		return $REG_date;		

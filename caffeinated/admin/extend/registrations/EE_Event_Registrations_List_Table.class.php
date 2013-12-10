@@ -46,7 +46,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				'REG_count' => __('Att #', 'event_espresso'),
 				'ATT_name' =>  __('Attendee', 'event_espresso'),
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
-				'REG_date' => __('Registration Date', 'event_espresso'),
+				'REG_date' => __('TXN Date', 'event_espresso'),
 				'REG_code' => __( 'Registration Code', 'event_espresso' ),
 				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
 				'REG_final_price' => __('Ticket Price', 'event_espresso'),
@@ -238,8 +238,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	function column_REG_date(EE_Registration $item) {
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
 		return $REG_date;	
 	}
 
