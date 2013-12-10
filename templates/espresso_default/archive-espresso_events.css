@@ -311,36 +311,36 @@
 	font-size: 11px;
 }
 
-.grid-event-list-dv .med-event-list-grid.espresso-event-list-event {
+.grid-event-list-dv .medium-event-list-grid.espresso-event-list-event {
 	width: 190px;
 }
-.grid-event-list-dv .med-event-list-grid .event-datetimes h4 {
+.grid-event-list-dv .medium-event-list-grid .event-datetimes h4 {
 	font-size: 1em;
 	line-height: 1.2em;
 }
-.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv {
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv {
 	margin: 0 .85em;
 }
-.grid-event-list-dv .med-event-list-grid .ee-event-img-dv {
+.grid-event-list-dv .medium-event-list-grid .ee-event-img-dv {
 	margin: 0 0 -2.5em;
 }
-.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header {
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-header {
 	padding: .85em;
 }
-.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv.has_img .event-header {
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv.has_img .event-header {
 	padding: 0em;
 }
-.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-header p {
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-header p {
 	font-size: .9em;
 }
-.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-title {
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-title {
 	/*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; */
 }
-.grid-event-list-dv .med-event-list-grid .espresso-event-wrapper-dv .event-content p {
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-content p {
 	font-size: 1em;
 	line-height: 1.4em;
 }
-.grid-event-list-dv .med-event-list-grid a.ee-register-button-lnk {
+.grid-event-list-dv .medium-event-list-grid a.ee-register-button-lnk {
 	font-size: 12px;
 }
 
