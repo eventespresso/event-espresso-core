@@ -16,7 +16,7 @@ $event_list_types = array(
 $grid_sizes = array(
 	array('id' => 'tiny', 'text' => __('tiny (up to 6 per row)', 'event_espresso')),
 	array('id' => 'small', 'text' => __('small (up to 5 per row)', 'event_espresso')),
-	array('id' => 'med', 'text' => __('medium (up to 4 per row)', 'event_espresso')),
+	array('id' => 'medium', 'text' => __('medium (up to 4 per row)', 'event_espresso')),
 	array('id' => 'large', 'text' => __('large (up to 3 per row)', 'event_espresso'))
 );
 ?>
