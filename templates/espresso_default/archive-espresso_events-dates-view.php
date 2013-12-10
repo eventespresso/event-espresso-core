@@ -16,7 +16,7 @@ do_action( 'AHEE_before_event_list' );
 $ELID = espresso_get_event_list_ID();
 ?>
 
-<div id="dates-event-list-dv-<?php echo $ELID; ?>" class="dates-event-list-dv entry-content max-width maxwidth row">
+<div id="dates-event-list-dv-<?php echo $ELID; ?>" class="dates-event-list-dv">
 	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
 	
 		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>

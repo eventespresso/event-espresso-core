@@ -13,8 +13,15 @@
  * @ link			http://www.eventespresso.com
  * @ version		4+
  */
-//get_header();
-include( espresso_event_list_template_part() );
+get_header();
+?>
+<section id="primary" class="content-area">
+	<div id="content" class="site-content max-width maxwidth row" role="main">
+<?php include( espresso_event_list_template_part() ); ?>
+	</div><!-- #content -->
+</section><!-- #primary -->
+
+<?php
 /*
 *** IMPORTANT ***
  if you are copying this file into your theme folder in order to edit it, 
@@ -27,4 +34,4 @@ include( espresso_event_list_template_part() );
  * archive-espresso_events-text-view.php
 */
 
-//get_footer(); 	
+get_footer(); 	

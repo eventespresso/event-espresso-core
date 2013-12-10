@@ -69,7 +69,7 @@
 /******************* GLOBAL STYLES ****************** */
 
 .espresso-events-list-wrap-dv {
-	padding: 0 0 2em;/* font-size:12px;*/
+	padding: 0 1em 2em;/* font-size:12px;*/
 }
 .espresso-events-list-dv {
 	position: relative;
@@ -141,9 +141,9 @@
 	display: inline-block;
 	float: left;
 	position: relative;
-	padding: 0;
+	padding: 0 !important;
 	margin: 10px 10px 20px;
-	border: none;
+	border: none !important;
 	-webkit-transition: top 1s ease, left 1s ease;
 	-moz-transition: top 1s ease, left 1s ease;
 	-o-transition: top 1s ease, left 1s ease;
