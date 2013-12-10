@@ -65,9 +65,34 @@
 	* 
 	 * @return string
 	 */
+	if ( ! function_exists( 'espresso_event_status_banner' )) {
+		function espresso_event_status_banner( $EVT_ID = FALSE ) {
+			return EEH_Event_View::event_status( $EVT_ID );
+		}		
+	}
+
+
+	/**
+	 * espresso_event_status
+	 * returns the event status if it is sold out, expired, or inactive
+	* 
+	 * @return string
+	 */
 	if ( ! function_exists( 'espresso_event_status' )) {
 		function espresso_event_status( $EVT_ID = FALSE ) {
-			return EEH_Event_View::event_status( $EVT_ID );
+			switch ( EEH_Event_View::event_active_status( $EVT_ID )) {
+				case EE_Datetime::sold_out :
+					return 'sold-out';
+				case EE_Datetime::expired :
+					return 'expired';
+				case EE_Datetime::upcoming :
+					return 'upcoming';
+				case EE_Datetime::active : 
+					return 'active';
+				case EE_Datetime::inactive :
+				default :
+					return 'inactive';
+			}
 		}		
 	}
 

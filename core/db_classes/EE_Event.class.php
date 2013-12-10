@@ -601,9 +601,9 @@ class EE_Event extends EE_CPT_Base{
 		$status_array = array();
 
 		//first check if event id is present on this object
-		$evt_id = $this->ID();
-		if ( empty( $evt_id) )
+		if ( ! $this->ID() ) {
 			return FALSE;
+		}			
 
 		//first get all dtts ordered by date
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
