@@ -19,6 +19,8 @@ $grid_sizes = array(
 	array('id' => 'medium', 'text' => __('medium (up to 4 per row)', 'event_espresso')),
 	array('id' => 'large', 'text' => __('large (up to 3 per row)', 'event_espresso'))
 );
+d( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive );
+
 ?>
 
 	<!--*************************   Event Listings  ****************************-->
