@@ -151,6 +151,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'func'=>'_import_events',
 				'noheader'=>TRUE,
 				),
+			'sample_export_file'=>array(
+				'func'=>'_sample_export_file',
+				'noheader'=>TRUE
+			),
 			'default_event_settings' => '_default_event_settings',
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
@@ -1819,9 +1823,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$form_url = EVENTS_ADMIN_URL;
 		$action = 'import_events';
 		$type = 'csv';
-		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
+		$this->_template_args['form'] = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
+		$this->_template_args['sample_file_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'sample_export_file'),$this->_admin_base_url);
+		$content = EEH_Template::display_template(EVENTS_TEMPLATE_PATH . 'import_page.template.php',$this->_template_args,true); 
 		
-		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
@@ -1837,6 +1842,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$success = EE_Import::instance()->import();
 		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
 		
+	}
+	
+	/**
+	 * Creates a sample CSV file for importing
+	 */
+	protected function _sample_export_file(){
+//		require_once(EE_CLASSES . 'EE_Export.class.php');
+		EE_Export::instance()->export_sample();
 	}
 	
 	
