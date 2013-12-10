@@ -357,7 +357,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	protected function _send_message() {
 		
-		$success = wp_mail(html_entity_decode($this->_to), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
+		$success = wp_mail(html_entity_decode($this->_to, ENT_QUOTES, "UTF-8"), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
 		
 		return $success;
 
@@ -418,14 +418,14 @@ class EE_Email_messenger extends EE_messenger  {
 		} else if ( $preview && defined('DOING_AJAX' ) ) {
 			require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
 			$style = file_get_contents( $this->get_inline_css_template( FALSE, TRUE ) );
-			$CSS = new CssToInlineStyles( $body, $style );
+			$CSS = new CssToInlineStyles( utf8_decode($body), $style );
 			$body = ltrim( $CSS->convert(), ">\n" );
 
 			//let's attempt to fix width's for ajax preview
-			$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
+			/*$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
 			$s_width = '/width="[ 0-9]+"/';
 			$body = preg_replace( $i_width, 'width:100%;', $body );
-			$body = preg_replace( $s_width, 'width=100%', $body );
+			$body = preg_replace( $s_width, 'width=100%', $body );/**/
 		}
 		return $body;
 	}

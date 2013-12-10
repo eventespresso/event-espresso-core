@@ -1108,12 +1108,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$payment = $transaction->get_first_related('Payment');
 		$reg_details = !empty($payment) ? maybe_unserialize( $payment->details() ) : NULL;
 
+		//REG_ID will NOT be retrieved from $payment!
+		$reg_details['registration_id'] = $this->_registration->get('REG_code');
 
 		if ( !is_array($reg_details) || ( is_array($reg_details) && isset($reg_details['REDO_TXN']) && $reg_details['REDO_TXN'] ) ) {
 			$reg_details = array();
 			$reg_details['method'] = '';
 			$reg_details['response_msg'] = '';
-			$reg_details['registration_id'] = '';
 			$reg_details['invoice_number'] = '';
 		} 
 

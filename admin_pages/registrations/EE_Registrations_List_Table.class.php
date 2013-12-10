@@ -89,7 +89,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	           	'REG_ID' => __( 'ID', 'event_espresso' ),  	
 				'REG_count' => __('Att #', 'event_espresso'),
 	           	'ATT_fname' => __( 'Name', 'event_espresso' ),
-				'REG_date' => __( 'Reg Date', 'event_espresso' ),
+				'REG_date' => __( 'TXN Date', 'event_espresso' ),
 				'event_name' => __( 'Event', 'event_espresso' ),
 	   	       	'DTT_EVT_start' => __( 'Event Date', 'event_espresso' ),
 				'REG_code' => __( 'Reg Code', 'event_espresso' ),
@@ -233,8 +233,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$actions = array();
 
         //Build row actions
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );	
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
 
 		return $REG_date;		
 
@@ -289,9 +289,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	*/
    	function column_ATT_fname(EE_Registration $item){
    		$attendee = $item->attendee();
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->attendee_ID() ), REG_ADMIN_URL );
+		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
-		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Contact Details', 'event_espresso' ) . '">' . $attendee_name . '</a>';
+		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>';
 		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 
 		//trash/restore/delete actions
