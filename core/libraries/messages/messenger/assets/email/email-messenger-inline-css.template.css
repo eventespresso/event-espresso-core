@@ -116,6 +116,9 @@ h4 { font-weight:500; font-size: 23px;}
 h5 { font-weight:900; font-size: 17px;}
 h6 { font-weight:900; font-size: 14px; text-transform: uppercase; color:#444;}
 
+h4.attendee-name {
+	margin: 10px 0;
+}
 .collapse { margin:0!important;}
 
 p, ul { 

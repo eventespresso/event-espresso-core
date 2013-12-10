@@ -24,9 +24,8 @@
 		<table align="left">
 			<tr>
 				<td><h3>Attendees</h3>
-					<ol>
 						[ATTENDEE_LIST]
-					</ol></td>
+					</td>
 			</tr>
 		</table>
 	</div>

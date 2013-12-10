@@ -115,7 +115,9 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 #ee-message-preview-container h4 { font-weight:500; font-size: 23px;}
 #ee-message-preview-container h5 { font-weight:900; font-size: 17px;}
 #ee-message-preview-container h6 { font-weight:900; font-size: 14px; text-transform: uppercase; color:#444;}
-
+#ee-message-preview-container h4.attendee-name {
+	margin: 10px 0;
+}
 #ee-message-preview-container .collapse { margin:0!important;}
 
 #ee-message-preview-container p, #ee-message-preview-container ul { 
