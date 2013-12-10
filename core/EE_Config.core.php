@@ -738,10 +738,21 @@ class EE_Core_Config extends EE_Config_Base {
 	public $current_blog_id;
 	public $site_license_key;
 	public $ee_ueip_optin;
+	/**
+	 * Not to be confused with the 4 critical page variables (See
+	 * get_critical_pages_array()), this is just an array of wp posts that have EE
+	 * shortcodes in them. Keys are slugs, values are arrays with only 1 element: where the key is the shortcode
+	 * in the page, and the value is the page's ID. The key 'posts' is basially a duplicate of this same array.
+	 * @var array
+	 */
 	public $post_shortcodes;
 	public $module_route_map;
 	public $module_forward_map;
 	public $module_view_map;
+	/**
+	 * The next 4 vars are the IDs of critical EE pages.
+	 * @var int
+	 */
 	public $reg_page_id;
 	public $txn_page_id;
 	public $thank_you_page_id;
