@@ -23,6 +23,7 @@ h3.venue-title a {
 	height: 156px;
 	overflow: hidden;
 	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;
 }
 .ee-venue-img-dv img {
 	width: 100%;
@@ -36,6 +37,7 @@ h3.venue-title a {
 	padding: 10px 20px 20px 10px;
 	line-height: 1.2em;
 	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;
 }
 .venue-header p {
 	line-height: 1.2em;
@@ -50,6 +52,7 @@ h3.venue-title a {
 	text-shadow: 1px 1px 0px #fff;
 	line-height: 1.2em;
 	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;
 }
 .venue-content a {
 
@@ -60,6 +63,7 @@ h3.venue-title a {
 	height: 156px;
 	padding: 0;
 	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;
 }
 .venue-meta {
 	position: relative;
