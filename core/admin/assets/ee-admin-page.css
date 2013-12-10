@@ -344,19 +344,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin: 4px 3px 0 0;
 	height: 20px;
 }
-.resume_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/btn_sprite.png) no-repeat -126px 0;
-	text-indent: -9000px;
-	outline: none;
-}
-.resume_btn:hover {
-	background-position: -126px -18px;
-}
 .complete_btn {
 	display: block;
 	float: left;
@@ -371,20 +358,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 .complete_btn:hover {
 	margin: 4px 3px 0 0;
 	height: 20px;
-}
-.delete_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/btn_sprite.png) no-repeat -54px 0;
-	text-indent: -9000px;
-	outline: none;
-}
-.delete_btn:hover {
-	background-position: -54px -18px;
-	height: 18px;
 }
 .options_btn {
 	display: block;
