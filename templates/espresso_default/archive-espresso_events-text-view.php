@@ -85,12 +85,11 @@ $ELID = espresso_get_event_list_ID();
 							<?php endif; ?>
 							<?php if ( espresso_display_venue_details_in_event_list() ) : ?>
 							<p>
-								<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
-								<?php echo espresso_venue_excerpt(); ?>								
+								<span class="tags-links"><?php echo espresso_venue_categories(); ?></span>
 							</p>
 							<p>
-								<strong><?php _e( 'Categories:', 'event_espresso' ); ?></strong>
-								<?php echo espresso_venue_categories(); ?>
+								<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
+								<?php echo espresso_venue_excerpt(); ?>								
 							</p>
 							<p>
 								<strong><?php _e( 'Phone:', 'event_espresso' ); ?></strong>
@@ -108,7 +107,7 @@ $ELID = espresso_get_event_list_ID();
 
 					<footer class="event-meta">
 						<?php do_action( 'AHEE_events_list_footer', $post ); ?>
-						<p class="event-categories-pg"><?php _e( 'category:', 'event_espresso' ) . the_terms( $post->ID, 'espresso_event_categories' ); ?></p>
+						<span class="tags-links"><?php espresso_event_categories(); ?></span><br/>	
 						<?php espresso_event_reg_button( __( 'Register Now', 'event_espresso' ), __( 'Read More', 'event_espresso' ), $post->ID ); ?>
 						<span class="edit-link"><?php espresso_edit_event_link(); ?></span>
 					</footer>
