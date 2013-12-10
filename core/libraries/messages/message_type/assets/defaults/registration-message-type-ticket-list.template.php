@@ -1,6 +1,2 @@
-<li>
-	[TICKET_NAME]
-	<ul>
-		[DATETIME_LIST]
-	</ul>
-</li>
+<p>[TICKET_NAME]
+[DATETIME_LIST]</p>
