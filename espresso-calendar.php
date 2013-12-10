@@ -477,7 +477,7 @@ class EE_Calendar {
 		$SQL .= " AND ( e.start_date >= %s AND e.start_date <= %s ) ";		
 		
 		if ($show_expired == "false") {
-			$SQL .= " AND ( e.start_date >= '$today' AND e.registration_end >= '$today' ) ";
+			$SQL .= apply_filters( 'filter_hook_espresso_calendar_sef_and_start_end_dates', " AND ( e.start_date >= '$today' AND e.registration_end >= '$today' ) " );
 		}
 
 		$SQL .= " GROUP BY e.id ORDER BY e.start_date ASC "; // . $throttle;
