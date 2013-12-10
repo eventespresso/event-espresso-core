@@ -170,7 +170,7 @@
 .grid-event-list-dv  .event-datetimes h4 {
 	display: block;
 	margin: .25em 0;
-	font-size: 1.4em;
+	font-size: 16px;
 	line-height: 1.5em; 
 	white-space:nowrap;
 }
@@ -241,11 +241,10 @@
 }
 .grid-event-list-dv .tiny-event-list-grid .event-datetimes h4 {
 	background: none;
-	font-size: .85em;
+	font-size: 10px;
 	font-weight: normal;
 	line-height: 16px;
 	padding-left: 0;
-	word-spacing: -2px;
 }
 .grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv {
 	margin: 0 .5em;
@@ -279,11 +278,10 @@
 }
 .grid-event-list-dv .small-event-list-grid .event-datetimes h4 {
 	background: none;
-	font-size: 1em;
+	font-size: 12px;
 	font-weight: normal;
 	line-height: 16px;
 	padding-left: 0;
-	word-spacing: -1px;
 }
 .grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv {
 	margin: 0 .7em;
@@ -316,7 +314,7 @@
 	width: 190px;
 }
 .grid-event-list-dv .medium-event-list-grid .event-datetimes h4 {
-	font-size: 1em;
+	font-size: 14px;
 	line-height: 1.2em;
 }
 .grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv {
