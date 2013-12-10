@@ -1120,6 +1120,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		$card_type = isset( $reg_details['card_type'] ) ? ' : ' . $reg_details['card_type'] : '';
+
+		//if method is empty then we'll attempt getting it from the transaction extra meta
+		$reg_details['method'] = !empty( $reg_details['method'] ) ? $reg_details['method'] : $transaction->get_extra_meta('gateway', TRUE);
 		$reg_details['method'] = $reg_details['method'] == 'CC' ? 'Credit Card' . $card_type : $reg_details['method'];
 		$this->_template_args['method']['value'] = $reg_details['method'];
 		$this->_template_args['method']['label'] = __( 'Payment Method', 'event_espresso' );
@@ -1139,7 +1142,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		if ( isset( $reg_details['invoice_number'] )) {
-			$this->_template_args['reg_details']['invoice_number']['value'] = $reg_details['invoice_number'];
+			$this->_template_args['reg_details']['invoice_number']['value'] = isset($reg_details['invoice_number']) ? $reg_details['invoice_number'] : '';
 			$this->_template_args['reg_details']['invoice_number']['label'] = __( 'Invoice Number', 'event_espresso' );
 			$this->_template_args['reg_details']['invoice_number']['class'] = 'regular-text';
 		}
