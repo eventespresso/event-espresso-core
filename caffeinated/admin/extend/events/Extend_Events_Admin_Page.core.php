@@ -41,6 +41,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	protected function _extend_page_config() {
 
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
+		$default_espresso_boxes = $this->_default_espresso_metaboxes;
 
 
 		$new_page_routes = array(
@@ -71,6 +72,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'func' => '_delete_ticket',
 				'noheader' => TRUE
 				),
+			'import_page'=>'_import_page',
+			'import' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
+			'import_events' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
+			'sample_export_file'=>array(
+				'func'=>'_sample_export_file',
+				'noheader'=>TRUE
+				)
 			);
 
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
@@ -94,9 +108,17 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'require_nonce' => FALSE
 					)
 				);
-
-			$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 		}
+
+		$new_page_config['import_page'] = array(
+				'nav' => array(
+					'label' => __('Import', 'event_esprsso'),
+					'order' => 30
+				),
+				'metaboxes' => $default_espresso_boxes,
+				'require_nonce' => FALSE
+		);
+		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
 		//add filters and actions
 		//modifying _views
@@ -231,6 +253,44 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
 		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
 		return $actionlinks;
+	}
+
+
+
+	protected function _import_page(){
+		
+		$title = __('Import', 'event_espresso');
+		$intro = __('If you have a previously exported Event Espresso 4 information in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
+		$form_url = EVENTS_ADMIN_URL;
+		$action = 'import_events';
+		$type = 'csv';
+		$this->_template_args['form'] = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
+		$this->_template_args['sample_file_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'sample_export_file'),$this->_admin_base_url);
+		$content = EEH_Template::display_template(EVENTS_CAF_TEMPLATE_PATH . 'import_page.template.php',$this->_template_args,true); 
+		
+
+		$this->_template_args['admin_page_content'] = $content;
+		$this->display_admin_page_with_sidebar();
+	}
+	/**
+	 * _import_events
+	 * This handles displaying the screen and running imports for importing events.
+	 * 	
+	 * @return string html
+	 */
+	protected function _import_events() {
+		require_once(EE_CLASSES . 'EE_Import.class.php');
+		$success = EE_Import::instance()->import();
+		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
+		
+	}
+	
+	/**
+	 * Creates a sample CSV file for importing
+	 */
+	protected function _sample_export_file(){
+//		require_once(EE_CLASSES . 'EE_Export.class.php');
+		EE_Export::instance()->export_sample();
 	}
 
 
