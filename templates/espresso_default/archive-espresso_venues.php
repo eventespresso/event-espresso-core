@@ -126,10 +126,10 @@ EEH_Maps::espresso_google_map_js();
 			</div>
 			<!-- #espresso-events-list-wrap-dv -->	
 		</div>
-<?php  do_action( 'AHEE_after_venue_list' );  ?>
 
 	</div><!-- #content -->
 </section><!-- #primary -->
 
+<?php  do_action( 'AHEE_after_venue_list' );  ?>
 <?php get_sidebar(); ?>
 <?php get_footer();  ?>

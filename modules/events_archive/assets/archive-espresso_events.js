@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
 		} else if ( eventWidth <= 148 ) {
 			eventSize = 'small-event-list-img';
 		} else if ( eventWidth <= 190 ) {
-			eventSize = 'med-event-list-img';
+			eventSize = 'medium-event-list-img';
 		} else if ( eventWidth <= 260 ) {
 			eventSize = 'large-event-list-img';
 		} else {
