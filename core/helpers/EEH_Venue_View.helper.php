@@ -324,7 +324,7 @@ class EEH_Venue_View extends EEH_Base {
 				// loop thru terms and create links
 				foreach ( $venue_categories as $term ) {
 					$url = get_term_link( $term, 'espresso_venue_categories' );
-					if ( ! is_wp_error( $url ) && (( $hide_uncategorized && $term->name != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
+					if ( ! is_wp_error( $url ) && (( $hide_uncategorized && strtolower( $term->name ) != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
 						$category_links[] = '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a> ';
 					}					
 				}

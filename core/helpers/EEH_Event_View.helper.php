@@ -451,7 +451,7 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function event_categories( $EVT_ID = FALSE, $hide_uncategorized = FALSE ) {
+	public static function event_categories( $EVT_ID = FALSE, $hide_uncategorized = TRUE ) {
 		$category_links = array();
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
@@ -459,8 +459,8 @@ class EEH_Event_View extends EEH_Base {
 				// loop thru terms and create links
 				foreach ( $event_categories as $term ) {
 					$url = get_term_link( $term, 'espresso_venue_categories' );
-					if ( ! is_wp_error( $url ) && (( $hide_uncategorized && $term->name != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
-						$category_links .= '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a>';
+					if ( ! is_wp_error( $url ) && (( $hide_uncategorized && strtolower( $term->name ) != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
+						$category_links[] = '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a>';
 					}					
 				}
 			}
