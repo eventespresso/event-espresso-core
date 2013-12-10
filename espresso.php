@@ -61,6 +61,7 @@ define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
 define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
 define( 'EE_TEMPLATES', EE_PLUGIN_DIR_PATH . 'templates' . DS );
 define( 'EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets' . DS );
+define( 'EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS );
 // core system paths
 define( 'EE_ADMIN', EE_CORE . 'admin' . DS );
 define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );
