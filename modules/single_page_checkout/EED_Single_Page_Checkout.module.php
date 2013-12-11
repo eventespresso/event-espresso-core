@@ -600,7 +600,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							} 	
 							
 							if( $answer instanceof EE_Answer ){
-								$answer->set( 'ANS_value', $answer_value );
+								if ( ! empty( $answer_value ) /*&& $answer->value() == NULL*/ ) {
+									$answer->set( 'ANS_value', $answer_value );
+								}								
 								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer->value();
 								$answer->cache( 'Question', $Question );
 								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
@@ -609,7 +611,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
 						}						
 					}
-		
+//					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
 					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
@@ -1241,6 +1243,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 								if ( ! $registration->attendee() instanceof EE_Attendee ) {
 									EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $line_item_id ), __FILE__, __FUNCTION__, __LINE__ );
 								}
+								
+								printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 							} // end of if ( $registration instanceof EE_Registration )
 							
