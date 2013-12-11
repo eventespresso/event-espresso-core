@@ -515,8 +515,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				foreach($options as $option_ID=>$option){
 					$option_req_index=$this->_get_option_req_data_index($option_ID);
 					if($option_req_index!==FALSE){
-						if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_name'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_name'] !== '0' )
-						$this->_req_data['question_options'][$option_req_index]['QSO_name'] = $this->_req_data['question_options'][$option_req_index]['QSO_value'];
+						if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_value'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_value'] !== '0' )
+						$this->_req_data['question_options'][$option_req_index]['QSO_value'] = $this->_req_data['question_options'][$option_req_index]['QSO_desc'];
 						$option->save($this->_req_data['question_options'][$option_req_index]);
 					}else{
 						//not found, remove it
@@ -526,14 +526,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 			//save new related options
 			foreach($this->_req_data['question_options'] as $index=>$option_req_data){
-				if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_name']) || !empty($option_req_data['QSO_value']))){//no ID! save it!
-					if(empty($option_req_data['QSO_value'])){
-						$option_req_data['QSO_value']=$option_req_data['QSO_name'];
+				if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_value']) || !empty($option_req_data['QSO_desc']))){//no ID! save it!
+					if(empty($option_req_data['QSO_desc'])){
+						$option_req_data['QSO_desc']=$option_req_data['QSO_value'];
 					}
-					if(empty($option_req_data['QSO_name']) && $option_req_data['QSO_name'] !== '0' ){
-						$option_req_data['QSO_name']=$option_req_data['QSO_value'];
+					if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
+						$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
 					}
-					$new_option=EE_Question_Option::new_instance( array( 'QSO_name' => $option_req_data['QSO_name'], 'QSO_value' => $option_req_data['QSO_value'], 'QST_ID' => $question->ID()));
+					$new_option=EE_Question_Option::new_instance( array( 'QSO_value' => $option_req_data['QSO_value'], 'QSO_desc' => $option_req_data['QSO_desc'], 'QST_ID' => $question->ID()));
 					$new_option->save();
 				}
 			}

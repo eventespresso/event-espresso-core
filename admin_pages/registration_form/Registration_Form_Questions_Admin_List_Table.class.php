@@ -156,7 +156,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 		}else{
 			foreach($options as $optionID=>$option){
 				/* @var $option EE_Question_Option */
-				$optionNames[]=$option->name();
+				$optionNames[]=$option->value();
 			}
 			return implode(', ',$optionNames);
 		}

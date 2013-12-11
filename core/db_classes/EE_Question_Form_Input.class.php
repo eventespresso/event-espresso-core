@@ -382,8 +382,8 @@ class EE_Question_Form_Input {
 						$option_id = ! empty( $option['id'] ) ? $option['id'] : 0;
 
 						$QSO = EE_Question_Option::new_instance ( array (
-								'QSO_name' => (string)$option_id,
-								'QSO_value' => $option['text'],
+								'QSO_value' => (string)$option_id,
+								'QSO_desc' => $option['text'],
 								'QSO_deleted' => FALSE
 							));
 						// all QST (and ANS) properties can be accessed indirectly thru QFI

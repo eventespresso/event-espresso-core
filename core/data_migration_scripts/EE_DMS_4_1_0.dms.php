@@ -478,8 +478,8 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		
 		$table_name='esp_question_option';
 		$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					QSO_name VARCHAR(100) NOT NULL ,
 					QSO_value VARCHAR(100) NOT NULL ,
+					QSO_desc TEXT NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
 					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (QSO_ID)";
