@@ -34,8 +34,8 @@ function espresso_reg_forms_add_option(){
 	var count=jQuery('#question_options tbody tr').not('.sample').size();
 	var sampleRow=jQuery('#question_options tbody tr:first-child');
 	var newRow=sampleRow.clone(true);
-	var newRowName=newRow.find('.option-name');
-	var newRowValue=newRow.find('.option-value');
+	var newRowName=newRow.find('.option-value');
+	var newRowValue=newRow.find('.option-desc');
 	var name=newRowName.attr('name');
 	newRowName.attr('name',name.replace("xxcountxx",count));
 	var value=newRowValue.attr('name');

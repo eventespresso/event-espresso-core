@@ -85,10 +85,10 @@ $fields = $question->get_model()->field_settings();
 						<thead>
 							<tr>
 								<th style="padding:1em 10px 0 3px; line-height: 1em;">
-									<?php _e('Option Value (key)','event_espresso')?>
+									<?php _e('Value','event_espresso')?>
 								</th>
 								<th style="padding:1em 10px 0 3px; line-height: 1em;">
-									<?php _e('Answer Option Display Text','event_espresso')?>
+									<?php _e('Description (optional, only shown on registration form)','event_espresso')?>
 								</th>
 								<th style="padding:1em 10px 0 3px; line-height: 1em;">
 								</th>
@@ -98,10 +98,10 @@ $fields = $question->get_model()->field_settings();
 						<tbody>
 							<tr class="question-option sample">
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-name medium-text">
+									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-value regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[xxcountxx][QSO_desc]" class="option-value regular-text">
+									<input type="text" name="question_options[xxcountxx][QSO_desc]" class="option-desc regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 									<a class="remove-option remove-item">
