@@ -65,18 +65,17 @@
 
 
 
-
 /******************* GLOBAL STYLES ****************** */
 
 .post-type-archive-espresso_events .site-content,
 .post-type-archive-espresso_events .entry-content {
-	width: auto;
-	max-width: 1100px;
-	margin: 0 auto;
+
 } 
 .espresso-events-list-wrap-dv {
-	padding: 0 10px 2em;/* font-size:12px;*/
-}
+	width: auto;
+	max-width: 1100px;
+	padding: 0 10px 2em;
+	margin: 0 auto;}
 .espresso-events-list-dv {
 	position: relative;
 	padding: 0;
@@ -88,19 +87,13 @@
 }
 .espresso-events-list-wrap-dv .event-list-h1 {
 	position: relative;
-	z-index: 10;/* margin:.75em .5em 0em;
-	font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 36px; font-weight: bold; color: #A39D9C;
-	text-shadow: 1px 1px 0px #fff;*/
+	z-index: 10;
 }
 
-/*.espresso-event-wrapper-dv  .event-title { font-size:1.3em; margin: 0; line-height: 1em; }	*/
 .espresso-event-wrapper-dv  .event-content p {
 	line-height: 1.5em;
 }
 
-.espresso-events-list-wrap-dv a {
-	/*color: #007BAE;*/
-}
 .event-meta p {
 	margin: 1em 0;
 }
@@ -130,7 +123,7 @@
 	padding: 2em;
 }
 .no-espresso-events-found .event-title {
-	margin: 0 0 1em; /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 1.5em; color: #A39D9C; text-shadow: 1px 1px 0px #fff; */
+	margin: 0 0 1em; 
 }
 .no-espresso-events-found #s {
 	min-width: 200px;
@@ -138,11 +131,11 @@
 }
 
 
+
 /******************* PIN-MASH (GRID-VIEW) TEMPLATE ****************** */
 
 
 .grid-event-list-dv .espresso-events-list-dv {
-	/*display: none;*/
 }
 .grid-event-list-dv .espresso-event-list-event {
 	display: inline-block;
@@ -193,7 +186,6 @@
 	margin: 0 0 -2.5em;
 }
 .grid-event-list-dv  .ee-event-img {
-	/*position: absolute; top: auto; left: auto;*/
 	width: 100%;
 	height: auto;
 	border-radius: 0 !important;
@@ -218,7 +210,7 @@
 }
 .grid-event-list-dv  .espresso-event-wrapper-dv  .event-title {
 	margin: 0;
-	line-height: 1.1em; /* font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.3em; margin: 0; */
+	line-height: 1.1em; 
 }
 .grid-event-list-dv  .espresso-event-wrapper-dv  .event-title a {
 	text-decoration: none;
@@ -274,7 +266,6 @@
 	font-size: .65em;
 }
 .grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-title {
-	/*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1em; */
 }
 .grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-content p {
 	font-size: .8em;
@@ -311,7 +302,6 @@
 	font-size: .8em;
 }
 .grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-title {
-	/*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.1em; */
 }
 .grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-content p {
 	font-size: .9em;
@@ -345,7 +335,6 @@
 	font-size: .9em;
 }
 .grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-title {
-	/*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; */
 }
 .grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-content p {
 	font-size: 1em;
@@ -369,6 +358,8 @@
 
 .grid-event-list-dv .ee-gmap-wrapper {
 }
+
+
 
 /******************* TEXT LIST TEMPLATE ****************** */
 
@@ -427,18 +418,14 @@
 	max-width: 25%;
 	min-width: 150px;
 	margin: 0;
-	font-size: .9em; /*text-align: center; */
+	font-size: .9em;
 	color: #A39D9C;
 }
-/*.text-event-list-dv .event-categories-pg {
-	margin: 0 0 1em;
-	font-size: .9em;
-	text-align: left;
-	color: #A39D9C;
-}*/
 
 .text-event-list-dv .ee-gmap-wrapper {
 }
+
+
 
 /******************* DATES LIST TEMPLATE ****************** */
 
@@ -478,7 +465,7 @@
 	color: #007BAE;
 	font-weight: bold;
 	font-size: 18px;
-	line-height: 18px;  /*007BAE*/
+	line-height: 18px;  
 }
 
 .dates-event-list-dv .ee-event-img-dv {
@@ -494,7 +481,7 @@
 	margin: 0 1em 0 0;
  }
 .dates-event-list-dv  .espresso-event-wrapper-dv  .event-title {
-	margin-top: 0; /*font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size:1.2em; margin: 0 0 .25em; line-height: 1em;*/
+	margin-top: 0;
 }
 
 .dates-event-list-dv .event-meta {
@@ -512,7 +499,6 @@
 	width: 50%;
 }
 .dates-event-list-dv .espresso-venue-name-spn {
-	/*max-width: 50%; */
 }
 .dates-event-list-dv .ee-gmap-wrapper {
 	float: right;
