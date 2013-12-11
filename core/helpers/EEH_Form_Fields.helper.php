@@ -910,8 +910,9 @@ class EEH_Form_Fields {
 		foreach ( $options as $OPT ) {
 
 			$key = self::prep_option_value( $OPT->name() );
-			$size = self::get_label_size_class( $OPT->value() );
-			$value = self::prep_answer( $OPT->value() );
+			$size = self::get_label_size_class(  $OPT->name() . ' ' . $OPT->value() );
+			$value = self::prep_answer( $OPT->name() );
+			$desc = self::prep_answer( $OPT->value() );
 			$opt = '-' . sanitize_key( $key );
 
 			$checked = is_array( $answer ) && in_array( $key, $answer ) ? ' checked="checked"' : '';
@@ -919,9 +920,10 @@ class EEH_Form_Fields {
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
 			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-checkbox-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
-			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '[]" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
+			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '[' . $OPT->ID() . ']" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
+ 			$input_html .= "\n\t\t\t\t\t" . ' &nbsp; <span class="small-text grey-text">(' . $desc . ')</span>';
 			$input_html .= "\n\t\t\t\t" . '</li>';
 
 		}
