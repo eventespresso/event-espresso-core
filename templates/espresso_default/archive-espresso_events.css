@@ -68,6 +68,7 @@
 
 /******************* GLOBAL STYLES ****************** */
 
+.post-type-archive-espresso_events .site-content,
 .post-type-archive-espresso_events .entry-content {
 	width: auto;
 	max-width: 1080px;
