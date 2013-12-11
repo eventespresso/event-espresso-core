@@ -777,9 +777,10 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public static function event_list_css() {
+	public static function event_list_css( $extra_class = '' ) {
 		$EE = EE_Registry::instance();
-		$event_list_css = array( 'espresso-event-list-event' );
+		$event_list_css = ! empty( $extra_class ) ? array( $extra_class ) : array();
+		$event_list_css[] = 'espresso-event-list-event';
 		if ( self::$_type == 'grid' ) {
 			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size : 'medium';
 			$event_list_css[] = $event_list_grid_size . '-event-list-grid';
@@ -800,9 +801,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function event_categories() {
-		$event_categories = EE_Registry::instance()->load_model('Term')->get_all_ee_categories();
-//		printr( $event_categories, '$event_categories  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $event_categories;
+		return EE_Registry::instance()->load_model('Term')->get_all_ee_categories();
 	}
 
 
@@ -914,11 +913,11 @@ function espresso_event_list_title() {
 	return EED_Events_Archive::event_list_title();
 }
 
-function espresso_event_list_css() {
-	return EED_Events_Archive::event_list_css();
+function espresso_event_list_css( $extra_class = '' ) {
+	return EED_Events_Archive::event_list_css( $extra_class );
 }
  
-function espresso_event_categories() {
+function espresso_get_event_categories() {
 	return EED_Events_Archive::event_categories();
 }
  
