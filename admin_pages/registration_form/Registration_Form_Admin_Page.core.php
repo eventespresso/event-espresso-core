@@ -129,7 +129,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
-
 			'default' => array(
 				'nav' => array(
 					'label' => __('Questions'),
@@ -144,7 +143,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 						'callback' => 'question_tab_overview_info_help_tab'
 						),
 					),
-				'require_nonce' => FALSE
+				'require_nonce' => FALSE,
+				'qtips' => array(
+					'EE_Registration_Form_Tips'
+					)/**/
 				),
 
 			'question_groups' => array(
