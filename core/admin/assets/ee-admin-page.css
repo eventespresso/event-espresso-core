@@ -573,7 +573,8 @@ label.error  { display: block; color: #FE2A00 !important; }
 	-webkit-font-smoothing: antialiased;
 	font: normal 16px/1 'dashicons';
 	vertical-align: top;
-	margin-top: 3px;
+	margin-top: 6px;
+	margin-right: 3px;
 }
 
 
