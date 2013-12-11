@@ -196,3 +196,8 @@
 	width: 100%;
 	overflow: wrap;
 }
+
+.espresso-question-group-wrap table th {
+	width: inherit;
+	min-width: 200px;
+}
