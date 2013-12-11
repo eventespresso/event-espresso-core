@@ -109,6 +109,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 			'content' => array(
 				'button' => false, //what you want for the close button text/link.
 				'title' => true, //Options: "string", true.  If TRUE then the title attribute of the target will be used (if available). If "string" then we'll use that as the title.
+				'clone' => true, //Options: true|false.  if true then the text will be cloned from the content instead of removed from the dom.
 				),
 			'position' => array(
 				'my' => 'top left', //top left || top center || top right || right top || right center || right bottom || bottom right || bottom center || bottom left || left bottom || left center || left top
