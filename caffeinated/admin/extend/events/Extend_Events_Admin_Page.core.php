@@ -242,11 +242,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	protected function _set_list_table_views_default() {
-		$views = parent::_set_list_table_views_default();
+		parent::_set_list_table_views_default();
 		$export_label = __('Export Events', 'event_espresso');
-		$views['all']['bulk_action']['export_events'] = $export_label;
-		$views['draft']['bulk_action']['export_events'] = $export_label;
-		$views['trash']['bulk_action']['export_events'] = $export_label;
+		$this->_views['all']['bulk_action']['export_events'] = $export_label;
+		$this->_views['draft']['bulk_action']['export_events'] = $export_label;
+		$this->_views['trash']['bulk_action']['export_events'] = $export_label;
 
 		$new_views = array(
 			'today' => array(
@@ -269,7 +269,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			)
 		);
 
-		return array_merge( $views, $new_views);
+		$this->_views = array_merge( $this->_views, $new_views);
+	}
+
+
+
+
+	protected function _set_list_table_views_category_list() {
+		parent::_set_list_table_views_category_list();
+		$this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
 	}
 
 
