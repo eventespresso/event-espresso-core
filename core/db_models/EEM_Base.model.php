@@ -1359,6 +1359,10 @@ abstract class EEM_Base extends EE_Base{
 		//set limit
 		if(array_key_exists('limit',$query_params) && $query_params['limit'] !== NULL){
 			if(is_array($query_params['limit'])){
+				if( ! isset($query_params['limit'][0]) || ! isset($query_params['limit'][1])){
+					$e = sprintf(__("Invalid DB query. You passed '%s' for the LIMIT, but only the following are valid: an integer, string representing an integer, a string like 'int,int', or an array like array(int,int)", "event_espresso"),  http_build_query($query_params['limit']));
+					throw new EE_Error($e."|".$e);
+				}
 				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
 				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);
 			}else{
