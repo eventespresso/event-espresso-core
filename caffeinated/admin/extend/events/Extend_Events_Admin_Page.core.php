@@ -41,6 +41,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	protected function _extend_page_config() {
 
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
+		$default_espresso_boxes = $this->_default_espresso_metaboxes;
 
 
 		$new_page_routes = array(
@@ -71,6 +72,27 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'func' => '_delete_ticket',
 				'noheader' => TRUE
 				),
+			'import_page'=>'_import_page',
+			'import' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
+			'import_events' => array(
+				'func'=>'_import_events',
+				'noheader'=>TRUE,
+				),
+			'export_events' => array(
+				'func' => '_events_export',
+				'noheader' => true
+			),
+			'export_categories' => array(
+				'func' => '_categories_export',
+				'noheader' => TRUE
+				),
+			'sample_export_file'=>array(
+				'func'=>'_sample_export_file',
+				'noheader'=>TRUE
+				)
 			);
 
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
@@ -94,13 +116,20 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'require_nonce' => FALSE
 					)
 				);
-
-			$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 		}
+
+		$new_page_config['import_page'] = array(
+				'nav' => array(
+					'label' => __('Import', 'event_esprsso'),
+					'order' => 30
+				),
+				'metaboxes' => $default_espresso_boxes,
+				'require_nonce' => FALSE
+		);
+		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
 		//add filters and actions
 		//modifying _views
-		add_filter('FHEE_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
 		add_filter('FHEE_event_datetime_metabox_add_additional_date_time_template', array( $this, 'add_additional_datetime_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_clone_button_template', array( $this, 'add_datetime_clone_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
@@ -109,7 +138,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE_list_table_views_espresso_events_default', array( $this, 'additional_views'), 10 );
 		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//event settings
@@ -213,11 +241,43 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	public function list_table_views( $views ) {
-		/*$views['all']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');
-		$views['today']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');
-		$views['month']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');*/
-		return $views;
+	protected function _set_list_table_views_default() {
+		parent::_set_list_table_views_default();
+		$export_label = __('Export Events', 'event_espresso');
+		$this->_views['all']['bulk_action']['export_events'] = $export_label;
+		$this->_views['draft']['bulk_action']['export_events'] = $export_label;
+		$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+
+		$new_views = array(
+			'today' => array(
+				'slug' => 'today',
+				'label' => __('Today', 'event_espresso'),
+				'count' => $this->total_events_today(),
+				'bulk_action' => array(
+					'export_events' => __('Export Events', 'event_espresso'),
+					'trash_events' => __('Move to Trash', 'event_espresso')
+				)
+			),
+			'month' => array(
+				'slug' => 'month',
+				'label' => __('This Month', 'event_espresso'),
+				'count' => $this->total_events_this_month(),
+				'bulk_action' => array(
+					'export_events' => __('Export Events', 'event_espresso'),
+					'trash_events' => __('Move to Trash', 'event_espresso')
+				)
+			)
+		);
+
+		$this->_views = array_merge( $this->_views, $new_views);
+	}
+
+
+
+
+	protected function _set_list_table_views_category_list() {
+		parent::_set_list_table_views_category_list();
+		$this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
 	}
 
 
@@ -228,9 +288,119 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'action' => 'reports',
 				'EVT_ID' => $event->ID()
 			);
+		$export_query_args = array(
+				'action' => 'export_events',
+				'EVT_ID' => $event->ID()
+			);
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
+		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
 		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
+		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
+			</a>';
 		return $actionlinks;
+	}
+
+
+
+	protected function _event_legend_items() {
+		$items = parent::_event_legend_items();
+		$items['csv_export'] = array(
+				'icon' => EE_GLOBAL_ASSETS_URL . 'images/csv_icon_sm.gif',
+				'desc' => __('Export Event details to csv', 'event_espresso')
+			);
+		return $items;
+	}
+
+
+
+	protected function _import_page(){
+		
+		$title = __('Import', 'event_espresso');
+		$intro = __('If you have a previously exported Event Espresso 4 information in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
+		$form_url = EVENTS_ADMIN_URL;
+		$action = 'import_events';
+		$type = 'csv';
+		$this->_template_args['form'] = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
+		$this->_template_args['sample_file_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'sample_export_file'),$this->_admin_base_url);
+		$content = EEH_Template::display_template(EVENTS_CAF_TEMPLATE_PATH . 'import_page.template.php',$this->_template_args,true); 
+		
+
+		$this->_template_args['admin_page_content'] = $content;
+		$this->display_admin_page_with_sidebar();
+	}
+	/**
+	 * _import_events
+	 * This handles displaying the screen and running imports for importing events.
+	 * 	
+	 * @return string html
+	 */
+	protected function _import_events() {
+		require_once(EE_CLASSES . 'EE_Import.class.php');
+		$success = EE_Import::instance()->import();
+		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
+		
+	}
+
+
+
+	/**
+	 * _events_export
+	 * Will export all (or just the given event) to a Excel compatible file.
+	 * 
+	 * @access protected
+	 * @return file 
+	 */
+	protected function _events_export() {
+		$event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : $this->_req_data['EVT_IDs'];
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'all_event_data',
+			'event_id' => $event_ids ,
+		);
+		$this->_req_data = array_merge($this->_req_data, $new_request_args);
+
+		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+			require_once(EE_CLASSES . 'EE_Export.class.php');
+			$EE_Export = EE_Export::instance($this->_req_data);
+			$EE_Export->export();
+		}
+	}
+
+
+
+
+	/**
+	 * handle category exports()
+	 * @return file export
+	 */
+	protected function _categories_export() {
+
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'categories',
+			'category_ids' => $this->_req_data['EVT_CAT_ID']
+			);
+
+		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
+
+		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
+			require_once( EE_CLASSES . 'EE_Export.class.php');
+			$EE_Export = EE_Export::instance( $this->_req_data );
+			$EE_Export->export();
+		}
+
+	}
+
+
+	
+	/**
+	 * Creates a sample CSV file for importing
+	 */
+	protected function _sample_export_file(){
+//		require_once(EE_CLASSES . 'EE_Export.class.php');
+		EE_Export::instance()->export_sample();
 	}
 
 
@@ -399,33 +569,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	}
 
 
-
-
-	//let's modify the views for caf
-	public function additional_views( $views ) {
-		$new_views = array(
-			'today' => array(
-				'slug' => 'today',
-				'label' => __('Today', 'event_espresso'),
-				'count' => $this->total_events_today(),
-				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso')
-				)
-			),
-			'month' => array(
-				'slug' => 'month',
-				'label' => __('This Month', 'event_espresso'),
-				'count' => $this->total_events_this_month(),
-				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso')
-				)
-			)
-		);
-
-		return array_merge( $views, $new_views);
-	}
 
 
 
