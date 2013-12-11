@@ -41,6 +41,18 @@ class EE_Registration_Form_Tips extends EE_Qtip_Config {
 				'target' => '.questions .ee-lock-icon.ee-alternate-color',
 				'content' => __('This question has answers attached to it from registrations that have the question.  It cannot be permanently deleted.', 'event_espresso'),
 				'options' => array()
+				),
+			2 => array(
+				'content_id' => 'about-question-group-lock-icon',
+				'target' => '.questiongroups .ee-lock-icon',
+				'content' => __('This question group is a system group and cannot be trashed', 'event_espresso'),
+				'options' => array()
+				),
+			3 => array(
+				'content_id' => 'about-non-system-qg-lock-icon',
+				'target' => '.questiongroups .ee-lock-icon.ee-alternate-color',
+				'content' => __('This question group has questions that have answers attached to it from registrations that have the question. It cannot be permanently deleted.', 'event_espresso'),
+				'options' => array()
 				)
 			);
 	}

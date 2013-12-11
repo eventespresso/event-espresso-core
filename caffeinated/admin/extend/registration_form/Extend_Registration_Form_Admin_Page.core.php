@@ -187,7 +187,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 						'callback' => 'question_groups_tab_overview_info_help_tab'
 						),
 					),
-				'require_nonce' => FALSE
+				'require_nonce' => FALSE,
+				'qtips' => array(
+					'EE_Registration_Form_Tips'
+					)
 				),
 
 			'add_question' => array(
