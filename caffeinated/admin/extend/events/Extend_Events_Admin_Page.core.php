@@ -81,6 +81,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'func'=>'_import_events',
 				'noheader'=>TRUE,
 				),
+			'export_events' => array(
+				'func' => '_events_export',
+				'noheader' => true
+			),
+			'export_categories' => array(
+				'func' => '_categories_export',
+				'noheader' => TRUE
+				),
 			'sample_export_file'=>array(
 				'func'=>'_sample_export_file',
 				'noheader'=>TRUE
@@ -324,6 +332,60 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
 		
 	}
+
+
+
+	/**
+	 * _events_export
+	 * Will export all (or just the given event) to a Excel compatible file.
+	 * 
+	 * @access protected
+	 * @return file 
+	 */
+	protected function _events_export() {
+		$event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : $this->_req_data['EVT_IDs'];
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'all_event_data',
+			'event_id' => $event_ids ,
+		);
+		$this->_req_data = array_merge($this->_req_data, $new_request_args);
+
+		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
+			require_once(EE_CLASSES . 'EE_Export.class.php');
+			$EE_Export = EE_Export::instance($this->_req_data);
+			$EE_Export->export();
+		}
+	}
+
+
+
+
+	/**
+	 * handle category exports()
+	 * @return file export
+	 */
+	protected function _categories_export() {
+
+		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
+		$new_request_args = array(
+			'export' => 'report',
+			'action' => 'categories',
+			'category_ids' => $this->_req_data['EVT_CAT_ID']
+			);
+
+		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
+
+		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
+			require_once( EE_CLASSES . 'EE_Export.class.php');
+			$EE_Export = EE_Export::instance( $this->_req_data );
+			$EE_Export->export();
+		}
+
+	}
+
+
 	
 	/**
 	 * Creates a sample CSV file for importing

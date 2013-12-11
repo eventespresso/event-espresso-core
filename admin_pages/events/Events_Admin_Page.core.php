@@ -138,10 +138,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'noheader' => true
 			),
 			'view_report' => '_view_report',
-			'export_events' => array(
-				'func' => '_events_export',
-				'noheader' => true
-			),
 			'default_event_settings' => '_default_event_settings',
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
@@ -175,10 +171,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
-				'noheader' => TRUE
-				),
-			'export_categories' => array(
-				'func' => '_categories_export',
 				'noheader' => TRUE
 				),
 			'category_list' => array(
@@ -496,7 +488,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					)
 				)
@@ -1733,53 +1724,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	
 
-	/**
-	 * _events_export
-	 * Will export all (or just the given event) to a Excel compatible file.
-	 * 
-	 * @access protected
-	 * @return file 
-	 */
-	protected function _events_export() {
-		$event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : $this->_req_data['EVT_IDs'];
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'all_event_data',
-			'event_id' => $event_ids ,
-		);
-		$this->_req_data = array_merge($this->_req_data, $new_request_args);
-
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
-			require_once(EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance($this->_req_data);
-			$EE_Export->export();
-		}
-	}
-
-	/**
-	 * _payment_export
-	 * Will export payments for events to an excel file (or for given events)
-	 * @return file?
-	 */
-	protected function _payment_export() {
-
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'payment',
-			'type' => 'csv',
-			'event_id' => $this->_req_data['EVT_ID'],
-		);
-		$this->_req_data = array_merge($this->_req_data, $new_request_args);
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
-			require_once(EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance();
-			$EE_Export->export();
-		}
-	}
-	
-
 
 	/** Event Category Stuff **/
 
@@ -1956,41 +1900,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		
 		return $cat_id;
-	}
-
-
-	/**
-	 * TODO handle category exports()
-	 * @return file export
-	 */
-	protected function _categories_export() {
-
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'categories',
-			'category_ids' => $this->_req_data['EVT_CAT_ID']
-			);
-
-		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
-
-		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
-			require_once( EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance( $this->_req_data );
-			$EE_Export->export();
-		}
-
-	}
-
-
-
-
-
-	protected function _import_categories() {
-
-		require_once(EE_CLASSES . 'EE_Import.class.php');
-		EE_Import::instance()->import();
-
 	}
 
 
