@@ -25,6 +25,26 @@ require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 require_once( EE_CLASSES . 'EE_Question.class.php');
 
 class EEM_Question extends EEM_Soft_Delete_Base {
+	
+	// constant used to indicate that the question type is DATE
+	const QST_type_date = 'DATE';
+
+	// constant used to indicate that the question type is DROPDOWN
+	const QST_type_dropdown = 'DROPDOWN';
+
+	// constant used to indicate that the question type is MULTIPLE
+	const QST_type_multiple = 'MULTIPLE';
+
+	// constant used to indicate that the question type is SINGLE
+	const QST_type_single = 'SINGLE';
+
+	// constant used to indicate that the question type is TEXT
+	const QST_type_text = 'TEXT';
+
+	// constant used to indicate that the question type is TEXTAREA
+	const QST_type_textarea = 'TEXTAREA';
+
+				
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
@@ -62,14 +82,17 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	protected function __construct(){
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
-		$this->_allowed_question_types=apply_filters('FHEE_allowed_question_types',
-					array(
-						'TEXT'=>__('Text','event_espresso'),
-						'TEXTAREA'=>__('Textarea','event_espresso'),
-						'SINGLE'=>__('Single','event_espresso'),
-						'DROPDOWN'=>__('Dropdown','event_espresso'),
-						'MULTIPLE'=>__('Multiple Choice','event_espresso'),
-						'DATE'=>__('Date','event_espresso')));
+		$this->_allowed_question_types=apply_filters( 
+			'FHEE_allowed_question_types',
+			array(
+				EEM_Question::QST_type_text =>__('Text','event_espresso'),
+				EEM_Question::QST_type_textarea =>__('Textarea','event_espresso'),
+				EEM_Question::QST_type_single =>__('Single','event_espresso'),
+				EEM_Question::QST_type_dropdown =>__('Dropdown','event_espresso'),
+				EEM_Question::QST_type_multiple =>__('Multiple Choice','event_espresso'),
+				EEM_Question::QST_type_date =>__('Date','event_espresso')
+			)
+		);
 
 		$this->_tables = array(
 			'Question'=>new EE_Primary_Table('esp_question','QST_ID')
