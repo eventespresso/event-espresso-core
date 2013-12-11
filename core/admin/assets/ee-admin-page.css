@@ -558,8 +558,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 /** NEW ICONS **/
-.ee-email-icon:before {
-	content: "\f157";
+.ee-email-icon, .ee-view-icon, .ee-lock-icon, .ee-collapsible:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
 	font: normal 16px/1 'dashicons';
@@ -567,20 +566,26 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin-top: 3px;
 }
 
+.ee-email-icon:before {
+	content: "\f157";
+}
+
 .ee-view-icon:before {
 	content: "\f177";
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 'dashicons';
-	vertical-align: top;
 	margin-top: 6px;
 	margin-right: 3px;
 }
 
+.ee-lock-icon:before {
+	content: "\f160";
+}
+
+.espresso-admin .wp-list-table .ee-lock-icon:before {
+	margin-left: 8px;
+}
+
 
 .ee-collapsible:before {
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
 	font: normal 22px/1 'dashicons';
 	vertical-align: top;
 	margin-top: -3px;
