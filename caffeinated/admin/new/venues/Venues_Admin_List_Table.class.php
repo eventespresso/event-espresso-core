@@ -101,7 +101,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function column_cb($item) {
 
-		return $item->count_related('Event') > 0 ? '<span class="lock-icon"></span>' : sprintf( '<input type="checkbox" name="venue_id[]" value="%s" />', $item->ID());
+		return $item->count_related('Event') > 0 ? '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="venue_id[]" value="%s" />', $item->ID());
 	}
 
 

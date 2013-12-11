@@ -97,7 +97,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function column_cb(EE_Question $item) {
 		$system_question = $item->is_system_question();
-		return $system_question || (!$system_question && $item->count_related('Answer') > 0 ) ? '<span class="lock-icon"></span>' . sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" style="visibility: hidden;"/>', $item->ID(), $item->ID() ) : sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID() );
+		return $system_question || (!$system_question && $item->count_related('Answer') > 0 ) ? '<span class="ee-lock-icon"></span>' . sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" style="visibility: hidden;"/>', $item->ID(), $item->ID() ) : sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID() );
 	}
 
 

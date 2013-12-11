@@ -104,7 +104,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 	public function column_cb($item) {
 		$system_group = $item->get('QSG_system');
-		return $system_group > 0 || ( $system_group === 0 && $this->_view == 'trash' && $item->has_questions_with_answers() ) ? '<span class="lock-icon"></span>' . sprintf( '<input type="checkbox" id="QSG_ID[%d]" name="checkbox[%d]" value="%d" style="visibility: hidden;" />', $item->ID(), $item->ID(), $item->ID() ) : sprintf( '<input type="checkbox" id="QSG_ID[%d]" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID(), $item->ID() );
+		return $system_group > 0 || ( $system_group === 0 && $this->_view == 'trash' && $item->has_questions_with_answers() ) ? '<span class="ee-lock-icon"></span>' . sprintf( '<input type="checkbox" id="QSG_ID[%d]" name="checkbox[%d]" value="%d" style="visibility: hidden;" />', $item->ID(), $item->ID(), $item->ID() ) : sprintf( '<input type="checkbox" id="QSG_ID[%d]" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID(), $item->ID() );
 	}
 
 

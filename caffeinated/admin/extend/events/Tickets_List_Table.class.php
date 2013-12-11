@@ -94,7 +94,7 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	function column_cb($item) {
-		return $item->ID() === 1 ? '<span class="lock-icon"></span>' : sprintf( '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', /* $1%s */ $item->ID() );
+		return $item->ID() === 1 ? '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', /* $1%s */ $item->ID() );
 
 	}
 

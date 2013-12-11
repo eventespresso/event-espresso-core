@@ -105,7 +105,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		//does event have any attached registrations?
 		$regs = $item->count_related('Registration');
-        return $regs > 0 && $this->_view == 'trash' ? '<span class="lock-icon"></span>' : sprintf(
+        return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
             '<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
         );    
     }
