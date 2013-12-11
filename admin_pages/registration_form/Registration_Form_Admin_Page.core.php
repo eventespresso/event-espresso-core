@@ -413,7 +413,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
 		}else{
 			$question= EE_Question::new_instance();
-			$question->set_order_to_latest();
+			$question->set_order_to_latest();			
 			$this->_set_add_edit_form_tags('insert_question');
 		}
 		$questionTypes=array();

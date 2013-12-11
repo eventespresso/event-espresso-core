@@ -33,4 +33,18 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 			return $data;
 		}
 	}
+	
+	/**
+	 * Gets a string representation of the array
+	 * @param type $value_on_field_to_be_outputted
+	 * @param string $schema, possible values are ',', others can be added
+	 * @return string
+	 */
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null) {
+		switch($schema){
+			default:
+				$pretty_value = implode(", ",$value_on_field_to_be_outputted);
+		}
+		return $pretty_value;
+	}
 }
