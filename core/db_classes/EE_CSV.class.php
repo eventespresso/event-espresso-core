@@ -697,7 +697,7 @@
 	 *			@Determine the maximum upload file size based on php.ini settings
 	 *		  @access public
 	 *			@param int $percent_of_max - desired percentage of the max upload_mb
-	 *			@return int
+	 *			@return int KB
 	 */	
 	public function get_max_upload_size ( $percent_of_max = FALSE ) {
 	

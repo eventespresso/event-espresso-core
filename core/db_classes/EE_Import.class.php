@@ -145,13 +145,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 					$file_ext 		= substr( strrchr( $filename, '.' ), 1 );
 				    $file_type 	= $_FILES['file']['type'][0];
 				    $temp_file	= $_FILES['file']['tmp_name'][0];
-				    $filesize    	= $_FILES['file']['size'][0];		
-	
+				    $filesize    	= $_FILES['file']['size'][0] / 1024;//convert from bytes to KB		
+					
 					if ( $file_ext=='csv' ) {
 					
-						$max_upload = $this->EE_CSV->get_max_upload_size();
-						
-						if ( $filesize < $max_upload ) { 
+						$max_upload = $this->EE_CSV->get_max_upload_size();//max upload size in KB
+						if ( $filesize < $max_upload || true) { 
 
 							$wp_upload_dir = str_replace( array( '\\', '/' ), DS, wp_upload_dir());
 							$path_to_file = $wp_upload_dir['basedir'] . DS . 'espresso' . DS . $filename;
