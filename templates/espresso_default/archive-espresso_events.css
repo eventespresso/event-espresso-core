@@ -68,6 +68,12 @@
 
 /******************* GLOBAL STYLES ****************** */
 
+.post-type-archive-espresso_events .site-content,
+.post-type-archive-espresso_events .entry-content {
+	width: auto;
+	max-width: 1080px;
+	margin: 0 auto;
+} 
 .espresso-events-list-wrap-dv {
 	padding: 0 1em 2em;/* font-size:12px;*/
 }
@@ -95,21 +101,22 @@
 .espresso-events-list-wrap-dv a {
 	/*color: #007BAE;*/
 }
-.espresso-event-wrapper-dv  .event-meta {
-	width: auto;
+.event-meta p {
+	margin: 1em 0;
 }
-.espresso-events-list-wrap-dv .edit-event-lnk {
-	margin-top: 1em;
+.event-meta .tags-links {
+	display: block;
+	margin:0 0 .5em;
+	font-size:12px;
+	line-height: 1em;
 }
-.espresso-events-list-wrap-dv .post-edit-link {
-	/*margin-top:1em;*/
+.event-meta .tags-links a {
+	color: #777;
 }
 
-.espresso-events-list-wrap-dv a.edit-event-lnk {
-	margin: 0 1em;
-}
 
 .espresso-venue-dv {
+	position: relative;
 	width: auto;
 	padding: 1em;
 	margin: 1em 0;
@@ -420,15 +427,15 @@
 	max-width: 25%;
 	min-width: 150px;
 	margin: 0;
-	font-size: 10px; /*text-align: center; */
+	font-size: .9em; /*text-align: center; */
 	color: #A39D9C;
 }
-.text-event-list-dv .event-categories-pg {
+/*.text-event-list-dv .event-categories-pg {
 	margin: 0 0 1em;
-	font-size: 10px;
+	font-size: .9em;
 	text-align: left;
 	color: #A39D9C;
-}
+}*/
 
 .text-event-list-dv .ee-gmap-wrapper {
 }
@@ -495,27 +502,21 @@
 	max-width: 17%;
 	min-width: 150px;
 	margin: 0;
-	font-size: 10px;
 	text-align: center;
 	color: #A39D9C;
 }
-.dates-event-list-dv .event-categories-pg {
-	margin: 1em 0 0;
-	font-size: 10px;
-	line-height: 10px;
-	text-align: left;
-	color: #A39D9C;
-}
+
 
 .dates-event-list-dv .espresso-venue-address-wrap-dv {
 	float: left;
-	max-width: 50%;
+	width: 50%;
 }
 .dates-event-list-dv .espresso-venue-name-spn {
 	/*max-width: 50%; */
 }
 .dates-event-list-dv .ee-gmap-wrapper {
 	float: right;
+	width: 50%;
 }
 
 

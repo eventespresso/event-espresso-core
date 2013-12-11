@@ -19,10 +19,10 @@ EE_Registry::instance()->load_helper( 'Venue_View' );
 EE_Registry::instance()->load_helper( 'Maps' );
 EEH_Maps::espresso_google_map_js();
 ?>
-<section id="primary" class="content-area">
-	<div id="content" class="site-content max-width maxwidth row" role="main">
+<div id="primary" class="content-area">
+	<div id="content" class="site-content" role="main">
 		<div id="espresso-venue-list-dv" class="espresso-venue-list-dv ">
-			<div id="espresso-venue-list-wrap-dv" class="espresso-venue-list-wrap-dv entry-content container">
+			<div id="espresso-venue-list-wrap-dv" class="espresso-venue-list-wrap-dv">
 			
 				<h1  id="venue-list-h1" class="venue-list-h1"><?php echo __( 'Venues', 'event_espresso' ); ?></h1>
 						
@@ -37,7 +37,7 @@ EEH_Maps::espresso_google_map_js();
 					<?php while ( have_posts() ) : the_post(); ?>
 					<?php global $post; ?>
 					
-					<article id="post-<?php echo $post->ID; ?>" <?php post_class( 'espresso-venue-list-venue clear' ); ?>>
+					<article id="post-<?php echo $post->ID; ?>" <?php post_class( 'espresso-venue-list-venue entry-content clear' ); ?>>
 					
 						<div id="venue-list-venue-wrap-<?php echo $post->ID; ?>" class="venue-list-venue-wrap-dv">					
 
@@ -127,8 +127,10 @@ EEH_Maps::espresso_google_map_js();
 			<!-- #espresso-events-list-wrap-dv -->	
 		</div>
 
-	</div><!-- #content -->
-</section><!-- #primary -->
+	</div>
+	<!-- #content -->
+</div>
+<!-- #primary -->
 
 <?php  do_action( 'AHEE_after_venue_list' );  ?>
 <?php get_sidebar(); ?>

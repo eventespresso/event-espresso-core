@@ -883,13 +883,13 @@ class EEH_Form_Fields {
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
 		}
+		$answer = maybe_unserialize( $answer );
 		// prep the answer(s)
 		$answer = is_array( $answer ) ? $answer : array( sanitize_key( $answer ) => $answer );
 		foreach ( $answer as $key => $value ) {
 			$key = self::prep_option_value( $key );
 			$answer[$key] = self::prep_answer( $value );
-		}	
-		
+		}		
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -909,13 +909,13 @@ class EEH_Form_Fields {
 		
 		foreach ( $options as $OPT ) {
 
-			$checked = is_array( $answer ) && in_array( $value, $answer ) ? ' checked="checked"' : '';
-			
 			$key = self::prep_option_value( $OPT->name() );
 			$size = self::get_label_size_class( $OPT->value() );
 			$value = self::prep_answer( $OPT->value() );
 			$opt = '-' . sanitize_key( $key );
 
+			$checked = is_array( $answer ) && in_array( $key, $answer ) ? ' checked="checked"' : '';
+			
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
 			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-checkbox-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';

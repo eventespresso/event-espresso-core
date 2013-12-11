@@ -15,7 +15,7 @@
  */
 get_header();
 ?>
-<section id="primary" class="content-area">
+<div id="primary" class="content-area">
 	<div id="content" class="site-content max-width maxwidth row" role="main">
 	
 		<div id="espresso-event-details-wrap-dv" class="">
@@ -28,7 +28,7 @@ get_header();
 				if (has_excerpt( $post->ID )){ $wrap_class .= ' has-excerpt';}
 				?>
 				<?php do_action( 'AHEE_event_details_before_post', $post ); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class('espresso-event-details'); ?>>
+				<article id="post-<?php the_ID(); ?>" <?php post_class('espresso-event-details entry-content'); ?>>
 					<?php do_action( 'AHEE_event_details_before_featured_img', $post ); ?>
 					<?php				
 					if ( has_post_thumbnail( $post->ID )) :
@@ -66,7 +66,7 @@ get_header();
 							<?php the_content(); ?>
 							<?php do_action( 'AHEE_event_details_after_the_content', $post ); ?>
 							<p>
-								<span class="tags-links"><?php the_terms( $post->ID, 'espresso_event_categories', 'Categories: ', ' / ' ); ?></span>
+								<span class="tags-links"><?php espresso_event_categories( $post->ID ); ?></span>
 							</p>
 							<h3 class="ticket-selector-h3 ee-event-h3">
 								<?php _e( 'Ticket Options', 'event_espresso' ); ?>
@@ -159,7 +159,7 @@ get_header();
 		</div>
 
 	</div><!-- #content -->
-</section><!-- #primary -->
+</div><!-- #primary -->
 
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>

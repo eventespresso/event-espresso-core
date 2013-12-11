@@ -33,7 +33,7 @@
 			
 			<span>
 				<?php echo __( 'Category:' )/* . $elf_category*/;?>&nbsp;
-				<?php $event_categories = espresso_event_categories(); ?>
+				<?php $event_categories = espresso_get_event_categories(); ?>
 				<select name="elf_category_dd" class="events-list-filter-category-slct">								
 					<?php
 						foreach ( $event_categories as $event_category ) { 
