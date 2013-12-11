@@ -104,7 +104,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 		$this->_default_options = array(
 			//'id' => 'unique_id_referncing_qtip_instance',
 			'prerender' => false, //increases page load if true,
-			'overwrite' => false, //if qtip already exists for called element then original overwritten.
+			'overwrite' => true, //if qtip already exists for called element then original overwritten.
 			'suppress' => true, //whether default browser tooltips are suppressed.
 			'content' => array(
 				'button' => false, //what you want for the close button text/link.
