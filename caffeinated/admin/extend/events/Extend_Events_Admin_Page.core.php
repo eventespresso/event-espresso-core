@@ -122,7 +122,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//add filters and actions
 		//modifying _views
-		add_filter('FHEE_list_table_views_espresso_events', array( $this, 'list_table_views'), 10 );
 		add_filter('FHEE_event_datetime_metabox_add_additional_date_time_template', array( $this, 'add_additional_datetime_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_clone_button_template', array( $this, 'add_datetime_clone_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
@@ -131,7 +130,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE_list_table_views_espresso_events_default', array( $this, 'additional_views'), 10 );
 		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//event settings
@@ -235,11 +233,35 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	public function list_table_views( $views ) {
-		/*$views['all']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');
-		$views['today']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');
-		$views['month']['bulk_action']['export_payments'] =  __('Export Payments', 'event_espresso');*/
-		return $views;
+	protected function _set_list_table_views_default() {
+		$views = parent::_set_list_table_views_default();
+		$export_label = __('Export Events', 'event_espresso');
+		$views['all']['bulk_action']['export_events'] = $export_label;
+		$views['draft']['bulk_action']['export_events'] = $export_label;
+		$views['trash']['bulk_action']['export_events'] = $export_label;
+
+		$new_views = array(
+			'today' => array(
+				'slug' => 'today',
+				'label' => __('Today', 'event_espresso'),
+				'count' => $this->total_events_today(),
+				'bulk_action' => array(
+					'export_events' => __('Export Events', 'event_espresso'),
+					'trash_events' => __('Move to Trash', 'event_espresso')
+				)
+			),
+			'month' => array(
+				'slug' => 'month',
+				'label' => __('This Month', 'event_espresso'),
+				'count' => $this->total_events_this_month(),
+				'bulk_action' => array(
+					'export_events' => __('Export Events', 'event_espresso'),
+					'trash_events' => __('Move to Trash', 'event_espresso')
+				)
+			)
+		);
+
+		return array_merge( $views, $new_views);
 	}
 
 
@@ -477,33 +499,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	}
 
 
-
-
-	//let's modify the views for caf
-	public function additional_views( $views ) {
-		$new_views = array(
-			'today' => array(
-				'slug' => 'today',
-				'label' => __('Today', 'event_espresso'),
-				'count' => $this->total_events_today(),
-				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso')
-				)
-			),
-			'month' => array(
-				'slug' => 'month',
-				'label' => __('This Month', 'event_espresso'),
-				'count' => $this->total_events_this_month(),
-				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso')
-				)
-			)
-		);
-
-		return array_merge( $views, $new_views);
-	}
 
 
 

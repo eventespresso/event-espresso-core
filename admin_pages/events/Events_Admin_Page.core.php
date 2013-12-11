@@ -480,9 +480,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('View All Events', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso'),
-//					'export_payments' => __('Export Payments', 'event_espresso')
+					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			),
 			'draft' => array(
@@ -490,7 +488,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('Draft', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso'),
 					)
 			),
@@ -500,7 +497,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'export_events' => __('Export Events', 'event_espresso'),
-					'restore_events' => __('Restore from Trash', 'event_espresso'),
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					)
 				)
