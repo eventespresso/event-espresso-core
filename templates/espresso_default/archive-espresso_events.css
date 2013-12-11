@@ -71,11 +71,11 @@
 .post-type-archive-espresso_events .site-content,
 .post-type-archive-espresso_events .entry-content {
 	width: auto;
-	max-width: 1080px;
+	max-width: 1100px;
 	margin: 0 auto;
 } 
 .espresso-events-list-wrap-dv {
-	padding: 0 1em 2em;/* font-size:12px;*/
+	padding: 0 10px 2em;/* font-size:12px;*/
 }
 .espresso-events-list-dv {
 	position: relative;
@@ -249,7 +249,7 @@
 }
 
 .grid-event-list-dv .tiny-event-list-grid.espresso-event-list-event {
-	width: 120px;
+	width: 134px;
 }
 .grid-event-list-dv .tiny-event-list-grid .event-datetimes h4 {
 	background: none;
@@ -286,7 +286,7 @@
 }
 
 .grid-event-list-dv .small-event-list-grid.espresso-event-list-event {
-	width: 148px;
+	width: 160px;
 }
 .grid-event-list-dv .small-event-list-grid .event-datetimes h4 {
 	background: none;
@@ -323,7 +323,7 @@
 }
 
 .grid-event-list-dv .medium-event-list-grid.espresso-event-list-event {
-	width: 190px;
+	width: 196px;
 }
 .grid-event-list-dv .medium-event-list-grid .event-datetimes h4 {
 	font-size: 14px;
@@ -358,13 +358,13 @@
 .grid-event-list-dv  .large-event-list-grid {
 }
 .grid-event-list-dv .large-event-list-grid.espresso-event-list-event {
-	width: 260px;
+	width: 250px;
 }
 
 .grid-event-list-dv  .huge-event-list-grid {
 }
 .grid-event-list-dv .huge-event-list-grid.espresso-event-list-event {
-	width: 260px;
+	width: 340px;
 }
 
 .grid-event-list-dv .ee-gmap-wrapper {
