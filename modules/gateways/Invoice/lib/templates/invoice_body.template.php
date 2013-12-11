@@ -194,7 +194,7 @@
 			</tbody>
 			
 		</table>
-		<p><?php _e("* Items with a * are taxable", "event_espresso");?></p>
+		<p><?php _e("* taxable items", "event_espresso");?></p>
 		<h2><?php _e("Payments",'event_espresso')?></h2>
 		<table id="invoice-amount">
 			<thead>

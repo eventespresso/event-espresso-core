@@ -138,23 +138,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'noheader' => true
 			),
 			'view_report' => '_view_report',
-			'export_events' => array(
-				'func' => '_events_export',
-				'noheader' => true
-			),
-			'import_page'=>'_import_page',
-			'import' => array(
-				'func'=>'_import_events',
-				'noheader'=>TRUE,
-				),
-			'import_events' => array(
-				'func'=>'_import_events',
-				'noheader'=>TRUE,
-				),
-			'sample_export_file'=>array(
-				'func'=>'_sample_export_file',
-				'noheader'=>TRUE
-			),
 			'default_event_settings' => '_default_event_settings',
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
@@ -190,11 +173,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'args' => array('new_category' => FALSE),
 				'noheader' => TRUE
 				),
-			'export_categories' => array(
-				'func' => '_categories_export',
-				'noheader' => TRUE
-				),
-			'import_categories' => '_import_categories',
 			'category_list' => array(
 				'func' => '_category_list_table'
 				)
@@ -217,14 +195,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'Event_Overview_Help_Tour',
 					//'New_Features_Test_Help_Tour' for testing multiple help tour
 					),
-				'require_nonce' => FALSE
-			),
-			'import_page' => array(
-				'nav' => array(
-					'label' => __('Import', 'event_esprsso'),
-					'order' => 30
-				),
-				'metaboxes' => $default_espresso_boxes,
 				'require_nonce' => FALSE
 			),
 			'create_new' => array(
@@ -478,8 +448,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_categories' => __('Delete Permanently', 'event_espresso'),
-					'export_categories' => __('Export Categories', 'event_espresso'),
+					'delete_categories' => __('Delete Permanently', 'event_espresso')
 					)
 				)
 		);
@@ -502,9 +471,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('View All Events', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso'),
-//					'export_payments' => __('Export Payments', 'event_espresso')
+					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			),
 			'draft' => array(
@@ -512,7 +479,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('Draft', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso'),
 					)
 			),
@@ -521,8 +487,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'restore_events' => __('Restore from Trash', 'event_espresso'),
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					)
 				)
@@ -544,14 +508,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'view_attendees' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/group.png',
 				'desc' => __('View Registrations for Event', 'event_espresso')
-			),
-			'excel_export' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/excel_icon.png',
-				'desc' => __('Export Event details to excel', 'event_espresso')
-			),
-			'csv_export' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/csv_icon_sm.gif',
-				'desc' => __('Export Event details to csv', 'event_espresso')
 			)
 		);
 		return apply_filters('FHEE_event_legend_items', $items);
@@ -594,7 +550,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _events_overview_list_table() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), __("View Event Archive Page", "event_espresso"), 'button' ) .
-													$this->_display_legend($this->_event_legend_items());
+		$this->_display_legend($this->_event_legend_items());
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -1312,7 +1268,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$EEME = $this->_event_model;
 
 		$offset = ($current_page - 1) * $per_page;
-		$limit = $count ? '' : $offset . ',' . $per_page;
+		$limit = $count ? NULL : $offset . ',' . $per_page;
 		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 
@@ -1767,94 +1723,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	
 
-	/**
-	 * _events_export
-	 * Will export all (or just the given event) to a Excel compatible file.
-	 * 
-	 * @access protected
-	 * @return file 
-	 */
-	protected function _events_export() {
-		$event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : $this->_req_data['EVT_IDs'];
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'all_event_data',
-			'event_id' => $event_ids ,
-		);
-		$this->_req_data = array_merge($this->_req_data, $new_request_args);
-
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
-			require_once(EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance($this->_req_data);
-			$EE_Export->export();
-		}
-	}
-
-	/**
-	 * _payment_export
-	 * Will export payments for events to an excel file (or for given events)
-	 * @return file?
-	 */
-	protected function _payment_export() {
-
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'payment',
-			'type' => 'csv',
-			'event_id' => $this->_req_data['EVT_ID'],
-		);
-		$this->_req_data = array_merge($this->_req_data, $new_request_args);
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
-			require_once(EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance();
-			$EE_Export->export();
-		}
-	}
-	/**
-	 * for GET requests to 
-	 */
-
-	protected function _import_page(){
-		
-		$title = __('Import', 'event_espresso');
-		$intro = __('If you have a previously exported Event Espresso 4 information in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
-		$form_url = EVENTS_ADMIN_URL;
-		$action = 'import_events';
-		$type = 'csv';
-		$this->_template_args['form'] = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
-		$this->_template_args['sample_file_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'sample_export_file'),$this->_admin_base_url);
-		$content = EEH_Template::display_template(EVENTS_TEMPLATE_PATH . 'import_page.template.php',$this->_template_args,true); 
-		
-
-		$this->_template_args['admin_page_content'] = $content;
-		$this->display_admin_page_with_sidebar();
-	}
-	/**
-	 * _import_events
-	 * This handles displaying the screen and running imports for importing events.
-	 * 	
-	 * @return string html
-	 */
-	protected function _import_events() {
-		require_once(EE_CLASSES . 'EE_Import.class.php');
-		$success = EE_Import::instance()->import();
-		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
-		
-	}
-	
-	/**
-	 * Creates a sample CSV file for importing
-	 */
-	protected function _sample_export_file(){
-//		require_once(EE_CLASSES . 'EE_Export.class.php');
-		EE_Export::instance()->export_sample();
-	}
-	
-	
-
-
 
 	/** Event Category Stuff **/
 
@@ -2031,41 +1899,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		
 		return $cat_id;
-	}
-
-
-	/**
-	 * TODO handle category exports()
-	 * @return file export
-	 */
-	protected function _categories_export() {
-
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'categories',
-			'category_ids' => $this->_req_data['EVT_CAT_ID']
-			);
-
-		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
-
-		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
-			require_once( EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance( $this->_req_data );
-			$EE_Export->export();
-		}
-
-	}
-
-
-
-
-
-	protected function _import_categories() {
-
-		require_once(EE_CLASSES . 'EE_Import.class.php');
-		EE_Import::instance()->import();
-
 	}
 
 

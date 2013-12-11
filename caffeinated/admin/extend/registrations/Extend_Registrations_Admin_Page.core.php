@@ -315,7 +315,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 */
 	protected function _registration_checkin_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $this->_req_data['event_id']), 'add-new-h2');
+		$reg_id = isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : null;
+		$reg = EEM_Registration::instance()->get_one_by_ID($reg_id);
+		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $reg->event_ID()), 'add-new-h2');
 
 		$legend_items = array(
 			'checkin' => array(
@@ -329,7 +331,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 
-		$reg_id = isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : null;
+		
 		$dtt_id = isset(  $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$go_back_url = !empty( $reg_id )  ? EE_Admin_Page::add_query_args_and_nonce(array('action' => 'event_registrations', 'event_id' => EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Event')->ID(), 'DTT_ID' => $dtt_id ), $this->_admin_base_url ) : '';
 		

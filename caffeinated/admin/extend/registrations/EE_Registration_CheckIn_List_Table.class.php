@@ -130,7 +130,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 		$limit = array();
-		if ( !empty( $perpage ) ) {
+		if ( !empty( $per_page ) ) {
 			$offset = ($current_page-1)*$per_page;
 			$limit = array( $offset, $per_page );
 		}
