@@ -356,7 +356,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_request_args = array(
 			'export' => 'report',
 			'action' => 'all_event_data',
-			'event_id' => $event_ids ,
+			'EVT_ID' => $event_ids ,
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 
