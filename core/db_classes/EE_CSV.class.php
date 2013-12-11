@@ -427,12 +427,23 @@
 					try{
 //						$model->show_next_x_db_queries(1);
 //						echo '<br><br>';
-						$success = $model->update($model_object_data,array(array($model->primary_key_name() => $id_in_csv)));
+						if($model->has_primary_key_field()){
+							$conditions = array($model->primary_key_name() => $id_in_csv);
+						}elseif($model->get_combined_primary_key_fields() > 1 ){
+							$conditions = array();
+							foreach($model->get_combined_primary_key_fields() as $key_field){
+								$conditions[$key_field->get_name()] = $model_object_data[$key_field->get_name()];
+							}
+						}else{
+							$model->primary_key_name();//this shoudl just throw an exception, explaining that we dont have a primary key (or a combine dkey)
+						}
+	
+						$success = $model->update($model_object_data,array($conditions));
 						if($success){
 							$total_updates++;
 							EE_Error::add_success( sprintf(__("Successfully updated %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data)));
 						}else{
-							$matched_items = $model->get_all(array(array($model->primary_key_name() => $id_in_csv )));
+							$matched_items = $model->get_all(array($conditions));
 							if( ! $matched_items){
 								//no items were matched (so we shouldn't have updated)... but then we should have inserted? what the heck?
 								$total_update_errors++;
