@@ -98,10 +98,10 @@ $fields = $question->get_model()->field_settings();
 						<tbody>
 							<tr class="question-option sample">
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[xxcountxx][QSO_name]" class="option-name medium-text">
+									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-name medium-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-value regular-text">
+									<input type="text" name="question_options[xxcountxx][QSO_desc]" class="option-value regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 									<a class="remove-option remove-item">
@@ -117,10 +117,10 @@ $fields = $question->get_model()->field_settings();
 							?>
 								<tr class="question-option">
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
-										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_name]" value="<?php echo $option->name()?>">
+										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
 									</td>
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
-										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
+										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_desc]" value="<?php echo $option->desc()?>">
 									</td>
 									<?php if( $count > 0 ){ ?>
 									<td style="padding: 0 10px 10px 0; line-height: 1em;">
@@ -142,10 +142,10 @@ $fields = $question->get_model()->field_settings();
 							?>
 							<tr class="question-option">
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[0][QSO_name]" class="option-name regular-text">
+									<input type="text" name="question_options[0][QSO_value]" class="option-name regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[0][QSO_value]" class="option-value regular-text">
+									<input type="text" name="question_options[0][QSO_desc]" class="option-value regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 								</td>

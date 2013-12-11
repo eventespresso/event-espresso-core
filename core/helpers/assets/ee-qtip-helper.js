@@ -2,14 +2,18 @@ jQuery(document).ready(function($) {
 
 	//load all qtips
 	if ( EE_QTIP_HELPER.qtips.length > 0 ) {
-		var parse;
+		var parse, content;
 
 		console.log(EE_QTIP_HELPER);
 		//loop through the qtips and set them up.
 		$.each(EE_QTIP_HELPER.qtips, function(i, v ) {
 			//make sure that content is refernecing content div
 			console.log(v);
-			v.options.content.text = $('#' + v.content_id);
+			content = v.options.content.clone ? $('#' + v.content_id).clone().html() : $('#' + v.content_id ).html();
+
+			if ( typeof( content ) !== 'undefined' ) {
+				v.options.content.text = content;
+			}
 
 			if ( typeof( v.options.position.target) !== 'undefined' && v.options.position.target.indexOf("jQuery::") > -1 ) {
 				parse = v.options.position.target.replace('jQuery::', '');

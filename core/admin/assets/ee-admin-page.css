@@ -558,8 +558,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 /** NEW ICONS **/
-.ee-email-icon:before {
-	content: "\f157";
+.ee-email-icon, .ee-view-icon, .ee-lock-icon, .ee-collapsible:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
 	font: normal 16px/1 'dashicons';
@@ -567,20 +566,26 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin-top: 3px;
 }
 
+.ee-email-icon:before {
+	content: "\f157";
+}
+
 .ee-view-icon:before {
 	content: "\f177";
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 'dashicons';
-	vertical-align: top;
 	margin-top: 6px;
 	margin-right: 3px;
 }
 
+.ee-lock-icon:before {
+	content: "\f160";
+}
+
+.espresso-admin .wp-list-table .ee-lock-icon:before {
+	margin-left: 8px;
+}
+
 
 .ee-collapsible:before {
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
 	font: normal 22px/1 'dashicons';
 	vertical-align: top;
 	margin-top: -3px;
@@ -592,6 +597,44 @@ label.error  { display: block; color: #FE2A00 !important; }
 
 .ee-collapsible-closed:before {
 	content: "\f140";
+}
+
+
+/* Admin theme specific colors */
+.ee-alternate-color {
+	color: #e6e6e6;
+}
+
+.admin-color-fresh .ee-alternate-color {
+	color: #2ea2cc;
+}
+
+.admin-color-light .ee-alternate-color {
+	color: #04a4cc;
+}
+
+.admin-color-blue .ee-alternate-color {
+	color: #74B6CE;
+}
+
+.admin-color-coffee .ee-alternate-color {
+	color: #9ea476;
+}
+
+.admin-color-ectoplasm .ee-alternate-color {
+	color: #d46f15;
+}
+
+.admin-color-midnight .ee-alternate-color {
+	color: #e14d43;
+}
+
+.admin-color-ocean .ee-alternate-color {
+	color: #aa9d88
+}
+
+.admin-color-sunrise .ee-alternate-color {
+	color: #ccaf0b;
 }
 
 /* Admin Sidebar*/
