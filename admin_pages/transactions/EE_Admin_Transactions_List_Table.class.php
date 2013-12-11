@@ -252,12 +252,18 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_event_name
 	*/ 
-    function column_event_name($item){	
+    function column_event_name($item){
+    	$actions = array();
 		$event = $item->primary_registration()->get_first_related('Event');
 		if ( !empty( $event ) ) {
 			$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit', 'post'=>$event->ID() ), EVENTS_ADMIN_URL );
 			$event_name = $event->get('EVT_name');
-			return '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event->get('EVT_name') ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>'; 
+
+			//filter this view by transactions for this event
+			$txn_by_event_lnk = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'EVT_ID' => $event->ID() ) );
+			$actions['filter_by_event'] = '<a href="' . $txn_by_event_lnk . '" title="' . __('Filter transactions by this event', 'event_espresso') . '">' . __('View Transactions for this event', 'event_espresso') . '</a>';
+
+			return sprintf('%1$s %2$s', '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event->get('EVT_name') ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>', $this->row_actions($actions) ); 
 		} else {
 			return __('The event associated with this transaction via the primary registration cannot be retrieved.', 'event_espresso');
 		}
