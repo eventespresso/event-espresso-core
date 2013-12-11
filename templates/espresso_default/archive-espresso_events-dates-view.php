@@ -16,21 +16,21 @@ do_action( 'AHEE_before_event_list' );
 $ELID = espresso_get_event_list_ID();
 ?>
 
-<div id="dates-event-list-dv-<?php echo $ELID; ?>" class="dates-event-list-dv">
-	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv container">
+<div id="dates-event-list-dv-<?php echo $ELID; ?>" class="dates-event-list-dv ">
+	<div id="espresso-events-list-<?php echo $ELID; ?>-wrap-dv" class="espresso-events-list-wrap-dv">
 	
 		<h1  id="event-list-<?php echo $ELID; ?>-h1" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
 		
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
-		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv column columns" role="main">
+		<div id="espresso-events-list-<?php echo $ELID; ?>-dv" class="espresso-events-list-dv" role="main">
 				
 		<?php if ( have_posts() ) : ?>
 			<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
 			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
 			
-			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
+			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css( 'entry-content' )); ?>>
 			
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">
 				
@@ -55,7 +55,7 @@ $ELID = espresso_get_event_list_ID();
 				}				
 			?>
 
-					<div class="espresso-event-wrapper-dv<?php echo $wrap_class . ' ' . espresso_event_status( $post->ID );?>">
+					<div class="espresso-event-wrapper-dv <?php echo $wrap_class . ' ' . espresso_event_status( $post->ID );?>">
 						<header class="event-header">							
 							<h3 class="event-title">
 								<?php echo espresso_event_status_banner( $post->ID ); ?>
@@ -81,16 +81,15 @@ $ELID = espresso_get_event_list_ID();
 						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) : ?>
 						<div class="espresso-venue-dv">
 							<div class="espresso-venue-address-wrap-dv">
-							<p>
-								<strong><?php _e( 'Location:', 'event_espresso' ); ?></strong><br/>
-								<strong><?php espresso_venue_name(); ?></strong>
-							</p>
+								<p>
+									<strong><?php _e( 'Location:', 'event_espresso' ); ?></strong><br/>
+									<strong><?php espresso_venue_name(); ?></strong>
+								</p>
 							</div>
 							<?php if ( espresso_display_venue_address_in_event_list() ) : ?>
-								<strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
-								<?php espresso_venue_address( 'inline' ); ?>
 								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
-								<div class="clear"><br/></div>
+								<strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
+								<?php espresso_venue_address( 'inline' ); ?><br/>							
 							<?php endif; ?>
 							<?php if ( espresso_display_venue_details_in_event_list() ) : ?>
 							<p>
@@ -111,8 +110,10 @@ $ELID = espresso_get_event_list_ID();
 
 						<footer class="event-meta">							
 							<?php espresso_event_reg_button( __( 'Register Now', 'event_espresso' ), __( 'Read More', 'event_espresso' ), $post->ID ); ?>
-							<span class="tags-links"><?php espresso_event_categories(); ?></span><br/>							
-							<span class="edit-link"><?php espresso_edit_event_link(); ?></span>
+							<p>
+								<span class="tags-links"><?php espresso_event_categories( $post->ID ); ?></span>
+								<span class="edit-link"><?php espresso_edit_event_link( $post->ID ); ?></span>
+							</p>
 						</footer>
 						<!-- .entry-meta -->
 
@@ -125,6 +126,8 @@ $ELID = espresso_get_event_list_ID();
 
 			<?php endwhile; ?>
 
+			<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
+		
 		<?php else : ?>
 
 			<article id="post-0" class="no-espresso-events-found">
@@ -148,8 +151,6 @@ $ELID = espresso_get_event_list_ID();
 		</div>
 		<!-- #espresso-events-list-dv -->
 
-		<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
-		
 		<div class="clear"></div>
 	</div>
 	<!-- #espresso-events-list-wrap-dv -->

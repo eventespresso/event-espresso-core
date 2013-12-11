@@ -17,20 +17,20 @@ $ELID = espresso_get_event_list_ID();
 ?>
 
 <div id="text-event-list-dv-<?php echo $ELID; ?>" class="text-event-list-dv">
-	<div id="espresso-events-list-wrap-dv-<?php echo $ELID; ?>" class="espresso-events-list-wrap-dv container">
+	<div id="espresso-events-list-wrap-dv-<?php echo $ELID; ?>" class="espresso-events-list-wrap-dv">
 	
 		<h1  id="event-list-h1-<?php echo $ELID; ?>" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
 				
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
 		
-		<div id="espresso-events-list-dv-<?php echo $ELID; ?>" class="espresso-events-list-dv column columns" role="main">
+		<div id="espresso-events-list-dv-<?php echo $ELID; ?>" class="espresso-events-list-dv" role="main">
 				
 		<?php if ( have_posts() ) : ?>
 			<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
 			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
 			
-			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css() . ' clear' ); ?>>
+			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css( 'entry-content clear' )); ?>>
 			
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">					
 
@@ -107,9 +107,11 @@ $ELID = espresso_get_event_list_ID();
 
 					<footer class="event-meta">
 						<?php do_action( 'AHEE_events_list_footer', $post ); ?>
-						<span class="tags-links"><?php espresso_event_categories(); ?></span><br/>	
 						<?php espresso_event_reg_button( __( 'Register Now', 'event_espresso' ), __( 'Read More', 'event_espresso' ), $post->ID ); ?>
-						<span class="edit-link"><?php espresso_edit_event_link(); ?></span>
+							<p>
+								<span class="tags-links"><?php espresso_event_categories( $post->ID ); ?></span>
+								<span class="edit-link"><?php espresso_edit_event_link( $post->ID ); ?></span>
+							</p>
 					</footer>
 					<!-- .entry-meta -->
 

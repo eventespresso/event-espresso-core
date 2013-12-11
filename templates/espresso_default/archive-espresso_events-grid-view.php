@@ -16,8 +16,8 @@ do_action( 'AHEE_before_event_list' );
 $ELID = espresso_get_event_list_ID();
 ?>
 
-<div id="grid-event-list-dv-<?php echo $ELID; ?>" class="grid-event-list-dv">
-	<div id="espresso-events-list-wrap-dv-<?php echo $ELID; ?>" class="espresso-events-list-wrap-dv container">
+<div id="grid-event-list-dv-<?php echo $ELID; ?>" class="grid-event-list-dv ">
+	<div id="espresso-events-list-wrap-dv-<?php echo $ELID; ?>" class="espresso-events-list-wrap-dv">
 	
 		<h1  id="event-list-h1-<?php echo $ELID; ?>" class="event-list-h1"><?php echo espresso_event_list_title(); ?></h1>
 		<?php do_action( 'AHEE__archive_event_list_template__after_header' ); ?>
@@ -25,10 +25,10 @@ $ELID = espresso_get_event_list_ID();
 		<?php if ( have_posts() ) : ?>
 		<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
 		
-		<div id="espresso-events-list-dv-<?php echo $ELID; ?>" class="espresso-events-list-dv column columns" role="main">
+		<div id="espresso-events-list-dv-<?php echo $ELID; ?>" class="espresso-events-list-dv" role="main">
 			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
-			<article id="<?php echo 'post-' . $ELID . '-' . $post->ID; ?>" <?php post_class( espresso_event_list_css() ); ?>>
+			<article id="<?php echo 'post-' . $ELID . '-' . $post->ID; ?>" <?php post_class( espresso_event_list_css( 'entry-content' ) ); ?>>
 				
 				
 				<div class="event-datetimes">
@@ -107,10 +107,12 @@ $ELID = espresso_get_event_list_ID();
 						<?php endif;/**/ ?>
 
 						<footer class="event-meta">
-							<span class="tags-links"><?php the_terms( $post->ID, 'espresso_event_categories' ); ?></span><br/>
 							<?php do_action( 'AHEE_events_list_footer', $post ); ?>
-							<?php espresso_event_reg_button( __( 'Register Now', 'event_espresso' ), __( 'Read More', 'event_espresso' ), $post->ID ); ?>
-							<span class="edit-link"><?php espresso_edit_event_link(); ?></span>
+							<?php espresso_event_reg_button( __( 'Register Now', 'event_espresso' ), __( 'Read More', 'event_espresso' ), $post->ID ); ?><br/>
+							<p>
+								<span class="tags-links"><?php espresso_event_categories( $post->ID ); ?></span>
+								<span class="edit-link"><?php espresso_edit_event_link( $post->ID ); ?></span>
+							</p>
 						</footer>
 						<!-- .entry-meta -->
 
@@ -120,12 +122,12 @@ $ELID = espresso_get_event_list_ID();
 			</article>
 			<!-- #post -->
 
-			<?php endwhile; ?>
-			
+		<?php endwhile; ?>
+		
 			<div class="clear"></div>
 		</div>
-		<!-- #espresso-events-list-dv -->
-		
+		<!-- #espresso-events-list-dv -->		
+			
 		<div class="ee-pagination-dv clear"><?php espresso_event_list_pagination(); ?></div>
 			
 
