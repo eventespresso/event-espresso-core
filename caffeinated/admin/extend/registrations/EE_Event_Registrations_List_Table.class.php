@@ -221,7 +221,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string                Registration code
 	 */
 	function column_REG_code(EE_Registration $item){
-		return $item->get('REG_code');
+		$link = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $item->ID() ), REG_ADMIN_URL );
+		return '<a href="' . $link . '" title="' . __('View Registration Details', 'event_espresso') .'">' . $item->get('REG_code') . '</a>';
 	}
 
 
