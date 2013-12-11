@@ -599,6 +599,44 @@ label.error  { display: block; color: #FE2A00 !important; }
 	content: "\f140";
 }
 
+
+/* Admin theme specific colors */
+.ee-alternate-color {
+	color: #e6e6e6;
+}
+
+.admin-color-fresh .ee-alternate-color {
+	color: #2ea2cc;
+}
+
+.admin-color-light .ee-alternate-color {
+	color: #04a4cc;
+}
+
+.admin-color-blue .ee-alternate-color {
+	color: #74B6CE;
+}
+
+.admin-color-coffee .ee-alternate-color {
+	color: #9ea476;
+}
+
+.admin-color-ectoplasm .ee-alternate-color {
+	color: #d46f15;
+}
+
+.admin-color-midnight .ee-alternate-color {
+	color: #e14d43;
+}
+
+.admin-color-ocean .ee-alternate-color {
+	color: #aa9d88
+}
+
+.admin-color-sunrise .ee-alternate-color {
+	color: #ccaf0b;
+}
+
 /* Admin Sidebar*/
 .espresso-rss-display a.rsswidget {
 	font-size: 13px;
