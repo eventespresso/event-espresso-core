@@ -162,6 +162,14 @@ class EE_Answer extends EE_Base_Class{
 		return $this->get('ANS_value');
 	}
 	/**
+	 * Echoes out a pretty value (even for multichoice-options)
+	 * @param string $schema
+	 * @return void
+	 */
+	public function e_value($schema = null){
+		return $this->e('ANS_value',$schema);
+	}
+	/**
 	 * Gets the related EE_Question to this EE_Answer
 	 * @return EE_Question
 	 */
