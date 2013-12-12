@@ -18,18 +18,19 @@ jQuery(document).ready(function($) {
 		
 		var eventSize = 'tiny';
 
-		if ( eventWidth <= 120 ) {
+		if ( eventWidth <= 134 ) {
 			eventSize = 'tiny-event-list-img';
-		} else if ( eventWidth <= 148 ) {
+		} else if ( eventWidth <= 160 ) {
 			eventSize = 'small-event-list-img';
-		} else if ( eventWidth <= 190 ) {
+		} else if ( eventWidth <= 196 ) {
 			eventSize = 'medium-event-list-img';
-		} else if ( eventWidth <= 260 ) {
+		} else if ( eventWidth <= 250 ) {
 			eventSize = 'large-event-list-img';
 		} else {
 			eventSize = 'huge-event-list-img';
 		} 
-	//	console.log( JSON.stringify( 'eventSize: ' + eventSize, null, 4 ));
+//		console.log( JSON.stringify( 'eventWidth: ' + eventWidth, null, 4 ));
+//		console.log( JSON.stringify( 'eventSize: ' + eventSize, null, 4 ));
 
 		
 		$('.grid-event-list-dv .espresso-event-list-event').each( function() {
@@ -38,7 +39,7 @@ jQuery(document).ready(function($) {
 		eventWidth = eventWidth + 20;
 		
 		var winWidth = $('.grid-event-list-dv').width();
-	//	console.log( JSON.stringify( 'winWidth: ' + winWidth, null, 4 ));
+//		console.log( JSON.stringify( 'winWidth: ' + winWidth, null, 4 ));
 		var conWidth;
 		if(winWidth < (eventWidth*2)) {
 			conWidth = eventWidth;
@@ -59,8 +60,9 @@ jQuery(document).ready(function($) {
 			conWidth = eventWidth*6;
 			col = 6;
 		}
-	//	console.log( JSON.stringify( 'conWidth: ' + conWidth, null, 4 ));
-	//	console.log( JSON.stringify( 'results:' + 'winWidth = ' + winWidth + 'conWidth = ' + conWidth + 'eventWidth = ' + eventWidth, null, 4 ));
+//		console.log( JSON.stringify( 'conWidth: ' + conWidth, null, 4 ));
+//		console.log( JSON.stringify( 'col: ' + col, null, 4 ));
+//		console.log( JSON.stringify( 'results:' + 'winWidth = ' + winWidth + ' conWidth = ' + conWidth + ' eventWidth = ' + eventWidth, null, 4 ));
 		
 
 		$('.grid-event-list-dv .espresso-events-list-dv').each( function() {
@@ -68,12 +70,13 @@ jQuery(document).ready(function($) {
 		});
 		
 		$( espresso_grid_event_lists ).each( function( index, grid_ID ) {
-			var $container = $('#espresso-events-list-dv-' + grid_ID );		   
-			$container.imagesLoaded( function(){
-				$container.masonry({
+			var container = $('#espresso-events-list-dv-' + grid_ID );
+//			console.log( JSON.stringify( '$container.outerwidth(): ' + container.outerWidth(), null, 4 ));	   
+			container.imagesLoaded( function(){
+				container.masonry({
 					columnWidth: eventWidth,
 					itemSelector: '#espresso-events-list-dv-' + grid_ID + ' .espresso-event-list-event',
-					gutter: 10,
+					gutter: 0,
 					isFitWidth: true
 				});
 			});		

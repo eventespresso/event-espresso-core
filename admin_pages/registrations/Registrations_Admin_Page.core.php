@@ -1219,7 +1219,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function form_before_question_group( $output ) {
 		return '
-	<table class="form-table ee-width-50">
+	<table class="form-table ee-width-100">
 		<tbody>
 			';		
 	}

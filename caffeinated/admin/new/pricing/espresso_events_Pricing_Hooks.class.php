@@ -421,6 +421,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @return  void
 	 */
 	private function  _add_prices_to_ticket( $prices, EE_Ticket $ticket, $new_prices = FALSE ) {
+
+		//let's just get any current prices that may exist on the given ticket so we can remove any prices that got trashed in this session.
+		$current_prices_on_ticket = $ticket->get_many_related('Price');
+		$updated_prices = array();
+
 		foreach ( $prices as $row => $prc ) {
 			$PRC_values = array(
 				'PRC_ID' => !empty( $prc['PRC_ID'] ) ? $prc['PRC_ID'] : NULL,
@@ -442,8 +447,27 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				}
 			}
 			$PRC->save();
+			$prcid = $PRC->ID();
+			$updated_prices[$prcid] = $PRC;
 			$ticket->_add_relation_to( $PRC, 'Price' );
 		}
+
+		//now let's remove any prices that got removed from the ticket
+		if ( !empty ( $current_prices_on_ticket ) ) {
+			$current = array_keys($current_prices_on_ticket);
+			$updated = array_keys($updated_prices);
+			$prices_to_remove = array_diff($current, $updated);
+			if ( !empty( $prices_to_remove ) ) {
+				foreach ( $prices_to_remove as $prc_id ) {
+					$p = $current_prices_on_ticket[$prc_id];
+					$ticket->_remove_relation_to( $p, 'Price' );
+
+					//delete permanently the price
+					$p->delete_permanently();
+				}
+			}
+		}
+
 		$ticket->save();
 		return $ticket;
 	}
@@ -583,20 +607,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}	
 
 
-	/*private function _get_dtt_display_row( $dttrow, $dtt, $default = FALSE, $all_dtts = array() ) {
-		$template_args = array(
-			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
-			'dtt_name' => $default ? '' : $dtt->get_dtt_display_name(),
-			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
-			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon clickable',
-			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'lock-icon' : 'trash-icon clickable'
-			);
-
-		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'lock-icon' ? ' style="display:none"' : '';
-		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_display_row.template.php';
-		return EEH_Template::display_template( $template, $template_args, TRUE);
-	}/**/
-
 
 	private function _get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ) {
 		$template_args = array(
@@ -610,10 +620,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input'),
 			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
 			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon clickable',
-			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'lock-icon' : 'trash-icon clickable'
+			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon clickable'
 			);
 
-		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'lock-icon' ? ' style="display:none"' : '';
+		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'ee-lock-icon' ? ' style="display:none"' : '';
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
@@ -709,11 +719,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'tax_rows' => $this->_get_tax_rows( $tktrow, $ticket ),
 			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' disabled' : '',
 			'ticket_archive_class' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' ticket-archived' : '',
-			'trash_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? 'lock-icon ' : 'trash-icon clickable',
+			'trash_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? 'ee-lock-icon ' : 'trash-icon clickable',
 			'clone_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? '' : 'clone-icon clickable'
 			);
 
-		$template_args['trash_hidden'] = count( $all_tickets ) === 1 && $template_args['trash_icon'] != 'lock-icon' ? ' style="display:none"' : '';
+		$template_args['trash_hidden'] = count( $all_tickets ) === 1 && $template_args['trash_icon'] != 'ee-lock-icon' ? ' style="display:none"' : '';
 
 		//handle rows that should NOT be empty
 		if ( empty( $template_args['TKT_start_date'] ) ) {

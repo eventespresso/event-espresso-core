@@ -104,8 +104,12 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_categories' )) {
-		function espresso_event_categories( $EVT_ID = FALSE, $hide_uncategorized = TRUE ) {
-			EEH_Event_View::event_categories( $EVT_ID, $hide_uncategorized );
+		function espresso_event_categories( $EVT_ID = FALSE, $hide_uncategorized = TRUE, $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Event_View::event_categories( $EVT_ID, $hide_uncategorized );
+			} else {
+				return EEH_Event_View::event_categories( $EVT_ID, $hide_uncategorized );
+			}
 		}		
 	}
 
@@ -245,8 +249,12 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_edit_event_link' )) {
-		function espresso_edit_event_link( $EVT_ID = FALSE ) {
-			echo EEH_Event_View::edit_event_link( $EVT_ID );
+		function espresso_edit_event_link( $EVT_ID = FALSE, $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Event_View::edit_event_link( $EVT_ID );
+			} else {
+				return EEH_Event_View::edit_event_link( $EVT_ID );
+			}
 		}		
 	}
 
@@ -455,7 +463,7 @@ class EEH_Event_View extends EEH_Base {
 		$category_links = array();
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
-			if ( $event_categories = get_the_terms( $event->ID, 'espresso_event_categories' )) {
+			if ( $event_categories = get_the_terms( $event->ID(), 'espresso_event_categories' )) {
 				// loop thru terms and create links
 				foreach ( $event_categories as $term ) {
 					$url = get_term_link( $term, 'espresso_venue_categories' );
@@ -465,7 +473,7 @@ class EEH_Event_View extends EEH_Base {
 				}
 			}
 		}		
-		return implode( ' ', $category_links );		
+		return implode( ', ', $category_links );		
 	}
 
 
@@ -615,7 +623,7 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function edit_event_link( $link = '', $before = '<p class="edit-event-lnk small-txt">', $after = '</p>', $EVT_ID = FALSE ) {
+	public static function edit_event_link( $EVT_ID = FALSE, $link = '', $before = '', $after = '' ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
 			// can the user edit this post ?
@@ -631,7 +639,7 @@ class EEH_Event_View extends EEH_Base {
 				// build final link html
 				$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
 				// put it all together 
-				echo $before . apply_filters( 'edit_post_link', $link, $event->ID() ) . $after;			
+				return $before . apply_filters( 'edit_post_link', $link, $event->ID() ) . $after;			
 			}
 		}
 	}

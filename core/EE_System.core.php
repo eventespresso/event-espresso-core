@@ -194,7 +194,7 @@ final class EE_System {
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type = $this->detect_req_type($espresso_db_update);
 //		echo "request type:".$request_type;
-		if( ! $request_type == EE_System::req_type_normal){
+		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
 		switch($request_type){
@@ -206,7 +206,7 @@ final class EE_System {
 				break;
 			case EE_System::req_type_reactivation:
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
-				$this->handle_as_activation();
+					$this->handle_as_activation();
 //				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
@@ -249,9 +249,12 @@ final class EE_System {
 	 * @return void
 	 */
 	public function handle_as_activation(){
-		EEH_Activation::system_initialization();
-		EEH_Activation::initialize_db_and_folders();
-		EEH_Activation::initialize_db_content();
+		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
+			//only initialize system if we're not in maintenance mode.
+			EEH_Activation::system_initialization();
+			EEH_Activation::initialize_db_and_folders();
+			EEH_Activation::initialize_db_content();
+		}	
 	}
 
 	

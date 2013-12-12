@@ -68,8 +68,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 		// don't add HTML labels for EE_Form_Fields generated inputs
 		add_filter( 'FHEE_form_field_label_html', '__return_empty_string' );		
 		$yes_no_values = array(
-			EE_Question_Option::new_instance( array( 'QSO_name' => 0, 'QSO_value' => __('No', 'event_espresso'))),
-			EE_Question_Option::new_instance( array( 'QSO_name' => 1, 'QSO_value' => __('Yes', 'event_espresso')))
+			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
+			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso')))
 		);
 		
 	?>
@@ -90,7 +90,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			$event_categories = array();
 			if ( $categories = EE_Registry::instance()->load_model( 'Term' )->get_all_ee_categories( TRUE )) {				
 				foreach ( $categories as $category ) {
-					$event_categories[] = EE_Question_Option::new_instance( array( 'QSO_name' => $category->get( 'slug' ), 'QSO_value' => $category->get( 'name' )));
+					$event_categories[] = EE_Question_Option::new_instance( array( 'QSO_value' => $category->get( 'slug' ), 'QSO_desc' => $category->get( 'name' )));
 				}
 			}			
 			echo EEH_Form_Fields::select( 
@@ -134,10 +134,10 @@ class EEW_Upcoming_Events  extends WP_Widget {
 					$image_size = trim( $image_size );
 					// no big images plz
 					if ( ! in_array( $image_size, array( 'large', 'post-thumbnail' ))) {
-						$image_sizes[] = EE_Question_Option::new_instance( array( 'QSO_name' => $image_size, 'QSO_value' => $image_size ));
+						$image_sizes[] = EE_Question_Option::new_instance( array( 'QSO_value' => $image_size, 'QSO_desc' => $image_size ));
 					}
 				}
-				$image_sizes[] = EE_Question_Option::new_instance( array( 'QSO_name' => 'none', 'QSO_value' =>  __('don\'t show images', 'event_espresso') ));
+				$image_sizes[] = EE_Question_Option::new_instance( array( 'QSO_value' => 'none', 'QSO_desc' =>  __('don\'t show images', 'event_espresso') ));
 			}			
 			echo EEH_Form_Fields::select( 
 				 __('Image Size:', 'event_espresso'), 

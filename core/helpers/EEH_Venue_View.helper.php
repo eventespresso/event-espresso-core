@@ -330,7 +330,7 @@ class EEH_Venue_View extends EEH_Base {
 				}
 			}
 		}
-		return implode( ' ', $category_links );		
+		return implode( ', ', $category_links );		
 	}
 
 

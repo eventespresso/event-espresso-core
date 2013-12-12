@@ -163,7 +163,7 @@ $tax_total_line_item;
 											$question = $answer->question();?>
 											<tr>
 												<th><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </th>
-												<td><?php echo $answer->value()?></td>
+												<td><?php echo $answer->e_value()?></td>
 											</tr>
 										<?php }?>
 									</table>

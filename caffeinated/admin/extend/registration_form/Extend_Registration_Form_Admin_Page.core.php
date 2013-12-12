@@ -187,7 +187,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 						'callback' => 'question_groups_tab_overview_info_help_tab'
 						),
 					),
-				'require_nonce' => FALSE
+				'require_nonce' => FALSE,
+				'qtips' => array(
+					'EE_Registration_Form_Tips'
+					)
 				),
 
 			'add_question' => array(
@@ -578,9 +581,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			foreach($options as $option_ID=>$option){
 				$option_req_index=$this->_get_option_req_data_index($option_ID);
 				if($option_req_index!==FALSE){
-					//make sure QSO_name is not empty
-					if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_name'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_name'] !== '0' )
-						$this->_req_data['question_options'][$option_req_index]['QSO_name'] = $this->_req_data['question_options'][$option_req_index]['QSO_value'];
+					//make sure QSO_value is not empty
+					if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_value'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_value'] !== '0' )
+						$this->_req_data['question_options'][$option_req_index]['QSO_value'] = $this->_req_data['question_options'][$option_req_index]['QSO_desc'];
 					$option->save($this->_req_data['question_options'][$option_req_index]);
 				}else{
 					//not found, remove it
@@ -590,12 +593,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		//save new related options
 		foreach($this->_req_data['question_options'] as $index=>$option_req_data){
-			if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_name']) || !empty($option_req_data['QSO_value']))){//no ID! save it!
-				if(empty($option_req_data['QSO_value'])){
-					$option_req_data['QSO_value']=$option_req_data['QSO_name'];
+			if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_value']) || !empty($option_req_data['QSO_desc']))){//no ID! save it!
+				if(empty($option_req_data['QSO_desc'])){
+					$option_req_data['QSO_desc']=$option_req_data['QSO_value'];
 				}
-				if(empty($option_req_data['QSO_name']) && $option_req_data['QSO_name'] !== '0' ){
-					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
+				if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
+					$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
 				}
 
 				//set a default option object

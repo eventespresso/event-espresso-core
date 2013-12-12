@@ -33,15 +33,15 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	protected $_QSO_ID=FALSE;
 	
 	/**
-	 * Question Option key value
+	 * Question Option description
 	 * 
 	 * @access protected
 	 * @var string
 	 */
-	protected $_QSO_name=FALSE;
+	protected $_QSO_desc=FALSE;
 	
 	/**
-	 * Question Option Display Text
+	 * Question Option Value
 	 * 
 	 * @access protected
 	 * @var int
@@ -102,16 +102,16 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * @param strig $value
 	 * @return bool success
 	 */
-	public function set_name($value){
-		return $this->set('QSO_name',$value);
+	public function set_value($value){
+		return $this->set('QSO_value',$value);
 	}
 	/**
 	 * Sets the option's Display Text 
 	 * @param string $text
 	 * @return bool success
 	 */
-	public function set_value($text){
-		return $this->set('QSO_value',$text);
+	public function set_desc($text){
+		return $this->set('QSO_desc',$text);
 	}
 	/**
 	 * Sets the ID of the related questino
@@ -134,16 +134,16 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * Gets the option's key value
 	 * @return string
 	 */
-	public function name(){
-		return $this->get('QSO_name');
+	public function value(){
+		return $this->get('QSO_value');
 	}
 
 	/**
 	 * Gets the option's display text
 	 * @return string
 	 */
-	public function value(){
-		return $this->get('QSO_value');
+	public function desc(){
+		return $this->get('QSO_desc');
 	}
 
 	/**

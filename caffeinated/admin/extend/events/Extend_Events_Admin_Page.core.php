@@ -689,7 +689,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$EEME = $this->_event_model;
 
 		$offset = ($current_page - 1) * $per_page;
-		$limit = $count ? '' : $offset . ',' . $per_page;
+		$limit = $count ? NULL : $offset . ',' . $per_page;
 		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 

@@ -109,7 +109,7 @@
 
 
 
-.gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
+.gear-icon, .ticket-icon, .trash-icon, .clone-icon {
     display: inline-block;
     height: 16px;
     margin-left: 8px;
@@ -145,10 +145,6 @@
 
 .clone-icon {
     background: transparent url(../../../../../templates/global_assets/images/clone-trooper-16x16.png) 0 0 no-repeat;
-}
-
-.lock-icon {
-    background: transparent url(../../../../../templates/global_assets/images/lock.png) 0 0 no-repeat;
 }
 
 .datetime-tickets-sold {

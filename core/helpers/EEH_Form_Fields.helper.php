@@ -741,7 +741,7 @@ class EEH_Form_Fields {
 		//printr( $options, '$options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		foreach ( $options as $key => $value ) {
 			// if value is an array, then create option groups, else create regular ol' options
-			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->name(), $value->value(), $answer, $only_option );
+			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->value(), $value->value(), $answer, $only_option );
 		}
 
 		$input_html .= "\n\t\t\t" . '</select>';
@@ -767,7 +767,7 @@ class EEH_Form_Fields {
 	private static function _generate_select_option_group( $opt_group, $QSOs, $answer ){
 		$html = "\n\t\t\t\t" . '<optgroup label="' . self::prep_option_value( $opt_group ) . '">';
 		foreach ( $QSOs as $QSO ) {	
-			$html .= self::_generate_select_option( $QSO->name(), $QSO->value(), $answer );
+			$html .= self::_generate_select_option( $QSO->value(), $QSO->value(), $answer );
 		}
 		$html .= "\n\t\t\t\t" . '</optgroup>';
 		return $html;
@@ -834,7 +834,7 @@ class EEH_Form_Fields {
 		$class .= ! empty( $required['class'] ) ? ' ' . $required['class'] : '';
 
 		foreach ( $options as $OPT ) {
-			$key = self::prep_option_value( $OPT->name() );
+			$key = self::prep_option_value( $OPT->value() );
 			$size = self::get_label_size_class( $OPT->value() );
 			
 			$value = self::prep_answer( $OPT->value() );
@@ -883,13 +883,13 @@ class EEH_Form_Fields {
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
 		}
+		$answer = maybe_unserialize( $answer );
 		// prep the answer(s)
 		$answer = is_array( $answer ) ? $answer : array( sanitize_key( $answer ) => $answer );
 		foreach ( $answer as $key => $value ) {
 			$key = self::prep_option_value( $key );
 			$answer[$key] = self::prep_answer( $value );
-		}	
-		
+		}		
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -909,19 +909,23 @@ class EEH_Form_Fields {
 		
 		foreach ( $options as $OPT ) {
 
-			$checked = is_array( $answer ) && in_array( $value, $answer ) ? ' checked="checked"' : '';
+			$value = self::prep_option_value( $OPT->value() );
+			$size = self::get_label_size_class(  $OPT->value() . ' ' . $OPT->desc() );
+			$text = self::prep_answer( $OPT->value() );
+			$desc = self::prep_answer( $OPT->desc() );
+			$opt = '-' . sanitize_key( $value );
 			
-			$key = self::prep_option_value( $OPT->name() );
-			$size = self::get_label_size_class( $OPT->value() );
-			$value = self::prep_answer( $OPT->value() );
-			$opt = '-' . sanitize_key( $key );
-
+			$checked = is_array( $answer ) && in_array( $text, $answer ) ? ' checked="checked"' : '';
+			
 			$input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
 			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-checkbox-lbl">';
-			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
-			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '[]" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
-			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
+			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
+			$input_html .= "\n\t\t\t\t\t\t" . '<input type="checkbox" name="' . $name . '[' . $OPT->ID() . ']" id="' . $id . $opt . '" class="' . $class . '" value="' . $value . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
+			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
+			if ( ! empty( $desc )) {
+	 			$input_html .= "\n\t\t\t\t\t" . ' &nbsp; <span class="small-text grey-text">(' . $desc . ')</span>';
+			}
 			$input_html .= "\n\t\t\t\t" . '</li>';
 
 		}
@@ -1047,8 +1051,8 @@ class EEH_Form_Fields {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
 					EE_Question_Option::new_instance( array( 
-						'QSO_name' => $key,
-						'QSO_value' => $QSO
+						'QSO_value' => $key,
+						'QSO_desc' => $QSO
 					));
 				}
 				if ( ! $QSO->deleted() ) {
@@ -1225,8 +1229,8 @@ class EEH_Form_Fields {
 			// if multiple countries, we'll create option groups within the dropdown
 			foreach ( $states as $STA_ID => $state ) {
 				$QSO = EE_Question_Option::new_instance ( array (
-						'QSO_name' => $state->ID(),
-						'QSO_value' => $state->name(),
+						'QSO_value' => $state->ID(),
+						'QSO_desc' => $state->name(),
 						'QST_ID' => $QST->get( 'QST_ID' ),
 						'QSO_deleted' => FALSE
 					));
@@ -1252,8 +1256,8 @@ class EEH_Form_Fields {
 			$QST->set( 'QST_type', 'DROPDOWN' );
 			foreach ( $countries as $country ) {	
 				$QSO = EE_Question_Option::new_instance ( array (
-						'QSO_name' => $country->ID(),
-						'QSO_value' => $country->name(),
+						'QSO_value' => $country->ID(),
+						'QSO_desc' => $country->name(),
 						'QST_ID' => $QST->get( 'QST_ID' ),
 						'QSO_deleted' => FALSE
 					));

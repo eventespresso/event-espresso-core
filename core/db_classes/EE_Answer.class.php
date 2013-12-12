@@ -70,14 +70,22 @@ class EE_Answer extends EE_Base_Class{
 
 
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Answer
+	 */
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
 		return $has_object ? $has_object : new self( $props_n_values);
 	}
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Answer
+	 */
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}
@@ -152,6 +160,14 @@ class EE_Answer extends EE_Base_Class{
 	*/	
 	public function value() {
 		return $this->get('ANS_value');
+	}
+	/**
+	 * Echoes out a pretty value (even for multichoice-options)
+	 * @param string $schema
+	 * @return void
+	 */
+	public function e_value($schema = null){
+		return $this->e('ANS_value',$schema);
 	}
 	/**
 	 * Gets the related EE_Question to this EE_Answer

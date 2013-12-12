@@ -15,11 +15,13 @@
  */
 get_header();
 ?>
-<section id="primary" class="content-area">
-	<div id="content" class="site-content max-width maxwidth row" role="main">
+<div id="primary" class="content-area">
+	<div id="content" class="site-content" role="main">
 <?php include( espresso_event_list_template_part() ); ?>
-	</div><!-- #content -->
-</section><!-- #primary -->
+	</div>
+	<!-- #content -->
+</div>
+<!-- #primary -->
 
 <?php
 /*

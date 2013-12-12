@@ -1063,7 +1063,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'existing_ticket_ids' => '',
 			'total_ticket_rows' => 1,
 			'ticket_js_structure' => '',
-			'trash-icon' => 'lock-icon',
+			'trash-icon' => 'ee-lock-icon',
 			'disabled' => ''
 			);
 
@@ -1145,7 +1145,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'TKT_qty' => $ticket->get_pretty('TKT_qty','input'),
 			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_sold' => $skeleton ? 0 : $ticket->get('TKT_sold'),
-			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon clickable' : 'lock-icon',
+			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon clickable' : 'ee-lock-icon',
 			'disabled' => $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted' ) ) ? '' : ' disabled=disabled'
 			);
 
@@ -1268,7 +1268,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$EEME = $this->_event_model;
 
 		$offset = ($current_page - 1) * $per_page;
-		$limit = $count ? '' : $offset . ',' . $per_page;
+		$limit = $count ? NULL : $offset . ',' . $per_page;
 		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 

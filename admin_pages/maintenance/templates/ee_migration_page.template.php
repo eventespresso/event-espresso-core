@@ -101,12 +101,12 @@
 			EE_Maintenance_Mode::instance()->level(), 
 			array(
 				EE_Question_Option::new_instance( array( 
-					'QSO_name' => EE_Maintenance_Mode::level_0_not_in_maintenance, 
-					'QSO_value' => __('Not In Maintenance (normal)', 'event_espresso')
+					'QSO_value' => EE_Maintenance_Mode::level_0_not_in_maintenance, 
+					'QSO_desc' => __('Not In Maintenance (normal)', 'event_espresso')
 				)),
 				EE_Question_Option::new_instance( array( 
-					'QSO_name' => EE_Maintenance_Mode::level_1_frontend_only_maintenance, 
-					'QSO_value' => __('Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)', 'event_espresso')
+					'QSO_value' => EE_Maintenance_Mode::level_1_frontend_only_maintenance, 
+					'QSO_desc' => __('Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)', 'event_espresso')
 				))
 			), 
 			'maintenance_model_level',
