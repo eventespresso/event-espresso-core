@@ -141,10 +141,12 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			  $c->organization->address_2 = $value;break;
 		  case 'organization_city': 
 			  $c->organization->city = $value;break;
-		  case 'organization_state': 
+		  case 'organization_state':
+			  try{
 			  $state = $this->get_migration_script()->get_or_create_state($value);
 			  $state_id = $state['STA_ID'];
-			  $c->organization->STA_ID = $state_id;break;
+			  $c->organization->STA_ID = $state_id;
+			  }catch(EE_Error $e){}break;
 		  case 'organization_zip': 
 			  $c->organization->zip = $value;break;
 		  case 'contact_email': 
