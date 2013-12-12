@@ -14,10 +14,11 @@ $event_list_types = array(
 	array('id' => 'dates', 'text' => __('Dates List', 'event_espresso'))
 );
 $grid_sizes = array(
-	array('id' => 'tiny', 'text' => __('tiny (up to 6 per row)', 'event_espresso')),
-	array('id' => 'small', 'text' => __('small (up to 5 per row)', 'event_espresso')),
-	array('id' => 'med', 'text' => __('medium (up to 4 per row)', 'event_espresso')),
-	array('id' => 'large', 'text' => __('large (up to 3 per row)', 'event_espresso'))
+	array('id' => 'tiny', 'text' => __('tiny (up to 7 per row)', 'event_espresso')),
+	array('id' => 'small', 'text' => __('small (up to 6 per row)', 'event_espresso')),
+	array('id' => 'medium', 'text' => __('medium (up to 5 per row)', 'event_espresso')),
+	array('id' => 'large', 'text' => __('large (up to 4 per row)', 'event_espresso')),
+	array('id' => 'huge', 'text' => __('huge (up to 3 per row)', 'event_espresso'))
 );
 ?>
 
@@ -96,12 +97,23 @@ $grid_sizes = array(
 			
 			<tr>
 				<th>
-					<label for="">
+					<label for="event_listings_url">
 						<?php _e('Event Listings URL', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('event_listings_url_info');?>
 					</label>
 				</th>
 				<td>
 					<a id="event_listings_url" class="ee-admin-settings-hdr-lnk small-text" href="<?php echo home_url('/') . __('events', 'event_espresso'); ?>"><?php  echo home_url('/') . __('events', 'event_espresso'); ?></a>
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="reset_event_list_settings">
+						<?php _e('Reset Event List Settings', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EEH_Form_Fields::select_input( 'reset_event_list_settings', $values, FALSE, 'id="reset_event_list_settings"' ); ?>
 				</td>
 			</tr>
 

@@ -157,7 +157,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	public function edit_admin_footer() {
 		//dialog container
 		$d_cont = '<div id="messages-change-edit-templates-dv" class="messages-change-edit-templates-option auto-hide hidden">' . "\n";
-		$d_cont .= '<div class="ajax-loader-grey"></div>';	
+		// $d_cont .= '<div class="ajax-loader-grey"></div>';	
 		$d_cont .= '<div class="messages-change-edit-templates-content"></div>';		
 		$d_cont .= '</div>';
 

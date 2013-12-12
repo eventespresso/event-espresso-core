@@ -80,7 +80,6 @@ class EE_Payment_message_type extends EE_message_type {
 			'subject' => $this->_default_template_field_subject(),
 			'content' => $this->_default_template_field_content(),
 		);
-		$this->_default_field_content = apply_filters('FHEE_default_field_content_'.$this->name, $this->_default_field_content);
 	}
 
 
@@ -140,8 +139,8 @@ class EE_Payment_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('transaction','event','organization','registration','event_list', 'ticket_list'),
-			'primary_attendee' => array('transaction', 'event', 'organization','registration', 'event_list', 'ticket_list')
+			'admin' => array('transaction','event','organization','registration','event_list', 'ticket_list', 'attendee'),
+			'primary_attendee' => array('transaction', 'event', 'organization','registration', 'event_list', 'ticket_list', 'attendee')
 			);
 	}
 
@@ -205,6 +204,7 @@ class EE_Payment_message_type extends EE_message_type {
 		$aee = $this->_default_addressee_data;
 		$aee['events'] = $this->_data->events;
 		$aee['attendees'] = $this->_data->attendees;
+		$aee['att_obj'] = $this->_data->primary_attendee_data['att_obj'];
 
 		//great now we can instantiate the $addressee object and return (as an array);
 		$add[] = new EE_Messages_Addressee( $aee );

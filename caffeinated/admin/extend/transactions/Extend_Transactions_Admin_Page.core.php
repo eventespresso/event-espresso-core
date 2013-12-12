@@ -123,11 +123,12 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
 			$xmax = 0;
 			$ymax = 0;
+
 			foreach ( $results as $result ) {
 				$revenue[] = array( $result->txnDate, (float)$result->revenue );
 				$xmin = strtotime( $result->txnDate ) < strtotime( $xmin ) ? $result->txnDate : $xmin;
 				$xmax = strtotime( $result->txnDate ) > strtotime( $xmax ) ? $result->txnDate : $xmax;
-				//$ymax = $result->revenue > $ymax ? $result->revenue : $ymax;
+				$ymax = $result->revenue > $ymax ? $result->revenue : $ymax;
 			}
 			
 			$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
@@ -141,7 +142,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 				'revenue' => $revenue,												
 				'xmin' 		=> $xmin,
 				'xmax' 		=> $xmax,
-				//'ymax' 		=> ceil($ymax * 1.25),
+				'ymax' 		=> ceil($ymax * 1.25),
 				'span' 		=> $span,
 				'width'		=> ceil(900 / $span)												
 			);

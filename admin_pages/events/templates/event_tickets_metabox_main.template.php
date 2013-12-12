@@ -29,8 +29,7 @@
 						</td>
 						<td class="event-datetime-column reg-limit-column">
 							<?php
-								$reg_limit = $time->get('DTT_reg_limit');
-								$reg_limit = $reg_limit == -1 ? '' : $reg_limit;
+								$reg_limit = $time->get_pretty('DTT_reg_limit','input');
 							?>
 							<input type="text" name="edit_event_datetimes[1][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-1" class="ee-small-text-inp ee-inp-right event-datetime-DTT_reg_limit" value="<?php echo $reg_limit; ?>">
 						</td>
@@ -47,6 +46,7 @@
 		<table class="add-new-ticket-table">
 			<thead>
 				<tr valign="top">
+					<td><!-- status --></td>
 					<td><?php _e('Ticket Name', 'event_espresso'); ?></td>
 					<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
 					<td><?php _e('Sell Until', 'event_espresso'); ?></td>

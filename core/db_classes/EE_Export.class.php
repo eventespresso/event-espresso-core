@@ -46,14 +46,16 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
  	private function __construct( $request_data = array() ) {
 		$this->_req_data = $request_data;
-		
+		$this->today = date("Y-m-d",time());
+		require_once( EE_CLASSES . 'EE_CSV.class.php' );
+		$this->EE_CSV= EE_CSV::instance();
 	}
 
 
 	/**
 	 *		@ singleton method used to instantiate class object
 	 *		@ access public
-	 *		@ return class instance
+	 *		@return EE_Export
 	 */	
 	public static function instance( $request_data = array() ) {
 		// check if class object is instantiated
@@ -70,11 +72,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	public function export() {
-	
-		require_once( EE_PLUGIN_DIR_PATH . 'includes/classes/EE_CSV.class.php' );
-		EE_Registry::instance()_CSV= EE_CSV::instance();
-
-		$this->today = date("Y-m-d",time());
 		
 		// in case of bulk exports, the "actual" action will be in action2, but first check regular action for "export" keyword
 		if ( isset( $this->_req_data['action'] ) && strpos( $this->_req_data['action'], 'export' ) === FALSE ) {
@@ -150,10 +147,79 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		
 		$filename = $this->generate_filename ( 'full-db-export' );
 
-		if ( ! EE_Registry::instance()_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
 			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
 		}
 	}	
+	
+	/**
+	 * Downloads a CSV file with all the columns, but no data. This should be used for importing
+	 * @return null kills execution
+	 */
+	function export_sample(){
+		$models_to_export = array(
+			'Event',
+			'Datetime',
+			'Ticket',
+			'Datetime_Ticket',
+			'Price',
+			'Price_Type',
+			'Question_Group',
+			'Event_Question_Group',
+			'Question',
+			'Question_Option',
+			'Venue',
+			'Event_Venue',
+			'State',
+			'Country',
+			'Term',
+			'Term_Taxonomy',
+			'Term_Relationship');
+		$model_names_and_impossible_query_params = array();
+		foreach($models_to_export as $model_name){
+			$model_names_and_impossible_query_params[$model_name] = array('limit'=>0);
+		}
+		$table_data = $this->_get_export_data_for_models( $model_names_and_impossible_query_params );
+		//fill in some sample data
+		$event_temp_id = 'my-event-temp-id123';
+		$datetime_temp_id = 'first-datetime-temp-id234';
+		$ticket_temp_id = 'a-ticket-temp-id342';
+		$price_temp_id = 'some-price';
+		
+		$pretend_event = EE_Event::new_instance(array('EVT_name'=>'My Event','EVT_slug'=>'my-site'));
+		$pretend_event_array = $pretend_event->model_field_array();
+		$pretend_event_array['EVT_ID'] = $event_temp_id;
+		$table_data['Event'][0] = $pretend_event_array;
+		
+		$pretend_datetime = EE_Datetime::new_instance();
+		$pretend_datetime_array = $pretend_datetime->model_field_array();
+		$pretend_datetime_array['EVT_ID'] = $event_temp_id;
+		$pretend_datetime_array['DTT_ID'] = $datetime_temp_id;
+		$table_data['Datetime'][0] = $pretend_datetime_array;
+		
+		$pretend_ticket = EE_Ticket::new_instance(array('TKT_name'=>'General Admission','TKT_price'=>12));
+		$pretend_ticket_array = $pretend_ticket->model_field_array();
+		$pretend_ticket_array['TKT_ID'] = $ticket_temp_id;
+		$table_data['Ticket'][0] = $pretend_ticket_array;
+		
+		$a_price_type = EEM_Price_Type::instance()->get_one();
+		$pretend_price = EE_Price::new_instance(array('PRC_name'=>'Normal Price','PRT_ID'=>$a_price_type->ID(), 'PRC_amount'=>12));
+		$pretend_price_array = $pretend_price->model_field_array();
+		$pretend_price_array['PRC_ID'] = $price_temp_id;
+		$table_data['Price'][0] = $pretend_price_array;
+		
+		$table_data['Datetime_Ticket'][0] = array(
+			'DTK_ID'=>'datetime-ticket-temp',
+			'DTT_ID'=>$datetime_temp_id,
+			'TKT_ID'=>$ticket_temp_id);
+		$table_data['Price_Type'][0] = $a_price_type->model_field_array();
+		
+		//done with sample data
+		$filename = $this->generate_filename ( 'sample-export-file' );
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
+			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
+		}
+	}
 
 
 	/**
@@ -174,7 +240,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 
 		$filename = $this->_req_data['all_events'] == "true" || count($event_ids) > 1 ? __('multiple-events', 'event_espresso') :	$filename;
 		$filename .= "-" . $this->today ;
-		if ( ! EE_Registry::instance()_CSV->export_array_to_csv( $table_data, $filename )) {
+		if ( ! $this->EE_CSV->export_array_to_csv( $table_data, $filename )) {
 			EE_Error::add_error(__('An error occured and the Event details could not be exported from the database.', "event_espresso"));
 		}
 	}
@@ -193,32 +259,35 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		// are any Event IDs set?
 		$event_query_params = array();
 		$related_models_query_params = array();
-		$attendee_query_params = array();
+		$related_through_reg_query_params = array();
 		$datetime_ticket_query_params = array();
+		$price_query_params = array();
+		$price_type_query_params = array();
 		$term_query_params  = array();
 		if ( isset( $this->_req_data['EVT_ID'] )) {
 			// do we have an array of IDs ?
+			
 			if ( is_array( $this->_req_data['EVT_ID'] )) {
-				
 				$EVT_IDs =  array_map( 'sanitize_text_field', $this->_req_data['EVT_ID'] );
-				$event_query_params[0]['EVT_ID'] = array('IN',$EVT_IDs);
-				$related_models_query_params[0]['Event.EVT_ID'] = array('IN',$EVT_IDs);
-				$attendee_query_params[0]['Registration.EVT_ID'] = array('IN',$EVT_IDs);
-				$datetime_ticket_query_params[0]['Datetime.EVT_ID'] = array('IN',$EVT_IDs);
-				$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = array('IN',$EVT_IDs);
+				$value_to_equal = array('IN',$EVT_IDs);
 				$filename = 'events';
 			} else {
 				// generate regular where = clause
 				$EVT_ID = absint( $this->_req_data['EVT_ID'] );
+				$value_to_equal = $EVT_ID;
 				$event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($EVT_ID);
-				
+
 				$filename = 'event-' . ($event ? $event->slug() : 'unknown');
-				$event_query_params[0]['EVT_ID'] = $EVT_ID;
-				$related_models_query_params[0]['Event.EVT_ID'] = $EVT_ID;
-				$attendee_query_params[0]['Registration.EVT_ID'] = $EVT_ID;
-				$datetime_ticket_query_params[0]['Datetime.EVT_ID'] = $EVT_ID;
-				$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $EVT_ID;
+				
 			}
+			$event_query_params[0]['EVT_ID'] =$value_to_equal;
+			$related_models_query_params[0]['Event.EVT_ID'] = $value_to_equal;
+			$related_through_reg_query_params[0]['Registration.EVT_ID'] = $value_to_equal;
+			$datetime_ticket_query_params[0]['Datetime.EVT_ID'] = $value_to_equal;
+			$price_query_params[0]['Ticket.Datetime.EVT_ID'] = $value_to_equal;
+			$price_type_query_params[0]['Price.Ticket.Datetime.EVT_ID'] = $value_to_equal;
+			$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $value_to_equal;
+			
 		} else {
 			$filename = 'all-events';
 		}
@@ -230,22 +299,17 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				'Datetime'=>$related_models_query_params,
 				'Datetime_Ticket'=>$datetime_ticket_query_params,
 				'Ticket'=>$datetime_ticket_query_params,
-				//'Price'=>$related_models_query_params,
+				'Price'=>$price_query_params,
+				'Price_Type'=>$price_type_query_params,
 				'Term'=>$term_query_params,
 				'Term_Taxonomy'=>$related_models_query_params,
 				'Term_Relationship'=>$related_models_query_params, //model has NO primary key...
 				'Venue'=>$related_models_query_params,
 				'Event_Venue'=>$related_models_query_params,
-				'Registration'=>$related_models_query_params,
-				'Attendee'=>$attendee_query_params,
-//				$wpdb->prefix . 'events_detail'	=> ' WHERE id ' . $EVT_ID,
-//				$wpdb->prefix . 'esp_datetime'	=> ' WHERE EVT_ID ' . $EVT_ID,
-//				//$wpdb->prefix . 'esp_event_question_group'	=> ' WHERE EVT_ID ' . $EVT_ID,				
-//				$wpdb->prefix . 'esp_price'	=> ' WHERE EVT_ID ' . $EVT_ID,
-//				$wpdb->prefix . 'events_category_detail'	=> FALSE,
-//				$wpdb->prefix . 'events_category_rel'	=> ' WHERE event_id ' . $EVT_ID,
-//				$wpdb->prefix . 'events_venue'	=> FALSE,
-//				$wpdb->prefix . 'events_venue_rel' =>  ' WHERE event_id ' . $EVT_ID,
+//				'Transaction'=>$related_through_reg_query_params,
+//				'Registration'=>$related_models_query_params,
+//				'Attendee'=>$related_through_reg_query_params,
+//				'Line_Item'=>
 
 			);
 			
@@ -253,7 +317,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		
 		$filename = $this->generate_filename ( $filename );
 
-		if ( ! EE_Registry::instance()_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
 			EE_Error::add_error(__("'An error occured and the Event details could not be exported from the database.'", "event_espresso"));
 		}
 	}
@@ -265,14 +329,22 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 *			@return void
 	 */	
 	function export_attendees() {
+		
+		$states_that_have_an_attendee = EEM_State::instance()->get_all(array('force_join'=>array('Attendee')));
+		$countries_that_have_an_attendee = EEM_Country::instance()->get_all(array('force_join'=>array('Attendee')));
+//		$states_to_export_query_params
 		$models_to_export = array( 
-				'Attendee'
-			);
+			'Country'=>array(array('CNT_ISO'=>array('IN',array_keys($countries_that_have_an_attendee)))),
+			'State'=>array(array('STA_ID'=>array('IN',array_keys($states_that_have_an_attendee)))),
+			'Attendee'=>array(),		
+		);
+		
+		
 																				
 		$model_data = $this->_get_export_data_for_models( $models_to_export );
 		$filename = $this->generate_filename ( 'all-attendees' );
 
-		if ( ! EE_Registry::instance()_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
 			EE_Error::add_error(__('An error occured and the Attendee data could not be exported from the database.','event_espresso'));
 		}
 	}
@@ -321,7 +393,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			foreach($reg_fields_to_include as $field_name){
 				$field = $reg_model->field_settings_for($field_name);
 				if($field_name == 'REG_final_price'){
-					$value = $registration->get_pretty($field_name,'schema_no_currency');
+					$value = $registration->get_pretty($field_name,'no_currency_code');
 				}else{
 					$value = $registration->get_pretty($field->get_name());
 				}
@@ -404,9 +476,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$event = EEM_Event::instance()->get_one_by_ID($event_id);
 		$filename = sprintf("registrations-for-%s",$event->slug());
 
-		$handle = EE_Registry::instance()_CSV->begin_sending_csv( $filename);
-		EE_Registry::instance()_CSV->write_data_array_to_csv($handle, $registrations_csv_ready_array);
-		EE_Registry::instance()_CSV->end_sending_csv($handle);
+		$handle = $this->EE_CSV->begin_sending_csv( $filename);
+		$this->EE_CSV->write_data_array_to_csv($handle, $registrations_csv_ready_array);
+		$this->EE_CSV->end_sending_csv($handle);
 	}
 	
 	/**
@@ -452,7 +524,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$table_data = $this->_get_export_data_for_models( $tables_to_export );
 		$filename = $this->generate_filename ( 'all-categories' );
 
-		if ( ! EE_Registry::instance()_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
+		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
 			EE_Error::add_error(__('An error occured and the Category details could not be exported from the database.','event_espresso'));
 		}
 	}

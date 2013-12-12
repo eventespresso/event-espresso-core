@@ -15,7 +15,7 @@ EEH_Template_Validator::verify_instanceof( $attendee, '$attendee', 'EE_Attendee'
 				<br/>
 				<input class="all-options" type="text" id="ATT_address2" name="ATT_address2" value="<?php echo $attendee->address2(); ?>"/>
 				<br/>
-				<p class="description"><?php _e('The attendee\'s street address.', 'event_espresso'); ?></p>
+				<p class="description"><?php _e('The contact\'s street address.', 'event_espresso'); ?></p>
 			</td>
 		</tr>
 		<tr valign="top">

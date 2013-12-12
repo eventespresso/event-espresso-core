@@ -810,29 +810,26 @@ Class EEM_Gateways {
 		// free event?
 		if ( $line_item->total() == EEH_Template::format_currency( 0, TRUE )) {
 			
-			$transaction->set_status(EEM_Transaction::complete_status_code);
+			$transaction->set_status( EEM_Transaction::complete_status_code );
+			$transaction->finalize();
 			$transaction->save();
-			
 			$response = array(
-					'msg' => array('success'=>TRUE),
+					'msg' => array( 'success'=>TRUE ),
 					'forward_url' => $return_page_url
 			);
-
 		} else {
 			try{
 				$response = array(
-					'msg' => $this->selected_gateway_obj()->process_payment_start($line_item,$transaction),
+					'msg' => $this->selected_gateway_obj()->process_payment_start( $line_item, $transaction ),
 					'forward_url' => $return_page_url
 				);
-			}catch(EE_Error $e){
+			} catch( EE_Error $e ) {
 				$response = array(
-					'msg'=>array('error'=>$e->getMessage()),
-					'forward_url'=>$return_page_url
-					
+					'msg'=>array( 'error'=>$e->getMessage() ),
+					'forward_url'=>$return_page_url					
 				);
 			}
 		}
-		$transaction->finalize();
 		return $response;
 	}	
 

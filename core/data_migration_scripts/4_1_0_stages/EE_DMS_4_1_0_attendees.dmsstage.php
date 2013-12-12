@@ -143,7 +143,8 @@ CREATE TABLE `wp_events_detail` (
 				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', __('String to be used in URL for identifying registration','event_espresso'), false, ''),
 				'REG_count'=>new EE_Integer_Field('REG_count', __('Count of this registration in the group registraion ','event_espresso'), true, 1),
 				'REG_group_size'=>new EE_Integer_Field('REG_group_size', __('Number of registrations on this group','event_espresso'), false, 1),
-				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),	
+				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),
+				'REG_deleted' => new EE_Trashed_Flag_Field('REG_deleted', __('Flag indicating if registration has been archived or not.', 'event_espresso'), false, false )	
 			)
 		);
  * 
@@ -453,7 +454,8 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'REG_url_link'=>$old_attendee['registration_id'].'-'.$count,
 				'REG_count'=>$regs_on_this_event_and_txn,
 				'REG_group_size'=>$this->_sum_old_attendees_with_registration_id($old_attendee['registration_id']),
-				'REG_att_is_going'=>true
+				'REG_att_is_going'=>true,
+				'REG_deleted'=>false
 			);
 			$datatypes = array(
 				'%d',//EVT_ID
@@ -469,6 +471,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'%d',//REG_count
 				'%d',//REG_group_size
 				'%d',//REG_att_is_going
+				'%d',//REG_deleted
 			);
 			$success = $wpdb->insert($this->_new_reg_table,$cols_n_values,$datatypes);
 			if ( ! $success){

@@ -50,8 +50,8 @@ CREATE TABLE `wp_events_question` (
 			'Question_Option'=>array(
 					'QSO_ID'=>new EE_Primary_Key_Int_Field('QSO_ID', __('Question Option ID','event_espresso')),
 					'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
-					'QSO_name'=>new EE_Simple_HTML_Field('QSO_name', __('Question Option Name','event_espresso'), false, ''),
-					'QSO_value'=>new EE_Simple_HTML_Field('QSO_value','Question Option Value',false,''),
+					'QSO_value'=>new EE_Simple_HTML_Field('QSO_value', __('Question Option Name','event_espresso'), false, ''),
+					'QSO_desc'=>new EE_Simple_HTML_Field('QSO_desc','Question Option Value',false,''),
 					'QSO_deleted'=>new EE_Trashed_Flag_Field('QSO_deleted', __('Flag indicating Option was trashed','event_espresso'), false, false)
 				)
  */
@@ -140,13 +140,13 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 		global $wpdb;
 		$cols_n_values = array(
 			'QST_ID'=>$question_id,
-			'QSO_name'=>$option,
 			'QSO_value'=>$option,
+			'QSO_desc'=>$option,
 			'QSO_deleted'=>false
 		);
 		$datatypes= array(
 			'%d',//QST_ID
-			'%s',//QSO_name
+			'%s',//QSO_value
 			'%s',//QSO_option
 			'%d',//QSO_deleted
 		);

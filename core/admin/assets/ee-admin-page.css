@@ -1,5 +1,5 @@
 #icon-options-event, #icon-espresso_events { background: url("../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
-.button.add-new-h2 { margin-left: 15px; }
+.add-new-h2 { margin-left: 15px; }
 
 .tablenav div { margin-right:15px; }
 .tablenav select { margin:0 1em 0 0 !important; }
@@ -344,19 +344,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin: 4px 3px 0 0;
 	height: 20px;
 }
-.resume_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/btn_sprite.png) no-repeat -126px 0;
-	text-indent: -9000px;
-	outline: none;
-}
-.resume_btn:hover {
-	background-position: -126px -18px;
-}
 .complete_btn {
 	display: block;
 	float: left;
@@ -371,20 +358,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 .complete_btn:hover {
 	margin: 4px 3px 0 0;
 	height: 20px;
-}
-.delete_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/btn_sprite.png) no-repeat -54px 0;
-	text-indent: -9000px;
-	outline: none;
-}
-.delete_btn:hover {
-	background-position: -54px -18px;
-	height: 18px;
 }
 .options_btn {
 	display: block;
@@ -452,22 +425,9 @@ label.error  { display: block; color: #FE2A00 !important; }
 	text-indent: -9000px;
 	outline: none;
 }
-.shortcode_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/tag.png) no-repeat;
-	text-indent: -9000px;
-	outline: none;
-}
-.shortcode_btn:hover {
-	margin: 4px 3px 0 0;
-	height: 20px;
-}
+
 /*fixing this -  what does this mean?*/
-.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .shortcode_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {
+.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {
 	height: 18px;
 	margin: 2px 3px 0 0;
 }
@@ -595,4 +555,90 @@ label.error  { display: block; color: #FE2A00 !important; }
 
 .button-primary.trigger-ee-help-tour {
 	margin: 5px;
+}
+
+/** NEW ICONS **/
+.ee-email-icon, .ee-view-icon, .ee-lock-icon, .ee-collapsible:before {
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 16px/1 'dashicons';
+	vertical-align: top;
+	margin-top: 3px;
+}
+
+.ee-email-icon:before {
+	content: "\f157";
+}
+
+.ee-view-icon:before {
+	content: "\f177";
+	margin-top: 6px;
+	margin-right: 3px;
+}
+
+.ee-lock-icon:before {
+	content: "\f160";
+}
+
+.espresso-admin .wp-list-table .ee-lock-icon:before {
+	margin-left: 8px;
+}
+
+
+.ee-collapsible:before {
+	font: normal 22px/1 'dashicons';
+	vertical-align: top;
+	margin-top: -3px;
+}
+
+.ee-collapsible-open:before {
+    content: "\f142";
+}
+
+.ee-collapsible-closed:before {
+	content: "\f140";
+}
+
+
+/* Admin theme specific colors */
+.ee-alternate-color {
+	color: #e6e6e6;
+}
+
+.admin-color-fresh .ee-alternate-color {
+	color: #2ea2cc;
+}
+
+.admin-color-light .ee-alternate-color {
+	color: #04a4cc;
+}
+
+.admin-color-blue .ee-alternate-color {
+	color: #74B6CE;
+}
+
+.admin-color-coffee .ee-alternate-color {
+	color: #9ea476;
+}
+
+.admin-color-ectoplasm .ee-alternate-color {
+	color: #d46f15;
+}
+
+.admin-color-midnight .ee-alternate-color {
+	color: #e14d43;
+}
+
+.admin-color-ocean .ee-alternate-color {
+	color: #aa9d88
+}
+
+.admin-color-sunrise .ee-alternate-color {
+	color: #ccaf0b;
+}
+
+/* Admin Sidebar*/
+.espresso-rss-display a.rsswidget {
+	font-size: 13px;
+	font-weight: normal;
 }

@@ -193,7 +193,7 @@ class EE_Base_Class{
 		if ( method_exists( $field_obj, 'set_timezone' ) )
 			$field_obj->set_timezone( $this->_timezone );
 		 $holder_of_value = $field_obj->prepare_for_set($field_value);
-		 if( ($holder_of_value === NULL || $holder_of_value ==='') && $use_default){
+		 if( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
 			 $this->$privateAttributeName = $field_obj->get_default_value();
 		 }else{
 			$this->$privateAttributeName = $holder_of_value; 
@@ -214,14 +214,11 @@ class EE_Base_Class{
 			 foreach($fields_on_model as $field_obj){
 				 if( ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
 						&& $field_obj->get_name() != $field_name ){
-				 
-					$privateAttributeName=$this->_get_private_attribute_name($field_obj->get_name());
 					
 					$this->set($field_obj->get_name(),$obj_in_db->get($field_obj->get_name()));
 				 }
 			 }
 		 }
-
 		 //let's unset any cache for this field_name from the $_cached_properties property.
 		 $this->_clear_cached_property( $privateAttributeName );
 	}
@@ -270,47 +267,55 @@ class EE_Base_Class{
 
 	
 	/**
-	 * Remembers the model object on the current model object. In certain circumstances,
-	 * we can use this cached model object instead of querying for another one entirely.
-	 * @param EE_Base_Class $object_to_cache that has a relation to this model object. (Eg, 
-	 * if this is a Transaction, that could be a payment or a registration)
-	 * @param string $relationName one of the keys in the _model_relations array on the model. Eg 'Registration'
-	 * assocaited with this model object
-	 * @return mixed index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one related thing, no array)
+	 * cache
+	 * stores the passed model object on the current model object. 
+	 * In certain circumstances, we can use this cached model object instead of querying for another one entirely.
+	 * 
+	 * @param string $relationName 	one of the keys in the _model_relations array on the model. Eg 'Registration' assocaited with this model object
+	 * @param EE_Base_Class $object_to_cache 	that has a relation to this model object. (Eg, if this is a Transaction, that could be a payment or a registration)
+	 * @param mixed int|string $cache_id 	a string or number that will be used as the key for any Belongs_To_Many items which will be stored in an array on this object
+	 * @return mixed 	index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one related thing, no array)
 	 */
-	public function cache($relationName,$object_to_cache, $cache_id = NULL ){
-		if ( empty( $object_to_cache ) ) return; //its entirely possible that there IS no related object yet in which case there is nothing to cache.
-		
-		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
-		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
-		if( ! $relationship_to_model){
-			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot cache it",'event_espresso'),$relationName,get_class($this)));
+	public function cache( $relationName = '', $object_to_cache = NULL, $cache_id = NULL ){
+		// its entirely possible that there IS no related object yet in which case there is nothing to cache.
+		if ( ! $object_to_cache instanceof EE_Base_Class ) {
+			return;
 		}
-		if($relationship_to_model instanceof EE_Belongs_To_Relation){
-			//if it's a belongs to relationship, there's only one of those model objects
-			//for each of these model objects (eg, if this is a registration, there's only 1 attendee for it)
-			//so, just set it to be cached
-			$this->$relationNameClassAttribute = $object_to_cache;
-			$return = true;
-		}else{
-			//there can be many of those other objects for this one.
-			//just add it to the array of related objects of that type.
-			//eg: if this is an event, there are many registrations to that event
-			if( ! is_array($this->$relationNameClassAttribute)){
-				$this->$relationNameClassAttribute = array();
+		// get the class name (minus the prefix) for the related object
+		$relationNameClassAttribute = $this->_get_private_attribute_name( $relationName );
+		// also get "how" the object is related, or throw an error
+		if( ! $relationship_to_model = $this->get_model()->related_settings_for( $relationName )) {
+			throw new EE_Error( sprintf( __( 'There is no relationship to %s on a %s. Cannot cache it', 'event_espresso' ), $relationName, get_class( $this )));
+		}
+		// how many things are related ?
+		if( $relationship_to_model instanceof EE_Belongs_To_Relation ){
+			// if it's a "belongs to" relationship, then there's only one related model object  eg, if this is a registration, there's only 1 attendee for it
+			// so for these model objects just set it to be cached
+			$this->{$relationNameClassAttribute} = $object_to_cache;
+			$return = TRUE;
+		} else {
+			// otherwise, this is the "many" side of a one to many relationship, so we'll add the object to the array of related objects for that type.
+			// eg: if this is an event, there are many registrations for that event, so we cache the registrations in an array
+			if( ! is_array( $this->{$relationNameClassAttribute} )) {
+				// if for some reason, the cached item is a model object, then stick that in the array, otherwise start with an empty array
+				$this->{$relationNameClassAttribute} = $this->{$relationNameClassAttribute} instanceof EE_Base_Class ? array( $this->{$relationNameClassAttribute} ) : array();
 			}
-			
-			if($this->ID()){
+			// first check for a cache_id which is normally empty
+			if ( ! empty( $cache_id )) {
+				// if the cache_id exists, then it means we are purposely trying to cache this with a known key that can then be used to retrieve the object later on
+				$this->{$relationNameClassAttribute}[ $cache_id ] = $object_to_cache;
+				$return = $cache_id;
+			} elseif ( $object_to_cache->ID() ) {
+				// OR the cached object originally came from the db, so let's just use it's PK for an ID	
+				$this->{$relationNameClassAttribute}[ $object_to_cache->ID() ] = $object_to_cache;
 				$return = $object_to_cache->ID();
-				$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
-			}else{
-				if ( empty( $cache_id )) {
-					$return = count($this->$relationNameClassAttribute);
-					$this->{$relationNameClassAttribute}[$return]=$object_to_cache;
-				} else {
-					$this->{$relationNameClassAttribute}[$cache_id]=$object_to_cache;
-					$return = $cache_id;
-				}
+			} else {
+				// OR it's a new object with no ID, so just throw it in the array with an autoincremented ID
+				$this->{$relationNameClassAttribute}[] = $object_to_cache;
+				  // move the internal pointer to the end of the array
+				end( $this->{$relationNameClassAttribute} );
+				// and grab the key so that we can return it
+				$return = key( $this->{$relationNameClassAttribute} );
 			}
 			
 		}
@@ -352,12 +357,12 @@ class EE_Base_Class{
 	protected function _get_cached_property( $propertyname, $pretty = FALSE, $extra_cache_ref = NULL ) {
 	
 		//first make sure this property exists
-		if ( !property_exists( $this, $propertyname ) )
+		if ( !property_exists( $this, $propertyname )) {
 			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
+		}
 
 		$cache_type = $pretty ? 'pretty' : 'standard';
 		$cache_type .= !empty( $extra_cache_ref ) ? '_' . $extra_cache_ref : '';
-
 
 		if ( isset( $this->_cached_properties[$propertyname][$cache_type] ) ) {
 			return $this->_cached_properties[$propertyname][$cache_type];
@@ -366,7 +371,6 @@ class EE_Base_Class{
 		//otherwise let's return the property
 		$field_name = ltrim( $propertyname, '_' );
 		$field_obj = $this->get_model()->field_settings_for($field_name);
-//		echo "getting $propertyname $extra_cache_ref<br>";
 		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname, $extra_cache_ref) : $field_obj->prepare_for_get($this->$propertyname );
 		$this->_set_cached_property( $propertyname, $value, $cache_type );
 		return $value;
@@ -436,6 +440,15 @@ class EE_Base_Class{
 		}else{
 			if($object_to_remove_or_index_into_array instanceof EE_Base_Class && $object_to_remove_or_index_into_array->ID()){
 				$index_in_cache = $object_to_remove_or_index_into_array->ID();
+				if( is_array($this->{$relationNameClassAttribute}) && ! isset($this->{$relationNameClassAttribute}[$index_in_cache])){
+					//find this object in teh array even though it has a different key
+					foreach($this->$relationNameClassAttribute as $index=>$obj){
+						if($obj == $object_to_remove_or_index_into_array || $obj->ID() == $object_to_remove_or_index_into_array->ID()){
+							$index_in_cache = $index;
+							break;
+						}
+					}
+				}
 			}elseif($object_to_remove_or_index_into_array instanceof EE_Base_Class){
 				//so they provided a model object, but it's not yet saved to the DB... so let's go hunting for it!
 				foreach($this->get_all_from_cache($relationName) as $index => $potentially_obj_we_want){
@@ -565,7 +578,7 @@ class EE_Base_Class{
 	 *
 	 * @access protected
 	 * @param  string                $field_name  Field on the instantiated EE_Base_Class child object
-	 * @param  mixed(null|string) $date_format valid datetime format used for date (if empty then we just use the default on the field)
+	 * @param  mixed(null|string) $date_format valid datetime format used for date (if '' then we just use the default on the field, if NULL we use the last-used format)
 	 * @param  mixed(null|string) $time_format Same as above except this is for time format
 	 * @param string $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time. 
 	 * @param  boolean $echo        Whether the dtt is echoing using pretty echoing or just returned using vanilla get
@@ -845,8 +858,7 @@ class EE_Base_Class{
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
 			if($results){//if successful, set the primary key
-				$this->set(self::_get_primary_key_name( get_class($this) ),$results);//for some reason the new ID is returned as part of an array,
-				//where teh only key is 'new-ID', and it's value is the new ID.
+				$this->set(self::_get_primary_key_name( get_class($this) ),$results);
 			}
 		}
 		//restore the old assumption about values being prepared by the model obejct
@@ -1031,19 +1043,24 @@ class EE_Base_Class{
 	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
+	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
 		//if this thing exists in the DB, save the relation to the DB
-		if($this->ID()){
-			$otherObject = $this->get_model()->add_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
+		if( $this->ID() ){			
+			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
-		}else{//this thing doesn't exist in the DB, just cache it
+		} else {
+			//this thing doesn't exist in the DB,  so just cache it
 			if( ! $otherObjectModelObjectOrID instanceof EE_Base_Class){
-				throw new EE_Error(sprintf(__("Before a model object is saved to the database, calls to _add_relation_to must be passed an actual object, not just an ID. You provideed %s as the model object to a %s", "event_espresso"),$otherObjectModelObjectOrID,get_class($this)));
-			}else{
+				throw new EE_Error( sprintf(
+					__( 'Before a model object is saved to the database, calls to _add_relation_to must be passed an actual object, not just an ID. You provideed %s as the model object to a %s', 'event_espresso' ),
+					$otherObjectModelObjectOrID,
+					get_class( $this )
+				));
+			} else {
 				$otherObject = $otherObjectModelObjectOrID;
 			}
-			$this->cache($relationName, $otherObjectModelObjectOrID, $cache_id );
+			$this->cache( $relationName, $otherObjectModelObjectOrID, $cache_id );
 		}
 		
 		
@@ -1071,6 +1088,21 @@ class EE_Base_Class{
 		return $otherObject;
 	}
 	
+	/**
+	 * Removes ALL the related things for teh $relationName.
+	 * @param string $relationName
+	 * @param array $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
+	 * @return EE_Base_Class
+	 */
+	public function _remove_relations($relationName,$where_query_params = array()){
+		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
+			$otherObjects = $this->get_model()->remove_relations($this, $relationName, $where_query_params );
+			$this->clear_cache($relationName,null,true);
+		}else{//this doesn't exist in teh DB, just remove it from the cache
+			$otherObjects = $this->clear_cache($relationName,null,true);
+		}
+		return $otherObjects;
+	}
 	/**
 	 * Gets all the related model objects of the specified type. Eg, if the current class if
 	 * EE_Event, you could call $this->get_many_related('Registration') to get an array of all the
@@ -1138,7 +1170,6 @@ class EE_Base_Class{
 	 */
 	public function get_first_related($relationName,$query_params = array()){
 		if($this->ID()){//this exists in the DB, get from the cache OR the DB
-			
 		
 			//if they've provided some query parameters, don't bother trying to cache teh result
 			//also make sure we're not caching the result of get_first_related

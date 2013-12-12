@@ -116,7 +116,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * @param EE_Base_Class/int $this_obj_or_id
 	 * @param EE_Base_Class/int $other_obj_or_id
 	 * * @param array           $where_query col=>val pairs that are used as extra conditions for checking existing values and for removing existing rows if exact matches exist.
-	 * @return void
+	 * @return EE_Base_Class
 	 */
 	 function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array() ){
 		  $this_model_obj = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);

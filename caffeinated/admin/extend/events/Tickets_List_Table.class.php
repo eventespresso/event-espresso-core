@@ -94,7 +94,7 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	function column_cb($item) {
-		return $item->ID() === 1 ? '<span class="lock-icon"></span>' : sprintf( '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', /* $1%s */ $item->ID() );
+		return $item->ID() === 1 ? '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', /* $1%s */ $item->ID() );
 
 	}
 
@@ -132,13 +132,13 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	function column_TKT_qty($item) {
-		return $item->get('TKT_qty');
+		return $item->get_pretty('TKT_qty','text');
 	}
 
 
 
 	function column_TKT_uses($item) {
-		return $item->get('TKT_uses') < 0 ? __('Unlimited', 'event_espresso') : $item->get('TKT_uses');
+		return $item->get_pretty('TKT_uses','text');
 	}
 
 
@@ -149,7 +149,7 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
 
 	function column_TKT_max($item) {
-		return $item->get('TKT_max') < 0 ? __('Unlimited', 'event_espresso') : $item->get('TKT_max');
+		return $item->get_pretty('TKT_max','text');
 	}
 
 

@@ -360,7 +360,19 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/	
 	public function session_data() {
-		return $this->get('TXN_session_data' );
+		$session_data = $this->get('TXN_session_data');
+		if ( empty( $session_data ) ) {
+			$session_data = array(
+				'id' => NULL,
+				'user_id' => NULL,
+				'ip_address' => NULL,
+				'user_agent' => NULL,
+				'init_access' => NULL,
+				'last_access' => NULL,
+				'pages_visited' => array()
+				);
+		}
+		return $session_data;
 	}
 
 
@@ -540,14 +552,24 @@ class EE_Transaction extends EE_Base_Class{
 
 	/**
 	 * This returns the url for the invoice of this transaction
-	 *
+	 * @param string $type  'download','launch', or 'html' (default is 'launch')
 	 * @access public
 	 * @return string
 	 */
-	public function invoice_url($force_download = false) {
+	public function invoice_url($type = 'launch') {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) return false;
-		return $REG->invoice_url($force_download);
+		return $REG->invoice_url($type);
+	}
+	/**
+	 * Gets the URL for viewing the 
+	 * @param string $type  'download','launch', or 'html' (default is 'launch')
+	 * @return string
+	 */
+	public function receipt_url($type = 'launch'){
+		$REG = $this->primary_registration();
+		if ( empty( $REG ) ) return false;
+		return $REG->receipt_url($type);
 	}
 
 
@@ -669,14 +691,15 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return void
 	 */
 	public function finalize(){
-		//$registrations = $this->get_many_related('Registration');
-		foreach ( $this->get_many_related('Registration') as $registration ) {
+		
+		$registrations = $this->get_many_related('Registration');
+		foreach ( $registrations as $registration ) {
 			$registration->finalize();
 		}
 		if (( ! is_admin() || EE_Registry::instance()->REQ->is_set( 'ee_front_ajax' ) && EE_Registry::instance()->REQ->get( 'ee_front_ajax' )) && ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
-//			//remove the session from the transaction before saving it to the db to minimize recursive relationships
+			// remove the session from the transaction before saving it to the db to minimize recursive relationships
 			$this->set_txn_session_data( NULL );
-//			// save this transaction and it's registrations to the session
+			// save this transaction and it's registrations to the session
 			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this ));
 			// save the session (with it's sessionless transaction) back to this transaction... we need to go deeper!
 			$this->set_txn_session_data( EE_Registry::instance()->SSN );
@@ -684,6 +707,9 @@ class EE_Transaction extends EE_Base_Class{
 			$this->save();
 		}
 	}
+
+
+
 	
 	/**
 	 * Gets the last payment made

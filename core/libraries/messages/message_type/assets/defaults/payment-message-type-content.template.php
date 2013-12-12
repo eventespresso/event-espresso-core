@@ -1,96 +1,92 @@
-<table border="0" cellpadding="0" cellspacing="0" width="720" id="templateContainer">
-    <tr>
-        <td align="center" valign="top">
-            <!-- // Begin Template Header \\ -->
-            <table border="0" cellpadding="0" cellspacing="0" width="720" id="templateHeader">
-                <tr>
-                    <td class="headerContent">
-                        
-                        <!-- // Begin Module: Standard Header Image \\ -->
-                        <!-- this shortcode should automatically output the img tags and the "headerImage" id that is handled by the default inline css.  -->
-                        [CO_LOGO] 
-                        <!-- // End Module: Standard Header Image \\ -->
-                    
-                    </td>
-                </tr>
-            </table>
-            <!-- // End Template Header \\ --> 
-        </td>
-    </tr>
-    <tr>
-        <td align="center" valign="top">
-            <!-- // Begin Template Body \\ -->
-            <table border="0" cellpadding="0" cellspacing="0" width="720" id="templateBody">
-                <tr>
-                    <td valign="top" class="bodyContent">
-        
-                        <!-- // Begin Module: Standard Content \\ -->
-                        <table border="0" cellpadding="20" cellspacing="0" width="100%">
-                            <tr>
-                                <td valign="top" colspan="2">
-                                    <h3>Your Payment Details:</h3>
-                                    <p>Thank for your payment for your event registration</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" valign="top">
-                                    [EVENT_LIST]
-                                </td>
-                            </tr>
-                            <tr>
-                                <td valign="top" colspan="2">
-                                    <ol style="list-style-type: none">
-                                        <li>Payment status: [PAYMENT_STATUS]</li>
-                                        <li>Payment gateway: [PAYMENT_GATEWAY]</li>
-                                        <li>Total Cost: [TOTAL_COST]</li>
-                                        <li>Payment Made: [AMOUNT_PAID]</li>
-                                        <li>Total Oweing: [TOTAL_OWING]</li>
-                                    </ol>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td valign="top" colspan="2">
-                                    <div>
-                                        <h4>Thank you again for your payment!</h4>
-                                        <blockquote>If you have any questions about any  payment, please contact us!</blockquote>
-                                    </div>
-                                </td>
-                            </tr>
-                       </table>
-                        <!-- // End Module: Standard Content \\ -->
-                        
-                    </td>
-                </tr>
-            </table>
-            <!-- // End Template Body \\ -->
-        </td>
-    </tr>
+<!-- HEADER -->
 
-
-    <!--TODO: This is another template field that could possible be created?-->
-    <tr>
-        <td align="center" valign="top">                                        
-            <!-- // Begin Template Footer \\ -->
-            <table border="0" cellpadding="10" cellspacing="0" width="720" id="templateFooter">
-                <tr>
-                    <td valign="top" class="footerContent">
-                    
-                        <!-- // Begin Module: Standard Footer \\ -->
-                        <table border="0" cellpadding="10" cellspacing="0" width="100%">
-                            <tr>
-                                <td colspan="2" valign="middle" id="social">
-                                    <div mc:edit="std_social">
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                        <!-- // End Module: Standard Footer \\ -->
-                    
-                    </td>
-                </tr>
-            </table>
-            <!-- // End Template Footer \\ --> 
-        </td>
-    </tr>   
+<table class="head-wrap" bgcolor="#999999">
+	<tr>
+		<td></td>
+		<td class="header container"><div class="content">
+				<table bgcolor="#999999" class="">
+					<tr>
+						<td>[CO_LOGO]</td>
+						<td align="right"><h6 class="collapse">[COMPANY]</h6></td>
+					</tr>
+				</table>
+			</div></td>
+		<td></td>
+	</tr>
 </table>
-<br />  
+<!-- END HEADER --> 
+
+<!-- BODY -->
+<table class="body-wrap">
+	<tr>
+		<td></td>
+		<td class="container" bgcolor="#FFFFFF"><!-- content -->
+			
+			<div class="content">
+				<table>
+					<tr>
+						<td><h2>Hello, [FNAME] [LNAME]</h2>
+							<p class="lead">Thank you for your payment for the following transaction:</p>
+							[TICKET_LIST]
+							<h5>Payment Details</h5>
+							<ol style="list-style-type: none;">
+								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
+								<li><strong>Payment gateway:</strong> [PAYMENT_GATEWAY]</li>
+								<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
+								<li><strong>Payment Made:</strong> [AMOUNT_PAID]</li>
+								<li><strong>Total Owing:</strong> [TOTAL_OWING]</li>
+							</ol>
+							
+							<!-- Callout Panel -->
+							
+							<p class="callout"> If there is still money owed on your transaction, you can make a payment by <a href="[PAYMENT_URL]">going here &raquo;</a> </p>
+							<!-- /Callout Panel --></td>
+					</tr>
+				</table>
+			</div></td>
+		<td></td>
+	</tr>
+</table>
+<!-- END BODY --> 
+
+<!-- FOOTER -->
+<table class="footer-wrap">
+	<tr>
+		<td></td>
+		<td class="container"><table class="social" width="100%">
+				<tbody>
+					<tr>
+						<td><!-- column 1 -->
+							
+							<table align="left" class="column">
+								<tbody>
+									<tr>
+										<td><h5 class="">Connect with Us:</h5>
+											<p class=""><a href="[CO_FACEBOOK_URL]" class="soc-btn fb">Facebook</a> <a href="[CO_TWITTER_URL]" class="soc-btn tw">Twitter</a> <a href="CO_GOOGLE_URL]" class="soc-btn gp">Google+</a></p></td>
+									</tr>
+								</tbody>
+							</table>
+							<!-- /column 1 --> 
+							
+							<!-- column 2 -->
+							
+							<table align="left">
+								<tbody>
+									<tr>
+										<td><h5 class="">Contact Info:</h5>
+											<p>Phone: <strong>[CO_PHONE]</strong><br>
+												Email: <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></p></td>
+									</tr>
+								</tbody>
+							</table>
+							<!-- /column 2 --> 
+							
+							<span class="clear"></span></td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- end social table --></td>
+		<td></td>
+	</tr>
+</table>
+<!-- /FOOTER -->

@@ -53,7 +53,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		// this will trigger the EED_Events_Archive module's espresso_events() method during the pre_get_posts hook point, 
 		// this allows us to initialize things, enqueue assets, etc, 
 		// as well, this saves an instantiation of the module in an array using 'espresso_events' as the key, so that we can retrieve it
-		EE_Registry::instance()->REQ->set( 'ee', 'espresso_events' );
+		EE_Registry::instance()->REQ->set( 'ee', 'event_list' );
 	}
 
 
@@ -101,10 +101,10 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		ob_start();
 		// load our template
 		$template_part = EED_Events_Archive::get_template_part();
-		if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'espresso_events' . DS . $template_part )) {
-			include( get_stylesheet_directory() . $this->theme . DS . 'espresso_events' . DS . $template_part );
+		if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . $template_part )) {
+			include( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . $template_part );
 		} else {
-			include( EE_TEMPLATES . $this->theme . DS . 'espresso_events' . DS . $template_part );
+			include( EE_TEMPLATES . EE_Config::get_current_theme() . DS . $template_part );
 		}
 		// now reset the query and postdata
 		wp_reset_query();

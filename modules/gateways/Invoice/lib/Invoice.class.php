@@ -54,9 +54,9 @@ class Invoice {
 		}
 
 		if (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) {
-			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/';
+			$template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'Invoice/lib/templates/';
 		} else {
-			$template_args['base_url'] = EE_GATEWAYS . '/invoice/lib/templates/';
+			$template_args['base_url'] = EE_GATEWAYS . '/Invoice/lib/templates/';
 		}
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
 		
@@ -67,7 +67,7 @@ class Invoice {
 		$template_args['country'] = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $EE->CFG->organization->CNT_ISO );
 		$template_args['zip'] = $EE->CFG->organization->zip;
 		$template_args['email'] = $EE->CFG->organization->email;
-		$template_args['download_link'] = $this->registration->invoice_url();
+		
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = $this->registration->date();
 		$template_args['name'] = $primary_attendee->full_name();
@@ -92,8 +92,11 @@ class Invoice {
 		$template_args['total_cost'] = number_format($this->transaction->total(), 2, '.', '');
 		$template_args['transaction'] = $this->transaction;
 		$template_args['amount_pd'] = $this->transaction->paid();
+		$template_args['amount_owed'] = $this->transaction->total() - $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
 		$template_args['net_total'] = '';
+		$template_args['edit_reg_info_url'] = $this->registration->payment_overview_url();
+		$template_args['retry_payment_url'] = add_query_arg('step','payment_options',$this->registration->payment_overview_url());
 		$template_args['show_line_item_description'] = $this->check_if_any_line_items_have_a_description($this->transaction->total_line_item());
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			//$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
@@ -115,7 +118,7 @@ class Invoice {
 		
 		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
-
+		$template_args['shameless_plug'] = apply_filters('FHEE_Invoice__send_invoice__shameless_plug',true);
 		if(isset($_GET['receipt'])){
 			//receipt-specific stuff
 			$events_for_txn = EEM_Event::instance()->get_all(array(array('Registration.TXN_ID'=>$this->transaction->ID())));
@@ -133,7 +136,7 @@ class Invoice {
 				$venues_for_events = array_merge($venues_for_events, $event->venues());
 			}
 			$tax_total_line_item = EEM_Line_Item::instance()->get_one(array(array('TXN_ID'=>$this->transaction->ID(),'LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
-			$attendee_columns_to_show = array('ATT_fname','ATT_lname','ATT_email','ATT_address','ATT_address2','ATT_city','STA_ID','CNT_ISO','ATT_zip','ATT_phone');
+			$attendee_columns_to_show = array('ATT_address','ATT_address2','ATT_city','STA_ID','CNT_ISO','ATT_zip','ATT_phone');
 			
 			$template_args['events_for_txn'] = $events_for_txn;
 			$template_args['ticket_line_items_per_event'] = $ticket_line_items_per_event;
@@ -141,14 +144,19 @@ class Invoice {
 			$template_args['venues_for_events'] = $venues_for_events;
 			$template_args['tax_total_line_item'] = $tax_total_line_item;
 			$template_args['attendee_columns_to_show'] = $attendee_columns_to_show;
+			$EE->load_helper( 'Venue_View' );
 //			d($template_args);
+			$template_args['download_link'] = $this->registration->receipt_url('download');
+		}else{
+			//it's just an invoice we're accessing
+			$template_args['download_link'] = $this->registration->invoice_url('download');
 		}
 		
 		
 		
 		//require helpers
 		$EE->load_helper( 'Formatter' );
-		
+
 		//Get the HTML as an object
 		EE_Registry::instance()->load_helper('Template');
 		$template_header = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
@@ -255,7 +263,7 @@ class Invoice {
 				$this->registration->reg_code(),
 				$this->transaction->ID(),
 				$primary_attendee->full_name(),
-				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'invoice/lib/templates/' : EE_GATEWAYS_URL . 'invoice/lib/templates/',
+				(is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) ? EVENT_ESPRESSO_GATEWAY_URL . 'Invoice/lib/templates/' : EE_GATEWAYS_URL . 'Invoice/lib/templates/',
 				$this->registration->invoice_url(),//home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
 				$invoice_logo_image,
 				empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2,

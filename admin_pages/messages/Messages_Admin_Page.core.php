@@ -176,7 +176,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'edit_message_template'	=> '_edit_message_template',
 				'preview_message' => '_preview_message',
 				'insert_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE ), 'noheader' => TRUE ),
-				'update_message_template'	=> array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE ), 'noheader' => TRUE ),
+				'update_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE ), 'noheader' => TRUE ),
+				'force_switch_template' => array( 'func' => '_check_template_switch', 'args' => array('force' => TRUE ), 'noheader' => TRUE ),
 				'trash_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE ), 'noheader' => TRUE ),
 				'trash_message_template_context' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE ), 'noheader' => TRUE ),
 				'restore_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE, 'all' => TRUE ), 'noheader' => TRUE ),
@@ -238,6 +239,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				),
 				'require_nonce' => FALSE
 			),
+			'force_switch_template' => array(
+				'require_nonce' => FALSE
+				),
 			'add_new_message_template' => array(
 				'nav' => array(
 					'label' => __('Add New Message Templates', 'event_espresso'),
@@ -458,6 +462,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('ee_msgs_edit_js');
 
 		wp_localize_script( 'ee_msgs_edit_js', 'eei18n', EE_Registry::$i18n_js_strings );
+
+		//add in special css for tiny_mce
+		add_filter( 'mce_css', array( $this, 'wp_editor_css' ) );
 	}
 
 
@@ -783,9 +790,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//set active messenger for this view
 		$this->_active_messenger = $this->_active_messengers[$message_template_group->messenger()]['obj'];
 
-		//add in special css for tiny_mce
-		add_filter( 'mce_css', array( $this, 'wp_editor_css' ) );
-
 
 		//Do we have any validation errors?
 		$validators = defined('DOING_AJAX') ? $this->_get_transient(FALSE, 'edit_message_template') : $this->_get_transient();
@@ -816,8 +820,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$message_templates = $message_template_group->context_templates();
 
+
 		//if we have the extra key.. then we need to remove the content index from the template_field_structure as it will get handled in the "extra" array.
-		if ( isset( $template_field_structure[$context]['extra']) ) {
+		if ( is_array($template_field_structure[$context]) && isset( $template_field_structure[$context]['extra']) ) {
 			foreach ( $template_field_structure[$context]['extra'] as $reference_field => $new_fields ) {
 				unset( $template_field_structure[$context][$reference_field] );
 			}
@@ -833,8 +838,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					foreach ( $field_setup_array as $reference_field => $new_fields_array ) {
 						foreach ( $new_fields_array as $extra_field =>  $extra_array ) {
 							//let's verify if we need this extra field via the shortcodes parameter.
+							$continue = FALSE;
 							if ( isset( $extra_array['shortcodes_required'] ) ) {
-								$continue = FALSE;
 								foreach ( (array) $extra_array['shortcodes_required'] as $shortcode ) {
 									if ( !array_key_exists( $shortcode, $this->_shortcodes ) )
 										$continue = TRUE;
@@ -846,12 +851,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
 							$css_class = isset( $extra_array['css_class'] ) ? $extra_array['css_class'] : '';
-							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && isset( $validators[$extra_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
+							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && ( is_array($validators[$extra_field] ) && isset( $validators[$extra_field]['msg'] ) ) ? 'validate-error ' . $css_class : $css_class;
 							$content = $message_templates[$context][$reference_field]->get('MTP_content');
-							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field]) ? stripslashes($content[$extra_field]) : '';
+							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field]) ? stripslashes( html_entity_decode( $content[$extra_field], ENT_QUOTES, "UTF-8") ) : '';
 
 							//do we have a validation error?  if we do then let's use that value instead
 							$template_form_fields[$field_id]['value'] = isset($validators[$extra_field]) ? $validators[$extra_field]['value'] : $template_form_fields[$field_id]['value'];
+
 
 							$template_form_fields[$field_id]['db-col'] = 'MTP_content';	
 
@@ -860,12 +866,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 								if ( defined('DOING_AJAX') ) {
 									$template_form_fields[$field_id]['input'] = 'textarea';
-									$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) ? 'large-text validate-error' : 'large-text';
+									$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && ( is_array($validators[$extra_field] ) && isset( $validators[$extra_field]['msg'] ) ) ? 'large-text validate-error' : 'large-text';
 									$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
 								}
 
 								//with or without ajax we want to decode the entities
-								$template_form_fields[$field_id]['value'] = html_entity_decode(stripslashes($template_form_fields[$field_id]['value']));
+								$template_form_fields[$field_id]['value'] = stripslashes( html_entity_decode( $template_form_fields[$field_id]['value'], ENT_QUOTES, "UTF-8") );
 
 							}/**/
 						}
@@ -903,7 +909,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$field_id = $template_field . '-content';
 					$template_form_fields[$field_id] = $field_setup_array;
 					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
-					$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($message_templates[$context][$template_field]) ?$message_templates[$context][$template_field]->get('MTP_content') : '';
+					$template_form_fields[$field_id]['value'] = !empty($message_templates) && is_array($message_templates[$context]) && isset($message_templates[$context][$template_field]) ?$message_templates[$context][$template_field]->get('MTP_content') : '';
 
 					//do we have a validator error for this field?  if we do then we'll use that value instead
 					$template_form_fields[$field_id]['value'] = isset($validators[$template_field]) ? $validators[$template_field]['value'] : $template_form_fields[$field_id]['value'];
@@ -922,7 +928,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						}
 
 						//with or without ajax we want to decode the entities
-						$template_form_fields[$field_id]['value'] = html_entity_decode(stripslashes($template_form_fields[$field_id]['value']));
+						$template_form_fields[$field_id]['value'] = $template_form_fields[$field_id]['value'];
 					}/**/
 				}
 
@@ -1313,7 +1319,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//setup display of preview.
 		$this->_admin_page_title = $preview_title;
-		$this->_template_args['admin_page_content'] = $preview_button . '<br />' . html_entity_decode(stripslashes($preview));
+		$this->_template_args['admin_page_content'] = $preview_button . '<br />' .stripslashes($preview);
 		$this->_template_args['data']['force_json'] = TRUE;
 
 		$this->display_admin_page_with_no_sidebar();
@@ -1414,7 +1420,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$alt = 0;
 			?>
-			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('These are the shortcodes you can use in the templates: ', 'event_espresso' ); ?></p>
+			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('This is a list of shortcodes that have been organized by content areas where they can be used: ', 'event_espresso' ); ?></p>
 			
 			<?php foreach ( $shortcodes as $field => $allshortcodes ) : ?>
 				<div class="shortcode-field-table">
@@ -1564,13 +1570,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param int $index This helps us know which template field to select from the request array.
 	 */
 	protected function _set_message_template_column_values($index) {
-		//first we need to make sure we run the content through html_entities
 		if ( is_array($this->_req_data['MTP_template_fields'][$index]['content'] ) ) {
 			foreach ( $this->_req_data['MTP_template_fields'][$index]['content'] as $field => $value ) {
-				$this->_req_data['MTP_template_fields'][$index]['content'][$field] = htmlentities( $value );
+				$this->_req_data['MTP_template_fields'][$index]['content'][$field] = $value;
 			}
 		} else {
-			$this->_req_data['MTP_template_fields'][$index]['content'] = htmlentities( $this->_req_data['MTP_template_fields'][$index]['content'] );
+			$this->_req_data['MTP_template_fields'][$index]['content'] = $this->_req_data['MTP_template_fields'][$index]['content'];
 		}
 
 
@@ -1647,9 +1652,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			} else {
 				//first validate all fields!
 				$validates = $MTPG->validate($this->_req_data['MTP_template_fields'], $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type']);
-
-				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response.
-				if ( is_array($validates) ) {
+				
+				//if $validate returned error messages (i.e. is_array()) then we need to process them and setup an appropriate response. HMM, dang this isn't correct, $validates will ALWAYS be an array.  WE need to make sure there is no actual error messages in validates.
+				if ( is_array($validates) && !empty($validates) ) {
 					//add the transient so when the form loads we know which fields to highlight
 					$this->_add_transient( 'edit_message_template', $validates );
 
@@ -1790,16 +1795,20 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This ajax method is called during ajax requests and checks to see if a template switch has been triggered (via edit_event notifications meta box.  If it has then we want to regenerate the switching ui to reflect the change and assign that to the 'admin_page_content' template arg key
 	 *
-	 * 
+	 * @param bool  $force just allows us to skip the normal check for the _req_data['template_switch'] param.
 	 * @return void 
 	 */
-	protected function _check_template_switch() {
+	protected function _check_template_switch($force = FALSE) {
+		if ( $force ) $this->_req_data['template_switch'] = TRUE;
 		if ( defined('DOING_AJAX') && isset($this->_req_data['template_switch']) && $this->_req_data['template_switch'] ) {
 			if ( isset($this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID']) )
 				$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
 			$this->_template_args['admin_page_content'] = $this->_hook_obj->messages_metabox('', array());
 			$this->_template_args['data']['what'] = 'clear';
 			$this->_template_args['data']['where'] = 'main';
+
+			if ( $force )
+				$this->_return_json();
 		}
 	}
 

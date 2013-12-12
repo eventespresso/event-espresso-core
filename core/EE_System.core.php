@@ -148,10 +148,8 @@ final class EE_System {
 	 * @return void
 	 */
 	private function _maybe_brew_regular() {
-		$reg_file = EE_PLUGIN_DIR_PATH . 'caffeinated/brewing_regular.php';
-		$eedecaf = ( defined( 'EE_DECAF' ) && ! EE_DECAF ) || ! defined('EE_DECAF') ? FALSE : TRUE;
-		if ( is_readable( $reg_file ) && ! $eedecaf ) {
-			require_once $reg_file;
+		if (( ! defined( 'EE_DECAF' ) ||  EE_DECAF !== TRUE ) && is_readable( EE_CAFF_PATH . 'brewing_regular.php' )) {
+			require_once EE_CAFF_PATH . 'brewing_regular.php';
 		}
 	}
 
@@ -196,19 +194,19 @@ final class EE_System {
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type = $this->detect_req_type($espresso_db_update);
 //		echo "request type:".$request_type;
-		if( ! $request_type == EE_System::req_type_normal){
+		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				
 				do_action('AHEE__EE_System__manage_activation_process__new_activation');
-				$this->_handle_as_activation();			
+				$this->handle_as_activation();			
 //				echo "done activation";die;
 				break;
 			case EE_System::req_type_reactivation:
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
-				$this->_handle_as_activation();
+					$this->handle_as_activation();
 //				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
@@ -218,7 +216,16 @@ final class EE_System {
 					//so the database doesnt look old (ie, there are no migration scripts
 					//taht say they need to upgrade it)
 					//THEN, we just want to still give the system a chance to setup new default data
-					$this->_handle_as_activation();
+					//first: double-check if this was called via an activation hook or a normal reqeust
+					if(self::$_activation){
+						//if via activation hook, we need to run the code right away, because the
+						//init hook was called before this activation hook
+						$this->handle_as_activation();
+					}else{
+						//if via a normal request, then we need to wait to run activation-type-code
+						//until we_rewrite is defined by WP (on init hook) otherwise we'll have troubles
+						add_action('init',array($this,'handle_as_activation'),2);
+					}
 				}
 //				echo "done upgrade";die;
 				break;
@@ -241,10 +248,13 @@ final class EE_System {
 	 * If migration script/process didn't exist, this is what woudl happen on every activation/reactivation/upgrade.
 	 * @return void
 	 */
-	private function _handle_as_activation(){
-		EEH_Activation::system_initialization();
-		EEH_Activation::initialize_db_and_folders();
-		EEH_Activation::initialize_db_content();
+	public function handle_as_activation(){
+		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
+			//only initialize system if we're not in maintenance mode.
+			EEH_Activation::system_initialization();
+			EEH_Activation::initialize_db_and_folders();
+			EEH_Activation::initialize_db_content();
+		}	
 	}
 
 	

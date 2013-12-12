@@ -177,10 +177,11 @@ jQuery(document).ready(function($) {
 		formURL = formURL + '&noheader=true&ee_admin_ajax=true';
 		$('#espresso-ajax').val(1);
 		$('#txn-admin-noheader-inp').val('true');
-		var formData = $('#txn-admin-apply-payment-frm').serialize();
+
+		var formData = $('#txn-admin-apply-payment-frm').serializeFullArray();
 		formData.ee_admin_ajax = true;
 		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
-//		console.log(formData);
+		formData.txn_admin_payment.amount = accounting.unformat(formData.txn_admin_payment.amount);
 //		response = new Object();
 
 		$.ajax({
@@ -188,7 +189,7 @@ jQuery(document).ready(function($) {
 					url:  formURL,
 					data: formData,
 					dataType: "json",
-					beforeSend: function() {
+					beforeSend: function(jqXHR, obj) {
 						do_before_admin_page_ajax();
 					},
 					success: function( response ) {
@@ -307,8 +308,8 @@ jQuery(document).ready(function($) {
 		// payment-extra_accntng
 		$('#payment-accntng-' + PAY_ID).html( response.return_data.extra_accntng );
 		// payment-amount
-		var payment = parseFloat( response.return_data.amount );
-		$('#payment-amount-' + PAY_ID).html( payment.toFixed(2) );
+		var payment = accounting.formatMoney( response.return_data.amount );
+		$('#payment-amount-' + PAY_ID).html( payment );
 		// update amount span class
 		if ( payment < 0 ) {
 			response.return_data.pay_status = 'PDC';
@@ -323,13 +324,13 @@ jQuery(document).ready(function($) {
 		//alert( response.toSource() );
 
 		// payment-total
-		var totalPaid = parseFloat( response.return_data.total_paid );
-		$('#txn-admin-payment-total').html( totalPaid.toFixed(2) );
+		var totalPaid = response.return_data.total_paid;
+		$('#txn-admin-payment-total').html( accounting.formatMoney( totalPaid ) );
 		// total-amount-due
-		var txnTotal = parseFloat( $('#txn-admin-grand-total').text() );
+		var txnTotal = accounting.unformat( $('#txn-admin-grand-total').text() );
 		var totalAmountDue = txnTotal - totalPaid;
 		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
-		$('#txn-amount-due-h2 > span').html( totalAmountDue.toFixed(2) );
+		$('#txn-amount-due-h2 > span').html( accounting.formatMoney( totalAmountDue ) );
 
 		$('#txn-status').html( eei18n.txn_status_array[ response.return_data.txn_status ] );
 		$('#txn-status').removeClass().addClass( 'status-' + response.return_data.txn_status  );

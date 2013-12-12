@@ -316,6 +316,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( method_exists( $this, 'extra_permalink_field_buttons' ) )
 			add_filter('get_sample_permalink_html', array( $this, 'extra_permalink_field_buttons' ), 10, 4 );
 
+		//add preview button
+		add_filter('get_sample_permalink_html', array($this, 'preview_button_html'), 5, 4 );
+		
+
 		//insert our own post_stati dropdown
 		add_action('post_submitbox_misc_actions', array($this, 'custom_post_stati_dropdown' ), 10 );
 
@@ -337,6 +341,27 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
+	}
+
+
+
+
+	/**
+	 * if this post is a draft or scheduled post then we provide a preview button for user to click
+	 *
+	 * Method is called from parent and is hooked into the wp 'get_sample_permalink_html' filter.
+	 * @param  string $return    the current html
+	 * @param  int    $id        the post id for the page
+	 * @param  string $new_title What the title is
+	 * @param  string $new_slug  what the slug is
+	 * @return string            The new html string for the permalink area
+	 */
+	public function preview_button_html( $return, $id, $new_title, $new_slug ) {
+		$post = get_post( $id );
+		if ( 'publish' != get_post_status( $post ) ) {
+			$return .= '<span_id="view-post-btn"><a href="' . wp_get_shortlink($id, $post->post_type) . '" class="button button-small">' . __('Preview', 'event_espresso') . '</a></span>' . "\n";
+		}
+		return $return;
 	}
 
 
@@ -577,6 +602,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 			//$post_id
 			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
+			add_action('trashed_post', array( $this, 'dont_permanently_delete_ee_cpts'), 10 );
 			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
 			add_action('after_delete_post', array( $this, 'delete_cpt_item'), 10 );
 		}
@@ -610,8 +636,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function insert_update( $post_id, $post ) {
 
-		//make sure that if this is a revision action that we don't do any updates!
-		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] == 'restore' )
+		//make sure that if this is a revision OR trash action that we don't do any updates!
+		if ( isset( $this->_req_data['action'] ) && ( $this->_req_data['action'] == 'restore' || $this->_req_data['action'] == 'trash' ) )
 			return;
 
 		//check for autosave and update our req_data property accordingly.
@@ -628,6 +654,24 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return; //TODO we'll remove this after reimplementing autosave in 4.2
 		$this->_insert_update_cpt_item( $post_id, $post );
+	}
+
+
+
+
+
+
+	/**
+	 * This hooks into the wp_trash_post() function and removes the `_wp_trash_meta_status` and `_wp_trash_meta_time` post meta IF the trashed post is one of our CPT's - note this method should only be called with our cpt routes so we don't have to check for our CPT.
+	 * @param  int    $post_id ID of the post
+	 * @return void          
+	 */
+	public function dont_permanently_delete_ee_cpts( $post_id ) {
+		delete_post_meta( $post_id, '_wp_trash_meta_status' );
+		delete_post_meta($post_id, '_wp_trash_meta_time');
+
+		//our cpts may have comments so let's take care of that too
+		delete_post_meta($post_id, '_wp_trash_meta_comments_status');
 	}
 
 
@@ -802,7 +846,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		if ( !isset( $this->_req_data['action'] ) || !isset( $this->_cpt_routes[$this->_req_data['action']] ) || $post->post_type !== $this->_cpt_routes[$this->_req_data['action']] )
 			return $link;
 		$query_args = array(
-			'action' => 'edit',
+			'action' => isset($this->_cpt_edit_routes[$post->post_type]) ? $this->_cpt_edit_routes[$post->post_type] : 'edit',
 			'post' => $id
 			);
 
@@ -957,7 +1001,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			7 => sprintf( __( '%1$s saved.', 'event_espresso'), $this->_cpt_object->labels->singular_name ),
 			8 => sprintf( __('%1$s submitted. <a target="_blank" href="%s">Preview %1$s</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) ),
 			9 => sprintf( __('%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %1$s</a>'), $this->_cpt_object->labels->singular_name, date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink($id) ) ),
-			10 => sprintf( __('%1$s draft updated. <a target="_blank" href="%s">Preview page</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) )
+			10 => sprintf( __('%1$s draft updated. <a target="_blank" href="%2$s">Preview page</a>'), $this->_cpt_object->labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink($id) ) ) )
 			);
 
 		return $messages;

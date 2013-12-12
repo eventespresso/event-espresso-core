@@ -1,4 +1,4 @@
-<section id="edit-event-datetime-tickets-<?php echo $dtt_row; ?>" class="datetime-tickets-edit" style="display:none">
+<section id="edit-event-datetime-tickets-<?php echo $dtt_row; ?>" class="datetime-tickets-edit"<?php echo $show_tickets_row; ?>>
 	<h5 class="datetime-tickets-heading"><?php _e('Assigned Tickets', 'event_espresso'); ?></h5>
 
 	<ul class="datetime-tickets-list">
@@ -62,6 +62,7 @@
  * template args used
  *
  * $dtt_row
+ * $show_tickets_row
  * $datetime_tickets_list
  * $add_new_datetime_ticket_help_link
  */

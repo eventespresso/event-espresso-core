@@ -617,9 +617,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 			call_user_func( array( $this, '_add_screen_options_' . $this->_current_view ) );
 
 
-		//add help tab(s) and tour- set via page_config.
+		//add help tab(s) and tours- set via page_config and qtips.
 		$this->_add_help_tour();
 		$this->_add_help_tabs();
+		$this->_add_qtips();
 
 		//add feature_pointers - global, page child class, and view specific
 		$this->_add_feature_pointers();
@@ -1065,6 +1066,28 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
+	 * This simply sets up any qtips that have been defined in the page config
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _add_qtips() {
+		if ( isset( $this->_route_config['qtips'] ) ) {
+			$qtips = (array) $this->_route_config['qtips'];
+			//load qtip loader
+			EE_Registry::instance()->load_helper('Qtip_Loader', array(), TRUE);
+			$path = array( 
+				$this->_get_dir() . '/qtips/',
+				EE_ADMIN_PAGES . basename($this->_get_dir()) . '/qtips/'
+				);
+			EEH_Qtip_Loader::instance()->register($qtips, $path);
+		}
+	}
+
+
+
+
+	/**
 	 * _set_nav_tabs
 	 * This sets up the nav tabs from the page_routes array.  This method can be overwritten by child classes if you wish to add additional tabs or modify accordingly.
 	 *
@@ -1420,8 +1443,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		
 		//register all styles
-		wp_register_style('jquery-ui-style', EE_GLOBAL_ASSETS_URL . 'css/ui-ee-theme/jquery-ui-1.8.16.custom.css', array(),EVENT_ESPRESSO_VERSION );
-		wp_register_style('jquery-ui-style-datepicker-css', EE_GLOBAL_ASSETS_URL . 'css/ui-ee-theme/jquery.ui.datepicker.css', array('jquery-ui-style'), EVENT_ESPRESSO_VERSION );
+		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(),EVENT_ESPRESSO_VERSION );
+
 		wp_register_style('jquery-jq-plot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array('jquery'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('ee-admin-css', EE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 		//helpers styles
@@ -1892,7 +1915,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$show_sponsors = apply_filters('FHEE_show_sponsors_meta_box', TRUE );
 		if ( $show_sponsors )
-			add_meta_box('espresso_sponsors_post_box', __('Sponsors', 'event_espresso'), array( $this, 'espresso_sponsors_post_box'), $this->_wp_page_slug, 'side');
+			add_meta_box('espresso_sponsors_post_box', __('Event Espresso Highlights', 'event_espresso'), array( $this, 'espresso_sponsors_post_box'), $this->_wp_page_slug, 'side');
 	}
 
 
@@ -2296,7 +2319,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
 			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
 			'notices' => EE_Error::get_notices(),
-			'content' => isset( $this->_template_args['admin_page_content'] ) ? utf8_encode($this->_template_args['admin_page_content']) : '',
+			'content' => isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '',
 			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
 			'isEEajax' => TRUE //special flag so any ajax.Success methods in js can identify this return package as a EEajax package.
 			);
@@ -2304,7 +2327,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// make sure there are no php errors or headers_sent.  Then we can set correct json header.
 		if ( NULL === error_get_last() || ! headers_sent() )
-			header('Content-Type: application/json');
+			header('Content-Type: application/json; charset=UTF-8');
 
 		echo json_encode( $json );
 		exit();

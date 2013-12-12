@@ -74,8 +74,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_valid_shortcodes() {
 		//remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
 		$this->_valid_shortcodes = array(
-			'to' => array('email'),
-			'from' => array('email')
+			'to' => array('email', 'attendee'),
+			'from' => array('email', 'attendee')
 			);
 	}
 
@@ -93,28 +93,37 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return void
 	 */
 	protected function _set_validator_config() {
+		$valid_shortcodes = $this->get_valid_shortcodes();
 
 		$this->_validator_config = array(
 			'to' => array(
-				'shortcodes' => $this->_valid_shortcodes['to'],
+				'shortcodes' => $valid_shortcodes['to'],
 				'type' => 'email'
 				),
 			'from' => array(
-				'shortcodes' => $this->_valid_shortcodes['from'],
+				'shortcodes' => $valid_shortcodes['from'],
 				'type' => 'email'
 				),
 			'subject' => array(
-				'shortcodes' => array('organization')
+				'shortcodes' => array('organization', 'attendee')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization')
+				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'attendee')
 				),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration')
+				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration'),
+				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue'),
-			'ticket_list' => array('event_list', 'attendee_list', 'ticket', 'registration')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee')
+				),
+			'ticket_list' => array(
+				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'registration', 'datetime_list'),
+				'required' => array('[TICKET_LIST]')
+				),
+			'datetime_list' => array(
+				'shortcodes' => array('datetime'),
+				'required' => array('[DATETIME_LIST]')
 				)
 			);
 	}
@@ -238,6 +247,25 @@ class EE_Email_messenger extends EE_messenger  {
 			'content' => '', //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
 			'extra' => array(
 				'content' => array(
+					'main' => array(
+						'input' => 'wp_editor',
+						'label' => __('Main Content', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'rows' => '15'
+					),
+					'event_list' => array(
+						'input' => 'wp_editor',
+						'label' => __('Event List', 'event_espresso'),
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'rows' => '15',
+						'shortcodes_required' => array('[EVENT_LIST]')
+						),
 					'attendee_list' => array(
 						'input' => 'textarea',
 						'label' => __('Attendee List', 'event_espresso'),
@@ -260,31 +288,20 @@ class EE_Email_messenger extends EE_messenger  {
 						'rows' => '10',
 						'shortcodes_required' => array('[TICKET_LIST]')
 						),
-					'event_list' => array(
-						'input' => 'wp_editor',
-						'label' => __('Event List', 'event_espresso'),
+					'datetime_list' => array(
+						'input' => 'textarea',
+						'label' => __('Datetime List', 'event_espresso'),
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'format' => '%s',
-						'rows' => '15',
-						'shortcodes_required' => array('[EVENT_LIST]')
-						),
-					'main' => array(
-						'input' => 'wp_editor',
-						'label' => __('Main Content', 'event_espresso'),
-						'type' => 'string',
-						'required' => TRUE,
-						'validation' => TRUE,
-						'format' => '%s',
-						'rows' => '15'
-					)
+						'css_class' => 'large-text',
+						'rows' => '10',
+						'shortcodes_required' => array('[DATETIME_LIST]')
+						)
 				)
 			)
-		);
-
-		$this->_template_fields = apply_filters('FHEE_set_template_fields_'.$this->name, $this->_template_fields);
-		$this->_template_fields = apply_filters('FHEE_set_template_fields_all', $this->_template_fields);	
+		);	
 	}
 
 	/**
@@ -303,7 +320,8 @@ class EE_Email_messenger extends EE_messenger  {
 				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
 				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
 				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
-				'ticket_list' => __('this contains the formatting for each ticket in a ticket list', 'event_espresso')
+				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
+				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso')
 				)
 			);
 	}
@@ -339,7 +357,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	protected function _send_message() {
 		
-		$success = wp_mail(html_entity_decode($this->_to), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
+		$success = wp_mail(html_entity_decode($this->_to, ENT_QUOTES, "UTF-8"), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
 		
 		return $success;
 
@@ -369,8 +387,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _headers() {
 		$headers = array(
 			'MIME-Version: 1.0',
-			'From:' . html_entity_decode( $this->_from ),
-			'Reply-To:' . html_entity_decode( $this->_from ),
+			'From:' . $this->_from,
+			'Reply-To:' . $this->_from,
 			'Content-Type:text/html; charset=utf-8'
 			);
 		return $headers;
@@ -400,14 +418,14 @@ class EE_Email_messenger extends EE_messenger  {
 		} else if ( $preview && defined('DOING_AJAX' ) ) {
 			require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
 			$style = file_get_contents( $this->get_inline_css_template( FALSE, TRUE ) );
-			$CSS = new CssToInlineStyles( $body, $style );
+			$CSS = new CssToInlineStyles( utf8_decode($body), $style );
 			$body = ltrim( $CSS->convert(), ">\n" );
 
 			//let's attempt to fix width's for ajax preview
-			$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
+			/*$i_width = '/width:[ 0-9%]+;|width:[ 0-9px]+;/';
 			$s_width = '/width="[ 0-9]+"/';
 			$body = preg_replace( $i_width, 'width:100%;', $body );
-			$body = preg_replace( $s_width, 'width=100%', $body );
+			$body = preg_replace( $s_width, 'width=100%', $body );/**/
 		}
 		return $body;
 	}

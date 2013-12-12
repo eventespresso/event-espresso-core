@@ -27,6 +27,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	/**
 	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
 	 */
+	const sold_out = -2;
 	const expired = -1;
 	const archived = 0;
 	const pending = 1;
@@ -370,7 +371,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * return the total number of tickets available for purchase
-	 * @param  int    $DTT_ID the primary key for a particular datetime
+	 * @param  int    $DTT_ID the primary key for a particular datetime. set to null for 
+	 * all related datetimes
 	 * @return int
 	 */
 	public function remaining( $DTT_ID = 0 ) {
@@ -389,18 +391,16 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 				array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ))
 			);			
 		}
-		
+//		d( $datetimes );
 		// if datetime reg limit is not unlimited
 		if ( ! empty( $datetimes )) {
-			// set a super high value for $tickets_remaining cuz -1 would throw off the use of 'min' below
+			// although TKT_qty and $datetime->spaces_remaining() could both be INF
+			//we only need to check for INF explicitly if we want to optimize.
+			//because INF - x = INF; and min(x,INF) = x
 			$tickets_remaining = $this->_TKT_qty - $this->_TKT_sold;
 			foreach ( $datetimes as $datetime ) {
-				// if datetime reg limit is not unlimited
-				if ( $datetime->tickets_remaining() > -1 ) {
-					$tickets_remaining = $tickets_remaining > 0 ? min( $tickets_remaining, $datetime->tickets_remaining() ) : $datetime->tickets_remaining();
-				}
+				$tickets_remaining =  min( $tickets_remaining, $datetime->spaces_remaining() );
 			}
-			$tickets_remaining = $tickets_remaining < 0 ? -1 : $tickets_remaining;
 			return $tickets_remaining;
 		}
 	}
@@ -413,6 +413,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return mixed(int|string) status int if the display string isn't requested
 	 */
 	public function ticket_status( $display = FALSE ) {
+		if ( $this->_TKT_qty - $this->_TKT_sold < 1 ) return $display ? __('Sold Out', 'event_espresso') : EE_Ticket::sold_out;
 		if ( $this->_TKT_deleted ) return $display ? __('Archived', 'event_espresso') : EE_Ticket::archived;
 		if ( $this->is_expired() ) return $display ? __('Expired', 'event_espresso') : EE_Ticket::expired;
 		if ( $this->is_pending() ) return $display ? __('Pending', 'event_espresso') : EE_Ticket::pending;
@@ -561,9 +562,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 
+	public function ticket_price() {
+		return $this->get('TKT_price');
+	}
+
 
 	public function get_ticket_subtotal() {
-		return $this->get('TKT_taxable') ? EE_Taxes::get_subtotal_for_admin($this) : $this->_TKT_price;
+		return $this->get('TKT_taxable') ? EE_Taxes::get_subtotal_for_admin($this) : $this->ticket_price();
 	}
 
 
@@ -715,8 +720,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->_TKT_sold;
-		$sold = $sold + $qty;
+		$sold = $this->_TKT_sold + $qty;
 		return $this->set( 'TKT_sold', $sold );
 	}
 	
@@ -726,8 +730,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->_TKT_sold;
-		$sold = $sold - $qty;
+		$sold = $this->_TKT_sold - $qty;
+		// sold can not go below zero
+		$sold = max( 0, $sold );
 		return $this->set( 'TKT_sold', $sold );
 	}
 	
@@ -869,5 +874,38 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 				$times[] = $datetime->start_date_and_time();
 			}
 		return $this->name()." @ ".implode(", ",$times)." for ".$this->price();
+	}
+	/**
+	 * Gets all the registrations for this ticket
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return EE_Registration[]
+	 */
+	public function registrations($query_params = array()){
+		return $this->get_many_related('Registration', $query_params);
+	}
+	/**
+	 * Counts the registrations for this ticket
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return int
+	 */
+	public function count_registrations($query_params = array()){
+		return $this->count_related('Registration', $query_params);
+	}
+	
+	/**
+	 * Updates the TKT_sold attribute (and saves) based on the number of registrations
+	 * for thsi ticket. Takes the current EE_Config setting for 'pending_counts_reg_limit' 
+	 * into account
+	 * @return int
+	 */
+	public function update_tickets_sold(){
+		$stati_to_include = array(EEM_Registration::status_id_approved);
+		if(EE_Config::instance()->registration->pending_counts_reg_limit){
+			$stati_to_include[] = EEM_Registration::status_id_pending;
+		}
+		$count_regs_for_this_ticket = $this->count_registrations(array(array('STS_ID'=>array('IN',$stati_to_include))));
+		$this->set_sold($count_regs_for_this_ticket);
+		$this->save();
+		return $count_regs_for_this_ticket;
 	}
 } //end EE_Ticket class

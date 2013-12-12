@@ -472,7 +472,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espresso-ui-theme');
 		//scripts
 		wp_enqueue_script('ee_admin_js');		
 	}
@@ -620,6 +620,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_city'] = isset( EE_Registry::instance()->CFG->organization->city ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->city ) : '';
 		$this->_template_args['organization_zip'] = isset( EE_Registry::instance()->CFG->organization->zip ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->zip ) : '';
 		$this->_template_args['organization_email'] = isset( EE_Registry::instance()->CFG->organization->email ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->email ) : '';
+		$this->_template_args['organization_phone'] = isset( EE_Registry::instance()->CFG->organization->phone ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->phone ) : '';
+		$this->_template_args['organization_vat'] = isset( EE_Registry::instance()->CFG->organization->vat ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->vat ) : '';
 		$this->_template_args['currency_sign'] = isset( EE_Registry::instance()->CFG->currency->sign ) ? $this->_display_nice( EE_Registry::instance()->CFG->currency->sign ) : '$';
 		$this->_template_args['organization_logo_url'] = isset( EE_Registry::instance()->CFG->organization->logo_url ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->logo_url ) : FALSE;
 		$this->_template_args['organization_facebook'] = isset( EE_Registry::instance()->CFG->organization->facebook ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->facebook ) : '';
@@ -696,6 +698,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->organization->CNT_ISO = isset( $this->_req_data['organization_country'] ) ? sanitize_text_field( $this->_req_data['organization_country'] ) : EE_Registry::instance()->CFG->organization->CNT_ISO;
 		EE_Registry::instance()->CFG->organization->zip = isset( $this->_req_data['organization_zip'] ) ? sanitize_text_field( $this->_req_data['organization_zip'] ) : EE_Registry::instance()->CFG->organization->zip;
 		EE_Registry::instance()->CFG->organization->email = isset( $this->_req_data['organization_email'] ) ? sanitize_email( $this->_req_data['organization_email'] ) : EE_Registry::instance()->CFG->organization->email;
+		EE_Registry::instance()->CFG->organization->vat = isset( $this->_req_data['organization_vat'] ) ? sanitize_text_field( $this->_req_data['organization_vat'] ) : EE_Registry::instance()->CFG->organization->vat;
+		EE_Registry::instance()->CFG->organization->phone = isset( $this->_req_data['organization_phone'] ) ? sanitize_text_field( $this->_req_data['organization_phone'] ) : EE_Registry::instance()->CFG->organization->phone;
 		EE_Registry::instance()->CFG->organization->logo_url = isset( $this->_req_data['organization_logo_url'] ) ? esc_url_raw( $this->_req_data['organization_logo_url'] ) : EE_Registry::instance()->CFG->organization->logo_url;
 		EE_Registry::instance()->CFG->organization->facebook = isset( $this->_req_data['organization_facebook'] ) ? esc_url_raw( $this->_req_data['organization_facebook'] ) : EE_Registry::instance()->CFG->organization->facebook;
 		EE_Registry::instance()->CFG->organization->twitter = isset( $this->_req_data['organization_twitter'] ) ? esc_url_raw( $this->_req_data['organization_twitter'] ) : EE_Registry::instance()->CFG->organization->twitter;
@@ -704,11 +708,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->organization->google = isset( $this->_req_data['organization_google'] ) ? esc_url_raw( $this->_req_data['organization_google'] ) : EE_Registry::instance()->CFG->organization->google;
 		EE_Registry::instance()->CFG->organization->instagram = isset( $this->_req_data['organization_instagram'] ) ? esc_url_raw( $this->_req_data['organization_instagram'] ) : EE_Registry::instance()->CFG->organization->instagram;
 		EE_Registry::instance()->CFG->core->ee_ueip_optin = isset( $this->_req_data['ueip_optin'] ) && !empty( $this->_req_data['ueip_optin'] ) ? $this->_req_data['ueip_optin'] : EE_Registry::instance()->CFG->core->ee_ueip_optin; 
+		
+		EE_Registry::instance()->CFG->currency = new EE_Currency_Config( EE_Registry::instance()->CFG->organization->CNT_ISO );
 
 		EE_Registry::instance()->CFG = apply_filters('FHEE_your_organization_settings_save', EE_Registry::instance()->CFG );	
 		
 		$what = 'Your Organization Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
+
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
 		
 	}

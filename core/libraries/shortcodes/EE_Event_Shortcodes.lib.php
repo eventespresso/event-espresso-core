@@ -52,6 +52,10 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_URL]' => __('A link to the event set up on the host site.', 'event_espresso'),
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
+			'[EVENT_IMAGE]' => __('This will parse to the Feature image for the event.', 'event_espresso'),
+			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event.', 'event_espresso'),
+			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event.', 'event_espresso'),
+			'[EVENT_AUTHOR_EMAIL]' => __('This will return the email for the author of the event.', 'event_espresso')
 			);
 	}
 
@@ -88,53 +92,48 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_LINK]' :
-				return $this->_get_event_link();
+				return $this->_get_event_link($event);
 				break;
 
 			case '[EVENT_URL]' :
-				return $this->_get_event_link(FALSE);
+				return $this->_get_event_link($event, FALSE);
 				break;
 
 			case '[VIRTUAL_URL]' :
-				$venue = $this->_venue($event);
+				$venue = $this->_data->get_first_related('Venue');
+				if ( empty( $venue ) )
+					return '';
 				return $venue->get('VNU_virtual_url');
 
 			case '[VIRTUAL_PHONE]' :
-				$venue = $this->_venue($event);
+				$venue = $this->_data->get_first_related('Venue');
+				if ( empty( $venue ) )
+					return '';
 				return $venue->get('VNU_virtual_phone');
 				break;
-		}
-	}
 
-
-
-
-	/**
-	 * return the event details for a given key
-	 * @param  string $type what to return
-	 * @return string       returned value if present, empty string if not
-	 */
-	private function _event( $type ) {
-		$what = '';
-		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
-		
-		//FIRST get the event
-		$event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($this->_data['ID']);
-
-		//we're using a switch here because I anticipate there will eventually be more types coming in here!
-		switch ( $type ) {
-			case 'desc' :
-				$result = $event->get('EVT_desc');
+			case '[EVENT_IMAGE]' :
+				// @todo: eventually we should make this an attribute shortcode so that em can send along what size they want returned.
+				return '<img src="' . $this->_data->feature_image_url(array(600,300) ) . '" alt="' . $this->_data->get('EVT_name') . ' Feature Image" />';
 				break;
-			case 'slug' :
-				$result = $event->get('EVT_slug');
+
+			case '[EVENT_FACEBOOK_URL]' :
+				return $this->_data->get_post_meta('event_facebook', true );
 				break;
+
+			case '[EVENT_TWITTER_URL]' :
+				return $this->_data->get_post_meta('event_twitter', true);
+				break;
+
+			case '[EVENT_AUTHOR_EMAIL]' :
+				$author_id = $this->_data->get('EVT_wp_user');
+				$user_data = get_userdata( (int) $author_id );
+				return $user_data->user_email;
+				break;
+
 		}
-
-		return $result;
-
+		return '';
 	}
-
 
 
 
@@ -143,11 +142,10 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 	 * @param  boolean $full_link if TRUE (default) we return the html for the name of the event linked to the event.  Otherwise we just return the url of the event.
 	 * @return string             
 	 */
-	private function _get_event_link( $full_link = TRUE ) {
-		if ( !isset( $this->_data['ID'] ) ) return ''; //no event id get out.
-		$url = get_permalink($this->_data['ID']);
+	private function _get_event_link( $event, $full_link = TRUE ) {
+		$url = get_permalink($event->ID());
 
-		return $full_link ? '<a href="' . $url . '">' . $this->_data['name'] . '</a>' : $url;
+		return $full_link ? '<a href="' . $url . '">' . $event->get('EVT_name') . '</a>' : $url;
 	}
 
 

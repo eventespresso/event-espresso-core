@@ -32,6 +32,54 @@ final class EE_Config {
 	private static $_instance = NULL;
 
 	/**
+	 *
+	 * @var EE_Config_Base[]
+	 */
+	public $addons;
+
+	/**
+	 *
+	 * @var EE_Admin_Config
+	 */
+	public $admin;
+	
+	/**
+	 *
+	 * @var EE_Core_Config
+	 */
+	public $core;
+	
+	/**
+	 * 
+	 * @var EE_Currency_Config 
+	 */
+	public $currency;
+
+	/**
+	 *
+	 * @var EE_Gateway_Config
+	 */
+	public $gateway;
+
+	/**
+	 *
+	 * @var EE_Organization_Config
+	 */
+	public $organization;
+	
+	/**
+	 *
+	 * @var EE_Registration_Config
+	 */
+	public $registration;
+
+	/**
+	 *
+	 * @var EE_Template_Config 
+	 */
+	public $template_settings;
+
+	/**
 	 * 	_module_route_map
 	 *	@var 	array	$_module_route_map
 	 * 	@access 	private
@@ -51,47 +99,6 @@ final class EE_Config {
 	 * 	@access 	private
 	 */
 	private static $_module_view_map = array();
-	
-	/**
-	 *
-	 * @var EE_Core_Config
-	 */
-	public $core;
-
-	/**
-	 *
-	 * @var EE_Admin_Config
-	 */
-	public $admin;
-	/**
-	 *
-	 * @var EE_Organization_Config
-	 */
-	public $organization;
-	
-	/**
-	 * 
-	 * @var EE_Currency_Config 
-	 */
-	public $currency;
-	
-	/**
-	 *
-	 * @var EE_Registration_Config
-	 */
-	public $registration;
-
-	/**
-	 *
-	 * @var EE_Gateway_Config
-	 */
-	public $gateway;
-	/**
-	 *
-	 * @var EE_Template_Config 
-	 */
-	public $template_settings;
-
 
 
 
@@ -122,22 +129,26 @@ final class EE_Config {
 		//set defaults
 		$this->core = new EE_Core_Config();
 		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();
+		$this->currency = new EE_Currency_Config();		
 		$this->registration = new EE_Registration_Config();
 		$this->admin = new EE_Admin_Config();
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
+		$this->addons = array();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
 		// set _module_forward_map
 		EE_Config::$_module_forward_map = array();
 		// set _module_view_map
 		EE_Config::$_module_view_map = array();
-
 		// load existing EE site settings
 		$this->_load_config();
+		//  register shortcodes and modules
 		add_action( 'init', array( $this, 'init' ), 10 );
+		// register widgets
+		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
+		// construct__end hook
 		do_action('AHEE__EE_Config__construct__end',$this);
 	}
 
@@ -293,6 +304,71 @@ final class EE_Config {
 
 
 	/**
+	 * 	widgets_init
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	public function widgets_init() {
+		// grab list of installed widgets
+		$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
+		// filter list of modules to register
+		$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
+		// cycle thru widget folders
+		foreach ( $widgets_to_register as $widget_path ) {
+			// add to list of installed widget modules
+			EE_Config::register_ee_widget( $widget_path );
+		}
+		// filter list of installed modules
+		EE_Registry::instance()->widgets = apply_filters( 'FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
+	}
+
+
+
+	/**
+	 * 	register_ee_widget - makes core aware of this widget
+	 *
+	 *  @access 	public
+	 *  @param 	string 	$widget_path - full path up to and including widget folder
+	 *  @return 	void
+	 */
+	public static function register_ee_widget( $widget_path = NULL ) {
+		do_action( 'AHEE__EE_Config__register_widget__begin', $widget_path );
+		$widget_ext = '.widget.php';
+		// make all separators match
+		$widget_path = rtrim( str_replace( '/\\', DS, $widget_path ), DS );
+		// grab and sanitize widget directory name
+		$widget_dir = sanitize_key( basename( $widget_path ));
+		// create classname from widget directory name
+		$widget = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $widget_dir )));
+		// add class prefix
+		$widget_class = 'EEW_' . $widget;
+		// does the widget exist ?
+		if ( ! is_readable( $widget_path . DS . $widget_class . $widget_ext )) {
+			$msg = sprintf( __( 'The requested %s widget file could not be found or is not readable due to file permissions.', 'event_espresso' ), $widget_class );
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		// load the widget class file
+		require_once( $widget_path . DS . $widget_class . $widget_ext );
+		// verfiy that class exists
+		if ( ! class_exists( $widget_class )) {
+			$msg = sprintf( __( 'The requested %s widget class does not exist.', 'event_espresso' ), $widget_class );
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}		
+		if ( register_widget( $widget_class )) {
+			// add to array of registered widgets
+			EE_Registry::instance()->widgets[ $widget_class ] = $widget_path . DS . $widget_class . $widget_ext;			
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}	
+	
+
+
+	/**
 	 * 		_register_shortcodes
 	 *
 	 * 		@access private
@@ -304,14 +380,14 @@ final class EE_Config {
 		// grab list of installed shortcodes
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$shortcodes_to_register = apply_filters( 'FHEE__Front_Controller__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
+		$shortcodes_to_register = apply_filters( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
 		// cycle thru shortcode folders
 		foreach ( $shortcodes_to_register as $shortcode_path ) {
 			// add to list of installed shortcode modules
 			EE_Config::register_shortcode( $shortcode_path );
 		}
 		// filter list of installed modules
-		EE_Registry::instance()->shortcodes = apply_filters( 'FHEE__Front_Controller__register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
+		EE_Registry::instance()->shortcodes = apply_filters( 'FHEE__EE_Config__register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
 	}
 
 
@@ -356,7 +432,10 @@ final class EE_Config {
 		} else {
 			// delay until other systems are online
 			add_action( 'wp_loaded', array( $shortcode_class,'set_hooks' ), 1 );
-		}		
+		}
+		// convert classname to UPPERCASE and create WP shortcode. 
+		// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes() 
+		add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
@@ -377,7 +456,7 @@ final class EE_Config {
 		// grab list of installed modules
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$modules_to_register = apply_filters( 'FHEE__Front_Controller__register_modules__modules_to_register', $modules_to_register );
+		$modules_to_register = apply_filters( 'FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
 		// loop through folders
 		foreach ( $modules_to_register as $module_path ) {
 			/**TEMPORARILY EXCLUDE gateways from modules for time being**/
@@ -387,7 +466,7 @@ final class EE_Config {
 			}
 		}
 		// filter list of installed modules
-		EE_Registry::instance()->modules = apply_filters( 'FHEE__Front_Controller__register_modules__installed_modules', EE_Registry::instance()->modules );
+		EE_Registry::instance()->modules = apply_filters( 'FHEE__EE_Config__register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
 
 
@@ -617,7 +696,8 @@ final class EE_Config {
 			'admin',
 			'template_settings',
 			'map_settings',
-			'gateway'
+			'gateway',
+			'addons'
 		));
 	}
 
@@ -658,11 +738,21 @@ class EE_Core_Config extends EE_Config_Base {
 	public $current_blog_id;
 	public $site_license_key;
 	public $ee_ueip_optin;
+	/**
+	 * Not to be confused with the 4 critical page variables (See
+	 * get_critical_pages_array()), this is just an array of wp posts that have EE
+	 * shortcodes in them. Keys are slugs, values are arrays with only 1 element: where the key is the shortcode
+	 * in the page, and the value is the page's ID. The key 'posts' is basially a duplicate of this same array.
+	 * @var array
+	 */
 	public $post_shortcodes;
-	public $post_id_shortcodes;
 	public $module_route_map;
 	public $module_forward_map;
 	public $module_view_map;
+	/**
+	 * The next 4 vars are the IDs of critical EE pages.
+	 * @var int
+	 */
 	public $reg_page_id;
 	public $txn_page_id;
 	public $thank_you_page_id;
@@ -681,7 +771,6 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->site_license_key = NULL;
 		$this->ee_ueip_optin = TRUE;
 		$this->post_shortcodes = array();
-		$this->post_id_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
 		$this->module_view_map = array();
@@ -754,6 +843,15 @@ class EE_Organization_Config extends EE_Config_Base {
 	* eg support@eventespresso.com
 	*/ 
 	public $email;
+
+
+
+	/**
+	 * @var string $phone
+	 * eg. 111-111-1111
+	 */
+	public $phone;
+
 	
 	/**
 	 * @var string $vat 
@@ -834,7 +932,8 @@ class EE_Organization_Config extends EE_Config_Base {
 		$this->CNT_ISO = 'US';
 		$this->zip = '12345';
 		$this->email = get_bloginfo('admin_email');
-		$this->vat = '383j3yh4';
+		$this->phone = '';
+		$this->vat = '123456789';
 		$this->logo_url = '';
 		$this->facebook = '';
 		$this->twitter = '';
@@ -913,16 +1012,32 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct() {
-		// set default currency settings
-		$this->code = 'USD'; 	// currency code: USD, CAD, EUR
-		$this->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
-		$this->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
-		$this->sign =  '$'; 	// currency sign: $
-		$this->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
-		$this->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
-		$this->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-		$this->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+	public function __construct( $CNT_ISO = NULL ) {
+		
+		if ( $CNT_ISO ) {
+			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( EE_Registry::instance()->CFG->organization->CNT_ISO )) {
+				if ( $country instanceof EE_Country ) {
+					$this->code = $country->currency_code(); 			// currency code: USD, CAD, EUR
+					$this->name = $country->currency_name_single();	// Dollar
+					$this->plural = $country->currency_name_plural(); 	// Dollars
+					$this->sign =  $country->currency_sign(); 			// currency sign: $
+					$this->sign_b4 = $country->currency_sign_before(); 		// currency sign before or after: $TRUE  or  FALSE$
+					$this->dec_plc = $country->currency_decimal_places();	// decimal places: 2 = 0.00  3 = 0.000
+					$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+					$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+				}
+			}			
+		} else {
+			// set default currency settings
+			$this->code = 'USD'; 	// currency code: USD, CAD, EUR
+			$this->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
+			$this->plural = __( 'Dollars', 'event_espresso' ); 	// Dollars
+			$this->sign =  '$'; 	// currency sign: $
+			$this->sign_b4 = TRUE; 	// currency sign before or after: $TRUE  or  FALSE$
+			$this->dec_plc = 2; 	// decimal places: 2 = 0.00  3 = 0.000
+			$this->dec_mrk = '.'; 	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+			$this->thsnds = ','; 	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+		}
 	}
 }
 

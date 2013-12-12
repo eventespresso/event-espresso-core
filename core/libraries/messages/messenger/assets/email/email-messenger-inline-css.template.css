@@ -1,328 +1,225 @@
-/* Client-specific Styles */
-#outlook a{padding:0;} /* Force Outlook to provide a "view in browser" button. */
-body{width:100% !important;} .ReadMsgBody{width:100%;} .ExternalClass{width:100%;} /* Force Hotmail to display emails at full width */
-body{-webkit-text-size-adjust:none;} /* Prevent Webkit platforms from changing default text sizes. */
-
-/* Reset Styles */
-body{margin:0; padding:0;}
-img{border:0; height:auto; line-height:100%; outline:none; text-decoration:none;}
-table td{border-collapse:collapse;}
-#backgroundTable{height:100% !important; margin:0; padding:0; width:100% !important;}
-
-/* Template Styles */
-
-/* /\/\/\/\/\/\/\/\/\/\ STANDARD STYLING: COMMON PAGE ELEMENTS /\/\/\/\/\/\/\/\/\/\ */
-
-/**
-* @tab Page
-* @section background color
-* @tip Set the background color for your email. You may want to choose one that matches your company's branding.
-* @theme page
-*/
-body, #backgroundTable{
-	background-color:#383739;
-	padding-top: 20px;
-}
-
-
-/**
-* @tab Page
-* @section heading 1
-* @tip Set the styling for all first-level headings in your emails. These should be the largest of your headings.
-* @style heading 1
-*/
-h1, .h1{
-	color:#383739;
-	display:block;
-	font-family:Arial;
-	font-size:34px;
-	font-weight:bold;
-	line-height:100%;
-	margin-top:0;
-	margin-right:0;
-	margin-bottom:10px;
-	margin-left:0;
-	text-align:left;
+/* ------------------------------------- 
+		GLOBAL 
+------------------------------------- */
+* { 
+	margin:0;
 	padding:0;
 }
+* { font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif; }
 
-/**
-* @tab Page
-* @section heading 2
-* @tip Set the styling for all second-level headings in your emails.
-* @style heading 2
-*/
-h2, .h2{
-	color:#383739;
-	display:block;
-	font-family:Arial;
-	font-size:30px;
-	font-weight:bold;
-	line-height:100%;
-	margin-top:0;
-	margin-right:0;
-	margin-bottom:10px;
-	margin-left:0;
-	text-align:left;
+img { 
+	max-width: 100%; 
+}
+.collapse {
+	margin:0;
 	padding:0;
 }
+body {
+	-webkit-font-smoothing:antialiased; 
+	-webkit-text-size-adjust:none; 
+	width: 100%!important; 
+	height: 100%;
+}
 
-/**
-* @tab Page
-* @section heading 3
-* @tip Set the styling for all third-level headings in your emails.
-* @style heading 3
-*/
-h3, .h3{
-	color:#2A292A;
-	display:block;
-	font-family:Arial;
-	font-size:26px;
+
+/* ------------------------------------- 
+		ELEMENTS 
+------------------------------------- */
+a { color: #2BA6CB;}
+
+.btn {
+	text-decoration:none;
+	color: #FFF;
+	background-color: #666;
+	padding:10px 16px;
 	font-weight:bold;
-	line-height:100%;
-	margin-top:0;
-	margin-right:0;
-	margin-bottom:10px;
-	margin-left:0;
-	text-align:left;
-	padding:0;
+	margin-right:10px;
+	text-align:center;
+	cursor:pointer;
+	display: inline-block;
 }
 
-/**
-* @tab Page
-* @section heading 4
-* @tip Set the styling for all fourth-level headings in your emails. These should be the smallest of your headings.
-* @style heading 4
-*/
-h4, .h4{
-	color:#2A292A;
-	display:block;
-	font-family:Arial;
-	font-size:22px;
+p.callout {
+	padding:15px;
+	background-color:#ECF8FF;
+	margin-bottom: 15px;
+}
+.callout a {
 	font-weight:bold;
-	line-height:100%;
-	margin-top:0;
-	margin-right:0;
-	margin-bottom:10px;
-	margin-left:0;
-	text-align:left;
-	padding:0;
+	color: #2BA6CB;
 }
 
-/* /\/\/\/\/\/\/\/\/\/\ STANDARD STYLING: PREHEADER /\/\/\/\/\/\/\/\/\/\ */
-
-/**
-* @tab Header
-* @section preheader style
-* @tip Set the background color for your email's preheader area.
-* @theme page
-*/
-#templatePreheader{
-	background-color:#383739;
+table.social {
+/* 	padding:15px; */
+	background-color: #ebebeb;
+	
 }
-
-/**
-* @tab Header
-* @section preheader text
-* @tip Set the styling for your email's preheader text. Choose a size and color that is easy to read.
-*/
-.preheaderContent div{
-	color:#FFFFFF;
-	font-family:Arial;
+.social .soc-btn {
+	padding: 3px 7px;
 	font-size:12px;
-	line-height:100%;
-	text-align:right;
-}
-
-/**
-* @tab Header
-* @section preheader link
-* @tip Set the styling for your email's preheader links. Choose a color that helps them stand out from your text.
-*/
-.preheaderContent div a:link, .preheaderContent div a:visited, /* Yahoo! Mail Override */ .preheaderContent div a .yshortcuts /* Yahoo! Mail Override */{
-	color:#2FBCFE;		/*		2FBCFE	C56CFC	*/
-	font-weight:normal;
-	text-decoration:underline;
-}
-
-/* /\/\/\/\/\/\/\/\/\/\ STANDARD STYLING: HEADER /\/\/\/\/\/\/\/\/\/\ */
-
-/**
-* @tab Header
-* @section header style
-* @tip Set the background color and border for your email's header area.
-* @theme header
-*/
-#templateHeader{
-	background-color:#FFFFFF;
-	border-bottom:0;
-}
-
-/**
-* @tab Header
-* @section header text
-* @tip Set the styling for your email's header text. Choose a size and color that is easy to read.
-*/
-.headerContent{
-	color:#2A292A;
-	font-family:Arial;
-	font-size:34px;
-	font-weight:bold;
-	line-height:100%;
-	padding:0;
-	text-align:center;
-	vertical-align:middle;
-}
-
-/**
-* @tab Header
-* @section header link
-* @tip Set the styling for your email's header links. Choose a color that helps them stand out from your text.
-*/
-.headerContent a:link, 
-.headerContent a:visited, 
-/* Yahoo! Mail Override */ 
-.headerContent a .yshortcuts {
-	color:#006AA8; 
-	font-weight:normal;
-	text-decoration:underline;
-}
-
-#headerImage{
-	height:auto;
-	max-width:600px !important;
-}
-
-/* /\/\/\/\/\/\/\/\/\/\ STANDARD STYLING: MAIN BODY /\/\/\/\/\/\/\/\/\/\ */
-
-/**
-* @tab Body
-* @section body style
-* @tip Set the background color for your email's body area.
-*/
-#templateContainer, .bodyContent{
-	background-color:#FFFFFF;
-}
-
-#sidebar { background-color:#B6CBD8; padding: 10px; }
-#sidebar p { color: #2A292A; }
-#sidebar img { border-width:10px; border-style: solid; border-color: #FFFFFF; }
-
-/**
-* @tab Body
-* @section body text
-* @tip Set the styling for your email's main content text. Choose a size and color that is easy to read.
-* @theme main
-*/
-.bodyContent div{
-	color:#504F51;
-	font-family:Arial;
-	font-size:14px;
-	line-height:150%;
-	text-align:left;
-}
-
-.table-wrap { border-width:1px; border-style: solid; border-color: #C7C4C9; margin:0 0 20px;  }
-#price-table { border-width:1px; border-style: solid; border-color: #C7C4C9; margin:1%; background:#f8f8f8; color: #2A292A; }
-#price-table .first .alpha, #price-table .alpha { border-left-width:0px; }
-#price-table .first td { border-width:0px; border-left-width:1px; border-style: solid; border-color: #C7C4C9; }
-#price-table td { border-width:0px; border-top-width: 1px; border-left-width: 1px; border-style: solid; border-color: #C7C4C9; text-align: right; }
-
-/**
-* @tab Body
-* @section body link
-* @tip Set the styling for your email's main content links. Choose a color that helps them stand out from your text.
-*/
-.bodyContent div a:link, .bodyContent div a:visited, /* Yahoo! Mail Override */ .bodyContent div a .yshortcuts /* Yahoo! Mail Override */{
-	color:#006AA8;
-	font-weight:normal;
-	text-decoration:underline;
-}
-
-.bodyContent img{
-	display:inline;
-	height:auto;
-}
-
-/* /\/\/\/\/\/\/\/\/\/\ STANDARD STYLING: FOOTER /\/\/\/\/\/\/\/\/\/\ */
-
-/**
-* @tab Footer
-* @section footer style
-* @tip Set the background color and top border for your email's footer area.
-* @theme footer
-*/
-#templateFooter{
-	background-color:#FFFFFF;
-	border-top:0;
-}
-
-/**
-* @tab Footer
-* @section footer text
-* @tip Set the styling for your email's footer text. Choose a size and color that is easy to read.
-* @theme footer
-*/
-.footerContent div{
-	color:#7D7B7E;
-	font-family:Arial;
-	font-size:12px;
-	line-height:125%;
-	text-align:left;
-}
-
-/**
-* @tab Footer
-* @section footer link
-* @tip Set the styling for your email's footer links. Choose a color that helps them stand out from your text.
-*/
-.footerContent div a:link, .footerContent div a:visited, /* Yahoo! Mail Override */ .footerContent div a .yshortcuts /* Yahoo! Mail Override */{
-	color:#2FBCFE;			/*		2FBCFE	C56CFC	*/
-	font-weight:normal;
-	text-decoration:underline;
-}
-
-.footerContent img{
-	display:inline;
-}
-
-/**
-* @tab Footer
-* @section social bar style
-* @tip Set the background color and border for your email's footer social bar.
-* @theme footer
-*/
-#social{
-	background-color:#383739;
-	border:0;
-	min-height:20px;
-}
-
-/**
-* @tab Footer
-* @section social bar style
-* @tip Set the background color and border for your email's footer social bar.
-*/
-#social div{
+	margin-bottom:10px;
+	text-decoration:none;
+	color: #FFF;font-weight:bold;
+	display:block;
 	text-align:center;
 }
+a.fb { background-color: #3B5998!important; }
+a.tw { background-color: #1daced!important; }
+a.gp { background-color: #DB4A39!important; }
+a.ms { background-color: #000!important; }
 
-/**
-* @tab Footer
-* @section utility bar style
-* @tip Set the background color and border for your email's footer utility bar.
-* @theme footer
-*/
-#utility{
-	background-color:#FFFFFF;
-	border:0;
+.sidebar .soc-btn { 
+	display:block;
+	width:100%;
 }
 
-/**
-* @tab Footer
-* @section utility bar style
-* @tip Set the background color and border for your email's footer utility bar.
-*/
-#utility div{
-	text-align:center;
+/* ------------------------------------- 
+		HEADER 
+------------------------------------- */
+table.head-wrap { width: 100%;}
+
+.header.container table td.logo { padding: 15px; }
+.header.container table td.label { padding: 15px; padding-left:0px;}
+
+
+/* ------------------------------------- 
+		BODY 
+------------------------------------- */
+table.body-wrap { width: 100%;}
+
+
+/* ------------------------------------- 
+		FOOTER 
+------------------------------------- */
+table.footer-wrap { width: 100%;	clear:both!important;
+}
+.footer-wrap .container td.content  p { border-top: 1px solid rgb(215,215,215); padding-top:15px;}
+.footer-wrap .container td.content p {
+	font-size:10px;
+	font-weight: bold;
+	
+}
+
+
+/* ------------------------------------- 
+		TYPOGRAPHY 
+------------------------------------- */
+h1,h2,h3,h4,h5,h6 {
+font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; line-height: 1.1; margin-bottom:15px; color:#000;
+}
+h1 small, h2 small, h3 small, h4 small, h5 small, h6 small { font-size: 60%; color: #6f6f6f; line-height: 0; text-transform: none; }
+
+h1 { font-weight:200; font-size: 44px;}
+h2 { font-weight:200; font-size: 37px;}
+h3 { font-weight:500; font-size: 27px;}
+h4 { font-weight:500; font-size: 23px;}
+h5 { font-weight:900; font-size: 17px;}
+h6 { font-weight:900; font-size: 14px; text-transform: uppercase; color:#444;}
+
+h4.attendee-name {
+	margin: 10px 0;
+}
+.collapse { margin:0!important;}
+
+p, ul { 
+	margin-bottom: 10px; 
+	font-weight: normal; 
+	font-size:14px; 
+	line-height:1.6;
+}
+p.lead { font-size:17px; }
+p.last { margin-bottom:0px;}
+
+ul li {
+	margin-left:5px;
+	list-style-position: inside;
+}
+
+hr {
+	margin: 10px 0;
+}
+
+/* ------------------------------------- 
+		SIDEBAR 
+------------------------------------- */
+ul.sidebar {
+	background:#ebebeb;
+	display:block;
+	list-style-type: none;
+}
+#ee-message-preview-container ul.sidebar li { display: block; margin:0; padding:10px 16px;}
+#ee-message-preview-container ul.sidebar li h5 {
+	text-decoration:none;
+	color: #000;
+	padding:10px 0 20px 0;
+	display:block;
+	margin:0;
+}
+ul.sidebar li a.last { border-bottom-width:0px;}
+ul.sidebar li a h1,ul.sidebar li a h2,ul.sidebar li a h3,ul.sidebar li a h4,ul.sidebar li a h5,ul.sidebar li a h6,ul.sidebar li a p { margin-bottom:0!important;}
+
+
+
+/* --------------------------------------------------- 
+		RESPONSIVENESS
+		Nuke it from orbit. It's the only way to be sure. 
+------------------------------------------------------ */
+
+/* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
+.container {
+	display:block!important;
+	max-width:600px!important;
+	margin:0 auto!important; /* makes it centered */
+	clear:both!important;
+}
+
+/* This should also be a block element, so that it will fill 100% of the .container */
+.content {
+	padding:15px;
+	max-width:600px;
+	margin:0 auto;
+	display:block; 
+}
+
+/* Let's make sure tables in the content area are 100% wide */
+.content table { width: 100%; }
+
+
+/* Odds and ends */
+.column {
+	width: 300px;
+	float:left;
+}
+.column tr td { padding: 15px; }
+.column-wrap { 
+	padding:0!important; 
+	margin:0 auto; 
+	max-width:600px!important;
+}
+.column table { width:100%;}
+.social .column {
+	width: 280px;
+	min-width: 279px;
+	float:left;
+}
+
+/* Be sure to place a .clear element after each set of columns, just to be safe */
+.clear { display: block; clear: both; }
+
+
+/* ------------------------------------------- 
+		PHONE
+		For clients that support media queries.
+		Nothing fancy. 
+-------------------------------------------- */
+@media only screen and (max-width: 600px) {
+	
+	a[class="btn"] { display:block!important; margin-bottom:10px!important; background-image:none!important; margin-right:0!important;}
+
+	div[class="column"] { width: auto!important; float:none!important;}
+	
+	table.social div[class="column"] {
+		width:auto!important;
+	}
+
 }

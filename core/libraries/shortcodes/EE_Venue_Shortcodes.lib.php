@@ -116,7 +116,6 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 	 * @return string       What was retrieved!
 	 */
 	private function _venue( $db_ref ) {
-		global $wpdb;
 
 		if ( ! $this->_data instanceof EE_Event )
 			return ''; //we need the event in order to get a venue!
@@ -136,10 +135,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case 'image':
-				$image_id = get_post_thumbnail_id( $venue->ID() );
-				if ( empty( $image_id ) ) return '';
-				$image = wp_get_attachment_image_src( $image_id );
-				return $image['src'];
+				return '<img src="' . $venue->feature_image_url(array(200,200) ) . '" alt="' . $venue->get('VNU_name') . ' Feature Image" />';
 				break;
 
 			case 'phone':
@@ -184,7 +180,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 					'state' => is_object( $state ) ? $state->get('STA_name') : '',
 					'zip' => $venue->get('VNU_zip'),
 					'country' => is_object( $country ) ? $country->get('CNT_name'): '',
-					'type' => $what == 'gmap_link' ? 'url' : 'map',
+					'type' => $db_ref == 'gmap_link' ? 'url' : 'map',
 					'map_w' => 200,
 					'map_h' => 200
 					);

@@ -21,7 +21,7 @@
 					<td class="jst-left"><?php echo $attendee['event_ticket_name'];?></td>
 					<td class="jst-left">
 						<?php 
-						$att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee['att_id'] ), REG_ADMIN_URL ); 
+						$att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration), REG_ADMIN_URL ); 
 						?>
 						<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
 							<?php echo $attendee['attendee']?>

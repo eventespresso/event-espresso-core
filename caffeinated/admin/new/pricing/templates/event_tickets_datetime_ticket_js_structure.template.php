@@ -42,12 +42,6 @@
 </div>
 
 
-<!-- new datetime display content -->
-<div id="dtt_new_display_row_holder" class="hidden">
-	<?php echo $default_datetime_display_row; ?>
-</div>
-
-
 <!-- this will always have existing tickets listed here.  When we create a new ticket they get added to this container so that if a new datetime is created it just pulls from here. -->
 <ul id="dtt-existing-available-ticket-list-items-holder" class="hidden datetime-tickets-list">
 	<li class="hidden"></li>
@@ -82,7 +76,6 @@
  * $default_price_rows
  * $default_price_modifier_selector_row
  * $default_available_tickets_for_datetime
- * $default_datetime_display_row
  * $existing_available_datetime_tickets_list
  * $existing_available_ticket_datetimes_list
  * $new_available_datetime_ticket_list_item

@@ -42,7 +42,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$this->_gateway_name = 'Invoice';
 		$this->_button_base = 'invoice-logo.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
-		$this->_btn_img = is_readable( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
+		$this->_btn_img = EE_GATEWAYS_URL . $this->_gateway_name . '/lib/' . $this->_button_base;
 		parent::__construct($model);
 	}
 
@@ -270,7 +270,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 			}
 
 			?>
-			<p><a href="<?php echo $registration->invoice_url(true) ?>" class="ee-button-lnk inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
+			<p><a href="<?php echo $registration->invoice_url('download') ?>" class="ee-button-lnk inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
 					<?php _e('Download PDF Invoice', 'event_espresso'); ?>
 				</a></p>
 			<?php

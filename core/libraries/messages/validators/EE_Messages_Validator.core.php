@@ -184,7 +184,6 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//get messenger validator_config
 		$msgr_validator = $this->_MSGR->get_validator_config();
 
-
 		
 		//we only want the valid shortcodes for the given context!
 		$context = $this->_context;
@@ -205,7 +204,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//okay now we've got our grps. Let's get the codes from the objects into an array indexed by group for easy retrieval later.
 		$codes_from_objs = array();
-		$shrtcode_grps = array_unique($shrtcode_grps);
+
 		foreach ( $shrtcode_grps as $group ) {
 			$ref = ucwords( str_replace('_', ' ', $group ) );
 			$ref = str_replace( ' ', '_', $ref );
@@ -230,8 +229,12 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//k now in this next loop we're going to loop through $msgr_validator again and setup the _validators property from the data we've setup so far.
 		foreach ( $msgr_validator as $field => $config ) {
-			//if empty config then we're assuming we're just going to use the shortcodes from the message type context
+			//if required shortcode is not in our list of codes for the given field, then we skip this field.
+			$required = isset($config['required']) ? array_intersect($config['required'], array_keys($mt_codes)) : true;
+			if ( empty($required) )
+				continue;
 
+			//if empty config then we're assuming we're just going to use the shortcodes from the message type context
 			if ( empty( $config ) ) {
 				$this->_validators[$field]['shortcodes'] = $mt_codes;
 			}
@@ -285,7 +288,10 @@ abstract class EE_Messages_Validator extends EE_Base {
 			$field_label = '';
 
 			//if field is not present in the _validators array then we continue
-			if ( !isset( $this->_validators[$field] ) ) continue;
+			if ( !isset( $this->_validators[$field] ) ) {
+				unset( $this->_errors[$field] );
+				continue;
+			}
 
 			//get the translated field label!
 			//first check if it's in the main fields list
@@ -345,7 +351,6 @@ abstract class EE_Messages_Validator extends EE_Base {
 			} else {
 				unset( $this->_errors[$field] );
 			}
-
 		}
 
 		//if we have ANY errors, then we want to make sure we return the values for ALL the fields so the user doesn't have to retype them all.
@@ -377,6 +382,12 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//get a diff of the shortcodes in the string vs the valid shortcodes
 		$diff = array_diff( $incoming_shortcodes, array_keys($valid_shortcodes) );
+
+		//we need to account for custom codes so let's loop through the diff and remove any of those type of codes
+		foreach ( $diff as $ind => $code ) {
+			if ( preg_match('/(\[[A-Za-z0-9]+_\*)/', $code ) )
+				unset( $diff[$ind] );
+		}
 
 		if ( empty( $diff ) ) return FALSE; //there is no diff, we have no invalid shortcodes, so return
 

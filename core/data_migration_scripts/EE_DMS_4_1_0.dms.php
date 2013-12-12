@@ -478,8 +478,8 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		
 		$table_name='esp_question_option';
 		$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					QSO_name VARCHAR(100) NOT NULL ,
 					QSO_value VARCHAR(100) NOT NULL ,
+					QSO_desc TEXT NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
 					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (QSO_ID)";
@@ -502,6 +502,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  REG_count tinyint(4) DEFAULT '1',
 					  REG_group_size tinyint(4) DEFAULT '1',
 					  REG_att_is_going tinyint(1) DEFAULT '0',
+					  REG_deleted tinyint(1) DEFAULT '0',
 					  PRIMARY KEY  (REG_ID),
 					  KEY EVT_ID (EVT_ID),
 					  KEY ATT_ID (ATT_ID),
@@ -1042,7 +1043,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $tickets_exist ) {
 				$SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
-					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
 				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
 				$wpdb->query($SQL);
 			}

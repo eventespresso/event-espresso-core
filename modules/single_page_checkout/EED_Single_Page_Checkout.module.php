@@ -254,6 +254,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
+
 		$this->_continue_reg = TRUE;
 		// verify recaptcha
 		if ( EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' )) {
@@ -282,8 +283,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				EE_Registry::instance()->CART->set_grand_total_line_item($transaction->total_line_item());
 				$this->_transaction = $transaction;
 			}
-			
-			
 		
 		} else{
 			$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
@@ -306,7 +305,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( empty( self::$_reg_steps )) {
 			EED_Single_Page_Checkout::setup_reg_steps_array();
 		}
-
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'translate_js_strings' ), 1 );
 	}
 
@@ -392,6 +390,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['answer_required_questions'] = __('You need to answer all required questions before you can proceed.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['enter_valid_email'] = __('You must enter a valid email address.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['valid_email_and_questions'] = __('You must enter a valid email address and answer all other required questions before you can proceed.', 'event_espresso');
+		EE_Registry::$i18n_js_strings['language'] = get_bloginfo( 'language' );
 	}
 
 
@@ -403,10 +402,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		void
 	 */
 	public static function wp_enqueue_scripts() {
-		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css' );
+		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style( 'single_page_checkout' );
 		wp_enqueue_script( 'underscore' );
-		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), '', TRUE );
+		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
@@ -420,6 +419,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return void
 	 */
 	private function _initialize_transaction() {
+//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
+//		d( $this->EE->CART );
 		// create new TXN
 		$transaction = EE_Transaction::new_instance( array( 
 				'TXN_timestamp' => current_time('mysql'),
@@ -559,7 +560,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				foreach ( $this->_transaction->registrations() as $registration ) {
 					
 					$line_item_ID = $registration->reg_url_link();	
-//					$cart_line_items = '#spco-line-item-' . $line_item_ID;					
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
 					$total_items += $registration->count();
@@ -573,37 +573,45 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						'input_id' => $line_item_ID,
 						'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
 					);
+					
 					$Question_Groups = EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array( 
 						array( 
 							'Event.EVT_ID' => $registration->event()->ID(), 
 							'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
-						)
+						),
+						'order_by'=>array( 'QSG_order'=>'ASC' )
 					));
-					//d( $Question_Groups );
-					foreach ( $Question_Groups as $Question_Group ) {
-						$Questions = $Question_Group->get_many_related( 'Question' );
-						//d( $Questions );
+					
+					foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
+						$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_deleted' => 0 ), 'order_by'=>array( 'QST_order' =>'ASC' )));
 						foreach ( $Questions as $Question ) {
-							/*@var $Question EE_Question */
-							if( !  $this->_reg_url_link ){
+							// if this question was for an attendee detail, then check for that answer
+							$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
+							if( $this->_reg_url_link || ! $answer_value ){
+								$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$Question->ID(), 'REG_ID'=>$registration->ID() )));
+							}
+							// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
+							if( ! $this->_reg_url_link || $answer_value || ! $answer instanceof EE_Answer ) {
+								// create an EE_Answer object for storing everything in
 								$answer = EE_Answer::new_instance ( array( 
 									'QST_ID'=> $Question->ID(),
 									'REG_ID'=> $registration->ID()
 								 ));
-								$answer->_add_relation_to( $Question, 'Question' );
+							} 	
+							
+							if( $answer instanceof EE_Answer ){
+								if ( ! empty( $answer_value ) /*&& $answer->value() == NULL*/ ) {
+									$answer->set( 'ANS_value', $answer_value );
+								}								
+								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer->value();
+								$answer->cache( 'Question', $Question );
 								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-								$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
-							}else{
-								$answer_to_question = EEM_Answer::instance()->get_answer_value_to_question($registration,$Question->ID());
-								$question_meta['attendee'][$Question->is_system_question() ? $Question->system_ID() : $Question->ID()] = $answer_to_question;
-							}
-
-						}
-						
+								$registration->cache( 'Answer', $answer, $answer_cache_id );
+							}								
+							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
+						}						
 					}
-
-					
-					//printr( $question_meta, '$question_meta  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
 					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
@@ -611,8 +619,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 					// show this attendee form?
 					if ( empty( $attendee_questions )) {				
-						//$attendee_questions .= '<p>' . __('This event does not require registration information for additional attendees.', 'event_espresso') . '</p>';
-//						$attendee_questions .= '
 						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '
 							<input
 									type="hidden"
@@ -762,6 +768,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				) 
 			);
 			if ( $step_nmbr == 1 ) {
+				$template_args['selected_gateway'] = '';
 				add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Single_Page_Checkout', 'display_recaptcha' ), 10, 2 );	
 			}
 			
@@ -871,7 +878,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
 					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
-					$total_items = $registration->count();
+					$total_items += $registration->count();
 					$ticket_count[ $registration->ticket()->ID() ] = isset( $ticket_count[ $registration->ticket()->ID() ] ) ? $ticket_count[ $registration->ticket()->ID() ] + 1 : 1;
 
 					$question_meta = array(
@@ -887,25 +894,26 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 						array( 
 							'Event.EVT_ID' => $registration->event()->ID(), 
 							'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
-						)
+						),
+						'order_by'=>array( 'QSG_order' => 'ASC' )
 					));
 					
-					foreach ( $Question_Groups as $Question_Group ) {
-						$Questions = $Question_Group->get_many_related( 'Question' );
+					foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
+						$Questions = $Question_Group->get_many_related( 'Question', array( 'order_by'=>array( 'QST_order'=>'ASC' )) );
 						//d( $Questions );
 						
 						foreach ( $Questions as $Question ) {
+							
 							/*@var $Question EE_Question */
 							$answer = EE_Answer::new_instance ( array( 
-								'QST_ID'=> $Question->ID(),
-								'REG_ID'=> $registration->ID()
-							 ));
-							$answer->_add_relation_to( $Question, 'Question' );
+									'QST_ID'=> $Question->ID(),
+									'REG_ID'=> $registration->ID()
+								 ));
+							$answer->cache( 'Question', $Question );
 							$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-							$registration->_add_relation_to( $answer, 'Answer', array(), $answer_cache_id );
-
-						}
-						
+							$registration->cache( 'Answer', $answer, $answer_cache_id );
+							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
+						}		
 					}
 
 					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
@@ -1095,6 +1103,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									$att_nmbr++;
 									// grab related answer objects
 									$answers = $registration->answers();
+//									printr( $answers, '$answers[ $answer_cache_id ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 									//printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 									$attendee_data = array();
 									// do we need to copy basic info from primary attendee ?
@@ -1102,10 +1111,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
 									if ( isset( $valid_data[ $line_item_id ] )) {
 										// now loop through our array of valid post data && process attendee reg forms
-										foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
-											
-											//echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-											
+										foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {											
 											// check for critical inputs
 											if ( empty( $input_value )) {
 												
@@ -1129,7 +1135,9 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													// whoops!!!
 													EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 												}
-											}
+											} /*else if ( is_array( $input_value )) {
+												$input_value = maybe_serialize( $input_value );
+											}*/
 										
 											// store a bit of data about the primary attendee
 											if ( $att_nmbr == 1 && $line_item_id == $primary_attendee['line_item_id'] && ! empty( $input_value )) {
@@ -1158,10 +1166,13 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													$form_input = 'ATT_' . $form_input;
 											}
 						
+//											echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//											echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+											
 											// if this form input has a corresponding attendee property
 											if ( $attendee_property ) {
 												$attendee_data[ $form_input ] = $input_value;
-												if (  $answer_is_obj ) {
+												if (  $answer_is_obj ) {													
 													// and delete the corresponding answer since we won't be storing this data in that object
 													$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
 												}
@@ -1183,7 +1194,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 										// add relation to new attendee
 										$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
 	//									echo '$copy_primary attendee <br/>';
-									} else {									
+									} else {							
 										// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
 										$existing_attendee = EE_Registry::instance()->LIB->EEM_Attendee->find_existing_attendee( array(
 											'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
@@ -1192,11 +1203,24 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 										));
 										// did we find an already existing record for this attendee ?
 										if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {
-											// TODO: add $attendee_data to $existing_attendee
+											// update attendee data in case it has changed since last time they registered for an event
+											// first remove fname, lname, and email from attendee data
+											unset( $attendee_data['ATT_fname'] );
+											unset( $attendee_data['ATT_lname'] );
+											unset( $attendee_data['ATT_email'] );
+											// now loop thru what' sleft and add to attendee CPT
+											foreach ( $attendee_data as $property_name => $property_value ) {
+												if ( property_exists( $existing_attendee,  '_' . $property_name )) {
+													$existing_attendee->set( $property_name, $property_value );
+												}												
+											}
+											// better save that now
+											$existing_attendee->save();
 											// add relation to existing attendee
 											$registration->_add_relation_to( $existing_attendee, 'Attendee' );
-	//										echo '$existing_attendee <br/>';
+
 										} else {
+											$attendee_data['ATT_author'] = $registration->event()->wp_user();
 											// add relation to new attendee
 											$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );
 	//										echo 'new attendee <br/>';
@@ -1219,6 +1243,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 								if ( ! $registration->attendee() instanceof EE_Attendee ) {
 									EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $line_item_id ), __FILE__, __FUNCTION__, __LINE__ );
 								}
+								
+//								printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 							} // end of if ( $registration instanceof EE_Registration )
 							
@@ -1293,7 +1319,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		//all is good so let's continue with finalizing the registration.
 		$this->_transaction->save_new_cached_related_model_objs();
 		EE_Registry::instance()->SSN->set_session_data(array('transaction', NULL ) );
-		$this->_transaction->set_txn_session_data(EE_Registry::instance()->SSN );
+		$this->_transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data() );
 		$this->_transaction->finalize();
 		$this->_transaction->save();
 		EE_Registry::instance()->CART->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
@@ -1354,7 +1380,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	public function process_recaptcha_response() {
 		
 		$response_data = array(
-			'success' => TRUE,
+			//'success' => TRUE,
 			'error' => FALSE
 		);
 		
@@ -1428,6 +1454,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					echo json_encode( $response_data );
 					die();
 				} else {
+//					printr( $response_data, '$response_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//					echo '<h4>$this->_thank_you_page_url : ' . $this->_thank_you_page_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 					wp_safe_redirect( $this->_thank_you_page_url );
 					exit(); 
 				}			
@@ -1532,6 +1560,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		} else {
 			$redirect = $this->_thank_you_page_url;
 		}
+//		echo '<h4>$next_step : ' . $next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$redirect : ' . $redirect . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		wp_safe_redirect( $redirect );
 		exit();
 	}

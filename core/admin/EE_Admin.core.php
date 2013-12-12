@@ -74,7 +74,7 @@ final class EE_Admin {
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 15 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 		
@@ -135,7 +135,6 @@ final class EE_Admin {
 	 *	@return void
 	 */
 	public function get_request() {
-		EE_Registry::instance()->load_helper( 'URL' );	
 		EE_Registry::instance()->load_core( 'CPT_Strategy' );
 		EE_Registry::instance()->load_core( 'Request_Handler' );
 	}
@@ -480,6 +479,42 @@ final class EE_Admin {
 
 			wp_enqueue_style('joyride-css');
 			wp_enqueue_script('jquery-joyride');
+		}
+
+		//qtip is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
+		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
+			EE_Registry::instance()->load_helper('Qtip_Loader');
+			EEH_Qtip_Loader::instance()->register_and_enqueue();
+		}
+
+
+		//accounting.js library
+		// @link http://josscrowcroft.github.io/accounting.js/
+		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
+			$acct_js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? EE_THIRD_PARTY_URL . 'accounting/accounting.js' : EE_THIRD_PARTY_URL . 'accounting/accounting.min.js';
+			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_register_script( 'ee-accounting-core', $acct_js, array(), '0.3.2', TRUE );
+			wp_enqueue_script( 'ee-accounting' );
+
+			$currency_config = array(
+				'currency' => array(
+					'symbol' => EE_Registry::instance()->CFG->currency->sign,
+					'format' => array(
+						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
+						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s(%v)' : '(%v)%s',
+						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s--' : '--%s'
+						 ),
+					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
+					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
+					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
+					),
+				'number' => array(
+					'precision' => 0,
+					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
+					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
+					)
+				);
+			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
 		}
 	}
 
@@ -828,11 +863,8 @@ final class EE_Admin {
 			$update_post_shortcodes = FALSE;
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
-			// array of shortcodes indexed by post ID
-			EE_Registry::instance()->CFG->core->post_id_shortcodes = isset( EE_Registry::instance()->CFG->core->post_id_shortcodes ) ? EE_Registry::instance()->CFG->core->post_id_shortcodes : array();
 			// empty both arrays
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
-			EE_Registry::instance()->CFG->core->post_id_shortcodes[ $post_ID ] = array();
 			// loop thru shortcodes
 			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// strip class prefix and convert to UPPERCASE
@@ -841,7 +873,6 @@ final class EE_Admin {
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
 					// map shortcode to post names and post IDs
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
-					EE_Registry::instance()->CFG->core->post_id_shortcodes[ $post_ID ][ $EES_Shortcode ] = $post_ID;
 					// and to frontpage in case it's displaying latest posts (don't need to track IDs for this)
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
 					$update_post_shortcodes = TRUE;

@@ -128,12 +128,24 @@ abstract class EE_Shortcodes extends EE_Base {
 	 * @return string            parsed shortcode.
 	 */
 	public function parser($shortcode, $data, $extra_data = array() ) {
+
+		//filter setup shortcodes
+		$this->_shortcodes = $this->get_shortcodes();
+
+		//we need to setup any dynamic shortcodes so that they work with the array_key_exists
+		$sc = preg_match_all( '/(\[[A-Za-z0-9]+_\*)/', $shortcode, $matches );
+		$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
+
 		//first we want to make sure this is a valid shortcode
-		if ( !array_key_exists($shortcode, $this->_shortcodes ) )
+		if ( !array_key_exists($sc_to_verify, $this->_shortcodes ) )
 			return false; //get out, this parser doesn't handle the incoming shortcode.
 		$this->_data = $data;
 		$this->_extra_data = $extra_data;
-		return $this->_parser($shortcode);
+		$parsed = apply_filters( 'FHEE__' . get_class($this) . '__parser_after', $this->_parser($shortcode), $shortcode, $data, $extra_data );
+
+		//note the below filter applies to ALL shortcode parsers... be careful!
+		$parsed = apply_filters( 'FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data );
+		return $parsed;
 	}
 
 
@@ -148,6 +160,11 @@ abstract class EE_Shortcodes extends EE_Base {
 	 * @return array array of shortcodes => description pairs
 	 */
 	public function get_shortcodes() {
+		$this->_shortcodes = apply_filters( 'FHEE__' . get_class($this) . '__shortcodes', $this->_shortcodes, $this );
+
+		//note the below filter applies to ALL shortcode parsers... be careful!
+		$this->_shortcodes = apply_filters( 'FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this );
+		
 		return $this->_shortcodes;
 	}
 

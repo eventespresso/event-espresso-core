@@ -336,13 +336,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function load_scripts_styles_edit_category() {
-		//styles
-		//wp_enqueue_style('jquery-ui-style');
-
 		//scripts
 		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
-		
-		;
 		EE_Registry::$i18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
 		wp_localize_script( 'ee_cat_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
 
@@ -354,7 +349,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function load_scripts_styles_edit() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espresso-ui-theme');
 		wp_register_style( 'espresso_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_venues');
 
@@ -412,7 +407,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->_search_btn_label = __('Venues', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
@@ -421,7 +416,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function extra_misc_actions_publish_box() {
 		$extra_rows = array(
-			'vnu_capacity' => $this->_cpt_model_obj->capacity(),
+			'vnu_capacity' => $this->_cpt_model_obj->get_pretty('VNU_capacity', 'input'),
 			'vnu_url' => $this->_cpt_model_obj->venue_url(),
 			'vnu_phone' => $this->_cpt_model_obj->phone()
 			);
@@ -522,7 +517,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'CNT_ISO' => !empty( $this->_req_data['cnt_iso'] ) ? $this->_req_data['cnt_iso'] : NULL,
 			'VNU_zip' => !empty( $this->_req_data['vnu_zip'] ) ? $this->_req_data['vnu_zip'] : NULL,
 			'VNU_phone' => !empty( $this->_req_data['vnu_phone'] ) ? $this->_req_data['vnu_phone'] : NULL,
-			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? $this->_req_data['vnu_capacity'] : NULL,
+			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? $this->_req_data['vnu_capacity'] : INF,
 			'VNU_url' => !empty( $this->_req_data['vnu_url'] ) ? $this->_req_data['vnu_url'] : NULL,
 			'VNU_virtual_phone' => !empty( $this->_req_data['vnu_virtual_phone'] ) ? $this->_req_data['vnu_virtual_phone'] : NULL,
 			'VNU_virtual_url' => !empty( $this->_req_data['vnu_virtual_url'] ) ? $this->_req_data['vnu_virtual_url'] : NULL,
@@ -720,7 +715,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * todo ... move this to parent (pretty much the same logic as in Events Admin) (same with delete_venues and permanently delete venue)
 	 * @param  boolean $redirect_after [description]
 	 * @return [type]                  [description]
 	 */
@@ -776,8 +770,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			return FALSE;
 		}
 		
-		$this->_cpt_model_obj = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
-		$success = $this->_cpt_model_obj->count_related('Event') > 0 ? $this->_cpt_model_obj->delete() : $this->_cpt_model_obj->delete_permanently();
+
+		$venue = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
+		//first need to remove all term relationships
+		$venue->_remove_relations('Term_Taxonomy');
+		$success = $venue->delete_permanently();
 		// did it all go as planned ?
 		if ($success) {
 			$msg = sprintf(__('Venue ID # %d has been deleted.', 'event_espresso'), $VNU_ID);
@@ -832,7 +829,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$limit = array($offset, $per_page);
 
 		$where = array(
-			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : 'publish'
+			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : array('IN', array('publish', 'draft') )
 			//todo add filter by category
 			);
 
@@ -923,7 +920,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'add-new-h2');
 		$this->_search_btn_label = __('Venue Categories', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
 	}

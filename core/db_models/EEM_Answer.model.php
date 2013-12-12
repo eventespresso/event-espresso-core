@@ -56,7 +56,7 @@ class EEM_Answer extends EEM_Base {
 				'ANS_ID'=> new EE_Primary_Key_Int_Field('ANS_ID', __('Answer ID','event_espresso')),
 				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID','event_espresso'), false, 0, 'Registration'),
 				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Quesetion ID','event_espresso'), false, 0, 'Question'),
-				'ANS_value'=>new EE_Simple_HTML_Field('ANS_value', __('Answer Value','event_espresso'), false, '')
+				'ANS_value'=>new EE_Maybe_Serialized_Text_Field('ANS_value', __('Answer Value','event_espresso'), false, '')
 			));
 		$this->_model_relations = array(
 			'Registration'=>new EE_Belongs_To_Relation(),
@@ -66,6 +66,8 @@ class EEM_Answer extends EEM_Base {
 		parent::__construct();
 	}
 
+
+
 	/**
 	 * Gets the string answer to the question for this registration (it could either be stored
 	 * on the attendee or in the answer table. This function finds its value regardless)
@@ -73,11 +75,43 @@ class EEM_Answer extends EEM_Base {
 	 * @param int $question_id
 	 * @return string
 	 */
-	public function get_answer_value_to_question(EE_Registration $registration,$question_id){
-		$value = null;
+	public function get_answer_value_to_question( EE_Registration $registration, $question_id = NULL ){
+		$value = $this->get_attendee_property_answer_value( $registration, $question_id );
+		if (  $value === NULL ){
+			$answer_obj = $this->get_registration_question_answer_object( $registration, $question_id );
+			if( $answer_obj instanceof EE_Answer ){
+				$value = $answer_obj->value();
+			}
+		}
+		return apply_filters( 'FHEE__EEM_Answer__get_answer_value_to_question__answer_value', $value, $registration, $question_id );
+	}
+
+
+
+	/**
+	 * Gets the EE_Answer object for the question for this registration (if it exists)
+	 * @param EE_Registration $registration
+	 * @param int $question_id
+	 * @return EE_Answer
+	 */
+	public function get_registration_question_answer_object( EE_Registration $registration, $question_id = NULL ){
+		$answer_obj = $this->get_one( array( array( 'QST_ID'=>$question_id, 'REG_ID'=>$registration->ID() )));
+		return apply_filters('FHEE__EEM_Answer__get_registration_question_answer_object__answer_obj', $answer_obj, $registration, $question_id );
+	}
+
+
+
+	/**
+	 * Gets the string answer to the question for this registration's attendee
+	 * @param EE_Registration $registration
+	 * @param int $question_id
+	 * @return string
+	 */
+	public function get_attendee_property_answer_value( EE_Registration $registration, $question_id = NULL ){
+		$value = NULL;
 		//only bother checking if the registration has an attendee
-		if($registration->attendee_ID() && $registration->attendee()){
-			switch($question_id){
+		if( $registration->attendee() instanceof EE_Attendee ){
+			switch( $question_id ){
 				case EEM_Attendee::fname_question_id:
 					$value =  $registration->attendee()->fname();
 					break;
@@ -110,15 +144,11 @@ class EEM_Answer extends EEM_Base {
 					break;				
 			}
 		}
-		if (  $value === null){
-			$answer_obj = $this->get_one(array(array('QST_ID'=>$question_id,'REG_ID'=>$registration->ID())));
-			if($answer_obj){
-				$value = $answer_obj->value();
-			}
-		}
-		return apply_filters('FHEE__EEM_Answer__get_answer_value_to_question',$value,$registration,$question_id);
-		
+		return apply_filters( 'FHEE__EEM_Answer__get_attendee_question_answer_value__answer_value', $value, $registration, $question_id );		
 	}
+
+
+
 }
 // End of file EEM_Answer.model.php
 // Location: /includes/models/EEM_Answer.model.php

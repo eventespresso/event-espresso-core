@@ -6,11 +6,10 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 			4.1.028.dev
-
-  Author: 				Seth Shoultes
+  Version: 		4.1.111.alpha
+  Author: 			Seth Shoultes
   Author URI: 		http://www.eventespresso.com
-  License: 				GPLv2
+  License: 		GPLv2
   TextDomain: event_espresso
 
   Copyright (c) 2008-2011 Event Espresso  All Rights Reserved.
@@ -31,7 +30,7 @@
  */
 //Returns the plugin version
 function espresso_version() {
-	return '4.1.028.dev';
+	return '4.1.111.alpha';
 }
 //Returns the template version
 function espresso_template_version() {
@@ -61,6 +60,8 @@ define( 'EE_CORE', EE_PLUGIN_DIR_PATH . 'core' . DS );
 define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
 define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
 define( 'EE_TEMPLATES', EE_PLUGIN_DIR_PATH . 'templates' . DS );
+define( 'EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets' . DS );
+define( 'EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS );
 // core system paths
 define( 'EE_ADMIN', EE_CORE . 'admin' . DS );
 define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );
@@ -78,6 +79,7 @@ define( 'EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'templates' . DS );
 define( 'EE_GLOBAL_ASSETS_URL', EE_TEMPLATES_URL . 'global_assets' . DS );
 define( 'EE_IMAGES_URL',  EE_GLOBAL_ASSETS_URL . 'images' . DS );
 define( 'EE_THIRD_PARTY_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'third_party_libs' . DS );
+define( 'EE_HELPERS_ASSETS', EE_PLUGIN_DIR_URL . 'core/helpers/assets/' );
 
 // define upload paths
 $uploads = wp_upload_dir();
@@ -97,7 +99,10 @@ define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
 //ajax constants
 define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) ? TRUE : FALSE );
 define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) ? TRUE : FALSE );
-
+//just a handy constant occasionally needed for finding values reprsenting infinity in the DB
+//you're better to use this than its straight value (currently -1) in case you ever
+//want to change its default value! or find when -1 means infinity
+define('EE_INF_IN_DB', -1);
 // define versions
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 	define( 'EVENT_ESPRESSO_VERSION', espresso_version());

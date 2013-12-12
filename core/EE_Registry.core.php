@@ -83,6 +83,13 @@ final class EE_Registry {
 	public $modules = array();
 
 	/**
+	 * 	$widgets
+	 * 	@access 	public
+	 *	@var 	array	$widgets
+	 */
+	public $widgets = array();
+
+	/**
 	 * 	$models
 	 * 	@access 	public
 	 *	@var 	array	$models
@@ -249,10 +256,12 @@ final class EE_Registry {
 	public function load_lib ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		$paths = array(
 			EE_LIBRARIES,
-			EE_LIBRARIES . 'messages' . DS
+			EE_LIBRARIES . 'messages' . DS,
+			EE_LIBRARIES . 'shortcodes' . DS,
+			EE_LIBRARIES . 'qtips' . DS
 		);
 		// retreive instantiated class
-		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments, FALSE, TRUE, $load_only );
+		return $this->_load( $paths, 'EE_' , $class_name, 'lib', $arguments, FALSE, TRUE, $load_only );
 	}
 
 

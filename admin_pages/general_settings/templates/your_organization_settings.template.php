@@ -97,7 +97,20 @@
 				<td>
 					<input class="regular-text" type="text" name="organization_email" value="<?php echo $organization_email; ?>" />
 					<p class="description">
-						<?php _e('This where all notifications will go to so make sure its correct.'); ?>
+						<?php _e('This where all notifications will go to so make sure its correct.', 'event_espresso'); ?>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<label for="organization_phone">
+						<?php _e('Phone Number:', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<input class="regular-text" type="text" name="organization_phone" value="<?php echo $organization_phone; ?>" />
+					<p class="description">
+						<?php _e('The phone number for your organization.', 'event_espresso'); ?>
 					</p>
 				</td>
 			</tr>
@@ -110,7 +123,7 @@
 				<td>
 					<input class="regular-text" type="text" name="organization_vat" value="<?php echo $organization_vat; ?>" />
 					<p class="description">
-						<?php _e('The VAT/Tax Number may be displayed on invoices and receipts.'); ?>
+						<?php _e('The VAT/Tax Number may be displayed on invoices and receipts.', 'event_espresso'); ?>
 					</p>	
 				</td>
 			</tr>

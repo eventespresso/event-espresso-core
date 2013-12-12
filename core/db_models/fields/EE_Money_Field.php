@@ -6,16 +6,30 @@ class EE_Money_Field extends EE_Float_Field{
 	function get_wpdb_data_type(){
 		return '%f';
 	}
+	/**
+	 * Schemas: 
+	 *	'localized_float': "3,023.00"
+	 *	'no_currency_code': "$3,023.00"
+	 *	null: "$3,023.00<span>USD</span>"
+	 * @param type $value_on_field_to_be_outputted
+	 * @param type $schema
+	 * @return string
+	 */
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted,$schema = null){
+		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
+
+		if($schema == 'localized_float'){
+			return $pretty_float;
+		}
 		EE_Registry::instance()->load_helper( 'Template' );
-		if($schema == 'schema_no_currency'){
+		if($schema == 'no_currency_code'){
 //			echo "schema no currency!";
 			$display_code = false;
 		}else{
 			$display_code = true;
 		}
-		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
-		return EEH_Template::format_currency( $pretty_float, false, $display_code );
+		//we don't use the $pretty_float because format_currency will take care of it.
+		return EEH_Template::format_currency( $value_on_field_to_be_outputted, false, $display_code );
 	}
 	
 	/**
@@ -31,6 +45,6 @@ class EE_Money_Field extends EE_Float_Field{
 	
 	function prepare_for_get($value_of_field_on_model_object) {
 		$c = EE_Registry::instance()->CFG->currency;
-		return number_format(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc, $c->dec_mrk, $c->thsnds);
+		return round(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc);
 	}
 }

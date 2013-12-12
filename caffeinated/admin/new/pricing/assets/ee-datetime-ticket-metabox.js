@@ -298,12 +298,12 @@ jQuery(document).ready(function($) {
 			$('#add-event-datetime').find('input').each(function() { $(this).val(''); });
 
 			//create new DTT display row.
-			var DTT_display_row = $('#dtt_new_display_row_holder').clone().html().replace(/DTTNUM/g, row);
-			DTT_display_row = $(DTT_display_row).prependTo(DTT_row_container);
+			/*var DTT_display_row = $('#dtt_new_display_row_holder').clone().html().replace(/DTTNUM/g, row);
+			DTT_display_row = $(DTT_display_row).prependTo(DTT_row_container);/**/
 
 			//replace Date text
 			DTT_display_text = this.DTT_display_text(DTT_start_time, DTT_end_time);
-			$(DTT_display_row).find('.datetime-title').text(DTT_display_text);
+			/*$(DTT_display_row).find('.datetime-title').text(DTT_display_text);/**/
 
 			//apply existing tickets
 			this.applyExistingTKTorDTTitems(DTT_row_container);
@@ -322,9 +322,9 @@ jQuery(document).ready(function($) {
 
 			//verify that there isn't only one DTT row.  If there is then let's remove the trash icon from this element.  If there ISNT' then let's show all trash elements.
 			if ( $('.event-datetime-row', '.event-datetimes-container').length === 1 ) {
-				DTT_display_row.find('.trash-icon').hide();
+				DTTeditform.find('.trash-icon').hide();
 			} else {
-				$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon', '.datetime-summary').show();
+				$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon', '.datetime-edit').show();
 			}
 			return this;
 		},
@@ -652,7 +652,7 @@ jQuery(document).ready(function($) {
 			//need to update the displayed datetime string for the datetime title...
 			var DTT_display_text = this.DTT_display_text( $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end', '#edit-event-datetime-' + this.dateTimeRow).val() );
 
-			$('.datetime-title', '#display-event-datetime-' + this.dateTimeRow).text(DTT_display_text);
+			/*$('.datetime-title', '#display-event-datetime-' + this.dateTimeRow).text(DTT_display_text);/**/
 
 			//... and in all related dtt list rows!
 			$('.datetime-tickets-list').find('li[data-datetime-row="' + tktHelper.dateTimeRow + '"]').each( function() {
@@ -741,7 +741,8 @@ jQuery(document).ready(function($) {
 			//replace all instances of DTTNUM with dttrow
 			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.dateTimeRow);
 			//get name for dtt and add to the new li item
-			var dttname = $('.datetime-title', '#display-event-datetime-' + this.dateTimeRow ).text();
+			var dttname = this.DTT_display_text( $('.event-datetime-DTT_EVT_start', '#edit-event-datetime-' + this.dateTimeRow).val(), $('.event-datetime-DTT_EVT_end', '#edit-event-datetime-' + this.dateTimeRow).val() );
+			/*var dttname = $('.datetime-title', '#display-event-datetime-' + this.dateTimeRow ).text();/**/
 			new_dtt_list_row = new_dtt_list_row.replace(/DTTNAME/g,dttname);
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
@@ -980,6 +981,12 @@ jQuery(document).ready(function($) {
 
 			initialPRCrow = incomingcontext == 'short-ticket' ? $(initialPRCrow).appendTo(newTKTrow.find('.ticket-price-rows')) : $(newTKTrow).find('.ticket-price-rows').html(initialPRCrow);
 
+			initialPRCrow.find('.ticket-price-plus-minus').hide();
+			initialPRCrow.find('.ticket-price-dollar-sign-display').show();
+
+			if ( incomingcontext == 'short-ticket' )
+				initialPRCrow.find('.trash-icon').hide();/**/
+
 			//if this is triggered via the "short-ticket" context then we need to get the values from the create ticket form and add to the new row.
 			if ( incomingcontext == 'short-ticket' ) {
 				// inputs
@@ -1026,10 +1033,12 @@ jQuery(document).ready(function($) {
 
 				newTKTrow.find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
 
+				newTKTrow.find('.ee-editing-container').removeClass('ee-edit-editing');
+
 				// selectors
 				var selected_price_type_val = 1;
 
-				newTKTrow.find('.price-title-text', '.price-row-' + row).text('Base Price');
+				newTKTrow.find('.price-title-text', '.price-row-' + row).text('Price');
 				newTKTrow.find('.edit-price-PRC_name', '.price-row-' + row).val(pricename);
 				$('add-datetime-ticket-container', '#edit-event-datetime-tickets-' + this.dateTimeRow ).find('.gear-icon').hide(); //reset cog visibility.
 
@@ -1410,19 +1419,34 @@ jQuery(document).ready(function($) {
 		 * This toggles the display of the edit form for a dtt row depending on the context and row num properties set.
 		 *
 		 */
-		DateTimeEditToggle: function() {
-			if ( this.context == 'ticket' || this.context == 'short-ticket' ) {
-				this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
-				this.selector.slideToggle( 250 );
-			} else if ( this.context == 'datetime' ) {
+		DateTimeEditToggle: function( trash ) {
+			trash = typeof(trash) === 'undefined' ? false : trash;
+			this.selector = $('#edit-event-datetime-tickets-' + this.dateTimeRow );
+			/*else if ( this.context == 'datetime' ) {
 				this.selector = $('#edit-event-datetime-' + this.dateTimeRow );
-				this.selector.slideToggle( 250 );
+				this.selector.slideToggle( 250 );/**/
+			if ( this.context == 'datetime-create' ) {
+				this.selector = $('#add-event-datetime');
+				if ( trash )
+					this.selector.find('input').val('');
+				this.slideToggler();
+				return this;
 			}
+			this.context = 'datetime';
+			this.slideToggler();
 			return this;
 		},
 
 
-
+		setSelector: function() {
+			switch ( this.context ) {
+				case 'ticket' :
+				case 'short-ticket' :
+					this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
+					break;
+			}
+			return this;
+		},
 
 		/**
 		 * This toggles the display of the edit form for a Ticket row.
@@ -1431,11 +1455,11 @@ jQuery(document).ready(function($) {
 		 */
 		TicketEditToggle: function( trash ) {
 			trash = typeof(trash) === 'undefined' ? false : trash;
-			this.selector = $('#fieldset-edit-ticketrow-' + this.ticketRow );
-			this.selector.slideToggle(250);
+			this.setSelector();
+			this.slideToggler();
 
 			/**
-			 * if creating is true, then we need to remove the existing row and related items from the dom.
+			 * if creating is true (and trashing), then we need to remove the existing row and related items from the dom.
 			 */
 			if ( this.creating && trash &&  _.indexOf(this.createdItems, this.ticketRow) > -1 )
 				this.setcontext('ticket').trash(this.ticketRow);
@@ -1446,13 +1470,42 @@ jQuery(document).ready(function($) {
 		},
 
 
+		/**
+		 * wrapper for jQuery slideToggle so we can do our common stuff in it
+		 * @param  {int}    delay how long the toggle animation should take to complete in milliseconds
+		 * @return {tktHelper}       this object
+		 */
+		slideToggler: function( delay ) {
+			var edit_container;
+			switch ( this.context ) {
+				case 'ticket' :
+					edit_container = $('#display-ticketrow-' + this.ticketRow).find('.ee-editing-container');
+					break;
+				case 'datetime' :
+					edit_container = $('#edit-event-datetime-' + this.dateTimeRow).find('.ee-editing-container');
+					break;
+			}
+
+			delay = typeof(delay) === 'undefined' ? 200 : delay;
+			this.selector.slideToggle(delay, function() {
+				if ( typeof( edit_container ) !== 'undefined' ) {
+					if ( $(this).is(':visible') ) {
+						edit_container.addClass('ee-edit-editing');
+					} else {
+						edit_container.removeClass('ee-edit-editing');
+					}
+				}
+			});
+			return this;
+		},
+
 
 		/**
 		 * This toggles the display of the edit form for a Price Row.
 		 */
 		PriceEditToggle: function() {
 			this.selector = $('.extra-price-row', '#extra-price-row-' + this.ticketRow + '-' + this.priceRow);
-			this.selector.slideToggle(250);
+			this.selector.slideToggle(200);
 			return this;
 		},
 
@@ -1507,14 +1560,17 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		switch ( data.context ) {
+			case 'datetime-create' :
+				tktHelper.newDTTrow().setcontext('datetime-create').DateTimeEditToggle(true).setcontext('ticket').DateTimeEditToggle().scrollTo();
+				break;
 			case 'datetime' :
-				tktHelper.newDTTrow().setcontext('ticket').DateTimeEditToggle().scrollTo();
+				tktHelper.setcontext('datetime-create').DateTimeEditToggle();
 				break;
 			case 'short-ticket' :
 				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow().setCreating();
 				break;
 			case 'ticket' :
-				tktHelper.setcontext('ticket').newTicketRow().TicketEditToggle().setCreating().scrollTo();
+				tktHelper.setcontext('ticket').newTicketRow().setCreating().TicketEditToggle().scrollTo();
 				break;
 			case 'price' :
 				tktHelper.setcontext('price').setitemdata(data).newPriceRow();
@@ -1532,9 +1588,9 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		switch ( data.context ) {
-			case 'datetime' :
+			/*case 'datetime' :
 				tktHelper.updateDTTrow(data.datetimeRow);
-				break;
+				break;/**/
 
 			case 'ticket' :
 				tktHelper.updateTKTrow(data.ticketRow);
@@ -1542,6 +1598,13 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
+
+	$('.datetime-edit').on('focusout', '.ee-datepicker', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var data = $(this).data();
+		tktHelper.updateDTTrow(data.datetimeRow);
+	});
 
 
 	/**
@@ -1558,9 +1621,14 @@ jQuery(document).ready(function($) {
 			case 'short-ticket' :
 				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
 				break;
-			case 'datetime' :
+			/*case 'datetime' :
 				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
+				break;/**/
+			case 'datetime-create' :
+				//clear inputs
+				tktHelper.setcontext('datetime-create').DateTimeEditToggle(true);
 				break;
+
 		}
 		return false;
 	});
@@ -1573,20 +1641,26 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		switch ( data.context ) {
-			case 'datetime' :
-				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle();
-				break;
 
 			case 'ticket-datetime' :
 				tktHelper.setcontext('datetime').setdateTimeRow(data.datetimeRow).DateTimeEditToggle().scrollTo();
 				break;
 
 			case 'datetime-ticket' :
-				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
+				if ( ! $('.event-tickets-container').is(':visible') ) {
+					$('.event-tickets-container').slideToggle(245);
+					$('.ee-collapsible', '.available-tickets-container').removeClass('ee-collapsible-closed').addClass('ee-collapsible-open');
+				}
+
+				if ( $('#fieldset-edit-ticketrow-' + data.ticketRow ).is(':visible') ) {
+					tktHelper.setcontext('ticket').setticketRow(data.ticketRow).scrollTo($('#fieldset-edit-ticketrow-' + data.ticketRow ) );
+				} else {
+					tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle().scrollTo();
+				}
 				break;
 
 			case 'ticket' :
-				tktHelper.setticketRow(data.ticketRow).TicketEditToggle();
+				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
 				break;
 			
 			case 'short-ticket' :
@@ -1658,6 +1732,27 @@ jQuery(document).ready(function($) {
 		}
 		UNSAVED_DATA_MSG.inputChanged=1;
 		return false;
+	});
+
+
+	/**
+	 * collapsible click
+	 */
+	$('#event-and-ticket-form-content').on('click', '.ee-collapsible', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var item = this;
+		$('.event-tickets-container').slideToggle(245, function() {
+			if ( $(this).is(':visible' ) ) {
+				$(item).removeClass('ee-collapsible-closed');
+				$(item).addClass('ee-collapsible-open');
+				$('.save-cancel-button-container', '.available-tickets-container').show();
+			} else {
+				$(item).removeClass('ee-collapsible-open');
+				$(item).addClass('ee-collapsible-closed');
+				$('.save-cancel-button-container', '.available-tickets-container').hide();
+			}
+		});
 	});
 
 
@@ -1753,6 +1848,37 @@ jQuery(document).ready(function($) {
 		var tktrow = $(this).attr('id').replace('edit-ticket-TKT_taxable-', '');
 		$('.TKT-taxes-display', '#edit-ticketrow-' + tktrow).slideToggle();
 		tktHelper.setticketRow(tktrow).applyTotalPrice();
+	});
+
+
+
+	/**
+	 * Live TKT status pip update
+	 */
+	$('.available-tickets-container').on('focusout', '.ee-datepicker', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var status = '';
+		var id = $(this).parents('.ticket-fieldset').attr('id').replace('fieldset-edit-ticketrow-', '');
+		var displayrow = $('#display-ticketrow-'+id);
+		var now = moment();
+		var tktStart = moment($(this).parent().parent().find('.edit-ticket-TKT_start_date').val(), 'YYYY-MM-DD h:mm a');
+		var tktEnd = moment($(this).parent().parent().find('.edit-ticket-TKT_end_date').val(), 'YYYY-MM-DD h:mm a');
+
+		//now we have moment objects to do some calcs and determine what status we're setting.
+		if ( now.isBefore(tktStart) ) {
+			status = 'tkt-status-1';
+		} else if ( now.isAfter(tktEnd) ) {
+			status = 'tkt-status--1';
+		} else if ( now.isAfter(tktStart) && now.isBefore(tktEnd) ) {
+			status = 'tkt-status-2';
+		} else {
+			status = 'tkt-status-0';
+		}
+
+		//we have status so let's set the pip
+		displayrow.find('.ee-tkt-status').removeClass().addClass('ee-tkt-status ' + status);
 	});
 
 

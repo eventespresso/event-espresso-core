@@ -100,6 +100,18 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'noheader' => TRUE
 				),
 
+			'trash_question_group' => array(
+				'func' => '_trash_or_restore_question_groups',
+				'args' => array( 'trash' => TRUE ),
+				'noheader' => TRUE
+				),
+
+			'restore_question_group' => array(
+				'func' => '_trash_or_restore_question_groups',
+				'args' => array( 'trash' => FALSE ),
+				'noheader' => TRUE
+				),
+
 			'insert_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => TRUE),
@@ -169,7 +181,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				'require_nonce' => FALSE
+				'help_tabs' => array(
+					'question_groups_tab_overview_info' => array(
+						'title' => __('Question Groups', 'event_espresso'),
+						'callback' => 'question_groups_tab_overview_info_help_tab'
+						),
+					),
+				'require_nonce' => FALSE,
+				'qtips' => array(
+					'EE_Registration_Form_Tips'
+					)
 				),
 
 			'add_question' => array(
@@ -274,6 +295,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$template = call_user_func( $tab . '_html' );
 		EEH_Template::display_template($template);
 	}
+	public function question_groups_tab_overview_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
 	public function group_name_info_help_tab(){
 		$this->edit_question_group_help_tabs( __FUNCTION__ );
 	}
@@ -338,7 +362,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function load_scripts_styles_forms() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espresso-ui-theme');
 		//scripts
 		wp_enqueue_script('ee_admin_js');
 	}
@@ -422,7 +446,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _questions_overview_list_table() {
 		$this->_search_btn_label = __('Questions', 'event_espresso');
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_question', 'add_question', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_question', 'add_question', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -430,7 +454,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _question_groups_overview_list_table() {
 		$this->_search_btn_label = __('Question Groups', 'event_espresso');
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -557,9 +581,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			foreach($options as $option_ID=>$option){
 				$option_req_index=$this->_get_option_req_data_index($option_ID);
 				if($option_req_index!==FALSE){
-					//make sure QSO_name is not empty
-					if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_name'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_name'] !== '0' )
-						$this->_req_data['question_options'][$option_req_index]['QSO_name'] = $this->_req_data['question_options'][$option_req_index]['QSO_value'];
+					//make sure QSO_value is not empty
+					if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_value'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_value'] !== '0' )
+						$this->_req_data['question_options'][$option_req_index]['QSO_value'] = $this->_req_data['question_options'][$option_req_index]['QSO_desc'];
 					$option->save($this->_req_data['question_options'][$option_req_index]);
 				}else{
 					//not found, remove it
@@ -569,12 +593,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		//save new related options
 		foreach($this->_req_data['question_options'] as $index=>$option_req_data){
-			if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_name']) || !empty($option_req_data['QSO_value']))){//no ID! save it!
-				if(empty($option_req_data['QSO_value'])){
-					$option_req_data['QSO_value']=$option_req_data['QSO_name'];
+			if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_value']) || !empty($option_req_data['QSO_desc']))){//no ID! save it!
+				if(empty($option_req_data['QSO_desc'])){
+					$option_req_data['QSO_desc']=$option_req_data['QSO_value'];
 				}
-				if(empty($option_req_data['QSO_name']) && $option_req_data['QSO_name'] !== '0' ){
-					$option_req_data['QSO_name']=$option_req_data['QSO_value'];
+				if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
+					$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
 				}
 
 				//set a default option object

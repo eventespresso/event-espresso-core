@@ -1,7 +1,7 @@
 <div id="admin-primary-mbox-reg-details-dv" class="admin-primary-mbox-dv">
 	
 	<h4 class="admin-primary-mbox-h4"><?php _e( 'Payment Details', 'event_espresso' );?></h4>
-
+	<?php echo $view_transaction_button; ?>
 	<table id="admin-primary-mbox-reg-session-info-tbl" class="form-table skinny-rows">
 		<tbody>
 			<tr>
@@ -23,7 +23,7 @@
 					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Event Date', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Ticket Option', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Price Paid', 'event_espresso' );?></th>
+					<th class="jst-cntr"><?php _e( 'Price', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Qty', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Line Total', 'event_espresso' );?></th>
 				</tr>

@@ -81,7 +81,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			
 		<p class="ee-attention">
 			<b><?php _e( 'Attention', 'event_espresso' );?></b><br/>
-			<?php echo sprintf( __( 'Accepts .%s file types only. Maximum file name length (minus extension) is 15 characters. Anything over that will be truncated to 15 characters.', 'event_espresso' ), $type ) ;?>	
+			<?php echo sprintf( __( 'Accepts .%s file types only.', 'event_espresso' ), $type ) ;?>	
 			<?php echo __( 'Please note that you may have to experiment with the import/export settings in your particular spreadsheet program before you find ones that work the best for you.', 'event_espresso' );?>	
 		</p>
 
@@ -103,8 +103,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	public function import() {
 	
-		require_once( EE_PLUGIN_DIR_PATH . 'includes/classes/EE_CSV.class.php' );
-		EE_Registry::instance()_CSV = EE_CSV::instance();
+		require_once( EE_CLASSES . 'EE_CSV.class.php' );
+		$this->EE_CSV = EE_CSV::instance();
 
 		if ( isset( $_REQUEST['import'] )) {	
 			if( isset( $_POST['csv_submitted'] )) {
@@ -145,13 +145,12 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 					$file_ext 		= substr( strrchr( $filename, '.' ), 1 );
 				    $file_type 	= $_FILES['file']['type'][0];
 				    $temp_file	= $_FILES['file']['tmp_name'][0];
-				    $filesize    	= $_FILES['file']['size'][0];		
-	
+				    $filesize    	= $_FILES['file']['size'][0] / 1024;//convert from bytes to KB		
+					
 					if ( $file_ext=='csv' ) {
 					
-						$max_upload = EE_Registry::instance()_CSV->get_max_upload_size();
-						
-						if ( $filesize < $max_upload ) { 
+						$max_upload = $this->EE_CSV->get_max_upload_size();//max upload size in KB
+						if ( $filesize < $max_upload || true) { 
 
 							$wp_upload_dir = str_replace( array( '\\', '/' ), DS, wp_upload_dir());
 							$path_to_file = $wp_upload_dir['basedir'] . DS . 'espresso' . DS . $filename;
@@ -164,7 +163,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 //								}
 													
 								// convert csv to array
-								$this->csv_array = EE_Registry::instance()_CSV->import_csv_to_model_data_array( $path_to_file );
+								$this->csv_array = $this->EE_CSV->import_csv_to_model_data_array( $path_to_file );
 									
 								// was data successfully stored in an array?
 								if ( is_array( $this->csv_array ) ) {
@@ -189,7 +188,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 									
 									}
 									// save processed codes to db
-									if ( EE_Registry::instance()_CSV->save_csv_to_db( $processed_data, $this->columns_to_save ) ) {
+									if ( $this->EE_CSV->save_csv_to_db( $processed_data, $this->columns_to_save ) ) {
 										return TRUE;
 																		
 									}

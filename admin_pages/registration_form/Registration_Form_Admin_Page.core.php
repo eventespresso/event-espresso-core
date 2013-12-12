@@ -129,7 +129,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
-
 			'default' => array(
 				'nav' => array(
 					'label' => __('Questions'),
@@ -138,7 +137,16 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
-				'require_nonce' => FALSE
+				'help_tabs' => array(
+					'question_tab_overview_info' => array(
+						'title' => __('Question Overview', 'event_espresso'),
+						'callback' => 'question_tab_overview_info_help_tab'
+						),
+					),
+				'require_nonce' => FALSE,
+				'qtips' => array(
+					'EE_Registration_Form_Tips'
+					)/**/
 				),
 
 			'question_groups' => array(
@@ -147,7 +155,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
-				
+				'help_tabs' => array(
+					'question_groups_tab_overview_info' => array(
+						'title' => __('Question Groups', 'event_espresso'),
+						'callback' => 'question_groups_tab_overview_info_help_tab'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 
@@ -195,6 +208,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_help_tabs.template.php';
 		$template = call_user_func( $tab . '_html' );
 		EEH_Template::display_template($template);
+	}
+	public function question_tab_overview_info_help_tab(){
+		$this->edit_question_help_tabs( __FUNCTION__ );
 	}
 	public function question_text_info_help_tab(){
 		$this->edit_question_help_tabs( __FUNCTION__ );
@@ -277,7 +293,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_forms() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espresso-ui-theme');
 		//scripts
 		wp_enqueue_script('ee_admin_js');
 	}
@@ -399,7 +415,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
 		}else{
 			$question= EE_Question::new_instance();
-			$question->set_order_to_latest();
+			$question->set_order_to_latest();			
 			$this->_set_add_edit_form_tags('insert_question');
 		}
 		$questionTypes=array();
@@ -499,8 +515,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				foreach($options as $option_ID=>$option){
 					$option_req_index=$this->_get_option_req_data_index($option_ID);
 					if($option_req_index!==FALSE){
-						if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_name'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_name'] !== '0' )
-						$this->_req_data['question_options'][$option_req_index]['QSO_name'] = $this->_req_data['question_options'][$option_req_index]['QSO_value'];
+						if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_value'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_value'] !== '0' )
+						$this->_req_data['question_options'][$option_req_index]['QSO_value'] = $this->_req_data['question_options'][$option_req_index]['QSO_desc'];
 						$option->save($this->_req_data['question_options'][$option_req_index]);
 					}else{
 						//not found, remove it
@@ -510,14 +526,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 			//save new related options
 			foreach($this->_req_data['question_options'] as $index=>$option_req_data){
-				if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_name']) || !empty($option_req_data['QSO_value']))){//no ID! save it!
-					if(empty($option_req_data['QSO_value'])){
-						$option_req_data['QSO_value']=$option_req_data['QSO_name'];
+				if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_value']) || !empty($option_req_data['QSO_desc']))){//no ID! save it!
+					if(empty($option_req_data['QSO_desc'])){
+						$option_req_data['QSO_desc']=$option_req_data['QSO_value'];
 					}
-					if(empty($option_req_data['QSO_name']) && $option_req_data['QSO_name'] !== '0' ){
-						$option_req_data['QSO_name']=$option_req_data['QSO_value'];
+					if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
+						$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
 					}
-					$new_option=EE_Question_Option::new_instance( array( 'QSO_name' => $option_req_data['QSO_name'], 'QSO_value' => $option_req_data['QSO_value'], 'QST_ID' => $question->ID()));
+					$new_option=EE_Question_Option::new_instance( array( 'QSO_value' => $option_req_data['QSO_value'], 'QSO_desc' => $option_req_data['QSO_desc'], 'QST_ID' => $question->ID()));
 					$new_option->save();
 				}
 			}

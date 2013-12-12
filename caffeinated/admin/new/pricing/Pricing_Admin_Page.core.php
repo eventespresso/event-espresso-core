@@ -312,7 +312,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
+		wp_enqueue_style('espresso-ui-theme');
 		wp_register_style( 'espresso_PRICING', PRICING_ASSETS_URL . 'espresso_pricing_admin.css', array(), EVENT_ESPRESSO_VERSION );		
 		wp_enqueue_style('espresso_PRICING');
 
@@ -406,7 +406,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price', 'add', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price', 'add', array(), 'add-new-h2');
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
 		$this->_search_btn_label = __('Prices', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -648,6 +648,19 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			if ( $PRC->update( $set_column_values, array($where_cols_n_values))) {
 				$success = 1;
 			}
+
+			//if this is $PRC_ID == 1, then we need to update the default ticket attached to this price so the TKT_price value is updated.
+			if ( $PRC_ID === 1 ) {
+				$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+				$ticket = $PR->get_first_related('Ticket');
+				if ( $ticket ) {
+					$ticket->set('TKT_price', $PR->get('PRC_amount') );
+					$ticket->set('TKT_name', $PR->get('PRC_name') );
+					$ticket->set('TKT_description', $PR->get('PRC_desc'));
+					$ticket->save();
+				}
+			}
+
 			$action_desc = 'updated';
 		}
 		
@@ -792,7 +805,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_types_overview_list_table() {
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price_type', 'add_type', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price_type', 'add_type', array(), 'add-new-h2');
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
 		$this->_search_btn_label = __('Price Types', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();

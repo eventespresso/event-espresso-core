@@ -239,7 +239,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('espresso_txn');
 
 		//scripts
-		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'ee-datepicker', 'jquery-ui-datepicker', 'jquery-ui-draggable', 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE);
+		add_filter('FHEE_load_accounting_js', '__return_true');
+
+		//scripts
+		wp_register_script('espresso_txn', TXN_ASSETS_URL . 'espresso_transactions_admin.js', array('ee_admin_js', 'ee-datepicker', 'jquery-ui-datepicker', 'jquery-ui-draggable', 'ee-dialog', 'ee-accounting', 'ee-serialize-full-array'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_enqueue_script('espresso_txn');	
 
 		;
@@ -257,10 +260,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_view_transaction() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
-		//scripts
+		wp_enqueue_style('espresso-ui-theme');
 	}
 
 
@@ -269,9 +269,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_default() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
+		wp_enqueue_style('espresso-ui-theme');
 	}
 
 
@@ -345,6 +343,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	protected function _transactions_overview_list_table() {
 		$this->_admin_page_title = __('Transactions', 'event_espresso');
+		$event = isset($this->_req_data['EVT_ID']) ? EEM_Event::instance()->get_one_by_ID($this->_req_data['EVT_ID'] ) : NULL;
+		$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%sViewing Transactions for the Event: %s%s', 'event_espresso'), '<h3>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce(array('action' => 'edit', 'post' => $event->ID()), EVENTS_ADMIN_URL ) . '" title="' . __('Click to Edit event', 'event_espresso') . '">' . $event->get('EVT_name') . '</a>', '</h3>' ) : '';
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_transaction_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -363,8 +363,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _transaction_details() {
-
-		global $wpdb;
 		
 		$this->_get_transaction_status_array();
 
@@ -385,6 +383,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
+
+		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __('Send Payment Reminder'), 'button secondary-button right ee-email-icon' ) : '';
 		
 		$amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
 		$this->_template_args['amount_due'] =  ' <span id="txn-admin-total-amount-due">' . EEH_Template::format_currency( $amount_due, TRUE ) . '</span>';
@@ -502,11 +502,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['txn_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
 		$this->_template_args['txn_details']['registration_session']['class'] = 'regular-text';
 		
-		$this->_template_args['txn_details']['ip_address']['value'] = $this->_session['ip_address'];
+		$this->_template_args['txn_details']['ip_address']['value'] = isset( $this->_session['ip_address'] ) ? $this->_session['ip_address'] : '';
 		$this->_template_args['txn_details']['ip_address']['label'] = __( 'Transaction placed from IP', 'event_espresso' );
 		$this->_template_args['txn_details']['ip_address']['class'] = 'regular-text';
 		
-		$this->_template_args['txn_details']['user_agent']['value'] = $this->_session['user_agent'];
+		$this->_template_args['txn_details']['user_agent']['value'] = isset( $this->_session['user_agent'] ) ? $this->_session['user_agent'] : '';
 		$this->_template_args['txn_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
 		$this->_template_args['txn_details']['user_agent']['class'] = 'large-text';
 
@@ -840,8 +840,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _send_payment_reminder() {
 	    $TXN_ID = ( ! empty( $this->_req_data['TXN_ID'] )) ? absint( $this->_req_data['TXN_ID'] ) : FALSE;
 		$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+		$query_args = isset($this->_req_data['redirect_to'] ) ? array('action' => $this->_req_data['redirect_to'], 'TXN_ID' => $this->_req_data['TXN_ID'] ) : array();
 		do_action( 'AHEE_process_admin_payment_reminder', $transaction );
-		$this->_redirect_after_action( FALSE, 'payment reminder', 'sent', array(), TRUE );
+
+		$this->_redirect_after_action( FALSE, __('payment reminder', 'event_espresso'), __('sent', 'event_espresso'), $query_args, TRUE );
 	}
 
 
@@ -902,6 +904,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'TXN_timestamp' => array('BETWEEN', array($start_date, $end_date) ),
 			'Registration.REG_count' => 1
 			);
+
+		if ( isset( $this->_req_data['EVT_ID'] ) ) {
+			$_where['Registration.EVT_ID'] = $this->_req_data['EVT_ID'];
+		}
 
 		if ( isset( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';

@@ -54,12 +54,11 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function __construct() {
-		// grab registry
-		
 		// early init
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
+		// action hook EE
 		do_action('AHEE__EE_Front_Controller__construct__done',$this);
 	}
 
@@ -82,6 +81,22 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+//		$e = EE_Export::instance();
+//		$e->export_sample();
+//		EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all());
+//		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
+//		$t = EE_Ticket::new_instance(array('TKT_name'=>'prog1',));
+//		$p = EEM_Price::instance()->get_one();
+//		$d = EEM_Datetime::instance()->get_one();
+//		$t->save();
+//		$t->_add_relation_to($p, 'Price');
+//		$t->_add_relation_to($d, 'Datetime');
+//		d($t);
+//		d($t->datetimes());
+//		d($t->prices());
+//		$t->_remove_relations('Datetime');
+//		$t->delete_related_permanently('Price');
+//		$t->delete_permanently();
 //		$em = EEM_Event::instance();
 //		$event = $em->get_one(array(array('Term_Taxonomy.term_taxonomy_id'=>array('IS NOT NULL'))));
 //		d($event);
@@ -243,6 +258,23 @@ final class EE_Front_Controller {
 //		EE_Error::add_attention('This is an attention message. You should prolly read this... but... meh... do whatcha want!');
 //		EE_Error::add_error('Ermehgerd!!! MOAR ERRORS!!! Seff n Garf aw gonna be maaaaad at you!!!');
 
+//		$regs = EEM_Datetime::instance()->get_all( array(
+//			array( 'DTT_reg_limit' => INF ),
+//			'limit'=>1,
+//			'order_by'=>array( 
+//				'DTT_EVT_start'=>'ASC',		
+//				'DTT_is_primary'=>'DESC'
+//			)
+//		));
+//		$reg = reset( $regs );
+//		d( $reg );		
+//		$reg->save();
+//		d( $reg );
+		
+//		$d = EE_Datetime::new_instance(array('DTT_reg_limit'=>-1));
+//		d($d);
+//		$d->save();
+//		d($d);
 		
 	}
 
@@ -273,6 +305,7 @@ final class EE_Front_Controller {
 			EE_Registry::instance()->load_core( 'CPT_Strategy' );
 		}
 	}
+
 
 
 
@@ -332,86 +365,83 @@ final class EE_Front_Controller {
 	public function _initialize_shortcodes( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
 		//d( $this->EE->REQ );
-		if ( EE_Registry::instance()->REQ->is_set( 'post_name' )) {
-			// grab post_name from request
-			$current_post = apply_filters('FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',EE_Registry::instance()->REQ->get( 'post_name' ));
-			// we gotta have one
-			//d( $current_post_name );
-			if ( $current_post ) {
-				// if it's not set, then check if frontpage is blog
-				if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
-					// yup.. this is the posts page, prepare to load all shortcode modules
+		// grab post_name from request
+		$current_post = apply_filters('FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',EE_Registry::instance()->REQ->get( 'post_name' ));
+//		d( $current_post );
+		// if it's not set, then check if frontpage is blog
+		if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
+			// yup.. this is the posts page, prepare to load all shortcode modules
+			$current_post = 'posts';
+		} else if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'page' ) {
+			// some other page is set as the homepage
+			if ( $page_on_front = get_option( 'page_on_front' )) {
+				// k now we need to find the slug for this page
+				global $wpdb;
+				$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
+				if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
+					// set the current post slug to what it actually is
+					$current_post = $post_slug;
+//					d( $current_post );
+				}					
+			}
+		} else if ( get_option( 'show_on_front' ) == 'page' ) {
+			// we're not on the homepage, but some "other" page is set as the posts page... 
+			if ( $page_for_posts = get_option( 'page_for_posts' )) {
+				// better get the ID for the current post
+				global $wpdb;
+				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND post_name=%s';
+				$current_post_id = $wpdb->get_var( $wpdb->prepare( $SQL, $current_post ));
+				// is the current post the "page_for_posts" ???
+				if ( $current_post_id === $page_for_posts ) {
 					$current_post = 'posts';
-				} else if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'page' ) {
-					// some other page is set as the homepage
-					if ( $page_on_front = get_option( 'page_on_front' )) {
-						// k now we need to find the slug for this page
-						global $wpdb;
-						$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
-						if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
-							// set the current post slug to what it actually is
-							$current_post = $post_slug;
-						}					
-					}
-				} else if ( get_option( 'show_on_front' ) == 'page' ) {
-					// we're not on the homepage, but some "other" page is set as the posts page... 
-					if ( $page_for_posts = get_option( 'page_for_posts' )) {
-						// better get the ID for the current post
-						global $wpdb;
-						$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND post_name=%s';
-						$current_post_id = $wpdb->get_var( $wpdb->prepare( $SQL, $current_post ));
-						// is the current post the "page_for_posts" ???
-						if ( $current_post_id === $page_for_posts ) {
-							$current_post = 'posts';
-						}					
-					}
-				} else {
-					// are we on a category page?
-					$term_exists = is_array( term_exists( $current_post, 'category' ));
-					// make sure shortcodes are set
-					if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
-		//				d( EE_Registry::instance()->CFG->core->post_shortcodes );
-						// cycle thru all posts with shortcodes set
-						foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
-							// are we on this page ?
-							if ( $current_post == $post_name || $term_exists ) {
-		//						d( $post_name );
-								// filter shortcodes so 
-								$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
-		//						d( $post_shortcodes );
-								// now cycle thru shortcodes
-								foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
-									// verify shortcode is in list of registered shortcodes
-									if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
-										$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
-										EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-										add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-										break;
-									}
-									//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-									if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
-										// let's pause to reflect on this...
-										$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
-										// ensure that class is actually a shortcode
-										if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
-											$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
-											EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-											add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-											break;
-										}
-										// and pass the request object to the run method
-										$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
-										// fire the shortcode class's run method, so that it can activate resources
-										$shortcode->run( $WP );
-		//								d( $shortcode );
-									}
-								}
+//					d( $current_post );
+				}					
+			}
+		} 
+		// are we on a category page?
+		$term_exists = is_array( term_exists( $current_post, 'category' ));
+//		d( $term_exists );
+		// make sure shortcodes are set
+		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
+			// cycle thru all posts with shortcodes set
+			foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
+				// are we on this page ?
+				if ( $current_post == $post_name || $term_exists ) {
+//					d( $post_name );
+					// filter shortcodes so 
+					$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
+//					d( $post_shortcodes );
+					// now cycle thru shortcodes
+					foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
+						// verify shortcode is in list of registered shortcodes
+						if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
+							$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
+							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+							add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+							break;
+						}
+						//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
+						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
+							// let's pause to reflect on this...
+							$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
+							// ensure that class is actually a shortcode
+							if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
+								$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
+								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+								break;
 							}
+							// and pass the request object to the run method
+							$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
+							// fire the shortcode class's run method, so that it can activate resources
+							$shortcode->run( $WP );
+//								d( $shortcode );
 						}
 					}
 				}
 			}
 		}
+
 		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__end',$this);
 //		printr( EE_Registry::instance()->shortcodes, 'EE_Registry::instance()->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
@@ -541,6 +571,43 @@ final class EE_Front_Controller {
 				);
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
+		}
+
+
+		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
+		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
+			EE_Registry::instance()->load_helper('Qtip_Loader');
+			EEH_Qtip_Loader::instance()->register_and_enqueue();
+		}
+
+
+		//accounting.js library
+		// @link http://josscrowcroft.github.io/accounting.js/
+		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
+			$acct_js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? EE_THIRD_PARTY_URL . 'accounting/accounting.js' : EE_THIRD_PARTY_URL . 'accounting/accounting.min.js';
+			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_register_script( 'ee-accounting-core', $acct_js, array(), '0.3.2', TRUE );
+			wp_enqueue_script( 'ee-accounting' );
+
+			$currency_config = array(
+				'currency' => array(
+					'symbol' => EE_Registry::instance()->CFG->currency->sign,
+					'format' => array(
+						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s %v' : '%v %s',
+						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s (%v)' : '(%v) %s',
+						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s --' : '-- %s'
+						 ),
+					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
+					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
+					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
+					),
+				'number' => array(
+					'precision' => 0,
+					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
+					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
+					)
+				);
+			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
 		}
 
 	}

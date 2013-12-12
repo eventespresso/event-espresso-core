@@ -68,14 +68,6 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Gets the term_taxonomies for this CPT
-	 * @param type $query_params
-	 * @return EE_Term_Taxonomy[]
-	 */
-	function term_taxonomies($query_params = array()){
-		return $this->get_many_related('Term_Taxonomy', $query_params);
-	}
-	/**
 	 * Removes the relation to the specified term taxonomy, and maintains the 
 	 * data integrity of the term taxonomy rpovided
 	 * @param EE_Term_Taxonomy $term_taxonomy
@@ -153,10 +145,30 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 
-
+	/**
+	 * See _get_feature_image. Returns the HTML to displya a featured image
+	 * @param string $size
+	 * @param string|array $attr
+	 * @return string of html
+	 */
 	public function feature_image( $size = 'thumbnail', $attr = '' ) {
 		return $this->_get_feature_image( $size, $attr );
 	}
+
+
+
+
+
+	/**
+	 * This uses the wp "wp_get_attachment_image_src()" function to return the feature image for the current class using the given size params.
+	 * @param  string|array $size can either be a string: 'thumbnail', 'medium', 'large', 'full' OR 2-item array representing width and height in pixels eg. array(32,32).
+	 * @return string|boolean       	  the url of the image or false if not found
+	 */
+	public function feature_image_url( $size = 'thumbnail' ) {
+		$attachment =  wp_get_attachment_image_src( get_post_thumbnail_id( $this->ID() ), $size );
+		return !empty($attachment) ? $attachment[0] : false;
+	}
+	
 
 
 
@@ -258,5 +270,22 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 			throw new EE_Error(sprintf(__("You must save this custom post type before adding or updating a post meta field", "event_espresso")));
 		}
 		return add_post_meta($this->ID(),$meta_key,$meta_value,$unique);
+	}
+	
+	/**
+	 * Gets the URL for viewing this event on the front-end
+	 * @return string
+	 */
+	public function get_permalink(){
+		return get_permalink($this->ID());
+	}
+	
+	/**
+	 * Gets all the term-taxonomies for thsi CPT
+	 * @param array $query_params
+	 * @return EE_Term_Taxonomy
+	 */
+	public function term_taxonomies($query_params){
+		return $this->get_many_related('Term_Taxonomy', $query_params);
 	}
 }

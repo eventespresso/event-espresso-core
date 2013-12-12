@@ -513,6 +513,21 @@ class EE_Line_Item extends EE_Base_Class{
 	function is_total(){
 		return EEM_Line_Item::type_total == $this->type();
 	}
+	
+	/**
+	 * 
+	 * @return string like '2, 004.00', formatted according to the localized currency
+	 */
+	function unit_price_no_code(){
+		return $this->get_pretty('LIN_unit_price','no_currency_code');
+	}
+	/**
+	 * 
+	 * @return string like '2, 004.00', formatted according to the localized currency
+	 */
+	function total_no_code(){
+		return $this->get_pretty('LIN_total','no_currency_code');
+	}
 
 	/**
 	 * Gets the final total on this item, taking taxes into account.

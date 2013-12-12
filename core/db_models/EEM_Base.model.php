@@ -695,6 +695,7 @@ abstract class EEM_Base extends EE_Base{
 				}else{
 					$related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id);
 				}
+				
 				if($related_model_objects){
 					EE_Error::add_error($relation_obj->get_deletion_error_message(), __FILE__, __FUNCTION__, __LINE__);
 					$is_blocked = true;
@@ -914,6 +915,18 @@ abstract class EEM_Base extends EE_Base{
 		return $relation_obj->remove_relation_to($id_or_obj, $other_model_id_or_obj, $where_query );
 	}
 	
+	/**
+	 * 
+	 * @param type $id_or_obj
+	 * @param type $relationName
+	 * @param type $where_query_params
+	 * @return EE_Base_Class[] objects to which relations were removed
+	 */
+	public function remove_relations($id_or_obj,$relationName,$where_query_params = array()){
+		$relation_obj = $this->related_settings_for($relationName);
+		return $relation_obj->remove_relations($id_or_obj, $where_query_params );
+	}
+	
 	
 	/**
 	 * Gets all the related items of the specified $model_name, using $query_params.
@@ -1114,7 +1127,7 @@ abstract class EEM_Base extends EE_Base{
 		//insert the new entry
 		$old_show_errors_value = $wpdb->show_errors;
 		$wpdb->show_errors(false);
-		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);	
+		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);
 		$wpdb->show_errors($old_show_errors_value);
 		$this->show_db_query_if_previously_requested($wpdb->last_query);
 		if(!$result){
@@ -1344,8 +1357,12 @@ abstract class EEM_Base extends EE_Base{
 
 
 		//set limit
-		if(array_key_exists('limit',$query_params) && $query_params['limit']){
+		if(array_key_exists('limit',$query_params) && $query_params['limit'] !== NULL){
 			if(is_array($query_params['limit'])){
+				if( ! isset($query_params['limit'][0]) || ! isset($query_params['limit'][1])){
+					$e = sprintf(__("Invalid DB query. You passed '%s' for the LIMIT, but only the following are valid: an integer, string representing an integer, a string like 'int,int', or an array like array(int,int)", "event_espresso"),  http_build_query($query_params['limit']));
+					throw new EE_Error($e."|".$e);
+				}
 				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
 				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);
 			}else{
@@ -2463,5 +2480,46 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		return array($this->get_primary_key_field());
+	}
+	
+	/**
+	 * Finds all model objects in the DB that appear to be a copy of $model_object_or_attributes_array.
+	 * We consider something to be a copy if all the attributes match (except the ID, of course).
+	 * @param EE_Base_Class|array $model_object_or_attributes_array If its an array, it's field-value pairs
+	 * @param array $query_params like EEM_Base::get_all's query_params.
+	 */
+	public function get_all_copies($model_object_or_attributes_array, $query_params = array()){
+		$attributes_array = array();
+		if($model_object_or_attributes_array instanceof EE_Base_Class){
+			$attributes_array = $model_object_or_attributes_array->model_field_array();
+		}elseif(is_array($model_object_or_attributes_array)){
+			$attributes_array = $model_object_or_attributes_array;
+		}else{
+			throw new EE_Error(sprintf(__("get_all_copies should be providd with either a model object or an array of field-value-pairs, but was given %s", "event_espresso"),$model_object_or_attributes_array));
+		}
+		if(isset($attributes_array[$this->primary_key_name()])){
+			unset($attributes_array[$this->primary_key_name()]);
+		}
+		if(isset($query_params[0])){
+			$query_params[0] = array_merge($attributes_array,$query_params);
+		}else{
+			$query_params[0] = $attributes_array;
+		}
+		return $this->get_all($query_params);
+	}
+	/**
+	 * Gets the first copy we find. See get_all_copies for more details
+	 * @param type $model_object_or_attributes_array
+	 * @param type $query_params
+	 * @return EE_Base_Class
+	 */
+	function get_one_copy($model_object_or_attributes_array,$query_params = array()){
+		$query_params['limit'] = 1;
+		$copies = $this->get_all_copies($model_object_or_attributes_array,$query_params);
+		if(is_array($copies)){
+			return array_shift($copies);
+		}else{
+			return null;
+		}
 	}
 }

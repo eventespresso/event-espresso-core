@@ -118,18 +118,28 @@ class EEH_Template {
 			}			
 		}		
 		// format float
-		$amount = number_format( $amount, max( array( 2, $mny->dec_plc )), $mny->dec_mrk, $mny->thsnds );
+		$amount_formatted = number_format( $amount, max( array( 2, $mny->dec_plc )), $mny->dec_mrk, $mny->thsnds );
 		if ( ! $return_raw ) {
 			// add currency sign
-			$amount = $mny->sign_b4 ? $mny->sign . $amount : $amount . $mny->sign;
+			if($mny->sign_b4){
+				if($amount >= 0){
+					$amount_formatted = $mny->sign . $amount_formatted;
+				}else{
+					$amount_formatted = "-".$mny->sign . str_replace("-","",$amount_formatted);
+				}
+				
+			}else{
+				$amount_formatted =  $amount_formatted . $mny->sign;
+			}
+			
 			// add currency code ?
-			$amount = $display_code ? $amount . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount;			
+			$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;			
 		}
 		// clean up vars
 		unset( $mny );
 		unset( $EE );
 		// return formatted currency amount
-		return $amount;
+		return $amount_formatted;
 	}
 
 

@@ -21,23 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EES_Shortcode extends EE_Base { 
-
-	/**
-	 * 	EE_Registry Object
-	 * 	@access 	public
-	 *	@var 	EE_Registry	$EE
-	 */
-	public $EE = NULL;
-
-	/**
-	 * 	the current active espresso tempalte theme
-	 *	@var 	string
-	 * 	@access 	protected
-	 */
-	protected $theme = '';
-
-
+abstract class EES_Shortcode extends EE_Base {
 
 	/**
 	 * 	run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
@@ -72,6 +56,22 @@ abstract class EES_Shortcode extends EE_Base {
 		return $this;
 	}
 
+	
+	/**
+	*	fallback_shortcode_processor - create instance and call process_shortcode
+	* 	NOTE: shortcode may not function perfectly dues to missing assets, but it's better than not having things work at all
+	*
+	*	@access public
+	*	@return 	void
+	*/
+	final public static function fallback_shortcode_processor( $attributes ) { 
+		EE_Registry::instance()->load_helper( 'Class_Tools' );
+		$shortcode_class = get_called_class();
+		$shortcode_obj = new $shortcode_class();
+		//d( $shortcode_obj );
+		$shortcode_obj->process_shortcode( $attributes );
+	}
+
 
 	
 	/**
@@ -81,12 +81,9 @@ abstract class EES_Shortcode extends EE_Base {
 	 *	@param 	EE_Registry	$EE
 	*	@return 	void
 	*/
-	final public function __construct( EE_Registry $EE = NULL ) {
-		
-		$this->theme = isset( EE_Registry::instance()->CFG->template_settings->current_espresso_theme ) ? EE_Registry::instance()->CFG->template_settings->current_espresso_theme : 'espresso_default';
+	final public function __construct() {
 		// get classname, remove EES_prefix, and convert to UPPERCASE
-		$classname = get_class( $this );
-		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this ) ));
+		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
 		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));		
 	}
 

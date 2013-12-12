@@ -138,19 +138,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'noheader' => true
 			),
 			'view_report' => '_view_report',
-			'export_events' => array(
-				'func' => '_events_export',
-				'noheader' => true
-			),
-			'import_page'=>'_import_page',
-			'import' => array(
-				'func'=>'_import_events',
-				'noheader'=>TRUE,
-				),
-			'import_events' => array(
-				'func'=>'_import_events',
-				'noheader'=>TRUE,
-				),
 			'default_event_settings' => '_default_event_settings',
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
@@ -186,11 +173,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'args' => array('new_category' => FALSE),
 				'noheader' => TRUE
 				),
-			'export_categories' => array(
-				'func' => '_categories_export',
-				'noheader' => TRUE
-				),
-			'import_categories' => '_import_categories',
 			'category_list' => array(
 				'func' => '_category_list_table'
 				)
@@ -215,14 +197,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'require_nonce' => FALSE
 			),
-			'import_page' => array(
-				'nav' => array(
-					'label' => __('Import', 'event_esprsso'),
-					'order' => 30
-				),
-				'metaboxes' => $default_espresso_boxes,
-				'require_nonce' => FALSE
-			),
 			'create_new' => array(
 				'nav' => array(
 					'label' => __('Add Event', 'event_espresso'),
@@ -242,6 +216,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'help_tour' => array(
 					'Event_Editor_Help_Tour'
+					),
+				'qtips' => array(
+					'EE_Event_Editor_Tips'
 					),
 				'require_nonce' => FALSE
 			),
@@ -263,6 +240,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'callback' => 'ticket_options_info_help_tab'
 					)
 				),
+				'qtips' => array(
+					'EE_Event_Editor_Tips'
+					),
 				'require_nonce' => FALSE
 			),
 			'default_event_settings' => array(
@@ -423,9 +403,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function load_scripts_styles_edit() {
 		//styles
-		wp_enqueue_style('jquery-ui-style');
-		wp_enqueue_style('jquery-ui-style-datepicker-css');
-
+		wp_enqueue_style('espresso-ui-theme');
 		wp_register_style('event-editor-css', EVENTS_ASSETS_URL . 'event-editor.css', array('ee-admin-css'), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('event-editor-css');
 
@@ -451,7 +429,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function load_scripts_styles_edit_category() {
 		//styles
-		//wp_enqueue_style('jquery-ui-style');
+		//wp_enqueue_style('espresso-ui-theme');
 
 		//scripts
 		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
@@ -470,8 +448,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_categories' => __('Delete Permanently', 'event_espresso'),
-					'export_categories' => __('Export Categories', 'event_espresso'),
+					'delete_categories' => __('Delete Permanently', 'event_espresso')
 					)
 				)
 		);
@@ -494,9 +471,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('View All Events', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'trash_events' => __('Move to Trash', 'event_espresso'),
-//					'export_payments' => __('Export Payments', 'event_espresso')
+					'trash_events' => __('Move to Trash', 'event_espresso')
 				)
 			),
 			'draft' => array(
@@ -504,7 +479,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('Draft', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
 					'trash_events' => __('Move to Trash', 'event_espresso'),
 					)
 			),
@@ -513,8 +487,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'export_events' => __('Export Events', 'event_espresso'),
-					'restore_events' => __('Restore from Trash', 'event_espresso'),
 					'delete_events' => __('Delete Permanently', 'event_espresso'),
 					)
 				)
@@ -536,14 +508,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'view_attendees' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/group.png',
 				'desc' => __('View Registrations for Event', 'event_espresso')
-			),
-			'excel_export' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/excel_icon.png',
-				'desc' => __('Export Event details to excel', 'event_espresso')
-			),
-			'csv_export' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/csv_icon_sm.gif',
-				'desc' => __('Export Event details to csv', 'event_espresso')
 			)
 		);
 		return apply_filters('FHEE_event_legend_items', $items);
@@ -586,8 +550,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _events_overview_list_table() {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), __("View Event Archive Page", "event_espresso"), 'button' ) .
-													$this->_display_legend($this->_event_legend_items());
-		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
+		$this->_display_legend($this->_event_legend_items());
+		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -737,7 +701,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'DTT_ID' => !empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
-				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? -1 : $dtt['DTT_reg_limit'],
+				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
 				'DTT_order' => $row,
 				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
@@ -787,14 +751,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
 				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
-				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? -1 : $tkt['TKT_qty'],
-				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? -1 : $tkt['TKT_uses'],
+				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? INF : $tkt['TKT_qty'],
+				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
-				'TKT_max' => empty( $tkt['TKT_max'] ) ? -1 : $tkt['TKT_max'],
+				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
 				'TKT_price' => $ticket_price
 				);
+
 
 
 
@@ -814,7 +779,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
 
 
-				$ticket_sold = $TKT->tickets_sold() > 0 ? true : false;
+				$ticket_sold = $TKT->count_related('Registration') > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
 				$create_new_TKT = $ticket_sold && $ticket_price !== $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
@@ -918,6 +883,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
 				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
+				'PRC_is_default' => 0, //make sure prices are NOT set as default from this context
 				'PRC_order' => $row
 				);
 
@@ -1028,9 +994,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//load formatter helper
   		EE_Registry::instance()->load_helper( 'Formatter' );
+
+  		//args for getting related registrations
+  		$query_args = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(EEM_Registration::status_id_pending, EEM_Registration::status_id_approved ) ) ) ) : array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
+
+
 		// publish box
 		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID() ), REG_ADMIN_URL);
-		$publish_box_extra_args['attendees_reg_limit'] = $this->_cpt_model_obj->get_number_of_tickets_sold();
+		$publish_box_extra_args['attendees_reg_limit'] = $this->_cpt_model_obj->count_related('Registration', $query_args);
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('FHEE_event_editor_email_attendees_class', 'misc-pub-section');
 		//$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_cpt_model_obj->id), 'admin.php?page=espresso_registrations');
 		$publish_box_extra_args['event_editor_overview_add'] = do_action('AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj);
@@ -1092,7 +1063,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'existing_ticket_ids' => '',
 			'total_ticket_rows' => 1,
 			'ticket_js_structure' => '',
-			'trash-icon' => 'lock-icon',
+			'trash-icon' => 'ee-lock-icon',
 			'disabled' => ''
 			);
 
@@ -1163,19 +1134,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */	
 	private function _get_ticket_row( $ticket, $skeleton = FALSE, $row = 0 ) {
 		$template_args = array(
+			'tkt_status_class' => ' tkt-status-' . $ticket->ticket_status(),
+			'tkt_archive_class' => $ticket->ticket_status() === EE_Ticket::archived && !$skeleton ? ' tkt-archived' : '',
 			'ticketrow' => $skeleton ? 'TICKETNUM' : $row,
 			'TKT_ID' => $ticket->get('TKT_ID'),
 			'TKT_name' => $ticket->get('TKT_name'),
-			'TKT_start_date' => $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
-			'TKT_end_date' => $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
+			'TKT_start_date' => $skeleton ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
+			'TKT_end_date' => $skeleton ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a'),
 			'TKT_is_default' => $ticket->get('TKT_is_default'),
-			'TKT_qty' => $ticket->get('TKT_qty') === -1 ? '' : $ticket->get('TKT_qty'),
+			'TKT_qty' => $ticket->get_pretty('TKT_qty','input'),
 			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_sold' => $skeleton ? 0 : $ticket->get('TKT_sold'),
-			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon clickable' : 'lock-icon',
+			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon clickable' : 'ee-lock-icon',
 			'disabled' => $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted' ) ) ? '' : ' disabled=disabled'
 			);
-
 
 		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none')) : EE_Registry::instance()->load_model('Price')->create_default_object();
 
@@ -1187,6 +1159,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'PRC_ID' => $price->get('PRC_ID'),
 			'PRC_is_default' => $price->get('PRC_is_default'),
 			);
+
+		//make sure we have default start and end dates if skeleton
+		//handle rows that should NOT be empty
+		if ( empty( $template_args['TKT_start_date'] ) ) {
+			//if empty then the start date will be now.
+			$template_args['TKT_start_date'] = date('Y-m-d h:i a', current_time('timestamp'));
+		}
+
+		if ( empty( $template_args['TKT_end_date'] ) ) {
+			//get the earliest datetime (if present);
+			$earliest_dtt = $this->_cpt_model_obj->ID() > 0 ? $this->_cpt_model_obj->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
+
+			if ( !empty( $earliest_dtt ) )
+				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
+			else
+				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(0, 0, 0, date("m"), date("d")+7, date("Y") ) );
+		}
 
 		$template_args = array_merge( $template_args, $price_args );
 		$template = apply_filters('FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
@@ -1279,7 +1268,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$EEME = $this->_event_model;
 
 		$offset = ($current_page - 1) * $per_page;
-		$limit = $count ? '' : $offset . ',' . $per_page;
+		$limit = $count ? NULL : $offset . ',' . $per_page;
 		$orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
 		$order = isset($this->_req_data['order']) ? $this->_req_data['order'] : "DESC";
 
@@ -1707,105 +1696,32 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _update_default_event_settings() {
 
-		$data = array();
-		$data['default_reg_status'] = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
-		$data['pending_counts_reg_limit'] = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
-		$data['use_attendee_pre_approval'] = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
-
-		$data = apply_filters('FHEE_default_event_settings_save', $data);
+		$old_pending_counts_reg_limit =  EE_Config::instance()->registration->pending_counts_reg_limit;
+		EE_Config::instance()->registration->default_STS_ID = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
+		EE_Config::instance()->registration->pending_counts_reg_limit = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
+		EE_Config::instance()->registration->use_attendee_pre_approval = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
+		//if we're changing the policy for when to count registrations towards teh
+		//TKT_sold and DTT_sold attributes on tickets and datetimes, then we need to update them
+		if(EE_Config::instance()->registration->pending_counts_reg_limit != $old_pending_counts_reg_limit){
+			$this->_update_sold_counts();
+			EE_Error::add_success(__("Updated ticket sales based on new policy for counting pending registrations towards registration limits and ticket sales", "event_espresso"));
+		}
 
 		$what = 'Default Event Settings';
-		$success = $this->_update_espresso_configuration($what, $data, __FILE__, __FUNCTION__, __LINE__);
+		$success = $this->_update_espresso_configuration($what, EE_Config::instance(), __FILE__, __FUNCTION__, __LINE__);		
 		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
 	}
+	
+	/**
+	 * Updates the TKT_sold and DTT_sold counts on all tickets and datetimes. 
+	 * Use this when their counts should be synced.
+	 */
+	private function _update_sold_counts(){
+		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
+		EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all());
+	}
 
 	
-
-	/**
-	 * _events_export
-	 * Will export all (or just the given event) to a Excel compatible file.
-	 * 
-	 * @access protected
-	 * @return file 
-	 */
-	protected function _events_export() {
-		$event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : $this->_req_data['EVT_IDs'];
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'all_event_data',
-			'event_id' => $event_ids ,
-		);
-		$this->_req_data = array_merge($this->_req_data, $new_request_args);
-
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
-			require_once(EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance($this->_req_data);
-			$EE_Export->export();
-		}
-	}
-
-	/**
-	 * _payment_export
-	 * Will export payments for events to an excel file (or for given events)
-	 * @return file?
-	 */
-	protected function _payment_export() {
-
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'payment',
-			'type' => 'csv',
-			'event_id' => $this->_req_data['EVT_ID'],
-		);
-		$this->_req_data = array_merge($this->_req_data, $new_request_args);
-		if (file_exists(EE_CLASSES . 'EE_Export.class.php')) {
-			require_once(EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance();
-			$EE_Export->export();
-		}
-	}
-	/**
-	 * for GET requests to 
-	 */
-
-	protected function _import_page(){
-		
-		$title = __('Import Events', 'event_espresso');
-		$intro = __('If you have a previously exported list of Event Details in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
-		$form_url = EVENTS_ADMIN_URL;
-		$action = 'import_events';
-		$type = 'csv';
-		$content = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
-		
-		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'button add-new-h2');
-
-		$title_cat = __( 'Import Event Categories', 'event_espresso' );
-		$intro_cat = __( 'If you have a previously exported list of Event Categories in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso' );
-		$form_url_cat = EVENTS_ADMIN_URL;
-		$action_cat = 'import_categories';
-		$type_cat = 'csv';
-		$content .= EE_Import::instance()->upload_form( $title_cat, $intro_cat, $form_url_cat, $action_cat, $type_cat );
-
-		$this->_template_args['admin_page_content'] = $content;
-		$this->display_admin_page_with_sidebar();
-	}
-	/**
-	 * _import_events
-	 * This handles displaying the screen and running imports for importing events.
-	 * 	
-	 * @return string html
-	 */
-	protected function _import_events() {
-		require_once(EE_CLASSES . 'EE_Import.class.php');
-		$success = EE_Import::instance()->import();
-		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
-		
-	}
-	
-	
-
 
 
 	/** Event Category Stuff **/
@@ -1864,7 +1780,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_search_btn_label = __('Categories', 'event_espresso');
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'button add-new-h2');
+		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
 
@@ -1983,41 +1899,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		
 		return $cat_id;
-	}
-
-
-	/**
-	 * TODO handle category exports()
-	 * @return file export
-	 */
-	protected function _categories_export() {
-
-		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'categories',
-			'category_ids' => $this->_req_data['EVT_CAT_ID']
-			);
-
-		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
-
-		if ( file_exists( EE_CLASSES . 'EE_Export.class.php') ) {
-			require_once( EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance( $this->_req_data );
-			$EE_Export->export();
-		}
-
-	}
-
-
-
-
-
-	protected function _import_categories() {
-
-		require_once(EE_CLASSES . 'EE_Import.class.php');
-		EE_Import::instance()->import();
-
 	}
 
 

@@ -76,6 +76,7 @@ class EEM_Country extends EEM_Base {
 				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Active Flag','event_espresso'), false, true)
 			));
 		$this->_model_relations = array(
+			'Attendee'=>new EE_Has_Many_Relation(),
 			'State'=>new EE_Has_Many_Relation()
 		);
 		

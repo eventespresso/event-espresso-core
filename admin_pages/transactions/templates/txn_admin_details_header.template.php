@@ -3,6 +3,7 @@
 		
 		<h2 id="txn-date-h2" style="padding:0;margin:0 0 1em;"><?php echo $txn_datetime['value'];?></h2>
 		
+		<?php echo $send_payment_reminder_button; ?>
 		<h2 id="txn-status-h2" style="padding:0;margin:0 0 1em;">
 			<?php echo __( 'Transaction Status: ', 'event_espresso' );?><span id="txn-status" class="<?php echo $txn_status['class'];?>"><?php echo $txn_status['value'];?></span>
 		</h2>

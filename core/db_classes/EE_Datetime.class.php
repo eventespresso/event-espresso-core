@@ -25,6 +25,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	
 	/**
+	 * constant used by get_active_status, indicates datetime has no more available spaces
+	 */
+	const sold_out = -2;
+	/**
 	 * constant used by get_active_status, indicates datetime has expired (event is over)
 	 */
 	const expired = -1;
@@ -33,13 +37,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 */
 	const inactive = 0;
 	/**
-	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
-	 */
-	const active = 2;
-	/**
 	 * constant used by get_active_status, indicating the datetime cannot be used for registrations yet, but has not expired
 	 */
 	const upcoming = 1;
+	/**
+	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
+	 */
+	const active = 2;
 	
     /**
     *	Datetime ID
@@ -101,7 +105,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	@access	protected
     *	@var int	
     */
-	protected $_DTT_reg_limit = -1;
+	protected $_DTT_reg_limit = INF;
 
 
 
@@ -274,7 +278,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@param		int		$reg_limit 	
 	*/	
 	public function set_reg_limit( $reg_limit ) {
-		$this->set('DTT_reg_limit', absint( $reg_limit ));
+		$this->set('DTT_reg_limit', $reg_limit);
 	}
 
 
@@ -286,8 +290,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->_DTT_sold;
-		$sold = $sold + $qty;
+		$sold = $this->_DTT_sold + $qty;
 		return $this->set( 'DTT_sold', $sold );
 	}
 	
@@ -297,8 +300,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->_DTT_sold;
-		$sold = $sold - $qty;
+		$sold = $this->_DTT_sold - $qty;
+		// sold can not go below zero
+		$sold = max( 0, $sold );
 		return $this->set( 'DTT_sold', $sold );
 	}
 
@@ -385,7 +389,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	*		get event start date
+	*		get event start date.  Provide either the date format, or NULL to re-use the
+	 * last-used format, or '' to use teh default date format
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
@@ -395,7 +400,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		return $this->_show_datetime( 'D', 'start', $dt_frmt );
 	}
 
-
+	/**
+	 * Echoes start_date()
+	 * @param string $dt_frmt
+	 */
 	public function e_start_date( $dt_frmt = NULL ) {
 		$this->_show_datetime( 'D', 'start', $dt_frmt, NULL, TRUE );
 	}
@@ -404,7 +412,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	*		get end date
+	*		get end date. Provide either the date format, or NULL to re-use the
+	 * last-used format, or '' to use teh default date format
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
@@ -413,7 +422,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	public function end_date( $dt_frmt = NULL ) {		
 		return $this->_show_datetime( 'D', 'end', $dt_frmt );
 	}
-
+	/**
+	 * Echoes the end date. See end_date()
+	 * @param string $dt_frmt
+	 */
 	public function e_end_date( $dt_frmt = NULL ) {		
 		$this->_show_datetime( 'D', 'end', $dt_frmt, NULL, TRUE );
 	}
@@ -508,6 +520,36 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		$this->_show_datetime( '', 'start', $dt_frmt, $tm_format, TRUE);
 	}
 
+	/**
+	 * Shows the length of the event (start to end time). 
+	 * Can be shown in 'seconds','minutes','hours', or 'days'.
+	 * By default, rounds up. (So if you use 'days', and then event 
+	 * only occurs for 1 hour, it will return 1 day).
+	 * @param string $units 'seconds','minutes','hours','days'
+	 */
+	public function length($units = 'seconds',$round_up = false){
+		$start = $this->get_raw('DTT_EVT_start');
+		$end = $this->get_raw('DTT_EVT_end');
+		$length_in_units = $end - $start;
+		switch($units){
+			//NOTE: We purposefully don't use "break;"
+			//in order to chain the divisions
+			case 'days':
+				$length_in_units /= 24;
+			case 'hours':
+				$length_in_units /= 60;
+			case 'minutes':
+				$length_in_units /= 60;
+			case 'seconds':
+			default:
+				$length_in_units = ceil($length_in_units);
+		}
+		if($round_up){
+			$length_in_units = max($length_in_units, 1);
+		}
+		return $length_in_units;
+		
+	}
 
 
 
@@ -601,22 +643,46 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	*	return the total number of tickets available for purchase for this datetime
+	*	return the total number of spaces remaining at this venue.
+	 *  This only takes the venue's capacity into account, NOT the tickets available for sale
 	* 
 	* 	@access		public		
 	*	@return 		int
 	*/	
-	public function tickets_remaining() {
-		// is there a reg limit set ?
-		if ( $this->_DTT_reg_limit < 1 ) {
-			// unlimited tickets available
-			return -1;
-		}
+	public function spaces_remaining() {
 		// tickets remaining availalbe for purchase
-		return $this->_DTT_reg_limit > $this->_DTT_sold ? $this->_DTT_reg_limit - $this->_DTT_sold : 0;
+		//no need for special checks for infinite, becuase if DTT_reg_limit == INF, then INF - x = INF
+		return $this->_DTT_reg_limit - $this->_DTT_sold ;
 	}
 
-
+	/**
+	 * Counts the total tickets available (from all the different types of tickets which are available for
+	 * this datetime). 
+	 * @param array $query_params  like EEM_Base::get_all's 
+	 * @return count
+	 */
+	public function tickets_remaining($query_params = array()){
+		return EEM_Ticket::instance()->sum_tickets_currently_available_at_datetime($this->ID(),$query_params);
+	}
+	
+	/**
+	 * Gets the count of all teh tickets available at this datetime (not ticket types)
+	 * before any were sold
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return int
+	 */
+	public function sum_tickets_initially_available($query_params = array()){
+		return $this->sum_related('Ticket',$query_params,'TKT_qty');
+	}
+	/**
+	 * Returns the lesser-of-the two: spaces remaining at this datetime, or
+	 * the total tickets remaining (a sum of the tickets remaining for each ticket type
+	 * that is available for this datetime).
+	 * @return int
+	 */
+	public function total_tickets_available_at_this_datetime(){
+		return min(array($this->tickets_remaining(),$this->spaces_remaining()));
+	}
 
 
 	/**
@@ -661,9 +727,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This returns the active status for whether an event is active, upcoming, or expired
-	 * @return int       return value will be one of three ints: -1 = expired, 0 = upcoming, 1 = active.
+	 * @return int       return value will be one of four ints: -2 = sold_out, -1 = expired, 0 = upcoming, 1 = active.
 	 */
 	public function get_active_status() {
+		if ( $this->total_tickets_available_at_this_datetime() < 1 ) return EE_Datetime::sold_out;
 		if ( $this->is_expired() ) return EE_Datetime::expired;
 		if ( $this->is_upcoming() ) return EE_Datetime::upcoming;
 		if ( $this->is_active() ) return EE_Datetime::active;
@@ -698,6 +765,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	public function tickets($query_params = array()){
 		return $this->get_many_related('Ticket', $query_params);
 	}
+	
+	/**
+	 * Gets all the ticket types currently available for purchase
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return EE_Ticket[]
+	 */
+	public function ticket_types_available_for_purchase($query_params = array()){
+		$query_params[0]['TK_start_date'] = array('<=',current_time('mysql'));
+		$query_params[0]['TKT_end_date'] = array('>=',current_time('mysql'));
+		return $this->tickets($query_params);
+	}
 
 	/**
 	 * 
@@ -707,7 +785,25 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		return $this->get_first_related('Event');
 	}
 
-
+	/**
+	 * Updates the DTT_sold attribute (and saves) based on the number of registrations
+	 * for this datetime (via the tickets). Takes the current EE_Config setting for 'pending_counts_reg_limit' 
+	 * into account
+	 * @return int
+	 */
+	public function update_sold(){
+		$stati_to_include = array(EEM_Registration::status_id_approved);
+		if(EE_Config::instance()->registration->pending_counts_reg_limit){
+			$stati_to_include[] = EEM_Registration::status_id_pending;
+		}
+		$count_regs_for_this_datetime = EEM_Registration::instance()->count(array(
+			array(
+				'STS_ID'=>array('IN',$stati_to_include),
+				'Ticket.Datetime.DTT_ID'=>$this->ID())));
+		$this->set('DTT_sold',$count_regs_for_this_datetime);
+		$this->save();
+		return $count_regs_for_this_datetime;
+	}
 
 
 }

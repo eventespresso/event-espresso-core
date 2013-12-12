@@ -195,11 +195,13 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		//Build row actions
 		$actions = array();
 		
-		// edit link
-		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event() ), EE_MSG_ADMIN_URL );
-		$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
+		// edit link but only if item isn't trashed.
+		if ( !$item->get('MTP_deleted') ) {
+			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event() ), EE_MSG_ADMIN_URL );
+			$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
+		}
 		
-		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>';
+		$name_link = ! $item->get('MTP_deleted') ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>' : ucwords( $item->messenger_obj()->label['singular'] );
 		$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		// restore link
 		$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );

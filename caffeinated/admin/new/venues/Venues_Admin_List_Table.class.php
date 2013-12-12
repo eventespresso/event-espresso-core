@@ -100,7 +100,8 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="venue_id[]" value="%s" />', $item->ID());
+
+		return $item->count_related('Event') > 0 ? '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="venue_id[]" value="%s" />', $item->ID());
 	}
 
 
@@ -130,11 +131,16 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_VENUES_ADMIN_URL );
 
 		$actions = array(
-			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Venue', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
-			'delete' => '<a href="' . $delete_link . '" title="' . __('Delete Venue', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>'
+			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Venue', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
 
+		if ( $item->count_related('Event') === 0 )
+			$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Venue', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
+
+		$statuses = EEM_Venue::instance()->get_status_array();
+
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>';
+		$content .= $item->status() == 'draft' ? ' - <span class="post-state">' . $statuses['draft'] . '</span>' : '';
 		$content .= $this->row_actions($actions);
 		return $content;
 	}

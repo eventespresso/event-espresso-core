@@ -9,4 +9,13 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base{
 	//@todo: should we be adding or stripslashing? probably only when adding to DB, if ever...
 		
 	}
+	/**
+	 * Does shortcodes and auto-paragraphs the content
+	 * @param type $value_on_field_to_be_outputted
+	 * @param type $schema
+	 * @return string
+	 */
+	function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null) {
+		return wpautop(do_shortcode(parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema)));
+	}
 }

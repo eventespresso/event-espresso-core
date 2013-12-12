@@ -342,15 +342,6 @@
 				
 				//now we need to decide if we're going to add a new model object given the $model_object_data,
 				//or just update.
-				//to decide that, first we want to know if this import has added
-				//a related model object this one depends on (eg, if we're currently
-				//deciding whether or not to add a Datetime, we ask did we JUST add
-				//its event? Because if we just added a new event, and datetimes DEPEND 
-				//on events for their existence, then we know we want to add a new datetime.
-				//...because even if there IS a datetime with the same ID, it COULDN'T have
-				//been for this same event, (because the event was JUST added), and therefore
-				//it's only a COINCIDENCE that a datetime with teh same ID exists
-				
 				if($export_from_site_a_to_b){
 					//if it's a site-to-site export-and-import, see if this modelobject's id
 					//in the old data that we know of
@@ -358,7 +349,18 @@
 						$id_in_csv = $old_db_to_new_db_mapping[$model_name][$id_in_csv];
 						$do_insert = false;
 					}else{
-						$do_insert = true;
+						//check if this new DB has an exact copy of this model object (eg, a country or state that we don't want to duplicate)
+						$copy_in_db = $model->get_one_copy($model_object_data);
+						if( $copy_in_db ){
+							//so basically this already exists in the DB...
+							//remember the mapping
+							$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $copy_in_db->ID();
+							//and don't bother trying to update or insert, beceause 
+							//we JUST asserted that it's the exact same as what's in teh DB
+							continue;
+						}else{
+							$do_insert = true;
+						}
 					}
 					//loop through all its related models, and see if we can swap their OLD foreign keys
 					//(ie, idsin teh OLD db) for  new foreign key (ie ids in the NEW db)
@@ -407,7 +409,6 @@
 						$new_id = $model->insert($model_object_data);
 						if($new_id){
 							$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $new_id;
-							d($old_db_to_new_db_mapping);
 							$total_inserts++;
 							EE_Error::add_success( sprintf(__("Successfully added new %s (with id %s) with csv data %s", "event_espresso"),$model_name,$new_id, implode(",",$model_object_data)));
 						}else{
@@ -426,12 +427,23 @@
 					try{
 //						$model->show_next_x_db_queries(1);
 //						echo '<br><br>';
-						$success = $model->update($model_object_data,array(array($model->primary_key_name() => $id_in_csv)));
+						if($model->has_primary_key_field()){
+							$conditions = array($model->primary_key_name() => $id_in_csv);
+						}elseif($model->get_combined_primary_key_fields() > 1 ){
+							$conditions = array();
+							foreach($model->get_combined_primary_key_fields() as $key_field){
+								$conditions[$key_field->get_name()] = $model_object_data[$key_field->get_name()];
+							}
+						}else{
+							$model->primary_key_name();//this shoudl just throw an exception, explaining that we dont have a primary key (or a combine dkey)
+						}
+	
+						$success = $model->update($model_object_data,array($conditions));
 						if($success){
 							$total_updates++;
 							EE_Error::add_success( sprintf(__("Successfully updated %s with csv data %s", "event_espresso"),$model_name,implode(",",$model_object_data)));
 						}else{
-							$matched_items = $model->get_all(array(array($model->primary_key_name() => $id_in_csv )));
+							$matched_items = $model->get_all(array($conditions));
 							if( ! $matched_items){
 								//no items were matched (so we shouldn't have updated)... but then we should have inserted? what the heck?
 								$total_update_errors++;
@@ -696,7 +708,7 @@
 	 *			@Determine the maximum upload file size based on php.ini settings
 	 *		  @access public
 	 *			@param int $percent_of_max - desired percentage of the max upload_mb
-	 *			@return int
+	 *			@return int KB
 	 */	
 	public function get_max_upload_size ( $percent_of_max = FALSE ) {
 	
@@ -741,14 +753,17 @@
 		$enclosure_esc = preg_quote($enclosure, '/');
 		
 		$output = array();
-		foreach ($row as $field) {
-			if ($field === null && $mysql_null) {
+		foreach ($row as $field_value) {
+			if(is_object($field_value) || is_array($field_value)){
+				$field_value = serialize($field_value);
+			}
+			if ($field_value === null && $mysql_null) {
 				$output[] = 'NULL';
 				continue;
 			}
 			
-			$output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field) ?
-				( $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure ) : $field;
+			$output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field_value) ?
+				( $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure ) : $field_value;
 		}
 		
 		fwrite($fh, join($delimiter, $output) . PHP_EOL);

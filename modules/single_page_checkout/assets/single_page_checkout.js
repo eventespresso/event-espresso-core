@@ -5,14 +5,35 @@
 	// clear firefox and safari cache
 	$(window).unload( function() {});
 	
-	//	var date_tester = document.createElement( 'input' );
-	// date_tester.setAttribute( 'type', 'date' );
-	// if type is text then and only then should you call the fallback
-	/*if( date_tester.type === 'text' ){
-		$( '#date' ).datepicker({
-			dateFormat: 'dd-mm-yy'
+	// if datepicker is active
+	if ( $.fn.datepicker ) {
+		$( '.datepicker' ).datepicker({
+			changeMonth: true,
+			changeYear: true
 		});
-	}/**/
+	}
+	// to internationalize the datepicker, copy the following to somewhere safe, then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key. 
+	// Multiple languages can be added this way
+//	$.datepicker.regional['fr_FR'] = {
+//		closeText: 'Fermer',
+//		prevText: 'Précédent',
+//		nextText: 'Suivant',
+//		currentText: 'Aujourd\'hui',
+//		monthNames: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+//		'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+//		monthNamesShort: ['janv.', 'févr.', 'mars', 'avril', 'mai', 'juin',
+//		'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+//		dayNames: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+//		dayNamesShort: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+//		dayNamesMin: ['D','L','M','M','J','V','S'],
+//		weekHeader: 'Sem.',
+//		dateFormat: 'dd/mm/yy',
+//		firstDay: 1,
+//		isRTL: false,
+//		showMonthAfterYear: false,
+//		yearSuffix: ''
+//	};
+//	$.datepicker.setDefaults($.datepicker.regional[ eei18n.language ]);  	//	will automagically produce something like:	$.datepicker.setDefaults($.datepicker.regional['fr_FR']);
 
 	$('#spco-copy-all-attendee-chk').prop( 'checked', false );
 
@@ -36,7 +57,7 @@
 
 
 	/**
-	*		trigger click event on all checkboxes if the Copy All option is selected
+	*	if the Copy All option is checked off, trigger click event on all checkboxes 
 	*/
 	$('#spco-copy-all-attendee-chk').on( 'click', function() {
 		$('.spco-copy-attendee-chk').each(function(index) {
@@ -90,11 +111,11 @@
 				var att_nmbr = input_id_array[0];		 
 				var line_item_id = input_id_array[1];		 
 				var input_name = input_id_array[2];	
+				var answer_id = input_id_array[3];	
 				// and it's value'
 				input_value = $(this).val();
 //				console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
 //				console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
-//				console.log( JSON.stringify( 'event_id: ' + event_id, null, 4 ));
 							
 				// if the input is required but has not been filled out
 				if ( $(this).hasClass('required') && input_value == '' ) {  
@@ -120,17 +141,20 @@
 				} else {
 	
 					new_input_id = '#' + trgt_att_input + '-' +  input_name;
-//					if ( answer_id != undefined ) {
-//						new_input_id = new_input_id + '-' + answer_id;
-//					}
+					if ( answer_id != undefined ) {
+						new_input_id = new_input_id + '-' + answer_id;
+					}
 //					console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
 					
 					if ( $(new_input_id).length > 0 ){
 						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
-					       $(new_input_id).prop('checked', true);
-					    } else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
-					        $(new_input_id).prop('checked', true);
-					    } else {
+//							console.log( JSON.stringify( 'radio: ', null, 4 ));
+							$(new_input_id).prop('checked', true);
+						} else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
+//							console.log( JSON.stringify( 'checkbox: ' , null, 4 ));
+							$(new_input_id).prop('checked', true);
+						} else {
+//							console.log( JSON.stringify( 'other: ', null, 4 ));
 							$(new_input_id).val(input_value);
 						}						
 					}
@@ -311,7 +335,7 @@
 
 
 	// submit registraion form
-	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {	
+	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		// re-enable submit btn in case it was disabled
@@ -329,15 +353,17 @@
 			}
 			form_to_check = '#spco-registration-'+step+'-frm';
 			if ( next_step == 'finalize_registration' && $('#reg-page-off-site-gateway').val() == 1 ) {
-	//			alert( 'off-site-gateway' );
-				$('#spco-registration-'+step+'-frm').submit();
-				return;
+				if ( eei18n.wp_debug == 1 ) {
+					console.log( JSON.stringify( 'single-page-checkout on click -> off-site-gateway: ' + $('#reg-page-off-site-gateway').val(), null, 4 ));
+				}	
+				//$('#spco-registration-'+step+'-frm').submit();
+				//return;
 			} else if ( step == 'payment_options' ) {
 				form_to_check = process_selected_gateway();
 			} 
 			process_reg_step ( step, next_step, form_to_check );			
 		}
-
+		return false;
 	});
 
 
@@ -356,9 +382,14 @@
 		var off_site_gateway = '#reg-page-gateway-off-site-'+selected_gateway;
 		var off_site_payment = $( off_site_gateway ).val(); 
 		var selected_gateway_dv = '#reg-page-billing-info-'+selected_gateway+'-dv';
+
 		if ( eei18n.wp_debug == 1 ) {
-			console.log( JSON.stringify( 'selected_gateway: ' + selected_gateway, null, 4 ));
+			console.log( JSON.stringify( 'process_selected_gateway -> selected_gateway: ' + selected_gateway, null, 4 ));
+			console.log( JSON.stringify( 'process_selected_gateway -> off_site_gateway: ' + off_site_gateway, null, 4 ));
+			console.log( JSON.stringify( 'process_selected_gateway -> off_site_payment: ' + off_site_payment, null, 4 ));
+			console.log( JSON.stringify( 'process_selected_gateway -> selected_gateway_dv: ' + selected_gateway_dv, null, 4 ));
 		}
+		
 		// set off-site-gateway status
 		if ( off_site_payment == 1 ) {
 			$('#reg-page-off-site-gateway').val( 1 );
@@ -379,7 +410,6 @@
 		
 		if ( good_to_go === true ) {
 
-			//$('#spco-'+step+'-ajax').val(1);
 			$('#spco-'+step+'-noheader').val('true');
 			$('#spco-'+step+'-action').attr( 'name', 'action' );		
 			var form_data = $('#spco-registration-'+step+'-frm').serialize();
@@ -401,11 +431,13 @@
 					if ( eei18n.wp_debug == 1 ) {
 						console.log( JSON.stringify( 'step: ' + step, null, 4 ));
 						console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ));
-						console.log( JSON.stringify( 'response.return_data: ' + response.return_data, null, 4 ));
 						console.log( JSON.stringify( 'response.success: ' + response.success, null, 4 ));
 						console.log( JSON.stringify( 'response.error: ' + response.error, null, 4 ));
+						for ( key in response.return_data ) {
+							console.log( JSON.stringify( key +': ' + response.return_data[key], null, 4 ));
+						}
 					}
-
+					
 					if ( response.recaptcha_reload != undefined ) {
 						$('#recaptcha_reload').trigger('click');
 						show_event_queue_ajax_error_msg( response.error );
@@ -455,6 +487,7 @@
 				$( '#reg-page-confirmation-dv' ).html( response.return_data[key] );
 			} else if ( key == 'redirect-to-thank-you-page' ) {
 				window.location.replace( response.return_data[key] );
+				console.log( JSON.stringify( key +': ' + response.return_data[key], null, 4 ));
 				return;
 			} else if ( key == 'off-site-redirect') {
 				$( '#spco-extra-finalize_registration-inputs-dv' ).html( response.return_data[key] );
@@ -492,13 +525,15 @@
 		 if ( whch_form == '' ){
 			whch_form = '#spco-registration-' + eei18n.reg_step_1 + '-frm';
 		}
-		//console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
 		
+//		console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
+			
 		var good_to_go = true;
 		
 		$( whch_form + ' .required' ).each( function(index) {
 
-			//console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
+//			console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
+//			console.log( JSON.stringify( 'input value: ' + $(this).val(), null, 4 ));		
 			
 			// empty field
 			if ( $(this).val() == '' ) {

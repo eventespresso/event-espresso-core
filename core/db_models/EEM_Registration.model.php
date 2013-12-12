@@ -21,11 +21,11 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
+require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 require_once ( EE_CLASSES . 'EE_Registration.class.php' );
 
 
-class EEM_Registration extends EEM_Base {
+class EEM_Registration extends EEM_Soft_Delete_Base {
 
   	// private instance of the Registration object
 	private static $_instance = NULL;
@@ -98,7 +98,8 @@ class EEM_Registration extends EEM_Base {
 				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', __('String to be used in URL for identifying registration','event_espresso'), false, ''),
 				'REG_count'=>new EE_Integer_Field('REG_count', __('Count of this registration in the group registraion ','event_espresso'), true, 1),
 				'REG_group_size'=>new EE_Integer_Field('REG_group_size', __('Number of registrations on this group','event_espresso'), false, 1),
-				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),	
+				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),
+				'REG_deleted' => new EE_Trashed_Flag_Field('REG_deleted', __('Flag indicating if registration has been archived or not.', 'event_espresso'), false, false )
 			)
 		);
 		$this->_model_relations = array(
@@ -330,21 +331,16 @@ class EEM_Registration extends EEM_Base {
 	 *		@param boolean $for_incomplete_payments
 	 *		@return int
 	 */
-	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {		
-		$query_params = array(
-			array(
-				'EVT_ID'=>$EVT_ID,
-				'STS_ID' => EEM_Registration::status_id_approved
-			),
-			'default_where_conditions' => 'none'
-		);
+	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {	
+
+		$query_params = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(self::status_id_pending, self::status_id_approved ) ) ) ) : array( array( 'STS_ID' => self::status_id_approved ) );
+
+		$query_params[0]['EVT_ID'] = $EVT_ID;
+
 		if( $for_incomplete_payments ){
 			$query_params[0]['Transaction.STS_ID']=array('!=',  EEM_Transaction::complete_status_code);
 		}
 
-		if( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ){
-			$query_params[0]['OR'] = array( 'STS_ID' => EEM_Registration::status_id_pending, 'STS_ID*' => EEM_Registration::status_id_approved );
-		}
 		return $this->count($query_params);	
 	}
 

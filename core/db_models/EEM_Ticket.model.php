@@ -52,11 +52,11 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_min'=>new EE_Integer_Field('TKT_min', __('Minimum quantity of this ticket that must be purchased', 'event_espresso'), false, 0 ),
-				'TKT_max'=>new EE_Integer_Field('TKT_max', __('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'), false, -1 ),
+				'TKT_max'=>new EE_Infinite_Integer_Field('TKT_max', __('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'), false, INF ),
 				'TKT_price'=> new EE_Money_Field('TKT_price', 'Final calculated price for ticket', false, 0),
 				'TKT_sold' => new EE_Integer_Field('TKT_sold', __('Number of this ticket sold', 'event_espresso'), false, 0),
-				'TKT_qty'=>new EE_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), true, 0),
-				'TKT_uses'=>new EE_Integer_Field('TKT_uses', __('Number of times this ticket can be used (per registration ) to Check-in before expiring', 'event_espresso'), TRUE, NULL ),
+				'TKT_qty'=>new EE_Infinite_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), false, INF),
+				'TKT_uses'=>new EE_Infinite_Integer_Field('TKT_uses', __('Number of datetimes this ticket can be used at', 'event_espresso'), false, INF ),
 				'TKT_taxable'=>new EE_Boolean_Field('TKT_taxable', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
 				'TKT_is_default'=>new EE_Boolean_Field('TKT_is_default', __('Flag indicating that this ticket is a default ticket', 'event_espresso'), false, false ),
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed in the editor (used for autosaves when the form doesn\'t have the ticket ID yet)', 'event_espresso'), false, 0),
@@ -132,7 +132,42 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		return $tickets;
 	}
 
-
+	/**
+	 * Gets the total number of tickets available at a particular datetime (does 
+	 * NOT take int account the datetime's spaces available)
+	 * @param int $DTT_ID
+	 * @param array $query_params
+	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns INF
+	 */
+	public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array()){
+		$sum = 0;
+		$query_params[0]['Datetime.DTT_ID'] = $DTT_ID;
+		$remaining_per_ticket = $this->_get_all_wpdb_results(
+				$query_params, 
+				ARRAY_A, 
+				array(
+					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold','%d'),//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
+					'initially_available'=>array('Ticket.TKT_qty','%d')));
+		foreach($remaining_per_ticket as $remaining_per_ticket){
+			if(intval($remaining_per_ticket['initially_available'])==EE_INF_IN_DB){//infinite in DB
+				return INF;
+			}
+			$sum+=intval($remaining_per_ticket['tickets_remaining']);
+		}
+		return $sum;
+	}
+	
+	/**
+	 * Updates the TKT_sold quantity on all the tickets matching $query_params
+	 * @param EE_Ticket[] $tickets
+	 * @return void
+	 */
+	public function update_tickets_sold($tickets){
+		foreach($tickets as $ticket){
+			/* @var  $ticket EE_Ticket */
+			$ticket->update_tickets_sold();
+		}
+	}
 
 } 
 //end EEM_Ticket model

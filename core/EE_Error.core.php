@@ -785,6 +785,30 @@ class EE_Error extends Exception {
 
 
 
+	/**
+	 * This is just a wrapper for the EEH_Debug_Tools::instance()->doing_it_wrong() method.
+	 *
+	 * doing_it_wrong() is used in those cases where a normal PHP error won't get thrown, but the code execution is done in a manner that could lead to unexpected results (i.e. running to early, or too late in WP or EE loading process).  
+	 *
+	 * A good test for knowing whether to use this method is:
+	 * 1. Is there going to be a PHP error if something isn't setup/used correctly? Yes -> use EE_Error::add_error() or throw new EE_Error()
+	 * 2. If this is loaded before something else, it won't break anything, but just wont' do what its supposed to do? Yes -> use EE_Error::doing_it_wrong()
+	 *
+	 * @uses   constant WP_DEBUG test if wp_debug is on or not
+	 * @param  string $function The function that was called
+	 * @param  string $message  A message explaining what has been done incorrectly
+	 * @param  string $version  The verison of Event Espresso where the error was added
+	 * @return trigger_error() 
+	 */
+	public static function doing_it_wrong( $function, $message, $version ) {
+		if ( defined('WP_DEBUG') && WP_DEBUG ) {
+			EE_Registry::instance()->load_helper('Debug_Tools');
+			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version );
+		}
+	}
+
+
+
 
 }
 // end of Class EE_Exceptions

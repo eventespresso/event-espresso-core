@@ -58,12 +58,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
-			'start_date' => __('Start Date', 'event_espresso'),
-			'start_time' => __('Start Time', 'event_espresso'),
+			'start_date_time' => __('Event Start', 'event_espresso'),
 			'reg_begins' => __('Reg Begins', 'event_espresso'),
 			'status' => __('Status', 'event_espresso'),
-			'attendees' => __('Attendees', 'event_espresso'),
-			'tkts_sold' => __('Tickets Sold', 'event_espresso'),
+			'attendees' => '<span class="ee-att-icon"></span>',
+			//'tkts_sold' => __('Tickets Sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
 			);
 
@@ -71,9 +70,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_sortable_columns = array(
 			'id' => array( 'EVT_ID' => true ),
 			'name' => array( 'EVT_name' => false ),
-			'venue' => array( 'VNU_name' => false ),
-			'start_date' => array('Datetime.DTT_EVT_start' => false),
-			'start_time' => array('Datetime.DTT_EVT_start' => false),
+			'venue' => array( 'Venue.VNU_name' => false ),
+			'start_date_time' => array('Datetime.DTT_EVT_start' => false),
 			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
 			//'status' => array('Event.status' => false)
 			);
@@ -107,7 +105,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		//does event have any attached registrations?
 		$regs = $item->count_related('Registration');
-        return $regs > 0 && $this->_view == 'trash' ? '<span class="lock-icon"></span>' : sprintf(
+        return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
             '<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
         );    
     }
@@ -208,20 +206,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_start_date($item) {
-		!empty( $this->_dtt ) ? $this->_dtt->e_start_date() : _e('No Date was saved for this Event', 'event_espresso');
+	public function column_start_date_time($item) {
+		!empty( $this->_dtt ) ? $this->_dtt->e_start_date_and_time() : _e('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_date', '', 'My Timezone: ' ) : '';
+		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_datetime', '', 'My Timezone: ' ) : '';
 
-	}
-
-
-
-
-	public function column_start_time($item) {
-		!empty( $this->_dtt ) ? $this->_dtt->e_start_time() : _e('No Date was saved for this Event', 'event_espresso');
-		//display in user's timezone?
-		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone( 'DTT_EVT_start', 'get_time', '', 'My Timezone: ' ) : '';
 	}
 
 
@@ -273,45 +262,21 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'post' => $item->ID()
 			);
 
-		$trash_event_query_args = array(
-				'action' => 'trash_event',
-				'EVT_ID' => $item->ID()
-			);
-
 		$attendees_query_args = array(
 				'action' => 'default',
 				'event_id' => $item->ID()
 			);
 
-		$reports_query_args = array(
-				'action' => 'reports',
-				'EVT_ID' => $item->ID()
-			);
-
-		$export_query_args = array(
-				'action' => 'export_events',
-				'EVT_ID' => $item->ID()
-			);
 
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
 		$view_link = get_permalink($item->ID());
-		$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
-		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
-		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
 
 		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
 		$actionlinks[] = '<div class="view_btn"></div></a>';
 		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>';
 		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>';
-		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
-		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to Excel', 'event_espresso') . '"><div class="excel_exp_btn"></div></a>';
-		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
-			</a>';
-		$actionlinks[] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">
-				<img width="16" height="16" alt="trash" src="' . EE_GLOBAL_ASSETS_URL . 'images/trash-small-16x16.png" style="margin-top:3px;">			
-			</a>' . "\n\t";
 
 		$actionlinks = apply_filters('FHEE_list_table_events_actions_column_action_links', $actionlinks, $item );
 

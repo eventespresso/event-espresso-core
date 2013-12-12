@@ -21,8 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
-class EE_Registration extends EE_Base_Class {
+require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
+class EE_Registration extends EE_Soft_Delete_Base_Class {
 	
     /**
     *	Registration ID
@@ -182,7 +182,18 @@ class EE_Registration extends EE_Base_Class {
 	*	@access	protected
     *	@var boolean	
     */
-	protected $_REG_att_is_going = 0;	
+	protected $_REG_att_is_going = 0;
+
+
+
+
+	/**
+	 * This is the soft delete field for Registrations
+	 *
+	 * @access protected
+	 * @var integer
+	 */
+	protected $_REG_deleted = 0;
 	
 	
 
@@ -538,15 +549,29 @@ class EE_Registration extends EE_Base_Class {
 	/**
 	 * Gets the string which represents the URL for the invoice PDF for this registration (according to EED_Invoice)
 	 * Dependant on code in ee/includes/functions/init espresso_export_invoice
+	 * @param string $type 'download','launch', or 'html' (default is 'launch')
 	 * @return string
 	 */
-	public function invoice_url($force_download = false){
-		if($force_download){
+	public function invoice_url($type = 'launch'){
+		if($type == 'download'){
 			$route = 'download_invoice';
 		}else{
 			$route = 'launch_invoice';
 		}
-		return add_query_arg(array('ee'=>$route,'id'=>$this->reg_url_link()),get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
+		$query_args = array('ee'=>$route,'id'=>$this->reg_url_link());
+		if($type=='html'){
+			$query_args['html'] = true;
+		}
+		return add_query_arg($query_args,get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
+	}
+	/**
+	 * Gets the string which represents the URL for the 'receipt' PDF, which is currently 
+	 * just a variant of the invoice
+	 * @param string $type  'download','launch', or 'html' (default is 'launch')
+	 * @return string
+	 */
+	public function receipt_url($type = 'launch'){
+		return add_query_arg(array('receipt'=>'true'),$this->invoice_url($type));
 	}
 	
 	
@@ -556,10 +581,11 @@ class EE_Registration extends EE_Base_Class {
 	
 	/**
 	 * Echoes out invoice_url()
+	 * @param string $type  'download','launch', or 'html' (default is 'launch')
 	 * @return void
 	 */
-	public function e_invoice_url($force_download = false){
-		echo $this->invoice_url($force_download);
+	public function e_invoice_url($type = 'launch'){
+		echo $this->invoice_url($type);
 	}
 	
 	
@@ -658,12 +684,8 @@ class EE_Registration extends EE_Base_Class {
 	 * Gets the ticket this registration is for
 	 * @return EE_Ticket
 	 */
-	public function ticket($query_params = array()){
-		//we're going to assume that when this method is called we always want to receive the attached ticket EVEN if that ticket is archived.  This can be overridden via the incoming $query_params argument
-		$remove_defaults = array('default_where_conditions' => 'none');
-		$query_params = array_merge($remove_defaults, $query_params);
-
-		return $this->get_first_related('Ticket', $query_params);
+	public function ticket(){
+		return $this->get_first_related('Ticket');
 	}
 	
 
@@ -799,7 +821,7 @@ class EE_Registration extends EE_Base_Class {
 
 
 	/**
-	 * This method simply returns the check in status for this registration and the given datetime.
+	 * This method simply returns the check-in status for this registration and the given datetime.
 	 * @param  int         $DTT_ID  The ID of the datetime we're checking against (if empty we'll get the primary datetime for this registration (via event) and use it's ID);
 	 * @param 	EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
 	 * @return int            Integer representing Check-in status.
@@ -895,7 +917,7 @@ class EE_Registration extends EE_Base_Class {
 		$attendee = $this->get_first_related('Attendee');
 
 		if ( $error ) {
-			return sprintf( __("%s's check in status was not changed.", "event_espresso"), $attendee->full_name() );
+			return sprintf( __("%s's check-in status was not changed.", "event_espresso"), $attendee->full_name() );
 		}
 
 		//what is the status message going to be?
@@ -947,13 +969,18 @@ class EE_Registration extends EE_Base_Class {
 	 * @return void
 	 */
 	public function reserve_registration_space() {
-		$this->ticket()->increase_sold();
-		$this->ticket()->save();
-		$datetimes = $this->ticket()->datetimes();
-		foreach ( $datetimes as $datetime ) {
-			$datetime->increase_sold();
-			$datetime->save();
-		}	
+		$ticket = $this->ticket();
+		$ticket->increase_sold();
+		$ticket->save();
+		$datetimes = $ticket->datetimes();
+		if ( is_array( $datetimes )) {
+			foreach ( $datetimes as $datetime ) {
+				$datetime->increase_sold();
+				$datetime->save();
+			}
+		}
+		// possibly set event status to sold out
+		$this->get_first_related( 'Event' )->perform_sold_out_status_check();
 	}
 
 
@@ -963,12 +990,15 @@ class EE_Registration extends EE_Base_Class {
 	 * @return void
 	 */
 	public function release_registration_space() {
-		$this->ticket()->decrease_sold();
-		$this->ticket()->save();
-		$datetimes = $this->ticket()->datetimes();
-		foreach ( $datetimes as $datetime ) {
-			$datetime->decrease_sold();
-			$datetime->save();
+		$ticket = $this->ticket();
+		$ticket->decrease_sold();
+		$ticket->save();
+		$datetimes = $ticket->datetimes();
+		if ( is_array( $datetimes )) {
+			foreach ( $datetimes as $datetime ) {
+				$datetime->decrease_sold();
+				$datetime->save();
+			}	
 		}	
 	}
 

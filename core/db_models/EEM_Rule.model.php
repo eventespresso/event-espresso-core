@@ -56,8 +56,8 @@ class EEM_Rule extends EEM_Soft_Delete_Base {
 				'RUL_ID'=>new EE_Primary_Key_Int_Field('RUL_ID', __("ID", "event_espresso")),
 				'RUL_name'=>new EE_Plain_Text_Field('RUL_name', __("Name", "event_espresso"), false, ''),
 				'RUL_desc'=>new EE_Simple_HTML_Field('RUL_desc', __("Description", "event_espresso"), false,''),
-				'RUL_trigger'=>new EE_Plain_Text_Field('RUL_trigger', __("Trigger", "event_espresso"), false),
-				'RUL_trigger_type'=>new EE_Plain_Text_Field('RUL_trigger_type', __("Trigger Type", "event_espresso"), false),
+				'RUL_trigger'=>new EE_Plain_Text_Field('RUL_trigger', __("Trigger", "event_espresso"), false,''),
+				'RUL_trigger_type'=>new EE_Plain_Text_Field('RUL_trigger_type', __("Trigger Type", "event_espresso"), false,''),
 				'RUL_comparison'=>new EE_Enum_Text_Field('RUL_comparison', __("Comparison", "event_espresso"), false, '=', 
 						array(
 							'='=>  __("=", "event_espresso"),

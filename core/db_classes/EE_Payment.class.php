@@ -414,6 +414,10 @@ class EE_Payment extends EE_Base_Class{
 	public function amount() {
 		return $this->get('PAY_amount');
 	}
+	
+	public function amount_no_code(){
+		return $this->get_pretty('PAY_amount','no_currency_code');
+	}
 
 
 
