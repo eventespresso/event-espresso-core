@@ -1135,9 +1135,9 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													// whoops!!!
 													EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 												}
-											} elseif ( is_array( $input_value )) {
+											} /*else if ( is_array( $input_value )) {
 												$input_value = maybe_serialize( $input_value );
-											}
+											}*/
 										
 											// store a bit of data about the primary attendee
 											if ( $att_nmbr == 1 && $line_item_id == $primary_attendee['line_item_id'] && ! empty( $input_value )) {
@@ -1172,7 +1172,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											// if this form input has a corresponding attendee property
 											if ( $attendee_property ) {
 												$attendee_data[ $form_input ] = $input_value;
-												if (  $answer_is_obj ) {
+												if (  $answer_is_obj ) {													
 													// and delete the corresponding answer since we won't be storing this data in that object
 													$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
 												}
