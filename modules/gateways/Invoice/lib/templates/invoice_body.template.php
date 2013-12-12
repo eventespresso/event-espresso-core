@@ -123,7 +123,7 @@
 							if($has_subitems){
 							?>
 							<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
-								<td class="item_l"><?php echo $line_item->value() ?></td>
+								<td class="item_l"><?php echo $line_item->name() ?></td>
 								<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 								<td class="item_l"><?php echo $line_item->quantity();?></td>
 								
@@ -140,7 +140,7 @@
 								} 
 							}else{//no subitems - just show this line item ?>
 								<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
-									<td class="item_l"><?php echo $line_item->value()?></td>
+									<td class="item_l"><?php echo $line_item->name()?></td>
 									<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 									<td class="item_l"><?php echo $line_item->quantity()?></td>
 									<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
@@ -153,7 +153,7 @@
 						case EEM_Line_Item::type_sub_line_item:							
 							?>
 						<tr class="item subitem-row">
-							<td class="item_l subitem"><?php echo $line_item->value(); ?></td>
+							<td class="item_l subitem"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<?php if ($line_item->is_percent()) { ?>
 									<td></td>
@@ -168,7 +168,7 @@
 					case EEM_Line_Item::type_tax:							
 							?>
 						<tr class="item sub-item tax-total">
-							<td class="item_l"><?php echo $line_item->value(); ?></td>
+							<td class="item_l"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<td colspan="2" class="item_c"><?php echo $line_item->percent(); ?>%</td>
 							
