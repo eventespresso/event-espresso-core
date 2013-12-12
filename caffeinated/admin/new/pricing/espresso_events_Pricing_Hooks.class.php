@@ -421,6 +421,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @return  void
 	 */
 	private function  _add_prices_to_ticket( $prices, EE_Ticket $ticket, $new_prices = FALSE ) {
+
+		//let's just get any current prices that may exist on the given ticket so we can remove any prices that got trashed in this session.
+		$current_prices_on_ticket = $ticket->get_many_related('Price');
+		$updated_prices = array();
+
 		foreach ( $prices as $row => $prc ) {
 			$PRC_values = array(
 				'PRC_ID' => !empty( $prc['PRC_ID'] ) ? $prc['PRC_ID'] : NULL,
@@ -442,8 +447,27 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				}
 			}
 			$PRC->save();
+			$prcid = $PRC->ID();
+			$updated_prices[$prcid] = $PRC;
 			$ticket->_add_relation_to( $PRC, 'Price' );
 		}
+
+		//now let's remove any prices that got removed from the ticket
+		if ( !empty ( $current_prices_on_ticket ) ) {
+			$current = array_keys($current_prices_on_ticket);
+			$updated = array_keys($updated_prices);
+			$prices_to_remove = array_diff($current, $updated);
+			if ( !empty( $prices_to_remove ) ) {
+				foreach ( $prices_to_remove as $prc_id ) {
+					$p = $current_prices_on_ticket[$prc_id];
+					$ticket->_remove_relation_to( $p, 'Price' );
+
+					//delete permanently the price
+					$p->delete_permanently();
+				}
+			}
+		}
+
 		$ticket->save();
 		return $ticket;
 	}
