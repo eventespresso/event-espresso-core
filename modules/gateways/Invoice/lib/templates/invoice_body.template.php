@@ -168,7 +168,7 @@
 					case EEM_Line_Item::type_tax:							
 							?>
 						<tr class="item sub-item tax-total">
-							<td class="item_l"><?php echo $line_item->value(); ?></td>
+							<td class="item_l"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<td colspan="2" class="item_c"><?php echo $line_item->percent(); ?>%</td>
 							
