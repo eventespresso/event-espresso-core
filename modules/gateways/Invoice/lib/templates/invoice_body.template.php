@@ -140,7 +140,7 @@
 								} 
 							}else{//no subitems - just show this line item ?>
 								<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
-									<td class="item_l"><?php echo $line_item->value()?></td>
+									<td class="item_l"><?php echo $line_item->name()?></td>
 									<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 									<td class="item_l"><?php echo $line_item->quantity()?></td>
 									<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
