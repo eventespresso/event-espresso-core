@@ -13,7 +13,7 @@ class EE_Maybe_Serialized_Text_Field extends EE_Serialized_Text_Field{
 	 */
 	function prepare_for_use_in_db($value_of_field_on_model_object) {
 		if(is_array($value_of_field_on_model_object)){
-			return parent::prepare_for_set_from_db($value_of_field_on_model_object);
+			return parent::prepare_for_use_in_db($value_of_field_on_model_object);
 		}else{
 			return $value_of_field_on_model_object;
 		}
