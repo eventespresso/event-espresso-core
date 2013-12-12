@@ -108,12 +108,12 @@
 }
 .ee-upcoming-events-widget-h5 a {
 	position: absolute;
-	bottom: 4.5%;
+	bottom: 4%;
 	left: 0;
 	width: 90%;
 	padding: 2.5% 5%; 
-	background: rgba(232, 232, 232, 0.9);
-	border: 1px solid rgba(232, 232, 232, 0.9);
+	background: rgba(255, 255, 255, 0.85);
+	border: 1px solid rgba(255, 255, 255, 0.85);
 	line-height: 1.2em;
 	color:#333 !important;
 	text-shadow: 1px 1px 0 #FFFFFF;
