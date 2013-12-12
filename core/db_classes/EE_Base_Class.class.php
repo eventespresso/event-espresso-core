@@ -440,7 +440,7 @@ class EE_Base_Class{
 		}else{
 			if($object_to_remove_or_index_into_array instanceof EE_Base_Class && $object_to_remove_or_index_into_array->ID()){
 				$index_in_cache = $object_to_remove_or_index_into_array->ID();
-				if( ! isset($this->{$relationNameClassAttribute}[$index_in_cache])){
+				if( is_array($this->{$relationNameClassAttribute}) && ! isset($this->{$relationNameClassAttribute}[$index_in_cache])){
 					//find this object in teh array even though it has a different key
 					foreach($this->$relationNameClassAttribute as $index=>$obj){
 						if($obj == $object_to_remove_or_index_into_array || $obj->ID() == $object_to_remove_or_index_into_array->ID()){
