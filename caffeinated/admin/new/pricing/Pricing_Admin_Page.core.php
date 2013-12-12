@@ -648,6 +648,19 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			if ( $PRC->update( $set_column_values, array($where_cols_n_values))) {
 				$success = 1;
 			}
+
+			//if this is $PRC_ID == 1, then we need to update the default ticket attached to this price so the TKT_price value is updated.
+			if ( $PRC_ID === 1 ) {
+				$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+				$ticket = $PR->get_first_related('Ticket');
+				if ( $ticket ) {
+					$ticket->set('TKT_price', $PR->get('PRC_amount') );
+					$ticket->set('TKT_name', $PR->get('PRC_name') );
+					$ticket->set('TKT_description', $PR->get('PRC_desc'));
+					$ticket->save();
+				}
+			}
+
 			$action_desc = 'updated';
 		}
 		
