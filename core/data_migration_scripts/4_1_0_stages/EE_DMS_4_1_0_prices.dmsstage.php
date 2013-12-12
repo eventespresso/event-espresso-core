@@ -276,7 +276,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		if($old_price_row['surcharge_type'] == 'flat_rate'){
 			$final_ticket_price = floatval($old_price_row['event_cost']) + floatval($old_price_row['surcharge']);
 		}else{//percent surcharge
-			$final_ticket_price = floatval($old_price_row['event_cost']) * (1 + 100*floatval($old_price_row['surcharge']));
+			$final_ticket_price = floatval($old_price_row['event_cost']) * (1 + floatval($old_price_row['surcharge'])/100);
 		}
 		$cols_n_values = array(
 			'TTM_ID'=>null,
