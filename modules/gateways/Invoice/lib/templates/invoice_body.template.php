@@ -34,28 +34,17 @@
 				</td>
 			</tr>
 		</table>
-		
-		<table id="bill-to" class="not-really-a-table">
-			<tr>
-				<td id="bill-to">
-					<?php _e('Bill To:', 'event_espresso')?>
-				</td>
-				<td colspan="4">
-					<div class="vcard" id="client-details">
+		<h2><?php _e('Bill To:', 'event_espresso')?></h2>
+		<div class="vcard" id="client-details">
 						<div class="fn">[name]</div>
-						<!--<div class="org">Client Company</div>--> 
 						<div class="adr">
 							<div class="street-address"><?php echo $attendee_address; ?></div>
 							<div class="locality"><?php echo $attendee_city; ?> <?php echo $attendee_state; ?></div>
 							<div id="client-postcode"><?php echo $attendee_zip; ?></div>
-							<!--<div id="your-tax-number">SALES TAX: 193528491</div>--> 
 						</div> 
 					</div>
 					 <!--#client-details vcard--> 
-				</td>
-			</tr>
-			
-		</table>
+		
 		<h2><?php _e("Purchases",'event_espresso')?></h2>
 		<table id="invoice-amount">
 			
