@@ -20,28 +20,39 @@
 
  * 
  */
-class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage{
-	private $_old_table;
+class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_table;
-	function _migration_step($num_items=50){
-		global $wpdb;
-		$start_at_record = $this->count_records_migrated();
-		$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$start_at_record,$num_items),ARRAY_A);
-		$items_actually_migrated = 0;
-		foreach($rows as $old_event){
-			$this->_insert_new_event_question_groups($old_event);
-			$items_actually_migrated++;
-		}
-		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
-			$this->set_completed();
-		}
-		return $items_actually_migrated;
+	function _migrate_old_row($old_row) {
+//		$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $this->_new_transaction_table);
+//			if ( ! $txn_id ){
+//				$this->add_error(sprintf(__("Could not find the transaction for the 3.1 attendee %d from row %s", "event_espresso"),$old_row['id'],http_build_query($old_row)));
+//				return;
+//			}
+//			$txn = $this->_get_txn($txn_id);
+//			$new_line_items = $this->_insert_new_line_items($txn,$old_row);
+//			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_line_table,$new_line_items);
+		
+			$this->_insert_new_event_question_groups($old_row);
 	}
-	function _count_records_to_migrate() {
-		global $wpdb;
-		$count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
-		return $count;
-	}
+//	function _migration_step($num_items=50){
+//		global $wpdb;
+//		$start_at_record = $this->count_records_migrated();
+//		$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$start_at_record,$num_items),ARRAY_A);
+//		$items_actually_migrated = 0;
+//		foreach($rows as $old_event){
+//			$this->_insert_new_event_question_groups($old_event);
+//			$items_actually_migrated++;
+//		}
+//		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
+//			$this->set_completed();
+//		}
+//		return $items_actually_migrated;
+//	}
+//	function _count_records_to_migrate() {
+//		global $wpdb;
+//		$count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+//		return $count;
+//	}
 	function __construct() {
 		global $wpdb;
 		$this->_old_table = $wpdb->prefix."events_detail";
@@ -87,8 +98,13 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage{
 			$this->add_error(sprintf(__("Could not find 4.1 question ID for 3.1 question id #%s on event $%s", "event_espresso"),$old_question_group_id,$old_event['id']));
 			return 0;
 		}
+		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", intval($old_event['id']), $wpdb->posts);
+			if( ! $new_question_group_id){
+			$this->add_error(sprintf(__("Could not find 4.1 event 3.1 event id #%s", "event_espresso"),$old_event['id']));
+			return 0;
+		}
 		$cols_n_values = array(
-			'EVT_ID'=>$old_event['id'],
+			'EVT_ID'=>$new_event_id,
 			'QSG_ID'=>$new_question_group_id,
 			'EQG_primary'=>$primary
 		);
