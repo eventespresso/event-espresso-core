@@ -500,6 +500,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}else{
 				$success = false;
 			}
+			$action_desc='created';
 		}else{
 			$ID=absint($this->_req_data['QST_ID']);
 			$pk=$this->_question_model->primary_key_name();
