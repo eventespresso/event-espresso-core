@@ -357,16 +357,17 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && ( isset( $dtts_added[0] ) && $dtts_added[0] == '' ) ) ? array() : $dtts_added;
 
 			foreach ( $dtts_added as $dttrow ) {
-				$saved_dtts[$dttrow]->_add_relation_to( $TKT, 'Ticket' );
-				$saved_dtts[$dttrow]->save();
+				$TKT->_add_relation_to($saved_dtts[$dttrow], 'Datetime');
 			}
 
-			$dtts_removed = empty( $dtts_added ) || ( is_array( $dtts_removed ) && isset( $dtts_removed[0] ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
+			$dtts_removed = empty( $dtts_removed ) || ( is_array( $dtts_removed ) && isset( $dtts_removed[0] ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
+	
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
-				$saved_dtts[$dttrow]->_remove_relation_to( $TKT, 'Ticket' );
-				$saved_dtts[$dttrow]->save();
+				$TKT->_remove_relation_to($saved_dtts[$dttrow], 'Datetime');
 			}
+
+			$TKT->save();
 
 
 			//DO ALL dtt relationships for both current tickets and any archived tickets for the given dtt that are related to the current ticket. TODO... not sure exactly how we're going to do this considering we don't know what current ticket the archived tickets are related to (and TKT_parent is used for autosaves so that's not a field we can reliably use).
