@@ -944,7 +944,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	private function _generate_new_reg_code() {
 		// generate a reg code ?
-		if ( empty( $this->_REG_code )) {			
+		if ( empty( $this->_REG_code )) {		
 			// figure out where to start parsing the reg code
 			$chars = strpos( $this->_REG_url_link, '-' ) + 4;
 			$new_reg_code = array(
@@ -1025,6 +1025,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		if ( $update_reg ) { 
 			$this->save();
 		}
+		return $update_reg;
 			
 	}
 
