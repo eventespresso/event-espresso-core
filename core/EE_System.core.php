@@ -124,7 +124,8 @@ final class EE_System {
 		//we gave addons a chance to register themselves before detecting the request type
 		//and deciding whether or nto to set maintenance mode
 		// check for plugin activation/upgrade/installation
-		add_action('plugins_loaded',array($this,'plugins_loaded'),5);
+		add_action( 'plugins_loaded', array( $this,'plugins_loaded' ), 7 );
+		do_action( 'AHEE__EE_System__construct__end', $this );
 	}
 	
 	public function plugins_loaded(){
@@ -141,7 +142,7 @@ final class EE_System {
 		}
 		// load additional common resources
 		add_action( 'init', array( $this, 'init' ), 3 );
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			do_action('AHEE__EE_System__construct__end',$this);
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 	}
 
 
