@@ -28,3 +28,6 @@
 .questiongroups .column-name { width:20%; }
 .questiongroups .column-description  { }
 
+table.question-options-table td, table.question-options-table th{
+	padding:1em 10px 0 3px; line-height: 1em;
+}

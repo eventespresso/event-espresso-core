@@ -81,29 +81,29 @@ $fields = $question->get_model()->field_settings();
 				</th>
 				<td>
 				
-					<table >
+					<table class="question-options-table">
 						<thead>
 							<tr>
-								<th style="padding:1em 10px 0 3px; line-height: 1em;">
+								<th class="option-value-header">
 									<?php _e('Value','event_espresso')?>
 								</th>
-								<th style="padding:1em 10px 0 3px; line-height: 1em;">
+								<th class="option-desc-header">
 									<?php _e('Description (optional, only shown on registration form)','event_espresso')?>
 								</th>
-								<th style="padding:1em 10px 0 3px; line-height: 1em;">
+								<th>
 								</th>
 							</tr>
 						</thead>
 						
 						<tbody>
 							<tr class="question-option sample">
-								<td style="padding: 0 10px 10px 0; line-height: 1em;">
+								<td class="option-value-cell">
 									<input type="text" name="question_options[xxcountxx][QSO_value]" class="option-value regular-text">
 								</td>
-								<td style="padding: 0 10px 10px 0; line-height: 1em;">
+								<td class="option-desc-cell">
 									<input type="text" name="question_options[xxcountxx][QSO_desc]" class="option-desc regular-text">
 								</td>
-								<td style="padding: 0 10px 10px 0; line-height: 1em;">
+								<td>
 									<a class="remove-option remove-item">
 										<img src="<?php echo EE_GLOBAL_ASSETS_URL ?>images/trash-16x16.png"/>
 									</a>
@@ -116,14 +116,14 @@ $fields = $question->get_model()->field_settings();
 								foreach( $question_options as $option_id => $option ) { 
 							?>
 								<tr class="question-option">
-									<td style="padding: 0 10px 10px 0; line-height: 1em;">
-										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
+									<td class="option-value">
+										<input type="text" class="option-value regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
 									</td>
-									<td style="padding: 0 10px 10px 0; line-height: 1em;">
-										<input type="text" class="regular-text" name="question_options[<?php echo $count?>][QSO_desc]" value="<?php echo $option->desc()?>">
+									<td class="option-desc-cell">
+										<input type="text" class="option-desc regular-text" name="question_options[<?php echo $count?>][QSO_desc]" value="<?php echo $option->desc()?>">
 									</td>
 									<?php if( $count > 0 ){ ?>
-									<td style="padding: 0 10px 10px 0; line-height: 1em;">
+									<td>
 										<a class="remove-option remove-item">
 											<img src="<?php echo EE_GLOBAL_ASSETS_URL ?>images/trash-16x16.png"/>
 										</a>
@@ -142,10 +142,10 @@ $fields = $question->get_model()->field_settings();
 							?>
 							<tr class="question-option">
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[0][QSO_value]" class="option-name regular-text">
+									<input type="text" name="question_options[0][QSO_value]" class="option-value regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
-									<input type="text" name="question_options[0][QSO_desc]" class="option-value regular-text">
+									<input type="text" name="question_options[0][QSO_desc]" class="option-desc regular-text">
 								</td>
 								<td style="padding: 0 10px 10px 0; line-height: 1em;">
 								</td>
