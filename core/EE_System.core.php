@@ -124,7 +124,10 @@ final class EE_System {
 		//we gave addons a chance to register themselves before detecting the request type
 		//and deciding whether or nto to set maintenance mode
 		// check for plugin activation/upgrade/installation
-		
+		add_action('plugins_loaded',array($this,'plugins_loaded'),5);
+	}
+	
+	public function plugins_loaded(){
 		$this->_manage_activation_process();
 		
 		// let's get it started		

@@ -145,6 +145,8 @@ final class EE_Config {
 		// load existing EE site settings
 		$this->_load_config();
 		//  register shortcodes and modules
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+		//  initialize shortcodes and modules
 		add_action( 'init', array( $this, 'init' ), 10 );
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
@@ -288,16 +290,39 @@ final class EE_Config {
 
 
 	/**
-	 * 	init
+	 * 	plugins_loaded.
+	 * At this point, it's too early to tell if we're maintenance mode or not.
+	 * In fact, this is where we give modules a chance to let core know they exist
+	 * so they can help trigger maintenance mode if it's needed
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function plugins_loaded() {
+		// allow shortcodes to register with WP and to set hooks for the rest of the system
+		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
+		// allow modules to set hooks for the rest of the system
+		EE_Registry::instance()->modules = $this->_register_modules();
+	}
+
+
+	/**
+	 * 	init. At this point we should know if we're in maintenance mode or not, 
+	 * so we can check for that, and if not, put the modules and shortcodes
+	 * in high gear (meaning they can start adding their hooks to get stuff done,
+	 * not just have us acknowledge their presence)
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public function init() {
-		// allow shortcodes to register with WP and to set hooks for the rest of the system
-		$this->_register_shortcodes();
-		// allow modules to set hooks for the rest of the system
-		$this->_register_modules();
+		//only initialize shortcodes if we're not in maintenance mode
+		if( ! EE_Maintenance_Mode::instance()->level()){
+			// allow shortcodes to set hooks for the rest of the system
+			$this->_initialize_shortcodes();
+			// allow modules to set hooks for the rest of the system
+			$this->_initialize_modules();
+		}
 	}
 
 
@@ -387,7 +412,7 @@ final class EE_Config {
 			EE_Config::register_shortcode( $shortcode_path );
 		}
 		// filter list of installed modules
-		EE_Registry::instance()->shortcodes = apply_filters( 'FHEE__EE_Config__register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
+		return apply_filters( 'FHEE__EE_Config__register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
 	}
 
 
@@ -424,18 +449,6 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
-		// which set hooks ?
-		if ( is_admin() ) {
-			// fire immediately			
-			call_user_func( array( $shortcode_class, 'set_hooks_admin' ));
-		} else {
-			// delay until other systems are online
-			add_action( 'wp_loaded', array( $shortcode_class,'set_hooks' ), 1 );
-		}
-		// convert classname to UPPERCASE and create WP shortcode. 
-		// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes() 
-		add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
@@ -466,7 +479,7 @@ final class EE_Config {
 			}
 		}
 		// filter list of installed modules
-		EE_Registry::instance()->modules = apply_filters( 'FHEE__EE_Config__register_modules__installed_modules', EE_Registry::instance()->modules );
+		return apply_filters( 'FHEE__EE_Config__register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
 
 
@@ -505,19 +518,68 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		// fire the module class's set_hooks methods in case it needs to hook into other parts of the system
-		// which set hooks ?
-		if ( is_admin() ) {
-			// fire immediately			
-			call_user_func( array( $module_class, 'set_hooks_admin' ));
-		} else {
-			// delay until other systems are online
-			add_action( 'wp_loaded', array( $module_class, 'set_hooks' ), 1 );
-		}
 		// add to array of registered modules
 		EE_Registry::instance()->modules[ $module ] = $module_path . DS . $module_class . $module_ext;
 		return TRUE;
 	}
+	
+
+
+	/**
+	 * 	_initialize_shortcodes
+	 * 	allow shortcodes to set hooks for the rest of the system
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	private function _initialize_shortcodes() {
+		// cycle thru shortcode folders
+		foreach ( EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path ) {
+			//echo '<h4>' . $shortcode . ' : ' . $shortcode_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			// add class prefix
+			$shortcode_class = 'EES_' . $shortcode;
+			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
+			// which set hooks ?
+			if ( is_admin() ) {
+				// fire immediately			
+				call_user_func( array( $shortcode_class, 'set_hooks_admin' ));
+			} else {
+				// delay until other systems are online
+				add_action( 'wp_loaded', array( $shortcode_class,'set_hooks' ), 1 );
+				// convert classname to UPPERCASE and create WP shortcode. 
+				// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes() 
+				add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
+			}
+		}
+	}
+	
+
+
+	/**
+	 * 	_initialize_modules
+	 * 	allow modules to set hooks for the rest of the system
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	private function _initialize_modules() {
+		// cycle thru shortcode folders
+		foreach ( EE_Registry::instance()->modules as $module => $module_path ) {
+			//echo '<h4>' . $module . ' : ' . $module_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			// add class prefix
+			$module_class = 'EED_' . $module;
+			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
+			// which set hooks ?
+			if ( is_admin() ) {
+				// fire immediately			
+				call_user_func( array( $module_class, 'set_hooks_admin' ));
+			} else {
+				// delay until other systems are online
+				add_action( 'wp_loaded', array( $module_class,'set_hooks' ), 1 );
+			}
+		}
+	}
+
 
 
 
