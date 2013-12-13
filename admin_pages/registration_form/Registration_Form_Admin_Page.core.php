@@ -488,7 +488,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
-		require_once( EE_CLASSES . 'EE_Question.class.php');
+		//if the admin label is blank, use a slug version of the question text
+		if( ! $set_column_values['QST_admin_label'] || $set_column_values['QST_admin_label'] == ''){
+			$set_column_values['QST_admin_label'] = sanitize_title($set_column_values['QST_display_text']);
+		}
 		if($new_question){
 			$new_id=$this->_question_model->insert($set_column_values);
 			if($new_id){
