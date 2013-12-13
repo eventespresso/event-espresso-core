@@ -426,7 +426,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				  PRT_name VARCHAR(45) NOT NULL ,
 				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
-				  PRT_order tinyint(1) UNSIGNED NULL,
+				  PRT_order tinyint UNSIGNED NULL,
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 				  PRIMARY KEY  (PRT_ID)";
