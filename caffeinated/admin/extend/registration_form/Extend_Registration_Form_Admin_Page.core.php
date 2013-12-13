@@ -550,76 +550,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	protected function _insert_or_update_question($new_question = TRUE) {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$success=0;
-		$set_column_values=$this->_set_column_values_for($this->_question_model);
-		if($new_question){
-			$results=$this->_question_model->insert($set_column_values);
-			if($results){
-				$success=1;
-				$ID=$results;
-			}else{
-				$success=0;
-				$ID=false;
-			}
-			$action_desc='created';
-		}else{
-			$ID=absint($this->_req_data['QST_ID']);
-			$pk=$this->_question_model->primary_key_name();
-			$wheres=array($pk=>$ID);
-			unset($set_column_values[$pk]);
-			$success= $this->_question_model->update($set_column_values,array($wheres));
-			$action_desc='updated';
-		}
-		//save the related options
-		//trash removed options, save old ones
-			//get list of all options
-		$question=$this->_question_model->get_one_by_ID($ID);
-		$options=$question->options();
-		if(!empty($options)){
-			foreach($options as $option_ID=>$option){
-				$option_req_index=$this->_get_option_req_data_index($option_ID);
-				if($option_req_index!==FALSE){
-					//make sure QSO_value is not empty
-					if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_value'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_value'] !== '0' )
-						$this->_req_data['question_options'][$option_req_index]['QSO_value'] = $this->_req_data['question_options'][$option_req_index]['QSO_desc'];
-					$option->save($this->_req_data['question_options'][$option_req_index]);
-				}else{
-					//not found, remove it
-					$option->delete();
-				}
-			}
-		}
-		//save new related options
-		foreach($this->_req_data['question_options'] as $index=>$option_req_data){
-			if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_value']) || !empty($option_req_data['QSO_desc']))){//no ID! save it!
-				if(empty($option_req_data['QSO_desc'])){
-					$option_req_data['QSO_desc']=$option_req_data['QSO_value'];
-				}
-				if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
-					$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
-				}
 
-				//set a default option object
-				$option = EE_Registry::instance()->load_model('Question_Option')->create_default_object();
-
-				//add the new data
-				foreach ( $option_req_data as $column => $value ) {
-					$option->set($column, $value);
-				}
-				//because this is in a loop.  Make sure we set the QSO_ID to zero (cause EE_Base_Classes are singletons).
-				$option->set('QSO_ID', NULL); 
-				//SAVE the option
-				$option->save();
-				//add to question
-				$option->_add_relation_to($question, 'Question');
-			}			
-
-		}
-		$query_args=array('action'=>'edit_question','QST_ID'=>$ID);
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
-	}
 
 
 
