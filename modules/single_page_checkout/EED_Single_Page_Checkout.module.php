@@ -1142,8 +1142,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											// store a bit of data about the primary attendee
 											if ( $att_nmbr == 1 && $line_item_id == $primary_attendee['line_item_id'] && ! empty( $input_value )) {
 												$primary_attendee[ $form_input ] = $input_value;
-											} else if ( $copy_primary ) {
-												$input_value = isset( $primary_attendee[ $form_input ] ) ? $primary_attendee[ $form_input ] : $input_value;
+											} else if ( $copy_primary && isset( $primary_attendee[ $form_input ] ) && $input_value == NULL ) {
+												$input_value = $primary_attendee[ $form_input ];
 											}
 											
 											// $answer_cache_id is the key used to find the EE_Answer we want
@@ -1194,7 +1194,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 										// add relation to new attendee
 										$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
 	//									echo '$copy_primary attendee <br/>';
-									} else {							
+									} else {					
 										// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
 										$existing_attendee = EE_Registry::instance()->LIB->EEM_Attendee->find_existing_attendee( array(
 											'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
@@ -1220,6 +1220,34 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											$registration->_add_relation_to( $existing_attendee, 'Attendee' );
 
 										} else {
+											// ensure critical details are set for additional attendees
+											if ( $att_nmbr > 1 ) {
+												$critical_attendee_details = array( 
+													'ATT_fname',
+													'ATT_lname',
+													'ATT_email',
+													'ATT_address',
+													'ATT_address2',
+													'ATT_city',
+													'STA_ID',
+													'CNT_ISO',
+													'ATT_zip',
+													'ATT_phone',
+												);
+												foreach ( $critical_attendee_details as $critical_attendee_detail ) {
+													if ( ! isset( $attendee_data[ $critical_attendee_detail ] ) || empty( $attendee_data[ $critical_attendee_detail ] )) { 
+														$attendee_data[ $critical_attendee_detail ] = $primary_attendee_obj->get( $critical_attendee_detail );
+													}
+												}
+												
+//												if ( ! isset( $attendee_data['ATT_lname'] ) || empty( $attendee_data['ATT_lname'] )) { 
+//													$attendee_data['ATT_lname'] = $primary_attendee_obj->lname();
+//												}
+//												if ( ! isset( $attendee_data['ATT_email'] ) || empty( $attendee_data['ATT_email'] )) { 
+//													$attendee_data['ATT_email'] = $primary_attendee_obj->email();
+//												}
+											}
+											// set author to event creator
 											$attendee_data['ATT_author'] = $registration->event()->wp_user();
 											// add relation to new attendee
 											$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );

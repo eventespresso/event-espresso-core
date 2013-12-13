@@ -21,10 +21,15 @@ jQuery(document).ready(function($) {
 
 function espresso_reg_forms_show_or_hide_question_options(){
 	var val=jQuery('#QST_type').val();
-	if (val=='DROPDOWN' || val=='SINGLE' || val=='MULTIPLE'){
+	if ( val=='SINGLE' || val=='MULTIPLE'){
 		jQuery('#question_options').show();
+		espresso_reg_forms_show_option_desc(true);
+	}else if(val=='DROPDOWN'){
+		jQuery('#question_options').show();
+		espresso_reg_forms_show_option_desc(false);
 	}else{
 		jQuery('#question_options').hide();
+		espresso_reg_forms_show_option_desc(false);
 	}
 }
 
@@ -42,6 +47,17 @@ function espresso_reg_forms_add_option(){
 	newRowValue.attr('name', value.replace("xxcountxx",count));
 	newRow.removeClass('sample');
 	jQuery('#question_options tr:last').after(newRow);
+}
+
+function espresso_reg_forms_show_option_desc(show){
+	if(show){
+		jQuery('.option-desc-cell').show();
+		jQuery('.option-desc-header').show();
+		
+	}else{
+		jQuery('.option-desc-cell').hide();
+		jQuery('.option-desc-header').hide();
+	}
 }
 
 

@@ -329,21 +329,22 @@ class EE_Question_Form_Input {
 		}
 		$inputs = array();
 		$fields = $object->get_model()->field_settings( FALSE );
-//		$pk = $object->_get_model()->primary_key_name();
-		$pk = $object->ID();
+//		$pk = $object->ID(); <<< NO!
 
 //		printr( $object, get_class( $object ) . '<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $fields, '$fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		printr( $input_types, '$input_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		foreach ( $fields as $field_ID => $field ) {			
+//			echo '<h4>$field_ID : ' . $field_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			printr( $field, '$field  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			if ( isset( $input_types[ $field_ID ] )) {
 				// get saved value for field
 				$value = $object->get( $field_ID );
+//				echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';	
 				// if no saved value, then use default
-				$value = ! empty( $value ) ? $value : $field->get_default_value();
+				$value = $value !== NULL ? $value : $field->get_default_value();
 	//			if ( $field_ID == 'CNT_active' ) 
-	//			echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';	
+//				echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';	
 				// determine question type
 				$type = isset( $input_types[ $field_ID ] ) ? $input_types[ $field_ID ]['type'] : 'TEXT';
 				// input name
@@ -391,7 +392,7 @@ class EE_Question_Form_Input {
 					}
 				}
 				// we don't want ppl manually changing primary keys cuz that would just lead to total craziness man
-				if ( $field_ID == $pk ) {
+				if ( $field_ID == $object->get_model()->primary_key_name() ) {
 					$QFI->set( 'QST_disabled', TRUE );
 				}
 				//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );

@@ -23,6 +23,11 @@ function _migration_step($num_items=50){
 					'description'=>$category_detail_row['category_desc'],
 					'slug'=>$category_detail_row['category_identifier']
 				));
+		if($term_and_taxonomy_ids instanceof WP_Error){
+			$this->add_error(sprintf(__("Could not create WP Term_Taxonomy from old category: %s. The Error was: %s", "event_espresso"),  http_build_query($category_detail_row),$term_and_taxonomy_ids->get_error_message()));
+			$items_actually_migrated++;
+			continue;
+		}
 		$term_id = $term_and_taxonomy_ids['term_id'];
 		$term_taxonomy_id = $term_and_taxonomy_ids['term_taxonomy_id'];
 		$this->get_migration_script()->set_mapping($this->_old_table, $category_detail_row['id'], $this->_new_term_table, $term_id);
