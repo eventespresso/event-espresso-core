@@ -285,34 +285,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	}
 
-	/**
-	 * add/edit question groups help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function edit_question_group_help_tabs( $tab ) {
-		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_group_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template($template);
-	}
-	public function question_groups_tab_overview_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_name_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_identifier_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_description_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function show_group_name_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function show_group_description_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
+	
 
 
 
@@ -329,18 +302,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	}
 
 
-
-	public function load_scripts_styles_add_question() {
-		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_CAF_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script( 'espresso_registration_form_single' );	
-	}
-	public function load_scripts_styles_edit_question() {
-		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_CAF_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script( 'espresso_registration_form_single' );	
-		
-	}
 	public function load_scripts_styles_add_question_group() {
 		$this->load_scripts_styles_forms();
 	}
@@ -354,17 +315,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	public function recaptcha_info_help_tab() {
 		$template = REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
 		EEH_Template::display_template($template, array());
-	}
-
-
-
-
-
-	public function load_scripts_styles_forms() {
-		//styles
-		wp_enqueue_style('espresso-ui-theme');
-		//scripts
-		wp_enqueue_script('ee_admin_js');
 	}
 
 
@@ -422,32 +372,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	/**
-	 * Extracts the question field's values from the POST request to update or insert them
-	 * @return array where each key is the name of a model's field/db column, and each value is its value.
-	 */
-	protected function _set_column_values_for(EEM_Base $model){
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$set_column_values=array();
-		foreach($model->field_settings() as $fieldName=>$settings){
-			// basically if QSG_identifier is empty or not set
-			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) || ! isset( $this->_req_data['QSG_identifier'] ) )) {
-				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
-				$this->_req_data['QSG_identifier'] = strtolower( str_replace( ' ', '-', $QSG_name )) . '-' . uniqid();
-			}
-			if ( isset( $this->_req_data[$fieldName] ) )
-				$set_column_values[$fieldName]=array_key_exists($fieldName,$this->_req_data)?$this->_req_data[$fieldName]:null;
-		}
-		return $set_column_values;//validation fo this data to be performed by the model before insertion.
-	}
-
 
 
 
 	protected function _questions_overview_list_table() {
-		$this->_search_btn_label = __('Questions', 'event_espresso');
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_question', 'add_question', array(), 'add-new-h2');
-		$this->display_admin_list_table_page_with_sidebar();
+		parent::_questions_overview_list_table();
 	}
 
 
@@ -460,63 +390,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	
-	protected function _edit_question( $action= 'add' ) {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$ID=isset( $this->_req_data['QST_ID'] ) && ! empty( $this->_req_data['QST_ID'] ) ? absint( $this->_req_data['QST_ID'] ) : FALSE;
-		
-		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
-		// add PRC_ID to title if editing 
-		$this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
-		if($ID){
-			$question=$this->_question_model->get_one_by_ID($ID);
-			$additional_hidden_fields=array('QST_ID'=>array('type'=>'hidden','value'=>$ID));
-			$this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
-		}else{
-			$question= EE_Registry::instance()->load_model('Question')->create_default_object();
-			//let's make sure that the question order is set properly
-			$question->set_order_to_latest();
-			$this->_set_add_edit_form_tags('insert_question');
-		}
-		$questionTypes=array();
-		$count=0;
-		foreach($this->_question_model->allowed_question_types() as $type => $label ){
-			$questionTypes[$count]=array('id'=>$type,'text'=>$label);
-			$count++;
-		}
-		$this->_template_args['QST_ID']=$ID;
-		$this->_template_args['question']=$question;
-		$this->_template_args['question_types']=$questionTypes;
-		
-		$this->_set_publish_post_box_vars( 'id', $ID );
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
-
-		// the details template wrapper
-		$this->display_admin_page_with_sidebar();	
-	}
-
-
 
 	
-	protected function _trash_question(){
-		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
-	}
-
-
-
-	protected function _trash_or_restore_questions($trash=TRUE){
-		$this->_trash_or_restore_items( $this->_question_model, $trash );
-	}
-
 
 	protected function _delete_question(){
 		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
 		$query_args=array('action'=>'default','status'=>'all');
 		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'deleted', $query_args);
 	}
-
 
 
 	protected function _delete_questions() {
@@ -526,11 +407,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 /**
- * 
+ * Performs the deletion of a single or multiple questions or question groups.
  * @param EEM_Base $model
  * @return int number of items deleted permanenetly
  */
-	private function _delete_items(EEM_Base $model){
+	private function _delete_items(EEM_Soft_Delete_Base $model){
 		
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
@@ -544,6 +425,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				}
 			}
 	
+		}elseif( !empty($this->_req_data['QSG_ID'])){
+			$success = $model->delete_permanently_by_ID($this->_req_data['QSG_ID']);
+				
+		}elseif( !empty($this->_req_data['QST_ID'])){
+			$success = $model->delete_permanently_by_ID($this->_req_data['QST_ID']);
+		}else{
+			throw new EE_Error(sprintf(__("Route malconfigured. We need to either have a request var called 'checkbox','QST_ID', or 'QSG_ID'. None was given", "event_espresso")));
 		}
 		return $success;
 	}
@@ -554,25 +442,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	
-	/**
-	 * Upon saving a question, there should be an array of 'question_options'. This array is index numerically, but not by ID 
-	 * (this is done because new question optiosn don't have an ID, but we may want to add multiple simultaneously).
-	 * So, this function gets the index in that request data array called question_options. Returns FALSE if not found.
-	 * @param int $ID of the question option to find
-	 * @return int indexin in question_options array if successful, FALSE if unsuccessful
-	 */
-	protected function _get_option_req_data_index($ID){
-		$req_data_for_question_options=$this->_req_data['question_options'];
-		foreach($req_data_for_question_options as $num=>$option_data){
-			if(array_key_exists('QSO_ID',$option_data) && intval($option_data['QSO_ID'])==$ID){
-				return $num;
-			}
-		}
-		return FALSE;
-	}
-
-	
+		
 	
 	/**
 	 * method for performing updates to question order
@@ -655,7 +525,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_group_model);
-		
 		if($new_question_group){
 			$ID=$this->_question_group_model->insert($set_column_values);
 			if($ID){
@@ -701,6 +570,18 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _trash_or_restore_question_groups($trash = TRUE) {
 		return $this->_trash_or_restore_items( $this->_question_group_model, $trash );
+	}
+	
+	protected function _trash_question(){
+		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
+		$query_args=array('action'=>'default','status'=>'all');
+		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
+	}
+
+
+
+	protected function _trash_or_restore_questions($trash=TRUE){
+		$this->_trash_or_restore_items( $this->_question_model, $trash );
 	}
 
 

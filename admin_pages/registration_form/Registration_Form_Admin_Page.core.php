@@ -229,6 +229,35 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	}
 	
 	
+	/**
+	 * add/edit question groups help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function edit_question_group_help_tabs( $tab ) {
+		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_group_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template($template);
+	}
+	public function question_groups_tab_overview_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function group_name_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function group_identifier_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function group_description_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function show_group_name_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function show_group_description_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	
 	
 	
 	protected function _add_screen_options() {
@@ -346,12 +375,18 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$set_column_values=array();
 		foreach($model->field_settings() as $fieldName=>$settings){
 			// basically if QSG_identifier is empty or not set
-			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) || ! isset( $this->_req_data['QSG_identifier'] ) )) {
+			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) )) {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
-				$this->_req_data['QSG_identifier'] = strtolower( str_replace( ' ', '-', $QSG_name )) . '-' . uniqid();
+				$set_column_values[$fieldName] = sanitize_title($QSG_name ) . '-' . uniqid();
+//				dd($set_column_values);
+			}
+			//if the admin label is blank, use a slug version of the question text
+			else if ( $fieldName == 'QST_admin_label' && ( isset( $this->_req_data['QST_admin_label'] ) && empty( $this->_req_data['QST_admin_label'] )  )) {
+				$QST_text = isset( $this->_req_data['QST_display_text'] ) ? $this->_req_data['QST_display_text'] : '' ;
+				$set_column_values[$fieldName] = sanitize_title($QST_text.'-'.uniqid());
 			}
 			//only add a property to the array if it's not null (otherwise the model should just use the defautl value)
-			if(isset($this->_req_data[$fieldName])){
+			else if(isset($this->_req_data[$fieldName])){
 				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
 			}
 		}
@@ -438,49 +473,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	
-	protected function _trash_question(){
-		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
-	}
 
 
 
-	protected function _trash_or_restore_questions($trash=TRUE){
-		$this->_trash_or_restore_items( $this->_question_model, $trash );
-	}
 
 
-	protected function _delete_question(){
-		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'deleted', $query_args);
-	}
-
-
-
-	protected function _delete_questions() {
-		$this->_delete_items($this->_question_model);
-	}
-
-
-
-	private function _delete_items(EEM_Base $model){
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
-			// if array has more than one element than success message should be plural
-			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
-			// cycle thru bulk action checkboxes
-			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
-
-				if (!$model->delete_permanently_by_ID(absint($ID))) {
-					$success = 0;
-				}
-			}
-	
-		}
-		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'all' ));
-	}
 
 
 
@@ -488,10 +485,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
-		//if the admin label is blank, use a slug version of the question text
-		if( ! $set_column_values['QST_admin_label'] || $set_column_values['QST_admin_label'] == ''){
-			$set_column_values['QST_admin_label'] = sanitize_title($set_column_values['QST_display_text']);
-		}
 		if($new_question){
 			$new_id=$this->_question_model->insert($set_column_values);
 			if($new_id){
@@ -611,8 +604,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$QST = EEM_Question::instance();
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
 		if ($count){
-			$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
-			$results = $QST->count($where);
+			$results = $QST->count($query_params);
 		}else{
 			$results = $QST->get_all($query_params);
 		}
@@ -683,25 +675,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
-
-	protected function _update_reg_form_settings() {
-
-		EE_Registry::instance()->CFG->registration->use_captcha = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
-		EE_Registry::instance()->CFG->registration->recaptcha_publickey = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
-		EE_Registry::instance()->CFG->registration->recaptcha_privatekey = isset( $this->_req_data['recaptcha_privatekey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_privatekey'] ) : NULL;
-		EE_Registry::instance()->CFG->registration->recaptcha_width = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
-		EE_Registry::instance()->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
-		EE_Registry::instance()->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
-		
-		EE_Registry::instance()->CFG = apply_filters( 'FHEE_reg_form_settings_save', EE_Registry::instance()->CFG );	
-		
-		$what = 'Registration Options';
-		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
-		
-	}
-
-
 
 
 

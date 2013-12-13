@@ -41,7 +41,11 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		$this->_data = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE );
+		if(isset($this->_req_data['status'] ) && $this->_req_data['status'] == 'trash'){
+			$this->_data = $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, FALSE );
+		}else{
+			$this->_data = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE );
+		}		
 		$this->_all_data_count = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
