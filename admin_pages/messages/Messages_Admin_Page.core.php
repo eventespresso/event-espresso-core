@@ -2484,12 +2484,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$_where['MTP_message_type'] = $message_type;
 			}
 
-			$event_templates = $MTP->get_all( array($_where) );
+			$event_templates = $MTP->get_all( array($_where, 'group_by' => 'EVT_ID' ) );
 
 			if ( $event_templates && count($event_templates) > 0 ) {
 				$m_label_pl = __('Messengers', 'event_espresso');
 				$m_label_sg = __('messenger', 'event_espresso');
-				$warning_msg = $message_type ? sprintf( __('<strong>Warning:</strong> Message Types cannot be deactivated if there are any Events currently using a custom template for that message type and messenger. Before you can deactivate the "%s" message type, you must switch the following "Events" to use global templates:', 'event_espresso' ), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']) ) : sprintf( __('<strong>Warning:</strong> %s cannot be deactivated if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following "Events" to use global templates:', 'event_espresso' ), $m_label_pl, $this->_active_messengers[$messenger]['obj']->label['singular'], $m_label_sg  );
+				$warning_msg = $message_type ? sprintf( __('<strong>Warning:</strong> Message Types cannot be deactivated if there are any Events currently using a custom template for that message type and messenger. Before you can deactivate the "%s" message type, you must switch the following events to use global templates:', 'event_espresso' ), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']) ) : sprintf( __('<strong>Warning:</strong> %s cannot be deactivated if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following events to use global templates (for all message types):', 'event_espresso' ), $m_label_pl, $this->_active_messengers[$messenger]['obj']->label['singular'], $m_label_sg  );
 				$warning_msg .= '<ul>';
 
 				//output list of events
