@@ -116,7 +116,7 @@ $fields = $question->get_model()->field_settings();
 								foreach( $question_options as $option_id => $option ) { 
 							?>
 								<tr class="question-option">
-									<td class="option-value">
+									<td class="option-value-cell">
 										<input type="text" class="option-value regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php echo $option->value()?>">
 									</td>
 									<td class="option-desc-cell">
@@ -141,13 +141,13 @@ $fields = $question->get_model()->field_settings();
 							} else {
 							?>
 							<tr class="question-option">
-								<td style="padding: 0 10px 10px 0; line-height: 1em;">
+								<td class="option-value-cell">
 									<input type="text" name="question_options[0][QSO_value]" class="option-value regular-text">
 								</td>
-								<td style="padding: 0 10px 10px 0; line-height: 1em;">
+								<td class="option-desc-cell">
 									<input type="text" name="question_options[0][QSO_desc]" class="option-desc regular-text">
 								</td>
-								<td style="padding: 0 10px 10px 0; line-height: 1em;">
+								<td>
 								</td>
 							</tr>							
 							<?php	
