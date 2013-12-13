@@ -204,7 +204,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * changes teh maintenane level, provided there are still no migration scripts that shoudl run
 	 */
 	public function _change_maintenance_level(){
-		$new_level = intval($this->_req_data['maintenance_model_level']);
+		$new_level = intval($this->_req_data['maintenance_mode_level']);
 		if( ! EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()){
 			EE_Maintenance_Mode::instance()->set_maintenance_level($new_level);
 			$success = true;
