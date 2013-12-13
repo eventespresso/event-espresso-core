@@ -290,7 +290,10 @@ final class EE_Config {
 
 
 	/**
-	 * 	plugins_loaded
+	 * 	plugins_loaded.
+	 * At this point, it's too early to tell if we're maintenance mode or not.
+	 * In fact, this is where we give modules a chance to let core know they exist
+	 * so they can help trigger maintenance mode if it's needed
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -304,16 +307,22 @@ final class EE_Config {
 
 
 	/**
-	 * 	init
+	 * 	init. At this point we should know if we're in maintenance mode or not, 
+	 * so we can check for that, and if not, put the modules and shortcodes
+	 * in high gear (meaning they can start adding their hooks to get stuff done,
+	 * not just have us acknowledge their presence)
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public function init() {
-		// allow shortcodes to set hooks for the rest of the system
-		$this->_initialize_shortcodes();
-		// allow modules to set hooks for the rest of the system
-		$this->_initialize_modules();
+		//only initialize shortcodes if we're not in maintenance mode
+		if( ! EE_Maintenance_Mode::instance()->level()){
+			// allow shortcodes to set hooks for the rest of the system
+			$this->_initialize_shortcodes();
+			// allow modules to set hooks for the rest of the system
+			$this->_initialize_modules();
+		}
 	}
 
 
