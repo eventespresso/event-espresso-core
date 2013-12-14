@@ -18,7 +18,7 @@
 					<label for="PRT_name"><?php _e('Price Type Name', 'event_espresso'); ?></label>
 				</th>
 				<td>
-					<input class="regular-text" type="text" id="PRT_name" name="PRT_name" value="<?php echo html_entity_decode( stripslashes( $price_type->name() ), ENT_QUOTES, 'UTF-8' ); ?>"/>
+					<input class="regular-text" type="text" id="PRT_name" name="PRT_name" value="<?php echo htmlentities($price_type->name()) ;?>"/>
 					<p class="description"><?php _e('A name for this Price Type.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
