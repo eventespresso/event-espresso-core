@@ -18,7 +18,7 @@
 			<tr valign="top">
 				<th><label for="PRC_name"><?php _e('Name', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('name_field_info');?></th>
 				<td>
-					<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php echo $price->name(); ?>"/>
+					<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php echo htmlentities($price->name()); ?>"/>
 				</td>
 			</tr>
 			<tr valign="top">
