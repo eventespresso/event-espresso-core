@@ -180,7 +180,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
     display: inline-block;
     height: 16px;
-    margin-top: 3px;
     padding: 0;
     vertical-align: middle;
     width: 16px;

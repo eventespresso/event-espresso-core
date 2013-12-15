@@ -123,6 +123,14 @@
     display: inline-block;
 }
 
+.datetime-edit-table td {
+    height: 1em;
+}
+
+.datetime-edit-table {
+    border-spacing: 3px;
+}
+
 .ee-edit-editing {
     background-color: #f8f8f8;
     height: 35px;
@@ -130,6 +138,12 @@
     border-top: 1px solid #EEEEEE;
     border-left: 1px solid #EEEEEE;
     border-right: 1px solid #EEEEEE;
+}
+
+.datetime-edit-table .ee-lock-icon:before {
+   margin-left: 9px;
+   font-size: 18px;
+   vertical-align: middle;
 }
 
 .trash-icon {
@@ -205,9 +219,30 @@
     padding: 5px;
     margin-left: 5px;
     background-color: #ddd;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
+    -webkit-border-radius: 0 8px 8px 0;
+    -moz-border-radius: 0 8px 8px 0;
+    border-radius: 0 8px 8px 0;
+    border-left: solid 4px #ccc;
+}
+
+.datetime-ticket.ticket-status-0 {
+    background-color: transparent;
+    border-left: solid 4px #e6e6e6;
+}
+
+.datetime-ticket.ticket-status--1 {
+    background-color: transparent;
+    border-left: solid 4px #A39D9C;
+}
+
+.datetime-ticket.ticket-status-1 {
+    background-color: transparent;
+    border-left: solid 4px #49afcd;
+}
+
+.datetime-ticket.ticket-status-2 {
+    background-color: transparent;
+    border-left: solid px #62B660;
 }
 
 .datetime-ticket .gear-icon {
@@ -239,26 +274,28 @@
     width: 100%;
 }
 
-.ticket-table .ticket-row td {
-    padding-top: 5px;
-}
-
-.ticket-table .ticket-row td:last-child {
-    padding-top: 2px;
-}
-
 .ticket-table thead {
     border-bottom: 2px solid #eee;
     font-weight: bold;
 }
 
-.ticket-table tbody tr td {
+.ticket-table tbody td {
+   height: 1.7em;
+   padding-bottom: .3em;
+}
+
+.ticket-table tbody tr:first-child td {
     padding-top: .3em;
-    padding-bottom: .3em;
+}
+
+.ticket-table tbody tr.edit-ticket-row td {
+    height: auto;
 }
 
 .ee-tkt-status {
     width: 5px;
+    height: 100%;
+    display: inline-block;
 }
 
 .ticket-display-row-TKT_name {
@@ -266,19 +303,19 @@
 }
 
 .tkt-status-0 {
-    background-color: #e6e6e6;
+   border-left: solid 7px #e6e6e6;
 }
 
 .tkt-status--1 {
-   background-color: #A39D9C;
+   border-left: solid 7px #A39D9C;
 }
 
 .tkt-status-1 {
-    background-color: #49afcd;
+    border-left: solid 7px #49afcd;
 }
 
 .tkt-status-2 {
-    background-color: #62B660;
+    border-left: solid 5px #62B660;
 }
 
 
