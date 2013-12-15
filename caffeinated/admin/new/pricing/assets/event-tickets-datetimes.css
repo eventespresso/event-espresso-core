@@ -204,7 +204,7 @@
     display: inline-block;
     padding: 5px;
     margin-left: 5px;
-    background-color: #ccc;
+    background-color: #ddd;
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
     border-radius: 8px;
@@ -217,6 +217,18 @@
 .ticket-selected {
     background-color: #9d7;
 }
+
+    /**
+     * ticket selected background color for various wp3.8+ admin themes
+     */
+    .admin-color-fresh .ticket-selected { background-color: #2ea2cc; color: #fff;}
+    .admin-color-light .ticket-selected { background-color:  #04a4cc; color: #fff;}
+    .admin-color-blue .ticket-selected { background-color: #74B6CE; color: #fff;}
+    .admin-color-coffee .ticket-selected { background-color: #9ea476; color: #fff;}
+    .admin-color-ectoplasm .ticket-selected { background-color: #d46f15; color: #fff;}
+    .admin-color-midnight .ticket-selected { background-color: #e14d43; color: #fff;}
+    .admin-color-ocean .ticket-selected { background-color: #9ebaa0; color: #fff;}
+    .admin-color-sunrise .ticket-selected { background-color: #ccaf0b; color: #fff;}
 
 .event-tickets-container {
     width: 100%;
