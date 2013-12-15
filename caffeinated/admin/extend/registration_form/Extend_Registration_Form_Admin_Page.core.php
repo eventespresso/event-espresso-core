@@ -311,6 +311,39 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
+	/**
+	 * add/edit question groups help tabs
+	 * @param  string $tab what tab content to retrieve
+	 * @return string      html content for help tab
+	 */
+	public function edit_question_group_help_tabs( $tab ) {
+		require_once REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'edit_question_group_help_tabs.template.php';
+		$template = call_user_func( $tab . '_html' );
+		EEH_Template::display_template($template);
+	}
+	public function question_groups_tab_overview_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function group_name_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function group_identifier_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function group_description_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function show_group_name_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	public function show_group_description_info_help_tab(){
+		$this->edit_question_group_help_tabs( __FUNCTION__ );
+	}
+	
+
+
+
+
 
 	public function recaptcha_info_help_tab() {
 		$template = REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';

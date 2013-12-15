@@ -155,12 +155,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
-				'help_tabs' => array(
-					'question_groups_tab_overview_info' => array(
-						'title' => __('Question Groups', 'event_espresso'),
-						'callback' => 'question_groups_tab_overview_info_help_tab'
-						),
-					),
 				'require_nonce' => FALSE
 				),
 
@@ -227,37 +221,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	public function required_text_info_help_tab(){
 		$this->edit_question_help_tabs( __FUNCTION__ );
 	}
-	
-	
-	/**
-	 * add/edit question groups help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function edit_question_group_help_tabs( $tab ) {
-		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_group_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template($template);
-	}
-	public function question_groups_tab_overview_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_name_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_identifier_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_description_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function show_group_name_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function show_group_description_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	
 	
 	
 	protected function _add_screen_options() {
