@@ -109,7 +109,7 @@
 
 
 
-.gear-icon, .ticket-icon, .trash-icon, .clone-icon {
+.ticket-icon, .trash-icon, .clone-icon {
     display: inline-block;
     height: 16px;
     margin-left: 8px;
@@ -118,9 +118,6 @@
     width: 16px;
 }
 
-.gear-icon {
-    background: transparent url(../../../../../templates/global_assets/images/settings-16x16.png) 0 0 no-repeat;
-}
 
 .ee-editing-container {
     display: inline-block;
@@ -211,6 +208,10 @@
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
     border-radius: 8px;
+}
+
+.datetime-ticket .gear-icon {
+    margin-left: 3px;
 }
 
 .ticket-selected {
