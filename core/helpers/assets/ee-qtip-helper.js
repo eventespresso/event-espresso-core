@@ -4,11 +4,9 @@ jQuery(document).ready(function($) {
 	if ( EE_QTIP_HELPER.qtips.length > 0 ) {
 		var parse, content;
 
-		console.log(EE_QTIP_HELPER);
 		//loop through the qtips and set them up.
 		$.each(EE_QTIP_HELPER.qtips, function(i, v ) {
 			//make sure that content is refernecing content div
-			console.log(v);
 			content = v.options.content.clone ? $('#' + v.content_id).clone().html() : $('#' + v.content_id ).html();
 
 			if ( typeof( content ) !== 'undefined' ) {
