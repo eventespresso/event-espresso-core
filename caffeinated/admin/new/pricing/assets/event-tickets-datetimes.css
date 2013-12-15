@@ -256,14 +256,14 @@
     /**
      * ticket selected background color for various wp3.8+ admin themes
      */
-    .admin-color-fresh .ticket-selected { background-color: #2ea2cc; color: #fff;}
-    .admin-color-light .ticket-selected { background-color:  #04a4cc; color: #fff;}
-    .admin-color-blue .ticket-selected { background-color: #74B6CE; color: #fff;}
-    .admin-color-coffee .ticket-selected { background-color: #9ea476; color: #fff;}
-    .admin-color-ectoplasm .ticket-selected { background-color: #d46f15; color: #fff;}
-    .admin-color-midnight .ticket-selected { background-color: #e14d43; color: #fff;}
-    .admin-color-ocean .ticket-selected { background-color: #9ebaa0; color: #fff;}
-    .admin-color-sunrise .ticket-selected { background-color: #ccaf0b; color: #fff;}
+    .admin-color-fresh .ticket-selected { background-color: #333; color: #fff;}
+    .admin-color-light .ticket-selected { background-color:  #999; color: #fff;}
+    .admin-color-blue .ticket-selected { background-color: #4796b3; color: #fff;}
+    .admin-color-coffee .ticket-selected { background-color: #59524c; color: #fff;}
+    .admin-color-ectoplasm .ticket-selected { background-color: #523f6d; color: #fff;}
+    .admin-color-midnight .ticket-selected { background-color: #363b3f; color: #fff;}
+    .admin-color-ocean .ticket-selected { background-color: #738e96; color: #fff;}
+    .admin-color-sunrise .ticket-selected { background-color: #cf4944; color: #fff;}
 
 .event-tickets-container {
     width: 100%;
@@ -303,15 +303,15 @@
 }
 
 .tkt-status-0 {
-   border-left: solid 7px #e6e6e6;
+   border-left: solid 5px #e6e6e6;
 }
 
 .tkt-status--1 {
-   border-left: solid 7px #A39D9C;
+   border-left: solid 5px #A39D9C;
 }
 
 .tkt-status-1 {
-    border-left: solid 7px #49afcd;
+    border-left: solid 5px #49afcd;
 }
 
 .tkt-status-2 {
