@@ -1098,7 +1098,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$taxes = $transaction->tax();
 			$this->_template_args['taxes'] = isset( $taxes['taxes'] ) ? $taxes['taxes'] : FALSE;
 		} else {
-			$this->_template_args['taxes'] = FALSE;
+			$this->_template_args['taxes'] = array();
 		}
 
 		$this->_template_args['view_transaction_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __('View Transaction'), 'button secondary-button right ee-view-icon' );
