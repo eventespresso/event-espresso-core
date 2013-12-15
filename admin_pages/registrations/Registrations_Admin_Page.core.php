@@ -1096,7 +1096,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		// process taxes
 		if ( $transaction ) {
 			$taxes = $transaction->tax();
-			$this->_template_args['taxes'] = isset( $taxes['taxes'] ) ? $taxes['taxes'] : FALSE;
+			$this->_template_args['taxes'] = isset( $taxes['taxes'] ) ? $taxes['taxes'] : array();
 		} else {
 			$this->_template_args['taxes'] = array();
 		}
