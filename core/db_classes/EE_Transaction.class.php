@@ -356,6 +356,18 @@ class EE_Transaction extends EE_Base_Class{
 
 
 	/**
+	*	get_cart_session
+	* 	@access		public
+	*/	
+	public function get_cart_session() {
+		$session_data = $this->get('TXN_session_data');
+		return isset( $session_data['cart'] ) && $session_data['cart'] instanceof EE_Cart ? $session_data['cart'] : NULL;
+	}
+
+
+
+
+	/**
 	*		get Transaction session data
 	* 		@access		public
 	*/	
@@ -681,7 +693,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Line_Item
 	 */
 	public function total_line_item(){
-		return $this->get_first_related('Line_Item', array(array('LIN_type'=>  EEM_Line_Item::type_total)));
+		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type'=> EEM_Line_Item::type_total )));
 	}
 
 
@@ -691,12 +703,13 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return void
 	 */
 	public function finalize(){
-		
+		$new_txn = FALSE;
 		$registrations = $this->get_many_related('Registration');
 		foreach ( $registrations as $registration ) {
-			$registration->finalize();
+			$new_txn = $registration->finalize() === TRUE ? TRUE : $new_txn;
 		}
-		if (( ! is_admin() || EE_Registry::instance()->REQ->is_set( 'ee_front_ajax' ) && EE_Registry::instance()->REQ->get( 'ee_front_ajax' )) && ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+
+		if ( $new_txn ) {
 			// remove the session from the transaction before saving it to the db to minimize recursive relationships
 			$this->set_txn_session_data( NULL );
 			// save this transaction and it's registrations to the session
@@ -758,33 +771,33 @@ class EE_Transaction extends EE_Base_Class{
 	 * process EE_Transaction object prior to serialization
 	 * @return array
 	 */
-	public function __sleep() {
-		// the transaction stores a record of the session_data array, and the session_data array has a copy of the transaction
-		if ( isset( $this->_TXN_session_data['transaction'] ) && $this->_TXN_session_data['transaction'] instanceof EE_Transaction ) {
-			// but we don't want that copy of the transaction
-			$this->_TXN_session_data['transaction'] = NULL;
-		}		
-		
-		$properties_to_serialize = array(
-			'_TXN_ID',
-			'_TXN_timestamp',
-			'_TXN_total',
-			'_TXN_paid',
-			'_STS_ID',
-			'_TXN_session_data',
-			'_TXN_hash_salt',
-			'_TXN_tax_data',
-			'dt_frmt',
-			'_Registration',
-			'_Payment',
-			'_Status',
-			'_Promotion_Object',
-			'_Line_Item',
-			'_Extra_Meta'
-		);
-
-		return $properties_to_serialize;
-	}
+//	public function __sleep() {
+//		// the transaction stores a record of the session_data array, and the session_data array has a copy of the transaction
+//		if ( isset( $this->_TXN_session_data['transaction'] ) && $this->_TXN_session_data['transaction'] instanceof EE_Transaction ) {
+//			// but we don't want that copy of the transaction to have a copy of the session
+//			$this->_TXN_session_data['transaction']->set_txn_session_data( NULL );
+//		}		
+//		
+//		$properties_to_serialize = array(
+//			'_TXN_ID',
+//			'_TXN_timestamp',
+//			'_TXN_total',
+//			'_TXN_paid',
+//			'_STS_ID',
+//			'_TXN_session_data',
+//			'_TXN_hash_salt',
+//			'_TXN_tax_data',	
+//			'dt_frmt',
+//			'_Registration',
+//			'_Payment',
+//			'_Status',
+//			'_Promotion_Object',
+//			'_Line_Item',
+//			'_Extra_Meta'
+//		);
+//
+//		return $properties_to_serialize;
+//	}
 
 
 
