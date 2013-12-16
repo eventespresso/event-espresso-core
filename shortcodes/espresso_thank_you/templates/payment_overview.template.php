@@ -28,10 +28,10 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 		if ( empty($payments)){
 			
 			if ( $transaction->total() ){
-				_e("No payments have been made yet towards this registration.",'event_espresso');
+				echo apply_filters('FHEE__payment_overview_template__no_payments_made',__("No payments have been made yet towards this registration.",'event_espresso'));
 				echo $gateway_content;
 			}else{
-				 _e("No payment required",'event_espresso');
+				 echo apply_filters('FHEE__payment_overview_template__no_payment_required', __("No payment required",'event_espresso'));
 			}
 			
 		} else {
