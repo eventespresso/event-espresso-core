@@ -97,8 +97,10 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 	</div>
 	<br/>
 	
-	<div class="highlight-bg bigger-text cntr">
-		<a href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
+	<div class="highlight-bg cntr">
+		<p><?php echo apply_filters('FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it"))?><br/>
+		<a class="bigger-text" href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a></p>
+		
 	</div>
 	<h3>
 		<?php _e('Transaction Status', 'event_espresso'); ?>
