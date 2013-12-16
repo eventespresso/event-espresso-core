@@ -569,8 +569,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	
 	protected function _insert_update_cpt_item( $post_id, $post ) {
 
-		$wheres = array( $this->_event_model->primary_key_name() => $post_id );
-
 		$event_values = array(
 			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => !empty( $this->_req_data['display_reg_form'] ) ? 1 : 0,
@@ -584,7 +582,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		//update event
-		$success = $this->_event_model->update( $event_values, array($wheres) );
+		$success = $this->_event_model->update_by_ID( $event_values, $post_id );
 
 
 		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!

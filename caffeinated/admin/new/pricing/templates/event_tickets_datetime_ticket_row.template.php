@@ -1,6 +1,6 @@
 <tr valign="top" class="ticket-row<?php echo $ticket_archive_class; ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
 	<td></td>
-	<td class="ee-tkt-status<?php echo $tkt_status_class; ?>"></td>
+	<td><span class="ee-tkt-status<?php echo $tkt_status_class; ?>"></span></td>
 	<td><span class="ticket-display-row-TKT_name"><?php echo $TKT_name; ?></span></td>
 	<td><span class="ticket-display-row-TKT_start_date"><?php echo $TKT_start_date; ?></span></td>
 	<td><span class="ticket-display-row-TKT_end_date"><?php echo $TKT_end_date; ?></span></td>

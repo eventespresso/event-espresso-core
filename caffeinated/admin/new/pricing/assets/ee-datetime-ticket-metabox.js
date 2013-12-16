@@ -1862,6 +1862,7 @@ jQuery(document).ready(function($) {
 		var status = '';
 		var id = $(this).parents('.ticket-fieldset').attr('id').replace('fieldset-edit-ticketrow-', '');
 		var displayrow = $('#display-ticketrow-'+id);
+		var tktListItems = $('.datetime-ticket[data-context="datetime-ticket"][data-ticket-row="' + id + '"]');
 		var now = moment();
 		var tktStart = moment($(this).parent().parent().find('.edit-ticket-TKT_start_date').val(), 'YYYY-MM-DD h:mm a');
 		var tktEnd = moment($(this).parent().parent().find('.edit-ticket-TKT_end_date').val(), 'YYYY-MM-DD h:mm a');
@@ -1877,8 +1878,21 @@ jQuery(document).ready(function($) {
 			status = 'tkt-status-0';
 		}
 
-		//we have status so let's set the pip
+		//we have status so let's set the pip in the display row
 		displayrow.find('.ee-tkt-status').removeClass().addClass('ee-tkt-status ' + status);
+
+		//now let's set the status for all datetime-tickets for this ticket
+		tktListItems.each( function () {
+			//make sure any existing tktStatus classes are remove
+			$(this).removeClass('tkt-status-1');
+			$(this).removeClass('tkt-status--1');
+			$(this).removeClass('tkt-status-2');
+			$(this).removeClass('tkt-status-0');
+
+			//add tktstatus class
+			$(this).addClass(status);
+		});
+
 	});
 
 

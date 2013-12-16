@@ -534,7 +534,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
-					'delete_attendees' => __('Delete Permanently', 'event_espresso')
 					)
 				)
 				
@@ -584,6 +583,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		if ( $EVT_ID ) {
 			$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'add-new-h2' );
+			$event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
+			$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%s Viewing Registrations for the event: %s%s', 'event_espressso'), '<h3>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array('action' => 'edit', 'post' => $event->ID() ), EVENTS_ADMIN_URL ) . '">' . $event->get('EVT_name') . '</a>', '</h3>' ) : '';
 		}		
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_registration_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -1096,9 +1097,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		// process taxes
 		if ( $transaction ) {
 			$taxes = $transaction->tax();
-			$this->_template_args['taxes'] = isset( $taxes['taxes'] ) ? $taxes['taxes'] : FALSE;
+			$this->_template_args['taxes'] = isset( $taxes['taxes'] ) ? $taxes['taxes'] : array();
 		} else {
-			$this->_template_args['taxes'] = FALSE;
+			$this->_template_args['taxes'] = array();
 		}
 
 		$this->_template_args['view_transaction_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __('View Transaction'), 'button secondary-button right ee-view-icon' );

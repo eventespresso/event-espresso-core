@@ -439,7 +439,7 @@ class EE_Admin_Page_Loader {
 	private function _set_caffeinated( $installed_refs ) {
 
 		//first let's check if there IS a caffeinated folder. If there is not then lets get out.
-		if ( !is_dir( EE_PLUGIN_DIR_PATH . 'caffeinated/admin' ) || defined('EE_DECAF')) return $installed_refs;
+		if ( !is_dir( EE_PLUGIN_DIR_PATH . 'caffeinated/admin' ) || ( defined('EE_DECAF') && EE_DECAF ) ) return $installed_refs;
 
 		$this->_define_caffeinated_constants();
 

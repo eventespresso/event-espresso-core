@@ -162,7 +162,7 @@ $tax_total_line_item;
 										 foreach($answers as $ans_id => $answer){
 											$question = $answer->question();?>
 											<tr>
-												<th><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </th>
+												<th><?php echo $question ? $question->display_text() : '{Question Deleted}'?>: </th>
 												<td><?php echo $answer->e_value()?></td>
 											</tr>
 										<?php }?>

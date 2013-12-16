@@ -1,14 +1,14 @@
 jQuery(document).ready(function($) {
 	
-	$('#QST_type').click(function(event){
+	$('#post-body').on('change', '#QST_type', function(event){
 		espresso_reg_forms_show_or_hide_question_options();
 	});
 	
-	$('#new-question-option').click(function(){
+	$('#post-body').on('click', '#new-question-option', function(){
 		espresso_reg_forms_add_option();
 	});
 	
-	$('.remove-option').click(function(){
+	$('#post-body').on('click', '.remove-option', function(){
 		espresso_reg_forms_trash_option(this);
 	});
 	
