@@ -2522,4 +2522,17 @@ abstract class EEM_Base extends EE_Base{
 			return null;
 		}
 	}
+	
+	/**
+	 * Updates the item with the specified id. Ignores default query parameters because
+	 * we have specified the ID, and its assumed we KNOW what we're doing
+	 * @param array $fields_n_values keys are field names, values are their new values
+	 * @param int|string $id the value of the primary key to update
+	 * @return int number of rows updated
+	 */
+	public function update_by_ID($fields_n_values,$id){
+		$query_params = array(0=>array($this->get_primary_key_field()->get_name() => $id),
+			'default_where_conditions'=>'other_models_only',);
+		return $this->update($fields_n_values,$query_params);
+	}
 }
