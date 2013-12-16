@@ -26,7 +26,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
  *
  * ------------------------------------------------------------------------
  */
- class EE_Cart implements Iterator, Countable { 
+ class EE_Cart { 
 
 	/**
 	 * 	instance of the EE_Cart object
@@ -34,15 +34,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@var EE_Cart $_instance
 	 */
 	private static $_instance = NULL;
-
-	/**
-	 * 	$_tax_strategy
-	 * 	@access 	private
-	 *	@var EE_Tax_Strategy $_tax_strategy
-	 */
-	private $_tax_strategy = NULL;
-	
-
 	
 	/**
 	 * The total Line item which comprises all the children line-item subtotals,
@@ -59,80 +50,73 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @var EE_Line_Item
 	 */
 	private $_grand_total = NULL;
-	
-	/**
-	 * Really only used for implementing iterator interface. Otherwise  unused
-	 * @var EE_Line_Item[]
-	 */
-	private $_iterable_line_items = array();
-	
-	
 
 
 
- 
+
+
 	/**
 	 *	@singleton method used to instantiate class object
 	 *	@access public
 	 *	@return class instance
 	 */	
-	public static function instance() {
+	public static function instance( EE_Line_Item $grand_total = NULL ) {
+		
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Cart )) {
+		if ( ! self::$_instance instanceof EE_Cart ) {
 			//try getting the cart out of the session
 			$saved_cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
-			if( ! empty( $saved_cart ) && is_object( $saved_cart ) && ( $saved_cart instanceof EE_Cart )) {
-				self::$_instance = $saved_cart;
-				self::$_instance->_tax_strategy = $saved_cart->_tax_strategy;
-				self::$_instance->_grand_total = $saved_cart->_grand_total;
-				self::$_instance->_iterable_line_items = $saved_cart->_iterable_line_items;
-//				if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) { d( self::$_instance ); }
-			} else {
-				self::$_instance = new self();
-			}
+			self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self( $grand_total );		
 			unset( $saved_cart );
 		}
 		// once everything is all said and done, save the cart to the EE_Session
 		add_action( 'shutdown', array( self::$_instance, 'save_cart' ), 90 );
 		return self::$_instance;
 	}
-	
 
-	
-	
-	
+
+
+	/**
+	 *	get_cart_from_reg_url_link
+	 *	@access public
+	 *	@return class instance
+	 */	
+	public static function get_cart_from_txn( EE_Transaction $transaction ) {
+		$grand_total = $transaction->total_line_item();
+		$grand_total->get_items();
+		$grand_total->tax_descendants();
+		return EE_Cart::instance( $grand_total );	
+	}	
+
+
+
 	/**
 	 *	private constructor to prevent direct creation
 	 *	@Constructor
 	 *	@access private
 	 *	@return void
 	 */	
-  	private function __construct() {
+  	private function __construct( EE_Line_Item $grand_total = NULL ) {
  
-	do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
 		if ( ! defined( 'ESPRESSO_CART' )) {
 			define( 'ESPRESSO_CART', TRUE );	
 		}
-		
-		// are we using encryption?
-//		if ( ! defined( 'ESPRESSO_ENCRYPT' )) {
-//			EE_Registry::instance()->load_core( 'Encryption' );
-//		}
-		if ( empty( $this->_grand_total )) {
-			$this->_create_grand_total();
+		if ( $grand_total instanceof EE_Line_Item ) {
+			$this->set_grand_total_line_item( $grand_total );
 		}
+		$this->get_grand_total();
 		
 	}
-	
+
+
+
 	/**
 	 * Creates the total line item, and ensures it has its 'tickets' and 'taxes' sub-items
 	 * @return EE_Line_Item
 	 */
 	private function _create_grand_total(){
-//		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
-//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		}
 		$this->_grand_total = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'total',
 			'LIN_name'=>  __('Grand Total', 'event_espresso'),
@@ -143,7 +127,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$this->_get_subtotal_for_taxes();
 		return $this->_grand_total;
 	}
-	
+
+
+
 	/**
 	 * gets the line item which comprises all the items (ie, registrations, producst, etc)
 	 * Has a side effect of adding this to the total line item
@@ -158,6 +144,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$this->_grand_total->add_child_line_item($items_line_item);
 		return $items_line_item;
 	}
+
+
+
 	/**
 	 * gets the line item which comprises all the transaction-wide taxes.
 	 * Has a side effect of adding this to the total line item
@@ -175,7 +164,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 
-
 	/**
 	 *	Gets all the item line items (ie, all line items for registrations, products, etc. NOT taxes or promotions)
 	 *	@access public
@@ -184,6 +172,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	public function get_tickets() {
 		return $this->get_ticket_items()->children();
 	}
+
 
 
 	/**
@@ -202,9 +191,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		}
 		return $count;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Gets the line item which comprises all the items as children of it (ie, NOT taxes or promotions)
 	 * @return EE_Line_Item
@@ -213,7 +202,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$tickets = $this->_grand_total->get_child_line_item('tickets');
 		return $tickets ? $tickets : $this->_get_subtotal_for_tickets();
 	}
-	
+
+
+
 	/**
 	 * Gets the line item which comprises all the taxes as children of it (ie, NOT registrations or products)
 	 * @return EE_Line_Item
@@ -222,15 +213,16 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$taxes = $this->_grand_total->get_child_line_item('taxes');
 		return $taxes ? $taxes : $this->_get_subtotal_for_taxes();
 	}
-	
+
+
+
 	/**
 	 * Gets the total line item (which is a parent of all other line items) on this cart
 	 * @return EE_Line_Item
 	 */
 	public function get_grand_total(){
-		return $this->_grand_total ? $this->_grand_total : $this->_create_grand_total();
+		return $this->_grand_total instanceof EE_Line_Item ? $this->_grand_total : $this->_create_grand_total();
 	}
-
 
 
 
@@ -295,8 +287,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 
-
-
 	/**
 	 *	@adds items to cart
 	 *	@access private
@@ -311,8 +301,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		}else{
 			return false;
 		}
-		
-		
 		// recalculate cart totals based on new items
 		if ( $this->_calculate_cart_total_before_tax() ) {
 			return TRUE;
@@ -320,8 +308,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			return FALSE;
 		}		
 	}		
-
-
 
 
 
@@ -345,7 +331,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 
-
 	/**
 	 *	calculate_cart_total_before_tax
 	 *	@access private
@@ -362,7 +347,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	private function _calculate_cart_taxable_total(){
 		return $this->get_grand_total()->recalculate_pre_tax_total(true);
 	}
-
 
 
 
@@ -410,7 +394,9 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 			}
 		}
 	}
-	
+
+
+
 	/**
 	 *	Applies taxes to teh grand total line itemand recalculates it, and returns the grant total
 	 *	@access private
@@ -427,7 +413,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 
-
 	/**
 	 *	gets the total amoutn of tax paid for items in this cart
 	 *	@access public
@@ -436,8 +421,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	public function get_applied_taxes() {
 		return $this->_apply_taxes_to_total();	
 	}
-
-
 
 
 
@@ -450,9 +433,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		$this->_apply_taxes_to_total();
 		return $this->get_grand_total()->total();
 	}
-
-
-
 
 
 
@@ -493,33 +473,27 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 
 
 
-	
-
-
-
 	/**
 	 *	@remove ALL items from cart and zero ALL totals
 	 *	@access public
 	 *	@return void
 	 */	
 	public function empty_cart() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
 		$this->_grand_total = $this->_create_grand_total();
 		$this->save_cart( TRUE );	
 	}		
-	
+
+
+
 	/**
 	 * Sets the cart to match the line item. Especialy handy for loading an old cart where you
 	 *  know the grand total line item on it
 	 * @param EE_Line_Item $line_item
 	 */
-	public function set_grand_total_line_item($line_item){
+	public function set_grand_total_line_item( EE_Line_Item $line_item ) {
 		$this->_grand_total = $line_item;
 	}
-	
-
-
 
 
 
@@ -529,75 +503,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return TRUE on success, FALSE on fail
 	 */	
 	public function save_cart() {
-//		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
-//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		}
-		return EE_Registry::instance()->SSN->set_session_data( array( 'cart'=> $this ));
+		self::$_instance->_apply_taxes_to_total();	
+		return EE_Registry::instance()->SSN->set_session_data( array( 'cart'=> self::$_instance ));
 	}
 
-	
-	
-
-	/**
-	 * 	required by Iterator interface
-	 * 	returns the first item in the cart
-	 * 	@access 	public
-	 *	@return EE_Item
-	 */
-	public function rewind() {
-		$this->_iterable_line_items = $this->get_tickets();
-		return is_array( $this->_iterable_line_items ) ? reset( $this->_iterable_line_items ) : NULL;
-	}
-
-	/**
-	 * 	required by Iterator interface
-	 * 	returns the current item in the cart
-	 * 	@access 	public
-	 *	@return boolean
-	 */
-	public function current() {
-		return is_array( $this->_iterable_line_items ) ? current( $this->_iterable_line_items ) : NULL;
-	}
-
-	/**
-	 * 	required by Iterator interface
-	 * 	returns the next item in the cart
-	 * 	@access 	public
-	 *	@return boolean
-	 */
-	public function next() {
-		return is_array( $this->_iterable_line_items ) ? next( $this->_iterable_line_items ) : NULL;
-	}
-
-	/**
-	 * 	required by Iterator interface
-	 * 	returns the key for the current item in the cart
-	 * 	@access 	public
-	 *	@return boolean
-	 */
-	public function key() {
-		return is_array( $this->_iterable_line_items ) ? key( $this->_iterable_line_items ) : NULL;
-	}
-
-	/**
-	 * 	required by Iterator interface
-	 * 	whether or not an item is indexed at this position:
-	 * 	@access 	public
-	 *	@return boolean
-	 */
-	public function valid() {
-		return key( $this->_iterable_line_items ) !== NULL ? TRUE : FALSE;
-	}
-	
-	/**
-	 * 	required by Countable interface
-	 * 	allows cart object to be counted as if it were an array
-	 * 	@access 	public
-	 *	@return int
-	 */
-	public function count() {
-		return is_array( $this->get_tickets() ) ? count( $this->get_tickets() ) : 0;
-	}
 
 
 
