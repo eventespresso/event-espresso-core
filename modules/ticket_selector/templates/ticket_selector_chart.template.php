@@ -93,8 +93,21 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
+			 	$hidden_input_qty = $max_atndz > 1 ? TRUE : FALSE;
+				// sold out or other status ?
+				if ( $tkt_status == -2 || $ticket->remaining() == 0 ) {
+					echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
+				} else if ( $tkt_status == -1 || $tkt_status == 0 ) {
+					echo $ticket_status;
+				} else if ( $tkt_status == 1 ) {
+				?>	
+				<p class="ticket-pending-pg">
+					<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
+					<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
+				</p>
+				<?php
 				// if only one attendee is allowed to register at a time
-				if ( $max_atndz  == 1 ) {
+				} else if ( $max_atndz  == 1 ) {
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 			?>
@@ -106,7 +119,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					value="<?php echo $row . '-'; ?>1"
 					<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
 				/>
-		<?php			
+		<?php
+					$hidden_input_qty = FALSE;
+					
 				} elseif ( $max > 0 ) { 
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
@@ -122,27 +137,15 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<?php } ?>
 				</select>
 			<?php 
-				} else {
-					// sold out or other status ?
-					if ( $tkt_status == -2 || $ticket->remaining() == 0 ) {
-						echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
-					} else if ( $tkt_status == -1 || $tkt_status == 0 ) {
-						echo $ticket_status;
-					} else if ( $tkt_status == 1 ) {
-					?>	
-					<p class="ticket-pending-pg">
-						<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
-						<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
-					</p>
-					<?php
-					} 
-					// depending on group reg we need to change the format for qty
-					if (  $max_atndz > 1 ) {
-					?>	
-					<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="0" />
-					<?php
-					} 
-				}
+					$hidden_input_qty = FALSE;
+					
+				} 
+				// depending on group reg we need to change the format for qty
+				if ( $hidden_input_qty ) {
+				?>	
+				<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="0" />
+				<?php
+				} 
 			?>	
 					<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>" />
 					<input type="hidden" name="tkt-slctr-ticket-obj-<?php echo $EVT_ID; ?>[]" value="<?php echo base64_encode( serialize( $ticket )); ?>" />
