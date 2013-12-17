@@ -13,6 +13,20 @@ jQuery(document).ready(function($) {
 				v.options.content.text = content;
 			}
 
+			if ( typeof( v.options.show_only_once ) !== 'undefined' && v.options.show_only_once ) {
+				v.options.events = {
+					hide: function() {
+						$.cookie(v.content_id + '-viewed', true );
+					},
+					show: function(evt, api) {
+						if ( $.cookie(v.content_id + '-viewed' ) )
+							evt.preventDefault();
+					}
+				};
+			}
+
+			console.log(v.options);
+
 			if ( typeof( v.options.position.target) !== 'undefined' && v.options.position.target.indexOf("jQuery::") > -1 ) {
 				parse = v.options.position.target.replace('jQuery::', '');
 				v.options.position.target = $(parse);
@@ -28,7 +42,8 @@ jQuery(document).ready(function($) {
 				v.options.hide.target = $(parse);
 			}
 
-			$(v.target).qtip(v.options);
+			if ( ! $.cookie(v.content_id + '-viewed') )
+				$(v.target).qtip(v.options);
 		});
 	}
 
