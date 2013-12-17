@@ -243,6 +243,35 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			add_post_meta($post_id,'recurrence_id',$old_event['recurrence_id']);
 		}
 	}
+	/**
+	 * Finds a unique slug for this event, given its name (we could have simply used
+	 * the old unique_identifier column, but it added a long string of seemingly random characters onto the end
+	 * and really wasn't that pretty for a slug, so we decided we'd make our own slug again)
+	 * @param string $event_name
+	 * @return string
+	 */
+	private function _find_unique_slug($event_name){
+		$count = 0;
+		$original_name = sanitize_title($event_name);
+		$event_slug = $original_name;
+		while( $this->_other_post_exists_with_that_slug($event_slug) && $count<50){
+			$event_slug = sanitize_title($original_name."-".++$count);
+		}
+		return $event_slug;
+	}
+	
+	/**
+	 * returns whether or not there is a post that has this same slug (post_title)
+	 * @global type $wpdb
+	 * @param type $slug
+	 * @return boolean
+	 */
+	private function _other_post_exists_with_that_slug($slug){
+		global $wpdb;
+		$query = $wpdb->prepare("SELECT COUNT(ID) FROM ".$this->_new_table." WHERE post_name = %s",$slug);
+		$count = $wpdb->get_var($query);
+		return (boolean)intval($count);
+	}
 	private function _insert_cpt($old_event){
 		global $wpdb;
 		//convert 3.1 event status to 4.1 CPT status
@@ -282,7 +311,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$cols_n_values = array(
 			'post_title'=>$old_event['event_name'],//EVT_name
 			'post_content'=>$old_event['event_desc'],//EVT_desc
-			'post_name'=>$old_event['event_identifier'],//EVT_slug
+			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
 			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
 			'post_date_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
 			'post_excerpt'=>wp_trim_words($old_event['event_desc'],50),//EVT_short_desc
