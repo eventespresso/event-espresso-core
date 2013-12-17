@@ -1582,6 +1582,66 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		$attachment_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid=%s LIMIT 1",$guid));
 		return $attachment_id;
 	}
+	/**
+	 * Returns a mysql-formatted datetime in UTC time, given a $datetime_string
+	 * (and optionally a timezone; if none is given, the wp default is used)
+	 * @param EE_Data_Migration_Script_base $script
+	 * @param array $row_of_data, the row from the DB (as an array) we're trying to find the UTC time for
+	 * @param string $datetime_string
+	 * @param string $timezone
+	 * @return string
+	 */
+	public function convert_date_string_to_utc(EE_Data_Migration_Script_Stage$script, $row_of_data, $datetime_string,$timezone = null){
+		$original_tz = $timezone;
+		if( ! $timezone){
+			$timezone = $this->_get_wp_timezone();
+		}
+		if( ! $timezone){
+			$script->add_error(sprintf(__("Could not find timezone given %s for %s", "event_espresso"),$original_tz,$row_of_data));
+			$timezone = 'UTC';
+		}
+		$date_obj = new DateTime( $datetime_string, new DateTimeZone( $timezone ) );
+		$date_obj->setTimezone(new DateTimeZone('UTC'));	
+		return $date_obj->format('Y-m-d H:i:s');
+	}
+	
+	/**
+	 * Gets the default timezone string from wordpress (even if they set a gmt offset)
+	 * @return string
+	 */
+	private function _get_wp_timezone(){
+		$timezone = empty( $timezone ) ? get_option('timezone_string') : $timezone;
+
+		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+		if ( empty( $timezone ) ) {
+			//let's get a the WordPress UTC offset
+			$offset = get_option('gmt_offset');
+			$timezone = $this->timezone_convert_to_string_from_offset( $offset );
+		}
+		return $timezone;
+	}
+	/**
+	 * Gets the wordpress timezone string from a UTC offset
+	 * @param int $offset
+	 * @return boolean
+	 */
+	private function timezone_convert_to_string_from_offset($offset){
+		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
+		$offset *= 3600; // convert hour offset to seconds
+        $abbrarray = timezone_abbreviations_list();
+        foreach ($abbrarray as $abbr){
+                foreach ($abbr as $city)
+                {
+                        if ($city['offset'] == $offset)
+                        {
+
+                                return $city['timezone_id'];
+                        }
+                }
+        }
+
+        return FALSE;
+	}
 	
 }
 

@@ -86,8 +86,8 @@ class EEM_Transaction extends EEM_Base {
 				'TXN_total'=>new EE_Money_Field('TXN_total', __('Total value of Transaction','event_espresso'), false, 0),
 				'TXN_paid'=>new EE_Money_Field('TXN_paid', __('Amount paid towards transaction to date','event_espresso'), false, 0),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Transaction::incomplete_status_code, 'Status'),
-				'TXN_tax_data'=>new EE_Serialized_Text_Field('TXN_tax_data', __('Serialized mess of tax data','event_espresso'), true, ''),
-				'TXN_session_data'=>new EE_Serialized_Text_Field('TXN_session_data', __('Serialized mess of session data','event_espresso'), true, ''),
+				'TXN_tax_data'=>new EE_Serialized_Text_Field('TXN_tax_data', __('Serialized tax data','event_espresso'), true, ''),
+				'TXN_session_data'=>new EE_Serialized_Text_Field('TXN_session_data', __('Serialized session data','event_espresso'), true, ''),
 				'TXN_hash_salt'=>new EE_Plain_Text_Field('TXN_hash_salt', __('Transaction Hash Salt','event_espresso'), true, '')
 			)
 		);

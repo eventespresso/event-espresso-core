@@ -436,7 +436,7 @@ class EE_Error extends Exception {
 		$msg = WP_DEBUG ? $dev_msg : $user_msg;
 		// add notice if message exists
 		if ( ! empty( $msg )) {
-			self::$_espresso_notices[ $type ][] = $msg . $error_code;
+			self::$_espresso_notices[ $type ][] = $msg . '<br/><span class="smaller-text">' . $error_code . '</span>';
 			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
 		}
 		
