@@ -60,6 +60,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'add_new_attendee' => 'espresso_attendees',
 			'edit_attendee' => 'espresso_attendees',
 			'insert_attendee' => 'espresso_attendees',
+			'update_attendee' => 'espresso_attendees'
 			);
 		$this->_cpt_model_names = array(
 			'add_new_attendee' => 'EEM_Attendee',
@@ -2187,7 +2188,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ATT_address2' => isset($this->_req_data['ATT_address2']) ? $this->_req_data['ATT_address2'] : '',
 				'ATT_city' => isset( $this->_req_data['ATT_city'] ) ? $this->_req_data['ATT_city'] : '',
 				'STA_ID' => isset( $this->_req_data['STA_ID'] ) ? $this->_req_data['STA_ID'] : '',
-				'CNT_ISO' => isset( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['STA_ID'] : '',
+				'CNT_ISO' => isset( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['CNT_ISO'] : '',
 				'ATT_zip' => isset( $this->_req_data['ATT_zip'] ) ? $this->_req_data['ATT_zip'] : '',
 				'ATT_email' => isset( $this->_req_data['ATT_email'] ) ? $this->_req_data['ATT_email'] : '',
 				'ATT_phone' => isset( $this->_req_data['ATT_phone'] ) ? $this->_req_data['ATT_phone'] : '',
@@ -2345,65 +2346,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 	}
 
-
-
-
-
-
-
-	/**
-	 * 		insert_or_update_attendee
-	*		@param boolean 		$new_attendee - whether to insert or update
-	*		@access protected
-	*		@return void
-	*/
-	protected function _insert_or_update_attendee( $new_attendee = FALSE ) {
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$ATT_MDL = EEM_Attendee::instance();
-		
-		//printr( $this->_req_data ); die();
-		
-		// why be so pessimistic ???  : (
-		$success = 0;
-		//create attendee object
-		$attendee = EE_Attendee::new_instance(
-			array(
-				'ATT_fname' => $this->_req_data['ATT_fname'],
-				'ATT_lname' => $this->_req_data['ATT_lname'],
-				'ATT_address' => $this->_req_data['ATT_address'],
-				'ATT_address2' => $this->_req_data['ATT_address2'],
-				'ATT_city' => $this->_req_data['ATT_city'],
-				'STA_ID' => $this->_req_data['STA_ID'],
-				'CNT_ISO' => $this->_req_data['CNT_ISO'],
-				'ATT_zip' => $this->_req_data['ATT_zip'],
-				'ATT_email' => $this->_req_data['ATT_email'],
-				'ATT_phone' => $this->_req_data['ATT_phone'],
-				'ATT_social' => $this->_req_data['ATT_social'],
-				'ATT_comments' => $this->_req_data['ATT_comments'],
-				'ATT_notes' => $this->_req_data['ATT_notes'],
-				'ATT_deleted' => isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0,
-				'ATT_ID' => $this->_req_data['ATT_ID']
-				)
-			);
-				
-		// is this a new Attendee ?
-		
-		if ( $new_attendee ) {
-			$action_desc = __( 'created', 'event_espresso' );
-		} else {
-			$action_desc = __( 'updated', 'event_espresso' );
-		}
-		if ( $attendee->save() ) {
-			$success = 1;
-		}else{
-			$success = 0;
-		}
-		
-		$this->_redirect_after_action( $success, __( 'Contact', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'post' => $this->_req_data['ATT_ID'] ) );
-			
-	}
  
 
 
