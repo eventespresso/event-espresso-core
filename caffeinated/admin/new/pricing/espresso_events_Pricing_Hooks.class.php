@@ -74,10 +74,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'ee-dtt-ticket-metabox' => array(
 					'DTT_TRASH_BLOCK' => array(
 						'main_warning' => __('The Datetime you are attempting to trash is the only datetime selected for the following ticket(s):', 'event_espresso'),
-						'after_warning' => __('In order to trash this datetime you must first make sure the above ticket(s) are attached to other datetimes.', 'event_espresso'),
+						'after_warning' => __('In order to trash this datetime you must first make sure the above ticket(s) are assigned to other datetimes.', 'event_espresso'),
 						'cancel_button' => '<button class="button-secondary ee-modal-cancel">' . __('Cancel', 'event_espresso') . '</button>',
-						'single_warning_from_tkt' => __('The Datetime you are attempting to detach from this ticket is the only remaining datetime for this ticket. Tickets must always have at least one datetime active on them.', 'event_espresso'),
-						'single_warning_from_dtt' => __('The ticket you are attempting to detach from this datetime cannot be detached because the datetime is the only remaining datetime for the ticket.  Tickets must always have at least one datetime active on them.', 'event_espresso'),
+						'single_warning_from_tkt' => __('The Datetime you are attempting to unassign from this ticket is the only remaining datetime for this ticket. Tickets must always have at least one datetime assigned to them.', 'event_espresso'),
+						'single_warning_from_dtt' => __('The ticket you are attempting to unassign from this datetime cannot be unassigned because the datetime is the only remaining datetime for the ticket.  Tickets must always have at least one datetime assigned to them.', 'event_espresso'),
 						'dismiss_button' => '<button class="button-secondary ee-modal-cancel">' . __('Dismiss', 'event_espresso') . '</button>'
 						),
 					'DTT_ERROR_MSG' => array(
