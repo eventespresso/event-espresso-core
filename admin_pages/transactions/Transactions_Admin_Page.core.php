@@ -472,7 +472,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		
 		// process taxes
-		if ( $taxes = $this->_transaction->get_many_related('Line_Item', array( array('LIN_type' => 'tax') ) ) ) {
+		if ( $taxes = $this->_transaction->get_many_related('Line_Item', array( array('LIN_type' => EEM_Line_Item::type_tax) ) ) ) {
 			$this->_template_args['taxes'] = $taxes;
 		} else {
 			$this->_template_args['taxes'] = FALSE;
