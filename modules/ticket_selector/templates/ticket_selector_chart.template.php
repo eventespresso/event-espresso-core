@@ -93,8 +93,21 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
+			 	$hidden_input_qty = $max_atndz > 1 ? TRUE : FALSE;
+				// sold out or other status ?
+				if ( $tkt_status == -2 || $ticket->remaining() == 0 ) {
+					echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
+				} else if ( $tkt_status == -1 || $tkt_status == 0 ) {
+					echo $ticket_status;
+				} else if ( $tkt_status == 1 ) {
+				?>	
+				<p class="ticket-pending-pg">
+					<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
+					<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
+				</p>
+				<?php
 				// if only one attendee is allowed to register at a time
-				if ( $max_atndz  == 1 ) {
+				} else if ( $max_atndz  == 1 ) {
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 			?>
@@ -106,7 +119,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					value="<?php echo $row . '-'; ?>1"
 					<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
 				/>
-		<?php			
+		<?php
+					$hidden_input_qty = FALSE;
+					
 				} elseif ( $max > 0 ) { 
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
@@ -122,27 +137,15 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<?php } ?>
 				</select>
 			<?php 
-				} else {
-					// sold out or other status ?
-					if ( $tkt_status == -2 || $ticket->remaining() == 0 ) {
-						echo '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>';
-					} else if ( $tkt_status == -1 || $tkt_status == 0 ) {
-						echo $ticket_status;
-					} else if ( $tkt_status == 1 ) {
-					?>	
-					<p class="ticket-pending-pg">
-						<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
-						<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
-					</p>
-					<?php
-					} 
-					// depending on group reg we need to change the format for qty
-					if (  $max_atndz > 1 ) {
-					?>	
-					<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="0" />
-					<?php
-					} 
-				}
+					$hidden_input_qty = FALSE;
+					
+				} 
+				// depending on group reg we need to change the format for qty
+				if ( $hidden_input_qty ) {
+				?>	
+				<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="0" />
+				<?php
+				} 
 			?>	
 					<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>" />
 					<input type="hidden" name="tkt-slctr-ticket-obj-<?php echo $EVT_ID; ?>[]" value="<?php echo base64_encode( serialize( $ticket )); ?>" />
@@ -157,23 +160,23 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<p><?php echo $ticket->description(); ?></p>
 							
 						<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
+						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><?php echo $ticket->start_date('l F jS, Y @') ; ?><br/>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><?php echo $ticket->end_date('l F jS, Y @') ; ?><br/>
-						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span>
-						<br/>						
+						<br/>
 						
 						<?php if ( isset( $min ) && isset( $max )) : ?>
 						<h5><?php _e( 'Purchasable Quantities', 'event_espresso' ); ?></h5>
+						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of tickets that can be purchased per transaction.', 'event_espresso' ); ?></span><br/>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Min Qty:', 'event_espresso' ); ?></span><?php echo $min > 0 ? $min : 0; ?><br/>
 						<?php $max = min( $max, $max_atndz );?>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Max Qty:', 'event_espresso' ); ?></span><?php echo $max === INF ? __( 'no limit', 'event_espresso' ) : max( $max, 1 ); ?><br/>
-						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The number of tickets that can be purchased per transaction.', 'event_espresso' ); ?></span>
 						<br/>
 						<?php endif; ?>
 						
 						<?php if ( $datetimes = $ticket->get_many_related( 'Datetime' )) : ?>
 						<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
-						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. Remaing shows the number of this ticket type left:', 'event_espresso' ); ?></span>
+						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. Remaing shows the number of this ticket type left:', 'event_espresso' ); ?></span>
 						<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
 							<table class="tckt-slctr-tkt-details-tbl">
 								<thead>
@@ -203,8 +206,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						
 						<?php if ( $ticket->uses() !== INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) : ?>							
 						<h5><?php _e( 'Event Date Ticket Uses', 'event_espresso' ); ?></h5>
+						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of separate event datetimes (see table above) that this ticket can be used to gain admittance to.<br/> <strong>Admission is always one person per ticket.</strong>', 'event_espresso' ); ?></span><br/>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# of Uses:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
-						<span class="drk-grey-text smaller-text no-bold"> - <?php _e( 'The number of separate event datetimes (see table above) that this ticket can be used to gain admittance to.<br/> <strong>Admission is always one person per ticket.</strong>', 'event_espresso' ); ?></span>
 						<?php endif; ?>
 						
 						

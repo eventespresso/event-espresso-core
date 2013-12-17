@@ -101,17 +101,14 @@ final class EE_System {
 		do_action('AHEE__EE_System__construct__begin',$this);
 
 		$this->_load_registry();
-
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		// setup autoloaders
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
-
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
-
 		// check for activation errors
 		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
 			EE_Error::add_error( $activation_errors );
@@ -122,39 +119,10 @@ final class EE_System {
 		//load caf stuff a chance to play during the activation process too.
 		$this->_maybe_brew_regular();
 		//we gave addons a chance to register themselves before detecting the request type
-		//and deciding whether or nto to set maintenance mode
+		//and deciding whether or not to set maintenance mode
 		// check for plugin activation/upgrade/installation
 		add_action( 'plugins_loaded', array( $this,'plugins_loaded' ), 7 );
 		do_action( 'AHEE__EE_System__construct__end', $this );
-	}
-	
-	public function plugins_loaded(){
-		$this->_manage_activation_process();
-		
-		// let's get it started		
-		if ( is_admin() && ! EE_FRONT_AJAX ) {
-			EE_Registry::instance()->load_core( 'Admin' );
-		} else if ( EE_Maintenance_Mode::instance()->level() ) {
-			// shut 'er down down for maintenance ?
-			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
-		} else {
-			EE_Registry::instance()->load_core( 'Front_Controller' );
-		}
-		// load additional common resources
-		add_action( 'init', array( $this, 'init' ), 3 );
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
-	}
-
-
-
-	/**
-	 * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks that need to be setup before our EE_System launches.
-	 * @return void
-	 */
-	private function _maybe_brew_regular() {
-		if (( ! defined( 'EE_DECAF' ) ||  EE_DECAF !== TRUE ) && is_readable( EE_CAFF_PATH . 'brewing_regular.php' )) {
-			require_once EE_CAFF_PATH . 'brewing_regular.php';
-		}
 	}
 
 
@@ -172,6 +140,61 @@ final class EE_System {
 			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
+	}
+
+
+
+	/**
+	 * cycles through all of the models/*.model.php files, and assembles an array of model names
+	 * 
+	 * @return void
+	 */
+	private function _parse_model_names(){
+		//get all the files in the EE_MODELS folder that end in .model.php
+		$models = glob( EE_MODELS.'*.model.php');
+		foreach( $models as $model ){
+			// get model classname
+			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
+			$shortname = str_replace( 'EEM_', '', $classname );
+			$model_names[ $shortname ] = $classname;
+		}
+		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
+	}	
+
+
+
+	/**
+	 * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks that need to be setup before our EE_System launches.
+	 * @return void
+	 */
+	private function _maybe_brew_regular() {
+		if (( ! defined( 'EE_DECAF' ) ||  EE_DECAF !== TRUE ) && is_readable( EE_CAFF_PATH . 'brewing_regular.php' )) {
+			require_once EE_CAFF_PATH . 'brewing_regular.php';
+		}
+	}
+
+
+
+	/**
+	 * plugins_loaded
+	 * 
+	 * @return void
+	 */
+	public function plugins_loaded(){
+		// detect whether install or upgrade
+		$this->_manage_activation_process();		
+		// let's get it started		
+		if ( is_admin() && ! EE_FRONT_AJAX ) {
+			EE_Registry::instance()->load_core( 'Admin' );
+		} else if ( EE_Maintenance_Mode::instance()->level() ) {
+			// shut 'er down down for maintenance ?
+			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
+		} else {
+			EE_Registry::instance()->load_core( 'Front_Controller' );
+		}
+		// load additional common resources
+		add_action( 'init', array( $this, 'init' ), 3 );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 	}
 
 
@@ -245,7 +268,9 @@ final class EE_System {
 	 * @return void
 	 */
 	public function handle_as_activation(){
-		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
+		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
+			// set flag for flushing rewrite rules
+			update_option( 'espresso_flush_rewrite_rules', TRUE );
 			//only initialize system if we're not in maintenance mode.
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
@@ -379,24 +404,6 @@ final class EE_System {
 		return update_option( 'espresso_db_update', $espresso_db_update );
 	}
 
-	
-	
-	/**
-	 * cycles through all of the models/*.model.php files, and assembles an array of model names
-	 * 
-	 * @return void
-	 */
-	private function _parse_model_names(){
-		//get all the files in the EE_MODELS folder that end in .model.php
-		$models = glob( EE_MODELS.'*.model.php');
-		foreach( $models as $model ){
-			// get model classname
-			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
-			$shortname = str_replace( 'EEM_', '', $classname );
-			$model_names[ $shortname ] = $classname;
-		}
-		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
-	}
 
 
 

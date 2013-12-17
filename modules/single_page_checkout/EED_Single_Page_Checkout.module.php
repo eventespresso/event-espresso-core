@@ -581,7 +581,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				));
 				
 				foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
-					$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_deleted' => 0 ), 'order_by'=>array( 'QST_order' =>'ASC' )));
+					$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_admin_only' => 0, 'QST_deleted' => 0 ), 'order_by'=>array( 'QST_order' =>'ASC' )));
 					foreach ( $Questions as $Question ) {
 						// if this question was for an attendee detail, then check for that answer
 						$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
@@ -1494,7 +1494,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
 			// attempt to perform transaction via payment gateway
-			$response = EE_Registry::instance()->LIB->EEM_Gateways->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
+			$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
 			$this->_thank_you_page_url = $response['forward_url'];
 			
 			if ( isset( $response['msg']['success'] )) {
