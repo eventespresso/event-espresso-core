@@ -356,14 +356,12 @@ span.ui-icon {
 #more-attendee-copy-options-dv {
 	position:relative;
 	display:none;
-	padding:2em 0 0;
-	margin:1em 0 0;
+	padding:0;
+	margin:3em 0 0;
 }
+.hide-the-displayed,
 .display-the-hidden {
-	margin:1em 0 0;
-	cursor:pointer;
-}
-.hide-the-displayed {
+	margin:.5em 0 0;
 	cursor:pointer;
 }
 .reg-page-form-field-wrap-pg input[type="text"] {
