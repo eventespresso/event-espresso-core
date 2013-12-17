@@ -48,9 +48,6 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 						),
 					'style' => array(
 						'classes' => ''
-						),
-					'position' => array(
-						'target' => 'jQuery::.TKT-tax-label'
 						)
 				 	)//defaults
 				)
