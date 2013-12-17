@@ -60,6 +60,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'add_new_attendee' => 'espresso_attendees',
 			'edit_attendee' => 'espresso_attendees',
 			'insert_attendee' => 'espresso_attendees',
+			'update_attendee' => 'espresso_attendees'
 			);
 		$this->_cpt_model_names = array(
 			'add_new_attendee' => 'EEM_Attendee',
@@ -2187,7 +2188,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ATT_address2' => isset($this->_req_data['ATT_address2']) ? $this->_req_data['ATT_address2'] : '',
 				'ATT_city' => isset( $this->_req_data['ATT_city'] ) ? $this->_req_data['ATT_city'] : '',
 				'STA_ID' => isset( $this->_req_data['STA_ID'] ) ? $this->_req_data['STA_ID'] : '',
-				'CNT_ISO' => isset( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['STA_ID'] : '',
+				'CNT_ISO' => isset( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['CNT_ISO'] : '',
 				'ATT_zip' => isset( $this->_req_data['ATT_zip'] ) ? $this->_req_data['ATT_zip'] : '',
 				'ATT_email' => isset( $this->_req_data['ATT_email'] ) ? $this->_req_data['ATT_email'] : '',
 				'ATT_phone' => isset( $this->_req_data['ATT_phone'] ) ? $this->_req_data['ATT_phone'] : '',
