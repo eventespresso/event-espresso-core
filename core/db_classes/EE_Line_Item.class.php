@@ -263,20 +263,20 @@ class EE_Line_Item extends EE_Base_Class{
 	 * @return boolean
 	 */
 	function is_percent() {
-		$unit_price_is_not_0 =  $this->get('LIN_unit_price') > .01;
+		$unit_price_is_not_0 =  $this->get('LIN_unit_price') >= .001; 
 		$percent = $this->get('LIN_percent');
 		if( ! $unit_price_is_not_0 && $percent){
 			return true;
 		}elseif($unit_price_is_not_0 && ! $percent){
 			return false;
 		}elseif($unit_price_is_not_0 && $percent){
-			throw new EE_Error(sprintf(__("A Line Itm cannot have a uni price (%s) AND a percent (%s)!", "event_espresso"),$unit_price,$percent));
+			throw new EE_Error(sprintf(__("A Line Item can not have a unit price of (%s) AND a percent (%s)!", "event_espresso"),$unit_price,$percent));
 		}else{//if they're both 0, assume its not a percent item
 			return false;
 		}
 	}
 	/**
-	 * Gets percent (between 100-.01)
+	 * Gets percent (between 100-.001)
 	 * @return float
 	 */
 	function percent() {
@@ -452,7 +452,10 @@ class EE_Line_Item extends EE_Base_Class{
 	 */
 	function get_child_line_item($code){
 		if($this->ID()){
-			return $this->get_model()->get_one(array(array('LIN_code'=>$code)));
+			return $this->get_model()->get_one(array(array( 
+				'LIN_parent'=>$this->ID(),
+				'LIN_code'=>$code 
+			)));
 		}else{
 			return $this->_Line_Item[$code];
 		}
@@ -463,7 +466,9 @@ class EE_Line_Item extends EE_Base_Class{
 	 */
 	function delete_children_line_items(){
 		if($this->ID()){
-			return $this->get_model()->delete(array(array('LIN_parent'=>$this->ID())));
+			return $this->get_model()->delete(array(array(
+				'LIN_parent'=>$this->ID()
+			)));
 		}else{
 			$count = count($this->_Line_Item);
 			$this->_Line_Item = array();
@@ -479,7 +484,10 @@ class EE_Line_Item extends EE_Base_Class{
 	 */
 	function delete_child_line_item($code){
 		if($this->ID()){
-			return $this->get_model()->delete(array(array('LIN_code'=>$code,'LIN_parent'=>$this->ID())));
+			return $this->get_model()->delete(array(array(
+				'LIN_code'=>$code,
+				'LIN_parent'=>$this->ID()
+			)));
 		}else{
 			unset($this->_Line_Item[$code]);
 			return 1;

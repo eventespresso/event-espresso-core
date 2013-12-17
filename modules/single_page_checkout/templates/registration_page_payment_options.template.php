@@ -12,6 +12,7 @@
 			<input type="hidden" id="spco-payment_options-action" name="ajax_action" value="espresso_<?php echo $reg_step_ajax_action;?>" />
 			<input type="hidden" id="spco-payment_options-noheader" name="noheader" value="" />		
 			<input type="hidden" id="spco-payment_options-next-step" name="next_step" value="<?php echo $next_step; ?>" />		
+			<input type="hidden" id="spco-reg_url_link" name="e_reg_url_link" value="<?php echo $reg_url_link;?>" />		
 
 <?php
 		if ( $events_requiring_pre_approval != '' ) { ?>
@@ -56,13 +57,15 @@
 			<span class="drk-grey-text"><?php _e('Billable Registrations:', 'event_espresso'); ?></span> <?php echo $total_items;?>
 		</h4>
 
+<?php	if ( $sub_total != $grand_total ) { ?>
 		<div class="reg-page-totals-spn">
 			<span class="lt-grey-text"><?php echo __('Sub Total: ', 'event_espresso');?></span>
 			<span class="reg-page-total-spn"><?php echo$sub_total;?></span>
 		</div>
-
-<?php 		if ( $taxes ) {
-				foreach ( $taxes as $tax ){
+<?php	} ?>
+<?php 	if ( $taxes ) {
+			foreach ( $taxes as $tax ){
+				if( (float)$tax->total() > 0 ) {
 ?>
 		<div class="reg-page-totals-spn">
 			<span class="lt-grey-text"><?php echo $tax->percent() . '% ' . $tax->name();?></span>
@@ -72,6 +75,7 @@
 <?php
 				}
 			}
+		}
 ?>
 		<div id="reg-page-grand-total-dv" class="reg-page-totals-spn">
 			<span class="drk-grey-text"><?php echo __('Total Amount Due: ', 'event_espresso');?></span>
