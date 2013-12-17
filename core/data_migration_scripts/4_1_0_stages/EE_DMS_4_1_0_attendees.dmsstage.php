@@ -272,9 +272,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			'post_title'=>$old_attendee['fname']." ".$old_attendee['lname'],//ATT_full_name
 			'post_content'=>'',//ATT_bio
 			'post_name'=>sanitize_title($old_attendee['fname']."-".$old_attendee['lname']),//ATT_slug
-			'post_date'=>$old_attendee['date'],//ATT_created
+			'post_date'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),//ATT_created
 			'post_excerpt'=>'',//ATT_short_bio
-			'post_modified'=>$old_attendee['date'],//ATT_modified
+			'post_modified'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),//ATT_modified
 			'post_author'=>0,//ATT_author
 			'post_parent'=>0,//ATT_parent
 			'post_type'=>'espresso_attendees',//post_type
@@ -375,7 +375,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			);
 			$STS_ID = isset($txn_status_mapping[$old_attendee['payment_status']]) ? $txn_status_mapping[$old_attendee['payment_status']] : 'TIN';
 			$cols_n_values = array(
-				'TXN_timestamp'=>$old_attendee['date'],
+				'TXN_timestamp'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),
 				'TXN_total'=>floatval($old_attendee['total_cost']),
 				'TXN_paid'=>floatval($old_attendee['amount_pd']),
 				'STS_ID'=>$STS_ID,
@@ -447,7 +447,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'TXN_ID'=>$new_txn_id,
 				'TKT_ID'=>$ticket_id,
 				'STS_ID'=>$STS_ID,
-				'REG_date'=>$old_attendee['date'],
+				'REG_date'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),
 				'REG_final_price'=>$old_attendee['final_price'],
 				'REG_session'=>$old_attendee['attendee_session'],
 				'REG_code'=>$old_attendee['registration_id'],
@@ -502,7 +502,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		
 		$old_att_start_date = $old_attendee['start_date'];
 		$old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
-		$old_att_datetime = "$old_att_start_date $old_att_start_time:00";
+		$old_att_datetime = $this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,"$old_att_start_date $old_att_start_time:00");
 		//add all conditions to an array from which we can SHIFT conditions off in order to widen our search
 		//the most important condition should be last, as it will be array_shift'ed off last
 		$conditions = array(
@@ -562,7 +562,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$cols_n_values = array(
 				'TXN_ID'=>$new_txn_id,
 				'STS_ID'=>$STS_ID,
-				'PAY_timestamp'=>$old_attendee['date'],
+				'PAY_timestamp'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),
 				'PAY_gateway'=>$old_attendee['txn_type'],
 				'PAY_gateway_response'=>'',
 				'PAY_txn_id_chq_nmbr'=>$old_attendee['txn_id'],
