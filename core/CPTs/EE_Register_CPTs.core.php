@@ -51,28 +51,28 @@ class EE_Register_CPTs {
 		foreach ( $taxonomies as $taxonomy =>  $tax ) {
 			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
 		}
-		
 		// register CPTs
 		$CPTs = apply_filters('FHEE__EE_Register_CPTs__get_CPTs', self::get_CPTs() );
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
 			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
 		}
-
-
-		//setup default terms in any of our taxonomies (but only if we're in admin).  Why not added via register_actvation_hook?  Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
+		// setup default terms in any of our taxonomies (but only if we're in admin). 
+		// Why not added via register_actvation_hook?  
+		// Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
 		if ( is_admin() ) {
 			$this->set_initial_event_categories();
 			$this->set_initial_venue_categories();
 			$this->set_initial_event_types();
 		}
-
-
 		//set default terms
 		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events') );
 		$this->set_default_term( 'espresso_event_type', 'single-event', array('espresso_events') );
 		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
-
-
+		// flush_rewrite_rules ?
+		if ( get_option( 'espresso_flush_rewrite_rules', FALSE )) {
+			flush_rewrite_rules();
+			update_option( 'espresso_flush_rewrite_rules', FALSE );
+		}
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
 		
