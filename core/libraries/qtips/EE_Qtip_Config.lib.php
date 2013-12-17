@@ -111,6 +111,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 				'title' => true, //Options: "string", true.  If TRUE then the title attribute of the target will be used (if available). If "string" then we'll use that as the title.
 				'clone' => true, //Options: true|false.  if true then the text will be cloned from the content instead of removed from the dom.
 				),
+			'show_only_once' => false, //this is NOT a qtip2 library option, but is something added for EE specific use.  If set to true, this means that this particular tooltip will only show ONCE for the user and then a cookie will be saved so that it doesn't show again (after exit).
 			'position' => array(
 				'my' => 'top left', //top left || top center || top right || right top || right center || right bottom || bottom right || bottom center || bottom left || left bottom || left center || left top
 				'at' => 'bottom right', //same options as above.
@@ -128,6 +129,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 				),
 			'show' => array(
 				'event' => 'mouseenter', //what event triggers tooltip to be shown.  Any jQuery standard event or custom events can be used. space separated events provide multiple triggers.
+				'target' => false, //options jQuery::#selector|false.  Used to indicate which html element will trigger show event.  When false, the element the qtip() method was called upon is used.
 				'delay' => 90, //time in millisecons by which to delay showing of tooltip.
 				'solo' => false, //determines whether tooltip will hid all others when triggered. Options: true (hide all) || false (ignore) || string (parent selector for which qtips get hidden)
 				'ready' => false, //use to indicate you want the qtip to show as soon as it is bound to the element it's attached to (true).
@@ -181,7 +183,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 				throw new EE_Error( sprintf( __('There is something wrong with the _qtipsa property setup for the %s qtip config class.  The dump of the current array index is: %s.<br /><br />Please check that it\'s setup correctly.', 'event_espresso'), get_class($this), var_export($qt, true) ) );
 
 			//make sure the options include defaults and just override via set config.
-			$options = array_merge_recursive( $this->_default_options, $qt['options'] );
+			$options = array_merge( $this->_default_options, $qt['options'] );
 			$setup = array(
 				'content_id' => $qt['content_id'],
 				'options' => $options,

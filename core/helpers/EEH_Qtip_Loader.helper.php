@@ -94,7 +94,7 @@ class EEH_Qtip_Loader extends EEH_Base {
 		wp_register_script('qtip-map', $qtip_map, array(), '3', TRUE );
 		wp_register_script('qtip-images-loaded', $qtip_images_loaded, array(), '2.2.0', TRUE );
 		wp_register_script('qtip', $qtips_js, array('jquery'), '2.2.0', TRUE );
-		wp_register_script('ee-qtip-helper', EE_HELPERS_ASSETS . 'ee-qtip-helper.js', array('qtip'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script('ee-qtip-helper', EE_HELPERS_ASSETS . 'ee-qtip-helper.js', array('qtip', 'jquery-cookie'), EVENT_ESPRESSO_VERSION, TRUE );
 
 		wp_register_style('qtip-css', $qtipcss, array(), '2.2' );
 

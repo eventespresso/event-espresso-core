@@ -43,8 +43,8 @@
 		<?php if ( $taxes ) : ?>
 			<?php foreach ( $taxes as $tax ) : ?>
 				<tr>
-					<th class=" jst-rght" colspan="6"><?php echo $tax['name'];?></th>
-					<th class=" jst-rght"><?php echo EEH_Template::format_currency( $tax['amount']);?></th>
+					<th class=" jst-rght" colspan="6"><?php echo $tax->get('LIN_name');?> (<?php echo $tax->get_pretty('LIN_percent'); ?>%)</th>
+					<th class=" jst-rght"><?php echo EEH_Template::format_currency( $tax->get('LIN_total'));?></th>
 				</tr>
 			<?php endforeach; // $taxes?>
 		<?php endif; // $taxes?>

@@ -182,17 +182,17 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 					'nav' => array(
-							'label' => __('Default Prices', 'event_espresso'),
+							'label' => __('Default Pricing', 'event_espresso'),
 							'order' => 10
 						),
 					'list_table' => 'Prices_List_Table',
 					'help_tour' => array( 'Pricing_Default_Prices_Help_Tour'),
-					'help_tabs' => array(
+					/*'help_tabs' => array(
 						'price_type_info' => array(
 							'title' => __('About Price Types', 'event_espresso'),
 							'callback' => 'price_type_info_help_tab'
 							)
-						),
+						),*/
 					'require_nonce' => FALSE
 				),
 			'add_new_price' => array(
@@ -223,6 +223,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						),
 					'list_table' => 'Price_Types_List_Table',
 					'help_tour' => array( 'Price_Types_Default_Help_Tour' ),
+					'help_tabs' => array(
+						'price_type_info' => array(
+							'title' => __('About Price Types', 'event_espresso'),
+							'callback' => 'price_type_info_help_tab'
+							)
+						),
 					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 					'require_nonce' => FALSE
 				),

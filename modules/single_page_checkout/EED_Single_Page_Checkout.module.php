@@ -441,7 +441,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'TXN_total' => $this->_cart->get_cart_grand_total(), 
 				'TXN_paid' => 0, 
 				'STS_ID' => EEM_Transaction::incomplete_status_code,
-				'TXN_tax_data' => $this->_cart->get_applied_taxes()
+				'TXN_tax_data' => $this->_cart->get_taxes_line_item()->children()
 		));
 	}
 
