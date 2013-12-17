@@ -21,6 +21,7 @@
 		<input type="hidden" id="spco-attendee_information-action" name="ajax_action" value="espresso_<?php echo $reg_step_ajax_action;?>" />		
 		<input type="hidden" id="spco-attendee_information-noheader" name="noheader" value="" />		
 		<input type="hidden" id="spco-attendee_information-next-step" name="next_step" value="<?php echo $next_step; ?>" />		
+		<input type="hidden" id="spco-reg_url_link" name="e_reg_url_link" value="<?php echo $reg_url_link;?>" />		
 					
 <?php
 global $css_class;

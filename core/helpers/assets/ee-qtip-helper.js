@@ -4,15 +4,26 @@ jQuery(document).ready(function($) {
 	if ( EE_QTIP_HELPER.qtips.length > 0 ) {
 		var parse, content;
 
-		console.log(EE_QTIP_HELPER);
 		//loop through the qtips and set them up.
 		$.each(EE_QTIP_HELPER.qtips, function(i, v ) {
 			//make sure that content is refernecing content div
-			console.log(v);
 			content = v.options.content.clone ? $('#' + v.content_id).clone().html() : $('#' + v.content_id ).html();
 
 			if ( typeof( content ) !== 'undefined' ) {
 				v.options.content.text = content;
+			}
+
+			if ( typeof( v.options.show_only_once ) !== 'undefined' && v.options.show_only_once ) {
+				v.options.events = {
+					hide: function(evt, api) {
+						$.cookie(v.content_id + '-viewed', true );
+					},
+					show: function(evt, api) {
+						if ( $.cookie(v.content_id + '-viewed' ) ) {
+							evt.preventDefault();
+						}
+					}
+				};
 			}
 
 			if ( typeof( v.options.position.target) !== 'undefined' && v.options.position.target.indexOf("jQuery::") > -1 ) {
@@ -30,7 +41,8 @@ jQuery(document).ready(function($) {
 				v.options.hide.target = $(parse);
 			}
 
-			$(v.target).qtip(v.options);
+			if ( ! $.cookie(v.content_id + '-viewed') )
+				$(v.target).qtip(v.options);
 		});
 	}
 

@@ -448,6 +448,9 @@ final class EE_Admin {
 		//this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.  Note the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script calls.
 		wp_enqueue_script('ee-inject-wp', EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
 
+		//register cookie script for future dependencies
+		wp_register_script('jquery-cookie', EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js', array('jquery'), '2.1', TRUE );
+
 		// jquery_validate loading is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
 			// load jQuery Validate script from CDN with local fallback
@@ -463,15 +466,12 @@ final class EE_Admin {
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
 			$joyride_js = EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js';
-			$joyride_cookie_js = EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js';
 			$joyride_modenizr_js = EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js';
 			$joyride_css = EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css';
 
 			//joyride style
 			wp_register_style('joyride-css', $joyride_css, array(), '2.1');
 
-			//joyride dependencies
-			wp_register_script('jquery-cookie', $joyride_cookie_js, array('jquery'), '2.1', TRUE );
 			wp_register_script('joyride-modenizr', $joyride_modenizr_js, array(), '2.1', TRUE );
 
 			//joyride

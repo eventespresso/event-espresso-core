@@ -96,31 +96,6 @@ class EE_Brewing_Regular extends EE_Base {
 							'%d',//PRT_order
 							'%d',//PRT_deleted
 						));
-				if( $result){
-					$wpdb->insert($price_table,
-							array(
-								'PRT_ID'=>$wpdb->insert_id,
-								'PRC_amount'=>7.00,
-								'PRC_name'=>  __("Local Sales Tax", "event_espresso"),
-								'PRC_desc'=>  __("Locally imposed tax. Example content - delete if you want to", "event_espresso"),
-								'PRC_is_default'=>true,
-								'PRC_overrides'=>NULL,
-								'PRC_deleted'=>false,
-								'PRC_order'=>40,
-								'PRC_parent'=>null
-							),
-							array(
-								'%d',//PRT_id
-								'%f',//PRC_amount
-								'%s',//PRC_name
-								'%s',//PRC_desc
-								'%d',//PRC_is_default
-								'%d',//PRC_overrides
-								'%d',//PRC_deleted
-								'%d',//PRC_order
-								'%d',//PRC_parent
-							));
-				}
 				//federal tax
 				$result = $wpdb->insert($price_type_table,
 						array(
@@ -143,7 +118,7 @@ class EE_Brewing_Regular extends EE_Base {
 								'PRT_ID'=>$wpdb->insert_id,
 								'PRC_amount'=>15.00,
 								'PRC_name'=>  __("Sales Tax", "event_espresso"),
-								'PRC_desc'=>  __("Federally imposed tax. Example content - delete if you want to", "event_espresso"),
+								'PRC_desc'=>  '',
 								'PRC_is_default'=>true,
 								'PRC_overrides'=>NULL,
 								'PRC_deleted'=>false,

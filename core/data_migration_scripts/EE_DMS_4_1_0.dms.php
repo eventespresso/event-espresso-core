@@ -426,7 +426,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				  PRT_name VARCHAR(45) NOT NULL ,
 				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
 				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
-				  PRT_order tinyint(1) UNSIGNED NULL,
+				  PRT_order tinyint UNSIGNED NULL,
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 				  PRIMARY KEY  (PRT_ID)";
@@ -1015,9 +1015,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 0),
-							(2, 2, '10', 'Early Bird Discount', 'Sign up early and receive an additional 10% discount off of the regular price. Example content - delete if you want to', 1, NULL, 20, 0, 0),
-							(3, 5, '7.50', 'Service Fee', 'Covers administrative expenses. Example content - delete if you want to', 1, NULL, 30, 0, 0);";			
+							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 0);";			
 				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}
@@ -1583,6 +1581,66 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$attachment_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid=%s LIMIT 1",$guid));
 		return $attachment_id;
+	}
+	/**
+	 * Returns a mysql-formatted datetime in UTC time, given a $datetime_string
+	 * (and optionally a timezone; if none is given, the wp default is used)
+	 * @param EE_Data_Migration_Script_base $script
+	 * @param array $row_of_data, the row from the DB (as an array) we're trying to find the UTC time for
+	 * @param string $datetime_string
+	 * @param string $timezone
+	 * @return string
+	 */
+	public function convert_date_string_to_utc(EE_Data_Migration_Script_Stage$script, $row_of_data, $datetime_string,$timezone = null){
+		$original_tz = $timezone;
+		if( ! $timezone){
+			$timezone = $this->_get_wp_timezone();
+		}
+		if( ! $timezone){
+			$script->add_error(sprintf(__("Could not find timezone given %s for %s", "event_espresso"),$original_tz,$row_of_data));
+			$timezone = 'UTC';
+		}
+		$date_obj = new DateTime( $datetime_string, new DateTimeZone( $timezone ) );
+		$date_obj->setTimezone(new DateTimeZone('UTC'));	
+		return $date_obj->format('Y-m-d H:i:s');
+	}
+	
+	/**
+	 * Gets the default timezone string from wordpress (even if they set a gmt offset)
+	 * @return string
+	 */
+	private function _get_wp_timezone(){
+		$timezone = empty( $timezone ) ? get_option('timezone_string') : $timezone;
+
+		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter
+		if ( empty( $timezone ) ) {
+			//let's get a the WordPress UTC offset
+			$offset = get_option('gmt_offset');
+			$timezone = $this->timezone_convert_to_string_from_offset( $offset );
+		}
+		return $timezone;
+	}
+	/**
+	 * Gets the wordpress timezone string from a UTC offset
+	 * @param int $offset
+	 * @return boolean
+	 */
+	private function timezone_convert_to_string_from_offset($offset){
+		//shamelessly taken from bottom comment at http://ca1.php.net/manual/en/function.timezone-name-from-abbr.php because timezone_name_from_abbr() did NOT work as expected - its not reliable
+		$offset *= 3600; // convert hour offset to seconds
+        $abbrarray = timezone_abbreviations_list();
+        foreach ($abbrarray as $abbr){
+                foreach ($abbr as $city)
+                {
+                        if ($city['offset'] == $offset)
+                        {
+
+                                return $city['timezone_id'];
+                        }
+                }
+        }
+
+        return FALSE;
 	}
 	
 }

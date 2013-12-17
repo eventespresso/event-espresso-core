@@ -88,7 +88,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		}
 		$old_att_start_date = $old_attendee['start_date'];
 		$old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
-		$old_att_datetime = "$old_att_start_date $old_att_start_time:00";
+		$old_att_datetime = $this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,"$old_att_start_date $old_att_start_time:00");
 		
 		$datetime_table = $wpdb->prefix."esp_datetime";
 		//add all conditions to an array from which we can SHIFT conditions off in order to widen our search

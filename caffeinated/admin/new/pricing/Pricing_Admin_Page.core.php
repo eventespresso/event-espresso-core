@@ -595,15 +595,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function set_price_column_values() {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		//$this->_req_data['PRC_name'] = ucwords(strtolower($this->_req_data['PRC_name']));
-		$this->_req_data['PRC_name'] = htmlentities(wp_strip_all_tags($this->_req_data['PRC_name']), ENT_QUOTES, 'UTF-8');
 	
 		$set_column_values = array(
 				'PRT_ID' => absint($this->_req_data['PRT_ID']),
-				'PRC_amount' => floatval ($this->_req_data['PRC_amount']),
+				'PRC_amount' => $this->_req_data['PRC_amount'],
 				'PRC_name' => $this->_req_data['PRC_name'],
-				'PRC_desc' => wp_strip_all_tags($this->_req_data['PRC_desc']),
+				'PRC_desc' => $this->_req_data['PRC_desc'],
 				'PRC_is_default' => 1,
 				'PRC_overrides' => NULL,
 				'PRC_order' => 0,
@@ -974,7 +971,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		$base_type = wp_strip_all_tags( $this->_req_data['base_type'] );
+		$base_type = $this->_req_data['base_type'];
 	
 		switch ($base_type) {
 	

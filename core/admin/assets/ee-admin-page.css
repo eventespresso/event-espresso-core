@@ -177,10 +177,9 @@ table .espresso-radio-btn-options-ul .big-lbl,
 /**
  * common icons
  */
-.gear-icon, .ticket-icon, .trash-icon, .clone-icon, .lock-icon {
+.ticket-icon, .trash-icon, .clone-icon, .lock-icon {
     display: inline-block;
     height: 16px;
-    margin-top: 3px;
     padding: 0;
     vertical-align: middle;
     width: 16px;
@@ -197,6 +196,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .check-column .lock-icon {
 	margin-left: 6px;
 }
+
 /** end common icons **/
 
 
@@ -558,7 +558,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 /** NEW ICONS **/
-.ee-email-icon, .ee-view-icon, .ee-lock-icon, .ee-collapsible:before {
+.gear-icon:before, .ee-email-icon:before, .ee-view-icon:before, .ee-lock-icon:before, .ee-collapsible:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
 	font: normal 16px/1 'dashicons';
@@ -579,6 +579,13 @@ label.error  { display: block; color: #FE2A00 !important; }
 .ee-lock-icon:before {
 	content: "\f160";
 }
+
+.gear-icon:before {
+	margin-top: 1px;
+	content: "\f111";
+}
+
+
 
 .espresso-admin .wp-list-table .ee-lock-icon:before {
 	margin-left: 8px;
