@@ -217,9 +217,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tour' => array(
 					'Event_Editor_Help_Tour'
 					),
-				'qtips' => array(
-					'EE_Event_Editor_Tips'
-					),
 				'require_nonce' => FALSE
 			),
 			'edit' => array(
@@ -242,9 +239,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'help_tour' => array(
 					'Event_Editor_Help_Tour'
-				),
-				'qtips' => array(
-					'EE_Event_Editor_Tips'
 				),
 				'require_nonce' => FALSE
 			),

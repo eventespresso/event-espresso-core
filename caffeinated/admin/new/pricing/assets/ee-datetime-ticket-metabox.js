@@ -889,7 +889,8 @@ jQuery(document).ready(function($) {
 			if ( dtt_items.length > 1 ) {
 				return true;
 			} else {
-				var htmlcontent = '<p>' + DTT_TRASH_BLOCK.single_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.dismiss_button + '</div>';
+				var warning = this.itemdata.context == 'datetime-ticket' ? DTT_TRASH_BLOCK.single_warning_from_dtt : DTT_TRASH_BLOCK.single_warning_from_tkt;
+				var htmlcontent = '<p>' + warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.dismiss_button + '</div>';
 
 			
 				dialogHelper.displayModal().addContent(htmlcontent);
