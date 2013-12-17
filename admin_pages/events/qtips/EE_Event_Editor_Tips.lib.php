@@ -61,6 +61,6 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 
 	private function _get_taxable_info_content() {
 		$price_admin_link = EE_Admin_Page::add_query_args_and_nonce(array('action' => 'default'), PRICING_ADMIN_URL );
-		return '<p>' . sprintf( __('Clicking the taxable ticket toggle checkbox has enabled taxes for this ticket. What this means is that when a person purchases this ticket, the tax will be applied to all prices on this ticket. You can edit the existing tax price modifier that was setup in Event Espresso by going to  %sDefault Prices Admin Page%s (labelled "Pricing" in the Event Espresso Menu)', 'event_espresso'), '<a href="' . $price_admin_link . '" title="' . __('Price Admin Page', 'event_espresso') . '">', '</a>' ) . '</p>';
+		return '<p>' . sprintf( __('Clicking the taxable ticket toggle checkbox has enabled taxes for this ticket. What this means is that when a person purchases this ticket, the tax will be applied to all prices on this ticket. You can edit the existing tax price modifier that was setup in Event Espresso by going to  %sDefault Pricing Admin Page%s (labelled "Pricing" in the Event Espresso Menu)', 'event_espresso'), '<a href="' . $price_admin_link . '" title="' . __('Pricing Admin Page', 'event_espresso') . '">', '</a>' ) . '</p>';
 	}
 }
