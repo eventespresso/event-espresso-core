@@ -1234,7 +1234,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['_venue'] = $venue;
 		$template_args['states_dropdown'] = EEH_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
 		$template_args['countries_dropdown'] = EEH_Form_Fields::select_input('countries', $ctry_ary, $venue->country_ID(), 'id="phys-country"');
-		$template_args['enable_for_gmap'] = EEH_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
 		$template_path = EVENTS_TEMPLATE_PATH . 'event_venues_metabox_content.template.php';
 		EEH_Template::display_template( $template_path, $template_args );
 	}
