@@ -345,7 +345,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
 			'EVT_display_reg_form'=> 'Y'== $old_event['display_reg_form'],
-			'EVT_visible_on'=> $old_event['visible_on'],
+			'EVT_visible_on'=> $this->get_migration_script()->convert_date_string_to_utc($this,$old_event,current_time('mysql'),$old_event['timezone_string']),//don't use the old 'visible_on', as it wasnt ever used
 			'EVT_additional_limit'=> $old_event['allow_multiple'] == 'N' ? 1 : $old_event['additional_limit'],
 			'EVT_default_registration_status' => $default_reg_status,
 			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
@@ -592,10 +592,12 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$end_date = $old_event_row['end_date'];
 		$end_time = $this->get_migration_script()->convertTimeFromAMPM($start_end_time_row['end_time']);
 		$existing_datetimes = $this->_count_other_datetimes_exist_for_new_event($new_cpt_id);
+		$start_datetime_utc = $this->get_migration_script()->convert_date_string_to_utc($this,$start_end_time_row,"$start_date $start_time:00",$old_event_row['timezone_string']);
+		$end_datetime_utc = $this->get_migration_script()->convert_date_string_to_utc($this,$start_end_time_row,"$end_date $end_time:00",$old_event_row['timezone_string']);
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID
-			'DTT_EVT_start'=> "$start_date $start_time:00",//DTT_EVT_start
-			'DTT_EVT_end'=> "$end_date $end_time:00",//DTT_EVT_end
+			'DTT_EVT_start'=>$start_datetime_utc,//DTT_EVT_start
+			'DTT_EVT_end'=> $end_datetime_utc,//DTT_EVT_end
 			'DTT_reg_limit'=>intval($start_end_time_row['reg_limit']) ? $start_end_time_row['reg_limit'] : $old_event_row['reg_limit'],//DTT_reg_limit
 			'DTT_sold'=>$this->count_registrations($old_event_row['id']),//DTT_sold
 			'DTT_is_primary'=> 0 == $existing_datetimes ,//DTT_is_primary... if count==0, then we'll call it the 'primary'
