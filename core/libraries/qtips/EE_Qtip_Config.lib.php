@@ -129,6 +129,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 				),
 			'show' => array(
 				'event' => 'mouseenter', //what event triggers tooltip to be shown.  Any jQuery standard event or custom events can be used. space separated events provide multiple triggers.
+				'target' => false, //options jQuery::#selector|false.  Used to indicate which html element will trigger show event.  When false, the element the qtip() method was called upon is used.
 				'delay' => 90, //time in millisecons by which to delay showing of tooltip.
 				'solo' => false, //determines whether tooltip will hid all others when triggered. Options: true (hide all) || false (ignore) || string (parent selector for which qtips get hidden)
 				'ready' => false, //use to indicate you want the qtip to show as soon as it is bound to the element it's attached to (true).
