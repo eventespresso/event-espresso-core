@@ -1494,7 +1494,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
 			// attempt to perform transaction via payment gateway
-			$response = EE_Registry::instance()->LIB->EEM_Gateways->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
+			$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
 			$this->_thank_you_page_url = $response['forward_url'];
 			
 			if ( isset( $response['msg']['success'] )) {
