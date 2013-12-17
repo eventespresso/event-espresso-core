@@ -40,6 +40,9 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		$num_to_checkin_at_this_time = max(array(intval($old_row['checked_in_quantity']),intval($old_row['checked_in']))) ;
 		
 		$new_registrations_for_attendee = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $new_reg_table);
+		if( ! $new_registrations_for_attendee){
+			$new_registrations_for_attendee = array();
+		}
 		$new_datetime = $this->_try_to_find_datetime($old_row);
 
 		//make sure registrations array is numerically indexed starting at 0 (it probably already is)
