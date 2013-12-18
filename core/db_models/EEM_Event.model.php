@@ -240,7 +240,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		
 		return EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
 			$where_params,
-			'order_by' => 'QSG_order'
+			'order_by' => array('QSG_order' => 'ASC')
 		));
 		
 	}
@@ -318,16 +318,18 @@ class EEM_Event  extends EEM_CPT_Base{
 	* 		@access		public
 	* 		@param      EE_Answer[]             $ANS 		array of answers
 	* 		@param 		EE_Question_Group[] 	$QSGs 		array of question group objects
+	* 		@param      int                 	$EVT_ID 	If included, this indicates we want to return ALL questions for the event not JUST the questions with answers.
 	*		@return 	array
 	*/	
-	public function assemble_array_of_groups_questions_and_options( $ANS = array(), $QSGs = array() ) {		
+	public function assemble_array_of_groups_questions_and_options( $ANS = array(), $QSGs = array(), $EVT_ID = NULL ) {		
 
-		if ( empty( $ANS ) && empty( $QSGs ) ) {
+		/*if ( empty( $ANS ) && empty( $QSGs ) ) {
 			EE_Error::add_error( __( 'An error occured. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
-		}
+		}/**/
 
 		$QSTs = $questions = array();
+
 
 		//let's make sure we have questions ans question groups setup correctly.
 		if ( !empty( $ANS ) ) {
@@ -352,6 +354,26 @@ class EEM_Event  extends EEM_CPT_Base{
 				foreach ( $questions as $question ) {
 					$QSTs[$question->ID()]['obj'] = $question;
 					$QSTs[$question->ID()]['ans_obj'] = EEM_Answer::instance()->create_default_object();
+				}
+			}
+		}
+
+		// if all questiosn and $QSGs is empty... let's get all question groups for event
+		if ( !empty($EVT_ID) ) {
+			$qgs = $this->get_question_groups_for_event( $EVT_ID );
+			if ( !empty( $qgs ) ) {
+				foreach ( $qgs as $qg ) {
+				 	$qsts = $qg->get_many_related('Question');
+				 	foreach ( $qsts as $qst ) {
+				 		if ( $qst->is_system_question() )
+				 			continue;
+				 		if ( !isset( $QSTs[$qst->ID()] ) ) {
+				 			$QSTs[$qst->ID()]['obj'] = $qst;
+				 			$QSTs[$qst->ID()]['ans_obj'] = EEM_Answer::instance()->create_default_object();
+				 		}
+				 	}
+				 	if ( !isset( $QSGs[$qg->ID()] ) )
+				 		$QSGs[$qg->ID()] = $qg;
 				}
 			}
 		}

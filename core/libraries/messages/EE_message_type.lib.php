@@ -473,8 +473,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			//let's setup the valid shortcodes for the incoming context.
 			$valid_shortcodes = $mt_shortcodes[$context];
 			//merge in valid shortcodes for the field.
-			$shortcodes = isset($m_shortcodes[$field]) ? array_merge($valid_shortcodes, $m_shortcodes[$field]) : $valid_shortcodes;
-			$shortcodes = array_unique( $shortcodes );
+			$shortcodes = isset($m_shortcodes[$field]) ? $m_shortcodes[$field] : $valid_shortcodes;
 			if ( isset( $this->_templates[$field][$context] ) ) {
 				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes);
 			}
