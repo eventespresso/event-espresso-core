@@ -74,9 +74,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway_name = 'Aim';
-		$this->_button_base = 'aim-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
-		$this->_btn_img = is_readable(dirname($this->_path) . '/lib/' . $this->_button_base) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
