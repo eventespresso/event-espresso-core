@@ -1186,7 +1186,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$_where = array(
 			'REG_ID' => $this->_registration->ID()
 			);
-		$query_params = array( $_where, 'order_by' => 'Question.QST_order');
+		$query_params = array( $_where, 'order_by' => array('Question.QST_order' => 'ASC') );
 		$ANS = EEM_Answer::instance()->get_all( $query_params );
 
 		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
