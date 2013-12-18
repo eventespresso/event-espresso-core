@@ -121,7 +121,6 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	 * 	@return string properly formatted list of email addresses for an event admin.
 	 */
 	private function _get_event_admin_emails() {
-		global $wpdb;
 
 		if ( !empty( $this->_data->admin_email ) ) {
 			return $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>';
