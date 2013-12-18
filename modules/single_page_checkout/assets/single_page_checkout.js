@@ -5,6 +5,8 @@
 	// clear firefox and safari cache
 	$(window).unload( function() {});
 	
+	$('.spco-edit-step-lnk').addClass('hidden');	
+	
 	// if datepicker is active
 	if ( $.fn.datepicker ) {
 		$( '.datepicker' ).datepicker({
@@ -256,9 +258,9 @@
 	 * @return void
 	 **/
 	function hide_steps(){
+		$('.spco-edit-step-lnk').removeClass('hidden');		
 		$('.spco-step-dv').slideUp( function() {				
 			$('.spco-step-dv').height(0);
-			$('.spco-edit-step-lnk').removeClass('hidden');			
 		});	
 	}
 	
@@ -273,6 +275,10 @@
 		$('.spco-step-display-dv').removeClass('active-step').addClass('inactive-step');	
 		$('#spco-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
 		$('#spco-edit-'+step_to_show+'-lnk').addClass('hidden');	
+		if ( eei18n.wp_debug == 1 ) {
+			console.log( JSON.stringify( 'go_to_step -> step_to_show: ' + step_to_show, null, 4 ));
+			console.log( JSON.stringify( 'go_to_step -> "#spco-edit-'+step_to_show+'-lnk" class: ' + $('#spco-edit-'+step_to_show+'-lnk').attr('class'), null, 4 ));
+		}	
 		$('#espresso-ajax-loading').fadeOut('fast');
 		$('#spco-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
 			scroll_to_top_of_form( msg );
@@ -287,6 +293,7 @@
 				// set attendee_information back to auto height 
 				$('#spco-attendee_information-dv').css( 'height', 'auto' );
 				if ( msg == undefined ) { msg =''; }
+				$( '#spco-display-event-questions-lnk' ).trigger('click');
 				go_to_step( 'attendee_information', msg );
 			},
 

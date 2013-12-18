@@ -69,7 +69,7 @@ class EE_Register_CPTs {
 		$this->set_default_term( 'espresso_event_type', 'single-event', array('espresso_events') );
 		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
 		// flush_rewrite_rules ?
-		if ( get_option( 'espresso_flush_rewrite_rules', FALSE )) {
+		if ( get_option( 'espresso_flush_rewrite_rules', TRUE )) {
 			flush_rewrite_rules();
 			update_option( 'espresso_flush_rewrite_rules', FALSE );
 		}
