@@ -335,17 +335,20 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
-		// grab list of installed widgets
-		$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
-		// filter list of modules to register
-		$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
-		// cycle thru widget folders
-		foreach ( $widgets_to_register as $widget_path ) {
-			// add to list of installed widget modules
-			EE_Config::register_ee_widget( $widget_path );
+		//only init widgets for admin pages, and frontend when not in maintenance mode
+		if( is_admin()  || ! EE_Maintenance_Mode::instance()->level()){
+			// grab list of installed widgets
+			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
+			// filter list of modules to register
+			$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
+			// cycle thru widget folders
+			foreach ( $widgets_to_register as $widget_path ) {
+				// add to list of installed widget modules
+				EE_Config::register_ee_widget( $widget_path );
+			}
+			// filter list of installed modules
+			EE_Registry::instance()->widgets = apply_filters( 'FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
 		}
-		// filter list of installed modules
-		EE_Registry::instance()->widgets = apply_filters( 'FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
 	}
 
 

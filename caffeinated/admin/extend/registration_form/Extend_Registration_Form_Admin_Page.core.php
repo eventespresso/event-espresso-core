@@ -532,7 +532,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$this->_set_add_edit_form_tags('insert_question_group');
 		}
 		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args['all_questions']=$this->_question_model->get_all();
+		$this->_template_args['all_questions']=$this->_question_model->get_all( array( 'order_by' => array('QST_order' => 'ASC')));
 		$this->_template_args['QSG_ID']=$ID ? $ID : TRUE;
 		$this->_template_args['question_group']=$questionGroup;
 		

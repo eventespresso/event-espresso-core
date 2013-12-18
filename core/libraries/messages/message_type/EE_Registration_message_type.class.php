@@ -44,27 +44,28 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	protected function _trigger_exit() {
+
 		//first is this a preview?
 		if ( empty( $this->_data ) )
 			return FALSE;
 
 		//if email_on_payment is set then we'll trigger an exit when incoming data is an EE_Session object.
 		$settings = $this->get_existing_admin_settings($this->_active_messenger->name);
+
 		//default is TRUE (yes we want to delay)! 
 		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; 
-		//for SPCO trigger 
-		if ( $this->_data instanceof EE_Session ) {
-			// BUT we need to make sure that this isn't a FREE event.
-			$transaction = $this->_data->get_session_data( 'transaction' );
-			//check grandtotal
-			$is_free = $transaction->total() > 0 ? FALSE : TRUE;			
-			$return = $delay && !$is_free ? TRUE : FALSE;
-			$this->_data_handler = $is_free ? 'EE_Session' : NULL;
-		} else {
-			//gateway trigger.  We need to know if payment is complete.
-			$txn = $this->_data[0];
-			$return = $txn->is_completed() ? FALSE : TRUE;
-		}
+		
+		// BUT we need to make sure that this isn't a FREE event.
+		$txn = $this->_data[0]; //should be instanceof EE_Transaction
+		
+		//check grandtotal
+		$is_free = $txn->total() > 0 ? FALSE : TRUE;			
+		$return = $delay && !$is_free ? TRUE : FALSE;
+		$this->_data_handler = $is_free ? 'Gateways' : NULL;
+		
+		//not done yet... if we're triggering an exit ($return = TRUE)... we need to check if payment is complete, if it is then we REMOVE the trigger ($return = FALSE). We need to know if payment is completed
+		if ( $return )
+			$return = $txn->is_completed() ? FALSE : $return;
 
 		return $return;		
 	}
@@ -86,7 +87,7 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	protected function _set_data_handler() {
-		$this->_data_handler = ! $this->_data instanceof EE_Session ? 'Gateways' : 'EE_Session';
+		$this->_data_handler = 'Gateways';
 	}
 
 

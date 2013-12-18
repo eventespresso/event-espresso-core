@@ -37,8 +37,8 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_migration_stages = array(
-			new EE_DMS_4_1_0_shortcodes(),
 			new EE_DMS_4_1_0_org_options(),
+			new EE_DMS_4_1_0_shortcodes(),
 			new EE_DMS_4_1_0_gateways(),
 			new EE_DMS_4_1_0_events(),
 			new EE_DMS_4_1_0_prices(),
@@ -1015,7 +1015,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created. Example content - delete if you want to', 1, NULL, 0, 0, 0);";			
+							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created.', 1, NULL, 0, 0, 0);";			
 				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}
@@ -1041,7 +1041,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $tickets_exist ) {
 				$SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
-					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '" . __('You can modify this description', 'event_espresso') . "', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
 				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
 				$wpdb->query($SQL);
 			}

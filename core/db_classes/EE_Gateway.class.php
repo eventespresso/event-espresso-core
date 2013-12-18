@@ -33,6 +33,8 @@ abstract class EE_Gateway {
 	protected $_path = NULL;
 	// image name for gateway button
 	protected $_button_base = NULL;
+	// the default button url
+	protected $_btn_img = NULL;
 	// holder for a handle to the Gateways MODEL
 	protected $_EEM_Gateways = NULL;
 	// URL the admin gateway settings form will submit to
@@ -481,7 +483,7 @@ abstract class EE_Gateway {
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway_name]) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway_name . '/lib/' . $this->_button_base;
 		} else {
-			$button_url = EE_GATEWAYS_URL . $this->_gateway_name . '/lib/' . $this->_button_base;
+			$button_url = $this->_btn_img;
 		}
 		$this->_payment_settings['button_url'] = $button_url;
 		// change windows style filepaths to Unix style filepaths

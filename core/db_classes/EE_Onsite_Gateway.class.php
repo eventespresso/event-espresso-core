@@ -14,6 +14,8 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		$this->_button_base = 'pay-by-credit-card.png';
+		$this->_btn_img = EE_GATEWAYS_URL .$this->_button_base;
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
 		//add_filter('FHEE_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
 		parent::__construct($model);

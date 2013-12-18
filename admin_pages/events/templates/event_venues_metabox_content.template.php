@@ -74,15 +74,3 @@
 		
 	</tr>
 </table>
-<?php if( EE_Registry::instance()->CFG->map_settings || ! isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) || ! EE_Registry::instance()->CFG->map_settings->use_google_maps ) { ?>
-<p class="ee-notice">
-	<?php
-		echo sprintf( 
-			__('To display a Google Map for event venues, go to %sEvent Espresso General Settings%sGoogle Maps%s, and set "Activate Google Maps" to "Yes"', 'event_espresso' ),
-			'<b>',
-			'</b> &raquo; <b>',
-			'</b>'
-		); 
-	?>
-</p>						
-<?php } ?>

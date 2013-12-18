@@ -653,7 +653,7 @@ class EEH_Form_Fields {
 	 * @param string $name 			form input name attribute
 	 * @param string $id 				form input css id attribute
 	 * @param string $class 			form input css class attribute
-	 * @param array $dimensions	array of form input rows and cols attributes : array( 'rows' => 50, 'cols' => 3 )
+	 * @param array $dimensions	array of form input rows and cols attributes : array( 'rows' => 3, 'cols' => 40 )
 	 * @param array $required 		'label', 'class', and 'msg' - array of values for required "label" content, css required 'class', and required 'msg' attribute
 	 * @param string $label_class 	css class attribute for the label
 	 * @param string $disabled 		disabled="disabled" or null
@@ -671,7 +671,7 @@ class EEH_Form_Fields {
 		// make sure $dimensions is an array
 		$dimensions = is_array( $dimensions ) ? $dimensions : array();
 		// and set some defaults
-		$dimensions = array_merge( array( 'rows' => 50, 'cols' => 3 ), $dimensions );
+		$dimensions = array_merge( array( 'rows' => 3, 'cols' => 40 ), $dimensions );
 		// set disabled tag
 		$disabled = empty( $answer ) ? '' : $disabled;
 		// ya gots ta have style man!!!

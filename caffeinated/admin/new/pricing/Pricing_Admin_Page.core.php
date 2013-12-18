@@ -707,7 +707,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$PRC_ID = absint($this->_req_data['id']);
-			if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array(array('PRC_ID' => absint($PRC_ID))))) {
+			if ( ! $PRC->update_by_ID(array('PRC_deleted' => $PRC_deleted), $PRC_ID) ) {
 				$success = 0;
 			}
 			

@@ -122,7 +122,7 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table{
 			}
 			$a_reg = reset($regs);
 			$reg_line_item_id = $this->_insert_new_line_item(array(
-				'LIN_code'=>'line-item',
+				'LIN_code'=> md5( 'Ticket' . $ticket_id . time() ),
 				'TXN_ID'=>$transaction['TXN_ID'],
 				'LIN_name'=>$old_attendee['price_option'],
 				'LIN_unit_price'=>$a_reg['REG_final_price'],
@@ -160,7 +160,6 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table{
 			'OBJ_type'=>null
 		);
 		$cols_n_values = array_merge($default_cols_n_values,$cols_n_values);
-		
 			$datatypes = array(
 				'%s',//LIN_code
 				'%d',//TXN_ID
