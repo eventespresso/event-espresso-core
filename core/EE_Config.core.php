@@ -335,7 +335,8 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
-		if( ! EE_Maintenance_Mode::instance()->level()){
+		//only init widgets for admin pages, and frontend when not in maintenance mode
+		if( is_admin()  || ! EE_Maintenance_Mode::instance()->level()){
 			// grab list of installed widgets
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
