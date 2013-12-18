@@ -66,7 +66,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		// don't add HTML labels for EE_Form_Fields generated inputs
-		add_filter( 'FHEE_form_field_label_html', '__return_false' );		
+		add_filter( 'FHEE_form_field_label_html', '__return_empty_string' );		
 		$yes_no_values = array(
 			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
 			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso')))
