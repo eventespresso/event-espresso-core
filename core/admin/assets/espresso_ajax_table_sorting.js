@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
 			var ajax_table_sort_nonce = $('#' + ajax_table_sort_action + '_nonce').val();
 			
 			var row_ids = '';
-			$('#the-list input[type=checkbox]').each(function(i){
+			$('#the-list input[type=checkbox], #the-list input[type=hidden]').each(function(i){
 				row_ids += $(this).val() + ',';
 			});
 		
