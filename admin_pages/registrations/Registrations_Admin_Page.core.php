@@ -1194,7 +1194,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
 		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
 		
-		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $ANS );
+		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $ANS, array(), $this->_registration->get('EVT_ID') );
 
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
