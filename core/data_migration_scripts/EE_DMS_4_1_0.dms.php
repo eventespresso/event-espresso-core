@@ -37,8 +37,8 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_migration_stages = array(
-			new EE_DMS_4_1_0_shortcodes(),
 			new EE_DMS_4_1_0_org_options(),
+			new EE_DMS_4_1_0_shortcodes(),
 			new EE_DMS_4_1_0_gateways(),
 			new EE_DMS_4_1_0_events(),
 			new EE_DMS_4_1_0_prices(),
