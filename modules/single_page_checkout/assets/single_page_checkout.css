@@ -99,8 +99,8 @@ span.ui-icon {
 }
 .overline-hdr {
 	padding:.5em 0 0;
-	margin:2em 0 1em;
-	border-top: 2px solid #eee;
+	margin:1em 0 1em;
+	/*border-top: 2px solid #eee;*/
 }
 /*
  * REG PAGE
@@ -186,10 +186,11 @@ span.ui-icon {
 .spco-edit-step-lnk {
 	float:right;
 	font-weight:normal;
-	font-size:.6em;
-	line-height:3.5em;
+	font-size:11px;
+	line-height:30px;
 	letter-spacing:1px;
 	cursor:pointer;
+	text-decoration: none !important;
 }
 .spco-step-title-hdr {
 	margin:3em 0 1em !important;
@@ -206,24 +207,31 @@ span.ui-icon {
 	border: 2px solid #eee;
 	border-radius: 2px;
 }
-#single-page-checkout .spco-attendee-wrap-fs p {
+
+#single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg {
 	display: block;
 	clear:both;
-	margin:0 0 .5em;
+	margin:0 0 1em;
+}
+#single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg + .reg-page-form-field-wrap-pg {
+	padding-top:.5em;
+}
+#single-page-checkout .espresso-question-group-wrap {
+	padding:1em;
+}
+#single-page-checkout .espresso-question-group-wrap + .espresso-question-group-wrap {
+	margin:.5em 0 0;
 }
 #single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-title-h4 {
-	margin:0;
+	margin:.25em 0 1em;
 }
 #single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-desc-pg {
-	padding:.5em 1em;
-	margin:0 0 1em;
+	padding: 0 1em;
+	margin:-1em 0 0;
 	font-size: .9em;
 	color: #999;
 }
 .event-list-display-dv .big-event-title-hdr, #single-page-checkout .big-event-title-hdr {
-	/*font-size:1.5em;
-	line-height:1.1em;
-	*/
 	margin:1em 0 0;
 }
 #single-page-checkout .spco-ticket-info-pg {
@@ -232,10 +240,8 @@ span.ui-icon {
 	color: #999;
 }
 .spco-steps-pg {
-	margin:0 0 2em;/*font-size:.8em;
-	line-height:1.4em;
-	*//*color:#666;
-	*/}
+	margin:0 0 2em;
+}
 .spco-attendee-panel-dv {
 	width:100%!important;
 }
@@ -275,16 +281,16 @@ span.ui-icon {
 	border-top:1px solid rgba( 0, 0, 0, .05);
 	border-bottom:1px solid rgba( 255, 255, 255, .9);
 }
-.reg-page-form-field-wrap-pg label {
-	display: inline-block;
-	float: left;
-	/*width: 35%;*/
-	width: 150px;
-	padding: 0.75em 10px 0.75em 0;
-	font-size: .9em;
+.reg-page-form-field-wrap-pg .espresso-form-input-lbl {
+	display: block;
+	padding: 0 0 .25em;
+	font-size: .8em;
+	letter-spacing: 1px;
+	word-spacing: 1px;
 	line-height: 1em;
-	text-align: right;
+	text-align: left;
 	vertical-align: middle;
+	color: #666;
 }
 .reg-page-confirmation-billing-info-spn {
 	display: inline-block;
@@ -298,28 +304,37 @@ span.ui-icon {
 #single-page-checkout .espresso-radio-btn-options-ul, 
 #single-page-checkout .espresso-checkbox-options-ul {
 	display: inline-block;
-	width: 62.5%;
-	padding: 0;
-	margin: 0.25em 0 0;
-	list-style: none outside none;
+	width: 100%;
+	padding: 0 0 0 1em;
+	margin: 0;
+	list-style: none inside none;
+}
+#single-page-checkout .espresso-checkbox-options-ul {
+	margin-top: .5em;
 }
 #single-page-checkout .espresso-radio-btn-options-ul li, 
 #single-page-checkout .espresso-checkbox-options-ul li {
 	display: inline-block;
 	width:100%;
 	padding: 0;
-	margin: 0 0 .5em;
+	margin: 0;
 	vertical-align: middle;
 }
-#single-page-checkout .espresso-radio-btn-options-ul li.nano-lbl, 
-#single-page-checkout .espresso-checkbox-options-ul li.nano-lbl {
-	width: 6%; min-width:60px;  max-width:100%;
+#single-page-checkout .espresso-radio-btn-options-ul li + li, 
+#single-page-checkout .espresso-checkbox-options-ul li + li {
+	margin-top:.25em;
 }
+#single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg +.espresso-radio-btn-options-ul,
+#single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg +.espresso-checkbox-options-ul {
+	position: relative; top: -1em; 
+}
+#single-page-checkout .espresso-radio-btn-options-ul li.nano-lbl, 
+#single-page-checkout .espresso-checkbox-options-ul li.nano-lbl,
 #single-page-checkout .espresso-radio-btn-options-ul li.micro-lbl, 
 #single-page-checkout .espresso-checkbox-options-ul li.micro-lbl {
-	width: 9%; min-width:80px; max-width:100%;
+	width: 30%; min-width:100px; max-width:100%;
 }
-#single-page-checkout .espresso-radio-btn-options-ul li.tiny-lbl, 
+/*#single-page-checkout .espresso-radio-btn-options-ul li.tiny-lbl, 
 #single-page-checkout .espresso-checkbox-options-ul li.tiny-lbl {
 	width: 12%; min-width:100px; max-width:100%;
 }
@@ -334,20 +349,23 @@ span.ui-icon {
 #single-page-checkout .espresso-radio-btn-options-ul li.big-lbl, 
 #single-page-checkout .espresso-checkbox-options-ul li.big-lbl {
 	width:99%; min-width:300px;  max-width:100%;
-}
+}*/
 
 #single-page-checkout .espresso-radio-btn-options-ul .espresso-radio-btn-lbl, 
-#single-page-checkout .espresso-radio-btn-options-ul .espresso-checkbox-lbl {
+#single-page-checkout .espresso-checkbox-options-ul .espresso-checkbox-lbl {
 	cursor: pointer;
 	display: inline-block;
 	padding: 0;
 	/*margin: 0 2em 0 0;*/
 	text-align: left;
 	vertical-align: middle;
+	font-size: 1.25em;
+    	letter-spacing:0;
+ 	word-spacing: 0;
 }
 #single-page-checkout .espresso-radio-btn-options-ul .espresso-radio-btn-lbl input, 
-#single-page-checkout .espresso-radio-btn-options-ul .espresso-checkbox-lbl input {
-	margin:0 .5em 3px 0;
+#single-page-checkout .espresso-checkbox-options-ul .espresso-checkbox-lbl input {
+	margin:0 .25em 2px 0;
 	vertical-align: middle;
 }
 #spco-copy-attendee-dv .wide {
@@ -365,13 +383,14 @@ span.ui-icon {
 	cursor:pointer;
 }
 .reg-page-form-field-wrap-pg input[type="text"] {
-	display:inline-block;
-	width: 62.5%;
-	margin:0 0 .5em;
+	display:block;
+	width: 100%;
+	margin:0 0 1em;
 }
 .reg-page-form-field-wrap-pg select {
-	display:inline-block;
-	margin:0 0 .5em;
+	display:block;
+	padding: 8px 10px 7px;
+	margin:0 0 1em;
 }
 .reg-page-form-field-wrap-pg input.medium-txt {
 	width:35%;
@@ -432,7 +451,7 @@ span.ui-icon {
 	margin:0 5px;
 }
 #single-page-checkout .spco-attendee-wrap-fs #spco-auto-copy-attendee-pg {
-	margin: 1em 0 1em 160px;
+	margin: 1em 0 1em;
 }
 #events-requiring-pre-approval-pg {
 	margin:.5em 0 0;
