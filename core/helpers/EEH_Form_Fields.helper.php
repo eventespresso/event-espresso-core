@@ -417,7 +417,7 @@ class EEH_Form_Fields {
 					// group_name
 					$html .= $QSG['QSG_show_group_name'] ? "\n\t\t" . '<h4 class="espresso-question-group-title-h4 section-title">' . self::prep_answer( $QSG['QSG_name'] ) . '</h4>' : '';
 					// group_desc
-					$html .= $QSG['QSG_show_group_desc'] && ! empty( $QSG['QSG_desc'] ) ? '<p class="espresso-question-group-desc-pg">' . self::prep_answer( $QSG['QSG_desc'] ) . '</p>' : '';
+					$html .= $QSG['QSG_show_group_desc'] && ! empty( $QSG['QSG_desc'] ) ? '<div class="espresso-question-group-desc-pg">' . self::prep_answer( $QSG['QSG_desc'] ) . '</div>' : '';
 					
 					$html .= $before_question_group_questions;
 					// loop thru questions
@@ -482,7 +482,7 @@ class EEH_Form_Fields {
 					}
 					// group_desc
 					if ( $QSG->show_group_desc() ) {
-						$html .=  '<p class="espresso-question-group-desc-pg">' . $QSG->get_pretty( 'QSG_desc'  ) . '</p>';
+						$html .=  '<div class="espresso-question-group-desc-pg">' . $QSG->get_pretty( 'QSG_desc'  ) . '</div>';
 					}
 					
 					$html .= $before_question_group_questions;
