@@ -184,10 +184,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-
-
-
 	public function load_scripts_styles_edit() {
+		/**
+		 * load accounting js.
+		 */
+		add_filter('FHEE_load_accounting_js', '__return_true');
+
 		//styles
 		wp_enqueue_style('espresso-ui-theme');		
 		wp_enqueue_script('event_editor_js');

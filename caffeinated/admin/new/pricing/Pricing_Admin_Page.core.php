@@ -1121,7 +1121,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 		
 		$success = 1;
@@ -1132,7 +1131,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$what = $PRT->item_name($success);
 			// cycle thru bulk action checkboxes
 			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if (!$PRT->delete_permanently_by_ID(absint($PRT_ID))) {
+				if (!$PRT->delete_permanently_by_ID($PRT_ID) ) {
 					$success = 0;
 				}
 			}

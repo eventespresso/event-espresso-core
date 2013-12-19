@@ -511,6 +511,40 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	public function prices($query_params = array()){
 		return $this->get_many_related('Price', $query_params);
 	}
+
+
+
+	/**
+	 * This returns the base price object for the ticket.
+	 *
+	 * @access public
+	 * @param  bool    $array whether to return as an array indexed by price id or just the object.
+	 * @return EE_Price
+	 */
+	public function base_price( $array = FALSE ) {
+		$_where = array(
+			'Price_Type.PBT_ID' => EEM_Price_Type::base_type_base_price
+			);
+		return $array ? $this->get_many_related('Price', array($_where) ) : $this->get_first_related('Price', array($_where));
+	}
+
+
+
+	/**
+	 * This returns ONLY the price modifiers for the ticket (i.e. no taxes or base price)
+	 *
+	 * @access public
+	 * @return EE_Price[]
+	 */
+	public function price_modifiers() {
+		$query_params = array(
+			0 => array(
+				'Price_Type.PBT_ID' => array( 'NOT IN', array(EEM_Price_Type::base_type_base_price, EEM_Price_Type::base_type_tax ) )
+				)
+			);
+		return $this->prices($query_params);
+	}
+
 	
 	
 	/**
@@ -568,7 +602,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 	public function get_ticket_subtotal() {
-		return $this->get('TKT_taxable') ? EE_Taxes::get_subtotal_for_admin($this) : $this->ticket_price();
+		return EE_Taxes::get_subtotal_for_admin($this);
 	}
 
 
