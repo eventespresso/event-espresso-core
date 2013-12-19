@@ -369,7 +369,7 @@
 						if($fk_field instanceof EE_Foreign_Key_Field_Base){
 							$fk_value = $model_object_data[$fk_field->get_name()];
 							//if the foreign key is 0 or blank, just ignore it and leave it as-is
-							if(intval($fk_value) == 0 || $fk_value == ''){
+							if($fk_value == '0' || $fk_value == ''){
 								continue;
 							}
 							//now, is that value in the list of PKs that have been inserted?
