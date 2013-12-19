@@ -79,8 +79,11 @@ class EE_Calendar_Admin {
 			$api_key = $org_options['site_license_key'];
 			$host_server_url = 'http://eventespresso.com';
 			$plugin_slug = array(
-				'premium' => array('p' => 'espresso-calendar'),
-				'prerelease' => array('b' => 'espresso-calendar-pr')
+				// remove following line when releasing this version to stable
+				'premium' => array('BETA' => 'espresso-calendar-pr'),
+				// uncomment following line when releasing this version to stable
+    			// 'premium' => array('p' => 'espresso-calendar'),
+   				'prerelease' => array('BETA' => 'espresso-calendar-pr')
 				);
 			$options = array(
 				'apikey' => $api_key,
@@ -124,6 +127,8 @@ class EE_Calendar_Admin {
 				'weekMode' => 'liquid', // 'fixed', 'liquid', 'variable'
 				'espresso_calendar_height' => '',
 				'enable_calendar_thumbs' => false,
+				'enable_calendar_filters' => false,
+				'enable_category_legend' => false,
 				
 				'show_tooltips' => true,
 				'tooltips_pos_my_1' => 'bottom',
@@ -131,7 +136,6 @@ class EE_Calendar_Admin {
 				'tooltips_pos_at_1' => 'center',
 				'tooltips_pos_at_2' => 'center',
 				'tooltip_style' => 'qtip-light',
-				'tooltip_word_count' => 50,
 				
 				'espresso_use_pickers' => false,
 				'ee_event_background' => '007BAE',
@@ -154,11 +158,11 @@ class EE_Calendar_Admin {
 		);
 
 		// get saved settings
-		$calendar_settings = get_option( 'espresso_calendar_settings', array() );
+		$calendar_settings = get_option( 'espresso_calendar_options', array() );
 		// override defaults
 		$calendar_settings = array_merge( $calendar_default_settings, $calendar_settings );
 		// resave
-		update_option('espresso_calendar_settings', $calendar_settings);
+		update_option('espresso_calendar_options', $calendar_settings);
 	}
 
 
@@ -211,6 +215,9 @@ class EE_Calendar_Admin {
 
 
 	public function admin_menu( $espresso_manager ) {
+		if ( ! isset ( $espresso_manager['espresso_manager_calendar'] )) {
+			$espresso_manager['espresso_manager_calendar'] = '';
+		}
 		add_submenu_page(
 			'event_espresso', 
 			__('Event Espresso - Calendar Settings', 'event_espresso'), 
@@ -277,23 +284,24 @@ class EE_Calendar_Admin {
 			$espresso_calendar['weekMode'] = sanitize_text_field( $_POST['weekMode'] ); 
 			$espresso_calendar['espresso_calendar_height'] = $_POST['espresso_calendar_height'];
 			$espresso_calendar['enable_calendar_thumbs'] = $_POST['enable_calendar_thumbs'];
+			$espresso_calendar['enable_calendar_filters'] = isset( $_POST['enable_calendar_filters'] ) ? $_POST['enable_calendar_filters'] : false;
 			$espresso_calendar['show_tooltips'] = $_POST['show_tooltips'];
 			$espresso_calendar['tooltips_pos_my_1'] = isset( $_POST['tooltips_pos_my_1'] ) ? $_POST['tooltips_pos_my_1'] : 'bottom';
 			$espresso_calendar['tooltips_pos_my_2'] = isset( $_POST['tooltips_pos_my_2'] ) ? $_POST['tooltips_pos_my_2'] : 'center';
 			$espresso_calendar['tooltips_pos_at_1'] = isset( $_POST['tooltips_pos_at_1'] ) ? $_POST['tooltips_pos_at_1'] : 'center';
 			$espresso_calendar['tooltips_pos_at_2'] = isset( $_POST['tooltips_pos_at_2'] ) ? $_POST['tooltips_pos_at_2'] : 'center';
 			$espresso_calendar['tooltip_style'] = $_POST['tooltip_style'];
-			$espresso_calendar['tooltip_word_count'] = isset( $_POST['tooltip_word_count'] ) ? absint( $_POST['tooltip_word_count'] ) : 50;
 			
 			$espresso_calendar['show_time'] = $_POST['show_time'];
 
 			$espresso_calendar['disable_categories'] = $_POST['disable_categories'];
 			$espresso_calendar['show_attendee_limit'] = $_POST['show_attendee_limit'];
 			$espresso_calendar['time_format'] = $_POST['time_format_custom'];
-			$espresso_calendar['espresso_use_pickers'] = $_POST['espresso_use_pickers'];
-			$espresso_calendar['ee_event_background'] = ( ! empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : '007BAE';
-			$espresso_calendar['ee_event_text_color'] = ( ! empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : 'FFFFFF';
+			$espresso_calendar['espresso_use_pickers'] = ( !empty($_POST['espresso_use_pickers']) ) ? $_POST['espresso_use_pickers'] : false;
+			$espresso_calendar['ee_event_background'] = ( !empty($_POST['ee_event_background']) ) ? $_POST['ee_event_background'] : '007BAE';
+			$espresso_calendar['ee_event_text_color'] = ( !empty($_POST['ee_event_text_color']) ) ? $_POST['ee_event_text_color'] : 'FFFFFF';
 			$espresso_calendar['enable_cat_classes'] = $_POST['enable_cat_classes'];
+			$espresso_calendar['enable_category_legend'] = $_POST['enable_category_legend'];
 
 			$espresso_calendar['titleFormat_month'] = $_POST['titleFormat_month'];
 			$espresso_calendar['titleFormat_week'] = $_POST['titleFormat_week'];
@@ -303,11 +311,11 @@ class EE_Calendar_Admin {
 			$espresso_calendar['columnFormat_week'] = $_POST['columnFormat_week'];
 			$espresso_calendar['columnFormat_day'] = $_POST['columnFormat_day'];
 			
-			$existing_settings = get_option( 'espresso_calendar_settings', array() );
+			$existing_settings = get_option( 'espresso_calendar_options', array() );
 			$differences = array_diff_assoc( $espresso_calendar, $existing_settings );
 			
 			if ( ! empty( $differences )) {
-				if ( update_option('espresso_calendar_settings', $espresso_calendar)) {
+				if ( update_option('espresso_calendar_options', $espresso_calendar)) {
 					$notices['updates'][] = __('The calendar settings were successfully saved ', 'event_espresso');
 				} else {
 					$notices['errors'][] = __('An error occured. The calendar settings were not saved ', 'event_espresso');
@@ -319,12 +327,12 @@ class EE_Calendar_Admin {
 			
 		}
 		if ( ! empty($_REQUEST['reset_calendar']) && check_admin_referer('espresso_form_check', 'reset_calendar_nonce' )) {
-			delete_option( 'espresso_calendar_settings' );
+			delete_option( 'espresso_calendar_options' );
 			EE_Calendar_Admin::activation();
 			$notices['updates'] = array();
 			$notices['updates'][] = __('The calendar settings were successfully reset ', 'event_espresso');
 		}
-		$espresso_calendar = get_option( 'espresso_calendar_settings', array() );
+		$espresso_calendar = get_option( 'espresso_calendar_options', array() );
 
 		$values = array(
 				array('id' => false, 'text' => __('No', 'event_espresso')),
@@ -503,7 +511,7 @@ class EE_Calendar_Admin {
 								</tbody>
 							</table>
 							<h4>
-								<?php _e('Page Settings', 'event_espresso'); ?>
+								<?php _e('Layout Settings', 'event_espresso'); ?>
 							</h4>
 							<table class="form-table">
 								<tbody>
@@ -568,6 +576,17 @@ class EE_Calendar_Admin {
 											</span>
 										</td>
 									</tr>
+									
+<?php } ?>
+								</tbody>
+							</table>
+<?php if ($espresso_premium == true) { ?>
+							<h4>
+								<?php _e('Display Settings', 'event_espresso'); ?>
+							</h4>
+
+							<table class="form-table">
+								<tbody>
 									<tr>
 										<th>
 											<label for="enable-calendar-thumbs">
@@ -582,16 +601,20 @@ class EE_Calendar_Admin {
 											</span>
 										</td>
 									</tr>
-<?php } ?>
-								</tbody>
-							</table>
-<?php if ($espresso_premium == true) { ?>
-							<h4>
-								<?php _e('Theme Settings', 'event_espresso'); ?>
-							</h4>
-
-							<table class="form-table">
-								<tbody>
+									<tr>
+										<th>
+											<label for="enable-calendar-filters">
+												<?php _e('Enable Filters in Calendar', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td>
+											<?php echo select_input('enable_calendar_filters', $values, isset($espresso_calendar['enable_calendar_filters']) && !empty($espresso_calendar['enable_calendar_filters']) ?  $espresso_calendar['enable_calendar_filters']: 0, 'id="enable-calendar-filters"'); ?>
+											<br />
+											<span class="description">
+												<?php _e('Filters allow users to filter events based on category and/or venue.', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
 									<tr>
 										<th>
 											<label for="enable-cat-classes">
@@ -602,6 +625,19 @@ class EE_Calendar_Admin {
 											<?php echo select_input('enable_cat_classes', $values, $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"'); ?><br />
 											<span class="description">
 												<?php _e('This setting allows you to set each category to display a different color. Set each category color in Event Espresso > Categories.', 'event_espresso'); ?>
+											</span>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											<label for="show-cat-legend">
+												<?php _e('Show Category Legend', 'event_espresso'); ?>
+											</label>
+										</th>
+										<td>
+											<?php echo select_input('enable_category_legend', $values, $espresso_calendar['enable_category_legend'], 'id="show-cat-legend"'); ?><br />
+											<span class="description">
+												<?php _e('This setting allows you display a category legend above the calendar.', 'event_espresso'); ?>
 											</span>
 										</td>
 									</tr>
@@ -654,7 +690,7 @@ class EE_Calendar_Admin {
 										<td>
 											<?php echo select_input('show_tooltips', $values, $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?><br />
 											<span class="description">
-												<?php _e('This allows you to display a short description of the event on hover. The "display short descriptions" feature set in Event Espresso>Template settings should be switched on when using this feature. Be sure to use the <code>&lt;!--more--&gt;</code> tag to separate the short description from the entire event description.', 'event_espresso'); ?>
+												<?php _e('This allows you to display a short description of the event on hover. Be sure to use the <code>&lt;!--more--&gt;</code> tag to separate the short description from the entire event description.', 'event_espresso'); ?>
 											</span>
 										</td>
 									</tr>
@@ -670,7 +706,7 @@ class EE_Calendar_Admin {
 										array('id'  => 'right','text'=> __('Right', 'event_espresso'))
 									);
 									?>
-									<tr class="tooltip-position-selections">
+									<tr class="tooltip-position-selections tooltip_settings">
 										<th class="tooltip-positions">
 											<label for="tooltips_pos_my_1">
 												<?php _e('Tooltip Position', 'event_espresso'); ?>
@@ -706,7 +742,7 @@ class EE_Calendar_Admin {
 									);
 									?>
 
-									<tr class="tooltip_style-selections">
+									<tr class="tooltip_style-selections tooltip_settings">
 										<th class="tooltip_style">
 											<label for="tooltip_style">
 												<?php _e('Tooltip Style', 'event_espresso'); ?>
@@ -715,21 +751,7 @@ class EE_Calendar_Admin {
 										<td>
 											<?php echo select_input('tooltip_style', $tooltip_style, !empty($espresso_calendar['tooltip_style']) ? $espresso_calendar['tooltip_style'] : 'qtip-light', 'id="tooltip_style"'); ?><br/>
 											<span class="description">
-												<?php _e('Adds styling to tooltips. Default: light', 'event_espresso'); ?>
-											</span>
-										</td>
-									</tr>
-
-									<tr class="tooltip_word_count">
-										<th>
-											<label for="tooltip_word_count">
-												<?php _e('Tooltip Desc Word Count', 'event_espresso'); ?>
-											</label>
-										</th>
-										<td>
-											<input id="tooltip_word_count" type="text" name="tooltip_word_count" value="<?php echo isset( $espresso_calendar['tooltip_word_count'] ) ? $espresso_calendar['tooltip_word_count'] : 50; ?>" /><br/>
-											<span class="description">
-												<?php _e('Number of words to show in tooltip event descriptions. Set to "0" for no limit. Default: 50.<br/>Please note that using this feature will strip all formating and images from your tool tip event descriptions.', 'event_espresso'); ?>
+												<?php printf(__('Adds styling to tooltips, if you are NOT using Themeroller, in the %sTemplate Settings%s.', 'event_espresso'), '<a href="admin.php?page=template_confg#style-themeroller">', '</a>'); ?>
 											</span>
 										</td>
 									</tr>
@@ -990,16 +1012,16 @@ class EE_Calendar_Admin {
 				if(window.ectt == ''){
 					$('input#show_tooltips').attr('disabled', true);
 					$('.tooltip-positions').attr('style', "opacity: .3");
-					$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').attr('style', "opacity: .3");
+					$('tr.tooltip_settings th, tr.tooltip_settings td').attr('style', "opacity: .3");
 				}
 				$('select#show_tooltips').change(function(){
 						window.ectt = $('select#show_tooltips option:selected').val();
 						if(window.ectt == ''){
 							$('input#event-background, input#event-text').attr('disabled', true);
-							$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').attr('style', "opacity: .3");
+							$('tr.tooltip_settings th, tr.tooltip_settings td').attr('style', "opacity: .3");
 						}else {
 							$('input#tooltips_pos_my_1, input#tooltips_pos_my_2, input#tooltips_pos_at_1, input#tooltips_pos_at_2').removeAttr('disabled', true);
-							$('tr.tooltip-position-selections th, tr.tooltip-position-selections td').removeAttr('style');
+							$('tr.tooltip_settings th, tr.tooltip_settings td').removeAttr('style');
 						}
 					});
 <?php } ?>

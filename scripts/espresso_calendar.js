@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+	
 	// fix this one boolean
 	if ( eeCAL.weekends == undefined || eeCAL.weekends == '' ) {
 		eeCAL.weekends = false;
@@ -12,6 +13,13 @@ jQuery(document).ready(function($) {
 	}
 	// padding and margin between event and day cell (this could be calculated via js)
 	var day_padding = 16;
+	
+	if ( eeCAL.espresso_use_pickers){
+		// Sets the background and border colors for all events on the calendar.
+		var ee_eventColor = eeCAL.ee_event_background;
+		// Sets the text color for all events on the calendar.
+		var ee_eventTextColor = eeCAL.ee_event_text_color;
+	}
 
 	$('#espresso_calendar').fullCalendar({
 		
@@ -31,20 +39,19 @@ jQuery(document).ready(function($) {
 		// Determines the number of weeks displayed in a month view. Also determines each week's height.
 		weekMode: eeCAL.weekMode,
 		// Will make the entire calendar (including header) a pixel height.
-		height: eeCAL.espresso_calendar_height,
+		height: !eeCAL.widget ? eeCAL.espresso_calendar_height:'',
 		aspectRatio: 1.618,
 		// Triggered when the calendar loads and every time a different date-range is displayed.
 		viewDisplay: function(view) {
-	        $('.qtip-close .ui-icon').each( function() {
+			// remove ui styling from tool tips
+		        $('.qtip-close .ui-icon').each( function() {
 		 		$(this).removeClass('ui-icon');
 		 		$(this).removeClass('ui-icon-close');
-		 	});
-	    },
-	 
+		 	});	
+	    	},	 
 		// Views - http://arshaw.com/fullcalendar/docs/views/
 		// The initial view when the calendar loads.
-		defaultView: eeCAL.cal_view,
-		
+		defaultView: eeCAL.cal_view,		
 		//Text/Time Customization - http://arshaw.com/fullcalendar/docs/text/
 		// Determines the text that will be displayed in the header's title.
 		timeFormat:{ 
@@ -65,20 +72,20 @@ jQuery(document).ready(function($) {
 		},
 		// Text that will be displayed on buttons of the header.
 		buttonText: {
-			next: eeCAL.buttonText_next, 	// default '&lsaquo;' <
-			prev: eeCAL.buttonText_prev, 	// default '&rsaquo;'  >
+			next: eeCAL.buttonText_next, 			// default '&lsaquo;' <
+			prev: eeCAL.buttonText_prev, 			// default '&rsaquo;'  >
 			prevYear: eeCAL.buttonText_prevYear, 	// default '&laquo;'  <<
 			nextYear:eeCAL.buttonText_nextYear, 	// default '&raquo;'  >>
-			today: eeCAL.buttonText_today, 	// default 'today'
-			month: eeCAL.buttonText_month, 	// default 'month'
-			week: eeCAL.buttonText_week, 	// default 'week'
-			day: eeCAL.buttonText_day, 	// default 'day'
+			today: eeCAL.buttonText_today, 			// default 'today'
+			month: eeCAL.buttonText_month, 			// default 'month'
+			week: eeCAL.buttonText_week, 			// default 'week'
+			day: eeCAL.buttonText_day, 				// default 'day'
 		},
-
+		
 		// Sets the background and border colors for all events on the calendar.
-		eventColor: eeCAL.ee_event_background,
+		eventColor: ee_eventColor,
 		// Sets the text color for all events on the calendar.
-		eventTextColor: eeCAL.ee_event_text_color,
+		eventTextColor: ee_eventTextColor,
 
 
 		//Full names of months.
@@ -101,7 +108,8 @@ jQuery(document).ready(function($) {
 					start_date: Math.round(start.getTime() / 1000),
 					end_date: Math.round(end.getTime() / 1000),
 					show_expired: eeCAL.show_expired,
-					event_category_id: eeCAL.event_category_id
+					event_category_id: eeCAL.event_category_id,
+					event_venue_id: eeCAL.event_venue_id
 				},
 				success: function( response ) {
 					// because FullCalendar won't wait for images to load fully before positioning events in the table grid...
@@ -124,11 +132,26 @@ jQuery(document).ready(function($) {
 				},
 			});
 		},
+		// A hook for modifying a day cell.
+		dayRender: function( date, cell ) {
+			// console.log( JSON.stringify( 'date: ' + date, null, 4 ));
+			// console.log( JSON.stringify( 'cell: ' + cell, null, 4 ));
+			// console.log( cell );
+		},
 		// Triggered while an event is being rendered.
 		eventRender: function( event, element ) {
-			
-//			console.log( JSON.stringify( 'event: ' + event.title, null, 4 ));
-//			console.log( JSON.stringify( element, null, 4 ));
+			// console.log( JSON.stringify( 'event: ' + event.title, null, 4 ));
+			// console.log( event );
+			// console.log( element );
+
+			// cycle thru each day of the HTML calendar
+			$('.fc-day').each( function(){
+				// if calendar date matches event date
+				if ( $(this).attr('data-date') == event.target_date ) {
+					// mark that day as having an event on it
+					$(this).addClass('event-day');
+				}				
+			});
 			// calculate the width for this event based on number of days x one day event width - 
 			var event_width = ( day_width * event.event_days ) - day_padding;
 			// set element to correct width
@@ -170,12 +193,23 @@ jQuery(document).ready(function($) {
 						}
 					} else {
 						// for single day events
-						var img_height = parseInt( day_width - day_padding );
+						// for portrait oriented images
+						var thumb_width = thumb.width();
+						if ( thumb_height > thumb_width ) {
+							var img_height = parseInt( thumb_height + day_padding );
+						} else if ( thumb_height == 0) {
+							var img_height = parseInt( day_width + day_padding );
+						} else {
+						// for landscape oriented images
+							var img_height = parseInt( day_width - day_padding );
+						}
 					}
 					// set the element height to our newly calculated value
 					element.height( base_evt_height + img_height );
 				}
 			}
+			
+			
 			
 			if ( eeCAL.show_tooltips ) {				
 				element.qtip({
@@ -197,8 +231,8 @@ jQuery(document).ready(function($) {
 					hide: "unfocus",
 					style: {
 						classes: event.tooltip_style, 
-					},
-					widget: true
+						widget: true
+					}
 				});
 				
 			} else {
@@ -226,6 +260,8 @@ jQuery(document).ready(function($) {
  		$(this).removeClass('ui-icon-close');
  	});	
 
-
+	$('.submit-this').on( 'change', function() {
+		$(this).closest('form').submit();
+	});
 
 });
