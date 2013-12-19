@@ -527,6 +527,24 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 			);
 		return $array ? $this->get_many_related('Price', array($_where) ) : $this->get_first_related('Price', array($_where));
 	}
+
+
+
+	/**
+	 * This returns ONLY the price modifiers for the ticket (i.e. no taxes or base price)
+	 *
+	 * @access public
+	 * @return EE_Price[]
+	 */
+	public function price_modifiers() {
+		$query_params = array(
+			0 => array(
+				'Price_Type.PBT_ID' => array( 'NOT_IN', array(EEM_Price_Type::base_type_base_price, EEM_Price_Type::base_type_tax ) )
+				)
+			);
+		return $this->prices($query_params);
+	}
+
 	
 	
 	/**
