@@ -90,6 +90,7 @@ abstract class EEM_Base extends EE_Base{
 		'<'=>'<',
 		'>='=>'>=',
 		'>'=>'>',
+		'!='=>'!=',
 		'LIKE'=>'LIKE',
 		'like'=>'LIKE',
 		'NOT_LIKE'=>'NOT LIKE',
