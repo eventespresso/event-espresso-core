@@ -118,6 +118,9 @@
     width: 16px;
 }
 
+.ticket-table .ticket-row .trash-icon, .ticket-table .ticket-row .clone-icon {
+    margin-top: 5px;
+}
 
 .ee-editing-container {
     display: inline-block;
@@ -133,8 +136,9 @@
 
 .ee-edit-editing {
     background-color: #f8f8f8;
-    height: 35px;
-    padding-right: 5px;
+    height: 40px;
+    padding-right: 3px;
+    padding-left: 3px;
     border-top: 1px solid #EEEEEE;
     border-left: 1px solid #EEEEEE;
     border-right: 1px solid #EEEEEE;
@@ -282,9 +286,16 @@
 .ticket-table tbody td {
    height: 1.7em;
    padding-bottom: .3em;
+   padding-right: .4em;
 }
 
-.ticket-table tbody tr:first-child td {
+.ticket-table tbody .ticket-row td:first-child, .ticket-table tbody .ticket-row td:nth-child(2) {
+    padding: 0;
+    margin: 0;
+    padding-bottom: .3em;
+}
+
+.ticket-table tbody tr.ticket-row:first-child td {
     padding-top: .3em;
 }
 
@@ -292,14 +303,48 @@
     height: auto;
 }
 
+.ticket-table tbody .ticket-row td:nth-child(2) {
+    width: 1%;
+}
+
+.ticket-table tbody .ticket-row td:nth-child(3) {
+    width: 25%;
+}
+
+.ticket-table tbody .ticket-row td:nth-child(4), .ticket-table tbody .ticket-row td:nth-child(5) {
+    width: 15%;
+}
+
+.ticket-table tbody .ticket-row td:nth-child(6) {
+    width: 10%;
+}
+
+    .ticket-table tbody .ticket-row td:nth-child(6) input {
+        text-align: right;
+    }
+
+.ticket-table tbody .ticket-row td:nth-child(7) {
+    width: 5%;
+}
+
+.ticket-table tbody .ticket-row td:nth-child(8) {
+    text-align: right;
+    padding-right: 1em;
+}
+
+.ticket-table .ticket-row .gear-icon:before {
+    margin-top: 5px;
+}
+
+.ticket-table .ticket-display-row-TKT_sold {
+    display:block;
+    margin-top: 4px;
+}
+
 .ee-tkt-status {
     width: 5px;
     height: 100%;
     display: inline-block;
-}
-
-.ticket-display-row-TKT_name {
-    margin-left: 5px;
 }
 
 .tkt-status-0 {
@@ -324,7 +369,7 @@
     border: 1px solid #EEEEEE;
     border-radius: 3px 3px 3px 3px;
     padding: 1em 1.5em 2em;
-    margin-top: -18px;
+    margin-top: -8px;
 }
 
 .ticket-fieldset legend {
@@ -332,13 +377,6 @@
     padding-left: 10px;
     padding-right: 10px;
     font-size: 1.2em
-}
-
-.edit-ticket-TKT_name {
-    padding: 0.5em;
-    margin-bottom: 10px;
-    font-size: 1.25em;
-    width: 70%;
 }
 
 .total-price-container .currency-code {
@@ -544,4 +582,12 @@
 
 .ee-active-price .ee-create-button {
     margin-left: 4px;
+}
+
+.ticket-fieldset .ee-price-create-button {
+    margin-top: 10px;
+}
+
+.available-tickets-container .ee-create-ticket-button {
+    margin-top: 10px;
 }
