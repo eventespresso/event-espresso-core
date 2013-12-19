@@ -97,8 +97,7 @@ class EEM_Payment extends EEM_Base {
 		);
 		$this->_model_relations = array(
 			'Transaction'=> new EE_Belongs_To_Relation(),
-			'Status'=> new EE_Belongs_To_Relation(),
-			'Extra_Meta'=>new EE_Has_Many_Any_Relation(),
+			'Status'=> new EE_Belongs_To_Relation()
 		);
 		parent::__construct( $timezone );
 	}
