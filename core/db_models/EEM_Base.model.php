@@ -90,6 +90,7 @@ abstract class EEM_Base extends EE_Base{
 		'<'=>'<',
 		'>='=>'>=',
 		'>'=>'>',
+		'!='=>'!=',
 		'LIKE'=>'LIKE',
 		'like'=>'LIKE',
 		'NOT_LIKE'=>'NOT LIKE',
@@ -104,8 +105,12 @@ abstract class EEM_Base extends EE_Base{
 		'not in'=>'NOT IN',
 		'between' => 'BETWEEN',
 		'BETWEEN' => 'BETWEEN',
+		'IS_NOT_NULL' => 'IS NOT NULL',
+		'is_not_null' =>'IS NOT NULL',
 		'IS NOT NULL' => 'IS NOT NULL',
 		'is not null' => 'IS NOT NULL',
+		'IS_NULL' => 'IS NULL',
+		'is_null' => 'IS NULL',
 		'IS NULL' => 'IS NULL',
 		'is null' => 'IS NULL');
 
@@ -113,7 +118,7 @@ abstract class EEM_Base extends EE_Base{
 	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
 	 * @var array 
 	 */
-	protected $_in_style_operators = array('IN','NOT_IN', 'in', 'not_in', 'NOT IN', 'not in');
+	protected $_in_style_operators = array('IN', 'NOT IN');
 
 	/**
 	 * operators that work like 'BETWEEN'.  Typically used for datetime calcs, i.e. "BETWEEN '12-1-2011' AND '12-31-2012'"
@@ -125,7 +130,7 @@ abstract class EEM_Base extends EE_Base{
 	 * operators that are used for handling NUll and !NULL queries.  Typically used for when checking if a row exists on a join table. 
 	 * @var array
 	 */
-	protected $_null_style_operators = array( 'IS NOT NULL', 'IS NULL' );
+	protected $_null_style_operators = array( 'IS NOT NULL', 'IS NULL');
 
 	/**
 	 * Allowed values for $query_params['order'] for ordering in queries
@@ -1811,15 +1816,16 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	private function _construct_op_and_value($op_and_value, $field_obj){
-		if(is_array( $op_and_value ) && preg_match( '/NULL/', $op_and_value[0]) ){
-			//handle special operators that don't HAVE a value (such as "IS NOT NULL")
-			$operator = $op_and_value[0];
-			$value = NULL;
-			
-		}else if ( is_array($op_and_value) ) {
-			//assume first arg is an aray
-			$operator = $op_and_value[0];
-			$value = $op_and_value[1];
+		if(is_array( $op_and_value )){
+			$operator = isset($op_and_value[0]) ? $this->_prepare_operator_for_sql($op_and_value[0]) : null;
+			if( ! $operator){
+				$php_array_like_string = array();
+				foreach($op_and_value as $key => $value){
+					$php_array_like_string[] = "$key=>$value";
+				}
+				throw new EE_Error(sprintf(__("You setup a query parameter like you were going to specify an operator, but didn't. You provided '(%s)', but the operator should be at array key index 0 (eg array('>',32))", "event_espresso"), implode(",",$php_array_like_string)));
+			}
+			$value = isset($op_and_value[1]) ? $op_and_value[1] : null;
 		}else{
 			$operator = '=';
 			$value = $op_and_value;
@@ -1840,7 +1846,10 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error( sprintf( __("The '%s' operator must be used with an array of values and there must be exactly TWO values in that array.", 'event_espresso'), "BETWEEN" ) );
 			$cleaned_value = $this->_construct_between_value( $value, $field_obj );
 			return $operator.SP.$cleaned_value;
-		} else if( in_array( $operator, $this->_null_style_operators ) ) {
+		} elseif( in_array( $operator, $this->_null_style_operators ) ) {
+			if($value != NULL){
+				throw new EE_Error(sprintf(__("You attempted to give a value  (%s) while using a NULL-style operator (%s). That isnt valid", "event_espresso"),$value,$operator));
+			}
 			return $operator;
 		}elseif( ! in_array($operator, $this->_in_style_operators) && ! is_array($value)){
 			return $operator.SP.$this->_wpdb_prepare_using_field($value,$field_obj);
@@ -1848,6 +1857,8 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("Operator '%s' must be used with an array of values, eg 'Registration.REG_ID' => array('%s',array(1,2,3))",'event_espresso'),$operator, $operator));
 		}elseif( ! in_array($operator, $this->_in_style_operators) && is_array($value)){
 			throw new EE_Error(sprintf(__("Operator '%s' must be used with a single value, not an array. Eg 'Registration.REG_ID => array('%s',23))",'event_espresso'),$operator,$operator));
+		}else{
+			throw new EE_Error(sprintf(__("It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isnt right at all", "event_espresso"),  http_build_query($op_and_value)));
 		}
 	}
 
@@ -2538,5 +2549,20 @@ abstract class EEM_Base extends EE_Base{
 		$query_params = array(0=>array($this->get_primary_key_field()->get_name() => $id),
 			'default_where_conditions'=>'other_models_only',);
 		return $this->update($fields_n_values,$query_params);
+	}
+	
+	/**
+	 * Changes an operator which was supplied to the models into one usable in SQL
+	 * @param string $operator_supplied
+	 * @return string an operator which can be used in SQL
+	 * @throws EE_Error
+	 */
+	private function _prepare_operator_for_sql($operator_supplied){
+		$sql_operator = isset($this->_valid_operators[$operator_supplied]) ? $this->_valid_operators[$operator_supplied] : null;
+		if($sql_operator){
+			return $sql_operator;
+		}else{
+			throw new EE_Error(sprintf(__("The operator '%s' is not in the list of valid operators: %s", "event_espresso"),$operator_supplied,implode(",",array_keys($this->_valid_operators))));
+		}
 	}
 }
