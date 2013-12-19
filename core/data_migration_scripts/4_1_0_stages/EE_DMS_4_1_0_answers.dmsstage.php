@@ -32,12 +32,13 @@ CREATE TABLE `wp_events_answer` (
 
 class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_answer_table;
-	
+	private $_new_question_table;
 	function __construct() {
 		global $wpdb;
 		$this->_pretty_name = __("Prices", "event_espresso");
 		$this->_old_table = $wpdb->prefix."events_answer";
 		$this->_new_answer_table = $wpdb->prefix."esp_answer";
+		$this->_new_question_table = $wpdb->prefix."esp_question";
 		parent::__construct();
 	}
 	protected function _migrate_old_row($old_row) {
@@ -68,13 +69,18 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 	private function _insert_new_answer($old_answer,$new_reg_id){		
 		global $wpdb;
 		$old_question_table = $wpdb->prefix."events_question";
-		$new_question_table = $wpdb->prefix."esp_question";
-		$new_question_id = $this->get_migration_script()->get_mapping_new_pk($old_question_table, $old_answer['question_id'], $new_question_table);
+		$new_question_id = $this->get_migration_script()->get_mapping_new_pk($old_question_table, $old_answer['question_id'], $this->_new_question_table);
 		
+		$question_type = $this->_get_question_type($new_question_id);
+		if(in_array($question_type,array('DROPDOWN','SINGLE','MULTIPLE'))){
+			$ans_value = serialize(explode(",",strip_tags($old_answer['answer'])));
+		}else{
+			$ans_value = strip_tags($old_answer['answer']);
+		}
 		$cols_n_values = array(
 			'REG_ID'=>$new_reg_id,
 			'QST_ID'=>$new_question_id,
-			'ANS_value'=>striptags($old_answer['answer'])
+			'ANS_value'=>$ans_value
 		);
 		$datatypes = array(
 			'%d',//REG_ID
@@ -88,6 +94,18 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 		}
 		$new_id = $wpdb->insert_id;
 		return $new_id;
+	}
+	
+	/**
+	 * Gets the question's type
+	 * @global type $wpdb
+	 * @param type $question_id
+	 * @return string
+	 */
+	private function _get_question_type($question_id){
+		global $wpdb;
+		$type = $wpdb->get_var($wpdb->prepare("SELECT QST_type FROM ".$this->_new_question_table." WHERE QST_ID=%d LIMIT 1",$question_id));
+		return $type;
 	}
 	
 }
