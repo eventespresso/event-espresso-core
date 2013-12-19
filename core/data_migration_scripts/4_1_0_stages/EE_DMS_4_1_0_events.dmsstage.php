@@ -309,8 +309,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		
 		$event_meta = maybe_unserialize($old_event['event_meta']);
 		$cols_n_values = array(
-			'post_title'=>$old_event['event_name'],//EVT_name
-			'post_content'=>$old_event['event_desc'],//EVT_desc
+			'post_title'=>stripslashes($old_event['event_name']),//EVT_name
+			'post_content'=>stripslashes($old_event['event_desc']),//EVT_desc
 			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
 			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
 			'post_date_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
