@@ -74,7 +74,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 		$cols_n_values = array(
 			'REG_ID'=>$new_reg_id,
 			'QST_ID'=>$new_question_id,
-			'ANS_value'=>$old_answer['answer']
+			'ANS_value'=>striptags($old_answer['answer'])
 		);
 		$datatypes = array(
 			'%d',//REG_ID
