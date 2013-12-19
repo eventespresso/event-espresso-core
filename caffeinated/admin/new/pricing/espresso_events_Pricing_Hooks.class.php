@@ -335,10 +335,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//let's make sure the base price is handled
 			$TKT = $this->_add_prices_to_ticket( array(), $TKT, $update_prices, $base_price, $base_price_id );
-			
 
 			//add price modifiers to ticket if any
-			if ( !empty( $data['edit_prices'] ) )
+			if ( !empty( $data['edit_prices'][$row] ) )
 				$TKT = $this->_add_prices_to_ticket( $data['edit_prices'][$row], $TKT, $update_prices );
 
 
@@ -433,7 +432,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function  _add_prices_to_ticket( $prices = array(), EE_Ticket $ticket, $new_prices = FALSE, $base_price = 0, $base_price_id = 0 ) {
 
 		//let's just get any current prices that may exist on the given ticket so we can remove any prices that got trashed in this session.
-		$current_prices_on_ticket = empty($prices) ? $ticket->base_price(TRUE) : $ticket->get_many_related('Price');
+		$current_prices_on_ticket = empty($prices) ? $ticket->base_price(TRUE) : $ticket->price_modifiers();
 
 		$updated_prices = array();
 
