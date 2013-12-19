@@ -87,6 +87,13 @@ class EE_Base_Class{
 	 * @var array
 	 */
 	protected $_cached_properties = array();
+	
+	/**
+	 * Everything is related to extra meta... except extra meta, but it doesn't hurt
+	 * to have this in that case
+	 * $var EE_Extra_Meta[]
+	 */
+	protected $_Extra_Meta = NULL;
 
 
 	/**

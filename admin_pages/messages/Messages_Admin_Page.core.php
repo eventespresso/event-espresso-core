@@ -64,7 +64,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _init_page_props() {
 		global $espresso_wp_user;
 		$this->page_slug = EE_MSG_PG_SLUG;
-		$this->page_label = __('Messages System', 'event_espresso');
+		$this->page_label = __('Messages Settings', 'event_espresso');
 		$this->_admin_base_url = EE_MSG_ADMIN_URL;
 		$this->_admin_base_path = EE_MSG_ADMIN;
 

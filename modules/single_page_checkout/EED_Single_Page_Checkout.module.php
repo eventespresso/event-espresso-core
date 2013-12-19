@@ -1046,7 +1046,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * 	@return 		string
 	 */
 	public function reg_form_form_field_label_wrap( $label ) {
-		return '<p class="reg-page-form-field-wrap-pg">' . $label;		
+		return '<div class="reg-page-form-field-wrap-pg">' . $label;		
 	}
 
 
@@ -1060,7 +1060,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * 	@return 		string
 	 */
 	public function reg_form_form_field_input__wrap( $input ) {
-		return $input . '</p>';		
+		return $input . '</div>';		
 	}
 
 

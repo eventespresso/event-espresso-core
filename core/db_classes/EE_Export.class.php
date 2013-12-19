@@ -330,8 +330,8 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 	 */	
 	function export_attendees() {
 		
-		$states_that_have_an_attendee = EEM_State::instance()->get_all(array('force_join'=>array('Attendee')));
-		$countries_that_have_an_attendee = EEM_Country::instance()->get_all(array('force_join'=>array('Attendee')));
+		$states_that_have_an_attendee = EEM_State::instance()->get_all(array(0=>array('Attendee.ATT_ID'=>array('IS NOT NULL'))));
+		$countries_that_have_an_attendee = EEM_Country::instance()->get_all(array(0=>array('Attendee.ATT_ID'=>array('IS NOT NULL'))));
 //		$states_to_export_query_params
 		$models_to_export = array( 
 			'Country'=>array(array('CNT_ISO'=>array('IN',array_keys($countries_that_have_an_attendee)))),
@@ -393,7 +393,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			foreach($reg_fields_to_include as $field_name){
 				$field = $reg_model->field_settings_for($field_name);
 				if($field_name == 'REG_final_price'){
-					$value = $registration->get_pretty($field_name,'no_currency_code');
+					$value = $registration->get_pretty($field_name,'localized_float');
 				}else{
 					$value = $registration->get_pretty($field->get_name());
 				}
@@ -456,7 +456,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			//now fill out the questions THEY answered
 			foreach($registration->answers() as $answer){
 				/* @var $answer EE_Answer */
-				$reg_csv_array[$answer->question()->admin_label()] = $answer->value();
+				$reg_csv_array[$answer->question()->admin_label()] = $answer->pretty_value();
 			}
 			$registrations_csv_ready_array[] = $reg_csv_array;
 		}

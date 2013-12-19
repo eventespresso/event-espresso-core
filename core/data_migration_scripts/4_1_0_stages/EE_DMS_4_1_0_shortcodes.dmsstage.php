@@ -16,14 +16,24 @@ class EE_DMS_4_1_0_shortcodes extends EE_Data_Migration_Script_Stage{
 		$new_post_content = $this->_change_event_list_shortcode($old_row['post_content']);
 		global $wpdb;
 		$wpdb->query($wpdb->prepare("UPDATE ".$this->_old_table." SET post_content=%s WHERE ID=%d",$new_post_content,$old_row['ID']));
-		$start_of_ee_shortcode = strpos($new_post_content,"[ESPRESSO_");
-		if( $start_of_ee_shortcode !== FALSE){
-			$closing_bracket = strpos($new_post_content,"]",$start_of_ee_shortcode);
-			$shortcode = substr($new_post_content, $start_of_ee_shortcode+1,$closing_bracket-2);//grab the shortcode minus brackets
-			$slug = $old_row['post_name'];
-			EE_Config::instance()->core->post_shortcodes[$slug][$shortcode] = $old_row['ID'];
-			EE_Config::instance()->core->post_shortcodes['posts'][$shortcode] = $old_row['ID'];
-			EE_Config::instance()->update_espresso_config();
+		$slug = $old_row['post_name'];
+		$matches = array();
+		$success = preg_match_all('(ESPRESSO_[^ \]]*)',$new_post_content,$matches);;
+		if($success){
+			$shortcodes = $matches[0];
+			foreach($shortcodes as $shortcode){
+				EE_Config::instance()->core->post_shortcodes[$slug][$shortcode] = $old_row['ID'];
+				EE_Config::instance()->core->post_shortcodes['posts'][$shortcode] = $old_row['ID'];
+			}
+//		$start_of_ee_shortcode = strpos($new_post_content,"[ESPRESSO_");
+//		if( $start_of_ee_shortcode !== FALSE){
+//			$closing_bracket = strpos($new_post_content,"]",$start_of_ee_shortcode);
+//			$shortcode = substr($new_post_content, $start_of_ee_shortcode+1,$closing_bracket-2);//grab the shortcode minus brackets
+//			
+//			EE_Config::instance()->core->post_shortcodes[$slug][$shortcode] = $old_row['ID'];
+//			EE_Config::instance()->core->post_shortcodes['posts'][$shortcode] = $old_row['ID'];
+//			EE_Config::instance()->update_espresso_config();
+//		}
 		}
 	}
 	

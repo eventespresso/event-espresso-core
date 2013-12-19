@@ -239,6 +239,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	}
 	
 	protected function _migrate_old_row($old_row) {
+		
 		$new_att_id = $this->_insert_new_attendee_cpt($old_row);
 		if( ! $new_att_id){
 			//if we couldnt even make an attendee, abandon all hope
@@ -269,7 +270,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private function _insert_new_attendee_cpt($old_attendee){
 		global $wpdb;
 		$cols_n_values = array(
-			'post_title'=>$old_attendee['fname']." ".$old_attendee['lname'],//ATT_full_name
+			'post_title'=>stripslashes($old_attendee['fname']." ".$old_attendee['lname']),//ATT_full_name
 			'post_content'=>'',//ATT_bio
 			'post_name'=>sanitize_title($old_attendee['fname']."-".$old_attendee['lname']),//ATT_slug
 			'post_date'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),//ATT_created
@@ -305,29 +306,29 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		//get the state and country ids from the old row
 		try{
-			$new_country = $this->get_migration_script()->get_or_create_country($old_attendee['country_id']);
+			$new_country = $this->get_migration_script()->get_or_create_country(stripslashes($old_attendee['country_id']));
 			$new_country_iso = $new_country['CNT_ISO'];
 		}catch(EE_Error $exception){
 			$new_country_iso = $this->get_migration_script()->get_default_country_iso();
 		}
 		try{
-			$new_state = $this->get_migration_script()->get_or_create_state($old_attendee['state'],$new_country_iso);
+			$new_state = $this->get_migration_script()->get_or_create_state(stripslashes($old_attendee['state']),$new_country_iso);
 			$new_state_id = $new_state['STA_ID'];
 		}catch(EE_Error $exception){
 			$new_state_id = 0;
 		}
 		$cols_n_values = array(
 			'ATT_ID'=>$new_attendee_cpt_id,
-			'ATT_fname'=>$old_attendee['fname'],
-			'ATT_lname'=>$old_attendee['lname'],
-			'ATT_address'=>$old_attendee['address'],
-			'ATT_address2'=>$old_attendee['address2'],
-			'ATT_city'=>$old_attendee['city'],
+			'ATT_fname'=>stripslashes($old_attendee['fname']),
+			'ATT_lname'=>stripslashes($old_attendee['lname']),
+			'ATT_address'=>stripslashes($old_attendee['address']),
+			'ATT_address2'=>stripslashes($old_attendee['address2']),
+			'ATT_city'=>stripslashes($old_attendee['city']),
 			'STA_ID'=>$new_state_id,
 			'CNT_ISO'=>$new_country_iso,
-			'ATT_zip'=>$old_attendee['zip'],
-			'ATT_email'=>$old_attendee['email'],
-			'ATT_phone'=>$old_attendee['phone'],			
+			'ATT_zip'=>stripslashes($old_attendee['zip']),
+			'ATT_email'=>stripslashes($old_attendee['email']),
+			'ATT_phone'=>stripslashes($old_attendee['phone']),			
 		);
 		$datatypes = array(
 			'%d',//ATT_ID

@@ -309,8 +309,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		
 		$event_meta = maybe_unserialize($old_event['event_meta']);
 		$cols_n_values = array(
-			'post_title'=>$old_event['event_name'],//EVT_name
-			'post_content'=>$old_event['event_desc'],//EVT_desc
+			'post_title'=>stripslashes($old_event['event_name']),//EVT_name
+			'post_content'=>stripslashes($old_event['event_desc']),//EVT_desc
 			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
 			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
 			'post_date_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
@@ -446,7 +446,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private function _insert_venue_into_posts($old_event){		
 		global $wpdb;
 		$insertion_array = array(
-					'post_title'=>$old_event['venue_title'],//VNU_name
+					'post_title'=>strip_tags($old_event['venue_title']),//VNU_name
 					'post_content'=>'',//VNU_desc
 					'post_name'=>sanitize_title($old_event['venue_title']),//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
@@ -497,7 +497,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		//find the state from the venue, or the organization, or just guess california
 		if( ! $old_event['state']){
 			$old_org_options = get_option('events_organization_settings');
-			$state_name = $old_org_options['organization_state'];
+			$state_name = strip_tags($old_org_options['organization_state']);
 		}else{
 			$state_name = $old_event['state'];
 		}
@@ -515,9 +515,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		//now insert into meta table
 		$insertion_array = array(
 			'VNU_ID'=>$cpt_id,//VNU_ID_fk
-			'VNU_address'=>$old_event['address'],//VNU_address
-			'VNU_address2'=>$old_event['address2'],//VNU_address2
-			'VNU_city'=>$old_event['city'],//VNU_city
+			'VNU_address'=>strip_tags($old_event['address']),//VNU_address
+			'VNU_address2'=>strip_tags($old_event['address2']),//VNU_address2
+			'VNU_city'=>strip_tags($old_event['city']),//VNU_city
 			'STA_ID'=>$state_id,//STA_ID
 			'CNT_ISO'=>$country_iso,//CNT_ISO
 			'VNU_zip'=>$old_event['zip'],//VNU_zip

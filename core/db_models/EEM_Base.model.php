@@ -196,7 +196,6 @@ abstract class EEM_Base extends EE_Base{
 		if(EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance){
 			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
 		}
-		// load registry
 		
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
@@ -217,6 +216,11 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 
+		//everything's related to Extra_Meta
+		if( get_class($this) != 'EEM_Extra_Meta'){
+			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation();
+		}
+		
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}

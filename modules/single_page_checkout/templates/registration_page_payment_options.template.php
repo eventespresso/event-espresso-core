@@ -53,7 +53,7 @@
 			<h4 class="spco-discounts-hdr"><?php _e('Discounts:', 'event_espresso'); ?></h4>
 		</div>
 
-		<h4 id="reg-page-totals-hdr" class="overline-hdr">
+		<h4 id="reg-page-totals-hdr" class="">
 			<span class="drk-grey-text"><?php _e('Billable Registrations:', 'event_espresso'); ?></span> <?php echo $total_items;?>
 		</h4>
 
