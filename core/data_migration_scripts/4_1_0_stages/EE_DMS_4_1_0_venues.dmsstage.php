@@ -120,8 +120,8 @@ function __construct() {
 		global $wpdb;
 		$meta = maybe_unserialize($old_venue['meta']);
 		$insertion_array = array(
-					'post_title'=>$old_venue['name'],//VNU_name
-					'post_content'=>isset($meta['description']) ? $meta['description'] : '',//VNU_desc
+					'post_title'=>striptags($old_venue['name']),//VNU_name
+					'post_content'=>isset($meta['description']) ? striptags($meta['description']) : '',//VNU_desc
 					'post_name'=>$old_venue['identifier'],//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
 					'post_date_gmt'=>  current_time('mysql',true),
@@ -167,7 +167,7 @@ function __construct() {
 		global $wpdb;
 		//get a country with the same name, or insert one
 		try{
-			$country = $this->get_migration_script()->get_or_create_country($old_venue['country']);
+			$country = $this->get_migration_script()->get_or_create_country(striptags($old_venue['country']));
 			$country_iso = $country['CNT_ISO'];
 		}catch(EE_Error $e){
 			$this->add_error(sprintf(__("%s for venue %s", "event_espresso"),$e->getMessage(),http_build_query($old_venue)));
@@ -175,7 +175,7 @@ function __construct() {
 		}
 		//get a state with the same name, if possible
 		try{
-			$state = $this->get_migration_script()->get_or_create_state($old_venue['state'],isset($country['CNT_name']) ? $country['CNT_name'] : $old_venue['country']);
+			$state = $this->get_migration_script()->get_or_create_state(striptags($old_venue['state']),isset($country['CNT_name']) ? $country['CNT_name'] : striptags($old_venue['country']));
 			$state_id = $state['STA_ID'];
 		}catch(EE_Error $e){
 			$this->add_error(sprintf(__("%s for venue %s", "event_espresso"),$e->getMessage(),http_build_query($old_venue)));
@@ -185,15 +185,15 @@ function __construct() {
 		//now insert into meta table
 		$insertion_array = array(
 			'VNU_ID'=>$cpt_id,//VNU_ID_fk
-			'VNU_address'=>$old_venue['address'],//VNU_address
-			'VNU_address2'=>$old_venue['address2'],//VNU_address2
-			'VNU_city'=>$old_venue['city'],//VNU_city
+			'VNU_address'=>striptags($old_venue['address']),//VNU_address
+			'VNU_address2'=>striptags($old_venue['address2']),//VNU_address2
+			'VNU_city'=>striptags($old_venue['city']),//VNU_city
 			'STA_ID'=>$state_id,//STA_ID
 			'CNT_ISO'=>$country_iso,//CNT_ISO
-			'VNU_zip'=>$old_venue['zip'],//VNU_zip
-			'VNU_phone'=>isset($meta['phone']) ? $meta['phone'] : '',//VNU_phone
+			'VNU_zip'=>striptags($old_venue['zip']),//VNU_zip
+			'VNU_phone'=>isset($meta['phone']) ? striptags($meta['phone']) : '',//VNU_phone
 			'VNU_capacity'=>-1,//VNU_capacity
-			'VNU_url'=>isset($meta['website']) ? $meta['website'] : '',//VNU_url
+			'VNU_url'=>isset($meta['website']) ? striptags($meta['website']) : '',//VNU_url
 			'VNU_virtual_phone'=>'',//VNU_virtual_phone
 			'VNU_virtual_url'=>'',//VNU_virtual_url
 			'VNU_google_map_link'=>'',//VNU_google_map_link
