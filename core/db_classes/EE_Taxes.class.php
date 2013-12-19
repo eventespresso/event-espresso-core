@@ -237,7 +237,8 @@ class EE_Taxes extends EE_BASE {
 
 
 	public static function get_subtotal_for_admin( EE_Ticket $ticket ) {
-		return self::$_subtotal ? self::$_subtotal : self::_get_subtotal_for_admin($ticket);
+		$TKT_ID = $ticket->ID();
+		return isset( self::$_subtotal[$TKT_ID] ) ? self::$_subtotal[$TKT_ID] : self::_get_subtotal_for_admin($ticket);
 	}
 
 
@@ -251,6 +252,7 @@ class EE_Taxes extends EE_BASE {
 
 		//get all prices
 		$prices = $ticket->get_many_related( 'Price', array('default_where_conditions' => 'none') );
+
 		//let's loop through them (base price is always the first item)
 		foreach ( $prices as $price ) {
 			switch ( $price->type_obj()->base_type() ) {
@@ -265,8 +267,8 @@ class EE_Taxes extends EE_BASE {
 					break;
 			}
 		}
-
-		self::$_subtotal = $subtotal;
+		$TKT_ID = $ticket->ID();
+		self::$_subtotal = array( $TKT_ID => $subtotal);
 		return $subtotal;
 	}
 
