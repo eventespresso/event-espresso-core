@@ -368,6 +368,10 @@
 					foreach($model->field_settings() as $field_name => $fk_field){
 						if($fk_field instanceof EE_Foreign_Key_Field_Base){
 							$fk_value = $model_object_data[$fk_field->get_name()];
+							//if the foreign key is 0 or blank, just ignore it and leave it as-is
+							if(intval($fk_value) == 0 || $fk_value == ''){
+								continue;
+							}
 							//now, is that value in the list of PKs that have been inserted?
 							if(is_array($fk_field->get_model_name_pointed_to())){//it points to a bunch of different models. So don't try each
 								$model_names_pointed_to = $fk_field->get_model_name_pointed_to();
