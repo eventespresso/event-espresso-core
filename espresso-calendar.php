@@ -744,13 +744,13 @@ class EE_Calendar {
 						$calendar_datetime->set_textColor($primary_cat->get_extra_meta('text_color',true,null));
 						
 					}
-					$calendar_datetime->set_eventType($primary_cat->slug());
+					$calendar_datetime->set_eventType($primary_cat->taxonomy());
 					if ( $enable_cat_classes ) {
 						foreach ( $event->term_taxonomies() as $term_taxonomy ) {
-							$calendar_datetime->add_classname($term_taxonomy->slug());
+							$calendar_datetime->add_classname($term_taxonomy->taxonomy());
 						}				
 					} else {
-						$calendar_datetime->add_classname($primary_cat->slug());
+						$calendar_datetime->add_classname($primary_cat->taxonomy());
 					}
 				}
 				
