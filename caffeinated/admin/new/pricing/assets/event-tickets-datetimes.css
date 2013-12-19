@@ -1,5 +1,6 @@
-.espresso-help-tab-lnk.help_img {
-    top: 0;
+#event-and-ticket-form-content .espresso-help-tab-lnk.help_img {
+    margin-top: 20px;
+    margin-left: 8px;
 }
 
 
@@ -7,6 +8,7 @@
     display: inline-block;
     font-size: 1.2em;
     padding: 0;
+    float: left;
 }
 
 .available-tickets-container {
@@ -303,18 +305,22 @@
     height: auto;
 }
 
+/*ticket status strip */
 .ticket-table tbody .ticket-row td:nth-child(2) {
     width: 1%;
 }
 
+/*Ticket Title */
 .ticket-table tbody .ticket-row td:nth-child(3) {
-    width: 25%;
+    width: 28%;
 }
 
+/*datetime fields */
 .ticket-table tbody .ticket-row td:nth-child(4), .ticket-table tbody .ticket-row td:nth-child(5) {
-    width: 15%;
+    width: 18%;
 }
 
+/* Price */
 .ticket-table tbody .ticket-row td:nth-child(6) {
     width: 10%;
 }
@@ -323,13 +329,21 @@
         text-align: right;
     }
 
+/* Qty */
 .ticket-table tbody .ticket-row td:nth-child(7) {
     width: 5%;
 }
 
+/* Sold */
 .ticket-table tbody .ticket-row td:nth-child(8) {
     text-align: right;
     padding-right: 1em;
+    width: 5%;
+}
+
+/* Actions */
+.ticket-table tbody .ticket-row td:nth-child(9) {
+    width: 15%;
 }
 
 .ticket-table .ticket-row .gear-icon:before {
@@ -370,6 +384,7 @@
     border-radius: 3px 3px 3px 3px;
     padding: 1em 1.5em 2em;
     margin-top: -8px;
+    margin-bottom: 15px;
 }
 
 .ticket-fieldset legend {
@@ -389,9 +404,6 @@
     padding: 0.5em;
 }
 
-.edit-ticket-TKT_start_date, .edit-ticket-TKT_end_date {
-    width: 180px;
-}
 
 .total-price-container {
     float:right;
@@ -424,23 +436,9 @@
    text-align: right;
 }
 
-.basic-ticket-info tbody td:nth-child(1) input, .basic-ticket-info tbody td:nth-child(2) input {
-    width: 90%;
-    text-align: left;
-    margin: 0;
-}
-
-.basic-ticket-info tbody td:nth-child(1), .basic-ticket-info tbody td:nth-child(2) {
-    width: 28%;
-}
-
-.basic-ticket-info tbody td:nth-child(3), .basic-ticket-info tbody td:nth-child(4), .basic-ticket-info tbody td:nth-child(5), .basic-ticket-info tbody td:nth-child(6) {
-    width: 11%
-}
-
-.basic-ticket-info .ee-text-inp, .basic-ticket-info .ee-small-text-inp {
-    margin: 0;
-    width: 90%;
+.basic-ticket-info tbody tr td {
+    padding-right: .4em;
+    width: 33%;
 }
 
 
@@ -479,6 +477,10 @@
 .save-cancel-button-container input {
     margin-right: 10px;
     margin-left: 6px;
+}
+
+.event-datetimes-container .datetime-create-button {
+    margin-top: -40px
 }
 
 .add-new-ticket-table {
