@@ -107,7 +107,7 @@ private function _get_old_gateway_option($new_gateway_slug){
 	$option_name = $this->_get_old_gateway_option_name($new_gateway_slug);
 	$settings =  get_option($option_name);
 	if( ! $settings){
-		$this->add_error(sprintf(__("There is no wordpress option named %s for gateway %s", "event_espresso"),$old_gateway_slug,$option_name));
+		$this->add_error(sprintf(__("There is no wordpress option named %s for gateway %s", "event_espresso"),$option_name,$new_gateway_slug));
 	}
 	return $settings;
 }

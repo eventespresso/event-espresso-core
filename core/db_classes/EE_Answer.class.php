@@ -162,6 +162,13 @@ class EE_Answer extends EE_Base_Class{
 		return $this->get('ANS_value');
 	}
 	/**
+	 * Gets a pretty form of the value (mostly applies to answers that have multiple answers)
+	 * @return string
+	 */
+	public function pretty_value($schema = null){
+		return $this->get_pretty('ANS_value',$schema);
+	}
+	/**
 	 * Echoes out a pretty value (even for multichoice-options)
 	 * @param string $schema
 	 * @return void

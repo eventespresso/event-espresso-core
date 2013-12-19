@@ -16,6 +16,14 @@
 </table>
 
 
+<div id="default-base-price-info" class="hidden">
+	<span id="default-base-price-amount"><?php echo $default_base_price_amount; ?></span>
+	<span id="default-base-price-name"><?php echo $default_base_price_name; ?></span>
+	<span id="default-base-price-description"><?php echo $default_base_price_description; ?></span>
+</div>
+
+
+
 <!-- this is retrieved by our js to set a new price row. Note this will also contain any default prices setup by event manager -->
 <table id="ticket-edit-row-initial-price-row" class="hidden">
 	<tbody>
@@ -74,6 +82,9 @@
  * $default_ticket_row
  * $default_price_row
  * $default_price_rows
+ * $default_base_price_amount
+ * $default_base_price_name
+ * $default_base_price_description
  * $default_price_modifier_selector_row
  * $default_available_tickets_for_datetime
  * $existing_available_datetime_tickets_list

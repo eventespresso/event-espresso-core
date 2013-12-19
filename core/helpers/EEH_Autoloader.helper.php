@@ -211,10 +211,15 @@ class EEH_Autoloader {
 	 * @return void
 	 */
 	public static function load_admin_core( $folder, $className ) {
+
 		$classfile = $className . '.core.php';
-		if ( is_readable( EE_ADMIN_PAGES . $folder . DS . $classfile )) {
-			require_once( EE_ADMIN_PAGES . $folder . DS . $classfile );
-		}			
+		$paths_to_try = apply_filters('FHEE__EEH_Autoloader__load_admin_core', array( EE_ADMIN_PAGES . $folder . DS, $className ) );
+
+		foreach ( $paths_to_try as $path ) {
+			if ( is_readable( $path . $classfile )) {
+				require_once( $path . $classfile );
+			}
+		}		
 	}
 
 

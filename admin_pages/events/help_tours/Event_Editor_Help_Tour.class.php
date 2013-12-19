@@ -129,52 +129,52 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_one() {
 		$content = '<h3>' . __('Event Editor', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('The Event Editor will likely be one of the most visited pages in Event Espresso.  This brief tour will go over all the different areas of this screen to help you understand what they are for.  Let\'s get started on setting up your first event!', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This brief tour of the Event Editor will provide an overview of the different areas of the screen to help you understand what they are used for. Let\'s get started on setting up your first event with Event Espresso!', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _stop_two() {
-		return '<p>This is where you will enter the title for your Event.</p>';
+		return '<p>Enter the title for your event in this field.</p>';
 	}
 
 	protected function _stop_three() {
-		return '<p>' . __('This is where you can add some information about your event.  This is a rich text editor and you can add images and links along with  your text.', 'event_espresso') . '</p>';
+		return '<p>' . __('The rich text editor can be used to add information about your event. Images and links can also be added along with your text.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_four_caf() {
-		return '<p>' . __('In this section, you can enter details about the venue that is hosting your event.', 'event_espresso') . '</p>';
+		return '<p>' . __('In this section, you can select the venue that is hosting your event.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_five_caf() {
-		return '<p>' . __('The Event Ticket & Datetime section is where you enter details about when the event is happening and what tickets you want to offer for access to the event.', 'event_espresso') . '</p>';
+		return '<p>' . __('Use the Event Datetimes & Ticket section to enter details about when the event is happening and what tickets you want to offer for access to the event.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _stop_publish_box() {
-		return '<p>' . __('Contains buttons that control the state of your event. The main states are Published, Pending Review, and Draft. Additional states are Cancelled, Postponed, and Sold Out.', 'event_espresso') . '</p>';
+		return '<p>' . __('Easily control the state of your event. The main states are Published, Pending Review, and Draft. Additional states are Cancelled, Postponed, and Sold Out.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _stop_registration_options() {
-		return '<p>' . __('All about Event Registration Options here.', 'event_espresso') . '</p>';
+		return '<p>' . __('Setup custom options for your event registration.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _stop_post_tag() {
-		return '<p>' . __('Events can be tagged if you wish.', 'event_espresso') . '</p>';
+		return '<p>' . __('Quickly add tags to your event.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_event_categories() {
-		return '<p>' . __('Events can be categorized if you wish.', 'event_espresso') . '</p>';
+		return '<p>' . __('Events can also be categorized if you wish.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_seven() {
-		return '<p>' . __('All about question groups here.', 'event_espresso') . '</p>';
+		return '<p>' . __('Use the questions group to request information from your primary attendee.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_nine_caf() {
-		return '<p>' . __('All about question groups for additional attendees here.', 'event_espresso') . '</p>';
+		return '<p>' . __('Use the questions group to request information from your additional attendees.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _stop_featured_image() {
-		return '<p>' . __('You can set a featured image for your event here.', 'event_espresso') . '</p>';
+		return '<p>' . __('Set a feature image for your event here.', 'event_espresso') . '</p>';
 	}
 	
 }

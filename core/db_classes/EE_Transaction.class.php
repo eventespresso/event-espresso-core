@@ -168,11 +168,6 @@ class EE_Transaction extends EE_Base_Class{
 	protected $_Line_Item = NULL;
 
 
-	/**
-	 * 
-	 * $var EE_Extra_Meta[]
-	 */
-	protected $_Extra_Meta = NULL;
 
 	/**
 	 * 

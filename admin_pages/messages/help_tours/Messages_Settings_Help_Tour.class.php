@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Messages_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Messages Settings Tour', 'event_espresso');
+		$this->_label = __('Msgs Settings Tour', 'event_espresso');
 		$this->_slug = 'messages-settings-joyride';
 	}
 
@@ -87,32 +87,32 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Messages Settings page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Messages Settings Overview', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This settings page controls the activation/deactivation of message types, as well as different settings for each type.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 
 	protected function _messenger_links_stop() {
-		return '<p>' . __('this row contains the various messengers available in the system', 'event_espresso') . '</p>';
+		return '<p>' . __('This row contains the various messengers available in the system', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _email_settings_metabox_stop() {
-		return '<p>' . __('about the messenger settings metabox', 'event_espresso') . '</p>';
+		return '<p>' . __('View the different message types that are currently active.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _on_off_toggle_stop() {
-		return '<p>' . __('about the messenger on/off toggle', 'event_espresso') . '</p>';
+		return '<p>' . __('This will turn ALL messages on or off for this message type.', 'event_espresso') . '</p>';
 	}
 
 	protected function _active_mts_container_stop() {
-		return '<p>' . __('about the active message types container', 'event_espresso') . '</p>';
+		return '<p>' . __('These are your active message types; click them to see a description and settings for each one.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _inactive_mts_container_stop() {
-		return '<p>' . __('about the inactive message types container', 'event_espresso') . '</p>';
+		return '<p>' . __('Drag message types here to de-activate them. Drag them from here to the active box to re-activate them.', 'event_espresso') . '</p>';
 	}
 }

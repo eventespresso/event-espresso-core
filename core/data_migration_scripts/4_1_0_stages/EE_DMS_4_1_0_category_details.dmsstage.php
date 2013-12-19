@@ -17,10 +17,10 @@ function _migration_step($num_items=50){
 	$items_actually_migrated = 0;
 	foreach($rows as $category_detail_row){
 		$term_and_taxonomy_ids = wp_insert_term(
-				$category_detail_row['category_name'],
+				strip_tags($category_detail_row['category_name']),
 				'espresso_event_categories',
 				array(
-					'description'=>$category_detail_row['category_desc'],
+					'description'=>strip_tags($category_detail_row['category_desc']),
 					'slug'=>$category_detail_row['category_identifier']
 				));
 		if($term_and_taxonomy_ids instanceof WP_Error){
