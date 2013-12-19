@@ -78,7 +78,7 @@ final class EE_Admin {
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 		
-		
+		do_action('AHEE__EE_Admin__loaded');
 	}
 
 
