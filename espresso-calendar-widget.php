@@ -1,171 +1,144 @@
 <?php
-	// do the javascript stuff
-	$espresso_calendar_widget = '<script type="text/javascript">';
-	$espresso_calendar_widget .= '$jaer = jQuery.noConflict();';
-	$espresso_calendar_widget .= 'jQuery(document).ready(function($jaer) {';
-	$espresso_calendar_widget .= '$jaer(\'#espresso_calendar\').fullCalendar({';
-					/**
-					* General Display
-					* http://arshaw.com/fullcalendar/docs/text/
-					**/
-					//month, basicWeek, basicDay, agendaWeek, agendaDay
-	$espresso_calendar_widget .= 'defaultView: \'month\',';
+/* ------------------------------------------------------------------------
+ *
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.0
+ *
+ * ------------------------------------------------------------------------
+ *
+ * Espresso_Calendar_Widget
+ * Displays a month-based espresso_calendar in the sidebar
+ *
+ * @package			Event Espresso
+ * @subpackage	espresso-calendar
+ * @author				Chris Reynolds 
+ * @since 2.0
+ *
+ * ------------------------------------------------------------------------
+ */
+class Espresso_Calendar_Widget extends WP_Widget {
 
-					//Defines the buttons and title at the top of the calendar.
-	$espresso_calendar_widget .= 'header: { left: \'prev\', center: \'title\', right: \'next\' },'; // setting this to a blank value so no title/buttons appear
 
-					/**
-					* Theme Settings
-					*
-					* Once you enable theming with true, you still need to include the CSS file for the theme you want.
-					* For example, if you just downloaded a theme from the jQuery UI Themeroller, you need to put a <link> tag in your page's <head>.
-					**/
 
-					//jQuery UI Themeroller
-					//Enables/disables use of jQuery UI theming.
-					//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
-
-					if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
-						$espresso_calendar_widget .= 'theme: true,';
-					}
-					//This option only applies to calendars that have jQuery UI theming enabled with the theme option.
-					/*buttonIcons:{ //Settings: http://arshaw.com/fullcalendar/docs/display/buttonIcons/
-						prev: 'circle-triangle-w',
-						next: 'circle-triangle-e'
-					},*/
-
-					//The day that each week begins.
-					//The value must be a number that represents the day of the week.
-					//Sunday=0, Monday=1, Tuesday=2, etc.
-	$espresso_calendar_widget .= 'firstDay: ' . $espresso_calendar['espresso_calendar_firstday'] . ','; //Settings: http://arshaw.com/fullcalendar/docs/display/firstDay/
-
-					//Displays the calendar in right-to-left mode.
-	$espresso_calendar_widget .= 'isRTL: false,';
-
-					//Whether to include Saturday/Sunday columns in any of the calendar views.
-	$espresso_calendar_widget .= 'weekends: ' . $espresso_calendar['espresso_calendar_weekends'] . ',';
-
-					//Determines the number of weeks displayed in a month view. Also determines each week's height.
-	$espresso_calendar_widget .= 'weekMode:\'fixed\','; //Settings: http://arshaw.com/fullcalendar/docs/display/weekMode/
-
-					//Will make the entire calendar (including header) a pixel height.
-	$espresso_calendar_widget .= 'height: 300,'; //Settings: http://arshaw.com/fullcalendar/docs/display/height/
-
-					//Will make the calendar's content area a pixel height.
-					//contentHeight: 600, //Settings: http://arshaw.com/fullcalendar/docs/display/contentHeight/
-
-					//Determines the width-to-height aspect ratio of the calendar.
-					//aspectRatio: 2, //Settings: http://arshaw.com/fullcalendar/docs/display/aspectRatio/
-
-					/**
-					* Agenda Options
-					* http://arshaw.com/fullcalendar/docs/agenda/
-					* Note: These ptions that apply to the agendaWeek and agendaDay views, and have beft out intentionally.
-					* Please refer to the URL above to add.manage your agenda views.
-					**/
-
-					/**
-					* Text/Time Customization Settings
-					* http://arshaw.com/fullcalendar/docs/text/
-					**/
-
-					//Determines the time-text that will be displayed on each event.
-	$espresso_calendar_widget .= 'timeFormat:{ '; //Settings: http://arshaw.com/fullcalendar/docs/text/timeFormat/
-						// for agendaWeek and agendaDay
-	$espresso_calendar_widget .= 'agenda: \'h:mm{ - h:mm}\','; // 5:00 - 6:30
-
-						// for all other views
-	$espresso_calendar_widget .= '\'\': \'\''; // 7p
-	$espresso_calendar_widget .= '},';
-
-					//Changes the colors of the events as seen here:
-					//http://code.google.com/p/fullcalendar/issues/detail?id=6&can=1&q=css&colspec=ID%20Type%20Status%20Milestone%20Summary%20Stars
-	$espresso_calendar_widget .= 'eventRender: function(event, element) { ';
-
-						// set an event category class
-						//alert(event.className);
-	$espresso_calendar_widget .= 'if(event.className){';
-	$espresso_calendar_widget .= 'element.find(\'a\').addClass(event.className);';
-	$espresso_calendar_widget .= 'element.attr(\'title\',event.title)';
-	$espresso_calendar_widget .= '}';
-	$espresso_calendar_widget .= $dont_show_expired;
-						//This displays the title of the event when hovering
-						//element.attr('title', event.title + " - Event Times: " + event.start + event.end);
-
-						// if the user selects show in thickbox we add this element
-						//if(event.in_thickbox_url){
-						//element.after($jaer('<div style="display: none;"><div id="event-thumb-detail-' + event.id+ '"><h2 class="tb-event-title">' + event.title + '</h2><p class="tb-event-start">Event start: ' + event.start + '</p><p class="tb-event-end">Event End: ' + event.end + '</p>' + event.description + '<p class="tb-reg-link"><a href="' + event.url + '"title="Go to registration page for this event">Register for this event</a></p></div></div>'));
-						//}
-
-	$espresso_calendar_widget .= 'if(event.event_img_thumb){';
-							//alert('we have thumbs');
-
-	$espresso_calendar_widget .= 'element.addClass(\'event-has-thumb\');';
-
-	$espresso_calendar_widget .= 'element.find(\'.fc-event-title\').after($jaer(\'<span class="thumb-wrap"><img class="ee-event-thumb \' + event.img_size_class + \'" src="\' + event.event_img_thumb + \'" alt="image of \' + event.title + \'" /></span>\'));';
-	$espresso_calendar_widget .= '}';
-
-	if ($espresso_calendar['show_time'] == 'true'){
-		$espresso_calendar_widget .= 'element.find(\'.fc-event-title\').after($jaer(\'<p class="time-display-block"><span class="event-start-time">\' + event.startTime + \' - </span><span class="event-end-time">\' + event.endTime + \'</span></p>\'));';
+	public function espresso_calendar_widget() {
+		/* Widget settings. */
+		$widget_options = array('classname' => 'espresso_calendar_widget', 'description' => 'Displays the Espresso Calendar in a widget.');
+		/* Widget control settings. */
+		$control_options = array('width' => 300, 'height' => 350, 'id_base' => 'espresso-calendar-widget');
+		/* Create the widget. */
+		$this->WP_Widget('espresso-calendar-widget', 'Event Espresso Calendar Widget', $widget_options, $control_options);
 	}
 
 
-						//These are examples of custom parameters that can be passed
-						/*if (event.eventType == 'meeting') {
-							element.addClass('meeting');
-							//alert(event.myType );
-						}*/
 
-						//This example basically applies different classes to the event
-						/*switch (event.myType){
-						case 'meeting' :
-							element.find('.n, .w, .c, .e, .s').css('background-color', '#00cc33');
-						break;
-						case 'project' :
-							element.find('.n, .w, .c, .e, .s').css('background-color', 'red');
-						break;
-						default :
-						break;
-						}*/
-	$espresso_calendar_widget .= '},';
+	public function widget($args, $instance) {
 
-					//Determines the text that will be displayed on the calendar's column headings.
-	$espresso_calendar_widget .= 'columnFormat:{'; //Settings: http://arshaw.com/fullcalendar/docs/text/columnFormat/
-	$espresso_calendar_widget .= stripslashes_deep($espresso_calendar['espresso_calendar_columnFormat']);
-						/*month: 'ddd',// Mon
-						week: 'ddd M/d', // Mon 9/7
-						day: 'dddd M/d'// Monday 9/7*/
-	$espresso_calendar_widget .= '},';
+		extract($args);
 
-					//For date formatting options, please refer to: http://arshaw.com/fullcalendar/docs/utilities/formatDate/
-	$espresso_calendar_widget .= 'titleFormat:{ month: \'MMMM\' },';
+		/* User-selected settings. */
+		$title = apply_filters('widget_title', $instance['title']);
 
-					//Text that will be displayed on buttons of the header.  Uncomment this if you want to change it from the default.
-	//$espresso_calendar_widget .= 'buttonText: { },';
+		// get the current post
+		global $post;
+		if ( isset( $post->post_content )) {
+			 // check the post content for the short code
+			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') === FALSE ) {
+				// Before widget (defined by themes).
+				echo $before_widget;
+				// Title of widget (before and after defined by themes).
+				if ( $title ) {
+					echo $before_title . $title . $after_title;
+				}
+				
+				$attributes = array( 
+					'event_category_id' => $instance['category_id'], 
+					'show_expired' => $instance['show_expired'], 
+					'cal_view' => 'month',
+					'widget' => TRUE,
+					'header_left' => 'prev',
+					'header_center' => 'title',
+					'header_right' =>'next',
+					'titleFormat_month' => 'MMM yyyy'
+				);
 
-					//Full names of months.
-	$espresso_calendar_widget .= 'monthNames: [' . stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']) . '],';
+				// get calendar options
+				$calendar_options = get_option( 'espresso_calendar_options', array() );
+				if ( isset( $calendar_options['show_tooltips'] ) && $calendar_options['show_tooltips'] ? TRUE : FALSE ) {
+					wp_enqueue_style('qtip');
+					wp_enqueue_script('jquery-qtip');
+				}
+				wp_enqueue_style('fullcalendar');
+				wp_enqueue_style('espresso_calendar');
+				wp_enqueue_script('espresso_calendar');	
 
-					//Abbreviated names of months.
-	$espresso_calendar_widget .= 'monthNamesShort: [' . stripslashes_deep($espresso_calendar['espresso_calendar_monthNamesShort']) . '],';
+				echo EE_Calendar::instance()->espresso_calendar( $attributes );
 
-					//Full names of days-of-week.
-	$espresso_calendar_widget .= 'dayNames: [' . stripslashes_deep($espresso_calendar['espresso_calendar_dayNames']) /*'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'*/ . '],';
+				// After widget (defined by themes).
+				echo $after_widget;
+			}
+		}
+	}
 
-					//Abbreviated names of days-of-week.
-	$espresso_calendar_widget .= 'dayNamesShort: [' . stripslashes_deep($espresso_calendar['espresso_calendar_dayNamesShort']) /*'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'*/ . '],';
 
-					//Load the events into json srrsy
-	$espresso_calendar_widget .= 'events: ' . json_encode($events) . ',';
-	$espresso_calendar_widget .= 'loading: function(bool) { ';
-	$espresso_calendar_widget .= 'if (bool) $(\'#loading\').show();';
-	$espresso_calendar_widget .= 'else $jaer(\'#loading\').hide();';
-	$espresso_calendar_widget .= '}';
 
-	$espresso_calendar_widget .= '});';
-	$espresso_calendar_widget .= '});';
+	public function update($new_instance, $old_instance) {
+		$instance = $old_instance;
+		// Strip tags (if needed) and update the widget settings.
+		$instance['title'] = strip_tags($new_instance['title']);
+		$instance['show_expired'] = strip_tags($new_instance['show_expired']);
+		$instance['category_id'] = strip_tags($new_instance['category_id']);
 
-	$espresso_calendar_widget .= '</script>';
-	$espresso_calendar_widget .= '<div id="espresso_calendar"></div>';
-	$espresso_calendar_debug_msg = '<p>this is espresso_hook_action_calendar_widget</p>';
+		return $instance;
+	}
+
+
+
+	public function form($instance) {
+
+		// Set up some default widget settings.
+		$defaults = array('title' => 'Calendar', 'show_expired' => false, 'category_id' => '', 'calendar_page' => '');
+		$instance = wp_parse_args((array) $instance, $defaults);
+
+		$values = array(
+				array('id' => false, 'text' => __('No', 'event_espresso')),
+				array('id' => true, 'text' => __('Yes', 'event_espresso')));
+		?>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('title'); ?>">
+				<?php _e('Title:', 'event_espresso'); ?>
+			</label>
+			<input type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" width="20" value="<?php echo $instance['title']; ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id('show_expired'); ?>">
+				<?php _e('Display Expired Events?', 'event_espresso'); ?>
+			</label>
+			<?php echo select_input($this->get_field_name('show_expired'), $values, $instance['show_expired']); ?> </p>
+		<p>
+			<label for="<?php echo $this->get_field_id('category_id'); ?>">
+				<?php _e('Single Category Name (optional)', 'event_espresso'); ?>
+			</label>
+			<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
+			<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=status_types_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </p>
+		<div id="status_types_info" style="display:none;">
+			<h2>
+				<?php _e('Display a Single Event Category', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e( 'Enter the Event Category ID from the ', 'event_espresso' ); ?><a href="admin.php?page=event_categories" target="_blank"><?php _e( 'Categories page','event_espresso' ); ?></a>.
+			</p>
+		</div>
+<?php
+	}
+
+}
 
