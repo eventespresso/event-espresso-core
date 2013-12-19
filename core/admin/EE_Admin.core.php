@@ -509,7 +509,7 @@ final class EE_Admin {
 					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
 					),
 				'number' => array(
-					'precision' => 0,
+					'precision' => EE_Registry::instance()->CFG->currency->dec_plc,
 					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
 					)
