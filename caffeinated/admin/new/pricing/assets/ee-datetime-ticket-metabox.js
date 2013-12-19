@@ -1758,16 +1758,18 @@ jQuery(document).ready(function($) {
 	$('#event-and-ticket-form-content').on('click', '.ee-collapsible', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		var item = this;
-		$('.event-tickets-container').slideToggle(245, function() {
+		var item = $(this);
+		var data = item.data();
+
+		$(data.target).slideToggle(245, function() {
 			if ( $(this).is(':visible' ) ) {
-				$(item).removeClass('ee-collapsible-closed');
-				$(item).addClass('ee-collapsible-open');
-				$('.save-cancel-button-container', '.available-tickets-container').show();
+				item.removeClass('ee-collapsible-closed');
+				item.addClass('ee-collapsible-open');
+				//$('.save-cancel-button-container', '.available-tickets-container').show();
 			} else {
-				$(item).removeClass('ee-collapsible-open');
-				$(item).addClass('ee-collapsible-closed');
-				$('.save-cancel-button-container', '.available-tickets-container').hide();
+				item.removeClass('ee-collapsible-open');
+				item.addClass('ee-collapsible-closed');
+				//$('.save-cancel-button-container', '.available-tickets-container').hide();
 			}
 		});
 	});
