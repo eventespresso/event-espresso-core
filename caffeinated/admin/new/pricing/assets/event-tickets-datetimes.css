@@ -124,6 +124,11 @@
     margin-top: 5px;
 }
 
+.ticket-table .ticket-row .ee-lock-icon:before {
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
 .ee-editing-container {
     display: inline-block;
 }
