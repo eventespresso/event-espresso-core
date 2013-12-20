@@ -253,9 +253,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				//'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
 				'help_tabs' => array(
-					'default_payment_status_help_tab' => array(
-						'title' => __('Default Payment Status', 'event_espresso'),
-						'callback' => 'default_payment_status_help_tab'
+					'default_registration_status_help_tab' => array(
+						'title' => __('Default Registration Status', 'event_espresso'),
+						'callback' => 'default_registration_status_help_tab'
 					)
 				),
 				'require_nonce' => FALSE
@@ -305,6 +305,41 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 		);
 	}
+	
+	/**
+	 * 		default_event_settings_help_tab
+	 * 		@access public
+	 * 		@return void
+	 */
+	public function default_event_settings_help_tab($tab_name) {
+		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/default_event_settings.php' );
+		$template = call_user_func($tab_name . '_html');
+		EEH_Template::display_template($template, array());
+	}
+
+
+	public function default_registration_status_help_tab() {
+		$this->default_event_settings_help_tab(__FUNCTION__);
+	}
+
+	/**
+	 * 		event_editor_help_tab
+	 * 		@access public
+	 * 		@return void
+	 */
+	public function event_editor_help_tab($tab_name) {
+		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/event_editor.php' );
+		$template = call_user_func($tab_name . '_html');
+		EEH_Template::display_template($template, array());
+	}
+
+
+	public function event_date_info_help_tab() {
+		$this->event_editor_help_tab(__FUNCTION__);
+	}
+	public function ticket_options_info_help_tab() {
+		$this->event_editor_help_tab(__FUNCTION__);
+	}
 
 
 	protected function _events_help_tour_steps() {
@@ -339,43 +374,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//todo
 	}
 
-	/**
-	 * 		default_event_settings_help_tab
-	 * 		@access public
-	 * 		@return void
-	 */
-	public function default_event_settings_help_tab($tab_name) {
-		require_once( EVENTS_TEMPLATE_PATH . 'default_event_settings_help_tab.template.php' );
-		$template = call_user_func($tab_name . '_html');
-		EEH_Template::display_template($template, array());
-	}
 
 
-	public function default_payment_status_help_tab() {
-		$this->default_event_settings_help_tab(__FUNCTION__);
-	}
-
-	/**
-	 * event edit help tabs
-	 */
-	public function event_date_info_help_tab_html() {
-		?>
-		<p>
-			<?php _e('This is the date of the event. All events require a start and end date in order to display properly on your pages.', 'event_espresso'); ?>
-		</p>
-		<p>
-			<?php _e('The limit field allows you to set a maximum number of tickets that you want to make available for an event. For example, lets say that we had 70 free tickets available and 30 premium tickets available. If we set a limit of 50 using the limit field, then the ticket sales will close once any combination of 50 tickets are sold.', 'event_espresso'); ?>
-		</p>
-		<?php
-	}
-	
-	public function ticket_options_info_help_tab_html() {
-		?>
-		<p>
-			TODO: The text for this needs to be done.  See includes/core/admin/events/templates/event_edit_help_tab.template.php
-		</p>
-		<?php
-	}
 
 	public function load_scripts_styles() {
 
