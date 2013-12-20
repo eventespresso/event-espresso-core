@@ -137,6 +137,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _settings_page( $template ) {
+		echo "settings page";
 		$this->set_settings();
 		$this->_template_args['espresso_calendar'] = $this->_settings;
 		$this->_template_args['values'] = array(
@@ -153,6 +154,21 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	protected function _usage() {
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( CALENDAR_ADMIN_TEMPLATE_PATH . 'calendar_usage_info.template.php', array(), TRUE );
 		$this->display_admin_page_with_no_sidebar();
+	}
+	protected function _update_settings(){
+		$rd = $this->_req_data;
+		$c = EE_Config::instance()->addons['calendar'];
+		/* @var $c EE_Calendar_Config */
+//		$c->show_time = $this->_get_from_req('time_format');
+//		$c->time_format = $this->_get_from_req(['time_format'])
+	}
+	
+	private function _get_from_req($index_in_req_data,$default = FALSE){
+		if(isset($this->_req_data[$index_in_req_data])){
+			return $this->_req_data[$index_in_req_data];
+		}else{
+			return $default;
+		}
 	}
 
 } //ends Forms_Admin_Page class

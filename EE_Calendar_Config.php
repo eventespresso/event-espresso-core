@@ -13,7 +13,7 @@ class EE_Calendar_Config extends EE_Config_Base{
 	 *
 	 * @var EE_Calendar_Config_Button_Text
 	 */
-	public $buttonText;
+	public $button_text;
 	/**
 	 *
 	 * @var EE_Calendar_Config_Tooltip
@@ -23,15 +23,15 @@ class EE_Calendar_Config extends EE_Config_Base{
 	 *
 	 * @var EE_Calendar_Config_Title_Format 
 	 */
-	public $titleFormat;
+	public $title_format;
 	/**
 	 *
 	 * @var EE_Calendar_Config_Column_Format
 	 */
-	public $columnFormat;
-	public $firstDay;
+	public $column_format;
+	public $first_day;
 	public $weekends;
-	public $weekMode;
+	public $week_mode;
 	public $calendar_height;
 	public $enable_calendar_thumbs;
 	public $enable_calendar_filters;
@@ -46,11 +46,11 @@ class EE_Calendar_Config extends EE_Config_Base{
 	
 	public function __construct(){
 		$this->header = new EE_Calendar_Config_Header();
-		$this->buttonText = new EE_Calendar_Config_Button_Text();
+		$this->button_text = new EE_Calendar_Config_Button_Text();
 		$this->tooltip = new EE_Calendar_Config_Tooltip();
-		$this->titleFormat = new EE_Calendar_Config_Title_Format();
-		$this->columnFormat = new EE_Calendar_Config_Column_Format();
-		$this->firstDay = '0';
+		$this->title_format = new EE_Calendar_Config_Title_Format();
+		$this->column_format = new EE_Calendar_Config_Column_Format();
+		$this->first_day = '0';
 		$this->weekends = true;
 		$this->weekMode = 'liquid';//fixed, liquid, variable
 		$this->calendar_height = '';
@@ -80,8 +80,8 @@ class EE_Calendar_Config_Header  extends EE_Config_Base{
 class EE_Calendar_Config_Button_Text  extends EE_Config_Base{
 	public $prev;
 	public $next;
-	public $prevYear;
-	public $nextYear;
+	public $prev_year;
+	public $next_year;
 	public $today;
 	public $month;
 	public $week;
@@ -89,8 +89,8 @@ class EE_Calendar_Config_Button_Text  extends EE_Config_Base{
 	public function __construct(){
 		$this->prev = '&lsaquo;';
 		$this->next = '&rsaquo;';
-		$this->prevYear = '&laquo;';
-		$this->nextYear = '&raquo;';
+		$this->prev_year = '&laquo;';
+		$this->next_year = '&raquo;';
 		$this->today = 'today';
 		$this->month = 'month';
 		$this->week = 'week';
