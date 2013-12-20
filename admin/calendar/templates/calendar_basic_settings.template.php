@@ -132,7 +132,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="espresso_calendar_height" type="text" name="espresso_calendar_height" size="100" maxlength="100" value="<?php echo $espresso_calendar['espresso_calendar_height']; ?>" />
+					<input id="espresso_calendar_height" type="text" name="espresso_calendar_height" value="<?php echo $espresso_calendar['espresso_calendar_height']; ?>" />
 					<br />
 					<span class="description">
 						<?php _e('Will make the entire calendar (including header) a pixel height. Leave blank for an automagical height.', 'event_espresso'); ?>
@@ -257,7 +257,7 @@
 					</label>
 				</th>
 				<td>
-					<?php _e('Place Tooltip ', 'event_espresso'); ?>
+					<?php _e('Place Tooltip\'s ', 'event_espresso'); ?>
 					<?php echo EEH_Form_Fields::select_input('tooltips_pos_my_1', $values_1, !empty($espresso_calendar['tooltips_pos_my_1']) ? $espresso_calendar['tooltips_pos_my_1'] : 'bottom', 'id="tooltips_pos_my_1"'); ?>
 					<?php echo EEH_Form_Fields::select_input('tooltips_pos_my_2', $values_2, !empty($espresso_calendar['tooltips_pos_my_2']) ? $espresso_calendar['tooltips_pos_my_2'] : 'center', 'id="tooltips_pos_my_2"'); ?>
 					<?php _e('at the Event\'s  ', 'event_espresso'); ?>
