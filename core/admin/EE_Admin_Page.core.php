@@ -282,10 +282,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     		'help_tabs' => array( //this is used for adding help tabs to a page
 	 *     			'tab_id' => array(
 	 *     				'title' => 'tab_title',
-	 *     				'callback' => 'callback_method_for_content'
+	 *     				'filename' => 'name_of_file_containing_content', //this is the primary method for setting help tab content.  The fallback if it isn't present is to try a the callback.  Filename should match a file in the admin folder's "help_tabs" dir (ie.. events/help_tabs/name_of_file_containing_content.help_tab.php)
+	 *     				'callback' => 'callback_method_for_content', //if 'filename' isn't present then system will attempt to use the callback which should match the name of a method in the class
 	 *     				),
 	 *     			'tab2_id' => array(
 	 *     			 	'title' => 'tab2 title',
+	 *     			 	'filename' => 'file_name_2'
 	 *     			 	'callback' => 'callback_method_for_content',
 	 *     			 ),
 	 *     	   	'help_sidebar' => 'callback_for_sidebar_content', //this is used for setting up the sidebar in the help tab area on an admin page. @link http://make.wordpress.org/core/2011/12/06/help-and-screen-api-changes-in-3-3/ 
@@ -978,20 +980,50 @@ abstract class EE_Admin_Page extends EE_BASE {
 				if ( !isset( $cfg['title'] ) )
 					throw new EE_Error( __('The _page_config array is not set up properly for help tabs.  It is missing a title', 'event_espresso') );
 
-				if ( !isset( $cfg['callback'] ) && !isset( $cfg['content'] ) )
-					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a callback reference and a content reference so there is no way to know the content for the help tab', 'event_espresso') );
 
-				//chekc if callback is valid
-				if ( empty($cfg['content']) && !method_exists( $this, $cfg['callback'] ) ) 
-					throw new EE_Error( sprintf( __('The callback given for the %s help tab does not have a corresponding method.  Check the spelling or make sure the method is present.  This method is used to get the content for the tab.', 'event_espresso'), $cfg['title'] ) );
+				if ( !isset($cfg['filename']) && !isset( $cfg['callback'] ) && !isset( $cfg['content'] ) )
+					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a either a filename reference, or a callback reference or a content reference so there is no way to know the content for the help tab', 'event_espresso') );
+
+
+
+
+				//first priority goes to content.
+				if ( !empty($cfg['content'] ) ) {
+					$content = !empty($cfg['content']);
+
+				//second priority goes to filename
+				} else if ( !empty($cfg['filename'] ) ) {
+					$file_path = $this->_get_dir() . '/help_tabs/' . $cfg['filename'] . '.help_tab.php';
+
+
+					//it's possible that the file is located on decaf route (and above sets up for caf route, if this is the case then lets check decaf route too)
+					$file_path = !is_readable($file_path) ? EE_ADMIN_PAGES . basename($this->_get_dir()) . '/help_tabs/' . $cfg['filename'] . '.help_tab.php' : $file_path;
+
+					//if file is STILL not readable then let's do a EE_Error so its more graceful than a fatal error.
+					if ( !is_readable($file_path) && !isset($cfg['callback']) ) {
+						EE_Error::add_error( sprintf( __('The filename given for the help tab %s is not a valid file and there is no other configuration for the tab content.  Please check that the string you set for the help tab on this route (%s) is the correct spelling.  The file should be in %s', 'event_espresso'), $tab_id, key($config), $file_path ), __FILE__, __FUNCTION__, __LINE__ );
+						return;
+					}
+					$template_args['admin_page_obj'] = $this;
+					$content = EEH_Template::display_template($file_path, $template_args, true);
+				} else {
+					$content = '';
+				}
+
+
+				//check if callback is valid
+				if ( empty($content) && ( !isset($cfg['callback']) || !method_exists( $this, $cfg['callback'] ) ) ) { 
+					EE_Error::add_error( sprintf( __('The callback given for a %s help tab on this page does not content OR a corresponding method for generating the content.  Check the spelling or make sure the method is present.', 'event_espresso'), $cfg['title'] ), __FILE__, __FUNCTION__, __LINE__ );
+					return;
+				}
 					
 				//setup config array for help tab method
 				$id = $this->page_slug . '-' . $this->_req_action . '-' . $tab_id;
 				$_ht = array(
 					'id' => $id,
 					'title' => $cfg['title'],
-					'callback' => isset( $cfg['callback'] ) ? array( $this, $cfg['callback'] ) : NULL,
-					'content' => isset($cfg['content']) ? $cfg['content'] : ''
+					'callback' => isset( $cfg['callback'] ) && empty($content) ? array( $this, $cfg['callback'] ) : NULL,
+					'content' => $content
 					);
 				
 				$this->_current_screen->add_help_tab( $_ht );
