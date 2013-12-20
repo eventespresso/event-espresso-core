@@ -168,7 +168,7 @@ final class EE_Admin {
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter( 'FHEE_admin_pages_array', array( $this, 'hide_admin_pages_except_maintenance_mode' ));			
+			add_filter( 'FHEE_admin_pages_array', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);			
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
@@ -932,6 +932,10 @@ final class EE_Admin {
 	 * @return void
 	 */
 	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
+
+		if ( !did_action('AHEE__EE_Admin__loaded') || did_action('init' ) ) {
+			EE_Error::doing_it_wrong('EE_Admin::register_ee_admin_page', __('Should be only called on the "AHEE__EE_Admin__loaded" hook.','event_espresso'), '4.1' );
+		}
 
 		//add incoming stuff to our registry property
 		self::$_ee_admin_page_registry[$page_basename] = array(
