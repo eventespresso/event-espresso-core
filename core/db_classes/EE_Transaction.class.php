@@ -713,7 +713,9 @@ class EE_Transaction extends EE_Base_Class{
 			$this->set_txn_session_data( EE_Registry::instance()->SSN );
 			// save the transaction to the db
 			$this->save();
+			do_action('AHEE__EE_Transaction__finalize__new_transaction', $this);
 		}
+		do_action('AHEE__EE_Transaction__finalize__all_transaction', $this);
 	}
 
 
