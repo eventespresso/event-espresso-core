@@ -90,12 +90,12 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 	private function _insert_new_question($old_question){
 		global $wpdb;
 		$cols_n_values = array(
-			'QST_display_text'=>strip_tags($old_question['question']),
+			'QST_display_text'=>stripslashes($old_question['question']),
 			'QST_admin_label'=> $old_question['system_name'] ? $old_question['system_name'] : sanitize_title($old_question['question']),
 			'QST_system'=>$old_question['system_name'],
 			'QST_type'=>$old_question['question_type'],
 			'QST_required'=> 'Y' == $old_question['required'],
-			'QST_required_text'=>strip_tags($old_question['required_text']),
+			'QST_required_text'=>stripslashes($old_question['required_text']),
 			'QST_order'=>$old_question['sequence'],
 			'QST_admin_only'=> 'Y' == $old_question['admin_only'],
 			'QST_wp_user'=>$old_question['wp_user'],

@@ -73,9 +73,9 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 		
 		$question_type = $this->_get_question_type($new_question_id);
 		if(in_array($question_type,array('DROPDOWN','SINGLE','MULTIPLE'))){
-			$ans_value = serialize(explode(",",strip_tags($old_answer['answer'])));
+			$ans_value = serialize(explode(",",stripslashes($old_answer['answer'])));
 		}else{
-			$ans_value = strip_tags($old_answer['answer']);
+			$ans_value = stripslashes($old_answer['answer']);
 		}
 		$cols_n_values = array(
 			'REG_ID'=>$new_reg_id,
