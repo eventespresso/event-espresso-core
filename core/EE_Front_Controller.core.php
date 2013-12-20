@@ -81,6 +81,17 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+//		$ps = EEM_Price::instance()->get_one(array(array('PRC_amount'=>array('>=','$1,00'))));
+//		d($ps);
+//		 $ps->e('PRC_amount');
+//		$p = EE_Price::new_instance(array('PRC_amount'=>'$ 1, 000.458'));
+//		d($p);
+//		$p2 = EE_Price::new_instance(array('PRC_amount'=>32.23));
+//		d($p2);
+//		$l = EE_Line_Item::new_instance(array('LIN_percent'=>'34.90'));
+//		d($l);
+//		$l2 = EE_Line_Item::new_instance(array('LIN_percent'=>' % 34.90 '));
+//		d($l2);
 //		$e = EE_Export::instance();
 //		$e->export_sample();
 //		EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all());

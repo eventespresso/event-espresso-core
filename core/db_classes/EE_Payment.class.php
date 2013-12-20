@@ -160,11 +160,6 @@ class EE_Payment extends EE_Base_Class{
 	protected $_Status = NULL;
 
 	
-	/**
-	 * 
-	 * $var EE_Extra_Meta[]
-	 */
-	protected $_Extra_Meta = NULL;
 
 
 

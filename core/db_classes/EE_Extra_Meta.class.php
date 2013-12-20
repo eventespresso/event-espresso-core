@@ -45,6 +45,8 @@ class EE_Extra_Meta extends EE_Base_Class{
 	 * @var EE_Transaction
 	 */
 	protected $_Transaction;
+	
+	protected $_Term_Taxonomy;
 
 
 	public static function new_instance( $props_n_values = array() ) {

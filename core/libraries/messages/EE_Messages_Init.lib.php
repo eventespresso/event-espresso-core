@@ -123,9 +123,10 @@ class EE_Messages_Init extends EE_Base {
 	 * @return void
 	 */
 	private function _do_actions() {
-		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment_and_maybe_reg' ), 10, 2 );
-		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder_and_maybe_reg'), 10 );
+		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment' ), 10, 2 );
+		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder'), 10 );
 		add_action( 'AHEE_process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
+		add_action( 'AHEE__EE_Transaction__finalize__new_transaction', array( $this, 'maybe_registration' ), 10 );
 	}
 
 
@@ -146,13 +147,10 @@ class EE_Messages_Init extends EE_Base {
 
 
 
-	public function payment_reminder_and_maybe_reg( EE_Transaction $transaction ) {
+	public function payment_reminder( EE_Transaction $transaction ) {
 		$this->_load_controller();
 		$data = array( $transaction, null );
 		$this->_EEMSG->send_message( 'payment_reminder', $data );
-
-		//maybe registration?
-		$this->_EEMSG->send_message( 'registration', $data );
 	}
 
 
@@ -163,7 +161,7 @@ class EE_Messages_Init extends EE_Base {
 	 * @param  EE_Payment object
 	 * @return void
 	 */
-	public function payment_and_maybe_reg( EE_Transaction $transaction, EE_Payment $payment ) {
+	public function payment( EE_Transaction $transaction, EE_Payment $payment ) {
 		$this->_load_controller();
 		$data = array( $transaction, $payment );
 
@@ -177,8 +175,21 @@ class EE_Messages_Init extends EE_Base {
 		
 
 		$this->_EEMSG->send_message( $message_type, $data);
+	}
 
-		//maybe registration?.
+
+
+
+	/**
+	 * Trigger for Registration messages
+	 * Note that the Registration_Message_Type internally determines whether a message actually goes out depending on the transaction state and the Registration Message Type setting for whether registrations get sent before complete payment or not.  Free registrations ALWAYS get sent.
+	 * @param  EE_Transaction $transaction
+	 * @return void                      
+	 */
+	public function maybe_registration( EE_Transaction $transaction ) {
+		$this->_load_controller();
+		$data = array( $transaction, NULL );
+
 		$this->_EEMSG->send_message( 'registration', $data );
 	}
 

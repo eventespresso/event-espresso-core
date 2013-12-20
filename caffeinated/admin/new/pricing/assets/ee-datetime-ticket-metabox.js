@@ -206,7 +206,7 @@ jQuery(document).ready(function($) {
 		getTicketTitle: function( rownum ) {
 			if ( typeof(rownum) === 'undefined' )
 				rownum = this.ticketRow;
-			return $('.edit-ticket-TKT_name', '#edit-ticketrow-' + rownum).val();
+			return $('.edit-ticket-TKT_name', '#display-ticketrow-' + rownum).val();
 		},
 
 
@@ -789,7 +789,7 @@ jQuery(document).ready(function($) {
 			//replace all instances of TICKETNUM with ticketRow
 			new_tkt_list_row = new_tkt_list_row.replace(/TICKETNUM/g, this.ticketRow );
 			//get name for ticket and add to the new li item
-			var TKT_name = $('.ticket-display-row-TKT_name', '#display-ticketrow-' + this.ticketRow ).text();
+			var TKT_name = this.getTicketTitle();
 			TKT_name += ': 0';
 			new_tkt_list_row = new_tkt_list_row.replace(/TKTNAME/g, TKT_name);
 			default_list_row_for_tkt = new_tkt_list_row; //without DTTNUM replaced.
@@ -871,6 +871,13 @@ jQuery(document).ready(function($) {
 						$('#price-row-' + this.ticketRow + '-' + previousrow ).find('.ee-create-button').show();
 					$('#price-row-' + this.ticketRow + '-' + row ).remove();
 					$('#extra-price-row-' + this.ticketRow + '-' + row).remove();
+
+					//if no rows are left, then let's hide the modifier section and show the modifier create button
+					if ( $('.ee-active-price', '#edit-ticketrow-' + this.ticketRow ).length === 0 ) {
+						$('.price-table-container', '#edit-ticketrow-' + this.ticketRow).slideToggle(200);
+						$('.ee-price-create-button', '#edit-ticketrow-' + this.ticketRow).show();
+					}
+
 					//recalculate totals and apply.
 					this.applyTotalPrice();
 			}
@@ -973,16 +980,16 @@ jQuery(document).ready(function($) {
 			this.createdItems.push(row);
 			//edit form stuff
 			var newTKTrow = $('#ticket-row-form-holder').find('tbody').clone().html().replace(/TICKETNUM/g, row ).replace(/TICKETNAMEATTR/g, 'edit_tickets');
-			var initialPRCrow = incomingcontext == 'short-ticket' ? $('#ticket-edit-row-initial-price-row').find('tbody').clone().html().replace(/PRICENUM/g, '1').replace(/TICKETNUM/g, row).replace(/PRICENAMEATTR/g, 'edit_prices') : $('#ticket-edit-row-default-price-rows').find('tbody').clone().html().replace(/TICKETNUM/g, row);
+			var initialPRCrow = incomingcontext == 'short-ticket' ? false : $('#ticket-edit-row-default-price-rows').find('tbody').clone().html().replace(/TICKETNUM/g, row);
 
 
 			//append to existing TKTrows
 			var currow = $('.ticket-table', '.event-tickets-container').find('tbody').first();
 			newTKTrow = $(newTKTrow).appendTo(currow);
 
-			initialPRCrow = incomingcontext == 'short-ticket' ? $(initialPRCrow).appendTo(newTKTrow.find('.ticket-price-rows')) : $(newTKTrow).find('.ticket-price-rows').html(initialPRCrow);
+			initialPRCrow = incomingcontext == 'short-ticket' ? false : $(newTKTrow).find('.ticket-price-rows').html(initialPRCrow);
 
-			initialPRCrow.find('.ticket-price-plus-minus').hide();
+			/*initialPRCrow.find('.ticket-price-plus-minus').hide();
 			initialPRCrow.find('.ticket-price-dollar-sign-display').show();
 
 			if ( incomingcontext == 'short-ticket' )
@@ -1004,7 +1011,7 @@ jQuery(document).ready(function($) {
 						pricename = $(this).val();
 						idref = 'add-new-ticket-TKT_name';
 						if ( pricename === '' ) {
-							pricename = curval = DTT_ERROR_MSG.no_ticket_name;
+							pricename = curval = $('#default-base-price-name').text();
 						}
 					}
 
@@ -1032,15 +1039,15 @@ jQuery(document).ready(function($) {
 					$(this).val('');
 				});
 
-				newTKTrow.find('.edit-price-PRC_amount', '.price-row-' +row).val(price_amount);
+				newTKTrow.find('.edit-ticket-TKT_base_price').val(price_amount);
 
 				newTKTrow.find('.ee-editing-container').removeClass('ee-edit-editing');
 
 				// selectors
 				var selected_price_type_val = 1;
 
-				newTKTrow.find('.price-title-text', '.price-row-' + row).text('Price');
-				newTKTrow.find('.edit-price-PRC_name', '.price-row-' + row).val(pricename);
+				//newTKTrow.find('.price-title-text', '.price-row-' + row).text('Price');
+				newTKTrow.find('.edit-ticket-TKT_name').val(pricename);
 				$('add-datetime-ticket-container', '#edit-event-datetime-tickets-' + this.dateTimeRow ).find('.gear-icon').hide(); //reset cog visibility.
 
 				//if there are multiple ticket rows after creating this then let's show all trash icons
@@ -1049,34 +1056,25 @@ jQuery(document).ready(function($) {
 
 			}
 
+			//now let's setup the display row!
+			if( incomingcontext != 'short-ticket' ) {
+				newTKTrow.find('.edit-ticket-TKT_name').val($('#default-base-price-name').text());
+				newTKTrow.find('.edit-ticket-TKT_description').val($('#default-base-price-description').text());
+				newTKTrow.find('.edit-ticket-TKT_base_price').val($('#default-base-price-amount').text() );
+			}
+
 			//update totals on the form.
 			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice().finalTotal;
 			newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
 			newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
 			newTKTrow.find('.ticket-display-row-TKT_price').text('$' + price_amount);
 
-			//now let's setup the display row!
-			newTKTrow.find('.ticket-display-row-TKT_name').text(newTKTrow.find('.edit-ticket-TKT_name').val());
-			newTKTrow.find('.ticket-display-row-TKT_start_date').text(
-				this.TKT_DTT_display_text(
-					newTKTrow.find('.edit-ticket-TKT_start_date').val(),
-					'MMM D[,] YYYY'
-					)
-				);
-			newTKTrow.find('.ticket-display-row-TKT_end_date').text(
-				this.TKT_DTT_display_text(
-					newTKTrow.find('.edit-ticket-TKT_end_date').val(),
-					'MMM D[,] YYYY'
-					)
-				);
-			newTKTrow.find('.ticket-display-row-TKT_status').text(
+			/*newTKTrow.find('.ticket-display-row-TKT_status').text(
 				this.getTKTstatus(
 					newTKTrow.find('.edit-ticket-TKT_start_date').val(),
 					newTKTrow.find('.edit-ticket-TKT_end_date').val()
 					)
-				);
-			
-			newTKTrow.find('.ticket-display-row-TKT_qty').text(newTKTrow.find('.edit-ticket-TKT_qty').val());
+				);/**/
 
 			//add li items
 			
@@ -1113,7 +1111,16 @@ jQuery(document).ready(function($) {
 			var curid, newid, curname, newname;
 			var row = this.itemdata.priceRow;
 			this.ticketRow = this.itemdata.ticketRow;
+
+			if ( this.context == 'price-create' ) {
+				$('.price-table-container', '#edit-ticketrow-' + this.ticketRow).slideToggle(200);
+				$('.ee-price-create-button', '#edit-ticketrow-' + this.ticketRow).hide();
+			}
+
+			this.context = 'price';
+
 			this.increaserowcount();
+
 			var newPRCrow = $('tbody', '#ticket-edit-row-initial-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow).replace(/PRICENAMEATTR/g, 'edit_prices');
 
 			newPRCrow = $(newPRCrow).appendTo( $('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow) );
@@ -1345,9 +1352,13 @@ jQuery(document).ready(function($) {
 		getTotalPrice: function( dotaxes ) {
 			var runningtotal = 0, priceAmount, operator, is_percent, totals=[];
 			dotaxes = typeof(dotaxes) === 'undefined' ? true : false;
+
+			//first get the baseprice amount to kick off the running total.
+			runningtotal = accounting.unformat($('.edit-ticket-TKT_base_price', '#display-ticketrow-' + this.ticketRow ).val() );
+
 			//loop through all the prices for a given ticket
 			$('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow ).find('tr.ee-active-price').each( function() {
-				priceAmount = parseFloat($('.edit-price-PRC_amount', this).val());
+				priceAmount = accounting.unformat($('.edit-price-PRC_amount', this).val());
 				operator = $('.ee-price-selected-operator', this).val();
 				is_percent = $('.ee-price-selected-is-percent', this ).val();
 				is_percent = parseInt(is_percent, 10);
@@ -1362,18 +1373,18 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			totals.subtotal = runningtotal.toFixed(2);
+			totals.subtotal = accounting.formatNumber(runningtotal);
 
 			//apply taxes?
 			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
 				this.applyTaxes();
 				//get tax amounts and add to running total
 				$('.TKT-tax-amount', '#edit-ticketrow-' + this.ticketRow ).each( function(){
-					runningtotal += parseFloat( $(this).val() );
+					runningtotal += accounting.unformat( $(this).val() );
 				});
 			}
 
-			totals.finalTotal = runningtotal.toFixed(2);
+			totals.finalTotal = accounting.formatNumber(runningtotal);
 
 			return totals; //todo eventually this can be dynamic according to currency setting
 		},
@@ -1462,8 +1473,8 @@ jQuery(document).ready(function($) {
 			/**
 			 * if creating is true (and trashing), then we need to remove the existing row and related items from the dom.
 			 */
-			if ( this.creating && trash &&  _.indexOf(this.createdItems, this.ticketRow) > -1 )
-				this.setcontext('ticket').trash(this.ticketRow);
+			/**if ( this.creating && trash &&  _.indexOf(this.createdItems, this.ticketRow) > -1 )
+				this.setcontext('ticket').trash(this.ticketRow);/**/
 
 			//reset creating
 			this.creating = false;
@@ -1575,6 +1586,11 @@ jQuery(document).ready(function($) {
 				break;
 			case 'price' :
 				tktHelper.setcontext('price').setitemdata(data).newPriceRow();
+				break;
+
+			case 'price-create' :
+				data.priceRow = 1; //base prices are ALWAYS row 1 so we start with that.
+				tktHelper.setcontext('price-create').setitemdata(data).newPriceRow();
 				break;
 		}
 		return false;
@@ -1742,16 +1758,18 @@ jQuery(document).ready(function($) {
 	$('#event-and-ticket-form-content').on('click', '.ee-collapsible', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		var item = this;
-		$('.event-tickets-container').slideToggle(245, function() {
+		var item = $(this);
+		var data = item.data();
+
+		$(data.target).slideToggle(245, function() {
 			if ( $(this).is(':visible' ) ) {
-				$(item).removeClass('ee-collapsible-closed');
-				$(item).addClass('ee-collapsible-open');
-				$('.save-cancel-button-container', '.available-tickets-container').show();
+				item.removeClass('ee-collapsible-closed');
+				item.addClass('ee-collapsible-open');
+				//$('.save-cancel-button-container', '.available-tickets-container').show();
 			} else {
-				$(item).removeClass('ee-collapsible-open');
-				$(item).addClass('ee-collapsible-closed');
-				$('.save-cancel-button-container', '.available-tickets-container').hide();
+				item.removeClass('ee-collapsible-open');
+				item.addClass('ee-collapsible-closed');
+				//$('.save-cancel-button-container', '.available-tickets-container').hide();
 			}
 		});
 	});

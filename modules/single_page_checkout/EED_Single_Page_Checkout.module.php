@@ -101,6 +101,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Single_Page_Checkout', 'set_definitions' ), 2 );
+		add_filter( 'FHEE_load_EE_messages', '__return_true');
 		// configure the reg steps array
 		EED_Single_Page_Checkout::setup_reg_steps_array();
 		// set ajax hooks

@@ -207,11 +207,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tabs' => array(
 					'event_date_info' => array(
 						'title' => __('Event Date', 'event_espresso'),
-						'callback' => 'event_date_info_help_tab'
+						'filename' => 'default_event_settings'
 					),
 					'ticket_options_info' => array(
 						'title' => __('Ticket Options', 'event_espresso'),
-						'callback' => 'ticket_options_info_help_tab'
+						'filename' => 'event_editor'
 					)
 				),
 				'help_tour' => array(
@@ -230,11 +230,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tabs' => array(
 					'event_date_info' => array(
 						'title' => __('Event Date', 'event_espresso'),
-						'callback' => 'event_date_info_help_tab'
+						'filename' => 'default_event_settings'
 					),
 					'ticket_options_info' => array(
 						'title' => __('Ticket Options', 'event_espresso'),
-						'callback' => 'ticket_options_info_help_tab'
+						'filename' => 'event_editor'
 					)
 				),
 				'help_tour' => array(
@@ -253,9 +253,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				//'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
 				'help_tabs' => array(
-					'default_payment_status_help_tab' => array(
-						'title' => __('Default Payment Status', 'event_espresso'),
-						'callback' => 'default_payment_status_help_tab'
+					'default_registration_status_help_tab' => array(
+						'title' => __('Default Registration Status', 'event_espresso'),
+						'callback' => 'default_registration_status_help_tab'
 					)
 				),
 				'require_nonce' => FALSE
@@ -305,20 +305,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 		);
 	}
-
-
-	protected function _events_help_tour_steps() {
-		require_once( EVENTS_TEMPLATE_PATH . 'decaf_ee_editor_steps.template.php' );
-		return array(
-			0 => array(
-				'content' => '<h3>Event Editor</h3>'
-				),
-			1 => array(
-				'id' => 'title',
-				'content' => '<p>Enter the event title here.</p>'
-				)
-			);
+	
+	/**
+	 * 		default_event_settings_help_tab
+	 * 		@access public
+	 * 		@return void
+	 */
+	public function default_event_settings_help_tab($tab_name) {
+		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/default_event_settings.help_tab.php' );
+		$template = call_user_func($tab_name . '_html');
+		EEH_Template::display_template($template, array());
 	}
+
+
+	public function default_registration_status_help_tab() {
+		$this->default_event_settings_help_tab(__FUNCTION__);
+	}
+
 
 	protected function _add_screen_options() {
 		//todo
@@ -339,40 +342,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//todo
 	}
 
-	/**
-	 * 		default_event_settings_help_tab
-	 * 		@access public
-	 * 		@return void
-	 */
-	public function default_event_settings_help_tab($tab_name) {
-		require_once( EVENTS_TEMPLATE_PATH . 'default_event_settings_help_tab.template.php' );
-		$template = call_user_func($tab_name . '_html');
-		EEH_Template::display_template($template, array());
-	}
 
 
-	public function default_payment_status_help_tab() {
-		$this->default_event_settings_help_tab(__FUNCTION__);
-	}
-
-	/**
-	 * event edit help tabs
-	 * @access public
-	 * @return void
-	 */
-	public function event_edit_help_tab($tab_name) {
-		require_once EVENTS_TEMPLATE_PATH . 'event_edit_help_tab.template.php';
-		$template = call_user_func($tab_name . '_html');
-		EEH_Template::display_template($template, array());
-	}
-
-	public function event_date_info_help_tab() {
-		$this->event_edit_help_tab(__FUNCTION__);
-	}
-
-	public function ticket_options_info_help_tab() {
-		$this->event_edit_help_tab(__FUNCTION__);
-	}
 
 	public function load_scripts_styles() {
 

@@ -326,6 +326,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 				'list_table' => 'EE_Attendee_Contact_List_Table',
 				'help_tour' => array( 'Contact_List_Help_Tour' ),
+				'help_tabs' => array(
+					'contact_list_tab_info' => array(
+						'title' => __('Contact List Overview', 'event_espresso'),
+						'callback' => 'contact_list_help_tab_html'
+						),
+					),
 				'metaboxes' => array(),
 				'require_nonce' => FALSE
 				),
@@ -337,6 +343,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			);
 	}
 
+	/**
+	 * help tabs
+	 */
+	 
+	function contact_list_help_tab_html() {
+	?>
+		<h2>
+			<?php _e('Contact List Overview', 'event_espresso'); ?>
+		</h2>
+		<p>
+			<?php _e("Notice: A contact can belong to multiple registrations. For example, an individual can be registered for Event A and Event B.", 'event_espresso'); ?>
+		</p>
+		<p>
+			<?php _e("For this reason, a contact can be deleted only after all associated registrations have been removed. If we wanted to delete the individual in the example above, we would need to remove their registrations for Event A and Event B. The contact (individual) will then be automatically removed.", 'event_espresso'); ?>
+		</p>
+	<?php
+	}
 
 
 

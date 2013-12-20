@@ -97,7 +97,6 @@ class EEM_Transaction extends EEM_Base {
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Promotion_Object'=>new EE_Has_Many_Any_Relation(),
 			'Line_Item'=>new EE_Has_Many_Relation(false),//you can delete a transaction without needing to delete its line items
-			'Extra_Meta'=>new EE_Has_Many_Any_Relation(),
 		);
 		parent::__construct( $timezone );
 

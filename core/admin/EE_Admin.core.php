@@ -39,6 +39,10 @@ final class EE_Admin {
 
 
 
+	protected static $_ee_admin_page_registry = array();
+
+
+
 
 
 
@@ -78,7 +82,7 @@ final class EE_Admin {
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 		
-		
+		do_action('AHEE__EE_Admin__loaded');
 	}
 
 
@@ -164,7 +168,7 @@ final class EE_Admin {
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter( 'FHEE_admin_pages_array', array( $this, 'hide_admin_pages_except_maintenance_mode' ));			
+			add_filter( 'FHEE_admin_pages_array', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);			
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
@@ -509,7 +513,7 @@ final class EE_Admin {
 					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
 					),
 				'number' => array(
-					'precision' => 0,
+					'precision' => EE_Registry::instance()->CFG->currency->dec_plc,
 					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
 					)
@@ -911,6 +915,54 @@ final class EE_Admin {
 			'<a href="http://eventespresso.com/" title="',
 			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
 		);
+	}
+
+
+	/**
+	 * The purpose of this method is to provide an easy way for addons to register their admin pages (using the EE Admin Page loader system).
+	 * @param  array  $config array of configuration settings for registering the admin page in the following format:
+	 * @return [type]         [description]
+	 */
+	
+	/**
+	 * The purpose of this method is to provide an easy way for addons to register their admin pages (using the EE Admin Page loader system).
+	 * @param  string $page_basename This string represents the basename of the Admin Page init.  The init file must use this basename in its name and class (i.e. {page_basename}_Admin_Page_Init.core.php).
+	 * @param  string $page_path     This is the path where the registered admin pages reside (used to setup autoloaders).
+	 * @param  array  $config        An array of extra configuration options (optional) that will be used in different circumstances (@todo this is currently in flux, hence why we have an array so people can use implemented options and at a later date we can add additional ones without messing up existing usage)
+	 * @return void
+	 */
+	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
+
+		if ( !did_action('AHEE__EE_Admin__loaded') || did_action('init' ) ) {
+			EE_Error::doing_it_wrong('EE_Admin::register_ee_admin_page', __('Should be only called on the "AHEE__EE_Admin__loaded" hook.','event_espresso'), '4.1' );
+		}
+
+		//add incoming stuff to our registry property
+		self::$_ee_admin_page_registry[$page_basename] = array(
+			'page_path' => $page_path,
+			'config' => $config
+			);
+
+		add_filter('FHEE_admin_pages_array', array( 'EE_Admin', 'set_page_basename' ), 10 );
+		add_filter('FHEE__EEH_Autoloader__load_admin_core', array( 'EE_Admin', 'set_page_path' ), 10 );
+
+	}
+
+
+	public static function set_page_basename( $installed_refs ) {
+		foreach ( self::$_ee_admin_page_registry as $basename => $args ) {
+			$installed_refs[] = $basename;
+		}
+		return $installed_refs;
+	}
+
+
+
+	public static function set_page_path( $paths ) {
+		foreach ( self::$_ee_admin_page_registry as $basename => $args ) {
+			$paths[] = $args['page_path'];
+		}
+		return $paths;
 	}
 
 

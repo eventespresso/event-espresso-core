@@ -1,11 +1,11 @@
 <div id="event-and-ticket-form-content">
-	<h4 class="event-tickets-datetimes-title"><?php _e('Event Datetimes', 'event_espresso'); ?></h4><?php echo $event_datetime_help_link; ?>
-	<div class="save-cancel-button-container">
-		<button class="button-secondary ee-create-button" data-context="datetime">
-			<?php _e('Add Datetime', 'event_espresso'); ?>
-		</button>
-	</div>
+	<h4 class="event-tickets-datetimes-title"><span data-target=".event-datetimes-container" class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><?php _e('Event Datetimes', 'event_espresso'); ?></span></h4><?php echo $event_datetime_help_link; ?>
 	<div class="event-datetimes-container">
+		<div class="save-cancel-button-container">
+			<button class="button-secondary ee-create-button datetime-create-button" data-context="datetime">
+				<?php _e('Add Datetime', 'event_espresso'); ?>
+			</button>
+		</div>
 		<!-- these are the ids for the current displayed datetimes (on create new this is blank -->
 		<input type="hidden" name="datetime_IDs" id="datetime-IDs" value="<?php echo $existing_datetime_ids; ?>">
 
@@ -46,18 +46,18 @@
 	</div> <!-- end #add-event-datetime -->
 	
 	<div class="available-tickets-container">
-		<h4 class="event-tickets-datetimes-title"><span class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><?php _e('Available Tickets', 'event_espresso'); ?></span></h4>
-		<div class="save-cancel-button-container"<?php echo $show_tickets_container; ?>><button class="button-secondary ee-create-button" data-context="ticket"><?php _e('Create Ticket', 'event_espresso'); ?></button></div>
+		<h4 class="event-tickets-datetimes-title"><span data-target=".event-tickets-container" class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><?php _e('Available Tickets', 'event_espresso'); ?></span></h4>
 		<div class="event-tickets-container"<?php echo $show_tickets_container; ?>>
+			<div class="save-cancel-button-container"<?php echo $show_tickets_container; ?>><button class="ee-create-ticket-button button-secondary ee-create-button" data-context="ticket"><?php _e('Create Ticket', 'event_espresso'); ?></button></div>
 			<table class="ticket-table">
 				<thead>
 					<tr valign="top">
 						<td colspan="3"><?php _e('Ticket', 'event_espresso'); ?></td>
-						<td><?php _e('On Sale', 'event_espresso'); ?></td>
+						<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
 						<td><?php _e('Sell Until', 'event_espresso'); ?></td>
-						<td><?php _e('Status', 'event_espresso'); ?></td>
 						<td><?php _e('Price', 'event_espresso'); ?></td>
 						<td><?php _e('Qty', 'event_espresso'); ?></td>
+						<!--<td><?php _e('Total', 'event_espresso'); ?></td>-->
 						<td colspan="2"><?php _e('Sold', 'event_espresso'); ?></td>
 					</tr>
 				</thead>
