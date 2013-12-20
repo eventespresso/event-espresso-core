@@ -933,6 +933,10 @@ final class EE_Admin {
 	 */
 	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
 
+		if ( !did_action('AHEE__EE_Admin__loaded') || did_action('init' ) ) {
+			EE_Error::doing_it_wrong('EE_Admin::register_ee_admin_page', __('Should be only called on the "AHEE__EE_Admin__loaded" hook.','event_espresso'), '4.1' );
+		}
+
 		//add incoming stuff to our registry property
 		self::$_ee_admin_page_registry[$page_basename] = array(
 			'page_path' => $page_path,
