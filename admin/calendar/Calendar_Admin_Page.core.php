@@ -140,6 +140,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		echo "settings page";
 		$this->set_settings();
 		$this->_template_args['espresso_calendar'] = $this->_settings;
+		$this->_template_args['calendar_config'] = EE_Config::instance()->addons['calendar'];
 		$this->_template_args['values'] = array(
 				array('id' => false, 'text' => __('No', 'event_espresso')),
 				array('id' => true, 'text' => __('Yes', 'event_espresso'))
@@ -156,11 +157,34 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_no_sidebar();
 	}
 	protected function _update_settings(){
-		$rd = $this->_req_data;
-		$c = EE_Config::instance()->addons['calendar'];
+//		require_once(ESPRESSO_CALENDAR_PLUGINFULLPATH.'EE_Calendar_Config.php');
+//		new EE_Calendar_Config();
+		$c = new EE_Calendar_Config();//EE_Config::instance()->addons['calendar'];
+		
+//		echo "addons retrieved from db";
+//		d(EE_Config::instance()->addons);
+//		EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
+//		EE_Config::instance()->update_espresso_config();
+//		echo "set addons['calendar'] to be a  new EE_Calendar_Config()";
+//		d(EE_Config::instance()->addons);
 		/* @var $c EE_Calendar_Config */
 //		$c->show_time = $this->_get_from_req('time_format');
 //		$c->time_format = $this->_get_from_req(['time_format'])
+		foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
+			if(is_array($top_level_value)){
+				foreach($top_level_value as $second_level_key => $second_level_value){
+					if(property_exists($c,$top_level_key) && property_exists($c->$top_level_key, $second_level_key)){
+						$c->$top_level_key->$second_level_key = $second_level_value;
+					}
+				}
+			}else{
+				if(property_exists($c, $top_level_key)){
+					$c->$top_level_key = $top_level_value;
+				}
+			}
+		}
+		EE_Config::instance()->addons['calendar'] = $c;
+		EE_Config::instance()->update_espresso_config();
 	}
 	
 	private function _get_from_req($index_in_req_data,$default = FALSE){

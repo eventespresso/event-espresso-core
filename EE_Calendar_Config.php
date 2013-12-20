@@ -29,8 +29,12 @@ class EE_Calendar_Config extends EE_Config_Base{
 	 * @var EE_Calendar_Config_Column_Format
 	 */
 	public $column_format;
-	public $first_day;
-	public $weekends;
+	/**
+	 *
+	 * @var EE_Calendar_Config_Time
+	 */
+	public $time;
+	
 	public $week_mode;
 	public $calendar_height;
 	public $enable_calendar_thumbs;
@@ -40,8 +44,7 @@ class EE_Calendar_Config extends EE_Config_Base{
 	public $event_text_color;
 	public $enable_cat_classes;
 	public $disable_categories;
-	public $time_format;
-	public $show_time;
+	
 	public $show_attendee_limit;
 	
 	public function __construct(){
@@ -50,9 +53,8 @@ class EE_Calendar_Config extends EE_Config_Base{
 		$this->tooltip = new EE_Calendar_Config_Tooltip();
 		$this->title_format = new EE_Calendar_Config_Title_Format();
 		$this->column_format = new EE_Calendar_Config_Column_Format();
-		$this->first_day = '0';
-		$this->weekends = true;
-		$this->weekMode = 'liquid';//fixed, liquid, variable
+		$this->time = new EE_Calendar_Config_Time();
+		$this->week_mode = 'liquid';//fixed, liquid, variable
 		$this->calendar_height = '';
 		$this->enable_calendar_thumbs = false;
 		$this->enable_calendar_filters = false;
@@ -60,12 +62,22 @@ class EE_Calendar_Config extends EE_Config_Base{
 		$this->event_background = '007BAE';
 		$this->event_text_color = 'FFFFFF';
 		$this->enable_cat_classes = false;
-		$this->time_format = get_option('time_format');
-		$this->show_time = true;
 		$this->disable_categories = false;
 		$this->show_attendee_limit = false;
 	}
 	
+}
+class EE_Calendar_Config_Time extends EE_Config_Base{
+	public $first_day;
+	public $weekends;
+	public $format;
+	public $show_time;
+	public function __construct() {
+		$this->first_day = '0';
+		$this->weekends = true;
+		$this->format = get_option('time_format');
+		$this->show_time = true;
+	}
 }
 class EE_Calendar_Config_Header  extends EE_Config_Base{
 	public $left;
@@ -104,6 +116,7 @@ class EE_Calendar_Config_Tooltip  extends EE_Config_Base{
 	public $pos_at_2;
 	public $style;
 	public $show;
+	public $word_count;
 	public function __construct(){
 		$this->show = true;
 		$this->pos_my_1 = 'bottom';
@@ -111,6 +124,7 @@ class EE_Calendar_Config_Tooltip  extends EE_Config_Base{
 		$this->pos_at_1 = 'center';
 		$this->pos_at_2 = 'center';
 		$this->style = 'qtip-light';
+		$this->word_count = 50;
 	}
 }
 class EE_Calendar_Config_Title_Format extends EE_Config_Base{

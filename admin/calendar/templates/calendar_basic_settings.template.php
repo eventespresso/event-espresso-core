@@ -1,3 +1,6 @@
+<?php 
+/* @var $calendar_config EE_Calendar_Config */
+?>
 <div class="padding">
 	<h4>
 		<?php _e('Time/Date Settings', 'event_espresso'); ?>
@@ -11,7 +14,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('show_time', $values, $espresso_calendar['show_time'], 'id="show_time"');?>
+					<?php echo EEH_Form_Fields::select_input('calendar[time][show_time]', $values, $calendar_config->time->show_time, 'id="show_time"');?>
 				</td>
 			</tr>
 			<tr>
@@ -22,7 +25,7 @@
 				</th>
 				<td>
 					<?php
-					$espresso_calendar['time_format'] = empty($espresso_calendar['time_format']) ? get_option('time_format') : $espresso_calendar['time_format'];
+					
 					$time_formats = apply_filters('time_formats', array(
 							__('g:i a'),
 							'ga',
@@ -34,8 +37,8 @@
 					$custom = true;
 
 					foreach ($time_formats as $format) {
-						echo "\t<label title='" . esc_attr($format) . "' style=\"display:inline-block; width:150px; margin-bottom:1em;\" >&nbsp;<input type='radio' name='time_format' value='" . esc_attr($format) . "'";
-						if ($espresso_calendar['time_format'] === $format) {
+						echo "\t<label title='" . esc_attr($format) . "' style=\"display:inline-block; width:150px; margin-bottom:1em;\" >&nbsp;<input type='radio' name='calendar[time][format]' value='" . esc_attr($format) . "'";
+						if ($calendar_config->time->format === $format) {
 							// checked() uses " == " rather than " === "
 							echo " checked='checked'";
 							$custom = false;
@@ -45,10 +48,10 @@
 
 					echo '<div style="display:inline-block; width:230px;"><label style="display:inline-block;">&nbsp;<input type="radio" name="time_format" id="time_format_custom_radio" value="\c\u\s\t\o\m"';
 					checked($custom);
-					echo '/>&nbsp;' . __('Custom:') . '</label>&nbsp;<input type="text" name="time_format_custom" value="' . esc_attr($espresso_calendar['time_format']) . '" class="small-text" /> ';
-					echo '<span class="example"> ' . date_i18n($espresso_calendar['time_format']) . "</span></div>";
+					echo '/>&nbsp;' . __('Custom:') . '</label>&nbsp;<input type="text" name="time_format_custom" value="' . esc_attr($calendar_config->time->format) . '" class="small-text" /> ';
+					echo '<span class="example"> ' . date_i18n($calendar_config->time->format) . "</span></div>";
 					?>
-					<p><span class="description">
+					<p><span class="description">``
 						<a href="http://codex.wordpress.org/Formatting_Date_and_Time">
 							<?php _e('Documentation on date and time formatting', 'event_espresso'); ?>
 						</a>
@@ -75,7 +78,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('firstDay', $days_of_the_week, $espresso_calendar['firstDay'], 'id="firstDay"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[time][first_day]', $days_of_the_week,$calendar_config->time->first_day, 'id="firstDay"'); ?><br />
 					<span class="description">
 						<?php _e('Determines which day will be in the first column of the calendar', 'event_espresso'); ?>
 					</span>
@@ -89,7 +92,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('weekends', $values, $espresso_calendar['weekends'], 'id="weekends"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[time][weekends]', $values,$calendar_config->time->weekends, 'id="weekends"'); ?><br />
 					<span class="description">
 						<?php _e('This setting allows you to remove the weekends from your calendar views. This may be useful if you don\'t have events on weekends.', 'event_espresso'); ?>
 					</span>
@@ -109,7 +112,6 @@
 				array('id'  => 'liquid','text'=> __('liquid: displays 4-6 weeks, fixed height', 'event_espresso')),
 				array('id'  => 'variable','text'=> __('variable: displays 4-6 weeks, variable height', 'event_espresso'))
 			);
-			$espresso_calendar['weekMode'] = isset( $espresso_calendar['weekMode'] ) ? $espresso_calendar['weekMode'] : 'liquid';
 			?>
 			<tr>
 				<th>
@@ -118,7 +120,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('weekMode', $week_modes, $espresso_calendar['weekMode'], 'id="weekMode"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[week_mode]', $week_modes, $calendar_config->week_mode, 'id="weekMode"'); ?><br />
 					<span class="description">
 						<?php _e('Determines the number of weeks displayed in a month view. Also determines each week\'s height.<br/>"fixed" - The calendar will always be 6 weeks tall. The height will always be the same, as determined by the calendar height setting or the aspect ratio.<br/>"liquid" - The calendar will have either 4, 5, or 6 weeks, depending on the month. The height of the weeks will stretch to fill the available height, as determined by the calendar height setting or the aspect ratio.<br/>"variable" - The calendar will have either 4, 5, or 6 weeks, depending on the month. Each week will have the same constant height, meaning the calendar\'s height will change month-to-month.', 'event_espresso'); ?>
 					</span>
@@ -132,24 +134,13 @@
 					</label>
 				</th>
 				<td>
-					<input id="espresso_calendar_height" type="text" name="espresso_calendar_height" size="100" maxlength="100" value="<?php echo $espresso_calendar['espresso_calendar_height']; ?>" />
+					<input id="espresso_calendar_height" type="text" name="calendar[calendar_height]" size="100" maxlength="100" value="<?php echo $calendar_config->calendar_height; ?>" />
 					<br />
 					<span class="description">
 						<?php _e('Will make the entire calendar (including header) a pixel height. Leave blank for an automagical height.', 'event_espresso'); ?>
 					</span>
 				</td>
 			</tr>
-			<!--								<tr>
-			<th> <label for="calendar_pages">
-			<?php _e('Page(s) Displaying the Calendar', 'event_espresso'); ?>
-			</label>
-			</th>
-			<td><input id="calendar_pages" type="text" name="calendar_pages" size="100" maxlength="100" value="<?php echo isset($espresso_calendar['calendar_pages']) && !empty($espresso_calendar['calendar_pages']) ? $espresso_calendar['calendar_pages'] : 0; ?>" />
-			<br />
-			<span class="description">
-			<?php _e('This tells the plugin to load the calendar CSS file on specific pages. This should be a comma separated list of page id\'s. If left to the default of 0, the calendar stylesheet will load on every page of the site. You can find Page ID\'s by going to the WordPress menu Pages > All Pages, and hovering your mouse over the Page title, at the bottom of your browser a small box will appear with some code in it. Where it says post= then a number (post=4), that number is the Page ID. You can improve site performance and reduce conflicts by specifying which page/s have calendars on them.', 'event_espresso'); ?>
-			</span></td>
-			</tr>-->
 			<tr>
 				<th>
 					<label for="enable-calendar-thumbs">
@@ -157,7 +148,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('enable_calendar_thumbs', $values, isset($espresso_calendar['enable_calendar_thumbs']) && !empty($espresso_calendar['enable_calendar_thumbs']) ?  $espresso_calendar['enable_calendar_thumbs']: 0, 'id="enable-calendar-thumbs"'); ?>
+					<?php echo EEH_Form_Fields::select_input('calendar[enable_calendar_thumbs]', $values, $calendar_config->enable_calendar_thumbs, 'id="enable-calendar-thumbs"'); ?>
 					<br />
 					<span class="description">
 						<?php _e('The "Featured Image" box in the event editor handles the thumbnail image URLs for each event. After setting the "Enable Calendar images" option to "Yes" in the calendar settings, upload an event image in the built-in WordPress media uploader, then click the Insert into post button on the media uploader.', 'event_espresso'); ?>
@@ -179,7 +170,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('enable_cat_classes', $values, $espresso_calendar['enable_cat_classes'], 'id="enable-cat-classes"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[enable_cat_classes]', $values,$calendar_config->enable_cat_classes, 'id="enable-cat-classes"'); ?><br />
 					<span class="description">
 						<?php _e('This setting allows you to set each category to display a different color. Set each category color in Event Espresso > Categories.', 'event_espresso'); ?>
 					</span>
@@ -192,7 +183,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('espresso_use_pickers', $values, $espresso_calendar['espresso_use_pickers'], 'id="espresso_use_pickers"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[use_pickers]', $values,$calendar_config->use_pickers, 'id="espresso_use_pickers"'); ?><br />
 					<span class="description">
 						<?php _e('This allows you to customize the event background color and text color.', 'event_espresso'); ?>
 					</span>
@@ -205,7 +196,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="background-color"type="text" name="ee_event_background" <?php echo (isset($espresso_calendar['ee_event_background']) && !empty($espresso_calendar['ee_event_background'])) ? 'value="' . $espresso_calendar['ee_event_background'] . '"' : 'value="#007BAE"' ?> />
+					<input id="background-color"type="text" name="calendar[event_background]" value="#<?php echo $calendar_config->event_background ?>" />
 					<div id="colorpicker-1">
 					</div>
 				</td>
@@ -217,7 +208,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="text-color" type="text" name="ee_event_text_color" <?php echo (isset($espresso_calendar['ee_event_text_color']) && !empty($espresso_calendar['ee_event_text_color'])) ? 'value="' . $espresso_calendar['ee_event_text_color'] . '"' : 'value="#FFFFFF"' ?> />
+					<input id="text-color" type="text" name="calendar[event_text_color]" value="#<?php echo $calendar_config->event_text_color ?>" />
 					<div id="colorpicker-2">
 					</div>
 				</td>
@@ -232,7 +223,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('show_tooltips', $values, $espresso_calendar['show_tooltips'], 'id="show_tooltips"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[tooltip][show]', $values, $calendar_config->tooltip->show, 'id="show_tooltips"'); ?><br />
 					<span class="description">
 						<?php _e('This allows you to display a short description of the event on hover. The "display short descriptions" feature set in Event Espresso>Template settings should be switched on when using this feature. Be sure to use the <code>&lt;!--more--&gt;</code> tag to separate the short description from the entire event description.', 'event_espresso'); ?>
 					</span>
@@ -258,11 +249,11 @@
 				</th>
 				<td>
 					<?php _e('Place Tooltip ', 'event_espresso'); ?>
-					<?php echo EEH_Form_Fields::select_input('tooltips_pos_my_1', $values_1, !empty($espresso_calendar['tooltips_pos_my_1']) ? $espresso_calendar['tooltips_pos_my_1'] : 'bottom', 'id="tooltips_pos_my_1"'); ?>
-					<?php echo EEH_Form_Fields::select_input('tooltips_pos_my_2', $values_2, !empty($espresso_calendar['tooltips_pos_my_2']) ? $espresso_calendar['tooltips_pos_my_2'] : 'center', 'id="tooltips_pos_my_2"'); ?>
+					<?php echo EEH_Form_Fields::select_input('calendar[tooltip[pos_my_1]', $values_1, $calendar_config->tooltip->pos_my_1, 'id="tooltips_pos_my_1"'); ?>
+					<?php echo EEH_Form_Fields::select_input('calendar[tooltip][pos_my_2]', $values_2, $calendar_config->tooltip->pos_my_2, 'id="tooltips_pos_my_2"'); ?>
 					<?php _e('at the Event\'s  ', 'event_espresso'); ?>
-					<?php echo EEH_Form_Fields::select_input('tooltips_pos_at_1', $values_1, !empty($espresso_calendar['tooltips_pos_at_1']) ? $espresso_calendar['tooltips_pos_at_1'] : 'center', 'id="tooltips_pos_at_1"'); ?>
-					<?php echo EEH_Form_Fields::select_input('tooltips_pos_at_2', $values_2, !empty($espresso_calendar['tooltips_pos_at_2']) ? $espresso_calendar['tooltips_pos_at_2'] : 'center', 'id="tooltips_pos_at_2"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[tooltip][pos_at_1]', $values_1, $calendar_config->tooltip->pos_at_1, 'id="tooltips_pos_at_1"'); ?>
+					<?php echo EEH_Form_Fields::select_input('calendar[tooltip][pos_at_2]', $values_2, $calendar_config->tooltip->pos_at_2, 'id="tooltips_pos_at_2"'); ?><br />
 					<span class="description">
 						<?php _e('Default: "Bottom Center" and "Center Center"', 'event_espresso'); ?>
 					</span>
@@ -293,7 +284,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('tooltip_style', $tooltip_style, !empty($espresso_calendar['tooltip_style']) ? $espresso_calendar['tooltip_style'] : 'qtip-light', 'id="tooltip_style"'); ?><br/>
+					<?php echo EEH_Form_Fields::select_input('calendar[tooltip][style]', $tooltip_style, $calendar_config->tooltip->style, 'id="tooltip_style"'); ?><br/>
 					<span class="description">
 						<?php _e('Adds styling to tooltips. Default: light', 'event_espresso'); ?>
 					</span>
@@ -307,7 +298,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="tooltip_word_count" type="text" name="tooltip_word_count" value="<?php echo isset( $espresso_calendar['tooltip_word_count'] ) ? $espresso_calendar['tooltip_word_count'] : 50; ?>" /><br/>
+					<input id="tooltip_word_count" type="text" name="calendar[tooltip][word_count]" value="<?php echo $calendar_config->tooltip->word_count ?>" /><br/>
 					<span class="description">
 						<?php _e('Number of words to show in tooltip event descriptions. Set to "0" for no limit. Default: 50.<br/>Please note that using this feature will strip all formating and images from your tool tip event descriptions.', 'event_espresso'); ?>
 					</span>
