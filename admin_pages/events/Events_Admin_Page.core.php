@@ -228,10 +228,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
-					'event_date_info' => array(
-						'title' => __('Event Date', 'event_espresso'),
-						'filename' => 'default_event_settings'
-					),
 					'ticket_options_info' => array(
 						'title' => __('Ticket Options', 'event_espresso'),
 						'filename' => 'event_editor'
@@ -255,7 +251,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tabs' => array(
 					'default_registration_status_help_tab' => array(
 						'title' => __('Default Registration Status', 'event_espresso'),
-						'callback' => 'default_registration_status_help_tab'
+						'filename' => 'default_event_settings'
 					)
 				),
 				'require_nonce' => FALSE
@@ -304,22 +300,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'require_nonce' => FALSE
 				),
 		);
-	}
-	
-	/**
-	 * 		default_event_settings_help_tab
-	 * 		@access public
-	 * 		@return void
-	 */
-	public function default_event_settings_help_tab($tab_name) {
-		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/default_event_settings.help_tab.php' );
-		$template = call_user_func($tab_name . '_html');
-		EEH_Template::display_template($template, array());
-	}
-
-
-	public function default_registration_status_help_tab() {
-		$this->default_event_settings_help_tab(__FUNCTION__);
 	}
 
 
