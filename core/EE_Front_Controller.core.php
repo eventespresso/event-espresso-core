@@ -348,7 +348,7 @@ final class EE_Front_Controller {
 	 */
 	public function get_request( WP $WP ) {
 //		d( $WP );
-		do_action( 'AHEE__EE_ront_Controller__get_request__before_Request_Handler_loaded' );
+		do_action( 'AHEE__EE_Front_Controller__get_request__before_Request_Handler_loaded' );
 		EE_Registry::instance()->load_core( 'Request_Handler', $WP );	
 		do_action( 'AHEE__EE_Front_Controller__get_request__after_Request_Handler_loaded' );
 	}
