@@ -195,6 +195,7 @@ final class EE_System {
 		// load additional common resources
 		add_action( 'init', array( $this, 'init' ), 3 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
+		do_action( 'AHEE__EE_System__plugins_loaded__end', $this );
 	}
 
 
