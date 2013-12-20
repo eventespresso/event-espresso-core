@@ -303,11 +303,17 @@ span.ui-icon {
 }
 #single-page-checkout .espresso-radio-btn-options-ul, 
 #single-page-checkout .espresso-checkbox-options-ul {
-	display: inline-block;
-	width: 100%;
-	padding: 0 0 0 1em;
+	display: block;
+	width: 95%;
+	padding: 0 0 0 5%;
 	margin: 0;
 	list-style: none inside none;
+}
+#single-page-checkout .espresso-radio-btn-options-ul.requires-value, 
+#single-page-checkout .espresso-checkbox-options-ul.requires-value {
+	width: 90%;
+	padding: 2.5% 5%;
+
 }
 #single-page-checkout .espresso-checkbox-options-ul {
 	margin-top: .5em;
@@ -398,14 +404,17 @@ span.ui-icon {
 .reg-page-form-field-wrap-pg input.small-txt {
 	width:20%;
 }
+.required-text,
 .asterisk, .espresso-form-input-lbl em {
 	font-weight:bold;
-	color:red !important;
+	color:#E34064 !important;
 }
 .requires-value {
-	border-color:red !important;
+	border-style:solid !important;
+	border-color:#E34064 !important;
 	border-width:2px !important;
 }
+
 #spco-copy-attendee-dv {
 	position:relative;
 	padding:1.5em;
