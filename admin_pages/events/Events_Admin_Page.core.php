@@ -312,7 +312,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return void
 	 */
 	public function default_event_settings_help_tab($tab_name) {
-		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/default_event_settings.php' );
+		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/default_event_settings.help_tab.php' );
 		$template = call_user_func($tab_name . '_html');
 		EEH_Template::display_template($template, array());
 	}
@@ -328,7 +328,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return void
 	 */
 	public function event_editor_help_tab($tab_name) {
-		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/event_editor.php' );
+		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/event_editor.help_tab.php' );
 		$template = call_user_func($tab_name . '_html');
 		EEH_Template::display_template($template, array());
 	}
