@@ -626,13 +626,32 @@ a.fc-event.themeroller.ui-widget-header span.fc-event-title, a.fc-event.themerol
 	}
 }
 
-@media only screen and (max-width: 600px) and (min-width: 480px) {
-	
+@media only screen and (max-width: 600px) and (min-width: 481px) {
+
+	#espresso_calendar .fc-header {
+		margin-top: 55px;
+	}
 	#espresso_calendar .fc-header-center {
 		position: absolute;
 		margin: -35px auto 0;
 		text-align: center;
 		width: 50%;
+	}
+	#espresso_calendar .fc-event-title {
+		font-size: 12px;
+	}
+	#espresso_calendar .time-display-block {
+		font-size: 10px;
+	}
+}
+
+@media only screen and (max-width: 540px) and (min-width: 480px) {
+
+	#espresso_calendar .fc-event-title {
+		font-size: 10px;
+	}
+	#espresso_calendar .time-display-block {
+		visibility: hidden;
 	}
 }
 
@@ -641,12 +660,16 @@ a.fc-event.themeroller.ui-widget-header span.fc-event-title, a.fc-event.themerol
 	#espresso_calendar .fc-event-title,
 	#espresso_calendar .time-display-block, 
 	#espresso_calendar .thumb-wrap, 
-	.ui-tooltip-content p:first-child,
+	.ui-tooltip-content p,
 	#espresso_calendar .fc-button-month,
 	#espresso_calendar .fc-button-agendaDay,
 	#espresso_calendar .fc-button-agendaWeek,
 	#espresso_calendar .fc-button-today {
 		display: none;
+	}
+	#espresso_calendar .fc-event {
+		min-height: 3em;
+		max-height: 3em;
 	}
 }
 

@@ -79,12 +79,9 @@ class EE_Calendar_Admin {
 			$api_key = $org_options['site_license_key'];
 			$host_server_url = 'http://eventespresso.com';
 			$plugin_slug = array(
-				// remove following line when releasing this version to stable
-				'premium' => array('BETA' => 'espresso-calendar-pr'),
-				// uncomment following line when releasing this version to stable
-    			// 'premium' => array('p' => 'espresso-calendar'),
-   				'prerelease' => array('BETA' => 'espresso-calendar-pr')
-				);
+				'premium' => array('p' => 'espresso-calendar'),
+				'prerelease' => array('BETA' => 'espresso-calendar-pr')
+			);
 			$options = array(
 				'apikey' => $api_key,
 				'lang_domain' => 'event_espresso',
