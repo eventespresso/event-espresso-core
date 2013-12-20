@@ -207,11 +207,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tabs' => array(
 					'event_date_info' => array(
 						'title' => __('Event Date', 'event_espresso'),
-						'callback' => 'event_date_info_help_tab_html'
+						'callback' => 'event_date_info_help_tab'
 					),
 					'ticket_options_info' => array(
 						'title' => __('Ticket Options', 'event_espresso'),
-						'callback' => 'ticket_options_info_help_tab_html'
+						'callback' => 'ticket_options_info_help_tab'
 					)
 				),
 				'help_tour' => array(
@@ -230,11 +230,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tabs' => array(
 					'event_date_info' => array(
 						'title' => __('Event Date', 'event_espresso'),
-						'callback' => 'event_date_info_help_tab_html'
+						'callback' => 'event_date_info_help_tab'
 					),
 					'ticket_options_info' => array(
 						'title' => __('Ticket Options', 'event_espresso'),
-						'callback' => 'ticket_options_info_help_tab_html'
+						'callback' => 'ticket_options_info_help_tab'
 					)
 				),
 				'help_tour' => array(
