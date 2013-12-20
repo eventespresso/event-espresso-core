@@ -205,10 +205,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
-					'event_date_info' => array(
-						'title' => __('Event Date', 'event_espresso'),
-						'filename' => 'default_event_settings'
-					),
 					'ticket_options_info' => array(
 						'title' => __('Ticket Options', 'event_espresso'),
 						'filename' => 'event_editor'
