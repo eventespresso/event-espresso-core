@@ -15,7 +15,7 @@
 	height:45px;
 }
 #event-editor-floating-save-btns {
-	position:fixed; top:-1px; right:17px;
+	position:fixed; top:-3px; right:22px;
 	padding: 35px 11px 10px 11px;
 	background:rgba(255,230,0,.2);
 	z-index: 1000;
