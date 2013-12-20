@@ -1,9 +1,8 @@
 <?php 
 
-function default_payment_status_help_tab_html() { ?>
+function default_registration_status_help_tab_html() { ?>
 
-	<h2><?php _e('Default Event Settings', 'event_espresso'); ?></h2>
-	<h3><?php _e('Default Payment Status Options', 'event_espresso'); ?></h3>
+	<h3><?php _e('Default Registration Status Options', 'event_espresso'); ?></h3>
 
 	<p>
 		<strong><?php _e('Approved', 'event_espresso'); ?></strong><br />
