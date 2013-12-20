@@ -153,7 +153,7 @@ class EEH_Debug_Tools{
 	 */
 	public function doing_it_wrong( $function, $message, $version ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
-		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s.', 'event_espresso' ), $version );
+		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
 		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ) );
 	}
 	

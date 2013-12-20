@@ -62,7 +62,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			<tr class="tckt-slctr-tbl-tr <?php echo $status_class; ?>">		
 				<td class="tckt-slctr-tbl-td-name">
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
-					<?php if ( $tkt_status > 0 || $max > 0 ) { ?>
 					<a 
 						id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
 						class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text" 
@@ -80,7 +79,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					>
 						<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 					</a>
-				<?php } 
+				<?php
 //echo '<br/><b>$max_atndz : ' . $max_atndz . '</b>';
 //echo '<br/><b>$max : ' . $max . '</b>';
 //echo '<br/><b>$ticket->is_on_sale() : ' . $ticket->is_on_sale() . '</b>';
