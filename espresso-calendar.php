@@ -436,17 +436,20 @@ class EE_Calendar {
 		}
 
 		add_action( 'widgets_init', array( $this, 'widget_init' ));
-		add_action( 'AHEE__EE_System__construct__end',array($this,'EE_System__construct__end'));
-		
+		add_action( 'AHEE__EE_System__construct__autoloaders_available',array($this,'EE_System__construct__autoloaders_available'));
+		do_action( 'AHEE__EE_System__construct__end', array($this,'EE_System__construct__end') );
 	}
 	/**
 	 * Runs initialization stuff for the calendar addon, but doesn't run or enqueue any code
 	 * that assumes we're NOT in maintenance mode. This function is called regardless of 
 	 * whether we're in maintenance mode or not
 	 */
-	public function EE_System__construct__end(){
+	public function EE_System__construct__autoloaders_available(){
 		EEH_Autoloader::instance()->register_autoloader(
 				array('EE_Calendar_Config'=>ESPRESSO_CALENDAR_PLUGINFULLPATH.'EE_Calendar_Config.php'));
+		
+	}
+	public function EE_System__construct__end(){
 		//check that the EE_Calendar_Config is in the main cnofig file
 		$cfg = EE_Config::instance();
 		if(!isset($cfg->addons['calendar'])){
