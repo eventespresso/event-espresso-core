@@ -95,6 +95,19 @@ jQuery(document).ready(function($) {
 	
 });
 
+
+// basic function for removing duplicate content from an array
+function array_unique( array_with_duplicates ) {
+	var unique_array = [];
+	$.each( array_with_duplicates, function( key, value ) {
+		if ( $.inArray( value, unique_array ) == -1 ) {
+			unique_array.push( value );
+		}
+	});
+	return unique_array;
+}
+
+
 function dump(arr,level) {
 	var dumped_text = "";
 	if(!level) level = 0;
