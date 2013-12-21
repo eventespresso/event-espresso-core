@@ -55,7 +55,7 @@ class EE_Question_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[ANSWER]' :
-				return $this->_data->get('ANS_value');
+				return $this->_data->get_pretty('ANS_value');
 				break;
 		}
 		return '';
