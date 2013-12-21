@@ -367,19 +367,23 @@
 }
 
 .tkt-status-0 {
-   border-left: solid 5px #e6e6e6;
+   border-left: solid 5px #e6e6e6; /*archived*/
 }
 
 .tkt-status--1 {
-   border-left: solid 5px #A39D9C;
+   border-left: solid 5px #A39D9C; /*expired*/
 }
 
 .tkt-status-1 {
-    border-left: solid 5px #49afcd;
+    border-left: solid 5px #49afcd; /*pending*/
 }
 
 .tkt-status-2 {
-    border-left: solid 5px #62B660;
+    border-left: solid 5px #62B660; /*onsale*/
+}
+
+.tkt-status--2 {
+    border-left: solid 5px #E44064;
 }
 
 
@@ -489,30 +493,16 @@
 }
 
 .add-new-ticket-table {
-    float: left;
-    width: 75%;
+    width: 100%;
 }
 
 .th-adjust {
     margin-top: 20px;
 }
 
-@media all and (min-width: 960px) and (max-width: 1182px) {
-    .add-new-ticket-table, .datetime-edit-table {
-        width: 100%;
-    }
-    
-    .save-cancel-button-container {
-        margin-top: -10px;
-    }
-    
-    .th-adjust {
-        margin-top: 10px;
-    }
-}
 
 @media all and (max-width: 770px)  {
-    .add-new-ticket-table, .datetime-edit-table, #add-new-event-datetime-table {
+    .datetime-edit-table, #add-new-event-datetime-table {
         width: 100%;
     }
     
@@ -596,5 +586,6 @@
 }
 
 .available-tickets-container .ee-create-ticket-button {
-    margin-top: 10px;
+    margin-top: -20px;
+    float:right;
 }

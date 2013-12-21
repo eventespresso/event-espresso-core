@@ -58,10 +58,10 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = PRICING_LABEL;
 		$this->_labels = array(
 			'buttons' => array(
-				'add' => __('Add New Price', 'event_espresso'),
-				'edit' => __('Edit Price', 'event_espresso'),
-				'delete' => __('Delete Price', 'event_espresso'),
-				'add_type' => __('Add New Price Type', 'event_espresso'),
+				'add' => __('Add New Default Price', 'event_espresso'),
+				'edit' => __('Edit Default Price', 'event_espresso'),
+				'delete' => __('Delete Default Price', 'event_espresso'),
+				'add_type' => __('Add New Default Price Type', 'event_espresso'),
 				'edit_type' => __('Edit Price Type', 'event_espresso'),
 				'delete_type' => __('Delete Price Type', 'event_espresso')
 			)
@@ -197,7 +197,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				),
 			'add_new_price' => array(
 					'nav' => array(
-							'label' => __('Add New Price', 'event_espresso'),
+							'label' => __('Add New Default Price', 'event_espresso'),
 							'order' => 20,
 							'persistent' => FALSE
 						),
@@ -207,7 +207,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				),
 			'edit_price' => array(
 					'nav' => array(
-							'label' => __('Edit Price', 'event_espresso'),
+							'label' => __('Edit Default Price', 'event_espresso'),
 							'order' => 20,
 							'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 							'persistent' => FALSE
@@ -414,7 +414,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _price_overview_list_table() {
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price', 'add', array(), 'add-new-h2');
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
-		$this->_search_btn_label = __('Prices', 'event_espresso');
+		$this->_search_btn_label = __('Default Prices', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -566,7 +566,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_details_meta_boxes() {		
-		add_meta_box( 'edit-price-details-mbox', __( 'Price Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
+		add_meta_box( 'edit-price-details-mbox', __( 'Default Price Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
 	}
 
 

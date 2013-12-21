@@ -101,11 +101,13 @@ final class EE_System {
 		do_action('AHEE__EE_System__construct__begin',$this);
 
 		$this->_load_registry();
+		
+		EE_Registry::instance()->load_helper( 'File' );
+		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		do_action('AHEE__EE_System__construct__autoloaders_available',$this);
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		// setup autoloaders
-		EE_Registry::instance()->load_helper( 'File' );
-		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();

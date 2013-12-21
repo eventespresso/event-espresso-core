@@ -599,11 +599,11 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 .ee-collapsible-open:before {
-    content: "\f142";
+    content: "\f140";
 }
 
 .ee-collapsible-closed:before {
-	content: "\f140";
+	content: "\f139";
 }
 
 

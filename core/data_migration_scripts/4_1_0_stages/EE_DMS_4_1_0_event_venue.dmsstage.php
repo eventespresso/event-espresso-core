@@ -80,8 +80,8 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage{
 			return 0;
 		}
 		$cols_n_values = array(
-			'EVT_ID'=>$new_venue_id,
-			'VNU_ID'=>$new_event_id,
+			'EVT_ID'=>$new_event_id,
+			'VNU_ID'=>$new_venue_id,
 			'EVV_primary'=>true
 		);
 		$datatypes = array(

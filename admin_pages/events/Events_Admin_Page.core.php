@@ -205,10 +205,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
-					'event_date_info' => array(
-						'title' => __('Event Date', 'event_espresso'),
-						'filename' => 'default_event_settings'
-					),
 					'ticket_options_info' => array(
 						'title' => __('Ticket Options', 'event_espresso'),
 						'filename' => 'event_editor'
@@ -228,10 +224,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
-					'event_date_info' => array(
-						'title' => __('Event Date', 'event_espresso'),
-						'filename' => 'default_event_settings'
-					),
 					'ticket_options_info' => array(
 						'title' => __('Ticket Options', 'event_espresso'),
 						'filename' => 'event_editor'
@@ -255,7 +247,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tabs' => array(
 					'default_registration_status_help_tab' => array(
 						'title' => __('Default Registration Status', 'event_espresso'),
-						'callback' => 'default_registration_status_help_tab'
+						'filename' => 'default_event_settings'
 					)
 				),
 				'require_nonce' => FALSE
@@ -267,11 +259,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => false),
 				'help_tabs' => array(
-					'unique_id_help_tab' => array(
-						'title' => __('Unique ID', 'event_espresso'),
-						'callback' => 'unique_id_help_tab'
+					'unique_category_id_help_tab' => array(
+						'title' => __('Unique Category ID', 'event_espresso'),
+						'filename' => 'unique_category_id'
 						)
 					),
+                'help_tour' => array('Event_Add_Category_Help_Tour'),
 				'metaboxes' => array('_publish_post_box'),
 				'require_nonce' => FALSE
 				),
@@ -283,9 +276,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'help_tabs' => array(
-					'unique_id_help_tab' => array(
-						'title' => __('Unique ID', 'event_espresso'),
-						'callback' => 'unique_id_help_tab'
+					'unique_category_id_help_tab' => array(
+						'title' => __('Unique Category ID', 'event_espresso'),
+						'filename' => 'unique_category_id'
 						)
 					),
 				'metaboxes' => array('_publish_post_box'),
@@ -304,22 +297,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'require_nonce' => FALSE
 				),
 		);
-	}
-	
-	/**
-	 * 		default_event_settings_help_tab
-	 * 		@access public
-	 * 		@return void
-	 */
-	public function default_event_settings_help_tab($tab_name) {
-		require_once( EVENTS_TEMPLATE_PATH . 'help_tabs/default_event_settings.help_tab.php' );
-		$template = call_user_func($tab_name . '_html');
-		EEH_Template::display_template($template, array());
-	}
-
-
-	public function default_registration_status_help_tab() {
-		$this->default_event_settings_help_tab(__FUNCTION__);
 	}
 
 
@@ -1728,18 +1705,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_category = new stdClass();
 		$this->_category->id = $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
 	}
-
-
-
-	public function unique_id_help_tab() {
-		?>		
-			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
-			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
-			<p><?php printf( __('The unique ID can also be used in individual pages using the %s shortcode', 'event_espresso'), '[EVENT_ESPRESSO_CATEGORY category_id="category_identifier"]' ); ?>.</p>		
-		<?php
-	}
-
-
 
 
 	protected function _category_list_table() {

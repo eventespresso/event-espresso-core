@@ -1063,6 +1063,13 @@ jQuery(document).ready(function($) {
 				newTKTrow.find('.edit-ticket-TKT_base_price').val($('#default-base-price-amount').text() );
 			}
 
+			//if there no default price modifiers then hide the price-table and show the modifier create button
+			if ( newTKTrow.find('.ticket-price-rows tr').length === 0 ) {
+				//price modifier section
+				newTKTrow.find('.ee-price-create-button').show();
+				newTKTrow.find('.price-table-container').hide();
+			}
+
 			//update totals on the form.
 			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice().finalTotal;
 			newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
@@ -1552,10 +1559,60 @@ jQuery(document).ready(function($) {
 				scrollTop: selector.offset().top - 80
 			}, 2000);
 			return this;
+		},
+
+
+
+		/**
+		 * use to set the ticket status for items
+		 * @return {tktHelper} this obj for chainability
+		 */
+		setTicketStatus: function() {
+			var status = '';
+			var displayrow = $('#display-ticketrow-'+this.ticketRow);
+			var currentstatusitem = displayrow.find('.ee-tkt-status');
+
+			//before we go any further lets make sure the ticket isn't sold out.  IF it is then we don't need to change the status and we can exit gracefully.
+			if ( currentstatusitem.hasClass('tkt-status--2') )
+				return this;
+
+			var tktListItems = $('.datetime-ticket[data-context="datetime-ticket"][data-ticket-row="' + this.ticketRow + '"]');
+
+			var tktStart = $('.edit-ticket-TKT_start_date', displayrow).val();
+			var tktEnd = $('.edit-ticket-TKT_end_date', displayrow).val();
+			
+			var now = moment();
+
+			tktStart = moment(tktStart, 'YYYY-MM-DD h:mm a');
+			tktEnd = moment(tktEnd, 'YYYY-MM-DD h:mm a');
+
+			//now we have moment objects to do some calcs and determine what status we're setting.
+			if ( now.isBefore(tktStart) ) {
+				status = 'tkt-status-1'; //pending
+			} else if ( now.isAfter(tktEnd) ) {
+				status = 'tkt-status--1'; //expired
+			} else if ( now.isAfter(tktStart) && now.isBefore(tktEnd) ) {
+				status = 'tkt-status-2'; //onsale
+			} else {
+				status = 'tkt-status-0'; //archived
+			}
+
+			//we have status so let's set the pip in the display row
+			currentstatusitem.removeClass().addClass('ee-tkt-status ' + status);
+
+			//now let's set the status for all datetime-tickets for this ticket
+			tktListItems.each( function () {
+				//make sure any existing tktStatus classes are remove
+				$(this).removeClass('tkt-status-1');
+				$(this).removeClass('tkt-status--1');
+				$(this).removeClass('tkt-status-2');
+				$(this).removeClass('tkt-status-0');
+
+				//add tktstatus class
+				$(this).addClass(status);
+			});
+			return this;
 		}
-
-
-
 
 	};
 
@@ -1579,10 +1636,10 @@ jQuery(document).ready(function($) {
 				tktHelper.setcontext('datetime-create').DateTimeEditToggle();
 				break;
 			case 'short-ticket' :
-				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow().setCreating();
+				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).newTicketRow().setCreating().setTicketStatus();
 				break;
 			case 'ticket' :
-				tktHelper.setcontext('ticket').newTicketRow().setCreating().TicketEditToggle().scrollTo();
+				tktHelper.setcontext('ticket').newTicketRow().setCreating().setTicketStatus().TicketEditToggle().scrollTo();
 				break;
 			case 'price' :
 				tktHelper.setcontext('price').setitemdata(data).newPriceRow();
@@ -1681,7 +1738,7 @@ jQuery(document).ready(function($) {
 				break;
 			
 			case 'short-ticket' :
-				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').TicketEditToggle().scrollTo();
+				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').setTicketStatus().TicketEditToggle().scrollTo();
 				break;
 
 			case 'price' :
@@ -1878,40 +1935,8 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		var status = '';
-		var id = $(this).parents('.ticket-fieldset').attr('id').replace('fieldset-edit-ticketrow-', '');
-		var displayrow = $('#display-ticketrow-'+id);
-		var tktListItems = $('.datetime-ticket[data-context="datetime-ticket"][data-ticket-row="' + id + '"]');
-		var now = moment();
-		var tktStart = moment($(this).parent().parent().find('.edit-ticket-TKT_start_date').val(), 'YYYY-MM-DD h:mm a');
-		var tktEnd = moment($(this).parent().parent().find('.edit-ticket-TKT_end_date').val(), 'YYYY-MM-DD h:mm a');
-
-		//now we have moment objects to do some calcs and determine what status we're setting.
-		if ( now.isBefore(tktStart) ) {
-			status = 'tkt-status-1';
-		} else if ( now.isAfter(tktEnd) ) {
-			status = 'tkt-status--1';
-		} else if ( now.isAfter(tktStart) && now.isBefore(tktEnd) ) {
-			status = 'tkt-status-2';
-		} else {
-			status = 'tkt-status-0';
-		}
-
-		//we have status so let's set the pip in the display row
-		displayrow.find('.ee-tkt-status').removeClass().addClass('ee-tkt-status ' + status);
-
-		//now let's set the status for all datetime-tickets for this ticket
-		tktListItems.each( function () {
-			//make sure any existing tktStatus classes are remove
-			$(this).removeClass('tkt-status-1');
-			$(this).removeClass('tkt-status--1');
-			$(this).removeClass('tkt-status-2');
-			$(this).removeClass('tkt-status-0');
-
-			//add tktstatus class
-			$(this).addClass(status);
-		});
-
+		var id = $(this).parents('.ticket-row').attr('id').replace('display-ticketrow-', '');
+		tktHelper.setticketRow(id).setTicketStatus();
 	});
 
 
