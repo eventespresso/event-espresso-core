@@ -729,7 +729,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),
 			'TKT_is_default_selector' => '',
 			'ticket_price_rows' => '',
-			'TKT_base_price' => $default || ! $base_price instanceof EE_Price ? '' : $base_price->get('PRC_amount'),
+			'TKT_base_price' => $default || ! $base_price instanceof EE_Price ? '' : $base_price->get_pretty('PRC_amount', 'localized_float'),
 			'TKT_base_price_ID' => $default || ! $base_price instanceof EE_Price ? 0 : $base_price->ID(),
 			'show_price_modifier' => count($prices) > 1 || ( $default && $count_price_mods > 1 ) ? '' : ' style="display:none;"',
 			'show_price_mod_button' => count($prices) > 1 || ( $default && $count_price_mods > 1 ) || ( !$default && $ticket->get('TKT_deleted') ) ? ' style="display:none;"' : '',
@@ -842,7 +842,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'show_plus' => $default && empty( $price ) ? ' style="display:none;"' : ( $price->is_discount() || $price->is_base_price() ? ' style="display:none;"' : ''),
 			'show_minus' => $default && empty( $price ) ? ' style="display:none;"' : ($price->is_discount() ? '' : ' style="display:none;"'),
 			'show_currency_symbol' => $default && empty( $price ) ? ' style="display:none"' : ($price->is_percent() ? ' style="display:none"' : '' ),
-			'PRC_amount' => $default && empty( $price ) ? 0 : $price->get('PRC_amount'),
+			'PRC_amount' => $default && empty( $price ) ? 0 : $price->get_pretty('PRC_amount', 'localized_float'),
 			'show_percentage' => $default && empty( $price ) ? ' style="display:none;"' : ( $price->is_percent() ? '' : ' style="display:none;"' ),
 			'show_trash_icon' => $show_trash ? '' : ' style="display:none;"',
 			'show_create_button' => $show_create ? '' : ' style="display:none;"',
@@ -974,7 +974,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$prcrow = 1;
 		foreach ( $default_prices as $price ) {
 			if ( $price->is_base_price() ) {
-				$template_args['default_base_price_amount'] = $price->get('PRC_amount');
+				$template_args['default_base_price_amount'] = $price->get_pretty('PRC_amount', 'localized_float');
 				$template_args['default_base_price_name'] = $price->get('PRC_name');
 				$template_args['default_base_price_description'] = $price->get('PRC_desc');
 				$prcrow++;
