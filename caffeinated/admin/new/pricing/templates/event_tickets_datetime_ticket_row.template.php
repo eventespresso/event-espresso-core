@@ -28,9 +28,9 @@
 				<table class="basic-ticket-info">
 					<thead>
 						<tr valign="bottom">
-							<td><?php _e('#Uses', 'event_espresso'); ?></td>
-							<td><?php _e('Min', 'event_espresso'); ?></td>
-							<td><?php _e('Max', 'event_espresso'); ?></td>
+							<td><?php _e('# Datetimes', 'event_espresso'); ?></td>
+							<td><?php _e('Minimum Quantity', 'event_espresso'); ?></td>
+							<td><?php _e('Maximum Quantity', 'event_espresso'); ?></td>
 						</tr>
 					</thead>
 					<tbody>
@@ -43,7 +43,7 @@
 				</table>
 			</div>
 			<button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button" data-ticket-row="<?php echo $tkt_row; ?>"<?php echo $show_price_mod_button; ?>>
-					<?php _e('Add Modifier', 'event_espresso'); ?>
+					<?php _e('Add Price Modifier', 'event_espresso'); ?>
 			</button>
 			<div class="price-table-container"<?php echo $show_price_modifier; ?>>
 				<h5 class="tickets-heading"><?php _e('Price Modifiers', 'event_espresso'); ?></h5>
@@ -96,7 +96,7 @@
 			</div>
 			<div style="clear:both"></div>
 			<h5 class="tickets-heading"><?php _e('Event Datetimes', 'event_espresso'); ?></h5>
-			<p><?php _e('This ticket will be usable (allow entrance) for the following selected event datetimes (click to select):', 'event_espresso'); ?></p>
+			<p><?php _e('This ticket will be usable (allow entrance) for the following selected event datetimes (click to select).  The "# Datetimes" amount (above)indicates how many of the assigned datetimes the ticket holder can gain access to:', 'event_espresso'); ?></p>
 			<ul class="datetime-tickets-list">
 				<?php echo $ticket_datetimes_list; ?>
 			</ul>
