@@ -47,8 +47,11 @@
 	
 	<div class="available-tickets-container">
 		<h4 class="event-tickets-datetimes-title"><span data-target=".event-tickets-container" class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><?php _e('Available Tickets', 'event_espresso'); ?></span></h4>
+		<div class="event-tickets-container ee-create-ticket-button"<?php echo $show_tickets_container; ?>>
+			<button class="ee-create-ticket-button button-secondary ee-create-button" data-context="ticket"><?php _e('Create Ticket', 'event_espresso'); ?></button>
+		</div>
+		<div style="clear:both"></div>
 		<div class="event-tickets-container"<?php echo $show_tickets_container; ?>>
-			<div class="save-cancel-button-container"<?php echo $show_tickets_container; ?>><button class="ee-create-ticket-button button-secondary ee-create-button" data-context="ticket"><?php _e('Create Ticket', 'event_espresso'); ?></button></div>
 			<table class="ticket-table">
 				<thead>
 					<tr valign="top">
