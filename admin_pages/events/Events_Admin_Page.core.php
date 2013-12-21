@@ -264,6 +264,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'callback' => 'unique_id_help_tab'
 						)
 					),
+                'help_tour' => array('Event_Add_Category_Help_Tour'),
 				'metaboxes' => array('_publish_post_box'),
 				'require_nonce' => FALSE
 				),
