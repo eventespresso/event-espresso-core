@@ -367,19 +367,23 @@
 }
 
 .tkt-status-0 {
-   border-left: solid 5px #e6e6e6;
+   border-left: solid 5px #e6e6e6; /*archived*/
 }
 
 .tkt-status--1 {
-   border-left: solid 5px #A39D9C;
+   border-left: solid 5px #A39D9C; /*expired*/
 }
 
 .tkt-status-1 {
-    border-left: solid 5px #49afcd;
+    border-left: solid 5px #49afcd; /*pending*/
 }
 
 .tkt-status-2 {
-    border-left: solid 5px #62B660;
+    border-left: solid 5px #62B660; /*onsale*/
+}
+
+.tkt-status--2 {
+    border-left: solid 5px #E44064;
 }
 
 
