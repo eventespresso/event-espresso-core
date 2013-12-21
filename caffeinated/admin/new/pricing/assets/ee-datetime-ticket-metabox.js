@@ -661,7 +661,7 @@ jQuery(document).ready(function($) {
 			});
 
 			this.context = 'datetime';
-			this.DateTimeEditToggle();
+			//this.DateTimeEditToggle();
 			return this;
 		},
 
@@ -1678,7 +1678,7 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		tktHelper.updateDTTrow(data.datetimeRow);
-	});
+	});/**/
 
 
 	/**
