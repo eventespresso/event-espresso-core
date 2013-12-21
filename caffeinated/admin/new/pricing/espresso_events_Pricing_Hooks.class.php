@@ -721,7 +721,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_qty' => $default ? '' : $ticket->get_pretty('TKT_qty','symbol'),
 			'TKT_qty_for_input'=> $default ? '' : $ticket->get_pretty('TKT_qty','input'),
 			'TKT_uses' => $default ? '' : $ticket->get_pretty('TKT_uses','input'),
-			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 ? '' : $ticket->get('TKT_min') ),
+			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 || $ticket->get('TKT_min') === 0 ? '' : $ticket->get('TKT_min') ),
 			'TKT_max' => $default ? '' :  $ticket->get_pretty('TKT_max','input'),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
