@@ -633,7 +633,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
-			'edit_dtt_expanded' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
+			'edit_dtt_expanded' => '',//$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
 			'DTT_ID' => $default ? '' : $dtt->ID(),
 			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
@@ -655,7 +655,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'datetime_tickets_list' => $default ? '<li class="hidden"></li>' : '',
-			'show_tickets_row' => $default || $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' style="display:none;"' : '',
+			'show_tickets_row' => ' style="display:none;"', //$default || $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' style="display:none;"' : '',
 			'add_new_datetime_ticket_help_link' => EEH_Template::get_help_tab_link('add_new_ticket_via_datetime', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add this help info id to the Events_Admin_Page core file so we can access it here.
 			);
 
@@ -709,8 +709,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 			'tkt_status_class' => $default ? '' : ' tkt-status-' . $ticket->ticket_status(),
-			'display_edit_tkt_row' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 || $default ? ' style="display:none"' : '',
-			'edit_tkt_expanded' => $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
+			'display_edit_tkt_row' => ' style="display:none;"', //$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 || $default ? ' style="display:none"' : '',
+			'edit_tkt_expanded' => '', //$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
 			'edit_tickets_name' => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_name' => $default ? '' : $ticket->get('TKT_name'),
 			'TKT_start_date' => $default ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
