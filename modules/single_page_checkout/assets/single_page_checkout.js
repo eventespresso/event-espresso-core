@@ -14,6 +14,9 @@
 			changeYear: true
 		});
 	}
+	
+	var multi_inputs_that_do_not_require_values = [];
+	
 	// to internationalize the datepicker, copy the following to somewhere safe, then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key. 
 	// Multiple languages can be added this way
 //	$.datepicker.regional['fr_FR'] = {
@@ -65,7 +68,7 @@
 	*/
 	$('#spco-copy-all-attendee-chk').on( 'click', function() {
 		$('.spco-copy-attendee-chk').each(function(index) {
-			if ( $(this).prop('checked') != $('#spco-copy-all-attendee-chk').prop('checked') ) {
+			if ( $('#spco-copy-all-attendee-chk').prop('checked') && $(this).prop('checked') != $('#spco-copy-all-attendee-chk').prop('checked') ) {
 				$(this).trigger('click');
 			}
 		});
@@ -80,15 +83,15 @@
 	
 	// in
 	$('.spco-copy-attendee-chk').on( 'click', function() {
-		// array of input fields that require validation
-		var requires_validation = new Array; 
+		// array of input fields that require values
+		var require_values = [];  
 		// the checkbox that was clicked
 		var clicked_checkbox = $(this);
 		
 		// the primary attendee question group
 		var prmry_att_qstn_grp = $('#primary-attendee').val();
-//		console.log(' ');
-//		console.log( JSON.stringify( 'prmry_att_qstn_grp: ' + prmry_att_qstn_grp, null, 4 ));
+		console.log(' ');
+		console.log( JSON.stringify( 'prmry_att_qstn_grp: ' + prmry_att_qstn_grp, null, 4 ));
 		// find all of the primaray attendee's questions for this event
 		var prmry_att_questions = $( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find(':input');	
 //		$( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');
@@ -96,7 +99,7 @@
 
 		// the targeted attendee question group
 		var trgt_att_input = $(this).val();
-//		console.log( JSON.stringify( 'trgt_att_input: ' + trgt_att_input, null, 4 ));
+		console.log( JSON.stringify( 'trgt_att_input: ' + trgt_att_input, null, 4 ));
 		
 		// set some empty vars (and reset when we loop back)
 		var input_id = '';
@@ -108,155 +111,193 @@
 		$( prmry_att_questions ).each(function(index) {
 		
 			input_id = $(this).attr('id');		
-//			console.log(' ');
-//			console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
+			console.log(' ');
+			console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
 			
 			if ( input_id != undefined ) {
-				// split the above var
-				var input_id_array =  input_id.split('-');
-//				console.log( JSON.stringify( 'input_id_array: ' + input_id_array, null, 4 ));
-	
-				// grab the current input's details
-				var att_nmbr = input_id_array[0];		 
-				var line_item_id = input_id_array[1];		 
-				var input_name = input_id_array[2];	
-				var answer_id = input_id_array[3];
-				// and get the input type
-				input_type = get_input_type( $(this) );
-				
-//				if ( eei18n.wp_debug == 1 ) {
-//					console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
-//				}
+
+				// get the input type
+				input_type = $(this).inputType();
 				
 				// form inputs whose values are obtained using .val()
 				var uses_val = [ 'text', 'textarea', 'select-one', 'select-multiple' ];
+				console.log( JSON.stringify( 'uses_val: ' + dump( uses_val ), null, 4 ));
 				// form inputs whose values are obtained using .prop()
 				var uses_prop = [ 'checkbox', 'radio' ];
 				// hope for the best
 				var copy = true;
 				// is this input a single ?
 				if ( $.inArray( input_type, uses_val ) > -1 ) {
-//					console.log( JSON.stringify( input_type + ' uses_val' , null, 4 ));
+					console.log( JSON.stringify( input_type + ' uses_val' , null, 4 ));
 					// grab it's value
 					input_value = $(this).val();
-//					console.log( JSON.stringify( 'input_value: ' + input_value, null, 4 ));
+					console.log( JSON.stringify( 'input_value: ' + input_value, null, 4 ));
 					// is it required ?				
 					if ( $(this).hasClass( 'required' ) && input_value == '' ) {
 						copy = false;
-//						console.log( JSON.stringify( 'copy: ' + copy, null, 4 ));
+						console.log( JSON.stringify( 'copy: ' + copy, null, 4 ));
 						// find label for this input and grab it's text
 						var lbl_txt = $(this).prev('label').html();
-//						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
+						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
 						// remove "<em>*</em>" from end
 						lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
-//						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
-						$(this).addClass('requires-value');
-						$(this).prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).removeClass('hidden');
-						requires_validation.push( lbl_txt );
+						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
+						set_single_input_requires_value_on( $(this) );
+						require_values.push( lbl_txt );
 					} 
 					
 				// or a multi ?
 				} else if ( $.inArray( input_type, uses_prop ) > -1 ) {
-//					console.log( JSON.stringify( input_type + ' uses_prop' , null, 4 ));
+					console.log( JSON.stringify( input_type + ' uses_prop' , null, 4 ));
 					// grab it's value
 					input_value = $(this).prop('checked');
-//					console.log( JSON.stringify( 'input_value: ' + input_value, null, 4 ));
-					if ( $(this).hasClass( 'required' ) && input_value == false ) {
-						copy = false;
-//						console.log( JSON.stringify( 'copy: ' + copy, null, 4 ));
+					console.log( JSON.stringify( 'input_value: ' + input_value, null, 4 ));
+					if ( $(this).hasClass( 'required' ) && input_value == false ) {						
+						console.log( JSON.stringify( 'copy: ' + copy, null, 4 ));
 						// find label for this input and grab it's text
 						var lbl_txt = $(this).closest('ul').prev('label').html();
-//						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
+						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
 						// remove "<em>*</em>" from end
 						lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
-//						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
-						$(this).closest('ul').addClass('requires-value');
-						$(this).closest('ul').prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).removeClass('hidden');
-						requires_validation.push( lbl_txt );
-					}
-				}	
-				
-			
-				
-				// if the input is required but has not been filled out
-				if ( copy == true ) {  
-/*					console.log( JSON.stringify( 'multi_input: ' + multi_input, null, 4 ));		
-					console.log( JSON.stringify( '', null, 4 ));
-					// is this input part of a group ? ( ie: checkbox or radio )
-					if ( multi_input == true ) {
-//						$(this).parents('ul').addClass('requires-value');
-						alert( '<ul> = ' + $(this).parents('ul').attr('id') );
-					} else {
-						$(this).addClass('requires-value');
-					}
-					
-					
-					// show an error msg
-					error_msg = error_msg + "\n" + lbl_txt + eei18n.required_field;
-					if ( eei18n.wp_debug == 1 ) {
-						error_msg = error_msg + "\n" + '<span class="smaller-text">( spco-copy-attendee-chk )</span>';
-					}
-					// uncheck the checkbox that was clicked
-					$(clicked_checkbox).prop('checked', false);
-					// fill out yer dang form will ya!!!
-//					exit;	*/		
-				
-	
-					new_input_id = '#' + trgt_att_input + '-' +  input_name;
-					if ( answer_id != undefined ) {
-						new_input_id = new_input_id + '-' + answer_id;
-					}
-//					console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
-					
-					if ( $(new_input_id).length > 0 ){
-						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
-//							console.log( JSON.stringify( 'radio: ', null, 4 ));
-							$(new_input_id).prop('checked', true);
-						} else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
-//							console.log( JSON.stringify( 'checkbox: ' , null, 4 ));
-							$(new_input_id).prop('checked', true);
-						} else {
-//							console.log( JSON.stringify( 'other: ', null, 4 ));
-							$(new_input_id).val(input_value);
+						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));						
+						// check that this input doesn't already have another option selected
+						if ( ! _.contains( multi_inputs_that_do_not_require_values, lbl_txt )) {
+							require_values.push( lbl_txt );
+							set_multi_input_requires_value_on( $(this) );
+							copy = false;
 						}						
+					} else {
+						// an option has been selected so this question does not requre a value
+						multi_inputs_that_do_not_require_values.push( lbl_txt );
+						// remove from list of inputs that require values
+						require_values = _.without( require_values, lbl_txt );
+						set_multi_input_requires_value_off( $(this) );
 					}
-	
-//					var billing = '#reg-page-billing-' + input_name;
-//					// copy to billing info
-//					if ( $(billing).val() == '' ) {
-//						$(billing).val(input_value);
-//					}				
-				}
+					console.log( JSON.stringify( 'require_values: ', null, 4 ));
+					dump( require_values );
+					console.log( JSON.stringify( 'multi_inputs_that_do_not_require_values: ', null, 4 ));
+					dump( multi_inputs_that_do_not_require_values );
+				}	
 			}
 
 		});
+		//remove duplicates
+		multi_inputs_that_require_validation = _.unique( multi_inputs_that_require_validation );
+		dump( multi_inputs_that_require_validation );
+		console.log( JSON.stringify( 'multi_inputs_that_require_validation: ' + dump( multi_inputs_that_require_validation ), null, 4 ));
+		
 		// any empty fields that need values ?
-		if ( requires_validation.length !== 0 ) {
+		if ( require_values.length !== 0 ) {
 			error_msg = '';
-			//requires_validation = array_unique( requires_validation );
-			$( requires_validation ).each( function( key, field_name ) {
+			//remove duplicates
+			require_values = _.unique( require_values );
+			$( require_values ).each( function( key, field_name ) {
 				error_msg = error_msg + field_name + eei18n.required_field  + '<br/>';
 			});
 			if ( eei18n.wp_debug == 1 ) {
 				error_msg = error_msg + '<span class="smaller-text">( spco-copy-attendee-chk )</span>';
 			}
+			// uncheck the checkbox that was clicked
+			$(clicked_checkbox).prop('checked', false);
+			// display error_msg				
 			show_event_queue_ajax_error_msg( error_msg );
-		}	
-	});		
+		} else {
+			// for each question in the targeted attendee question group
+			$( prmry_att_questions ).each(function(index) {
+				// here we go again...			
+				input_id = $(this).attr('id');		
+				console.log(' ');
+				console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
+				if ( input_id != undefined ) {
+					// split the above var
+					var input_id_array =  input_id.split('-');
+					console.log( JSON.stringify( 'input_id_array: ' + input_id_array, null, 4 ));
+		
+					// grab the current input's details
+					var att_nmbr = input_id_array[0];		 
+					var line_item_id = input_id_array[1];		 
+					var input_name = input_id_array[2];	
+					var answer_id = input_id_array[3];
+//					// get the input type
+//					input_type = $(this).inputType();
+					
+					if ( eei18n.wp_debug == 1 ) {
+						console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
+					}
+
+					new_input_id = '#' + trgt_att_input + '-' +  input_name;
+					if ( answer_id != undefined ) {
+						new_input_id = new_input_id + '-' + answer_id;
+					}
+					console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
+					
+					if ( $(new_input_id).length > 0 ){
+						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
+							console.log( JSON.stringify( 'radio: ', null, 4 ));
+							$(new_input_id).prop('checked', true);
+						} else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
+							console.log( JSON.stringify( 'checkbox: ' , null, 4 ));
+							$(new_input_id).prop('checked', true);
+						} else {
+							console.log( JSON.stringify( 'other: ', null, 4 ));
+							$(new_input_id).val(input_value);
+						}						
+					}
+
+					var billing = '#reg-page-billing-' + input_name;
+					// copy to billing info
+					if ( $(billing).val() == '' ) {
+						$(billing).val(input_value);
+					}		
+				}
+			});
+		}		
+	});
 
 
 
-	/**
-	*	returns a string indicating the "type of input
-	* 	possible types: 'text', 'textarea', 'select-one', 'select-multiple', 'checkbox', 'radio' 
-	*/	
-	function get_input_type( form_input ) {
-		input_type = $(form_input).attr('type');
-		if ( input_type == undefined ) {
-			input_type = $(this).prop("type");
+	// remove "requires-value" class if field is no longer empty
+	$(':input').change(function() { 
+		input_type = $(this).inputType();
+		if ( input_type == 'checkbox' || input_type ==  'radio' ) {
+			if ( $(this).prop('checked')) {
+				set_multi_input_requires_value_off( $(this) );
+			}
+		} else {
+			if ( $.trim( this.value ) != '' ){
+				set_single_input_requires_value_off( $(this) );
+			}
 		}
-		return input_type;
-	}	
+	});	
+
+
+
+	function set_multi_input_requires_value_off( input ) {
+		$(input).closest('ul').removeClass('requires-value');
+		$(input).closest('ul').prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).addClass('hidden');
+	}
+
+
+
+	function set_multi_input_requires_value_on( input ) {
+		$(input).closest('ul').addClass('requires-value');
+		$(input).closest('ul').prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).removeClass('hidden');
+	}
+
+
+
+	function set_single_input_requires_value_off( input ) {
+		$(input).removeClass('requires-value');
+		$(input).prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).addClass('hidden');
+	}
+
+
+
+	function set_single_input_requires_value_on( input ) {
+		$(input).addClass('requires-value');
+		$(input).prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).removeClass('hidden');
+	}
+
 
 	
 	/**
@@ -313,14 +354,6 @@
 			$('#espresso-ajax-loading').fadeOut('fast');
 		}
 	}
-	
-	// remove "requires-value" class if field is no longer empty
-	$(':input').change(function() {   
-		if ( $.trim(this.value) != '' ){
-			$(this).removeClass('requires-value');
-			$(this).prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).addClass('hidden');
-		}
-	});	
 
 		
 
@@ -774,3 +807,27 @@
 
 })(jQuery);
 
+function dump(arr,level) {
+	var dumped_text = "";
+	if(!level) level = 0;
+	
+	//The padding given at the beginning of the line.
+	var level_padding = "";
+	for(var j=0;j<level+1;j++) level_padding += "    ";
+	
+	if(typeof(arr) == 'object') { //Array/Hashes/Objects
+		for(var item in arr) {
+			var value = arr[item];
+			
+			if(typeof(value) == 'object') { //If it is an array,
+				dumped_text += level_padding + "'" + item + "' ...\n";
+				dumped_text += dump(value,level+1);
+			} else {
+				dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+			}
+		}
+	} else { //Stings/Chars/Numbers etc.
+		dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+	}
+	return dumped_text;
+}
