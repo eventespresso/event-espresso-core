@@ -144,4 +144,5 @@
 		</tbody>
 	</table>
 </div>
+<input type='hidden' name="return_action" value="<?php echo $return_action?>">
 <!-- / .padding -->
