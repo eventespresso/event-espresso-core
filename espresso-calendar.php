@@ -909,7 +909,7 @@ class EE_Calendar {
 	public function __destruct() { return FALSE; }		
 
 }
-EE_Calendar::instance();
+add_action( 'AHEE__EE_System__construct__end', array( 'EE_Calendar','instance' ));
 
 
 
