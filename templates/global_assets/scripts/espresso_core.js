@@ -22,6 +22,18 @@ jQuery(document).ready(function($) {
 		return this;
 	};
 
+	/**
+	*	add jQuery function to return a string indicating the "type of form input
+	* 	possible types: 'text', 'textarea', 'select-one', 'select-multiple', 'checkbox', 'radio' 
+	*/	
+	$.fn.inputType = function () { 
+		input_type = $(this).attr('type');
+		if ( input_type == undefined ) {
+			input_type = $(this).prop("type");
+		}
+		return input_type;
+	}
+
 	$('#espresso-notices').center();
 	$('.espresso-notices').slideDown();
 	$('.espresso-notices.fade-away').delay(10000).slideUp();
@@ -90,14 +102,20 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 	});
+
+
+
 	
 	
 	
 });
 
+ 
 
-// basic function for removing duplicate content from an array
-function array_unique( array_with_duplicates ) {
+/**
+*	basic function for removing duplicate content from an array
+*/	
+/*function espresso_array_unique( array_with_duplicates ) {
 	var unique_array = [];
 	$.each( array_with_duplicates, function( key, value ) {
 		if ( $.inArray( value, unique_array ) == -1 ) {
@@ -105,10 +123,10 @@ function array_unique( array_with_duplicates ) {
 		}
 	});
 	return unique_array;
-}
+}*/
 
 
-function dump(arr,level) {
+/*function dump(arr,level) {
 	var dumped_text = "";
 	if(!level) level = 0;
 	
@@ -131,7 +149,7 @@ function dump(arr,level) {
 		dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
 	}
 	return dumped_text;
-}
+}*/
 
 
 function getFunctionName() {
