@@ -206,7 +206,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<?php if ( $ticket->uses() !== INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) : ?>							
 						<h5><?php _e( 'Event Date Ticket Uses', 'event_espresso' ); ?></h5>
 						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of separate event datetimes (see table above) that this ticket can be used to gain admittance to.<br/> <strong>Admission is always one person per ticket.</strong>', 'event_espresso' ); ?></span><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# of Uses:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# Datetimes:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
 						<?php endif; ?>
 						
 						
