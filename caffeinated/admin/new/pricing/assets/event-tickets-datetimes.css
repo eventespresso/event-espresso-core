@@ -586,5 +586,6 @@
 }
 
 .available-tickets-container .ee-create-ticket-button {
-    margin-top: 10px;
+    margin-top: -20px;
+    float:right;
 }
