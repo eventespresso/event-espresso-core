@@ -1063,6 +1063,13 @@ jQuery(document).ready(function($) {
 				newTKTrow.find('.edit-ticket-TKT_base_price').val($('#default-base-price-amount').text() );
 			}
 
+			//if there no default price modifiers then hide the price-table and show the modifier create button
+			if ( newTKTrow.find('.ticket-price-rows tr').length === 0 ) {
+				//price modifier section
+				newTKTrow.find('.ee-price-create-button').show();
+				newTKTrow.find('.price-table-container').hide();
+			}
+
 			//update totals on the form.
 			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice().finalTotal;
 			newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
