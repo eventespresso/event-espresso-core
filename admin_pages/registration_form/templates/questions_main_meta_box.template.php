@@ -54,7 +54,7 @@ $fields = $question->get_model()->field_settings();
 
 			<tr>
 				<th>
-					<label for="QST_admin_only"><?php echo $fields['QST_admin_only']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_label_info');?>
+					<label for="QST_admin_only"><?php echo $fields['QST_admin_only']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_admin_only_info');?>
 				</th>
 				<td>
 					<?php 

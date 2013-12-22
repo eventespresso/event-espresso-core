@@ -175,6 +175,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 						'title' => __('Question Label', 'event_espresso'),
 						'callback' => 'question_label_info_help_tab'
 						),
+					'question_admin_only_info' => array(
+						'title' => __('Question Admin Only', 'event_espresso'),
+						'filename' => 'question_admin_only'
+						),
 					'question_type_info' => array(
 						'title' => __('Question Type', 'event_espresso'),
 						'callback' => 'question_type_info_help_tab'
