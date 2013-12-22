@@ -662,6 +662,11 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					$ticket->set('TKT_description', $PR->get('PRC_desc'));
 					$ticket->save();
 				}
+			} else {
+				//we make sure this price is attached to base ticket.
+				$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
+				$ticket->_add_relation_to( $PRC_ID, 'Price' );
+				$ticket->save();
 			}
 
 			$action_desc = 'updated';
