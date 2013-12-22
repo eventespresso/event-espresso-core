@@ -200,7 +200,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	
 	public function column_venue($item) {
 		$venue = $item->get_first_related( 'Venue' );
-		return !empty( $venue ) ? $venue->name() : __('No Venue attached', 'event_espresso');
+		return !empty( $venue ) ? $venue->name() : '';
 	}
 
 
