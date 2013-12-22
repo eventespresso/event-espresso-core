@@ -51,6 +51,30 @@ $fields = $question->get_model()->field_settings();
 					</p>					
 				</td>
 			</tr>
+
+			<tr>
+				<th>
+					<label for="QST_admin_only"><?php echo $fields['QST_admin_only']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_label_info');?>
+				</th>
+				<td>
+					<?php 
+						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
+						$id =  ! empty( $QST_system ) ? '_disabled' : '';
+						$admin_only = $question->get('QST_admin_only');
+						$checked = !empty( $admin_only ) ? ' checked="checked"' : '';
+					?>
+					<input type="checkbox" id="QST_admin_only<?php echo $id; ?>" name = "QST_admin_only<?php echo $id; ?>" value="1"<?php echo $disabled; echo $checked; ?>/>
+					<br/>
+					<p class="description">
+					<?php if ( ! empty( $QST_system )) { ?>
+					<span class="description" style="color:#D54E21;">
+						<?php _e('System question! This field cannot be changed.','event_espresso')?>
+					</span>
+					<?php } ?>
+						
+					</p>					
+				</td>
+			</tr>
 			
 			<tr>
 				<th>

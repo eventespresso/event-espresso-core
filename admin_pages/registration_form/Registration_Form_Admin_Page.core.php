@@ -348,10 +348,18 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$QST_text = isset( $this->_req_data['QST_display_text'] ) ? $this->_req_data['QST_display_text'] : '' ;
 				$set_column_values[$fieldName] = sanitize_title(wp_trim_words($QST_text,10));
 			}
+
+
+			else if ( $fieldName == 'QST_admin_only' && ( !isset( $this->_req_data['QST_admin_only'] ) ) ) {
+				$set_column_values[$fieldName] = 0;
+			}
+
+
 			//only add a property to the array if it's not null (otherwise the model should just use the defautl value)
 			else if(isset($this->_req_data[$fieldName])){
 				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
 			}
+
 		}
 		return $set_column_values;//validation fo this data to be performed by the model before insertion.
 	}
