@@ -25,6 +25,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	
 	/**
+	 * Datetime is cancelled
+	 */
+	const cancelled = -3;
+	/**
 	 * constant used by get_active_status, indicates datetime has no more available spaces
 	 */
 	const sold_out = -2;
@@ -44,6 +48,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
 	 */
 	const active = 2;
+	/**
+	 * Datetime is postponed
+	 */
+	const postponed = 3;
 	
     /**
     *	Datetime ID

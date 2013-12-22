@@ -222,16 +222,15 @@
    	border-radius: 3px;
    	color: white;
    	font-size: 10px;
+	width: 52px;
    	text-decoration: none;
    	font-weight: 500;
-   	width:50px;
    	text-align: center;
    }
 
-.ee-status.sold-out { background-color: #E44064; }
+.ee-status.sold-out, .ee-status.cancelled, .ee-status.inactive{ background-color: #E44064; }
 .ee-status.expired { background-color: #A39D9C; }
-.ee-status.inactive { background-color: #E44064; }
-.ee-status.upcoming { background-color: #00B1CA; }
+.ee-status.upcoming, .ee-status.postponed { background-color: #00B1CA; }
 .ee-status.active { background-color: #70CC50; }
 
 
@@ -240,6 +239,6 @@
 }
 
 #espresso_event_editor_event_options label {
-	width: 75%;
+	width: 73%;
 	display: inline-block;
 }
