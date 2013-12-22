@@ -192,12 +192,21 @@
 	float: none;
 }
 
-.admin-country {
-	width: 100%;
-	overflow: wrap;
-}
+
 
 .espresso-question-group-wrap table th {
 	width: inherit;
 	min-width: 200px;
+}
+
+#attendee_details_address label.espresso-form-input-lbl {
+	display: block;
+}
+
+#attendee_details_address input.all-options {
+	width: 100%;
+}
+
+#attendee_details_address #ATT_zip {
+	width: 10%;
 }
