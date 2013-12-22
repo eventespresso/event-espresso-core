@@ -31,3 +31,19 @@
 table.question-options-table td, table.question-options-table th{
 	padding:1em 10px 0 3px; line-height: 1em;
 }
+
+table.question-options-table{
+	width: 100%;
+}
+
+table.question-options-table .regular-text {
+	width: 100%;
+}
+
+table.question-options-table td:first-child, table.question-options-table td:nth-child(2) {
+	width: 45%;
+}
+
+table.question-options-table td:last-child {
+	width: 10%;
+}
