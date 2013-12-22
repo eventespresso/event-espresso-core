@@ -48,7 +48,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_ID'=> new EE_Primary_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso')),
 				'TTM_ID'=>new EE_Foreign_Key_Int_Field('TTM_ID', __('Ticket Template ID','event_espresso'), false, 0, 'Ticket_Template'),
 				'TKT_name'=>new EE_Plain_Text_Field('TKT_name', __('Ticket Name', 'event_espresso'), false, ''),
-				'TKT_description'=>new EE_Plain_Text_Field('TKT_description', __('Description of Ticket', 'event_espresso'), false, '' ),
+				'TKT_description'=>new EE_Full_HTML_Field('TKT_description', __('Description of Ticket', 'event_espresso'), false, '' ),
 				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'TKT_min'=>new EE_Integer_Field('TKT_min', __('Minimum quantity of this ticket that must be purchased', 'event_espresso'), false, 0 ),
