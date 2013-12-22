@@ -864,7 +864,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function modify_delete_post_link( $delete_link, $post_id, $force_delete ) {
 		$post = get_post($post_id);
-		if ( !isset( $this->_req_data['action'] ) || $post->post_type !== $this->_cpt_routes[$this->_req_data['action']] )
+		if ( !isset( $this->_req_data['action'] ) || ( isset( $this->_cpt_routes[$this->_req_data['action']] ) && $post->post_type !== $this->_cpt_routes[$this->_req_data['action']] ) )
 			return $delete_link;
 
 		return add_query_arg( array('current_route' => 'trash' ), $delete_link );
