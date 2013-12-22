@@ -2290,7 +2290,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		add_meta_box('commentsdiv', __('Notes on the Contact', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		add_meta_box('attendee_contact_info', __('Contact Info', 'event_espresso'), array( $this, 'attendee_contact_info'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
 		add_meta_box('attendee_details_address', __('Address Details', 'event_espresso'), array($this, 'attendee_address_details'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
-		add_meta_box('attendee_notes_comments', __('Alternative Notes/Comments', 'event_espresso'), array( $this, 'attendee_old_notes_comments'), $this->_cpt_routes[$this->_req_action], 'side', 'core');
 		add_meta_box('attendee_registrations', __('Registrations for this Contact', 'event_espresso'), array( $this, 'attendee_registrations_meta_box'), $this->_cpt_routes[$this->_req_action], 'normal', 'high');
 	}
 
@@ -2307,13 +2306,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		EEH_Template::display_template($template, $this->_template_args);
 	}
 
-
-
-	public function attendee_old_notes_comments( $post ) {
-		$this->_template_args['attendee'] = $this->_cpt_model_obj;
-		$template = REG_TEMPLATE_PATH . 'attendee_old_notes_comments_metabox_content.template.php';
-		EEH_Template::display_template($template, $this->_template_args);
-	}
 
 
 	/**
