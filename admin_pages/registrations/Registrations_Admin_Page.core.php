@@ -1348,6 +1348,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( __('An error occured. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$success = TRUE;
+		$registration = NULL;
 		// grab values for fname, lname, and email from qstns
 		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? array_shift( array_values( $qstns['fname'] )) : FALSE;
 		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? array_shift( array_values( $qstns['lname'] )) : FALSE;
@@ -1436,19 +1437,54 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				}
 			}
 		}
+
 //		echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 //		var_dump( $attendee->ID() );
 		// allow others to get in on this awesome fun   :D
 		do_action( 'AHEE_save_attendee_registration_form', $registration, $qstns );
 		// loop thru questions... FINALLY!!!
+
 		foreach ( $qstns as $QST_ID => $qstn ) {
+			//if $qstn isn't an array then it doesnt' already have an answer, so let's create the answer
+			if ( !is_array($qstn) ) {
+				$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
+				continue;
+			}
+
+
 			foreach ( $qstn as $ANS_ID => $ANS_value ) {
 				//get answer 
-				$answer = EEM_Answer::instance()->get_one_by_ID($ANS_ID);
+				$query_params = array(
+					0 => array(
+						'ANS_ID' => $ANS_ID,
+						'REG_ID' => $REG_ID,
+						'QST_ID' => $QST_ID
+						)
+					);
+				$answer = EEM_Answer::instance()->get_one($query_params);
+				//this MAY be an array but NOT have an answer because its multi select.  If so then we need to create the answer
+				if ( ! $answer instanceof EE_Answer ) {
+					$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
+					continue 2;
+				}
+
 				$answer->set('ANS_value', $ANS_value);
 				$success = $answer->save();
 			}
 		}
+
+		return $success;
+	}
+
+
+	//TODO: try changing this to use the model directly... not indirectly through creating a default object...
+	private function _save_new_answer( $REG_ID, $QST_ID, $ans ) {
+		$set_values = array(
+			'QST_ID' => $QST_ID,
+			'REG_ID' => $REG_ID,
+			'ANS_value' => $ans
+			);
+		$success = EEM_Answer::instance()->insert($set_values);
 		return $success;
 	}
 
