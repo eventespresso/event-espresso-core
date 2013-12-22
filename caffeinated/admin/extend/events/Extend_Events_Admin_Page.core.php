@@ -449,7 +449,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$default_reg_status_values = EEM_Registration::reg_status_array();
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
-		$template_args['additional_limit'] = (int) $this->_cpt_model_obj->additional_limit() < 1 ? 1 : $this->_cpt_model_obj->additional_limit();
+		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
