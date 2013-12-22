@@ -345,8 +345,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('espresso_txn');	
 
 		;
-		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['txn_status_array'] = self::$_txn_status;
 		EE_Registry::$i18n_js_strings['pay_status_array'] = self::$_pay_status;
 
@@ -406,7 +406,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
 
 	 	if ( empty( $this->_transaction ) ) {
-	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
+	    	$error_msg = __('An error occurred and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 	    }
 	}
@@ -845,7 +845,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				)
 			);
 			if( ! $payment->save() ){
-				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );
+				$msg = __( 'An error occurred. The payment has not been processed succesfully.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			//update the transaction with this payment
@@ -853,7 +853,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$msg =__('The payment has been processed succesfully.', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}else{
-				$msg = __( 'An error occured. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
+				$msg = __( 'An error occurred. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			
@@ -881,7 +881,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_process_payment_notification( $payment );
 
 		} else {
-			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
+			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		
@@ -918,7 +918,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				}						
 			}
 		} else {
-			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
+			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 			$return_data = FALSE;	
 		}

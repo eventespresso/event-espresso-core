@@ -501,7 +501,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$success = FALSE;
 		}
 		
-		$errors = ! $success ? __( 'An error occured. The question order was not updated.', 'event_espresso' ) : FALSE;
+		$errors = ! $success ? __( 'An error occurred. The question order was not updated.', 'event_espresso' ) : FALSE;
 		
 		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();
@@ -745,7 +745,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$success = FALSE;
 		}
 		
-		$errors = ! $success ? __( 'An error occured. The question group order was not updated.', 'event_espresso' ) : FALSE;
+		$errors = ! $success ? __( 'An error occurred. The question group order was not updated.', 'event_espresso' ) : FALSE;
 		
 		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();

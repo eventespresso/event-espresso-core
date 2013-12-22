@@ -504,8 +504,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style( 'organization-css' );
 
 		global $eei18n_js_strings;
-		$eei18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
 		$eei18n_js_strings['confirm_delete_state'] = __(  'Are you sure you want to delete this State / Province?', 'event_espresso' );
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		$eei18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php?page=espresso_general_settings' , $protocol );
@@ -940,17 +940,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		$CNT_ISO = isset( $this->_req_data['CNT_ISO'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
-			EE_Error::add_error( __( 'An error occured. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 		$STA_abbrev = isset( $this->_req_data['STA_abbrev'] ) ? strtoupper( sanitize_text_field( $this->_req_data['STA_abbrev'] )) : FALSE;		
 		if ( ! $STA_abbrev ) {
-			EE_Error::add_error( __( 'An error occured. No State ISO code or an invalid State ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No State ISO code or an invalid State ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 		$STA_name = isset( $this->_req_data['STA_name'] ) ? ucwords( strtolower( sanitize_text_field( $this->_req_data['STA_name'] ))) : FALSE;
 		if ( ! $STA_name ) {
-			EE_Error::add_error( __( 'An error occured. No State name or an invalid State name was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No State name or an invalid State name was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 		
@@ -984,7 +984,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function delete_state() {
 		$STA_ID = isset( $this->_req_data['STA_ID'] ) ? sanitize_text_field( $this->_req_data['STA_ID'] ) : FALSE;
 		if ( ! $STA_ID ) {
-			EE_Error::add_error( __( 'An error occured. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$success = EEM_State::instance()->delete_by_ID( $STA_ID );
@@ -1012,7 +1012,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		// grab the country ISO code
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
-			EE_Error::add_error( __( 'An error occured. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$success = TRUE;

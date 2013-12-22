@@ -1298,12 +1298,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$success = $this->_change_event_status($EVT_ID, $event_status);
 			} else {
 				$success = FALSE;
-				$msg = __('An error occured. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
+				$msg = __('An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		} else {
 			$success = FALSE;
-			$msg = __('An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
+			$msg = __('An error occurred. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
@@ -1333,14 +1333,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					$results = $this->_change_event_status($EVT_ID, $event_status);
 					$success = $results !== FALSE ? $success : FALSE;
 				} else {
-					$msg = sprintf(__('An error occured. Event #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $EVT_ID);
+					$msg = sprintf(__('An error occurred. Event #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $EVT_ID);
 					EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 					$success = FALSE;
 				}
 			}
 		} else {
 			$success = FALSE;
-			$msg = __('An error occured. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
+			$msg = __('An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		// in order to force a pluralized result message we need to send back a success status greater than 1
@@ -1361,7 +1361,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _change_event_status($EVT_ID = FALSE, $event_status = FALSE) {
 		// grab event id
 		if (!$EVT_ID) {
-			$msg = __('An error occured. No Event ID or an invalid Event ID was received.', 'event_espresso');
+			$msg = __('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1372,7 +1372,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_status = sanitize_key($event_status);
 		// grab status
 		if (empty($event_status)) {
-			$msg = __('An error occured. No Event Status or an invalid Event Status was received.', 'event_espresso');
+			$msg = __('An error occurred. No Event Status or an invalid Event Status was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1396,7 +1396,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$success = $this->_cpt_model_obj->save();
 		
 		if ($success === FALSE) {
-			$msg = sprintf(__('An error occured. The event could not be %s.', 'event_espresso'), $action);
+			$msg = sprintf(__('An error occurred. The event could not be %s.', 'event_espresso'), $action);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1430,7 +1430,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			update_option('espresso_no_ticket_prices', $espresso_no_ticket_prices);
 		} else {
 			$success = FALSE;
-			$msg = __('An error occured. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
+			$msg = __('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 
@@ -1461,7 +1461,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				}
 			} else {
 				$succes = FALSE;
-				$msg = __('An error occured. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
+				$msg = __('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		}
@@ -1481,7 +1481,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _permanently_delete_event($EVT_ID = FALSE) {
 		// grab event id
 		if (!$EVT_ID = absint($EVT_ID)) {
-			$msg = __('An error occured. No Event ID or an invalid Event ID was received.', 'event_espresso');
+			$msg = __('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1543,7 +1543,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$msg = sprintf(__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
 			EE_Error::add_success($msg);
 		} else {
-			$msg = sprintf(__('An error occured. Event ID # %d could not be deleted.', 'event_espresso'), $EVT_ID);
+			$msg = sprintf(__('An error occurred. Event ID # %d could not be deleted.', 'event_espresso'), $EVT_ID);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1820,7 +1820,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
-			$msg = __( 'An error occured and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
+			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];

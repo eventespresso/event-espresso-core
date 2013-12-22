@@ -171,7 +171,7 @@ class Page_Frame_Decorator extends Frame_Decorator {
    * @link http://www.w3.org/TR/CSS21/page.html#forced
    *
    * @param Frame $frame the frame to check
-   * @return bool true if a page break occured
+   * @return bool true if a page break occurred
    */
   function check_forced_page_break(Frame $frame) {
 		

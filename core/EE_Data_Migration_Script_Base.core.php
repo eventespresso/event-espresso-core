@@ -586,7 +586,7 @@ abstract class EE_Data_Migration_Class_Base{
 	abstract public function get_errors();
 	
 	/**
-	 * Return sthe last error that occurred. If none occured, returns null
+	 * Return sthe last error that occurred. If none occurred, returns null
 	 * @return string
 	 */
 	public function get_last_error(){

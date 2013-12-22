@@ -614,7 +614,7 @@ Class EEM_Gateways {
 				EE_Registry::instance()->load_core( 'Request_Handler' );		
 			}
 			if ( ! is_bool( EE_Registry::instance()->REQ->ajax )) {
-				$this->_notices['errors'][] = __( 'An error occured. Set Ajax requires a boolean paramater.', 'event_espresso' );
+				$this->_notices['errors'][] = __( 'An error occurred. Set Ajax requires a boolean paramater.', 'event_espresso' );
 				$this->_ajax = FALSE;
 			} else {
 				$this->_ajax = EE_Registry::instance()->REQ->ajax;

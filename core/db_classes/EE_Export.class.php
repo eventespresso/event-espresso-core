@@ -115,7 +115,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 					break;
 
 					default:
-						EE_Error::add_error(__('An error occured! The requested export report could not be found.','event_espresso')) ;
+						EE_Error::add_error(__('An error occurred! The requested export report could not be found.','event_espresso')) ;
 						return FALSE;
 					break;
 					
@@ -148,7 +148,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'full-db-export' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
-			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
+			EE_Error::add_error(__("An error occurred and the Event details could not be exported from the database.", "event_espresso"));
 		}
 	}	
 	
@@ -217,7 +217,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		//done with sample data
 		$filename = $this->generate_filename ( 'sample-export-file' );
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
-			EE_Error::add_error(__("An error occured and the Event details could not be exported from the database.", "event_espresso"));
+			EE_Error::add_error(__("An error occurred and the Event details could not be exported from the database.", "event_espresso"));
 		}
 	}
 
@@ -241,7 +241,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->_req_data['all_events'] == "true" || count($event_ids) > 1 ? __('multiple-events', 'event_espresso') :	$filename;
 		$filename .= "-" . $this->today ;
 		if ( ! $this->EE_CSV->export_array_to_csv( $table_data, $filename )) {
-			EE_Error::add_error(__('An error occured and the Event details could not be exported from the database.', "event_espresso"));
+			EE_Error::add_error(__('An error occurred and the Event details could not be exported from the database.', "event_espresso"));
 		}
 	}
 
@@ -318,7 +318,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( $filename );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
-			EE_Error::add_error(__("'An error occured and the Event details could not be exported from the database.'", "event_espresso"));
+			EE_Error::add_error(__("'An error occurred and the Event details could not be exported from the database.'", "event_espresso"));
 		}
 	}
 
@@ -345,7 +345,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'all-attendees' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $model_data )) {
-			EE_Error::add_error(__('An error occured and the Attendee data could not be exported from the database.','event_espresso'));
+			EE_Error::add_error(__('An error occurred and the Attendee data could not be exported from the database.','event_espresso'));
 		}
 	}
 	
@@ -525,7 +525,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$filename = $this->generate_filename ( 'all-categories' );
 
 		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename, $table_data )) {
-			EE_Error::add_error(__('An error occured and the Category details could not be exported from the database.','event_espresso'));
+			EE_Error::add_error(__('An error occurred and the Category details could not be exported from the database.','event_espresso'));
 		}
 	}
 	

@@ -19,7 +19,7 @@
  * over to the new database structure, and returns either: EE_Data_Migration_Manager::status_continue to indicate that
  * it's successfully migrated some data, but has more to do on the subsequent ajax request;  EE_Data_Migration_Manager::status_completed
  * to indicate it succesfully migrate some data, and has nothing left to do; or EE_Data_Migration_Manager::status_fatal_error to indicate
- * an error occured which means the ajax script should probably stop executing. 
+ * an error occurred which means the ajax script should probably stop executing. 
  */
 class EE_Data_Migration_Manager{
 	
@@ -53,7 +53,7 @@ class EE_Data_Migration_Manager{
 	 */
 	const status_completed = 'status_completed';
 	/**
-	 * string indicating a fatal error occured and the data migration should be completedly aborted
+	 * string indicating a fatal error occurred and the data migration should be completedly aborted
 	 */
 	const status_fatal_error = 'status_fatal_error';
 	/**
@@ -348,7 +348,7 @@ class EE_Data_Migration_Manager{
 						'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
 						'records_migrated'=>$current_script_class->count_records_migrated(),
 						'status'=> $current_script_class->get_status(),
-						'message'=>  sprintf(__("Minor errors occured during %s: %s", "event_espresso"), $current_script_class->pretty_name(), implode(", ",$current_script_class->get_errors())),
+						'message'=>  sprintf(__("Minor errors occurred during %s: %s", "event_espresso"), $current_script_class->pretty_name(), implode(", ",$current_script_class->get_errors())),
 						'script'=>$current_script_class->pretty_name()
 					);
 					break;

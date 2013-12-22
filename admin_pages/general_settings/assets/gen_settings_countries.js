@@ -45,7 +45,7 @@ jQuery(document).ready(function($) {
 				error: function(response) {
 					//console.log(response);
 					if ( response.errors == undefined ) {
-						response.errors = eei18n.error_occured;
+						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
@@ -92,7 +92,7 @@ jQuery(document).ready(function($) {
 				error: function(response) {
 					//console.log(response);
 					if ( response.errors == undefined ) {
-						response.errors = eei18n.error_occured;
+						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
@@ -138,7 +138,7 @@ jQuery(document).ready(function($) {
 				error: function(response) {
 					//console.log(response);
 					if ( response.errors == undefined ) {
-						response.errors = eei18n.error_occured;
+						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
@@ -152,7 +152,7 @@ jQuery(document).ready(function($) {
 		// ------------------------------------------
 		delete_state : function( STA_ID ) {
 			if ( STA_ID == undefined || STA_ID == NaN || STA_ID == '' ) {
-				response.errors = eei18n.error_occured;
+				response.errors = eei18n.error_occurred;
 				show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				return false;
 			}
@@ -188,7 +188,7 @@ jQuery(document).ready(function($) {
 				error: function(response) {
 					//console.log(response);
 					if ( response.errors == undefined ) {
-						response.errors = eei18n.error_occured;
+						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}

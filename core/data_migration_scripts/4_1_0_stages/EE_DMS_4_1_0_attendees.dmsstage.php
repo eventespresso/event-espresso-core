@@ -136,7 +136,7 @@ CREATE TABLE `wp_events_detail` (
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_not_approved, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occured','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),

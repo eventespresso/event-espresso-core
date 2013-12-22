@@ -88,7 +88,7 @@ final class EE_Module_Request_Router {
 				if ( isset( self::$_previous_routes[ $current_route ] )) {
 					throw new EE_Error( 
 						sprintf( 
-							__('An error occured. The %s route has already been called, and therefore can not be forwarded to, because an infinite loop would be created and break the interweb.','event_espresso'), 
+							__('An error occurred. The %s route has already been called, and therefore can not be forwarded to, because an infinite loop would be created and break the interweb.','event_espresso'), 
 							$current_route 
 						)
 					);

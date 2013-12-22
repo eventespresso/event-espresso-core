@@ -31,7 +31,7 @@ For all testers on github, please take note of the following when reporting issu
 2. UI/UX issues may be considered a bug but not if it requires a major change in design.  Feel free to report things you find confusing or needing improvement but if we consider it a feature we will not be "fixing" anything in alpha or beta.
 3. Report your issue as clearly as possible.  By "clear" we mean:
 
-	i. Specify the branch this occured in.
+	i. Specify the branch this occurred in.
 
 	ii. Be specific about the steps you took to reproduce.
 

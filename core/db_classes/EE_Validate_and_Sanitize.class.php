@@ -351,7 +351,7 @@
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 				
 		if ( empty( $post_inputs )) {
-			$msg = __( 'An error occured! No post data was passed to the validator. Please click your browser\'s back button and try again. If the problem persists, contact customer support.', 'event_espresso' );
+			$msg = __( 'An error occurred! No post data was passed to the validator. Please click your browser\'s back button and try again. If the problem persists, contact customer support.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 			return FALSE;
 		}

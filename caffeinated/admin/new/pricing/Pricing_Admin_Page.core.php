@@ -787,7 +787,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$success = FALSE;
 		}
 		
-		$errors = ! $success ? __( 'An error occured. The price order was not updated.', 'event_espresso' ) : FALSE;
+		$errors = ! $success ? __( 'An error occurred. The price order was not updated.', 'event_espresso' ) : FALSE;
 		
 		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();

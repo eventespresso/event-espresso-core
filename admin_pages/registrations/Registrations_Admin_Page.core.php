@@ -636,7 +636,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( $this->_registration = $REG->get_one_by_ID( $REG_ID ))
 			return TRUE;
 		else {
-			$error_msg = sprintf( __('An error occured and the details for Registration ID #%s could not be retreived.', 'event_espresso'), $REG_ID );
+			$error_msg = sprintf( __('An error occurred and the details for Registration ID #%s could not be retreived.', 'event_espresso'), $REG_ID );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			$this->_registration = NULL;
 			return FALSE;
@@ -1345,7 +1345,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	private function _save_attendee_registration_form( $REG_ID = FALSE, $qstns = FALSE ) {
 		
 		if ( ! $REG_ID || ! $qstns ) {	
-			EE_Error::add_error( __('An error occured. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('An error occurred. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$success = TRUE;
 		$registration = NULL;
@@ -1425,7 +1425,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					// grab and set the new ID
 					if ( ! $new_id) {
 						$success = FALSE;
-						EE_Error::add_error( __('An error occured. An ID for the new attendee could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_error( __('An error occurred. An ID for the new attendee could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 					}					
 				}
 				if ( $attendee->ID() ) {
