@@ -202,6 +202,34 @@ class EE_PUE {
 
 
 
+	/**
+	 * This is a handy helper method for retrieving whether there is an update available for the given plugin.
+	 * @param  string  $basename Use the equivalent reulst from plugin_basename() for this param as WP uses that to identify plugins. Defaults to core update
+	 * @return boolean           True if update available, false if not.
+	 */
+	public static function is_update_available($basename = '') {
+		if ( empty($basename) )
+			$basename = plugin_basename(EE_PLUGINPATH);
+
+		$update = false;
+
+		$folder = DS . dirname($basename); // should take "event-espresso-core/espresso.php" and change to "/event-espresso-core"
+
+		$plugins = get_plugins($folder);
+		$current = get_site_transient( 'update_plugins' );
+
+		foreach ( (array) $plugins as $plugin_file => $plugin_data ) {
+			if ( isset( $current->response['plugin_file'] ) )
+				$update = true;
+		}
+
+		//it's possible that there is an update but an invalid site-license-key is in use
+		if ( get_site_option('pue_json_error_' . $basename ) )
+			$update = true;
+
+		return $update;
+	}
+
 }
 // End of file EE_PUE.core.php
 // Location: ./core/EE_PUE.core.php
