@@ -2497,8 +2497,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				foreach ( $event_templates as $template ) {
 					$event_name = $template->event_name();
 					$query_args = array(
-						'action' => 'edit_event',
-						'EVT_ID' => $template->event()
+						'action' => 'edit',
+						'post' => $template->event()
 						);
 					$edit_event_url = self::add_query_args_and_nonce( $query_args, $base_event_admin_url );
 					$warning_msg .= "\n" . '<li><a href="' . $edit_event_url . '" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a></li>';
