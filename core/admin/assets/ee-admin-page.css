@@ -557,7 +557,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 /** NEW ICONS **/
-.gear-icon:before, .ee-email-icon:before, .ee-view-icon:before, .ee-lock-icon:before, .ee-collapsible:before {
+.gear-icon:before, .ee-email-icon:before, .ee-view-icon:before, .ee-lock-icon:before, .ee-collapsible:before, .ee-capacity-icon:before, .ee-url-icon:before, .ee-phone-icon:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
 	font: normal 16px/1 'dashicons';
@@ -582,6 +582,18 @@ label.error  { display: block; color: #FE2A00 !important; }
 .gear-icon:before {
 	margin-top: 1px;
 	content: "\f111";
+}
+
+.ee-capacity-icon:before {
+	content: "\f459";
+}
+
+.ee-url-icon:before {
+	content: "\f103";
+}
+
+.ee-phone-icon:before {
+	content: "\f336";
 }
 
 
