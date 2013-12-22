@@ -89,11 +89,11 @@ class EE_PUE {
 
 
 		// PUE Auto Upgrades stuff
-		if (file_exists(EE_PLUGIN_DIR_PATH . 'libraries/pue/pue-client.php')) { //include the file 
-			require(EE_PLUGIN_DIR_PATH . 'libraries/pue/pue-client.php' );
+		if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { //include the file 
+			require(EE_THIRD_PARTY . 'pue/pue-client.php' );
 
 			$api_key = isset( EE_Registry::instance()->CFG->site_license_key ) ? EE_Registry::instance()->CFG->site_license_key : '';
-			$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
+			$host_server_url = 'http://beta.eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
 			//Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.  So it's important that you use a key for the version type that is unique and not found in another key.
 			//For example:
@@ -117,7 +117,7 @@ class EE_PUE {
 				'lang_domain' => 'event_espresso', //(optional) - put here whatever reference you are using for the localization of your plugin (if it's localized).  That way strings in this file will be included in the translation for your plugin.
 				'checkPeriod' => '24', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
 				'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
-				'options_page_slug' => 'event_espresso',
+				'options_page_slug' => 'espresso_general_settings',
 				'plugin_basename' => plugin_basename(EE_PLUGINPATH),
 				'use_wp_update' => FALSE, //if TRUE then you want FREE versions of the plugin to be updated from WP
 				'extra_stats' => $extra_stats
@@ -125,7 +125,6 @@ class EE_PUE {
 			$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 		}
 	}
-	//add_action('AHEE_pue_update', 'espresso_site_license');
 
 
 
