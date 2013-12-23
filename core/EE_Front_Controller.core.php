@@ -81,8 +81,8 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
-		EEM_Event::instance()->show_next_x_db_queries(2);
-		EEM_Event::instance()->get_all(array(array('status'=>'draft'),'order_by'=>array('Venue.VNU_ID'=>'asc')));die;
+//		EEM_Event::instance()->show_next_x_db_queries(2);
+//		EEM_Event::instance()->get_all(array(array('status'=>'draft'),'order_by'=>array('Venue.VNU_ID'=>'asc')));die;
 //		$ps = EEM_Price::instance()->get_one(array(array('PRC_amount'=>array('>=','$1,00'))));
 //		d($ps);
 //		 $ps->e('PRC_amount');
