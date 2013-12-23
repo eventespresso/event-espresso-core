@@ -230,7 +230,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					)
 				),
 				'help_tour' => array(
-					'Event_Editor_Help_Tour'
+					'Event_Edit_Help_Tour'
 				),
 				'require_nonce' => FALSE
 			),
