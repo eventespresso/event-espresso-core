@@ -201,6 +201,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 20,
 							'persistent' => FALSE
 						),
+                    'help_tour' => array('Pricing_Add_New_Default_Price_Help_Tour'),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
 					'help_tabs' => $pricing_help_tabs,
 					'require_nonce' => FALSE
@@ -238,6 +239,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 40,
 							'persistent' => FALSE
 						),
+                    'help_tour' => array( 'Pricing_Add_New_Price_Type_Help_Tour' ),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' ),
 					'require_nonce' => FALSE
 				),
