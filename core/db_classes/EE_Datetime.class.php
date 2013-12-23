@@ -807,7 +807,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		$count_regs_for_this_datetime = EEM_Registration::instance()->count(array(
 			array(
 				'STS_ID'=>array('IN',$stati_to_include),
-				'Ticket.Datetime.DTT_ID'=>$this->ID())));
+				'Ticket.Datetime.DTT_ID'=>$this->ID(),
+				'REG_deleted' => 0 ) ) );
 		$this->set('DTT_sold',$count_regs_for_this_datetime);
 		$this->save();
 		return $count_regs_for_this_datetime;

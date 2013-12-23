@@ -941,6 +941,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
   		//args for getting related registrations
   		$query_args = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(EEM_Registration::status_id_pending, EEM_Registration::status_id_approved ) ) ) ) : array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
 
+  		$query_args[0]['REG_deleted'] = 0; 
+
 
 		// publish box
 		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID() ), REG_ADMIN_URL);
