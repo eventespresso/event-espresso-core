@@ -243,7 +243,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 				),
-				//'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
+				'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
 				'help_tabs' => array(
 					'default_registration_status_help_tab' => array(
 						'title' => __('Default Registration Status', 'event_espresso'),
