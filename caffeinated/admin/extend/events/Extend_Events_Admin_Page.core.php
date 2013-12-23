@@ -129,6 +129,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'label' => __('Import', 'event_esprsso'),
 					'order' => 30
 				),
+				'help_tabs' => array(
+					'ee_import_help_tab' => array(
+						'title' => __('Import', 'event_espresso'),
+						'filename' => 'ee_import'
+						)
+					),
+                'help_tour' => array('Event_Import_Help_Tour'),
 				'metaboxes' => $default_espresso_boxes,
 				'require_nonce' => FALSE
 		);
