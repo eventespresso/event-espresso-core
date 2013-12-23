@@ -579,7 +579,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 		$offset = ($current_page-1)*$per_page;
-		$limit = array( $offset, $per_page );
+		$limit = $count ? NULL : array( $offset, $per_page );
 		$query_params = array(array());
 		if ($EVT_ID){
 			$query_params[0]['EVT_ID']=$EVT_ID;
