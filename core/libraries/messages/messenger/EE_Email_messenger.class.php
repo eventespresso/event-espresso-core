@@ -336,6 +336,7 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_default_message_types = array(
 			'payment',
 			'registration',
+			'pending_approval',
 			'resend_registration',
 			'payment_reminder',
 			'payment_declined'
