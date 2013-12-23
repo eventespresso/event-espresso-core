@@ -1661,9 +1661,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void         
 	 */
 	protected function _trash_or_restore_registrations( $trash = TRUE ) {
-		$REG = EEM_Registration::instance();
+		$REGM = EEM_Registration::instance();
 
 		$success = 1;
+
+		$tickets = array();
+		$dtts = array();
 
 		//Checkboxes
 		if (!empty($this->_req_data['_REG_ID']) && is_array($this->_req_data['_REG_ID'])) {
@@ -1671,7 +1674,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = count( $this->_req_data['_REG_ID'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
 			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
-				$updated = $trash ? $REG->delete_by_ID($REG_ID) : $REG->restore_by_ID($REG_ID);
+
+				$REG = $REGM->get_one_by_ID($REG_ID);
+				$ticket = $REG->get_first_related('Ticket');
+				$tickets[$ticket->ID()] = $ticket;
+				$dtt = $ticket->get_many_related('Datetime');
+				$dtts = array_merge($dtts, $dtt);
+
+				$updated = $trash ? $REG->delete() : $REG->restore();
 				if ( !$updated ) {
 					$success = 0;
 				}/**/
@@ -1680,12 +1690,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		} else {
 			// grab single id and delete
 			$REG_ID = absint($this->_req_data['_REG_ID']);
-			$updated = $trash ? $REG->delete_by_ID($REG_ID) : $REG->restore_by_ID($REG_ID);
+			$REG = $REGM->get_one_by_ID($REG_ID);
+			$ticket = $REG->get_first_related('Ticket');
+			$tickets[$ticket->ID()] = $ticket;
+			$dtts = $ticket->get_many_related('Datetime');
+			$updated = $trash ? $REG->delete() : $REG->restore();
 			if ( ! $updated ) {
 				$success = 0;
 			}
 			
 		}
+
+		//now let's update counts
+		EEM_Ticket::instance()->update_tickets_sold($tickets);
+		EEM_Datetime::instance()->update_sold($dtts);
 
 		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Registration', 'event_espresso' );
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
