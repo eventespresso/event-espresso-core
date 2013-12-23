@@ -1572,7 +1572,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['country'] =  $attendee->country_obj() ? $attendee->country_obj()->name() : '';
 		$this->_template_args['zip'] =  $attendee->zip() ? '<br />' . $attendee->zip() : '';
 		$this->_template_args['phone'] = $attendee->phone();
-		$this->_template_args['social'] = $attendee->social();
 		$this->_template_args['comments'] = $attendee->comments();
 		$this->_template_args['notes'] = $attendee->notes();
 

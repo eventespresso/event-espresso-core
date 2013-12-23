@@ -743,7 +743,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['prime_reg_country'] = $primary_att->get('CNT_ISO');
 		$this->_template_args['prime_reg_zip'] = $primary_att->get('ATT_zip');
 		$this->_template_args['prime_reg_phone'] = $primary_att->get('ATT_phone');
-		$this->_template_args['prime_reg_social'] = $primary_att->get('ATT_social');
 		$this->_template_args['prime_reg_comments'] = $primary_att->get('ATT_comments');
 		$this->_template_args['prime_reg_notes'] = $primary_att->get('ATT_notes');
 		
