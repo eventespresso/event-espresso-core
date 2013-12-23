@@ -269,6 +269,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 5
 					),
 				'help_tour' => array( 'Registration_Overview_Help_Tour' ),
+				'qtips' => array('Registration_List_Table_Tips'),
 				'list_table' => 'EE_Registrations_List_Table',
 				'require_nonce' => FALSE
 				),
