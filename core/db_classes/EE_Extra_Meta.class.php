@@ -126,6 +126,7 @@ class EE_Extra_Meta extends EE_Base_Class{
 	}
 
 
+	}
 }
 
 /* End of file EE_Extra_Meta.class.php */
