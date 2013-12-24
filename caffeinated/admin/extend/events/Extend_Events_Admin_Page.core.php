@@ -130,9 +130,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'order' => 30
 				),
 				'help_tabs' => array(
-					'ee_import_help_tab' => array(
+					'import_help_tab' => array(
 						'title' => __('Import', 'event_espresso'),
-						'filename' => 'ee_import'
+						'filename' => 'events_import'
 						)
 					),
                 'help_tour' => array('Event_Import_Help_Tour'),
