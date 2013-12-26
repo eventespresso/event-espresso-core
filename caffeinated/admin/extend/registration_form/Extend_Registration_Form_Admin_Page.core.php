@@ -150,27 +150,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				),
 			);
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
-		$question_group_tabs =  array('group_name_info' => array(
-						'title' => __('Group Name', 'event_espresso'),
-						'callback' => 'group_name_info_help_tab'
-						),
-					'group_identifier_info' => array(
-						'title' => __('Group Identifier', 'event_espresso'),
-						'callback' => 'group_identifier_info_help_tab'
-						),
-					'group_description_info' => array(
-						'title' => __('Group Description', 'event_espresso'),
-						'callback' => 'group_description_info_help_tab'
-						),
-					'show_group_name_info' => array(
-						'title' => __('Show Group Name', 'event_espresso'),
-						'callback' => 'show_group_name_info_help_tab'
-						),
-					'show_group_description_info' => array(
-						'title' => __('Show Group Description', 'event_espresso'),
-						'callback' => 'show_group_description_info_help_tab'
-						)
-					);
+
 		$new_page_config = array(
 
 			'question_groups' => array(
@@ -179,14 +159,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
-				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				'help_tabs' => array(
-					'question_groups_tab_overview_info' => array(
+                'help_tabs' => array(
+					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
-						'callback' => 'question_groups_tab_overview_info_help_tab'
+						'filename' => 'registration_form_question_groups'
 						),
 					),
+				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE,
 				'qtips' => array(
 					'EE_Registration_Form_Tips'
@@ -200,26 +180,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'persistent' => FALSE
 					),
 				'metaboxes' => array('_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tabs' => array(
-					'question_text_info' => array(
-						'title' => __('Question Text', 'event_espresso'),
-						'callback' => 'question_text_info_help_tab'
-						),
-					'question_label_info' => array(
-						'title' => __('Question Label', 'event_espresso'),
-						'callback' => 'question_label_info_help_tab'
-						),
-					'question_type_info' => array(
-						'title' => __('Question Type', 'event_espresso'),
-						'callback' => 'question_type_info_help_tab'
-						),
-					'required_question_info' => array(
-						'title' => __('Required Question', 'event_espresso'),
-						'callback' => 'required_question_info_help_tab'
-						),
-					'required_text_info' => array(
-						'title' => __('Required Text', 'event_espresso'),
-						'callback' => 'required_text_info_help_tab'
+                'help_tabs' => array(
+					'registration_form_add_question_help_tab' => array(
+						'title' => __('Add Question', 'event_espresso'),
+						'filename' => 'registration_form_add_question'
 						),
 					),
 				'require_nonce' => FALSE
@@ -232,7 +196,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'persistent' => FALSE
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tabs' => $question_group_tabs,
+				'help_tabs' => array(
+					'registration_form_add_question_group_help_tab' => array(
+						'title' => __('Add Question Group', 'event_espresso'),
+						'filename' => 'registration_form_add_question_group'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 
@@ -244,7 +213,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'url' => isset($this->_req_data['question_group_id']) ? add_query_arg(array('question_group_id' => $this->_req_data['question_group_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tabs' => $question_group_tabs,
+				'help_tabs' => array(
+					'registration_form_edit_question_group_help_tab' => array(
+						'title' => __('Edit Question Group', 'event_espresso'),
+						'filename' => 'registration_form_edit_question_group'
+						),
+					),
 				'require_nonce' => FALSE
 				),
 
@@ -258,10 +232,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'help_tabs' => array(
-					'recaptcha_info' => array(
-						'title' => __('reCAPTCHA Information', 'event_espresso'),
-						'callback' => 'recaptcha_info_help_tab'
-						)
+					'registration_form_reg_form_settings_help_tab' => array(
+						'title' => __('Registration Form Settings', 'event_espresso'),
+						'filename' => 'registration_form_reg_form_settings'
+						),
 					),
 				'require_nonce' => FALSE
 				)
@@ -308,49 +282,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	public function load_scripts_styles_edit_question_group() {
 		$this->load_scripts_styles_forms();
 	}
-
-
-
-	/**
-	 * add/edit question groups help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function edit_question_group_help_tabs( $tab ) {
-		require_once REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'edit_question_group_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template($template);
-	}
-	public function question_groups_tab_overview_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_name_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_identifier_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function group_description_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function show_group_name_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	public function show_group_description_info_help_tab(){
-		$this->edit_question_group_help_tabs( __FUNCTION__ );
-	}
-	
-
-
-
-
-
-	public function recaptcha_info_help_tab() {
-		$template = REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
-		EEH_Template::display_template($template, array());
-	}
-
-
 
 
 
