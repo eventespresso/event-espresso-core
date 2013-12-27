@@ -1236,8 +1236,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$where['status'] = $status;
 		}
 
-		$where['post_type'] = array( '!=', 'revision' );
-
 		//search query handling
 		if ( isset( $this->_req_data['s'] ) ) {
 			$search_string = '%' . $this->_req_data['s'] . '%';
