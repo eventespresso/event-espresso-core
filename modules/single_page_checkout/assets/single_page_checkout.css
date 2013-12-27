@@ -66,22 +66,6 @@ span.ui-icon {
 .act-like-link {
 	cursor:pointer;
 }
-.small-text {
-	font-size:.85em;
-	letter-spacing:.5px;
-	line-height:1.5em;
-}
-.smaller-text {
-	font-size:.7em;
-	letter-spacing:1px;
-	line-height:1.25em;
-}
-.lt-grey-text {
-	color:#999;
-}
-.drk-grey-text {
-	color:#666;
-}
 .important-notice {
 	font-weight:bold;
 	color:#f59200;
@@ -102,10 +86,11 @@ span.ui-icon {
 	margin:1em 0 1em;
 	/*border-top: 2px solid #eee;*/
 }
+
+
 /*
  * REG PAGE
 */
- 
 #single-page-checkout {
 	position: relative;
 }
@@ -323,12 +308,17 @@ span.ui-icon {
 	display: inline-block;
 	width:100%;
 	padding: 0;
-	margin: 0;
+	margin: .5em 0 0;
 	vertical-align: middle;
+}
+
+#single-page-checkout .espresso-checkbox-options-ul li .espresso-checkbox-option-desc {
+	line-height: 1.25em;
+	padding-left: 2em;
 }
 #single-page-checkout .espresso-radio-btn-options-ul li + li, 
 #single-page-checkout .espresso-checkbox-options-ul li + li {
-	margin-top:.25em;
+	margin-top:1em;
 }
 #single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg +.espresso-radio-btn-options-ul,
 #single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg +.espresso-checkbox-options-ul {
