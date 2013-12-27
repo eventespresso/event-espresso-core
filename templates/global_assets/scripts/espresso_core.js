@@ -23,16 +23,18 @@ jQuery(document).ready(function($) {
 	};
 
 	/**
-	*	add jQuery function to return a string indicating the "type of form input
-	* 	possible types: 'text', 'textarea', 'select-one', 'select-multiple', 'checkbox', 'radio' 
+	*	add jQuery function to return the correct value for a form input regardless of it's type
 	*/	
-	$.fn.inputType = function () { 
-		input_type = $(this).attr('type');
-		if ( input_type == undefined ) {
-			input_type = $(this).prop("type");
+	$.fn.inputValue = function () { 
+		var inputType = $(this).prop('type');
+		if ( inputType ==  'checkbox' || inputType == 'radio' ) {
+			return $(this).prop('checked');
+		} else {
+			return $(this).val();
 		}
-		return input_type;
 	}
+	
+	
 
 	$('#espresso-notices').center();
 	$('.espresso-notices').slideDown();
@@ -110,23 +112,9 @@ jQuery(document).ready(function($) {
 	
 });
 
- 
-
-/**
-*	basic function for removing duplicate content from an array
-*/	
-/*function espresso_array_unique( array_with_duplicates ) {
-	var unique_array = [];
-	$.each( array_with_duplicates, function( key, value ) {
-		if ( $.inArray( value, unique_array ) == -1 ) {
-			unique_array.push( value );
-		}
-	});
-	return unique_array;
-}*/
 
 
-/*function dump(arr,level) {
+function dump(arr,level) {
 	var dumped_text = "";
 	if(!level) level = 0;
 	
@@ -149,7 +137,7 @@ jQuery(document).ready(function($) {
 		dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
 	}
 	return dumped_text;
-}*/
+}
 
 
 function getFunctionName() {
