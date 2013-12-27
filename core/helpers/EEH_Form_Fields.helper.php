@@ -848,7 +848,7 @@ class EEH_Form_Fields {
 			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-radio-btn-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
 			$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
-			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
+			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span class="espresso-radio-btn-desc">' . $value . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
 			$input_html .= "\n\t\t\t\t" . '</li>';
 
@@ -926,7 +926,7 @@ class EEH_Form_Fields {
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
 			if ( ! empty( $desc )) {
-	 			$input_html .= "\n\t\t\t\t\t" . ' &nbsp; <span class="small-text grey-text">(' . $desc . ')</span>';
+	 			$input_html .= "\n\t\t\t\t\t" . ' &nbsp; <br/><div class="espresso-checkbox-option-desc small-text grey-text">' . $desc . '</div>';
 			}
 			$input_html .= "\n\t\t\t\t" . '</li>';
 
