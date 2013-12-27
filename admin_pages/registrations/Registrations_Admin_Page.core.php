@@ -268,6 +268,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 5
 					),
+                'help_tabs' => array(
+					'registrations_overview_help_tab' => array(
+						'title' => __('Registrations Overview', 'event_espresso'),
+						'filename' => 'registrations_overview'
+						)
+					),
 				'help_tour' => array( 'Registration_Overview_Help_Tour' ),
 				'qtips' => array('Registration_List_Table_Tips'),
 				'list_table' => 'EE_Registrations_List_Table',
@@ -280,6 +286,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
+					),
+                'help_tabs' => array(
+					'registrations_details_help_tab' => array(
+						'title' => __('Registration Details', 'event_espresso'),
+						'filename' => 'registrations_details'
+						)
 					),
 				'help_tour' => array( 'Registration_View_Help_Tour' ),
 				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
@@ -326,13 +338,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 20
 					),
 				'list_table' => 'EE_Attendee_Contact_List_Table',
-				'help_tour' => array( 'Contact_List_Help_Tour' ),
-				'help_tabs' => array(
-					'contact_list_tab_info' => array(
-						'title' => __('Contact List Overview', 'event_espresso'),
-						'callback' => 'contact_list_help_tab_html'
-						),
+                'help_tabs' => array(
+					'registrations_contact_list_help_tab' => array(
+						'title' => __('Registrations Contact List', 'event_espresso'),
+						'filename' => 'registrations_contact_list'
+						)
 					),
+				'help_tour' => array( 'Contact_List_Help_Tour' ),
 				'metaboxes' => array(),
 				'require_nonce' => FALSE
 				),
@@ -343,26 +355,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				
 			);
 	}
-
-	/**
-	 * help tabs
-	 */
-	 
-	function contact_list_help_tab_html() {
-	?>
-		<h2>
-			<?php _e('Contact List Overview', 'event_espresso'); ?>
-		</h2>
-		<p>
-			<?php _e("Notice: A contact can belong to multiple registrations. For example, an individual can be registered for Event A and Event B.", 'event_espresso'); ?>
-		</p>
-		<p>
-			<?php _e("For this reason, a contact can be deleted only after all associated registrations have been removed. If we wanted to delete the individual in the example above, we would need to remove their registrations for Event A and Event B. The contact (individual) will then be automatically removed.", 'event_espresso'); ?>
-		</p>
-	<?php
-	}
-
-
 
 
 	/**

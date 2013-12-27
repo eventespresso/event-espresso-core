@@ -653,6 +653,7 @@ class EE_Event extends EE_CPT_Base{
 	 *  return string
 	 */
 	public function pretty_active_status( $echo = TRUE, $show_all = TRUE ) {
+		$status = '';
 		$active_status = $this->get_active_status();
 		if ( $active_status < 1 || $show_all ) {
 			switch ( $active_status ) {
@@ -692,7 +693,7 @@ class EE_Event extends EE_CPT_Base{
 			}
 
 			$status = '<span class="ee-status ' . $class . '">' . $status . '</span>';
-		}
+		} 
 		
 		if ( $echo ) {
 			echo $status;

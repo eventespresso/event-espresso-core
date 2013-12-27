@@ -56,13 +56,13 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 					'order' => 40
 					),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tour' => array( 'Google_Maps_Help_Tour' ),
-				'help_tabs' => array(
-					'gmaps_info' => array(
-						'title' => __('Google Maps Configuration', 'event_espresso'),
-						'callback' => 'gmaps_info_help_tab'
+                'help_tabs' => array(
+					'general_settings_google_maps_help_tab' => array(
+						'title' => __('Google Maps', 'event_espresso'),
+						'filename' => 'general_settings_google_maps'
 						)
 					),
+				'help_tour' => array( 'Google_Maps_Help_Tour' ),
 				'require_nonce' => FALSE
 				)
 			);
