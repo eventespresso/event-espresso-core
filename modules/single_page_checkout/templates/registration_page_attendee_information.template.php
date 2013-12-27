@@ -41,6 +41,7 @@ if ( $event_queue['total_items'] > 0 ) {
 			<h3 id="event_title-<?php echo $item['ticket']->ID() ?>" class="big-event-title-hdr">
 				<?php echo $item['event']->name(); ?>				
 			</h3>
+				<?php if ( $payment_required ) { ?>
 			<p class="spco-ticket-info-pg">
 			<?php 
 				echo $item['ticket']->name() . ':  ' . EEH_Template::format_currency( $item['ticket']->price(), FALSE, FALSE );
@@ -50,6 +51,7 @@ if ( $event_queue['total_items'] > 0 ) {
 			</p>
 
 			<?php 
+					}
 				} 
 			?>
 			
