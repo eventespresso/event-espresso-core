@@ -417,7 +417,7 @@ final class EE_Config {
 			EE_Config::register_shortcode( $shortcode_path );
 		}
 		// filter list of installed modules
-		return apply_filters( 'FHEE__EE_Config__register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
+		return apply_filters( 'FHEE__EE_Config___register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
 	}
 
 
@@ -484,7 +484,7 @@ final class EE_Config {
 			}
 		}
 		// filter list of installed modules
-		return apply_filters( 'FHEE__EE_Config__register_modules__installed_modules', EE_Registry::instance()->modules );
+		return apply_filters( 'FHEE__EE_Config___register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
 
 

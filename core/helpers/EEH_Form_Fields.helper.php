@@ -556,39 +556,41 @@ class EEH_Form_Fields {
 		$input_class = $QFI->get('QST_input_class');
 		$disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
 		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
-		$QST_required = $QFI->get('QST_required'); 
+		$QST_required = $QFI->get('QST_required');
 		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required', 'title' => $QST_required ) : array();
+		$use_html_entities = $QFI->get_meta( 'htmlentities' );
+		$required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : 'This field is required';
+		$required_text = $QST_required ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer( $required_text, $use_html_entities ) . '</div>' : '';
 		$label_class = 'espresso-form-input-lbl';
 		$QST_options = $QFI->options(); 
 		$options = $QST_options ? self::prep_answer_options( $QST_options ) : array();
 		$system_ID = $QFI->get('QST_system');
-		$use_html_entities = $QFI->get_meta( 'htmlentities' );
 		
 		switch ( $QFI->get('QST_type') ){
 			
 			case 'TEXTAREA' :
-					return self::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::textarea( $display_text, $answer, $input_name, $input_id, $input_class, array(), $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'DROPDOWN' :
-					return self::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'SINGLE' :
-					return self::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::radio( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'MULTIPLE' :
-					return self::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'DATE' :
-					return self::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::datepicker( $display_text, $answer, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'TEXT' :
 			default:
-					return self::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::text( $display_text, $answer, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 		}
@@ -614,7 +616,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
@@ -630,8 +632,8 @@ class EEH_Form_Fields {
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
-
-		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		
+		$label_html = $required_text . "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled .' ' . $extra . '/>';
@@ -659,7 +661,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
@@ -680,7 +682,7 @@ class EEH_Form_Fields {
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
-		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$label_html = $required_text . "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 
 		$input_html = "\n\t\t\t" . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>' . $answer . '</textarea>';
@@ -709,7 +711,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 				
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
@@ -727,7 +729,7 @@ class EEH_Form_Fields {
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
-		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$label_html = $required_text . "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>';
@@ -809,7 +811,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE, $label_b4 = FALSE ) {
+	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE, $label_b4 = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -825,7 +827,7 @@ class EEH_Form_Fields {
 		$class = ! empty( $class ) ? $class : 'espresso-radio-btn-inp';
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
-		$label_html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$label_html = $required_text . "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<ul id="' . $id . '-ul" class="espresso-radio-btn-options-ul ' . $label_class . ' ' . $class . '-ul">';
@@ -846,7 +848,7 @@ class EEH_Form_Fields {
 			$input_html .= "\n\t\t\t\t\t" . '<label class="' . $rdio_class . ' espresso-radio-btn-lbl">';
 			$input_html .= $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
 			$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
-			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $value . '</span>' : '';
+			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span class="espresso-radio-btn-desc">' . $value . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
 			$input_html .= "\n\t\t\t\t" . '</li>';
 
@@ -878,7 +880,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -899,7 +901,7 @@ class EEH_Form_Fields {
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
-		$label_html = "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$label_html = $required_text . "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 
 		$input_html = "\n\t\t\t" . '<ul id="' . $id . '-ul" class="espresso-checkbox-options-ul ' . $label_class . ' ' . $class . '-ul">';
@@ -924,7 +926,7 @@ class EEH_Form_Fields {
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
 			if ( ! empty( $desc )) {
-	 			$input_html .= "\n\t\t\t\t\t" . ' &nbsp; <span class="small-text grey-text">(' . $desc . ')</span>';
+	 			$input_html .= "\n\t\t\t\t\t" . ' &nbsp; <br/><div class="espresso-checkbox-option-desc small-text grey-text">' . $desc . '</div>';
 			}
 			$input_html .= "\n\t\t\t\t" . '</li>';
 
@@ -955,7 +957,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
@@ -972,7 +974,7 @@ class EEH_Form_Fields {
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 
-		$label_html = "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
+		$label_html = $required_text . "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html );
 		
 		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . ' datepicker" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '/>';
