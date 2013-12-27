@@ -676,8 +676,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$where = array(
 			'status' => array( 'NOT IN', array('trash') ),
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) ),
-			'post_type' => array( '!=', 'revision' )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
 			);
 
 		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
