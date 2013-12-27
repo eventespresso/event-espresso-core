@@ -287,6 +287,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'events_edit_category'
 						)
 					),
+                'help_tour' => array('Event_Edit_Category_Help_Tour'),
 				'metaboxes' => array('_publish_post_box'),
 				'require_nonce' => FALSE
 				),
