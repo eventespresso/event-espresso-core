@@ -366,9 +366,9 @@ class EE_Error extends Exception {
 	*
 	*	@access public
 	* 	@param		string		$msg	the message to display to users or developers - adding a double pipe || (OR) creates separate messages for user || dev
-	* 	@param		string		$file		the file that the error occured in - just use __FILE__
-	* 	@param		string		$func	the function/method that the error occured in - just use __FUNCTION__
-	* 	@param		string		$line	the line number where the error occured - just use __LINE__
+	* 	@param		string		$file		the file that the error occurred in - just use __FILE__
+	* 	@param		string		$func	the function/method that the error occurred in - just use __FUNCTION__
+	* 	@param		string		$line	the line number where the error occurred - just use __LINE__
 	* 	@return 		void
 	*/
 	public static function add_error( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
@@ -384,9 +384,9 @@ class EE_Error extends Exception {
 	*
 	*	@access public
 	* 	@param		string		$msg	the message to display to users or developers - adding a double pipe || (OR) creates separate messages for user || dev
-	* 	@param		string		$file		the file that the error occured in - just use __FILE__
-	* 	@param		string		$func	the function/method that the error occured in - just use __FUNCTION__
-	* 	@param		string		$line	the line number where the error occured - just use __LINE__
+	* 	@param		string		$file		the file that the error occurred in - just use __FILE__
+	* 	@param		string		$func	the function/method that the error occurred in - just use __FUNCTION__
+	* 	@param		string		$line	the line number where the error occurred - just use __LINE__
 	* 	@return 		void
 	*/
 	public static function add_success( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
@@ -402,9 +402,9 @@ class EE_Error extends Exception {
 	*
 	*	@access public
 	* 	@param		string		$msg	the message to display to users or developers - adding a double pipe || (OR) creates separate messages for user || dev
-	* 	@param		string		$file		the file that the error occured in - just use __FILE__
-	* 	@param		string		$func	the function/method that the error occured in - just use __FUNCTION__
-	* 	@param		string		$line	the line number where the error occured - just use __LINE__
+	* 	@param		string		$file		the file that the error occurred in - just use __FILE__
+	* 	@param		string		$func	the function/method that the error occurred in - just use __FUNCTION__
+	* 	@param		string		$line	the line number where the error occurred - just use __LINE__
 	* 	@return 		void
 	*/
 	public static function add_attention( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
@@ -421,9 +421,9 @@ class EE_Error extends Exception {
 	*	@access public
 	* 	@param		string		$type	whether the message is for a success or error notification
 	* 	@param		string		$msg	the message to display to users or developers - adding a double pipe || (OR) creates separate messages for user || dev
-	* 	@param		string		$file		the file that the error occured in - just use __FILE__
-	* 	@param		string		$func	the function/method that the error occured in - just use __FUNCTION__
-	* 	@param		string		$line	the line number where the error occured - just use __LINE__
+	* 	@param		string		$file		the file that the error occurred in - just use __FILE__
+	* 	@param		string		$func	the function/method that the error occurred in - just use __FUNCTION__
+	* 	@param		string		$line	the line number where the error occurred - just use __LINE__
 	* 	@return 		void
 	*/
 	private static function _add_notice( $type = 'success', $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
@@ -559,7 +559,7 @@ class EE_Error extends Exception {
 
 		// check for error messages
 		if ( self::$_espresso_notices['errors'] && ! empty(  self::$_espresso_notices['errors'] ) ) {
-			$error_messages .= count( self::$_espresso_notices['errors'] ) > 1 ? __( 'The following errors have occured:<br />', 'event_espresso' ) : __( 'An error has occured:<br />', 'event_espresso' );
+			$error_messages .= count( self::$_espresso_notices['errors'] ) > 1 ? __( 'The following errors have occurred:<br />', 'event_espresso' ) : __( 'An error has occurred:<br />', 'event_espresso' );
 			// combine messages
 			$error_messages .= implode( self::$_espresso_notices['errors'], '<br />' );
 			$print_scripts = TRUE;

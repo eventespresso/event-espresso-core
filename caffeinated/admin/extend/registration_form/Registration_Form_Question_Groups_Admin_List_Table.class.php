@@ -39,7 +39,6 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 
 	protected function _setup_data() {
-		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_view != 'trash' ? $this->_admin_page->get_question_groups( $this->_per_page,$this->_current_page, FALSE ) : $this->_admin_page->get_trashed_question_groups( $this->_per_page,$this->_current_page, FALSE );
 		$this->_all_data_count = $this->_view != 'trash' ? $this->_admin_page->get_question_groups( $this->_per_page,$this->_current_page, TRUE ) : $this->_admin_page->get_trashed_question_groups( $this->_per_page,$this->_current_page, TRUE );
 	}

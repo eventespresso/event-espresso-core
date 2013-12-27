@@ -147,29 +147,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
-				'help_tabs' => array(
-					'registration_page_info' => array(
-						'title' => __('Registration Page', 'event_espresso'),
-						'callback' => 'registration_page_info_help_tab'
-						),
-					'notify_url_info' => array(
-						'title' => __('Transaction Page', 'event_espresso'),
-						'callback' => 'transactions_info_help_tab'
-						),
-					'return_url_info' => array(
-						'title' => __('Thank You Page', 'event_espresso'),
-						'callback' => 'thank_you_page_info_help_tab'
-						),
-					'cancel_return_info' => array(
-						'title' => __('Cancel/Return Page', 'event_espresso'),
-						'callback' => 'cancel_return_info_help_tab'
-						),
-					'event_list_cpt_info'=> array(
-						'title'=>  __("Event List Page", "event_espresso"),
-						'callback'=> 'event_list_cpt_info_help_tab'
-						),
+                'help_tabs' => array(
+					'general_settings_critical_pages_help_tab' => array(
+						'title' => __('Critical Pages', 'event_espresso'),
+						'filename' => 'general_settings_critical_pages'
+						)
 					),
+				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
 			
@@ -180,45 +164,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+                'help_tabs' => array(
+					'general_settings_templates_help_tab' => array(
+						'title' => __('Templates', 'event_espresso'),
+						'filename' => 'general_settings_templates'
+						)
+					),
 				'help_tour' => array( 'Templates_Help_Tour' ),
-				'help_tabs' => array(
-					/*'event_list_settings_info' => array(
-						'title' => __('Event List Settings', 'event_espresso'),
-						'callback' => 'event_list_settings_info_help_tab'
-						),*/
-					'template_settings_info' => array(
-						'title' => __('Default Event List Type', 'event_espresso'),
-						'callback' => 'default_event_list_type_info_help_tab'
-						),
-					'grid_size_info' => array(
-						'title' => __('Grid Size', 'event_espresso'),
-						'callback' => 'grid_size_info_help_tab'
-						),
-					'display_description_info' => array(
-						'title' => __('Display Descriptions', 'event_espresso'),
-						'callback' => 'display_description_info_help_tab'
-						),
-					'display_address_info' => array(
-						'title' => __('Display Address', 'event_espresso'),
-						'callback' => 'display_address_info_help_tab'
-						),
-					'display_venue_details_info' => array(
-						'title' => __('Display Venue Details', 'event_espresso'),
-						'callback' => 'display_venue_details_info_help_tab'
-						),
-					'display_expired_events_info' => array(
-						'title' => __('Display Expired Events', 'event_espresso'),
-						'callback' => 'display_expired_events_info_help_tab'
-						),
-					'event_listings_url_info' => array(
-						'title' => __('Event Listings URL', 'event_espresso'),
-						'callback' => 'event_listings_url_info_help_tab'
-						),
-					'display_addresses_in_reg_form_info' => array(
-						'title' => __('Display Addresses', 'event_espresso'),
-						'callback' => 'display_addresses_in_reg_form_info_help_tab'
-						),
-					),					
 				'require_nonce' => FALSE
 				),			
 			'your_organization_settings' => array(
@@ -226,26 +178,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Your Organization'),
 					'order' => 50
 					),
+                'help_tabs' => array(
+					'general_settings_your_organization_help_tab' => array(
+						'title' => __('Your Organization', 'event_espresso'),
+						'filename' => 'general_settings_your_organization'
+						)
+					),
 				'help_tour' => array( 'Your_Organization_Help_Tour' ),
 				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tabs' => array(
-					'site_license_key_info' => array(
-						'title' => __('Site License Key', 'event_espresso'),
-						'callback' => 'site_license_key_info_help_tab'
-						),
-					'contact_info_info' => array(
-						'title' => __('Contact Information', 'event_espresso'),
-						'callback' => 'contact_info_info_help_tab'
-						),
-					'organization_logo_info' => array(
-						'title' => __("Company Logo", 'event_espresso'),
-						'callback' => 'organization_logo_info_help_tab'
-						),
-					'social_links_info' => array(
-						'title' => __('Social Links', 'event_espresso'),
-						'callback' => 'social_links_info_help_tab'
-						),
-					),
 				'require_nonce' => FALSE
 				),
 			'admin_option_settings' => array(
@@ -254,29 +194,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 60
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tour' => array( 'Admin_Options_Help_Tour' ),
-				'help_tabs' => array(
-					'full_logging_info' => array(
-						'title' => __('Full Logging', 'event_espresso'),
-						'callback' => 'full_logging_info_help_tab'
-						),
-					'remote_logging_info' => array(
-						'title' => __('Remote Logging', 'event_espresso'),
-						'callback' => 'remote_logging_info_help_tab'
-						),
-					'remote_logging_url_info' => array(
-						'title' => __("Remote Logging URL", 'event_espresso'),
-						'callback' => 'remote_logging_url_info_help_tab'
-						),
-					'affiliate_info' => array(
-						'title' => __('Affiliate', 'event_espresso'),
-						'callback' => 'affiliate_info_help_tab'
-						),
-					'help_tour_activation_info' => array(
-						'title' => __('Help Tour Activation', 'event_espresso'),
-						'callback' => 'help_tour_activation_info_help_tab'
-						),
+                'help_tabs' => array(
+					'general_settings_admin_options_help_tab' => array(
+						'title' => __('Admin Options', 'event_espresso'),
+						'filename' => 'general_settings_admin_options'
+						)
 					),
+				'help_tour' => array( 'Admin_Options_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
 			'country_settings' => array(
@@ -284,178 +208,18 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Countries'),
 					'order' => 70
 					),
-				'help_tour' => array( 'Countries_Help_Tour' ),
-				'help_tabs' => array(
-					'country_select_info' => array(
-						'title' => __('Select a Country', 'event_espresso'),
-						'callback' => 'country_select_info_help_tab'
-						),
-					'country_details_info' => array(
-						'title' => __('Country Details', 'event_espresso'),
-						'callback' => 'country_details_info_help_tab'
-						),
-					'country_states_info' => array(
-						'title' => __('States / Provinces', 'event_espresso'),
-						'callback' => 'country_states_info_help_tab'
-						),
+                'help_tabs' => array(
+					'general_settings_countries_help_tab' => array(
+						'title' => __('Countries', 'event_espresso'),
+						'filename' => 'general_settings_countries'
+						)
 					),
+				'help_tour' => array( 'Countries_Help_Tour' ),
 				//'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'require_nonce' => FALSE
 				)
 			);
 	}
-
-
-
-	/**
-	 * general settings critical pages help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function general_settings_critical_pages_help_tabs( $tab ) {
-		require_once GEN_SET_TEMPLATE_PATH . 'general_settings_critical_pages_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template($template);
-	}
-	public function registration_page_info_help_tab(){
-		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
-	}
-	public function transactions_info_help_tab() {
-		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
-	}
-	public function thank_you_page_info_help_tab(){
-		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
-	}
-	public function cancel_return_info_help_tab(){
-		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
-	}
-	public function event_list_cpt_info_help_tab(){
-		$this->general_settings_critical_pages_help_tabs( __FUNCTION__ );
-	}
-
-	/**
-	 * template settings help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function template_settings_help_tabs( $tab ) {
-		require_once GEN_SET_TEMPLATE_PATH . 'template_settings_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template($template);
-	}
-	public function event_list_settings_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function default_event_list_type_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function grid_size_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function display_description_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function display_address_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function display_venue_details_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function display_expired_events_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function display_addresses_in_reg_form_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	public function event_listings_url_info_help_tab(){
-		$this->template_settings_help_tabs( __FUNCTION__ );
-	}
-	
-	
-	/**
-	 * google map settings help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function gmaps_info_help_tab() {
-		$template = GEN_SET_TEMPLATE_PATH . 'map_confg_help.php';
-		EEH_Template::display_template( $template );
-	}
-	
-	/**
-	 * your organization help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for tab 
-	 */
-	public function your_organization_help_tabs( $tab ) {
-		require_once GEN_SET_TEMPLATE_PATH . 'your_organization_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template( $template );
-	}
-	public function site_license_key_info_help_tab() {
-		$this->your_organization_help_tabs( __FUNCTION__ );
-	}
-	public function contact_info_info_help_tab() {
-		$this->your_organization_help_tabs( __FUNCTION__ );
-	}
-	public function organization_logo_info_help_tab() {
-		$this->your_organization_help_tabs( __FUNCTION__ );
-	}
-	public function social_links_info_help_tab() {
-		$this->your_organization_help_tabs( __FUNCTION__ );
-	}
-
-
-
-
-	/**
-	 * admin options help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for tab 
-	 */
-	public function admin_options_help_tabs( $tab ) {
-		require_once GEN_SET_TEMPLATE_PATH . 'admin_options_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template( $template );
-	}
-	public function full_logging_info_help_tab() {
-		$this->admin_options_help_tabs( __FUNCTION__ );
-	}
-	public function remote_logging_info_help_tab() {
-		$this->admin_options_help_tabs( __FUNCTION__ );
-	}
-	public function remote_logging_url_info_help_tab() {
-		$this->admin_options_help_tabs( __FUNCTION__ );
-	}
-	public function affiliate_info_help_tab() {
-		$this->admin_options_help_tabs( __FUNCTION__ );
-	}
-	public function help_tour_activation_info_help_tab() {
-		$this->admin_options_help_tabs( __FUNCTION__ );
-	}
-	
-	
-	/**
-	 * countries help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for tab 
-	 */
-	public function countries_help_tabs( $tab ) {
-		require_once GEN_SET_TEMPLATE_PATH . 'countries_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template( $template );
-	}
-	public function country_select_info_help_tab() {
-		$this->countries_help_tabs( __FUNCTION__ );
-	}
-	public function country_details_info_help_tab() {
-		$this->countries_help_tabs( __FUNCTION__ );
-	}
-	public function country_states_info_help_tab() {
-		$this->countries_help_tabs( __FUNCTION__ );
-	}
-	
-	
 
 
 	protected function _add_screen_options() {
@@ -504,8 +268,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style( 'organization-css' );
 
 		global $eei18n_js_strings;
-		$eei18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		$eei18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
 		$eei18n_js_strings['confirm_delete_state'] = __(  'Are you sure you want to delete this State / Province?', 'event_espresso' );
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
 		$eei18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php?page=espresso_general_settings' , $protocol );
@@ -940,17 +704,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		$CNT_ISO = isset( $this->_req_data['CNT_ISO'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
-			EE_Error::add_error( __( 'An error occured. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 		$STA_abbrev = isset( $this->_req_data['STA_abbrev'] ) ? strtoupper( sanitize_text_field( $this->_req_data['STA_abbrev'] )) : FALSE;		
 		if ( ! $STA_abbrev ) {
-			EE_Error::add_error( __( 'An error occured. No State ISO code or an invalid State ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No State ISO code or an invalid State ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 		$STA_name = isset( $this->_req_data['STA_name'] ) ? ucwords( strtolower( sanitize_text_field( $this->_req_data['STA_name'] ))) : FALSE;
 		if ( ! $STA_name ) {
-			EE_Error::add_error( __( 'An error occured. No State name or an invalid State name was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No State name or an invalid State name was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 		
@@ -984,7 +748,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function delete_state() {
 		$STA_ID = isset( $this->_req_data['STA_ID'] ) ? sanitize_text_field( $this->_req_data['STA_ID'] ) : FALSE;
 		if ( ! $STA_ID ) {
-			EE_Error::add_error( __( 'An error occured. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$success = EEM_State::instance()->delete_by_ID( $STA_ID );
@@ -1012,7 +776,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		// grab the country ISO code
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
-			EE_Error::add_error( __( 'An error occured. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$success = TRUE;

@@ -51,6 +51,30 @@ $fields = $question->get_model()->field_settings();
 					</p>					
 				</td>
 			</tr>
+
+			<tr>
+				<th>
+					<label for="QST_admin_only"><?php echo $fields['QST_admin_only']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_admin_only_info');?>
+				</th>
+				<td>
+					<?php 
+						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
+						$id =  ! empty( $QST_system ) ? '_disabled' : '';
+						$admin_only = $question->get('QST_admin_only');
+						$checked = !empty( $admin_only ) ? ' checked="checked"' : '';
+					?>
+					<input class="QST_admin_only" type="checkbox" id="QST_admin_only<?php echo $id; ?>" name = "QST_admin_only<?php echo $id; ?>" value="1"<?php echo $disabled; echo $checked; ?>/>
+					<br/>
+					<p class="description">
+					<?php if ( ! empty( $QST_system )) { ?>
+					<span class="description" style="color:#D54E21;">
+						<?php _e('System question! This field cannot be changed.','event_espresso')?>
+					</span>
+					<?php } ?>
+						
+					</p>					
+				</td>
+			</tr>
 			
 			<tr>
 				<th>
@@ -175,13 +199,23 @@ $fields = $question->get_model()->field_settings();
 					<?php 
 					$system_required = array( 'fname', 'lname', 'email' );
 					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : ''; 
+					$required_on = $question->get('QST_admin_only');
+					$show_required_msg = $required_on ? '' : ' display:none;';
+					$disabled = $required_on ? ' disabled="disabled"' : '';
 					$id =  ! empty( $disabled ) ? '_disabled' : '';
 					$requiredOptions=array( 
 						array('text'=>'Optional','id'=>0), 
 						array('text'=>'Required','id'=>1)
 					);
 					echo EEH_Form_Fields::select_input('QST_required' . $id, $requiredOptions, $question->required(), 'id="QST_required' . $id . '"' . $disabled );
-					if ( ! empty( $disabled )) { ?>
+					?>
+						<p><span id="required_toggled_on" class="description" style="color:#D54E21;<?php echo $show_required_msg; ?>">
+						<?php _e('Required is set to optional, and this field is disabled, because the question is Admin-Only.','event_espresso')?>
+					</span></p>
+					<p><span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
+						<?php _e('Required option field is no longer disabled because the question is not Admin-Only','event_espresso')?>
+					</span></p>
+					<?php if ( ! empty( $disabled )) { ?>
 						<input type="hidden"  id="QST_required" name="QST_required" value="1"/>
 						<p><span class="description" style="color:#D54E21;">
 						<?php _e('System question! This field cannot be changed.','event_espresso')?>

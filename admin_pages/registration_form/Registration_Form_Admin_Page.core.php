@@ -136,13 +136,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
-				'help_tabs' => array(
-					'question_tab_overview_info' => array(
-						'title' => __('Question Overview', 'event_espresso'),
-						'callback' => 'question_tab_overview_info_help_tab'
+                'help_tabs' => array(
+					'registration_form_questions_overview_help_tab' => array(
+						'title' => __('Questions Overview', 'event_espresso'),
+						'filename' => 'registration_form_questions_overview'
 						),
 					),
+				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
 				'require_nonce' => FALSE,
 				'qtips' => array(
 					'EE_Registration_Form_Tips'
@@ -153,6 +153,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Question Groups'),
 					'order' => 20
+					),
+                'help_tabs' => array(
+					'registration_form_question_groups_help_tab' => array(
+						'title' => __('Question Groups', 'event_espresso'),
+						'filename' => 'registration_form_question_groups'
+						),
 					),
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
 				'require_nonce' => FALSE
@@ -167,59 +173,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'help_tabs' => array(
-					'question_text_info' => array(
-						'title' => __('Question Text', 'event_espresso'),
-						'callback' => 'question_text_info_help_tab'
-						),
-					'question_label_info' => array(
-						'title' => __('Question Label', 'event_espresso'),
-						'callback' => 'question_label_info_help_tab'
-						),
-					'question_type_info' => array(
-						'title' => __('Question Type', 'event_espresso'),
-						'callback' => 'question_type_info_help_tab'
-						),
-					'required_question_info' => array(
-						'title' => __('Required Question', 'event_espresso'),
-						'callback' => 'required_question_info_help_tab'
-						),
-					'required_text_info' => array(
-						'title' => __('Required Text', 'event_espresso'),
-						'callback' => 'required_text_info_help_tab'
+					'registration_form_edit_question_group_help_tab' => array(
+						'title' => __('Edit Question', 'event_espresso'),
+						'filename' => 'registration_form_edit_question'
 						),
 					),
 				'require_nonce' => FALSE
 				),
 			);
-	}
-	
-	/**
-	 * add/edit question help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function edit_question_help_tabs( $tab ) {
-		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template($template);
-	}
-	public function question_tab_overview_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function question_text_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function question_label_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function question_type_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function required_question_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function required_text_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
 	}
 	
 	
@@ -348,10 +309,18 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$QST_text = isset( $this->_req_data['QST_display_text'] ) ? $this->_req_data['QST_display_text'] : '' ;
 				$set_column_values[$fieldName] = sanitize_title(wp_trim_words($QST_text,10));
 			}
+
+
+			else if ( $fieldName == 'QST_admin_only' && ( !isset( $this->_req_data['QST_admin_only'] ) ) ) {
+				$set_column_values[$fieldName] = 0;
+			}
+
+
 			//only add a property to the array if it's not null (otherwise the model should just use the defautl value)
 			else if(isset($this->_req_data[$fieldName])){
 				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
 			}
+
 		}
 		return $set_column_values;//validation fo this data to be performed by the model before insertion.
 	}
@@ -391,7 +360,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$success = FALSE;
 		}
 		
-		$errors = ! $success ? __( 'An error occured. The question order was not updated.', 'event_espresso' ) : FALSE;
+		$errors = ! $success ? __( 'An error occurred. The question order was not updated.', 'event_espresso' ) : FALSE;
 		
 		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();

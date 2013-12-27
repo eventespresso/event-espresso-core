@@ -36,7 +36,6 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _setup_data() {
-		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_get_checkins( $this->_per_page );
 		$this->_all_data_count = $this->_get_checkins(  $this->_per_page, TRUE );
 	}
@@ -71,7 +70,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 	}
 
 	//remove the search box
-	function search_box() {
+	function search_box($text, $input_id) {
 		return '';
 	}
 
@@ -129,8 +128,8 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
-		$limit = array();
-		if ( !empty( $per_page ) ) {
+		$limit = NULL;
+		if ( !$count ) {
 			$offset = ($current_page-1)*$per_page;
 			$limit = array( $offset, $per_page );
 		}
@@ -143,7 +142,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 		$query_params = array( $_where, 'order_by' => array( $orderby => $order ), 'limit' => $limit );
 
 		//if no per_page value then we just want to return a count of all Check-ins
-		if ( empty( $per_page ) )
+		if ( $count )
 			return EEM_Checkin::instance()->count( array( $_where ) );
 
 		return $count ? EEM_Checkin::instance()->count( array( $_where ) ) : EEM_Checkin::instance()->get_all($query_params);

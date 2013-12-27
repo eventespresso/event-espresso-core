@@ -69,6 +69,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
 					),
+                'help_tabs' => array(
+					'registrations_reports_help_tab' => array(
+						'title' => __('Registration Reports', 'event_espresso'),
+						'filename' => 'registrations_reports'
+						)
+					),
 				'help_tour' => array( 'Registration_Reports_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
@@ -77,6 +83,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'label' => __('Event Check-In', 'event_espresso'),
 					'order' => 10,
 					'persistent' => true
+					),
+                'help_tabs' => array(
+					'registrations_event_checkin_help_tab' => array(
+						'title' => __('Registrations Event Check-in', 'event_espresso'),
+						'filename' => 'registrations_event_checkin'
+						)
 					),
 				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
 				'list_table' => 'EE_Event_Registrations_List_Table',
@@ -579,7 +591,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 		$offset = ($current_page-1)*$per_page;
-		$limit = array( $offset, $per_page );
+		$limit = $count ? NULL : array( $offset, $per_page );
 		$query_params = array(array());
 		if ($EVT_ID){
 			$query_params[0]['EVT_ID']=$EVT_ID;

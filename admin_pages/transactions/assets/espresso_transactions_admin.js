@@ -207,7 +207,7 @@ jQuery(document).ready(function($) {
 					error: function(response) {
 						/*console.log(response);/**/
 						if ( response.errors === undefined ) {
-							response.errors = eei18n.error_occured;
+							response.errors = eei18n.error_occurred;
 						}
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 					}
@@ -250,7 +250,7 @@ jQuery(document).ready(function($) {
 					},
 					error: function(response) {
 						if ( response.errors === undefined ) {
-							response.errors = eei18n.error_occured;
+							response.errors = eei18n.error_occurred;
 						}
 						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 					}

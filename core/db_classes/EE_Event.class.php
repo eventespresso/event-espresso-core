@@ -624,11 +624,22 @@ class EE_Event extends EE_CPT_Base{
 				return EE_Datetime::expired;
 			}			
 		} else {
-			if ( in_array( EE_Datetime::expired, $status_array )) {
-				return EE_Datetime::expired;
-			}				
+			switch ($this->_status) {
+				case EEM_Event::sold_out :
+					return EE_Datetime::sold_out;
+					break;
+				case EEM_Event::cancelled :
+					return EE_Datetime::cancelled;
+					break;
+
+				case EEM_Event::postponed :
+					return EE_Datetime::postponed;
+					break;
+
+				default :
+					return EE_Datetime::inactive;
+			}			
 		}
-		return EE_Datetime::inactive;
 	}
 
 
@@ -643,7 +654,6 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	public function pretty_active_status( $echo = TRUE, $show_all = TRUE ) {
 		$active_status = $this->get_active_status();
-		$status = ''; 
 		if ( $active_status < 1 || $show_all ) {
 			switch ( $active_status ) {
 				case EE_Datetime::sold_out :
@@ -667,6 +677,11 @@ class EE_Event extends EE_CPT_Base{
 				case EE_Datetime::active : 
 					$status = __('Active', 'event_espresso');
 					$class = 'active';
+					break;
+
+				case EE_Datetime::postponed :
+					$status = __('Postponed', 'event_espresso');
+					$class = 'postponed';
 					break;
 
 				default :

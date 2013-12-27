@@ -173,13 +173,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
     *	@var string	
     */
 	protected $_ATT_phone = NULL;
-
-	/**
-	 * Attendee's social media information (eg, twitter ID or whatever).
-	 * @access protected
-	 * @var array
-	 */
-	protected $_ATT_social = NULL;
 	
 	/**
 	 * Attendee notes by the attendee themselves about themselves
@@ -408,20 +401,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 
 
-	/**
-	*		Set Attendee Social Networking details
-	* 
-	* 		@access		public		
-	*		@param		string		$social
-	*/	
-	public function set_social( $social = FALSE ) {
-		
-		$this->set('ATT_social',$social);
-	}
-
-
-
-
 
 	/**
 	*		Set Attendee Comments (by the attendee)
@@ -634,15 +613,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 		return $this->get('ATT_phone');
 	}
 
-
-
-	/**
-	*		get Attendee Social Networking details
-	* 		@access		public
-	*/	
-	public function social() {
-		return $this->get('ATT_social');
-	}
 
 
 

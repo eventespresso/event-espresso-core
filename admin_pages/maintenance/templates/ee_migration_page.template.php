@@ -30,7 +30,7 @@
 				<?php 
 				//display errors or not of the most recent migration ran
 				if ($most_recent_migration->get_errors()){?>
-					<p><?php printf(__("The following errors occured during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></p>
+					<p><?php printf(__("The following errors occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></p>
 					<ul>
 					<?php foreach($most_recent_migration->get_errors() as $error){ ?>
 						<li><?php echo $error ?></li>

@@ -203,24 +203,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$event_query_args = isset($this->_req_data['evt_id']) ? array('evt_id' => $this->_req_data['evt_id'] ) : array();
 		$edit_query_args = array_merge( $group_query_args, $event_query_args );
 
-		$default_msg_help_tabs = array(
-			'about-messages' => array(
-				'title' => __('About Messages', 'event_espresso'),
-				'callback' => 'messages_help_tab'
-				),
-			'about-messengers' => array(
-				'title' => __('About Messengers', 'event_espresso'),
-				'callback' => 'messengers_help_tab',
-			),
-			'about-message-types' => array(
-				'title' => __('About Message Types', 'event_espresso'),
-				'callback' => 'message_types_help_tab'
-			),
-			'about-message-templates' => array(
-				'title' => __('About Message Templates', 'event_espresso'),
-				'callback' => 'message_templates_help_tab'
-				)
-		);
 
 		$this->_page_config = array(
 			'default' => array(
@@ -229,14 +211,37 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10 
 					),
 				'list_table' => 'Messages_Template_List_Table',
-				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
-				'help_tabs' => array_merge( array(
-						'messages_overview' => array(
-							'title' => __('About the Overview', 'event_espresso'),
-							'callback' => 'messages_overview_help_tab'
+                'help_tabs' => array(
+						'messages_overview_help_tab' => array(
+							'title' => __('Messages Overview', 'event_espresso'),
+							'filename' => 'messages_overview'
 							),
-						), $default_msg_help_tabs
-				),
+                        'messages_system_help_tab' => array(
+                            'title' => __('Messages System', 'event_espresso'),
+                            'filename' => 'messages_system'
+                            ),
+                        'message_types_help_tab' => array(
+                            'title' => __('Message Types', 'event_espresso'),
+                            'filename' => 'messages_types'
+                            ),
+                        'message_templates_help_tab' => array(
+                            'title' => __('Message Templates', 'event_espresso'),
+                            'filename' => 'messages_templates'
+                            ),
+                        'message_preview_help_tab' => array(
+                            'title' => __('Message Preview', 'event_espresso'),
+                            'filename' => 'messages_preview'
+                            ),
+                        'message_shortcodes_help_tab' => array(
+                            'title' => __('Message Shortcodes', 'event_espresso'),
+                            'filename' => 'messages_shortcodes'
+                            ),
+                        'messengers_help_tab' => array(
+                            'title' => __('Messengers', 'event_espresso'),
+                            'filename' => 'messages_what_are_messengers',
+                            ),
+                    ),
+				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
 				'require_nonce' => FALSE
 			),
 			'force_switch_template' => array(
@@ -266,7 +271,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE,
 				'help_tour' => array( 'Message_Templates_Edit_Help_Tour' ),
-				'help_tabs' => array_merge( array(
+				/*'help_tabs' => array(
 						'edit_message_template' => array(
 							'title' => __('About Template Editor', 'event_espresso'),
 							'callback' => 'edit_message_template_help_tab'
@@ -275,8 +280,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'title' => __('Shortcode Descriptions', 'event_epresso'),
 							'callback' => 'message_template_shortcodes_help_tab'
 							),
-						), $default_msg_help_tabs
-					),
+					),*/
 				'require_nonce' => FALSE
 				),
 			'preview_message' => array(
@@ -285,13 +289,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'help_tabs' => array_merge( array(
+				/*'help_tabs' => array(
 						'preview_message' => array(
 							'title' => __('About Previews', 'event_espresso'),
 							'callback' => 'preview_message_help_tab'
 							)
-						), $default_msg_help_tabs
-					),
+					),*/
 				'require_nonce' => FALSE
 				),
 			'settings' => array(
@@ -300,14 +303,37 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'metaboxes' => array('_messages_settings_metaboxes'),
+                'help_tabs' => array(
+						'messages_overview_help_tab' => array(
+							'title' => __('Messages Overview', 'event_espresso'),
+							'filename' => 'messages_overview'
+							),
+                        'messages_system_help_tab' => array(
+                            'title' => __('Messages System', 'event_espresso'),
+                            'filename' => 'messages_system'
+                            ),
+                        'message_types_help_tab' => array(
+                            'title' => __('Message Types', 'event_espresso'),
+                            'filename' => 'messages_types'
+                            ),
+                        'message_templates_help_tab' => array(
+                            'title' => __('Message Templates', 'event_espresso'),
+                            'filename' => 'messages_templates'
+                            ),
+                        'message_preview_help_tab' => array(
+                            'title' => __('Message Preview', 'event_espresso'),
+                            'filename' => 'messages_preview'
+                            ),
+                        'message_shortcodes_help_tab' => array(
+                            'title' => __('Message Shortcodes', 'event_espresso'),
+                            'filename' => 'messages_shortcodes'
+                            ),
+                        'messengers_help_tab' => array(
+                            'title' => __('Messengers', 'event_espresso'),
+                            'filename' => 'messages_what_are_messengers',
+                            ),
+                    ),
 				'help_tour' => array( 'Messages_Settings_Help_Tour' ),
-				'help_tabs' => array_merge( array(
-						'settings' => array(
-							'title' => __('About Message Settings', 'event_espresso'),
-							'callback' => 'settings_help_tab'
-							)
-						), $default_msg_help_tabs
-					),
 				'require_nonce' => FALSE
 				)
 			/*'reports' => array(
@@ -2497,8 +2523,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				foreach ( $event_templates as $template ) {
 					$event_name = $template->event_name();
 					$query_args = array(
-						'action' => 'edit_event',
-						'EVT_ID' => $template->event()
+						'action' => 'edit',
+						'post' => $template->event()
 						);
 					$edit_event_url = self::add_query_args_and_nonce( $query_args, $base_event_admin_url );
 					$warning_msg .= "\n" . '<li><a href="' . $edit_event_url . '" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a></li>';

@@ -102,7 +102,7 @@ class EE_Question_Form_Input {
 	 */
 	public function __construct(  EE_Question $QST = NULL, EE_Answer $ANS = NULL, $q_meta = array() ) {
 		if ( empty( $QST ) || empty( $ANS )) {
-			EE_Error::add_error( __( 'An error occured. A valid EE_Question or EE_Answer object was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. A valid EE_Question or EE_Answer object was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 		$this->_QST = $QST;

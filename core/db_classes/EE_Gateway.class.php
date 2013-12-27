@@ -493,7 +493,7 @@ abstract class EE_Gateway {
 			$msg = sprintf( __( 'The %s button URL was reset.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
-			$msg = sprintf( __( 'An error occured. The %s button URL was not reset.', 'event_espresso' ), $this->_payment_settings['display_name'] );
+			$msg = sprintf( __( 'An error occurred. The %s button URL was not reset.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}

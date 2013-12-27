@@ -11,6 +11,10 @@ jQuery(document).ready(function($) {
 	$('#post-body').on('click', '.remove-option', function(){
 		espresso_reg_forms_trash_option(this);
 	});
+
+	$('#post-body').on('click', '#QST_admin_only', function() {
+		espresso_maybe_switch_required(this);
+	});
 	
 	espresso_reg_forms_show_or_hide_question_options();
 	
@@ -57,6 +61,21 @@ function espresso_reg_forms_show_option_desc(show){
 	}else{
 		jQuery('.option-desc-cell').hide();
 		jQuery('.option-desc-header').hide();
+	}
+}
+
+
+function espresso_maybe_switch_required(item) {
+	var admin_only = jQuery(item).prop('checked');
+	if ( admin_only ) {
+		jQuery('#QST_required').val('0');
+		jQuery('#QST_required').prop('disabled', true);
+		jQuery('#required_toggled_on').show();
+		jQuery('#required_toggled_off').hide();
+	} else {
+		jQuery('#QST_required').prop('disabled', false);
+		jQuery('#required_toggled_on').hide();
+		jQuery('#required_toggled_off').show();
 	}
 }
 

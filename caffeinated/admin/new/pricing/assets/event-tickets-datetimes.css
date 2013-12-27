@@ -49,20 +49,29 @@
     width: 77%;
 }
 
+.datetime-edit-table td:nth-child(1), .datetime-edit-table td:nth-child(2) {
+    width: 40%;
+}
+
 
 .datetime-edit-table td:nth-child(3) {
-    width: 3%;
+    width: 5%;
 }
 
 .datetime-edit-table td:nth-child(4) {
-   padding-top: 15px;
-   min-width :80px
-   
+   width: 5%;
+   text-align: right;
+   line-height: 1.8em;
+   padding-bottom: 5px;
 }
 
 .datetime-edit .datetime-edit-table td:last-child {
     padding-top: 20px;
-    min-width: 40px;
+    width: 10%;
+}
+
+.datetime-edit .datetime-edit-table label {
+    font-weight: bold;
 }
 
 @media all and (max-width: 1363px) {
@@ -187,8 +196,10 @@
 
 .datetime-edit .ee-edit-editing {
     height: 35px;
-    margin-top: 15px;
-    padding-top: -10px;
+    margin-top: 9px;
+    padding-top: 3px;
+    padding-left: 0;
+    padding-right: 6px;
 }
 
 .button-column {

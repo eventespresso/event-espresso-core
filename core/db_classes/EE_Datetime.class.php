@@ -25,6 +25,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	
 	/**
+	 * Datetime is cancelled
+	 */
+	const cancelled = -3;
+	/**
 	 * constant used by get_active_status, indicates datetime has no more available spaces
 	 */
 	const sold_out = -2;
@@ -44,6 +48,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
 	 */
 	const active = 2;
+	/**
+	 * Datetime is postponed
+	 */
+	const postponed = 3;
 	
     /**
     *	Datetime ID
@@ -799,7 +807,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		$count_regs_for_this_datetime = EEM_Registration::instance()->count(array(
 			array(
 				'STS_ID'=>array('IN',$stati_to_include),
-				'Ticket.Datetime.DTT_ID'=>$this->ID())));
+				'Ticket.Datetime.DTT_ID'=>$this->ID(),
+				'REG_deleted' => 0 ) ) );
 		$this->set('DTT_sold',$count_regs_for_this_datetime);
 		$this->save();
 		return $count_regs_for_this_datetime;

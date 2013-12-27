@@ -206,7 +206,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//let's generate the attendee objects
 		$attendees = array();
-		$var_array = array('fname','lname','email','address','address2','city','staid','cntry','zip','phone','social','comments','notes','deleted','attid');
+		$var_array = array('fname','lname','email','address','address2','city','staid','cntry','zip','phone','comments','notes','deleted','attid');
 
 		EE_Registry::instance()->load_class( 'Attendee', array(), FALSE, TRUE, TRUE );
 		foreach ( $dummy_attendees as $dummy ) {
@@ -224,7 +224,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 					'ATT_zip' => $zip,
 					'ATT_email' => $email,
 					'ATT_phone' => $phone,
-					'ATT_social' => $social,
 					'ATT_comments' => $comments,
 					'ATT_notes' => $notes,
 					'ATT_ID' => $attid

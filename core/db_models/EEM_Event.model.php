@@ -119,7 +119,7 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
 				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
-				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true, 1),
+				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true, 255),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending, EEM_Registration::reg_status_array()),
 				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
@@ -177,7 +177,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	*/	
 	public function get_all_event_question_groups( $EVT_ID = FALSE ) {
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
-			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
@@ -199,7 +199,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	*/	
 	public function get_event_question_groups( $EVT_ID = FALSE, $for_primary_attendee = TRUE ) {
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
-			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
@@ -224,7 +224,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function get_question_groups_for_event( $EVT_ID = FALSE, $system_ID = FALSE, $for_primary_attendee = TRUE ) {
 		
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
-			EE_Error::add_error( __( 'An error occured. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
@@ -261,7 +261,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function get_questions_in_groups( $QSG_IDs = '' ) {		
 
 		if ( empty( $QSG_IDs )) {
-			EE_Error::add_error( __( 'An error occured. No Question Group IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Question Group IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
@@ -292,7 +292,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function get_options_for_question( $QST_IDs ) {		
 
 		if ( empty( $QST_IDs )) {
-			EE_Error::add_error( __( 'An error occured. No Question IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Question IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
@@ -324,7 +324,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function assemble_array_of_groups_questions_and_options( $ANS = array(), $QSGs = array(), $EVT_ID = NULL ) {		
 
 		/*if ( empty( $ANS ) && empty( $QSGs ) ) {
-			EE_Error::add_error( __( 'An error occured. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}/**/
 

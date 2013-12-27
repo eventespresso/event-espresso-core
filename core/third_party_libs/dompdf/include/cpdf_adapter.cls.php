@@ -641,7 +641,7 @@ class CPDF_Adapter implements Canvas {
 		//don't create temp file, but place gd object directly into the pdf
   		if ( method_exists( $this->_pdf, "image_iscached" ) &&
   			$this->_pdf->image_iscached($img_url) ) {
-  		  //If same image has occured already before, no need to load because
+  		  //If same image has occurred already before, no need to load because
   		  //duplicate will anyway be eliminated.
   		  $img = null;
   		  unset($img);

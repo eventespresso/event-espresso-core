@@ -44,7 +44,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _setup_data() {
-		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_admin_page->get_registrations( $this->_per_page );
 		$this->_all_data_count = $this->_admin_page->get_registrations( $this->_per_page, TRUE, FALSE, FALSE );
 	}
@@ -197,7 +196,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-
 	/**
 	 * 		column_default
 	*/
@@ -215,7 +213,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_cb
 	*/
     function column_cb(EE_Registration $item){
-        return sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
+    	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+        return $payment_count > 0 ? '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
 
@@ -294,12 +293,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>';
 		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 
+		$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+
 		//trash/restore/delete actions
 		$actions = array();
-		if ( $this->_view != 'trash' ) {
+		if ( $this->_view != 'trash' && $payment_count === 0 ) {
 			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Trash Registration', 'event_espresso' ) . '">' . __( 'Trash', 'event_espresso' ) . '</a>';
-		} else {
+		} elseif ( $this->_view == 'trash' ) {
 			// restore registration link
 			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 			$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );

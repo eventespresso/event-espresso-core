@@ -661,7 +661,7 @@ jQuery(document).ready(function($) {
 			});
 
 			this.context = 'datetime';
-			this.DateTimeEditToggle();
+			//this.DateTimeEditToggle();
 			return this;
 		},
 
@@ -1171,7 +1171,7 @@ jQuery(document).ready(function($) {
 			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.datetimeRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
 			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]') : $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' );
 
-			if ( !selecting ) {
+			if ( ( !selecting && this.context != 'ticket' ) || ( !selecting && this.context == 'ticket' && this.itemdata.context == 'ticket-datetime' ) ) {
 				this.lastDTTtoggle = tktHelper.verifyLastDTT(this.itemdata.ticketRow);
 			}
 
@@ -1678,7 +1678,7 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).data();
 		tktHelper.updateDTTrow(data.datetimeRow);
-	});
+	});/**/
 
 
 	/**

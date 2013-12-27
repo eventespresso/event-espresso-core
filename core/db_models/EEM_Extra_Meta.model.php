@@ -55,7 +55,7 @@ class EEM_Extra_Meta extends EEM_Base {
 		$this->_tables = array(
 			'Extra_Meta'=> new EE_Primary_Table('esp_extra_meta', 'EXM_ID')
 		);
-		$models_this_can_attach_to = array('Transaction','Payment','Term_Taxonomy',);
+		$models_this_can_attach_to = array_keys(EE_Registry::instance()->models);
 		$this->_fields = array(
 			'Extra_Meta'=>array(
 				'EXM_ID'=>new EE_Primary_Key_Int_Field('EXM_ID', __("Extra Meta ID", "event_espresso")),

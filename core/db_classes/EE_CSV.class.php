@@ -129,7 +129,7 @@
 			fclose($file_handle);
 			return $csvarray;
 		}else{
-			EE_Error::add_error( sprintf(__("An error occured - the file: %s could not opened.", "event_espresso"),$path_to_file));
+			EE_Error::add_error( sprintf(__("An error occurred - the file: %s could not opened.", "event_espresso"),$path_to_file));
 			return false;
 		}
 	}
@@ -477,11 +477,11 @@
 		}
 
 		if ( $total_update_errors > 0 ) {
-			EE_Error::add_error(sprintf(__("'One or more errors occured, and a total of %s existing records in the database were <strong>not</strong> updated.'", "event_espresso"),$total_update_errors));
+			EE_Error::add_error(sprintf(__("'One or more errors occurred, and a total of %s existing records in the database were <strong>not</strong> updated.'", "event_espresso"),$total_update_errors));
 			$error = true;
 		}
 		if ( $total_insert_errors > 0 ) {
-			EE_Error::add_error(sprintf(__("One or more errors occured, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors));
+			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors));
 			$error = true;
 		}
 

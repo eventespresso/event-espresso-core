@@ -149,13 +149,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'EE_Admin_Transactions_List_Table',
-				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
-				'help_tabs' => array(
-					'txn_overview_info' => array(
-						'title' => __('About the Overview', 'event_espresso'),
-						'callback' => 'txn_overview_help_tab_html'
+                'help_tabs' => array(
+					'transactions_overview_help_tab' => array(
+						'title' => __('Transactions Overview', 'event_espresso'),
+						'filename' => 'transactions_overview'
 					),
 				),
+				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
 			'view_transaction' => array(
@@ -165,108 +165,18 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['TXN_ID']) ? add_query_arg(array('TXN_ID' => $this->_req_data['TXN_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
+                'help_tabs' => array(
+					'view_transaction_help_tab' => array(
+						'title' => __('View Transaction', 'event_espresso'),
+						'filename' => 'transactions_view_transaction'
+					),
+				),
 				'help_tour' => array( 'Transaction_Details_Help_Tour' ),
 				'metaboxes' => array('_transaction_details_metaboxes'),
 				
 				'require_nonce' => FALSE
 				)
 		);
-	}
-
-
-	/**
-	 * transaction help tabs
-	 */
-	public function txn_overview_help_tab_html() {
-		?>
-
-<h2>
-	<?php _e('About the Overview', 'event_espresso'); ?>
-</h2>
-<p>
-	<?php _e('This table represents all the ticket purchases made for your events.', 'event_espresso'); ?>
-</p>
-<h3>
-	<?php _e('Filters', 'event_espresso'); ?>
-</h3>
-<p>
-	<?php _e('The date filters allow you to display only purchases made within a specific period. Leaving the both blank will display all results, and leaving only one blank will display all result up to that date or after that date, depending on which you leave blank.', 'event_espresso'); ?>
-</p>
-<h3>
-	<?php _e('Table Columns', 'event_espresso'); ?>
-</h3>
-<ul>
-	<li>
-		<p> <strong>
-			<?php _e('ID', 'event_espresso'); ?>
-			</strong> <br />
-			<?php _e(' The transaction ID is used through the payment process.	', 'event_espresso'); ?>
-		</p>
-	</li>
-	<li> <strong>
-		<?php _e('Transaction Date	', 'event_espresso'); ?>
-		</strong> <br />
-		<?php _e('The data when the transaction took place. Clicking the date will take you through to the individual transaction page where you can see the transaction in detail.	', 'event_espresso'); ?>
-	</li>
-	<li> <strong>
-		<?php _e('Status', 'event_espresso'); ?>
-		</strong> <br />
-		<?php _e('The status helps you know if the transaction was successful or not. It could be one of three: ', 'event_espresso'); ?>
-		<ol>
-			<li>
-				<?php _e('Complete, the payment was successful; ', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Open, the payment has not yet been attempted. This is the status for incomplete offline payments such as invoices; ', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Incomplete, the payment has not yet been completed. This is the status for online payments that have yet to be processed.		', 'event_espresso'); ?>
-			</li>
-		</ol>
-	</li>
-	<li> <strong>
-		<?php _e('Total', 'event_espresso'); ?>
-		</strong> <br />
-		<?php _e('This column will show you the total amount for that transaction. It will include the total of every ticket purchased even if from separate events.	', 'event_espresso'); ?>
-	</li>
-	<li> <strong>
-		<?php _e('Paid', 'event_espresso'); ?>
-		</strong> <br />
-		<?php _e('Here you can see how much has been paid. If this column matches the figure in the total column, then the transaction has been paid in full.	', 'event_espresso'); ?>
-	</li>
-	<li> <strong>
-		<?php _e('Primary Registrant	', 'event_espresso'); ?>
-		</strong> <br />
-		<?php _e('The name of the primary attendee is shown here. Clicking the name will allow you to edit the attendees.	', 'event_espresso'); ?>
-	</li>
-	<li> <strong>
-		<?php _e('Email Address	', 'event_espresso'); ?>
-		</strong> <br />
-		<?php _e('The primary attendees email address is shown here. Clicking the email will open up your email client.	', 'event_espresso'); ?>
-	</li>
-	<li> <strong>
-		<?php _e('Event', 'event_espresso'); ?>
-		</strong> <br />
-		<?php _e('The name of the event/s are shown here. Clicking the name will take you the edit event screen.	', 'event_espresso'); ?>
-	</li>
-	<li> <strong>
-		<?php _e('Actions', 'event_espresso'); ?>
-		</strong> <br />
-		<?php _e('There are 4 main actions that can be done by clicking the icons here:', 'event_espresso'); ?>
-		<ol>
-			<li>
-				<?php _e('View Transaction Details: Takes you to the individual transaction page. Clicking the date also takes you to the individual transaction page.', 'event_espresso'); ?>
-			</li>
-			<li>
-				<?php _e('Download Invoice for Transaction: downloads the invoice PDF.', 'event_espresso'); ?>
-			</li>
-			<li> <?php echo sprintf(__('Send Payment Reminder: Emails the primary attendee the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?> </li>
-			<li> <?php echo sprintf(__('View Registration Details: Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">','</a>'); ?> </li>
-		</ol>
-	</li>
-</ul>
-
-	<?php
 	}
 
 
@@ -345,8 +255,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('espresso_txn');	
 
 		;
-		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['txn_status_array'] = self::$_txn_status;
 		EE_Registry::$i18n_js_strings['pay_status_array'] = self::$_pay_status;
 
@@ -406,7 +316,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
 
 	 	if ( empty( $this->_transaction ) ) {
-	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
+	    	$error_msg = __('An error occurred and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 	    }
 	}
@@ -743,7 +653,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['prime_reg_country'] = $primary_att->get('CNT_ISO');
 		$this->_template_args['prime_reg_zip'] = $primary_att->get('ATT_zip');
 		$this->_template_args['prime_reg_phone'] = $primary_att->get('ATT_phone');
-		$this->_template_args['prime_reg_social'] = $primary_att->get('ATT_social');
 		$this->_template_args['prime_reg_comments'] = $primary_att->get('ATT_comments');
 		$this->_template_args['prime_reg_notes'] = $primary_att->get('ATT_notes');
 		
@@ -845,7 +754,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				)
 			);
 			if( ! $payment->save() ){
-				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );
+				$msg = __( 'An error occurred. The payment has not been processed succesfully.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			//update the transaction with this payment
@@ -853,7 +762,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$msg =__('The payment has been processed succesfully.', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}else{
-				$msg = __( 'An error occured. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
+				$msg = __( 'An error occurred. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			
@@ -881,7 +790,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_process_payment_notification( $payment );
 
 		} else {
-			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
+			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		
@@ -918,7 +827,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				}						
 			}
 		} else {
-			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
+			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 			$return_data = FALSE;	
 		}

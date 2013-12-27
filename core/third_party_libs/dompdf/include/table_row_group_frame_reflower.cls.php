@@ -69,7 +69,7 @@ class Table_Row_Group_Frame_Reflower extends Frame_Reflower {
 	  $child->set_containing_block($cb["x"], $cb["y"], $cb["w"], $cb["h"]);
 	  $child->reflow();
 
-	  // Check if a split has occured
+	  // Check if a split has occurred
 	  $page->check_page_break($child);
 
 	}

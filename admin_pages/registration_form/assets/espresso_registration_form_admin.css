@@ -17,17 +17,33 @@
 .questions .column-type { width:7.5%; text-align: center; }
 .questions .column-display_text { width:20%; }
 .questions .column-admin_label { width:22.5%; }
-.questions .column-values { }
 
 
 .questiongroups .column-id { width:5%; }
 .questiongroups .column-order,
-.questiongroups .column-show_group_name,
-.questiongroups .column-show_group_desc,
 .questiongroups .column-ajax_sort_handle { width:5%; text-align: center; }
 .questiongroups .column-name { width:20%; }
-.questiongroups .column-description  { }
+.questiongroups .column-show_group_name,
+.questiongroups .column-show_group_desc {
+	width: 15%;
+}
 
 table.question-options-table td, table.question-options-table th{
 	padding:1em 10px 0 3px; line-height: 1em;
+}
+
+table.question-options-table{
+	width: 100%;
+}
+
+table.question-options-table .regular-text {
+	width: 100%;
+}
+
+table.question-options-table td:first-child, table.question-options-table td:nth-child(2) {
+	width: 45%;
+}
+
+table.question-options-table td:last-child {
+	width: 10%;
 }

@@ -847,7 +847,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//try to access page route via this class
 			if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
 				// user error msg
-				$error_msg =  __( 'An error occured. The  requested page route could not be found.', 'event_espresso' );
+				$error_msg =  __( 'An error occurred. The  requested page route could not be found.', 'event_espresso' );
 				// developer error msg
 				$error_msg .= '||' . sprintf( __( 'Page route "%s" could not be called. Check that the spelling for method names and actions in the "_page_routes" array are all correct.', 'event_espresso' ), $func );	
 			} 
@@ -855,7 +855,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//for pluggability by addons first let's see if just the function exists (this will also work in the case where $func is an array indicating class/method)
 			$args['admin_page_object'] = $this; //send along this admin page object for access by addons.
 			if ( !empty( $error_msg ) && call_user_func_array( $func, $args ) === FALSE ) {
-				$error_msg = __('An error occured. The requested page route could not be found', 'event_espresso' );
+				$error_msg = __('An error occurred. The requested page route could not be found', 'event_espresso' );
 				$error_msg .= '||' . sprintf( __('Page route "%s" could not be called.  Check that the spelling for the function name and action in the "_page_routes" array filtered by your plugin is correct.', 'event_espresso'), $fund );
 			}
 
@@ -879,7 +879,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
 		if ( ! $url ) {
-			$user_msg = __('An error occured. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
+			$user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
 			$dev_msg = $user_msg . "\n" . sprintf( 
 					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.', 'event_espresso' ),
 					__CLASS__ 
@@ -1662,7 +1662,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		if ( call_user_func( array( $this, '_set_list_table_views_' . $this->_req_action ) ) === FALSE ) {
 			//user error msg
-			$error_msg = __('An error occured. The requested list table views could not be found.', 'event_espresso' );
+			$error_msg = __('An error occurred. The requested list table views could not be found.', 'event_espresso' );
 			//developer error msg
 			$error_msg .= '||' . sprintf( __('List table views for "%s" route could not be setup. Check that you have the corresponding method, "%s" set up for defining list_table_views for this route.', 'event_espresso' ), $this->_req_action, '_set_list_table_views_' . $this->_req_action );
 			throw new EE_Error( $error_msg );
@@ -1837,7 +1837,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
 				if ( call_user_func( array($this, &$metabox_callback) ) === FALSE ) {
 					// user error msg
-				$error_msg =  __( 'An error occured. The  requested metabox could not be found.', 'event_espresso' );
+				$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
 				// developer error msg
 				$error_msg .= '||' . sprintf( __( 'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.', 'event_espresso' ), $metabox_callback );
 				throw new EE_Error( $error_msg );
@@ -2002,7 +2002,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		if ( empty( $name ) || ! $id ) {
 			//user error msg
-			$user_msg = __('An error occured. A required form key or ID was not supplied.', 'event_espresso' );
+			$user_msg = __('An error occurred. A required form key or ID was not supplied.', 'event_espresso' );
 			//developer error msg
 			$dev_msg = $user_msg . "\n" . __('In order for the "Save" or "Save and Close" buttons to work, a key name for what it is being saved (ie: event_id), as well as some sort of id for the individual record is required.', 'event_espresso' );
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );			
@@ -2967,9 +2967,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @access 	protected
 	 * @param string $tab
 	 * @param array $data
-	 * @param string $file	file where error occured
-	 * @param string $func function  where error occured
-	 * @param string $line	line no where error occured
+	 * @param string $file	file where error occurred
+	 * @param string $func function  where error occurred
+	 * @param string $line	line no where error occurred
 	 * @return boolean
 	 */
 	protected function _update_espresso_configuration( $tab, $config, $file = '', $func = '', $line = '' ) {
@@ -2985,7 +2985,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {
-			$user_msg = sprintf( __('An error occured. The %s were not updated.', 'event_espresso'), $tab );
+			$user_msg = sprintf( __('An error occurred. The %s were not updated.', 'event_espresso'), $tab );
 			EE_Error::add_error( $user_msg, $file, $func, $line  );
 			return FALSE;
 		}			
