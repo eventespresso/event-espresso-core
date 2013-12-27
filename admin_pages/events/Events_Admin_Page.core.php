@@ -242,7 +242,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'default_event_settings' => array(
 				'nav' => array(
-					'label' => __('Default Settings', 'event_esprsso'),
+					'label' => __('Default Settings', 'event_espresso'),
 					'order' => 40
 				),
 				'metaboxes' => array_merge($default_espresso_boxes, array('_publish_post_box')),

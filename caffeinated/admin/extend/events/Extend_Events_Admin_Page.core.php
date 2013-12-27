@@ -126,7 +126,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$new_page_config['import_page'] = array(
 				'nav' => array(
-					'label' => __('Import', 'event_esprsso'),
+					'label' => __('Import', 'event_espresso'),
 					'order' => 30
 				),
 				'help_tabs' => array(
