@@ -504,26 +504,18 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function is_completed(){
-		if($this->status_ID()==EEM_Transaction::complete_status_code){
-			return true;
-		}else{
-			return false;
-		}
+		return $this->status_ID() == EEM_Transaction::complete_status_code ? TRUE : FALSE;
 	}
 	
 	
 	
 	/**
-	 * Returns whether this transaction is pending
+	 * Returns whether this transaction is open
 	 * Useful in templates and other logic for deciding if we should ask for another payment...
 	 * @return boolean
 	 */
-	public function is_pending(){
-		if($this->status_ID() == EEM_Transaction::open_status_code){
-			return true;
-		}else{
-			return false;
-		}
+	public function is_open(){
+		return $this->status_ID() == EEM_Transaction::open_status_code ? TRUE : FALSE;
 	}
 	
 	
@@ -531,28 +523,20 @@ class EE_Transaction extends EE_Base_Class{
 	
 	/**
 	 * Returns whether this transaction is incomplete
-	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * meaning that the transaction/registration process was somehow interupted and never completed
 	 * @return boolean
 	 */
 	public function is_incomplete(){
-		if($this->status_ID() == EEM_Transaction::incomplete_status_code){
-			return true;
-		}else{
-			return false;
-		}
+		return $this->status_ID() == EEM_Transaction::incomplete_status_code ? TRUE : FALSE;
 	}
 	
 	/**
 	 * Returns whether this transaction is overpaid
-	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * Useful in templates and other logic for deciding if monies need to be refunded
 	 * @return boolean
 	 */
 	public function is_overpaid(){
-		if($this->status_ID() == EEM_Transaction::overpaid_status_code){
-			return true;
-		}else{
-			return false;
-		}
+		return $this->status_ID() == EEM_Transaction::overpaid_status_code ? TRUE : FALSE;
 	}
 
 
@@ -568,6 +552,9 @@ class EE_Transaction extends EE_Base_Class{
 		if ( empty( $REG ) ) return false;
 		return $REG->invoice_url($type);
 	}
+
+
+
 	/**
 	 * Gets the URL for viewing the 
 	 * @param string $type  'download','launch', or 'html' (default is 'launch')
