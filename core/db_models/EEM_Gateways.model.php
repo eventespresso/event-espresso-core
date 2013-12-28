@@ -811,8 +811,8 @@ Class EEM_Gateways {
 		if ( $line_item->total() == EEH_Template::format_currency( 0, TRUE )) {
 			
 			$transaction->set_status( EEM_Transaction::complete_status_code );
-			$transaction->finalize();
 			$transaction->save();
+			$transaction->finalize();
 			$response = array(
 					'msg' => array( 'success'=>TRUE ),
 					'forward_url' => $return_page_url
