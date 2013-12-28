@@ -611,6 +611,27 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
+	/**
+	 * This simply verifies if the cpt_model_object is instantiated for the given page and throws an error message accordingly.
+	 *
+	 * @access public
+	 * @return EE_Error|void
+	 */
+	public function verify_cpt_object() {
+		$label = !empty( $this->_cpt_object ) ? $this->_cpt_object->labels->singular_name : $this->page_label;
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+			throw new EE_Error( sprintf( __('Something has gone wrong with the page load because we are unable to set up the object for the %1$s.  This usually happens when the given id for the page route is NOT for the correct custom post type for this page', 'event_espresso' ), $label ) );
+		}
+
+		//if auto-draft then throw an error
+		if ( $this->_cpt_model_obj->get('status') == 'auto-draft' ) {
+			EE_Error::overwrite_errors();
+			EE_Error::add_error( sprintf( __('This %1$s was saved without a title, description, or excerpt which means that none of the extra details you added were saved properly.  All autodrafts will show up in the "draft" view of your event list table.  You can delete them from there. Please click the "Add %1$s" button to refresh and restart.'), $label ) );
+		}
+	}
+
+
+
 
 
 	/**
