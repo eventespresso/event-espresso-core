@@ -42,33 +42,46 @@ class EE_Registration_message_type extends EE_message_type {
 	}
 
 
+	/**
+	 * modifying _data property before parent calls addresse methods.  Need to make sure the data included is only IF registration conditions are met
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _process_data() {
 
-	protected function _trigger_exit() {
+		//ignore on preview
+		if ( ! $this->_preview ) {
 
-		//first is this a preview?
-		if ( empty( $this->_data ) )
-			return FALSE;
+			$txn_completed = $this->_data->txn->is_completed();
 
-		//if email_on_payment is set then we'll trigger an exit when incoming data is an EE_Session object.
-		$settings = $this->get_existing_admin_settings($this->_active_messenger->name);
 
-		//default is TRUE (yes we want to delay)! 
-		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; 
-		
-		// BUT we need to make sure that this isn't a FREE event.
-		$txn = $this->_data[0]; //should be instanceof EE_Transaction
-		
-		//check grandtotal
-		$is_free = $txn->total() > 0 ? FALSE : TRUE;			
-		$return = $delay && !$is_free ? TRUE : FALSE;
-		$this->_data_handler = $is_free ? 'Gateways' : NULL;
-		
-		//not done yet... if we're triggering an exit ($return = TRUE)... we need to check if payment is complete, if it is then we REMOVE the trigger ($return = FALSE). We need to know if payment is completed
-		if ( $return )
-			$return = $txn->is_completed() ? FALSE : $return;
+			//if email_on_payment is set then we'll trigger an exit when incoming data is an EE_Session object.
+			$settings = $this->get_existing_admin_settings($this->_active_messenger->name);
+			//default is TRUE (yes we want to delay)! 
+			$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE;
 
-		return $return;		
+			//we also allow for the possibility of a complete transaction
+			$delay = $txn_completed ? FALSE : $delay;
+
+			// however we also need to account for pending approval events
+			foreach ( $this->_data->events as $line_ref => $event ) {
+				//if this is a "pre approval" event remove event details from message setup cause transaction complete does not matter.
+				$rmv_event = $event['pre_approval'] ? TRUE : $delay;
+				if ( $rmv_event ) {
+					unset( $this->_data->events[$line_ref] );
+					unset( $this->_data->datetimes['evt_objs'][$line_ref] );
+					unset( $this->_data->attendees['evt_objs'][$line_ref] );
+				}
+
+			//make sure default_addressee_data property is updated
+			$this->_default_addressee_data['datetimes'] = $this->_data->datetimes;
+		}
+
+		//now back to regular programming
+		return parent::_process_data();
 	}
+
 
 
 	protected function _set_admin_pages() {
