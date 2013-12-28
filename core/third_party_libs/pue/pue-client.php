@@ -92,6 +92,8 @@ class PluginUpdateEngineChecker {
 	 */
 	function __construct( $metadataUrl = NULL, $slug = NULL, $options = array() ){
 		$this->metadataUrl = $metadataUrl;
+		if ( empty($this->metadataUrl) )
+			return FALSE;
 
 		$this->_incoming_slug = $slug;
 
