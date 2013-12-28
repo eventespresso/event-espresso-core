@@ -421,6 +421,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 */
 	protected function _premium_event_editor_meta_boxes() {
 
+		$this->verify_cpt_object();
+
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->page_slug, 'side', 'core');
 		//add_meta_box('espresso_event_types', __('Event Type', 'event_espresso'), array( $this, 'event_type_meta_box' ), $this->page_slug, 'side', 'default' ); //add this back in when the feature is ready.
 

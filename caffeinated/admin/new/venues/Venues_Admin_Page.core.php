@@ -451,6 +451,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _venue_editor_metaboxes() {
+		$this->verify_cpt_object();
 
 		add_meta_box( 'espresso_venue_address_options', __('Physical Location', 'event_espresso'), array( $this, 'venue_address_metabox'), $this->page_slug, 'side', 'default' );
 		add_meta_box( 'espresso_venue_gmap_options', __('Google Map', 'event_espresso'), array( $this, 'venue_gmap_metabox'), $this->page_slug, 'side', 'default' );

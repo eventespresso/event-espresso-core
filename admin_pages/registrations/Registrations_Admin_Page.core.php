@@ -2292,6 +2292,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function attendee_editor_metaboxes() {
 
+		$this->verify_cpt_object();
+
 		remove_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		remove_meta_box('commentstatusdiv', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal' );

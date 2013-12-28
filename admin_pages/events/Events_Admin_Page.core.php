@@ -993,7 +993,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return [type] [description]
 	 */
 	protected function _register_event_editor_meta_boxes() {
-
+		$this->verify_cpt_object();
 
 		add_meta_box('espresso_event_editor_tickets', __('Event Datetime & Ticket', 'event_espresso'), array($this, 'ticket_metabox'), $this->page_slug, 'normal', 'high');
 
