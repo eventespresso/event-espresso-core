@@ -704,6 +704,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		$cart_total_before_tax = $this->_cart->get_cart_total_before_tax();
 		$template_args['payment_required'] = $cart_total_before_tax > 0 ? TRUE : FALSE;
+		if ( ! $template_args['payment_required'] ) { 
+			//unset( self::$_reg_steps['payment_options'] );
+			EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ));
+		}
 		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
 		$template_args['taxes'] = $this->_cart->get_taxes_line_item()->children();
 		
@@ -1399,15 +1403,13 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$error_msg = FALSE;
 		
 		if ( $this->_continue_reg ) {
-			if ( $this->_transaction->total() == 0 ) {				
-				// FREE EVENT !!! YEAH : )
-				if (  ! $this->_reg_url_link || EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ))) {
-					$success_msg = __( 'no payment required.', 'event_espresso' );
-					EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );	
-				} 
-			} else { 			
+			if ( $this->_transaction->total() > 0 ) {				
 				// PAID EVENT !!!  BOO  : (
-				EE_Registry::instance()->load_model( 'Gateways' )->process_gateway_selection();
+				EE_Registry::instance()->load_model( 'Gateways' )->process_gateway_selection();				 
+			} else if (  ! $this->_reg_url_link ) {
+				// FREE EVENT !!! YEAH : )
+				$success_msg = __( 'no payment required.', 'event_espresso' );
+				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );	
 			}
 		}
 		
