@@ -162,9 +162,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'US',
 				'f0r3e',
 				'',
-				'',
-				'',
-				'',
 				FALSE,
 				'999999991'
 				),
@@ -179,9 +176,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'US',
 				'c1h2c',
 				'',
-				'',
-				'',
-				'',
 				FALSE,
 				'999999992'
 				),
@@ -195,9 +189,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				22,
 				'US',
 				'l18n',
-				'',
-				'',
-				'',
 				'',
 				FALSE,
 				'999999993'
