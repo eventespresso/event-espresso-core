@@ -96,6 +96,19 @@ final class EE_Registry {
 	 */
 	public $models = array();
 
+
+
+
+	/**
+	 * $implemented_models
+	 * @access public
+	 * @var array this is an array of all implemented model names (i.e. not the parent abstract models)
+	 */
+	public $implemented_models = array();
+
+
+
+
 	/**
 	* 	$i18n_js_strings - internationalization for JS strings
 	*  	usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );

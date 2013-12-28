@@ -154,13 +154,17 @@ final class EE_System {
 	private function _parse_model_names(){
 		//get all the files in the EE_MODELS folder that end in .model.php
 		$models = glob( EE_MODELS.'*.model.php');
+		$parent_model_names = array( 'Base', 'CPT_Base', 'Soft_Delete_Base', 'Gateways', 'System_Status' );
 		foreach( $models as $model ){
 			// get model classname
 			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
 			$shortname = str_replace( 'EEM_', '', $classname );
 			$model_names[ $shortname ] = $classname;
+			if ( !in_array($shortname, $parent_model_names ) )
+				$imp_model_names[$shortname] = $classname;
 		}
 		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
+		EE_Registry::instance()->implemented_models = apply_filters( 'FHEE__EE_System__parse_implemented_model_names', $imp_model_names );
 	}	
 
 
