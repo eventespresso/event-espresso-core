@@ -73,7 +73,7 @@ class EE_Registration_message_type extends EE_message_type {
 					unset( $this->_data->datetimes['evt_objs'][$line_ref] );
 					unset( $this->_data->attendees['evt_objs'][$line_ref] );
 				}
-
+			}
 			//make sure default_addressee_data property is updated
 			$this->_default_addressee_data['datetimes'] = $this->_data->datetimes;
 		}
