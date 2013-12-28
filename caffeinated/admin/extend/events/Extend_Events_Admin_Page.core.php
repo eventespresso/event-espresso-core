@@ -652,7 +652,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$end = ' 23:59:59';
 
 		$where = array(
-			'status' => array( '!=', 'trash' ),
 			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
 			);
 
@@ -675,7 +674,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$end = ' 23:59:59';
 
 		$where = array(
-			'status' => array( 'NOT IN', array('trash') ),
 			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
 			);
 
@@ -724,7 +722,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			case 'today' :
 			case NULL :
 			case 'all' :
-				$where['status'] = array( 'NOT IN', array('trash') );
 				break;
 
 			case 'draft' :

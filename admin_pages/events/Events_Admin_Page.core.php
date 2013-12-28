@@ -1239,7 +1239,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		switch ( $status ) {
 			case NULL :
 			case 'all' :
-				$where['status'] = array( 'NOT IN', array('trash') );
 				break;
 
 			case 'draft' :
@@ -1577,7 +1576,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function total_events() {
 
-		$count = EEM_Event::instance()->count( array( array('status' => array( 'NOT IN', array('trash') ) ) ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array(), 'EVT_ID' );
 		return $count;
 	}
 
