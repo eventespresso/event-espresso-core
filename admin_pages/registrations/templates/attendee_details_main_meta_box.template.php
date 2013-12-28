@@ -107,15 +107,6 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 					</td>
 				</tr>
 				
-				<tr valign="top">
-					<th>
-						<label for="ATT_social"><?php _e('Social Networking Contacts', 'event_espresso'); ?></label>
-					</th>
-					<td>
-						<textarea class="" id="ATT_social" name="ATT_social" cols="40" rows="2" ><?php // echo $attendee->social(); ?></textarea><br/>
-						<p class="description"><?php _e('Social networking contacts for the attendee such as Facebook page, Twitter account, LinkedIn account, etc. One per line please', 'event_espresso'); ?></p>
-					</td>							
-				</tr>
 				
 				
 				<?php do_action('AHEE_attendee_details_main_meta_box__table_body_end',$attendee);?>
