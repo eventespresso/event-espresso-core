@@ -1564,8 +1564,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['country'] =  $attendee->country_obj() ? $attendee->country_obj()->name() : '';
 		$this->_template_args['zip'] =  $attendee->zip() ? '<br />' . $attendee->zip() : '';
 		$this->_template_args['phone'] = $attendee->phone();
-		$this->_template_args['comments'] = $attendee->comments();
-		$this->_template_args['notes'] = $attendee->notes();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
@@ -2167,8 +2165,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ATT_address' => array( 'LIKE', $sstr ),
 				'ATT_address2' => array( 'LIKE', $sstr ),
 				'ATT_city' => array( 'LIKE', $sstr ),
-				'ATT_comments' => array( 'LIKE', $sstr ),
-				'ATT_notes' => array( 'LIKE', $sstr ),
 				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
 				'Registration.REG_code' => array( 'LIKE', $sstr ),
 				'Registration.REG_count' => array( 'LIKE' , $sstr ),
@@ -2259,8 +2255,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ATT_zip' => isset( $this->_req_data['ATT_zip'] ) ? $this->_req_data['ATT_zip'] : '',
 				'ATT_email' => isset( $this->_req_data['ATT_email'] ) ? $this->_req_data['ATT_email'] : '',
 				'ATT_phone' => isset( $this->_req_data['ATT_phone'] ) ? $this->_req_data['ATT_phone'] : '',
-				'ATT_comments' => isset( $this->_req_data['ATT_comments'] ) ? $this->_req_data['ATT_comments'] : '',
-				'ATT_notes' => isset( $this->_req_data['ATT_notes'] ) ? $this->_req_data['ATT_notes'] : '',
 				);
 			foreach ( $updated_fields as $field => $value ) {
 				$attendee->set($field, $value);

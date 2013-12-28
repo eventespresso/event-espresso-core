@@ -653,8 +653,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['prime_reg_country'] = $primary_att->get('CNT_ISO');
 		$this->_template_args['prime_reg_zip'] = $primary_att->get('ATT_zip');
 		$this->_template_args['prime_reg_phone'] = $primary_att->get('ATT_phone');
-		$this->_template_args['prime_reg_comments'] = $primary_att->get('ATT_comments');
-		$this->_template_args['prime_reg_notes'] = $primary_att->get('ATT_notes');
 		
 		$this->_template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
 
@@ -930,8 +928,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Attendee.ATT_address' => array( 'LIKE', $sstr ),
 				'Registration.Attendee.ATT_address2' => array( 'LIKE', $sstr ),
 				'Registration.Attendee.ATT_city' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_comments' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_notes' => array( 'LIKE', $sstr ),
 				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
 				'Registration.REG_code' => array( 'LIKE', $sstr ),
 				'Registration.REG_count' => array( 'LIKE' , $sstr ),
