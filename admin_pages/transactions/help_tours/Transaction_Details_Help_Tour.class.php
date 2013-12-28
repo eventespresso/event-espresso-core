@@ -45,8 +45,8 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_date_h2_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -30,
-					'tipAdjustmentX' => 30
+					'tipAdjustmentY' => -40,
+					'tipAdjustmentX' => 200
 					)
 				),
 			30 => array(
@@ -54,25 +54,35 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_status_h2_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -30,
-					'tipAdjustmentX' => 30
+					'tipAdjustmentY' => -40,
+					'tipAdjustmentX' => 200
 					)
 				),
 			40 => array(
-				'id' => 'txn-
-				-due-h2',
+				/*'id' => 'txn-amount-due-h2',*/
 				'content' => $this->_txn_amount_due_h2_stop(),
-				'options' => array(
-					'tipAdjustmentY' => -30,
-					'tipAdjustmentX' => 30
-					)
+				/*'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -40,
+					'tipAdjustmentX' => 200
+					)*/
 				),
 			50 => array(
 				'id' => 'edit-txn-details-mbox',
 				'content' => $this->_txn_details_metabox_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentY' => -30,
+					'tipAdjustmentX' => 60
+					)
+				),
+			55 => array(
+				'id' => 'display-additional-transaction-session-info',
+				'content' => $this->_txn_session_info_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -35,
+					'tipAdjustmentX' => 60
 					)
 				),
 			60 => array(
@@ -80,8 +90,8 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_attendees_metabox_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => -15
+					'tipAdjustmentY' => -35,
+					'tipAdjustmentX' => 60
 					)
 				),
 			70 => array(
@@ -107,43 +117,45 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Transaction Details page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('View Transaction', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the view transaction page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
+	protected function _txn_date_h2_stop() {
+		return '<p>' . __('This is the date that the transaction occurred on.', 'event_espresso') . '</p>';
+	}
 
 	protected function _txn_status_h2_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('View current status of the transaction. You can also perform actions to this transaction by clicking on one of the buttons to the right of the status below.', 'event_espresso') . '</p>';
 	}
-
-	protected function _txn_date_h2_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
-	}
-
 
 	protected function _txn_amount_due_h2_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
-	}
-
-	protected function _txn_attendees_metabox_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
-	}
-
-
-	protected function _txn_primary_reg_metabox_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
-	}
-
-	protected function _txn_billing_metabox_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
-	}
-
-	protected function _event_name_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('View the amount due for a transaction (will not appear if the transaction has been paid in full).', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_details_metabox_stop() {
-		return '<p>' . __('about the column', 'event_espresso') . '</p>';
+		return '<p>' . __('The transaction details area displays various information including line item id, event name, event date, ticket option, price, quantity, line total, sales tax, and the grand total. You can also view details about any payments made towards this transaction.', 'event_espresso') . '</p>';
 	}
+
+	protected function _txn_session_info_stop() {
+		return '<p>' . __('You can view additional information about the transaction by clicking on the link below. Examples of available information includes ip address and user agent.', 'event_espresso') . '</p>';
+	}
+
+	protected function _txn_attendees_metabox_stop() {
+		return '<p>' . __('View information about attendees that are linked to this transaction.', 'event_espresso') . '</p>';
+	}
+
+	protected function _txn_primary_reg_metabox_stop() {
+		return '<p>' . __('View details on the primary registrant who is linked to this transaction.', 'event_espresso') . '</p>';
+	}
+
+	protected function _txn_billing_metabox_stop() {
+		return '<p>' . __('View billing information for this transaction.', 'event_espresso') . '</p>';
+	}
+
+	protected function _event_name_stop() {
+		return '<p>' . __('event name', 'event_espresso') . '</p>';
+	}
+
 }

@@ -41,19 +41,11 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_start(),
 				),
 			20 => array(
-				'id' => 'event-espresso_page_espresso_transactions-search-input',
-				'content' => $this->_search_stop(),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => -15
-					)
-				),
-			25 => array(
-				'id' => 'txn-filter-start-date',
-				'content' => $this->_stop_about_filters(),
+				'id' => 'TXN_ID',
+				'content' => $this->_txn_id_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
+					'tipAdjustmentX' => -20,
 					'tipAdjustmentY' => -30
 					)
 				),
@@ -62,7 +54,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_timestamp_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => 25,
+					'tipAdjustmentY' => -30
 					)
 				),
 			40 => array(
@@ -70,8 +63,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_status_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => -10
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -30
 					)
 				),
 			50 => array(
@@ -79,8 +72,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_total_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 5
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
 					)
 				),
 			60 => array(
@@ -88,8 +81,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_paid_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 5
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
 					)
 				),
 			70 => array(
@@ -97,7 +90,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_attendee_name_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => 20,
+					'tipAdjustmentY' => -30
 					)
 				),
 			80 => array(
@@ -105,7 +99,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_att_email_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => 15,
+					'tipAdjustmentY' => -30
 					)
 				),
 			90 => array(
@@ -113,7 +108,8 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_event_name_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -15
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -30
 					)
 				),
 			100 => array(
@@ -121,74 +117,93 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_actions_stop(),
 				'options' => array(
 					'tipLocation' => 'left',
-					'tipAdjustmentY' => -40,
-					'tipAdjustmentX' => -10,
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -50
 					)
 				),
 			110 => array(
 				'class' => 'ee-list-table-legend-container',
 				'content' => $this->_legend_stop(),
 				'options' => array(
-					'tipLocation' => 'right'
+					'tipLocation' => 'right',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -40
 					)
-				)
+				),
+			120 => array(
+				'id' => 'txn-filter-start-date',
+				'content' => $this->_stop_about_filters(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 105,
+					'tipAdjustmentY' => -45
+					)
+				),
+			130 => array(
+				'id' => 'event-espresso_page_espresso_transactions-search-input',
+				'content' => $this->_search_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => -15
+					)
+				),
 			);
 	}
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Transaction Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('The transactions page provides you with all the information about the tickets purchased for your events.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Transactions Overview', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the transactions overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-	
-
-	protected function _search_stop() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: event name, event description, attendee name, attendee bio, attendee email, attendee address, registration final price, registration code, registration count, registration group size, ticket name, ticket description, payment method, payment gateway, transaction details, and transaction session data.', 'event_espresso') . '</p>';
+	protected function _txn_id_stop() {
+		return '<p>' . __('Sort by transaction id in ascending or descending order.', 'event_espresso') . '</p>';
 	}
-
-
-	protected function _stop_about_filters() {
-		return '<p>' . __('Use these date fields to filter your results by purchase date.', 'event_espresso') . '</p>';
-	}
-
 
 	protected function _txn_timestamp_stop() {
-		return '<p>' . __('This column lists the date the transaction was made.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by transaction date in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _txn_status_stop() {
-		return '<p>' . __('Here you will see the current status of the transaction, whether it is complete, pending or incomplete.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by transaction status in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_total_stop() {
-		return '<p>' . __('This amount is for all the events and tickets purchased in the single transaction.', 'event_espresso') . '</p>';
+		return '<p>' . __('View total for transaction.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _txn_paid_stop() {
-		return '<p>' . __('This column will show you how much has been paid. If the value matches the value in the Total column, then they have fully paid.', 'event_espresso') . '</p>';
+		return '<p>' . __('View amount paid for transaction.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _attendee_name_stop() {
-		return '<p>' . __('This is the name of the primary registrant.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by name of attendee in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_email_stop() {
-		return '<p>' . __('The primary registrants email address.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by email address of primary registrant in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _event_name_stop() {
-		return '<p>' . __('The name of the event.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by name of event in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _actions_stop() {
-		return '<p>' . __('These actions provide extra functionality such as seeing the customers invoice, or sending a payment reminder.', 'event_espresso') . '</p>';
+		return '<p>' . __('Perform an action to a transaction. See legend in bottom left corner.', 'event_espresso') . '</p>';
 	}
 
 	protected function _legend_stop() {
-		return '<p>' . __('This is the legend that describes the actions available in the Actions column.', 'event_espresso') . '</p>';
+		return '<p>' . __('This legend that describes the actions available in the actions column.', 'event_espresso') . '</p>';
 	}
+
+	protected function _stop_about_filters() {
+		return '<p>' . __('Filter transactions by date by selecting two dates and clicking on the filter button. You can clear your current date selection by clicking on the reset filters button.', 'event_espresso') . '</p>';
+	}
+
+	protected function _search_stop() {
+		return '<p>' . __('Search through transactions. The following sources will be searched: event name, event description, attendee first name, attendee last name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size, ticket name, ticket description, payment method, payment gateway, transaction details, and transaction session data.', 'event_espresso') . '</p>';
+	}
+
 }
