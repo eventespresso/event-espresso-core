@@ -191,6 +191,9 @@ class EE_Messages_Init extends EE_Base {
 		$data = array( $transaction, NULL );
 
 		$this->_EEMSG->send_message( 'registration', $data );
+
+		//could be pending approval
+		$this->_EEMSG->send_message( 'pending_approval', $data );
 	}
 
 
