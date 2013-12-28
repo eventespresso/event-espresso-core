@@ -146,7 +146,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('FHEE_event_datetime_metabox_add_additional_date_time_template', array( $this, 'add_additional_datetime_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_clone_button_template', array( $this, 'add_datetime_clone_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
-		add_filter('FHEE_additional_registration_options_event_edit_page', array( $this, 'additional_registration_options'), 10, 6);
 
 
 		//filters for event list table
@@ -236,13 +235,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	public function datetime_timezones_template( $template, $template_args ) {
 		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_timezones.template.php', $template_args, TRUE );
-	}
-
-
-	public function additional_registration_options( $html, $template_args, $yes_no_values, $default_reg_status_values ) {
-		$template_args['use_attendee_pre_approval'] = EE_Registry::instance()->CFG->registration->use_attendee_pre_approval;
-		$template_args['attendee_pre_approval_required'] = EE_Registry::instance()->CFG->registration->use_attendee_pre_approval ? EEH_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
-		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
 	}
 
 
