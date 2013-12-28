@@ -554,6 +554,8 @@ label.error  { display: block; color: #FE2A00 !important; }
 
 .button-primary.trigger-ee-help-tour {
 	margin: 5px;
+	height: auto;
+	white-space: normal;
 }
 
 /** NEW ICONS **/
