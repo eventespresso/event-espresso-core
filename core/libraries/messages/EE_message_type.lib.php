@@ -199,6 +199,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		}
 
 		$exit = $this->_init_data();
+
 		//final check for if we exit or not cause child objects may have run conditionals that cleared out data so no addresees generated.
 		if ( $exit ) return FALSE;
 
@@ -343,10 +344,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @return void
 	 */
 	protected function _process_data() {
-
-		//if no events in the incoming data then no sense in continuing
 		if ( empty( $this->_data->events ) )
-			return FALSE;
+			return TRUE;  //EXIT!
 
 		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
 		foreach ( $this->_contexts as $context => $details ) {
@@ -355,7 +354,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 				throw new EE_Error( sprintf( __('The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $xpctd_method) );
 			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
 		}
-		return TRUE;
+		return FALSE; //DON'T EXIT
 	}
 
 
