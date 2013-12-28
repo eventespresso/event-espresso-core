@@ -40,7 +40,97 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 			10 => array(
 				'content' => $this->_start(),
 				),
+			15 => array(
+				'id' => 'ATT_ID',
+				'content' => $this->_attendee_id_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -20,
+					'tipAdjustmentY' => -30
+					)
+				),
 			20 => array(
+				'id' => 'ATT_fname',
+				'content' => $this->_attendee_name_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			30 => array(
+				'id' => 'ATT_lname',
+				'content' => $this->_att_lname_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			40 => array(
+				'id' => 'ATT_email',
+				'content' => $this->_att_email_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 10,
+					'tipAdjustmentY' => -30
+					)
+				),
+			50 => array(
+				'id' => 'ATT_phone',
+				'content' => $this->_att_phone_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			60 => array(
+				'id' => 'ATT_address',
+				'content' => $this->_att_address_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -30
+					)
+				),
+			70 => array(
+				'id' => 'ATT_city',
+				'content' => $this->_att_city_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -50
+					)
+				),
+			80 => array(
+				'id' => 'STA_ID',
+				'content' => $this->_sta_id_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -50
+					)
+				),
+			90 => array(
+				'id' => 'CNT_ISO',
+				'content' => $this->_cnt_iso_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -50
+					)
+				),
+			100 => array(
+				'class' => 'bulkactions',
+				'content' => $this->_bulkactions_stop(),
+				'options' => array(
+					'tipLocation' => 'bottom',
+					'tipAdjustmentY' => -30,
+					'tipAdjustmentX' => 15
+					)
+				),
+			110 => array(
 				'id' => 'event-espresso_page_espresso_registrations-search-input',
 				'content' => $this->_search_stop(),
 				'options' => array(
@@ -49,28 +139,13 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => -15
 					)
 				),
-			30 => array(
-				'id' => 'ATT_fname',
-				'content' => $this->_attendee_name_stop(),
+			120 => array(
+				'id' => 'contact-list-csv-export',
+				'content' => $this->_contact_list_csv_export_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
-					)
-				),
-			50 => array(
-				'id' => 'ATT_lname',
-				'content' => $this->_att_lname_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
-					)
-				),
-			60 => array(
-				'id' => 'ATT_email',
-				'content' => $this->_att_email_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 25
 					)
 				)
 			);
@@ -78,27 +153,57 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Contact List overview page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction to the contact list overview page. This is the default view for the contact list overview page ', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Contact List', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the contact list page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-	
-
-	protected function _search_stop() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: Event Name, Event description, Attendee first and last name, Attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size', 'event_espresso') . '</p>';
+	protected function _attendee_id_stop() {
+		return '<p>' . __('Sort by attendee id in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _attendee_name_stop() {
-		return '<p>' . __('about the attendee first name column', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by first name for attendee in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_lname_stop() {
-		return '<p>' . __('about the attendee last name column', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by last name for attendee in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_email_stop() {
-		return '<p>' . __('about the attendee email column', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by email for attendee in ascending or descending order.', 'event_espresso') . '</p>';
 	}
+
+	protected function _att_phone_stop() {
+		return '<p>' . __('View phone number for attendee.', 'event_espresso') . '</p>';
+	}
+
+	protected function _att_address_stop() {
+		return '<p>' . __('View address for attendee.', 'event_espresso') . '</p>';
+	}
+
+	protected function _att_city_stop() {
+		return '<p>' . __('Sort by city for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+	}
+
+	protected function _sta_id_stop() {
+		return '<p>' . __('Sort by state / province for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+	}
+
+	protected function _cnt_iso_stop() {
+		return '<p>' . __('Sort by country for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+	}
+
+	protected function _bulkactions_stop() {
+		return '<p>' . __('Perform a bulk action to multiple attendees.', 'event_espresso') . '</p>';
+	}
+
+	protected function _search_stop() {
+		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, attendee first name, attendee last name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code.', 'event_espresso') . '</p>';
+	}
+
+	protected function _contact_list_csv_export_stop() {
+		return '<p>' . __('Export your contact list to a CSV file.', 'event_espresso') . '</p>';
+	}
+
 }

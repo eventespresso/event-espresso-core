@@ -80,10 +80,9 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 	private function _get_question_answer_list_for_attendee() {
 		$valid_shortcodes = array('question');
 		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['question_list']) ? $this->_data['template']['question_list'] : $this->_extra_data['template']['question_list'];
-		$attendee = $this->_data['data'];
-
 		$ans_result = '';
-		$answers = isset( $this->_extra_data['data']->attendees ) ? $this->_extra_data['data']->attendees[$attendee->ID()]['ans_objs'] : array();
+		$most_recent_registration = $this->_data['data'] instanceof EE_Attendee ? $this->_data['data']->get_most_recent_registration() : NULL;
+		$answers = $most_recent_registration instanceof EE_Registration ? $most_recent_registration->answers() : array();
 
 		foreach ( $answers as $answer ) {
 			$ans_result .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $this->_extra_data);

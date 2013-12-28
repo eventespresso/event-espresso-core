@@ -1,5 +1,5 @@
 <!--***************  ATTENDEE INFORMATION STEP 	***************-->		
-<?php echo do_action('AHEE_registration_page_attendee_information_start',$event_queue);?>
+<?php echo do_action( 'AHEE__registration_page_attendee_information__start', $event_queue );?>
 
 <h2 id="spco-attendee_information-hdr" class="spco-step-title-hdr">
 	<?php echo sprintf( __('Step %d -  Attendee Information', 'event_espresso'), $step_nmbr ); ?>
@@ -41,6 +41,7 @@ if ( $event_queue['total_items'] > 0 ) {
 			<h3 id="event_title-<?php echo $item['ticket']->ID() ?>" class="big-event-title-hdr">
 				<?php echo $item['event']->name(); ?>				
 			</h3>
+				<?php if ( $payment_required ) { ?>
 			<p class="spco-ticket-info-pg">
 			<?php 
 				echo $item['ticket']->name() . ':  ' . EEH_Template::format_currency( $item['ticket']->price(), FALSE, FALSE );
@@ -50,6 +51,7 @@ if ( $event_queue['total_items'] > 0 ) {
 			</p>
 
 			<?php 
+					}
 				} 
 			?>
 			

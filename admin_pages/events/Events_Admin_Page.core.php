@@ -191,6 +191,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 10
 				),
 				'list_table' => 'Events_Admin_List_Table',
+                'help_tabs' => array(
+					'events_overview_help_tab' => array(
+						'title' => __('Events Overview', 'event_espresso'),
+						'filename' => 'events_overview'
+					)
+				),
 				'help_tour' => array(
 					'Event_Overview_Help_Tour',
 					//'New_Features_Test_Help_Tour' for testing multiple help tour
@@ -205,8 +211,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
-					'ticket_options_info' => array(
-						'title' => __('Ticket Options', 'event_espresso'),
+					'event_editor_help_tab' => array(
+						'title' => __('Event Editor', 'event_espresso'),
 						'filename' => 'event_editor'
 					)
 				),
@@ -224,32 +230,32 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
-					'ticket_options_info' => array(
-						'title' => __('Ticket Options', 'event_espresso'),
+					'event_editor_help_tab' => array(
+						'title' => __('Event Editor', 'event_espresso'),
 						'filename' => 'event_editor'
 					)
 				),
 				'help_tour' => array(
-					'Event_Editor_Help_Tour'
+					'Event_Edit_Help_Tour'
 				),
 				'require_nonce' => FALSE
 			),
 			'default_event_settings' => array(
 				'nav' => array(
-					'label' => __('Default Settings', 'event_esprsso'),
+					'label' => __('Default Settings', 'event_espresso'),
 					'order' => 40
 				),
 				'metaboxes' => array_merge($default_espresso_boxes, array('_publish_post_box')),
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 				),
-				'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
-				'help_tabs' => array(
-					'default_registration_status_help_tab' => array(
-						'title' => __('Default Registration Status', 'event_espresso'),
-						'filename' => 'default_event_settings'
+                'help_tabs' => array(
+					'default_settings_help_tab' => array(
+						'title' => __('Default Event Settings', 'event_espresso'),
+						'filename' => 'events_default_settings'
 					)
 				),
+				'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
 				'require_nonce' => FALSE
 			),
 			//event category stuff
@@ -259,9 +265,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => false),
 				'help_tabs' => array(
-					'unique_category_id_help_tab' => array(
-						'title' => __('Unique Category ID', 'event_espresso'),
-						'filename' => 'unique_category_id'
+					'add_category_help_tab' => array(
+						'title' => __('Add Event Category', 'event_espresso'),
+						'filename' => 'events_add_category'
 						)
 					),
                 'help_tour' => array('Event_Add_Category_Help_Tour'),
@@ -276,11 +282,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'help_tabs' => array(
-					'unique_category_id_help_tab' => array(
-						'title' => __('Unique Category ID', 'event_espresso'),
-						'filename' => 'unique_category_id'
+					'edit_category_help_tab' => array(
+						'title' => __('Edit Event Category', 'event_espresso'),
+						'filename' => 'events_edit_category'
 						)
 					),
+                'help_tour' => array('Event_Edit_Category_Help_Tour'),
 				'metaboxes' => array('_publish_post_box'),
 				'require_nonce' => FALSE
 				),
@@ -290,6 +297,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 20
 					),
 				'list_table' => 'Event_Categories_Admin_List_Table',
+                'help_tabs' => array(
+					'categories_help_tab' => array(
+						'title' => __('Event Categories', 'event_espresso'),
+						'filename' => 'events_categories'
+						)
+					),
 				'help_tour' => array(
 					'Event_Categories_Help_Tour'
 					),
@@ -1235,8 +1248,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			default :
 				$where['status'] = $status;
 		}
-
-		$where['post_type'] = array( '!=', 'revision' );
 
 		//search query handling
 		if ( isset( $this->_req_data['s'] ) ) {

@@ -132,7 +132,7 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 						<?php
 						if ($transaction->is_completed()) { ?>
 							<img class="espresso-paid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>accept.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
-						<?php } elseif($transaction->is_pending()) { ?>
+						<?php } elseif($transaction->is_open()) { ?>
 							<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>error.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
 						<?php }else{?>
 							<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>exclamation.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />

@@ -197,6 +197,7 @@ final class EE_System {
 		// load additional common resources
 		add_action( 'init', array( $this, 'init' ), 3 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
+		do_action( 'AHEE__EE_System__plugins_loaded__end', $this );
 	}
 
 
@@ -230,12 +231,12 @@ final class EE_System {
 			case EE_System::req_type_new_activation:
 				
 				do_action('AHEE__EE_System__manage_activation_process__new_activation');
-				$this->_setup_handle_as_activation();	
+				$this->_setup_initialize_db_if_no_migrations_required();	
 //				echo "done activation";die;
 				break;
 			case EE_System::req_type_reactivation:
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
-					$this->handle_as_activation();
+					$this->initialize_db_if_no_migrations_required();
 //				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
@@ -246,7 +247,7 @@ final class EE_System {
 					//taht say they need to upgrade it)
 					//THEN, we just want to still give the system a chance to setup new default data
 					//first: double-check if this was called via an activation hook or a normal reqeust
-					$this->_setup_handle_as_activation();
+					$this->_setup_initialize_db_if_no_migrations_required();
 				}
 //				echo "done upgrade";die;
 				break;
@@ -267,13 +268,15 @@ final class EE_System {
 	/**
 	 * Does the traditional work of setting up the plugin's database and adding default data.
 	 * If migration script/process didn't exist, this is what woudl happen on every activation/reactivation/upgrade.
+	 * NOTE: does nothing if we're in maintenance mode (which would be the case if we detect there are data
+	 * migration scripts that need to be run)
 	 * @return void
 	 */
-	public function handle_as_activation(){
+	public function initialize_db_if_no_migrations_required(){
+		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			// set flag for flushing rewrite rules
 			update_option( 'espresso_flush_rewrite_rules', TRUE );
-			//only initialize system if we're not in maintenance mode.
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
@@ -282,20 +285,20 @@ final class EE_System {
 	
 	/**
 	 * Instead of just calling the activation code, we first check when WAS this code called?
-	 * If it's on activation hook, then we can directly call handle_as_activation as 
+	 * If it's on activation hook, then we can directly call initialize_db_if_no_migrations_required as 
 	 * everything's ready for it, and init has already been called and we shouldn't add it on that hook (because it wont fire).
-	 * If it's NOT on activation hook, then it's probably on plugins_loaded, and it's too early to call handle_as_activation,
+	 * If it's NOT on activation hook, then it's probably on plugins_loaded, and it's too early to call initialize_db_if_no_migrations_required,
 	 * so we set it up to call it later, on init, when it's ready.
 	 */
-	private function _setup_handle_as_activation(){
+	private function _setup_initialize_db_if_no_migrations_required(){
 		if(self::$_activation){
 			//if via activation hook, we need to run the code right away, because the
 			//init hook was called before this activation hook
-			$this->handle_as_activation();
+			$this->initialize_db_if_no_migrations_required();
 		}else{
 			//if via a normal request, then we need to wait to run activation-type-code
 			//until we_rewrite is defined by WP (on init hook) otherwise we'll have troubles
-			add_action('init',array($this,'handle_as_activation'),2);
+			add_action('init',array($this,'initialize_db_if_no_migrations_required'),2);
 		}
 	}
 

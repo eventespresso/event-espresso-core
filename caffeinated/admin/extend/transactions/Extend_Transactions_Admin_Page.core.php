@@ -54,41 +54,18 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 20
 					),
-				'help_tour' => array( 'Transaction_Reports_Help_Tour' ),
-				'help_tabs' => array(
-					'txn_reports_overview_info' => array(
-						'title' => __('About the Reports', 'event_espresso'),
-						'callback' => 'txn_reports_overview_help_tab_html'
+                'help_tabs' => array(
+					'transactions_reports_help_tab' => array(
+						'title' => __('Transaction Reports', 'event_espresso'),
+						'filename' => 'transactions_reports'
 					)
 				),
+				'help_tour' => array( 'Transaction_Reports_Help_Tour' ),
 				'require_nonce' => FALSE
 				)
 			);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 	}
-	
-	/**
-	 * reports help tabs
-	 */
-	public function txn_reports_overview_help_tab_html() {
-		?>
-		<h2><?php _e('About the Reports', 'event_espresso'); ?></h2>
-<p><?php _e('This tab displays various graphs to give you a visual representation of how your events are doing.', 'event_espresso'); ?>
-			</p>
-		</p>
-<p>
-			<?php _e('The current graphs available are:', 'event_espresso'); ?>
-		</p>
-			<ol>
-				<li>
-					<?php _e('Total Revenue per Day: This lists a snapshot of your recent revenue on a daily basis.', 'event_espresso'); ?></li>
-				<li>
-					<?php _e('Total Revenue per Event: This shows how much each event has earned overall.', 'event_espresso'); ?>
-				</li>
-			</ol>
-	<?php
-	}
-
 
 	public function load_scripts_styles_reports() {
 		//styles

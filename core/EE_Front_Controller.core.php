@@ -81,6 +81,8 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+//		EEM_Event::instance()->show_next_x_db_queries(2);
+//		EEM_Event::instance()->get_all(array(array('status'=>'draft'),'order_by'=>array('Venue.VNU_ID'=>'asc')));die;
 //		$ps = EEM_Price::instance()->get_one(array(array('PRC_amount'=>array('>=','$1,00'))));
 //		d($ps);
 //		 $ps->e('PRC_amount');
@@ -359,7 +361,7 @@ final class EE_Front_Controller {
 	 */
 	public function get_request( WP $WP ) {
 //		d( $WP );
-		do_action( 'AHEE__EE_ront_Controller__get_request__before_Request_Handler_loaded' );
+		do_action( 'AHEE__EE_Front_Controller__get_request__before_Request_Handler_loaded' );
 		EE_Registry::instance()->load_core( 'Request_Handler', $WP );	
 		do_action( 'AHEE__EE_Front_Controller__get_request__after_Request_Handler_loaded' );
 	}

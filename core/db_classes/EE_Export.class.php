@@ -375,8 +375,6 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			'CNT_ISO',
 			'ATT_zip',
 			'ATT_phone',
-			'ATT_comments',
-			'ATT_notes'
 		);
 		
 		$registrations_csv_ready_array = array();

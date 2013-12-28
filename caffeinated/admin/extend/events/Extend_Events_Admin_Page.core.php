@@ -126,13 +126,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$new_page_config['import_page'] = array(
 				'nav' => array(
-					'label' => __('Import', 'event_esprsso'),
+					'label' => __('Import', 'event_espresso'),
 					'order' => 30
 				),
 				'help_tabs' => array(
-					'ee_import_help_tab' => array(
+					'import_help_tab' => array(
 						'title' => __('Import', 'event_espresso'),
-						'filename' => 'ee_import'
+						'filename' => 'events_import'
 						)
 					),
                 'help_tour' => array('Event_Import_Help_Tour'),
@@ -676,8 +676,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$where = array(
 			'status' => array( 'NOT IN', array('trash') ),
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) ),
-			'post_type' => array( '!=', 'revision' )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
 			);
 
 		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
@@ -756,8 +755,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$end = ' 23:59:59';
 			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
 		}
-
-		$where['post_type'] = array( '!=', 'revision' );
 
 		//search query handling
 		if ( isset( $this->_req_data['s'] ) ) {

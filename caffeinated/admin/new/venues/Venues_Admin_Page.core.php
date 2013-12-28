@@ -205,6 +205,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 10
 				),
 				'list_table' => 'Venues_Admin_List_Table',
+                'help_tabs' => array(
+					'venues_overview_help_tab' => array(
+						'title' => __('Venues Overview', 'event_espresso'),
+						'filename' => 'venues_overview'
+					)
+				),
 				'help_tour' => array( 'Venue_Overview_Help_Tour' ),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 				'require_nonce' => FALSE
@@ -214,6 +220,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Add Venue', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE
+				),
+                'help_tabs' => array(
+					'venues_add_venue_help_tab' => array(
+						'title' => __('Add Venue', 'event_espresso'),
+						'filename' => 'venues_add_venue'
+					)
 				),
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
@@ -225,6 +237,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 				),
+                'help_tabs' => array(
+					'venues_edit_venue_help_tab' => array(
+						'title' => __('Edit Venue', 'event_espresso'),
+						'filename' => 'venues_edit_venue'
+					)
+				),
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),
@@ -235,12 +253,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => false),
 				'metaboxes' => array('_publish_post_box'),
-				'help_tabs' => array(
-					'unique_id_help_tab' => array(
-						'title' => __('Unique ID', 'event_espresso'),
-						'callback' => 'unique_id_help_tab'
-						)
-					),
+                'help_tabs' => array(
+					'venues_add_category_help_tab' => array(
+						'title' => __('Add Venue Category', 'event_espresso'),
+						'filename' => 'venues_add_category'
+					)
+				),
 				'require_nonce' => FALSE
 				),
 			'edit_category' => array(
@@ -251,12 +269,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'metaboxes' => array('_publish_post_box'),
-				'help_tabs' => array(
-					'unique_id_help_tab' => array(
-						'title' => __('Unique ID', 'event_espresso'),
-						'callback' => 'unique_id_help_tab'
-						)
-					),
+                'help_tabs' => array(
+					'venues_edit_category_help_tab' => array(
+						'title' => __('Edit Venue Category', 'event_espresso'),
+						'filename' => 'venues_edit_category'
+					)
+				),
 				'require_nonce' => FALSE
 				),
 			'category_list' => array(
@@ -265,6 +283,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 20
 					),
 				'list_table' => 'Venue_Categories_Admin_List_Table',
+                'help_tabs' => array(
+					'venues_categories_help_tab' => array(
+						'title' => __('Venue Categories', 'event_espresso'),
+						'filename' => 'venues_categories'
+					)
+				),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE
 				)
@@ -904,17 +928,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_category = new stdClass();
 		$this->_category->id = $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
 	}
-
-
-
-	public function unique_id_help_tab() {
-		?>		
-			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
-			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
-			<p><?php printf( __('The unique ID can also be used in individual pages using the %s shortcode', 'event_espresso'), '[EVENT_ESPRESSO_CATEGORY category_id="category_identifier"]' ); ?>.</p>		
-		<?php
-	}
-
 
 
 

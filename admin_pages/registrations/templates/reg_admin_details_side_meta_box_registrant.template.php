@@ -18,24 +18,6 @@
 			<?php echo $zip;?>
 		</div>
 	</p>
-	<p class="clearfix">
-		<span class="admin-side-mbox-label-full-spn lt-grey-txt"><?php _e('Social Networking Contacts', 'event_espresso'); ?></span>&nbsp;
-		<div class="admin-side-mbox-text-dv">
-			<?php echo $social;?>
-		</div>
-	</p>
-	<p class="clearfix">
-		<span class="admin-side-mbox-label-full-spn lt-grey-txt"><?php _e('Attendee Comments', 'event_espresso'); ?></span>&nbsp;
-		<div class="admin-side-mbox-text-dv">
-			<?php echo $comments;?>
-		</div>
-	</p>
-	<p class="clearfix">
-		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e('Admin Notes', 'event_espresso'); ?></span>&nbsp;
-		<div class="admin-side-mbox-text-dv">
-			<?php echo $notes;?>
-		</div>
-	</p>
 </div>
 
 

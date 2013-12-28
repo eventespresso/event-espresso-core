@@ -59,10 +59,9 @@ class Registration_Reports_Help_Tour extends EE_Help_Tour {
 			);
 	}
 
-
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Registration Reports Page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Registration Reports', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the registration reports page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 

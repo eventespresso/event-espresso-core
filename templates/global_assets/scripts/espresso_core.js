@@ -22,6 +22,20 @@ jQuery(document).ready(function($) {
 		return this;
 	};
 
+	/**
+	*	add jQuery function to return the correct value for a form input regardless of it's type
+	*/	
+	$.fn.inputValue = function () { 
+		var inputType = $(this).prop('type');
+		if ( inputType ==  'checkbox' || inputType == 'radio' ) {
+			return $(this).prop('checked');
+		} else {
+			return $(this).val();
+		}
+	}
+	
+	
+
 	$('#espresso-notices').center();
 	$('.espresso-notices').slideDown();
 	$('.espresso-notices.fade-away').delay(10000).slideUp();
@@ -90,10 +104,15 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 	});
+
+
+
 	
 	
 	
 });
+
+
 
 function dump(arr,level) {
 	var dumped_text = "";

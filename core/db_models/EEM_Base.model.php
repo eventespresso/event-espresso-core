@@ -1354,7 +1354,7 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$use_default_where_conditions = 'all';
 		}
-		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object,$use_default_where_conditions), $where_query_params );
+		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object,$use_default_where_conditions,$where_query_params), $where_query_params );
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params));
 
 
@@ -1475,9 +1475,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $use_default_where_conditions can be 'none','other_models_only', or 'all'.  'none' means NO default where conditions will be used AT ALL during this query.
 	 * 'other_models_only' means default where conditions from other models will be used, but not for this primary model. 'all', the default, means
 	 * default where conditions will apply as normal
+	 * @param array $where_query_params like EEM_Base::get_all's $query_parmas[0] 
 	 * @return array like $query_params[0], see EEM_Base::get_all for documentation
 	 */
-	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all'){
+	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all',$where_query_params = array()){
 		$allowed_used_default_where_conditions_values = array('all','other_models_only','none');
 		if( ! in_array($use_default_where_conditions,$allowed_used_default_where_conditions_values)){
 			throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s", "event_espresso"),$use_default_where_conditions,implode(", ",$allowed_used_default_where_conditions_values)));
@@ -1492,10 +1493,50 @@ abstract class EEM_Base extends EE_Base{
 			foreach($query_info_carrier->get_model_names_included() as $model_name =>$model_relation_path){
 				$related_model = $this->get_related_model_obj($model_name);
 				$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
-				$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params);
+				
+				$universal_query_params = array_merge($universal_query_params, 
+						$this->_override_defaults_or_make_null_friendly(
+								$related_model_universal_where_params,
+								$where_query_params,
+								$related_model,
+								$model_relation_path)
+						);
 			}
 		}
 		return $universal_query_params;
+	}
+	
+	/**
+	 * Checks if any of the defaults have been overriden. If there are any that AREN'T overridden,
+	 * then we also add a speecial where condition which allows for that model's primary key
+	 * to be null (which is important for JOINs. Eg, if you want to see all Events ordered by Venue's name,
+	 * then Event's with NO Venue won't appear unless you allow VNU_ID to be NULL)
+	 * @param type $default_where_conditions
+	 * @param type $provided_where_conditions
+	 * @param EEM_Base $model
+	 * @param string $model_relation_path like 'Transaction.Payment.'
+	 * @return array like EEM_Base::get_all's $query_params[0]
+	 */
+	private function _override_defaults_or_make_null_friendly($default_where_conditions,$provided_where_conditions,$model,$model_relation_path){
+		$null_friendly_where_conditions = array();
+		$none_overridden = true;
+		$or_condition_key_for_defaults = 'OR*'.get_class($model);
+
+		foreach($default_where_conditions as $key => $val){
+			if( isset($provided_where_conditions[$key])){
+				$none_overridden = false;
+			}else{
+				$null_friendly_where_conditions[$or_condition_key_for_defaults]['AND'][$key] = $val;
+			}
+		}
+		if( $none_overridden && $default_where_conditions){			
+			if($model->has_primary_key_field()){
+				$null_friendly_where_conditions[$or_condition_key_for_defaults][$model_relation_path.".".$model->primary_key_name()] = array('IS NULL');
+			}else{
+				//@todo NO PK, use other defaults
+			}
+		}
+		return $null_friendly_where_conditions;
 	}
 	
 	/**

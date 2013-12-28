@@ -18,24 +18,6 @@
 			<?php echo $prime_reg_zip;?>
 		</div>
 	</p>
-	<p class="clearfix">
-		<span class="admin-side-mbox-label-full-spn lt-grey-txt"><?php _e( 'Social Networking Contacts', 'event_espresso' );?></span>&nbsp;
-		<div class="admin-side-mbox-text-dv">
-			<?php echo $prime_reg_social;?>
-		</div>
-	</p>
-	<p class="clearfix">
-		<span class="admin-side-mbox-label-full-spn lt-grey-txt"><?php _e( 'Attendee Comments', 'event_espresso' );?></span>&nbsp;
-		<div class="admin-side-mbox-text-dv">
-			<?php echo $prime_reg_comments;?>
-		</div>
-	</p>
-	<p class="clearfix">
-		<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php _e( 'Admin Notes', 'event_espresso' );?></span>&nbsp;
-		<div class="admin-side-mbox-text-dv">
-			<?php echo $prime_reg_notes;?>
-		</div>
-	</p>
 </div>
 
 

@@ -554,7 +554,6 @@ abstract class EE_Gateway {
 		if(empty($payment)){
 			$transaction->set_status(EEM_Transaction::open_status_code);
 			$transaction->update_extra_meta('gateway', $this->_gateway_name);
-			$transaction->save();
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 		}else{
 			$payment = $this->_PAY->ensure_is_obj($payment);
@@ -563,6 +562,7 @@ abstract class EE_Gateway {
 			$transaction->update_extra_meta('gateway', $this->_gateway_name);
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		}
+		$transaction->save();
 		$transaction->finalize();
 		return true;
 	}

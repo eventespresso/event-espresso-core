@@ -2,6 +2,7 @@
 
 	$.ajaxSetup ({ cache: false });
 
+
 	// clear firefox and safari cache
 	$(window).unload( function() {});
 	
@@ -13,7 +14,7 @@
 			changeMonth: true,
 			changeYear: true
 		});
-	}
+	}	
 	// to internationalize the datepicker, copy the following to somewhere safe, then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key. 
 	// Multiple languages can be added this way
 //	$.datepicker.regional['fr_FR'] = {
@@ -37,17 +38,21 @@
 //	};
 //	$.datepicker.setDefaults($.datepicker.regional[ eei18n.language ]);  	//	will automagically produce something like:	$.datepicker.setDefaults($.datepicker.regional['fr_FR']);
 
-	$('#spco-copy-all-attendee-chk').prop( 'checked', false );
 
-	// apply coupon button
-	$('#spco-apply-coupon-btn').on( 'click', function() {
-		var error_msg = eei18n.invalid_coupon;
-		if ( eei18n.wp_debug == 1 ) {
-			error_msg = error_msg + ' (' + getFunctionName( arguments.callee.toString() ) + ' )';
-		}
-		show_event_queue_ajax_error_msg( error_msg );
-		return false;
+	// unset all copy attendee info checkboxes
+	$('#spco-copy-all-attendee-chk').prop( 'checked', false );
+	$('.spco-copy-attendee-chk').each(function(index) {
+		$(this).prop('checked', false);
 	});
+	// apply coupon button
+//	$('#spco-apply-coupon-btn').on( 'click', function() {
+//		var error_msg = eei18n.invalid_coupon;
+//		if ( eei18n.wp_debug == 1 ) {
+//			error_msg = error_msg + ' (' + getFunctionName( arguments.callee.toString() ) + ' )';
+//		}
+//		show_event_queue_ajax_error_msg( error_msg );
+//		return false;
+//	});
 
 
 
@@ -57,19 +62,20 @@
 	});
 
 
-
 	/**
 	*	if the Copy All option is checked off, trigger click event on all checkboxes 
 	*/
 	$('#spco-copy-all-attendee-chk').on( 'click', function() {
-		$('.spco-copy-attendee-chk').each(function(index) {
-			if ( $(this).prop('checked') != $('#spco-copy-all-attendee-chk').prop('checked') ) {
-				$(this).trigger('click');
-			}
-		});
-		var good_to_go = verify_all_questions_answered('#spco-registration-attendee_information-frm');		
-		if ( good_to_go !== true ) {
-			show_event_queue_ajax_error_msg( good_to_go );
+		if ( $(this).prop('checked')) {
+			$('.spco-copy-attendee-chk').each( function(index) {
+				if ( $('#spco-copy-all-attendee-chk').prop('checked') && $(this).prop('checked') != $('#spco-copy-all-attendee-chk').prop('checked') ) {
+					$(this).trigger('click');
+				}
+			}).promise().done( function() {
+				if ( ! verify_all_questions_answered( '#spco-registration-attendee_information-frm' )) {
+					show_event_queue_ajax_error_msg( good_to_go );
+				}			
+			});
 		}
 	});
 	
@@ -77,102 +83,251 @@
 	
 	
 	// in
-	$('.spco-copy-attendee-chk').on( 'click', function() { 
-
-		// the checkbox that was clicked
-		var clicked_checkbox = $(this);
+	$('.spco-copy-attendee-chk').on( 'click', function() {
 		
-		// the primary attendee question group
-		var prmry_att_qstn_grp = $('#primary-attendee').val();
-//		console.log( JSON.stringify( 'prmry_att_qstn_grp: ' + prmry_att_qstn_grp, null, 4 ));
-		// find all of the primaray attendee's questions for this event
-		var prmry_att_questions = $( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input');		
-		//$( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');
-
-		// the targeted attendee question group
-		var trgt_att_input = $(this).val();
-//		console.log( JSON.stringify( 'trgt_att_input: ' + trgt_att_input, null, 4 ));
-		
-		// set some empty vars (and reset when we loop back)
-		var input_id = '';
-		var new_input_id = '';
-		var input_name = '';
-		var input_value = '';
-		
-		// for each question in the targeted attendee question group
-		$( prmry_att_questions ).each(function(index) {
-		
-			input_id = $(this).attr('id');
+		if ( $(this).prop('checked')) {
+			// array of input fields that require values
+			var require_values = [];  
+			var multi_inputs_that_do_not_require_values = [];
+			// the checkbox that was clicked
+			var clicked_checkbox = $(this);
 			
-			if ( input_id != undefined ) {
-				// split the above var
-				var input_id_array =  input_id.split('-');
-//				console.log( JSON.stringify( 'input_id_array: ' + input_id_array, null, 4 ));
-	
-				// grab the current input's details
-				var att_nmbr = input_id_array[0];		 
-				var line_item_id = input_id_array[1];		 
-				var input_name = input_id_array[2];	
-				var answer_id = input_id_array[3];	
-				// and it's value'
-				input_value = $(this).val();
-//				console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
-//				console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
-							
-				// if the input is required but has not been filled out
-				if ( $(this).hasClass('required') && input_value == '' ) {  
-				
-					$(this).addClass('requires-value');
-					// find label for this input
-					var lbl = $(this).prev('label');
-					// grab it's text
-					var lbl_txt = $(lbl).html();
-					// remove "<em>*</em>" from end
-					lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
-					// show an error msg
-					var error_msg = lbl_txt + eei18n.required_field;
-					if ( eei18n.wp_debug == 1 ) {
-						error_msg = error_msg + ' ( spco-copy-attendee-chk )';
-					}
-					show_event_queue_ajax_error_msg( error_msg );	
-					// uncheck the checkbox that was clicked
-					$(clicked_checkbox).prop('checked', false);
-					// fill out yer dang form will ya!!!
-					exit;			
-				
-				} else {
-	
-					new_input_id = '#' + trgt_att_input + '-' +  input_name;
-					if ( answer_id != undefined ) {
-						new_input_id = new_input_id + '-' + answer_id;
-					}
-//					console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
-					
-					if ( $(new_input_id).length > 0 ){
-						if ( $(new_input_id).is(':radio') && $('#' + input_id).is(':checked') === true ) {
-//							console.log( JSON.stringify( 'radio: ', null, 4 ));
-							$(new_input_id).prop('checked', true);
-						} else if ( $(new_input_id).is(':checkbox') && $('#' + input_id).is(':checked') === true ) {
-//							console.log( JSON.stringify( 'checkbox: ' , null, 4 ));
-							$(new_input_id).prop('checked', true);
-						} else {
-//							console.log( JSON.stringify( 'other: ', null, 4 ));
-							$(new_input_id).val(input_value);
-						}						
-					}
-	
-					var billing = '#reg-page-billing-' + input_name;
-					// copy to billing info
-					if ( $(billing).val() == '' ) {
-						$(billing).val(input_value);
-					}				
-				}
-			}
+			// the primary attendee question group
+			var prmry_att_qstn_grp = $('#primary-attendee').val();
+//			console.log(' ');
+//			console.log( JSON.stringify( 'prmry_att_qstn_grp: ' + prmry_att_qstn_grp, null, 4 ));
+			// find all of the primaray attendee's questions for this event
+			var prmry_att_questions = $( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find(':input');	
+	//		$( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('input').css('background','pink');
+	//		$( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find('select').css('background','pink');
 
-		});		
-	});		
-	
-		
+			// the targeted attendee question group
+			var trgt_att_input = $(this).val();
+			console.log( JSON.stringify( 'trgt_att_input: ' + trgt_att_input, null, 4 ));
+			
+			// set some empty vars (and reset when we loop back)
+			var input_id = '';
+			var new_input_id = '';
+			var input_name = '';
+			var input_value = '';
+			
+			// for each question in the targeted attendee question group
+			$( prmry_att_questions ).each(function(index) {
+			
+				input_id = $(this).attr('id');		
+	//			console.log(' ');
+	//			console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
+				
+				if ( input_id != undefined ) {
+
+					// get the input type
+					input_type = $(this).prop('type');
+					
+					// form inputs whose values are obtained using .val()
+					var uses_val = [ 'text', 'textarea', 'select-one', 'select-multiple' ];
+	//				console.log( JSON.stringify( 'uses_val: ' + dump( uses_val ), null, 4 ));
+					// form inputs whose values are obtained using .prop()
+					var uses_prop = [ 'checkbox', 'radio' ];
+					// hope for the best
+					var copy = true;
+					// is this input a single ?
+					if ( $.inArray( input_type, uses_val ) > -1 ) {
+	//					console.log( JSON.stringify( input_type + ' uses_val' , null, 4 ));
+						// grab it's value
+						input_value = $(this).val();
+	//					console.log( JSON.stringify( 'input_value: ' + input_value, null, 4 ));
+						// is it required ?				
+						if ( $(this).hasClass( 'required' ) && input_value == '' ) {
+							copy = false;
+	//						console.log( JSON.stringify( 'copy: ' + copy, null, 4 ));
+							// find label for this input and grab it's text
+							var lbl_txt = $(this).prev('label').html();
+	//						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
+							// remove "<em>*</em>" from end
+							lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
+	//						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
+							set_single_input_requires_value_on( $(this) );
+							require_values.push( lbl_txt );
+						} 
+						
+					// or a multi ?
+					} else if ( $.inArray( input_type, uses_prop ) > -1 ) {
+	//					console.log( JSON.stringify( input_type + ' uses_prop' , null, 4 ));
+						// grab it's value
+						input_value = $(this).prop('checked');
+	//					console.log( JSON.stringify( 'input_value: ' + input_value, null, 4 ));
+						// find label for this input and grab it's text
+						var lbl_txt = $(this).closest('ul').prev('label').html();
+	//					console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
+						// remove "<em>*</em>" from end
+						lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
+	//					console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));						
+						if ( $(this).hasClass( 'required' ) && input_value == false ) {						
+	//						console.log( JSON.stringify( 'copy: ' + copy, null, 4 ));
+							// check that this input doesn't already have another option selected
+							if ( ! _.contains( multi_inputs_that_do_not_require_values, lbl_txt )) {							
+								require_values.push( lbl_txt );
+								set_multi_input_requires_value_on( $(this) );
+								copy = false;
+							}						
+						} else {
+							if ( ! _.contains( multi_inputs_that_do_not_require_values, lbl_txt )) {
+								// an option has been selected so this question does not requre a value
+								multi_inputs_that_do_not_require_values.push( lbl_txt );							
+								// remove from list of inputs that require values
+								require_values = _.without( require_values, lbl_txt );							
+								set_multi_input_requires_value_off( $(this) );
+							}
+						}
+	//					console.log( JSON.stringify( 'require_values: ' + require_values.join(), null, 4 ));
+	//					console.log( JSON.stringify( 'multi_inputs_that_do_not_require_values: ' + multi_inputs_that_do_not_require_values.join(), null, 4 ));
+					}	
+				}
+			});
+			//remove duplicates
+			multi_inputs_that_do_not_require_values = _.uniq( multi_inputs_that_do_not_require_values );
+//			console.log( JSON.stringify( 'require_values: ' + require_values.join(), null, 4 ));
+//			console.log( JSON.stringify( 'multi_inputs_that_do_not_require_values: ' + multi_inputs_that_do_not_require_values.join(), null, 4 ));		
+			// any empty fields that need values ?
+			if ( require_values.length !== 0 ) {
+				error_msg = '';
+				//remove duplicates
+				require_values = _.unique( require_values );
+				$( require_values ).each( function( key, field_name ) {
+					error_msg = error_msg + field_name + eei18n.required_field  + '<br/>';
+				});
+				if ( eei18n.wp_debug == 1 ) {
+					error_msg = error_msg + '<span class="smaller-text">( spco-copy-attendee-chk )</span>';
+				}
+				// uncheck the checkbox that was clicked
+				$(clicked_checkbox).prop('checked', false);
+				// display error_msg				
+				show_event_queue_ajax_error_msg( error_msg );
+				exit;
+			} else {
+				// for each question in the targeted attendee question group
+				$( prmry_att_questions ).each(function(index) {
+					// here we go again...			
+					input_id = $(this).attr('id');		
+//					console.log(' ');
+//					console.log( JSON.stringify( 'input_id: ' + input_id, null, 4 ));
+					if ( input_id != undefined ) {
+						// split the above var
+						var input_id_array =  input_id.split('-');
+	//					console.log( JSON.stringify( 'input_id_array: ' + input_id_array, null, 4 ));
+			
+						// grab the current input's details
+						var att_nmbr = input_id_array[0];		 
+						var line_item_id = input_id_array[1];		 
+						var input_name = input_id_array[2];	
+						var answer_id = input_id_array[3];
+						input_value = $(this).inputValue();
+						
+//						if ( eei18n.wp_debug == 1 ) {
+//							console.log( JSON.stringify( 'input_name: ' + input_name, null, 4 ));
+//						}
+
+						new_input_id = '#' + trgt_att_input + '-' +  input_name;
+						if ( answer_id != undefined ) {
+							new_input_id = new_input_id + '-' + answer_id;
+						}
+//						console.log( JSON.stringify( 'new_input_id: ' + new_input_id, null, 4 ));
+
+						if ( $(new_input_id).length > 0 ){
+							copy_form_input_value_from_this( $(new_input_id), $(this) )						
+						}
+
+						// copy to billing info
+						var billing = '#reg-page-billing-' + input_name;
+						if ( $(billing).length > 0 ){
+							copy_form_input_value_from_this( $(billing), $(this) )						
+						}
+						
+					}
+				});
+			}		
+		}		
+	});
+
+
+
+	// remove "requires-value" class if field is no longer empty
+	$(':input').change(function() { 
+		inputType = $(this).prop('type');
+		if ( inputType == 'checkbox' || inputType ==  'radio' ) {
+			if ( $(this).prop('checked')) {
+				set_multi_input_requires_value_off( $(this) );
+			}
+		} else {
+			if ( $.trim( this.value ) != '' ){
+				set_single_input_requires_value_off( $(this) );
+			}
+		}
+	});	
+
+
+
+	function copy_form_input_value_from_this( target_input, copy_from ) {
+		if ( $(target_input).is(':radio') || $(target_input).is(':checkbox') ) {
+			$(target_input).prop('checked', $(copy_from).prop('checked'));
+//			console.log( JSON.stringify( 'input value copied: ' + $(copy_from).prop('checked'), null, 4 ));
+		} else {
+			$(target_input).val( $(copy_from).val() );
+//			console.log( JSON.stringify( 'input value copied: ' + $(copy_from).val(), null, 4 ));
+		}
+	}
+
+
+
+	function set_requires_value_on( input ) {
+		var inputType = $(input).prop('type');
+		if ( inputType ==  'checkbox' || inputType == 'radio' ) {
+			set_multi_input_requires_value_on( $(input) );
+		} else {
+			set_single_input_requires_value_on( $(input) );
+		}
+	}
+
+
+
+	function set_requires_value_off( input ) {
+		var inputType = $(input).prop('type');
+		if ( inputType ==  'checkbox' || inputType == 'radio' ) {
+			set_multi_input_requires_value_off( $(input) );
+		} else {
+			set_single_input_requires_value_off( $(input) );
+		}
+	}
+
+
+
+	function set_multi_input_requires_value_off( input ) {
+		$(input).closest('ul').removeClass('requires-value');
+		$(input).closest('ul').prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).addClass('hidden');
+	}
+
+
+
+	function set_multi_input_requires_value_on( input ) {
+		$(input).closest('ul').addClass('requires-value');
+		$(input).closest('ul').prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).removeClass('hidden');
+	}
+
+
+
+	function set_single_input_requires_value_off( input ) {
+		$(input).removeClass('requires-value');
+		$(input).prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).addClass('hidden');
+	}
+
+
+
+	function set_single_input_requires_value_on( input ) {
+		$(input).addClass('requires-value');
+		$(input).prevUntil( '.reg-page-form-field-wrap-pg', '.required-text' ).removeClass('hidden');
+	}
+
+
 	
 	/**
 	*		do_before_event_queue_ajax
@@ -228,13 +383,8 @@
 			$('#espresso-ajax-loading').fadeOut('fast');
 		}
 	}
-	
-	// remove "requires-value" class if field is no longer empty
-	$('input[type="text"]').focusout(function() {   
-		if ( $.trim(this.value) != '' ){
-			$(this).removeClass('requires-value');
-		}
-	});	
+
+		
 
 
 
@@ -525,74 +675,75 @@
 	*/
 	function verify_all_questions_answered( whch_form ) {
 
-		if ( $('#reg-page-no-payment-required').val() == 1 ) {
-			return true;
-		}
+//		if ( $('#reg-page-no-payment-required').val() == 1 ) {
+//			return true;
+//		}
 
 		 if ( whch_form == '' ){
 			whch_form = '#spco-registration-' + eei18n.reg_step_1 + '-frm';
 		}
 		
-//		console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
+		console.log( JSON.stringify( 'whch_form: ' + whch_form, null, 4 ));
 			
 		var good_to_go = true;
 		
 		$( whch_form + ' .required' ).each( function(index) {
 
-//			console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
-//			console.log( JSON.stringify( 'input value: ' + $(this).val(), null, 4 ));		
+			input_value = $(this).inputValue();
+
+			console.log( JSON.stringify( 'input_id: ' + $(this).attr('id'), null, 4 ));
+			console.log( JSON.stringify( 'input value: ' + $(this).val(), null, 4 ));		
 			
 			// empty field
-			if ( $(this).val() == '' ) {
+			if ( input_value == '' || input_value == false ) {
 			
 				// set error messages
 				if ( good_to_go === true ) {
 					good_to_go = eei18n.answer_required_questions;
 					if ( eei18n.wp_debug == 1 ) {
-						good_to_go = good_to_go + ' ( verify_all_questions_answered )';
+						good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered )</span>';
 					}
 					return false;
 				} else if ( good_to_go == eei18n.enter_valid_email ) {
 					good_to_go = eei18n.valid_email_and_questions;
 					if ( eei18n.wp_debug == 1 ) {
-						good_to_go = good_to_go + ' ( verify_all_questions_answered )';
+						good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered )</span>';
 					}
 					return false;
 				} 
-				
-				$(this).addClass('requires-value');
+
+				set_requires_value_on( $(this) );
+
 				
 			} else {
 				
 				// is this field an email address ?
 				if ( $(this).hasClass('email') ) {
-					// grab the addy
-					var email_address = $(this).val();
 					// send addy for validation
-					if ( validate_email_address( email_address )) {
+					if ( validate_email_address( $(this).val() )) {
 						// good email addy
-						$(this).removeClass('requires-value');
+						set_requires_value_off( $(this) );
 					} else {
 						// bad email addy
-						$(this).addClass('requires-value');
+						set_requires_value_on( $(this) );
 						// set error messages
 						if ( good_to_go === true ) {
 							good_to_go = eei18n.enter_valid_email;
 							if ( eei18n.wp_debug == 1 ) {
-								good_to_go = good_to_go + ' ( verify_all_questions_answered )';
+								good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered )</span>';
 							}
 							return false;
 						}  else if ( good_to_go == eei18n.answer_required_questions ) {
 							good_to_go = eei18n.valid_email_and_questions;
 							if ( eei18n.wp_debug == 1 ) {
-								good_to_go = good_to_go + ' ( verify_all_questions_answered )';
+								good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered )</span>';
 							}
 							return false;
 						} 			
 					}								
 							
 				} else {
-					$(this).removeClass('requires-value');
+					set_requires_value_off( $(this) );
 				}			
 				
 			}	
@@ -685,4 +836,3 @@
 
 
 })(jQuery);
-

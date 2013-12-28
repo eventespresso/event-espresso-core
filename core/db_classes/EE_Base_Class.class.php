@@ -155,19 +155,22 @@ class EE_Base_Class{
 					);
 				}
 			}
-			// verify we have all the model relations
-			foreach($model->relation_settings() as $relationName=>$relationSettings){
-				if( ! property_exists( $this, $this->_get_private_attribute_name( $relationName ))) {
-					throw new EE_Error(
-						sprintf(
-							__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add protected $%s to %s','event_espresso'),
-							$relationName,
-							get_class($model),
-							get_class($this),
-							$this->_get_private_attribute_name($relationName),
-							get_class($this)
-						)
-					);
+			// verify we have all the model relations, except on extra metas because they
+			//are meant to be related to everything
+			if(get_class($this) !== 'EE_Extra_Meta'){
+				foreach($model->relation_settings() as $relationName=>$relationSettings){
+					if( ! property_exists( $this, $this->_get_private_attribute_name( $relationName ))) {
+						throw new EE_Error(
+							sprintf(
+								__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add protected $%s to %s','event_espresso'),
+								$relationName,
+								get_class($model),
+								get_class($this),
+								$this->_get_private_attribute_name($relationName),
+								get_class($this)
+							)
+						);
+					}
 				}
 			}
 			
