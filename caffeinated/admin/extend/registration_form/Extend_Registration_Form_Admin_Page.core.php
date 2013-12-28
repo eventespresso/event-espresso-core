@@ -615,6 +615,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		
 		if( $count ){
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			$query_params['limit'] = NULL;
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
 			$results=$this->_question_model->count_deleted($where);
 		}else{
@@ -631,6 +632,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
 		if ($count){
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
+			$query_params['limit'] = NULL;
 			$results = $questionGroupModel->count($where);
 		}else{
 			$results = $questionGroupModel->get_all($query_params);
@@ -645,6 +647,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
 		if($count){
 			$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
+			$query_params['limit'] = NULL;
 			$results = $questionGroupModel->count_deleted($where);
 		}else{
 			$results = $questionGroupModel->get_all_deleted($query_params);

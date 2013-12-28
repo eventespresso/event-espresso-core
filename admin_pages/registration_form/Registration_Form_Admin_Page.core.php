@@ -536,6 +536,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$QST = EEM_Question::instance();
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
 		if ($count){
+			$query_params['limit'] = NULL;
 			$results = $QST->count($query_params);
 		}else{
 			$results = $QST->get_all($query_params);
