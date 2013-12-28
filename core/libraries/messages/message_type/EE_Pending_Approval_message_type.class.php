@@ -49,6 +49,13 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 			);
 	}
 
+	/**
+	 * This message type doesn't need any settings so we are just setting to empty array.
+	 */
+	protected function _set_admin_settings_fields() {
+		$this->_admin_settings_fields = array();
+	}
+
 
 	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
 		//this is just a test
