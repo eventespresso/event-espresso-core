@@ -627,8 +627,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'Attendee.ATT_address' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_address2' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_city' => array( 'LIKE', $sstr ),
-				'Attendee.ATT_comments' => array( 'LIKE', $sstr ),
-				'Attendee.ATT_notes' => array( 'LIKE', $sstr ),
 				'REG_final_price' => array( 'LIKE', $sstr ),
 				'REG_code' => array( 'LIKE', $sstr ),
 				'REG_count' => array( 'LIKE' , $sstr ),

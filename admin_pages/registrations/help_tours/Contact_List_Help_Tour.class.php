@@ -86,7 +86,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 	
 
 	protected function _search_stop() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: Event Name, Event description, Attendee first and last name, Attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size', 'event_espresso') . '</p>';
+		return '<p>' . __('Fields that will be searched with the value from the search are: Event Name, Event description, Attendee first and last name, Attendee bio, attendee email, attendee address, registration final price, registration code, registration group size', 'event_espresso') . '</p>';
 	}
 
 

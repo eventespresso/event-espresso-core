@@ -145,7 +145,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	
 
 	protected function _search_stop() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: event name, event description, attendee name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration count, registration group size, ticket name, ticket description, payment method, payment gateway, transaction details, and transaction session data.', 'event_espresso') . '</p>';
+		return '<p>' . __('Fields that will be searched with the value from the search are: event name, event description, attendee name, attendee bio, attendee email, attendee address, registration final price, registration code, registration count, registration group size, ticket name, ticket description, payment method, payment gateway, transaction details, and transaction session data.', 'event_espresso') . '</p>';
 	}
 
 

@@ -107,35 +107,8 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 					</td>
 				</tr>
 				
-				<tr valign="top">
-					<th>
-						<label for="ATT_social"><?php _e('Social Networking Contacts', 'event_espresso'); ?></label>
-					</th>
-					<td>
-						<textarea class="" id="ATT_social" name="ATT_social" cols="40" rows="2" ><?php // echo $attendee->social(); ?></textarea><br/>
-						<p class="description"><?php _e('Social networking contacts for the attendee such as Facebook page, Twitter account, LinkedIn account, etc. One per line please', 'event_espresso'); ?></p>
-					</td>							
-				</tr>
 				
-				<tr valign="top">
-					<th>
-						<label for="ATT_comments"><?php _e('Attendee Comments', 'event_espresso'); ?></label>
-					</th>
-					<td>
-						<textarea class="" id="ATT_comments" name="ATT_comments" cols="40" rows="4" ><?php echo $attendee->comments(); ?></textarea><br/>
-						<p class="description"><?php _e('Comments from the attendee regarding your events, services, etc collected via forms, emails, etc.', 'event_espresso'); ?></p>
-					</td>							
-				</tr>
 				
-				<tr valign="top">
-					<th>
-						<label for="ATT_notes"><?php _e('Attendee Notes', 'event_espresso'); ?></label>
-					</th>
-					<td>
-						<textarea class="" id="ATT_notes" name="ATT_notes" cols="40" rows="4" ><?php echo $attendee->notes() ?></textarea><br/>
-						<p class="description"><?php _e('A place for you to keep any notes pertaining to this attendee, their preferences, special circumstances, etc.', 'event_espresso'); ?></p>
-					</td>							
-				</tr>
 				<?php do_action('AHEE_attendee_details_main_meta_box__table_body_end',$attendee);?>
 			</tbody>
 		</table>
