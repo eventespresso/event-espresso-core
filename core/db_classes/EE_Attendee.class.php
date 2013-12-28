@@ -173,19 +173,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
     *	@var string	
     */
 	protected $_ATT_phone = NULL;
-	
-	/**
-	 * Attendee notes by the attendee themselves about themselves
-	 * @var string 
-	 */
-	protected $_ATT_comments = NULL;
-    /**
-    *	Attendee Notes  about the attendee by the customer
-	* 
-	*	@access	protected
-    *	@var string	
-    */
-	protected $_ATT_notes = NULL;
 
 
     
