@@ -198,7 +198,10 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$this->_contexts[$context] = $cntxt;
 		}
 
-		$this->_init_data();
+		$exit = $this->_init_data();
+		//final check for if we exit or not cause child objects may have run conditionals that cleared out data so no addresees generated.
+		if ( $exit ) return FALSE;
+
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
@@ -329,7 +332,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$a = new ReflectionClass( $classname );
 		$this->_data = $a->newInstance( $this->_data );
 
-		$this->_process_data();
+		$this->_set_default_addressee_data();
+		return $this->_process_data();
 	}
 
 
@@ -340,6 +344,30 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected function _process_data() {
 
+		//if no events in the incoming data then no sense in continuing
+		if ( empty( $this->_data->events ) )
+			return FALSE;
+
+		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
+		foreach ( $this->_contexts as $context => $details ) {
+			$xpctd_method = '_' . $context . '_addressees';
+			if ( !method_exists( $this, $xpctd_method ) )
+				throw new EE_Error( sprintf( __('The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $xpctd_method) );
+			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
+		}
+		return TRUE;
+	}
+
+
+
+
+	/**
+	 * sets the default_addressee_data property,
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_default_addressee_data() {
 		$this->_default_addressee_data = array(
 			'billing' => $this->_data->billing,
 			'taxes' => $this->_data->taxes,
@@ -356,16 +384,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		if ( is_array( $this->_data->primary_attendee_data ) ) {
 			$this->_default_addressee_data = array_merge( $this->_default_addressee_data, $this->_data->primary_attendee_data );
-		}
-
-
-		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
-		foreach ( $this->_contexts as $context => $details ) {
-			$xpctd_method = '_' . $context . '_addressees';
-
-			if ( !method_exists( $this, $xpctd_method ) )
-				throw new EE_Error( sprintf( __('The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $xpctd_method) );
-			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
 		}
 	}
 
