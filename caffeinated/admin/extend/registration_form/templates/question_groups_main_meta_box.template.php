@@ -21,9 +21,6 @@ $QSG_system = $question_group->system_group();
  
 $disabled = ! empty( $QSG_system ) ? ' disabled="disabled"' : '';
 $id =  ! empty( $QST_system ) ? '_disabled' : '';
-
-
-echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order') );
 ?>
 
 <div class="edit-group padding" style="float:left; width:60%; padding-right: 5%;">
@@ -66,6 +63,17 @@ echo EEH_Form_Fields::hidden_input('QSG_order', $question_group->get('QSG_order'
 				</th>
 				<td>
 					<textarea name="QSG_desc"  class="regular-text" rows="1" cols="50"><?php echo $question_group->desc()?></textarea>
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="QSG_order">
+						<?php _e('Question Group Order','event_espresso');?> <?php echo EEH_Template::get_help_tab_link('group_order_info');?>
+					</label>
+				</th>
+				<td>
+					<input name="QSG_order"  class="regular-text" value="<?php echo $question_group->get('QSG_order'); ?>" />
 				</td>
 			</tr>
 

@@ -17,6 +17,15 @@
 <p>
 <?php _e('A description of this question group.','event_espresso')?>
 </p>
+
+<h2>
+<?php _e('Group Order', 'event_espresso'); ?>
+</h2>
+<p>
+<?php _e('What order you want this group to display whenever multiple question groups are listed.','event_espresso')?>
+</p>
+
+
 <h2>
 <?php _e('Show Group Name', 'event_espresso'); ?>
 </h2>

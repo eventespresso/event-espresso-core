@@ -9,7 +9,6 @@ assert($question_types);
 echo EEH_Form_Fields::hidden_input('QST_system', $question->system_ID());
 echo EEH_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EEH_Form_Fields::hidden_input('QST_deleted', $question->deleted());
-echo EEH_Form_Fields::hidden_input('QST_order', $question->get('QST_order') );
 $QST_system = $question->system_ID();
 $fields = $question->get_model()->field_settings();
 ?>
@@ -49,6 +48,15 @@ $fields = $question->get_model()->field_settings();
 					<?php } ?>
 						
 					</p>					
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<label for="QST_order"><?php echo $fields['QST_order']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_order');?>
+				</th>
+				<td>
+					<input class="QST_order" type="text" id="QST_order<?php echo $id; ?>" name = "QST_order<?php echo $id; ?>" value="<?php echo $question->get('QST_order'); ?>" />
+					<br/>					
 				</td>
 			</tr>
 

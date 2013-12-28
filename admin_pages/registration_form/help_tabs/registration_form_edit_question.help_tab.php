@@ -17,6 +17,10 @@
 <p><?php _e('This setting allows you to indicate that the question should ONLY appear to admins.', 'event_espresso'); ?></p>
 <p><strong><?php _e('Note: If you make the question admin only, then the "Required Question" setting will be set to optional and cannot be changed.', 'event_espresso'); ?></strong></p>
 
+<h2><?php _e('Question Order', 'event_espresso'); ?></h2>
+<p><?php _e('This setting allows you to indicate what order the question should appear when listed with other questions in a question group.', 'event_espresso'); ?></p>
+
+
 <h2>
 <?php _e('Question Type', 'event_espresso'); ?>
 </h2>
