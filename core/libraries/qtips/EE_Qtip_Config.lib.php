@@ -104,7 +104,6 @@ abstract class EE_Qtip_Config extends EE_Base {
 		$this->_default_options = array(
 			//'id' => 'unique_id_referncing_qtip_instance',
 			'prerender' => false, //increases page load if true,
-			'overwrite' => true, //if qtip already exists for called element then original overwritten.
 			'suppress' => true, //whether default browser tooltips are suppressed.
 			'content' => array(
 				'button' => false, //what you want for the close button text/link.
@@ -132,7 +131,6 @@ abstract class EE_Qtip_Config extends EE_Base {
 				'target' => false, //options jQuery::#selector|false.  Used to indicate which html element will trigger show event.  When false, the element the qtip() method was called upon is used.
 				'delay' => 90, //time in millisecons by which to delay showing of tooltip.
 				'solo' => false, //determines whether tooltip will hid all others when triggered. Options: true (hide all) || false (ignore) || string (parent selector for which qtips get hidden)
-				'ready' => false, //use to indicate you want the qtip to show as soon as it is bound to the element it's attached to (true).
 				'modal' => array(
 					'on' => false, //does tooltip trigger modal?
 					'blur' => true, //does clicking on the dimmed background hide the tooltip and remove the dim?
