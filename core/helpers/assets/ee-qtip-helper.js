@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
 
 	//load all qtips
 	if ( EE_QTIP_HELPER.qtips.length > 0 ) {
-		var parse, content;
+		var parse, content, showevent;
 
 		//loop through the qtips and set them up.
 		$.each(EE_QTIP_HELPER.qtips, function(i, v ) {
@@ -41,8 +41,15 @@ jQuery(document).ready(function($) {
 				v.options.hide.target = $(parse);
 			}
 
-			if ( ! $.cookie(v.content_id + '-viewed') )
-				$(v.target).qtip(v.options);
+			if ( ! $.cookie(v.content_id + '-viewed') ) {
+				showevent = v.options.show.event;
+				//lets make sure qtips are added via on handler so they work with dom elements added after load.
+				$(document).on(showevent, v.target, function(evt) {
+					v.options.overwrite = false; //make sure we dont' overwrite on each call
+					v.options.show.ready = true;
+					$(this).qtip(v.options, evt);
+				});
+			}
 		});
 	}
 
