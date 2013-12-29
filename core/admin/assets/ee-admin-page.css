@@ -620,6 +620,11 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 
+.ee-numeric {
+	text-align: right;
+}
+
+
 /* Admin theme specific colors */
 .ee-alternate-color {
 	color: #e6e6e6;
