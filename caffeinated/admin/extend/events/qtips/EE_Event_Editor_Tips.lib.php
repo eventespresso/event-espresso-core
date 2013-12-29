@@ -50,6 +50,37 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 						'classes' => ''
 						)
 				 	)//defaults
+				),
+			1 => array(
+				'content_id' => 'ticket-icon-help',
+				'target' => '.ticket-icon',
+				'content' => '<p>' . __('Assigned Tickets', 'event_espresso') . '</p>',
+				'options' => array()
+				),
+			2 => array(
+				'content_id' => 'clone-icon-help',
+				'target' => '.clone-icon',
+				'content' => '<p>' . __('Duplicate this Item', 'event_espresso') . '</p>'
+				),
+			3 => array(
+				'content_id' => 'trash-datetime-help',
+				'target' => '.datetime-edit-table .trash-icon',
+				'content' => '<p>' . __('Trash Datetime', 'event_espresso') . '</p>'
+				),
+			4 => array(
+				'content_id' => 'trash-ticket-help',
+				'target' => '.ticket-row .trash-icon',
+				'content' => '<p>' . __('Trash Ticket', 'event_espresso') . '</p>'
+				),
+			5 => array(
+				'content_id' => 'trash-price-modifier-help',
+				'target' => '.price-row .trash-icon',
+				'content' => '<p>' . __('Trash Price Modifier', 'event_espresso') . '</p>'
+				),
+			6 => array(
+				'content_id' => 'gear-icon-help',
+				'target' => '.gear-icon',
+				'content' => '<p>' . __('Advanced Settings', 'event_espresso') . '</p>'
 				)
 			);
 	}
