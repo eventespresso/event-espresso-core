@@ -29,7 +29,7 @@
 					</td>
 					<td class="event-datetime-column reg-limit-column">
 						<label for="add-new-event-datetime-DTT_reg_limit"><?php _e('Limit', 'event_espresso'); ?></label>
-						<input type="text" name="add_new_datetime[DTT_reg_limit]" id="add-new-event-datetime-DTT_reg_limit" class="ee-small-text-inp">
+						<input type="text" name="add_new_datetime[DTT_reg_limit]" id="add-new-event-datetime-DTT_reg_limit" class="ee-numeric ee-small-text-inp">
 					</td>
 				</tr>
 			</table>

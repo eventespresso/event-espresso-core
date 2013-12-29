@@ -31,10 +31,10 @@
 						<input type="text" name="add_new_ticket[TKT_end_date]" class="add-new-ticket-TKT_end_date ee-text-inp ee-datepicker" data-context="end-ticket" data-date-field-context="#edit-event-datetime-tickets-<?php echo $dtt_row; ?>" data-related-field=".add-new-ticket-TKT_start_date" data-next-field=".add-new-ticket-PRC_amount">
 					</td>
 					<td>	
-						<input type="text" name="add_new_ticket[PRC_amount]" class="ee-text-inp add-new-ticket-PRC_amount" size="1">
+						<input type="text" name="add_new_ticket[PRC_amount]" class="ee-text-inp add-new-ticket-PRC_amount ee-numeric" size="1">
 					</td>
 					<td>
-						<input type="text" name="add_new_ticket[TKT_qty]" class="ee-small-text-inp add-new-ticket-TKT_qty" size="1">
+						<input type="text" name="add_new_ticket[TKT_qty]" class="ee-small-text-inp add-new-ticket-TKT_qty ee-numeric" size="1">
 					</td>
 					<td>
 						<span class="clickable gear-icon add-edit" data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" style="display:none"></span>

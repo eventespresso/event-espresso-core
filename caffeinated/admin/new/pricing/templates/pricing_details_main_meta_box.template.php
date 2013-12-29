@@ -32,7 +32,7 @@
 			<tr valign="top">
 				<th><label for="PRC_amount"><?php _e('Amount', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('amount_field_info');?></label></th>
 				<td>
-					<input class="small-text" type="text" id="PRC_amount" name="PRC_amount" value="<?php echo $price->amount(); ?>"/>
+					<input class="small-text ee-numeric" type="text" id="PRC_amount" name="PRC_amount" value="<?php echo $price->amount(); ?>"/>
 				</td>
 			</tr>
 		</tbody>

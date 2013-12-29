@@ -5,10 +5,10 @@
 	<td><input id="edit-ticket-TKT_start_date-<?php echo $tkt_row; ?>" type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="<?php echo $TKT_start_date; ?>" data-context="start-ticket" data-date-field-context="#display-ticketrow-<?php echo $tkt_row; ?>" data-related-field=".edit-ticket-TKT_end_date" data-next-field=".edit-ticket-TKT_end_date"<?php echo $disabled; ?>></td>
 	<td><input id="edit-ticket-TKT_end_date-<?php echo $tkt_row; ?>" type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="<?php echo $TKT_end_date; ?>" data-context="end-ticket" data-date-field-context="#display-ticketrow-<?php echo $tkt_row; ?>" data-related-field=".edit-ticket-TKT_start_date" data-next-field=".edit-ticket-TKT_qty"<?php echo $disabled; ?>></td>
 	<td>
-		<input id="edit-ticket-TKT_base_price-<?php echo $tkt_row; ?>" type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_base_price]" class="edit-ticket-TKT_base_price ee-small-text-inp edit-price-PRC_amount" value="<?php echo $TKT_base_price; ?>"<?php echo $disabled;?>>
+		<input id="edit-ticket-TKT_base_price-<?php echo $tkt_row; ?>" type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_base_price]" class="edit-ticket-TKT_base_price ee-small-text-inp edit-price-PRC_amount ee-numeric" value="<?php echo $TKT_base_price; ?>"<?php echo $disabled;?>>
 		<input type="hidden" id="edit-ticket-TKT_base_price_ID-<?php echo $tkt_row; ?>" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_base_price_ID]" value="<?php echo $TKT_base_price_ID; ?>">
 	</td>
-	<td><input type="text" class="edit-ticket-TKT_qty ee-small-text-inp" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>"<?php echo $disabled; ?>></td>
+	<td><input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>"<?php echo $disabled; ?>></td>
 	<!--<td><span class="ticket-display-row-TKT_price"><?php echo $TKT_price; ?></span></td>-->
 	<td><span class="ticket-display-row-TKT_sold"><?php echo $TKT_sold; ?></span></td>
 	<td><div class="ee-editing-container <?php echo $edit_tkt_expanded; ?>"><span class="gear-icon clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span></div><span class="<?php echo $clone_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="<?php echo $trash_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"<?php echo $trash_hidden; ?>></span></td>
@@ -35,9 +35,9 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td><input type="text" class="edit-ticket-TKT_uses ee-small-text-inp" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_uses]" value="<?php echo $TKT_uses; ?>"<?php echo $disabled; ?>></td>
-							<td><input type="text" class="edit-ticket-TKT_min ee-small-text-inp" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_min]" value="<?php echo $TKT_min; ?>"<?php echo $disabled; ?>></td>
-							<td><input type="text" class="edit-ticket-TKT_max ee-small-text-inp" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_max]" value="<?php echo $TKT_max; ?>"<?php echo $disabled; ?>></td>
+							<td><input type="text" class="edit-ticket-TKT_uses ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_uses]" value="<?php echo $TKT_uses; ?>"<?php echo $disabled; ?>></td>
+							<td><input type="text" class="edit-ticket-TKT_min ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_min]" value="<?php echo $TKT_min; ?>"<?php echo $disabled; ?>></td>
+							<td><input type="text" class="edit-ticket-TKT_max ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_max]" value="<?php echo $TKT_max; ?>"<?php echo $disabled; ?>></td>
 						</tr>
 					</tbody>
 				</table>
@@ -64,10 +64,10 @@
 					</tbody>
 					<tfoot>
 						<tr class="price-subtotal-row TKT-taxes-display"<?php echo $display_subtotal; ?>>
-							<td colspan="4">
+							<td colspan="4" class="ee-numeric">
 								<span class="TKT-taxable-subtotal-label"><strong><?php _e('Subtotal', 'event_espresso'); ?></strong></span>
 							</td>
-							<td>
+							<td class="ee-numeric">
 								<span class="TKT-taxable-subtotal-amount-display"><?php echo $TKT_subtotal_amount_display; ?></span>
 								<input type="hidden" value="<?php echo $TKT_subtotal_amount; ?>" name="subtotal_amount_<?php echo $tkt_row; ?>" class="TKT-taxable-subtotal-amount">
 							</td>
@@ -81,10 +81,10 @@
 									<input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>" type="checkbox" name="<?php echo $edit_tickets_name;?>[<?php echo $tkt_row; ?>][TKT_taxable]" value="1"<?php echo $TKT_taxable; ?><?php echo $disabled; ?>><label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php _e('This ticket is taxable.', 'event_espresso'); ?>
 								<?php endif; ?>
 							</td>
-							<td colspan="3">	
+							<td colspan="3" class="ee-numeric">	
 								<strong><?php _e('Total', 'event_espresso'); ?></strong>
 							</td>
-							<td>
+							<td class="ee-numeric" >
 								<span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span>
 								<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_price]" class="edit-ticket-TKT_price" value="<?php echo $TKT_price_amount; ?>">
 							</td>
