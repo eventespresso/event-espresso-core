@@ -1399,9 +1399,13 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$this->_transaction->save();
 		EE_Registry::instance()->SSN->set_session_data( array( 'transaction', NULL ));
 		$this->_transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data() );
+		$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
+		//is this free event?
+		if ( $this->_cart->get_grand_total()->total() == EEH_Template::format_currency( 0, TRUE ) ) {
+			$this->_transaction->set_status( EEM_Transaction::complete_status_code );
+		}
 		$this->_transaction->finalize();
 		$this->_transaction->save();
-		$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 		EE_Registry::instance()->SSN->clear_session();
 		return $this->_transaction->ID();
 	}
