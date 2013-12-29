@@ -349,7 +349,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		//verify registrations have been set
 		$registrations = $this->_transaction->registrations();
-		if ( empty( $registrations )) {
+		if ( $registrations == NULL ) {
 			$this->_initialize_registrations();
 		}
 			
@@ -927,15 +927,31 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 						//d( $Questions );
 						
 						foreach ( $Questions as $Question ) {
-							
-							/*@var $Question EE_Question */
-							$answer = EE_Answer::new_instance ( array( 
+
+							$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
+
+							if ( ! $answer_value ) {
+								$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$Question->ID(), 'REG_ID'=>$registration->ID() )));
+							}
+
+							if ( $answer_value || ! $answer instanceof EE_Answer ) {
+								// create an EE_Answer object for storing everything in
+								$answer = EE_Answer::new_instance ( array( 
 									'QST_ID'=> $Question->ID(),
 									'REG_ID'=> $registration->ID()
 								 ));
-							$answer->cache( 'Question', $Question );
-							$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-							$registration->cache( 'Answer', $answer, $answer_cache_id );
+							}
+
+							if ( $answer instanceof EE_Answer ) {
+								if ( ! empty( $answer_value )) {
+								$answer->set( 'ANS_value', $answer_value );
+								}								
+								$question_meta['attendee'][ $Question->is_system_question() ? $Question->system_ID() : $Question->ID() ] = $answer->value();
+								$answer->cache( 'Question', $Question );
+								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
+	//								echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+								$registration->cache( 'Answer', $answer, $answer_cache_id );
+							}
 							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
 						}		
 					}
@@ -1008,6 +1024,11 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		
 		$cart_total_before_tax = $this->_cart->get_cart_total_before_tax();
 		$template_args['payment_required'] = $cart_total_before_tax > 0 ? TRUE : FALSE;
+
+		if ( ! $template_args['payment_required'] ) {
+			EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ) );
+		}
+
 		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
 
 		
@@ -1375,6 +1396,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 		//all is good so let's continue with finalizing the registration.
 		$this->_transaction->save_new_cached_related_model_objs();
+		$this->_transaction->save();
 		EE_Registry::instance()->SSN->set_session_data( array( 'transaction', NULL ));
 		$this->_transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data() );
 		$this->_transaction->finalize();
