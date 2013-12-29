@@ -179,11 +179,12 @@ abstract class EE_Qtip_Config extends EE_Base {
 	protected function _construct_tips() {
 		foreach ( $this->_qtipsa as $qt ) {
 			//make sure we have what we need.
-			if ( !isset( $qt['content_id'] ) || !isset( $qt['options'] ) || !isset( $qt['target'] ) || !isset( $qt['content'] ) )
+			if ( !isset( $qt['content_id'] ) || !isset( $qt['target'] ) || !isset( $qt['content'] ) )
 				throw new EE_Error( sprintf( __('There is something wrong with the _qtipsa property setup for the %s qtip config class.  The dump of the current array index is: %s.<br /><br />Please check that it\'s setup correctly.', 'event_espresso'), get_class($this), var_export($qt, true) ) );
 
 			//make sure the options include defaults and just override via set config.
-			$options = array_merge( $this->_default_options, $qt['options'] );
+			$options_override = isset( $qt['options'] ) ? (array) $qt['options'] : array();
+			$options = array_merge( $this->_default_options, $options_override );
 			$setup = array(
 				'content_id' => $qt['content_id'],
 				'options' => $options,
