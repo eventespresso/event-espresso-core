@@ -472,7 +472,7 @@
     width: 20%;
 }
 
-.price-table tbody td:first-child, .price-table tfoot td {
+.price-table tbody td:first-child {
     text-align: left;
 }
 
