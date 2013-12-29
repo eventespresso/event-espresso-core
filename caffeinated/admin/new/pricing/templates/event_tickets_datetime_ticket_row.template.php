@@ -96,7 +96,7 @@
 			</div>
 			<div style="clear:both"></div>
 			<h5 class="tickets-heading"><?php _e('Event Datetimes', 'event_espresso'); ?></h5>
-			<p><?php _e('This ticket will be usable (allow entrance) for the following selected event datetimes (click to select).  The "# Datetimes" amount (above)indicates how many of the assigned datetimes the ticket holder can gain access to:', 'event_espresso'); ?></p>
+			<p><?php _e('This ticket will be usable (allow entrance) for the following selected event datetimes (click to select).  The "# Datetimes" amount (above) indicates how many of the assigned datetimes the ticket holder can gain access to:', 'event_espresso'); ?></p>
 			<ul class="datetime-tickets-list">
 				<?php echo $ticket_datetimes_list; ?>
 			</ul>
