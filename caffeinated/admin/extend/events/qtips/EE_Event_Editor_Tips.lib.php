@@ -54,8 +54,7 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 			1 => array(
 				'content_id' => 'ticket-icon-help',
 				'target' => '.ticket-icon',
-				'content' => '<p>' . __('Assigned Tickets', 'event_espresso') . '</p>',
-				'options' => array()
+				'content' => '<p>' . __('Assigned Tickets', 'event_espresso') . '</p>'
 				),
 			2 => array(
 				'content_id' => 'clone-icon-help',
@@ -74,7 +73,7 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 				),
 			5 => array(
 				'content_id' => 'trash-price-modifier-help',
-				'target' => '.price-row .trash-icon',
+				'target' => '.ticket-price-rows .trash-icon',
 				'content' => '<p>' . __('Trash Price Modifier', 'event_espresso') . '</p>'
 				),
 			6 => array(
