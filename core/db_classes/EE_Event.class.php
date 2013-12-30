@@ -614,15 +614,18 @@ class EE_Event extends EE_CPT_Base{
 		}
 		//now we can conditionally determine status
 		if ( $this->_status == 'publish' ) {
-			if ( in_array( EE_Datetime::sold_out, $status_array )) {
-				return EE_Datetime::sold_out;
-			} else if ( in_array( EE_Datetime::active, $status_array )) {
+			
+			if ( in_array( EE_Datetime::active, $status_array )) {
 				return EE_Datetime::active;
 			} else if ( in_array( EE_Datetime::upcoming, $status_array )) {
 				return EE_Datetime::upcoming;
-			} else {
+			} else if ( in_array( EE_Datetime::expired, $status_array ) ) {
 				return EE_Datetime::expired;
-			}			
+			}  else if ( in_array( EE_Datetime::sold_out, $status_array )) {
+				return EE_Datetime::sold_out;	
+			} else {
+				return EE_Datetime::expired; //catchall
+			}		
 		} else {
 			switch ($this->_status) {
 				case EEM_Event::sold_out :
