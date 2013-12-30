@@ -211,7 +211,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_overview'
 					)
 				),
-				'help_tour' => array( 'Venue_Overview_Help_Tour' ),
+				'help_tour' => array( 'Venues_Overview_Help_Tour' ),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 				'require_nonce' => FALSE
 			),
@@ -227,6 +227,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_add_venue'
 					)
 				),
+                'help_tour' => array( 'Venues_Add_Venue_Help_Tour' ),
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 				),
@@ -243,6 +244,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_edit_venue'
 					)
 				),
+                'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),
@@ -259,6 +261,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_add_category'
 					)
 				),
+                'help_tour' => array( 'Venues_Add_Category_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
 			'edit_category' => array(
@@ -275,6 +278,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_edit_category'
 					)
 				),
+                'help_tour' => array( 'Venues_Edit_Category_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
 			'category_list' => array(
@@ -289,6 +293,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_categories'
 					)
 				),
+                'help_tour' => array( 'Venues_Categories_Help_Tour' ),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE
 				)
