@@ -25,8 +25,8 @@
 			<div class="content">
 				<table>
 					<tr>
-						<td><h2>Hello, [FNAME] [LNAME]</h2>
-							<p class="lead">We're just reminding you that there is still money owing for the following transaction:</p>
+						<td><h2>Hello, [FNAME] [LNAME]:</h2>
+							<p class="lead">We'd like to remind you that you still owe money for the following transaction:</p>
 							[TICKET_LIST]
 							<h5>Payment Details</h5>
 							<ol style="list-style-type: none;">
@@ -73,7 +73,7 @@
 									<tr>
 										<td><h5 class="">Contact Info:</h5>
 											<p>Phone: <strong>[CO_PHONE]</strong><br>
-												Email: <strong><a href="ehttps://mail.google.com/mail/?view=cm&amp;fs=1&amp;tf=1&amp;to=hseldon@trantor.com" target="_blank">[CO_EMAIL]</a></strong></p></td>
+												Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></p></td>
 									</tr>
 								</tbody>
 							</table>

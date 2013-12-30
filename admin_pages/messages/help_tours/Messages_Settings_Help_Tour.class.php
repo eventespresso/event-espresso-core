@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Messages_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Msgs Settings Tour', 'event_espresso');
+		$this->_label = __('Messages Settings Tour', 'event_espresso');
 		$this->_slug = 'messages-settings-joyride';
 	}
 
@@ -45,7 +45,8 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_messenger_links_stop(),
 				'options' => array(
 					'tipLocation' => 'bottom',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -25
 					)
 				),
 			30 => array(
@@ -53,7 +54,8 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_email_settings_metabox_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => 20,
+					'tipAdjustmentY' => -30
 					)
 				),
 			40 => array(
@@ -70,7 +72,7 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_active_mts_container_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentY' => -30
 					)
 				),
 			60 => array(
@@ -87,32 +89,28 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Messages Settings Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This settings page controls the activation/deactivation of message types, as well as different settings for each type.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Messages Settings', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the messages settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-
 	protected function _messenger_links_stop() {
-		return '<p>' . __('This row contains the various messengers available in the system', 'event_espresso') . '</p>';
+		return '<p>' . __('Available messengers are shown above.', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _email_settings_metabox_stop() {
 		return '<p>' . __('View the different message types that are currently active.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _on_off_toggle_stop() {
-		return '<p>' . __('This will turn ALL messages on or off for this message type.', 'event_espresso') . '</p>';
+		return '<p>' . __('This toggle will turn ALL messages on or off for this message type.', 'event_espresso') . '</p>';
 	}
 
 	protected function _active_mts_container_stop() {
-		return '<p>' . __('These are your active message types; click them to see a description and settings for each one.', 'event_espresso') . '</p>';
+		return '<p>' . __('These are your active message types. Click them to see a description and settings for each one.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _inactive_mts_container_stop() {
-		return '<p>' . __('Drag message types here to de-activate them. Drag them from here to the active box to re-activate them.', 'event_espresso') . '</p>';
+		return '<p>' . __('Drag message types here to deactivate them. Drag them from here to the active box to reactivate them.', 'event_espresso') . '</p>';
 	}
 }

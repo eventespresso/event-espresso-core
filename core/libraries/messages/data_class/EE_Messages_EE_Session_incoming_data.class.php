@@ -48,7 +48,7 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
 		$this->reg_info = array();
 		$this->incoming_data = $session;
-		$this->taxes = $this->txn->tax();
+		$this->taxes = $this->txn->tax_total();
 
 		$this->grand_total_price_object = '';
 

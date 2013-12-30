@@ -109,16 +109,6 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-    /**
-    *	Tax Data
-	* 
-    *	information regarding taxes
-	* 
-	*	@access	protected
-    *	@var array	
-    */
-	protected $_TXN_tax_data = NULL;	
-
 
 
     /**
@@ -275,18 +265,6 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-
-	/**
-	*		Set tax data
-	* 
-	* 		@access		public		
-	*		@param		string		$tax_data 		information regarding taxes
-	*/	
-	public function set_tax_data( $tax_data = FALSE ) {
-		$this->set('TXN_tax_data');
-	}
-
-
 	/**
 	*		get Transaction Total
 	* 		@access		public
@@ -396,13 +374,6 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-	/**
-	*		get Transaction tax data
-	* 		@access		public
-	*/	
-	public function tax() {
-		return $this->get('TXN_tax_data');
-	}
 
 
 
@@ -677,6 +648,27 @@ class EE_Transaction extends EE_Base_Class{
 	public function total_line_item(){
 		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type'=> EEM_Line_Item::type_total )));
 	}
+	/**
+	 * Gets the tax subtotal line item (assumes there's only one)
+	 * @return EE_Line_Item
+	 */
+	public function tax_total_line_item(){
+		return $this->get_first_related('Line_Item',array(array('LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
+	}
+	
+	/**
+	 * Returns the total amoutn of tax on this transaction
+	 * (assumes there's only one tax subtotal line item)
+	 * @return float
+	 */
+	public function tax_total(){
+		$tax_line_item = $this->tax_total_line_item();
+		if($tax_line_item){
+			return $tax_line_item->total();
+		}else{
+			return 0;
+		}
+	}
 
 
 
@@ -770,7 +762,6 @@ class EE_Transaction extends EE_Base_Class{
 //			'_STS_ID',
 //			'_TXN_session_data',
 //			'_TXN_hash_salt',
-//			'_TXN_tax_data',	
 //			'dt_frmt',
 //			'_Registration',
 //			'_Payment',
