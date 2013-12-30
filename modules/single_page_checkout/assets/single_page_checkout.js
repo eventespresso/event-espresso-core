@@ -128,8 +128,6 @@
 	//				console.log( JSON.stringify( 'uses_val: ' + dump( uses_val ), null, 4 ));
 					// form inputs whose values are obtained using .prop()
 					var uses_prop = [ 'checkbox', 'radio' ];
-					// hope for the best
-					var copy = true;
 					// is this input a single ?
 					if ( $.inArray( input_type, uses_val ) > -1 ) {
 	//					console.log( JSON.stringify( input_type + ' uses_val' , null, 4 ));
@@ -138,8 +136,6 @@
 	//					console.log( JSON.stringify( 'input_value: ' + input_value, null, 4 ));
 						// is it required ?				
 						if ( $(this).hasClass( 'required' ) && input_value == '' ) {
-							copy = false;
-	//						console.log( JSON.stringify( 'copy: ' + copy, null, 4 ));
 							// find label for this input and grab it's text
 							var lbl_txt = $(this).prev('label').html();
 	//						console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));
@@ -163,12 +159,10 @@
 						lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 	//					console.log( JSON.stringify( 'lbl_txt: ' + lbl_txt, null, 4 ));						
 						if ( $(this).hasClass( 'required' ) && input_value == false ) {						
-	//						console.log( JSON.stringify( 'copy: ' + copy, null, 4 ));
 							// check that this input doesn't already have another option selected
 							if ( ! _.contains( multi_inputs_that_do_not_require_values, lbl_txt )) {							
 								require_values.push( lbl_txt );
 								set_multi_input_requires_value_on( $(this) );
-								copy = false;
 							}						
 						} else {
 							if ( ! _.contains( multi_inputs_that_do_not_require_values, lbl_txt )) {
@@ -517,6 +511,10 @@
 				//return;
 			} else if ( step == 'payment_options' ) {
 				form_to_check = process_selected_gateway();
+				if ( form_to_check == false ) {
+					show_event_queue_ajax_error_msg( eei18n.no_payment_method );
+					exit;	
+				}
 			} 
 			process_reg_step ( step, next_step, form_to_check );			
 		}
@@ -536,6 +534,9 @@
 	function process_selected_gateway() {
 		
 		var selected_gateway = $('#reg-page-selected-gateway').val();
+		if ( selected_gateway == '' ) {
+			return false;
+		}
 		var off_site_gateway = '#reg-page-gateway-off-site-'+selected_gateway;
 		var off_site_payment = $( off_site_gateway ).val(); 
 		var selected_gateway_dv = '#reg-page-billing-info-'+selected_gateway+'-dv';
