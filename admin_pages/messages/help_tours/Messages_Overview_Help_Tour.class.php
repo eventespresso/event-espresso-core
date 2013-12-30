@@ -41,76 +41,90 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_start(),
 				),
 			20 => array(
-				'id' => 'ee_messenger_filter_by',
-				'content' => $this->_stop_about_filters(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -30
-					)
-				),
-			30 => array(
 				'id' => 'event',
 				'content' => $this->event_column_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -30
 					)
 				),
-			40 => array(
+			30 => array(
 				'id' => 'message_type',
 				'content' => $this->_message_type_column_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => 20,
+					'tipAdjustmentY' => -30
 					)
 				),
-			50 => array(
+			40 => array(
 				'id' => 'messenger',
 				'content' => $this->_messenger_column_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
 					)
 				),
-			60 => array(
+			50 => array(
 				'id' => 'description',
 				'content' => $this->_description_column_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
 					)
-				)
+				),
+			60 => array(
+				'class' => 'bulkactions',
+				'content' => $this->_bulk_actions_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 25,
+					'tipAdjustmentY' => -35
+					)
+				),
+			70 => array(
+				'id' => 'ee_messenger_filter_by',
+				'content' => $this->_filters_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
+					)
+				),
 			);
 	}
 
 
 	protected function _start() {
 		$content = '<h3>' . __('Messages Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('Messages are a new way of dealing with emails and other notifications to both yourself and your customers.', 'event_espresso') . '</p>';
-		$content .= '<p>' . __('Please be sure to open the "Help" tab in the top right corer of this page to view the documentation for this page.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the messages overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-
-	protected function _stop_about_filters() {
-		return '<p>' . __('These dropdowns will allow you to filter the different notifications.', 'event_espresso') . '</p>';
-	}
-
-
 	protected function event_column_stop() {
-		return '<p>' . __('This column shows you if the message is specific to one or more events.', 'event_espresso') . '</p>';
+		return '<p>' . __('View if a message is associated with one event or multiple events. Can be sorted in ascending and descending order.', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _message_type_column_stop() {
-		return '<p>' . __('Here you can see what type of message it is. The types refer to things like payment emails, or registration emails.', 'event_espresso') . '</p>';
+		return '<p>' . __('View the type of message. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _messenger_column_stop() {
-		return '<p>' . __('Each message can be sent to multiple recipients, and this column shows which ones will receive the message.', 'event_espresso') . '</p>';
+		return '<p>' . __('View who messages will be sent to. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _description_column_stop() {
-		return '<p>' . __('A short description of each message type.', 'event_espresso') . '</p>';
+		return '<p>' . __('View the description for each message type.', 'event_espresso') . '</p>';
+	}
+
+	protected function _bulk_actions_stop() {
+		return '<p>' . __('Perform bulk actions to multiple message types.', 'event_espresso') . '</p>';
+	}
+
+	protected function _filters_stop() {
+		return '<p>' . __('You can filter by different notifications by making a selection below and clicking on the filter button. To reset your selection, just click on the reset filters button.', 'event_espresso') . '</p>';
 	}
 }
