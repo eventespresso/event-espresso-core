@@ -88,7 +88,7 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 		//get txn
 		$this->txn = $this->reg_obj->transaction();
 
-		$this->taxes = $this->txn->tax();
+		$this->taxes = $this->txn->tax_items();
 
 		$this->grand_total_price_object = '';
 
