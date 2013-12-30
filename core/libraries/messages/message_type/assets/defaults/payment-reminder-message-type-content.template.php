@@ -25,8 +25,8 @@
 			<div class="content">
 				<table>
 					<tr>
-						<td><h2>Hello, [FNAME] [LNAME]</h2>
-							<p class="lead">We're just reminding you that there is still money owing for the following transaction:</p>
+						<td><h2>Hello, [FNAME] [LNAME]:</h2>
+							<p class="lead">We'd like to remind you that you still owe money for the following transaction:</p>
 							[TICKET_LIST]
 							<h5>Payment Details</h5>
 							<ol style="list-style-type: none;">
