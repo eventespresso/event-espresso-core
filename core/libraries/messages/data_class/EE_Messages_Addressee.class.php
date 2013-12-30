@@ -73,6 +73,10 @@ class EE_Messages_Addressee extends EE_Base {
 	 * txn related
 	 */
 	public $billing;
+	/**
+	 *total taxes
+	 * @var float
+	 */
 	public $taxes;
 	public $txn;
 	public $payment;

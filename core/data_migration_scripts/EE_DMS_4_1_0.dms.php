@@ -554,7 +554,6 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  TXN_total decimal(10,3) DEFAULT '0.00',
 					  TXN_paid decimal(10,3) NOT NULL DEFAULT '0.00',
 					  STS_ID varchar(3) NOT NULL DEFAULT 'TOP',
-					  TXN_tax_data text COLLATE utf8_bin,
 					  TXN_session_data text COLLATE utf8_bin,
 					  TXN_hash_salt varchar(250) COLLATE utf8_bin DEFAULT NULL,
 					  PRIMARY KEY  (TXN_ID),

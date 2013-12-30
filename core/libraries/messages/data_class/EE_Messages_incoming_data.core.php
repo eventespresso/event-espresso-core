@@ -120,8 +120,8 @@ abstract class EE_Messages_incoming_data {
 
 
 	/**
-	 * Will hold tax details from transaction (if present)
-	 * @var int (?)
+	 * The total amount of tax for the transaction
+	 * @var float
 	 */
 	public $taxes;
 

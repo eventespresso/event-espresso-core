@@ -404,7 +404,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'STS_ID' => 'PAP', //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
 				'TXN_hash_salt' => NULL, //hash salt blank as well
-				'TXN_tax_data' => $cart->get_applied_taxes(),
 				'TXN_ID' => 999999
 			)
 		);
