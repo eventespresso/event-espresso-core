@@ -159,7 +159,7 @@ private function _convert_active_gateways(){
 	$new_active_gateways = EE_Config::instance()->gateway->active_gateways;
 	foreach($old_active_gateways as $old_gateway_slug => $filepath){
 		if( ! isset($this->_gateways_we_know_how_to_migrate[$old_gateway_slug])){
-			$this->add_error(sprintf(__("There gateway %s does not exist in EE 4.1", "event_espresso"),$old_gateway_slug));
+			$this->add_error(sprintf(__("The %s gateway does not exist in EE 4.1", "event_espresso"),$old_gateway_slug));
 			continue;
 		}
 		$new_gateway_slug = $this->_gateways_we_know_how_to_migrate[$old_gateway_slug];
