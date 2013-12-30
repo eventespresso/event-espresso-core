@@ -42,7 +42,7 @@ class Pricing_Add_New_Price_Type_Help_Tour extends EE_Help_Tour {
 				),
 			20 => array(
 				'id' => 'base_type',
-				'content' => $this->_stop_two(),
+				'content' => $this->_basic_type_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -50,
@@ -51,7 +51,7 @@ class Pricing_Add_New_Price_Type_Help_Tour extends EE_Help_Tour {
 				),
 			30 => array(
 				'id' => 'PRT_name',
-				'content' => $this->_stop_three(),
+				'content' => $this->_price_type_name_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -40
@@ -59,7 +59,7 @@ class Pricing_Add_New_Price_Type_Help_Tour extends EE_Help_Tour {
 				),
 			40 => array(
 				'id' => 'PRT_name',
-				'content' => $this->_stop_four(),
+				'content' => $this->_percentage_dollar_amount_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => 45
@@ -67,7 +67,7 @@ class Pricing_Add_New_Price_Type_Help_Tour extends EE_Help_Tour {
 				),
 			50 => array(
 				'id' => 'PRT_order',
-				'content' => $this->_stop_five(),
+				'content' => $this->_order_of_application_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -40
@@ -79,29 +79,24 @@ class Pricing_Add_New_Price_Type_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Add New Price Type', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the add new price type page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
-
 	
-	protected function _stop_one() {
-		return '<p>' . __('1', 'event_espresso') . '</p>';
+	protected function _basic_type_stop() {
+		return '<p>' . __('Set a price type to be a discount, surcharge, or tax.', 'event_espresso') . '</p>';
 	}
 
-	protected function _stop_two() {
-		return '<p>' . __('2', 'event_espresso') . '</p>';
+	protected function _price_type_name_stop() {
+		return '<p>' . __('The name of the price type.', 'event_espresso') . '</p>';
 	}
 
-	protected function _stop_three() {
-		return '<p>' . __('3', 'event_espresso') . '</p>';
+	protected function _percentage_dollar_amount_stop() {
+		return '<p>' . __('Set a price type to be percentage-based or a fixed amount.', 'event_espresso') . '</p>';
 	}
 
-	protected function _stop_four() {
-		return '<p>' . __('4', 'event_espresso') . '</p>';
-	}
-
-	protected function _stop_five() {
-		return '<p>' . __('5', 'event_espresso') . '</p>';
+	protected function _order_of_application_stop() {
+		return '<p>' . __('Set the order of application for a price type.', 'event_espresso') . '</p>';
 	}
 
 }

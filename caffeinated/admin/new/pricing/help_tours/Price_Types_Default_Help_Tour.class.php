@@ -41,47 +41,57 @@ class Price_Types_Default_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_start(),
 				),
 			20 => array(
-				'id' => 'event-espresso_page_pricing-search-input',
-				'content' => $this->_search_stop(),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => -15
-					)
-				),
-			30 => array(
 				'id' => 'name',
 				'content' => $this->_name_column_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -30
 					)
 				),
-			40 => array(
+			30 => array(
 				'id' => 'base_type',
 				'content' => $this->_base_type_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 100
+					'tipAdjustmentX' => 120,
+					'tipAdjustmentY' => -30
 					)
 				),
-			50 => array(
+			40 => array(
 				'id' => 'percent',
 				'content' => $this->_percent_column_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 100
+					'tipAdjustmentX' => 120,
+					'tipAdjustmentY' => -30
 					)
 				),
-			60 => array(
+			50 => array(
 				'id' => 'order',
 				'content' => $this->_order_column_stop(),
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentY' => -30,
 					'tipAdjustmentX' => 100,
+					)
+				),
+			60 => array(
+				'class' => 'bulkactions',
+				'content' => $this->_bulk_actions_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => -75
+					)
+				),
+			70 => array(
+				'id' => 'event-espresso_page_pricing-search-input',
+				'content' => $this->_search_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => -15
 					)
 				)
 			);
@@ -90,39 +100,36 @@ class Price_Types_Default_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Price Types', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This section allows you to create new discounts and surcharges to add to your events.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the price types page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-	
-
-	protected function _search_stop() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: Price Type name', 'event_espresso') . '</p>';
-	}
-
-
 	protected function _name_column_stop() {
-		return '<p>' . __('This column shows you the name of the price type. It is visible to your customers.', 'event_espresso') . '</p>';
+		return '<p>' . __('The name of the price type. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _base_type_stop() {
-		return '<p>' . __('Here you can see whether the price type is a discount or a surcharge.', 'event_espresso') . '</p>';
+		return '<p>' . __('View if a price type is a discount, surcharge, or tax.', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _member_column_stop() {
 		return '<p>' . __('Here you can see if the discount/surcharge is percentage based or a flat monetary amount.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _percent_column_stop() {
-		return '<p>' . __('Here you can see if the discount/surcharge is percentage based or a flat monetary amount.', 'event_espresso') . '</p>';
+		return '<p>' . __('View if the discount, surcharge, or tax is percentage-based or a fixed amount.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _order_column_stop() {
-		return '<p>' . __('This column shows you the order in which each discount or surcharge will be applied to the base ticket cost. Zero (0) means it will be applied first. Any number can be set here.', 'event_espreso') . '</p>';
+		return '<p>' . __('View the order in which each discount, surcharge, or tax will be applied to the base ticket cost. Zero (0) means it will be applied first.', 'event_espreso') . '</p>';
+	}
+
+	protected function _bulk_actions_stop() {
+		return '<p>' . __('Perform bulk actions to multiple price types.', 'event_espresso') . '</p>';
+	}
+
+	protected function _search_stop() {
+		return '<p>' . __('Search through price types. The following source will be searched: price type name.', 'event_espresso') . '</p>';
 	}
 
 }
