@@ -701,13 +701,13 @@
 				if ( good_to_go === true ) {
 					good_to_go = eei18n.answer_required_questions;
 					if ( eei18n.wp_debug == 1 ) {
-						good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered )</span>';
+						good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered ' + $(this).attr('name') + ' )</span>';
 					}
 					return false;
 				} else if ( good_to_go == eei18n.enter_valid_email ) {
 					good_to_go = eei18n.valid_email_and_questions;
 					if ( eei18n.wp_debug == 1 ) {
-						good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered )</span>';
+						good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered ' + $(this).attr('name') + ' )</span>';
 					}
 					return false;
 				} 
@@ -730,13 +730,13 @@
 						if ( good_to_go === true ) {
 							good_to_go = eei18n.enter_valid_email;
 							if ( eei18n.wp_debug == 1 ) {
-								good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered )</span>';
+								good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered ' + $(this).attr('name') + ' )</span>';
 							}
 							return false;
 						}  else if ( good_to_go == eei18n.answer_required_questions ) {
 							good_to_go = eei18n.valid_email_and_questions;
 							if ( eei18n.wp_debug == 1 ) {
-								good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered )</span>';
+								good_to_go = good_to_go + '<br/><span class="smaller-text">( verify_all_questions_answered ' + $(this).attr('name') + ' )</span>';
 							}
 							return false;
 						} 			
