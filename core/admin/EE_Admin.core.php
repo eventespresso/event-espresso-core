@@ -81,6 +81,10 @@ final class EE_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
+
+		//at a glance dashboard widget
+		add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
+
 		// pew pew pew
 		EE_Registry::instance()->load_core( 'PUE' );
 		
@@ -562,6 +566,27 @@ final class EE_Admin {
 	 */
 	public function display_admin_notices() {
 		echo EE_Error::get_notices();
+	}
+
+
+
+
+	public function dashboard_glance_items( $elements ) {
+		$events = EEM_Event::instance()->count();
+		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), EVENTS_ADMIN_URL );
+		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
+		$items['events']['title'] = __('Click to view all Events', 'event_espresso');
+		$registrations = EEM_Registration::instance()->count();
+		$items['registrations']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), REG_ADMIN_URL );
+		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
+		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
+
+		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
+
+		foreach ( $items as $item ) {
+			$elements[] = sprintf( '<a href="%s" title="%s">%s</a>', $item['url'], $item['title'], $item['text'] );
+		}
+		return $elements;
 	}
 
 
