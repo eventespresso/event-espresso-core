@@ -72,7 +72,7 @@
                                                                         
                                             <h5 class="">Contact Info:</h5>                                             
                                             <p>Phone: <strong>[CO_PHONE]</strong><br>
-                        Email: <strong><a href="ehttps://mail.google.com/mail/?view=cm&amp;fs=1&amp;tf=1&amp;to=hseldon@trantor.com" target="_blank">[CO_EMAIL]</a></strong></p>
+                        Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></p>
 
                                         </td>
                                     </tr>
