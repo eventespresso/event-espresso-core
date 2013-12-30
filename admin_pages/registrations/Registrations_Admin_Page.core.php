@@ -1195,20 +1195,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@access public
 	*		@return void
 	*/
-	public function _reg_questions_meta_box() {		
-		//we also need to get the answers to the questions from this registration.
-		$_where = array(
-			'REG_ID' => $this->_registration->ID()
-			);
-		$query_params = array( $_where, 'order_by' => array('Question.QST_order' => 'ASC') );
-		$ANS = EEM_Answer::instance()->get_all( $query_params );
+	public function _reg_questions_meta_box() {				
 
 		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
 		add_filter( 'FHEE_form_after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );	
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
 		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
 		
-		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $ANS, array(), $this->_registration->get('EVT_ID') );
+		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $this->_registration, $this->_registration->get('EVT_ID') );
 
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 

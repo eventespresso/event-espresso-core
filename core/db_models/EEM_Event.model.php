@@ -217,11 +217,10 @@ class EEM_Event  extends EEM_CPT_Base{
 	* 
 	* 		@access		public
 	* 		@param		int					$EVT_ID 			
-	* 		@param		int					$system_ID	
-	* 		@param		boolean|int		$for_primary_attendee	could be TRUE or FALSE or the attendee number
+	* 		@param		EE_Registration 	$registration
 	*		@return 		array		
 	*/	
-	public function get_question_groups_for_event( $EVT_ID = FALSE, $system_ID = FALSE, $for_primary_attendee = TRUE ) {
+	public function get_question_groups_for_event( $EVT_ID = FALSE, EE_Registration $registration ) {
 		
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
 			EE_Error::add_error( __( 'An error occurred. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -230,13 +229,9 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		$where_params = array(
 			'Event_Question_Group.EVT_ID' => $EVT_ID,
-			'Event_Question_Group.EQG_primary' => $for_primary_attendee,
+			'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE,
 			'QSG_deleted' => FALSE 
 		);		
-		
-		if ( $system_ID ) {
-			$where_params['QSG_system'] = array( '<' =>$system_ID, '!=' => 0 );
-		}
 		
 		return EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
 			$where_params,
@@ -308,73 +303,39 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 
-
-
-
-
 	/**
 	*		_get_question_target_db_column
 	* 
 	* 		@access		public
-	* 		@param      EE_Answer[]             $ANS 		array of answers
-	* 		@param 		EE_Question_Group[] 	$QSGs 		array of question group objects
-	* 		@param      int                 	$EVT_ID 	If included, this indicates we want to return ALL questions for the event not JUST the questions with answers.
+	* 		@param      EE_Registration         $registration  (so existing answers for registration are included)
+	* 		@param      int                 	$EVT_ID 	so all question groups are included for event (not just answers from registration).
 	*		@return 	array
 	*/	
-	public function assemble_array_of_groups_questions_and_options( $ANS = array(), $QSGs = array(), $EVT_ID = NULL ) {		
+	public function assemble_array_of_groups_questions_and_options( EE_Registration $registration, $EVT_ID = NULL ) {		
 
-		/*if ( empty( $ANS ) && empty( $QSGs ) ) {
-			EE_Error::add_error( __( 'An error occurred. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
+		if ( empty( $EVT_ID ) ) {
+			throw EE_Error( __( 'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.', 'event_espresso' ) );
 		}/**/
 
-		$QSTs = $questions = array();
+		$QSTs = $questions = $QSGs = array();
 
 
-		//let's make sure we have questions ans question groups setup correctly.
-		if ( !empty( $ANS ) ) {
-			foreach ( $ANS as $answer ) {
-				$question = $answer->get_first_related('Question');
-				$qs_id = $question->ID();
-				if ( !isset( $QSTs[$qs_id] ) ) {
-					$QSTs[$qs_id]['obj'] = $question;
-					$QSTs[$qs_id]['ans_obj'] = $answer;
-				}
-
-				$question_group = $question->get_first_related('Question_Group');
-				$qsg_id = $question_group->ID();
-				if ( !isset( $QSGs[$qsg_id] ) ) {
-					$QSGs[$qsg_id] = $question_group;
-				}
-			} 
-		} else {
-			//starting from question groups not answers
-			foreach ( $QSGs as $question_group ) {
-				$questions = $question_group->get_many_related('Question');
-				foreach ( $questions as $question ) {
-					$QSTs[$question->ID()]['obj'] = $question;
-					$QSTs[$question->ID()]['ans_obj'] = EEM_Answer::instance()->create_default_object();
-				}
-			}
-		}
-
-		// if all questiosn and $QSGs is empty... let's get all question groups for event
-		if ( !empty($EVT_ID) ) {
-			$qgs = $this->get_question_groups_for_event( $EVT_ID );
-			if ( !empty( $qgs ) ) {
-				foreach ( $qgs as $qg ) {
-				 	$qsts = $qg->get_many_related('Question');
-				 	foreach ( $qsts as $qst ) {
-				 		if ( $qst->is_system_question() )
-				 			continue;
-				 		if ( !isset( $QSTs[$qst->ID()] ) ) {
-				 			$QSTs[$qst->ID()]['obj'] = $qst;
-				 			$QSTs[$qst->ID()]['ans_obj'] = EEM_Answer::instance()->create_default_object();
-				 		}
-				 	}
-				 	if ( !isset( $QSGs[$qg->ID()] ) )
-				 		$QSGs[$qg->ID()] = $qg;
-				}
+		// get all question groups for event
+	
+		$qgs = $this->get_question_groups_for_event( $EVT_ID, $registration );
+		if ( !empty( $qgs ) ) {
+			foreach ( $qgs as $qg ) {
+			 	$qsts = $qg->get_many_related('Question', array('order_by' => array('QST_order' => 'ASC' ) ) );
+			 	foreach ( $qsts as $qst ) {
+			 		if ( $qst->is_system_question() )
+			 			continue;
+			 		$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $qst->ID(), 'REG_ID' => $registration->ID() ) ) );
+		 			$QSTs[$qst->ID()]['obj'] = $qst;
+		 			$QSTs[$qst->ID()]['ans_obj'] = $answer instanceof EE_Answer ? $answer : EEM_Answer::instance()->create_default_object();
+		 		
+			 	}
+			 	
+			 	$QSGs[$qg->ID()] = $qg;
 			}
 		}
 
