@@ -31,139 +31,123 @@ class Venues_Add_Venue_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
 		$this->_label = __('Add Venue Tour', 'event_espresso');
-		$this->_slug = 'venue-overview-joyride';
+		$this->_slug = 'venue-add-venue-joyride';
 	}
-
 
 	protected function _set_tour_stops() {
 		$this->_stops = array(
 			10 => array(
-				'content' => $this->_start(),
-				),
-			15 => array(
-				'id' => 'add-new-venue',
-				'content' => $this->_new_venue_stop(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 10
-					)
+				'content' => $this->_stop_one(),
 				),
 			20 => array(
-				'id' => 'event-espresso_page_espresso_venues-search-input',
-				'content' => $this->_search_stop(),
+				'id' => 'titlewrap',
+				'content' => $this->_venue_title_stop(),
 				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => -15
+					'tipLocation' => 'bottom',
+					'tipAdjustmentY' => -30,
 					)
 				),
 			30 => array(
-				'id' => 'id',
-				'content' => $this->_id_stop(),
+				'id' => 'wp-content-editor-tools',
+				'content' => $this->_venue_editor_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => -15
+					'tipLocation' => 'right',
 					)
 				),
 			40 => array(
-				'id' => 'name',
-				'content' => $this->_name_stop(),
+				'id' => 'tagsdiv-post_tag',
+				'content' => $this->_venue_tags_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => -15
+					'tipLocation' => 'left'
 					)
 				),
 			50 => array(
-				'id' => 'address',
-				'content' => $this->_address_stop(),
+				'id' => 'espresso_venue_categoriesdiv',
+				'content' => $this->_venue_categories_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => -15
+					'tipLocation' => 'left'
 					)
 				),
 			60 => array(
-				'id' => 'city',
-				'content' => $this->_city_stop(),
+				'id' => 'espresso_venue_address_options',
+				'content' => $this->_venue_physical_location_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => -15
+					'tipLocation' => 'left'
 					)
 				),
 			70 => array(
-				'id' => 'capacity',
-				'content' => $this->_capacity_stop(),
+				'id' => 'espresso_venue_gmap_options',
+				'content' => $this->_venue_gmap_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => -15
+					'tipLocation' => 'left'
 					)
 				),
 			80 => array(
-				'id' => 'shortcode',
-				'content' => $this->_shortcode_stop(),
+				'id' => 'espresso_venue_virtual_loc_options',
+				'content' => $this->_venue_virtual_location_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -40
+					'tipLocation' => 'left'
 					)
 				),
 			90 => array(
-				'id' => 'contextual-help-link',
-				'content' => $this->_end(),
-				'button_text' => __('End Tour', 'event_espresso'),
+				'id' => 'postimagediv',
+				'content' => $this->_stop_featured_image(),
 				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -20,
-					'tipAdjustmentX' => 10
+					'tipLocation' => 'left'
 					)
-				)
+				),
+			100 => array(
+				'id' => 'submitpost',
+				'content' => $this->_stop_publish_box(),
+				'options' => array(
+					'tipLocation' => 'left'
+					)
+				),
+			
 			);
 	}
 
 
-	protected function _start() {
+	protected function _stop_one() {
 		$content = '<h3>' . __('Add Venue', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the add venue page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This brief tour of the add venue page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-	protected function _search_stop() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: Venue Name, Venue Description, Venue Short Description, Venue address, Venue city, Venue zip, Venue phone, Venue url, Venue virtual phone, Venue google map link, Event Name, Event description, Event Phone, Event external url', 'event_espresso') . '</p>';
-	}
-	
-	protected function _new_venue_stop() {
-		return '<p>' . __('Click here to add a new venue.', 'event_espresso') . '</p>';
-	}
-	
-	protected function _id_stop() {
-		return '<p>' . __('This column shows the ID of each venue. Can be used in your custom templates and shortcodes to output detail about a single venue.', 'event_espresso') . '</p>';
-	}
-	
-	protected function _name_stop() {
-		return '<p>' . __('This column shows the name of each venue.', 'event_espresso') . '</p>';
-	}
-	
-	protected function _address_stop() {
-		return '<p>' . __('This column shows the address of each venue.', 'event_espresso') . '</p>';
-	}
-	
-	protected function _city_stop() {
-		return '<p>' . __('This column shows the city of each venue.', 'event_espresso') . '</p>';
-	}
-	
-	protected function _capacity_stop() {
-		return '<p>' . __('This column shows the capacity of each venue.', 'event_espresso') . '</p>';
+	protected function _venue_title_stop() {
+		return '<p>Enter the title for your venue in this field.</p>';
 	}
 
-	protected function _shortcode_stop() {
-		return '<p>' . __('This column shows the specific venue shortcode should you need to add it to an event, post or page.', 'event_espresso') . '</p>';
+	protected function _venue_editor_stop() {
+		return '<p>' . __('The rich text editor can be used to add information about your venue. Images and links can also be added along with your text.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _venue_tags_stop() {
+		return '<p>' . __('Quickly add tags to your venue.', 'event_espresso') . '</p>';
 	}
 
-	protected function _end() {
-		return '<p>' . __('That\'s it for the tour through the Venue Overview!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Venue Overview Tour button.  All the best with your events!', 'event_espresso') . '</p>';
+	protected function _venue_categories_stop() {
+		return '<p>' . __('Venues can also be categorized if you wish.', 'event_espresso') . '</p>';
 	}
+
+	protected function _venue_physical_location_stop() {
+		return '<p>' . __('Add a physical address for your venue.', 'event_espresso') . '</p>';
+	}
+
+	protected function _venue_gmap_stop() {
+		return '<p>' . __('Enable or disable a Google map for your venue.', 'event_espresso') . '</p>';
+	}
+
+	protected function _venue_virtual_location_stop() {
+		return '<p>' . __('Setup a virtual location for your venue.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _stop_featured_image() {
+		return '<p>' . __('Set a feature image for your venue here.', 'event_espresso') . '</p>';
+	}
+
+	protected function _stop_publish_box() {
+		return '<p>' . __('Easily control the status of your venue. The main options are Published, Pending Review, and Draft. Additional options are Cancelled, Postponed, and Sold Out.', 'event_espresso') . '</p>';
+	}
+	
 }
