@@ -27,10 +27,10 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class Venue_Overview_Help_Tour extends EE_Help_Tour {
+class Venues_Edit_Category_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Venue Overview Tour', 'event_espresso');
+		$this->_label = __('Edit Category Tour', 'event_espresso');
 		$this->_slug = 'venue-overview-joyride';
 	}
 
@@ -126,12 +126,10 @@ class Venue_Overview_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Venue Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This section allows you to create and edit your event venues.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Edit Category', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the edit category page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
-
-	
 
 	protected function _search_stop() {
 		return '<p>' . __('Fields that will be searched with the value from the search are: Venue Name, Venue Description, Venue Short Description, Venue address, Venue city, Venue zip, Venue phone, Venue url, Venue virtual phone, Venue google map link, Event Name, Event description, Event Phone, Event external url', 'event_espresso') . '</p>';
@@ -164,7 +162,6 @@ class Venue_Overview_Help_Tour extends EE_Help_Tour {
 	protected function _shortcode_stop() {
 		return '<p>' . __('This column shows the specific venue shortcode should you need to add it to an event, post or page.', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _end() {
 		return '<p>' . __('That\'s it for the tour through the Venue Overview!  At any time you can restart this tour by clicking on this help dropdown and then clicking the Venue Overview Tour button.  All the best with your events!', 'event_espresso') . '</p>';
