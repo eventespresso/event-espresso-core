@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 		4.1.180.alpha
+  Version: 		4.1.181.alpha
   Author: 			Seth Shoultes
   Author URI: 		http://www.eventespresso.com
   License: 		GPLv2
@@ -31,7 +31,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.1.180.alpha';
+		return '4.1.181.alpha';
 	}
 } else {
 	wp_die( __( 'Can not run multiple versions of Event Espresso.', 'event_espresso' ));
