@@ -58,7 +58,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table {
 		$datetime_strings = array();
 		$remove_defaults = array('default_where_conditions' => 'none');
 		$ticket = $item->ticket();
-		$datetimes = !empty($item->ticket()) ? $item->ticket()->datetimes($remove_defaults) : array();
+		$datetimes = !empty($ticket) ? $ticket->datetimes($remove_defaults) : array();
 		$query_args = array(
 			'action'=>'event_registrations',
 			'event_id'=>$item->event_ID()
