@@ -314,7 +314,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
 			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
 			'post_date_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
-			'post_excerpt'=>wp_trim_words($old_event['event_desc'],50),//EVT_short_desc
+			'post_excerpt'=>'',//EVT_short_desc
 			'post_modified'=>$event_meta['date_submitted'],//EVT_modified
 			'post_modified_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
 			'post_author'=>$old_event['wp_user'],//EVT_wp_user
