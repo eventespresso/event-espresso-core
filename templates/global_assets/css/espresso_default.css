@@ -129,6 +129,21 @@
 	content: "\e619";
 }
 
+.tags-links a {
+	white-space: nowrap;
+}
+.tags-links a:before {
+	content: "\f323";
+	display: inline-block;
+	font-family: dashicons;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: middle;
+	margin-right: .25em;
+}
 
 
 .ee-clock-icon-big {
