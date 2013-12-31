@@ -60,7 +60,7 @@ get_header();
 					<div class="espresso-event-wrapper-dv">
 						<div class="event-content">
 							<h3 class="about-event-h3 ee-event-h3">
-								<?php _e( 'Details', 'event_espresso' ); ?>
+								<span class="ee-icon ee-icon-event"></span><?php _e( 'Details', 'event_espresso' ); ?>
 							</h3>
 							<?php do_action( 'AHEE_event_details_before_the_content', $post ); ?>
 							<?php the_content(); ?>
@@ -69,7 +69,7 @@ get_header();
 								<span class="tags-links"><?php espresso_event_categories( $post->ID ); ?></span>
 							</p>
 							<h3 class="ticket-selector-h3 ee-event-h3">
-								<?php _e( 'Ticket Options', 'event_espresso' ); ?>
+								<span class="ee-icon ee-icon-tickets"></span><?php _e( 'Ticket Options', 'event_espresso' ); ?>
 							</h3>
 							<?php espresso_ticket_selector( $post ); ?>
 							<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'event_espresso' ), 'after' => '</div>' ) ); ?>
@@ -84,7 +84,7 @@ get_header();
 						<?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
 						<div class="event-datetimes">
 							<h3 class="event-datetimes-h3 ee-event-h3">
-								<?php _e( 'Date, Time, and Location', 'event_espresso' ); ?>
+								<span class="dashicons dashicons-calendar"></span><?php _e( 'Date, Time, and Location', 'event_espresso' ); ?>
 							</h3>
 							<?php espresso_list_of_event_dates();?>
 							<?php do_action( 'AHEE_event_details_after_event_date', $post ); ?>
@@ -94,22 +94,15 @@ get_header();
 						<?php if ( espresso_display_venue_address_in_event_details() ) : ?>
 						<?php do_action( 'AHEE_event_details_before_venue_details', $post ); ?>
 						<div class="espresso-venue-dv">
-							<p> <strong>
-								<?php _e( 'Location:', 'event_espresso' ); ?>
-								</strong><br/>
-								<strong>
-								<?php espresso_venue_name(); ?>
-								</strong> </p>
-							<strong>
-							<?php _e( 'Address:', 'event_espresso' ); ?>
-							</strong>
+							<strong><span class="ee-icon ee-icon-venue"></span><?php _e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp; 
+							<strong> <?php espresso_venue_name(); ?></strong><br/>
+							<span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span>
+							<br/><br/>
+							<strong><span class="dashicons dashicons-location-alt"></span><?php _e( 'Address:', 'event_espresso' ); ?></strong>
 							<?php espresso_venue_address( 'inline' ); ?>
 							<?php espresso_venue_gmap( $post->ID ); ?>
 							<div class="clear"><br/>
 							</div>
-							<p>
-								<span class="tags-links"><?php echo espresso_venue_categories(); ?></span>
-							 </p>
 							<p>
 								<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
 								<?php echo espresso_venue_description(); ?>									

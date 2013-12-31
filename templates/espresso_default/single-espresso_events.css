@@ -19,19 +19,10 @@ header.event-header.has-img p {
 }
 .ee-event-h3 {
 	text-shadow: 1px 1px 0 #FFFFFF;
-	padding: 10px 0 10px 40px;
-	
-}
-.about-event-h3 {
-	background: url(images/details-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
+	padding: 10px;
+	background: rgba(232, 232, 232, 0.9);	
 }
 
-.ticket-selector-h3 {
-	background: url(images/ticket-options-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
-}
-.event-datetimes-h3 {
-	background: url(images/location-pin-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
-}
 
 #espresso-event-details-wrap-dv {
 	width:100%;
