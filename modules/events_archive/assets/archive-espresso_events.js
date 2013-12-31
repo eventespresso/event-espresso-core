@@ -70,12 +70,12 @@ jQuery(document).ready(function($) {
 		});
 		
 		$( espresso_grid_event_lists ).each( function( index, grid_ID ) {
-			var container = $('#espresso-events-list-dv-' + grid_ID );
+			var container = $('.grid-event-list-dv #espresso-events-list-dv-' + grid_ID );
 //			console.log( JSON.stringify( '$container.outerwidth(): ' + container.outerWidth(), null, 4 ));	   
 			container.imagesLoaded( function(){
 				container.masonry({
 					columnWidth: eventWidth,
-					itemSelector: '#espresso-events-list-dv-' + grid_ID + ' .espresso-event-list-event',
+					itemSelector: '.grid-event-list-dv #espresso-events-list-dv-' + grid_ID + ' .espresso-event-list-event',
 					gutter: 0,
 					isFitWidth: true
 				});

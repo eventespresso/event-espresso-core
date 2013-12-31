@@ -612,6 +612,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		if ( $insert ) {
 			// run the insert
 			if ( $PRC_ID = $PRC->insert( $set_column_values )) {
+				//make sure this new price modifier is attached to the ticket but ONLY if it is not a tax type
+				$PR = EEM_price::instance()->get_one_by_ID($PRC_ID);
+				if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+					$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
+					$ticket->_add_relation_to( $PR, 'Price' );
+					$ticket->save();
+				}
 				$success = 1;
 			} else {
 				$PRC_ID = FALSE;
@@ -626,21 +633,24 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				$success = 1;
 			}
 
-			//if this is $PRC_ID == 1, then we need to update the default ticket attached to this price so the TKT_price value is updated.
-			if ( $PRC_ID === 1 ) {
-				$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
-				$ticket = $PR->get_first_related('Ticket');
-				if ( $ticket ) {
-					$ticket->set('TKT_price', $PR->get('PRC_amount') );
-					$ticket->set('TKT_name', $PR->get('PRC_name') );
-					$ticket->set('TKT_description', $PR->get('PRC_desc'));
+			$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+			if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+
+				//if this is $PRC_ID == 1, then we need to update the default ticket attached to this price so the TKT_price value is updated.
+				if ( $PRC_ID === 1 ) {
+					$ticket = $PR->get_first_related('Ticket');
+					if ( $ticket ) {
+						$ticket->set('TKT_price', $PR->get('PRC_amount') );
+						$ticket->set('TKT_name', $PR->get('PRC_name') );
+						$ticket->set('TKT_description', $PR->get('PRC_desc'));
+						$ticket->save();
+					}
+				} else {
+					//we make sure this price is attached to base ticket. but ONLY if its not a tax ticket type.
+					$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
+					$ticket->_add_relation_to( $PRC_ID, 'Price' );
 					$ticket->save();
 				}
-			} else {
-				//we make sure this price is attached to base ticket.
-				$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
-				$ticket->_add_relation_to( $PRC_ID, 'Price' );
-				$ticket->save();
 			}
 
 			$action_desc = 'updated';
@@ -672,14 +682,28 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		$success = 1;
 		$PRC_deleted = $trash ? TRUE : FALSE;
+		
+		//get base ticket for updating
+		$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
 		//Checkboxes
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
 			while (list( $PRC_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array(array('PRC_ID' => absint($PRC_ID))))) {
+				if ( ! $PRC->update_by_ID(array('PRC_deleted' => $PRC_deleted), absint($PRC_ID) ) ) {
 					$success = 0;
+				} else {
+					$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+					if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+						//if trashing then remove relations to base default ticket.  If restoring then add back to base default ticket
+						if ( $PRC_deleted ) {
+							$ticket->_remove_relation_to($PRC_ID, 'Price');
+						} else {
+							$ticket->_add_relation_to($PRC_ID, 'Price');
+						}
+						$ticket->save();
+					}
 				}
 			}
 			
@@ -688,6 +712,17 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$PRC_ID = absint($this->_req_data['id']);
 			if ( ! $PRC->update_by_ID(array('PRC_deleted' => $PRC_deleted), $PRC_ID) ) {
 				$success = 0;
+			} else {
+				$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+				if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+					//if trashing then remove relations to base default ticket.  If restoring then add back to base default ticket
+					if ( $PRC_deleted ) {
+						$ticket->_remove_relation_to($PRC_ID, 'Price');
+					} else {
+						$ticket->_add_relation_to($PRC_ID, 'Price');
+					}
+					$ticket->save();
+				}
 			}
 			
 		}

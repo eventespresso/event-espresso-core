@@ -147,9 +147,9 @@ class EED_Event_Single  extends EED_Module {
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && is_single() ) {
 			// first check uploads folder
 			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css' )) {
-				wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array() );
+				wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array( 'dashicons', 'espresso_default' ) );
 			} else {
-				wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array() );
+				wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array( 'dashicons', 'espresso_default' ) );
 			}
 			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_events.js' )) {
 				wp_register_script( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE  );

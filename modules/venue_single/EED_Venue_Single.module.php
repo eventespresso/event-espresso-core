@@ -70,9 +70,9 @@ class EED_Venue_Single  extends EED_Module {
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && is_single() ) {
 			// first check theme folder
 			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css' )) {
-				wp_register_style( 'single-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css', array() );
+				wp_register_style( 'single-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css', array( 'dashicons', 'espresso_default' ) );
 			} else if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css' )) {
-				wp_register_style( 'single-espresso_venues', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css', array() );
+				wp_register_style( 'single-espresso_venues', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css', array( 'dashicons', 'espresso_default' ) );
 			}
 			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js' )) {
 				wp_register_script( 'single-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js', array('espresso_core'), '1.0', TRUE  );

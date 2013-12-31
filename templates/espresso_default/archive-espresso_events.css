@@ -50,6 +50,7 @@
 #espresso-events-list-filters-view-dv .events-list-filter-view-lnk {
 	display: inline-block;
 	margin: 0;
+	font-size: 16px;
 }
 #espresso-events-list-filters-view-dv .events-list-filter-view-lnk img {
 	vertical-align: middle;
@@ -409,8 +410,19 @@
 }
 
 .text-event-list-dv .ee-event-img-dv {
+	position: relative;
+	z-index: 10;
 	float: left;
 	margin: 0 3em 2em 0;
+}
+.text-event-list-dv .espresso-venue-dv {
+	clear:none;
+	display: inline-block;
+}
+
+.text-event-list-dv .event-details-dv {
+	/*float: left;*/
+	/*display: inline; */
 }
 
 .text-event-list-dv .event-meta {

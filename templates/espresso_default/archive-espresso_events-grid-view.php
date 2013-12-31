@@ -32,7 +32,7 @@ $ELID = espresso_get_event_list_ID();
 				
 				
 				<div class="event-datetimes">
-					<h4 class="ee-calendar_year-icon-small"><?php espresso_event_date_range(); ?></h4>
+					<h4><span class="dashicons dashicons-calendar"></span><?php espresso_event_date_range(); ?></h4>
 				</div>				
 				<!-- .event-datetimes -->
 
@@ -80,11 +80,11 @@ $ELID = espresso_get_event_list_ID();
 						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) : ?>
 						<div class="espresso-venue-dv">
 							<p>
-								<strong><?php _e( 'Location:', 'event_espresso' ); ?></strong><br/>
+								<strong><span class="ee-icon ee-icon-venue"></span><?php _e( 'Venue:', 'event_espresso' ); ?></strong><br/>
 								<strong><?php espresso_venue_name(); ?></strong>
 							</p>
 							<?php if ( espresso_display_venue_address_in_event_list() ) : ?>
-								<strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
+								<span class="dashicons dashicons-location-alt"></span><strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
 								<?php espresso_venue_address( 'inline' ); ?>
 								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
 								<div class="clear"><br/></div>
