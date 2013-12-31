@@ -612,6 +612,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		if ( $insert ) {
 			// run the insert
 			if ( $PRC_ID = $PRC->insert( $set_column_values )) {
+				//make sure this new price modifier is attached to the ticket but ONLY if it is not a tax type
+				$PR = EEM_price::instance()->get_one_by_ID($PRC_ID);
+				if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+					$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
+					$ticket->_add_relation_to( $PR, 'Price' );
+					$ticket->save();
+				}
 				$success = 1;
 			} else {
 				$PRC_ID = FALSE;
