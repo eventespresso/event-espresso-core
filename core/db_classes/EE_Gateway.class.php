@@ -104,6 +104,9 @@ abstract class EE_Gateway {
 		require_once( EE_MODELS . 'EEM_Registration.model.php');
 		require_once( EE_CLASSES . 'EE_Registration.class.php');
 		$this->_REG = EEM_Registration::instance();
+		if( ! $this->_btn_img){
+			$this->_btn_img = EE_GATEWAYS_URL .$this->_gateway_name.DS.'lib'.DS.$this->_button_base;
+		}
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
 

@@ -2,7 +2,7 @@
 <?php _e('Site License Key', 'event_espresso'); ?>
 </h2>
 <p>
-<?php _e("Insert your licence key here to benefit from one click updates.", 'event_espresso'); ?>
+<?php _e("Insert your license key here to benefit from one click updates.", 'event_espresso'); ?>
 </p>
 <p>
 <?php _e('Please visit your account page on the <a href="http://eventespresso.com/">Event Espresso website</a> to manage your site license key.', 'event_espresso'); ?>

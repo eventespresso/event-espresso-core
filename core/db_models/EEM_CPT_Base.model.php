@@ -10,7 +10,7 @@
  */
 define('EE_Event_Category_Taxonomy','espresso_event_category');
 //require_once( EE_MODELS . 'EEM_Base.model.php');
-class EEM_CPT_Base extends EEM_Soft_Delete_Base{
+abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	
 	/**
 	 * Searches for field on this model of type 'deleted_flag'. if it is found,

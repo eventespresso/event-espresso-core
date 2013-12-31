@@ -4,7 +4,7 @@
  * as there is much funcitonality they share
  */
 require_once( EE_CLASSES . 'EE_Base_Class.class.php');
-class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
+abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 	/**

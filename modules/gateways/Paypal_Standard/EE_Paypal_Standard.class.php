@@ -44,7 +44,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		
 		$this->addField('rm', '2');		 // Return method = POST
 		$this->addField('cmd', '_xclick');
-		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 		if(!$this->_payment_settings['use_sandbox']){
 			$this->_gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';

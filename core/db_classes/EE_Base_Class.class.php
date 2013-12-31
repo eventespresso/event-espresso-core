@@ -24,7 +24,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  * ------------------------------------------------------------------------
  */
 
-class EE_Base_Class{
+abstract class EE_Base_Class{
 
 	/**
 	 * 	system registry
@@ -1423,14 +1423,22 @@ class EE_Base_Class{
 	public function get_extra_meta($meta_key,$single = FALSE,$default = NULL){
 		if($single){
 			$result = $this->get_first_related('Extra_Meta',array(array('EXM_key'=>$meta_key)));
+			if($result){
+				return $result->value();
+			}else{
+				return $default;
+			}
 		}else{
-			$result =  $this->get_many_related('Extra_Meta',array(array('EXM_key'=>$meta_key)));
-		}
-		
-		if($result){
-			return $result->value();
-		}else{
-			return $default;
+			$results =  $this->get_many_related('Extra_Meta',array(array('EXM_key'=>$meta_key)));
+			if($results){
+				$values = array();
+				foreach($results as $result){
+					$values[$result->ID()] = $result->value();
+				}
+				return $values;
+			}else{
+				return $default;
+			}
 		}
 		
 	}

@@ -42,7 +42,6 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$this->_gateway_name = 'Invoice';
 		$this->_button_base = 'invoice-logo.png';
 		$this->_path = str_replace( '\\', '/', __FILE__ );
-		$this->_btn_img = EE_GATEWAYS_URL . $this->_gateway_name . '/lib/' . $this->_button_base;
 		parent::__construct($model);
 	}
 

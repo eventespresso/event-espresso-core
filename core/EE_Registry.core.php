@@ -92,7 +92,7 @@ final class EE_Registry {
 	/**
 	 * 	$models
 	 * 	@access 	public
-	 *	@var 	array	$models
+	 *	@var 	array	$models keys are 'short names' (eg Event), values ar eclassnames (eg 'EEM_Event')
 	 */
 	public $models = array();
 
@@ -100,11 +100,12 @@ final class EE_Registry {
 
 
 	/**
-	 * $implemented_models
+	 * $non_abstract_db_models
 	 * @access public
-	 * @var array this is an array of all implemented model names (i.e. not the parent abstract models)
+	 * @var array this is an array of all implemented model names (i.e. not the parent abstract models, or models
+	 * which don't actually fetch items from the DB in the normal way (ie, aren't children of EEM_Base))
 	 */
-	public $implemented_models = array();
+	public $non_abstract_db_models = array();
 
 
 
