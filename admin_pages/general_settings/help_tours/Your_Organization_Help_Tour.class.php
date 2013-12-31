@@ -89,7 +89,7 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 	
 
 	protected function _site_license_key_stop() {
-		return '<p>' . __('Insert your licence key here to benefit from one click updates.', 'event_espresso') . '</p>';
+		return '<p>' . __('Insert your license key here to benefit from one click updates.', 'event_espresso') . '</p>';
 	}
 
 

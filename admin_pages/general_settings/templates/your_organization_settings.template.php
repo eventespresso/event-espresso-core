@@ -97,7 +97,7 @@
 				<td>
 					<input class="regular-text" type="text" name="organization_email" value="<?php echo $organization_email; ?>" />
 					<p class="description">
-						<?php _e('This where all notifications will go to so make sure its correct.', 'event_espresso'); ?>
+						<?php _e('This is where all notifications will go to by default so please make sure it is correct.', 'event_espresso'); ?>
 					</p>
 				</td>
 			</tr>
