@@ -874,7 +874,7 @@ jQuery(document).ready(function($) {
 
 					//if no rows are left, then let's hide the modifier section and show the modifier create button
 					if ( $('.ee-active-price', '#edit-ticketrow-' + this.ticketRow ).length === 0 ) {
-						$('.price-table-container', '#edit-ticketrow-' + this.ticketRow).slideToggle(200);
+						$('.price-table-info', '#edit-ticketrow-' + this.ticketRow).toggle();
 						$('.ee-price-create-button', '#edit-ticketrow-' + this.ticketRow).show();
 					}
 
@@ -1067,7 +1067,7 @@ jQuery(document).ready(function($) {
 			if ( newTKTrow.find('.ticket-price-rows tr').length === 0 ) {
 				//price modifier section
 				newTKTrow.find('.ee-price-create-button').show();
-				newTKTrow.find('.price-table-container').hide();
+				newTKTrow.find('.price-table-info').toggle();
 			}
 
 			//update totals on the form.
@@ -1120,7 +1120,7 @@ jQuery(document).ready(function($) {
 			this.ticketRow = this.itemdata.ticketRow;
 
 			if ( this.context == 'price-create' ) {
-				$('.price-table-container', '#edit-ticketrow-' + this.ticketRow).slideToggle(200);
+				$('.price-table-info', '#edit-ticketrow-' + this.ticketRow).toggle();
 				$('.ee-price-create-button', '#edit-ticketrow-' + this.ticketRow).hide();
 			}
 

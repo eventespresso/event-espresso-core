@@ -44,10 +44,10 @@
 			<button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button" data-ticket-row="<?php echo $tkt_row; ?>"<?php echo $show_price_mod_button; ?>>
 					<?php _e('Add Price Modifier', 'event_espresso'); ?>
 			</button>
-			<div class="price-table-container"<?php echo $show_price_modifier; ?>>
-				<h5 class="tickets-heading"><?php _e('Price Modifiers', 'event_espresso'); ?></h5>
+			<div class="price-table-container">
+				<h5 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>><?php _e('Price Modifiers', 'event_espresso'); ?></h5>
 				<table class="price-table">
-					<thead>
+					<thead class="price-table-info"<?php echo $show_price_modifier; ?>>
 						<tr>
 							<td><?php _e('Price Type', 'event_espresso'); ?></td>
 							<td><?php _e('Name', 'event_espresso'); ?></td>
@@ -58,7 +58,7 @@
 							<td></td>
 						</tr>
 					</thead>
-					<tbody class="ticket-price-rows">
+					<tbody class="ticket-price-rows price-table-info"<?php echo $show_price_modifier; ?>>
 						<?php echo $ticket_price_rows; ?>
 					</tbody>
 					<tfoot>
