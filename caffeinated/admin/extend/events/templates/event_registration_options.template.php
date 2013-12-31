@@ -5,7 +5,7 @@
 
 <p>
 	<label for="max-registrants"><?php _e('Maximum number of tickets allowed per order for this event: ', 'event_espresso'); ?></label>
-	<input type="text" id="max-registrants" name="additional_limit" value="<?php echo $additional_limit; ?>" size="4" />
+	<input class="ee-numeric" type="text" id="max-registrants" name="additional_limit" value="<?php echo $additional_limit; ?>" size="4" />
 </p>
 
 <?php echo $additional_registration_options; ?>

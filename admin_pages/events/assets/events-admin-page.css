@@ -241,4 +241,5 @@
 #espresso_event_editor_event_options label {
 	width: 73%;
 	display: inline-block;
+	vertical-align: top;
 }
