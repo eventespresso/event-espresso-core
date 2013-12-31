@@ -84,6 +84,10 @@ function __construct() {
 private function _convert_gateway_settings($old_gateway_settings,$new_gateway_slug){
 	$new_gateway_settings = $old_gateway_settings;
 	switch($new_gateway_slug){
+			case 'Bank':
+				$new_gateway_settings['account_number'] = $old_gateway_settings['bank_account'];
+				$new_gateway_settings['page_title'] = $old_gateway_settings['bank_title'];
+				break;
 			case 'Invoice':
 				$new_gateway_settings['invoice_logo_url'] = $old_gateway_settings['image_url'];
 				break;
