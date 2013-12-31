@@ -4,9 +4,21 @@
 }
 #espresso-venue-details-dv {
     margin: 0 auto;
-    padding: 0;
+    padding: 0 1em;
     position: relative;
 }
+
+#espresso-venue-header-dv {
+	position: relative;
+}
+
+.venue-header {
+	padding: 20px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+}
+
 
 #venue-details-h1 {
     -moz-hyphens: none;
@@ -16,42 +28,32 @@
     z-index: 10;
 }
 
-header.venue-header.has-img h1 {
-	margin: 10px 0;
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-
-header.venue-header.has-img {
-	margin-top:-65px;
-	text-shadow: 1px 1px 0 #FFFFFF;
-	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.9);
-	position: relative;
-	padding-left: 10px;
-	height: 100%;
-}
-
-header.venue-header.has-excerpt {
-	margin-top:-120px;
-}
-
-
-header.venue-header.has-img p {
+.venue-header.has-img h1 {
 	margin:0;
-	padding-bottom: 20px;
 }
 
-.about-venue-h3 {
-	background: url(images/details-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
+
+.venue-header.has-img {
+	/*margin-top:-65px;*/
 	text-shadow: 1px 1px 0 #FFFFFF;
-	padding: 10px 0 10px 50px;
-	
+	background: none repeat scroll 0 0 rgba(232, 232, 232, 0.9);
 }
 
-.venue-address-h3 {
-    background: url("images/location-pin-icon.png") no-repeat scroll 10px center rgba(232, 232, 232, 0.9);
+.venue-header.has-excerpt {
+	/*margin-top:-120px;*/
+}
+
+
+.venue-header.has-img p,
+.venue-header.has-excerpt p {
+	margin:10px 0 0;
+}
+
+
+.ee-venue-h3 {
+	background: rgba(232, 232, 232, 0.9);
 	text-shadow: 1px 1px 0 #FFFFFF;
-	padding: 10px 0 10px 50px;
+	padding: 10px;
 }
 
 .ee-venue-img-dv {
