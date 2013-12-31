@@ -222,8 +222,9 @@ final class EE_System {
 	*/
 	private function _manage_activation_process() {
 		//let's ONLY do this method IF we're in admin and user IS logged in.
-		if ( !is_admin() || ( is_admin() && !is_user_logged_in() ) )
+		if ( ! is_admin() ) {
 			return;
+		}
 
 		// check if db has been updated, or if its a brand-new installation
 		
