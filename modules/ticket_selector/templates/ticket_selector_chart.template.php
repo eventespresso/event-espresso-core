@@ -231,7 +231,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<input type="hidden" name="tkt-slctr-event-<?php echo $EVT_ID; ?>" value="<?php echo base64_encode( serialize( $event )); ?>" />
 
 <?php if ( $max_atndz > 0 ) { ?>
-	<p class="smaller-text lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased per transaction for this event.', 'event_espresso' ), $max_atndz );?></p>
+	<p class="smaller-text lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz );?></p>
 <?php } ?>
 
 	<?php do_action( 'AHEE_after_ticket_selector' ); ?>
