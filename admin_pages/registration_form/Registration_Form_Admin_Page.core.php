@@ -178,6 +178,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 						'filename' => 'registration_form_edit_question'
 						),
 					),
+                'help_tour' => array( 'Registration_Form_Edit_Question_Help_Tour'),
 				'require_nonce' => FALSE
 				),
 			);

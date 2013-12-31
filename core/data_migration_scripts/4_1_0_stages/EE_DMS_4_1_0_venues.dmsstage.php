@@ -121,11 +121,11 @@ function __construct() {
 		$meta = maybe_unserialize($old_venue['meta']);
 		$insertion_array = array(
 					'post_title'=>stripslashes($old_venue['name']),//VNU_name
-					'post_content'=>isset($meta['description']) ? strip_tags($meta['description']) : '',//VNU_desc
+					'post_content'=>isset($meta['description']) ? stripslashes(strip_tags($meta['description'])) : '',//VNU_desc
 					'post_name'=>$old_venue['identifier'],//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
 					'post_date_gmt'=>  current_time('mysql',true),
-					'post_excerpt'=>wp_trim_words($meta['description'] ? $meta['description'] : '',50),//VNU_short_desc arbitraty only 50 characters
+					'post_excerpt'=>'',//wp_trim_words($meta['description'] ? $meta['description'] : '',50),//VNU_short_desc arbitraty only 50 characters
 					'post_modified'=>current_time('mysql'),//VNU_modified
 					'post_modified_gmt'=>current_time('mysql',true),
 					'post_author'=>$old_venue['wp_user'],//VNU_wp_user
