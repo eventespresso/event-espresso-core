@@ -30,7 +30,7 @@ $ELID = espresso_get_event_list_ID();
 			<?php while ( have_posts() ) : the_post(); ?>
 			<?php global $post; ?>
 			
-			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css( 'entry-content clear' )); ?>>
+			<article id="post-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" <?php post_class( espresso_event_list_css( 'clear' )); ?>>
 			
 				<div id="events-list-event-wrap-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="events-list-event-wrap-dv">					
 
@@ -52,14 +52,14 @@ $ELID = espresso_get_event_list_ID();
 								$wrap_class = 'has-img';
 						?>
 						<div id="ee-event-img-dv-<?php echo $ELID; ?>-<?php echo $post->ID; ?>" class="ee-event-img-dv">
-							<?php the_post_thumbnail( 'medium' ); // array( 300, 100 )?>
+							<?php the_post_thumbnail( 'medium' );?>
 						</div>
 						<?php endif; ?>
 						
-						<div class="event-content <?php echo $wrap_class . ' ' . espresso_event_status( $post->ID );?>">						
+						<div class="event-details-dv <?php echo $wrap_class . ' ' . espresso_event_status( $post->ID );?>">						
 
 							<div class="event-datetimes">
-								<h4 class="ee-calendar_year-icon-med"><?php espresso_event_date_range( 'F jS', ' ', 'l F jS @ ', ' g:i a' ); ?></h4>
+								<h4><span class="dashicons dashicons-calendar"></span><?php espresso_event_date_range( 'F jS', ' ', 'l F jS @ ', ' g:i a' ); ?></h4>
 							</div>
 							<!-- .event-datetimes -->
 						
@@ -70,15 +70,17 @@ $ELID = espresso_get_event_list_ID();
 								the_excerpt(); 
 							endif;
 						?>
+						</div>				
+						<!-- .event-content -->
 						
 						<?php if ( espresso_display_venue_details_in_event_list() || espresso_display_venue_address_in_event_list() ) : ?>
 						<div class="espresso-venue-dv">
 							<p>
-								<strong><?php _e( 'Location:', 'event_espresso' ); ?></strong><br/>
+								<strong><span class="ee-icon ee-icon-venue"></span><?php _e( 'Venue:', 'event_espresso' ); ?></strong><br/>
 								<strong><?php espresso_venue_name(); ?></strong>
 							</p>
 							<?php if ( espresso_display_venue_address_in_event_list() ) : ?>
-								<strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
+								<span class="dashicons dashicons-location-alt"></span><strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
 								<?php espresso_venue_address( 'inline' ); ?>
 								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
 								<div class="clear"><br/></div>
@@ -100,8 +102,6 @@ $ELID = espresso_get_event_list_ID();
 						<!-- .espresso-venue-dv -->
 						<?php endif; ?>
 
-						</div>				
-						<!-- .event-content -->
 
 					</div>
 

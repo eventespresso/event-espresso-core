@@ -5,15 +5,9 @@
 		
 			<div id="espresso-events-list-filters-view-dv">
 			<?php _e( 'View:' );?>&nbsp;
-				<a id="events-list-filter-grid-lnk" class="events-list-filter-view-lnk submit-this" rel="grid" href="<?php echo add_query_arg( array( 'elf_type' => 'grid' ), $form_url );?>"  title="<?php _e( 'Click to view the events in a grid.' );?>">
-					<img src="<?php echo EE_IMAGES_URL;?>event-list-grid.png" width="16" height="16" alt="<?php _e( 'Grid View' );?>" />
-				</a>&nbsp;
-				<a id="events-list-filter-text-view-lnk" class="events-list-filter-view-lnk submit-this" rel="text" href="<?php echo add_query_arg( array( 'elf_type' => 'text' ), $form_url );?>"   title="<?php _e( 'Click to view the events as a text list.' );?>">
-					<img src="<?php echo EE_IMAGES_URL;?>event-list-text.png" width="16" height="16" alt="<?php _e( 'List View' );?>" />
-				</a>&nbsp;
-				<a id="events-list-filter-dates-view-lnk" class="events-list-filter-view-lnk submit-this" rel="dates" href="<?php echo add_query_arg( array( 'elf_type' => 'dates' ), $form_url );?>"   title="<?php _e( 'Click to view the events as a list of dates.' );?>">
-					<img src="<?php echo EE_IMAGES_URL;?>event-list-dates.png" width="16" height="16" alt="<?php _e( 'Dates List View' );?>" />
-				</a>
+				<a id="events-list-filter-grid-lnk" class="events-list-filter-view-lnk submit-this" rel="grid" href="<?php echo add_query_arg( array( 'elf_type' => 'grid' ), $form_url );?>"  title="<?php _e( 'Click to view the events in a grid.' );?>"><span class="ee-icon ee-icon-event-list-grid"></span></a>
+				<a id="events-list-filter-text-view-lnk" class="events-list-filter-view-lnk submit-this" rel="text" href="<?php echo add_query_arg( array( 'elf_type' => 'text' ), $form_url );?>"   title="<?php _e( 'Click to view the events as a text list.' );?>"><span class="dashicons dashicons-editor-justify"></span></a>
+				<a id="events-list-filter-dates-view-lnk" class="events-list-filter-view-lnk submit-this" rel="dates" href="<?php echo add_query_arg( array( 'elf_type' => 'dates' ), $form_url );?>"   title="<?php _e( 'Click to view the events as a list of dates.' );?>"><span class="ee-icon ee-icon-event-list-dates"></span></a>
 			</div>
 
 			<span>
