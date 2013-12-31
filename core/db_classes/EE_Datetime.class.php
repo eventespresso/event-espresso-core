@@ -738,7 +738,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return int       return value will be one of four ints: -2 = sold_out, -1 = expired, 0 = upcoming, 1 = active.
 	 */
 	public function get_active_status() {
-		if ( $this->total_tickets_available_at_this_datetime() < 1 ) return EE_Datetime::sold_out;
+		$total_tickets_for_this_dtt = $this->total_tickets_available_at_this_datetime();
+		if ( $total_tickets_for_this_dtt !== FALSE  && $total_tickets_for_this_dtt < 1 ) return EE_Datetime::sold_out;
 		if ( $this->is_expired() ) return EE_Datetime::expired;
 		if ( $this->is_upcoming() ) return EE_Datetime::upcoming;
 		if ( $this->is_active() ) return EE_Datetime::active;

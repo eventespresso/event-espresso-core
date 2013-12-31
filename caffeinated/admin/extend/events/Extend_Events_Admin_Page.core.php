@@ -295,15 +295,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'action' => 'reports',
 				'EVT_ID' => $event->ID()
 			);
-		$export_query_args = array(
-				'action' => 'export_events',
-				'EVT_ID' => $event->ID()
-			);
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
-		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
 		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
-		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
-			</a>';
 		return $actionlinks;
 	}
 
@@ -311,9 +304,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _event_legend_items() {
 		$items = parent::_event_legend_items();
-		$items['csv_export'] = array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/csv_icon_sm.gif',
-				'desc' => __('Export Event details to csv', 'event_espresso')
+		$items['reports'] = array(
+				'icon' => EE_GLOBAL_ASSETS_URL . 'images/chart_bar.png',
+				'desc' => __('Event Reports', 'event_espresso')
 			);
 		return $items;
 	}

@@ -58,7 +58,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'name' => __('Name', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
 			'start_date_time' => __('Event Start', 'event_espresso'),
-			'reg_begins' => __('Reg Begins', 'event_espresso'),
+			'reg_begins' => __('On Sale', 'event_espresso'),
 			'status' => __('Status', 'event_espresso'),
 			'attendees' => '<span class="ee-att-icon"></span>',
 			//'tkts_sold' => __('Tickets Sold', 'event_espresso'),
