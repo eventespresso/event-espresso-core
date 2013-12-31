@@ -24,7 +24,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  * ------------------------------------------------------------------------
  */
 
-class EE_Base_Class{
+abstract class EE_Base_Class{
 
 	/**
 	 * 	system registry

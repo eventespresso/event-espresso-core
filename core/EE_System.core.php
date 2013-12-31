@@ -159,7 +159,7 @@ final class EE_System {
 			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
 			$shortname = str_replace( 'EEM_', '', $classname );
 			$reflectionClass = new ReflectionClass($classname);
-			if( $reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract() && $shortname != 'CPT_Base' ){
+			if( $reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract()){
 				$non_abstract_db_models[$shortname] = $classname;
 			}
 			$model_names[ $shortname ] = $classname;

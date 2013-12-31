@@ -39,7 +39,7 @@
  * of 3 AND THAT QUESTION GROUP ISNT' DELETED.
  */
 require_once( EE_MODELS . 'EEM_Base.model.php');
-class EEM_Soft_Delete_Base extends EEM_Base{
+abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	
 	protected function __construct($timezone = NULL) {
 		require_once( EE_MODELS . 'strategies/EE_Soft_Delete_Where_Conditions.strategy.php');
