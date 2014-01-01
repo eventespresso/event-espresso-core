@@ -46,29 +46,6 @@
 	font-weight: normal;
 }
 
-#wpadminbar .ab-icon-espresso {
-	position: relative;
-	float: left;
-	width: 18px;
-	height: 12px;
-	margin-top: 8px;
-}
-
-#wpadminbar #wp-admin-bar-espresso-toolbar > .ab-item .ab-icon-espresso {
-	background-image: url("../../../templates/global_assets/images/ee-cup-menu-icon.png");
-	background-position: 0px 0px;
-	background-repeat: no-repeat;
-}
-
-#wpadminbar #wp-admin-bar-espresso-toolbar:hover > .ab-item .ab-icon-espresso {
-	background-image: url("../../../templates/global_assets/images/ee-cup-menu-icon-dark.png");
-	background-position: 0px 0px;
-	background-repeat: no-repeat;
-}
-
-#wpadminbar.nojs #wp-admin-bar-new-content:hover > .ab-item .ab-icon, #wpadminbar #wp-admin-bar-new-content.hover > .ab-item .ab-icon-espresso {
-	background-position: -2px -203px;
-}
 div.TB-ee-frame a {
 	border-bottom: none;
 	padding: 0;
@@ -93,4 +70,218 @@ div.TB-ee-frame a {
 .bigger-text {
 	font-size: 1.5em;
 	line-height: 2em;
+}
+
+/******************* DASHICONS ****************** */
+
+@font-face {
+	font-family: 'ee_dashicons';
+	src:url('../../../templates/global_assets/fonts/ee_dashicons.eot');
+	src:url('../../../templates/global_assets/fonts/ee_dashicons.eot?#iefix') format('embedded-opentype'),
+		url('../../../templates/global_assets/fonts/ee_dashicons.ttf') format('truetype'),
+		url('../../../templates/global_assets/fonts/ee_dashicons.woff') format('woff'),
+		url('../../../templates/global_assets/fonts/ee_dashicons.svg#ee_dashicons') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.dashicons, .ee-icon:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before {
+	position: relative;
+	top: -2px;
+	font-size: inherit;
+   	height: auto;
+	margin-right: .5em;
+    vertical-align: middle;
+	width: auto;	
+}
+
+.ee-icon:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before {
+	display: inline-block;
+	font-family: 'ee_dashicons' !important;
+ 	font-style: normal;
+	font-weight: 400;
+	font-variant: normal;
+	line-height: 1;
+	speak: none;
+    text-align: center;
+    text-decoration: inherit;
+	text-transform: none;
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+#toplevel_page_espresso_events div.wp-menu-image:before, #wpadminbar .ee-icon:before {
+	margin-left: 8px;
+	font-weight: 700 !important;
+	font-size: 18px;
+}
+
+.ee-icon-venue:before {
+	content: "\e600";
+}
+.ee-icon-user-edit:before {
+	content: "\e601";
+}
+.ee-icon-user-delete:before {
+	content: "\e602";
+}
+.ee-icon-user-add-new:before {
+	content: "\e603";
+}
+.ee-icon-tickets:before {
+	content: "\e604";
+}
+.ee-icon-tickets-download:before {
+	content: "\e605";
+}
+.ee-icon-PDF-file-type:before {
+	content: "\e606";
+}
+.ee-icon-payment-reminder:before {
+	content: "\e607";
+}
+.ee-icon-external-link:before {
+	content: "\e608";
+}
+.ee-icon-event:before {
+	content: "\e609";
+}
+.ee-icon-event-list-grid:before {
+	content: "\e60a";
+}
+.ee-icon-event-list-dates:before {
+	content: "\e60b";
+}
+.ee-icon-email:before {
+	content: "\e60c";
+}
+.ee-icon-email-send:before {
+	content: "\e60d";
+}
+.ee-icon-ee-cup:before {
+	content: "\e60e";
+}
+.ee-icon-ee-cup-thick:before, #toplevel_page_espresso_events div.wp-menu-image:before {
+	content: "\e60f";
+}
+.ee-icon-clone:before {
+	content: "\e610";
+}
+.ee-icon-clock:before {
+	content: "\e611";
+}
+.ee-icon-arrow-move:before {
+	content: "\e612";
+}
+.ee-icon-check-out:before {
+	content: "\e613";
+}
+.ee-icon-check-in:before {
+	content: "\e614";
+}
+.ee-icon-cash:before {
+	content: "\e615";
+}
+.ee-icon-cash-remove:before {
+	content: "\e616";
+}
+.ee-icon-cash-edit:before {
+	content: "\e617";
+}
+.ee-icon-cash-add:before {
+	content: "\e618";
+}
+.ee-icon-calendar-edit:before {
+	content: "\e619";
+}
+
+.tags-links a {
+	white-space: nowrap;
+}
+.tags-links a:before {
+	content: "\f323";
+	display: inline-block;
+	font-family: dashicons;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: middle;
+	margin-right: .25em;
+}
+
+
+/** icon adjustments **/
+.ee-icon-color-grey:before {
+	color: #888;
+}
+
+.ee-icon-size-12:before {
+	font-size: 12px;
+}
+
+.ee-icon-size-14:before {
+	font-size: 14px;
+}
+
+.ee-icon-size-16:before {
+	font-size: 16px;
+}
+
+.ee-icon-size-18:before {
+	font-size: 18px;
+}
+
+.ee-icon-size-20:before {
+	font-size: 20px;
+}
+
+.ee-icon-size-22:before {
+	font-size: 22px;
+}
+
+.espresso-help-tab-lnk {
+	cursor: pointer;
+}
+
+.ee-email-icon:before, .ee-view-icon:before, .ee-lock-icon:before, .ee-collapsible:before, .ee-capacity-icon:before, .ee-url-icon:before, .ee-phone-icon:before {
+	display: inline-block;
+	-webkit-font-smoothing: antialiased;
+	font: normal 16px/1 'dashicons';
+	vertical-align: top;
+	margin-top: 3px;
+}
+
+.ee-email-icon:before {
+	content: "\f157";
+}
+
+.ee-view-icon:before {
+	content: "\f177";
+	margin-top: 6px;
+	margin-right: 3px;
+}
+
+.ee-lock-icon:before {
+	content: "\f160";
+}
+
+.ee-capacity-icon:before {
+	content: "\f459";
+}
+
+.ee-url-icon:before {
+	content: "\f103";
+}
+
+.ee-phone-icon:before {
+	content: "\f336";
+}
+
+
+
+.espresso-admin .wp-list-table .ee-lock-icon:before {
+	margin-left: 8px;
 }

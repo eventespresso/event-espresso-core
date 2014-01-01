@@ -173,40 +173,12 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .no-bold { font-weight: normal; }
 .currency-code { font-size:.7em; color:#a8a8a8; vertical-align: text-top; }
 
-/**
- * common icons
- */
-.ticket-icon, .trash-icon, .clone-icon, .lock-icon {
-    display: inline-block;
-    height: 16px;
-    padding: 0;
-    vertical-align: middle;
-    width: 16px;
-}
-
-.trash-icon {
-    background: transparent url(../../../templates/global_assets/images/trash-small-16x16.png) 0 0 no-repeat;
-}
-
-.lock-icon {
-    background: transparent url(../../../templates/global_assets/images/lock.png) 0 0 no-repeat;
-}
 
 .check-column .lock-icon {
 	margin-left: 6px;
 }
 
 /** end common icons **/
-
-
-.espresso-help-tab-lnk.help_img {
-	display: inline-block; position: relative; top:3px; width: 16px; height: 16px; margin: 0 0 0 .25em;
-	background: transparent url(../../../templates/global_assets/images/help.png) bottom left no-repeat; text-indent:-999em; overflow: hidden;
-    padding: 0px;
-}
-.espresso-help-tab-lnk.help_img:hover { background-position: top left; }
-.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../templates/global_assets/images/help2.png); }
-.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../templates/global_assets/images/help2.png); }
 
 
 
@@ -556,52 +528,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin: 5px;
 	height: auto;
 	white-space: normal;
-}
-
-/** NEW ICONS **/
-.gear-icon:before, .ee-email-icon:before, .ee-view-icon:before, .ee-lock-icon:before, .ee-collapsible:before, .ee-capacity-icon:before, .ee-url-icon:before, .ee-phone-icon:before {
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 'dashicons';
-	vertical-align: top;
-	margin-top: 3px;
-}
-
-.ee-email-icon:before {
-	content: "\f157";
-}
-
-.ee-view-icon:before {
-	content: "\f177";
-	margin-top: 6px;
-	margin-right: 3px;
-}
-
-.ee-lock-icon:before {
-	content: "\f160";
-}
-
-.gear-icon:before {
-	margin-top: 1px;
-	content: "\f111";
-}
-
-.ee-capacity-icon:before {
-	content: "\f459";
-}
-
-.ee-url-icon:before {
-	content: "\f103";
-}
-
-.ee-phone-icon:before {
-	content: "\f336";
-}
-
-
-
-.espresso-admin .wp-list-table .ee-lock-icon:before {
-	margin-left: 8px;
 }
 
 

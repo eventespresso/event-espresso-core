@@ -37,7 +37,7 @@
 						<input type="text" name="add_new_ticket[TKT_qty]" class="ee-small-text-inp add-new-ticket-TKT_qty ee-numeric" size="1">
 					</td>
 					<td>
-						<span class="clickable gear-icon add-edit" data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" style="display:none"></span>
+						<span class="clickable gear-icon dashicons dashicons-admin-generic add-edit" data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" style="display:none"></span>
 						<!-- the "add-edit" class is used by jQuery to indicate we need to retrieve a edit form using the value from the #next-ticket-row hidden input (which in turn is incremented if the new created item is saved). -->
 						<!-- Also: when the Add New Ticket form is recalled, jQuery will automatically populate the data-context and data-datetime-row properties on the edit icon and save buttons from the event handler for the datetime being edited. -->
 					</td>
