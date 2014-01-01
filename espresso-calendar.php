@@ -434,7 +434,6 @@ class EE_Calendar {
 	 * whether we're in maintenance mode or not
 	 */
 	public function EE_System__construct__autoloaders_available(){
-		echo 'autoload config";';
 		EEH_Autoloader::instance()->register_autoloader(
 				array('EE_Calendar_Config'=>ESPRESSO_CALENDAR_PLUGINFULLPATH.'EE_Calendar_Config.php'));
 		
@@ -589,30 +588,23 @@ class EE_Calendar {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function espresso_calendar( $atts ) {
+	public function espresso_calendar( $ee_calendar_js_options ) {
 		
 		if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 			return '';
 		}
 		// get calendar options
 		$calendar_config = $this->_get_calendar_options();
-		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE, 'show_tooltips' => FALSE ), $calendar_config->to_array() );
-		d($defaults);die;
+		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE,), $calendar_config->to_flat_array() );
 		// make sure $atts is an array
-		$atts = is_array( $atts ) ? $atts : array( $atts );
+		$ee_calendar_js_options = is_array( $ee_calendar_js_options ) ? $ee_calendar_js_options : array( $ee_calendar_js_options );
 		// set default attributes
-		$atts = shortcode_atts( $defaults, $atts );
+		$ee_calendar_js_options = shortcode_atts( $defaults, $ee_calendar_js_options );
 		// grab some request vars
-		$this->_event_category_id = $atts['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $atts['event_category_id'];
-		$this->_show_expired = $atts['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $atts['show_expired'];
-		// loop thru atts and add to js options
-		foreach ( $atts as $att_name => $att_value ) {
-			if ( ! empty( $att_value )) {
-				$ee_calendar_js_options[$att_name] = is_array( $att_value ) ? stripslashes_deep( $att_value ) : stripslashes( $att_value );
-			}
-		}
+		$this->_event_category_id = $ee_calendar_js_options['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $ee_calendar_js_options['event_category_id'];
+		$this->_show_expired = $ee_calendar_js_options['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $ee_calendar_js_options['show_expired'];
 		// i18n some strings
-		$ee_calendar_js_options['monthNames'] = array( 
+		$ee_calendar_js_options['month_names'] = array( 
 			__('January', 'event_espresso'),
 			__('February', 'event_espresso'),
 			__('March', 'event_espresso'),
@@ -627,7 +619,7 @@ class EE_Calendar {
 			__('December', 'event_espresso')
 		);
 			
-		$ee_calendar_js_options['monthNamesShort'] =array( 
+		$ee_calendar_js_options['month_names_short'] =array( 
 				__('Jan', 'event_espresso'),
 				__('Feb', 'event_espresso'),
 				__('Mar', 'event_espresso'),
@@ -642,7 +634,7 @@ class EE_Calendar {
 				__('Dec', 'event_espresso')
 			);
 				
-		$ee_calendar_js_options['dayNames'] = array( 
+		$ee_calendar_js_options['day_names'] = array( 
 				__('Sunday', 'event_espresso'),
 				__('Monday', 'event_espresso'),
 				__('Tuesday', 'event_espresso'),
@@ -652,7 +644,7 @@ class EE_Calendar {
 				__('Saturday', 'event_espresso')
 			);
 			
-		$ee_calendar_js_options['dayNamesShort'] = array( 
+		$ee_calendar_js_options['day_names_short'] = array( 
 				__('Sun', 'event_espresso'),
 				__('Mon', 'event_espresso'),
 				__('Tue', 'event_espresso'),
@@ -673,7 +665,7 @@ class EE_Calendar {
 		$ee_calendar_js_options['ajax_url'] = admin_url('admin-ajax.php', $protocol);
 		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
 		
-		$calendar_class = $atts['widget'] ? 'calendar_widget' : 'calendar_fullsize';
+		$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
 
 		return '
 	<div id="espresso_calendar" class="'. $calendar_class . '">
@@ -703,7 +695,7 @@ class EE_Calendar {
 		$config = $this->_get_calendar_options();
 		 $enable_cat_classes = $config->enable_cat_classes;
 		 $show_attendee_limit = $config->show_attendee_limit;
-		 $show_time = $config->time->show_time;
+		 $show_time = $config->time->show;
 		 $show_tooltips = $config->tooltip->show;
 		if ( $show_tooltips ) {
 			$tooltip_my = $config->tooltip->pos_my_1 . $config->tooltip->pos_my_2;

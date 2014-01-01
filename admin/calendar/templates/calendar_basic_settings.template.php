@@ -14,7 +14,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[time][show_time]', $values, $calendar_config->time->show_time, 'id="show_time"');?>
+					<?php echo EEH_Form_Fields::select_input('calendar[time][show]', $values, $calendar_config->time->show, 'id="show_time"');?>
 				</td>
 			</tr>
 			<tr>
@@ -196,7 +196,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="background-color"type="text" name="calendar[event_background]" value="#<?php echo $calendar_config->event_background ?>" />
+					<input id="background-color"type="text" name="calendar[event_background]" value="<?php echo $calendar_config->event_background ?>" />
 					<div id="colorpicker-1">
 					</div>
 				</td>
@@ -208,7 +208,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="text-color" type="text" name="calendar[event_text_color]" value="#<?php echo $calendar_config->event_text_color ?>" />
+					<input id="text-color" type="text" name="calendar[event_text_color]" value="<?php echo $calendar_config->event_text_color ?>" />
 					<div id="colorpicker-2">
 					</div>
 				</td>

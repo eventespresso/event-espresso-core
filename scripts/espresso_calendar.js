@@ -20,16 +20,16 @@ jQuery(document).ready(function($) {
 		header: {
 			left: eeCAL.header_left,
 			center: eeCAL.header_center,
-			right: eeCAL.header_right,
+			right: eeCAL.header_right
 		},
 		// Enables/disables use of jQuery UI theming.
 		theme: eeCAL.theme,
 		// The day that each week begins.
-		firstDay: eeCAL.firstDay,
+		firstDay: eeCAL.time_first_day,
 		// Whether to include Saturday/Sunday columns in any of the calendar views.
-		weekends: eeCAL.weekends,
+		weekends: eeCAL.time_weekends,
 		// Determines the number of weeks displayed in a month view. Also determines each week's height.
-		weekMode: eeCAL.weekMode,
+		weekMode: eeCAL.time_week_mode,
 		// Will make the entire calendar (including header) a pixel height.
 		height: eeCAL.espresso_calendar_height,
 		aspectRatio: 1.618,
@@ -53,42 +53,42 @@ jQuery(document).ready(function($) {
 		},
 		// Determines the text that will be displayed on the calendar's column headings.
 		columnFormat: {
-			month: eeCAL.columnFormat_month,
-			week: eeCAL.columnFormat_week,
-			day: eeCAL.columnFormat_day,
+			month: eeCAL.column_format_month,
+			week: eeCAL.column_format_week,
+			day: eeCAL.column_format_day
 		},
 		// Determines the text that will be displayed in the header's title.
 		titleFormat: {
-			month: eeCAL.titleFormat_month,
-			week: eeCAL.titleFormat_week,
-			day: eeCAL.titleFormat_day,
+			month: eeCAL.title_format_month,
+			week: eeCAL.title_format_week,
+			day: eeCAL.title_format_day
 		},
 		// Text that will be displayed on buttons of the header.
 		buttonText: {
-			next: eeCAL.buttonText_next, 	// default '&lsaquo;' <
-			prev: eeCAL.buttonText_prev, 	// default '&rsaquo;'  >
-			prevYear: eeCAL.buttonText_prevYear, 	// default '&laquo;'  <<
-			nextYear:eeCAL.buttonText_nextYear, 	// default '&raquo;'  >>
-			today: eeCAL.buttonText_today, 	// default 'today'
-			month: eeCAL.buttonText_month, 	// default 'month'
-			week: eeCAL.buttonText_week, 	// default 'week'
-			day: eeCAL.buttonText_day, 	// default 'day'
+			next: eeCAL.button_text_next, 	// default '&lsaquo;' <
+			prev: eeCAL.button_text_prev, 	// default '&rsaquo;'  >
+			prevYear: eeCAL.button_text_prevYear, 	// default '&laquo;'  <<
+			nextYear:eeCAL.button_text_nextYear, 	// default '&raquo;'  >>
+			today: eeCAL.button_text_today, 	// default 'today'
+			month: eeCAL.button_text_month, 	// default 'month'
+			week: eeCAL.button_text_week, 	// default 'week'
+			day: eeCAL.button_text_day 	// default 'day'
 		},
 
 		// Sets the background and border colors for all events on the calendar.
-		eventColor: eeCAL.ee_event_background,
+		eventColor: eeCAL.event_background,
 		// Sets the text color for all events on the calendar.
-		eventTextColor: eeCAL.ee_event_text_color,
+		eventTextColor: eeCAL.event_text_color,
 
 
 		//Full names of months.
-		monthNames: eeCAL.monthNames,
+		monthNames: eeCAL.month_names,
 		//Abbreviated names of months.
-		monthNamesShort: eeCAL.monthNamesShort,
+		monthNamesShort: eeCAL.month_names_short,
 		//Full names of days-of-week.
-		dayNames: eeCAL.dayNames,
+		dayNames: eeCAL.day_names,
 		//Abbreviated names of days-of-week.
-		dayNamesShort: eeCAL.dayNamesShort,
+		dayNamesShort: eeCAL.day_names_short,
 				
 		//Load the events into json srrsy
 		events: function(start, end, callback) {
@@ -121,7 +121,7 @@ jQuery(document).ready(function($) {
 					callback( response );
 				},
 				error: function(response) {
-				},
+				}
 			});
 		},
 		// Triggered while an event is being rendered.
@@ -177,7 +177,7 @@ jQuery(document).ready(function($) {
 				}
 			}
 			
-			if ( eeCAL.show_tooltips ) {				
+			if ( eeCAL.tooltip_show ) {				
 				element.qtip({
 					content: {
 						text: event.description + event.tooltip,
@@ -188,7 +188,7 @@ jQuery(document).ready(function($) {
 						// Position my top left...
 						my: event.tooltip_my, 
 						// at the bottom right of...
-						at: event.tooltip_at,
+						at: event.tooltip_at
 					},
 					show: {
 						event: 'click mouseenter',
@@ -196,7 +196,7 @@ jQuery(document).ready(function($) {
 					},
 					hide: "unfocus",
 					style: {
-						classes: event.tooltip_style, 
+						classes: event.tooltip_style 
 					},
 					widget: true
 				});
@@ -217,7 +217,7 @@ jQuery(document).ready(function($) {
 		loading: function( bool ) {
 			if ( bool ) $('#ee-calendar-ajax-loader-img').show();
 			else $('#ee-calendar-ajax-loader-img').hide();
-		},
+		}
 
 	});
 

@@ -66,17 +66,38 @@ class EE_Calendar_Config extends EE_Config_Base{
 		$this->show_attendee_limit = false;
 	}
 	
+	/**
+	 * 
+	 * @return array one dimensional. All nested config classes properties are 
+	 * 'flatened'. Eg, $this->tooltip->show becomes array key 'tooltip_show' in the newly
+	 * formed array
+	 */
+	public function to_flat_array(){
+		$flattened_vars = array();
+		$properties = get_object_vars($this);
+		foreach($properties as $name => $property){
+			if($property instanceof EE_Config_Base){
+				$sub_config_properties = get_object_vars($property);
+				foreach($sub_config_properties as $sub_config_property_name => $sub_config_property){
+					$flattened_vars[$name."_".$sub_config_property_name] = $sub_config_property;
+				}
+			}else{
+				$flattened_vars[$name] = $property;
+			}
+		}
+		return $flattened_vars;
+	}
 }
 class EE_Calendar_Config_Time extends EE_Config_Base{
 	public $first_day;
 	public $weekends;
 	public $format;
-	public $show_time;
+	public $show;
 	public function __construct() {
 		$this->first_day = '0';
 		$this->weekends = true;
 		$this->format = get_option('time_format');
-		$this->show_time = true;
+		$this->show = true;
 	}
 }
 class EE_Calendar_Config_Header  extends EE_Config_Base{
