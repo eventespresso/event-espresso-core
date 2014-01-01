@@ -749,7 +749,7 @@ class EE_Calendar {
 				//any term_taxonmies set for this event?
 				if ( $primary_cat ) {
 					if($primary_cat->get_extra_meta('use_pickers',true,false)){
-						$calendar_datetime->set_color($primary_cat->get_extra_meta('color',true,null));
+						$calendar_datetime->set_color($primary_cat->get_extra_meta('background_color',true,null));
 						$calendar_datetime->set_textColor($primary_cat->get_extra_meta('text_color',true,null));
 						
 					}
