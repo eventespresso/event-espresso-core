@@ -59,12 +59,6 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 			)
 		);
 		
-
-		//hook into the handler for saving question groups
-//		add_filter( 'FHEE_event_editor_update', array( $this, 'modify_callbacks'), 10 );
-//
-//		//hook into revision restores (we're hooking into the global action because EE_Admin_Hooks classes are already restricted by page)
-//		add_action( 'AHEE_EE_Admin_Page_CPT__restore_revision', array($this, 'restore_revision' ), 10, 2 );
 	}
 	
 	/**
@@ -104,6 +98,23 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$template_args['default_background_color'] = $default_background_color;
 		$template_args['default_text_color'] = $default_text_color;
 		 EEH_Template::display_template(CALENDAR_ADMIN_TEMPLATE_PATH."category_color_for_calendar.template.php",$template_args);
+	}
+	
+	public function _redirect_action_update_category($redirection_query_args){
+		$this->_save_calendar_color_settings($redirection_query_args);
+	}
+	public function _redirect_action_insert_category($redirection_query_args){
+		$this->_save_calendar_color_settings($redirection_query_args);
+	}
+	protected function _save_calendar_color_settings($redirection_query_args){
+		$CAT_ID = isset($redirection_query_args['EVT_CAT_ID']) ? $redirection_query_args['EVT_CAT_ID'] :  NULL;
+		if($CAT_ID){
+			$category = EEM_Term_Taxonomy::instance()->get_one_by_ID($CAT_ID);
+			$category->update_extra_meta('use_color_picker' , $this->_req_data['use-color-picker-for-calendar']);
+			$category->update_extra_meta('background_color', $this->_req_data['category-background-color-for-calendar']);
+			$category->update_extra_meta('text_color', $this->_req_data['category-text-color-for-calendar']);
+				
+		}
 	}
 
 
