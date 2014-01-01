@@ -82,17 +82,22 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$CAT_ID = $this->_req_data['EVT_CAT_ID'];
 		$category = EEM_Term_Taxonomy::instance()->get_one_by_ID($CAT_ID);
 		$use_color_picker = false;
-		$background_color = '#289b97';
-		$text_color = '#883b97';
+		$default_background_color = '#82e0e0';
+		$default_text_color = '#2d2c75';
 		if($category){
-			$use_color_picker = $category->get_extra_meta('use_color_picker',true,$use_color_picker);
-			$background_color = $category->get_extra_meta('background_color', true,$background_color);
-			$text_color = $category->get_extra_meta('text_color',true,$text_color);
+			$use_color_picker = $category->get_extra_meta('use_color_picker',true,false);
+			$background_color = $category->get_extra_meta('background_color', true,$default_background_color);
+			$text_color = $category->get_extra_meta('text_color',true,$default_text_color);
+		}else{
+			$background_color = $default_background_color;
+			$text_color = $default_text_color;
 		}
 		$template_args = array();
 		$template_args['use_color_picker'] = $use_color_picker;
 		$template_args['background_color'] = $background_color;
 		$template_args['text_color'] = $text_color;
+		$template_args['default_background_color'] = $default_background_color;
+		$template_args['default_text_color'] = $default_text_color;
 		 EEH_Template::display_template(CALENDAR_ADMIN_TEMPLATE_PATH."category_color_for_calendar.template.php",$template_args);
 	}
 
