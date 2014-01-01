@@ -568,6 +568,15 @@ abstract class EE_Base_Class{
 	public function e($field_name, $extra_cache_ref = NULL){
 		echo $this->get_pretty($field_name, $extra_cache_ref);
 	}
+	/**
+	 * Exactly like e(), echoes out the field, but sets its schema to 'form_input', so that it
+	 * can be easily used as the value of form input.
+	 * @param string $field_name
+	 * @return void
+	 */
+	public function f($field_name){
+		$this->e($field_name,'form_input');
+	}
 	
 	/**
 	 * 
