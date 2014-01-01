@@ -324,13 +324,27 @@
 
 	
 	/**
-	*		do_before_event_queue_ajax
+	*	do_before_event_queue_ajax
 	*/	
-	function do_before_event_queue_ajax( next_step ) {
+	function do_before_event_queue_ajax() {
 		// stop any message alerts that are in progress	
 		$('.espresso-ajax-notices').stop();
 		$('#espresso-ajax-long-loading').remove();
 		$('#espresso-ajax-loading').center().show();		
+	}
+
+
+
+	/**
+	*	like do_before_event_queue_ajax() but for the finalize_registration step
+	*/	
+	function processing_registration_notification() {
+		$('#spco-go-to-step-finalize_registration-btn').addClass( 'disabled' );
+		$('#espresso-ajax-long-loading').remove();
+		$('#espresso-ajax-notices').center();	
+		$('#espresso-ajax-notices-attention').append( '<span id="espresso-ajax-long-loading" class="ee-spinner ee-spin"></span>' );
+		$('#espresso-ajax-notices-attention > .espresso-notices-msg').html( eei18n.process_registration );
+		$('#espresso-ajax-notices-attention').removeClass('hidden').show();	
 	}
 
 
@@ -578,15 +592,7 @@
 
 			// disable submit btn and processing registration message
 			if ( next_step == 'finalize_registration' ) {
-				$('#spco-go-to-step-finalize_registration-btn').addClass( 'disabled' );
-				$('#espresso-ajax-loading').center().show();		
-				$('#espresso-ajax-long-loading').remove();
-				$('#espresso-ajax-notices').center();	
-				$('#espresso-ajax-notices-attention').append( '<span id="espresso-ajax-long-loading" class="ee-spinner ee-spin"></span>' );
-				$('#espresso-ajax-notices-attention > .espresso-notices-msg').html( eei18n.process_registration );
-				$('#espresso-ajax-loading').fadeOut('fast');
-				$('#espresso-ajax-notices-attention').removeClass('hidden').show();
-				
+				processing_registration_notification();
 			}
 			
 //			console.log( JSON.stringify( 'form_data: ' + form_data, null, 4 ));
@@ -598,7 +604,7 @@
 				dataType: "json",
 				beforeSend: function() {
 					if ( next_step != 'finalize_registration' ) {
-						do_before_event_queue_ajax( next_step );
+						do_before_event_queue_ajax();
 					}
 				}, 
 				success: function( response ){
