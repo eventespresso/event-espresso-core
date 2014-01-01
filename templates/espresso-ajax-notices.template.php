@@ -1,6 +1,6 @@
 	
 	<div id="espresso-ajax-loading">
-		<img src="<?php echo EE_IMAGES_URL;?>ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?></span>
+		<span class="ee-spinner ee-spin"></span><span class="hidden"><?php _e('loading...', 'event_espresso'); ?></span>
 	</div>
 
 	<div id="espresso-ajax-notices">

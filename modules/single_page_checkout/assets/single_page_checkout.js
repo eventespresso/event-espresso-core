@@ -324,12 +324,27 @@
 
 	
 	/**
-	*		do_before_event_queue_ajax
+	*	do_before_event_queue_ajax
 	*/	
 	function do_before_event_queue_ajax() {
 		// stop any message alerts that are in progress	
 		$('.espresso-ajax-notices').stop();
+		$('#espresso-ajax-long-loading').remove();
 		$('#espresso-ajax-loading').center().show();		
+	}
+
+
+
+	/**
+	*	like do_before_event_queue_ajax() but for the finalize_registration step
+	*/	
+	function processing_registration_notification() {
+		$('#spco-go-to-step-finalize_registration-btn').addClass( 'disabled' );
+		$('#espresso-ajax-long-loading').remove();
+		$('#espresso-ajax-notices').center();	
+		$('#espresso-ajax-notices-attention').append( '<span id="espresso-ajax-long-loading" class="ee-spinner ee-spin"></span>' );
+		$('#espresso-ajax-notices-attention > .espresso-notices-msg').html( eei18n.process_registration );
+		$('#espresso-ajax-notices-attention').removeClass('hidden').show();	
 	}
 
 
@@ -337,19 +352,20 @@
 	/**
 	*		show event queue ajax success msg
 	*/	
-	function show_event_queue_ajax_success_msg( success_msg ) {
+	function show_event_queue_ajax_success_msg( success_msg, fadeOut ) {
+		
+		fadeOut = fadeOut == undefined || fadeOut < 4000 ? 4000 : fadeOut;
 		
 		if ( success_msg != undefined && success_msg != '' )  {
 		
 			if ( success_msg.success != undefined ) {
 				success_msg = success_msg.success;
-			}		
-			//alert( 'success_msg'+success_msg);
+			}
 
 			$('#espresso-ajax-notices').center();	
 			$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
 			$('#espresso-ajax-loading').fadeOut('fast');
-			$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(4000).fadeOut();			
+			$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(fadeOut).fadeOut();
 		} else {
 			$('#espresso-ajax-loading').fadeOut('fast');
 		}	
@@ -490,17 +506,14 @@
 		e.preventDefault();
 		e.stopPropagation();
 		// re-enable submit btn in case it was disabled
-		$('#spco-go-to-step-finalize_registration-btn').prop( 'disabled', false );
+		//$('#spco-go-to-step-finalize_registration-btn').prop( 'disabled', false );
 		var step = $(this).attr('rel');
-		if ( step != undefined && step != '' ) {
-			next_step = get_next_step( step );
+		var disabled = $(this).hasClass('disabled');
+		if ( step != undefined && step != '' && ! disabled ) {
+			next_step = get_next_step( step );			
 			if ( eei18n.wp_debug == 1 ) {
 				console.log( JSON.stringify( 'single-page-checkout on click > step; ' + step, null, 4 ));
 				console.log( JSON.stringify( 'single-page-checkout on click > next_step: ' + next_step, null, 4 ));
-			}
-			// disable submit btn
-			if ( next_step == 'finalize_registration' ) {
-				$( this ).prop( 'disabled', true ).attr( 'rel', '' );
 			}
 			form_to_check = '#spco-registration-'+step+'-frm';
 			if ( next_step == 'finalize_registration' && $('#reg-page-off-site-gateway').val() == 1 ) {
@@ -511,9 +524,12 @@
 				//return;
 			} else if ( step == 'payment_options' ) {
 				form_to_check = process_selected_gateway();
+				if ( eei18n.wp_debug == 1 ) {
+					console.log( JSON.stringify( 'single-page-checkout on click > form_to_check ' + form_to_check, null, 4 ));
+				}
 				if ( form_to_check == false ) {
 					show_event_queue_ajax_error_msg( eei18n.no_payment_method );
-					exit;	
+					return false;
 				}
 			} 
 			process_reg_step ( step, next_step, form_to_check );			
@@ -573,6 +589,11 @@
 			var form_data = $('#spco-registration-'+step+'-frm').serialize();
 			form_data += '&ee_front_ajax=1';
 			form_data += '&step=' + step;
+
+			// disable submit btn and processing registration message
+			if ( next_step == 'finalize_registration' ) {
+				processing_registration_notification();
+			}
 			
 //			console.log( JSON.stringify( 'form_data: ' + form_data, null, 4 ));
 
@@ -582,7 +603,9 @@
 				data: form_data,
 				dataType: "json",
 				beforeSend: function() {
-					do_before_event_queue_ajax();
+					if ( next_step != 'finalize_registration' ) {
+						do_before_event_queue_ajax();
+					}
 				}, 
 				success: function( response ){
 					
