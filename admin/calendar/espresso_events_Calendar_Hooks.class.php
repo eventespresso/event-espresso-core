@@ -79,8 +79,13 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 	}
 	
 	function category_color(){
-		$CAT_ID = $this->_req_data['EVT_CAT_ID'];
-		$category = EEM_Term_Taxonomy::instance()->get_one_by_ID($CAT_ID);
+		if(isset($this->_req_data['EVT_CAT_ID'])){
+			$CAT_ID = $this->_req_data['EVT_CAT_ID'];
+			$category = EEM_Term_Taxonomy::instance()->get_one_by_ID($CAT_ID);
+		}else{
+			$category = null;
+		}
+		
 		$use_color_picker = false;
 		$default_background_color = '#82e0e0';
 		$default_text_color = '#2d2c75';
