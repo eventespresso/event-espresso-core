@@ -456,15 +456,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _event_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/magnifier.png',
+				'class' => 'dashicons dashicons-search',
 				'desc' => __('View Event', 'event_espresso')
 			),
 			'edit_event' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/calendar_edit.png',
+				'class' => 'ee-icon ee-icon-calendar-edit',
 				'desc' => __('Edit Event Details', 'event_espresso')
 			),
 			'view_attendees' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/group.png',
+				'class' => 'dashicons dashicons-groups',
 				'desc' => __('View Registrations for Event', 'event_espresso')
 			)
 		);

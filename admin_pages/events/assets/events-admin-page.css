@@ -5,15 +5,15 @@
 #toplevel_page_espresso_events-table-frm .column-start_date_time { width:15%; }
 #toplevel_page_espresso_events-table-frm .column-reg_begins { width:15%; }
 #toplevel_page_espresso_events-table-frm .column-status  { width:9%; max-width:84px; }
-#toplevel_page_espresso_events-table-frm .ee-att-icon:before {
-	content: "\f307";
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 'dashicons';
-	vertical-align: top;
+#toplevel_page_espresso_events-table-frm .ee-icon:before, #toplevel_page_espresso_events-table-frm .dashicons:before {
+	font-size: 18px;
  }
+
+#toplevel_page_espresso_events-table-frm a {
+	display: inline-block;
+}
 #toplevel_page_espresso_events-table-frm .column-attendees { width: 5%; max-width: 40px;}
-#toplevel_page_espresso_events-table-frm .column-actions { width: 10%; }
+#toplevel_page_espresso_events-table-frm .column-actions { width: 15%; }
 
 
 .remove-item { cursor: pointer; vertical-align: middle; }
