@@ -37,7 +37,7 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 			0 => array(
 				'page_route' => array( 'edit_category', 'add_category' ),
 				'func' => 'category_color',
-				'label' => __('Category Color', 'event_espresso'),
+				'label' => __('Calendar Colors', 'event_espresso'),
 				'priority' => 'default',
 				'context' => 'side'
 				)

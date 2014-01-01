@@ -1,4 +1,4 @@
-<label for="use-color-picker"><?php _e("Use Color Picker?", "event_espresso");?></label>
+<label for="use-color-picker"><?php _e("Use Custom Category Color", "event_espresso");?></label>
 <select name="use-color-picker-for-calendar" id="use-color-picker">
 	<option value="1" <?php echo $use_color_picker ? 'selected' : ''?>><?php _e("Yes", "event_espresso");?></option>
 	<option value="0" <?php echo ! $use_color_picker ? 'selected' : ''?>><?php _e("No", "event_espresso");?></option>
