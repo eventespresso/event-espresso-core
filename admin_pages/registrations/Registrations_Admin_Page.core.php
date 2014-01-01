@@ -568,19 +568,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/magnifier.png',
+				'class' => 'dashicons dashicons-search',
 				'desc' => __('View Registration Details', 'event_espresso')
 				),
 			'edit_attendee' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/user_edit.png',
+				'class' => 'dashicons dashicons-businessman',
 				'desc' => __('Edit Contact Details', 'event_espresso')
 				),
 			'resend_registration' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/email_go.png',
+				'class' => 'ee-icon ee-icon-email-send',
 				'desc' => __('Resend registration details to attendee', 'event_espresso')
 				),
 			'view_transaction' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/money.png',
+				'class' => 'ee-icon ee-icon-cash',
 				'desc' => __('View Transaction details.', 'event_espresso')
 				)
 			);

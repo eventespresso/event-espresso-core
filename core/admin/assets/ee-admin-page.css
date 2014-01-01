@@ -394,6 +394,17 @@ label.error  { display: block; color: #FE2A00 !important; }
     margin-left: 10px;
 }
 
+/**
+ * other ee wp-list-table styles
+ */
+.espresso-admin .wp-list-table .ee-icon:before, .espresso-admin .wp-list-table .dashicons:before, .espresso-admin .wp-list-table .checkin-icons:before {
+	font-size: 18px;
+ }
+
+.espresso-admin .wp-list-table a {
+	display: inline-block;
+}
+
 
 /** CAFFEINATED PREVIEW CSS **/
 .ee-admin-caf-preview-contents {

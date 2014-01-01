@@ -53,13 +53,17 @@
 .reg-pad-rght { display:block; padding-right:1em; }
 
 .wp-list-table .column-actions,
-.wp-list-table .column-CHK_in { width:8.5%;  }
+.wp-list-table .column-CHK_in { width:11%;  }
+
+.wp-list-table.attendees .column-actions {
+	width: 7%;
+}
 
 .reg-overview-free-event-spn { display: block; text-align:center; }
 
 .reg-overview-actions-ul { list-style:none; margin:0; }
 .reg-overview-actions-ul li { display: inline; margin:0; }
-.reg-overview-actions-ul li + li { margin-left:.25em; }
+.reg-overview-actions-ul li + li { margin-left:0; }
 
 #reg-admin-reg-details-reg-nmbr-hdr { padding:0; margin:-.5em 0 1em; }
 #reg-admin-reg-details-reg-date-hdr,
@@ -129,30 +133,25 @@
 
 
 /** Check-in status manipulation **/
-.checkin-icons{
-	display: block;
-	min-width: 18px;
-	min-height: 18px;
-}
 
 /**never checked in**/
 .wp-list-table .REG_att_checked_in {
     padding-left: 20px;
 }
 
-.checkedin-status-0 {
-	background: transparent url('images/delete-grey-16x16.png') no-repeat;
-	margin: auto;
+.checkedin-status-0:before {
+	font-family: 'dashicons' !important; /** using important b/c wp has dashicons setup with important and I had to override **/
+	content: "\f158";
 }
 
 /**checked in**/
-.checkedin-status-1 {
-	background: transparent url('images/check-in-16x16.png') no-repeat;
+.checkedin-status-1:before {
+	content: "\e614";
 }
 
 /**check in but now checked out**/
-.checkedin-status-2 {
-	background: transparent url('images/check-out-16x16.png') no-repeat;
+.checkedin-status-2:before {
+	content: "\e613";
 }
 
 

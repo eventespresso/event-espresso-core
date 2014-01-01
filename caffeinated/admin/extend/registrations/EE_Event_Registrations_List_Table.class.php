@@ -310,7 +310,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_actions( EE_Registration $item ) {
 		$view_link_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID()));
 
-		$view_lnk = '<li><a href="' . $view_link_url . '" title="' . __('View Attendee Check-in Records', 'event_espresso' ) . '"><img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/magnifier.png"></a></li>';
+		$view_lnk = '<li><a href="' . $view_link_url . '" title="' . __('View Attendee Check-in Records', 'event_espresso' ) . '"><div class="dashicons dashicons-search"></div></a></li>';
 
 		return '<ul class="reg-overview-actions-ul">' . $view_lnk . '</ul>';
 	}
