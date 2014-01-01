@@ -369,10 +369,10 @@ class EE_Calendar {
 	private static $_instance = NULL;
 
 	/**
-	 * 	@var 	array	$_calendar_options
+	 * 	@var 	EE_Calendar_Config	$_calendar_options
 	 *  @access 	private
 	 */
-	private $_calendar_options = array();
+	private $_calendar_config = array();
 
 	/**
 	 * 	@var 	INT	$_event_category_id
@@ -423,21 +423,10 @@ class EE_Calendar {
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLPATH', plugin_dir_path( __FILE__ ));
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLURL', plugin_dir_url( __FILE__ ));	
 		
-		if ( is_admin() ) {			
-			register_activation_hook(  __FILE__ , array( $this, 'activation' ));
-			require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
-			EE_Calendar_Admin::instance();
-			// ajax hooks
-			add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
-			add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));			
-		} else {
-			add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
-			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
-		}
 
 		add_action( 'widgets_init', array( $this, 'widget_init' ));
 		add_action( 'AHEE__EE_System__construct__autoloaders_available',array($this,'EE_System__construct__autoloaders_available'));
-		do_action( 'AHEE__EE_System__construct__end', array($this,'EE_System__construct__end') );
+		add_action( 'AHEE__EE_System__construct__end', array($this,'EE_System__construct__end') );
 	}
 	/**
 	 * Runs initialization stuff for the calendar addon, but doesn't run or enqueue any code
@@ -445,6 +434,7 @@ class EE_Calendar {
 	 * whether we're in maintenance mode or not
 	 */
 	public function EE_System__construct__autoloaders_available(){
+		echo 'autoload config";';
 		EEH_Autoloader::instance()->register_autoloader(
 				array('EE_Calendar_Config'=>ESPRESSO_CALENDAR_PLUGINFULLPATH.'EE_Calendar_Config.php'));
 		
@@ -455,6 +445,17 @@ class EE_Calendar {
 		if(!isset($cfg->addons['calendar'])){
 			$cfg->addons['calendar'] = new EE_Calendar_Config();
 			$cfg->update_espresso_config();
+		}
+		if ( is_admin() ) {			
+			register_activation_hook(  __FILE__ , array( $this, 'activation' ));
+			require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
+			EE_Calendar_Admin::instance();
+			// ajax hooks
+			add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
+			add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));			
+		} else {
+			add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
+			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
 		}
 	}
 
@@ -511,10 +512,9 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	private function _get_calendar_options() {
-		if ( empty( $this->_calendar_options ) || ! is_array( $this->_calendar_options )) {
-			$this->_calendar_options = get_option( 'espresso_calendar_settings', array() );
-		}
-		return $this->_calendar_options;
+		$c = isset ( EE_Config::instance()->addons['calendar'] ) ? EE_Config::instance()->addons['calendar'] : new EE_Calendar_Config();
+		$this->_calendar_config = $c;
+		return $this->_calendar_config;
 	}
 
 
@@ -530,9 +530,9 @@ class EE_Calendar {
 			return;
 		}
 		// get calendar options
-		$this->_calendar_options = $this->_get_calendar_options();
+		$calendar_config = $this->_get_calendar_options();
 		//Load tooltips styles
-		$show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
+		$show_tooltips = $calendar_config->tooltip->show;
 		if ( $show_tooltips ) {
 			// load jQuery qtip script from CDN with local fallback
 			$qtip_js_url = 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js';
@@ -595,8 +595,9 @@ class EE_Calendar {
 			return '';
 		}
 		// get calendar options
-		$this->_calendar_options = $this->_get_calendar_options();
-		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE, 'show_tooltips' => FALSE ), $this->_calendar_options );
+		$calendar_config = $this->_get_calendar_options();
+		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE, 'show_tooltips' => FALSE ), $calendar_config->to_array() );
+		d($defaults);die;
 		// make sure $atts is an array
 		$atts = is_array( $atts ) ? $atts : array( $atts );
 		// set default attributes
@@ -699,20 +700,18 @@ class EE_Calendar {
 //	$this->timer->start();
 		remove_shortcode('LISTATTENDEES');
 		// get calendar options
-		$this->_calendar_options = $this->_get_calendar_options();
-		 $enable_cat_classes = isset( $this->_calendar_options['enable_cat_classes'] ) && $this->_calendar_options['enable_cat_classes'] ? TRUE : FALSE;
-		 $show_attendee_limit = isset( $this->_calendar_options['show_attendee_limit'] ) && $this->_calendar_options['show_attendee_limit'] ? TRUE : FALSE;
-		 $show_time = isset( $this->_calendar_options['show_time'] ) && $this->_calendar_options['show_time'] ? TRUE : FALSE;
-		 $show_tooltips = isset( $this->_calendar_options['show_tooltips'] ) && $this->_calendar_options['show_tooltips'] ? TRUE : FALSE;
+		$config = $this->_get_calendar_options();
+		 $enable_cat_classes = $config->enable_cat_classes;
+		 $show_attendee_limit = $config->show_attendee_limit;
+		 $show_time = $config->time->show_time;
+		 $show_tooltips = $config->tooltip->show;
 		if ( $show_tooltips ) {
-			$tooltip_my = isset( $this->_calendar_options['tooltips_pos_my_1'] ) && ! empty( $this->_calendar_options['tooltips_pos_my_1'] ) ? $this->_calendar_options['tooltips_pos_my_1'] : 'bottom';
-			$tooltip_my .= isset( $this->_calendar_options['tooltips_pos_my_2'] ) && ! empty( $this->_calendar_options['tooltips_pos_my_2'] ) ? ' ' . $this->_calendar_options['tooltips_pos_my_2'] : ' center';
-			$tooltip_at = isset( $this->_calendar_options['tooltips_pos_at_1'] ) && ! empty( $this->_calendar_options['tooltips_pos_at_1'] ) ? $this->_calendar_options['tooltips_pos_at_1'] : 'top';
-			$tooltip_at .= isset( $this->_calendar_options['tooltips_pos_at_2'] ) && ! empty( $this->_calendar_options['tooltips_pos_at_2']) ? ' ' . $this->_calendar_options['tooltips_pos_at_2'] : ' center';
-			$tooltip_style = isset( $this->_calendar_options['tooltip_style'] ) && $this->_calendar_options['tooltip_style'] ? $this->_calendar_options['tooltip_style'] : 'qtip-light';
-			$tooltip_word_count = isset( $this->_calendar_options['tooltip_word_count'] ) ? $this->_calendar_options['tooltip_word_count'] : 50;
+			$tooltip_my = $config->tooltip->pos_my_1 . $config->tooltip->pos_my_2;
+			$tooltip_at = $config->tooltip->pos_at_1 . $config->tooltip->pos_at_2;
+			$tooltip_style = $config->tooltip->style;
+			$tooltip_word_count = $config->tooltip->word_count;
 		}
-		$enable_calendar_thumbs = isset( $this->_calendar_options['enable_calendar_thumbs'] ) && $this->_calendar_options['enable_calendar_thumbs'] ? TRUE : FALSE;
+		$enable_calendar_thumbs = $config->enable_calendar_thumbs;
 
 		
 		$today = date( 'Y-m-d' );
@@ -722,7 +721,7 @@ class EE_Calendar {
 		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $this->_show_expired;	
 		// set boolean for categories 
-		$use_categories = isset($this->_calendar_options['disable_categories']) && $this->_calendar_options['disable_categories'] == FALSE ? TRUE : FALSE;
+		$use_categories = ! $config->disable_categories;
 		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 		if($event_category_id){
 			$where_params['Event.Term_Taxonomy.term_taxonomy_id'] = $event_category_id;
@@ -779,8 +778,8 @@ class EE_Calendar {
 			}
 			
 
-			$startTime = $datetime->start_time($this->_calendar_options['time_format']) ? '<span class="event-start-time">' . $datetime->start_time($this->_calendar_options['time_format']) . '</span>' : FALSE;
-			$endTime = $datetime->end_time($this->_calendar_options['time_format']) ? '<span class="event-end-time">' . $datetime->end_time($this->_calendar_options['time_format']) . '</span>' : FALSE;
+			$startTime =  '<span class="event-start-time">' . $datetime->start_time($config->time->format) . '</span>';
+			$endTime = '<span class="event-end-time">' . $datetime->end_time($config->time->format) . '</span>';
 
 			if ( $show_time && $startTime ) {
 				$event_time_html = '<span class="time-display-block">' . $startTime;
@@ -909,7 +908,7 @@ class EE_Calendar {
 	public function __destruct() { return FALSE; }		
 
 }
-add_action( 'AHEE__EE_System__construct__end', array( 'EE_Calendar','instance' ));
+EE_Calendar::instance();
 
 
 
