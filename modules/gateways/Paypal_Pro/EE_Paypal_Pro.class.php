@@ -821,7 +821,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Testing Result Code Responses', 'event_espreso'); ?></strong><br/>
-						<span class="small-text"><?php _e('You can use the amount of the transaction to generate a particular result code. The table below lists the general guidelines for specifying amounts.', 'event_espreso'); ?></span>
+						<span class="small-text"><?php printf(__('You can use the amount of the transaction to generate a particular result code. The table below lists the general guidelines for specifying amounts. IMPORTANT: before you attempt any of these, ensure your sandbox paypal account has %s "Negative Testing" set to on%s', 'event_espreso'),"<a href='https://docs.google.com/a/eventespresso.com/file/d/0B5P8GXTvZgfMNXNkZ2s5VUlHTUk/edit?usp=drivesdk'>","</a>"); ?></span>
 					</p>			
 
 					<div class="tbl-wrap">
