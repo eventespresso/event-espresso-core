@@ -380,12 +380,6 @@ class EE_Calendar {
 	 */
 	private $_event_category_id = 0;
 
-	/**
-	 * 	@var 	boolean	$_show_expired
-	 *  @access 	private
-	 */
-	private $_show_expired = TRUE;
-
 
 	private $timer = NULL;
 
@@ -595,14 +589,13 @@ class EE_Calendar {
 		}
 		// get calendar options
 		$calendar_config = $this->_get_calendar_options();
-		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'false', 'cal_view' => 'month', 'widget' => FALSE,), $calendar_config->to_flat_array() );
+		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'true', 'cal_view' => 'month', 'widget' => FALSE,), $calendar_config->to_flat_array() );
 		// make sure $atts is an array
 		$ee_calendar_js_options = is_array( $ee_calendar_js_options ) ? $ee_calendar_js_options : array( $ee_calendar_js_options );
 		// set default attributes
 		$ee_calendar_js_options = shortcode_atts( $defaults, $ee_calendar_js_options );
 		// grab some request vars
 		$this->_event_category_id = $ee_calendar_js_options['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $ee_calendar_js_options['event_category_id'];
-		$this->_show_expired = $ee_calendar_js_options['show_expired'] = isset( $_REQUEST['show_expired'] ) && ! empty( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $ee_calendar_js_options['show_expired'];
 		// i18n some strings
 		$ee_calendar_js_options['month_names'] = array( 
 			__('January', 'event_espresso'),
@@ -711,7 +704,7 @@ class EE_Calendar {
 		$year = date('Y' );
 		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
 		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));	
-		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $this->_show_expired;	
+		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';	
 		// set boolean for categories 
 		$use_categories = ! $config->disable_categories;
 		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
@@ -722,10 +715,10 @@ class EE_Calendar {
 		
 		$where_params['DTT_EVT_start*1']= array('>=',$start_datetime);
 		$where_params['DTT_EVT_start*2'] = array('<=',$end_date);
-//		if($show_expired == 'false'){
-//			$where_params['DTT_EVT_start*3'] = array('>=',$today);
-//			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
-//		}
+		if($show_expired == 'false'){
+			$where_params['DTT_EVT_start*3'] = array('>=',$today);
+			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
+		}
 		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
 		/* @var $datetime_objs EE_Datetime[] */
 				
