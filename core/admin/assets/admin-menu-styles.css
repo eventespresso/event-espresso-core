@@ -246,22 +246,12 @@ div.TB-ee-frame a {
 	cursor: pointer;
 }
 
-.ee-email-icon:before, .ee-view-icon:before, .ee-lock-icon:before, .ee-collapsible:before, .ee-capacity-icon:before, .ee-url-icon:before, .ee-phone-icon:before {
+.ee-lock-icon:before, .ee-collapsible:before, .ee-capacity-icon:before, .ee-url-icon:before, .ee-phone-icon:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
 	font: normal 16px/1 'dashicons';
 	vertical-align: top;
 	margin-top: 3px;
-}
-
-.ee-email-icon:before {
-	content: "\f157";
-}
-
-.ee-view-icon:before {
-	content: "\f177";
-	margin-top: 6px;
-	margin-right: 3px;
 }
 
 .ee-lock-icon:before {
