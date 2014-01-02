@@ -2816,7 +2816,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$data = array_merge( (array) $data, (array) $existing );
 		}
 
-		set_transient( $transient, $data, 5 );
+		set_transient( $transient, $data, 8 );
 	}
 	
 

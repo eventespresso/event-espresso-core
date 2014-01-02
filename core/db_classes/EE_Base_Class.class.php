@@ -523,7 +523,16 @@ abstract class EE_Base_Class{
 	public function set_from_db($field_name,$field_value_from_db){
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		$field_obj = $this->get_model()->field_settings_for($field_name);
-		$this->$privateAttributeName = $field_obj->prepare_for_set_from_db($field_value_from_db);
+		//you would think the DB hass no NULLs for non-nullabel fields right? wrong!
+		//eg, a CPT model object could have an entry in the posts table, but no
+		//entry in the meta table. Meaning that all its columsn in the meta table
+		//are null! yikes! so when we find one like that, use defaults for its meta columns
+		if($field_value_from_db === NULL && ! $field_obj->is_nullable()){
+			$field_value = $field_obj->get_default_value();
+		}else{
+			$field_value = $field_value_from_db;
+		}
+		$this->$privateAttributeName = $field_obj->prepare_for_set_from_db($field_value);
 		//echo '<h4>' . $privateAttributeName . ' : ' . $this->$privateAttributeName . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	}
 	
