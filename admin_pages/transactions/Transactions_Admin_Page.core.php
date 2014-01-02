@@ -329,19 +329,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transaction_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'images/magnifier.png',
+				'class' => 'dashicons dashicons-search',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
 			'download_invoice' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'images/invoice-1-16x16.png',
+				'class' => 'ee-icon ee-icon-PDF-file-type',
 				'desc' => __('Download Invoice for Transaction.', 'event_espresso')
 				),
 			'send_payment_reminder' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'images/payment-reminder-20x20.png',
+				'class' => 'ee-icon ee-icon-payment-reminder',
 				'desc' => __('Send Payment Reminder', 'event_espresso')
 				),
 			'view_registration' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'images/edit.png',
+				'class' => 'ee-icon ee-icon-user-edit',
 				'desc' => __('View Registration Details', 'event_espresso')
 				)
 		);
@@ -393,7 +393,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
 
-		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __('Send Payment Reminder'), 'button secondary-button right ee-email-icon' ) : '';
+		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __('Send Payment Reminder'), 'button secondary-button right ee-icon ee-icon-payment-reminder' ) : '';
 		
 		$amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
 		$this->_template_args['amount_due'] =  ' <span id="txn-admin-total-amount-due">' . EEH_Template::format_currency( $amount_due, TRUE ) . '</span>';

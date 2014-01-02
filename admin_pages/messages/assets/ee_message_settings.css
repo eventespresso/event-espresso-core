@@ -30,13 +30,6 @@
 }
 
 
-.ajax-loader-grey {
-    background: transparent url(../../../templates/global_assets/images/ajax-loader-grey.gif) no-repeat left;
-    padding: 31px;
-    display: none;
-    padding-right: 5px;
-}
-
 
 #active-message-types, #inactive-message-types {
     min-height: 10em;

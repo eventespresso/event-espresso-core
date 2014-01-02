@@ -34,7 +34,6 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour {
 		$this->_slug = 'critical-pages-joyride';
 	}
 
-
 	protected function _set_tour_stops() {
 		$this->_stops = array(
 			10 => array(
@@ -87,22 +86,17 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour {
 		return $content;
 	}
 
-	
-
 	protected function _reg_page_id_stop() {
 		return '<p>' . __('This is the page that displays all your events and is required, even if it is not visible in your menus. ', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _txn_page_id_stop() {
 		return '<p>' . __('This processes the payments. It should not be visible on your menus, and the page should not contain anything other than the shortcode.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _thank_you_page_id_stop() {
 		return '<p>' . __('This page is displayed after a successful transaction. Feel free to add extra content to this page to personalise it!', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _cancel_page_id_stop() {
 		return '<p>' . __('This page is displayed after an unsuccessful transaction. Feel free to add extra content to this page to personalise it!', 'event_espresso') . '</p>';

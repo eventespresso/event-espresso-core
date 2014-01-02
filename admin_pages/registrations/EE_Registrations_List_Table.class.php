@@ -447,28 +447,21 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	        $view_lnk = '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/magnifier.png">
+				<div class="dashicons dashicons-search"></div>
 			</a>
 		</li>';
 
 	       $edit_lnk = '
 		<li>
 			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Edit Contact Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/user_edit.png">
+				<div class="dashicons dashicons-businessman"></div>
 			</a>
 		</li>';
 
 	         $resend_reg_lnk = '
 		<li>
 			<a href="'.$resend_reg_lnk_url.'" title="' . __( 'Resend Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Resend Registration Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/email_go.png">
-			</a>
-		</li>';
-
-	         $dl_tckt_lnk = '
-		<li>
-			<a href="' . add_query_arg( array( 'ticket_launch'=>'true', '_REG_ID'=>$item->reg_url_link(),  'html'=>'true' ), site_url() ) . '" target="_blank" title="' . __( 'Download Ticket', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Download Ticket', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/ticket-arrow-icon.png">
+				<div class="ee-icon ee-icon-email-send"></div>
 			</a>
 		</li>';
 
@@ -477,13 +470,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$view_txn_lnk = '
 		<li>
 			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="View Transaction" src="'. EE_GLOBAL_ASSETS_URL .'/images/money.png">
+				<div class="ee-icon ee-icon-cash"></div>
 			</a>
 		</li>';
 
 			$actions = '
 	<ul class="reg-overview-actions-ul">' . 
-	$view_lnk . $edit_lnk . $resend_reg_lnk . /*$dl_tckt_lnk .*/ $view_txn_lnk . '
+	$view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk . '
 	</ul>';
 			
 			return $actions;

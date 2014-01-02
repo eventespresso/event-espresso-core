@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Your_Organization_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Organization Settings Tour', 'event_espresso');
+		$this->_label = __('Your Organization Tour', 'event_espresso');
 		$this->_slug = 'your-organization-joyride';
 	}
 
@@ -68,6 +68,15 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			50 => array(
+				'id' => 'organization_facebook',
+				'content' => $this->_organization_facebook_stop(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 15
+					)
+				),
+			60 => array(
 				'id' => 'ueip_optin',
 				'content' => $this->_ueip_option_stop(),
 				'options' => array(
@@ -82,24 +91,24 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Organization Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('Make sure that your business details are correct, and help promote your own brand!', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the your organization page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-	
-
 	protected function _site_license_key_stop() {
-		return '<p>' . __('Insert your license key here to benefit from one click updates.', 'event_espresso') . '</p>';
+		return '<p>' . __('Insert your license key here to enable one click updates.', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _contact_information_stop() {
-		return '<p>' . __('Your business details. These are used in other areas of the site, so keep them updated!', 'event_espresso') . '</p>';
+		return '<p>' . __('You can change your business information below. Be sure to keep this information updated as it is used in other areas of the site.', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _upload_image_stop() {
 		return '<p>' . __('Add a logo. This can be used for invoice and tickets.', 'event_espresso') . '</p>';
+	}
+
+	protected function _organization_facebook_stop() {
+		return '<p>' . __('Add links to various social media networks.', 'event_espresso') . '</p>';
 	}
 
 	protected function _ueip_option_stop() {

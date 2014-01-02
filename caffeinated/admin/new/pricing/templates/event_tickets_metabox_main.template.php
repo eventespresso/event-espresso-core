@@ -44,6 +44,7 @@
 			<div style="clear:both"></div>
 		</div>
 	</div> <!-- end #add-event-datetime -->
+	<div style="clear:both"></div>
 	
 	<div class="available-tickets-container">
 		<h4 class="event-tickets-datetimes-title"><span data-target=".event-tickets-container" class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><?php _e('Available Tickets', 'event_espresso'); ?></span></h4>

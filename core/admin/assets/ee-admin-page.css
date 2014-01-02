@@ -127,9 +127,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .admin-page-header-edit-lnk  { margin:0 0 0 1em; font-size:10px; }
 .admin-page-header-go-back-lnk  { margin:0 0 0 1em; font-size:12px; }
 
-#espresso-admin-page-ajax-loading { display:none; position:absolute; top:18px; left:50%; margin-left:-15px; padding:0; z-index:99999; }
-#espresso-admin-page-ajax-loading span { display:none; }
-
 #espresso-admin-page-overlay-dv {
 	position:absolute; top:0; left:0;
 	background: rgba(0, 0, 0, 0.6) !important; z-index:999;
@@ -173,24 +170,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .no-bold { font-weight: normal; }
 .currency-code { font-size:.7em; color:#a8a8a8; vertical-align: text-top; }
 
-/**
- * common icons
- */
-.ticket-icon, .trash-icon, .clone-icon, .lock-icon {
-    display: inline-block;
-    height: 16px;
-    padding: 0;
-    vertical-align: middle;
-    width: 16px;
-}
-
-.trash-icon {
-    background: transparent url(../../../templates/global_assets/images/trash-small-16x16.png) 0 0 no-repeat;
-}
-
-.lock-icon {
-    background: transparent url(../../../templates/global_assets/images/lock.png) 0 0 no-repeat;
-}
 
 .check-column .lock-icon {
 	margin-left: 6px;
@@ -198,15 +177,90 @@ table .espresso-radio-btn-options-ul .big-lbl,
 
 /** end common icons **/
 
+/******************* AJAX ****************** */
 
-.espresso-help-tab-lnk.help_img {
-	display: inline-block; position: relative; top:3px; width: 16px; height: 16px; margin: 0 0 0 .25em;
-	background: transparent url(../../../templates/global_assets/images/help.png) bottom left no-repeat; text-indent:-999em; overflow: hidden;
-    padding: 0px;
+
+#espresso-ajax-loading {
+	display: none;
+	position: absolute;
+	top: 25%;
+	left: 50%;
+	margin-left: -15px;
+	padding: 0;
+	z-index: 1000;
+	font-size: 48px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
-.espresso-help-tab-lnk.help_img:hover { background-position: top left; }
-.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../templates/global_assets/images/help2.png); }
-.espresso-help-tab-lnk.help_img.help2 { background-image: url(../../../templates/global_assets/images/help2.png); }
+.espresso-unpaid-status-icon-img,
+#espresso-ajax-loading img {
+	box-shadow: none !important;
+	border: none;
+}
+#espresso-ajax-long-loading {
+	font-size: 36px;
+}
+.ee-spinner:before {
+	content: "\f111";
+	/*content: "\f463";*/
+}
+.ee-spinner {
+	font-family: 'dashicons';
+	display: inline-block;
+    	font-style: normal;
+    	font-weight: normal;
+    	line-height: 1;	
+	vertical-align: middle;
+}
+
+.ee-spin {
+	-webkit-animation:spin 2s linear infinite;
+	-moz-animation: spin 2s linear infinite;
+	-o-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite;
+}
+
+
+@-moz-keyframes spin {
+	0% {
+		-moz-transform: rotate(0deg);
+	}
+	100% {
+		-moz-transform: rotate(359deg);
+	}
+}
+@-webkit-keyframes spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(359deg);
+	}
+}
+@-o-keyframes spin {
+	0% {
+		-o-transform: rotate(0deg);
+	}
+	100% {
+		-o-transform: rotate(359deg);
+	}
+}
+@-ms-keyframes spin {
+	0% {
+		-ms-transform: rotate(0deg);
+	}
+	100% {
+		-ms-transform: rotate(359deg);
+	}
+}
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(359deg);
+	}
+} 
 
 
 
@@ -314,50 +368,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin-left: 2em; margin-right: 2em;
 }
 
-.view_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/magnifier.png) no-repeat;
-	text-indent: -9000px;
-	outline: none;
-}
-.view_btn:hover {
-	margin: 4px 3px 0 0;
-	height: 20px;
-}
-.edit_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/calendar_edit.png) no-repeat;
-	text-indent: -9000px;
-	outline: none;
-}
-/*.edit_btn:hover { background-position: -72px -18px; }*/
-.edit_btn:hover {
-	margin: 4px 3px 0 0;
-	height: 20px;
-}
-.complete_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/group.png) no-repeat;
-	text-indent: -9000px;
-	outline: none;
-}
-/*.complete_btn:hover { background-position: -36px -18px; }*/
-.complete_btn:hover {
-	margin: 4px 3px 0 0;
-	height: 20px;
-}
 .options_btn {
 	display: block;
 	float: left;
@@ -414,22 +424,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin: 4px 3px 0 0;
 	height: 20px;
 }
-.reports_btn {
-	display: block;
-	float: left;
-	width: 18px;
-	height: 18px;
-	margin: 2px 3px 0 0;
-	background: url(../../../templates/global_assets/images/chart_bar.png) no-repeat;
-	text-indent: -9000px;
-	outline: none;
-}
-
-/*fixing this -  what does this mean?*/
-.view_btn:hover, .edit_btn:hover, .complete_btn:hover, .excel_exp_btn:hover, .csv_exp_btn:hover, .newsletter_btn:hover {
-	height: 18px;
-	margin: 2px 3px 0 0;
-}
 
 .help-tab-content img {
 	border: 2px solid #e7e7e7;
@@ -474,8 +468,23 @@ label.error  { display: block; color: #FE2A00 !important; }
    float: left;
 }
 
+.ee-list-table-legend-container .dashicons, .ee-list-table-legend-container .ee-icon {
+	font-size: 18px;
+}
+
 .ee-legend-description {
     margin-left: 10px;
+}
+
+/**
+ * other ee wp-list-table styles
+ */
+.espresso-admin .wp-list-table .ee-icon:before, .espresso-admin .wp-list-table .dashicons:before, .espresso-admin .wp-list-table .checkin-icons:before {
+	font-size: 18px;
+ }
+
+.espresso-admin .wp-list-table a {
+	display: inline-block;
 }
 
 
@@ -533,8 +542,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 .ajax-loader-grey {
-	background: transparent url(../../../templates/global_assets/images/ajax-loader-grey.gif) no-repeat top left;
-	padding: 31px;
 	display: none;
 }
 
@@ -556,52 +563,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 	margin: 5px;
 	height: auto;
 	white-space: normal;
-}
-
-/** NEW ICONS **/
-.gear-icon:before, .ee-email-icon:before, .ee-view-icon:before, .ee-lock-icon:before, .ee-collapsible:before, .ee-capacity-icon:before, .ee-url-icon:before, .ee-phone-icon:before {
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 'dashicons';
-	vertical-align: top;
-	margin-top: 3px;
-}
-
-.ee-email-icon:before {
-	content: "\f157";
-}
-
-.ee-view-icon:before {
-	content: "\f177";
-	margin-top: 6px;
-	margin-right: 3px;
-}
-
-.ee-lock-icon:before {
-	content: "\f160";
-}
-
-.gear-icon:before {
-	margin-top: 1px;
-	content: "\f111";
-}
-
-.ee-capacity-icon:before {
-	content: "\f459";
-}
-
-.ee-url-icon:before {
-	content: "\f103";
-}
-
-.ee-phone-icon:before {
-	content: "\f336";
-}
-
-
-
-.espresso-admin .wp-list-table .ee-lock-icon:before {
-	margin-left: 8px;
 }
 
 

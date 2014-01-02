@@ -171,19 +171,19 @@ jQuery(document).ready(function($) {
 		$('#message').stop().hide();
 		// spinny things pacify the masses
 		var st = $('html').scrollTop();
-		var po = $('#espresso-admin-page-ajax-loading').parent().offset();		
+		var po = $('#espresso-ajax-loading').parent().offset();		
 		var mal_top = ( st+( parseInt( $(window).height() )/5 )-po.top ) - 15;
-		var ww = $('#espresso-admin-page-ajax-loading').parent().width();
+		var ww = $('#espresso-ajax-loading').parent().width();
 		var mal_left = ( ww/2 ) -15;
 		//alert( 'mal_top = ' + mal_top + '\n' + 'mal_left = ' + mal_left );
-		$('#espresso-admin-page-ajax-loading').css({ 'top' : mal_top, 'left' : mal_left }).show();	
+		$('#espresso-ajax-loading').css({ 'top' : mal_top, 'left' : mal_left }).show();	
 	}		
 	
 
 
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
 			
-		$('#espresso-admin-page-ajax-loading').fadeOut('fast');
+		$('#espresso-ajax-loading').fadeOut('fast');
 		//alert( response.toSource() );
 		if (( response.success != undefined && response.success != '' ) || ( response.errors != undefined && response.errors != '' )) {
 		

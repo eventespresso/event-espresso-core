@@ -456,15 +456,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _event_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/magnifier.png',
+				'class' => 'dashicons dashicons-search',
 				'desc' => __('View Event', 'event_espresso')
 			),
 			'edit_event' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/calendar_edit.png',
+				'class' => 'ee-icon ee-icon-calendar-edit',
 				'desc' => __('Edit Event Details', 'event_espresso')
 			),
 			'view_attendees' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/group.png',
+				'class' => 'dashicons dashicons-groups',
 				'desc' => __('View Registrations for Event', 'event_espresso')
 			)
 		);
@@ -1021,7 +1021,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'existing_ticket_ids' => '',
 			'total_ticket_rows' => 1,
 			'ticket_js_structure' => '',
-			'trash-icon' => 'ee-lock-icon',
+			'trash_icon' => 'ee-lock-icon',
 			'disabled' => ''
 			);
 
@@ -1103,7 +1103,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'TKT_qty' => $ticket->get_pretty('TKT_qty','input'),
 			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_sold' => $skeleton ? 0 : $ticket->get('TKT_sold'),
-			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon clickable' : 'ee-lock-icon',
+			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon dashicons dashicons-trash clickable' : 'ee-lock-icon',
 			'disabled' => $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted' ) ) ? '' : ' disabled=disabled'
 			);
 
