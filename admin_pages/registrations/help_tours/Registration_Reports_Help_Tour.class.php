@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Registration_Reports_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Reg Reports Tour', 'event_espresso');
+		$this->_label = __('Registration Reports Tour', 'event_espresso');
 		$this->_slug = 'registration-reports-joyride';
 	}
 
@@ -66,11 +66,11 @@ class Registration_Reports_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _reg_per_day_report_stop() {
-		return '<p>' . __('about the reg per day report', 'event_espresso') . '</p>';
+		return '<p>' . __('This graph shows registrations for each day.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_per_event_report_stop() {
-		return '<p>' . __('about the reg_per_event_report', 'event_espresso') . '</p>';
+		return '<p>' . __('This graph shows registrations for each event.', 'event_espresso') . '</p>';
 	}
 
 }
