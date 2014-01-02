@@ -1359,6 +1359,7 @@ abstract class EE_Base_Class{
 	 * @param string $meta_value
 	 * @param string $previous_value
 	 * @return int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+	 * NOTE: if the values havent changed, returns 0
 	 */
 	public function update_extra_meta($meta_key,$meta_value,$previous_value = NULL){
 		$query_params  = array(array(
@@ -1368,11 +1369,11 @@ abstract class EE_Base_Class{
 		if($previous_value !== NULL){
 			$query_params[0]['EXM_value'] = $meta_value;
 		}
-		$records_updated = EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);
-		if( ! $records_updated){
+		$existing_rows_like_that = EEM_Extra_Meta::instance()->get_all($query_params);
+		if( ! $existing_rows_like_that){
 			return $this->add_extra_meta($meta_key, $meta_value);
 		}else{
-			return $records_updated;
+			return EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);;
 		}
 	}
 	
