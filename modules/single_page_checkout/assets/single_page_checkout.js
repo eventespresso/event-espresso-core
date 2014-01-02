@@ -88,6 +88,7 @@
 	*/
 	$('#spco-copy-all-attendee-chk').on( 'click', function() {
 		if ( $(this).prop('checked')) {
+			SPCO.do_before_sending_ajax();
 			SPCO.reset_validation_vars();
 			$('.spco-copy-attendee-chk').each( function(index) {
 				if ( $('#spco-copy-all-attendee-chk').prop('checked') && $(this).prop('checked') != $('#spco-copy-all-attendee-chk').prop('checked') ) {
@@ -95,7 +96,10 @@
 				}
 			});
 			// any empty or invalid fields that need values ?
-			SPCO.validation_errors( 'spco-copy-all-attendee-chk' );
+			if ( ! SPCO.validation_errors( 'spco-copy-all-attendee-chk' )) {
+				// display success_msg
+				SPCO.display_messages( SPCO.generate_message_object( eei18n.attendee_info_copied ));				
+			}
 		}
 	});
 
@@ -217,7 +221,9 @@
 		multi_inputs_that_do_not_require_values : [],
 		// display debugging info in console?
 		display_debug : false,
-		// error message string
+		// success message array
+		success_msgs : [],
+		// error message array
 		error_msgs : [],
 
 		
@@ -228,6 +234,7 @@
 			// reset
 			SPCO.require_values = [];
 			SPCO.multi_inputs_that_do_not_require_values = [];
+			SPCO.success_msgs = [];
 			SPCO.error_msgs = [];
 		},
 
@@ -286,7 +293,7 @@
 						}
 					});
 					
-					SPCO.collapse_question_groups();
+					//SPCO.collapse_question_groups();
 
 				}		
 			}
@@ -525,7 +532,7 @@
 			if ( SPCO.validation_errors( 'verify_all_questions_answered' )) {
 				return false;
 			} else {
-				SPCO.collapse_question_groups();
+//				SPCO.collapse_question_groups();
 				return true;	
 			}
 		},
@@ -535,7 +542,7 @@
 		/**
 		*	validation_errors
 		*/	
-		validation_errors : function( msg_tag ) {
+		validation_errors : function( msg_tag, scroll_to_top ) {
 			//remove duplicates
 			SPCO.require_values = _.unique( SPCO.require_values );
 			// no empty or invalid fields that need values ?
@@ -547,9 +554,13 @@
 				//remove duplicates
 				SPCO.error_msgs = _.unique( SPCO.error_msgs );
 				// concatenate and tag error messages
-				var error_msg = SPCO.tag_error_msg( msg_tag, SPCO.error_msgs.join( '<br/>' ));
-				// display error_msg				
-				SPCO.scroll_to_top_and_display_messages( SPCO.generate_message_object( '', error_msg ));
+				var error_msg = SPCO.tag_message_for_debugging( msg_tag, SPCO.error_msgs.join( '<br/>' ));
+				// display error_msg
+				if ( scroll_to_top !== false ) {
+					SPCO.scroll_to_top_and_display_messages( SPCO.generate_message_object( '', error_msg ));
+				} else {
+					SPCO.display_messages( SPCO.generate_message_object( '', error_msg ));
+				}				
 				return true;		
 			} else {
 				return false;
@@ -561,7 +572,7 @@
 		/**
 		*	collapse_question_groups
 		*/	
-		collapse_question_groups : function() {			
+		collapse_question_groups : function() {
 			$('.espresso-question-group-wrap').slideUp(); 
 			$('#spco-copy-attendee-dv').slideUp();
 			$('#spco-auto-copy-attendee-pg').slideUp();
@@ -571,19 +582,19 @@
 
 
 		/**
-		*	do_before_spco_ajax
+		*	do_before_sending_ajax
 		*/	
-		do_before_spco_ajax : function() {
+		do_before_sending_ajax : function() {
 			// stop any message alerts that are in progress	
 			$('.espresso-ajax-notices').stop();
 			$('#espresso-ajax-long-loading').remove();
-			$('#espresso-ajax-loading').center().show();		
+			$('#espresso-ajax-loading').show();		
 		},
 
 
 
 		/**
-		*	like do_before_spco_ajax() but for the finalize_registration step
+		*	like do_before_sending_ajax() but for the finalize_registration step
 		*/	
 		display_processing_registration_notification : function() {
 			var top_of_form = $('#spco-steps-display-dv').offset();
@@ -609,10 +620,6 @@
 			fadeOut = fadeOut == undefined || fadeOut < 4000 ? 4000 : fadeOut;
 			// does an actual message exist ?
 			if ( success_msg != undefined && success_msg != '' )  {
-				// is success_msg a string or an object ?
-//				if ( success_msg.success != undefined ) {
-//					success_msg = success_msg.success;
-//				}
 				$('#espresso-ajax-notices').center();	
 				$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
 				$('#espresso-ajax-loading').fadeOut('fast');
@@ -631,10 +638,6 @@
 			$('#espresso-ajax-notices-attention').fadeOut('fast');				
 			// does an actual message exist ?
 			if ( error_msg != undefined && error_msg != '' ) {
-				// is error_msg a string or an object ?
-//				if ( typeof( error_msg ) === 'object' && error_msg.error != undefined && error_msg.error != '' ) {
-//					error_msg = error_msg.error;				
-//				} 						
 				$('#espresso-ajax-notices').center();				
 				$('#espresso-ajax-notices-error > .espresso-notices-msg').html( error_msg );
 				$('#espresso-ajax-loading').fadeOut('fast');
@@ -650,24 +653,32 @@
 		*	scroll_to_top_and_display_messages
 		*/	
 		scroll_to_top_and_display_messages : function( msg ) {
+			//var animation_complete = $.Deferred();
 			var top_of_form = $('#spco-steps-display-dv').offset();
 			top_of_form = top_of_form.top + 10;
 			$('body, html').animate({ scrollTop: top_of_form }, 'normal', function() {
-				// animation complete
-				if ( msg.success ) {
-					SPCO.show_event_queue_ajax_success_msg( msg.success );
-				} else if ( msg.error ) {
-					SPCO.show_event_queue_ajax_error_msg( msg.error );
-				}
+				SPCO.display_messages( msg );
+				//return animation_complete.promise();
 			});
 		},
 
 
 
 		/**
-		 * Hides the step specified by step_to_hide
-		 * @param int step_to_hide 1, 2, or 3
-		 * @return void
+		 * 	display_messages
+		 **/
+		display_messages : function( msg ){
+			if ( msg.success ) {
+				SPCO.show_event_queue_ajax_success_msg( msg.success );
+			} else if ( msg.error ) {
+				SPCO.show_event_queue_ajax_error_msg( msg.error );
+			}
+		},
+
+
+
+		/**
+		 * 	Hides the step specified by step_to_hide
 		 **/
 		hide_steps : function(){
 			$('.spco-edit-step-lnk').removeClass('hidden');		
@@ -681,7 +692,7 @@
 		/**
 		 * opens the the SPCO step specified by step_to_show
 		 * shows msg as a notification
-		 * @param int step_to_show either step 1, 2, or 3
+		 * @param string step_to_show either step 1, 2, or 3
 		 * @param string msg message to show
 		 * @return void
 		 **/
@@ -757,7 +768,7 @@
 				if ( step == 'payment_options' ) {
 					form_to_check = SPCO.process_selected_gateway();
 					if ( form_to_check == false ) {
-						msg = SPCO.generate_message_object( '', tag_error_msg( 'process_next_step > ' + next_step, eei18n.no_payment_method ));
+						msg = SPCO.generate_message_object( '', tag_message_for_debugging( 'process_next_step > ' + next_step, eei18n.no_payment_method ));
 						SPCO.scroll_to_top_and_display_messages( msg );
 						return false;
 					}
@@ -808,8 +819,11 @@
 				data: form_data,
 				dataType: "json",
 				beforeSend: function() {
-					if ( next_step != 'finalize_registration' ) {
-						SPCO.do_before_spco_ajax();
+					if ( step == 'attendee_information' ) {
+						SPCO.do_before_sending_ajax();
+						SPCO.collapse_question_groups();				
+					} else if ( next_step != 'finalize_registration' ) {
+						SPCO.do_before_sending_ajax();
 					}
 				}, 
 				success: function( response ){
@@ -837,7 +851,7 @@
 				},
 				error: function(response) {
 					SPCO.debug( 'submit_reg_form > ajax error response', dump( response ));
-					msg = SPCO.generate_message_object( '', tag_error_msg( 'submit_reg_form_' + step, eei18n.reg_step_error ));
+					msg = SPCO.generate_message_object( '', tag_message_for_debugging( 'submit_reg_form_' + step, eei18n.reg_step_error ));
 					SPCO.scroll_to_top_and_display_messages( msg );
 					return false;
 				}			
@@ -899,10 +913,10 @@
 
 
 		/**
-		*	tag_debug_msg
+		*	tag_message_for_debugging
 		*/	
-		tag_error_msg : function( tag, error_msg ) {
-			return eei18n.wp_debug == 1 ? error_msg + ' <span class="smaller-text">(&nbsp;' + tag + '&nbsp;)</span><br/>' : error_msg;
+		tag_message_for_debugging : function( tag, msg ) {
+			return eei18n.wp_debug == 1 ? msg + ' <span class="smaller-text">(&nbsp;' + tag + '&nbsp;)</span><br/>' : msg;
 		}
 
 
@@ -922,7 +936,7 @@
 	var go_to = {		
 		
 		// go to attendee_information
-		attendee_information : function ( msg ) {
+		attendee_information : function ( response ) {
 			SPCO.hide_steps();
 			// set attendee_information back to auto height 
 			$('#spco-attendee_information-dv').css( 'height', 'auto' );
