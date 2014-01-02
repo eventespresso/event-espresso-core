@@ -1,9 +1,3 @@
-#event-and-ticket-form-content .espresso-help-tab-lnk.help_img {
-    margin-top: 20px;
-    margin-left: 8px;
-}
-
-
 .event-tickets-datetimes-title {
     display: inline-block;
     font-size: 1.2em;
@@ -23,8 +17,13 @@
 /*.event-datetime-row {
     border-bottom: 2px solid #eee;
     /*padding-top: 15px;
-    padding-bottom: 11px;*/
+    padding-bottom: 11px;
 }/**/
+
+#espresso_events-create_new-event_date_info, #espresso_events-edit-event_date_info {
+    top: 18px;
+    left: 5px;
+}
 
 .datetime-title {
     font-size: 1.1em;
@@ -50,7 +49,7 @@
 }
 
 .datetime-edit-table td:nth-child(1), .datetime-edit-table td:nth-child(2) {
-    width: 40%;
+    width: 35%;
 }
 
 
@@ -67,7 +66,7 @@
 
 .datetime-edit .datetime-edit-table td:last-child {
     padding-top: 20px;
-    width: 10%;
+    width: 20%;
 }
 
 .datetime-edit .datetime-edit-table label {
@@ -119,18 +118,14 @@
 }
 
 
-
-.ticket-icon, .trash-icon, .clone-icon {
-    display: inline-block;
-    height: 16px;
-    margin-left: 8px;
-    padding: 0;
-    vertical-align: middle;
-    width: 16px;
+.ticket-table .ticket-row .trash-icon, .ticket-table .ticket-row .clone-icon:before {
+   margin-top: 6px;
 }
 
-.ticket-table .ticket-row .trash-icon, .ticket-table .ticket-row .clone-icon {
+.ticket-table .ticket-row .gear-icon {
     margin-top: 5px;
+    margin-right: 0;
+    margin-left: 0;
 }
 
 .ticket-table .ticket-row .ee-lock-icon:before {
@@ -153,8 +148,7 @@
 .ee-edit-editing {
     background-color: #f8f8f8;
     height: 40px;
-    padding-right: 3px;
-    padding-left: 3px;
+    padding-right: 5px;
     border-top: 1px solid #EEEEEE;
     border-left: 1px solid #EEEEEE;
     border-right: 1px solid #EEEEEE;
@@ -166,16 +160,11 @@
    vertical-align: middle;
 }
 
-.trash-icon {
-    background: transparent url(../../../../../templates/global_assets/images/trash-small-16x16.png) 0 0 no-repeat;
-}
-
-.ticket-icon {
-    background: transparent url(../../../../../templates/global_assets/images/tickets.png) 0 0 no-repeat;
-}
-
-.clone-icon {
-    background: transparent url(../../../../../templates/global_assets/images/clone-trooper-16x16.png) 0 0 no-repeat;
+.ticket-icon:before, .clone-icon:before, .trash-icon:before, .gear-icon:before {
+    font-size: 18px;
+    margin-left: 7px;
+    margin-right: 0px;
+    padding: 0;
 }
 
 .datetime-tickets-sold {
@@ -264,7 +253,7 @@
 
 .datetime-ticket.ticket-status-2 {
     background-color: transparent;
-    border-left: solid px #62B660;
+    border-left: solid 4px #62B660;
 }
 
 .datetime-ticket .gear-icon {
@@ -362,9 +351,6 @@
     width: 15%;
 }
 
-.ticket-table .ticket-row .gear-icon:before {
-    margin-top: 5px;
-}
 
 .ticket-table .ticket-display-row-TKT_sold {
     display:block;

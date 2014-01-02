@@ -296,7 +296,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'EVT_ID' => $event->ID()
 			);
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
-		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
+		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
 		return $actionlinks;
 	}
 
@@ -305,7 +305,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	protected function _event_legend_items() {
 		$items = parent::_event_legend_items();
 		$items['reports'] = array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/chart_bar.png',
+				'class' => 'dashicons dashicons-chart-bar',
 				'desc' => __('Event Reports', 'event_espresso')
 			);
 		return $items;
@@ -713,6 +713,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 			case 'draft' :
 				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
+				break;
 
 			default :
 				$where['status'] = $status;

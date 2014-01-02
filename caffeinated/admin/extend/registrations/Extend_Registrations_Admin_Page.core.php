@@ -333,11 +333,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$legend_items = array(
 			'checkin' => array(
-				'icon' => REG_ASSETS_URL . 'images/check-in-16x16.png',
+				'class' => 'ee-icon ee-icon-check-in',
 				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
 				),
 			'checkout' => array(
-				'icon' => REG_ASSETS_URL . 'images/check-out-16x16.png',
+				'class' => 'ee-icon ee-icon-check-out',
 				'desc' => __('This indicates the attendee has been checked out', 'event_espresso')
 				)
 			);
@@ -528,21 +528,21 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'checkin' => array(
-				'icon' => REG_ASSETS_URL . 'images/check-in-16x16.png',
+				'class' => 'ee-icon ee-icon-check-in',
 				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
 				),
 			'checkout' => array(
-				'icon' => REG_ASSETS_URL . 'images/check-out-16x16.png',
+				'class' => 'ee-icon ee-icon-check-out',
 				'desc' => __('This indicates the attendee has been checked out', 'event_espresso')
 				),
 			'nocheckinrecord' => array(
-				'icon' => REG_ASSETS_URL . 'images/delete-grey-16x16.png',
+				'class' => 'dashicons dashicons-no',
 				'desc' => __('This indicates that no Check-in record has been created for this attendee', 'event_espresso')
 				),
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/magnifier.png',
+				'class' => 'dashicons dashicons-search',
 				'desc' => __('View All Check-in records for this attendee', 'event_espresso')
-				),
+				),/**/
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 

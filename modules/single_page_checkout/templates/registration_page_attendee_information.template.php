@@ -63,9 +63,11 @@ if ( $event_queue['total_items'] > 0 ) {
 			echo do_action( 'AHEE_registration_page_attendee_information_before_questions', $item, $att_nmbr );
 			echo $item['attendee_questions'];
 			
-			if ( $att_nmbr == 1 && $print_copy_info ) { ?>
-
+			if ( $att_nmbr == 1 ) { ?>
 					<input type="hidden" id="primary-attendee" name="qstn[primary_attendee]" value="<?php echo $prmy_att_input_name ?>" />
+			<?php } ?>	
+
+			<?php if ( $att_nmbr == 1 && $print_copy_info ) { ?>
 
 					<div id="spco-copy-attendee-dv" class="hide-if-no-js">
 					

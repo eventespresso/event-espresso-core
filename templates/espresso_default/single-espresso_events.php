@@ -126,6 +126,12 @@ get_header();
 				</article>
 				<!-- #post -->
 				<?php do_action( 'AHEE_event_details_after_post', $post );
+				
+				// If comments are open or we have at least one comment, load up the comment template.
+				if ( comments_open() || get_comments_number() ) {
+					comments_template();
+				}
+				
 				endwhile;
 				
 				//No events found

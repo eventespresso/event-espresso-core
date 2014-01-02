@@ -262,7 +262,7 @@ jQuery(document).ready(function($) {
 
 	function process_return_data( response ) {
 
-		$('#espresso-admin-page-ajax-loading').fadeOut('fast');
+		$('#espresso-ajax-loading').fadeOut('fast');
 		overlay.trigger('click');
 
 		// grab PAY ID from return data

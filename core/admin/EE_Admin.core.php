@@ -179,7 +179,6 @@ final class EE_Admin {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
 			add_action( 'wp_ajax_event_list_load_state', array( $this, 'event_list_load_state_callback' ));
-			add_action( 'action_hook_espresso_help', array( $this, 'help_tab_links' ), 10, 4 );
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
@@ -594,41 +593,6 @@ final class EE_Admin {
 
 
 	/**
-	 * 	help_tab_links
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function help_tab_links( $help_tab = FALSE, $action = FALSE, $page = FALSE, $help_text = '' ) {
-		
-		if ( ! $page ) {
-			$page = isset( $_REQUEST['page'] ) && ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : $page;
-		}
-		
-		if ( ! $action ) {
-			$action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : $action;
-		}
-
-		if ( ! $help_tab ) {
-			$help_tab = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) . '_help_tab' : $help_tab;
-		}
-		
-	//	echo '<h4>$page : ' . $page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-	//	echo '<h4>$action : ' . $action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-	//	echo '<h4>$help_tab : ' . $help_tab . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		
-		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab;
-		$icon_style = empty( $help_text ) ? ' help_img' : '';
-		$help_text = ! empty( $help_text ) ? $help_text : 'click for help';
-	//	$help_icon_img = $custom_image ? $custom_image : '<img src="' . EE_PLUGIN_DIR_URL . 'images/subtle_help.png" width="16" height="16" alt="help" />';
-		
-		echo '
-		<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon_style . '" title="click to open the \'Help\' tab for more information about this feature" > ' . $help_text . ' </a>';
-	}
-
-
-
-	/**
 	 * 	espresso_toolbar_items
 	 *
 	 *  @access 	public
@@ -642,7 +606,7 @@ final class EE_Admin {
 		//Top Level
 		$admin_bar->add_menu(array(
 				'id' => 'espresso-toolbar',
-				'title' => '<span class="ab-icon-espresso"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label') . '</span>',
+				'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label') . '</span>',
 				'href' => EVENTS_ADMIN_URL,
 				'meta' => array(
 						'title' => __('Event Espresso'),

@@ -14,7 +14,12 @@ $count = 1;
 				<dl class="alignleft ee-list-table-legend">
 			<?php $count = 1; endif; ?>
 			<dt id="ee-legend-item-<?php echo $item; ?>">
-				<span class="ee-legend-img-container"><img src="<?php echo $details['icon']; ?>" class="ee-legend-icon" alt="<?php echo $details['desc']; ?>" /></span>
+				<?php $class = !empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
+				<span class="<?php echo $class; ?>">
+					<?php if ( !empty($details['icon']) ) : ?>
+					<img src="<?php echo $details['icon']; ?>" class="ee-legend-icon" alt="<?php echo $details['desc']; ?>" />
+					<?php endif; ?>
+				</span>
 				<span class="ee-legend-description"><?php echo $details['desc']; ?></span>
 			</dt>
 		<?php $count++; endforeach; ?>

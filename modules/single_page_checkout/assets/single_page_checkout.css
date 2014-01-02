@@ -381,12 +381,16 @@ span.ui-icon {
 .reg-page-form-field-wrap-pg input[type="text"] {
 	display:block;
 	width: 100%;
+	padding: 8px 10px 7px;
 	margin:0 0 1em;
 }
 .reg-page-form-field-wrap-pg select {
 	display:block;
-	padding: 8px 10px 7px;
+	padding: 7px 10px 7px;
 	margin:0 0 1em;
+}
+.reg-page-form-field-wrap-pg .display-inline {
+	display:inline-block;
 }
 .reg-page-form-field-wrap-pg input.medium-txt {
 	width:35%;
@@ -550,7 +554,8 @@ span.ui-icon {
 	position: relative;
 	top:2px;
 }
-.reg-page-billing-info-dv p, .sandbox-panel {
+.reg-page-billing-info-dv p,
+.reg-page-billing-info-dv .sandbox-panel {
 	padding: 1em;
 	margin:0 0 2em;
 	background-color: #FFFFE0;
