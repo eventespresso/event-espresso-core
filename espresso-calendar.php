@@ -681,7 +681,6 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function get_calendar_events() {
-		
 //	$this->timer->start();
 		remove_shortcode('LISTATTENDEES');
 		// get calendar options
@@ -709,7 +708,7 @@ class EE_Calendar {
 		$use_categories = ! $config->disable_categories;
 		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 		if($event_category_id){
-			$where_params['Event.Term_Taxonomy.term_taxonomy_id'] = $event_category_id;
+			$where_params['Event.Term_Taxonomy.Term.slug'] = $event_category_id;
 		}
 		$where_params['Event.status'] = 'publish';
 		
