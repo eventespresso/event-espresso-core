@@ -710,7 +710,7 @@ class EE_Calendar {
 		$month = date('m' );
 		$year = date('Y' );
 		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
-		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
+		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));	
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : $this->_show_expired;	
 		// set boolean for categories 
 		$use_categories = ! $config->disable_categories;
@@ -815,7 +815,8 @@ class EE_Calendar {
 				}
 //				}
 				// and just in case it's still too long, or somebody forgot to use the more tag...
-				$calendar_datetime->set_description($description);			
+				//if word count is set to 0, set no limit
+				$calendar_datetime->set_description(intval($tooltip_word_count) == 0 ? $description : wp_trim_words($description,$tooltip_word_count));			
 // tooltip wrapper
 				$tooltip_html = '<div class="qtip_info">';
 				// show time ?
