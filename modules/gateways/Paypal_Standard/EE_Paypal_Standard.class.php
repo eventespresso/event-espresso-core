@@ -374,7 +374,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		//get any of the current registrations, 
 		$primary_registrant = $transaction->primary_registration();
 		if($paypal_settings['use_sandbox']){
-			$this->addField('item_name_'.$item_num,'NOTIFY URL:'.$this->_get_return_url($primary_registrant));
+			$this->addField('item_name_'.$item_num,'NOTIFY URL:'.$this->_get_notify_url($primary_registrant));
 			$this->addField('amount_'.$item_num,0);
 			$this->addField('quantity_'.$item_num,1);
 		}
