@@ -36,7 +36,7 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$this->_metaboxes = array(
 			0 => array(
 				'page_route' => array( 'edit_category', 'add_category' ),
-				'func' => 'category_color',
+				'func' => 'category_color_widget',
 				'label' => __('Calendar Colors', 'event_espresso'),
 				'priority' => 'default',
 				'context' => 'side'
@@ -72,10 +72,10 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		parent::enqueue_scripts_styles();
 	}
 	
-	function category_color(){
+	function category_color_widget(){
 		if(isset($this->_req_data['EVT_CAT_ID'])){
 			$CAT_ID = $this->_req_data['EVT_CAT_ID'];
-			$category = EEM_Term_Taxonomy::instance()->get_one_by_ID($CAT_ID);
+			$category = EEM_Term::instance()->get_one_by_ID($CAT_ID);
 		}else{
 			$category = null;
 		}
@@ -109,7 +109,7 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 	protected function _save_calendar_color_settings($redirection_query_args){
 		$CAT_ID = isset($redirection_query_args['EVT_CAT_ID']) ? $redirection_query_args['EVT_CAT_ID'] :  NULL;
 		if($CAT_ID){
-			$category = EEM_Term_Taxonomy::instance()->get_one_by_ID($CAT_ID);
+			$category = EEM_Term::instance()->get_one_by_ID($CAT_ID);
 			$category->update_extra_meta('use_color_picker' , $this->_req_data['use-color-picker-for-calendar']);
 			$category->update_extra_meta('background_color', $this->_req_data['category-background-color-for-calendar']);
 			$category->update_extra_meta('text_color', $this->_req_data['category-text-color-for-calendar']);

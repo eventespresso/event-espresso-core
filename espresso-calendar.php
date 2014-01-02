@@ -745,21 +745,24 @@ class EE_Calendar {
 			}
 			//Get details about the category of the event
 			if ($use_categories) {
-				$primary_cat = $event->first_term_taxonomy();
+//				echo "using cateogires!";
+				$primary_cat = $event->first_event_category();
 				//any term_taxonmies set for this event?
+//				d($primary_cat);
 				if ( $primary_cat ) {
-					if($primary_cat->get_extra_meta('use_pickers',true,false)){
+//					d($primary_cat->get_extra_meta('use_color_picker',true,false));
+					if($primary_cat->get_extra_meta('use_color_picker',true,false)){
 						$calendar_datetime->set_color($primary_cat->get_extra_meta('background_color',true,null));
 						$calendar_datetime->set_textColor($primary_cat->get_extra_meta('text_color',true,null));
-						
 					}
-					$calendar_datetime->set_eventType($primary_cat->taxonomy());
+					$calendar_datetime->set_eventType($primary_cat->slug());
+//					d($calendar_datetime);
 					if ( $enable_cat_classes ) {
 						foreach ( $event->term_taxonomies() as $term_taxonomy ) {
 							$calendar_datetime->add_classname($term_taxonomy->taxonomy());
 						}				
 					} else {
-						$calendar_datetime->add_classname($primary_cat->taxonomy());
+						$calendar_datetime->add_classname($primary_cat->slug());
 					}
 				}
 				
