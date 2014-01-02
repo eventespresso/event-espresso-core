@@ -34,7 +34,6 @@ class Admin_Options_Help_Tour extends EE_Help_Tour {
 		$this->_slug = 'admin-options-joyride';
 	}
 
-
 	protected function _set_tour_stops() {
 		$this->_stops = array(
 			10 => array(
@@ -83,27 +82,23 @@ class Admin_Options_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Admin Options', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('Miscellaneous settings, such as logging, help tour settings, and promoting Event Espresso.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the your admin options page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-	
-
 	protected function _use_full_logging_stop() {
-		return '<p>' . __('When enabled, it creates a log file useful for debugging. Please only use if it is necessary.', 'event_espresso') . '</p>';
+		return '<p>' . __('When enabled, it creates a log file which can be useful for debugging. Please only use if it is necessary.', 'event_espresso') . '</p>';
 	}
-
 
 	protected function _use_remote_logging_stop() {
 		return '<p>' . __(' This option sends all Event Espresso debugging data and get/post variables to the specified URL below.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _show_reg_footer_stop() {
-		return '<p>' . __('Support us by adding a small link to Event Espresso in your event pages. You can even generate money for yourself by adding your affiliate link there!', 'event_espresso') . '</p>';
+		return '<p>' . __('Support us by adding a small link to Event Espresso in your event pages. You can even earn money for yourself by adding your affiliate link there!', 'event_espresso') . '</p>';
 	}
 	
 	protected function _help_tour_activation_stop() {
-		return '<p>' . __('Turn these help tours on/off globally.', 'event_espresso') . '</p>';
+		return '<p>' . __('Turn these help tours on/off for Event Espresso pages.', 'event_espresso') . '</p>';
 	}
 }
