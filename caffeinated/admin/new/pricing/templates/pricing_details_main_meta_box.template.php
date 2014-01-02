@@ -24,7 +24,7 @@
 			<tr valign="top">
 				<th><label for="PRC_desc"><?php _e('Description', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('description_field_info');?></th>
 				<td>
-					<textarea class="regular-text" id="PRC_desc" name="PRC_desc" cols="70" rows="1" ><?php
+					<textarea class="regular-text" id="PRC_desc" name="PRC_desc" rows="5" ><?php
 					 echo $price->desc(); 
 					?></textarea><br/>
 				</td>							
