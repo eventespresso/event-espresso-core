@@ -85,7 +85,7 @@ div.TB-ee-frame a {
 	font-style: normal;
 }
 
-.dashicons, .ee-icon:before, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before {
+.dashicons, .ee-dashicons, .ee-icon:before, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before {
 	position: relative;
 	top: -2px;
 	font-size: inherit;
@@ -95,7 +95,7 @@ div.TB-ee-frame a {
 	width: auto;	
 }
 
-.ee-icon:before, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before {
+.ee-icon:before, .ee-dashicons, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before {
 	display: inline-block;
 	font-family: 'ee_dashicons' !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
  	font-style: normal;
@@ -109,6 +109,13 @@ div.TB-ee-frame a {
 	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+/**
+ * used for those times when want to use the default dashicons font but not inherit any styles that may be assigned in in a particular location
+ */
+.ee-dashicons {
+	font-family: 'dashicons' !important;
 }
 
 #toplevel_page_espresso_events div.wp-menu-image:before, #wpadminbar .ee-icon:before {
@@ -246,7 +253,7 @@ div.TB-ee-frame a {
 	cursor: pointer;
 }
 
-.ee-lock-icon:before, .ee-collapsible:before, .ee-capacity-icon:before, .ee-url-icon:before, .ee-phone-icon:before {
+.ee-lock-icon:before, .ee-collapsible:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
 	font: normal 16px/1 'dashicons';
@@ -257,19 +264,6 @@ div.TB-ee-frame a {
 .ee-lock-icon:before {
 	content: "\f160";
 }
-
-.ee-capacity-icon:before {
-	content: "\f459";
-}
-
-.ee-url-icon:before {
-	content: "\f103";
-}
-
-.ee-phone-icon:before {
-	content: "\f336";
-}
-
 
 
 .espresso-admin .wp-list-table .ee-lock-icon:before {
