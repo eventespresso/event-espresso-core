@@ -1287,7 +1287,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//dialog container for dialog helper
 		$d_cont = '<div class="ee-admin-dialog-container auto-hide hidden">' . "\n";
 		$d_cont .= '<div class="ee-notices"></div>';
-		$d_cont .= '<div class="ajax-loader-grey"></div>';
 		$d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
 		$d_cont .= '</div>';
 		echo $d_cont;
@@ -2083,8 +2082,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/		
 	protected function _add_admin_page_ajax_loading_img() {
 		?>
-			<div id="espresso-admin-page-ajax-loading" class="hidden">
-				<img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?>'</span>
+			<div id="espresso-ajax-loading" class="ajax-loading-grey">
+				<span class="ee-spinner ee-spin"></span><span class="hidden"><?php _e('loading...', 'event_espresso'); ?></span>
 			</div>
 		<?php
 	}

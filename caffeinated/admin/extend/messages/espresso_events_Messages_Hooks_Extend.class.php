@@ -121,7 +121,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 			$tabbed_content = '<p>' . __( 'You will see notifications options after you add the initial details for your event and save it', 'event_espresso' ) . '</p>';
 		}
 
-		$notices = '<div class="ajax-loader-grey"></div><div class="ee-notices"></div>';
+		$notices = '<div id="espresso-ajax-loading" class="ajax-loader-grey">
+				<span class="ee-spinner ee-spin"></span><span class="hidden">' . __('loading...', 'event_espresso') . '</span>
+			</div><div class="ee-notices"></div>';
 
 		if ( defined('DOING_AJAX' ) )
 			return $tabbed_content;

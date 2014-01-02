@@ -127,9 +127,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .admin-page-header-edit-lnk  { margin:0 0 0 1em; font-size:10px; }
 .admin-page-header-go-back-lnk  { margin:0 0 0 1em; font-size:12px; }
 
-#espresso-admin-page-ajax-loading { display:none; position:absolute; top:18px; left:50%; margin-left:-15px; padding:0; z-index:99999; }
-#espresso-admin-page-ajax-loading span { display:none; }
-
 #espresso-admin-page-overlay-dv {
 	position:absolute; top:0; left:0;
 	background: rgba(0, 0, 0, 0.6) !important; z-index:999;
@@ -179,6 +176,91 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 /** end common icons **/
+
+/******************* AJAX ****************** */
+
+
+#espresso-ajax-loading {
+	display: none;
+	position: absolute;
+	top: 25%;
+	left: 50%;
+	margin-left: -15px;
+	padding: 0;
+	z-index: 1000;
+	font-size: 48px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.espresso-unpaid-status-icon-img,
+#espresso-ajax-loading img {
+	box-shadow: none !important;
+	border: none;
+}
+#espresso-ajax-long-loading {
+	font-size: 36px;
+}
+.ee-spinner:before {
+	content: "\f111";
+	/*content: "\f463";*/
+}
+.ee-spinner {
+	font-family: 'dashicons';
+	display: inline-block;
+    	font-style: normal;
+    	font-weight: normal;
+    	line-height: 1;	
+	vertical-align: middle;
+}
+
+.ee-spin {
+	-webkit-animation:spin 2s linear infinite;
+	-moz-animation: spin 2s linear infinite;
+	-o-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite;
+}
+
+
+@-moz-keyframes spin {
+	0% {
+		-moz-transform: rotate(0deg);
+	}
+	100% {
+		-moz-transform: rotate(359deg);
+	}
+}
+@-webkit-keyframes spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(359deg);
+	}
+}
+@-o-keyframes spin {
+	0% {
+		-o-transform: rotate(0deg);
+	}
+	100% {
+		-o-transform: rotate(359deg);
+	}
+}
+@-ms-keyframes spin {
+	0% {
+		-ms-transform: rotate(0deg);
+	}
+	100% {
+		-ms-transform: rotate(359deg);
+	}
+}
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(359deg);
+	}
+} 
 
 
 
@@ -460,8 +542,6 @@ label.error  { display: block; color: #FE2A00 !important; }
 }
 
 .ajax-loader-grey {
-	background: transparent url(../../../templates/global_assets/images/ajax-loader-grey.gif) no-repeat top left;
-	padding: 31px;
 	display: none;
 }
 
