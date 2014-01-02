@@ -34,7 +34,6 @@ class Payment_Methods_Settings_Help_Tour extends EE_Help_Tour {
 		$this->_slug = 'payment-settings-joyride';
 	}
 
-
 	protected function _set_tour_stops() {
 		$this->_stops = array(
 			10 => array(
@@ -54,14 +53,12 @@ class Payment_Methods_Settings_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Payment Settings page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Payment Settings', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the payment settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-	
-
 	protected function _show_pending_options_stop() {
-		return '<p>' . __('about the setting', 'event_espresso') . '</p>';
+		return '<p>' . __('Do you want to provide your registrants with the option to retry payments?', 'event_espresso') . '</p>';
 	}
 }

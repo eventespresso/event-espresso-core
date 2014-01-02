@@ -34,7 +34,6 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour {
 		$this->_slug = 'payment-methods-joyride';
 	}
 
-
 	protected function _set_tour_stops() {
 		$this->_stops = array(
 			10 => array(
@@ -54,7 +53,8 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_gateway_settings_metabox_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipAdjustmentY' => -25,
+					'tipAdjustmentX' => 20
 					)
 				)
 			);
@@ -62,20 +62,17 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Payment Method Gateway activation page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction ...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Payment Methods', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the payment methods page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-	
-
 	protected function _gateway_links_stop() {
-		return '<p>' . __('about the gateway selectors', 'event_espresso') . '</p>';
+		return '<p>' . __('Available payment methods are shown here. Clicking on a payment method will provide you with an option to enable that payment gateway.', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _gateway_settings_metabox_stop() {
-		return '<p>' . __('about the gateway settings metabox', 'event_espresso') . '</p>';
+		return '<p>' . __('A payment gateway must first be enabled. You will then be able to configure the payment gateway. Be sure to save changes.', 'event_espresso') . '</p>';
 	}
 
 }
