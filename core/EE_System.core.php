@@ -222,8 +222,9 @@ final class EE_System {
 	*/
 	private function _manage_activation_process() {
 		//let's ONLY do this method IF we're in admin and user IS logged in.
-		if ( !is_admin() || ( is_admin() && !is_user_logged_in() ) )
+		if ( ! is_admin() ) {
 			return;
+		}
 
 		// check if db has been updated, or if its a brand-new installation
 		
@@ -425,6 +426,25 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function init() {
+//		$p = EE_Price::new_instance();
+//		$p->set_amount('$2000');
+//		d($p->amount());
+//		$p->set_amount('$2000,00');
+//		d($p->amount());
+//		$p->set_amount('$2. 000,00');
+//		d($p->amount());
+//		$p->set_amount('$ 2. 000,00');
+//		d($p->amount());
+//		
+//		$l = EE_Line_Item::new_instance();
+//		$l->set_percent('%20');
+//		d($l->percent());
+//		$l->set_percent('%20,00');
+//		d($l->percent());
+//		$l->set_percent('20');
+//		d($l->percent());
+//		$l->set_percent('2. 000');
+//		d($l->percent());
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );

@@ -40,9 +40,9 @@ class EE_Money_Field extends EE_Float_Field{
 	 */
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
 		//remove any currencies etc.
-		if(is_string($value_inputted_for_field_on_model_object)){
-			$value_inputted_for_field_on_model_object = preg_replace("/[^0-9,.]/", "", $value_inputted_for_field_on_model_object);
-		}
+//		if(is_string($value_inputted_for_field_on_model_object)){
+//			$value_inputted_for_field_on_model_object = preg_replace("/[^0-9,.]/", "", $value_inputted_for_field_on_model_object);
+//		}
 		//now it's a float-style string or number
 		$float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
 		//round to the correctly number of decimal places for this  currency

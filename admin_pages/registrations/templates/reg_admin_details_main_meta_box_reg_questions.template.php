@@ -12,7 +12,7 @@
 		<?php if ( !empty($att_questions) ) : ?>
 			<input id="reg-admin-attendee-questions-submit" class="button-primary" value="Update Attendee Questions" type="submit" />
 		<?php else : ?>
-			<p><?php _e('There were no custom questions asked for this attendee.', 'event_espresso'); ?></p>
+			<p class="ee-attention"><?php _e('There were no custom questions asked for this attendee.', 'event_espresso'); ?></p>
 		<?php endif; ?>
 
 	</form>

@@ -12,13 +12,12 @@
 	position: relative;
 }
 
-.venue-header {
+.has-post-thumbnail .venue-header {
 	padding: 20px;
 	position: absolute;
 	bottom: 0;
 	left: 0;
 }
-
 
 #venue-details-h1 {
     -moz-hyphens: none;
@@ -32,17 +31,12 @@
 	margin:0;
 }
 
-
 .venue-header.has-img {
-	/*margin-top:-65px;*/
 	text-shadow: 1px 1px 0 #FFFFFF;
 	background: none repeat scroll 0 0 rgba(232, 232, 232, 0.9);
 }
-
 .venue-header.has-excerpt {
-	/*margin-top:-120px;*/
 }
-
 
 .venue-header.has-img p,
 .venue-header.has-excerpt p {
