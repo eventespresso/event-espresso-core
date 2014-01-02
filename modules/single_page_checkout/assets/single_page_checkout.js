@@ -586,6 +586,8 @@
 		*	like do_before_spco_ajax() but for the finalize_registration step
 		*/	
 		display_processing_registration_notification : function() {
+			var top_of_form = $('#spco-steps-display-dv').offset();
+			top_of_form = top_of_form.top + 10;
 			$('body, html').animate({ scrollTop: top_of_form }, 'normal', function() {
 				// animation complete
 				$('#spco-go-to-step-finalize_registration-btn').addClass( 'disabled' );
