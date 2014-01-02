@@ -106,10 +106,17 @@ EEH_Maps::espresso_google_map_js();
 					</div>
 				</article>
 				<!-- #post -->
-				<?php do_action( 'AHEE_venue_details_after_post', $post ); ?>
-				<?php endwhile; ?>
-				<?php //venue_espresso_content_nav( 'nav-below' ); ?>
-				<?php else : ?>
+				<?php 
+					do_action( 'AHEE_venue_details_after_post', $post ); 
+				
+					// If comments are open or we have at least one comment, load up the comment template.
+					if ( comments_open() || get_comments_number() ) {
+						comments_template();
+					}
+				
+				 	endwhile; 
+					
+				else : ?>
 				<article id="post-0" class="post no-results not-found">
 					<header class="venue-header">
 						<h1 class="venue-title">
