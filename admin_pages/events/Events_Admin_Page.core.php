@@ -1243,6 +1243,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			case 'draft' :
 				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
+				break;
 
 			default :
 				$where['status'] = $status;
