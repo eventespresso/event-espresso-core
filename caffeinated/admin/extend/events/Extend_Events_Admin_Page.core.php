@@ -713,6 +713,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 			case 'draft' :
 				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
+				break;
 
 			default :
 				$where['status'] = $status;
