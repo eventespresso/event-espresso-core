@@ -59,7 +59,7 @@ class EE_Has_Many_Any_Relation extends EE_Has_Many_Relation{
 		 $fk_field_on_other_model = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		 //set that field on the other model to this model's ID
 		 $other_model_obj->set($fk_field_on_other_model->get_name(),null, true);
-		 $other_model_obj->set($this->get_other_model()->get_field_containing_related_model_name(), null, true);
+		 $other_model_obj->set($this->get_other_model()->get_field_containing_related_model_name()->get_name(), null, true);
 		 $other_model_obj->save();
 		 return $other_model_obj;
 	 }
