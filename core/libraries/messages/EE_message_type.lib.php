@@ -466,7 +466,10 @@ abstract class EE_message_type extends EE_Messages_Base {
 	protected function _assemble_messages() {
 		foreach ( $this->_addressees as $context => $addressees ) {
 			foreach ( $addressees as $addressee ) {
-				$this->messages[] = $this->_setup_message_object($context, $addressee);
+				$message = $this->_setup_message_object($context, $addressee);
+				//only assign message if everything went okay
+				if ( $message )
+					$this->messages[] = $this->_setup_message_object($context, $addressee);
 			}
 		}
 	}
@@ -485,6 +488,9 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$mt_shortcodes = $this->get_valid_shortcodes();
 		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
+		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off).
+		if ( empty( $this->_templates['to'][$context] ) )
+			return false;
 
 		foreach ( $this->_templates as $field => $ctxt ) {
 			//let's setup the valid shortcodes for the incoming context.
