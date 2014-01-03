@@ -26,10 +26,11 @@
             
             <!-- content -->
             <div class="content">
+                <h1>ADMIN EMAIL</h1>
                 <table>
                     <tr>
                         <td>
-                            <h2>Hello, [FNAME]</h2>
+                            <h3>Hello, [FNAME]</h3>
                             <p class="lead">This is a copy of your registration details!</p>
                             
     

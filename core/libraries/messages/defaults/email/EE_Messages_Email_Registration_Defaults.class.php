@@ -40,6 +40,6 @@ class EE_Messages_Email_Registration_Defaults extends EE_Message_Template_Defaul
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '[EVENT_AUTHOR_EMAIL]';
 		$this->_templates['primary_attendee']['to'] = '[PRIMARY_ATTENDEE_EMAIL]';
-		$this->_templates['admin']['content'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-admin-main-content.template.php', TRUE );
+		$this->_templates['admin']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-admin-main-content.template.php', TRUE );
 	}
 }
