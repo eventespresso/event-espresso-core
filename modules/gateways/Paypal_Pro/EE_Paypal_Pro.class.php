@@ -834,39 +834,39 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 							</thead>
 							<tbody>
 								<tr>
-									<td>$0 - $10,000</td>
+									<td>$0 - $103.99</td>
 									<td><?php _e('Approved', 'event_espreso'); ?></td>
 								</tr>				
 								<tr>
-									<td>$10,400</td>
+									<td>$104.00</td>
 									<td><?php _e('Invalid amount', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,402</td>
+									<td>$104.02</td>
 									<td><?php _e('Invalid transaction type', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,405</td>
+									<td>$104.05</td>
 									<td><?php _e('Field format error', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,502</td>
+									<td>$105.02</td>
 									<td><?php _e('Invalid expiry date', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,504</td>
+									<td>$105.04</td>
 									<td><?php _e('CVV2 Mismatch', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,506</td>
+									<td>$105.06</td>
 									<td><?php _e('Declined', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,522</td>
+									<td>$105.22</td>
 									<td><?php _e('Invalid account number', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,536</td>
+									<td>$105.36</td>
 									<td><?php _e('Invalid account number', 'event_espreso'); ?></td>
 								</tr>
 							</tbody>
