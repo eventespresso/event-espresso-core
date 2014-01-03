@@ -564,17 +564,6 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		
 		
-		$table_name = 'esp_status';
-		$sql = "STS_ID varchar(3) COLLATE utf8_bin NOT NULL,
-					  STS_code varchar(45) COLLATE utf8_bin NOT NULL,
-					  STS_type set('event','registration','transaction','payment','email') COLLATE utf8_bin NOT NULL,
-					  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
-					  STS_desc tinytext COLLATE utf8_bin,
-					  STS_open tinyint(1) NOT NULL DEFAULT 1,
-					  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
-					  KEY STS_type (STS_type)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB' );
-
 
 
 		$table_name = 'esp_venue_meta';

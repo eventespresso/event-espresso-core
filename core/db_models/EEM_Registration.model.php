@@ -45,25 +45,35 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	
 	
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a pending registration
+	 * Status ID (STS_ID on esp_status table) to indicate a pending registration.
+	 * Meaning: the user CAN pay, but is not yet approved. No seat is reserved for them.
 	 */
 	const status_id_pending = 'RPN';
 	
 	
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a cancelled registration
+	 * Status ID (STS_ID on esp_status table) to indicate a cancelled registration.
+	 * NO seat reserved.
 	 */
 	const status_id_cancelled = 'RCN';
 	
+	/**
+	 * Status ID (STS_ID on teh esp_status table) to indicate a registration was DECLINED
+	 * by the admin. No seat reservced.
+	 */
+	const status_id_declined = 'RDC';
+	
 	
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate an approved registration
+	 * Status ID (STS_ID on esp_status table) to indicate an approved registration.
+	 * Their spot is reserved. Usually this means they ahve paid.
 	 */
 	const status_id_approved = 'RAP';
 	
 	
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate an unapproved registration
+	 * Status ID (STS_ID on esp_status table) to indicate an unapproved registration.
+	 * This means they are not yet allowed to pay, and an admin must first approve them.
 	 */
 	const status_id_not_approved = 'RNA';
 	/**
