@@ -381,7 +381,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				<input id="reg-page-billing-card-nmbr-<?php echo $gw; ?>" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr-<?php echo $gw; ?>"/>
 			</p>
 
-			<p class="reg-page-form-field-wrap-pg">
+			<p class="reg-page-form-field-wrap-pg display-inline">
 				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
 				<select id="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>">
 		<?php
