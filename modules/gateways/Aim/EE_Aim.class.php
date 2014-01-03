@@ -381,9 +381,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				<input id="reg-page-billing-card-nmbr-<?php echo $gw; ?>" class="required <?php echo $css_class; ?>" type="text" name="reg-page-billing-card-nmbr-<?php echo $gw; ?>"/>
 			</p>
 
-			<p class="reg-page-form-field-wrap-pg display-inline">
+			<p class="reg-page-form-field-wrap-pg">
 				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
-				<select id="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>">
+				<select id="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>" class="display-inline required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>">
 		<?php
 		for ($x = 1; $x <= 12; $x++) {
 			$value = $x < 10 ? '0' . $x : $x;
@@ -393,7 +393,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		?>
 				</select>
 				&nbsp;/&nbsp;
-				<select id="reg-page-billing-card-exp-date-year-<?php echo $gw; ?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year-<?php echo $gw; ?>">
+				<select id="reg-page-billing-card-exp-date-year-<?php echo $gw; ?>" class="display-inline required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year-<?php echo $gw; ?>">
 					<?php
 					$current_year = date('y');
 					$next_decade = $current_year + 10;
