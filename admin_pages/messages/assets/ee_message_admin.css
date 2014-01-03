@@ -51,3 +51,7 @@
 .resetbutton {
 	margin-right: 5px;
 }
+
+.mtp-inactive {
+	color: red;
+}

@@ -1203,7 +1203,7 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->default_STS_ID = 'RPN'; 	// default reg status
 		$this->use_attendee_pre_approval = FALSE;
 		$this->show_pending_payment_options = FALSE;
-		$this->pending_counts_reg_limit = TRUE;
+		$this->pending_counts_reg_limit = FALSE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;

@@ -571,7 +571,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
-		$reg_status = isset($this->_req_data['reg_status']) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
 		
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
 		
@@ -607,9 +606,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			$query_params[0]['Ticket.Datetime.DTT_is_primary'] = 1;
 		}
 
-		if($reg_status ){
-			$query_params[0]['STS_ID']=$reg_status;
-		}
+		$status_ids_array = apply_filters('FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending, EEM_Registration::status_id_approved ) );
+
+		$query_params[0]['STS_ID']= array('IN', $status_ids_array );
+		
 		if($trash){
 			$query_params[0]['Attendee.ATT_status']=  EEM_CPT_Base::post_status_trashed;
 		}
