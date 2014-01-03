@@ -271,7 +271,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE,
 				'help_tour' => array( 'Message_Templates_Edit_Help_Tour' ),
-				/*'help_tabs' => array(
+				'help_tabs' => array(
 						'edit_message_template' => array(
 							'title' => __('About Template Editor', 'event_espresso'),
 							'callback' => 'edit_message_template_help_tab'
@@ -280,7 +280,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'title' => __('Shortcode Descriptions', 'event_epresso'),
 							'callback' => 'message_template_shortcodes_help_tab'
 							),
-					),*/
+					),
 				'require_nonce' => FALSE
 				),
 			'preview_message' => array(
@@ -289,12 +289,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				/*'help_tabs' => array(
+				'help_tabs' => array(
 						'preview_message' => array(
 							'title' => __('About Previews', 'event_espresso'),
 							'callback' => 'preview_message_help_tab'
 							)
-					),*/
+					),
 				'require_nonce' => FALSE
 				),
 			'settings' => array(

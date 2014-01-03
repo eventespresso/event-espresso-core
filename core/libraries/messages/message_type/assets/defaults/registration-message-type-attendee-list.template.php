@@ -1,4 +1,4 @@
-<h4 class="attendee-name">[FNAME] [LNAME]</h4>
+<h5 class="attendee-name">[FNAME] [LNAME]</h5>
 		<p><strong>Tickets:</strong></p>
 		[TICKET_LIST]
 		
