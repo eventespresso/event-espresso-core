@@ -39,6 +39,6 @@ class EE_Messages_Email_Pending_Approval_Defaults extends EE_Message_Template_De
 	protected function _change_templates( $evt_id, $is_global ) {
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '[EVENT_AUTHOR_EMAIL]';
-		$this->_templates['primary_attendee']['to'] = '[PRIMARY_ATTENDEE_EMAIL]';
+		$this->_templates['primary_attendee']['to'] = '';
 	}
 }
