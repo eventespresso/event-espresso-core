@@ -14,13 +14,13 @@
 </li>
 <li>
 <?php _e('Category Description', 'event_espresso'); ?><br />
-<?php _e('The rich text editor can be used to edit the description for your event category. Similar to WordPress pages and posts, you can upload images and customize your text by using the options on the toolbar.', 'event_espresso'); ?>
+<?php _e('The rich text editor can be used to create a description for your event category. Similar to WordPress pages and posts, you can upload images and customize your text by using the options on the toolbar.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>
 <p>
-<?php _e('Recommendations: Want to see a tour of this screen? Click on the edit category tour button which appears on the right side of the page.', 'event_espresso'); ?>
+<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Edit Category Tour button which appears on the right side of the page.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e('Screen Options: You can customize the information that is shown on this page by toggling the screen options tab. Then you can add or remove checkmarks to hide or show certain content.', 'event_espresso'); ?>
+<?php _e('<strong>Screen Options</strong><br /> You can customize the information that is shown on this page by toggling the screen options tab. Then you can add or remove checkmarks to hide or show certain content.', 'event_espresso'); ?>
 </p>

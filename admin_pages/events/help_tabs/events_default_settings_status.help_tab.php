@@ -1,7 +1,7 @@
 <h3><?php _e('Default Registration Status', 'event_espresso'); ?></h3>
 <p>
 <strong><?php _e('Approved', 'event_espresso'); ?></strong><br />
-<?php _e('A status of approved means that an attendee\'s registration has been accepted as complete. Their registration will count towards the registration limit, remaining tickets, and calculations for available seats. This default status can be overridden for a specific event.', 'event_espresso'); ?>
+<?php _e('A status of approved means that an attendee\'s registration has been accepted as complete. Their registration will count towards the registration limit, remaining tickets, and calculations for available seats. /*This default status can be overridden for a specific event.*/', 'event_espresso'); ?>
 </p>
 <p>
 <strong><?php _e('Pending', 'event_espresso'); ?></strong><br />
