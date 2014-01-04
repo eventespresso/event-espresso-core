@@ -33,6 +33,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_next_step = '';
 	// erg_url_link for a previously saved registration
 	private $_reg_url_link = '';
+	// whether returning to edit attendee information or to retry a payment
+	private $_revisit = FALSE;
 	// pass recaptcha?
 	private $_continue_reg = TRUE;
 	// array of tempate paths
@@ -259,13 +261,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public function init() {
 		// load classes
-//		EE_Registry::instance()->load_model( 'Gateways' );
-//		EE_Registry::instance()->load_core( 'Cart' );
-//		$TXN_MDL = EE_Registry::instance()->load_model( 'Transaction' );
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
-
+		// make sure reg steps array is setup
+		if ( empty( self::$_reg_steps )) {
+			EED_Single_Page_Checkout::setup_reg_steps_array();
+		}
 		$this->_continue_reg = TRUE;
 		// verify recaptcha
 		if ( EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' )) {
@@ -277,12 +279,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// grab what step we're on
 		$this->_current_step = ! empty( $this->_current_step )  ? $this->_current_step : 'attendee_information';
 		$this->_current_step = EE_Registry::instance()->REQ->is_set( 'step' ) ? EE_Registry::instance()->REQ->get( 'step' ) : $this->_current_step;
-		// and the next step
-		$this->_set_next_step();
 		// returning from the thank you page ?
 		$this->_reg_url_link = EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' ) ? EE_Registry::instance()->REQ->get( 'e_reg_url_link' ) : FALSE;		
 		// if reg_url_link is present in the request, then we are only being sent back to SPCO to retry the payment 
 		if ( $this->_reg_url_link ) {
+			// are we returning to the page to edit attendee info or retry a payment?		
+			$this->_revisit = EE_Registry::instance()->REQ->is_set( 'revisit' ) && EE_Registry::instance()->REQ->get( 'revisit' ) == 1 ? TRUE : FALSE;
+			if ( $this->_revisit ) {
+				// remove all other pages from the reg steps array except the one required by the revisit
+				self::$_reg_steps = array_intersect_key( self::$_reg_steps, array( $this->_current_step => TRUE ));
+			}
 			// let's get that transaction data
 			$this->_transaction = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
 			// and get the cart that was used in the original txn
@@ -311,14 +317,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			d( $this->_cart );
 //		}
 		
-		// make sure reg steps array is setup
-		if ( empty( self::$_reg_steps )) {
-			EED_Single_Page_Checkout::setup_reg_steps_array();
-		}
-		
 		if ( $this->_transaction->is_completed() || $this->_transaction->is_overpaid() ) {
 			unset( self::$_reg_steps['payment_options'] );
 		}
+
+		// and the next step
+		$this->_set_next_step();
+//		d( self::$_reg_steps );
 		
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'translate_js_strings' ), 1 );
 	}
@@ -724,15 +729,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['update_url'] = add_query_arg( array('ee' => 'update_event_queue'), $this->_reg_page_base_url );
 		$template_args['register_url'] = add_query_arg( array('ee' => 'register'), $this->_reg_page_base_url );
 		$template_args['event_queue_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
-
+		
 		$template_args['confirmation_data'] = $this->_current_step == 'registration_confirmation' ? $this->_registration_confirmation() : '';
 		
-		if ( $this->_reg_url_link ) {
+		$step_or_revisit = __('Step ', 'event_espresso');
+
+		if ( $this->_revisit && $this->_current_step == 'attendee_information' ) {
 			// YES! Save Registration Details
-			$confirmation_btn_text = sprintf( __('YES!%1$sSave%1$sRegistration%1$sDetails', 'event_espresso'), '&nbsp;' );
+			$confirmation_btn_text = sprintf( __('Update%1$sRegistration%1$sDetails', 'event_espresso'), '&nbsp;' );
+			$step_or_revisit = __('Edit', 'event_espresso');
+		} else if ( $this->_revisit && $this->_current_step == 'payment_options' ) {
+			// YES! Save Registration Details
+			$confirmation_btn_text = sprintf( __('Process%1$sPayment', 'event_espresso'), '&nbsp;' );
+			$step_or_revisit = '';
 		} else {
 			// YES! Finalize Registration
-			$confirmation_btn_text = sprintf( __('YES!%1$sFinalize%1$sRegistration', 'event_espresso'), '&nbsp;' );
+			$confirmation_btn_text = sprintf( __('Finalize%1$sRegistration', 'event_espresso'), '&nbsp;' );
 		}		
 		// grand total less than paid but greater than zero ?
 		if ( $grand_total < $this->_transaction->paid() && $grand_total > 0 ) {
@@ -746,7 +758,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}		
 		add_action( 'AHEE__SPCO__after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
 
-		
 		$registration_steps = '';
 		$step_nmbr = 1;
 		// set pointer to first step
@@ -767,14 +778,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$template_args, 
 				array( 
 					'step' => $reg_step, 
-					'step_nmbr' => $step_nmbr, 
+					'step_nmbr' => $this->_revisit !== FALSE ? $step_or_revisit : $step_or_revisit . $step_nmbr . ' - ', 
 					'edit_lnk_class' => $edit_lnk_class, 
 					'edit_lnk_url' => $edit_lnk_url,
 					'step_dv_class' => $step_dv_class, 
 					'reg_step_form_url' => $reg_step_form_url,
 					'reg_step_ajax_action' => $reg_step_details['process_func'],
 					'next_step' => $next_step,
-					'next_step_text' => $next_step_text
+					'next_step_text' => $next_step_text,
+					'revisit' => $this->_revisit
 				) 
 			);
 			
@@ -792,14 +804,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						EE_Registry::instance()->LIB->EEM_Gateways->unset_selected_gateway( $payment );
 					}
 				}
-				$template_args['selected_gateway'] = EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway();
+				$step_args['selected_gateway'] = EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway();
 
 			} else  {
-				$template_args['selected_gateway'] = '';
+				$step_args['selected_gateway'] = '';
 			}
 			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Single_Page_Checkout', 'display_recaptcha' ), 10, 2 );	
 			
-			//d( $step_args );
+//			d( $step_args );
 			$registration_steps .= EEH_Template::display_template( $this->_templates[ $reg_step_details['template'] ], $step_args, TRUE);
 			// pass step info to js
 			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step_details['display_func'];
@@ -815,9 +827,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'step' => $this->_current_step,
 			'empty_cart' => $total_items < 1 ? TRUE : FALSE,
 			'reg_steps' => self::$_reg_steps,
-			'registration_steps' => $registration_steps
+			'registration_steps' => $registration_steps,
+			'revisit' => $this->_revisit
 		);
-		//d( $wrapper_args );
+//		d( $wrapper_args );
 		EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( $this->_templates['registration_page_wrapper'], $wrapper_args, TRUE ));
 	}
 
@@ -1377,6 +1390,35 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 
 
+	/**
+	 * 	_finalize_attendee_information
+	 * 	this is the final step after a user  revisits the site to edit their attendee information
+	 *
+	 * 	@access private
+	 * 	@return 	void (redirect)
+	 */
+	private function _finalize_attendee_information( $params = array(), $success_msg = '' ) {
+
+		if ( $this->_continue_reg ) {
+			if ( $this->_transaction->save_new_cached_related_model_objs() ) {
+				// and save the txn to the db
+				$this->_transaction->save();
+				$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
+				$response_data = array(
+					'success' => $success_msg,
+					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
+				);
+				if ( EE_Registry::instance()->REQ->front_ajax ) {
+					echo json_encode( $response_data );
+					die();
+				} else {
+					wp_safe_redirect( $this->_thank_you_page_url );
+					exit(); 
+				}	
+			}
+		}
+	}
+
 
 
 	/**
@@ -1453,6 +1495,50 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 
 
+	/**
+	 * 	_finalize_payment_options
+	 * 	this is the final step after a user  revisits the site to retry a payment
+	 *
+	 * 	@access private
+	 * 	@return 	void (redirect)
+	 */
+	private function _finalize_payment_options( $params = array(), $success_msg = '' ) {
+
+		if ( $this->_continue_reg ) {
+			
+			$this->_transaction->save();
+			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
+
+			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
+			// attempt to perform transaction via payment gateway
+			$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
+			$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
+			
+			if ( isset( $response['msg']['success'] )) {
+				$response_data = array(
+					'success' => $response['msg']['success'],
+					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
+				);			
+				if ( EE_Registry::instance()->REQ->front_ajax ) {
+					echo json_encode( $response_data );
+					die();
+				} else {
+					wp_safe_redirect( $this->_thank_you_page_url );
+					exit();
+				}		
+			} else {
+				$error_msg = $response['msg']['error'];
+			}
+		} else {
+			$notices = EE_Error::get_notices(FALSE);
+			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
+			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
+		}
+
+		$this->go_to_next_step( $success_msg, $error_msg );
+	}
+
+
 
 	
 	/**
@@ -1474,10 +1560,10 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
 			}
 			$response = recaptcha_check_answer(
-					EE_Registry::instance()->CFG->registration->recaptcha_privatekey, 
-					$_SERVER["REMOTE_ADDR"],
-					EE_Registry::instance()->REQ->is_set( 'recaptcha_challenge_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_challenge_field' ) : '',
-					EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_response_field' ) : ''
+				EE_Registry::instance()->CFG->registration->recaptcha_privatekey, 
+				$_SERVER["REMOTE_ADDR"],
+				EE_Registry::instance()->REQ->is_set( 'recaptcha_challenge_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_challenge_field' ) : '',
+				EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_response_field' ) : ''
 			);
 			// ohhh soo sorry... it appears you can't read gibberish chicken scratches !!!
 			if ( ! $response->is_valid ) {
@@ -1531,8 +1617,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			
 			if ( isset( $response['msg']['success'] )) {
 				$response_data = array(
-						'success' => $response['msg']['success'],
-						'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
+					'success' => $response['msg']['success'],
+					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
 				);
 				if ( EE_Registry::instance()->REQ->front_ajax ) {
 					echo json_encode( $response_data );
@@ -1596,13 +1682,15 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				$callback = '_go_to_registration_confirmation_ajax_response';
 			break;
 			case 'finalize_registration' :
-				$callback = '_process_finalize_registration';
+				$callback = $this->_revisit ? '_finalize_' . $this->_current_step : '_process_finalize_registration';
 			break;
 		}
 		
 
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
+//		echo '<h4>$this->_revisit : ' . $this->_revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
