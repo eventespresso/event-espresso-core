@@ -426,8 +426,6 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function init() {
-//		$p = EE_Price::new_instance();
-//		$p->set_amount('$2000');
 //		d($p->amount());
 //		$p->set_amount('$2000,00');
 //		d($p->amount());

@@ -1,10 +1,10 @@
-<h3><?php _e('Event Datetimes', 'event_espresso'); ?></h3>
+<h3><?php _e('Event Editor', 'event_espresso'); ?></h3>
 <p>
-<?php _e('This is the date of the event. All events require a start and end date in order to display properly on your pages.', 'event_espresso'); ?>
+<?php _e('This page allows you to create and edit events with Event Espresso.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e('The limit field allows you to set a maximum number of tickets that you want to make available for an event. For example, lets say that we had 70 free tickets available and 30 premium tickets available. If we set a limit of 50 using the limit field, then the ticket sales will close once any combination of 50 tickets are sold.', 'event_espresso'); ?>
+<?php _e('Recommendations: Want to see a tour of this screen? Click on the event editor tour button which appears on the right side of the page. To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e('More content coming soon.', 'event_espresso'); ?>
+<?php _e('Screen Options: You can customize the information that is shown on this page by toggling the screen options tab. Then you can add or remove checkmarks to hide or show certain content and even adjust the screen layout.', 'event_espresso'); ?>
 </p>

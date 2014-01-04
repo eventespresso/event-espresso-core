@@ -730,6 +730,7 @@ class EEH_Activation {
 					('RPN', 'PENDING', 'registration', 0, NULL, 1),
 					('RAP', 'APPROVED', 'registration', 0, NULL, 1),
 					('RCN', 'CANCELLED', 'registration', 0, NULL, 0),
+					('RDC', 'DECLINED', 'registration', 0, NULL, 0),
 					('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 0),
 					('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 0),
 					('TPN', 'OPEN', 'transaction', 0, NULL, 1),
