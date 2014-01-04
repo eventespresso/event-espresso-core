@@ -6,12 +6,10 @@
             
             <!-- content -->
             <div class="content">
-                <h1>Registration Notification</h1>
-               
+                <h1>Registration Pending Approval</h1>
             </div>
             [EVENT_LIST]
         </td>
         <td></td>
     </tr>
 </table> <!-- END BODY -->
-
