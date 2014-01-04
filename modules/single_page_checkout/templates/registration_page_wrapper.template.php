@@ -1,6 +1,7 @@
 <div id="single-page-checkout" class="ui-widget">
 
 <?php if ( ! $empty_cart ) { ?>
+	<?php if ( ! $revisit ) { ?>
 
 	<h2 id="spco-steps-big-hdr" class="spco-steps-big-hdr"><?php _e(' Steps', 'event_espresso'); ?></h2>
 	
@@ -24,7 +25,7 @@
 		<?php } ?>
 		<div class="clear-float"></div>
 	</div>
-	
+	<?php } ?>	
 <?php 
 	do_action( 'AHEE__SPCO__before_registration_steps' );
 	echo $registration_steps; 
