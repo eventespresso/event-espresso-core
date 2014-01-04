@@ -805,31 +805,22 @@ Class EEM_Gateways {
 		if ( empty( $transaction )){
 			$transaction = $line_item->transaction();
 		}
-		$return_page_url = $this->_get_return_page_url( $transaction );
 		EE_Registry::instance()->load_helper( 'Template' );
 		// free event?
-		if ( $line_item->total() == EEH_Template::format_currency( 0, TRUE )) {
-			
+		if ( $line_item->total() == EEH_Template::format_currency( 0, TRUE )) {			
 			$transaction->set_status( EEM_Transaction::complete_status_code );
 			$transaction->save();
 			$transaction->finalize();
-			$response = array(
-					'msg' => array( 'success'=>TRUE ),
-					'forward_url' => $return_page_url
-			);
+			$response = array( 'msg' => array( 'success'=>TRUE ));
 		} else {
 			try{
-				$response = array(
-					'msg' => $this->selected_gateway_obj()->process_payment_start( $line_item, $transaction ),
-					'forward_url' => $return_page_url
-				);
+				$response = array( 'msg' => $this->selected_gateway_obj()->process_payment_start( $line_item, $transaction ));
 			} catch( EE_Error $e ) {
-				$response = array(
-					'msg'=>array( 'error'=>$e->getMessage() ),
-					'forward_url'=>$return_page_url					
-				);
+				$response = array( 'msg'=>array( 'error'=>$e->getMessage() ));
 			}
 		}
+		// add return URL
+		$response['forward_url'] = $this->_get_return_page_url( $transaction );		
 		return $response;
 	}	
 
