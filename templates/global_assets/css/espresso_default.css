@@ -464,11 +464,6 @@ input.ee-register-button {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-.espresso-unpaid-status-icon-img,
-#espresso-ajax-loading img {
-	box-shadow: none !important;
-	border: none;
-}
 #espresso-ajax-long-loading {
 	font-size: 36px;
 }
@@ -711,8 +706,15 @@ input.ee-register-button {
 	color: #f59200;
 }
 .highlight-bg {
-	padding:1em 20px;
+	padding:1em;
 	background:#ffffdd;
+	border-color: #F8D755;
+}
+.extra-padding {
+	padding:1em;
+}
+.width-100 {
+	width: 100%;
 }
 .tiny-link {
 	display: block;
@@ -743,8 +745,15 @@ input.ee-register-button {
 .hide-the-displayed {
 	cursor: pointer;
 }
-
-
+.espresso-txn-status-icon {
+	vertical-align: text-bottom;
+	margin-right: .5em;
+}
+.espresso-txn-status-icon,
+#espresso-ajax-loading img {
+	box-shadow: none !important;
+	border: none;
+}
 
 /*******************************************************/
 /****                     -==ATTENTION==-                     ****/
