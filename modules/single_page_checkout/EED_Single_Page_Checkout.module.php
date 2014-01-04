@@ -1399,13 +1399,27 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 */
 	private function _finalize_attendee_information( $params = array(), $success_msg = '' ) {
 
-		if ( $this->_continue_reg ) {
-			if ( $this->_transaction->save_new_cached_related_model_objs() ) {
-				// and save the txn to the db
-				$this->_transaction->save();
+		if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
+			// grab the saved registrations from the transaction
+			foreach ( $this->_transaction->registrations()  as $registration ) {	
+				// verify object
+				if ( $registration instanceof EE_Registration ) {
+					$registration->save();
+					foreach ( $registration->answers()  as $answer ) {	
+						// verify object
+						if ( $answer instanceof EE_Answer ) {
+							$answer->save();
+						}
+					}
+				}
+			}
+			//grab notices
+			$notices = EE_Error::get_notices(FALSE);
+			// if it's all good...
+			if ( ! isset( $notices['errors'] ) || empty( $notices['errors'] )) {
 				$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
 				$response_data = array(
-					'success' => $success_msg,
+					'success' => isset( $notices['success'] ) ? $notices['success'] : '',
 					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
 				);
 				if ( EE_Registry::instance()->REQ->front_ajax ) {
@@ -1414,9 +1428,13 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				} else {
 					wp_safe_redirect( $this->_thank_you_page_url );
 					exit(); 
-				}	
-			}
+				}
+			} 
+		} else {
+			//grab notices
+			$notices = EE_Error::get_notices(FALSE);
 		}
+		$this->go_to_next_step( $notices['success'], $notices['errors'] );
 	}
 
 
