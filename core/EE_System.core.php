@@ -208,9 +208,6 @@ final class EE_System {
 
 
 
-
-
-
 	/**
 	* _manage_activation_process
 	* 
@@ -221,13 +218,11 @@ final class EE_System {
 	* @return void
 	*/
 	private function _manage_activation_process() {
-		//let's ONLY do this method IF we're in admin and user IS logged in.
-		if ( ! is_admin() ) {
+		// do NOT do this IF... we're NOT in the admin, OR on the WP login or register screens, OR it's an AJAX request
+		if ( ! is_admin() || ( is_admin() && isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  )) {
 			return;
 		}
-
-		// check if db has been updated, or if its a brand-new installation
-		
+		// check if db has been updated, or if its a brand-new installation		
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type = $this->detect_req_type($espresso_db_update);
 //		echo "request type:".$request_type;
@@ -271,6 +266,9 @@ final class EE_System {
 		}
 		do_action('AHEE__EE_System__manage_activation_process__end');
 	}
+
+
+
 	
 	/**
 	 * Does the traditional work of setting up the plugin's database and adding default data.
@@ -289,6 +287,9 @@ final class EE_System {
 			EEH_Activation::initialize_db_content();
 		}	
 	}
+
+
+
 	
 	/**
 	 * Instead of just calling the activation code, we first check when WAS this code called?
@@ -309,7 +310,8 @@ final class EE_System {
 		}
 	}
 
-	
+
+
 	/**
 	 * standardizes the wp option 'espresso_db_upgrade' which actually stores
 	 * information about what versions of EE have been installed and activated,
@@ -363,7 +365,9 @@ final class EE_System {
 		do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__end',$espresso_db_update);
 		return $espresso_db_update;
 	}
-	
+
+
+
 	/**
 	 * Detects if the current version indicated in the has existed in the list of 
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
@@ -401,7 +405,9 @@ final class EE_System {
 		}
 		return $this->_req_type;
 	}
-	
+
+
+
 	/**
 	 * Adds teh current code version to the saved wp option which stores a list
 	 * of all ee versions ever installed.
