@@ -106,21 +106,6 @@
     text-align: left;
 }
 
-
-.ee-status {
-	display: block;
-   	padding: 2.5px 5px;
-   	-webkit-border-radius: 3px;
-   	-moz-border-radius: 3px;
-   	border-radius: 3px;
-   	color: white;
-   	font-size: 10px;
-	width: 52px;
-   	text-decoration: none;
-   	font-weight: 500;
-   	text-align: center;
-   }
-
 .ee-status.sold-out, .ee-status.cancelled, .ee-status.inactive{ background-color: #E44064; }
 .ee-status.expired { background-color: #A39D9C; }
 .ee-status.upcoming, .ee-status.postponed { background-color: #00B1CA; }
