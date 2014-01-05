@@ -9,11 +9,6 @@
 </p>
 
 <?php echo $additional_registration_options; ?>
-<!-- removing the next block temporarily because it's not going to be used as is -->
-<!-- <p> -->
-	<!-- <label><?php _e('Default Payment Status', 'event_espresso'); ?></label> -->
-	<?php //echo $default_registration_status; ?>
-<!-- </p> -->
 
 <p>
 	<label><?php _e('Display  Description', 'event_espresso'); ?></label>
@@ -36,15 +31,6 @@
 </p>
 
 <p>
-	<label><?php _e('Require Pre-approval', 'event_espresso'); ?></label>
-	<?php echo $require_pre_approval; ?>
+	<label><?php _e('Default Registration Status', 'event_espresso'); ?></label>
+	<?php echo $EVT_default_registration_status; ?>
 </p>
-
-<?php /*<p>
-	<label><?php _e('Alternate Email Address', 'event_espresso'); ?>
-		<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=alt_email_info">
-			<span class="question">[?]</span>
-		</a>
-	</label>
-	<input name="alt_email" size="20" type="text" value="<?php echo $_event->alt_email; ?>">
-</p> /**/ ?>

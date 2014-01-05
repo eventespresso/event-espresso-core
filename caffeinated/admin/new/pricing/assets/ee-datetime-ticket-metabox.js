@@ -1393,7 +1393,7 @@ jQuery(document).ready(function($) {
 
 			totals.finalTotal = accounting.formatNumber(runningtotal);
 
-			return totals; //todo eventually this can be dynamic according to currency setting
+			return totals;
 		},
 
 

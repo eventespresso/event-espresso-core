@@ -10,12 +10,6 @@
 
 <?php echo $additional_registration_options; ?>
 
-<!-- removing below block for now becuase it's not going to be implemented as is. -->
-<!-- <p> -->
-	<!-- <label><?php _e('Default Payment Status', 'event_espresso'); ?></label> -->
-	<?php //echo $default_registration_status; ?>
-<!-- </p> -->
-
 <p>
 	<label><?php _e('Display Description', 'event_espresso'); ?></label>
 	<?php echo $display_description; ?>

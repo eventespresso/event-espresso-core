@@ -10,27 +10,27 @@
 </li>
 <li>
 <?php _e('Maximum number of tickets allowed per order for this event', 'event_espresso'); ?><br />
-<?php _e('How many tickets should a registrant be able to purchase in a single order?', 'event_espresso'); ?>
+<?php _e('Control how many tickets can be purchased in a single order.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Display Description', 'event_espresso'); ?><br />
-<?php _e('Should the event description be shown on the registration page?', 'event_espresso'); ?>
+<?php _e('Choose whether to show the event description on the registration page.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Display Registration Form', 'event_espresso'); ?><br />
-<?php _e('Should the registration form be shown?', 'event_espresso'); ?>
+<?php _e('Choose whether to show the registration form.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Alternate Registration Page', 'event_espresso'); ?><br />
-<?php _e('Is another regisration page available? If so, enter it here as a website address (URL).', 'event_espresso'); ?>
+<?php _e('Enter another registration URL (website address). This field is optional.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Event Phone Number', 'event_espresso'); ?><br />
-<?php _e('Is a phone number available for this event?', 'event_espresso'); ?>
+<?php _e('Is a phone number available for this event? This field is optional.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Require Pre-approval', 'event_espresso'); ?><br />
-<?php _e('Should registrations be manually approved by an event administrator?', 'event_espresso'); ?>
+<?php _e('Require an event administrator to approve events.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

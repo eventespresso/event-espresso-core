@@ -1,3 +1,6 @@
+<p>
+<strong><?php _e('Certain options below such as the featured image and excerpt will only be displayed if supported by your WordPress theme.', 'event_espresso'); ?></strong>
+</p>
 <h3><?php _e('Featured Image', 'event_espresso'); ?></h3>
 <p>
 <?php _e('Set a featured image for your event.', 'event_espresso'); ?>
@@ -20,7 +23,7 @@
 </p>
 <h3><?php _e('Author', 'event_espresso'); ?></h3>
 <p>
-<?php _e('This is the site member that will be credited for creating this event.', 'event_espresso'); ?>
+<?php _e('This is the site member that will be credited for creating this event. The author will receive notifications such as event confirmations', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Notifications', 'event_espresso'); ?></h3>
 <p>

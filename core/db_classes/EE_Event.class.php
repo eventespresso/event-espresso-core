@@ -324,6 +324,7 @@ class EE_Event extends EE_CPT_Base{
 	function default_registration_status() {
 		return $this->get('EVT_default_registration_status');
 	}
+	
 	function short_description( $num_words = 55, $more = NULL ){
 		$short_desc = $this->get('EVT_short_desc');
 		if ( ! empty( $short_desc )) {

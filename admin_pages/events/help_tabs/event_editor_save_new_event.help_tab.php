@@ -16,5 +16,13 @@
 <?php _e('Publish', 'event_espresso'); ?><br />
 <?php _e('An event can be published immediately or you can schedule it to be published at a later date in the future.', 'event_espresso'); ?>
 </li>
+<li>
+<?php _e('Attendees', 'event_espresso'); ?><br />
+<?php _e('Shows number of registrants who are attending event. Click on the Attendees link to be brought to a page where you can be a list of registrants who are attending the event.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('Move to Trash', 'event_espresso'); ?><br />
+<?php _e('Click the Move to Trash link to move an event to the trash. Note: an event can be completely deleted only after associated payments have been removed and registrations have been removed.', 'event_espresso'); ?>
+</li>
 </ul>
 </p>

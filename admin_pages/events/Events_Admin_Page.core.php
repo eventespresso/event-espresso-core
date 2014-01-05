@@ -239,9 +239,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
-					'event_editor_event_tickets_datetimes_help_tab' => array(
-						'title' => __('Event Tickets & Datetimes', 'event_espresso'),
-						'filename' => 'event_editor_event_tickets_datetimes'
+					'event_editor_event_datetimes_help_tab' => array(
+						'title' => __('Event Datetimes', 'event_espresso'),
+						'filename' => 'event_editor_event_datetimes'
+					),
+					'event_editor_event_tickets_help_tab' => array(
+						'title' => __('Event Tickets', 'event_espresso'),
+						'filename' => 'event_editor_event_tickets'
 					),
 					'event_editor_event_registration_options_help_tab' => array(
 						'title' => __('Event Registration Options', 'event_espresso'),
@@ -290,9 +294,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
-					'event_editor_event_tickets_datetimes_help_tab' => array(
-						'title' => __('Event Tickets & Datetimes', 'event_espresso'),
-						'filename' => 'event_editor_event_tickets_datetimes'
+					'event_editor_event_datetimes_help_tab' => array(
+						'title' => __('Event Datetimes', 'event_espresso'),
+						'filename' => 'event_editor_event_datetimes'
+					),
+					'event_editor_event_tickets_help_tab' => array(
+						'title' => __('Event Tickets', 'event_espresso'),
+						'filename' => 'event_editor_event_tickets'
 					),
 					'event_editor_event_registration_options_help_tab' => array(
 						'title' => __('Event Registration Options', 'event_espresso'),
@@ -627,7 +635,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => !empty( $this->_req_data['display_reg_form'] ) ? 1 : 0,
 			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
-			'EVT_require_pre_approval' => !empty( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
+			'EVT_default_registration_status' => !empty( $this->_req_data['EVT_default_registration_status'] ) ? $this->_req_data['EVT_default_registration_status'] : EE_Registry::instance()->CFG->registration->default_STS_ID,
 			'EVT_member_only' => !empty( $this->_req_data['member_only'] ) ? 1 : 0,
 			'EVT_allow_overflow' => !empty( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
 			'EVT_timezone_string' => !empty( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL,
@@ -1048,7 +1056,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
   		EE_Registry::instance()->load_helper( 'Formatter' );
 
   		//args for getting related registrations
-  		$query_args = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(EEM_Registration::status_id_pending, EEM_Registration::status_id_approved ) ) ) ) : array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
+  		$query_args = array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
 
   		$query_args[0]['REG_deleted'] = 0; 
 
@@ -1728,11 +1736,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['values'] = $this->_yes_no_values;
 
-		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array('RCN', 'RNA'));
-		$this->_template_args['default_reg_status'] = isset( EE_Registry::instance()->CFG->registration->default_STS_ID ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID ) : 'RPN';
-		$this->_template_args['pending_counts_reg_limit'] = isset( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ) : TRUE;
-
-		$this->_template_args['use_attendee_pre_approval'] = isset( EE_Registry::instance()->CFG->registration->use_attendee_pre_approval ) ? EE_Registry::instance()->CFG->registration->use_attendee_pre_approval : FALSE;
+		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined));
+		$this->_template_args['default_reg_status'] = isset( EE_Registry::instance()->CFG->registration->default_STS_ID ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID ) : EEM_Registration::status_id_pending;
 
 		$this->_set_add_edit_form_tags('update_default_event_settings');
 		$this->_set_publish_post_box_vars(NULL, FALSE, FALSE, NULL, FALSE);
@@ -1747,32 +1752,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _update_default_event_settings() {
 
-		$old_pending_counts_reg_limit =  EE_Config::instance()->registration->pending_counts_reg_limit;
-		EE_Config::instance()->registration->default_STS_ID = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
-		EE_Config::instance()->registration->pending_counts_reg_limit = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
-		EE_Config::instance()->registration->use_attendee_pre_approval = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
-		//if we're changing the policy for when to count registrations towards teh
-		//TKT_sold and DTT_sold attributes on tickets and datetimes, then we need to update them
-		if(EE_Config::instance()->registration->pending_counts_reg_limit != $old_pending_counts_reg_limit){
-			$this->_update_sold_counts();
-			EE_Error::add_success(__("Updated ticket sales based on new policy for counting pending registrations towards registration limits and ticket sales", "event_espresso"));
-		}
+		EE_Config::instance()->registration->default_STS_ID = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : EEM_Registration::status_id_pending;
 
 		$what = 'Default Event Settings';
 		$success = $this->_update_espresso_configuration($what, EE_Config::instance(), __FILE__, __FUNCTION__, __LINE__);		
 		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
-	}
-	
-	/**
-	 * Updates the TKT_sold and DTT_sold counts on all tickets and datetimes. 
-	 * Use this when their counts should be synced.
-	 */
-	private function _update_sold_counts(){
-		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
-		EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all());
-	}
-
-	
+	}	
 
 
 	/** Event Category Stuff **/
