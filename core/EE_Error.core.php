@@ -82,17 +82,12 @@ class EE_Error extends Exception {
 	*	@access public
 	*	@echo string
 	*/
-	function __construct( $message, $code = 0, Exception $previous = NULL ) {
-
-		wp_enqueue_script( 'ee_error_js' );
-		wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
-	
-		if (version_compare(phpversion(), '5.3.0', '<')) {
+	function __construct( $message, $code = 0, Exception $previous = NULL ) {	
+		if ( version_compare( phpversion(), '5.3.0', '<' )) {
 			parent::__construct( $message, $code );
 		} else {
 			parent::__construct( $message, $code, $previous );
-		}
-		
+		}		
 	}
 
 
@@ -156,6 +151,53 @@ class EE_Error extends Exception {
 	#error-page {
 		max-width:90% !important;	
 	}
+	.ee-error-dev-msg-pg {
+		padding:1em; 
+		margin:0 0 1em; 
+		border:2px solid #E44064; 
+		background:#fff; 
+		border-radius:3px;
+	}
+	#ee-trace-details {
+		padding:3px; 
+		margin:0 0 1em; 
+		border:1px solid #666; 
+		background:#fff; 
+		border-radius:3px;
+	}
+	#ee-trace-details table {
+		border:1px solid #666; 
+		border-bottom:none; 
+		background:#f9f9f9;
+	}
+	#ee-trace-details table th {
+		background:#eee; 
+		border-bottom:1px solid #666;
+	}
+	#ee-trace-details table td {
+		border-bottom:1px solid #666;
+	}
+	#ee-trace-details table td.odd {
+		background:#f3f3f3;
+	}
+	.display-ee-error-trace-lnk {
+		color:blue;
+		cursor:pointer;
+	}
+	.display-ee-error-trace-lnk:hover {
+		text-decoration:underline;
+	}
+	.hidden {
+		display:none;
+	}
+	.small-text {
+		font-size: .85em;
+		line-height: 1.4em;
+		letter-spacing: .25px;
+	}
+	.lt-grey-text {
+		color: #a8a8a8;
+	}
 </style>		
 <div id="ee-error-message" class="error">';
 
@@ -175,14 +217,14 @@ class EE_Error extends Exception {
 			} else {
 
 				$trace_details .= '
-			<div style="padding:3px; margin:0 0 1em; border:1px solid #666; background:#fff; border-radius:3px;">
-			<table width="100%" border="0" cellpadding="5" cellspacing="0" style="border:1px solid #666; border-bottom:none; background:#f9f9f9;">
+			<div id="ee-trace-details">
+			<table width="100%" border="0" cellpadding="5" cellspacing="0">
 				<tr>
-					<th scope="col" align="center" style="width:1.5%; background:#eee; border-bottom:1px solid #666;">#</th>
-					<th scope="col" align="center" style="width:3.5%; background:#eee; border-bottom:1px solid #666;">Line</th>
-					<th scope="col" align="left" style="width:40%; background:#eee; border-bottom:1px solid #666;">File</th>
-					<th scope="col" align="left" style="background:#eee; border-bottom:1px solid #666;">Class</th>
-					<th scope="col" align="left" style="background:#eee; border-bottom:1px solid #666;">Method( arguments )</th>
+					<th scope="col" align="right" style="width:2.5%;">#</th>
+					<th scope="col" align="right" style="width:3.5%;">Line</th>
+					<th scope="col" align="left" style="width:40%;">File</th>
+					<th scope="col" align="left">Class</th>
+					<th scope="col" align="left">Method( arguments )</th>
 				</tr>';
 			
 				$last_on_stack = count( $ex['trace'] ) - 1;
@@ -197,7 +239,7 @@ class EE_Error extends Exception {
 					$function = isset( $trace['function'] ) ? $trace['function'] : '';
 					$args = isset( $trace['args'] ) ? $this->_convert_args_to_string( $trace['args'] ) : '';
 					$line = isset( $trace['line'] ) ? $trace['line'] : '';
-					$zebra = $nmbr % 2 ? ' background:#f3f3f3;' : '';
+					$zebra = $nmbr % 2 ? ' odd' : '';
 					
 					if ( empty( $file ) && ! empty( $class )) {
 						$a = new ReflectionClass( $class );
@@ -224,11 +266,11 @@ class EE_Error extends Exception {
 								 
 		              $trace_details .= '
 					<tr>
-						<td align="center" style="border-bottom:1px solid #666;' . $zebra . '">' . $nmbr_dsply . '</td>
-						<td align="center" style="border-bottom:1px solid #666;' . $zebra . '">' . $line_dsply . '</td>
-						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $file_dsply . '</td>
-						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $class_dsply . '</td>
-						<td align="left" style="border-bottom:1px solid #666;' . $zebra . '">' . $type_dsply . $function_dsply . $args_dsply . '</td>
+						<td align="right" class="' . $zebra . '">' . $nmbr_dsply . '</td>
+						<td align="right" class="' . $zebra . '">' . $line_dsply . '</td>
+						<td align="left" class="' . $zebra . '">' . $file_dsply . '</td>
+						<td align="left" class="' . $zebra . '">' . $class_dsply . '</td>
+						<td align="left" class="' . $zebra . '">' . $type_dsply . $function_dsply . $args_dsply . '</td>
 					</tr>';
 
 					
@@ -254,10 +296,13 @@ class EE_Error extends Exception {
 		<div class="ee-error-dev-msg-dv">
 			<p class="ee-error-dev-msg-pg">
 				<strong class="ee-error-dev-msg-str">An ' . $ex['name'] . ' exception was thrown!</strong>  &nbsp; <span>code: ' . $ex['code'] . '</span><br />
-				<span class="big-text">"' . trim( $ex['msg'] ) . '"</span>  &nbsp; <a class="display-ee-error-trace-lnk" rel="ee-error-trace-' . self::$_error_count . $time . '">' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '</a><br />
-				'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' )
+				<span class="big-text">"' . trim( $ex['msg'] ) . '"</span><br/>
+				<a id="display-ee-error-trace-' . self::$_error_count . $time . '" class="display-ee-error-trace-lnk small-text" rel="ee-error-trace-' . self::$_error_count . $time . '">
+					' . __( 'click to view backtrace and class/method details', 'event_espresso' ) . '
+				</a><br />
+				<span class="small-text lt-grey-text">'.$ex['file'].' &nbsp; ( line no: '.$ex['line'].' )</span>
 			</p>
-			<div id="ee-error-trace-' . self::$_error_count . $time . '" class="ee-error-trace-dv hidden">
+			<div id="ee-error-trace-' . self::$_error_count . $time . '-dv" class="ee-error-trace-dv" style="display: none;">
 				' . $trace_details;
 				
 				if ( ! empty( $class )) {
@@ -294,17 +339,15 @@ class EE_Error extends Exception {
 		$ouput .= '
 </div>';
 
-		if ( defined('DOING_AJAX') ) {
-			echo json_encode( array('error' => $ouput) );
+		$ouput .= self::_print_scripts();		
+
+		if ( defined( 'DOING_AJAX' )) {
+			echo json_encode( array( 'error' => $ouput ));
 			exit();
 		}
 
 		echo $ouput;
-
-//		$template = 'error_msg.php';
-//		$path_to_template = EE_TEMPLATES_PATH;
-//		$template_vars = array( 'error_msg' => $ouput );
-//		EEH_Template::display_template( $template . $path_to_template, $template_args );
+		die();
 		
 	}
 
@@ -612,12 +655,49 @@ class EE_Error extends Exception {
 			}
 		}
 		
-		if ( $print_scripts ) {			
-			wp_enqueue_script( 'ee_error_js' );
-			wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+		if ( $print_scripts ) {
+			self::_print_scripts();
 		}
 		
 		return $notices;
+	}
+
+
+
+
+
+
+	/**
+	* 	_print_scripts
+	*
+	*	@access public
+	* 	@return 		void
+	*/
+	private static function _print_scripts() {
+		
+		if ( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) {
+			if ( wp_script_is( 'ee_error_js', 'enqueued' )) {
+				return;
+			} else if ( wp_script_is( 'ee_error_js', 'registered' )) {
+				add_filter( 'FHEE_load_css', '__return_true' );
+				add_filter( 'FHEE_load_js', '__return_true' );
+				wp_enqueue_script( 'ee_error_js' );
+				wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+			} 	
+		} else {
+			return '
+<script>
+/* <![CDATA[ */
+var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
+/* ]]> */ 
+</script>
+<script src="' . includes_url() . 'js/jquery/jquery.js" type="text/javascript"></script>
+<script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
+<script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
+';
+
+		}
+
 	}
 
 
@@ -632,10 +712,7 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	public function enqueue_error_scripts() {
-		add_filter( 'FHEE_load_css', '__return_true' );
-		add_filter( 'FHEE_load_js', '__return_true' );
-		wp_enqueue_script( 'ee_error_js' );
-		wp_localize_script( 'ee_error_js','ee_settings', array( 'wp_debug'=>WP_DEBUG ));
+		self::_print_scripts();
 	}
 
 
@@ -825,7 +902,13 @@ function espresso_error_enqueue_scripts() {
 	// js for error handling
 	wp_register_script( 'ee_error_js', EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js', array('espresso_core'), EVENT_ESPRESSO_VERSION, FALSE );
 }
-add_action( 'wp_enqueue_scripts', 'espresso_error_enqueue_scripts', 2 );
+if ( is_admin() ) {
+	add_action( 'admin_enqueue_scripts', 'espresso_error_enqueue_scripts', 2 );
+} else {
+	add_action( 'wp_enqueue_scripts', 'espresso_error_enqueue_scripts', 2 );
+}
+
+
 
 
 
