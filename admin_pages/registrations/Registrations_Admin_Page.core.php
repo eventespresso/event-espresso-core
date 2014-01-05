@@ -574,6 +574,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'view_transaction' => array(
 				'class' => 'ee-icon ee-icon-cash',
 				'desc' => __('View Transaction details.', 'event_espresso')
+				),
+			'pending_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-RPN',
+				'desc' => __('Pending Registration Status', 'event_espresso')
+				),
+			'cancelled_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-RCN',
+				'desc' => __('Cancelled Registration Status', 'event_espresso')
+				),
+			'declined_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-RDC',
+				'desc' => __('Declined Registration Status', 'event_espresso')
+				),
+			'approved_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-RAP',
+				'desc' => __('Approved Registration Status', 'event_espresso')
+				),
+			'not_approved' => array(
+				'class' => 'ee-status-legend ee-status-legend-RNA',
+				'desc' => __('Not Approved Registration Status', 'event_espresso')
 				)
 			);
 		return $items;

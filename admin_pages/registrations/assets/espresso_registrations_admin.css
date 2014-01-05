@@ -238,3 +238,24 @@
 	padding: 0;
 	margin: 0;
 }
+
+/** reg status legend **/
+.ee-status-legend {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	vertical-align: middle;
+}
+
+.ee-status-legend-RPN {
+	background-color: #00B1CA;
+}
+.ee-status-legend-RCN, .ee-status-legend-RDC {
+	background-color: #E44064;
+}
+.ee-status-legend-RAP {
+	background-color: #70CC50;
+}
+.ee-status-legend-RNA {
+	background-color: #AC9D9C;
+}
