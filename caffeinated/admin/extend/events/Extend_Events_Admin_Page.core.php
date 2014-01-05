@@ -152,9 +152,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
 		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
-		//event settings
-		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
-
 	}
 
 
@@ -235,14 +232,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	public function datetime_timezones_template( $template, $template_args ) {
 		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_timezones.template.php', $template_args, TRUE );
-	}
-
-
-
-	public function enable_attendee_pre_approval( $template_args ) {
-		$_args['attendee_pre_approval_select'] = EEH_Form_Fields::select_input('use_attendee_pre_approval', $template_args['values'], $template_args['use_attendee_pre_approval'] );
-		$template = EVENTS_CAF_TEMPLATE_PATH . 'event_settings_enable_attendee_pre_approval.template.php';
-		EEH_Template::display_template( $template, $_args );
 	}
 
 
