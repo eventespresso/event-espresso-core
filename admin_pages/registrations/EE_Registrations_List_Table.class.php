@@ -62,6 +62,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		
 		if ( isset( $_GET['event_id'] )) {
 			$this->_columns = array(
+				'Reg_Status' => '',
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 	           	'REG_ID' => __( 'ID', 'event_espresso' ),
 	           	'REG_count' => __('Att #', 'event_espresso'),
@@ -69,7 +70,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'ATT_email' =>  __('Email', 'event_espresso'),		
 				'REG_date' => __( 'Reg Date', 'event_espresso' ),
 				'REG_code' => __( 'Reg Code', 'event_espresso' ),
-				'Reg_status' => __( 'Status', 'event_espresso' ),
+				//'Reg_status' => __( 'Status', 'event_espresso' ),
 	  			'PRC_amount' => __( 'Ticket Price', 'event_espresso' ),
 	  			'REG_final_price' => __( 'Final Price', 'event_espresso' ),
 	  			'TXN_total' => __( 'Total Txn', 'event_espresso' ),
@@ -84,6 +85,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			);
 		} else {
 			$this->_columns = array(
+				'Reg_Status' => '',
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 	           	'REG_ID' => __( 'ID', 'event_espresso' ),  	
 				'REG_count' => __('Att #', 'event_espresso'),
@@ -92,7 +94,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'event_name' => __( 'Event', 'event_espresso' ),
 	   	       	'DTT_EVT_start' => __( 'Event Date', 'event_espresso' ),
 				'REG_code' => __( 'Reg Code', 'event_espresso' ),
-				'Reg_status' => __( 'Status', 'event_espresso' ),
+				//'Reg_status' => __( 'Status', 'event_espresso' ),
 	  			'REG_final_price' => __( 'Price', 'event_espresso' ),
             	'actions' => __( 'Actions', 'event_espresso' )
 	        );			
@@ -104,7 +106,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
            	'ATT_fname' => array( 'ATT_fname' => FALSE ),
            	'event_name' => array( 'event_name' => FALSE ),
            	'DTT_EVT_start'	=> array( 'DTT_EVT_start' => FALSE ),
-           	'Reg_status' => array( 'Reg_status' => FALSE ),
+           	//'Reg_status' => array( 'Reg_status' => FALSE ),
 			'REG_ID' => array( 'REG_ID' => FALSE ),
         	);
 
@@ -205,7 +207,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-
+    function column_Reg_Status( EE_Registration $item ) {
+    	return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
+    }
 
 
 
@@ -213,6 +217,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_cb
 	*/
     function column_cb(EE_Registration $item){
+  		/** checkbox/lock **/
     	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
         return $payment_count > 0 ? '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
@@ -346,9 +351,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_Reg_status
 	*/
-   	function column_Reg_status(EE_Registration $item){
+   	/*function column_Reg_status(EE_Registration $item){
 		return '<span class="status-'. $item->status_ID() .'">' . str_replace ( '_', ' ', $this->_status[ $item->status_ID() ] ) . '</span>';
-	}
+	}/**/
 
 
 

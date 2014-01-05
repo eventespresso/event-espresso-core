@@ -209,3 +209,32 @@
 #attendee_details_address #ATT_zip {
 	width: 10%;
 }
+
+
+/**
+ * status strips
+ */
+ /*pending*/
+.reg-status-RPN {
+	border-color: #00B1CA;
+}
+/*cancelled, declined*/
+.reg-status-RCN, .reg-status-RDC {
+	border-color: #E44064;
+}
+
+/*approved*/
+.reg-status-RAP {
+	border-color: #70CC50;
+}
+
+/*not-approved*/
+.reg-status-RNA {
+	border-color: #AC9D9C;
+}
+
+.widefat td.column-Reg_Status, .widefat th.column-Reg_Status {
+	width: 2%;
+	padding: 0;
+	margin: 0;
+}
