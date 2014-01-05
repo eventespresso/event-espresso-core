@@ -379,15 +379,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	private function _get_registration_status_array() {
-
-		global $wpdb;
-		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
-		$results = $wpdb->get_results( $SQL );
-
-		self::$_reg_status = array();
-		foreach ( $results as $status ) {
-			self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
-		}
+		self::$_reg_status = EEM_Registration::reg_status_array();
 	}
 
 
