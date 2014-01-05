@@ -744,7 +744,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_end_date' => $default ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ),
 			'TKT_status' => $default ? '' : $ticket->ticket_status(TRUE),
 			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get_ticket_total_with_taxes()),
-			'TKT_price_amount' => $default ? 0 : $base_price->get_pretty('PRC_amount', 'localized_float'),
+			'TKT_price_amount' => $default ? 0 : $ticket_subtotal,
 			'TKT_qty' => $default ? '' : $ticket->get_pretty('TKT_qty','symbol'),
 			'TKT_qty_for_input'=> $default ? '' : $ticket->get_pretty('TKT_qty','input'),
 			'TKT_uses' => $default ? '' : $ticket->get_pretty('TKT_uses','input'),
