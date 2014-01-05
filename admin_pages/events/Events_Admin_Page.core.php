@@ -1056,7 +1056,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
   		EE_Registry::instance()->load_helper( 'Formatter' );
 
   		//args for getting related registrations
-  		$query_args = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(EEM_Registration::status_id_pending, EEM_Registration::status_id_approved ) ) ) ) : array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
+  		$query_args = array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
 
   		$query_args[0]['REG_deleted'] = 0; 
 
