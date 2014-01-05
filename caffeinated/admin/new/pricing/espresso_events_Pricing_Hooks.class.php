@@ -222,7 +222,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 		$saved_tickets = $dtts_on_existing = array();
-		$update_prices = FALSE;
+		$update_prices = $create_new_TKT = FALSE;
 		$new_default = $new_tkt = NULL;
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 
