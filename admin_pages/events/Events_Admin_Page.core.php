@@ -635,7 +635,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => !empty( $this->_req_data['display_reg_form'] ) ? 1 : 0,
 			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
-			'EVT_require_pre_approval' => !empty( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
+			'EVT_default_registration_status' => !empty( $this->_req_data['EVT_default_registration_status'] ) ? $this->_req_data['EVT_default_registration_status'] : EE_Registry::instance()->CFG->registration->default_STS_ID,
 			'EVT_member_only' => !empty( $this->_req_data['member_only'] ) ? 1 : 0,
 			'EVT_allow_overflow' => !empty( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
 			'EVT_timezone_string' => !empty( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL,
