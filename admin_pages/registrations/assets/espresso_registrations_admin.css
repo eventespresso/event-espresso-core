@@ -259,3 +259,11 @@
 .ee-status-legend-RNA {
 	background-color: #AC9D9C;
 }
+
+.ee-is-reg-status {
+	background-color: #fefa99;
+	padding: 0 4px 3px 4px;
+	color: black;
+	margin-left: -4px;
+	text-shadow: none;
+}
