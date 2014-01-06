@@ -647,10 +647,11 @@ label.error  { display: block; color: #FE2A00 !important; }
    }
 
 .ee-status-strip {
-	display: inline;
+	display: inline-block;
 	border-left: solid 5px #e6e6e6;
 }
 
 .ee-status-strip-td {
+	display: inline;
 	padding: 400%; /** cancel out any td padding **/
 }
