@@ -927,17 +927,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Updates the TKT_sold attribute (and saves) based on the number of registrations
-	 * for thsi ticket. Takes the current EE_Config setting for 'pending_counts_reg_limit' 
+	 * Updates the TKT_sold attribute (and saves) based on the number of APPROVED registrations for thsi ticket.
 	 * into account
 	 * @return int
 	 */
 	public function update_tickets_sold(){
-		$stati_to_include = array(EEM_Registration::status_id_approved);
-		if(EE_Config::instance()->registration->pending_counts_reg_limit){
-			$stati_to_include[] = EEM_Registration::status_id_pending_payment;
-		}
-		$count_regs_for_this_ticket = $this->count_registrations(array(array('STS_ID'=>array('IN',$stati_to_include), 'REG_deleted' => 0)));
+		$count_regs_for_this_ticket = $this->count_registrations( array( array( 'STS_ID' => EEM_Registration::status_id_approved, 'REG_deleted' => 0 )));
 		$this->set_sold($count_regs_for_this_ticket);
 		$this->save();
 		return $count_regs_for_this_ticket;
