@@ -730,8 +730,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				return __("Approved",'event_espresso');
 			case EEM_Registration::status_id_not_approved:
 				return __("Not Approved",'event_espresso');
-			case EEM_Registration::status_id_pending_payment_payment:
-				return __("Pending Payment",'event_espresso');
+			case EEM_Registration::status_id_pending_payment:
+				return __("Pending Approval",'event_espresso');
 			case EEM_Registration::status_id_cancelled:
 				return __("Cancelled",'event_espresso');
 			default:
@@ -1030,7 +1030,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function finalize() {
 		$update_reg = FALSE;
 		// update reg status if no monies are owing and the REG status is pending payment
-		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment_payment ) {
+		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment ) {
 			// automatically toggle status to approved
 			$this->set_status( EEM_Registration::status_id_approved );
 			$update_reg = TRUE;

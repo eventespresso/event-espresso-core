@@ -803,7 +803,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	public function update_sold(){
 		$stati_to_include = array(EEM_Registration::status_id_approved);
 		if(EE_Config::instance()->registration->pending_counts_reg_limit){
-			$stati_to_include[] = EEM_Registration::status_id_pending_payment_payment;
+			$stati_to_include[] = EEM_Registration::status_id_pending_payment;
 		}
 		$count_regs_for_this_datetime = EEM_Registration::instance()->count(array(
 			array(

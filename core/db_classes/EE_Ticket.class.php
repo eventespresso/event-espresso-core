@@ -935,7 +935,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	public function update_tickets_sold(){
 		$stati_to_include = array(EEM_Registration::status_id_approved);
 		if(EE_Config::instance()->registration->pending_counts_reg_limit){
-			$stati_to_include[] = EEM_Registration::status_id_pending_payment_payment;
+			$stati_to_include[] = EEM_Registration::status_id_pending_payment;
 		}
 		$count_regs_for_this_ticket = $this->count_registrations(array(array('STS_ID'=>array('IN',$stati_to_include), 'REG_deleted' => 0)));
 		$this->set_sold($count_regs_for_this_ticket);
