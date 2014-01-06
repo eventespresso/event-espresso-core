@@ -580,7 +580,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'desc' => __('Not Approved', 'event_espresso')
 				),
 			'pending_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending,
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
 				'desc' => __('Pending', 'event_espresso')
 				),
 			'approved_status' => array(
@@ -1009,7 +1009,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	private function _set_registration_status( $REG_ID = FALSE, $status = FALSE ) {
 		$success = FALSE;
 		// set default status if none is passed
-		$status = $status ? $status : EEM_Registration::status_id_pending;
+		$status = $status ? $status : EEM_Registration::status_id_pending_payment;
 		// have we been passed a REG_ID ?
 		if ( ! absint( $REG_ID )) {
 			// no ? then check for one in the req data
@@ -1077,7 +1077,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	protected function activate_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending );
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending_payment );
 		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
 		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
 		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to pending', $route );
