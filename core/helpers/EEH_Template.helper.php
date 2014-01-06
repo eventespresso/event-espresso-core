@@ -118,14 +118,14 @@ class EEH_Template {
 			}			
 		}		
 		// format float
-		$amount_formatted = number_format( $amount, max( array( 2, $mny->dec_plc )), $mny->dec_mrk, $mny->thsnds );
+		$amount_formatted = number_format( $amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds );
 		if ( ! $return_raw ) {
 			// add currency sign
-			if($mny->sign_b4){
-				if($amount >= 0){
+			if( $mny->sign_b4 ){
+				if( $amount >= 0 ){
 					$amount_formatted = $mny->sign . $amount_formatted;
 				}else{
-					$amount_formatted = "-".$mny->sign . str_replace("-","",$amount_formatted);
+					$amount_formatted = '-' . $mny->sign . str_replace( '-', '', $amount_formatted );
 				}
 				
 			}else{
