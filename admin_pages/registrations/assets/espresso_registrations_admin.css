@@ -266,6 +266,13 @@
 	background-color: #E76700;
 }
 
+.status-RPP { color: #00B1CA;}
+.status-RCN { color: #AC9D9C;}
+.status-RDC { color: #E44064;}
+.status-RAP { color: #70CC50;}
+.status-RNA { color: #E76700;}
+
+
 .ee-is-reg-status {
 	background-color: #fefa99;
 	padding: 0 4px 3px 4px;
