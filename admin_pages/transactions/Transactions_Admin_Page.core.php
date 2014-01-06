@@ -334,7 +334,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				),
 			'download_invoice' => array(
 				'class' => 'ee-icon ee-icon-PDF-file-type',
-				'desc' => __('Download Invoice for Transaction.', 'event_espresso')
+				'desc' => __('Download Transaction Invoice as a PDF', 'event_espresso')
 				),
 			'send_payment_reminder' => array(
 				'class' => 'ee-icon ee-icon-payment-reminder',

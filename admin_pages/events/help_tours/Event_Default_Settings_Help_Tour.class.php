@@ -48,24 +48,6 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -50,
 					'tipAdjustmentX' => 15
 					)
-				),
-			30 => array(
-				'id' => 'pending_counts_reg_limit',
-				'content' => $this->_stop_three(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 15
-					)
-				),
-			35 => array(
-				'id' => 'use_attendee_pre_approval',
-				'content' => $this->_pending_approval_stop(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 15
-					)
 				)
 			);
 	}
@@ -79,14 +61,7 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _stop_two() {
-		return '<p>' . __('Should the default registration status be set to pending or approved?', 'event_espresso') . '</p>';
+		return '<p>' . __('Should the default registration status be set to not-approved, pending payment, or approved?', 'event_espresso') . '</p>';
 	}
 
-	protected function _stop_three() {
-		return '<p>' . __('Should pending registrations count towards the registration limits and ticket sales?', 'event_espresso') . '</p>';
-	}
-
-	protected function _pending_approval_stop() {
-		return '<p>' . __('Do you want to automatically approve all registrations?', 'event_espresso') . '</p>';
-	}
 }

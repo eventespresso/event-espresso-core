@@ -646,12 +646,12 @@ label.error  { display: block; color: #FE2A00 !important; }
    	background-color: #E44064;
    }
 
-.ee-status-strip {
-	width: 5px;
-	display: inline;
+.ee-status-strip, .button-secondary.ee-status-strip, .button-primary.ee-status-strip {
+	display: inline-block;
 	border-left: solid 5px #e6e6e6;
 }
 
 .ee-status-strip-td {
+	display: inline;
 	padding: 400%; /** cancel out any td padding **/
 }
