@@ -575,25 +575,25 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-icon ee-icon-cash',
 				'desc' => __('View Transaction details.', 'event_espresso')
 				),
+			'not_approved' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
+				'desc' => __('Not Approved', 'event_espresso')
+				),
 			'pending_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending,
-				'desc' => __('Pending Registration Status', 'event_espresso')
-				),
-			'cancelled_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
-				'desc' => __('Cancelled Registration Status', 'event_espresso')
-				),
-			'declined_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
-				'desc' => __('Declined Registration Status', 'event_espresso')
+				'desc' => __('Pending', 'event_espresso')
 				),
 			'approved_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
-				'desc' => __('Approved Registration Status', 'event_espresso')
+				'desc' => __('Approved', 'event_espresso')
 				),
-			'not_approved' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
-				'desc' => __('Not Approved Registration Status', 'event_espresso')
+			'cancelled_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
+				'desc' => __('Cancelled', 'event_espresso')
+				),
+			'declined_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
+				'desc' => __('Declined', 'event_espresso')
 				)
 			);
 		return $items;

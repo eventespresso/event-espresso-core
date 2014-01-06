@@ -214,8 +214,13 @@
 .reg-status-RPN {
 	border-color: #00B1CA;
 }
-/*cancelled, declined*/
-.reg-status-RCN, .reg-status-RDC {
+/*cancelled*/
+.reg-status-RCN {
+	border-color: #AC9D9C;
+}
+
+/*declined*/
+ .reg-status-RDC {
 	border-color: #E44064;
 }
 
@@ -226,7 +231,7 @@
 
 /*not-approved*/
 .reg-status-RNA {
-	border-color: #AC9D9C;
+	border-color: #E76700;
 }
 
 .widefat td.column-Reg_Status, .widefat th.column-Reg_Status {
@@ -246,14 +251,19 @@
 .ee-status-legend-RPN {
 	background-color: #00B1CA;
 }
-.ee-status-legend-RCN, .ee-status-legend-RDC {
+.ee-status-legend-RCN {
+	background-color: #AC9D9C;
+}
+
+.ee-status-legend-RDC {
 	background-color: #E44064;
 }
+
 .ee-status-legend-RAP {
 	background-color: #70CC50;
 }
 .ee-status-legend-RNA {
-	background-color: #AC9D9C;
+	background-color: #E76700;
 }
 
 .ee-is-reg-status {

@@ -28,9 +28,5 @@
 <?php _e('Event Phone Number', 'event_espresso'); ?><br />
 <?php _e('Is a phone number available for this event? This field is optional.', 'event_espresso'); ?>
 </li>
-<li>
-<?php _e('Require Pre-approval', 'event_espresso'); ?><br />
-<?php _e('Require an event administrator to approve events.', 'event_espresso'); ?>
-</li>
 </ul>
 </p>

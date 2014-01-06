@@ -106,30 +106,30 @@ class Registration_List_Table_Tips extends EE_Qtip_Config {
 	private function _registration_status_legend( $status ) {
 
 		$status_array = array(
+			'not_approved' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
+				'desc' => __('Not Approved', 'event_espresso'),
+				'status' => EEM_Registration::status_id_not_approved
+				),
 			'pending_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending,
-				'desc' => __('Pending Registration Status', 'event_espresso'),
+				'desc' => __('Pending', 'event_espresso'),
 				'status' => EEM_Registration::status_id_pending
+				),
+			'approved_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
+				'desc' => __('Approved', 'event_espresso'),
+				'status' => EEM_Registration::status_id_approved
 				),
 			'cancelled_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
-				'desc' => __('Cancelled Registration Status', 'event_espresso'),
+				'desc' => __('Cancelled', 'event_espresso'),
 				'status' => EEM_Registration::status_id_cancelled
 				),
 			'declined_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
-				'desc' => __('Declined Registration Status', 'event_espresso'),
+				'desc' => __('Declined', 'event_espresso'),
 				'status' => EEM_Registration::status_id_declined
-				),
-			'approved_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
-				'desc' => __('Approved Registration Status', 'event_espresso'),
-				'status' => EEM_Registration::status_id_approved
-				),
-			'not_approved' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
-				'desc' => __('Not Approved Registration Status', 'event_espresso'),
-				'status' => EEM_Registration::status_id_not_approved
 				)
 			);
 
