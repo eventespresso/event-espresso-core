@@ -56,7 +56,7 @@
 			<table class="ticket-table">
 				<thead>
 					<tr valign="top">
-						<td colspan="3"><?php _e('Ticket', 'event_espresso'); ?></td>
+						<td colspan="2"><?php _e('Ticket', 'event_espresso'); ?></td>
 						<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
 						<td><?php _e('Sell Until', 'event_espresso'); ?></td>
 						<td><?php _e('Price', 'event_espresso'); ?></td>

@@ -2,6 +2,7 @@
 	
 	<h4 class="admin-primary-mbox-h4"><?php _e( 'Payment Details', 'event_espresso' );?></h4>
 	<?php echo $view_transaction_button; ?>
+	<?php echo $resend_registration_button; ?>
 	<table id="admin-primary-mbox-reg-session-info-tbl" class="form-table skinny-rows">
 		<tbody>
 			<tr>

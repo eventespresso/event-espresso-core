@@ -296,7 +296,7 @@
    padding-right: .4em;
 }
 
-.ticket-table tbody .ticket-row td:first-child, .ticket-table tbody .ticket-row td:nth-child(2) {
+.ticket-table tbody .ticket-row td:first-child {
     padding: 0;
     margin: 0;
     padding-bottom: .3em;
@@ -311,43 +311,43 @@
 }
 
 /*ticket status strip */
-.ticket-table tbody .ticket-row td:nth-child(2) {
+.ticket-table tbody .ticket-row td:first-child {
     width: 1%;
 }
 
 /*Ticket Title */
-.ticket-table tbody .ticket-row td:nth-child(3) {
+.ticket-table tbody .ticket-row td:nth-child(2) {
     width: 28%;
 }
 
 /*datetime fields */
-.ticket-table tbody .ticket-row td:nth-child(4), .ticket-table tbody .ticket-row td:nth-child(5) {
+.ticket-table tbody .ticket-row td:nth-child(3), .ticket-table tbody .ticket-row td:nth-child(4) {
     width: 18%;
 }
 
 /* Price */
-.ticket-table tbody .ticket-row td:nth-child(6) {
+.ticket-table tbody .ticket-row td:nth-child(5) {
     width: 10%;
 }
 
-    .ticket-table tbody .ticket-row td:nth-child(6) input {
+    .ticket-table tbody .ticket-row td:nth-child(5) input {
         text-align: right;
     }
 
 /* Qty */
-.ticket-table tbody .ticket-row td:nth-child(7) {
+.ticket-table tbody .ticket-row td:nth-child(6) {
     width: 5%;
 }
 
 /* Sold */
-.ticket-table tbody .ticket-row td:nth-child(8) {
+.ticket-table tbody .ticket-row td:nth-child(7) {
     text-align: right;
     padding-right: 1em;
     width: 5%;
 }
 
 /* Actions */
-.ticket-table tbody .ticket-row td:nth-child(9) {
+.ticket-table tbody .ticket-row td:nth-child(8) {
     width: 15%;
 }
 
@@ -357,30 +357,28 @@
     margin-top: 4px;
 }
 
-.ee-tkt-status {
-    width: 5px;
-    height: 100%;
-    display: inline-block;
+.ee-status-strip-td {
+    padding: 50% 0 150% 0;
 }
 
 .tkt-status-0 {
-   border-left: solid 5px #e6e6e6; /*archived*/
+   border-color: #e6e6e6; /*archived*/
 }
 
 .tkt-status--1 {
-   border-left: solid 5px #A39D9C; /*expired*/
+   border-color: #A39D9C; /*expired*/
 }
 
 .tkt-status-1 {
-    border-left: solid 5px #49afcd; /*pending*/
+    border-color: #49afcd; /*pending*/
 }
 
 .tkt-status-2 {
-    border-left: solid 5px #62B660; /*onsale*/
+    border-color: #62B660; /*onsale*/
 }
 
 .tkt-status--2 {
-    border-left: solid 5px #E44064;
+    border-color: #E44064;
 }
 
 
@@ -392,6 +390,8 @@
     margin-top: -8px;
     margin-bottom: 15px;
 }
+
+
 
 .ticket-fieldset legend {
     font-weight: bold;
