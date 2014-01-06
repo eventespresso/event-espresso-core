@@ -985,7 +985,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * increments this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
 	 */
-	public function reserve_registration_space() {
+	private function _reserve_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
 		$ticket->save();
@@ -1006,7 +1006,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
 	 */
-	public function release_registration_space() {
+	private function _release_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->decrease_sold();
 		$ticket->save();
