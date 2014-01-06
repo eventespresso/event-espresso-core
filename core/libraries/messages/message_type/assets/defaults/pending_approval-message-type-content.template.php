@@ -30,7 +30,7 @@
                     <tr>
                         <td>
                             <h2>Hello, [FNAME]</h2>
-                            <p class="lead">Your registration for the following events is pending approval:</p>
+                            <p class="lead">Your registration for the following event(s) are pending approval. Your registration for the following events is pending approval. You will be notified if/when your registration is approved.</p>
                             
     
                         </td>
