@@ -490,7 +490,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  ATT_ID int(10) unsigned NOT NULL,
 					  TXN_ID int(10) unsigned NOT NULL,
 					  TKT_ID int(10) unsigned NOT NULL,
-					  STS_ID varchar(3) COLLATE utf8_bin NOT NULL DEFAULT 'RPN',
+					  STS_ID varchar(3) COLLATE utf8_bin NOT NULL DEFAULT 'RPP',
 					  REG_date datetime NOT NULL default '0000-00-00 00:00:00',
 					  REG_final_price decimal(10,3) NOT NULL DEFAULT '0.00',
 					  REG_session varchar(45) COLLATE utf8_bin NOT NULL,
@@ -1464,7 +1464,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		'Completed'=>'RAP',
 		''=>'RNA',
 		'Incomplete'=>'RNA',
-		'Pending'=>'RPN');
+		'Pending'=>'RPP');
 		return isset($mapping[$payment_status]) ? $mapping[$payment_status] : 'RNA';
 	}
 	
