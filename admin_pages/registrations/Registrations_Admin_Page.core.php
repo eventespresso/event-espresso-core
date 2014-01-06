@@ -184,6 +184,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'func' => 'activate_registration',
 						'noheader' => TRUE
 					),
+
+				'not_approve_registration' => array(
+					'func' => 'not_approve_registration',
+					'noheader' => TRUE
+					),
 					
 				'activate_registration'	=> array(
 						'func' => 'activate_registration',
@@ -923,76 +928,60 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	protected function _set_approve_or_decline_reg_status_buttons() {
-		
-		$approve_decline_reg_status_buttons = '';
-		
-//		$reg_status_array = EEM_Registration::reg_status_array();
-//		printr( $reg_status_array, '$reg_status_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//is registration for free event OR for a completed transaction? This will determine whether the set to pending option is shown.
+		$is_complete = $this->_registration->transaction()->is_completed();
 
+		//let's get an array of all possible buttons that we can just reference
+		$status_buttons = $this->_get_reg_status_buttons();
+
+		$default_status = EE_Registry::instance()->CFG->registration->default_STS_ID;
+		
 		if ( $this->_set_registration_object() ) {
-			switch ( $this->_registration->status_ID() ) {
-				
-				case 'RAP' :
-					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$approve_decline_reg_status_buttons = '
-			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending', 'event_espresso' ) . '">
-				' . __( 'Set this Registration to Pending', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
-				' . __( 'Decline this Registration', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '" title="' . __( 'Set Registration Status to Cancelled', 'event_espresso' ) . '">
-				' . __( 'Cancel this Registration', 'event_espresso' ) . '
-			</a>';
-					break;
-				
-				case 'RPN' :
-					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$approve_decline_reg_status_buttons = '
-			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
-				' . __( 'Approve this Registration', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
-				' . __( 'Decline this Registration', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '" title="' . __( 'Set Registration Status to Cancelled', 'event_espresso' ) . '">
-				' . __( 'Cancel this Registration', 'event_espresso' ) . '
-			</a>';
-					break;
-				
-				case 'RNA' :
-					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$approve_decline_reg_status_buttons = '
-			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
-				' . __( 'Approve this Registration', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending', 'event_espresso' ) . '">
-				' . __( 'Set this Registration to Pending', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '" title="' . __( 'Set Registration Status to Cancelled', 'event_espresso' ) . '">
-				' . __( 'Cancel this Registration', 'event_espresso' ) . '
-			</a>';
-					break;
-				
-				case 'RCN' :
-					$activate_url = self::add_query_args_and_nonce( array( 'action'=>'activate_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$approve_decline_reg_status_buttons = '
-			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $activate_url . '" title="' . __( 'Set Registration Status to Pending', 'event_espresso' ) . '">
-				' . __( 'Reactivate this Registration', 'event_espresso' ) . '
-			</a>';
-					break;
-				
-			}		
+			$current_status = $this->_registration->status_ID();
+			unset( $status_buttons[$current_status] );
+			if ( $current_status != EEM_Registration::status_id_pending && $is_complete ) {
+				unset( $status_buttons[EEM_Registration::status_id_pending] );
+			}
+			return implode( "\n", $status_buttons );
 		}
 		
-		return $approve_decline_reg_status_buttons;
+		return '';
 		
+	}
+
+
+
+
+	/**
+	 * Returns an array of all the buttons for the various statuses and switch status actions
+	 * @return array 
+	 */
+	private function _get_reg_status_buttons() {
+		$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+		$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+		$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+		$approve_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL ); 
+		$not_approve_url = self::add_query_args_and_nonce( array( 'action'=>'not_approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+		$activate_url = self::add_query_args_and_nonce( array( 'action'=>'activate_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+
+		$buttons = array(
+			EEM_Registration::status_id_approved => '<a class="button-primary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" href="' . $approve_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
+				' . __( 'Approve this Registration', 'event_espresso' ) . '
+				</a>',
+			EEM_Registration::status_id_pending => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending . '" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending', 'event_espresso' ) . '">
+				' . __( 'Set this Registration to Pending', 'event_espresso' ) . '
+				</a>',
+			EEM_Registration::status_id_not_approved => '<a class="(and button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" href="' . $not_approve_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
+				' . __( 'Not Approve this Registration', 'event_espresso' ) . '
+				</a>',
+			EEM_Registration::status_id_declined => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_declined . '" href="' . $decline_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
+				' . __( 'Decline this Registration', 'event_espresso' ) . '
+				</a>',
+			EEM_Registration::status_id_cancelled => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_cancelled . '" href="' . $cancel_url . '" title="' . __( 'Set Registration Status to Cancelled', 'event_espresso' ) . '">
+				' . __( 'Cancel this Registration', 'event_espresso' ) . '
+				</a>',
+			);
+		return $buttons;
 	}
 
 

@@ -211,27 +211,27 @@
  * status strips
  */
  /*pending*/
-.reg-status-RPN {
-	border-color: #00B1CA;
+.reg-status-RPN, .button-secondary.reg-status-RPN, .button-primary.reg-status-RPN {
+	border-left-color: #00B1CA;
 }
 /*cancelled*/
-.reg-status-RCN {
-	border-color: #AC9D9C;
+.reg-status-RCN, .button-secondary.reg-status-RCN, .button-primary.reg-status-RCN {
+	border-left-color: #AC9D9C;
 }
 
 /*declined*/
- .reg-status-RDC {
-	border-color: #E44064;
+ .reg-status-RDC, .button-secondary.reg-status-RDC, .button-primary.reg-status-RDC {
+	border-left-color: #E44064;
 }
 
 /*approved*/
-.reg-status-RAP {
-	border-color: #70CC50;
+.reg-status-RAP, .button-secondary.reg-status-RAP, .button-primary.reg-status-RAP {
+	border-left-color: #70CC50;
 }
 
 /*not-approved*/
-.reg-status-RNA {
-	border-color: #E76700;
+.reg-status-RNA, .button-secondary.reg-status-RNA, .button-primary.reg-status-RNA {
+	border-left-color: #E76700;
 }
 
 .widefat td.column-Reg_Status, .widefat th.column-Reg_Status {
