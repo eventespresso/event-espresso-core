@@ -4,11 +4,14 @@
 		<h2 id="reg-admin-reg-details-reg-status-hdr">
 			<?php echo __( 'Registration Status : ', 'event_espresso' );?>
 			<span class="<?php echo $reg_status['class'];?>"><?php echo $reg_status['value'];?></span>
+			<span><?php echo $resend_registration_button; ?></span>
+		</h2>
+		<h3>
+			<?php _e('Change status to: ', 'event_espresso'); ?>
 			<span id="reg-admin-approve-decline-reg-status-spn">
 				<?php echo $approve_decline_reg_status_buttons;?>
 			</span>
-			<span><?php echo $resend_registration_button; ?></span>
-		</h2>
+		</h3>
 		<?php if ( $registration->group_size() > 1 ) : ?>
 			<a id="scroll-to-other-attendees" class="scroll-to" href="#other-attendees"><?php echo __( 'scroll to Other Attendees Registered in the Same Transaction', 'event_espresso' );?></a>
 		<?php endif; ?>

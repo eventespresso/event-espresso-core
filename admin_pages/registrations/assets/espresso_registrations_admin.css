@@ -210,8 +210,8 @@
 /**
  * status strips
  */
- /*pending*/
-.reg-status-RPN, .button-secondary.reg-status-RPN, .button-primary.reg-status-RPN {
+ /*pending payment*/
+.reg-status-RPP, .button-secondary.reg-status-RPP, .button-primary.reg-status-RPP {
 	border-left-color: #00B1CA;
 }
 /*cancelled*/
