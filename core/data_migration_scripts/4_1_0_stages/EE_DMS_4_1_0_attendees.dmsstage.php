@@ -417,7 +417,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		$reg_status_mapping = array(
 				'Completed'=>'RAP',
-				'Pending'=>'RPN',
+				'Pending'=>'RPP',
 				'Payment Declined'=>'RNA',
 				'Incomplete'=>'RNA',
 				'Not Completed'=>'RNA',

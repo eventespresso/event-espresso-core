@@ -52,13 +52,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	const status_id_not_approved = 'RNA';
 
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a PENDING registration.
+	 * Status ID (STS_ID on esp_status table) to indicate registration is PENDING_PAYMENT .
 	 * Payments are allowed. 
-	 * STS_ID will automatically be toggled to RAP if payment is made in full
+	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
 	 * No space reservced.
 	 * Registration is active
 	 */
-	const status_id_pending = 'RPN';
+	const status_id_pending_payment = 'RPP';
 
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate an APPROVED registration.
@@ -114,7 +114,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'ATT_ID'=>new EE_Foreign_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0, 'Attendee'),
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
-				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_not_approved, 'Status'),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_pending_payment, 'Status'),
 				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
@@ -357,7 +357,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 */
 	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {	
 
-		$query_params = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(self::status_id_pending, self::status_id_approved ) ) ) ) : array( array( 'STS_ID' => self::status_id_approved ) );
+		$query_params = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(self::status_id_pending_payment, self::status_id_approved ) ) ) ) : array( array( 'STS_ID' => self::status_id_approved ) );
 
 		$query_params[0]['EVT_ID'] = $EVT_ID;
 

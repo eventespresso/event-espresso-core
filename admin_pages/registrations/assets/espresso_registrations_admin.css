@@ -17,14 +17,14 @@
 .reg-overview-full-payment-spn { color:#090; font-weight:bold; }
 
 .status-TPN,
-.status-RPN, 
+.status-RPP, 
 .reg-overview-part-payment-spn { color:#F93; font-weight:bold; }
 
 .status-TFL, .status-TIN, .status-TOP,
 .status-RCN, .status-RFL, .status-RNA, 
 .reg-overview-no-payment-spn { color:#F00; font-weight:bold; }
 
-.status-RAP, .status-RPN, .status-RCN, .status-RFL, .status-RNA { font-size:.9em;}
+.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size:.9em;}
 
 .wp-list-table .column-event_name { width:10%; }
 .wp-list-table .column-REG_date,
@@ -248,7 +248,7 @@
 	vertical-align: middle;
 }
 
-.ee-status-legend-RPN {
+.ee-status-legend-RPP {
 	background-color: #00B1CA;
 }
 .ee-status-legend-RCN {

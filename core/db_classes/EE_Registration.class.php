@@ -730,7 +730,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				return __("Approved",'event_espresso');
 			case EEM_Registration::status_id_not_approved:
 				return __("Not Approved",'event_espresso');
-			case EEM_Registration::status_id_pending:
+			case EEM_Registration::status_id_pending_payment:
 				return __("Pending Approval",'event_espresso');
 			case EEM_Registration::status_id_cancelled:
 				return __("Cancelled",'event_espresso');
@@ -985,7 +985,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * increments this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
 	 */
-	public function reserve_registration_space() {
+	private function _reserve_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
 		$ticket->save();
@@ -1006,7 +1006,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
 	 */
-	public function release_registration_space() {
+	private function _release_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->decrease_sold();
 		$ticket->save();
@@ -1029,8 +1029,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	public function finalize() {
 		$update_reg = FALSE;
-		// update reg status if no monies are owing and the REG status is NOT set to NOT APPROVED
-		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() != EEM_Registration::status_id_not_approved ) {
+		// update reg status if no monies are owing and the REG status is pending payment
+		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment ) {
+			// automatically toggle status to approved
 			$this->set_status( EEM_Registration::status_id_approved );
 			$update_reg = TRUE;
 		}

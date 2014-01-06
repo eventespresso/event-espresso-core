@@ -75,7 +75,7 @@ td{
 	margin-bottom:1em;
 }
 /* classes from registration and transaction stati */
-.RNA,.RCN,.RPN, .TPN, .TIN{
+.RNA,.RCN,.RPP, .TPN, .TIN{
 	color:red;
 }
 .TCM {

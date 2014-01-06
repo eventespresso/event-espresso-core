@@ -36,9 +36,9 @@ class Registration_List_Table_Tips extends EE_Qtip_Config {
 				'content' => $this->_registration_trash_message(),
 				),
 			1 => array(
-				'content_id' => 'registration-status-' . EEM_Registration::status_id_pending,
-				'target' => '.reg-status-' . EEM_Registration::status_id_pending,
-				'content' => $this->_registration_status_legend(EEM_Registration::status_id_pending),
+				'content_id' => 'registration-status-' . EEM_Registration::status_id_pending_payment,
+				'target' => '.reg-status-' . EEM_Registration::status_id_pending_payment,
+				'content' => $this->_registration_status_legend(EEM_Registration::status_id_pending_payment),
 				'options' => array(
 					'position' => array(
 						'target' => 'mouse'
@@ -112,9 +112,9 @@ class Registration_List_Table_Tips extends EE_Qtip_Config {
 				'status' => EEM_Registration::status_id_not_approved
 				),
 			'pending_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending,
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
 				'desc' => __('Pending', 'event_espresso'),
-				'status' => EEM_Registration::status_id_pending
+				'status' => EEM_Registration::status_id_pending_payment
 				),
 			'approved_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
