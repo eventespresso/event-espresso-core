@@ -190,11 +190,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'noheader' => TRUE
 					),
 					
-				'activate_registration'	=> array(
-						'func' => 'activate_registration',
-						'noheader' => TRUE
-					),
-					
 				'cancel_registration'	=> array(
 						'func' => 'cancel_registration',
 						'noheader' => TRUE
@@ -486,7 +481,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'activate_registration' => __('Activate Registrations', 'event_espresso'),
+					'not_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
@@ -499,7 +494,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'activate_registration' => __('Activate Registrations', 'event_espresso'),
+					'not_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
@@ -512,7 +507,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'activate_registration' => __('Activate Registrations', 'event_espresso'),
+					'not_approved_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
@@ -877,8 +872,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			
 			$this->_template_args['approve_decline_reg_status_buttons'] = $this->_set_approve_or_decline_reg_status_buttons();
 
-			$this->_template_args['resend_registration_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __('Resend Registration'), 'button secondary-button ee-icon ee-icon-email-send' );
-
 			$this->_template_args['grand_total'] = $transaction->total();
 
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
@@ -1021,11 +1014,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$REG_ID = FALSE;
 		}
 		if ( $REG_ID ) {
-			//echo '<h4>$REG_ID : ' . $REG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			$registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID );
 			$success = $registration->set_status( $status );
 			$registration->save();
-			//printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		} 
 		return array( 'REG_ID' => $REG_ID, 'success' => $success );
 	}
@@ -1052,25 +1043,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	protected function decline_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_not_approved );
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_declined );
 		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
 		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
 		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to not approved', $route );
 	}
 
-
-
-	/**
-	 * 		activate_registration
-	*		@access protected
-	*		@return void
-	*/
-	protected function activate_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending_payment );
-		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
-		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to pending', $route );
-	}
 
 
 
@@ -1089,6 +1067,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+
+	/**
+	 * 		decline_registration
+	*		@access protected
+	*		@return void
+	*/
+	protected function not_approve_registration() {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_not_approved );
+		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
+		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
+		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to not approved', $route );
+	}
 
 
 
@@ -1120,6 +1110,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$this->_template_args['view_transaction_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __('View Transaction'), 'button secondary-button right ee-icon ee-icon-cash' );
+		$this->_template_args['resend_registration_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __('Resend Registration'), 'button secondary-button ee-icon ee-icon-email-send right' );
 
 		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 

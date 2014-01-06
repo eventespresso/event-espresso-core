@@ -273,3 +273,7 @@
 	margin-left: -4px;
 	text-shadow: none;
 }
+
+#admin-primary-mbox-reg-details-dv .secondary-button {
+	margin-left: 10px;
+}

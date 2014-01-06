@@ -4,7 +4,6 @@
 		<h2 id="reg-admin-reg-details-reg-status-hdr">
 			<?php echo __( 'Registration Status : ', 'event_espresso' );?>
 			<span class="<?php echo $reg_status['class'];?>"><?php echo $reg_status['value'];?></span>
-			<span><?php echo $resend_registration_button; ?></span>
 		</h2>
 		<h3>
 			<?php _e('Change status to: ', 'event_espresso'); ?>
