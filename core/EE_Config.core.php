@@ -1119,7 +1119,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	/**
 	 * Default registration status
 	 * @var string $default_STS_ID
-	 * eg 'RPN'
+	 * eg 'RPP'
 	 */
 	public $default_STS_ID;
 	  
@@ -1200,7 +1200,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public function __construct() {
 		// set default registration settings
-		$this->default_STS_ID = 'RPN'; 	// default reg status
+		$this->default_STS_ID = EEM_Registration::status_id_pending_payment; 
 		$this->use_attendee_pre_approval = FALSE;
 		$this->show_pending_payment_options = FALSE;
 		$this->pending_counts_reg_limit = FALSE;

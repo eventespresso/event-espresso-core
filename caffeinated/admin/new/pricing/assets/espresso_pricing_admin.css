@@ -18,7 +18,7 @@
 
 .column-Reg_status { width:7%; }
 .status-APR, .reg-overview-full-payment-spn { color:#090;  }
-.status-RPN, .reg-overview-part-payment-spn { color:#F93;  }
+.status-RPP, .reg-overview-part-payment-spn { color:#F93;  }
 .status-NAP, .reg-overview-no-payment-spn { color:#F00;  }
 
 .column-name { width:17.5%; }

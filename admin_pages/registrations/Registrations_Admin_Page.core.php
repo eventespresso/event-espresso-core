@@ -932,7 +932,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( $this->_set_registration_object() ) {
 			switch ( $this->_registration->status_ID() ) {
 				
-				case 'RAP' :
+				case EEM_Registration::status_id_approved :
 					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
@@ -948,7 +948,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			</a>';
 					break;
 				
-				case 'RPN' :
+				case EEM_Registration::status_id_pending_payment :
 					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
@@ -964,7 +964,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			</a>';
 					break;
 				
-				case 'RNA' :
+				case EEM_Registration::status_id_not_approved :
 					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
@@ -980,7 +980,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			</a>';
 					break;
 				
-				case 'RCN' :
+				case EEM_Registration::status_id_cancelled :
 					$activate_url = self::add_query_args_and_nonce( array( 'action'=>'activate_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 					$approve_decline_reg_status_buttons = '
 			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $activate_url . '" title="' . __( 'Set Registration Status to Pending', 'event_espresso' ) . '">
