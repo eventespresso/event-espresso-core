@@ -557,7 +557,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$items = array(
 			'star-icon' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
-				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				'desc' => __('This is the Primary Attendee', 'event_espresso')
 				),
 			'view_details' => array(
 				'class' => 'dashicons dashicons-search',
@@ -569,11 +569,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'resend_registration' => array(
 				'class' => 'ee-icon ee-icon-email-send',
-				'desc' => __('Resend registration details to attendee', 'event_espresso')
+				'desc' => __('Resend Registration Details to Attendee', 'event_espresso')
 				),
 			'view_transaction' => array(
 				'class' => 'ee-icon ee-icon-cash',
-				'desc' => __('View Transaction details.', 'event_espresso')
+				'desc' => __('View Transaction Details', 'event_espresso')
 				),
 			'not_approved' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
