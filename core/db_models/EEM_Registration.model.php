@@ -42,46 +42,60 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 */
 	const PRIMARY_REGISTRANT_COUNT = 1;
 
-	
-	
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a pending registration.
-	 * Meaning: the user CAN pay, but is not yet approved. No seat is reserved for them.
-	 */
-	const status_id_pending = 'RPN';
-	
-	
-	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a cancelled registration.
-	 * NO seat reserved.
-	 */
-	const status_id_cancelled = 'RCN';
-	
-	/**
-	 * Status ID (STS_ID on teh esp_status table) to indicate a registration was DECLINED
-	 * by the admin. No seat reservced.
-	 */
-	const status_id_declined = 'RDC';
-	
-	
-	/**
-	 * Status ID (STS_ID on esp_status table) to indicate an approved registration.
-	 * Their spot is reserved. Usually this means they ahve paid.
-	 */
-	const status_id_approved = 'RAP';
-	
-	
-	/**
-	 * Status ID (STS_ID on esp_status table) to indicate an unapproved registration.
-	 * This means they are not yet allowed to pay, and an admin must first approve them.
+	 * Status ID (STS_ID on esp_status table) to indicate an UNAPPROVED registration.
+	 * Payments are NOT allowed. 
+	 * Event Admin must manually toggle STS_ID for it to change
+	 * No space reservced.
+	 * Registration is active
 	 */
 	const status_id_not_approved = 'RNA';
+
 	/**
-	 *		private constructor to prevent direct creation
-	 *		@Constructor
-	 *		@access protected
-	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return void
+	 * Status ID (STS_ID on esp_status table) to indicate a PENDING registration.
+	 * Payments are allowed. 
+	 * STS_ID will automatically be toggled to RAP if payment is made in full
+	 * No space reservced.
+	 * Registration is active
+	 */
+	const status_id_pending = 'RPN';
+
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate an APPROVED registration.
+	 * the TXN may or may not be completed ( paid in full )
+	 * Payments are allowed. 
+	 * A space IS reserved. 
+	 * Registration is active
+	 */
+	const status_id_approved = 'RAP';
+
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a registration was CANCELLED by the attendee.
+	 * Payments are NOT allowed. 
+	 * NO space reserved.
+	 * Registration is NOT active
+	 */
+	const status_id_cancelled = 'RCN';
+
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a registration was DECLINED by the Event Admin
+	 * Payments are NOT allowed. 
+	 * No space reservced.
+	 * Registration is NOT active
+	 */
+	const status_id_declined = 'RDC';
+
+
+
+
+
+	/**
+	 *	private constructor to prevent direct creation
+	 *	@Constructor
+	 *	@access protected
+	 *	@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  
+	* 	Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
+	 *	@return void
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Registration','event_espresso');
