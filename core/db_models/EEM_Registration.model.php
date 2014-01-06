@@ -52,13 +52,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	const status_id_not_approved = 'RNA';
 
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a PENDING registration.
+	 * Status ID (STS_ID on esp_status table) to indicate registration is PENDING_PAYMENT .
 	 * Payments are allowed. 
-	 * STS_ID will automatically be toggled to RAP if payment is made in full
+	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
 	 * No space reservced.
 	 * Registration is active
 	 */
-	const status_id_pending = 'RPN';
+	const status_id_pending_payment = 'RPP';
 
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate an APPROVED registration.
@@ -357,7 +357,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 */
 	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {	
 
-		$query_params = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(self::status_id_pending, self::status_id_approved ) ) ) ) : array( array( 'STS_ID' => self::status_id_approved ) );
+		$query_params = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(self::status_id_pending_payment, self::status_id_approved ) ) ) ) : array( array( 'STS_ID' => self::status_id_approved ) );
 
 		$query_params[0]['EVT_ID'] = $EVT_ID;
 
