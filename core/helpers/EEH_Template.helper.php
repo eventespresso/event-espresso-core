@@ -80,13 +80,15 @@ class EEH_Template {
 	 */
 	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE, $cur_code_span_class = 'currency-code' ) {
 		// ensure amount was received
-		if ( is_null( $amount )) {
+		if ( is_null( $amount ) ) {
 			$msg = __( 'In order to format currency, an amount needs to be passed.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
+
 		//ensure amount is float
 		$amount = (float) $amount;
+
 		// load registray
 		$EE = EE_Registry::instance();
 		$mny = new EE_Currency_Config();
@@ -119,18 +121,17 @@ class EEH_Template {
 		$amount_formatted = number_format( $amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds );
 		if ( ! $return_raw ) {
 			// add currency sign
-			if ( $mny->sign_b4 ){
-				if ( $amount >= 0 ){
+			if( $mny->sign_b4 ){
+				if( $amount >= 0 ){
 					$amount_formatted = $mny->sign . $amount_formatted;
-				} else {
-					// since we are manually adding the negative sign in B4 the currency sign, we need to make the amount positive so that we do NOT get TWO negative signs
-					$amount_formatted = $amount_formatted * -1;
-					// now manually add the negative sign in B4 the currency sign  ie:   -$25  NOT $-25
+				}else{
 					$amount_formatted = '-' . $mny->sign . str_replace( '-', '', $amount_formatted );
-				}				
-			} else {
+				}
+				
+			}else{
 				$amount_formatted =  $amount_formatted . $mny->sign;
-			}			
+			}
+			
 			// add currency code ?
 			$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;			
 		}
