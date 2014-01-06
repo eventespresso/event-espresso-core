@@ -185,7 +185,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'noheader' => TRUE
 					),
 
-				'not_approve_registration' => array(
+				'no_approve_registration' => array(
 					'func' => 'not_approve_registration',
 					'noheader' => TRUE
 					),
@@ -481,7 +481,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'not_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
+					'no_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
@@ -494,7 +494,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'not_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
+					'no_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
@@ -954,8 +954,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 		$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 		$approve_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL ); 
-		$not_approve_url = self::add_query_args_and_nonce( array( 'action'=>'not_approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-		$activate_url = self::add_query_args_and_nonce( array( 'action'=>'activate_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+		$not_approve_url = self::add_query_args_and_nonce( array( 'action'=>'no_approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 
 		$buttons = array(
 			EEM_Registration::status_id_approved => '<a class="button-primary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" href="' . $approve_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
@@ -964,7 +963,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			EEM_Registration::status_id_pending_payment => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending Payment', 'event_espresso' ) . '">
 				' . __( 'Pending Payment', 'event_espresso' ) . '
 				</a>',
-			EEM_Registration::status_id_not_approved => '<a class="(and button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" href="' . $not_approve_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
+			EEM_Registration::status_id_not_approved => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" href="' . $not_approve_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
 				' . __( 'Not Approved', 'event_espresso' ) . '
 				</a>',
 			EEM_Registration::status_id_declined => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_declined . '" href="' . $decline_url . '" title="' . __( 'Set Registration Status to Declined', 'event_espresso' ) . '">
