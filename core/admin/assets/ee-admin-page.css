@@ -647,7 +647,6 @@ label.error  { display: block; color: #FE2A00 !important; }
    }
 
 .ee-status-strip {
-	width: 5px;
 	display: inline;
 	border-left: solid 5px #e6e6e6;
 }
