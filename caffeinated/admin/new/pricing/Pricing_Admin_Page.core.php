@@ -341,7 +341,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				),
 			'trashed' => array(
 					'slug' => 'trashed',
-					'label' => __('Trash Can', 'event_espreso'),
+					'label' => __('Trash', 'event_espreso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'restore_price' => __('Restore from Trash', 'event_espresso'),
