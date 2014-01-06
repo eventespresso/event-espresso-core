@@ -44,7 +44,7 @@
 .wp-list-table .column-PRC_amount,
 .wp-list-table .column-REG_final_price,
 .wp-list-table .column-TXN_total,
-.wp-list-table .column-TXN_paid { width:15%; text-align:right; }
+.wp-list-table .column-TXN_paid { width:10%; text-align:right; }
 
 .reg-pad-rght { display:block; padding-right:1em; }
 
