@@ -1,7 +1,7 @@
 <!-- content -->
 
 <div class="content">
-	<p>The following attendee(s) are pending approval for the following event(s). Your registration for the following events is pending approval. You will be notified if/when your registration is approved.</p>
+	<p>The following attendee(s) are pending approval for the following event(s).</p>
 	<table>
 		<tr>
 			<td>
