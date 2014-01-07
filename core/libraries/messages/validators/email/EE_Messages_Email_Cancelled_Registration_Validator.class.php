@@ -17,22 +17,22 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Messages_Email_Resend_Registration_Validator class
+ * EE_Messages_Email_Cancelled_Registration_Validator class
  *
- * Holds any special validation rules for template fields with Email messenger and Resend Registration message type.
+ * Holds any special validation rules for template fields with Email messenger and Registration message type.
  *
  * @package		Event Espresso
- * @subpackage	includes/core/messages/validators/email/EE_Messages_Email_Resend_Registration_Validator.class.php
+ * @subpackage	includes/core/messages/validators/email/EE_Messages_Email_Cancelled_Registration_Validator.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class EE_Messages_Email_Resend_Registration_Validator extends EE_Messages_Validator {
+class EE_Messages_Email_Cancelled_Registration_Validator extends EE_Messages_Validator {
 
 
 	public function __construct( $fields, $context ) {
 		$this->_m_name = 'email';
-		$this->_mt_name = 'resend_registration';
+		$this->_mt_name = 'cancelled_registration';
 
 		parent::__construct( $fields, $context );
 	}
@@ -45,10 +45,10 @@ class EE_Messages_Email_Resend_Registration_Validator extends EE_Messages_Valida
 
 		//modify just event_list
 		$new_config['event_list'] = array(
-			'shortcodes' => array('event', 'ticket_list', 'attendee_list', 'datetime_list', 'venue', 'organization', 'attendee'),
+			'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization', 'attendee'),
 			'required' => array('[EVENT_LIST]')
 			);
 		$this->_MSGR->set_validator_config( $new_config );
 	}
 
-} //end class EE_Messages_Email_Resend_Registration_Validator
+} //end class EE_Messages_Email_Cancelled_Registration_Validator

@@ -72,8 +72,12 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		
-
+		$req = EE_Registry::instance()->REQ;
+		if ( $req->is_set('e_reg_url_link' ) && $req->is_set('ee_gateway') ){			
+			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
+			EEM_Gateways::instance()->set_selected_gateway($req->get('ee_gateway') );
+			EEM_Gateways::instance()->handle_ipn_for_transaction($this->_current_txn);
+		}
 	}
 
 
@@ -87,9 +91,11 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes ) {
-
-		return EE_Registry::instance()->REQ->get_output();		
-		
+		if($this->_current_txn){
+			printf(__("IPN successfully received for Transaction with ID '%d'", "event_espresso"),$this->_current_txn->ID());
+		}else{
+			printf(__("No IPN (or incomplete IPN) received.", "event_espresso"));
+		}
 	}
 
 }

@@ -32,10 +32,10 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 	public function __construct() {
 		$this->name = 'pending_approval';
-		$this->description = __('This message type is used in the following situations:', 'event_espresso') . '<ol>' . '<li>' . __('When all registrations require approval (regardless of payment (registration messages only get sent when they are "approved")', 'event_espresso') . '</li><li>' . __('If full payment is required before registrations get sent and a full payment hasn\'t been made, then pending aproval messages would go out along with the payment reminder', 'event_espresso') . '</li></ol>';
+		$this->description = __('This message type is used for recipients who have Pending Payment registration status.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('pending approval', 'event_espresso'),
-			'plural' => __('pending approval', 'event_espresso')
+			'singular' => __('pending payment registration', 'event_espresso'),
+			'plural' => __('pending payment registrations', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -59,14 +59,15 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
 		//this is just a test
-		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';
+		return $this->label['singular'] . ' Message Type for ' . $messenger->name . ' Messenger ';
 	}
 
 
 
 
 	protected function _set_data_handler() {
-		$this->_data_handler = 'Gateways';
+		$this->_data_handler = $this->_data instanceof EE_Registration ? 'REG' : 'Gateways';
+		$this->_single_message = $this->_data instanceof EE_Registration ? TRUE : FALSE;
 	}
 
 
@@ -86,7 +87,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Pending Approval Details';
+			$content[$context] = 'Event Pending Payment Registration Details';
 		};
 		return $content;
 	}
@@ -133,15 +134,15 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 		$this->_contexts = array(
 			'admin' => array(
 				'label' => __('Event Admin', 'event_espresso'),
-				'description' => __('This template is what event administrators will receive when a pending approval message is sent.', 'event_espresso')
+				'description' => __('This template is what event administrators will receive when a message is sent to registrants with the pending payment registration status.', 'event_espresso')
 				),
 			'primary_attendee' => array(
 				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who made the main registration) will receive on when the pending approval message is sent', 'event_espresso')
+				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive on when their registration status is pending payment.', 'event_espresso')
 				),
 			'attendee' => array(
 				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when a successful registration is processed.', 'event_espresso')
+				'description' => __('This template is what each attendee for the event will receive when their registration status is pending payment.', 'event_espresso')
 				)
 			);
 
@@ -166,47 +167,15 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 
 	/**
-	 * modifying _data property before parent calls addresse methods.  Need to make sure the data included is only IF pending approval conditions are met
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _process_data() {
-
-		//ignore on preview
-		if ( ! $this->_preview ) {
-
-			$txn_completed = $this->_data->txn->is_completed();
-
-			//loop through events and only setup ones that match the criteria for pre-approval events
-			foreach ( $this->_data->events as $line_ref => $event ) {
-				//if this isn't a "pre approval" event remove event details from message setup.
-				if ( $txn_completed && !$event['pre_approval'] ) {
-					unset( $this->_data->events[$line_ref] );
-					unset( $this->_data->datetimes['evt_objs'][$line_ref] );
-					unset( $this->_data->attendees['evt_objs'][$line_ref] );
-				}
-			}
-
-			//make sure default_addressee_data property is updated
-			$this->_default_addressee_data['datetimes'] = $this->_data->datetimes;
-		}
-
-		//now back to regular programming
-		return parent::_process_data();
-	}
-
-
-
-
-
-	/**
 	 * returns an array of addressee objects for event_admins
 	 *
 	 * @access protected
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
+		if ( !$this->_single_message )
+			return array();
+
 		$admin_ids = array();
 		$admin_events = array();
 		$admin_attendees = array();
@@ -246,6 +215,8 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
+		if ( !$this->_single_message ) 
+			return array();
 		
 		$aee = $this->_default_addressee_data;
 		$aee['events'] = $this->_data->events;
@@ -275,6 +246,8 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 		foreach ( $this->_data->attendees as $att_id => $details ) {
 			//set the attendee array to blank on each loop;
 			$aee = array();
+
+			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) && $this->_single_message ) continue;
 			
 			if ( in_array( $details['attendee_email'], $already_processed ) )
 				continue;

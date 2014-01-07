@@ -86,10 +86,26 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					),
                 'help_tabs' => array(
 					'registrations_event_checkin_help_tab' => array(
-						'title' => __('Registrations Event Check-in', 'event_espresso'),
+						'title' => __('Registrations Event Check-In', 'event_espresso'),
 						'filename' => 'registrations_event_checkin'
-						)
 					),
+					'registrations_event_checkin_table_column_headings_help_tab' => array(
+						'title' => __('Event Check-In Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_table_column_headings'
+					),
+					'registrations_event_checkin_filters_help_tab' => array(
+						'title' => __('Event Check-In Filters', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_filters'
+					),
+					'registrations_event_checkin_views_help_tab' => array(
+						'title' => __('Event Check-In Views', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_views'
+					),
+					'registrations_event_checkin_other_help_tab' => array(
+						'title' => __('Event Check-In Other', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_other'
+					)	
+				),
 				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
 				'list_table' => 'EE_Event_Registrations_List_Table',
 				'metaboxes' => array(),
@@ -525,23 +541,23 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$legend_items = array(
 			'star-icon' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
-				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				'desc' => __('This Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'checkin' => array(
 				'class' => 'ee-icon ee-icon-check-in',
-				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
+				'desc' => __('This Attendee has been Checked In', 'event_espresso')
 				),
 			'checkout' => array(
 				'class' => 'ee-icon ee-icon-check-out',
-				'desc' => __('This indicates the attendee has been checked out', 'event_espresso')
+				'desc' => __('This Attendee has been Checked Out', 'event_espresso')
 				),
 			'nocheckinrecord' => array(
 				'class' => 'dashicons dashicons-no',
-				'desc' => __('This indicates that no Check-in record has been created for this attendee', 'event_espresso')
+				'desc' => __('No Check-in Record has been Created for this Attendee', 'event_espresso')
 				),
 			'view_details' => array(
 				'class' => 'dashicons dashicons-search',
-				'desc' => __('View All Check-in records for this attendee', 'event_espresso')
+				'desc' => __('View All Check-in Records for this Attendee', 'event_espresso')
 				),/**/
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );

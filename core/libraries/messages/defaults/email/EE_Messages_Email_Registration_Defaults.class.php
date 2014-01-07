@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Messages_Registration_Defaults class
+ * EE_Messages_Email_Registration_Defaults class
  *
  * Handles all the defaults for Email messenger, Payment message type templates
  *

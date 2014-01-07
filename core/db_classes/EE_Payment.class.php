@@ -163,7 +163,11 @@ class EE_Payment extends EE_Base_Class{
 
 
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @return EE_Payment
+	 */
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );

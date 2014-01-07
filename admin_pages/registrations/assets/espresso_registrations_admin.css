@@ -268,7 +268,7 @@
 
 .status-RPP { color: #00B1CA;}
 .status-RCN { color: #AC9D9C;}
-.status-RDC { color: #E44064;}
+.status-RDC { color: #E44064; font-weight: bold;}
 .status-RAP { color: #70CC50;}
 .status-RNA { color: #E76700;}
 

@@ -182,7 +182,7 @@ class EE_Messages_Init extends EE_Base {
 
 	/**
 	 * Trigger for Registration messages
-	 * Note that the Registration_Message_Type internally determines whether a message actually goes out depending on the transaction state and the Registration Message Type setting for whether registrations get sent before complete payment or not.  Free registrations ALWAYS get sent.
+	 * Note that what registration message type is sent depends on what the reg status is for the registrations on the incoming transaction.
 	 * @param  EE_Transaction $transaction
 	 * @return void                      
 	 */
@@ -190,10 +190,38 @@ class EE_Messages_Init extends EE_Base {
 		$this->_load_controller();
 		$data = array( $transaction, NULL );
 
-		$this->_EEMSG->send_message( 'registration', $data );
+		//let's get the first related reg on the transaction since we can use its status to determine what message type gets sent.
+		$registration = $transaction->get_first_related('Registration');
+		$reg_status = $registration->status_ID();
 
-		//could be pending approval
-		$this->_EEMSG->send_message( 'pending_approval', $data );
+		//send the message type matching the status if that message type is active.
+		//first an array to match for class name
+		$status_match_array = $this->_get_reg_status_array();
+
+		$active_mts = $this->_EEMSG->get_active_message_types();
+
+		if ( in_array( $status_match_array[$reg_status], $active_mts ) )
+			$this->_EEMSG->send_message( $status_match_array[$reg_status], $data );
+
+		return; //if we get here then there is no active message type for this status.
+	}
+
+
+
+	/**
+	 * Simply returns an array indexed by Registration Status ID and the related message_type name assoicated with that status id.
+	 * @return array 
+	 */
+	private function _get_reg_status_array() {
+		
+		$status_match_array = array(
+			EEM_Registration::status_id_approved => 'registration',
+			EEM_Registration::status_id_pending_payment => 'pending_approval',
+			EEM_Registration::status_id_not_approved => 'not_approved_registration',
+			EEM_Registration::status_id_cancelled => 'cancelled_registration',
+			EEM_Registration::status_id_declined => 'declined_registration'
+			);
+		return $status_match_array;
 	}
 
 
@@ -215,17 +243,31 @@ class EE_Messages_Init extends EE_Base {
 			$success = FALSE;
 		}
 
-		$this->_load_controller();
+		//get reg object from reg_id
+		$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID($req_data['_REG_ID'] );
+
+		//if no reg object then send error
+		if ( empty( $reg ) ) {
+			EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
+			$success = FALSE;
+		}
+
 
 		if ( $success ) {
-			$success = $this->_EEMSG->send_message( 'resend_registration', $req_data );
+			$this->_load_controller();
+
+			//get status_match_array
+			$status_match_array = $this->_get_reg_status_array();
+			$active_mts = $this->_EEMSG->get_active_message_types();
+
+			$success = in_array( $status_match_array[$reg->status_ID()], $active_mts ) ? $this->_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg ) : FALSE;
 		}
 
 		if ( $success ) {
 			EE_Error::overwrite_success();
-			EE_Error::add_success( __('The registration confirmation has been sent', 'event_espresso') );
+			EE_Error::add_success( __('The message for this registration has been re-sent', 'event_espresso') );
 		} else {
-			EE_Error::add_error( __('Something went wrong and the registration confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('Something went wrong and the message for this registration was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		
 		return $success;

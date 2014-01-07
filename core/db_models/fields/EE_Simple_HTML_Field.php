@@ -11,7 +11,8 @@ class EE_Simple_HTML_Field extends EE_Text_Field_Base{
 		$allowedtags['ol']=array();
 		$allowedtags['ul']=array();
 		$allowedtags['li']=array();
-		return wp_kses("$value_inputted_for_field_on_model_object",$allowedtags);
+		$value_with_select_tags =  wp_kses("$value_inputted_for_field_on_model_object",$allowedtags);
+		return parent::prepare_for_set($value_with_select_tags);
 	}
 	
 }
