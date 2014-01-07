@@ -957,7 +957,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$not_approve_url = self::add_query_args_and_nonce( array( 'action'=>'no_approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 
 		$buttons = array(
-			EEM_Registration::status_id_approved => '<a class="button-primary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" href="' . $approve_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
+			EEM_Registration::status_id_approved => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" href="' . $approve_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
 				' . __( 'Approved', 'event_espresso' ) . '
 				</a>',
 			EEM_Registration::status_id_pending_payment => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending Payment', 'event_espresso' ) . '">
