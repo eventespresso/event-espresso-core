@@ -30,8 +30,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL;
 
 		$this->_wp_list_args = array(
-			'singular' => __('attendee', 'event_espresso'),
-			'plural' => __('attendees', 'event_espresso'),
+			'singular' => __('registrant', 'event_espresso'),
+			'plural' => __('registrants', 'event_espresso'),
 			'ajax' => TRUE,
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
@@ -43,7 +43,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_columns = array(
 				'REG_att_checked_in' => __('Check-In', 'event_espresso'),
 				'REG_count' => __('Att #', 'event_espresso'),
-				'ATT_name' =>  __('Attendee', 'event_espresso'),
+				'ATT_name' =>  __('Registrant', 'event_espresso'),
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
 				'REG_date' => __('TXN Date', 'event_espresso'),
 				'REG_code' => __( 'Registration Code', 'event_espresso' ),
@@ -92,7 +92,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
 			$events = EEM_Event::instance()->get_all(array(array(), 'order_by' => array( 'EVT_name' => 'asc' ) ) );
-			$evts[] = array('id' => 0, 'text' => __('To toggle Check-in status for attendees, select an event', 'event_espresso') );
+			$evts[] = array('id' => 0, 'text' => __('To toggle Check-in status for registrants, select an event', 'event_espresso') );
 			foreach ( $events as $evt ) {
 				//any registrations for this event?
 				if ( ! $evt->get_count_of_all_registrations() )
@@ -185,7 +185,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>';
-		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
+		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary registrant"/>' : '';
 
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
@@ -193,7 +193,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		
 		if ( !empty($DTT_ID) ) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
-			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('Click here to view all the check-ins and checkouts for this attendee', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
+			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('Click here to view all the check-ins and checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
 
 		return !empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions($actions) ) : $name_link;

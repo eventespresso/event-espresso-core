@@ -143,7 +143,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _txn_attendees_metabox_stop() {
-		return '<p>' . __('View information about attendees that are linked to this transaction.', 'event_espresso') . '</p>';
+		return '<p>' . __('View information about registrants that are linked to this transaction.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_primary_reg_metabox_stop() {

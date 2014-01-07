@@ -48,7 +48,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 			1 => array(
 				'page_route' => array('create_new', 'edit'),
 				'func' => 'additional_questions',
-				'label' => __('Questions for Additional Attendees', 'event_espresso'),
+				'label' => __('Questions for Additional Registrants', 'event_espresso'),
 				'priority' => 'default',
 				'context' => 'side'
 				)
