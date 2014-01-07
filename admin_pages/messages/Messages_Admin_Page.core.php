@@ -216,30 +216,26 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							'title' => __('Messages Overview', 'event_espresso'),
 							'filename' => 'messages_overview'
 							),
-                        'messages_system_help_tab' => array(
-                            'title' => __('Messages System', 'event_espresso'),
-                            'filename' => 'messages_system'
-                            ),
-                        'message_types_help_tab' => array(
+						'messages_overview_messages_table_column_headings_help_tab' => array(
+						'title' => __('Messages Table Column Headings', 'event_espresso'),
+						'filename' => 'messages_overview_table_column_headings'
+						),
+						'messages_overview_messages_filters_help_tab' => array(
+						'title' => __('Message Filters', 'event_espresso'),
+						'filename' => 'messages_overview_filters'
+						),
+						'messages_overview_messages_views_help_tab' => array(
+						'title' => __('Message Views', 'event_espresso'),
+						'filename' => 'messages_overview_views'
+						),
+                        'message_overview_message_types_help_tab' => array(
                             'title' => __('Message Types', 'event_espresso'),
-                            'filename' => 'messages_types'
-                            ),
-                        'message_templates_help_tab' => array(
-                            'title' => __('Message Templates', 'event_espresso'),
-                            'filename' => 'messages_templates'
-                            ),
-                        'message_preview_help_tab' => array(
-                            'title' => __('Message Preview', 'event_espresso'),
-                            'filename' => 'messages_preview'
-                            ),
-                        'message_shortcodes_help_tab' => array(
-                            'title' => __('Message Shortcodes', 'event_espresso'),
-                            'filename' => 'messages_shortcodes'
-                            ),
-                        'messengers_help_tab' => array(
+                            'filename' => 'messages_overview_types'
+                        ),
+                        'messages_messengers_help_tab' => array(
                             'title' => __('Messengers', 'event_espresso'),
-                            'filename' => 'messages_what_are_messengers',
-                            ),
+                            'filename' => 'messages_overview_messengers',
+                        ),
                     ),
 				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
 				'require_nonce' => FALSE
@@ -273,13 +269,21 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Message_Templates_Edit_Help_Tour' ),
 				'help_tabs' => array(
 						'edit_message_template' => array(
-							'title' => __('About Template Editor', 'event_espresso'),
+							'title' => __('Message Template Editor', 'event_espresso'),
 							'callback' => 'edit_message_template_help_tab'
 							),
+                        'message_templates_help_tab' => array(
+                            'title' => __('Message Templates', 'event_espresso'),
+                            'filename' => 'messages_templates'
+                            ),
 						'message_template_shortcodes' => array(
-							'title' => __('Shortcode Descriptions', 'event_epresso'),
+							'title' => __('Message Shortcodes', 'event_epresso'),
 							'callback' => 'message_template_shortcodes_help_tab'
 							),
+                        'message_preview_help_tab' => array(
+                            'title' => __('Message Preview', 'event_espresso'),
+                            'filename' => 'messages_preview'
+                            ),
 					),
 				'require_nonce' => FALSE
 				),
@@ -304,34 +308,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_messages_settings_metaboxes'),
                 'help_tabs' => array(
-						'messages_overview_help_tab' => array(
-							'title' => __('Messages Overview', 'event_espresso'),
-							'filename' => 'messages_overview'
+						'messages_settings_help_tab' => array(
+							'title' => __('Messages Settings', 'event_espresso'),
+							'filename' => 'messages_settings'
 							),
-                        'messages_system_help_tab' => array(
-                            'title' => __('Messages System', 'event_espresso'),
-                            'filename' => 'messages_system'
-                            ),
-                        'message_types_help_tab' => array(
-                            'title' => __('Message Types', 'event_espresso'),
-                            'filename' => 'messages_types'
-                            ),
-                        'message_templates_help_tab' => array(
-                            'title' => __('Message Templates', 'event_espresso'),
-                            'filename' => 'messages_templates'
-                            ),
-                        'message_preview_help_tab' => array(
-                            'title' => __('Message Preview', 'event_espresso'),
-                            'filename' => 'messages_preview'
-                            ),
-                        'message_shortcodes_help_tab' => array(
-                            'title' => __('Message Shortcodes', 'event_espresso'),
-                            'filename' => 'messages_shortcodes'
-                            ),
-                        'messengers_help_tab' => array(
-                            'title' => __('Messengers', 'event_espresso'),
-                            'filename' => 'messages_what_are_messengers',
-                            ),
+						'messages_settings_message_types_help_tab' => array(
+							'title' => __('Activating / Deactivating Message Types', 'event_espresso'),
+							'filename' => 'messages_settings_message_types'
+							),
+						'messages_settings_messengers_help_tab' => array(
+							'title' => __('Activating / Deactivating Messengers', 'event_espresso'),
+							'filename' => 'messages_settings_messengers'
+							),
                     ),
 				'help_tour' => array( 'Messages_Settings_Help_Tour' ),
 				'require_nonce' => FALSE
