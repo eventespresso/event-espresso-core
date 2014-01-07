@@ -1,7 +1,7 @@
 <!--***************  PAYMENT OPTIONS STEP  ***************-->
 
 	<h2 id="spco-payment_options-hdr" class="spco-step-title-hdr">
-		<?php echo sprintf( __('Step %d -  Payment Options', 'event_espresso'), $step_nmbr ); ?>
+		<?php echo sprintf( __('%s Payment Options', 'event_espresso'), $step_nmbr ); ?>
 		<a id="spco-edit-payment_options-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="payment_options"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 
@@ -12,6 +12,8 @@
 			<input type="hidden" id="spco-payment_options-action" name="ajax_action" value="espresso_<?php echo $reg_step_ajax_action;?>" />
 			<input type="hidden" id="spco-payment_options-noheader" name="noheader" value="" />		
 			<input type="hidden" id="spco-payment_options-next-step" name="next_step" value="<?php echo $next_step; ?>" />		
+			<input type="hidden" id="spco-reg_url_link" name="e_reg_url_link" value="<?php echo $reg_url_link;?>" />
+			<input type="hidden" id="spco-revisit" name="revisit" value="<?php echo $revisit;?>" />
 
 <?php
 		if ( $events_requiring_pre_approval != '' ) { ?>
@@ -52,17 +54,19 @@
 			<h4 class="spco-discounts-hdr"><?php _e('Discounts:', 'event_espresso'); ?></h4>
 		</div>
 
-		<h4 id="reg-page-totals-hdr" class="overline-hdr">
+		<h4 id="reg-page-totals-hdr" class="">
 			<span class="drk-grey-text"><?php _e('Billable Registrations:', 'event_espresso'); ?></span> <?php echo $total_items;?>
 		</h4>
 
+<?php	if ( $sub_total != $grand_total ) { ?>
 		<div class="reg-page-totals-spn">
 			<span class="lt-grey-text"><?php echo __('Sub Total: ', 'event_espresso');?></span>
 			<span class="reg-page-total-spn"><?php echo$sub_total;?></span>
 		</div>
-
-<?php 		if ( $taxes ) {
-				foreach ( $taxes as $tax ){
+<?php	} ?>
+<?php 	if ( $taxes ) {
+			foreach ( $taxes as $tax ){
+				if( (float)$tax->total() > 0 ) {
 ?>
 		<div class="reg-page-totals-spn">
 			<span class="lt-grey-text"><?php echo $tax->percent() . '% ' . $tax->name();?></span>
@@ -72,6 +76,7 @@
 <?php
 				}
 			}
+		}
 ?>
 		<div id="reg-page-grand-total-dv" class="reg-page-totals-spn">
 			<span class="drk-grey-text"><?php echo __('Total Amount Due: ', 'event_espresso');?></span>

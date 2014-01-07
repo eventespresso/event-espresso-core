@@ -106,15 +106,15 @@ class EEH_Autoloader {
 			try {
 				// get some class
 				if ( empty( $class )) {					
-					throw new EE_Error ( __( 'An error occured. No Class name was specified while registering an autoloader.','event_espresso' ));					
+					throw new EE_Error ( __( 'An error occurred. No Class name was specified while registering an autoloader.','event_espresso' ));					
 				}
 				// one day you will find the path young grasshopper 
 				if ( empty( $path )) {					
-					throw new EE_Error ( sprintf( __( 'An error occured. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));					
+					throw new EE_Error ( sprintf( __( 'An error occurred. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));					
 				}
 				// is file readable ?
 				if ( ! is_readable( $path )) {
-					throw new EE_Error ( sprintf( __( 'An error occured. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));					
+					throw new EE_Error ( sprintf( __( 'An error occurred. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));					
 				}				 
 			} catch ( EE_Error $e ) {
 				$e->get_error();
@@ -211,10 +211,15 @@ class EEH_Autoloader {
 	 * @return void
 	 */
 	public static function load_admin_core( $folder, $className ) {
+
 		$classfile = $className . '.core.php';
-		if ( is_readable( EE_ADMIN_PAGES . $folder . DS . $classfile )) {
-			require_once( EE_ADMIN_PAGES . $folder . DS . $classfile );
-		}			
+		$paths_to_try = apply_filters('FHEE__EEH_Autoloader__load_admin_core', array( EE_ADMIN_PAGES . $folder . DS, $className ) );
+
+		foreach ( $paths_to_try as $path ) {
+			if ( is_readable( $path . $classfile )) {
+				require_once( $path . $classfile );
+			}
+		}		
 	}
 
 

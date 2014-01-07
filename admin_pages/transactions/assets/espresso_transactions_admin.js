@@ -156,12 +156,12 @@ jQuery(document).ready(function($) {
 	function validate_form_inputs() {
 		goodToGo = true;
 		$('#txn-admin-apply-payment-frm .required').each( function( index ) {
-			if( $( this ).val() === '' || $( this ).val() === 0 ) {
+			if( $( this ).val() == false ) {
 				$( this ).addClass('requires-value').siblings( '.validation-notice-dv' ).fadeIn();
 				goodToGo = false;
 			}
 			$( this ).on( 'change', function() {
-				if( $( this ).val() !== '' || $( this ).val() !== 0 ) {
+				if( $( this ).val() != false ) {
 					$( this ).removeClass('requires-value').siblings( '.validation-notice-dv' ).fadeOut('fast');
 				}
 			});
@@ -207,7 +207,7 @@ jQuery(document).ready(function($) {
 					error: function(response) {
 						/*console.log(response);/**/
 						if ( response.errors === undefined ) {
-							response.errors = eei18n.error_occured;
+							response.errors = eei18n.error_occurred;
 						}
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 					}
@@ -250,7 +250,7 @@ jQuery(document).ready(function($) {
 					},
 					error: function(response) {
 						if ( response.errors === undefined ) {
-							response.errors = eei18n.error_occured;
+							response.errors = eei18n.error_occurred;
 						}
 						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 					}
@@ -262,7 +262,7 @@ jQuery(document).ready(function($) {
 
 	function process_return_data( response ) {
 
-		$('#espresso-admin-page-ajax-loading').fadeOut('fast');
+		$('#espresso-ajax-loading').fadeOut('fast');
 		overlay.trigger('click');
 
 		// grab PAY ID from return data

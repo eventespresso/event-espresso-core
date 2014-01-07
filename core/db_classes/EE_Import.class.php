@@ -135,7 +135,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			            $error_msg = __('File upload stopped by extension.', "event_espresso");
 			            break;
 			        default:
-			            $error_msg = __('An unknown error occured and the file could not be uploaded', "event_espresso");
+			            $error_msg = __('An unknown error occurred and the file could not be uploaded', "event_espresso");
 			            break;
 			    }
 				

@@ -33,14 +33,21 @@ class EE_Money_Field extends EE_Float_Field{
 	}
 	
 	/**
+	 * If provided witha string, strips out money-related formatting to turn it into a proper float.
 	 * Rounds teh float to teh correct number of decimal places for this country's currency.
 	 * @param type $value_inputted_for_field_on_model_object
 	 * @return float
 	 */
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		//round to the correctly number of decimal places for this 
-		$rounded_value = round($value_inputted_for_field_on_model_object,  EE_Registry::instance()->CFG->currency->dec_plc);
-		return parent::prepare_for_set($rounded_value);
+		//remove any currencies etc.
+//		if(is_string($value_inputted_for_field_on_model_object)){
+//			$value_inputted_for_field_on_model_object = preg_replace("/[^0-9,.]/", "", $value_inputted_for_field_on_model_object);
+//		}
+		//now it's a float-style string or number
+		$float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
+		//round to the correctly number of decimal places for this  currency
+		$rounded_value = round($float_val,  EE_Registry::instance()->CFG->currency->dec_plc);
+		return $rounded_value;
 	}
 	
 	function prepare_for_get($value_of_field_on_model_object) {

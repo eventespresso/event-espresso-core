@@ -131,7 +131,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_one() {
 		$content = '<h3>' . __('Event Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This brief tour of the event overview, will go over all the different areas of this screen, to help you understand how to use Event Espresso.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This short tour of the event overview page will go over different areas of the screen to help you understand how to use Event Espresso.', 'event_espresso') . '</p>';
 		return $content;
 	}
 	

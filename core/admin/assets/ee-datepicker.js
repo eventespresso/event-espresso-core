@@ -11,6 +11,14 @@ var dttPickerHelper = {
 		minuteGrid: 5,
 		minDateTime: null,
 		maxDateTime: null,
+		hourMin: 0,
+		minuteMin: 0,
+		secondMin: 0,
+		millisecMin: 0,
+		hourMax: 23,
+		minuteMax: 59,
+		secondMax: 59,
+		millisecMax: 999,
 		numberOfMonths: 2,
 		hour: null,
 		minute: null,
@@ -73,13 +81,11 @@ var dttPickerHelper = {
 			this.dttOptions.minDateTime = this.dttOptions.minDateTime === null ? minDateTime.toDate() : this.dttOptions.minDateTime;
 			this.dttOptions.maxDateTime = this.dttOptions.maxDateTime === null ? minDateTime.clone().add('years', 100).toDate() : this.dttOptions.maxDateTime;
 		} else {
-			this.dttOptions.minDateTime = null;
-			this.dttOptions.maxDateTime = null;
+			dttPickerHelper.resetpicker();
 		}/**/
 
 
 		this.dttOptions.onSelect = function(dateText, inst) {
-			//get diff from original start date
 		};
 
 		this.dttOptions.onClose = function(dateText, dpinst) {
@@ -108,6 +114,7 @@ var dttPickerHelper = {
 						dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a') );
 				}
 				dttPickerHelper.resetpicker();
+				dttPickerHelper.pickerobj.datetimepicker('destroy');
 				return false;
 			};
 
@@ -133,6 +140,14 @@ var dttPickerHelper = {
 			minuteGrid: 5,
 			minDateTime: null,
 			maxDateTime: null,
+			hourMin: 0,
+			minuteMin: 0,
+			secondMin: 0,
+			millisecMin: 0,
+			hourMax: 23,
+			minuteMax: 59,
+			secondMax: 59,
+			millisecMax: 999,
 			numberOfMonths: 2,
 			hour: null,
 			minute: null,

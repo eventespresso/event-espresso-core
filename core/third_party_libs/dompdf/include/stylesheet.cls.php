@@ -856,7 +856,7 @@ class Stylesheet {
 	  "/xs";
 
 	if ( preg_match_all($re, $css, $matches, PREG_SET_ORDER) === false )
-	  // An error occured
+	  // An error occurred
 	  throw new DOMPDF_Exception("Error parsing css file: preg_match_all() failed.");
 
 	// After matching, the array indicies are set as follows:

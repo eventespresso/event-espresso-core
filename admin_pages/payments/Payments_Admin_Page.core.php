@@ -80,14 +80,25 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+                'help_tabs' => array(
+					'payment_methods_overview_help_tab' => array(
+						'title' => __('Payment Methods Overview', 'event_espresso'),
+						'filename' => 'payment_methods_overview'
+						)
+					),
 				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
-				'help_tabs' => $this->_get_gateway_help_tabs(),
 				'require_nonce' => FALSE
 				),
 			'payment_settings' => array(
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
 					'order' => 20
+					),
+                'help_tabs' => array(
+					'payment_methods_settings_help_tab' => array(
+						'title' => __('Payment Method Settings', 'event_espresso'),
+						'filename' => 'payment_methods_settings'
+						)
 					),
 				'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),

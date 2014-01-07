@@ -150,7 +150,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'organization_zip': 
 			  $c->organization->zip = $value;break;
 		  case 'contact_email': 
-			  $c->organization->email;break;
+			  $c->organization->email = $value;break;
 		  case 'default_payment_status': 
 			  $c->registration->default_STS_ID =  $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID($value);break;
 		  case 'organization_country': 
@@ -173,9 +173,9 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 //		  case 'currency_symbol': ignore the currency symbol. we'll just go by their country.
 //			  $c->currency->sign = $value;break;
 		  case 'show_pending_payment_options': 
-			  $c->registration->show_pending_payment_options = 'Y' == $value;break;
+			  $c->registration->show_pending_payment_options = ($value == 'Y');break;
 		  case 'display_address_in_regform': 
-			  $c->template_settings->display_address_in_regform = 'Y' == $value;break;
+			  $c->template_settings->display_address_in_regform = ($value == 'Y');break;
 		  case 'default_logo_url': 
 			  $c->organization->logo_url = $value;break;
 		  case 'event_page_id':
@@ -186,8 +186,6 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			  $reg_page_post->post_content = str_replace("[ESPRESSO_EVENTS]","[ESPRESSO_CHECKOUT]",$reg_page_post->post_content);
 			  wp_update_post($reg_page_post);
 			  $c->core->reg_page_id = $value;
-			  $c->core->post_shortcodes[$reg_page_post->post_name]=array('ESPRESSO_CHECKOUT'=>$value);
-			  $c->core->post_shortcodes['posts']['ESPRESSO_CHECKOUT']=$value;
 			  break;
 		  case 'return_url': 
 			  //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
@@ -196,23 +194,16 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			  $thank_you_page_post->post_content = str_replace("[ESPRESSO_PAYMENTS]","[ESPRESSO_THANK_YOU]",$thank_you_page_post->post_content);
 			  wp_update_post($thank_you_page_post);
 			  $c->core->thank_you_page_id = $value;
-			  $c->core->post_shortcodes[$thank_you_page_post->post_name]=array('ESPRESSO_THANK_YOU'=>$value);
-			  $c->core->post_shortcodes['posts']['ESPRESSO_THANK_YOU']=$value;
 			   break;
 		  case 'cancel_return': 
-			  $canel_post = get_post($value);
 			  $c->core->cancel_page_id = $value;
-			  $c->core->post_shortcodes[$canel_post->post_name]=array('ESPRESSO_CANCELLED'=>$value);
-			  $c->core->post_shortcodes['posts']['ESPRESSO_CANCELLED']=$value;
+			  
 			  break;
-		  case 'notify_url': 
-			  $txn_post = get_post($value);
+		  case 'notify_url':
 			  $c->core->txn_page_id = $value;
-			  $c->core->post_shortcodes[$txn_post->post_name]=array('ESPRESSO_TXN_PAGE'=>$value);
-			  $c->core->post_shortcodes['posts']['ESPRESSO_TXN_PAGE']=$value;
 			  break;
 		  case 'use_captcha': 
-			  $c->registration->use_captcha = $value == 'Y' ? true: false; break;
+			  $c->registration->use_captcha = ($value == 'Y'); break;
 		  case 'recaptcha_publickey': 
 			  $c->registration->recaptcha_publickey = $value;break;
 		  case 'recaptcha_privatekey': 
@@ -224,15 +215,15 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'recaptcha_language': 
 			  $c->registration->recaptcha_language = $value;break;
 		  case 'espresso_dashboard_widget': 
-			  $c->admin->use_dashboard_widget = $value == 'Y' ? true: false; break;
+			  $c->admin->use_dashboard_widget = ($value == 'Y'); break;
 		  case 'use_attendee_pre_approval': 
-			  $c->registration->use_attendee_pre_approval = $value == 'Y' ? true: false; break;
+			  $c->registration->use_attendee_pre_approval = ($value == 'Y'); break;
 		  case 'use_personnel_manager': 
-			  $c->admin->use_personnel_manager = $value == 'Y' ? true: false; break;
+			  $c->admin->use_personnel_manager = ($value == 'Y'); break;
 		  case 'use_event_timezones': 
-			  $c->admin->use_event_timezones = $value == 'Y' ? true: false; break;
+			  $c->admin->use_event_timezones = ($value == 'Y'); break;
 		  case 'full_logging': 
-			  $c->admin->use_full_logging = $value == 'Y' ? true: false;break;
+			  $c->admin->use_full_logging = ($value == 'Y');break;
 		  case 'affiliate_id': 
 			  $c->admin->affiliate_id = $value;break;
 		  case 'site_license_key': 

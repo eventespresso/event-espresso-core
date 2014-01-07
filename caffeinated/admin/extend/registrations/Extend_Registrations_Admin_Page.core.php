@@ -69,6 +69,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
 					),
+                'help_tabs' => array(
+					'registrations_reports_help_tab' => array(
+						'title' => __('Registration Reports', 'event_espresso'),
+						'filename' => 'registrations_reports'
+						)
+					),
 				'help_tour' => array( 'Registration_Reports_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
@@ -78,6 +84,28 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'order' => 10,
 					'persistent' => true
 					),
+                'help_tabs' => array(
+					'registrations_event_checkin_help_tab' => array(
+						'title' => __('Registrations Event Check-In', 'event_espresso'),
+						'filename' => 'registrations_event_checkin'
+					),
+					'registrations_event_checkin_table_column_headings_help_tab' => array(
+						'title' => __('Event Check-In Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_table_column_headings'
+					),
+					'registrations_event_checkin_filters_help_tab' => array(
+						'title' => __('Event Check-In Filters', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_filters'
+					),
+					'registrations_event_checkin_views_help_tab' => array(
+						'title' => __('Event Check-In Views', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_views'
+					),
+					'registrations_event_checkin_other_help_tab' => array(
+						'title' => __('Event Check-In Other', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_other'
+					)	
+				),
 				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
 				'list_table' => 'EE_Event_Registrations_List_Table',
 				'metaboxes' => array(),
@@ -321,11 +349,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$legend_items = array(
 			'checkin' => array(
-				'icon' => REG_ASSETS_URL . 'images/check-in-16x16.png',
+				'class' => 'ee-icon ee-icon-check-in',
 				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
 				),
 			'checkout' => array(
-				'icon' => REG_ASSETS_URL . 'images/check-out-16x16.png',
+				'class' => 'ee-icon ee-icon-check-out',
 				'desc' => __('This indicates the attendee has been checked out', 'event_espresso')
 				)
 			);
@@ -513,24 +541,24 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$legend_items = array(
 			'star-icon' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
-				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				'desc' => __('This Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'checkin' => array(
-				'icon' => REG_ASSETS_URL . 'images/check-in-16x16.png',
-				'desc' => __('This indicates the attendee has been checked in', 'event_espresso')
+				'class' => 'ee-icon ee-icon-check-in',
+				'desc' => __('This Attendee has been Checked In', 'event_espresso')
 				),
 			'checkout' => array(
-				'icon' => REG_ASSETS_URL . 'images/check-out-16x16.png',
-				'desc' => __('This indicates the attendee has been checked out', 'event_espresso')
+				'class' => 'ee-icon ee-icon-check-out',
+				'desc' => __('This Attendee has been Checked Out', 'event_espresso')
 				),
 			'nocheckinrecord' => array(
-				'icon' => REG_ASSETS_URL . 'images/delete-grey-16x16.png',
-				'desc' => __('This indicates that no Check-in record has been created for this attendee', 'event_espresso')
+				'class' => 'dashicons dashicons-no',
+				'desc' => __('No Check-in Record has been Created for this Attendee', 'event_espresso')
 				),
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/magnifier.png',
-				'desc' => __('View All Check-in records for this attendee', 'event_espresso')
-				),
+				'class' => 'dashicons dashicons-search',
+				'desc' => __('View All Check-in Records for this Attendee', 'event_espresso')
+				),/**/
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 
@@ -559,7 +587,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
-		$reg_status = isset($this->_req_data['reg_status']) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
 		
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
 		
@@ -579,7 +606,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 		$offset = ($current_page-1)*$per_page;
-		$limit = array( $offset, $per_page );
+		$limit = $count ? NULL : array( $offset, $per_page );
 		$query_params = array(array());
 		if ($EVT_ID){
 			$query_params[0]['EVT_ID']=$EVT_ID;
@@ -595,9 +622,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			$query_params[0]['Ticket.Datetime.DTT_is_primary'] = 1;
 		}
 
-		if($reg_status ){
-			$query_params[0]['STS_ID']=$reg_status;
-		}
+		$status_ids_array = apply_filters('FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
+
+		$query_params[0]['STS_ID']= array('IN', $status_ids_array );
+		
 		if($trash){
 			$query_params[0]['Attendee.ATT_status']=  EEM_CPT_Base::post_status_trashed;
 		}
@@ -615,8 +643,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'Attendee.ATT_address' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_address2' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_city' => array( 'LIKE', $sstr ),
-				'Attendee.ATT_comments' => array( 'LIKE', $sstr ),
-				'Attendee.ATT_notes' => array( 'LIKE', $sstr ),
 				'REG_final_price' => array( 'LIKE', $sstr ),
 				'REG_code' => array( 'LIKE', $sstr ),
 				'REG_count' => array( 'LIKE' , $sstr ),

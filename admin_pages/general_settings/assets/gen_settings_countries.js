@@ -31,7 +31,7 @@ jQuery(document).ready(function($) {
 					// console.log(response);
 					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
 						if ( ajax_loading == false ) {
-							$('#espresso-admin-page-ajax-loading').fadeOut('fast');
+							$('#espresso-ajax-loading').fadeOut('fast');
 						}					
 						$('#country-details-dv').html( response.return_data );					
 						ajax_loading = false;
@@ -45,7 +45,7 @@ jQuery(document).ready(function($) {
 				error: function(response) {
 					//console.log(response);
 					if ( response.errors == undefined ) {
-						response.errors = eei18n.error_occured;
+						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
@@ -78,7 +78,7 @@ jQuery(document).ready(function($) {
 					//console.log(response);
 					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
 						if ( ajax_loading == false ) {
-							$('#espresso-admin-page-ajax-loading').fadeOut('fast');
+							$('#espresso-ajax-loading').fadeOut('fast');
 						}					
 						$('#country-states-dv').html( response.return_data );
 						ajax_loading = false;
@@ -92,7 +92,7 @@ jQuery(document).ready(function($) {
 				error: function(response) {
 					//console.log(response);
 					if ( response.errors == undefined ) {
-						response.errors = eei18n.error_occured;
+						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
@@ -138,7 +138,7 @@ jQuery(document).ready(function($) {
 				error: function(response) {
 					//console.log(response);
 					if ( response.errors == undefined ) {
-						response.errors = eei18n.error_occured;
+						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
@@ -152,7 +152,7 @@ jQuery(document).ready(function($) {
 		// ------------------------------------------
 		delete_state : function( STA_ID ) {
 			if ( STA_ID == undefined || STA_ID == NaN || STA_ID == '' ) {
-				response.errors = eei18n.error_occured;
+				response.errors = eei18n.error_occurred;
 				show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				return false;
 			}
@@ -177,7 +177,7 @@ jQuery(document).ready(function($) {
 					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
 						var row_to_delete = '#state-' + STA_ID + '-tr';
 						$( row_to_delete ).fadeOut().delay(500).remove();
-						$('#espresso-admin-page-ajax-loading').fadeOut('fast');				
+						$('#espresso-ajax-loading').fadeOut('fast');				
 					} else if ( response.errors ) {
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );					 
 					} else {
@@ -188,7 +188,7 @@ jQuery(document).ready(function($) {
 				error: function(response) {
 					//console.log(response);
 					if ( response.errors == undefined ) {
-						response.errors = eei18n.error_occured;
+						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}

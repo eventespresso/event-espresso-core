@@ -40,8 +40,11 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _setup_data() {
-		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
-		$this->_data = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE );
+		if(isset($this->_req_data['status'] ) && $this->_req_data['status'] == 'trash'){
+			$this->_data = $this->_admin_page->get_trashed_questions( $this->_per_page,$this->_current_page, FALSE );
+		}else{
+			$this->_data = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, FALSE );
+		}		
 		$this->_all_data_count = $this->_admin_page->get_questions( $this->_per_page,$this->_current_page, TRUE );
 	}
 
@@ -99,7 +102,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 		$system_question = $item->is_system_question();
 		$related_answer_count = $item->count_related('Answer');
 		$extra_lock_icon = ( !$system_question && $related_answer_count > 0 && $this->_view == 'trash' ) ? ' ee-alternate-color' : '';
-		return $system_question || (!$system_question && $related_answer_count > 0 && $this->_view == 'trash' ) ? '<span class="ee-lock-icon' . $extra_lock_icon . '"></span>' . sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" style="visibility: hidden;"/>', $item->ID(), $item->ID() ) : sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%d]" value="%d" />', $item->ID(), $item->ID() );
+		return $system_question || (!$system_question && $related_answer_count > 0 && $this->_view == 'trash' ) ? '<span class="ee-lock-icon' . $extra_lock_icon . '"></span>' . sprintf( '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID() )  : sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
 	}
 
 

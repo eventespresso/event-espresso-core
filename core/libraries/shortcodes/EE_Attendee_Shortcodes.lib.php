@@ -31,6 +31,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
+	/**
+	 * hold all extra data.
+	 * @var array
+	 */
+	protected $_xtra;
 
 	public function __construct() {
 		parent::__construct();
@@ -50,6 +55,9 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
+
+		$this->_xtra = !empty($this->_extra_data ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : NULL;
+
 		//setup _data appropriately
 		if ( !empty( $this->_data->fname ) ) {
 			//we're parsing admin details... let's setup a pseudo attendee object
@@ -96,15 +104,20 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		$ID = empty( $ID ) && is_object( $this->_data ) ? $this->_data->ID() : $ID;
 		if ( !isset( $ID ) ) return '';
 
+		//ID will be attendee ID so let's get the reg ID instead!
+		$REG_ID = !empty( $this->_xtra ) ? $this->_xtra->attendees[$ID]['registration_id'] : $this->_data->get_most_recent_registration();
+
+		$REG_ID = $REG_ID instanceof EE_Registration ? $REG_ID->ID() : $REG_ID;
+
 		//made it here so we can generate the edit attendee link.
 		$query_args = array(
 			'page' => 'espresso_registrations',
-			'action' => 'edit_attendee',
-			'post' => $ID
+			'action' => 'view_registration',
+			'_REG_ID' => $REG_ID
 			);
 
 		//require EE_Admin_Page core
-		require_once EVENT_ESPRESSO_INCLUDES_DIR . 'core/admin/EE_Admin_Page.core.php';
+		require_once EE_ADMIN . 'EE_Admin_Page.core.php';
 		$url = EE_Admin_Page::add_query_args_and_nonce( $query_args, admin_url('admin.php') );
 
 		return $url;

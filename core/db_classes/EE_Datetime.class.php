@@ -25,6 +25,10 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	
 	/**
+	 * Datetime is cancelled
+	 */
+	const cancelled = -3;
+	/**
 	 * constant used by get_active_status, indicates datetime has no more available spaces
 	 */
 	const sold_out = -2;
@@ -44,6 +48,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
 	 */
 	const active = 2;
+	/**
+	 * Datetime is postponed
+	 */
+	const postponed = 3;
 	
     /**
     *	Datetime ID
@@ -730,7 +738,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return int       return value will be one of four ints: -2 = sold_out, -1 = expired, 0 = upcoming, 1 = active.
 	 */
 	public function get_active_status() {
-		if ( $this->total_tickets_available_at_this_datetime() < 1 ) return EE_Datetime::sold_out;
+		$total_tickets_for_this_dtt = $this->total_tickets_available_at_this_datetime();
+		if ( $total_tickets_for_this_dtt !== FALSE  && $total_tickets_for_this_dtt < 1 ) return EE_Datetime::sold_out;
 		if ( $this->is_expired() ) return EE_Datetime::expired;
 		if ( $this->is_upcoming() ) return EE_Datetime::upcoming;
 		if ( $this->is_active() ) return EE_Datetime::active;
@@ -786,21 +795,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Updates the DTT_sold attribute (and saves) based on the number of registrations
-	 * for this datetime (via the tickets). Takes the current EE_Config setting for 'pending_counts_reg_limit' 
+	 * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime (via the tickets). 
 	 * into account
 	 * @return int
 	 */
 	public function update_sold(){
-		$stati_to_include = array(EEM_Registration::status_id_approved);
-		if(EE_Config::instance()->registration->pending_counts_reg_limit){
-			$stati_to_include[] = EEM_Registration::status_id_pending;
-		}
-		$count_regs_for_this_datetime = EEM_Registration::instance()->count(array(
-			array(
-				'STS_ID'=>array('IN',$stati_to_include),
-				'Ticket.Datetime.DTT_ID'=>$this->ID())));
-		$this->set('DTT_sold',$count_regs_for_this_datetime);
+		$count_regs_for_this_datetime = EEM_Registration::instance()->count( array( array(
+			'STS_ID' => EEM_Registration::status_id_approved,
+			'Ticket.Datetime.DTT_ID' =>$this->ID(),
+			'REG_deleted' => 0
+		)));
+		$this->set( 'DTT_sold', $count_regs_for_this_datetime );
 		$this->save();
 		return $count_regs_for_this_datetime;
 	}

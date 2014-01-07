@@ -100,7 +100,7 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[CO_LOGO]' :
-				return '<img src="' . EE_Registry::instance()->CFG->organization->logo_url . '" style="width:720px;" id="headerImage" />';
+				return '<img src="' . EE_Registry::instance()->CFG->organization->logo_url . '" id="headerImage" />';
 				break;
 
 			case '[CO_LOGO_URL]' : 

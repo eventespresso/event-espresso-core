@@ -42,36 +42,60 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 */
 	const PRIMARY_REGISTRANT_COUNT = 1;
 
-	
-	
 	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a pending registration
-	 */
-	const status_id_pending = 'RPN';
-	
-	
-	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a cancelled registration
-	 */
-	const status_id_cancelled = 'RCN';
-	
-	
-	/**
-	 * Status ID (STS_ID on esp_status table) to indicate an approved registration
-	 */
-	const status_id_approved = 'RAP';
-	
-	
-	/**
-	 * Status ID (STS_ID on esp_status table) to indicate an unapproved registration
+	 * Status ID (STS_ID on esp_status table) to indicate an UNAPPROVED registration.
+	 * Payments are NOT allowed. 
+	 * Event Admin must manually toggle STS_ID for it to change
+	 * No space reservced.
+	 * Registration is active
 	 */
 	const status_id_not_approved = 'RNA';
+
 	/**
-	 *		private constructor to prevent direct creation
-	 *		@Constructor
-	 *		@access protected
-	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return void
+	 * Status ID (STS_ID on esp_status table) to indicate registration is PENDING_PAYMENT .
+	 * Payments are allowed. 
+	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
+	 * No space reservced.
+	 * Registration is active
+	 */
+	const status_id_pending_payment = 'RPP';
+
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate an APPROVED registration.
+	 * the TXN may or may not be completed ( paid in full )
+	 * Payments are allowed. 
+	 * A space IS reserved. 
+	 * Registration is active
+	 */
+	const status_id_approved = 'RAP';
+
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a registration was CANCELLED by the attendee.
+	 * Payments are NOT allowed. 
+	 * NO space reserved.
+	 * Registration is NOT active
+	 */
+	const status_id_cancelled = 'RCN';
+
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a registration was DECLINED by the Event Admin
+	 * Payments are NOT allowed. 
+	 * No space reservced.
+	 * Registration is NOT active
+	 */
+	const status_id_declined = 'RDC';
+
+
+
+
+
+	/**
+	 *	private constructor to prevent direct creation
+	 *	@Constructor
+	 *	@access protected
+	 *	@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  
+	* 	Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
+	 *	@return void
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Registration','event_espresso');
@@ -90,8 +114,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'ATT_ID'=>new EE_Foreign_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0, 'Attendee'),
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
-				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_not_approved, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occured','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_pending_payment, 'Status'),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
@@ -332,11 +356,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@return int
 	 */
 	public function get_event_registration_count ( $EVT_ID, $for_incomplete_payments = FALSE ) {	
-
-		$query_params = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(self::status_id_pending, self::status_id_approved ) ) ) ) : array( array( 'STS_ID' => self::status_id_approved ) );
-
-		$query_params[0]['EVT_ID'] = $EVT_ID;
-
+		// we only count approved registrations towards registration limits
+		$query_params = array( array( 'EVT_ID' => $EVT_ID, 'STS_ID' => self::status_id_approved ) );
 		if( $for_incomplete_payments ){
 			$query_params[0]['Transaction.STS_ID']=array('!=',  EEM_Transaction::complete_status_code);
 		}

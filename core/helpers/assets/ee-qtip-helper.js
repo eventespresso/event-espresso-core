@@ -2,17 +2,28 @@ jQuery(document).ready(function($) {
 
 	//load all qtips
 	if ( EE_QTIP_HELPER.qtips.length > 0 ) {
-		var parse, content;
+		var parse, content, showevent;
 
-		console.log(EE_QTIP_HELPER);
 		//loop through the qtips and set them up.
 		$.each(EE_QTIP_HELPER.qtips, function(i, v ) {
 			//make sure that content is refernecing content div
-			console.log(v);
 			content = v.options.content.clone ? $('#' + v.content_id).clone().html() : $('#' + v.content_id ).html();
 
 			if ( typeof( content ) !== 'undefined' ) {
 				v.options.content.text = content;
+			}
+
+			if ( typeof( v.options.show_only_once ) !== 'undefined' && v.options.show_only_once ) {
+				v.options.events = {
+					hide: function(evt, api) {
+						$.cookie(v.content_id + '-viewed', true );
+					},
+					show: function(evt, api) {
+						if ( $.cookie(v.content_id + '-viewed' ) ) {
+							evt.preventDefault();
+						}
+					}
+				};
 			}
 
 			if ( typeof( v.options.position.target) !== 'undefined' && v.options.position.target.indexOf("jQuery::") > -1 ) {
@@ -30,7 +41,15 @@ jQuery(document).ready(function($) {
 				v.options.hide.target = $(parse);
 			}
 
-			$(v.target).qtip(v.options);
+			if ( ! $.cookie(v.content_id + '-viewed') ) {
+				showevent = v.options.show.event;
+				//lets make sure qtips are added via on handler so they work with dom elements added after load.
+				$(document).on(showevent, v.target, function(evt) {
+					v.options.overwrite = false; //make sure we dont' overwrite on each call
+					v.options.show.ready = true;
+					$(this).qtip(v.options, evt);
+				});
+			}
 		});
 	}
 

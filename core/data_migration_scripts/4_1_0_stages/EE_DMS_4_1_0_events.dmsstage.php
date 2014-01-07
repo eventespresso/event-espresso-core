@@ -115,7 +115,7 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
 				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
-				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending, EEM_Registration::reg_status_array()),
+				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()),
 				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
 				'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', __('Event Phone Number', 'event_espresso'), false ),
@@ -152,7 +152,7 @@ CREATE TABLE `wp_events_start_end` (
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, 999999),
-				'DTT_sold'=>new EE_Integer_Field('DTT_sold', __('How many sales for this Datetime that have occured', 'event_espresso'), true, 0 ),
+				'DTT_sold'=>new EE_Integer_Field('DTT_sold', __('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0 ),
 				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
 				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
 				'DTT_parent' => new EE_Integer_Field('DTT_parent', __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0 ),
@@ -243,6 +243,35 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			add_post_meta($post_id,'recurrence_id',$old_event['recurrence_id']);
 		}
 	}
+	/**
+	 * Finds a unique slug for this event, given its name (we could have simply used
+	 * the old unique_identifier column, but it added a long string of seemingly random characters onto the end
+	 * and really wasn't that pretty for a slug, so we decided we'd make our own slug again)
+	 * @param string $event_name
+	 * @return string
+	 */
+	private function _find_unique_slug($event_name){
+		$count = 0;
+		$original_name = sanitize_title($event_name);
+		$event_slug = $original_name;
+		while( $this->_other_post_exists_with_that_slug($event_slug) && $count<50){
+			$event_slug = sanitize_title($original_name."-".++$count);
+		}
+		return $event_slug;
+	}
+	
+	/**
+	 * returns whether or not there is a post that has this same slug (post_title)
+	 * @global type $wpdb
+	 * @param type $slug
+	 * @return boolean
+	 */
+	private function _other_post_exists_with_that_slug($slug){
+		global $wpdb;
+		$query = $wpdb->prepare("SELECT COUNT(ID) FROM ".$this->_new_table." WHERE post_name = %s",$slug);
+		$count = $wpdb->get_var($query);
+		return (boolean)intval($count);
+	}
 	private function _insert_cpt($old_event){
 		global $wpdb;
 		//convert 3.1 event status to 4.1 CPT status
@@ -280,12 +309,12 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		
 		$event_meta = maybe_unserialize($old_event['event_meta']);
 		$cols_n_values = array(
-			'post_title'=>$old_event['event_name'],//EVT_name
-			'post_content'=>$old_event['event_desc'],//EVT_desc
-			'post_name'=>$old_event['event_identifier'],//EVT_slug
+			'post_title'=>stripslashes($old_event['event_name']),//EVT_name
+			'post_content'=>stripslashes($old_event['event_desc']),//EVT_desc
+			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
 			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
 			'post_date_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
-			'post_excerpt'=>wp_trim_words($old_event['event_desc'],50),//EVT_short_desc
+			'post_excerpt'=>'',//EVT_short_desc
 			'post_modified'=>$event_meta['date_submitted'],//EVT_modified
 			'post_modified_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
 			'post_author'=>$old_event['wp_user'],//EVT_wp_user
@@ -345,7 +374,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
 			'EVT_display_reg_form'=> 'Y'== $old_event['display_reg_form'],
-			'EVT_visible_on'=> $old_event['visible_on'],
+			'EVT_visible_on'=> $this->get_migration_script()->convert_date_string_to_utc($this,$old_event,current_time('mysql'),$old_event['timezone_string']),//don't use the old 'visible_on', as it wasnt ever used
 			'EVT_additional_limit'=> $old_event['allow_multiple'] == 'N' ? 1 : $old_event['additional_limit'],
 			'EVT_default_registration_status' => $default_reg_status,
 			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
@@ -417,7 +446,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private function _insert_venue_into_posts($old_event){		
 		global $wpdb;
 		$insertion_array = array(
-					'post_title'=>$old_event['venue_title'],//VNU_name
+					'post_title'=>stripslashes($old_event['venue_title']),//VNU_name
 					'post_content'=>'',//VNU_desc
 					'post_name'=>sanitize_title($old_event['venue_title']),//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
@@ -468,7 +497,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		//find the state from the venue, or the organization, or just guess california
 		if( ! $old_event['state']){
 			$old_org_options = get_option('events_organization_settings');
-			$state_name = $old_org_options['organization_state'];
+			$state_name = stripslashes($old_org_options['organization_state']);
 		}else{
 			$state_name = $old_event['state'];
 		}
@@ -486,9 +515,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		//now insert into meta table
 		$insertion_array = array(
 			'VNU_ID'=>$cpt_id,//VNU_ID_fk
-			'VNU_address'=>$old_event['address'],//VNU_address
-			'VNU_address2'=>$old_event['address2'],//VNU_address2
-			'VNU_city'=>$old_event['city'],//VNU_city
+			'VNU_address'=>stripslashes($old_event['address']),//VNU_address
+			'VNU_address2'=>stripslashes($old_event['address2']),//VNU_address2
+			'VNU_city'=>stripslashes($old_event['city']),//VNU_city
 			'STA_ID'=>$state_id,//STA_ID
 			'CNT_ISO'=>$country_iso,//CNT_ISO
 			'VNU_zip'=>$old_event['zip'],//VNU_zip
@@ -592,10 +621,12 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$end_date = $old_event_row['end_date'];
 		$end_time = $this->get_migration_script()->convertTimeFromAMPM($start_end_time_row['end_time']);
 		$existing_datetimes = $this->_count_other_datetimes_exist_for_new_event($new_cpt_id);
+		$start_datetime_utc = $this->get_migration_script()->convert_date_string_to_utc($this,$start_end_time_row,"$start_date $start_time:00",$old_event_row['timezone_string']);
+		$end_datetime_utc = $this->get_migration_script()->convert_date_string_to_utc($this,$start_end_time_row,"$end_date $end_time:00",$old_event_row['timezone_string']);
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID
-			'DTT_EVT_start'=> "$start_date $start_time:00",//DTT_EVT_start
-			'DTT_EVT_end'=> "$end_date $end_time:00",//DTT_EVT_end
+			'DTT_EVT_start'=>$start_datetime_utc,//DTT_EVT_start
+			'DTT_EVT_end'=> $end_datetime_utc,//DTT_EVT_end
 			'DTT_reg_limit'=>intval($start_end_time_row['reg_limit']) ? $start_end_time_row['reg_limit'] : $old_event_row['reg_limit'],//DTT_reg_limit
 			'DTT_sold'=>$this->count_registrations($old_event_row['id']),//DTT_sold
 			'DTT_is_primary'=> 0 == $existing_datetimes ,//DTT_is_primary... if count==0, then we'll call it the 'primary'

@@ -6,11 +6,11 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 		4.1.111.alpha
+  Version: 		4.1.207.alpha
   Author: 			Seth Shoultes
   Author URI: 		http://www.eventespresso.com
   License: 		GPLv2
-  TextDomain: event_espresso
+  TextDomain: 	event_espresso
 
   Copyright (c) 2008-2011 Event Espresso  All Rights Reserved.
 
@@ -29,14 +29,22 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 //Returns the plugin version
-function espresso_version() {
-	return '4.1.111.alpha';
+if ( ! function_exists( 'espresso_version' )) {
+	function espresso_version() {
+		return '4.1.207.alpha';
+	}
+} else {
+	deactivate_plugins( plugin_basename( __FILE__ ));
+	add_action( 'admin_notices', 'espresso_duplicate_plugin_error' );
+	exit();	
 }
+// define versions
+define( 'EVENT_ESPRESSO_VERSION', espresso_version());
+define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );	
 //Returns the template version
 function espresso_template_version() {
 	return '1.0';
 }
-
 define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
 
 //used to be DIRECTORY_SEPARATOR, but that caused issues on windows
@@ -103,13 +111,6 @@ define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) ? TRUE : FALSE );
 //you're better to use this than its straight value (currently -1) in case you ever
 //want to change its default value! or find when -1 means infinity
 define('EE_INF_IN_DB', -1);
-// define versions
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
-	define( 'EVENT_ESPRESSO_VERSION', espresso_version());
-	define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );	
-} else {
-	wp_die( __( 'Can not run multiple versions of Event Espresso.', 'event_espresso' ));
-}
 
 
 
@@ -185,3 +186,11 @@ function espresso_load_required( $classname, $full_path_to_file ) {
 	}
 }
 
+
+function espresso_duplicate_plugin_error() {
+    ?>
+    <div class="error">
+        <p><?php _e( 'Can not run multiple versions of Event Espresso!', 'event_espresso' ); ?></p>
+    </div>
+    <?php
+}

@@ -82,13 +82,13 @@ $ELID = espresso_get_event_list_ID();
 						<div class="espresso-venue-dv">
 							<div class="espresso-venue-address-wrap-dv">
 								<p>
-									<strong><?php _e( 'Location:', 'event_espresso' ); ?></strong><br/>
+									<strong><span class="ee-icon ee-icon-venue"></span><?php _e( 'Venue:', 'event_espresso' ); ?></strong><br/>
 									<strong><?php espresso_venue_name(); ?></strong>
 								</p>
 							</div>
 							<?php if ( espresso_display_venue_address_in_event_list() ) : ?>
 								<?php espresso_venue_gmap( $ELID . '-' . $post->ID ); ?>
-								<strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
+								<span class="dashicons dashicons-location-alt"></span><strong><?php _e( 'Address:', 'event_espresso' ); ?></strong>
 								<?php espresso_venue_address( 'inline' ); ?><br/>							
 							<?php endif; ?>
 							<?php if ( espresso_display_venue_details_in_event_list() ) : ?>

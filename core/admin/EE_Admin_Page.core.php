@@ -282,10 +282,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *     		'help_tabs' => array( //this is used for adding help tabs to a page
 	 *     			'tab_id' => array(
 	 *     				'title' => 'tab_title',
-	 *     				'callback' => 'callback_method_for_content'
+	 *     				'filename' => 'name_of_file_containing_content', //this is the primary method for setting help tab content.  The fallback if it isn't present is to try a the callback.  Filename should match a file in the admin folder's "help_tabs" dir (ie.. events/help_tabs/name_of_file_containing_content.help_tab.php)
+	 *     				'callback' => 'callback_method_for_content', //if 'filename' isn't present then system will attempt to use the callback which should match the name of a method in the class
 	 *     				),
 	 *     			'tab2_id' => array(
 	 *     			 	'title' => 'tab2 title',
+	 *     			 	'filename' => 'file_name_2'
 	 *     			 	'callback' => 'callback_method_for_content',
 	 *     			 ),
 	 *     	   	'help_sidebar' => 'callback_for_sidebar_content', //this is used for setting up the sidebar in the help tab area on an admin page. @link http://make.wordpress.org/core/2011/12/06/help-and-screen-api-changes-in-3-3/ 
@@ -845,7 +847,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//try to access page route via this class
 			if ( call_user_func_array( array( $this, &$func  ), $args ) === FALSE ) {
 				// user error msg
-				$error_msg =  __( 'An error occured. The  requested page route could not be found.', 'event_espresso' );
+				$error_msg =  __( 'An error occurred. The  requested page route could not be found.', 'event_espresso' );
 				// developer error msg
 				$error_msg .= '||' . sprintf( __( 'Page route "%s" could not be called. Check that the spelling for method names and actions in the "_page_routes" array are all correct.', 'event_espresso' ), $func );	
 			} 
@@ -853,7 +855,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			//for pluggability by addons first let's see if just the function exists (this will also work in the case where $func is an array indicating class/method)
 			$args['admin_page_object'] = $this; //send along this admin page object for access by addons.
 			if ( !empty( $error_msg ) && call_user_func_array( $func, $args ) === FALSE ) {
-				$error_msg = __('An error occured. The requested page route could not be found', 'event_espresso' );
+				$error_msg = __('An error occurred. The requested page route could not be found', 'event_espresso' );
 				$error_msg .= '||' . sprintf( __('Page route "%s" could not be called.  Check that the spelling for the function name and action in the "_page_routes" array filtered by your plugin is correct.', 'event_espresso'), $fund );
 			}
 
@@ -877,7 +879,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
 		if ( ! $url ) {
-			$user_msg = __('An error occured. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
+			$user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
 			$dev_msg = $user_msg . "\n" . sprintf( 
 					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.', 'event_espresso' ),
 					__CLASS__ 
@@ -978,20 +980,50 @@ abstract class EE_Admin_Page extends EE_BASE {
 				if ( !isset( $cfg['title'] ) )
 					throw new EE_Error( __('The _page_config array is not set up properly for help tabs.  It is missing a title', 'event_espresso') );
 
-				if ( !isset( $cfg['callback'] ) && !isset( $cfg['content'] ) )
-					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a callback reference and a content reference so there is no way to know the content for the help tab', 'event_espresso') );
 
-				//chekc if callback is valid
-				if ( empty($cfg['content']) && !method_exists( $this, $cfg['callback'] ) ) 
-					throw new EE_Error( sprintf( __('The callback given for the %s help tab does not have a corresponding method.  Check the spelling or make sure the method is present.  This method is used to get the content for the tab.', 'event_espresso'), $cfg['title'] ) );
+				if ( !isset($cfg['filename']) && !isset( $cfg['callback'] ) && !isset( $cfg['content'] ) )
+					throw new EE_Error( __('The _page_config array is not setup properly for help tabs. It is missing a either a filename reference, or a callback reference or a content reference so there is no way to know the content for the help tab', 'event_espresso') );
+
+
+
+
+				//first priority goes to content.
+				if ( !empty($cfg['content'] ) ) {
+					$content = !empty($cfg['content']);
+
+				//second priority goes to filename
+				} else if ( !empty($cfg['filename'] ) ) {
+					$file_path = $this->_get_dir() . '/help_tabs/' . $cfg['filename'] . '.help_tab.php';
+
+
+					//it's possible that the file is located on decaf route (and above sets up for caf route, if this is the case then lets check decaf route too)
+					$file_path = !is_readable($file_path) ? EE_ADMIN_PAGES . basename($this->_get_dir()) . '/help_tabs/' . $cfg['filename'] . '.help_tab.php' : $file_path;
+
+					//if file is STILL not readable then let's do a EE_Error so its more graceful than a fatal error.
+					if ( !is_readable($file_path) && !isset($cfg['callback']) ) {
+						EE_Error::add_error( sprintf( __('The filename given for the help tab %s is not a valid file and there is no other configuration for the tab content.  Please check that the string you set for the help tab on this route (%s) is the correct spelling.  The file should be in %s', 'event_espresso'), $tab_id, key($config), $file_path ), __FILE__, __FUNCTION__, __LINE__ );
+						return;
+					}
+					$template_args['admin_page_obj'] = $this;
+					$content = EEH_Template::display_template($file_path, $template_args, true);
+				} else {
+					$content = '';
+				}
+
+
+				//check if callback is valid
+				if ( empty($content) && ( !isset($cfg['callback']) || !method_exists( $this, $cfg['callback'] ) ) ) { 
+					EE_Error::add_error( sprintf( __('The callback given for a %s help tab on this page does not content OR a corresponding method for generating the content.  Check the spelling or make sure the method is present.', 'event_espresso'), $cfg['title'] ), __FILE__, __FUNCTION__, __LINE__ );
+					return;
+				}
 					
 				//setup config array for help tab method
 				$id = $this->page_slug . '-' . $this->_req_action . '-' . $tab_id;
 				$_ht = array(
 					'id' => $id,
 					'title' => $cfg['title'],
-					'callback' => isset( $cfg['callback'] ) ? array( $this, $cfg['callback'] ) : NULL,
-					'content' => isset($cfg['content']) ? $cfg['content'] : ''
+					'callback' => isset( $cfg['callback'] ) && empty($content) ? array( $this, $cfg['callback'] ) : NULL,
+					'content' => $content
 					);
 				
 				$this->_current_screen->add_help_tab( $_ht );
@@ -1255,7 +1287,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//dialog container for dialog helper
 		$d_cont = '<div class="ee-admin-dialog-container auto-hide hidden">' . "\n";
 		$d_cont .= '<div class="ee-notices"></div>';
-		$d_cont .= '<div class="ajax-loader-grey"></div>';
 		$d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
 		$d_cont .= '</div>';
 		echo $d_cont;
@@ -1630,7 +1661,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		if ( call_user_func( array( $this, '_set_list_table_views_' . $this->_req_action ) ) === FALSE ) {
 			//user error msg
-			$error_msg = __('An error occured. The requested list table views could not be found.', 'event_espresso' );
+			$error_msg = __('An error occurred. The requested list table views could not be found.', 'event_espresso' );
 			//developer error msg
 			$error_msg .= '||' . sprintf( __('List table views for "%s" route could not be setup. Check that you have the corresponding method, "%s" set up for defining list_table_views for this route.', 'event_espresso' ), $this->_req_action, '_set_list_table_views_' . $this->_req_action );
 			throw new EE_Error( $error_msg );
@@ -1805,7 +1836,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
 				if ( call_user_func( array($this, &$metabox_callback) ) === FALSE ) {
 					// user error msg
-				$error_msg =  __( 'An error occured. The  requested metabox could not be found.', 'event_espresso' );
+				$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
 				// developer error msg
 				$error_msg .= '||' . sprintf( __( 'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.', 'event_espresso' ), $metabox_callback );
 				throw new EE_Error( $error_msg );
@@ -1970,7 +2001,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		if ( empty( $name ) || ! $id ) {
 			//user error msg
-			$user_msg = __('An error occured. A required form key or ID was not supplied.', 'event_espresso' );
+			$user_msg = __('An error occurred. A required form key or ID was not supplied.', 'event_espresso' );
 			//developer error msg
 			$dev_msg = $user_msg . "\n" . __('In order for the "Save" or "Save and Close" buttons to work, a key name for what it is being saved (ie: event_id), as well as some sort of id for the individual record is required.', 'event_espresso' );
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );			
@@ -2051,8 +2082,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/		
 	protected function _add_admin_page_ajax_loading_img() {
 		?>
-			<div id="espresso-admin-page-ajax-loading" class="hidden">
-				<img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/ajax-loader-grey.gif" /><span><?php _e('loading...', 'event_espresso'); ?>'</span>
+			<div id="espresso-ajax-loading" class="ajax-loading-grey">
+				<span class="ee-spinner ee-spin"></span><span class="hidden"><?php _e('loading...', 'event_espresso'); ?></span>
 			</div>
 		<?php
 	}
@@ -2785,7 +2816,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$data = array_merge( (array) $data, (array) $existing );
 		}
 
-		set_transient( $transient, $data, 5 );
+		set_transient( $transient, $data, 8 );
 	}
 	
 
@@ -2935,9 +2966,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @access 	protected
 	 * @param string $tab
 	 * @param array $data
-	 * @param string $file	file where error occured
-	 * @param string $func function  where error occured
-	 * @param string $line	line no where error occured
+	 * @param string $file	file where error occurred
+	 * @param string $func function  where error occurred
+	 * @param string $line	line no where error occurred
 	 * @return boolean
 	 */
 	protected function _update_espresso_configuration( $tab, $config, $file = '', $func = '', $line = '' ) {
@@ -2953,7 +2984,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {
-			$user_msg = sprintf( __('An error occured. The %s were not updated.', 'event_espresso'), $tab );
+			$user_msg = sprintf( __('An error occurred. The %s were not updated.', 'event_espresso'), $tab );
 			EE_Error::add_error( $user_msg, $file, $func, $line  );
 			return FALSE;
 		}			

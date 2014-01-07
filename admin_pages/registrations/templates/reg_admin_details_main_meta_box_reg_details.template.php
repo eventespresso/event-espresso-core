@@ -2,6 +2,7 @@
 	
 	<h4 class="admin-primary-mbox-h4"><?php _e( 'Payment Details', 'event_espresso' );?></h4>
 	<?php echo $view_transaction_button; ?>
+	<?php echo $resend_registration_button; ?>
 	<table id="admin-primary-mbox-reg-session-info-tbl" class="form-table skinny-rows">
 		<tbody>
 			<tr>
@@ -43,8 +44,8 @@
 		<?php if ( $taxes ) : ?>
 			<?php foreach ( $taxes as $tax ) : ?>
 				<tr>
-					<th class=" jst-rght" colspan="6"><?php echo $tax['name'];?></th>
-					<th class=" jst-rght"><?php echo EEH_Template::format_currency( $tax['amount']);?></th>
+					<th class=" jst-rght" colspan="6"><?php echo $tax->get('LIN_name');?> (<?php echo $tax->get_pretty('LIN_percent'); ?>%)</th>
+					<th class=" jst-rght"><?php echo EEH_Template::format_currency( $tax->get('LIN_total'));?></th>
 				</tr>
 			<?php endforeach; // $taxes?>
 		<?php endif; // $taxes?>

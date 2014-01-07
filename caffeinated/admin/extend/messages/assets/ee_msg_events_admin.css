@@ -3,12 +3,6 @@
 	background:#fff; border:1px solid #ddd; border-radius:5px;
 }
 
-.ajax-loader-grey {
-	background: transparent url(../../../../../templates/global_assets/images/ajax-loader-grey.gif) no-repeat top left;
-	padding: 31px;
-	display: none;
-}
-
 #ee-msg-context-switcher-frm {
     display: inline-block;
 }

@@ -146,18 +146,21 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		retreive all active global prices for a particular event
 	 *
 	 * 		@access		public
+	 * 		@param 			boolean $count  return count
 	 * 		@return 		array				on success
 	 * 		@return 		boolean			false on fail
 	 */
-	public function get_all_default_prices() {
-		return $this->get_all(array(
-			array(
-				'Price_Type.PBT_ID'=>array('!=',4),
-				'PRC_deleted' => 0,
-				'PRC_is_default' => 1
-				),
+	public function get_all_default_prices( $count = FALSE ) {
+		$_where = array(
+			'Price_Type.PBT_ID'=>array('!=',4),
+			'PRC_deleted' => 0,
+			'PRC_is_default' => 1
+		);
+		$_query_params = array(
+			$_where,
 			'order_by'=>$this->_order_by_array_for_get_all_method()
-		));
+		);
+		return $count ? $this->count(array($_where)) : $this->get_all($_query_params);
 	}
 
 

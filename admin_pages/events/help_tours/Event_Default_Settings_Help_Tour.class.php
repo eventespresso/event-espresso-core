@@ -48,24 +48,6 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -50,
 					'tipAdjustmentX' => 15
 					)
-				),
-			30 => array(
-				'id' => 'pending_counts_reg_limit',
-				'content' => $this->_stop_three(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 15
-					)
-				),
-			35 => array(
-				'id' => 'use_attendee_pre_approval',
-				'content' => $this->_pending_approval_stop(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 15
-					)
 				)
 			);
 	}
@@ -73,20 +55,13 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_one() {
 		$content = '<h3>' . __('Event Default Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This brief tour will go over all the different areas of this screen to help you understand what they are for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This short tour of the default settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 
 	protected function _stop_two() {
-		return '<p>' . __('Default registration status info', 'event_espresso') . '</p>';
+		return '<p>' . __('Should the default registration status be set to not-approved, pending payment, or approved?', 'event_espresso') . '</p>';
 	}
 
-	protected function _stop_three() {
-		return '<p>' . __('Pending Registrations count etc info blah blah blah', 'event_espresso') . '</p>';
-	}
-
-	protected function _pending_approval_stop() {
-		return '<p>' . __('What the heck is pending approval?', 'event_espresso') . '</p>';
-	}
 }

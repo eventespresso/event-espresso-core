@@ -118,14 +118,14 @@ class EEH_Template {
 			}			
 		}		
 		// format float
-		$amount_formatted = number_format( $amount, max( array( 2, $mny->dec_plc )), $mny->dec_mrk, $mny->thsnds );
+		$amount_formatted = number_format( $amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds );
 		if ( ! $return_raw ) {
 			// add currency sign
-			if($mny->sign_b4){
-				if($amount >= 0){
+			if( $mny->sign_b4 ){
+				if( $amount >= 0 ){
 					$amount_formatted = $mny->sign . $amount_formatted;
 				}else{
-					$amount_formatted = "-".$mny->sign . str_replace("-","",$amount_formatted);
+					$amount_formatted = '-' . $mny->sign . str_replace( '-', '', $amount_formatted );
 				}
 				
 			}else{
@@ -185,9 +185,9 @@ class EEH_Template {
 
 
 		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
-		$icon = !$icon_style ? ' help_img' : $icon_style;
-		$help_text = !$help_text ? __('Click for help', 'event_espresso') : $help_text;
-		return '<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon . '" title="Click to open the \'Help\' tab for more information about this feature." > ' . $help_text . ' </a>';
+		$icon = !$icon_style ? ' dashicons-editor-help' : $icon_style;
+		$help_text = !$help_text ? '' : $help_text;
+		return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="Click to open the \'Help\' tab for more information about this feature." > ' . $help_text . ' </a>';
 	}
 
 

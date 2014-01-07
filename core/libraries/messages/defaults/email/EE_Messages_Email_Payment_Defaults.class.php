@@ -38,7 +38,8 @@ class EE_Messages_Email_Payment_Defaults extends EE_Message_Template_Defaults {
 
 	protected function _change_templates( $evt_id, $is_global ) {
 		//make sure admin context has correct "To" email address
-		$this->_templates['admin']['to'] = '[EVENT_AUTHOR_EMAIL]';
+		$this->_templates['admin']['to'] = '';
 		$this->_templates['primary_attendee']['to'] = '[PRIMARY_ATTENDEE_EMAIL]';
+		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/payment-message-type-admin-main-content.template.php', TRUE );
 	}
 }

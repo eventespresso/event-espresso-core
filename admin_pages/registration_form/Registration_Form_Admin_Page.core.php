@@ -136,13 +136,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
-				'help_tabs' => array(
-					'question_tab_overview_info' => array(
-						'title' => __('Question Overview', 'event_espresso'),
-						'callback' => 'question_tab_overview_info_help_tab'
+                'help_tabs' => array(
+					'registration_form_questions_overview_help_tab' => array(
+						'title' => __('Questions Overview', 'event_espresso'),
+						'filename' => 'registration_form_questions_overview'
 						),
 					),
+				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
 				'require_nonce' => FALSE,
 				'qtips' => array(
 					'EE_Registration_Form_Tips'
@@ -154,13 +154,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
-				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
-				'help_tabs' => array(
-					'question_groups_tab_overview_info' => array(
+                'help_tabs' => array(
+					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
-						'callback' => 'question_groups_tab_overview_info_help_tab'
+						'filename' => 'registration_form_question_groups'
 						),
 					),
+				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
 				'require_nonce' => FALSE
 				),
 
@@ -173,62 +173,16 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					),
 				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'help_tabs' => array(
-					'question_text_info' => array(
-						'title' => __('Question Text', 'event_espresso'),
-						'callback' => 'question_text_info_help_tab'
-						),
-					'question_label_info' => array(
-						'title' => __('Question Label', 'event_espresso'),
-						'callback' => 'question_label_info_help_tab'
-						),
-					'question_type_info' => array(
-						'title' => __('Question Type', 'event_espresso'),
-						'callback' => 'question_type_info_help_tab'
-						),
-					'required_question_info' => array(
-						'title' => __('Required Question', 'event_espresso'),
-						'callback' => 'required_question_info_help_tab'
-						),
-					'required_text_info' => array(
-						'title' => __('Required Text', 'event_espresso'),
-						'callback' => 'required_text_info_help_tab'
+					'registration_form_edit_question_group_help_tab' => array(
+						'title' => __('Edit Question', 'event_espresso'),
+						'filename' => 'registration_form_edit_question'
 						),
 					),
+                'help_tour' => array( 'Registration_Form_Edit_Question_Help_Tour'),
 				'require_nonce' => FALSE
 				),
 			);
 	}
-	
-	/**
-	 * add/edit question help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function edit_question_help_tabs( $tab ) {
-		require_once REGISTRATION_FORM_TEMPLATE_PATH . 'edit_question_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template($template);
-	}
-	public function question_tab_overview_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function question_text_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function question_label_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function question_type_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function required_question_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	public function required_text_info_help_tab(){
-		$this->edit_question_help_tabs( __FUNCTION__ );
-	}
-	
-	
 	
 	
 	protected function _add_screen_options() {
@@ -346,14 +300,28 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$set_column_values=array();
 		foreach($model->field_settings() as $fieldName=>$settings){
 			// basically if QSG_identifier is empty or not set
-			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) || ! isset( $this->_req_data['QSG_identifier'] ) )) {
+			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) )) {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
-				$this->_req_data['QSG_identifier'] = strtolower( str_replace( ' ', '-', $QSG_name )) . '-' . uniqid();
+				$set_column_values[$fieldName] = sanitize_title($QSG_name ) . '-' . uniqid();
+//				dd($set_column_values);
 			}
+			//if the admin label is blank, use a slug version of the question text
+			else if ( $fieldName == 'QST_admin_label' && ( isset( $this->_req_data['QST_admin_label'] ) && empty( $this->_req_data['QST_admin_label'] )  )) {
+				$QST_text = isset( $this->_req_data['QST_display_text'] ) ? $this->_req_data['QST_display_text'] : '' ;
+				$set_column_values[$fieldName] = sanitize_title(wp_trim_words($QST_text,10));
+			}
+
+
+			else if ( $fieldName == 'QST_admin_only' && ( !isset( $this->_req_data['QST_admin_only'] ) ) ) {
+				$set_column_values[$fieldName] = 0;
+			}
+
+
 			//only add a property to the array if it's not null (otherwise the model should just use the defautl value)
-			if(isset($this->_req_data[$fieldName])){
+			else if(isset($this->_req_data[$fieldName])){
 				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
 			}
+
 		}
 		return $set_column_values;//validation fo this data to be performed by the model before insertion.
 	}
@@ -393,7 +361,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$success = FALSE;
 		}
 		
-		$errors = ! $success ? __( 'An error occured. The question order was not updated.', 'event_espresso' ) : FALSE;
+		$errors = ! $success ? __( 'An error occurred. The question order was not updated.', 'event_espresso' ) : FALSE;
 		
 		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();
@@ -438,49 +406,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	
-	protected function _trash_question(){
-		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
-	}
 
 
 
-	protected function _trash_or_restore_questions($trash=TRUE){
-		$this->_trash_or_restore_items( $this->_question_model, $trash );
-	}
 
 
-	protected function _delete_question(){
-		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'deleted', $query_args);
-	}
-
-
-
-	protected function _delete_questions() {
-		$this->_delete_items($this->_question_model);
-	}
-
-
-
-	private function _delete_items(EEM_Base $model){
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
-			// if array has more than one element than success message should be plural
-			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
-			// cycle thru bulk action checkboxes
-			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
-
-				if (!$model->delete_permanently_by_ID(absint($ID))) {
-					$success = 0;
-				}
-			}
-	
-		}
-		$this->_redirect_after_action( $success, $model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'all' ));
-	}
 
 
 
@@ -488,7 +418,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
-		require_once( EE_CLASSES . 'EE_Question.class.php');
 		if($new_question){
 			$new_id=$this->_question_model->insert($set_column_values);
 			if($new_id){
@@ -497,6 +426,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}else{
 				$success = false;
 			}
+			$action_desc='created';
 		}else{
 			$ID=absint($this->_req_data['QST_ID']);
 			$pk=$this->_question_model->primary_key_name();
@@ -515,8 +445,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				foreach($options as $option_ID=>$option){
 					$option_req_index=$this->_get_option_req_data_index($option_ID);
 					if($option_req_index!==FALSE){
-						if ( empty( $this->_req_data['question_options'][$option_req_index]['QSO_value'] ) && $this->_req_data['question_options'][$option_req_index]['QSO_value'] !== '0' )
-						$this->_req_data['question_options'][$option_req_index]['QSO_value'] = $this->_req_data['question_options'][$option_req_index]['QSO_desc'];
 						$option->save($this->_req_data['question_options'][$option_req_index]);
 					}else{
 						//not found, remove it
@@ -609,8 +537,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$QST = EEM_Question::instance();
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
 		if ($count){
-			$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
-			$results = $QST->count($where);
+			$query_params['limit'] = NULL;
+			$results = $QST->count($query_params);
 		}else{
 			$results = $QST->get_all($query_params);
 		}
@@ -681,25 +609,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();	
 	}
-
-	protected function _update_reg_form_settings() {
-
-		EE_Registry::instance()->CFG->registration->use_captcha = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
-		EE_Registry::instance()->CFG->registration->recaptcha_publickey = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
-		EE_Registry::instance()->CFG->registration->recaptcha_privatekey = isset( $this->_req_data['recaptcha_privatekey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_privatekey'] ) : NULL;
-		EE_Registry::instance()->CFG->registration->recaptcha_width = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
-		EE_Registry::instance()->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
-		EE_Registry::instance()->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
-		
-		EE_Registry::instance()->CFG = apply_filters( 'FHEE_reg_form_settings_save', EE_Registry::instance()->CFG );	
-		
-		$what = 'Registration Options';
-		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
-		
-	}
-
-
 
 
 

@@ -409,10 +409,15 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$validate = TRUE;
 		$fail = FALSE;
 		$or_val = $value;
+
+		//empty strings will validate because this is how a message template for a particula context can be "turned off" (if there is no email then no message)
+		if ( empty( $value ) )
+			return $validate;
+
 		//first we need to strip out all the shortcodes!
 		$value = preg_replace('/(\[.+?\])/', '', $value);
 
-		//if original value is not empty and new value is, then we've parsed out a shortcode and we now have an empty string which DOES validate (otherwise an empty string doesn't validate)
+		//if original value is not empty and new value is, then we've parsed out a shortcode and we now have an empty string which DOES validate. We also validate complete empty field for email because its possible that this message is being "turned off" for a particular context
 		if ( !empty($or_val) && empty($value) )
 			return $validate;
 

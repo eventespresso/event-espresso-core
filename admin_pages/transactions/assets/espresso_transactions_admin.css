@@ -42,9 +42,9 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .txn-pad-rght { display:block; padding-right:1em; }
 
 .column-ATT_fname { width:14%; }
-.column-ATT_email { width:14%; }
-.column-event_name {  }
-.column-actions { width:8%; }
+.column-ATT_email { width:15%; }
+.column-event_name { width: 20% }
+.column-actions { width:15%; }
 
 .txn-overview-free-event-spn {
 	display: block; text-align:center;
@@ -185,4 +185,3 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 	-moz-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
 	box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
 }
-

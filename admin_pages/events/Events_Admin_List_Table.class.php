@@ -39,7 +39,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 	protected function _setup_data() {
-		$this->_per_page = $this->get_items_per_page($this->_screen . '_per_page');
 		$this->_data = $this->_admin_page->get_events($this->_per_page, $this->_current_page);
  		$this->_all_data_count = $this->_admin_page->get_events(0,0, TRUE);
 	}
@@ -59,9 +58,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'name' => __('Name', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
 			'start_date_time' => __('Event Start', 'event_espresso'),
-			'reg_begins' => __('Reg Begins', 'event_espresso'),
+			'reg_begins' => __('On Sale', 'event_espresso'),
 			'status' => __('Status', 'event_espresso'),
-			'attendees' => '<span class="ee-att-icon"></span>',
+			'attendees' => '<span class="dashicons dashicons-groups ee-icon-size-20"></span>',
 			//'tkts_sold' => __('Tickets Sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
 			);
@@ -200,7 +199,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	
 	public function column_venue($item) {
 		$venue = $item->get_first_related( 'Venue' );
-		return !empty( $venue ) ? $venue->name() : __('No Venue attached', 'event_espresso');
+		return !empty( $venue ) ? $venue->name() : '';
 	}
 
 
@@ -274,9 +273,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 
 		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
-		$actionlinks[] = '<div class="view_btn"></div></a>';
-		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="edit_btn"></div></a>';
-		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="complete_btn"></div></a>';
+		$actionlinks[] = '<div class="dashicons dashicons-search"></div></a>';
+		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="ee-icon ee-icon-calendar-edit"></div></a>';
+		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
 
 		$actionlinks = apply_filters('FHEE_list_table_events_actions_column_action_links', $actionlinks, $item );
 

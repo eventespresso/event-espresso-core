@@ -34,28 +34,17 @@
 				</td>
 			</tr>
 		</table>
-		
-		<table id="bill-to" class="not-really-a-table">
-			<tr>
-				<td id="bill-to">
-					<?php _e('Bill To:', 'event_espresso')?>
-				</td>
-				<td colspan="4">
-					<div class="vcard" id="client-details">
+		<h2><?php _e('Bill To:', 'event_espresso')?></h2>
+		<div class="vcard" id="client-details">
 						<div class="fn">[name]</div>
-						<!--<div class="org">Client Company</div>--> 
 						<div class="adr">
 							<div class="street-address"><?php echo $attendee_address; ?></div>
 							<div class="locality"><?php echo $attendee_city; ?> <?php echo $attendee_state; ?></div>
 							<div id="client-postcode"><?php echo $attendee_zip; ?></div>
-							<!--<div id="your-tax-number">SALES TAX: 193528491</div>--> 
 						</div> 
 					</div>
 					 <!--#client-details vcard--> 
-				</td>
-			</tr>
-			
-		</table>
+		
 		<h2><?php _e("Purchases",'event_espresso')?></h2>
 		<table id="invoice-amount">
 			
@@ -123,7 +112,7 @@
 							if($has_subitems){
 							?>
 							<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
-								<td class="item_l"><?php echo $line_item->value() ?></td>
+								<td class="item_l"><?php echo $line_item->name() ?></td>
 								<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 								<td class="item_l"><?php echo $line_item->quantity();?></td>
 								
@@ -140,7 +129,7 @@
 								} 
 							}else{//no subitems - just show this line item ?>
 								<tr class="item <?php echo $odd ?   'odd' : ''; ?>">
-									<td class="item_l"><?php echo $line_item->value()?></td>
+									<td class="item_l"><?php echo $line_item->name()?></td>
 									<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 									<td class="item_l"><?php echo $line_item->quantity()?></td>
 									<td class="item_c"><?php echo $line_item->unit_price_no_code()?></td>
@@ -153,7 +142,7 @@
 						case EEM_Line_Item::type_sub_line_item:							
 							?>
 						<tr class="item subitem-row">
-							<td class="item_l subitem"><?php echo $line_item->value(); ?></td>
+							<td class="item_l subitem"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<?php if ($line_item->is_percent()) { ?>
 									<td></td>
@@ -168,7 +157,7 @@
 					case EEM_Line_Item::type_tax:							
 							?>
 						<tr class="item sub-item tax-total">
-							<td class="item_l"><?php echo $line_item->value(); ?></td>
+							<td class="item_l"><?php echo $line_item->name(); ?></td>
 							<?php if ($show_line_item_description){?><td class="item_l"><?php echo $line_item->desc() ?></td><?php }?>
 							<td colspan="2" class="item_c"><?php echo $line_item->percent(); ?>%</td>
 							

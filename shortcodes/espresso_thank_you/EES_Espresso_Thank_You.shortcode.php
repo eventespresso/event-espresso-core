@@ -126,8 +126,13 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				// its pending
 				$template_args['show_try_pay_again_link'] = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
 			}
-			
-			$template_args['SPCO_step_2_url'] = add_query_arg( array( 'ee'=>'register', 'step'=>'payment_options', 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
+			$thank_you_page_url = get_permalink( EE_Registry::instance()->CFG->core->reg_page_id );
+			$template_args['SPCO_payment_options_url'] = add_query_arg( 
+				array( 'ee'=>'register', 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' ), 'step'=>'payment_options', 'revisit'=>TRUE ), $thank_you_page_url
+			);
+			$template_args['SPCO_attendee_information_url'] = add_query_arg( 
+				array( 'ee'=>'register', 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' ), 'step'=>'attendee_information', 'revisit'=>TRUE ), $thank_you_page_url
+			);
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
 			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));

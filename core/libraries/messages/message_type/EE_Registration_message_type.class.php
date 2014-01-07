@@ -32,42 +32,15 @@ class EE_Registration_message_type extends EE_message_type {
 
 	public function __construct() {
 		$this->name = 'registration';
-		$this->description = __('This message type is for registation confirmation messages that include information about the event someone has registered for.  This message type does have one setting that you can use to indicate if registration confirmations are delayed until full payments are made for an event (default setting).', 'event_espresso');
+		$this->description = __('This message type is for messages sent to attendees when their registration is approved.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('registration', 'event_espresso'),
-			'plural' => __('registrations', 'event_espresso')
+			'singular' => __('approved registration', 'event_espresso'),
+			'plural' => __('approved registrations', 'event_espresso')
 			);
 
 		parent::__construct();
 	}
 
-
-
-	protected function _trigger_exit() {
-		//first is this a preview?
-		if ( empty( $this->_data ) )
-			return FALSE;
-
-		//if email_on_payment is set then we'll trigger an exit when incoming data is an EE_Session object.
-		$settings = $this->get_existing_admin_settings($this->_active_messenger->name);
-		//default is TRUE (yes we want to delay)! 
-		$delay = isset($settings['email_before_payment']) && $settings['email_before_payment'] == 'yes' ? FALSE : TRUE; 
-		//for SPCO trigger 
-		if ( $this->_data instanceof EE_Session ) {
-			// BUT we need to make sure that this isn't a FREE event.
-			$transaction = $this->_data->get_session_data( 'transaction' );
-			//check grandtotal
-			$is_free = $transaction->total() > 0 ? FALSE : TRUE;			
-			$return = $delay && !$is_free ? TRUE : FALSE;
-			$this->_data_handler = $is_free ? 'EE_Session' : NULL;
-		} else {
-			//gateway trigger.  We need to know if payment is complete.
-			$txn = $this->_data[0];
-			$return = $txn->is_completed() ? FALSE : TRUE;
-		}
-
-		return $return;		
-	}
 
 
 	protected function _set_admin_pages() {
@@ -86,7 +59,8 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	protected function _set_data_handler() {
-		$this->_data_handler = ! $this->_data instanceof EE_Session ? 'Gateways' : 'EE_Session';
+		$this->_data_handler = $this->_data instanceof EE_Registration ? 'REG' : 'Gateways';
+		$this->_single_message = $this->_data instanceof EE_Registration ? TRUE : FALSE;
 	}
 
 
@@ -95,21 +69,7 @@ class EE_Registration_message_type extends EE_message_type {
 	 * Setup admin settings for this message type.
 	 */
 	protected function _set_admin_settings_fields() {
-		$this->_admin_settings_fields = array(
-			'email_before_payment' => array(
-				'field_type' => 'select',
-				'label' => __('Send registration confirmation emails before payment is received?', 'event_espresso'),
-				'default' => 'no',
-				'options' => array(
-					'yes' => __('Yes', 'event_espresso'),
-					'no' => __('No', 'event_espresso')
-					),
-				'value_type' => 'string',
-				'format' => '%s',
-				'validation' => FALSE,
-				'required' => TRUE
-				)
-			);
+		$this->_admin_settings_fields = array();
 	}
 
 
@@ -178,15 +138,15 @@ class EE_Registration_message_type extends EE_message_type {
 		$this->_contexts = array(
 			'admin' => array(
 				'label' => __('Event Admin', 'event_espresso'),
-				'description' => __('This template is what event administrators will receive on a successful registration', 'event_espresso')
+				'description' => __('This template is what event administrators will receive with an approved registration', 'event_espresso')
 				),
 			'primary_attendee' => array(
 				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who made the main registration) will receive on successful registration', 'event_espresso')
+				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive with approved registration', 'event_espresso')
 				),
 			'attendee' => array(
 				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when a successful registration is processed.', 'event_espresso')
+				'description' => __('This template is what each attendee for the event will receive when their registration is approved.', 'event_espresso')
 				)
 			);
 
@@ -219,6 +179,9 @@ class EE_Registration_message_type extends EE_message_type {
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
+		if ( !$this->_single_message )
+			return array();
+
 		$admin_ids = array();
 		$admin_events = array();
 		$admin_attendees = array();
@@ -258,6 +221,8 @@ class EE_Registration_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
+		if ( !$this->_single_message ) 
+			return array();
 		
 		$aee = $this->_default_addressee_data;
 		$aee['events'] = $this->_data->events;
@@ -287,6 +252,8 @@ class EE_Registration_message_type extends EE_message_type {
 		foreach ( $this->_data->attendees as $att_id => $details ) {
 			//set the attendee array to blank on each loop;
 			$aee = array();
+
+			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) && $this->_single_message ) continue;
 			
 			if ( in_array( $details['attendee_email'], $already_processed ) )
 				continue;

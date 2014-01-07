@@ -113,7 +113,7 @@ $tax_total_line_item;
 							</div>
 							<?php if ($event->venues()){?>
 							<div class="ticket-place-details">
-								<h4 class="sub-section-title no-bottom-margin"><img class="icon" src="<?php echo EE_IMAGES_URL.'location-pin16x16.png';?>"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h4>
+								<h4 class="sub-section-title no-bottom-margin"><img class="icon" src="<?php echo EE_IMAGES_URL.'location-pin-16x16.png';?>"><?php echo _n("Venue:","Venues:",count($event->venues()), "event_espresso");?></h4>
 								<ul class="event-venues">
 									<?php foreach($event->venues() as $venue){?>
 									<li><?php echo $venue->name()?> <span class="small-text">[ <a href='<?php echo $venue->get_permalink()?>'><?php _e('view', 'event_espresso'); ?></a> ]</span></li>
@@ -162,7 +162,7 @@ $tax_total_line_item;
 										 foreach($answers as $ans_id => $answer){
 											$question = $answer->question();?>
 											<tr>
-												<th><?php echo $question ? $question->admin_label() : '{Question Deleted}'?>: </th>
+												<th><?php echo $question ? $question->display_text() : '{Question Deleted}'?>: </th>
 												<td><?php echo $answer->e_value()?></td>
 											</tr>
 										<?php }?>
@@ -217,6 +217,7 @@ $tax_total_line_item;
 		</div>
 		<div class="payment-dv">
 			<h3 class="section-title"><?php _e("Payments",'event_espresso')?></h3>
+			<p>[instructions]</p>
 			<table id="invoice-amount">
 				<thead>
 					<tr class="header_row">
@@ -246,10 +247,10 @@ $tax_total_line_item;
 						<?php }
 					}else{?>
 						<tr class='item'>
-							<td class='aln-cntr' colspan=6><?php _e("No approved payments have been received.",'event_espresso')?> </td>
+							<td class='aln-cntr' colspan="6"><?php _e("No approved payments have been received.",'event_espresso')?> </td>
 						</tr>
 					<?php }
-					?><tr class="item" ><td class='aln-cntr' colspan=6><?php if($amount_owed){?><a class="noPrint" href='<?php echo $retry_payment_url?>'><?php _e("Please make payment", "event_espresso");}?></a></td></tr>
+					?><tr class="item" ><td class='aln-cntr' colspan="6"><?php if($amount_owed){?><a class="noPrint" href='<?php echo $retry_payment_url?>'><?php _e("Please make a payment.", "event_espresso");}?></a></td></tr>
 				</tbody>
 				<tfoot>
 					<tr class='total_tr'><td colspan="4">&nbsp;</td>
@@ -268,13 +269,11 @@ $tax_total_line_item;
 		<div class="additional-info-dv">
 			<h3 class="section-title"><?php _e("Additional Information:", "event_espresso");?></h3>
 			<div class="additional-info">
-				<p>[instructions]</p>
 				<?php if($venues_for_events){?>
 				<h2><?php echo _n("Venue Details:", "Venues Details:", "event_espresso",count($venues_for_events));?></h2>
 				<table class="venue-list">
 					<?php foreach($venues_for_events as $venue){?>
 						<tr class="venue-details">
-							
 							<td class="venue-details-part venue-address-dv">
 								<h3><a href='<?php echo $venue->get_permalink()?>'><?php 
 									echo $venue->name()
@@ -284,7 +283,6 @@ $tax_total_line_item;
 							<?php if($venue->enable_for_gmap()){?>
 								<td class="venue-details-part venue-image-dv"><?php echo EEH_Venue_View::espresso_google_static_map($venue)?></td>
 							<?php } ?>
-
 						</tr>
 					<?php }?>
 				</tr>

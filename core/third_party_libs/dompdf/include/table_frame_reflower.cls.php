@@ -481,7 +481,7 @@ class Table_Frame_Reflower extends Frame_Reflower {
 	  $child->reflow();
 
 	  if ( !$page->in_nested_table() )
-		// Check if a split has occured
+		// Check if a split has occurred
 		$page->check_page_break($child);
 
 	}

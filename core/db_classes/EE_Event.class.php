@@ -324,6 +324,7 @@ class EE_Event extends EE_CPT_Base{
 	function default_registration_status() {
 		return $this->get('EVT_default_registration_status');
 	}
+	
 	function short_description( $num_words = 55, $more = NULL ){
 		$short_desc = $this->get('EVT_short_desc');
 		if ( ! empty( $short_desc )) {
@@ -614,21 +615,35 @@ class EE_Event extends EE_CPT_Base{
 		}
 		//now we can conditionally determine status
 		if ( $this->_status == 'publish' ) {
-			if ( in_array( EE_Datetime::sold_out, $status_array )) {
-				return EE_Datetime::sold_out;
-			} else if ( in_array( EE_Datetime::active, $status_array )) {
+			
+			if ( in_array( EE_Datetime::active, $status_array )) {
 				return EE_Datetime::active;
 			} else if ( in_array( EE_Datetime::upcoming, $status_array )) {
 				return EE_Datetime::upcoming;
+			} else if ( in_array( EE_Datetime::expired, $status_array ) ) {
+				return EE_Datetime::expired;
+			}  else if ( in_array( EE_Datetime::sold_out, $status_array )) {
+				return EE_Datetime::sold_out;	
 			} else {
-				return EE_Datetime::expired;
-			}			
+				return EE_Datetime::expired; //catchall
+			}		
 		} else {
-			if ( in_array( EE_Datetime::expired, $status_array )) {
-				return EE_Datetime::expired;
-			}				
+			switch ($this->_status) {
+				case EEM_Event::sold_out :
+					return EE_Datetime::sold_out;
+					break;
+				case EEM_Event::cancelled :
+					return EE_Datetime::cancelled;
+					break;
+
+				case EEM_Event::postponed :
+					return EE_Datetime::postponed;
+					break;
+
+				default :
+					return EE_Datetime::inactive;
+			}			
 		}
-		return EE_Datetime::inactive;
 	}
 
 
@@ -642,8 +657,8 @@ class EE_Event extends EE_CPT_Base{
 	 *  return string
 	 */
 	public function pretty_active_status( $echo = TRUE, $show_all = TRUE ) {
+		$status = '';
 		$active_status = $this->get_active_status();
-		$status = ''; 
 		if ( $active_status < 1 || $show_all ) {
 			switch ( $active_status ) {
 				case EE_Datetime::sold_out :
@@ -669,6 +684,11 @@ class EE_Event extends EE_CPT_Base{
 					$class = 'active';
 					break;
 
+				case EE_Datetime::postponed :
+					$status = __('Postponed', 'event_espresso');
+					$class = 'postponed';
+					break;
+
 				default :
 					$status = __('Inactive', 'event_espresso');
 					$class = 'inactive';
@@ -677,7 +697,7 @@ class EE_Event extends EE_CPT_Base{
 			}
 
 			$status = '<span class="ee-status ' . $class . '">' . $status . '</span>';
-		}
+		} 
 		
 		if ( $echo ) {
 			echo $status;
@@ -743,8 +763,10 @@ class EE_Event extends EE_CPT_Base{
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Term_Taxonomy
 	 */
-	public function first_term_taxonomy($query_params = array()){
-		return $this->get_first_related('Term_Taxonomy',$query_params);
+	public function first_event_category($query_params = array()){
+		$query_params[0]['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+		$query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $this->ID();
+		return EEM_Term::instance()->get_one($query_params);
 	}
 
 

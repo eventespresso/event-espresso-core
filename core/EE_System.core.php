@@ -101,17 +101,16 @@ final class EE_System {
 		do_action('AHEE__EE_System__construct__begin',$this);
 
 		$this->_load_registry();
-
+		
+		EE_Registry::instance()->load_helper( 'File' );
+		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		do_action('AHEE__EE_System__construct__autoloaders_available',$this);
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		// setup autoloaders
-		EE_Registry::instance()->load_helper( 'File' );
-		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
-
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
-
 		// check for activation errors
 		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
 			EE_Error::add_error( $activation_errors );
@@ -122,35 +121,10 @@ final class EE_System {
 		//load caf stuff a chance to play during the activation process too.
 		$this->_maybe_brew_regular();
 		//we gave addons a chance to register themselves before detecting the request type
-		//and deciding whether or nto to set maintenance mode
+		//and deciding whether or not to set maintenance mode
 		// check for plugin activation/upgrade/installation
-		
-		$this->_manage_activation_process();
-		
-		// let's get it started		
-		if ( is_admin() && ! EE_FRONT_AJAX ) {
-			EE_Registry::instance()->load_core( 'Admin' );
-		} else if ( EE_Maintenance_Mode::instance()->level() ) {
-			// shut 'er down down for maintenance ?
-			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
-		} else {
-			EE_Registry::instance()->load_core( 'Front_Controller' );
-		}
-		// load additional common resources
-		add_action( 'init', array( $this, 'init' ), 3 );
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );			do_action('AHEE__EE_System__construct__end',$this);
-	}
-
-
-
-	/**
-	 * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks that need to be setup before our EE_System launches.
-	 * @return void
-	 */
-	private function _maybe_brew_regular() {
-		if (( ! defined( 'EE_DECAF' ) ||  EE_DECAF !== TRUE ) && is_readable( EE_CAFF_PATH . 'brewing_regular.php' )) {
-			require_once EE_CAFF_PATH . 'brewing_regular.php';
-		}
+		add_action( 'plugins_loaded', array( $this,'plugins_loaded' ), 7 );
+		do_action( 'AHEE__EE_System__construct__end', $this );
 	}
 
 
@@ -172,6 +146,65 @@ final class EE_System {
 
 
 
+	/**
+	 * cycles through all of the models/*.model.php files, and assembles an array of model names
+	 * 
+	 * @return void
+	 */
+	private function _parse_model_names(){
+		//get all the files in the EE_MODELS folder that end in .model.php
+		$models = glob( EE_MODELS.'*.model.php');
+		foreach( $models as $model ){
+			// get model classname
+			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
+			$shortname = str_replace( 'EEM_', '', $classname );
+			$reflectionClass = new ReflectionClass($classname);
+			if( $reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract()){
+				$non_abstract_db_models[$shortname] = $classname;
+			}
+			$model_names[ $shortname ] = $classname;
+				
+		}
+		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
+		EE_Registry::instance()->non_abstract_db_models = apply_filters( 'FHEE__EE_System__parse_implemented_model_names', $non_abstract_db_models );
+	}	
+
+
+
+	/**
+	 * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks that need to be setup before our EE_System launches.
+	 * @return void
+	 */
+	private function _maybe_brew_regular() {
+		if (( ! defined( 'EE_DECAF' ) ||  EE_DECAF !== TRUE ) && is_readable( EE_CAFF_PATH . 'brewing_regular.php' )) {
+			require_once EE_CAFF_PATH . 'brewing_regular.php';
+		}
+	}
+
+
+
+	/**
+	 * plugins_loaded
+	 * 
+	 * @return void
+	 */
+	public function plugins_loaded(){
+		// detect whether install or upgrade
+		$this->_manage_activation_process();		
+		// let's get it started		
+		if ( is_admin() && ! EE_FRONT_AJAX ) {
+			EE_Registry::instance()->load_core( 'Admin' );
+		} else if ( EE_Maintenance_Mode::instance()->level() ) {
+			// shut 'er down down for maintenance ?
+			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 99999 );
+		} else {
+			EE_Registry::instance()->load_core( 'Front_Controller' );
+		}
+		// load additional common resources
+		add_action( 'init', array( $this, 'init' ), 3 );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
+		do_action( 'AHEE__EE_System__plugins_loaded__end', $this );
+	}
 
 
 
@@ -185,12 +218,11 @@ final class EE_System {
 	* @return void
 	*/
 	private function _manage_activation_process() {
-		//let's ONLY do this method IF we're in admin and user IS logged in.
-		if ( !is_admin() || ( is_admin() && !is_user_logged_in() ) )
+		// do NOT do this IF... we're NOT in the admin, OR on the WP login or register screens, OR it's an AJAX request
+		if ( ! is_admin() || ( is_admin() && isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  )) {
 			return;
-
-		// check if db has been updated, or if its a brand-new installation
-		
+		}
+		// check if db has been updated, or if its a brand-new installation		
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type = $this->detect_req_type($espresso_db_update);
 //		echo "request type:".$request_type;
@@ -201,12 +233,12 @@ final class EE_System {
 			case EE_System::req_type_new_activation:
 				
 				do_action('AHEE__EE_System__manage_activation_process__new_activation');
-				$this->handle_as_activation();			
+				$this->_setup_initialize_db_if_no_migrations_required();	
 //				echo "done activation";die;
 				break;
 			case EE_System::req_type_reactivation:
 				do_action('AHEE__EE_System__manage_activation_process__reactivation');
-					$this->handle_as_activation();
+					$this->initialize_db_if_no_migrations_required();
 //				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
@@ -217,15 +249,7 @@ final class EE_System {
 					//taht say they need to upgrade it)
 					//THEN, we just want to still give the system a chance to setup new default data
 					//first: double-check if this was called via an activation hook or a normal reqeust
-					if(self::$_activation){
-						//if via activation hook, we need to run the code right away, because the
-						//init hook was called before this activation hook
-						$this->handle_as_activation();
-					}else{
-						//if via a normal request, then we need to wait to run activation-type-code
-						//until we_rewrite is defined by WP (on init hook) otherwise we'll have troubles
-						add_action('init',array($this,'handle_as_activation'),2);
-					}
+					$this->_setup_initialize_db_if_no_migrations_required();
 				}
 //				echo "done upgrade";die;
 				break;
@@ -242,22 +266,52 @@ final class EE_System {
 		}
 		do_action('AHEE__EE_System__manage_activation_process__end');
 	}
+
+
+
 	
 	/**
 	 * Does the traditional work of setting up the plugin's database and adding default data.
 	 * If migration script/process didn't exist, this is what woudl happen on every activation/reactivation/upgrade.
+	 * NOTE: does nothing if we're in maintenance mode (which would be the case if we detect there are data
+	 * migration scripts that need to be run)
 	 * @return void
 	 */
-	public function handle_as_activation(){
-		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
-			//only initialize system if we're not in maintenance mode.
+	public function initialize_db_if_no_migrations_required(){
+		//only initialize system if we're not in maintenance mode.
+		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
+			// set flag for flushing rewrite rules
+			update_option( 'espresso_flush_rewrite_rules', TRUE );
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
 		}	
 	}
 
+
+
 	
+	/**
+	 * Instead of just calling the activation code, we first check when WAS this code called?
+	 * If it's on activation hook, then we can directly call initialize_db_if_no_migrations_required as 
+	 * everything's ready for it, and init has already been called and we shouldn't add it on that hook (because it wont fire).
+	 * If it's NOT on activation hook, then it's probably on plugins_loaded, and it's too early to call initialize_db_if_no_migrations_required,
+	 * so we set it up to call it later, on init, when it's ready.
+	 */
+	private function _setup_initialize_db_if_no_migrations_required(){
+		if(self::$_activation){
+			//if via activation hook, we need to run the code right away, because the
+			//init hook was called before this activation hook
+			$this->initialize_db_if_no_migrations_required();
+		}else{
+			//if via a normal request, then we need to wait to run activation-type-code
+			//until we_rewrite is defined by WP (on init hook) otherwise we'll have troubles
+			add_action('init',array($this,'initialize_db_if_no_migrations_required'),2);
+		}
+	}
+
+
+
 	/**
 	 * standardizes the wp option 'espresso_db_upgrade' which actually stores
 	 * information about what versions of EE have been installed and activated,
@@ -311,7 +365,9 @@ final class EE_System {
 		do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__end',$espresso_db_update);
 		return $espresso_db_update;
 	}
-	
+
+
+
 	/**
 	 * Detects if the current version indicated in the has existed in the list of 
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
@@ -349,7 +405,9 @@ final class EE_System {
 		}
 		return $this->_req_type;
 	}
-	
+
+
+
 	/**
 	 * Adds teh current code version to the saved wp option which stores a list
 	 * of all ee versions ever installed.
@@ -364,24 +422,6 @@ final class EE_System {
 		return update_option( 'espresso_db_update', $espresso_db_update );
 	}
 
-	
-	
-	/**
-	 * cycles through all of the models/*.model.php files, and assembles an array of model names
-	 * 
-	 * @return void
-	 */
-	private function _parse_model_names(){
-		//get all the files in the EE_MODELS folder that end in .model.php
-		$models = glob( EE_MODELS.'*.model.php');
-		foreach( $models as $model ){
-			// get model classname
-			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
-			$shortname = str_replace( 'EEM_', '', $classname );
-			$model_names[ $shortname ] = $classname;
-		}
-		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
-	}
 
 
 

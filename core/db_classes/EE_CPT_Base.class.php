@@ -4,7 +4,7 @@
  * as there is much funcitonality they share
  */
 require_once( EE_CLASSES . 'EE_Base_Class.class.php');
-class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
+abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 	/**
@@ -285,7 +285,7 @@ class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	 * @param array $query_params
 	 * @return EE_Term_Taxonomy
 	 */
-	public function term_taxonomies($query_params){
+	public function term_taxonomies($query_params = array()){
 		return $this->get_many_related('Term_Taxonomy', $query_params);
 	}
 }

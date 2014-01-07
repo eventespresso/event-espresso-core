@@ -273,6 +273,22 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
+	/**
+	 * Overrides parent set() method so that all calls to set( 'STS_ID', $STS_ID ) can be routed to internal set_status()
+	 * @param type $field_name
+	 * @param type $field_value
+	 * @param type $use_default
+	 */
+	public function set( $field_name, $field_value, $use_default= FALSE ) {
+		if ( $field_name == 'STS_ID' ) {
+			$this->set_status( $field_value );
+		} else {
+			parent::set( $field_name, $field_value, $use_default= FALSE );
+		}
+	}
+
+
+
 
 	/**
 	*		Set Event ID
@@ -370,31 +386,33 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
+
 	/**
-	*		Set Status ID
+	*	Set Status ID
+	* 	updates the registration status and ALSO...
+	* 	calls reserve_registration_space() if the reg status changes TO approved from any other reg status
+	* 	calls release_registration_space() if the reg status changes FROM approved to any other reg status
 	* 
-	* 		@access		public		
-	*		@param		int		$STS_ID 		Status ID
+	* 	@access		public		
+	*	@param		string	$STS_ID	Status ID
 	*/	
-	public function set_status( $STS_ID = FALSE ) {	
-		//make sure related TXN is set
-		$this->get_first_related('Transaction');
-		// if status is ANYTHING other than approved, OR if it IS approved AND the TXN is paid in full (or free)
-		if ( $STS_ID != EEM_Registration::status_id_approved || ( $STS_ID == EEM_Registration::status_id_approved && $this->_Transaction->is_completed() )) {
-			$this->set('STS_ID',$STS_ID);
-			return TRUE;
-		} else {
-			//@tod: this looks awfully like controller or business logic, not model code, imho; Mike
-			$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$this->_TXN_ID ), TXN_ADMIN_URL );
-			$txn_link = '
-			<a id="reg-admin-sts-error-txn-lnk" href="' . $txn_url . '" title="' . __( 'View transaction #', 'event_espresso' ) . $this->_TXN_ID . '">
-				' . __( 'View the Transaction for this Registration', 'event_espresso' ) . '
-			</a>';			
-			$msg =  __( 'Registrations can only be approved if the corresponding transaction is completed and has no monies owing.', 'event_espresso' ) . $txn_link;
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}	
-		
+	public function set_status( $new_STS_ID = FALSE ) {
+		// get current REG_Status 
+		$old_STS_ID = $this->status_ID();
+		// if status has changed TO approved 
+		if ( $old_STS_ID != $new_STS_ID && $new_STS_ID == EEM_Registration::status_id_approved ) {
+			// reserve a space by incrementing ticket and datetime sold values
+			$this->_reserve_registration_space();
+			do_action( 'AHEE__EE_Registration__set_status__to_approved', $this );
+		// OR if status has changed FROM  approved 
+		} else if ( $old_STS_ID != $new_STS_ID && $old_STS_ID == EEM_Registration::status_id_approved ) {
+			// release a space by decrementing ticket and datetime sold values
+			$this->_release_registration_space();
+			do_action( 'AHEE__EE_Registration__set_status__from_approved', $this );
+		}
+		// update status
+		parent::set( 'STS_ID', $new_STS_ID );		
+		do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
 	}
 
 
@@ -712,7 +730,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				return __("Approved",'event_espresso');
 			case EEM_Registration::status_id_not_approved:
 				return __("Not Approved",'event_espresso');
-			case EEM_Registration::status_id_pending:
+			case EEM_Registration::status_id_pending_payment:
 				return __("Pending Approval",'event_espresso');
 			case EEM_Registration::status_id_cancelled:
 				return __("Cancelled",'event_espresso');
@@ -798,7 +816,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return EE_Datetime 
 	 */
 	public function get_related_primary_datetime() {
-		return $this->get_first_related('Event')->primary_datetime();
+		return $this->event()->primary_datetime();
 	}
 	
 	/**
@@ -944,23 +962,22 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	private function _generate_new_reg_code() {
 		// generate a reg code ?
-		if ( empty( $this->_REG_code )) {			
+		if ( empty( $this->_REG_code )) {		
 			// figure out where to start parsing the reg code
 			$chars = strpos( $this->_REG_url_link, '-' ) + 4;
 			$new_reg_code = array(
 				$this->_TXN_ID,
 				$this->_TKT_ID,
 				substr( $this->_REG_url_link, 0, $chars ) . substr( $this->_REG_url_link, -3 ),
-				$this->get_first_related('Transaction')->is_completed() ? 1 : 0
+				$this->transaction()->is_completed() ? 1 : 0
 			);
 			$new_reg_code = implode( '-', $new_reg_code );
 			$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );	
-			$this->set( 'REG_code', $new_reg_code );
+			$this->set_reg_code( $new_reg_code );
 			return TRUE;
 		}
 		return FALSE;
 	}
-
 
 
 	
@@ -968,7 +985,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * increments this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
 	 */
-	public function reserve_registration_space() {
+	private function _reserve_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
 		$ticket->save();
@@ -980,7 +997,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			}
 		}
 		// possibly set event status to sold out
-		$this->get_first_related( 'Event' )->perform_sold_out_status_check();
+		$this->event()->perform_sold_out_status_check();			
 	}
 
 
@@ -989,7 +1006,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
 	 */
-	public function release_registration_space() {
+	private function _release_registration_space() {
 		$ticket = $this->ticket();
 		$ticket->decrease_sold();
 		$ticket->save();
@@ -998,8 +1015,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			foreach ( $datetimes as $datetime ) {
 				$datetime->decrease_sold();
 				$datetime->save();
-			}	
-		}	
+			}
+		}
 	}
 
 
@@ -1011,21 +1028,20 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return void
 	 */
 	public function finalize() {
-		$update_reg = $this->_generate_new_reg_code();
-		// update reg status if no monies are owing and event does NOT require pre-approval
-		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && ! $this->get_first_related('Event')->require_pre_approval() ) {
-			$this->set( 'STS_ID', EEM_Registration::status_id_approved );
+		$update_reg = FALSE;
+		// update reg status if no monies are owing and the REG status is pending payment
+		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment ) {
+			// automatically toggle status to approved
+			$this->set_status( EEM_Registration::status_id_approved );
 			$update_reg = TRUE;
-		}		
-		// does this registration count towards the reg limits ?
-		if ( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit  || $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) {
-			$this->reserve_registration_space();
 		}
-			
+		// generate REG codes for NEW registrations			
+		$update_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $update_reg;
+		// save the registration?
 		if ( $update_reg ) { 
 			$this->save();
 		}
-			
+		return $update_reg;			
 	}
 
 

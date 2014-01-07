@@ -84,6 +84,10 @@ function __construct() {
 private function _convert_gateway_settings($old_gateway_settings,$new_gateway_slug){
 	$new_gateway_settings = $old_gateway_settings;
 	switch($new_gateway_slug){
+			case 'Bank':
+				$new_gateway_settings['account_number'] = $old_gateway_settings['bank_account'];
+				$new_gateway_settings['page_title'] = $old_gateway_settings['bank_title'];
+				break;
 			case 'Invoice':
 				$new_gateway_settings['invoice_logo_url'] = $old_gateway_settings['image_url'];
 				break;
@@ -107,7 +111,7 @@ private function _get_old_gateway_option($new_gateway_slug){
 	$option_name = $this->_get_old_gateway_option_name($new_gateway_slug);
 	$settings =  get_option($option_name);
 	if( ! $settings){
-		$this->add_error(sprintf(__("There is no wordpress option named %s for gateway %s", "event_espresso"),$old_gateway_slug,$option_name));
+		$this->add_error(sprintf(__("There is no wordpress option named %s for gateway %s", "event_espresso"),$option_name,$new_gateway_slug));
 	}
 	return $settings;
 }
@@ -159,7 +163,7 @@ private function _convert_active_gateways(){
 	$new_active_gateways = EE_Config::instance()->gateway->active_gateways;
 	foreach($old_active_gateways as $old_gateway_slug => $filepath){
 		if( ! isset($this->_gateways_we_know_how_to_migrate[$old_gateway_slug])){
-			$this->add_error(sprintf(__("There gateway %s does not exist in EE 4.1", "event_espresso"),$old_gateway_slug));
+			$this->add_error(sprintf(__("The %s gateway does not exist in EE 4.1", "event_espresso"),$old_gateway_slug));
 			continue;
 		}
 		$new_gateway_slug = $this->_gateways_we_know_how_to_migrate[$old_gateway_slug];

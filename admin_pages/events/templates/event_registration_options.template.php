@@ -4,17 +4,11 @@
 </p>
 
 <p>
-	<label for="max-registrants"><?php _e('Maximum number of tickets allowed in a single transaction: ', 'event_espresso'); ?></label>
-	<input type="text" id="max-registrants" name="additional_limit" value="<?php echo $additional_limit; ?>" size="4" />
+	<label for="max-registrants"><?php _e('Maximum number of tickets allowed per order for this event: ', 'event_espresso'); ?></label>
+	<input class="ee-numeric" type="text" id="max-registrants" name="additional_limit" value="<?php echo $additional_limit; ?>" size="4" />
 </p>
 
 <?php echo $additional_registration_options; ?>
-
-<!-- removing below block for now becuase it's not going to be implemented as is. -->
-<!-- <p> -->
-	<!-- <label><?php _e('Default Payment Status', 'event_espresso'); ?></label> -->
-	<?php //echo $default_registration_status; ?>
-<!-- </p> -->
 
 <p>
 	<label><?php _e('Display Description', 'event_espresso'); ?></label>

@@ -48,9 +48,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 */
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway_name = 'Paypal_Pro';
-		$this->_button_base = 'paypal_pro-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
-		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -823,7 +821,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Testing Result Code Responses', 'event_espreso'); ?></strong><br/>
-						<span class="small-text"><?php _e('You can use the amount of the transaction to generate a particular result code. The table below lists the general guidelines for specifying amounts.', 'event_espreso'); ?></span>
+						<span class="small-text"><?php printf(__('You can use the amount of the transaction to generate a particular result code (see %s Paypal\'s documentation%s). The table below lists the general guidelines for specifying amounts. IMPORTANT: before you attempt any of these, ensure your sandbox paypal account has %s "Negative Testing" set to on%s', 'event_espreso'),"<a href='https://developer.paypal.com/docs/classic/api/errorcodes/#id09C3GA00GR1'>","</a>", "<a href='https://docs.google.com/a/eventespresso.com/file/d/0B5P8GXTvZgfMNXNkZ2s5VUlHTUk/edit?usp=drivesdk'>","</a>"); ?></span>
 					</p>			
 
 					<div class="tbl-wrap">
@@ -836,39 +834,39 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 							</thead>
 							<tbody>
 								<tr>
-									<td>$0 - $10,000</td>
+									<td>$0 - $103.99</td>
 									<td><?php _e('Approved', 'event_espreso'); ?></td>
 								</tr>				
 								<tr>
-									<td>$10,400</td>
+									<td>$104.00</td>
 									<td><?php _e('Invalid amount', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,402</td>
+									<td>$104.02</td>
 									<td><?php _e('Invalid transaction type', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,405</td>
+									<td>$104.05</td>
 									<td><?php _e('Field format error', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,502</td>
+									<td>$105.02</td>
 									<td><?php _e('Invalid expiry date', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,504</td>
+									<td>$105.04</td>
 									<td><?php _e('CVV2 Mismatch', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,506</td>
+									<td>$105.06</td>
 									<td><?php _e('Declined', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,522</td>
+									<td>$105.22</td>
 									<td><?php _e('Invalid account number', 'event_espreso'); ?></td>
 								</tr>
 								<tr>
-									<td>$10,536</td>
+									<td>$105.36</td>
 									<td><?php _e('Invalid account number', 'event_espreso'); ?></td>
 								</tr>
 							</tbody>

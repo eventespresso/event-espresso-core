@@ -12,31 +12,27 @@
 .column-REG_ID { width:3%; }
 .column-REG_date { width:12.5%; }
 
-.column-Reg_status { width:7%; }
-
 .status-TCM,
 .status-RAP, 
 .reg-overview-full-payment-spn { color:#090; font-weight:bold; }
 
 .status-TPN,
-.status-RPN, 
+.status-RPP, 
 .reg-overview-part-payment-spn { color:#F93; font-weight:bold; }
 
 .status-TFL, .status-TIN, .status-TOP,
 .status-RCN, .status-RFL, .status-RNA, 
 .reg-overview-no-payment-spn { color:#F00; font-weight:bold; }
 
-.status-RAP, .status-RPN, .status-RCN, .status-RFL, .status-RNA { font-size:.9em;}
+.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size:.9em;}
 
-.wp-list-table .column-event_name { }
+.wp-list-table .column-event_name { width:10%; }
 .wp-list-table .column-REG_date,
 .wp-list-table .column-DTT_EVT_start { width:12.5%; }
-/*.wp-list-table .column-ATT_fname { width:11%; }*/
-.wp-list-table .column-REG_count { width:5%; text-align:center;  }
+.wp-list-table .column-ATT_fname { width:15%; }*/
+.wp-list-table .column-REG_count { width:10%; text-align:center;  }
 .wp-list-table .column-ATT_email { width:10.5%; }
 .wp-list-table .column-REG_code { width:10.5%; }
-.wp-list-table .column-Reg_status { width:6.5%; text-align:center; }
-
 .wp-list-table .column-REG_att_checked_in { width:5%; text-align:center; }
 .wp-list-table .column-DTT_reg_limit { width:4.25%; text-align:center; }
 
@@ -48,18 +44,22 @@
 .wp-list-table .column-PRC_amount,
 .wp-list-table .column-REG_final_price,
 .wp-list-table .column-TXN_total,
-.wp-list-table .column-TXN_paid { width:5%; text-align:right; }
+.wp-list-table .column-TXN_paid { width:10%; text-align:right; }
 
 .reg-pad-rght { display:block; padding-right:1em; }
 
 .wp-list-table .column-actions,
-.wp-list-table .column-CHK_in { width:8.5%;  }
+.wp-list-table .column-CHK_in { width:11%;  }
+
+.wp-list-table.attendees .column-actions {
+	width: 7%;
+}
 
 .reg-overview-free-event-spn { display: block; text-align:center; }
 
 .reg-overview-actions-ul { list-style:none; margin:0; }
 .reg-overview-actions-ul li { display: inline; margin:0; }
-.reg-overview-actions-ul li + li { margin-left:.25em; }
+.reg-overview-actions-ul li + li { margin-left:0; }
 
 #reg-admin-reg-details-reg-nmbr-hdr { padding:0; margin:-.5em 0 1em; }
 #reg-admin-reg-details-reg-date-hdr,
@@ -129,30 +129,25 @@
 
 
 /** Check-in status manipulation **/
-.checkin-icons{
-	display: block;
-	min-width: 18px;
-	min-height: 18px;
-}
 
 /**never checked in**/
 .wp-list-table .REG_att_checked_in {
     padding-left: 20px;
 }
 
-.checkedin-status-0 {
-	background: transparent url('images/delete-grey-16x16.png') no-repeat;
-	margin: auto;
+.checkedin-status-0:before {
+	font-family: 'dashicons' !important; /** using important b/c wp has dashicons setup with important and I had to override **/
+	content: "\f158";
 }
 
 /**checked in**/
-.checkedin-status-1 {
-	background: transparent url('images/check-in-16x16.png') no-repeat;
+.checkedin-status-1:before {
+	content: "\e614";
 }
 
 /**check in but now checked out**/
-.checkedin-status-2 {
-	background: transparent url('images/check-out-16x16.png') no-repeat;
+.checkedin-status-2:before {
+	content: "\e613";
 }
 
 
@@ -192,12 +187,100 @@
 	float: none;
 }
 
-.admin-country {
-	width: 100%;
-	overflow: wrap;
-}
+
 
 .espresso-question-group-wrap table th {
 	width: inherit;
 	min-width: 200px;
+}
+
+#attendee_details_address label.espresso-form-input-lbl {
+	display: block;
+}
+
+#attendee_details_address input.all-options {
+	width: 100%;
+}
+
+#attendee_details_address #ATT_zip {
+	width: 10%;
+}
+
+
+/**
+ * status strips
+ */
+ /*pending payment*/
+.reg-status-RPP, .button-secondary.reg-status-RPP, .button-primary.reg-status-RPP {
+	border-left-color: #00B1CA;
+}
+/*cancelled*/
+.reg-status-RCN, .button-secondary.reg-status-RCN, .button-primary.reg-status-RCN {
+	border-left-color: #AC9D9C;
+}
+
+/*declined*/
+ .reg-status-RDC, .button-secondary.reg-status-RDC, .button-primary.reg-status-RDC {
+	border-left-color: #E44064;
+}
+
+/*approved*/
+.reg-status-RAP, .button-secondary.reg-status-RAP, .button-primary.reg-status-RAP {
+	border-left-color: #70CC50;
+}
+
+/*not-approved*/
+.reg-status-RNA, .button-secondary.reg-status-RNA, .button-primary.reg-status-RNA {
+	border-left-color: #E76700;
+}
+
+.widefat td.column-Reg_Status, .widefat th.column-Reg_Status {
+	width: 2%;
+	padding: 0;
+	margin: 0;
+}
+
+/** reg status legend **/
+.ee-status-legend {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	vertical-align: middle;
+}
+
+.ee-status-legend-RPP {
+	background-color: #00B1CA;
+}
+.ee-status-legend-RCN {
+	background-color: #AC9D9C;
+}
+
+.ee-status-legend-RDC {
+	background-color: #E44064;
+}
+
+.ee-status-legend-RAP {
+	background-color: #70CC50;
+}
+.ee-status-legend-RNA {
+	background-color: #E76700;
+}
+
+.status-RPP { color: #00B1CA;}
+.status-RCN { color: #AC9D9C;}
+.status-RDC { color: #E44064; font-weight: bold;}
+.status-RAP { color: #70CC50;}
+.status-RNA { color: #E76700;}
+
+
+.ee-is-reg-status {
+	background-color: #fefa99;
+	padding: 0 4px 3px 4px;
+	color: black;
+	margin-left: -4px;
+	text-shadow: none;
+}
+
+#admin-primary-mbox-reg-details-dv .secondary-button {
+	margin-left: 10px;
 }

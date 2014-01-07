@@ -191,6 +191,28 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 10
 				),
 				'list_table' => 'Events_Admin_List_Table',
+                'help_tabs' => array(
+					'events_overview_help_tab' => array(
+						'title' => __('Events Overview', 'event_espresso'),
+						'filename' => 'events_overview'
+					),
+					'events_overview_table_column_headings_help_tab' => array(
+						'title' => __('Table Column Headings', 'event_espresso'),
+						'filename' => 'events_overview_table_column_headings'
+					),
+					'events_overview_filters_help_tab' => array(
+						'title' => __('Filters', 'event_espresso'),
+						'filename' => 'events_overview_filters'
+					),
+					'events_overview_view_help_tab' => array(
+						'title' => __('Views', 'event_espresso'),
+						'filename' => 'events_overview_views'
+					),
+					'events_overview_other_help_tab' => array(
+						'title' => __('Other', 'event_espresso'),
+						'filename' => 'events_overview_other'
+					)
+				),
 				'help_tour' => array(
 					'Event_Overview_Help_Tour',
 					//'New_Features_Test_Help_Tour' for testing multiple help tour
@@ -205,20 +227,49 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
-					'event_date_info' => array(
-						'title' => __('Event Date', 'event_espresso'),
-						'callback' => 'event_date_info_help_tab'
+					'event_editor_help_tab' => array(
+						'title' => __('Event Editor', 'event_espresso'),
+						'filename' => 'event_editor'
 					),
-					'ticket_options_info' => array(
-						'title' => __('Ticket Options', 'event_espresso'),
-						'callback' => 'ticket_options_info_help_tab'
+					'event_editor_title_richtexteditor_help_tab' => array(
+						'title' => __('Title & Rich Text Editor', 'event_espresso'),
+						'filename' => 'event_editor_title_richtexteditor'
+					),
+					'event_editor_venue_details_help_tab' => array(
+						'title' => __('Venue Details', 'event_espresso'),
+						'filename' => 'event_editor_venue_details'
+					),
+					'event_editor_event_datetimes_help_tab' => array(
+						'title' => __('Event Datetimes', 'event_espresso'),
+						'filename' => 'event_editor_event_datetimes'
+					),
+					'event_editor_event_tickets_help_tab' => array(
+						'title' => __('Event Tickets', 'event_espresso'),
+						'filename' => 'event_editor_event_tickets'
+					),
+					'event_editor_event_registration_options_help_tab' => array(
+						'title' => __('Event Registration Options', 'event_espresso'),
+						'filename' => 'event_editor_event_registration_options'
+					),
+					'event_editor_tags_categories_help_tab' => array(
+						'title' => __('Tags & Categories', 'event_espresso'),
+						'filename' => 'event_editor_tags_categories'
+					),
+					'event_editor_questions_attendees_help_tab' => array(
+						'title' => __('Questions for Attendees', 'event_espresso'),
+						'filename' => 'event_editor_questions_attendees'
+					),
+					'event_editor_save_new_event_help_tab' => array(
+						'title' => __('Save New Event', 'event_espresso'),
+						'filename' => 'event_editor_save_new_event'
+					),
+					'event_editor_other_help_tab' => array(
+						'title' => __('Other', 'event_espresso'),
+						'filename' => 'event_editor_other'
 					)
 				),
 				'help_tour' => array(
 					'Event_Editor_Help_Tour'
-					),
-				'qtips' => array(
-					'EE_Event_Editor_Tips'
 					),
 				'require_nonce' => FALSE
 			),
@@ -231,36 +282,72 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
-					'event_date_info' => array(
-						'title' => __('Event Date', 'event_espresso'),
-						'callback' => 'event_date_info_help_tab'
+					'event_editor_help_tab' => array(
+						'title' => __('Event Editor', 'event_espresso'),
+						'filename' => 'event_editor'
 					),
-					'ticket_options_info' => array(
-						'title' => __('Ticket Options', 'event_espresso'),
-						'callback' => 'ticket_options_info_help_tab'
+					'event_editor_title_richtexteditor_help_tab' => array(
+						'title' => __('Title & Rich Text Editor', 'event_espresso'),
+						'filename' => 'event_editor_title_richtexteditor'
+					),
+					'event_editor_venue_details_help_tab' => array(
+						'title' => __('Venue Details', 'event_espresso'),
+						'filename' => 'event_editor_venue_details'
+					),
+					'event_editor_event_datetimes_help_tab' => array(
+						'title' => __('Event Datetimes', 'event_espresso'),
+						'filename' => 'event_editor_event_datetimes'
+					),
+					'event_editor_event_tickets_help_tab' => array(
+						'title' => __('Event Tickets', 'event_espresso'),
+						'filename' => 'event_editor_event_tickets'
+					),
+					'event_editor_event_registration_options_help_tab' => array(
+						'title' => __('Event Registration Options', 'event_espresso'),
+						'filename' => 'event_editor_event_registration_options'
+					),
+					'event_editor_tags_categories_help_tab' => array(
+						'title' => __('Tags & Categories', 'event_espresso'),
+						'filename' => 'event_editor_tags_categories'
+					),
+					'event_editor_questions_attendees_help_tab' => array(
+						'title' => __('Questions for Attendees', 'event_espresso'),
+						'filename' => 'event_editor_questions_attendees'
+					),
+					'event_editor_save_new_event_help_tab' => array(
+						'title' => __('Save New Event', 'event_espresso'),
+						'filename' => 'event_editor_save_new_event'
+					),
+					'event_editor_other_help_tab' => array(
+						'title' => __('Other', 'event_espresso'),
+						'filename' => 'event_editor_other'
 					)
 				),
-				'qtips' => array(
-					'EE_Event_Editor_Tips'
-					),
+				'help_tour' => array(
+					'Event_Edit_Help_Tour'
+				),
 				'require_nonce' => FALSE
 			),
 			'default_event_settings' => array(
 				'nav' => array(
-					'label' => __('Default Settings', 'event_esprsso'),
+					'label' => __('Default Settings', 'event_espresso'),
 					'order' => 40
 				),
 				'metaboxes' => array_merge($default_espresso_boxes, array('_publish_post_box')),
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 				),
-				//'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
-				'help_tabs' => array(
-					'default_payment_status_help_tab' => array(
-						'title' => __('Default Payment Status', 'event_espresso'),
-						'callback' => 'default_payment_status_help_tab'
+                'help_tabs' => array(
+					'default_settings_help_tab' => array(
+						'title' => __('Default Event Settings', 'event_espresso'),
+						'filename' => 'events_default_settings'
+					),
+					'default_settings_status_help_tab' => array(
+						'title' => __('Status, Registration & Pre-approval', 'event_espresso'),
+						'filename' => 'events_default_settings_status'
 					)
 				),
+				'help_tour' => array( 'Event_Default_Settings_Help_Tour'),
 				'require_nonce' => FALSE
 			),
 			//event category stuff
@@ -270,11 +357,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => false),
 				'help_tabs' => array(
-					'unique_id_help_tab' => array(
-						'title' => __('Unique ID', 'event_espresso'),
-						'callback' => 'unique_id_help_tab'
+					'add_category_help_tab' => array(
+						'title' => __('Add Event Category', 'event_espresso'),
+						'filename' => 'events_add_category'
 						)
 					),
+                'help_tour' => array('Event_Add_Category_Help_Tour'),
 				'metaboxes' => array('_publish_post_box'),
 				'require_nonce' => FALSE
 				),
@@ -286,11 +374,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'help_tabs' => array(
-					'unique_id_help_tab' => array(
-						'title' => __('Unique ID', 'event_espresso'),
-						'callback' => 'unique_id_help_tab'
+					'edit_category_help_tab' => array(
+						'title' => __('Edit Event Category', 'event_espresso'),
+						'filename' => 'events_edit_category'
 						)
 					),
+                'help_tour' => array('Event_Edit_Category_Help_Tour'),
 				'metaboxes' => array('_publish_post_box'),
 				'require_nonce' => FALSE
 				),
@@ -300,6 +389,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 20
 					),
 				'list_table' => 'Event_Categories_Admin_List_Table',
+                'help_tabs' => array(
+					'events_categories_help_tab' => array(
+						'title' => __('Categories', 'event_espresso'),
+						'filename' => 'events_categories'
+					),
+					'events_categories_table_column_headings_help_tab' => array(
+						'title' => __('Table Column Headings', 'event_espresso'),
+						'filename' => 'events_categories_table_column_headings'
+					),
+					'events_categories_view_help_tab' => array(
+						'title' => __('Views', 'event_espresso'),
+						'filename' => 'events_categories_views'
+					),
+					'events_categories_other_help_tab' => array(
+						'title' => __('Other', 'event_espresso'),
+						'filename' => 'events_categories_other'
+					)
+                ),
 				'help_tour' => array(
 					'Event_Categories_Help_Tour'
 					),
@@ -309,19 +416,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 	}
 
-
-	protected function _events_help_tour_steps() {
-		require_once( EVENTS_TEMPLATE_PATH . 'decaf_ee_editor_steps.template.php' );
-		return array(
-			0 => array(
-				'content' => '<h3>Event Editor</h3>'
-				),
-			1 => array(
-				'id' => 'title',
-				'content' => '<p>Enter the event title here.</p>'
-				)
-			);
-	}
 
 	protected function _add_screen_options() {
 		//todo
@@ -342,40 +436,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//todo
 	}
 
-	/**
-	 * 		default_event_settings_help_tab
-	 * 		@access public
-	 * 		@return void
-	 */
-	public function default_event_settings_help_tab($tab_name) {
-		require_once( EVENTS_TEMPLATE_PATH . 'default_event_settings_help_tab.template.php' );
-		$template = call_user_func($tab_name . '_html');
-		EEH_Template::display_template($template, array());
-	}
 
 
-	public function default_payment_status_help_tab() {
-		$this->default_event_settings_help_tab(__FUNCTION__);
-	}
-
-	/**
-	 * event edit help tabs
-	 * @access public
-	 * @return void
-	 */
-	public function event_edit_help_tab($tab_name) {
-		require_once EVENTS_TEMPLATE_PATH . 'event_edit_help_tab.template.php';
-		$template = call_user_func($tab_name . '_html');
-		EEH_Template::display_template($template, array());
-	}
-
-	public function event_date_info_help_tab() {
-		$this->event_edit_help_tab(__FUNCTION__);
-	}
-
-	public function ticket_options_info_help_tab() {
-		$this->event_edit_help_tab(__FUNCTION__);
-	}
 
 	public function load_scripts_styles() {
 
@@ -498,15 +560,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _event_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/magnifier.png',
+				'class' => 'dashicons dashicons-search',
 				'desc' => __('View Event', 'event_espresso')
 			),
 			'edit_event' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/calendar_edit.png',
+				'class' => 'ee-icon ee-icon-calendar-edit',
 				'desc' => __('Edit Event Details', 'event_espresso')
 			),
 			'view_attendees' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/group.png',
+				'class' => 'dashicons dashicons-groups',
 				'desc' => __('View Registrations for Event', 'event_espresso')
 			)
 		);
@@ -569,13 +631,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	
 	protected function _insert_update_cpt_item( $post_id, $post ) {
 
-		$wheres = array( $this->_event_model->primary_key_name() => $post_id );
-
 		$event_values = array(
 			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_reg_form' => !empty( $this->_req_data['display_reg_form'] ) ? 1 : 0,
 			'EVT_additional_limit' => !empty( $this->_req_data['additional_limit'] ) ? $this->_req_data['additional_limit'] : NULL,
-			'EVT_require_pre_approval' => !empty( $this->_req_data['require_pre_approval'] ) ? 1 : 0,
+			'EVT_default_registration_status' => !empty( $this->_req_data['EVT_default_registration_status'] ) ? $this->_req_data['EVT_default_registration_status'] : EE_Registry::instance()->CFG->registration->default_STS_ID,
 			'EVT_member_only' => !empty( $this->_req_data['member_only'] ) ? 1 : 0,
 			'EVT_allow_overflow' => !empty( $this->_req_data['EVT_allow_overflow'] ) ? 1 : 0,
 			'EVT_timezone_string' => !empty( $this->_req_data['timezone_string'] ) ? $this->_req_data['timezone_string'] : NULL,
@@ -584,7 +644,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 
 		//update event
-		$success = $this->_event_model->update( $event_values, array($wheres) );
+		$success = $this->_event_model->update_by_ID( $event_values, $post_id );
 
 
 		//get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
@@ -996,7 +1056,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
   		EE_Registry::instance()->load_helper( 'Formatter' );
 
   		//args for getting related registrations
-  		$query_args = EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ? array( array( 'STS_ID' => array('IN', array(EEM_Registration::status_id_pending, EEM_Registration::status_id_approved ) ) ) ) : array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
+  		$query_args = array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
+
+  		$query_args[0]['REG_deleted'] = 0; 
 
 
 		// publish box
@@ -1035,7 +1097,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return [type] [description]
 	 */
 	protected function _register_event_editor_meta_boxes() {
-
+		$this->verify_cpt_object();
 
 		add_meta_box('espresso_event_editor_tickets', __('Event Datetime & Ticket', 'event_espresso'), array($this, 'ticket_metabox'), $this->page_slug, 'normal', 'high');
 
@@ -1063,7 +1125,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'existing_ticket_ids' => '',
 			'total_ticket_rows' => 1,
 			'ticket_js_structure' => '',
-			'trash-icon' => 'ee-lock-icon',
+			'trash_icon' => 'ee-lock-icon',
 			'disabled' => ''
 			);
 
@@ -1145,7 +1207,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'TKT_qty' => $ticket->get_pretty('TKT_qty','input'),
 			'edit_ticketrow_name' => $skeleton ? 'TICKETNAMEATTR' : 'edit_tickets',
 			'TKT_sold' => $skeleton ? 0 : $ticket->get('TKT_sold'),
-			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon clickable' : 'ee-lock-icon',
+			'trash_icon' => ( $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted') ) ) && ( !empty( $ticket ) && $ticket->get('TKT_sold') === 0 ) ? 'trash-icon dashicons dashicons-trash clickable' : 'ee-lock-icon',
 			'disabled' => $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted' ) ) ? '' : ' disabled=disabled'
 			);
 
@@ -1196,7 +1258,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//$template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
-		$template_args['additional_limit'] = (int) $this->_cpt_model_obj->additional_limit() < 1 ? 1 : $this->_cpt_model_obj->additional_limit();
+		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
@@ -1239,7 +1301,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['_venue'] = $venue;
 		$template_args['states_dropdown'] = EEH_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
 		$template_args['countries_dropdown'] = EEH_Form_Fields::select_input('countries', $ctry_ary, $venue->country_ID(), 'id="phys-country"');
-		$template_args['enable_for_gmap'] = EEH_Form_Fields::select_input('enable_for_gmap', $values, $venue->enable_for_gmap(), 'id="enable_for_gmap"');
 		$template_path = EVENTS_TEMPLATE_PATH . 'event_venues_metabox_content.template.php';
 		EEH_Template::display_template( $template_path, $template_args );
 	}
@@ -1282,17 +1343,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		switch ( $status ) {
 			case NULL :
 			case 'all' :
-				$where['status'] = array( 'NOT IN', array('trash') );
 				break;
 
 			case 'draft' :
 				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
+				break;
 
 			default :
 				$where['status'] = $status;
 		}
-
-		$where['post_type'] = array( '!=', 'revision' );
 
 		//search query handling
 		if ( isset( $this->_req_data['s'] ) ) {
@@ -1356,12 +1415,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$success = $this->_change_event_status($EVT_ID, $event_status);
 			} else {
 				$success = FALSE;
-				$msg = __('An error occured. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
+				$msg = __('An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		} else {
 			$success = FALSE;
-			$msg = __('An error occured. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
+			$msg = __('An error occurred. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
@@ -1391,14 +1450,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					$results = $this->_change_event_status($EVT_ID, $event_status);
 					$success = $results !== FALSE ? $success : FALSE;
 				} else {
-					$msg = sprintf(__('An error occured. Event #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $EVT_ID);
+					$msg = sprintf(__('An error occurred. Event #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $EVT_ID);
 					EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 					$success = FALSE;
 				}
 			}
 		} else {
 			$success = FALSE;
-			$msg = __('An error occured. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
+			$msg = __('An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		// in order to force a pluralized result message we need to send back a success status greater than 1
@@ -1419,7 +1478,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _change_event_status($EVT_ID = FALSE, $event_status = FALSE) {
 		// grab event id
 		if (!$EVT_ID) {
-			$msg = __('An error occured. No Event ID or an invalid Event ID was received.', 'event_espresso');
+			$msg = __('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1430,7 +1489,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_status = sanitize_key($event_status);
 		// grab status
 		if (empty($event_status)) {
-			$msg = __('An error occured. No Event Status or an invalid Event Status was received.', 'event_espresso');
+			$msg = __('An error occurred. No Event Status or an invalid Event Status was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1454,7 +1513,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$success = $this->_cpt_model_obj->save();
 		
 		if ($success === FALSE) {
-			$msg = sprintf(__('An error occured. The event could not be %s.', 'event_espresso'), $action);
+			$msg = sprintf(__('An error occurred. The event could not be %s.', 'event_espresso'), $action);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1488,7 +1547,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			update_option('espresso_no_ticket_prices', $espresso_no_ticket_prices);
 		} else {
 			$success = FALSE;
-			$msg = __('An error occured. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
+			$msg = __('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 
@@ -1519,7 +1578,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				}
 			} else {
 				$succes = FALSE;
-				$msg = __('An error occured. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
+				$msg = __('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		}
@@ -1539,7 +1598,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _permanently_delete_event($EVT_ID = FALSE) {
 		// grab event id
 		if (!$EVT_ID = absint($EVT_ID)) {
-			$msg = __('An error occured. No Event ID or an invalid Event ID was received.', 'event_espresso');
+			$msg = __('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1601,7 +1660,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$msg = sprintf(__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
 			EE_Error::add_success($msg);
 		} else {
-			$msg = sprintf(__('An error occured. Event ID # %d could not be deleted.', 'event_espresso'), $EVT_ID);
+			$msg = sprintf(__('An error occurred. Event ID # %d could not be deleted.', 'event_espresso'), $EVT_ID);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1622,7 +1681,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function total_events() {
 
-		$count = EEM_Event::instance()->count( array( array('status' => array( 'NOT IN', array('trash') ) ) ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array(), 'EVT_ID' );
 		return $count;
 	}
 
@@ -1677,11 +1736,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['values'] = $this->_yes_no_values;
 
-		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array('RCN', 'RNA'));
-		$this->_template_args['default_reg_status'] = isset( EE_Registry::instance()->CFG->registration->default_STS_ID ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID ) : 'RPN';
-		$this->_template_args['pending_counts_reg_limit'] = isset( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->pending_counts_reg_limit ) : TRUE;
-
-		$this->_template_args['use_attendee_pre_approval'] = isset( EE_Registry::instance()->CFG->registration->use_attendee_pre_approval ) ? EE_Registry::instance()->CFG->registration->use_attendee_pre_approval : FALSE;
+		$this->_template_args['reg_status_array'] = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined));
+		$this->_template_args['default_reg_status'] = isset( EE_Registry::instance()->CFG->registration->default_STS_ID ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID ) : EEM_Registration::status_id_pending_payment;
 
 		$this->_set_add_edit_form_tags('update_default_event_settings');
 		$this->_set_publish_post_box_vars(NULL, FALSE, FALSE, NULL, FALSE);
@@ -1696,32 +1752,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _update_default_event_settings() {
 
-		$old_pending_counts_reg_limit =  EE_Config::instance()->registration->pending_counts_reg_limit;
-		EE_Config::instance()->registration->default_STS_ID = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : 'RPN';
-		EE_Config::instance()->registration->pending_counts_reg_limit = isset($this->_req_data['pending_counts_reg_limit']) ? absint($this->_req_data['pending_counts_reg_limit']) : TRUE;
-		EE_Config::instance()->registration->use_attendee_pre_approval = isset($this->_req_data['use_attendee_pre_approval']) ? absint($this->_req_data['use_attendee_pre_approval']) : TRUE;
-		//if we're changing the policy for when to count registrations towards teh
-		//TKT_sold and DTT_sold attributes on tickets and datetimes, then we need to update them
-		if(EE_Config::instance()->registration->pending_counts_reg_limit != $old_pending_counts_reg_limit){
-			$this->_update_sold_counts();
-			EE_Error::add_success(__("Updated ticket sales based on new policy for counting pending registrations towards registration limits and ticket sales", "event_espresso"));
-		}
+		EE_Config::instance()->registration->default_STS_ID = isset($this->_req_data['default_reg_status']) ? sanitize_text_field($this->_req_data['default_reg_status']) : EEM_Registration::status_id_pending_payment;
 
 		$what = 'Default Event Settings';
 		$success = $this->_update_espresso_configuration($what, EE_Config::instance(), __FILE__, __FUNCTION__, __LINE__);		
 		$this->_redirect_after_action($success, $what, 'updated', array('action' => 'default_event_settings'));
-	}
-	
-	/**
-	 * Updates the TKT_sold and DTT_sold counts on all tickets and datetimes. 
-	 * Use this when their counts should be synced.
-	 */
-	private function _update_sold_counts(){
-		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
-		EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all());
-	}
-
-	
+	}	
 
 
 	/** Event Category Stuff **/
@@ -1763,18 +1799,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_category = new stdClass();
 		$this->_category->id = $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
 	}
-
-
-
-	public function unique_id_help_tab() {
-		?>		
-			<h2><?php _e('Unique Category Identifier', 'event_espresso'); ?></h2>
-			<p><?php _e('This should be a unique identifier for the category. Example: "category1" (without qoutes.)', 'event_espresso'); ?></p>
-			<p><?php printf( __('The unique ID can also be used in individual pages using the %s shortcode', 'event_espresso'), '[EVENT_ESPRESSO_CATEGORY category_id="category_identifier"]' ); ?>.</p>		
-		<?php
-	}
-
-
 
 
 	protected function _category_list_table() {
@@ -1890,7 +1914,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
-			$msg = __( 'An error occured and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
+			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];

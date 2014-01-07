@@ -43,6 +43,10 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 			20 => array(
 				'id' => 'titlewrap',
 				'content' => $this->_stop_two(),
+				'options' => array(
+					'tipLocation' => 'bottom',
+					'tipAdjustmentY' => -40,
+					)
 				),
 			30 => array(
 				'id' => 'wp-content-editor-tools',
@@ -52,47 +56,50 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			40 => array(
-				'id' => 'espresso_event_editor_tickets',
-				'content' => $this->_stop_four(),
-				'options' => array(
-					'tipLocation' => 'top'
-					)
-				),
-			45 => array(
 				'id' => 'espresso_events_Venues_Hooks_venue_metabox_metabox',
 				'content' => $this->_stop_four_caf(),
 				'options' => array(
-					'tipLocation' => 'top'
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -30,
 					)
 				),
 			50 => array(
-				'id' => 'espresso_event_editor_venue',
-				'content' => $this->_stop_five(),
-				'options' => array(
-					'tipLocation' => 'top'
-					)
-				),
-			55 => array(
 				'id' => 'espresso_events_Pricing_Hooks_pricing_metabox_metabox',
 				'content' => $this->_stop_five_caf(),
 				'options' => array(
-					'tipLocation' => 'top'
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -30,
 					)
 				),
 			60 => array(
-				'id' => 'espresso_event_types',
-				'content' => $this->_stop_six_caf(),
+				'id' => 'submitpost',
+				'content' => $this->_stop_publish_box(),
+				'options' => array(
+					'tipLocation' => 'left'
+					)
+				),
+			65 => array(
+				'id' => 'espresso_event_editor_event_options',
+				'content' => $this->_stop_registration_options(),
 				'options' => array(
 					'tipLocation' => 'left'
 					)
 				),
 			70 => array(
-				'id' => 'taxonomy-espresso_event_categories',
-				'content' => $this->_stop_six(),
+				'id' => 'tagsdiv-post_tag',
+				'content' => $this->_stop_post_tag(),
 				'options' => array(
 					'tipLocation' => 'left'
 					)
 				),
+			75 => array(
+				'id' => 'espresso_event_categoriesdiv',
+				'content' => $this->_stop_event_categories(),
+				'options' => array(
+					'tipLocation' => 'left'
+					)
+				),
+			
 			80 => array(
 				'id' => $this->_is_caf ? 'espresso_events_Registration_Form_Hooks_Extend_primary_questions_metabox' : 'espresso_events_Registration_Form_Hooks_primary_questions_metabox',
 				'content' => $this->_stop_seven(),
@@ -107,90 +114,67 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'left'
 					)
 				),
-			90 => array(
-				'id' => 'espresso_event_editor_event_options',
-				'content' => $this->_stop_eight(),
-				'options' => array(
-					'tipLocation' => 'left'
-					)
-				),
+			
 			100 => array(
 				'id' => 'postimagediv',
-				'content' => $this->_stop_nine(),
+				'content' => $this->_stop_featured_image(),
 				'options' => array(
 					'tipLocation' => 'left'
 					)
 				),
-			110 => array(
-				'id' => 'submitpost',
-				'content' => $this->_stop_ten(),
-				'options' => array(
-					'tipLocation' => 'left'
-					)
-				),
+			
 			);
 	}
 
 
 	protected function _stop_one() {
 		$content = '<h3>' . __('Event Editor', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('The Event Editor will likely be one of the most visited pages in Event Espresso.  This brief tour will go over all the different areas of this screen to help you understand what they are for.  Let\'s get started on setting up your first event!', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This brief tour of the Event Editor will provide an overview of the different areas of the screen to help you understand what they are used for. Let\'s get started on setting up your first event with Event Espresso!', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _stop_two() {
-		return '<p>This is where you will enter the title for your Event.</p>';
+		return '<p>Enter the title for your event in this field.</p>';
 	}
 
 	protected function _stop_three() {
-		return '<p>' . __('This is where you can add some information about your event.  This is a rich text editor and you can add images and links along with  your text.', 'event_espresso') . '</p>';
-	}
-
-	protected function _stop_four() {
-		return '<p>' . __('The Event Datetime & Ticket section is where you enter details about when the event is happening and what tickets you want to offer for access to the event.', 'event_espresso') . '</p>';
+		return '<p>' . __('The rich text editor can be used to add information about your event. Images and links can also be added along with your text.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_four_caf() {
-		return '<p>' . __('In this section, you can enter details about the venue that is hosting your event.', 'event_espresso') . '</p>';
+		return '<p>' . __('In this section, you can select the venue that is hosting your event.', 'event_espresso') . '</p>';
 	}
-
-	protected function _stop_five() {
-		return '<p>' . __('In this section, you can enter details about the venue that is hosting your event.', 'event_espresso') . '</p>';
-	}
-
 
 	protected function _stop_five_caf() {
-		return '<p>' . __('The Event Datetime & Ticket section is where you enter details about when the event is happening and what tickets you want to offer for access to the event.', 'event_espresso') . '</p>';
+		return '<p>' . __('Use the Event Datetimes & Ticket section to enter details about when the event is happening and what tickets you want to offer for access to the event.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _stop_publish_box() {
+		return '<p>' . __('Easily control the state of your event. The main states are Published, Pending Review, and Draft. Additional states are Cancelled, Postponed, and Sold Out.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _stop_registration_options() {
+		return '<p>' . __('Setup custom options for your event registration.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _stop_post_tag() {
+		return '<p>' . __('Quickly add tags to your event.', 'event_espresso') . '</p>';
 	}
 
-
-	protected function _stop_six() {
-		return '<p>' . __('Events can be categorized if you wish.', 'event_espresso') . '</p>';
+	protected function _stop_event_categories() {
+		return '<p>' . __('Events can also be categorized if you wish.', 'event_espresso') . '</p>';
 	}
-
-	protected function _stop_six_caf() {
-		return '<p>' . __('Some info about Event Types blah blah blah', 'event_espresso') . '</p>';
-	}
-
 
 	protected function _stop_seven() {
-		return '<p>' . __('All about question groups here.', 'event_espresso') . '</p>';
-	}
-
-	protected function _stop_eight() {
-		return '<p>' . __('All about Event Registration Options here.', 'event_espresso') . '</p>';
-	}
-
-	protected function _stop_nine() {
-		return '<p>' . __('You can set a feature image for your event here.', 'event_espresso') . '</p>';
+		return '<p>' . __('Use the questions group to request information from your primary attendee.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_nine_caf() {
-		return '<p>' . __('All about question groups for additional attendees here.', 'event_espresso') . '</p>';
+		return '<p>' . __('Use the questions group to request information from your additional attendees.', 'event_espresso') . '</p>';
 	}
-
-
-	protected function _stop_ten() {
-		return '<p>' . __('Information about the different options in the submit box can go here.', 'event_espresso') . '</p>';
+	
+	protected function _stop_featured_image() {
+		return '<p>' . __('Set a feature image for your event here.', 'event_espresso') . '</p>';
 	}
+	
 }

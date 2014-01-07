@@ -5,7 +5,8 @@ EEH_Template_Validator::verify_instanceof($primary_registrant, '$primary_registr
 EEH_Template_Validator::verify_instanceof($primary_registrant->attendee(), '$primary_registrant', 'EE_Attendee');
 EEH_Template_Validator::verify_is_array_of($payments, '$payments', 'EE_Payment');
 EEH_Template_Validator::verify_is_array($event_names, '$event_names');
-EEH_Template_Validator::verify_isnt_null($SPCO_step_2_url, '$SPCO_step_2_url');
+EEH_Template_Validator::verify_isnt_null($SPCO_payment_options_url, '$SPCO_payment_options_url');
+EEH_Template_Validator::verify_isnt_null($SPCO_attendee_information_url, '$SPCO_attendee_information_url');
 EEH_Template_Validator::verify_isnt_null($show_try_pay_again_link, '$show_try_pay_again_link');
 EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 /**
@@ -13,13 +14,13 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
  * @var $primary_registrant EE_Registration
  * @var $payments EE_Payment[]
  * @var $event_names array of strings of only event names
- * @var $SPCO_step_2_url string
+ * @var $SPCO_payment_options_url string
  * @var $show_try_pay_again_link boolean whether or not to show the link back to SPCO step 2 to retry paying
  * @var $gateway_content string of content from the gateway.
  */
 ?>
-<div class="espresso_payment_overview event-display-boxes ui-widget" >
-	<h2 class="section-heading display-box-heading ui-widget-header ui-corner-top">
+<div class="espresso_payment_overview event-display-boxes wdith-100" >
+	<h2 class="section-heading display-box-heading">
 		<?php _e('Payment Overview', 'event_espresso'); ?>
 	</h2>
 
@@ -28,10 +29,10 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 		if ( empty($payments)){
 			
 			if ( $transaction->total() ){
-				_e("No payments have been made yet towards this registration.",'event_espresso');
+				echo apply_filters('FHEE__payment_overview_template__no_payments_made',__("No payments have been made yet towards this registration.",'event_espresso'));
 				echo $gateway_content;
 			}else{
-				 _e("No payment required",'event_espresso');
+				 echo apply_filters('FHEE__payment_overview_template__no_payment_required', __("No payment required",'event_espresso'));
 			}
 			
 		} else {
@@ -78,7 +79,7 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 							<?php } ?>
 							<?php $payment->e_pretty_status();
 							if ( $show_try_pay_again_link &&  ! $payment->is_approved()) {?>
-							<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a>
+							<a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a>
 								<?php }
 							?>
 						</td>
@@ -97,12 +98,16 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 	</div>
 	<br/>
 	
-	<div class="highlight-bg bigger-text cntr">
-		<a href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
-	</div>
-	<h3>
-		<?php _e('Transaction Status', 'event_espresso'); ?>
-	</h3>
+	<div id="espresso-notices-attention" class="espresso-notices width-100" style="z-index:1;">
+		<div class="extra-padding">
+			<p>
+				<?php echo apply_filters('FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it"))?><br/><br/>
+				<a class="big-text" href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
+			</p>
+		</div>
+	</div><br/>
+	
+	<h3><?php _e('Transaction Details', 'event_espresso'); ?></h3>
 	<div class='ee-transaction-status'>
 		<table class='ee-table'>
 			<tbody>
@@ -116,7 +121,7 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 				</tr>
 				<tr>
 					<td>
-						<label><?php _e('Amount Owed: ', 'event_espresso'); ?></label>
+						<label><?php _e('Amount Owing: ', 'event_espresso'); ?></label>
 					</td>
 					<td class='<?php echo ($transaction->paid() == $transaction->total()) ? 'ee-transaction-paid' : 'ee-transaction-unpaid' ?>'>
 						<?php echo EEH_Template::format_currency( $transaction->remaining() ); ?> 
@@ -128,19 +133,17 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 					</td>
 					<td>
 						<?php
-						if ($transaction->is_completed()) { ?>
-							<img class="espresso-paid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>accept.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
-						<?php } elseif($transaction->is_pending()) { ?>
-							<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>error.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
-						<?php }else{?>
-							<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>exclamation.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
+						if ( $transaction->is_completed() ) { ?>
+							<img class="espresso-paid-status-icon-img espresso-txn-status-icon" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>accept.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
+						<?php } elseif( $transaction->is_open() ) { ?>
+							<img class="espresso-unpaid-status-icon-img espresso-txn-status-icon" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>error.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
+						<?php } else { ?>
+							<img class="espresso-unpaid-status-icon-img espresso-txn-status-icon" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>exclamation.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
 						<?php } ?>
 						<?php $transaction->e_pretty_status(); 
-						if ( $show_try_pay_again_link) {
-							?><br>
-						<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a>
-							<?php }
-						?>
+						if ( $show_try_pay_again_link && ! $transaction->is_completed() ) { ?>
+						 &nbsp; <span class="small-text"><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a></span>
+						<?php } ?>
 					</td>
 				</tr>
 				<tr>
@@ -159,9 +162,9 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 	</div>
 	
 	<?php
-	if ( $show_try_pay_again_link) {
+	if ( $show_try_pay_again_link && ! $transaction->is_completed() ) {
 			?>
-		<a href='<?php echo $SPCO_step_2_url?>'><?php _e("Click here to view Payment Options", 'event_espresso'); ?></a>
+		<p class="small-text jst-rght"><span><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Click here to view Payment Options", 'event_espresso'); ?></a></span></p><br/>
 			<?php 	
 	}?>
 	<div class="event-data-display">
@@ -208,6 +211,7 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 					<?php } ?>
 				</tbody>
 			</table>
+			<p class="small-text jst-rght"><span><a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit Attendee Information", 'event_espresso'); ?></a></span></p>
 			
 		</div><!-- / .reg-gen-details -->
 	</div><!-- / .event-data-display -->

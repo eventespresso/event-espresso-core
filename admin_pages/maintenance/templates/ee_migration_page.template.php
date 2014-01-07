@@ -30,7 +30,7 @@
 				<?php 
 				//display errors or not of the most recent migration ran
 				if ($most_recent_migration->get_errors()){?>
-					<p><?php printf(__("The following errors occured during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></p>
+					<p><?php printf(__("The following errors occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></p>
 					<ul>
 					<?php foreach($most_recent_migration->get_errors() as $error){ ?>
 						<li><?php echo $error ?></li>
@@ -96,23 +96,11 @@
 	if ($show_maintenance_switch){?>
 	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
 	<?php 
-		echo EEH_Form_Fields::radio(
-			__("Maintenance Mode Level", "event_espresso"), 
-			EE_Maintenance_Mode::instance()->level(), 
-			array(
-				EE_Question_Option::new_instance( array( 
-					'QSO_value' => EE_Maintenance_Mode::level_0_not_in_maintenance, 
-					'QSO_desc' => __('Not In Maintenance (normal)', 'event_espresso')
-				)),
-				EE_Question_Option::new_instance( array( 
-					'QSO_value' => EE_Maintenance_Mode::level_1_frontend_only_maintenance, 
-					'QSO_desc' => __('Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)', 'event_espresso')
-				))
-			), 
-			'maintenance_model_level',
-			'maintenance_model_level'
-		); 
-	?>
+	?><input type="radio" id="maintenance_mode_level_off" name="maintenance_mode_level" value="0" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_0_not_in_maintenance ? 'checked="checked"' : ''?>>
+		<label for="maintenance_mode_level_off"><?php  _e('Not In Maintenance (normal)', 'event_espresso');?></label>
+	<input type="radio" id="maintenance_mode_level_on" name="maintenance_mode_level" value="1" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_1_frontend_only_maintenance ? 'checked="checked"' : ''?>>
+		<label for="maintenance_mode_level_on"><?php  _e('Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)', 'event_espresso')?></label>
+	
 		<p class='description'><?php _e("Frontend Maintenance might be handy if you want to debug something on the frontend of your website before allowing non-administrators to see.", "event_espresso");?></p>
 		<input type='submit' class="button-primary" value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
 	</form>

@@ -1,6 +1,6 @@
 
-<div class="misc-pub-section" id="visibility">
-	<img src="<?php echo EE_GLOBAL_ASSETS_URL ?>images/group.png" width="16" height="16" alt="<?php _e('View Attendees', 'event_espresso'); ?>" />
+<div class="misc-pub-section">
+	<span class="dashicons dashicons-groups ee-icon-color-grey ee-icon-size-20"></span>
 	<a href="<?php echo $view_attendees_url;?>">
 		<?php _e('Attendees', 'event_espresso'); ?>
 	</a>:

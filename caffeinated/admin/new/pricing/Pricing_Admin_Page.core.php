@@ -58,10 +58,10 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = PRICING_LABEL;
 		$this->_labels = array(
 			'buttons' => array(
-				'add' => __('Add New Price', 'event_espresso'),
-				'edit' => __('Edit Price', 'event_espresso'),
-				'delete' => __('Delete Price', 'event_espresso'),
-				'add_type' => __('Add New Price Type', 'event_espresso'),
+				'add' => __('Add New Default Price', 'event_espresso'),
+				'edit' => __('Edit Default Price', 'event_espresso'),
+				'delete' => __('Delete Default Price', 'event_espresso'),
+				'add_type' => __('Add New Default Price Type', 'event_espresso'),
 				'edit_type' => __('Edit Price Type', 'event_espresso'),
 				'delete_type' => __('Delete Price Type', 'event_espresso')
 			)
@@ -161,59 +161,54 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
-		$pricing_help_tabs = array(
-						'type_field_info' => array(
-							'title' => __('Type', 'event_espresso'),
-							'callback' => 'type_field_info_help_tab'
-							),
-						'name_field_info' => array(
-							'title' => __('Name', 'event_espresso'),
-							'callback' => 'name_field_info_help_tab'
-							),
-						'description_field_info' => array(
-							'title' => __('Description', 'event_espresso'),
-							'callback' => 'description_field_info_help_tab'
-							),
-						'amount_field_info' => array(
-							'title' => __('Amount', 'event_espresso'),
-							'callback' => 'amount_field_info_help_tab'
-							)
-						);
+		
 		$this->_page_config = array(
 			'default' => array(
 					'nav' => array(
-							'label' => __('Default Prices', 'event_espresso'),
+							'label' => __('Default Pricing', 'event_espresso'),
 							'order' => 10
 						),
 					'list_table' => 'Prices_List_Table',
-					'help_tour' => array( 'Pricing_Default_Prices_Help_Tour'),
-					'help_tabs' => array(
-						'price_type_info' => array(
-							'title' => __('About Price Types', 'event_espresso'),
-							'callback' => 'price_type_info_help_tab'
+                    'help_tabs' => array(
+						'default_pricing_help_tab' => array(
+							'title' => __('Default Pricing', 'event_espresso'),
+							'filename' => 'pricing_default_pricing'
 							)
 						),
+					'help_tour' => array( 'Pricing_Default_Prices_Help_Tour'),
 					'require_nonce' => FALSE
 				),
 			'add_new_price' => array(
 					'nav' => array(
-							'label' => __('Add New Price', 'event_espresso'),
+							'label' => __('Add New Default Price', 'event_espresso'),
 							'order' => 20,
 							'persistent' => FALSE
 						),
+                    'help_tabs' => array(
+						'add_new_default_price_help_tab' => array(
+							'title' => __('Add New Default Price', 'event_espresso'),
+							'filename' => 'pricing_add_new_default_price'
+							)
+						),
+                    'help_tour' => array('Pricing_Add_New_Default_Price_Help_Tour'),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
-					'help_tabs' => $pricing_help_tabs,
 					'require_nonce' => FALSE
 				),
 			'edit_price' => array(
 					'nav' => array(
-							'label' => __('Edit Price', 'event_espresso'),
+							'label' => __('Edit Default Price', 'event_espresso'),
 							'order' => 20,
 							'url' => isset($this->_req_data['id']) ? add_query_arg(array('id' => $this->_req_data['id'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 							'persistent' => FALSE
 						),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes' ),
-					'help_tabs' => $pricing_help_tabs,
+                    'help_tabs' => array(
+						'edit_default_price_help_tab' => array(
+							'title' => __('Edit Default Price', 'event_espresso'),
+							'filename' => 'pricing_edit_default_price'
+							)
+						),
+					'help_tour' => array( 'Pricing_Edit_Default_Price_Help_Tour' ),
 					'require_nonce' => FALSE
 				),
 			'price_types' => array(
@@ -222,6 +217,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 30
 						),
 					'list_table' => 'Price_Types_List_Table',
+                    'help_tabs' => array(
+						'price_types_help_tab' => array(
+							'title' => __('Price Types', 'event_espresso'),
+							'filename' => 'pricing_price_types'
+							)
+						),
 					'help_tour' => array( 'Price_Types_Default_Help_Tour' ),
 					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 					'require_nonce' => FALSE
@@ -232,6 +233,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 40,
 							'persistent' => FALSE
 						),
+                    'help_tabs' => array(
+						'add_new_price_type_help_tab' => array(
+							'title' => __('Add New Price Type', 'event_espresso'),
+							'filename' => 'pricing_add_new_price_type'
+							)
+						),
+                    'help_tour' => array( 'Pricing_Add_New_Price_Type_Help_Tour' ),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' ),
 					'require_nonce' => FALSE
 				),
@@ -241,47 +249,19 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'order' => 40,
 							'persistent' => FALSE
 						),
+                    'help_tabs' => array(
+						'edit_price_type_help_tab' => array(
+							'title' => __('Edit Price Type', 'event_espresso'),
+							'filename' => 'pricing_edit_price_type'
+							)
+						),
+                    'help_tour' => array( 'Pricing_Edit_Price_Type_Help_Tour' ),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' ),
 					
 					'require_nonce' => FALSE
 				)
 		);
 	}
-
-	/**
-	 * edit price help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function edit_price_info_help_tabs( $tab ) {
-		require_once PRICING_TEMPLATE_PATH . 'edit_price_help_tabs.template.php';
-		$template = call_user_func( $tab . '_html' );
-		EEH_Template::display_template($template);
-	}
-	public function type_field_info_help_tab(){
-		$this->edit_price_info_help_tabs( __FUNCTION__ );
-	}
-	public function name_field_info_help_tab(){
-		$this->edit_price_info_help_tabs( __FUNCTION__ );
-	}
-	public function description_field_info_help_tab(){
-		$this->edit_price_info_help_tabs( __FUNCTION__ );
-	}
-	public function amount_field_info_help_tab(){
-		$this->edit_price_info_help_tabs( __FUNCTION__ );
-	}
-
-	
-	/**
-	 * edit price type help tabs
-	 * @param  string $tab what tab content to retrieve
-	 * @return string      html content for help tab
-	 */
-	public function price_type_info_help_tab() {
-		$template = PRICING_TEMPLATE_PATH . 'price_type_info_help_tab.template.php';
-		EEH_Template::display_template( $template, array() );
-	}
-
 
 
 	protected function _add_screen_options() {
@@ -361,7 +341,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				),
 			'trashed' => array(
 					'slug' => 'trashed',
-					'label' => __('Trash Can', 'event_espreso'),
+					'label' => __('Trash', 'event_espreso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'restore_price' => __('Restore from Trash', 'event_espresso'),
@@ -408,7 +388,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function _price_overview_list_table() {
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_new_price', 'add', array(), 'add-new-h2');
 		$this->admin_page_title .= $this->_learn_more_about_pricing_link();
-		$this->_search_btn_label = __('Prices', 'event_espresso');
+		$this->_search_btn_label = __('Default Prices', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
@@ -560,7 +540,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _price_details_meta_boxes() {		
-		add_meta_box( 'edit-price-details-mbox', __( 'Price Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
+		add_meta_box( 'edit-price-details-mbox', __( 'Default Price Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
 	}
 
 
@@ -589,15 +569,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	protected function set_price_column_values() {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		//$this->_req_data['PRC_name'] = ucwords(strtolower($this->_req_data['PRC_name']));
-		$this->_req_data['PRC_name'] = htmlentities(wp_strip_all_tags($this->_req_data['PRC_name']), ENT_QUOTES, 'UTF-8');
 	
 		$set_column_values = array(
 				'PRT_ID' => absint($this->_req_data['PRT_ID']),
-				'PRC_amount' => floatval ($this->_req_data['PRC_amount']),
+				'PRC_amount' => $this->_req_data['PRC_amount'],
 				'PRC_name' => $this->_req_data['PRC_name'],
-				'PRC_desc' => wp_strip_all_tags($this->_req_data['PRC_desc']),
+				'PRC_desc' => $this->_req_data['PRC_desc'],
 				'PRC_is_default' => 1,
 				'PRC_overrides' => NULL,
 				'PRC_order' => 0,
@@ -635,6 +612,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		if ( $insert ) {
 			// run the insert
 			if ( $PRC_ID = $PRC->insert( $set_column_values )) {
+				//make sure this new price modifier is attached to the ticket but ONLY if it is not a tax type
+				$PR = EEM_price::instance()->get_one_by_ID($PRC_ID);
+				if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+					$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
+					$ticket->_add_relation_to( $PR, 'Price' );
+					$ticket->save();
+				}
 				$success = 1;
 			} else {
 				$PRC_ID = FALSE;
@@ -649,14 +633,22 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				$success = 1;
 			}
 
-			//if this is $PRC_ID == 1, then we need to update the default ticket attached to this price so the TKT_price value is updated.
-			if ( $PRC_ID === 1 ) {
-				$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
-				$ticket = $PR->get_first_related('Ticket');
-				if ( $ticket ) {
-					$ticket->set('TKT_price', $PR->get('PRC_amount') );
-					$ticket->set('TKT_name', $PR->get('PRC_name') );
-					$ticket->set('TKT_description', $PR->get('PRC_desc'));
+			$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+			if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+
+				//if this is $PRC_ID == 1, then we need to update the default ticket attached to this price so the TKT_price value is updated.
+				if ( $PRC_ID === 1 ) {
+					$ticket = $PR->get_first_related('Ticket');
+					if ( $ticket ) {
+						$ticket->set('TKT_price', $PR->get('PRC_amount') );
+						$ticket->set('TKT_name', $PR->get('PRC_name') );
+						$ticket->set('TKT_description', $PR->get('PRC_desc'));
+						$ticket->save();
+					}
+				} else {
+					//we make sure this price is attached to base ticket. but ONLY if its not a tax ticket type.
+					$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
+					$ticket->_add_relation_to( $PRC_ID, 'Price' );
 					$ticket->save();
 				}
 			}
@@ -690,22 +682,47 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		$success = 1;
 		$PRC_deleted = $trash ? TRUE : FALSE;
+		
+		//get base ticket for updating
+		$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
 		//Checkboxes
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
 			while (list( $PRC_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array(array('PRC_ID' => absint($PRC_ID))))) {
+				if ( ! $PRC->update_by_ID(array('PRC_deleted' => $PRC_deleted), absint($PRC_ID) ) ) {
 					$success = 0;
+				} else {
+					$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+					if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+						//if trashing then remove relations to base default ticket.  If restoring then add back to base default ticket
+						if ( $PRC_deleted ) {
+							$ticket->_remove_relation_to($PRC_ID, 'Price');
+						} else {
+							$ticket->_add_relation_to($PRC_ID, 'Price');
+						}
+						$ticket->save();
+					}
 				}
 			}
 			
 		} else {
 			// grab single id and delete
 			$PRC_ID = absint($this->_req_data['id']);
-			if ( ! $PRC->update(array('PRC_deleted' => $PRC_deleted), array(array('PRC_ID' => absint($PRC_ID))))) {
+			if ( ! $PRC->update_by_ID(array('PRC_deleted' => $PRC_deleted), $PRC_ID) ) {
 				$success = 0;
+			} else {
+				$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+				if ( $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax ) {
+					//if trashing then remove relations to base default ticket.  If restoring then add back to base default ticket
+					if ( $PRC_deleted ) {
+						$ticket->_remove_relation_to($PRC_ID, 'Price');
+					} else {
+						$ticket->_add_relation_to($PRC_ID, 'Price');
+					}
+					$ticket->save();
+				}
 			}
 			
 		}
@@ -779,7 +796,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$success = FALSE;
 		}
 		
-		$errors = ! $success ? __( 'An error occured. The price order was not updated.', 'event_espresso' ) : FALSE;
+		$errors = ! $success ? __( 'An error occurred. The price order was not updated.', 'event_espresso' ) : FALSE;
 		
 		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();
@@ -968,7 +985,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		$base_type = wp_strip_all_tags( $this->_req_data['base_type'] );
+		$base_type = $this->_req_data['base_type'];
 	
 		switch ($base_type) {
 	
@@ -1118,7 +1135,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
 		
 		$success = 1;
@@ -1129,7 +1145,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$what = $PRT->item_name($success);
 			// cycle thru bulk action checkboxes
 			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if (!$PRT->delete_permanently_by_ID(absint($PRT_ID))) {
+				if (!$PRT->delete_permanently_by_ID($PRT_ID) ) {
 					$success = 0;
 				}
 			}

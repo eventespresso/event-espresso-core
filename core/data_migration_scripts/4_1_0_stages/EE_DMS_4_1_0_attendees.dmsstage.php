@@ -119,9 +119,6 @@ CREATE TABLE `wp_events_detail` (
 				'ATT_zip'=>new EE_Plain_Text_Field('ATT_zip', __('ZIP/Postal Code','event_espresso'), true, ''),
 				'ATT_email'=>new EE_Email_Field('ATT_email', __('Email Address','event_espresso'), true, ''),
 				'ATT_phone'=>new EE_Plain_Text_Field('ATT_phone', __('Phone','event_espresso'), true, ''),
-				'ATT_social'=>new EE_Serialized_Text_Field('ATT_social', __("Social Information", "event_espresso"), true, null),
-				'ATT_comments'=>new EE_Simple_HTML_Field('ATT_comments', __("Comments by Attendee", "event_espresso"), false,''),
-				'ATT_notes'=>new EE_Simple_HTML_Field('ATT_notes', __('Admin Notes','event_espresso'), true, ''),
 			));
  * 
  * 4.1 Registration tables and models:
@@ -136,7 +133,7 @@ CREATE TABLE `wp_events_detail` (
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_not_approved, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occured','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
@@ -159,7 +156,6 @@ CREATE TABLE `wp_events_detail` (
 				'TXN_total'=>new EE_Money_Field('TXN_total', __('Total value of Transaction','event_espresso'), false, 0),
 				'TXN_paid'=>new EE_Money_Field('TXN_paid', __('Amount paid towards transaction to date','event_espresso'), false, 0),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Transaction::incomplete_status_code, 'Status'),
-				'TXN_tax_data'=>new EE_Serialized_Text_Field('TXN_tax_data', __('Serialized mess of tax data','event_espresso'), true, ''),
 				'TXN_session_data'=>new EE_Serialized_Text_Field('TXN_session_data', __('Serialized mess of session data','event_espresso'), true, ''),
 				'TXN_hash_salt'=>new EE_Plain_Text_Field('TXN_hash_salt', __('Transaction Hash Salt','event_espresso'), true, '')
 			)
@@ -239,6 +235,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	}
 	
 	protected function _migrate_old_row($old_row) {
+		
 		$new_att_id = $this->_insert_new_attendee_cpt($old_row);
 		if( ! $new_att_id){
 			//if we couldnt even make an attendee, abandon all hope
@@ -249,16 +246,18 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		if($new_att_meta_id){
 			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_attendee_meta_table, $new_att_meta_id);
 		}
+		
 		$txn_id = $this->_insert_new_transaction($old_row);
 		if( ! $txn_id){
 			//if we couldnt make the transaction, also abandon all hope
 			return false;
 		}
-		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_transaction_table, $txn_id);
-		$pay_id = $this->_insert_new_payment($old_row,$txn_id);
+			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_transaction_table, $txn_id);$pay_id = $this->_insert_new_payment($old_row,$txn_id);
 		if($pay_id){
 			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_payment_table,$pay_id);
 		}
+		
+		
 		//even if there was no payment, we can go ahead with adding teh reg
 		$new_regs = $this->_insert_new_registrations($old_row,$new_att_id,$txn_id);
 		if($new_regs){
@@ -269,12 +268,12 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private function _insert_new_attendee_cpt($old_attendee){
 		global $wpdb;
 		$cols_n_values = array(
-			'post_title'=>$old_attendee['fname']." ".$old_attendee['lname'],//ATT_full_name
+			'post_title'=>stripslashes($old_attendee['fname']." ".$old_attendee['lname']),//ATT_full_name
 			'post_content'=>'',//ATT_bio
 			'post_name'=>sanitize_title($old_attendee['fname']."-".$old_attendee['lname']),//ATT_slug
-			'post_date'=>$old_attendee['date'],//ATT_created
+			'post_date'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),//ATT_created
 			'post_excerpt'=>'',//ATT_short_bio
-			'post_modified'=>$old_attendee['date'],//ATT_modified
+			'post_modified'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),//ATT_modified
 			'post_author'=>0,//ATT_author
 			'post_parent'=>0,//ATT_parent
 			'post_type'=>'espresso_attendees',//post_type
@@ -305,29 +304,29 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		//get the state and country ids from the old row
 		try{
-			$new_country = $this->get_migration_script()->get_or_create_country($old_attendee['country_id']);
+			$new_country = $this->get_migration_script()->get_or_create_country(stripslashes($old_attendee['country_id']));
 			$new_country_iso = $new_country['CNT_ISO'];
 		}catch(EE_Error $exception){
 			$new_country_iso = $this->get_migration_script()->get_default_country_iso();
 		}
 		try{
-			$new_state = $this->get_migration_script()->get_or_create_state($old_attendee['state'],$new_country_iso);
+			$new_state = $this->get_migration_script()->get_or_create_state(stripslashes($old_attendee['state']),$new_country_iso);
 			$new_state_id = $new_state['STA_ID'];
 		}catch(EE_Error $exception){
 			$new_state_id = 0;
 		}
 		$cols_n_values = array(
 			'ATT_ID'=>$new_attendee_cpt_id,
-			'ATT_fname'=>$old_attendee['fname'],
-			'ATT_lname'=>$old_attendee['lname'],
-			'ATT_address'=>$old_attendee['address'],
-			'ATT_address2'=>$old_attendee['address2'],
-			'ATT_city'=>$old_attendee['city'],
+			'ATT_fname'=>stripslashes($old_attendee['fname']),
+			'ATT_lname'=>stripslashes($old_attendee['lname']),
+			'ATT_address'=>stripslashes($old_attendee['address']),
+			'ATT_address2'=>stripslashes($old_attendee['address2']),
+			'ATT_city'=>stripslashes($old_attendee['city']),
 			'STA_ID'=>$new_state_id,
 			'CNT_ISO'=>$new_country_iso,
-			'ATT_zip'=>$old_attendee['zip'],
-			'ATT_email'=>$old_attendee['email'],
-			'ATT_phone'=>$old_attendee['phone'],			
+			'ATT_zip'=>stripslashes($old_attendee['zip']),
+			'ATT_email'=>stripslashes($old_attendee['email']),
+			'ATT_phone'=>stripslashes($old_attendee['phone']),			
 		);
 		$datatypes = array(
 			'%d',//ATT_ID
@@ -375,7 +374,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			);
 			$STS_ID = isset($txn_status_mapping[$old_attendee['payment_status']]) ? $txn_status_mapping[$old_attendee['payment_status']] : 'TIN';
 			$cols_n_values = array(
-				'TXN_timestamp'=>$old_attendee['date'],
+				'TXN_timestamp'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),
 				'TXN_total'=>floatval($old_attendee['total_cost']),
 				'TXN_paid'=>floatval($old_attendee['amount_pd']),
 				'STS_ID'=>$STS_ID,
@@ -396,7 +395,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$new_id = $wpdb->insert_id;
 			return $new_id;
 		}else{//non-primary attendee, so find its primary attendee's transaction
-			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and txn_id=%s",$old_attendee['txn_id']));
+			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and registration_id=%s",$old_attendee['registration_id']));
 			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);
 			if( ! $txn_id){
 				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  http_build_query($old_attendee),$primary_attendee_old_id));
@@ -420,7 +419,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		$reg_status_mapping = array(
 				'Completed'=>'RAP',
-				'Pending'=>'RPN',
+				'Pending'=>'RPP',
 				'Payment Declined'=>'RNA',
 				'Incomplete'=>'RNA',
 				'Not Completed'=>'RNA',
@@ -447,7 +446,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'TXN_ID'=>$new_txn_id,
 				'TKT_ID'=>$ticket_id,
 				'STS_ID'=>$STS_ID,
-				'REG_date'=>$old_attendee['date'],
+				'REG_date'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),
 				'REG_final_price'=>$old_attendee['final_price'],
 				'REG_session'=>$old_attendee['attendee_session'],
 				'REG_code'=>$old_attendee['registration_id'],
@@ -502,7 +501,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		
 		$old_att_start_date = $old_attendee['start_date'];
 		$old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
-		$old_att_datetime = "$old_att_start_date $old_att_start_time:00";
+		$old_att_datetime = $this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,"$old_att_start_date $old_att_start_time:00");
 		//add all conditions to an array from which we can SHIFT conditions off in order to widen our search
 		//the most important condition should be last, as it will be array_shift'ed off last
 		$conditions = array(
@@ -562,7 +561,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$cols_n_values = array(
 				'TXN_ID'=>$new_txn_id,
 				'STS_ID'=>$STS_ID,
-				'PAY_timestamp'=>$old_attendee['date'],
+				'PAY_timestamp'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),
 				'PAY_gateway'=>$old_attendee['txn_type'],
 				'PAY_gateway_response'=>'',
 				'PAY_txn_id_chq_nmbr'=>$old_attendee['txn_id'],

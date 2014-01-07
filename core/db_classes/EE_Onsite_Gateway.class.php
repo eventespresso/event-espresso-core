@@ -14,8 +14,10 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		$this->_button_base = 'pay-by-credit-card.png';
 		// this filter allows whatever function is processing the registration page to know what inputs to expect
 		//add_filter('FHEE_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
+		$this->_btn_img = EE_GATEWAYS_URL .$this->_button_base;
 		parent::__construct($model);
 	}
 	
@@ -74,7 +76,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 
 				// start with a p tag, unless this is the credit card year field
 				if ( $input_key != 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ) {
-					$output .= "\n\t\t" . '<p class="event_form_field">';
+					$output .= "\n\t\t" . '<div class="reg-page-form-field-wrap-pg">';
 				}
 
 				// what type of input are we dealing with ?
@@ -83,7 +85,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 					// text inputs
 					case 'text' :
 
-						$output .= "\n\t\t\t" . '<label for="' . $input_key . '">' . $billing_input['label'] . $required . '</label>';
+						$output .= "\n\t\t\t" . '<label class="espresso-form-input-lbl" for="' . $input_key . '">' . $billing_input['label'] . $required . '</label>';
 						$output .= "\n\t\t\t" . '<input id="' . $input_key . '" class="' . $styles . '" type="text" value="' . $billing_input['value'] . '" name="' . $input_key . '">';
 						break;
 
@@ -92,8 +94,8 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 
 						if ( $input_key == 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ) {
 
-							$output .= "\n\t\t\t" . '<label>' . __('Expiry Date', 'event_espresso') . '&nbsp;<em>*</em></label>';
-							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name . '" class="' . $styles . ' small-txt" name="reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name . '">';
+							$output .= "\n\t\t\t" . '<label class="espresso-form-input-lbl">' . __('Expiry Date', 'event_espresso') . '&nbsp;<em>*</em></label>';
+							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name . '" class="' . $styles . ' display-inline small-txt" name="reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name . '">';
 							for ($x = 1; $x <= 12; $x++) {
 								$value = $x < 10 ? '0' . $x : $x;
 								$output .= "\n\t\t\t\t" . '<option value="' . $value . '">' . $value . '</option>';
@@ -102,7 +104,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 							$output .= "\n\t\t\t" . '&nbsp;/&nbsp;';
 						} elseif ( $input_key == 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ) {
 
-							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-year-' . $this->_gateway_name . '" class="' . $styles . ' small-txt" name="reg-page-billing-card-exp-date-year-' . $this->_gateway_name . '">';
+							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-year-' . $this->_gateway_name . '" class="' . $styles . ' display-inline small-txt" name="reg-page-billing-card-exp-date-year-' . $this->_gateway_name . '">';
 							$current_year = date('y');
 							$next_decade = $current_year + 10;
 							for ($x = $current_year; $x <= $next_decade; $x++) {
@@ -113,7 +115,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 							$output .= "\n\t\t\t" . '<span class="small-text lt-grey-text">' . __('(mm/yy)', 'event_espresso') . '</span>';
 						} else {
 
-							$output .= "\n\t\t\t" . '<label for="' . $input_key . '">' . $billing_input['label'] . $required . '</label>';
+							$output .= "\n\t\t\t" . '<label class="espresso-form-input-lbl" for="' . $input_key . '">' . $billing_input['label'] . $required . '</label>';
 							$output .= "\n\t\t\t" . '<select id="' . $input_key . '" class="' . $styles . ' small-txt" name="' . $input_key . '">';
 
 							if (is_array($billing_input['options'])) {
@@ -133,7 +135,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 				} // end switch
 				// end with a p tag, unless this is the credit card month field
 				if ( $input_key != 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ) {
-					$output .= "\n\t\t" . '</p>';
+					$output .= "\n\t\t" . '</div>';
 				}
 			} // end if ( in_array( $input_key, $this->$section ))
 		} // end foreach( $billing_inputs as $input_key => $billing_input ) 

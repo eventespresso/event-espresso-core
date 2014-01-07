@@ -64,7 +64,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _init_page_props() {
 		global $espresso_wp_user;
 		$this->page_slug = EE_MSG_PG_SLUG;
-		$this->page_label = __('Messages System', 'event_espresso');
+		$this->page_label = __('Messages Settings', 'event_espresso');
 		$this->_admin_base_url = EE_MSG_ADMIN_URL;
 		$this->_admin_base_path = EE_MSG_ADMIN;
 
@@ -203,24 +203,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$event_query_args = isset($this->_req_data['evt_id']) ? array('evt_id' => $this->_req_data['evt_id'] ) : array();
 		$edit_query_args = array_merge( $group_query_args, $event_query_args );
 
-		$default_msg_help_tabs = array(
-			'about-messages' => array(
-				'title' => __('About Messages', 'event_espresso'),
-				'callback' => 'messages_help_tab'
-				),
-			'about-messengers' => array(
-				'title' => __('About Messengers', 'event_espresso'),
-				'callback' => 'messengers_help_tab',
-			),
-			'about-message-types' => array(
-				'title' => __('About Message Types', 'event_espresso'),
-				'callback' => 'message_types_help_tab'
-			),
-			'about-message-templates' => array(
-				'title' => __('About Message Templates', 'event_espresso'),
-				'callback' => 'message_templates_help_tab'
-				)
-		);
 
 		$this->_page_config = array(
 			'default' => array(
@@ -229,14 +211,37 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10 
 					),
 				'list_table' => 'Messages_Template_List_Table',
-				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
-				'help_tabs' => array_merge( array(
-						'messages_overview' => array(
-							'title' => __('About the Overview', 'event_espresso'),
-							'callback' => 'messages_overview_help_tab'
+                'help_tabs' => array(
+						'messages_overview_help_tab' => array(
+							'title' => __('Messages Overview', 'event_espresso'),
+							'filename' => 'messages_overview'
 							),
-						), $default_msg_help_tabs
-				),
+						'messages_overview_messages_table_column_headings_help_tab' => array(
+						'title' => __('Messages Table Column Headings', 'event_espresso'),
+						'filename' => 'messages_overview_table_column_headings'
+						),
+						'messages_overview_messages_filters_help_tab' => array(
+						'title' => __('Message Filters', 'event_espresso'),
+						'filename' => 'messages_overview_filters'
+						),
+						'messages_overview_messages_views_help_tab' => array(
+						'title' => __('Message Views', 'event_espresso'),
+						'filename' => 'messages_overview_views'
+						),
+                        'message_overview_message_types_help_tab' => array(
+                            'title' => __('Message Types', 'event_espresso'),
+                            'filename' => 'messages_overview_types'
+                        ),
+                        'messages_overview_messengers_help_tab' => array(
+                            'title' => __('Messengers', 'event_espresso'),
+                            'filename' => 'messages_overview_messengers',
+                        ),
+                        'messages_overview_other_help_tab' => array(
+                            'title' => __('Messages Other', 'event_espresso'),
+                            'filename' => 'messages_overview_other',
+                        ),
+                    ),
+				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
 				'require_nonce' => FALSE
 			),
 			'force_switch_template' => array(
@@ -266,16 +271,23 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => TRUE,
 				'help_tour' => array( 'Message_Templates_Edit_Help_Tour' ),
-				'help_tabs' => array_merge( array(
+				'help_tabs' => array(
 						'edit_message_template' => array(
-							'title' => __('About Template Editor', 'event_espresso'),
+							'title' => __('Message Template Editor', 'event_espresso'),
 							'callback' => 'edit_message_template_help_tab'
 							),
+                        'message_templates_help_tab' => array(
+                            'title' => __('Message Templates', 'event_espresso'),
+                            'filename' => 'messages_templates'
+                            ),
 						'message_template_shortcodes' => array(
-							'title' => __('Shortcode Descriptions', 'event_epresso'),
+							'title' => __('Message Shortcodes', 'event_epresso'),
 							'callback' => 'message_template_shortcodes_help_tab'
 							),
-						), $default_msg_help_tabs
+                        'message_preview_help_tab' => array(
+                            'title' => __('Message Preview', 'event_espresso'),
+                            'filename' => 'messages_preview'
+                            ),
 					),
 				'require_nonce' => FALSE
 				),
@@ -285,12 +297,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => FALSE
 					),
-				'help_tabs' => array_merge( array(
+				'help_tabs' => array(
 						'preview_message' => array(
 							'title' => __('About Previews', 'event_espresso'),
 							'callback' => 'preview_message_help_tab'
 							)
-						), $default_msg_help_tabs
 					),
 				'require_nonce' => FALSE
 				),
@@ -300,14 +311,21 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'metaboxes' => array('_messages_settings_metaboxes'),
+                'help_tabs' => array(
+						'messages_settings_help_tab' => array(
+							'title' => __('Messages Settings', 'event_espresso'),
+							'filename' => 'messages_settings'
+							),
+						'messages_settings_message_types_help_tab' => array(
+							'title' => __('Activating / Deactivating Message Types', 'event_espresso'),
+							'filename' => 'messages_settings_message_types'
+							),
+						'messages_settings_messengers_help_tab' => array(
+							'title' => __('Activating / Deactivating Messengers', 'event_espresso'),
+							'filename' => 'messages_settings_messengers'
+							),
+                    ),
 				'help_tour' => array( 'Messages_Settings_Help_Tour' ),
-				'help_tabs' => array_merge( array(
-						'settings' => array(
-							'title' => __('About Message Settings', 'event_espresso'),
-							'callback' => 'settings_help_tab'
-							)
-						), $default_msg_help_tabs
-					),
 				'require_nonce' => FALSE
 				)
 			/*'reports' => array(
@@ -2484,12 +2502,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$_where['MTP_message_type'] = $message_type;
 			}
 
-			$event_templates = $MTP->get_all( array($_where) );
+			$event_templates = $MTP->get_all( array($_where, 'group_by' => 'EVT_ID' ) );
 
 			if ( $event_templates && count($event_templates) > 0 ) {
 				$m_label_pl = __('Messengers', 'event_espresso');
 				$m_label_sg = __('messenger', 'event_espresso');
-				$warning_msg = $message_type ? sprintf( __('<strong>Warning:</strong> Message Types cannot be deactivated if there are any Events currently using a custom template for that message type and messenger. Before you can deactivate the "%s" message type, you must switch the following "Events" to use global templates:', 'event_espresso' ), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']) ) : sprintf( __('<strong>Warning:</strong> %s cannot be deactivated if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following "Events" to use global templates:', 'event_espresso' ), $m_label_pl, $this->_active_messengers[$messenger]['obj']->label['singular'], $m_label_sg  );
+				$warning_msg = $message_type ? sprintf( __('<strong>Warning:</strong> Message Types cannot be deactivated if there are any Events currently using a custom template for that message type and messenger. Before you can deactivate the "%s" message type, you must switch the following events to use global templates:', 'event_espresso' ), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']) ) : sprintf( __('<strong>Warning:</strong> %s cannot be deactivated if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following events to use global templates (for all message types):', 'event_espresso' ), $m_label_pl, $this->_active_messengers[$messenger]['obj']->label['singular'], $m_label_sg  );
 				$warning_msg .= '<ul>';
 
 				//output list of events
@@ -2497,8 +2515,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				foreach ( $event_templates as $template ) {
 					$event_name = $template->event_name();
 					$query_args = array(
-						'action' => 'edit_event',
-						'EVT_ID' => $template->event()
+						'action' => 'edit',
+						'post' => $template->event()
 						);
 					$edit_event_url = self::add_query_args_and_nonce( $query_args, $base_event_admin_url );
 					$warning_msg .= "\n" . '<li><a href="' . $edit_event_url . '" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a></li>';

@@ -101,6 +101,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//partial route/config override
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
 		$this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+		$this->_page_config['create_new']['qtips'] = array(
+					'EE_Event_Editor_Tips'
+					);
+		$this->_page_config['edit']['qtips'] = array( 
+			'EE_Event_Editor_Tips'
+			);
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 
 		//add tickets tab but only if there are more than one default ticket!
@@ -120,9 +126,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$new_page_config['import_page'] = array(
 				'nav' => array(
-					'label' => __('Import', 'event_esprsso'),
+					'label' => __('Import', 'event_espresso'),
 					'order' => 30
 				),
+				'help_tabs' => array(
+					'import_help_tab' => array(
+						'title' => __('Import', 'event_espresso'),
+						'filename' => 'events_import'
+						)
+					),
+                'help_tour' => array('Event_Import_Help_Tour'),
 				'metaboxes' => $default_espresso_boxes,
 				'require_nonce' => FALSE
 		);
@@ -133,15 +146,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('FHEE_event_datetime_metabox_add_additional_date_time_template', array( $this, 'add_additional_datetime_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_clone_button_template', array( $this, 'add_datetime_clone_button' ), 10, 2 );
 		add_filter('FHEE_event_datetime_metabox_timezones_template', array( $this, 'datetime_timezones_template'), 10, 2 );
-		add_filter('FHEE_additional_registration_options_event_edit_page', array( $this, 'additional_registration_options'), 10, 6);
 
 
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
 		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
-
-		//event settings
-		add_action('AHEE_event_settings_template_extra_content', array( $this, 'enable_attendee_pre_approval'), 10 );
 
 	}
 
@@ -178,10 +187,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-
-
-
 	public function load_scripts_styles_edit() {
+		/**
+		 * load accounting js.
+		 */
+		add_filter('FHEE_load_accounting_js', '__return_true');
+
 		//styles
 		wp_enqueue_style('espresso-ui-theme');		
 		wp_enqueue_script('event_editor_js');
@@ -221,21 +232,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	public function datetime_timezones_template( $template, $template_args ) {
 		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_datetime_timezones.template.php', $template_args, TRUE );
-	}
-
-
-	public function additional_registration_options( $html, $template_args, $yes_no_values, $default_reg_status_values ) {
-		$template_args['use_attendee_pre_approval'] = EE_Registry::instance()->CFG->registration->use_attendee_pre_approval;
-		$template_args['attendee_pre_approval_required'] = EE_Registry::instance()->CFG->registration->use_attendee_pre_approval ? EEH_Form_Fields::select_input("require_pre_approval", $yes_no_values, $this->_event->require_pre_approval) : '';
-		return EEH_Template::display_template( EVENTS_CAF_TEMPLATE_PATH . 'event_additional_registration_options.template.php', $template_args, TRUE);
-	}
-
-
-
-	public function enable_attendee_pre_approval( $template_args ) {
-		$_args['attendee_pre_approval_select'] = EEH_Form_Fields::select_input('use_attendee_pre_approval', $template_args['values'], $template_args['use_attendee_pre_approval'] );
-		$template = EVENTS_CAF_TEMPLATE_PATH . 'event_settings_enable_attendee_pre_approval.template.php';
-		EEH_Template::display_template( $template, $_args );
 	}
 
 
@@ -288,15 +284,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'action' => 'reports',
 				'EVT_ID' => $event->ID()
 			);
-		$export_query_args = array(
-				'action' => 'export_events',
-				'EVT_ID' => $event->ID()
-			);
 		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
-		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
-		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="reports_btn"></div></a>' . "\n\t";
-		$actionlinks[] = '<a href="#" onclick="window.location=\'' . $export_event_link . '\'" title="' . __('Export to CSV', 'event_espresso') . '"><div class="csv_exp_btn"></div>
-			</a>';
+		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
 		return $actionlinks;
 	}
 
@@ -304,9 +293,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _event_legend_items() {
 		$items = parent::_event_legend_items();
-		$items['csv_export'] = array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/csv_icon_sm.gif',
-				'desc' => __('Export Event details to csv', 'event_espresso')
+		$items['reports'] = array(
+				'class' => 'dashicons dashicons-chart-bar',
+				'desc' => __('Event Reports', 'event_espresso')
 			);
 		return $items;
 	}
@@ -414,6 +403,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 */
 	protected function _premium_event_editor_meta_boxes() {
 
+		$this->verify_cpt_object();
+
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array( $this, 'registration_options_meta_box' ), $this->page_slug, 'side', 'core');
 		//add_meta_box('espresso_event_types', __('Event Type', 'event_espresso'), array( $this, 'event_type_meta_box' ), $this->page_slug, 'side', 'default' ); //add this back in when the feature is ready.
 
@@ -438,14 +429,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$default_reg_status_values = EEM_Registration::reg_status_array();
+		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined));
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
-		$template_args['additional_limit'] = (int) $this->_cpt_model_obj->additional_limit() < 1 ? 1 : $this->_cpt_model_obj->additional_limit();
+		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
-		$template_args['require_pre_approval'] = EEH_Form_Fields::select_input('require_pre_approval', $yes_no_values, $this->_cpt_model_obj->require_pre_approval() );
+		$template_args['EVT_default_registration_status'] = EEH_Form_Fields::select_input('EVT_default_registration_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status() );
 		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
@@ -637,7 +628,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$end = ' 23:59:59';
 
 		$where = array(
-			'status' => array( '!=', 'trash' ),
 			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
 			);
 
@@ -660,9 +650,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$end = ' 23:59:59';
 
 		$where = array(
-			'status' => array( 'NOT IN', array('trash') ),
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) ),
-			'post_type' => array( '!=', 'revision' )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
 			);
 
 		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
@@ -710,11 +698,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			case 'today' :
 			case NULL :
 			case 'all' :
-				$where['status'] = array( 'NOT IN', array('trash') );
 				break;
 
 			case 'draft' :
 				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
+				break;
 
 			default :
 				$where['status'] = $status;
@@ -741,8 +729,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$end = ' 23:59:59';
 			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
 		}
-
-		$where['post_type'] = array( '!=', 'revision' );
 
 		//search query handling
 		if ( isset( $this->_req_data['s'] ) ) {

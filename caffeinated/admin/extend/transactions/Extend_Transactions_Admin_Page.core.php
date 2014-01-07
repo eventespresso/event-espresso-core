@@ -54,13 +54,18 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 20
 					),
+                'help_tabs' => array(
+					'transactions_reports_help_tab' => array(
+						'title' => __('Transaction Reports', 'event_espresso'),
+						'filename' => 'transactions_reports'
+					)
+				),
 				'help_tour' => array( 'Transaction_Reports_Help_Tour' ),
 				'require_nonce' => FALSE
 				)
 			);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 	}
-
 
 	public function load_scripts_styles_reports() {
 		//styles

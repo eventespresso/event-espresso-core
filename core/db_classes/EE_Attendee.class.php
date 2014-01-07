@@ -174,26 +174,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
     */
 	protected $_ATT_phone = NULL;
 
-	/**
-	 * Attendee's social media information (eg, twitter ID or whatever).
-	 * @access protected
-	 * @var array
-	 */
-	protected $_ATT_social = NULL;
-	
-	/**
-	 * Attendee notes by the attendee themselves about themselves
-	 * @var string 
-	 */
-	protected $_ATT_comments = NULL;
-    /**
-    *	Attendee Notes  about the attendee by the customer
-	* 
-	*	@access	protected
-    *	@var string	
-    */
-	protected $_ATT_notes = NULL;
-
 
     
 	
@@ -408,44 +388,8 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 
 
-	/**
-	*		Set Attendee Social Networking details
-	* 
-	* 		@access		public		
-	*		@param		string		$social
-	*/	
-	public function set_social( $social = FALSE ) {
-		
-		$this->set('ATT_social',$social);
-	}
 
 
-
-
-
-	/**
-	*		Set Attendee Comments (by the attendee)
-	* 
-	* 		@access		public		
-	*		@param		string		$comments
-	*/	
-	public function set_comments( $comments = FALSE ) {
-		$this->set('ATT_comments',$comments);
-	}
-
-
-
-
-
-	/**
-	*		Set Attendee Notes (about the attendee)
-	* 
-	* 		@access		public		
-	*		@param		string		$notes
-	*/	
-	public function set_notes( $notes = FALSE ) {
-		$this->set('ATT_notes',$notes);
-	}
 
 
 
@@ -636,33 +580,6 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 
 
-	/**
-	*		get Attendee Social Networking details
-	* 		@access		public
-	*/	
-	public function social() {
-		return $this->get('ATT_social');
-	}
-
-
-
-	/**
-	*		get Attendee Comments (by the attendee)
-	* 		@access		public
-	*/	
-	public function comments() {
-		return $this->get('ATT_comments');
-	}
-
-
-
-	/**
-	*		get Attendee Notes (about the attendee by admin)
-	* 		@access		public
-	*/	
-	public function notes() {
-		return $this->get('ATT_notes');
-	}
 
 
 	/**

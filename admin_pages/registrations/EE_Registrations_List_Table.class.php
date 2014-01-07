@@ -44,7 +44,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _setup_data() {
-		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_admin_page->get_registrations( $this->_per_page );
 		$this->_all_data_count = $this->_admin_page->get_registrations( $this->_per_page, TRUE, FALSE, FALSE );
 	}
@@ -63,6 +62,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		
 		if ( isset( $_GET['event_id'] )) {
 			$this->_columns = array(
+				'Reg_Status' => '',
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 	           	'REG_ID' => __( 'ID', 'event_espresso' ),
 	           	'REG_count' => __('Att #', 'event_espresso'),
@@ -70,7 +70,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'ATT_email' =>  __('Email', 'event_espresso'),		
 				'REG_date' => __( 'Reg Date', 'event_espresso' ),
 				'REG_code' => __( 'Reg Code', 'event_espresso' ),
-				'Reg_status' => __( 'Status', 'event_espresso' ),
+				//'Reg_status' => __( 'Status', 'event_espresso' ),
 	  			'PRC_amount' => __( 'Ticket Price', 'event_espresso' ),
 	  			'REG_final_price' => __( 'Final Price', 'event_espresso' ),
 	  			'TXN_total' => __( 'Total Txn', 'event_espresso' ),
@@ -85,6 +85,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			);
 		} else {
 			$this->_columns = array(
+				'Reg_Status' => '',
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 	           	'REG_ID' => __( 'ID', 'event_espresso' ),  	
 				'REG_count' => __('Att #', 'event_espresso'),
@@ -93,7 +94,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'event_name' => __( 'Event', 'event_espresso' ),
 	   	       	'DTT_EVT_start' => __( 'Event Date', 'event_espresso' ),
 				'REG_code' => __( 'Reg Code', 'event_espresso' ),
-				'Reg_status' => __( 'Status', 'event_espresso' ),
+				//'Reg_status' => __( 'Status', 'event_espresso' ),
 	  			'REG_final_price' => __( 'Price', 'event_espresso' ),
             	'actions' => __( 'Actions', 'event_espresso' )
 	        );			
@@ -105,7 +106,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
            	'ATT_fname' => array( 'ATT_fname' => FALSE ),
            	'event_name' => array( 'event_name' => FALSE ),
            	'DTT_EVT_start'	=> array( 'DTT_EVT_start' => FALSE ),
-           	'Reg_status' => array( 'Reg_status' => FALSE ),
+           	//'Reg_status' => array( 'Reg_status' => FALSE ),
 			'REG_ID' => array( 'REG_ID' => FALSE ),
         	);
 
@@ -197,7 +198,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-
 	/**
 	 * 		column_default
 	*/
@@ -207,7 +207,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-
+    function column_Reg_Status( EE_Registration $item ) {
+    	return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
+    }
 
 
 
@@ -215,7 +217,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_cb
 	*/
     function column_cb(EE_Registration $item){
-        return sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
+  		/** checkbox/lock **/
+    	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+        return $payment_count > 0 ? '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
 
@@ -294,12 +298,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$link = '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>';
 		$link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary attendee"/>' : '';
 
+		$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+
 		//trash/restore/delete actions
 		$actions = array();
-		if ( $this->_view != 'trash' ) {
+		if ( $this->_view != 'trash' && $payment_count === 0 ) {
 			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Trash Registration', 'event_espresso' ) . '">' . __( 'Trash', 'event_espresso' ) . '</a>';
-		} else {
+		} elseif ( $this->_view == 'trash' ) {
 			// restore registration link
 			$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 			$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
@@ -345,9 +351,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_Reg_status
 	*/
-   	function column_Reg_status(EE_Registration $item){
+   	/*function column_Reg_status(EE_Registration $item){
 		return '<span class="status-'. $item->status_ID() .'">' . str_replace ( '_', ' ', $this->_status[ $item->status_ID() ] ) . '</span>';
-	}
+	}/**/
 
 
 
@@ -446,28 +452,21 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	        $view_lnk = '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/magnifier.png">
+				<div class="dashicons dashicons-search"></div>
 			</a>
 		</li>';
 
 	       $edit_lnk = '
 		<li>
 			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Edit Contact Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/user_edit.png">
+				<div class="dashicons dashicons-businessman"></div>
 			</a>
 		</li>';
 
 	         $resend_reg_lnk = '
 		<li>
 			<a href="'.$resend_reg_lnk_url.'" title="' . __( 'Resend Registration Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Resend Registration Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/email_go.png">
-			</a>
-		</li>';
-
-	         $dl_tckt_lnk = '
-		<li>
-			<a href="' . add_query_arg( array( 'ticket_launch'=>'true', '_REG_ID'=>$item->reg_url_link(),  'html'=>'true' ), site_url() ) . '" target="_blank" title="' . __( 'Download Ticket', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'Download Ticket', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/ticket-arrow-icon.png">
+				<div class="ee-icon ee-icon-email-send"></div>
 			</a>
 		</li>';
 
@@ -476,13 +475,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$view_txn_lnk = '
 		<li>
 			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="View Transaction" src="'. EE_GLOBAL_ASSETS_URL .'/images/money.png">
+				<div class="ee-icon ee-icon-cash"></div>
 			</a>
 		</li>';
 
 			$actions = '
 	<ul class="reg-overview-actions-ul">' . 
-	$view_lnk . $edit_lnk . $resend_reg_lnk . /*$dl_tckt_lnk .*/ $view_txn_lnk . '
+	$view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk . '
 	</ul>';
 			
 			return $actions;

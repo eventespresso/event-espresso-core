@@ -24,7 +24,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
  * ------------------------------------------------------------------------
  */
 
-class EE_Base_Class{
+abstract class EE_Base_Class{
 
 	/**
 	 * 	system registry
@@ -87,6 +87,13 @@ class EE_Base_Class{
 	 * @var array
 	 */
 	protected $_cached_properties = array();
+	
+	/**
+	 * Everything is related to extra meta... except extra meta, but it doesn't hurt
+	 * to have this in that case
+	 * $var EE_Extra_Meta[]
+	 */
+	protected $_Extra_Meta = NULL;
 
 
 	/**
@@ -148,19 +155,22 @@ class EE_Base_Class{
 					);
 				}
 			}
-			// verify we have all the model relations
-			foreach($model->relation_settings() as $relationName=>$relationSettings){
-				if( ! property_exists( $this, $this->_get_private_attribute_name( $relationName ))) {
-					throw new EE_Error(
-						sprintf(
-							__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add protected $%s to %s','event_espresso'),
-							$relationName,
-							get_class($model),
-							get_class($this),
-							$this->_get_private_attribute_name($relationName),
-							get_class($this)
-						)
-					);
+			// verify we have all the model relations, except on extra metas because they
+			//are meant to be related to everything
+			if(get_class($this) !== 'EE_Extra_Meta'){
+				foreach($model->relation_settings() as $relationName=>$relationSettings){
+					if( ! property_exists( $this, $this->_get_private_attribute_name( $relationName ))) {
+						throw new EE_Error(
+							sprintf(
+								__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add protected $%s to %s','event_espresso'),
+								$relationName,
+								get_class($model),
+								get_class($this),
+								$this->_get_private_attribute_name($relationName),
+								get_class($this)
+							)
+						);
+					}
 				}
 			}
 			
@@ -513,7 +523,16 @@ class EE_Base_Class{
 	public function set_from_db($field_name,$field_value_from_db){
 		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		$field_obj = $this->get_model()->field_settings_for($field_name);
-		$this->$privateAttributeName = $field_obj->prepare_for_set_from_db($field_value_from_db);
+		//you would think the DB hass no NULLs for non-nullabel fields right? wrong!
+		//eg, a CPT model object could have an entry in the posts table, but no
+		//entry in the meta table. Meaning that all its columsn in the meta table
+		//are null! yikes! so when we find one like that, use defaults for its meta columns
+		if($field_value_from_db === NULL && ! $field_obj->is_nullable()){
+			$field_value = $field_obj->get_default_value();
+		}else{
+			$field_value = $field_value_from_db;
+		}
+		$this->$privateAttributeName = $field_obj->prepare_for_set_from_db($field_value);
 		//echo '<h4>' . $privateAttributeName . ' : ' . $this->$privateAttributeName . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	}
 	
@@ -557,6 +576,15 @@ class EE_Base_Class{
 	 */
 	public function e($field_name, $extra_cache_ref = NULL){
 		echo $this->get_pretty($field_name, $extra_cache_ref);
+	}
+	/**
+	 * Exactly like e(), echoes out the field, but sets its schema to 'form_input', so that it
+	 * can be easily used as the value of form input.
+	 * @param string $field_name
+	 * @return void
+	 */
+	public function f($field_name){
+		$this->e($field_name,'form_input');
 	}
 	
 	/**
@@ -1340,6 +1368,7 @@ class EE_Base_Class{
 	 * @param string $meta_value
 	 * @param string $previous_value
 	 * @return int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+	 * NOTE: if the values havent changed, returns 0
 	 */
 	public function update_extra_meta($meta_key,$meta_value,$previous_value = NULL){
 		$query_params  = array(array(
@@ -1349,11 +1378,11 @@ class EE_Base_Class{
 		if($previous_value !== NULL){
 			$query_params[0]['EXM_value'] = $meta_value;
 		}
-		$records_updated = EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);
-		if( ! $records_updated){
+		$existing_rows_like_that = EEM_Extra_Meta::instance()->get_all($query_params);
+		if( ! $existing_rows_like_that){
 			return $this->add_extra_meta($meta_key, $meta_value);
 		}else{
-			return $records_updated;
+			return EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);;
 		}
 	}
 	
@@ -1413,14 +1442,22 @@ class EE_Base_Class{
 	public function get_extra_meta($meta_key,$single = FALSE,$default = NULL){
 		if($single){
 			$result = $this->get_first_related('Extra_Meta',array(array('EXM_key'=>$meta_key)));
+			if($result){
+				return $result->value();
+			}else{
+				return $default;
+			}
 		}else{
-			$result =  $this->get_many_related('Extra_Meta',array(array('EXM_key'=>$meta_key)));
-		}
-		
-		if($result){
-			return $result->value();
-		}else{
-			return $default;
+			$results =  $this->get_many_related('Extra_Meta',array(array('EXM_key'=>$meta_key)));
+			if($results){
+				$values = array();
+				foreach($results as $result){
+					$values[$result->ID()] = $result->value();
+				}
+				return $values;
+			}else{
+				return $default;
+			}
 		}
 		
 	}

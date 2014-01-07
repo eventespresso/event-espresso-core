@@ -74,9 +74,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway_name = 'Aim';
-		$this->_button_base = 'aim-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
-		$this->_btn_img = is_readable(dirname($this->_path) . '/lib/' . $this->_button_base) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 	}
 
@@ -385,7 +383,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			<p class="reg-page-form-field-wrap-pg">
 				<label><?php _e('Expiry Date', 'event_espresso'); ?> <em>*</em></label>
-				<select id="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>">
+				<select id="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>" class="display-inline required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-mnth-<?php echo $gw; ?>">
 		<?php
 		for ($x = 1; $x <= 12; $x++) {
 			$value = $x < 10 ? '0' . $x : $x;
@@ -395,7 +393,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		?>
 				</select>
 				&nbsp;/&nbsp;
-				<select id="reg-page-billing-card-exp-date-year-<?php echo $gw; ?>" class="required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year-<?php echo $gw; ?>">
+				<select id="reg-page-billing-card-exp-date-year-<?php echo $gw; ?>" class="display-inline required small-txt <?php echo $css_class; ?>" name="reg-page-billing-card-exp-date-year-<?php echo $gw; ?>">
 					<?php
 					$current_year = date('y');
 					$next_decade = $current_year + 10;

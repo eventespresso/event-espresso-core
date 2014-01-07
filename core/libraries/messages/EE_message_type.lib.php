@@ -90,6 +90,12 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+	/**
+	 * The purpose for this property is to simply allow message types to indicate if the message generated is intended for only single context.  Child message types should redefine this variable (if necessary) in the _set_data_Handler() method.
+	 * @var boolean
+	 */
+	protected $_single_message = FALSE;
+
 
 
 	/**
@@ -198,7 +204,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$this->_contexts[$context] = $cntxt;
 		}
 
-		$this->_init_data();
+		$exit = $this->_init_data();
+
+		//final check for if we exit or not cause child objects may have run conditionals that cleared out data so no addresees generated.
+		if ( $exit ) return FALSE;
+
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
@@ -329,7 +339,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$a = new ReflectionClass( $classname );
 		$this->_data = $a->newInstance( $this->_data );
 
-		$this->_process_data();
+		$this->_set_default_addressee_data();
+		return $this->_process_data();
 	}
 
 
@@ -339,7 +350,29 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @return void
 	 */
 	protected function _process_data() {
+		if ( empty( $this->_data->events ) )
+			return TRUE;  //EXIT!
 
+		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
+		foreach ( $this->_contexts as $context => $details ) {
+			$xpctd_method = '_' . $context . '_addressees';
+			if ( !method_exists( $this, $xpctd_method ) )
+				throw new EE_Error( sprintf( __('The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $xpctd_method) );
+			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
+		}
+		return FALSE; //DON'T EXIT
+	}
+
+
+
+
+	/**
+	 * sets the default_addressee_data property,
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_default_addressee_data() {
 		$this->_default_addressee_data = array(
 			'billing' => $this->_data->billing,
 			'taxes' => $this->_data->taxes,
@@ -356,16 +389,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		if ( is_array( $this->_data->primary_attendee_data ) ) {
 			$this->_default_addressee_data = array_merge( $this->_default_addressee_data, $this->_data->primary_attendee_data );
-		}
-
-
-		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
-		foreach ( $this->_contexts as $context => $details ) {
-			$xpctd_method = '_' . $context . '_addressees';
-
-			if ( !method_exists( $this, $xpctd_method ) )
-				throw new EE_Error( sprintf( __('The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $xpctd_method) );
-			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
 		}
 	}
 
@@ -449,7 +472,10 @@ abstract class EE_message_type extends EE_Messages_Base {
 	protected function _assemble_messages() {
 		foreach ( $this->_addressees as $context => $addressees ) {
 			foreach ( $addressees as $addressee ) {
-				$this->messages[] = $this->_setup_message_object($context, $addressee);
+				$message = $this->_setup_message_object($context, $addressee);
+				//only assign message if everything went okay
+				if ( $message )
+					$this->messages[] = $this->_setup_message_object($context, $addressee);
 			}
 		}
 	}
@@ -468,13 +494,15 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$mt_shortcodes = $this->get_valid_shortcodes();
 		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
+		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off).
+		if ( empty( $this->_templates['to'][$context] ) )
+			return false;
 
 		foreach ( $this->_templates as $field => $ctxt ) {
 			//let's setup the valid shortcodes for the incoming context.
 			$valid_shortcodes = $mt_shortcodes[$context];
 			//merge in valid shortcodes for the field.
-			$shortcodes = isset($m_shortcodes[$field]) ? array_merge($valid_shortcodes, $m_shortcodes[$field]) : $valid_shortcodes;
-			$shortcodes = array_unique( $shortcodes );
+			$shortcodes = isset($m_shortcodes[$field]) ? $m_shortcodes[$field] : $valid_shortcodes;
 			if ( isset( $this->_templates[$field][$context] ) ) {
 				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes);
 			}

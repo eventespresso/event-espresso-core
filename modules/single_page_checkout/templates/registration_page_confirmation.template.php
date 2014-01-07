@@ -1,7 +1,7 @@
 <!--***************  REGISTRATION CONFIRMATION STEP ***************-->			
 	
 	<h2 id="spco-registration_confirmation-hdr" class="spco-step-title-hdr">
-		<?php echo sprintf( __('Step %d -  Registration Confirmation', 'event_espresso'), $step_nmbr ); ?>
+		<?php echo sprintf( __('%s Registration Confirmation', 'event_espresso'), $step_nmbr ); ?>
 		<a id="spco-edit-registration_confirmation-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="registration_confirmation"><?php _e('edit', 'event_espresso'); ?></a>
 	</h2>
 	
@@ -13,7 +13,8 @@
 				<input type="hidden" id="spco-registration_confirmation-action" name="ajax_action" value="espresso_<?php echo $reg_step_ajax_action;?>" />		
 				<input type="hidden" id="spco-registration_confirmation-noheader" name="noheader" value="" />		
 				<input type="hidden" id="spco-reg_url_link" name="e_reg_url_link" value="<?php echo $reg_url_link;?>" />		
-				<input type="hidden" id="spco-registration_confirmation-next-step" name="next_step" value="<?php echo $next_step; ?>" />		
+				<input type="hidden" id="spco-registration_confirmation-next-step" name="next_step" value="<?php echo $next_step; ?>" />
+				<input type="hidden" id="spco-revisit" name="revisit" value="<?php echo $revisit;?>" />
 
 	<?php	if ( ! $payment_required ) { ?>
 				<input type="hidden" id="reg-page-no-payment-required-registration_confirmation" name="reg-page-no-payment-required" value="1" />

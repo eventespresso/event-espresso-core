@@ -90,9 +90,9 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage{
 			$guess_at_system_number = 0;
 		}
 		$cols_n_values = array(
-			'QSG_name'=>$old_question_group['group_name'],
+			'QSG_name'=>stripslashes($old_question_group['group_name']),
 			'QSG_identifier'=>$old_question_group['group_identifier'],
-			'QSG_desc'=>$old_question_group['group_description'],
+			'QSG_desc'=>stripslashes($old_question_group['group_description']),
 			'QSG_order'=>$old_question_group['group_order'],
 			'QSG_show_group_name'=>$old_question_group['show_group_name'],
 			'QSG_show_group_desc'=>$old_question_group['show_group_description'],

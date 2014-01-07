@@ -160,15 +160,14 @@ class EE_Payment extends EE_Base_Class{
 	protected $_Status = NULL;
 
 	
+
+
+
 	/**
 	 * 
-	 * $var EE_Extra_Meta[]
+	 * @param type $props_n_values
+	 * @return EE_Payment
 	 */
-	protected $_Extra_Meta = NULL;
-
-
-
-
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );

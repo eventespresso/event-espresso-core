@@ -555,6 +555,11 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	private function _handle_metabox_array( $boxes, $add = TRUE ) {
+		if ( $this->adminpage_obj instanceof EE_Admin_Page_CPT ) {
+			$this->adminpage_obj->verify_cpt_object();
+		}
+
+
 		foreach ( $boxes as $box ) {
 			if ( !isset($box['page_route']) )
 				continue; //we dont' have a valid array

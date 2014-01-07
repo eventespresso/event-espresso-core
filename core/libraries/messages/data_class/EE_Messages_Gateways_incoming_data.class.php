@@ -81,7 +81,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->txn = $this->_data['txn_obj'];
 		$this->payment = $this->_data['pmt_obj'];
 		$this->incoming_data = $this->_data;
-		$this->taxes = $this->txn->tax();
+		$this->taxes = $this->txn->tax_total();
 
 		$this->grand_total_price_object = ''; //not available and not needed?
 

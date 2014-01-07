@@ -49,20 +49,6 @@
 					<label for="zip-postal"><?php _e('Zip/Postal Code:', 'event_espresso'); ?></label><br/>
 					<input size="20" id="zip-postal" type="text"  value="<?php echo $_venue->zip(); ?>" name="zip" />
 				</p>
-				
-				<p>
-					<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
-					<?php echo $_venue->google_map_link(); ?> 
-				</p>
-
-				<?php if( isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) && EE_Registry::instance()->CFG->map_settings->use_google_maps ) { ?>
-				<p>
-					<label for="enable_for_gmap">
-						<?php _e('Display Google Map for this venue? ', 'event_espresso') ?>
-					</label>
-					<?php echo $enable_for_gmap; ?> 
-				</p>
-				<?php } ?>
 			</fieldset>
 		</td>
 			
@@ -88,15 +74,3 @@
 		
 	</tr>
 </table>
-<?php if( EE_Registry::instance()->CFG->map_settings || ! isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) || ! EE_Registry::instance()->CFG->map_settings->use_google_maps ) { ?>
-<p class="ee-notice">
-	<?php
-		echo sprintf( 
-			__('To display a Google Map for event venues, go to %sEvent Espresso General Settings%sGoogle Maps%s, and set "Activate Google Maps" to "Yes"', 'event_espresso' ),
-			'<b>',
-			'</b> &raquo; <b>',
-			'</b>'
-		); 
-	?>
-</p>						
-<?php } ?>

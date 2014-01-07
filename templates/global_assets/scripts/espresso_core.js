@@ -13,14 +13,32 @@
 jQuery(document).ready(function($) {
 
 	// add jQuery function to center elements on screen
-	$.fn.center = function () {
-		this.css({ 'position' : 'absolute' });
-		var element_top = Math.max( 0, ((( $(window).height() / 2 ) - this.outerHeight() ) / 2 )  + $(window).scrollTop() );
-		var element_left = Math.max( 0, (( $(window).width() - this.outerWidth() ) / 2 ) + $(window).scrollLeft() );
-		this.css({ 'top' : element_top + 'px' });
-		this.css({ 'left' : element_left + 'px' });
+	$.fn.center = function( position ) {
+		position = position !== undefined && position !== '' ? position : 'fixed';
+		var element_top = (( $(window).height() / 2 ) - this.outerHeight() ) / 2;
+		element_top = position == 'fixed' ? element_top : element_top + $(window).scrollTop();
+		element_top = Math.max( 0, element_top );
+		var element_left = ( $(window).width() - this.outerWidth() ) / 2;
+		element_left = position == 'fixed' ? element_left : element_left + $(window).scrollLeft();
+		element_left = Math.max( 0, element_left );
+		this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
+		this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
 		return this;
 	};
+
+	/**
+	*	add jQuery function to return the correct value for a form input regardless of it's type
+	*/	
+	$.fn.inputValue = function () { 
+		var inputType = $(this).prop('type');
+		if ( inputType ==  'checkbox' || inputType == 'radio' ) {
+			return $(this).prop('checked');
+		} else {
+			return $(this).val();
+		}
+	}
+	
+	
 
 	$('#espresso-notices').center();
 	$('.espresso-notices').slideDown();
@@ -90,10 +108,15 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 	});
+
+
+
 	
 	
 	
 });
+
+
 
 function dump(arr,level) {
 	var dumped_text = "";

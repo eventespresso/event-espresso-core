@@ -27,34 +27,36 @@ EEH_Maps::espresso_google_map_js();
 				<?php while ( have_posts() ) : the_post();?>
 				<?php 
 				global $post;
-				$wrap_class = '';
-				if (has_excerpt( $post->ID )){ $wrap_class .= ' has-excerpt';}
+				$wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 				?>
 				<?php do_action( 'AHEE_venue_details_before_post', $post ); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class('espresso-venue-details'); ?>>
-					<?php do_action( 'AHEE_venue_details_before_featured_img', $post ); ?>
-					<?php				
-					if ( has_post_thumbnail( $post->ID )) :
-						if ( $img_ID = get_post_thumbnail_id( $post->ID )) :
-							if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'large' )) :
-								$caption = esc_attr( get_post( get_post( $img_ID ))->post_excerpt );
-								$wrap_class .= ' has-img';
-								?>
-								<div id="ee-venue-img-dv-<?php echo $post->ID; ?>" class="ee-venue-img-dv"> <img class="ee-venue-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/> </div>
-								<?php 
+					<div id="espresso-venue-header-dv" class="">
+						<?php do_action( 'AHEE_venue_details_before_featured_img', $post ); ?>
+						<?php				
+						if ( has_post_thumbnail( $post->ID )) :
+							if ( $img_ID = get_post_thumbnail_id( $post->ID )) :
+								if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'large' )) :
+									$caption = esc_attr( get_post( get_post( $img_ID ))->post_excerpt );
+									$wrap_class .= ' has-img';
+									?>
+									<div id="ee-venue-img-dv-<?php echo $post->ID; ?>" class="ee-venue-img-dv"> <img class="ee-venue-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/> </div>
+									<?php 
+								endif;
 							endif;
 						endif;
-					endif;
-					?>
-					<?php do_action( 'AHEE_venue_details_after_featured_img', $post );?>
-					<header class="venue-header<?php echo $wrap_class;?>">
-						<?php do_action( 'AHEE_venue_details_header_top', $post ); ?>
-						<h1 id="venue-details-h1">
-							<?php the_title(); ?>
-						</h1>
-						<?php if (has_excerpt( $post->ID )): the_excerpt(); endif;?>
-						<?php do_action( 'AHEE_venue_details_header_bottom', $post ); ?>
-					</header>
+						?>
+						<?php do_action( 'AHEE_venue_details_after_featured_img', $post );?>
+						<header class="venue-header<?php echo $wrap_class;?>">
+							<?php do_action( 'AHEE_venue_details_header_top', $post ); ?>
+							<h1 id="venue-details-h1">
+								<?php the_title(); ?>
+							</h1>
+							<?php if (has_excerpt( $post->ID )): the_excerpt(); endif;?>
+							<?php do_action( 'AHEE_venue_details_header_bottom', $post ); ?>
+						</header>
+					</div>
+					
 					<?php /*?><div class="venue-datetimes">
 						<?php do_action( 'AHEE_venue_details_before_venue_date', $post ); ?>
 						<h4><?php espresso_venue_date(); ?></h4>
@@ -65,7 +67,7 @@ EEH_Maps::espresso_google_map_js();
 						<!-- .venue-header -->
 						<div class="venue-content">
 							<h3 class="about-venue-h3 ee-venue-h3">
-								<?php _e( 'Details', 'event_espresso' ); ?>
+								<span class="ee-icon ee-icon-venue"></span><?php _e( 'Details', 'event_espresso' ); ?>
 							</h3>
 							<?php do_action( 'AHEE_venue_details_before_the_content', $post ); ?>
 							<?php the_content(); ?>
@@ -76,7 +78,7 @@ EEH_Maps::espresso_google_map_js();
 							</p>
 							
 							<h3 class="venue-address-h3 ee-venue-h3">
-								<?php _e( 'Location', 'event_espresso' ); ?>
+								<span class="dashicons dashicons-location-alt"></span><?php _e( 'Location', 'event_espresso' ); ?>
 							</h3>
 							<p><strong>
 								<?php _e( 'Phone:', 'event_espresso' ); ?>
@@ -104,10 +106,17 @@ EEH_Maps::espresso_google_map_js();
 					</div>
 				</article>
 				<!-- #post -->
-				<?php do_action( 'AHEE_venue_details_after_post', $post ); ?>
-				<?php endwhile; ?>
-				<?php //venue_espresso_content_nav( 'nav-below' ); ?>
-				<?php else : ?>
+				<?php 
+					do_action( 'AHEE_venue_details_after_post', $post ); 
+				
+					// If comments are open or we have at least one comment, load up the comment template.
+					if ( comments_open() || get_comments_number() ) {
+						comments_template();
+					}
+				
+				 	endwhile; 
+					
+				else : ?>
 				<article id="post-0" class="post no-results not-found">
 					<header class="venue-header">
 						<h1 class="venue-title">

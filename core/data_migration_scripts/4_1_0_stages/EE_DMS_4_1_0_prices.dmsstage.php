@@ -276,14 +276,18 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		if($old_price_row['surcharge_type'] == 'flat_rate'){
 			$final_ticket_price = floatval($old_price_row['event_cost']) + floatval($old_price_row['surcharge']);
 		}else{//percent surcharge
-			$final_ticket_price = floatval($old_price_row['event_cost']) * (1 + 100*floatval($old_price_row['surcharge']));
+			$final_ticket_price = floatval($old_price_row['event_cost']) * (1 + floatval($old_price_row['surcharge'])/100);
 		}
+		$start_date = $event_row['registration_start']." ".$this->get_migration_script()->convertTimeFromAMPM($event_row['registration_startT']);
+		$start_date_utc = $this->get_migration_script()->convert_date_string_to_utc($this,$old_price_row,$start_date,$event_row['timezone_string']);
+		$end_date = $event_row['registration_end']." ".$this->get_migration_script()->convertTimeFromAMPM($event_row['registration_endT']);
+		$end_date_utc = $this->get_migration_script()->convert_date_string_to_utc($this,$old_price_row,$end_date,$event_row['timezone_string']);
 		$cols_n_values = array(
 			'TTM_ID'=>null,
 			'TKT_name'=>$old_price_row['price_type'],
 			'TKT_description'=>'',
-			'TKT_start_date'=>$event_row['registration_start']." ".$this->get_migration_script()->convertTimeFromAMPM($event_row['registration_startT']),
-			'TKT_end_date'=>$event_row['registration_end']." ".$this->get_migration_script()->convertTimeFromAMPM($event_row['registration_endT']),
+			'TKT_start_date'=>$start_date_utc,
+			'TKT_end_date'=>$end_date_utc,
 			'TKT_min'=>0,
 			'TKT_max'=>-1,
 			'TKT_price'=>$final_ticket_price,

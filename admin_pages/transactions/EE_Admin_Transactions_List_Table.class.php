@@ -43,7 +43,6 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _setup_data() {
-		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page' );
 		$this->_data = $this->_admin_page->get_transactions( $this->_per_page );
 		$this->_all_data_count = $this->_admin_page->get_transactions( $this->_per_page, TRUE );
 	}
@@ -223,10 +222,11 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 * 		column_ATT_fname
 	*/ 
     function column_ATT_fname($item){
-    	$attendee = $item->primary_registration()->get_first_related('Attendee');
+    	$primary_reg = $item->primary_registration();
+    	$attendee = $primary_reg->get_first_related('Attendee');
     	if ( !empty( $attendee ) ) {
-			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'id'=>$attendee->ID() ), REG_ADMIN_URL );
-			return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Attendee Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>';
+			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$primary_reg->ID() ), REG_ADMIN_URL );
+			return '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>';
 		}
 		return __('Could be something wrong with the primary registration associated with this transaction in the db', 'event_espresso');
 	}
@@ -291,21 +291,21 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
         $view_lnk = '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
-				<img width="16" height="16" alt="' . __( 'View Transaction Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/magnifier.png">
+				<span class="dashicons dashicons-search"></span>
 			</a>
 		</li>';
 		
          $dl_invoice_lnk = '
 		<li>
-			<a title="Download Invoice" target="_blank" href="'.$dl_invoice_lnk_url.'">
-				<img width="16" height="16" alt="Download Invoice" src="'. EE_GLOBAL_ASSETS_URL .'/images/invoice-1-16x16.png">
+			<a title="Download Transaction Invoice" target="_blank" href="'.$dl_invoice_lnk_url.'">
+				<span class="ee-icon ee-icon-PDF-file-type"></span>
 			</a>
 		</li>';
       
 	       $send_pay_lnk = '
 		<li>
 			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
-				<img width="20" height="20" alt="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/payment-reminder-20x20.png">
+				<span class="ee-icon ee-icon-payment-reminder"></span>
 			</a>
 		</li>';
 		$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
@@ -313,7 +313,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	        $view_reg_lnk = '
 		<li>
 			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<img width="13" height="13" alt="' . __( 'View Registration Details', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/edit.png">
+				<span class="ee-icon ee-icon-user-edit"></span>
 			</a>
 		</li>';
 

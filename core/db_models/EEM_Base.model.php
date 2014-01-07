@@ -90,6 +90,7 @@ abstract class EEM_Base extends EE_Base{
 		'<'=>'<',
 		'>='=>'>=',
 		'>'=>'>',
+		'!='=>'!=',
 		'LIKE'=>'LIKE',
 		'like'=>'LIKE',
 		'NOT_LIKE'=>'NOT LIKE',
@@ -104,8 +105,12 @@ abstract class EEM_Base extends EE_Base{
 		'not in'=>'NOT IN',
 		'between' => 'BETWEEN',
 		'BETWEEN' => 'BETWEEN',
+		'IS_NOT_NULL' => 'IS NOT NULL',
+		'is_not_null' =>'IS NOT NULL',
 		'IS NOT NULL' => 'IS NOT NULL',
 		'is not null' => 'IS NOT NULL',
+		'IS_NULL' => 'IS NULL',
+		'is_null' => 'IS NULL',
 		'IS NULL' => 'IS NULL',
 		'is null' => 'IS NULL');
 
@@ -113,7 +118,7 @@ abstract class EEM_Base extends EE_Base{
 	 * operators that work like 'IN', accepting a comma-seperated list of values inside brackets. Eg '(1,2,3)'
 	 * @var array 
 	 */
-	protected $_in_style_operators = array('IN','NOT_IN', 'in', 'not_in', 'NOT IN', 'not in');
+	protected $_in_style_operators = array('IN', 'NOT IN');
 
 	/**
 	 * operators that work like 'BETWEEN'.  Typically used for datetime calcs, i.e. "BETWEEN '12-1-2011' AND '12-31-2012'"
@@ -125,7 +130,7 @@ abstract class EEM_Base extends EE_Base{
 	 * operators that are used for handling NUll and !NULL queries.  Typically used for when checking if a row exists on a join table. 
 	 * @var array
 	 */
-	protected $_null_style_operators = array( 'IS NOT NULL', 'IS NULL' );
+	protected $_null_style_operators = array( 'IS NOT NULL', 'IS NULL');
 
 	/**
 	 * Allowed values for $query_params['order'] for ordering in queries
@@ -196,7 +201,6 @@ abstract class EEM_Base extends EE_Base{
 		if(EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance){
 			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
 		}
-		// load registry
 		
 		foreach($this->_tables as $table_alias => $table_obj){
 			$table_obj->_construct_finalize_with_alias($table_alias);
@@ -217,6 +221,11 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 
+		//everything's related to Extra_Meta
+		if( get_class($this) != 'EEM_Extra_Meta'){
+			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation();
+		}
+		
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
@@ -1345,7 +1354,7 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$use_default_where_conditions = 'all';
 		}
-		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object,$use_default_where_conditions), $where_query_params );
+		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object,$use_default_where_conditions,$where_query_params), $where_query_params );
 		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params));
 
 
@@ -1466,9 +1475,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $use_default_where_conditions can be 'none','other_models_only', or 'all'.  'none' means NO default where conditions will be used AT ALL during this query.
 	 * 'other_models_only' means default where conditions from other models will be used, but not for this primary model. 'all', the default, means
 	 * default where conditions will apply as normal
+	 * @param array $where_query_params like EEM_Base::get_all's $query_parmas[0] 
 	 * @return array like $query_params[0], see EEM_Base::get_all for documentation
 	 */
-	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all'){
+	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all',$where_query_params = array()){
 		$allowed_used_default_where_conditions_values = array('all','other_models_only','none');
 		if( ! in_array($use_default_where_conditions,$allowed_used_default_where_conditions_values)){
 			throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s", "event_espresso"),$use_default_where_conditions,implode(", ",$allowed_used_default_where_conditions_values)));
@@ -1483,10 +1493,50 @@ abstract class EEM_Base extends EE_Base{
 			foreach($query_info_carrier->get_model_names_included() as $model_name =>$model_relation_path){
 				$related_model = $this->get_related_model_obj($model_name);
 				$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
-				$universal_query_params = array_merge($universal_query_params, $related_model_universal_where_params);
+				
+				$universal_query_params = array_merge($universal_query_params, 
+						$this->_override_defaults_or_make_null_friendly(
+								$related_model_universal_where_params,
+								$where_query_params,
+								$related_model,
+								$model_relation_path)
+						);
 			}
 		}
 		return $universal_query_params;
+	}
+	
+	/**
+	 * Checks if any of the defaults have been overriden. If there are any that AREN'T overridden,
+	 * then we also add a speecial where condition which allows for that model's primary key
+	 * to be null (which is important for JOINs. Eg, if you want to see all Events ordered by Venue's name,
+	 * then Event's with NO Venue won't appear unless you allow VNU_ID to be NULL)
+	 * @param type $default_where_conditions
+	 * @param type $provided_where_conditions
+	 * @param EEM_Base $model
+	 * @param string $model_relation_path like 'Transaction.Payment.'
+	 * @return array like EEM_Base::get_all's $query_params[0]
+	 */
+	private function _override_defaults_or_make_null_friendly($default_where_conditions,$provided_where_conditions,$model,$model_relation_path){
+		$null_friendly_where_conditions = array();
+		$none_overridden = true;
+		$or_condition_key_for_defaults = 'OR*'.get_class($model);
+
+		foreach($default_where_conditions as $key => $val){
+			if( isset($provided_where_conditions[$key])){
+				$none_overridden = false;
+			}else{
+				$null_friendly_where_conditions[$or_condition_key_for_defaults]['AND'][$key] = $val;
+			}
+		}
+		if( $none_overridden && $default_where_conditions){			
+			if($model->has_primary_key_field()){
+				$null_friendly_where_conditions[$or_condition_key_for_defaults][$model_relation_path.".".$model->primary_key_name()] = array('IS NULL');
+			}else{
+				//@todo NO PK, use other defaults
+			}
+		}
+		return $null_friendly_where_conditions;
 	}
 	
 	/**
@@ -1807,15 +1857,16 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string
 	 */
 	private function _construct_op_and_value($op_and_value, $field_obj){
-		if(is_array( $op_and_value ) && preg_match( '/NULL/', $op_and_value[0]) ){
-			//handle special operators that don't HAVE a value (such as "IS NOT NULL")
-			$operator = $op_and_value[0];
-			$value = NULL;
-			
-		}else if ( is_array($op_and_value) ) {
-			//assume first arg is an aray
-			$operator = $op_and_value[0];
-			$value = $op_and_value[1];
+		if(is_array( $op_and_value )){
+			$operator = isset($op_and_value[0]) ? $this->_prepare_operator_for_sql($op_and_value[0]) : null;
+			if( ! $operator){
+				$php_array_like_string = array();
+				foreach($op_and_value as $key => $value){
+					$php_array_like_string[] = "$key=>$value";
+				}
+				throw new EE_Error(sprintf(__("You setup a query parameter like you were going to specify an operator, but didn't. You provided '(%s)', but the operator should be at array key index 0 (eg array('>',32))", "event_espresso"), implode(",",$php_array_like_string)));
+			}
+			$value = isset($op_and_value[1]) ? $op_and_value[1] : null;
 		}else{
 			$operator = '=';
 			$value = $op_and_value;
@@ -1836,7 +1887,10 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error( sprintf( __("The '%s' operator must be used with an array of values and there must be exactly TWO values in that array.", 'event_espresso'), "BETWEEN" ) );
 			$cleaned_value = $this->_construct_between_value( $value, $field_obj );
 			return $operator.SP.$cleaned_value;
-		} else if( in_array( $operator, $this->_null_style_operators ) ) {
+		} elseif( in_array( $operator, $this->_null_style_operators ) ) {
+			if($value != NULL){
+				throw new EE_Error(sprintf(__("You attempted to give a value  (%s) while using a NULL-style operator (%s). That isnt valid", "event_espresso"),$value,$operator));
+			}
 			return $operator;
 		}elseif( ! in_array($operator, $this->_in_style_operators) && ! is_array($value)){
 			return $operator.SP.$this->_wpdb_prepare_using_field($value,$field_obj);
@@ -1844,6 +1898,8 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("Operator '%s' must be used with an array of values, eg 'Registration.REG_ID' => array('%s',array(1,2,3))",'event_espresso'),$operator, $operator));
 		}elseif( ! in_array($operator, $this->_in_style_operators) && is_array($value)){
 			throw new EE_Error(sprintf(__("Operator '%s' must be used with a single value, not an array. Eg 'Registration.REG_ID => array('%s',23))",'event_espresso'),$operator,$operator));
+		}else{
+			throw new EE_Error(sprintf(__("It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isnt right at all", "event_espresso"),  http_build_query($op_and_value)));
 		}
 	}
 
@@ -2497,7 +2553,9 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			throw new EE_Error(sprintf(__("get_all_copies should be providd with either a model object or an array of field-value-pairs, but was given %s", "event_espresso"),$model_object_or_attributes_array));
 		}
-		if(isset($attributes_array[$this->primary_key_name()])){
+		//even copies obviously won't have the same ID, so remove teh primary key
+		//from the WHERE conditions for finding copies (if there is a primary key, of coursE)
+		if($this->has_primary_key_field() && isset($attributes_array[$this->primary_key_name()])){
 			unset($attributes_array[$this->primary_key_name()]);
 		}
 		if(isset($query_params[0])){
@@ -2520,6 +2578,34 @@ abstract class EEM_Base extends EE_Base{
 			return array_shift($copies);
 		}else{
 			return null;
+		}
+	}
+	
+	/**
+	 * Updates the item with the specified id. Ignores default query parameters because
+	 * we have specified the ID, and its assumed we KNOW what we're doing
+	 * @param array $fields_n_values keys are field names, values are their new values
+	 * @param int|string $id the value of the primary key to update
+	 * @return int number of rows updated
+	 */
+	public function update_by_ID($fields_n_values,$id){
+		$query_params = array(0=>array($this->get_primary_key_field()->get_name() => $id),
+			'default_where_conditions'=>'other_models_only',);
+		return $this->update($fields_n_values,$query_params);
+	}
+	
+	/**
+	 * Changes an operator which was supplied to the models into one usable in SQL
+	 * @param string $operator_supplied
+	 * @return string an operator which can be used in SQL
+	 * @throws EE_Error
+	 */
+	private function _prepare_operator_for_sql($operator_supplied){
+		$sql_operator = isset($this->_valid_operators[$operator_supplied]) ? $this->_valid_operators[$operator_supplied] : null;
+		if($sql_operator){
+			return $sql_operator;
+		}else{
+			throw new EE_Error(sprintf(__("The operator '%s' is not in the list of valid operators: %s", "event_espresso"),$operator_supplied,implode(",",array_keys($this->_valid_operators))));
 		}
 	}
 }

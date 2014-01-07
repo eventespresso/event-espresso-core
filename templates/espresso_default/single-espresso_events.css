@@ -1,41 +1,44 @@
-header.event-header.has-img {
-	margin-top:-120px;
+#espresso-event-header-dv {
+	position: relative;
+	margin: 0 0 20px;
+}
+
+.espresso-event-details.has-excerpt #espresso-event-header-dv {
+	/*min-height: 80px;*/
+}
+
+
+.event-header {
+	width: 97%;
+}
+
+.event-header.has-img {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 1.5%;
 	text-shadow: 1px 1px 0 #FFFFFF;
 	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.9);
-	position: relative;
-	padding-left: 10px;
-	height: 100%;
-}
-header.event-header.has-excerpt {
-	margin-top:-160px;
-}
-header.event-header.has-img h1 {
-	margin: 10px 0;
-	padding-top: 20px;
-}
-header.event-header.has-img p {
-	margin:0;
-	padding-bottom: 20px;
-}
-.ee-event-h3 {
-	text-shadow: 1px 1px 0 #FFFFFF;
-	padding: 10px 0 10px 40px;
 	
 }
-.about-event-h3 {
-	background: url(images/details-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
+.event-header.has-img h1 {
+	margin: 0;
+}
+.event-header.has-img p,
+.event-header.has-excerpt p {
+	margin:10px 0 0;
 }
 
-.ticket-selector-h3 {
-	background: url(images/ticket-options-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
+.ee-event-h3 {
+	text-shadow: 1px 1px 0 #FFFFFF;
+	padding: 10px;
+	background: rgba(232, 232, 232, 0.9);	
 }
-.event-datetimes-h3 {
-	background: url(images/location-pin-icon.png) no-repeat scroll 10px rgba(232, 232, 232, 0.9);
-}
+
 
 #espresso-event-details-wrap-dv {
-	clear: both;
-	margin: 1em auto;  /*width:65%;*/
+	width:100%;
+	margin: 1em auto; 
 }
 #espresso-event-details-dv {
 	position: relative;
@@ -43,23 +46,16 @@ header.event-header.has-img p {
 	margin: 0 auto;
 }
 #event-details-h1 {
-	z-index:10; /*margin:.5em  0 1em;*/
+	z-index:10; 
 	font-size: 2em;
-	line-height:1.1em; /*font-weight: bold; color: #464549;
-		text-shadow: 1px 1px 0px #fff;*/
+	line-height:1.1em; 
 	word-break: keep-all;
 	white-space: wrap;
 	-webkit-hyphens:none;
 	-moz-hyphens:none;
 	hyphens:none;
 }
-.espresso_events {
-	position: relative;
-	width: 95%;
-	height: auto;
-	padding:0;
-	margin: 2%;
-}
+
 .ee-event-img-dv {
 	width:100%;
 	overflow: hidden;
@@ -75,7 +71,7 @@ header.event-header.has-img p {
 .espresso-event-wrapper-dv .event-content {
 	padding: 0 0 .25em;
 }
-.espresso-event-wrapper-dv .event-content p { /*margin: 0 0 1em; font-size: 1.1em; color: #666; line-height: 1.5em;*/
+.espresso-event-wrapper-dv .event-content p { 
 }
 .espresso-event-wrapper-dv .event-meta {
 	text-align: right;
@@ -84,7 +80,7 @@ header.event-header.has-img p {
 .espresso-event-details .event-datetimes {
 	padding: 0 0 1em;
 }
-.espresso-event-details .event-datetimes-h3 {/* margin-bottom: 0;*/
+.espresso-event-details .event-datetimes-h3 {
 }
 .espresso-event-details .ee-event-datetimes-ul {
 	list-style: none;

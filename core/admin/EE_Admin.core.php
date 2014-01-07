@@ -39,6 +39,10 @@ final class EE_Admin {
 
 
 
+	protected static $_ee_admin_page_registry = array();
+
+
+
 
 
 
@@ -77,8 +81,14 @@ final class EE_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
+
+		//at a glance dashboard widget
+		add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
+
+		// pew pew pew
+		EE_Registry::instance()->load_core( 'PUE' );
 		
-		
+		do_action('AHEE__EE_Admin__loaded');
 	}
 
 
@@ -164,12 +174,11 @@ final class EE_Admin {
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter( 'FHEE_admin_pages_array', array( $this, 'hide_admin_pages_except_maintenance_mode' ));			
+			add_filter( 'FHEE_admin_pages_array', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);			
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
 			add_action( 'wp_ajax_event_list_load_state', array( $this, 'event_list_load_state_callback' ));
-			add_action( 'action_hook_espresso_help', array( $this, 'help_tab_links' ), 10, 4 );
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
@@ -432,9 +441,7 @@ final class EE_Admin {
 	* @access public
 	* @return void
 	*/
-	public function admin_init() {
-		// pew pew pew
-		EE_Registry::instance()->load_core( 'PUE' );	
+	public function admin_init() {	
 	}
 
 
@@ -447,6 +454,9 @@ final class EE_Admin {
 	public function enqueue_admin_scripts() {
 		//this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.  Note the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script calls.
 		wp_enqueue_script('ee-inject-wp', EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE);
+
+		//register cookie script for future dependencies
+		wp_register_script('jquery-cookie', EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js', array('jquery'), '2.1', TRUE );
 
 		// jquery_validate loading is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
@@ -463,15 +473,12 @@ final class EE_Admin {
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
 			$joyride_js = EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js';
-			$joyride_cookie_js = EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js';
 			$joyride_modenizr_js = EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js';
 			$joyride_css = EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css';
 
 			//joyride style
 			wp_register_style('joyride-css', $joyride_css, array(), '2.1');
 
-			//joyride dependencies
-			wp_register_script('jquery-cookie', $joyride_cookie_js, array('jquery'), '2.1', TRUE );
 			wp_register_script('joyride-modenizr', $joyride_modenizr_js, array(), '2.1', TRUE );
 
 			//joyride
@@ -509,7 +516,7 @@ final class EE_Admin {
 					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
 					),
 				'number' => array(
-					'precision' => 0,
+					'precision' => EE_Registry::instance()->CFG->currency->dec_plc,
 					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
 					)
@@ -563,39 +570,25 @@ final class EE_Admin {
 
 
 
+	public function dashboard_glance_items( $elements ) {
+		$events = EEM_Event::instance()->count();
+		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), EVENTS_ADMIN_URL );
+		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
+		$items['events']['title'] = __('Click to view all Events', 'event_espresso');
+		$registrations = EEM_Registration::instance()->count();
+		$items['registrations']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), REG_ADMIN_URL );
+		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
+		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
-	/**
-	 * 	help_tab_links
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function help_tab_links( $help_tab = FALSE, $action = FALSE, $page = FALSE, $help_text = '' ) {
-		
-		if ( ! $page ) {
-			$page = isset( $_REQUEST['page'] ) && ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : $page;
-		}
-		
-		if ( ! $action ) {
-			$action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : $action;
-		}
+		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
-		if ( ! $help_tab ) {
-			$help_tab = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) . '_help_tab' : $help_tab;
+		foreach ( $items as $item ) {
+			$elements[] = sprintf( '<a href="%s" title="%s">%s</a>', $item['url'], $item['title'], $item['text'] );
 		}
-		
-	//	echo '<h4>$page : ' . $page . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-	//	echo '<h4>$action : ' . $action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-	//	echo '<h4>$help_tab : ' . $help_tab . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		
-		$help_tab_lnk = $page . '-' . $action . '-' . $help_tab;
-		$icon_style = empty( $help_text ) ? ' help_img' : '';
-		$help_text = ! empty( $help_text ) ? $help_text : 'click for help';
-	//	$help_icon_img = $custom_image ? $custom_image : '<img src="' . EE_PLUGIN_DIR_URL . 'images/subtle_help.png" width="16" height="16" alt="help" />';
-		
-		echo '
-		<a id="' . $help_tab_lnk . '" class="espresso-help-tab-lnk' . $icon_style . '" title="click to open the \'Help\' tab for more information about this feature" > ' . $help_text . ' </a>';
+		return $elements;
 	}
+
+
 
 
 
@@ -613,7 +606,7 @@ final class EE_Admin {
 		//Top Level
 		$admin_bar->add_menu(array(
 				'id' => 'espresso-toolbar',
-				'title' => '<span class="ab-icon-espresso"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label') . '</span>',
+				'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label') . '</span>',
 				'href' => EVENTS_ADMIN_URL,
 				'meta' => array(
 						'title' => __('Event Espresso'),
@@ -730,7 +723,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-today-approved',
 				'parent' => 'espresso-toolbar-registrations-today',
 				'title' => 'Approved',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>'RAP' ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_approved ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Approved'),
 						'target' => '',
@@ -743,9 +736,9 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-today-pending',
 				'parent' => 'espresso-toolbar-registrations-today',
 				'title' => 'Pending',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>'RPN' ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_pending_payment ), REG_ADMIN_URL ),
 				'meta' => array(
-						'title' => __('Pending'),
+						'title' => __('Pending Payment'),
 						'target' => '',
 						'class' => $menu_class
 				),
@@ -756,7 +749,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-today-not-approved',
 				'parent' => 'espresso-toolbar-registrations-today',
 				'title' => 'Not Approved',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>'RNA' ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_not_approved ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Not Approved'),
 						'target' => '',
@@ -769,7 +762,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-today-cancelled',
 				'parent' => 'espresso-toolbar-registrations-today',
 				'title' => 'Cancelled',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>'RCN' ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_cancelled ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Cancelled'),
 						'target' => '',
@@ -795,7 +788,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-month-approved',
 				'parent' => 'espresso-toolbar-registrations-month',
 				'title' => 'Approved',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>'RAP' ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>EEM_Registration::status_id_approved ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Approved'),
 						'target' => '',
@@ -808,7 +801,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-month-pending',
 				'parent' => 'espresso-toolbar-registrations-month',
 				'title' => 'Pending',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>'RPN' ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>EEM_Registration::status_id_pending_payment ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Pending'),
 						'target' => '',
@@ -821,7 +814,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-month-not-approved',
 				'parent' => 'espresso-toolbar-registrations-month',
 				'title' => 'Not Approved',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>'RNA' ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>EEM_Registration::status_id_not_approved ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Not Approved', 'event_espresso' ),
 						'target' => '',
@@ -834,7 +827,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-month-cancelled',
 				'parent' => 'espresso-toolbar-registrations-month',
 				'title' => 'Cancelled',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>'RCN' ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>EEM_Registration::status_id_cancelled ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Cancelled'),
 						'target' => '',
@@ -911,6 +904,54 @@ final class EE_Admin {
 			'<a href="http://eventespresso.com/" title="',
 			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
 		);
+	}
+
+
+	/**
+	 * The purpose of this method is to provide an easy way for addons to register their admin pages (using the EE Admin Page loader system).
+	 * @param  array  $config array of configuration settings for registering the admin page in the following format:
+	 * @return [type]         [description]
+	 */
+	
+	/**
+	 * The purpose of this method is to provide an easy way for addons to register their admin pages (using the EE Admin Page loader system).
+	 * @param  string $page_basename This string represents the basename of the Admin Page init.  The init file must use this basename in its name and class (i.e. {page_basename}_Admin_Page_Init.core.php).
+	 * @param  string $page_path     This is the path where the registered admin pages reside (used to setup autoloaders).
+	 * @param  array  $config        An array of extra configuration options (optional) that will be used in different circumstances (@todo this is currently in flux, hence why we have an array so people can use implemented options and at a later date we can add additional ones without messing up existing usage)
+	 * @return void
+	 */
+	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
+
+		if ( !did_action('AHEE__EE_Admin__loaded') || did_action('init' ) ) {
+			EE_Error::doing_it_wrong('EE_Admin::register_ee_admin_page', __('Should be only called on the "AHEE__EE_Admin__loaded" hook.','event_espresso'), '4.1' );
+		}
+
+		//add incoming stuff to our registry property
+		self::$_ee_admin_page_registry[$page_basename] = array(
+			'page_path' => $page_path,
+			'config' => $config
+			);
+
+		add_filter('FHEE_admin_pages_array', array( 'EE_Admin', 'set_page_basename' ), 10 );
+		add_filter('FHEE__EEH_Autoloader__load_admin_core', array( 'EE_Admin', 'set_page_path' ), 10 );
+
+	}
+
+
+	public static function set_page_basename( $installed_refs ) {
+		foreach ( self::$_ee_admin_page_registry as $basename => $args ) {
+			$installed_refs[] = $basename;
+		}
+		return $installed_refs;
+	}
+
+
+
+	public static function set_page_path( $paths ) {
+		foreach ( self::$_ee_admin_page_registry as $basename => $args ) {
+			$paths[] = $args['page_path'];
+		}
+		return $paths;
 	}
 
 

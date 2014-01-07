@@ -18,21 +18,21 @@
 			<tr valign="top">
 				<th><label for="PRC_name"><?php _e('Name', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('name_field_info');?></th>
 				<td>
-					<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php echo html_entity_decode( stripslashes( $price->name() ), ENT_QUOTES, 'UTF-8' ); ?>"/>
+					<input class="regular-text" type="text" id="PRC_name" name="PRC_name" value="<?php echo htmlentities($price->name()); ?>"/>
 				</td>
 			</tr>
 			<tr valign="top">
 				<th><label for="PRC_desc"><?php _e('Description', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('description_field_info');?></th>
 				<td>
-					<textarea class="regular-text" id="PRC_desc" name="PRC_desc" cols="70" rows="1" ><?php
-					 echo html_entity_decode( stripslashes( $price->desc() ), ENT_QUOTES, 'UTF-8' ); 
+					<textarea class="regular-text" id="PRC_desc" name="PRC_desc" rows="5" ><?php
+					 echo $price->desc(); 
 					?></textarea><br/>
 				</td>							
 			</tr>
 			<tr valign="top">
 				<th><label for="PRC_amount"><?php _e('Amount', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('amount_field_info');?></label></th>
 				<td>
-					<input class="small-text" type="text" id="PRC_amount" name="PRC_amount" value="<?php echo $price->amount(); ?>"/>
+					<input class="small-text ee-numeric" type="text" id="PRC_amount" name="PRC_amount" value="<?php echo $price->amount(); ?>"/>
 				</td>
 			</tr>
 		</tbody>

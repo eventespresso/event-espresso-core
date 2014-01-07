@@ -30,10 +30,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Templates_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Templates Help Tour', 'event_espresso');
+		$this->_label = __('Templates Tour', 'event_espresso');
 		$this->_slug = 'templates-settings-joyride';
 	}
-
 
 	protected function _set_tour_stops() {
 		$this->_stops = array(
@@ -118,44 +117,43 @@ class Templates_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Template Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This section deals with the general front end settings.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the templates page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 
 	protected function _default_view_stop() {
-		return '<p>' . __('Define how your basic event list will look', 'event_espresso') . '</p>';
+		return '<p>' . __('Define how your basic event list will appear.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _event_list_grid_size_stop() {
-		return '<p>' . __('If your list type is Grid View, these settings modify the size of the grids.', 'event_espresso') . '</p>';
+		return '<p>' . __('Is your list type set to grid view? You can use these settings to change the size of the grids.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _display_description_stop() {
-		return '<p>' . __('Change whether descriptions are shown on the event list, and how big they will be.', 'event_espresso') . '</p>';
+		return '<p>' . __('Should descriptions be shown on the event list?', 'event_espresso') . '</p>';
 	}
 
 	protected function _display_address_stop() {
-		return '<p>' . __('Change whether the venue address is displayed in the event list.', 'event_espresso') . '</p>';
+		return '<p>' . __('Should the venue address be displayed on the event list?', 'event_espresso') . '</p>';
 	}
 
-
 	protected function _display_venue_stop() {
-		return '<p>' . __('Choose whether the venue information is displayed in the event list.', 'event_espresso') . '</p>';
+		return '<p>' . __('Should the venue information be displayed on the event list?', 'event_espresso') . '</p>';
 	}
 
 	protected function _display_expired_events_stop() {
-		return '<p>' . __('Choose whether to show expired events or not on the default event list.', 'event_espresso') . '</p>';
+		return '<p>' . __('Should expired events be shown on the default event list?', 'event_espresso') . '</p>';
 	}
 	
 	protected function _event_listings_url_stop() {
-		return '<p>' . __('This is the website address to your event listings page.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the website address (URL) for your event listings page.', 'event_espresso') . '</p>';
 	}
 
 	protected function _display_address_in_reg_form_stop() {
-		return '<p>' . __('Choose whether to display the venues address in the single registration page or not.', 'event_espresso') . '</p>';
+		return '<p>' . __('Should the address for a venue be shown on the single registration page?', 'event_espresso') . '</p>';
 	}
 
 }

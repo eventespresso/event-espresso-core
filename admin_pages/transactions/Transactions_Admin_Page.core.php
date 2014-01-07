@@ -149,6 +149,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'EE_Admin_Transactions_List_Table',
+                'help_tabs' => array(
+					'transactions_overview_help_tab' => array(
+						'title' => __('Transactions Overview', 'event_espresso'),
+						'filename' => 'transactions_overview'
+					),
+				),
 				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
@@ -159,16 +165,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'url' => isset($this->_req_data['TXN_ID']) ? add_query_arg(array('TXN_ID' => $this->_req_data['TXN_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
+                'help_tabs' => array(
+					'view_transaction_help_tab' => array(
+						'title' => __('View Transaction', 'event_espresso'),
+						'filename' => 'transactions_view_transaction'
+					),
+				),
 				'help_tour' => array( 'Transaction_Details_Help_Tour' ),
 				'metaboxes' => array('_transaction_details_metaboxes'),
+				
 				'require_nonce' => FALSE
 				)
 		);
 	}
-
-
-
-
 
 
 	/**
@@ -246,8 +255,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('espresso_txn');	
 
 		;
-		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occured! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['error_occured'] = __(  'An error occured! Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['txn_status_array'] = self::$_txn_status;
 		EE_Registry::$i18n_js_strings['pay_status_array'] = self::$_pay_status;
 
@@ -307,7 +316,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
 
 	 	if ( empty( $this->_transaction ) ) {
-	    	$error_msg = __('An error occured and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
+	    	$error_msg = __('An error occurred and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 	    }
 	}
@@ -320,19 +329,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transaction_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'images/magnifier.png',
+				'class' => 'dashicons dashicons-search',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
 			'download_invoice' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'images/invoice-1-16x16.png',
-				'desc' => __('Download Invoice for Transaction.', 'event_espresso')
+				'class' => 'ee-icon ee-icon-PDF-file-type',
+				'desc' => __('Download Transaction Invoice as a PDF', 'event_espresso')
 				),
 			'send_payment_reminder' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'images/payment-reminder-20x20.png',
+				'class' => 'ee-icon ee-icon-payment-reminder',
 				'desc' => __('Send Payment Reminder', 'event_espresso')
 				),
 			'view_registration' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'images/edit.png',
+				'class' => 'ee-icon ee-icon-user-edit',
 				'desc' => __('View Registration Details', 'event_espresso')
 				)
 		);
@@ -384,7 +393,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
 
-		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __('Send Payment Reminder'), 'button secondary-button right ee-email-icon' ) : '';
+		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __('Send Payment Reminder'), 'button secondary-button right ee-icon ee-icon-payment-reminder' ) : '';
 		
 		$amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
 		$this->_template_args['amount_due'] =  ' <span id="txn-admin-total-amount-due">' . EEH_Template::format_currency( $amount_due, TRUE ) . '</span>';
@@ -472,7 +481,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		
 		// process taxes
-		if ( $taxes = $this->_transaction->get_many_related('Line_Item', array( array('LIN_type' => 'tax') ) ) ) {
+		if ( $taxes = $this->_transaction->get_many_related('Line_Item', array( array('LIN_type' => EEM_Line_Item::type_tax) ) ) ) {
 			$this->_template_args['taxes'] = $taxes;
 		} else {
 			$this->_template_args['taxes'] = FALSE;
@@ -644,9 +653,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['prime_reg_country'] = $primary_att->get('CNT_ISO');
 		$this->_template_args['prime_reg_zip'] = $primary_att->get('ATT_zip');
 		$this->_template_args['prime_reg_phone'] = $primary_att->get('ATT_phone');
-		$this->_template_args['prime_reg_social'] = $primary_att->get('ATT_social');
-		$this->_template_args['prime_reg_comments'] = $primary_att->get('ATT_comments');
-		$this->_template_args['prime_reg_notes'] = $primary_att->get('ATT_notes');
 		
 		$this->_template_args['registrant_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'registrant'  ), TXN_ADMIN_URL );  
 
@@ -746,7 +752,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				)
 			);
 			if( ! $payment->save() ){
-				$msg = __( 'An error occured. The payment has not been processed succesfully.', 'event_espresso' );
+				$msg = __( 'An error occurred. The payment has not been processed succesfully.', 'event_espresso' );
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			//update the transaction with this payment
@@ -754,7 +760,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$msg =__('The payment has been processed succesfully.', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}else{
-				$msg = __( 'An error occured. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
+				$msg = __( 'An error occurred. The payment was processed succesfully but the amount paid for the transaction was not updated.', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			
@@ -782,7 +788,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$this->_process_payment_notification( $payment );
 
 		} else {
-			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
+			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
 		}
 		
@@ -819,7 +825,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				}						
 			}
 		} else {
-			$msg = __( 'An error occured. The payment form data could not be loaded.', 'event_espresso' );
+			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 			$return_data = FALSE;	
 		}
@@ -922,8 +928,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Attendee.ATT_address' => array( 'LIKE', $sstr ),
 				'Registration.Attendee.ATT_address2' => array( 'LIKE', $sstr ),
 				'Registration.Attendee.ATT_city' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_comments' => array( 'LIKE', $sstr ),
-				'Registration.Attendee.ATT_notes' => array( 'LIKE', $sstr ),
 				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
 				'Registration.REG_code' => array( 'LIKE', $sstr ),
 				'Registration.REG_count' => array( 'LIKE' , $sstr ),
@@ -948,3 +952,5 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	
 
 }
+
+

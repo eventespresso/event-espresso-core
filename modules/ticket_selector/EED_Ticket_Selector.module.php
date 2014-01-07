@@ -130,21 +130,13 @@ class EED_Ticket_Selector extends  EED_Module {
 		$template_args['EVT_ID'] = self::$_event->ID();
 		$template_args['event'] = self::$_event;
 
-		if ( self::$_event->additional_limit() > 1 ) {
-			// make sure additional_limit is set and that it is at least 1
-			$additional_limit = self::$_event->additional_limit();
-			// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-			$max_tickets = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', 16 );
-			// let's make the max amount of attendees somebody can select a little more reasonable
-			$template_args['max_atndz'] = $additional_limit > $max_tickets ? $max_tickets : $additional_limit;	
-		} else {
-			$template_args['max_atndz'] = 1;
-		}
+		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
+		$template_args['max_atndz'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
 		
 		// get all tickets for this event ordered by the datetime
 		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
 			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-			'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC', 'TKT_start_date' => 'ASC' )
+			'order_by' => array( 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' ) 
 		));
 	
 		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';

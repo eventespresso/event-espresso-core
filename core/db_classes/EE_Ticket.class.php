@@ -511,6 +511,40 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	public function prices($query_params = array()){
 		return $this->get_many_related('Price', $query_params);
 	}
+
+
+
+	/**
+	 * This returns the base price object for the ticket.
+	 *
+	 * @access public
+	 * @param  bool    $array whether to return as an array indexed by price id or just the object.
+	 * @return EE_Price
+	 */
+	public function base_price( $array = FALSE ) {
+		$_where = array(
+			'Price_Type.PBT_ID' => EEM_Price_Type::base_type_base_price
+			);
+		return $array ? $this->get_many_related('Price', array($_where) ) : $this->get_first_related('Price', array($_where));
+	}
+
+
+
+	/**
+	 * This returns ONLY the price modifiers for the ticket (i.e. no taxes or base price)
+	 *
+	 * @access public
+	 * @return EE_Price[]
+	 */
+	public function price_modifiers() {
+		$query_params = array(
+			0 => array(
+				'Price_Type.PBT_ID' => array( 'NOT IN', array(EEM_Price_Type::base_type_base_price, EEM_Price_Type::base_type_tax ) )
+				)
+			);
+		return $this->prices($query_params);
+	}
+
 	
 	
 	/**
@@ -568,7 +602,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 	public function get_ticket_subtotal() {
-		return $this->get('TKT_taxable') ? EE_Taxes::get_subtotal_for_admin($this) : $this->ticket_price();
+		return EE_Taxes::get_subtotal_for_admin($this);
 	}
 
 
@@ -893,17 +927,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Updates the TKT_sold attribute (and saves) based on the number of registrations
-	 * for thsi ticket. Takes the current EE_Config setting for 'pending_counts_reg_limit' 
+	 * Updates the TKT_sold attribute (and saves) based on the number of APPROVED registrations for thsi ticket.
 	 * into account
 	 * @return int
 	 */
 	public function update_tickets_sold(){
-		$stati_to_include = array(EEM_Registration::status_id_approved);
-		if(EE_Config::instance()->registration->pending_counts_reg_limit){
-			$stati_to_include[] = EEM_Registration::status_id_pending;
-		}
-		$count_regs_for_this_ticket = $this->count_registrations(array(array('STS_ID'=>array('IN',$stati_to_include))));
+		$count_regs_for_this_ticket = $this->count_registrations( array( array( 'STS_ID' => EEM_Registration::status_id_approved, 'REG_deleted' => 0 )));
 		$this->set_sold($count_regs_for_this_ticket);
 		$this->save();
 		return $count_regs_for_this_ticket;

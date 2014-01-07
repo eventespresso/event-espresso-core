@@ -119,9 +119,9 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
 				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
-				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true, 1),
-				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending, EEM_Registration::reg_status_array()),
-				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
+				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true, 10),
+				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()),
+				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, EE_Registry::instance()->CFG->registration->use_attendee_pre_approval),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
 				'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', __('Event Phone Number', 'event_espresso'), false ),
 				'EVT_allow_overflow'=>new EE_Boolean_Field('EVT_allow_overflow', __("Allow Overflow on Event", "event_espresso"), false, false),
@@ -177,7 +177,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	*/	
 	public function get_all_event_question_groups( $EVT_ID = FALSE ) {
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
-			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
@@ -199,7 +199,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	*/	
 	public function get_event_question_groups( $EVT_ID = FALSE, $for_primary_attendee = TRUE ) {
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
-			EE_Error::add_error( __( 'An error occured. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
@@ -217,30 +217,25 @@ class EEM_Event  extends EEM_CPT_Base{
 	* 
 	* 		@access		public
 	* 		@param		int					$EVT_ID 			
-	* 		@param		int					$system_ID	
-	* 		@param		boolean|int		$for_primary_attendee	could be TRUE or FALSE or the attendee number
+	* 		@param		EE_Registration 	$registration
 	*		@return 		array		
 	*/	
-	public function get_question_groups_for_event( $EVT_ID = FALSE, $system_ID = FALSE, $for_primary_attendee = TRUE ) {
+	public function get_question_groups_for_event( $EVT_ID = FALSE, EE_Registration $registration ) {
 		
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
-			EE_Error::add_error( __( 'An error occured. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
 		$where_params = array(
 			'Event_Question_Group.EVT_ID' => $EVT_ID,
-			'Event_Question_Group.EQG_primary' => $for_primary_attendee,
+			'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE,
 			'QSG_deleted' => FALSE 
 		);		
 		
-		if ( $system_ID ) {
-			$where_params['QSG_system'] = array( '<' =>$system_ID, '!=' => 0 );
-		}
-		
 		return EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array(
 			$where_params,
-			'order_by' => 'QSG_order'
+			'order_by' => array('QSG_order' => 'ASC')
 		));
 		
 	}
@@ -261,7 +256,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function get_questions_in_groups( $QSG_IDs = '' ) {		
 
 		if ( empty( $QSG_IDs )) {
-			EE_Error::add_error( __( 'An error occured. No Question Group IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Question Group IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
@@ -292,7 +287,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function get_options_for_question( $QST_IDs ) {		
 
 		if ( empty( $QST_IDs )) {
-			EE_Error::add_error( __( 'An error occured. No Question IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'An error occurred. No Question IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
@@ -308,51 +303,39 @@ class EEM_Event  extends EEM_CPT_Base{
 
 
 
-
-
-
-
 	/**
 	*		_get_question_target_db_column
 	* 
 	* 		@access		public
-	* 		@param      EE_Answer[]             $ANS 		array of answers
-	* 		@param 		EE_Question_Group[] 	$QSGs 		array of question group objects
+	* 		@param      EE_Registration         $registration  (so existing answers for registration are included)
+	* 		@param      int                 	$EVT_ID 	so all question groups are included for event (not just answers from registration).
 	*		@return 	array
 	*/	
-	public function assemble_array_of_groups_questions_and_options( $ANS = array(), $QSGs = array() ) {		
+	public function assemble_array_of_groups_questions_and_options( EE_Registration $registration, $EVT_ID = NULL ) {		
 
-		if ( empty( $ANS ) && empty( $QSGs ) ) {
-			EE_Error::add_error( __( 'An error occured. Insufficient data was received to process question groups and questions.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
-		}
+		if ( empty( $EVT_ID ) ) {
+			throw EE_Error( __( 'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.', 'event_espresso' ) );
+		}/**/
 
-		$QSTs = $questions = array();
+		$QSTs = $questions = $QSGs = array();
 
-		//let's make sure we have questions ans question groups setup correctly.
-		if ( !empty( $ANS ) ) {
-			foreach ( $ANS as $answer ) {
-				$question = $answer->get_first_related('Question');
-				$qs_id = $question->ID();
-				if ( !isset( $QSTs[$qs_id] ) ) {
-					$QSTs[$qs_id]['obj'] = $question;
-					$QSTs[$qs_id]['ans_obj'] = $answer;
-				}
 
-				$question_group = $question->get_first_related('Question_Group');
-				$qsg_id = $question_group->ID();
-				if ( !isset( $QSGs[$qsg_id] ) ) {
-					$QSGs[$qsg_id] = $question_group;
-				}
-			} 
-		} else {
-			//starting from question groups not answers
-			foreach ( $QSGs as $question_group ) {
-				$questions = $question_group->get_many_related('Question');
-				foreach ( $questions as $question ) {
-					$QSTs[$question->ID()]['obj'] = $question;
-					$QSTs[$question->ID()]['ans_obj'] = EEM_Answer::instance()->create_default_object();
-				}
+		// get all question groups for event
+	
+		$qgs = $this->get_question_groups_for_event( $EVT_ID, $registration );
+		if ( !empty( $qgs ) ) {
+			foreach ( $qgs as $qg ) {
+			 	$qsts = $qg->get_many_related('Question', array('order_by' => array('QST_order' => 'ASC' ) ) );
+			 	foreach ( $qsts as $qst ) {
+			 		if ( $qst->is_system_question() )
+			 			continue;
+			 		$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $qst->ID(), 'REG_ID' => $registration->ID() ) ) );
+		 			$QSTs[$qst->ID()]['obj'] = $qst;
+		 			$QSTs[$qst->ID()]['ans_obj'] = $answer instanceof EE_Answer ? $answer : EEM_Answer::instance()->create_default_object();
+		 		
+			 	}
+			 	
+			 	$QSGs[$qg->ID()] = $qg;
 			}
 		}
 

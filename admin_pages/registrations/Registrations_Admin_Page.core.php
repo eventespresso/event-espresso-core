@@ -60,6 +60,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'add_new_attendee' => 'espresso_attendees',
 			'edit_attendee' => 'espresso_attendees',
 			'insert_attendee' => 'espresso_attendees',
+			'update_attendee' => 'espresso_attendees'
 			);
 		$this->_cpt_model_names = array(
 			'add_new_attendee' => 'EEM_Attendee',
@@ -180,13 +181,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 					
 				'pending_registration'	=> array(
-						'func' => 'activate_registration',
+						'func' => 'pending_registration',
 						'noheader' => TRUE
 					),
-					
-				'activate_registration'	=> array(
-						'func' => 'activate_registration',
-						'noheader' => TRUE
+
+				'no_approve_registration' => array(
+					'func' => 'not_approve_registration',
+					'noheader' => TRUE
 					),
 					
 				'cancel_registration'	=> array(
@@ -267,7 +268,30 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 5
 					),
+                'help_tabs' => array(
+					'registrations_overview_help_tab' => array(
+						'title' => __('Registrations Overview', 'event_espresso'),
+						'filename' => 'registrations_overview'
+					),
+					'registrations_overview_table_column_headings_help_tab' => array(
+						'title' => __('Registrations Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_overview_table_column_headings'
+					),
+					'registrations_overview_filters_help_tab' => array(
+						'title' => __('Registration Filters', 'event_espresso'),
+						'filename' => 'registrations_overview_filters'
+					),
+					'registrations_overview_views_help_tab' => array(
+						'title' => __('Registration Views', 'event_espresso'),
+						'filename' => 'registrations_overview_views'
+					),
+					'registrations_overview_other_help_tab' => array(
+						'title' => __('Registrations Other', 'event_espresso'),
+						'filename' => 'registrations_overview_other'
+					)	
+                ),
 				'help_tour' => array( 'Registration_Overview_Help_Tour' ),
+				'qtips' => array('Registration_List_Table_Tips'),
 				'list_table' => 'EE_Registrations_List_Table',
 				'require_nonce' => FALSE
 				),
@@ -279,7 +303,25 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
 					),
-				'help_tour' => array( 'Registration_View_Help_Tour' ),
+                'help_tabs' => array(
+					'registrations_details_help_tab' => array(
+						'title' => __('Registration Details', 'event_espresso'),
+						'filename' => 'registrations_details'
+						),
+					'registrations_details_table_help_tab' => array(
+						'title' => __('Registration Details Table', 'event_espresso'),
+						'filename' => 'registrations_details_table'
+						),
+					'registrations_details_form_answers_help_tab' => array(
+						'title' => __('Attendee Registration Form Answers', 'event_espresso'),
+						'filename' => 'registrations_details_form_answers'
+						),
+					'registrations_details_attendee_details_help_tab' => array(
+						'title' => __('Attendee Details', 'event_espresso'),
+						'filename' => 'registrations_details_attendee_details'
+						)
+					),
+				'help_tour' => array( 'Registration_Details_Help_Tour' ),
 				'metaboxes' => array( '_registration_details_metaboxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'require_nonce' => FALSE
 				),
@@ -324,6 +366,24 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 20
 					),
 				'list_table' => 'EE_Attendee_Contact_List_Table',
+                'help_tabs' => array(
+					'registrations_contact_list_help_tab' => array(
+						'title' => __('Registrations Contact List', 'event_espresso'),
+						'filename' => 'registrations_contact_list'
+					),
+					'registrations_contact-list_table_column_headings_help_tab' => array(
+						'title' => __('Contact List Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_contact_list_table_column_headings'
+					),
+					'registrations_contact_list_views_help_tab' => array(
+						'title' => __('Contact List Views', 'event_espresso'),
+						'filename' => 'registrations_contact_list_views'
+					),
+					'registrations_contact_list_other_help_tab' => array(
+						'title' => __('Contact List Other', 'event_espresso'),
+						'filename' => 'registrations_contact_list_other'
+					)	
+                ),
 				'help_tour' => array( 'Contact_List_Help_Tour' ),
 				'metaboxes' => array(),
 				'require_nonce' => FALSE
@@ -335,9 +395,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				
 			);
 	}
-
-
-
 
 
 	/**
@@ -362,15 +419,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	private function _get_registration_status_array() {
-
-		global $wpdb;
-		$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
-		$results = $wpdb->get_results( $SQL );
-
-		self::$_reg_status = array();
-		foreach ( $results as $status ) {
-			self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
-		}
+		self::$_reg_status = EEM_Registration::reg_status_array();
 	}
 
 
@@ -471,8 +520,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'bulk_action' => array(
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
-					'pending_registration' => __('Set Registrations to Pending', 'event_espresso'),
-					'activate_registration' => __('Activate Registrations', 'event_espresso'),
+					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
+					'no_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
@@ -484,8 +533,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'bulk_action' => array(
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
-					'pending_registration' => __('Set Registrations to Pending', 'event_espresso'),
-					'activate_registration' => __('Activate Registrations', 'event_espresso'),
+					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
+					'no_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
@@ -497,8 +546,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'bulk_action' => array(
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
-					'pending_registration' => __('Set Registrations to Pending', 'event_espresso'),
-					'activate_registration' => __('Activate Registrations', 'event_espresso'),
+					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
+					'not_approved_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
@@ -534,7 +583,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'count' => 0,
 				'bulk_action' => array(
 					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
-					'delete_attendees' => __('Delete Permanently', 'event_espresso')
 					)
 				)
 				
@@ -549,23 +597,43 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$items = array(
 			'star-icon' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
-				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				'desc' => __('This Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'view_details' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/magnifier.png',
+				'class' => 'dashicons dashicons-search',
 				'desc' => __('View Registration Details', 'event_espresso')
 				),
 			'edit_attendee' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/user_edit.png',
+				'class' => 'dashicons dashicons-businessman',
 				'desc' => __('Edit Contact Details', 'event_espresso')
 				),
 			'resend_registration' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/email_go.png',
-				'desc' => __('Resend registration details to attendee', 'event_espresso')
+				'class' => 'ee-icon ee-icon-email-send',
+				'desc' => __('Resend Registration Details to Attendee', 'event_espresso')
 				),
 			'view_transaction' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL .'/images/money.png',
-				'desc' => __('View Transaction details.', 'event_espresso')
+				'class' => 'ee-icon ee-icon-cash',
+				'desc' => __('View Transaction Details', 'event_espresso')
+				),
+			'not_approved' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
+				'desc' => __('Not Approved', 'event_espresso')
+				),
+			'pending_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
+				'desc' => __('Pending Payment', 'event_espresso')
+				),
+			'approved_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
+				'desc' => __('Approved', 'event_espresso')
+				),
+			'cancelled_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
+				'desc' => __('Cancelled', 'event_espresso')
+				),
+			'declined_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
+				'desc' => __('Declined', 'event_espresso')
 				)
 			);
 		return $items;
@@ -584,6 +652,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		if ( $EVT_ID ) {
 			$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'add-new-h2' );
+			$event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
+			$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%s Viewing registered attendees for the event: %s%s', 'event_espressso'), '<h2>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array('action' => 'edit', 'post' => $event->ID() ), EVENTS_ADMIN_URL ) . '">' . $event->get('EVT_name') . '</a>', '</h2>' ) : '';
 		}		
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_registration_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -611,7 +681,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( $this->_registration = $REG->get_one_by_ID( $REG_ID ))
 			return TRUE;
 		else {
-			$error_msg = sprintf( __('An error occured and the details for Registration ID #%s could not be retreived.', 'event_espresso'), $REG_ID );
+			$error_msg = sprintf( __('An error occurred and the details for Registration ID #%s could not be retreived.', 'event_espresso'), $REG_ID );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			$this->_registration = NULL;
 			return FALSE;
@@ -673,7 +743,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		
 		$offset = ($current_page-1)*$per_page;
-		$limit = array( $offset, $per_page );
+		$limit = $count  ? NULL : array( $offset, $per_page );
 
 		$query_params = array();
 		if($EVT_ID){
@@ -736,8 +806,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Attendee.ATT_address' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_address2' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_city' => array( 'LIKE', $sstr ),
-				'Attendee.ATT_comments' => array( 'LIKE', $sstr ),
-				'Attendee.ATT_notes' => array( 'LIKE', $sstr ),
 				'REG_final_price' => array( 'LIKE', $sstr ),
 				'REG_code' => array( 'LIKE', $sstr ),
 				'REG_count' => array( 'LIKE' , $sstr ),
@@ -844,8 +912,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			
 			$this->_template_args['approve_decline_reg_status_buttons'] = $this->_set_approve_or_decline_reg_status_buttons();
 
-			$this->_template_args['resend_registration_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __('Resend Registration'), 'button secondary-button ee-email-icon' );
-
 			$this->_template_args['grand_total'] = $transaction->total();
 
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
@@ -895,76 +961,59 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	protected function _set_approve_or_decline_reg_status_buttons() {
-		
-		$approve_decline_reg_status_buttons = '';
-		
-//		$reg_status_array = EEM_Registration::reg_status_array();
-//		printr( $reg_status_array, '$reg_status_array  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		//is registration for free event OR for a completed transaction? This will determine whether the set to pending option is shown.
+		$is_complete = $this->_registration->transaction()->is_completed();
 
+		//let's get an array of all possible buttons that we can just reference
+		$status_buttons = $this->_get_reg_status_buttons();
+
+		$default_status = EE_Registry::instance()->CFG->registration->default_STS_ID;
+		
 		if ( $this->_set_registration_object() ) {
-			switch ( $this->_registration->status_ID() ) {
-				
-				case 'RAP' :
-					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$approve_decline_reg_status_buttons = '
-			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending', 'event_espresso' ) . '">
-				' . __( 'Set this Registration to Pending', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
-				' . __( 'Decline this Registration', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '" title="' . __( 'Set Registration Status to Cancelled', 'event_espresso' ) . '">
-				' . __( 'Cancel this Registration', 'event_espresso' ) . '
-			</a>';
-					break;
-				
-				case 'RPN' :
-					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$approve_decline_reg_status_buttons = '
-			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
-				' . __( 'Approve this Registration', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-decline-reg-status-lnk" class="button-secondary" href="' . $decline_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
-				' . __( 'Decline this Registration', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '" title="' . __( 'Set Registration Status to Cancelled', 'event_espresso' ) . '">
-				' . __( 'Cancel this Registration', 'event_espresso' ) . '
-			</a>';
-					break;
-				
-				case 'RNA' :
-					$aprove_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$approve_decline_reg_status_buttons = '
-			<a id="reg-admin-approve-reg-status-lnk" class="espresso-button-green button-primary" href="' . $aprove_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
-				' . __( 'Approve this Registration', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-pending-reg-status-lnk" class="button-secondary" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending', 'event_espresso' ) . '">
-				' . __( 'Set this Registration to Pending', 'event_espresso' ) . '
-			</a>
-			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $cancel_url . '" title="' . __( 'Set Registration Status to Cancelled', 'event_espresso' ) . '">
-				' . __( 'Cancel this Registration', 'event_espresso' ) . '
-			</a>';
-					break;
-				
-				case 'RCN' :
-					$activate_url = self::add_query_args_and_nonce( array( 'action'=>'activate_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-					$approve_decline_reg_status_buttons = '
-			<a id="reg-admin-cancel-reg-status-lnk" class="button-secondary" href="' . $activate_url . '" title="' . __( 'Set Registration Status to Pending', 'event_espresso' ) . '">
-				' . __( 'Reactivate this Registration', 'event_espresso' ) . '
-			</a>';
-					break;
-				
-			}		
+			$current_status = $this->_registration->status_ID();
+			unset( $status_buttons[$current_status] );
+			if ( $current_status != EEM_Registration::status_id_pending_payment && $is_complete ) {
+				unset( $status_buttons[EEM_Registration::status_id_pending_payment] );
+			}
+			return implode( "\n", $status_buttons );
 		}
 		
-		return $approve_decline_reg_status_buttons;
+		return '';
 		
+	}
+
+
+
+
+	/**
+	 * Returns an array of all the buttons for the various statuses and switch status actions
+	 * @return array 
+	 */
+	private function _get_reg_status_buttons() {
+		$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+		$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+		$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+		$approve_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL ); 
+		$not_approve_url = self::add_query_args_and_nonce( array( 'action'=>'no_approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
+
+		$buttons = array(
+			EEM_Registration::status_id_approved => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" href="' . $approve_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
+				' . __( 'Approved', 'event_espresso' ) . '
+				</a>',
+			EEM_Registration::status_id_pending_payment => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending Payment', 'event_espresso' ) . '">
+				' . __( 'Pending Payment', 'event_espresso' ) . '
+				</a>',
+			EEM_Registration::status_id_not_approved => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" href="' . $not_approve_url . '" title="' . __( 'Set Registration Status to Not Approved', 'event_espresso' ) . '">
+				' . __( 'Not Approved', 'event_espresso' ) . '
+				</a>',
+			EEM_Registration::status_id_declined => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_declined . '" href="' . $decline_url . '" title="' . __( 'Set Registration Status to Declined', 'event_espresso' ) . '">
+				' . __( 'Declined', 'event_espresso' ) . '
+				</a>',
+			EEM_Registration::status_id_cancelled => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_cancelled . '" href="' . $cancel_url . '" title="' . __( 'Set Registration Status to Cancelled', 'event_espresso' ) . '">
+				' . __( 'Cancelled', 'event_espresso' ) . '
+				</a>',
+			);
+		return $buttons;
 	}
 
 
@@ -981,7 +1030,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	private function _set_registration_status( $REG_ID = FALSE, $status = FALSE ) {
 		$success = FALSE;
 		// set default status if none is passed
-		$status = $status ? $status : EEM_Registration::status_id_pending;
+		$status = $status ? $status : EEM_Registration::status_id_pending_payment;
 		// have we been passed a REG_ID ?
 		if ( ! absint( $REG_ID )) {
 			// no ? then check for one in the req data
@@ -1004,11 +1053,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$REG_ID = FALSE;
 		}
 		if ( $REG_ID ) {
-			//echo '<h4>$REG_ID : ' . $REG_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			$registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID );
 			$success = $registration->set_status( $status );
 			$registration->save();
-			//printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		} 
 		return array( 'REG_ID' => $REG_ID, 'success' => $success );
 	}
@@ -1035,25 +1082,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	protected function decline_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_not_approved );
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_declined );
 		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
 		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
 		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to not approved', $route );
 	}
 
-
-
-	/**
-	 * 		activate_registration
-	*		@access protected
-	*		@return void
-	*/
-	protected function activate_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending );
-		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
-		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to pending', $route );
-	}
 
 
 
@@ -1073,6 +1107,31 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	/**
+	 * 		not_approve_registration
+	*		@access protected
+	*		@return void
+	*/
+	protected function not_approve_registration() {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_not_approved );
+		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
+		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
+		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to not approved', $route );
+	}
+
+
+
+	/**
+	 * 		decline_registration
+	*		@access protected
+	*		@return void
+	*/
+	protected function pending_registration() {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending_payment );
+		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
+		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
+		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to not Pending Payment', $route );
+	}
 
 
 
@@ -1095,13 +1154,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		// process taxes
 		if ( $transaction ) {
-			$taxes = $transaction->tax();
-			$this->_template_args['taxes'] = isset( $taxes['taxes'] ) ? $taxes['taxes'] : FALSE;
+			//get all "tax" line items for this transaction and we'll use them for the tax display.
+			$taxes = $transaction->get_many_related('Line_Item', array(array('LIN_type' => EEM_Line_Item::type_tax ) ) );
+			$this->_template_args['taxes'] = !empty($taxes) ? $taxes : array();
 		} else {
-			$this->_template_args['taxes'] = FALSE;
+			$this->_template_args['taxes'] = array();
 		}
 
-		$this->_template_args['view_transaction_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __('View Transaction'), 'button secondary-button right ee-view-icon' );
+		$this->_template_args['view_transaction_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __('View Transaction'), 'button secondary-button right ee-icon ee-icon-cash' );
+		$this->_template_args['resend_registration_button'] = EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __('Resend Registration'), 'button secondary-button ee-icon ee-icon-email-send right' );
 
 		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 
@@ -1178,20 +1239,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@access public
 	*		@return void
 	*/
-	public function _reg_questions_meta_box() {		
-		//we also need to get the answers to the questions from this registration.
-		$_where = array(
-			'REG_ID' => $this->_registration->ID()
-			);
-		$query_params = array( $_where, 'order_by' => 'Question.QST_order');
-		$ANS = EEM_Answer::instance()->get_all( $query_params );
+	public function _reg_questions_meta_box() {				
 
 		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
 		add_filter( 'FHEE_form_after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );	
 		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
 		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
 		
-		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $ANS );
+		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $this->_registration, $this->_registration->get('EVT_ID') );
 
 		//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -1319,9 +1374,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	private function _save_attendee_registration_form( $REG_ID = FALSE, $qstns = FALSE ) {
 		
 		if ( ! $REG_ID || ! $qstns ) {	
-			EE_Error::add_error( __('An error occured. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('An error occurred. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$success = TRUE;
+		$registration = NULL;
 		// grab values for fname, lname, and email from qstns
 		$QST_fname 	= isset( $qstns['fname'] ) && ! empty( $qstns['fname'] ) ? array_shift( array_values( $qstns['fname'] )) : FALSE;
 		$QST_lname 	= isset( $qstns['lname'] ) && ! empty( $qstns['lname'] ) ? array_shift( array_values( $qstns['lname'] )) : FALSE;
@@ -1398,7 +1454,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					// grab and set the new ID
 					if ( ! $new_id) {
 						$success = FALSE;
-						EE_Error::add_error( __('An error occured. An ID for the new attendee could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_error( __('An error occurred. An ID for the new attendee could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 					}					
 				}
 				if ( $attendee->ID() ) {
@@ -1410,19 +1466,54 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				}
 			}
 		}
+
 //		echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 //		var_dump( $attendee->ID() );
 		// allow others to get in on this awesome fun   :D
 		do_action( 'AHEE_save_attendee_registration_form', $registration, $qstns );
 		// loop thru questions... FINALLY!!!
+
 		foreach ( $qstns as $QST_ID => $qstn ) {
+			//if $qstn isn't an array then it doesnt' already have an answer, so let's create the answer
+			if ( !is_array($qstn) ) {
+				$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
+				continue;
+			}
+
+
 			foreach ( $qstn as $ANS_ID => $ANS_value ) {
 				//get answer 
-				$answer = EEM_Answer::instance()->get_one_by_ID($ANS_ID);
+				$query_params = array(
+					0 => array(
+						'ANS_ID' => $ANS_ID,
+						'REG_ID' => $REG_ID,
+						'QST_ID' => $QST_ID
+						)
+					);
+				$answer = EEM_Answer::instance()->get_one($query_params);
+				//this MAY be an array but NOT have an answer because its multi select.  If so then we need to create the answer
+				if ( ! $answer instanceof EE_Answer ) {
+					$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
+					continue 2;
+				}
+
 				$answer->set('ANS_value', $ANS_value);
 				$success = $answer->save();
 			}
 		}
+
+		return $success;
+	}
+
+
+	//TODO: try changing this to use the model directly... not indirectly through creating a default object...
+	private function _save_new_answer( $REG_ID, $QST_ID, $ans ) {
+		$set_values = array(
+			'QST_ID' => $QST_ID,
+			'REG_ID' => $REG_ID,
+			'ANS_value' => $ans
+			);
+		$success = EEM_Answer::instance()->insert($set_values);
 		return $success;
 	}
 
@@ -1511,9 +1602,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['country'] =  $attendee->country_obj() ? $attendee->country_obj()->name() : '';
 		$this->_template_args['zip'] =  $attendee->zip() ? '<br />' . $attendee->zip() : '';
 		$this->_template_args['phone'] = $attendee->phone();
-		$this->_template_args['social'] = $attendee->social();
-		$this->_template_args['comments'] = $attendee->comments();
-		$this->_template_args['notes'] = $attendee->notes();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
@@ -1600,9 +1688,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void         
 	 */
 	protected function _trash_or_restore_registrations( $trash = TRUE ) {
-		$REG = EEM_Registration::instance();
+		$REGM = EEM_Registration::instance();
 
 		$success = 1;
+
+		$tickets = array();
+		$dtts = array();
 
 		//Checkboxes
 		if (!empty($this->_req_data['_REG_ID']) && is_array($this->_req_data['_REG_ID'])) {
@@ -1610,7 +1701,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = count( $this->_req_data['_REG_ID'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes 
 			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
-				$updated = $trash ? $REG->delete_by_ID($REG_ID) : $REG->restore_by_ID($REG_ID);
+
+				$REG = $REGM->get_one_by_ID($REG_ID);
+				$ticket = $REG->get_first_related('Ticket');
+				$tickets[$ticket->ID()] = $ticket;
+				$dtt = $ticket->get_many_related('Datetime');
+				$dtts = array_merge($dtts, $dtt);
+
+				$updated = $trash ? $REG->delete() : $REG->restore();
 				if ( !$updated ) {
 					$success = 0;
 				}/**/
@@ -1619,12 +1717,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		} else {
 			// grab single id and delete
 			$REG_ID = absint($this->_req_data['_REG_ID']);
-			$updated = $trash ? $REG->delete_by_ID($REG_ID) : $REG->restore_by_ID($REG_ID);
+			$REG = $REGM->get_one_by_ID($REG_ID);
+			$ticket = $REG->get_first_related('Ticket');
+			$tickets[$ticket->ID()] = $ticket;
+			$dtts = $ticket->get_many_related('Datetime');
+			$updated = $trash ? $REG->delete() : $REG->restore();
 			if ( ! $updated ) {
 				$success = 0;
 			}
 			
 		}
+
+		//now let's update counts
+		EEM_Ticket::instance()->update_tickets_sold($tickets);
+		EEM_Datetime::instance()->update_sold($dtts);
 
 		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Registration', 'event_espresso' );
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
@@ -2108,7 +2214,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		$offset = ($current_page-1)*$per_page;
-		$limit = array( $offset, $per_page );
+		$limit = $count ? NULL : array( $offset, $per_page );
 
 		if ( $trash )
 			$all_attendees = $count ? $ATT_MDL->count_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all_deleted( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
@@ -2185,11 +2291,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ATT_address2' => isset($this->_req_data['ATT_address2']) ? $this->_req_data['ATT_address2'] : '',
 				'ATT_city' => isset( $this->_req_data['ATT_city'] ) ? $this->_req_data['ATT_city'] : '',
 				'STA_ID' => isset( $this->_req_data['STA_ID'] ) ? $this->_req_data['STA_ID'] : '',
-				'CNT_ISO' => isset( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['STA_ID'] : '',
+				'CNT_ISO' => isset( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['CNT_ISO'] : '',
 				'ATT_zip' => isset( $this->_req_data['ATT_zip'] ) ? $this->_req_data['ATT_zip'] : '',
 				'ATT_email' => isset( $this->_req_data['ATT_email'] ) ? $this->_req_data['ATT_email'] : '',
 				'ATT_phone' => isset( $this->_req_data['ATT_phone'] ) ? $this->_req_data['ATT_phone'] : '',
-				'ATT_social' => isset( $this->_req_data['ATT_social'] ) ? $this->_req_data['ATT_social'] : '',
 				'ATT_comments' => isset( $this->_req_data['ATT_comments'] ) ? $this->_req_data['ATT_comments'] : '',
 				'ATT_notes' => isset( $this->_req_data['ATT_notes'] ) ? $this->_req_data['ATT_notes'] : '',
 				);
@@ -2223,14 +2328,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function attendee_editor_metaboxes() {
 
+		$this->verify_cpt_object();
+
 		remove_meta_box('postexcerpt', __('Excerpt'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		remove_meta_box('commentstatusdiv', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		add_meta_box('postexcerpt', __('Short Biography', 'event_espresso'), 'post_excerpt_meta_box', $this->_cpt_routes[$this->_req_action], 'normal' );
 		add_meta_box('commentsdiv', __('Notes on the Contact', 'event_espresso'), 'post_comment_meta_box', $this->_cpt_routes[$this->_req_action], 'normal', 'core');
 		add_meta_box('attendee_contact_info', __('Contact Info', 'event_espresso'), array( $this, 'attendee_contact_info'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
-		add_meta_box('attendee_details_address', __('Address Details', 'event_espresso'), array($this, 'attendee_address_details'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
-		add_meta_box('attendee_details_social', __('Social Info', 'event_espresso'), array( $this, 'attendee_social_details'), $this->_cpt_routes[$this->_req_action], 'side', 'core' );
-		add_meta_box('attendee_notes_comments', __('Alternative Notes/Comments', 'event_espresso'), array( $this, 'attendee_old_notes_comments'), $this->_cpt_routes[$this->_req_action], 'side', 'core');
+		add_meta_box('attendee_details_address', __('Address Details', 'event_espresso'), array($this, 'attendee_address_details'), $this->_cpt_routes[$this->_req_action], 'normal', 'core' );
 		add_meta_box('attendee_registrations', __('Registrations for this Contact', 'event_espresso'), array( $this, 'attendee_registrations_meta_box'), $this->_cpt_routes[$this->_req_action], 'normal', 'high');
 	}
 
@@ -2247,20 +2352,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		EEH_Template::display_template($template, $this->_template_args);
 	}
 
-
-
-	public function attendee_social_details( $post ) {
-		$this->_template_args['attendee'] = $this->_cpt_model_obj;
-		$template = REG_TEMPLATE_PATH . 'attendee_social_contacts_metabox_content.template.php';
-		EEH_Template::display_template($template, $this->_template_args);
-	}
-
-
-	public function attendee_old_notes_comments( $post ) {
-		$this->_template_args['attendee'] = $this->_cpt_model_obj;
-		$template = REG_TEMPLATE_PATH . 'attendee_old_notes_comments_metabox_content.template.php';
-		EEH_Template::display_template($template, $this->_template_args);
-	}
 
 
 	/**
@@ -2343,65 +2434,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 	}
 
-
-
-
-
-
-
-	/**
-	 * 		insert_or_update_attendee
-	*		@param boolean 		$new_attendee - whether to insert or update
-	*		@access protected
-	*		@return void
-	*/
-	protected function _insert_or_update_attendee( $new_attendee = FALSE ) {
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$ATT_MDL = EEM_Attendee::instance();
-		
-		//printr( $this->_req_data ); die();
-		
-		// why be so pessimistic ???  : (
-		$success = 0;
-		//create attendee object
-		$attendee = EE_Attendee::new_instance(
-			array(
-				'ATT_fname' => $this->_req_data['ATT_fname'],
-				'ATT_lname' => $this->_req_data['ATT_lname'],
-				'ATT_address' => $this->_req_data['ATT_address'],
-				'ATT_address2' => $this->_req_data['ATT_address2'],
-				'ATT_city' => $this->_req_data['ATT_city'],
-				'STA_ID' => $this->_req_data['STA_ID'],
-				'CNT_ISO' => $this->_req_data['CNT_ISO'],
-				'ATT_zip' => $this->_req_data['ATT_zip'],
-				'ATT_email' => $this->_req_data['ATT_email'],
-				'ATT_phone' => $this->_req_data['ATT_phone'],
-				'ATT_social' => $this->_req_data['ATT_social'],
-				'ATT_comments' => $this->_req_data['ATT_comments'],
-				'ATT_notes' => $this->_req_data['ATT_notes'],
-				'ATT_deleted' => isset($this->_req_data['ATT_deleted']) ? $this->_req_data['ATT_deleted'] : 0,
-				'ATT_ID' => $this->_req_data['ATT_ID']
-				)
-			);
-				
-		// is this a new Attendee ?
-		
-		if ( $new_attendee ) {
-			$action_desc = __( 'created', 'event_espresso' );
-		} else {
-			$action_desc = __( 'updated', 'event_espresso' );
-		}
-		if ( $attendee->save() ) {
-			$success = 1;
-		}else{
-			$success = 0;
-		}
-		
-		$this->_redirect_after_action( $success, __( 'Contact', 'event_espresso' ), $action_desc, array( 'action' => 'edit_attendee', 'post' => $this->_req_data['ATT_ID'] ) );
-			
-	}
  
 
 

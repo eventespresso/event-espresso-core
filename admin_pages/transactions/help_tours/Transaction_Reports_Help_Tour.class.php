@@ -30,10 +30,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Transaction_Reports_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('TXN Reports Tour', 'event_espresso');
+		$this->_label = __('Transaction Reports Tour', 'event_espresso');
 		$this->_slug = 'transaction-reports-joyride';
 	}
-
 
 	protected function _set_tour_stops() {
 		$this->_stops = array(
@@ -61,16 +60,16 @@ class Transaction_Reports_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Transaction Reports Page!', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('An introduction...', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Transaction Reports', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the transaction reports page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _txn_per_day_report() {
-		return '<p>' . __('about the txn per day report', 'event_espresso') . '</p>';
+		return '<p>' . __('This graph shows revenue for each day.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_per_event_report() {
-		return '<p>' . __('about the txn per event report', 'event_espresso') . '</p>';
+		return '<p>' . __('This graph shows revenue for each event.', 'event_espresso') . '</p>';
 	}
 }

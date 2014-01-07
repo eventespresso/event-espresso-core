@@ -44,7 +44,6 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		
 		$this->addField('rm', '2');		 // Return method = POST
 		$this->addField('cmd', '_xclick');
-		$this->_btn_img = file_exists( dirname( $this->_path ) . '/lib/' . $this->_button_base ) ? EE_MODULES . 'gateways/' . $this->_gateway_name . '/lib/' . $this->_button_base : '';
 		parent::__construct($model);
 		if(!$this->_payment_settings['use_sandbox']){
 			$this->_gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
@@ -374,6 +373,12 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		//get any of the current registrations, 
 		$primary_registrant = $transaction->primary_registration();
+		if($paypal_settings['use_sandbox']){
+			$this->addField('item_name_'.$item_num,'DEBUG INFO (this item only added in sandbox mode)');
+			$this->addField('amount_'.$item_num,0);
+			$this->addField('on0_'.$item_num,'NOTIFY URL');
+			$this->addField('os0_'.$item_num,$this->_get_notify_url($primary_registrant));
+		}
 		$this->addField('business', $paypal_id);
 		$this->addField('return',  $this->_get_return_url($primary_registrant));
 		$this->addField('cancel_return', $this->_get_cancel_url());
@@ -386,7 +391,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)));
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 		
-		$this->redirect_after_reg_step_3();
+		$this->redirect_after_reg_step_3($transaction,$paypal_settings['use_sandbox']);
 	}
 
 

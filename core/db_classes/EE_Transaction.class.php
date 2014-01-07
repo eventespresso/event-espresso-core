@@ -109,16 +109,6 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-    /**
-    *	Tax Data
-	* 
-    *	information regarding taxes
-	* 
-	*	@access	protected
-    *	@var array	
-    */
-	protected $_TXN_tax_data = NULL;	
-
 
 
     /**
@@ -168,11 +158,6 @@ class EE_Transaction extends EE_Base_Class{
 	protected $_Line_Item = NULL;
 
 
-	/**
-	 * 
-	 * $var EE_Extra_Meta[]
-	 */
-	protected $_Extra_Meta = NULL;
 
 	/**
 	 * 
@@ -280,18 +265,6 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-
-	/**
-	*		Set tax data
-	* 
-	* 		@access		public		
-	*		@param		string		$tax_data 		information regarding taxes
-	*/	
-	public function set_tax_data( $tax_data = FALSE ) {
-		$this->set('TXN_tax_data');
-	}
-
-
 	/**
 	*		get Transaction Total
 	* 		@access		public
@@ -356,6 +329,18 @@ class EE_Transaction extends EE_Base_Class{
 
 
 	/**
+	*	get_cart_session
+	* 	@access		public
+	*/	
+	public function get_cart_session() {
+		$session_data = $this->get('TXN_session_data');
+		return isset( $session_data['cart'] ) && $session_data['cart'] instanceof EE_Cart ? $session_data['cart'] : NULL;
+	}
+
+
+
+
+	/**
 	*		get Transaction session data
 	* 		@access		public
 	*/	
@@ -389,13 +374,6 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-	/**
-	*		get Transaction tax data
-	* 		@access		public
-	*/	
-	public function tax() {
-		return $this->get('TXN_tax_data');
-	}
 
 
 
@@ -497,26 +475,18 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return boolean
 	 */
 	public function is_completed(){
-		if($this->status_ID()==EEM_Transaction::complete_status_code){
-			return true;
-		}else{
-			return false;
-		}
+		return $this->status_ID() == EEM_Transaction::complete_status_code ? TRUE : FALSE;
 	}
 	
 	
 	
 	/**
-	 * Returns whether this transaction is pending
+	 * Returns whether this transaction is open
 	 * Useful in templates and other logic for deciding if we should ask for another payment...
 	 * @return boolean
 	 */
-	public function is_pending(){
-		if($this->status_ID() == EEM_Transaction::open_status_code){
-			return true;
-		}else{
-			return false;
-		}
+	public function is_open(){
+		return $this->status_ID() == EEM_Transaction::open_status_code ? TRUE : FALSE;
 	}
 	
 	
@@ -524,28 +494,20 @@ class EE_Transaction extends EE_Base_Class{
 	
 	/**
 	 * Returns whether this transaction is incomplete
-	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * meaning that the transaction/registration process was somehow interupted and never completed
 	 * @return boolean
 	 */
 	public function is_incomplete(){
-		if($this->status_ID() == EEM_Transaction::incomplete_status_code){
-			return true;
-		}else{
-			return false;
-		}
+		return $this->status_ID() == EEM_Transaction::incomplete_status_code ? TRUE : FALSE;
 	}
 	
 	/**
 	 * Returns whether this transaction is overpaid
-	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 * Useful in templates and other logic for deciding if monies need to be refunded
 	 * @return boolean
 	 */
 	public function is_overpaid(){
-		if($this->status_ID() == EEM_Transaction::overpaid_status_code){
-			return true;
-		}else{
-			return false;
-		}
+		return $this->status_ID() == EEM_Transaction::overpaid_status_code ? TRUE : FALSE;
 	}
 
 
@@ -561,6 +523,9 @@ class EE_Transaction extends EE_Base_Class{
 		if ( empty( $REG ) ) return false;
 		return $REG->invoice_url($type);
 	}
+
+
+
 	/**
 	 * Gets the URL for viewing the 
 	 * @param string $type  'download','launch', or 'html' (default is 'launch')
@@ -681,7 +646,28 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return EE_Line_Item
 	 */
 	public function total_line_item(){
-		return $this->get_first_related('Line_Item', array(array('LIN_type'=>  EEM_Line_Item::type_total)));
+		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type'=> EEM_Line_Item::type_total )));
+	}
+	/**
+	 * Gets the tax subtotal line item (assumes there's only one)
+	 * @return EE_Line_Item
+	 */
+	public function tax_total_line_item(){
+		return $this->get_first_related('Line_Item',array(array('LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
+	}
+	
+	/**
+	 * Returns the total amoutn of tax on this transaction
+	 * (assumes there's only one tax subtotal line item)
+	 * @return float
+	 */
+	public function tax_total(){
+		$tax_line_item = $this->tax_total_line_item();
+		if($tax_line_item){
+			return $tax_line_item->total();
+		}else{
+			return 0;
+		}
 	}
 
 
@@ -691,21 +677,22 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return void
 	 */
 	public function finalize(){
-		
+		$new_txn = FALSE;
 		$registrations = $this->get_many_related('Registration');
 		foreach ( $registrations as $registration ) {
-			$registration->finalize();
+			$new_txn = $registration->finalize() === TRUE ? TRUE : $new_txn;
 		}
-		if (( ! is_admin() || EE_Registry::instance()->REQ->is_set( 'ee_front_ajax' ) && EE_Registry::instance()->REQ->get( 'ee_front_ajax' )) && ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
-			// remove the session from the transaction before saving it to the db to minimize recursive relationships
-			$this->set_txn_session_data( NULL );
-			// save this transaction and it's registrations to the session
-			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this ));
+
+		if ( $new_txn ) {
+			// remove the transaction from the session before saving it to the db
+			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => NULL ));
 			// save the session (with it's sessionless transaction) back to this transaction... we need to go deeper!
 			$this->set_txn_session_data( EE_Registry::instance()->SSN );
 			// save the transaction to the db
 			$this->save();
+			do_action('AHEE__EE_Transaction__finalize__new_transaction', $this);
 		}
+		do_action('AHEE__EE_Transaction__finalize__all_transaction', $this);
 	}
 
 
@@ -758,33 +745,32 @@ class EE_Transaction extends EE_Base_Class{
 	 * process EE_Transaction object prior to serialization
 	 * @return array
 	 */
-	public function __sleep() {
-		// the transaction stores a record of the session_data array, and the session_data array has a copy of the transaction
-		if ( isset( $this->_TXN_session_data['transaction'] ) && $this->_TXN_session_data['transaction'] instanceof EE_Transaction ) {
-			// but we don't want that copy of the transaction
-			$this->_TXN_session_data['transaction'] = NULL;
-		}		
-		
-		$properties_to_serialize = array(
-			'_TXN_ID',
-			'_TXN_timestamp',
-			'_TXN_total',
-			'_TXN_paid',
-			'_STS_ID',
-			'_TXN_session_data',
-			'_TXN_hash_salt',
-			'_TXN_tax_data',
-			'dt_frmt',
-			'_Registration',
-			'_Payment',
-			'_Status',
-			'_Promotion_Object',
-			'_Line_Item',
-			'_Extra_Meta'
-		);
-
-		return $properties_to_serialize;
-	}
+//	public function __sleep() {
+//		// the transaction stores a record of the session_data array, and the session_data array has a copy of the transaction
+//		if ( isset( $this->_TXN_session_data['transaction'] ) && $this->_TXN_session_data['transaction'] instanceof EE_Transaction ) {
+//			// but we don't want that copy of the transaction to have a copy of the session
+//			$this->_TXN_session_data['transaction']->set_txn_session_data( NULL );
+//		}		
+//		
+//		$properties_to_serialize = array(
+//			'_TXN_ID',
+//			'_TXN_timestamp',
+//			'_TXN_total',
+//			'_TXN_paid',
+//			'_STS_ID',
+//			'_TXN_session_data',
+//			'_TXN_hash_salt',
+//			'dt_frmt',
+//			'_Registration',
+//			'_Payment',
+//			'_Status',
+//			'_Promotion_Object',
+//			'_Line_Item',
+//			'_Extra_Meta'
+//		);
+//
+//		return $properties_to_serialize;
+//	}
 
 
 

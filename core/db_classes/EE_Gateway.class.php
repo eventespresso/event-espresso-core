@@ -33,6 +33,8 @@ abstract class EE_Gateway {
 	protected $_path = NULL;
 	// image name for gateway button
 	protected $_button_base = NULL;
+	// the default button url
+	protected $_btn_img = NULL;
 	// holder for a handle to the Gateways MODEL
 	protected $_EEM_Gateways = NULL;
 	// URL the admin gateway settings form will submit to
@@ -102,6 +104,9 @@ abstract class EE_Gateway {
 		require_once( EE_MODELS . 'EEM_Registration.model.php');
 		require_once( EE_CLASSES . 'EE_Registration.class.php');
 		$this->_REG = EEM_Registration::instance();
+		if( ! $this->_btn_img){
+			$this->_btn_img = EE_GATEWAYS_URL .$this->_gateway_name.DS.'lib'.DS.$this->_button_base;
+		}
 		$this->_set_default_properties();
 		$this->_handle_payment_settings();
 
@@ -481,7 +486,7 @@ abstract class EE_Gateway {
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway_name]) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway_name . '/lib/' . $this->_button_base;
 		} else {
-			$button_url = EE_GATEWAYS_URL . $this->_gateway_name . '/lib/' . $this->_button_base;
+			$button_url = $this->_btn_img;
 		}
 		$this->_payment_settings['button_url'] = $button_url;
 		// change windows style filepaths to Unix style filepaths
@@ -491,7 +496,7 @@ abstract class EE_Gateway {
 			$msg = sprintf( __( 'The %s button URL was reset.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 			EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
-			$msg = sprintf( __( 'An error occured. The %s button URL was not reset.', 'event_espresso' ), $this->_payment_settings['display_name'] );
+			$msg = sprintf( __( 'An error occurred. The %s button URL was not reset.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
@@ -552,7 +557,6 @@ abstract class EE_Gateway {
 		if(empty($payment)){
 			$transaction->set_status(EEM_Transaction::open_status_code);
 			$transaction->update_extra_meta('gateway', $this->_gateway_name);
-			$transaction->save();
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 		}else{
 			$payment = $this->_PAY->ensure_is_obj($payment);
@@ -561,6 +565,7 @@ abstract class EE_Gateway {
 			$transaction->update_extra_meta('gateway', $this->_gateway_name);
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		}
+		$transaction->save();
 		$transaction->finalize();
 		return true;
 	}

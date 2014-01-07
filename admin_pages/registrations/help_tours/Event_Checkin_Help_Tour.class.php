@@ -44,37 +44,29 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_start(),
 				),
 			20 => array(
-				'id' => 'event-espresso_page_espresso_registrations-search-input',
-				'content' => $this->_search_stop(),
+				'id' => 'REG_count',
+				'content' => $this->_reg_count_stop(),
 				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => -15
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -20
 					)
 				),
 			30 => array(
-				'id' => 'event_id',
-				'content' => $this->_event_selector_stop(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 20
-					)
-				),
-			35 => array(
-				'id' => 'DTT_ID',
-				'content' => $this->_dtt_selector_stop(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 20
-					)
-				),
-			40 => array(
 				'id' => 'ATT_name',
 				'content' => $this->_attendee_name_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -20
+					)
+				),
+			40 => array(
+				'id' => 'ATT_email',
+				'content' => $this->_attendee_email_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
 					'tipAdjustmentY' => -20
 					)
 				),
@@ -83,6 +75,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_reg_date_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
 					'tipAdjustmentY' => -20
 					)
 				),
@@ -91,6 +84,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_reg_code_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
 					'tipAdjustmentY' => -20
 					)
 				),
@@ -99,39 +93,98 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_reg_status_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
 					'tipAdjustmentY' => -20
 					)
 				),
 			80 => array(
-				'id' => 'TXN_paid',
-				'content' => $this->_txn_paid_stop(),
+				'id' => 'REG_final_price',
+				'content' => $this->_reg_final_price_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
 					'tipAdjustmentY' => -20
 					)
 				),
 			90 => array(
-				'id' => 'TXN_total',
-				'content' => $this->_txn_total_stop(),
+				'id' => 'TXN_paid',
+				'content' => $this->_txn_paid_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20
+					'tipLocation' => 'left',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -30
 					)
 				),
 			100 => array(
-				'id' => 'PRC_name',
-				'content' => $this->_ticket_name_stop(),
+				'id' => 'TXN_total',
+				'content' => $this->_txn_total_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -20,
+					'tipLocation' => 'left',
 					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -30
 					)
 				),
 			110 => array(
+				'id' => 'PRC_name',
+				'content' => $this->_prc_name_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -30
+					)
+				),
+			115 => array(
+				'id' => 'actions',
+				'content' => $this->_actions_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -30
+					)
+				),
+			120 => array(
 				'class' => 'ee-list-table-legend-container',
 				'content' => $this->_legend_stop(),
 				'options' => array(
-					'tipLocation' => 'right'
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -40
+					)
+				),
+			125 => array(
+				'class' => 'bulkactions',
+				'content' => $this->_bulkactions_stop(),
+				'options' => array(
+					'tipLocation' => 'bottom',
+					'tipAdjustmentY' => -30,
+					'tipAdjustmentX' => 15
+					)
+				),
+			130 => array(
+				'id' => 'event_id',
+				'content' => $this->_event_selector_stop(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 25
+					)
+				),
+			135 => array(
+				'id' => 'DTT_ID',
+				'content' => $this->_dtt_selector_stop(),
+				'options' => array(
+					'tipLocation' => 'bottom',
+					'tipAdjustmentY' => -30,
+					'tipAdjustmentX' => 15
+					)
+				),
+			140 => array(
+				'id' => 'event-espresso_page_espresso_registrations-search-input',
+				'content' => $this->_search_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => -15
 					)
 				)
 			);
@@ -139,63 +192,77 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Welcome to the Event Check-in page!', 'event_espresso') . '</h3>';
+		$content = '<h3>' . __('Event Check-in', 'event_espresso') . '</h3>';
 		if ( isset( $this->_req_data['event_id'] ) ) {
-			$content .= '<p>' . __('An introduction to the Event Check-in page. Since you are viewing the Check-in for a specific event, you are able to toggle the Check-in status for registrations for the displayed datetime.', 'event_espresso') . '</p>';
+			$content .= '<p>' . __('This tour of the event check-in page will go over different areas of the screen to help you understand what they are used for.<br /><br /> Note: You are currently viewing the check-in for a specific event so you can toggle the check-in status for attendees.', 'event_espresso') . '</p>';
 		} else {
-			$content .= '<p>' . __('An introduction to the Event Check-in page. This shows the check-in status of all registrations in the system. You cannot toggle the Check-in status via this view.  In order to toggle check-in status select an event from the dropdown.', 'event_espresso') . '</p>';
+			$content .= '<p>' . __('This tour of the event check-in page will go over different areas of the screen to help you understand what they are used for. <br /><br /> Note: You must select an event from the dropdown menu before you can toggle the check-in status for an attendee.', 'event_espresso') . '</p>';
 		}
 		return $content;
 	}
 
-
-	
-
-	protected function _search_stop() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: Event Name, Event description, Attendee first and last name, Attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size, ticket name, ticket description', 'event_espresso') . '</p>';
+	protected function _reg_count_stop() {
+		return '<p>' . __('View registration number for attendee.', 'event_espresso') . '</p>';
 	}
-
-
-	protected function _event_selector_stop() {
-		return '<p>' . __('Select an event from this dropdown and click the filter button to see the Check-in registration list for a specific event.  Then you will be able to toggle the check-in status for a registration.', 'event_espresso') . '</p>';
-	}
-
-	protected function _dtt_selector_stop() {
-		return '<p>' . __('This dropdown not only shows you the datetime the displayed registrations are attached to (and which you can toggle the check-in status for) but also allows you to switch to a different datetime to check-in and out registrations on.', 'event_espresso') . '</p>';
-	}
-
-
-	protected function _reg_date_stop() {
-		return '<p>' . __('about the reg date column', 'event_espresso') . '</p>';
-	}
-
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('about the attendee name column', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by name of attendee in ascending or descending order.', 'event_espresso') . '</p>';
+	}
+
+	protected function _attendee_email_stop() {
+		return '<p>' . __('View email address for attendee.', 'event_espresso') . '</p>';
+	}
+
+	protected function _reg_date_stop() {
+		return '<p>' . __('Sort by registration date in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_code_stop() {
-		return '<p>' . __('about the reg code column', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by registration code for attendee in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_status_stop() {
-		return '<p>' . __('about the reg status column', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by registration status for an attendee in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
-	protected function _txn_total_stop() {
-		return '<p>' . __('about the txn total column', 'event_espresso') . '</p>';
+	protected function _reg_final_price_stop() {
+		return '<p>' . __('View price for ticket.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_paid_stop() {
-		return '<p>' . __('about the txn paid column', 'event_espresso') . '</p>';
+		return '<p>' . __('View if attendee has paid for ticket.', 'event_espresso') . '</p>';
 	}
 
-	protected function _ticket_name_stop() {
-		return '<p>' . __('about the ticket name column', 'event_espresso') . '</p>';
+	protected function _txn_total_stop() {
+		return '<p>' . __('View total amount paid.', 'event_espresso') . '</p>';
 	}
 
+	protected function _prc_name_stop() {
+		return '<p>' . __('View type of ticket.', 'event_espresso') . '</p>';
+	}
+
+	protected function _actions_stop() {
+		return '<p>' . __('Perform an action to a registration. See legend in bottom left corner.', 'event_espresso') . '</p>';
+	}
 
 	protected function _legend_stop() {
-		return '<p>' . __('This is the legend that describes the different Check-in statuses.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the legend that describes the different check-in statuses.', 'event_espresso') . '</p>';
 	}
+	
+	protected function _bulkactions_stop() {
+		return '<p>' . __('Perform a bulk action to multiple registrations (only available when viewing check-in for a specific event).', 'event_espresso') . '</p>';
+	}
+
+	protected function _event_selector_stop() {
+		return '<p>' . __('Select an event from this dropdown and click the filter button to see the check-in registration list for a specific event. You will then be able to toggle the check-in status for a registration.', 'event_espresso') . '</p>';
+	}
+
+	protected function _dtt_selector_stop() {
+		return '<p>' . __('This dropdown shows you the date and time that a displayed registration is attached to. You can switch to a different event by selecting another date and clicking on the filter button. You can also switch out of this view by clicking on the reset filters button.', 'event_espresso') . '</p>';
+	}
+
+	protected function _search_stop() {
+		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, attendee first name, attendee last name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size, ticket name, and ticket description.', 'event_espresso') . '</p>';
+	}
+
 }
