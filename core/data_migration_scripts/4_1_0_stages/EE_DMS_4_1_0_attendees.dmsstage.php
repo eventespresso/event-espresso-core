@@ -246,16 +246,18 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		if($new_att_meta_id){
 			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_attendee_meta_table, $new_att_meta_id);
 		}
+		
 		$txn_id = $this->_insert_new_transaction($old_row);
 		if( ! $txn_id){
 			//if we couldnt make the transaction, also abandon all hope
 			return false;
 		}
-		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_transaction_table, $txn_id);
-		$pay_id = $this->_insert_new_payment($old_row,$txn_id);
+			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_transaction_table, $txn_id);$pay_id = $this->_insert_new_payment($old_row,$txn_id);
 		if($pay_id){
 			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_payment_table,$pay_id);
 		}
+		
+		
 		//even if there was no payment, we can go ahead with adding teh reg
 		$new_regs = $this->_insert_new_registrations($old_row,$new_att_id,$txn_id);
 		if($new_regs){
@@ -393,7 +395,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$new_id = $wpdb->insert_id;
 			return $new_id;
 		}else{//non-primary attendee, so find its primary attendee's transaction
-			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and txn_id=%s",$old_attendee['txn_id']));
+			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and registration_id=%s",$old_attendee['registration_id']));
 			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);
 			if( ! $txn_id){
 				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  http_build_query($old_attendee),$primary_attendee_old_id));
