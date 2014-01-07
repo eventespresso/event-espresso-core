@@ -272,8 +272,24 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'registrations_overview_help_tab' => array(
 						'title' => __('Registrations Overview', 'event_espresso'),
 						'filename' => 'registrations_overview'
-						)
 					),
+					'registrations_overview_table_column_headings_help_tab' => array(
+						'title' => __('Registrations Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_overview_table_column_headings'
+					),
+					'registrations_overview_filters_help_tab' => array(
+						'title' => __('Registration Filters', 'event_espresso'),
+						'filename' => 'registrations_overview_filters'
+					),
+					'registrations_overview_views_help_tab' => array(
+						'title' => __('Registration Views', 'event_espresso'),
+						'filename' => 'registrations_overview_views'
+					),
+					'registrations_overview_other_help_tab' => array(
+						'title' => __('Registrations Other', 'event_espresso'),
+						'filename' => 'registrations_overview_other'
+					)	
+                ),
 				'help_tour' => array( 'Registration_Overview_Help_Tour' ),
 				'qtips' => array('Registration_List_Table_Tips'),
 				'list_table' => 'EE_Registrations_List_Table',
@@ -291,6 +307,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'registrations_details_help_tab' => array(
 						'title' => __('Registration Details', 'event_espresso'),
 						'filename' => 'registrations_details'
+						),
+					'registrations_details_table_help_tab' => array(
+						'title' => __('Registration Details Table', 'event_espresso'),
+						'filename' => 'registrations_details_table'
+						),
+					'registrations_details_form_answers_help_tab' => array(
+						'title' => __('Attendee Registration Form Answers', 'event_espresso'),
+						'filename' => 'registrations_details_form_answers'
+						),
+					'registrations_details_attendee_details_help_tab' => array(
+						'title' => __('Attendee Details', 'event_espresso'),
+						'filename' => 'registrations_details_attendee_details'
 						)
 					),
 				'help_tour' => array( 'Registration_Details_Help_Tour' ),
@@ -342,8 +370,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'registrations_contact_list_help_tab' => array(
 						'title' => __('Registrations Contact List', 'event_espresso'),
 						'filename' => 'registrations_contact_list'
-						)
 					),
+					'registrations_contact-list_table_column_headings_help_tab' => array(
+						'title' => __('Contact List Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_contact_list_table_column_headings'
+					),
+					'registrations_contact_list_views_help_tab' => array(
+						'title' => __('Contact List Views', 'event_espresso'),
+						'filename' => 'registrations_contact_list_views'
+					),
+					'registrations_contact_list_other_help_tab' => array(
+						'title' => __('Contact List Other', 'event_espresso'),
+						'filename' => 'registrations_contact_list_other'
+					)	
+                ),
 				'help_tour' => array( 'Contact_List_Help_Tour' ),
 				'metaboxes' => array(),
 				'require_nonce' => FALSE
@@ -557,7 +597,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$items = array(
 			'star-icon' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
-				'desc' => __('This indicates that the Attendee is the Primary Attendee', 'event_espresso')
+				'desc' => __('This Attendee is the Primary Attendee', 'event_espresso')
 				),
 			'view_details' => array(
 				'class' => 'dashicons dashicons-search',
@@ -569,11 +609,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'resend_registration' => array(
 				'class' => 'ee-icon ee-icon-email-send',
-				'desc' => __('Resend registration details to attendee', 'event_espresso')
+				'desc' => __('Resend Registration Details to Attendee', 'event_espresso')
 				),
 			'view_transaction' => array(
 				'class' => 'ee-icon ee-icon-cash',
-				'desc' => __('View Transaction details.', 'event_espresso')
+				'desc' => __('View Transaction Details', 'event_espresso')
 				),
 			'not_approved' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
@@ -957,7 +997,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$not_approve_url = self::add_query_args_and_nonce( array( 'action'=>'no_approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 
 		$buttons = array(
-			EEM_Registration::status_id_approved => '<a class="button-primary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" href="' . $approve_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
+			EEM_Registration::status_id_approved => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" href="' . $approve_url . '" title="' . __( 'Set Registration Status to Approved', 'event_espresso' ) . '">
 				' . __( 'Approved', 'event_espresso' ) . '
 				</a>',
 			EEM_Registration::status_id_pending_payment => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" href="' . $pending_url . '" title="' . __( 'Set Registration Status to Pending Payment', 'event_espresso' ) . '">

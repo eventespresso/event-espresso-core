@@ -816,7 +816,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return EE_Datetime 
 	 */
 	public function get_related_primary_datetime() {
-		return event()->primary_datetime();
+		return $this->event()->primary_datetime();
 	}
 	
 	/**
