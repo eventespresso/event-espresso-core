@@ -550,22 +550,25 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		//only add a payment for primary attendees
 		$old_pay_stati_indicating_no_payment = array('Pending','Incomplete','Not Completed');
 		//if this is for a primary 3.1 attendee which WASN'T free and has a completed, cancelled, or declined payment...
-		if(intval($old_attendee['is_primary']) && floatval($old_attendee['total_cost']) && !in_array($old_attendee['payment_status'], $old_pay_stati_indicating_no_payment)){
+		if(intval($old_attendee['is_primary']) && floatval($old_attendee['total_cost']) && ! in_array($old_attendee['payment_status'], $old_pay_stati_indicating_no_payment)){
 			$pay_status_mapping = array(
 				'Completed'=>'PAP',
 				'Payment Declined'=>'PDC',
 				'Cancelled'=>'PCN',
 				'Declined'=>'PDC'
 			);
+			$by_admin = $old_attendee['payment'] == 'Admin';
 			$STS_ID = isset($pay_status_mapping[$old_attendee['payment_status']]) ? $pay_status_mapping[$old_attendee['payment_status']] : 'PFL';//IE, if we don't recognize teh status, assume paymetn failed
 			$cols_n_values = array(
 				'TXN_ID'=>$new_txn_id,
 				'STS_ID'=>$STS_ID,
 				'PAY_timestamp'=>$this->get_migration_script()->convert_date_string_to_utc($this,$old_attendee,$old_attendee['date']),
+				'PAY_method'=>'CART',
+				'PAY_amount'=>$old_attendee['amount_pd'],
 				'PAY_gateway'=>$old_attendee['txn_type'],
 				'PAY_gateway_response'=>'',
 				'PAY_txn_id_chq_nmbr'=>$old_attendee['txn_id'],
-				'PAY_via_admin'=>false,
+				'PAY_via_admin'=>$by_admin,
 				'PAY_details'=>$old_attendee['transaction_details']
 				
 			);
@@ -573,8 +576,11 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'%d',//TXN_Id
 				'%s',//STS_ID
 				'%s',//PAY_timestamp
+				'%s',//PAY_method
+				'%f',//PAY_amount
 				'%s',//PAY_gateway
 				'%s',//PAY_gateway_response
+				'%s',//PAY_txn_id_chq_nmbr
 				'%d',//PAY_via_admin
 				'%s',//PAY_details
 			);
