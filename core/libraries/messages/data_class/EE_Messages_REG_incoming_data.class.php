@@ -17,27 +17,20 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Messages_REGID_incoming_data
+ * EE_Messages_REG_incoming_data
  *
  * This prepares dummy data for all messages previews run in the back end.  The Preview Data is going to use a given event id for the data.  If that event is NOT provided then we'll retrieve the first three published events from the users database as a sample (or whatever is available if there aren't three).
  *
  * To assemble the preview data, I basically used the EE_Single_Page_Checkout class to server as a guide for what data objects are setup etc.  Any place there is input expected from registrants we just setup some dummy inputs.  Remember none of this is actually saved to the database.  It is all one time use for any generated previews.
  *
  * @package		Event Espresso
- * @subpackage	includes/core/messages/data_class/EE_Messages_REGID_incoming_data.core.php
+ * @subpackage	includes/core/messages/data_class/EE_Messages_REG_incoming_data.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
-
-	//will hold any incoming data that might be available here
-	private $_reg_id;
-
-	//for models used in here
-	private $_EEM_att;
-	private $_EEM_reg;
+class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 
 
 	//hold objects that might be created
@@ -49,22 +42,11 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 	 *
 	 * The data is expected to be an array that came from the $_POST and $_GET and should have at least one property from the list looked for.
 	 * 
-	 * @param array $data
+	 * @param EE_Registration $data
 	 */
-	public function __construct( $data ) {
-		
-		//make sure data is an array.
-		if ( !is_array($data) ) return FALSE;
+	public function __construct( EE_Registration $data ) {
 
-		//assign properties
-		$this->_reg_id = isset($data['_REG_ID']) ? $data['_REG_ID'] : NULL;
-
-		//if all of the above are NULL we can't do anything so get out!
-		if ( empty( $this->_reg_id ) ) return FALSE;
-
-		//require the models we need;
-		$this->_EEM_att = EEM_Attendee::instance();	
-		$this->_EEM_reg = EEM_Registration::instance();
+		$this->$reg_obj = $data;
 
 		parent::__construct($data);
 	}
@@ -76,9 +58,6 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 	 * @return void
 	 */
 	protected function _setup_data() {
-
-		$this->reg_obj = $this->_EEM_reg->get_one_by_ID( $this->_reg_id );
-
 
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
 
@@ -124,4 +103,4 @@ class EE_Messages_REGID_incoming_data extends EE_Messages_incoming_data {
 
 	}
 
-} //end EE_Messages_REGID_incoming_data class
+} //end EE_Messages_REG_incoming_data class
