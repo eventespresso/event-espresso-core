@@ -46,7 +46,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * Status ID (STS_ID on esp_status table) to indicate an UNAPPROVED registration.
 	 * Payments are NOT allowed. 
 	 * Event Admin must manually toggle STS_ID for it to change
-	 * No space reservced.
+	 * No space reserved.
 	 * Registration is active
 	 */
 	const status_id_not_approved = 'RNA';
@@ -55,7 +55,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * Status ID (STS_ID on esp_status table) to indicate registration is PENDING_PAYMENT .
 	 * Payments are allowed. 
 	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
-	 * No space reservced.
+	 * No space reserved.
 	 * Registration is active
 	 */
 	const status_id_pending_payment = 'RPP';
@@ -80,7 +80,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate a registration was DECLINED by the Event Admin
 	 * Payments are NOT allowed. 
-	 * No space reservced.
+	 * No space reserved.
 	 * Registration is NOT active
 	 */
 	const status_id_declined = 'RDC';
