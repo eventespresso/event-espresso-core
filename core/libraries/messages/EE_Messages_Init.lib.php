@@ -182,7 +182,7 @@ class EE_Messages_Init extends EE_Base {
 
 	/**
 	 * Trigger for Registration messages
-	 * Note that the Registration_Message_Type internally determines whether a message actually goes out depending on the transaction state and the Registration Message Type setting for whether registrations get sent before complete payment or not.  Free registrations ALWAYS get sent.
+	 * Note that what registration message type is sent depends on what the reg status is for the registrations on the incoming transaction.
 	 * @param  EE_Transaction $transaction
 	 * @return void                      
 	 */
@@ -190,10 +190,26 @@ class EE_Messages_Init extends EE_Base {
 		$this->_load_controller();
 		$data = array( $transaction, NULL );
 
-		$this->_EEMSG->send_message( 'registration', $data );
+		//let's get the first related reg on the transaction since we can use its status to determine what message type gets sent.
+		$registration = $transaction->get_first_related('Registration');
+		$reg_status = $registration->status_ID();
 
-		//could be pending approval
-		$this->_EEMSG->send_message( 'pending_approval', $data );
+		//send the message type matching the status if that message type is active.
+		//first an array to match for class name
+		$status_match_array = array(
+			EEM_Registration::status_id_approved => 'registration',
+			EEM_Registration::status_id_pending_payment => 'pending_approval',
+			EEM_Registration::status_id_not_approved => 'not_approved_registration',
+			EEM_Registration::status_id_cancelled => 'cancelled_registration',
+			EEM_Registration::status_id_declined => 'declined_registration'
+			);
+
+		$active_mts = $this->_EEMSG->get_active_message_types();
+
+		if ( in_array( $status_match_array[$reg_status], $active_mts ) )
+			$this->_EEMSG->send_message( $status_match_array[$reg_status], $data );
+
+		return; //if we get here then there is no active message type for this status.
 	}
 
 
