@@ -421,7 +421,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'ATT_ID' => $attendee['att_obj']->ID(),
 						'TXN_ID' => $this->txn->ID(),
 						'TKT_ID' => $ticket->ID(),
-						'STS_ID' => 'RAP',
+						'STS_ID' => EEM_Registration::status_id_pending_payment,
 						'REG_date' => current_time('mysql'),
 						'REG_final_price' => $ticket->get('TKT_price'),
 						'REG_session' => 'dummy_session_id',
