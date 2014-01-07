@@ -3,19 +3,19 @@
 <ul>
 <li>
 <?php _e('Check-In', 'event_espresso'); ?><br />
-<?php _e('Shows the Check-In status for an attendee. Available statuses are checked in <span class="ee-icon ee-icon-check-in"></span>, checked out <span class="ee-icon ee-icon-check-out"></span>, or no check-in record is available <span class="dashicons dashicons-no"></span>.', 'event_espresso'); ?>
+<?php _e('Shows the Check-In status for an registrant. Available statuses are checked in <span class="ee-icon ee-icon-check-in"></span>, checked out <span class="ee-icon ee-icon-check-out"></span>, or no check-in record is available <span class="dashicons dashicons-no"></span>.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Att #', 'event_espresso'); ?><br />
 <?php _e('To-DO', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Attendee', 'event_espresso'); ?><br />
-<?php _e('This is the name of the attendee.', 'event_espresso'); ?>
+<?php _e('Registrations', 'event_espresso'); ?><br />
+<?php _e('This is the name of the registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Email Address', 'event_espresso'); ?><br />
-<?php _e('This is the email address for the attendee.', 'event_espresso'); ?>
+<?php _e('This is the email address for the registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('TXN Date', 'event_espresso'); ?><br />
@@ -23,7 +23,7 @@
 </li>
 <li>
 <?php _e('Reg Code', 'event_espresso'); ?><br />
-<?php _e('This is a unique registration code for an attendee.', 'event_espresso'); ?>
+<?php _e('This is a unique registration code for an registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Reg Status', 'event_espresso'); ?><br />
