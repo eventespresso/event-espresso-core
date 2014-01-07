@@ -12,7 +12,7 @@
 </li>
 <li>
 <?php _e('Messenger', 'event_espresso'); ?><br />
-<?php _e('Shows the Messenger that will handle the delivery of messages. Hovering over the Messenger will provide you with an additional option to Edit the current message template. Clicking on Email will take you to the Message Templates Editor so you can edit the message template for an Event Admin. Clicking on Event Admin will also take you to the Message Templates Editor. Clicking on Primary Attendee will take you to the Message Templates Editor so that you can edit the message template that is sent to the Primary Attendee. Clicking on the Edit link will also take you to the Message Templates Editor so that you can edit the message template that is sent to the Event Admin.', 'event_espresso'); ?>
+<?php _e('Shows the Messenger that will handle the delivery of messages. Hovering over the Messenger will provide you with an additional option to Edit the current message template. Clicking on Email will take you to the Message Templates Editor so you can edit the message template for an Event Admin. Clicking on Event Admin will also take you to the Message Templates Editor. Clicking on Primary Registrant will take you to the Message Templates Editor so that you can edit the message template that is sent to the Primary Registrant. Clicking on the Edit link will also take you to the Message Templates Editor so that you can edit the message template that is sent to the Event Admin.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Description', 'event_espresso'); ?><br />

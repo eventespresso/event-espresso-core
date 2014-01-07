@@ -4,5 +4,5 @@
 </p>
 <h3><?php _e('Search', 'event_espresso'); ?></h3>
 <p>
-<?php _e('You can perform a search to find certain registrations. The following sources will be searched: Event Name (Title), Event Description, Attendee first name, Attendee Last Name, Attendee Bio, Attendee Email, Attendee Address, Attendee Comments, Attendee Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description. To use the search feature, enter a value into the search box and click on the Search Events button.', 'event_espresso'); ?>
+<?php _e('You can perform a search to find certain registrations. The following sources will be searched: Event Name (Title), Event Description, First Name, Last Name, Bio, Email, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description. To use the search feature, enter a value into the search box and click on the Search Events button.', 'event_espresso'); ?>
 </p>

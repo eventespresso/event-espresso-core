@@ -7,7 +7,7 @@
 </li>
 <li>
 <?php _e('Name', 'event_espresso'); ?><br />
-<?php _e('This is the name of an attendee. The primary attendee will have a star to the right of their name.', 'event_espresso'); ?>
+<?php _e('This is the name of a registrant. The primary registrant will have a star to the right of their name.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('TXN Date', 'event_espresso'); ?><br />
@@ -23,7 +23,7 @@
 </li>
 <li>
 <?php _e('Reg Code', 'event_espresso'); ?><br />
-<?php _e('This is a unique registration code for an attendee.', 'event_espresso'); ?>
+<?php _e('This is a unique registration code for a registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Price', 'event_espresso'); ?><br />
@@ -31,7 +31,7 @@
 </li>
 <li>
 <?php _e('Actions', 'event_espresso'); ?><br />
-<?php _e('Using the action buttons you can View Registration Details <span class="dashicons dashicons-search"></span>, Edit Contact Details <span class="dashicons dashicons-businessman"></span>, Resend Registration Details to Attendee <span class="ee-icon ee-icon-email-send"></span>, and View Transaction Details <span class="ee-icon ee-icon-cash"></span>.', 'event_espresso'); ?>
+<?php _e('Using the action buttons you can View Registration Details <span class="dashicons dashicons-search"></span>, Edit Contact Details <span class="dashicons dashicons-businessman"></span>, Resend Registration Details <span class="ee-icon ee-icon-email-send"></span>, and View Transaction Details <span class="ee-icon ee-icon-cash"></span>.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

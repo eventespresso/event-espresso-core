@@ -78,7 +78,7 @@
 				<?php _e('Off-site Registration Page', 'event_espresso'); ?>
 			</h2>
 			<p>
-				<?php _e('If an off-site registration page is entered, it will override your registration page and send attendees to the URL that is entered.', 'event_espresso'); ?>
+				<?php _e('If an off-site registration page is entered, it will override your registration page and send registrants to the URL that is entered.', 'event_espresso'); ?>
 			</p>
 		</div>
 	</div>
