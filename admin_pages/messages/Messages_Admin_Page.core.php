@@ -232,9 +232,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
                             'title' => __('Message Types', 'event_espresso'),
                             'filename' => 'messages_overview_types'
                         ),
-                        'messages_messengers_help_tab' => array(
+                        'messages_overview_messengers_help_tab' => array(
                             'title' => __('Messengers', 'event_espresso'),
                             'filename' => 'messages_overview_messengers',
+                        ),
+                        'messages_overview_other_help_tab' => array(
+                            'title' => __('Messages Other', 'event_espresso'),
+                            'filename' => 'messages_overview_other',
                         ),
                     ),
 				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
