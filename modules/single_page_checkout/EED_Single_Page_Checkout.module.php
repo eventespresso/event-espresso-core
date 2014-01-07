@@ -665,8 +665,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 				
 				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
-				// add event to list of events with pre-approval reg status
-				$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li>' . $registration->event()->name() . '</li>';
+				if ( ! $payment_required ) {
+					// add event to list of events with pre-approval reg status
+					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li>' . $registration->event()->name() . '</li>';
+				}
 				
 			} 
 
