@@ -295,6 +295,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$event_group_id = array();
 		$new_event = empty($event_id) ? true : false;
 
+		//active message types
+		$EE_MSG = new EE_messages();
+		$installed_message_types = $EE_MSG->get_installed_message_types();
+
 		//todo: this should be replaced by EE_MSG_ADMIN_URL constant when we have access to it.
 		$ee_msg_admin_url = defined('EE_MSG_ADMIN_URL') ? EE_MSG_ADMIN_URL : admin_url('admin.php?page=espresso_messages');
 
@@ -334,6 +338,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$et_trashed = isset($event_template_trashed[$template->message_type()]) ? true : false;
 			$et_group_id = isset($event_group_id[$template->message_type()]) ? $event_group_id[$template->message_type()] : false;
 
+
+			//need to get the label for the message type.
+			$mt_label = $installed_message_types[$template->message_type()]->label['singular'];
 			
 			//check for existence of Event Template and if present AND the current template in the loop is the event template (or the current template in the loop is a DIFFERENT event template) let's skip (we'll delay until we get to global)
 			if ( $et_set && !$template->is_global() ) continue;
@@ -405,7 +412,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 			$content .= '<div class="message-template-message-type-container">' . "\n\t";
 			$content .= '<p>';
-			$content .= sprintf( __('This event will use %s for <span class="message-type-text">%s %s</span> messages. %s.', 'event_espresso'), $main_button, str_replace('_', ' ',$template->message_type()), str_replace('_', ' ', $this->name), $switch_button);
+			$content .= sprintf( __('This event will use %s for <span class="message-type-text">%s %s</span> messages. %s.', 'event_espresso'), $main_button, $mt_label, $this->label['singular'], $switch_button);
 			$content .= '</p>' . "\n" . '</div>';
 
 			$old_template_type = $template_type;
