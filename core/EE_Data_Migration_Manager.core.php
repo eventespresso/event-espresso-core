@@ -56,6 +56,12 @@ class EE_Data_Migration_Manager{
 	 * string indicating a fatal error occurred and the data migration should be completedly aborted
 	 */
 	const status_fatal_error = 'status_fatal_error';
+	
+	/**
+	 * the number of 'items' (usually DB rows) to migrate on each 'step' (ajax request sent
+	 * during migration)
+	 */
+	const step_size = 50;
 	/**
 	 * Array of information concernign data migrations that have ran in the history 
 	 * of this EE installation. Keys should be the name of the version the script upgraded to
@@ -311,7 +317,7 @@ class EE_Data_Migration_Manager{
 		//ok so we definitely have a data migration script
 		try{
 			//do what we came to do!
-			$current_script_class->migration_step(50);
+			$current_script_class->migration_step(EE_Data_Migration_Manager::step_size);
 			switch($current_script_class->get_status()){
 				case EE_Data_Migration_Manager::status_continue:
 					$response_array = array(
