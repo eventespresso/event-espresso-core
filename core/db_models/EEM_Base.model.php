@@ -2553,7 +2553,9 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			throw new EE_Error(sprintf(__("get_all_copies should be providd with either a model object or an array of field-value-pairs, but was given %s", "event_espresso"),$model_object_or_attributes_array));
 		}
-		if(isset($attributes_array[$this->primary_key_name()])){
+		//even copies obviously won't have the same ID, so remove teh primary key
+		//from the WHERE conditions for finding copies (if there is a primary key, of coursE)
+		if($this->has_primary_key_field() && isset($attributes_array[$this->primary_key_name()])){
 			unset($attributes_array[$this->primary_key_name()]);
 		}
 		if(isset($query_params[0])){

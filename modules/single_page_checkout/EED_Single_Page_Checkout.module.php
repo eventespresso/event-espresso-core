@@ -42,6 +42,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	// info for each of the reg steps
 	private static $_reg_steps = array();
 
+
+
+
 	/**
 	 * 	$_cart - the current cart object
 	 * 	@access private
@@ -310,20 +313,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->_transaction->registrations() == NULL ) {
 			$this->_initialize_registrations();
 		}
-		
-//		printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		if ( ! EE_Registry::instance()->REQ->front_ajax ) {
-//			d( $this->_transaction );
-//			d( $this->_cart );
-//		}
-		
+		// don't need payment options for a completed transaction (note: if we ever implement donations, then this will need overriding)
 		if ( $this->_transaction->is_completed() || $this->_transaction->is_overpaid() ) {
 			unset( self::$_reg_steps['payment_options'] );
 		}
-
 		// and the next step
 		$this->_set_next_step();
-//		d( self::$_reg_steps );
 		
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'translate_js_strings' ), 1 );
 	}
@@ -447,10 +442,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _initialize_transaction() {
 		// create new TXN
 		$this->_transaction = EE_Transaction::new_instance( array( 
-				'TXN_timestamp' => current_time('mysql'),
-				'TXN_total' => $this->_cart->get_cart_grand_total(), 
-				'TXN_paid' => 0, 
-				'STS_ID' => EEM_Transaction::incomplete_status_code,
+			'TXN_timestamp' => current_time('mysql'),
+			'TXN_total' => $this->_cart->get_cart_grand_total(), 
+			'TXN_paid' => 0, 
+			'STS_ID' => EEM_Transaction::incomplete_status_code,
 		));
 	}
 
@@ -490,14 +485,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$reg_url_link = $att_nmbr . '-' . $item->code();
 					
 //					// TODO: verify that $event->default_registration_status() is editable in admin event editor, then uncomment and use the following for STS_ID
-//					$event_default_registration_status = $event->default_registration_status();
-//					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
+					$event_default_registration_status = $event->default_registration_status();
+					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
 					// now create a new registration for the ticket				
 			 		$registration = EE_Registration::new_instance( array( 
 						'EVT_ID' => $event->ID(),
 						'TXN_ID' => $this->_transaction->ID(),
 						'TKT_ID' => $ticket->ID(),
-						'STS_ID' => EE_Registry::instance()->CFG->registration->default_STS_ID,
+						'STS_ID' => $STS_ID,
 						'REG_date' => $this->_transaction->datetime(),
 						'REG_final_price' => $ticket->price(),
 						'REG_session' => EE_Registry::instance()->SSN->id(),
@@ -508,7 +503,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
 					$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
 					$this->_transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
-				}					
+					
+				}
 			}
 			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
 			EE_Registry::instance()->SSN->update();
@@ -534,26 +530,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::instance()->load_helper( 'Template' );
 		EE_Registry::instance()->load_class( 'Question_Form_Input', array(), FALSE, FALSE, TRUE );
 
-		$template_args = array();
-		$template_args['css_class'] = '';
-		$template_args['confirmation_data'] = '';
-
 		$event_queue = array();
 		$total_items = 0;
 		$ticket_count = array();
+		$payment_required = FALSE;
 
-		$additional_event_attendees = array();
-		$events_requiring_pre_approval = array();
+		$events_requiring_pre_approval = array();		
+		$additional_event_attendees = array();		
 		$events_that_use_coupon_codes = array();
 		$events_that_use_groupon_codes = array();
-		$template_args['reg_page_discounts_dv_class'] = 'hidden';
-		$template_args['additional_attendee_reg_info'] = NULL;
 		
+		$template_args = array();
+		$template_args['css_class'] = '';
+		$template_args['confirmation_data'] = '';
+		$template_args['reg_page_discounts_dv_class'] = 'hidden';
+		$template_args['additional_attendee_reg_info'] = NULL;		
 		$template_args['whats_in_the_cart'] = '';
 
 		$event_queue['title'] = __('Registrations', 'event_espresso');
 		$attendee_headings = array();
-		$additional_attendees = array();
 		$additional_attendee_forms = FALSE;
 			
 		// grab the saved registrations from teh transaction				
@@ -668,6 +663,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = FALSE;
 					}
 				}
+				
+				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
+				if ( ! $payment_required ) {
+					// add event to list of events with pre-approval reg status
+					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li>' . $registration->event()->name() . '</li>';
+				}
+				
 			} 
 
 			if ( ! $this->_reg_url_link ) {
@@ -682,11 +684,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// empty
 			$event_queue['has_items'] = FALSE;
 		}
-
+		
+		$template_args['events_requiring_pre_approval'] = implode( $events_requiring_pre_approval );
 		$event_queue['empty_msg'] = __( 'Their appears to be nothing in your Event Queue.', 'event_espresso' );
-
-		// PRE APPROVAL
-		$template_args['events_requiring_pre_approval'] = '';
 
 		//  GOT COUPONS ?
 		$template_args['events_that_use_coupon_codes'] = '';
@@ -711,7 +711,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
 		
 		$cart_total_before_tax = $this->_cart->get_cart_total_before_tax();
-		$template_args['payment_required'] = $cart_total_before_tax > 0 ? TRUE : FALSE;
+		$template_args['payment_required'] = $cart_total_before_tax > 0 ? $payment_required : FALSE;
 		if ( ! $template_args['payment_required'] ) { 
 			//unset( self::$_reg_steps['payment_options'] );
 			EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ));
@@ -903,7 +903,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 		$event_queue['title'] = __('Registrations', 'event_espresso');
 		$attendee_headings = array();
-		$additional_attendees = array();
 		$additional_attendee_forms = FALSE;
 
 		if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations() !== NULL ) {
@@ -1492,9 +1491,13 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$error_msg = FALSE;
 		
 		if ( $this->_continue_reg ) {
-			if ( $this->_transaction->total() > 0 ) {				
+			if ( EE_Registry::instance()->REQ->is_set('selected_gateway') && EE_Registry::instance()->REQ->get('selected_gateway') == 'payments_closed' ) {				
+				// requires pre-approval
+				$success_msg = __( 'no payment required at this time.', 'event_espresso' );
+				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
+			} else if ( $this->_transaction->total() > 0 ) {				
 				// PAID EVENT !!!  BOO  : (
-				EE_Registry::instance()->load_model( 'Gateways' )->process_gateway_selection();				 
+				EE_Registry::instance()->load_model( 'Gateways' )->process_gateway_selection();
 			} else if (  ! $this->_reg_url_link ) {
 				// FREE EVENT !!! YEAH : )
 				$success_msg = __( 'no payment required.', 'event_espresso' );
@@ -1553,7 +1556,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 		}
 
-		$this->go_to_next_step( $success_msg, $error_msg );
+		$this->go_to_next_step( $success_msg, $error_msg ); //, $callback = FALSE, $callback_param = FALSE
 	}
 
 
@@ -1627,11 +1630,27 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			$this->_transaction->save();
 //			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
-
+				
 			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
-			// attempt to perform transaction via payment gateway
-			$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
-			$this->_thank_you_page_url = $response['forward_url'];
+			if ( EE_Registry::instance()->REQ->is_set('selected_gateway') && EE_Registry::instance()->REQ->get('selected_gateway') == 'payments_closed' ) {
+				$this->_transaction->set_status( EEM_Transaction::open_status_code );
+				$this->_transaction->save();
+				$this->_transaction->finalize();
+				$notices = EE_Error::get_notices(FALSE);
+				$response = array(
+					'msg' => array(
+						'success' => isset( $notices['success'] ) ? $notices['success'] : '',
+						'errors' => isset( $notices['errors'] ) ? $notices['errors'] : '',
+					)
+				);
+				//$primary_reg = $this->_transaction->primary_registration()->reg_url_link()
+				$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
+			} else {
+				// attempt to perform transaction via payment gateway
+				$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
+				$this->_thank_you_page_url = $response['forward_url'];
+			}
+			
 			
 			if ( isset( $response['msg']['success'] )) {
 				$response_data = array(
@@ -1657,6 +1676,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 		}
 			
+		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		$this->go_to_next_step( $success_msg, $error_msg );
 		

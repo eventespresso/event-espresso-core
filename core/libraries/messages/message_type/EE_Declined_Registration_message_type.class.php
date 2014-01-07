@@ -59,7 +59,8 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 
 
 	protected function _set_data_handler() {
-		$this->_data_handler = 'Gateways';
+		$this->_data_handler = $this->_data instanceof EE_Registration ? 'REG' : 'Gateways';
+		$this->_single_message = $this->_data instanceof EE_Registration ? TRUE : FALSE;
 	}
 
 
@@ -178,6 +179,9 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
+		if ( !$this->_single_message )
+			return array();
+
 		$admin_ids = array();
 		$admin_events = array();
 		$admin_attendees = array();
@@ -217,6 +221,8 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
+		if ( !$this->_single_message ) 
+			return array();
 		
 		$aee = $this->_default_addressee_data;
 		$aee['events'] = $this->_data->events;
@@ -246,6 +252,8 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 		foreach ( $this->_data->attendees as $att_id => $details ) {
 			//set the attendee array to blank on each loop;
 			$aee = array();
+
+			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) && $this->_single_message ) continue;
 			
 			if ( in_array( $details['attendee_email'], $already_processed ) )
 				continue;
