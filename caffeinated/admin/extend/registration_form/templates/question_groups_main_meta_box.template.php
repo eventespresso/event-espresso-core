@@ -34,7 +34,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 					</label>
 				</th>
 				<td>
-					<input name="QSG_name" value="<?php echo $question_group->name()?>" type="text" class="regular-text"><br/>
+					<input name="QSG_name" value="<?php  $question_group->f('QSG_name')?>" type="text" class="regular-text"><br/>
 					
 				</td>
 			</tr>
