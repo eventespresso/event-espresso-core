@@ -46,7 +46,7 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 	 */
 	public function __construct( EE_Registration $data ) {
 
-		$this->$reg_obj = $data;
+		$this->reg_obj = $data;
 
 		parent::__construct($data);
 	}
