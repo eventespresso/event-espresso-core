@@ -272,8 +272,24 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'registrations_overview_help_tab' => array(
 						'title' => __('Registrations Overview', 'event_espresso'),
 						'filename' => 'registrations_overview'
-						)
 					),
+					'registrations_overview_table_column_headings_help_tab' => array(
+						'title' => __('Registrations Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_overview_table_column_headings'
+					),
+					'registrations_overview_filters_help_tab' => array(
+						'title' => __('Registration Filters', 'event_espresso'),
+						'filename' => 'registrations_overview_filters'
+					),
+					'registrations_overview_views_help_tab' => array(
+						'title' => __('Registration Views', 'event_espresso'),
+						'filename' => 'registrations_overview_views'
+					),
+					'registrations_overview_other_help_tab' => array(
+						'title' => __('Registrations Other', 'event_espresso'),
+						'filename' => 'registrations_overview_other'
+					)	
+                ),
 				'help_tour' => array( 'Registration_Overview_Help_Tour' ),
 				'qtips' => array('Registration_List_Table_Tips'),
 				'list_table' => 'EE_Registrations_List_Table',
@@ -291,6 +307,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'registrations_details_help_tab' => array(
 						'title' => __('Registration Details', 'event_espresso'),
 						'filename' => 'registrations_details'
+						),
+					'registrations_details_table_help_tab' => array(
+						'title' => __('Registration Details Table', 'event_espresso'),
+						'filename' => 'registrations_details_table'
+						),
+					'registrations_details_form_answers_help_tab' => array(
+						'title' => __('Attendee Registration Form Answers', 'event_espresso'),
+						'filename' => 'registrations_details_form_answers'
+						),
+					'registrations_details_attendee_details_help_tab' => array(
+						'title' => __('Attendee Details', 'event_espresso'),
+						'filename' => 'registrations_details_attendee_details'
 						)
 					),
 				'help_tour' => array( 'Registration_Details_Help_Tour' ),
@@ -342,8 +370,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'registrations_contact_list_help_tab' => array(
 						'title' => __('Registrations Contact List', 'event_espresso'),
 						'filename' => 'registrations_contact_list'
-						)
 					),
+					'registrations_contact-list_table_column_headings_help_tab' => array(
+						'title' => __('Contact List Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_contact_list_table_column_headings'
+					),
+					'registrations_contact_list_views_help_tab' => array(
+						'title' => __('Contact List Views', 'event_espresso'),
+						'filename' => 'registrations_contact_list_views'
+					),
+					'registrations_contact_list_other_help_tab' => array(
+						'title' => __('Contact List Other', 'event_espresso'),
+						'filename' => 'registrations_contact_list_other'
+					)	
+                ),
 				'help_tour' => array( 'Contact_List_Help_Tour' ),
 				'metaboxes' => array(),
 				'require_nonce' => FALSE

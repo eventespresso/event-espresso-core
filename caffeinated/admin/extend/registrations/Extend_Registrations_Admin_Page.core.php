@@ -86,10 +86,26 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					),
                 'help_tabs' => array(
 					'registrations_event_checkin_help_tab' => array(
-						'title' => __('Registrations Event Check-in', 'event_espresso'),
+						'title' => __('Registrations Event Check-In', 'event_espresso'),
 						'filename' => 'registrations_event_checkin'
-						)
 					),
+					'registrations_event_checkin_table_column_headings_help_tab' => array(
+						'title' => __('Event Check-In Table Column Headings', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_table_column_headings'
+					),
+					'registrations_event_checkin_filters_help_tab' => array(
+						'title' => __('Event Check-In Filters', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_filters'
+					),
+					'registrations_event_checkin_views_help_tab' => array(
+						'title' => __('Event Check-In Views', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_views'
+					),
+					'registrations_event_checkin_other_help_tab' => array(
+						'title' => __('Event Check-In Other', 'event_espresso'),
+						'filename' => 'registrations_event_checkin_other'
+					)	
+				),
 				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
 				'list_table' => 'EE_Event_Registrations_List_Table',
 				'metaboxes' => array(),
