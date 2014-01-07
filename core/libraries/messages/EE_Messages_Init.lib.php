@@ -244,7 +244,7 @@ class EE_Messages_Init extends EE_Base {
 		}
 
 		//get reg object from reg_id
-		$reg = EEM_Registry::instance()->load_model('Registration')->get_one_by_ID($req_data['_REG_ID'] );
+		$reg = EE_Registry::instance()->load_model('Registration')->get_one_by_ID($req_data['_REG_ID'] );
 
 		//if no reg object then send error
 		if ( empty( $reg ) ) {
@@ -259,8 +259,8 @@ class EE_Messages_Init extends EE_Base {
 			//get status_match_array
 			$status_match_array = $this->_get_reg_status_array();
 			$active_mts = $this->_EEMSG->get_active_message_types();
-			
-			$success = in_array( $status_match_array[$reg_status], $active_mts ) ? $this->_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg ) : FALSE;
+
+			$success = in_array( $status_match_array[$reg->status_ID()], $active_mts ) ? $this->_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg ) : FALSE;
 		}
 
 		if ( $success ) {
