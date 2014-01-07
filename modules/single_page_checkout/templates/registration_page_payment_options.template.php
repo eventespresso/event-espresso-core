@@ -19,16 +19,18 @@
 		if ( $events_requiring_pre_approval != '' ) { ?>
 			<h4 class="important-notice small-text"><?php _e('Important Notice:', 'event_espresso');?></h4>
 			<p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text">
-				<?php echo __('The following events require attendee pre-approval and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. If this is a free event, then no billing will occur.', 'event_espresso'); ?>				
+				<?php echo __('The following events do not require payment at this time and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso'); ?>				
 			</p>
 			<h6><?php _e('Events Requiring Pre-Approval:', 'event_espresso');?></h6>
 			<ul><?php echo $events_requiring_pre_approval; ?></ul>
+			
+			<input id="reg-page-selected-gateway" type="hidden" value="payments_closed" name="selected_gateway">
+			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="reg-page-no-payment-required" value="1" />
+
 <?php
-		} // end  if  $events_requiring_pre_approval
+		} else if ( $payment_required ) {
 
-			if ( $payment_required ) {
-
-				 if ( $use_coupon_codes or $use_groupon_codes ) {
+			 if ( $use_coupon_codes or $use_groupon_codes ) {
 ?>
 
 			<h5><strong><?php _e('Discount Codes', 'event_espresso'); ?></strong></h5>
@@ -92,13 +94,14 @@
 		</div><!-- / .event-display-boxes payment opts -->
 		<?php
 				// end  if  $payment_required
-			} else { ?>
+		} else { ?>
 			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="reg-page-no-payment-required" value="1" />
 			<?php _e('This is a free event, so no billing will occur.', 'event_espresso'); ?>
-<?php }  ?>
+	<?php } ?>
 
 			<?php do_action( 'AHEE__before_spco_whats_next_buttons', 'payment_options', $next_step ); ?>
-
+			
+	<?php if ( ! ( $revisit && $events_requiring_pre_approval != '' )) { ?>
 			<div id="spco-payment_options-whats-next-buttons-dv" class="spco-whats-next-buttons">
 
 				<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn ee-button ee-register-button huge ee-green hide-if-no-js" rel="payment_options" >
@@ -116,6 +119,7 @@
 
 			</div>
 			<!--end spco-whats-next-buttons-->
+	<?php } ?>
 
 		</form>
 		
