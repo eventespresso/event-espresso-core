@@ -306,11 +306,12 @@ class EEH_Address {
 	*/	
 	private static function _regular_formatting( $formatter, $obj_with_address, $add_wrapper = TRUE ){
 		$formatted_address = $add_wrapper ? '<div>' : '';
+		$state_obj = $obj_with_address->state_obj();
 		$formatted_address .= $formatter->format(
 			$obj_with_address->address(),
 			$obj_with_address->address2(),
 			$obj_with_address->city(),
-			$obj_with_address->state_obj()->abbrev(),
+			$state_obj ? $state_obj->abbrev() : '',
 			$obj_with_address->country_ID(),
 			$obj_with_address->zip()
 		);
