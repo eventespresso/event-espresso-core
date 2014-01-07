@@ -338,6 +338,7 @@ class EE_Email_messenger extends EE_messenger  {
 			'registration',
 			'not_approved_registration',
 			'declined_registration',
+			'cancelled_registration',
 			'pending_approval',
 			'resend_registration',
 			'payment_reminder',
