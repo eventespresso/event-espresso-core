@@ -17,25 +17,25 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Registration_message_type
+ * EE_Cancelled_Registration_message_type
  *
  * Handles frontend registration message types. 
  *
  * @package		Event Espresso
- * @subpackage	includes/core/messages/message_type/EE_Registration_message_type.class.php
+ * @subpackage	includes/core/messages/message_type/EE_Cancelled_Registration_message_type.class.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 
-class EE_Registration_message_type extends EE_message_type {
+class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 	public function __construct() {
-		$this->name = 'registration';
-		$this->description = __('This message type is for messages sent to attendees when their registration is approved.', 'event_espresso');
+		$this->name = 'cancelled_registration';
+		$this->description = __('This message type is for messages sent to attendees when their registration is cancelled.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('approved registration', 'event_espresso'),
-			'plural' => __('approved registrations', 'event_espresso')
+			'singular' => __('cancelled registration', 'event_espresso'),
+			'plural' => __('cancelled registrations', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -101,14 +101,14 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-content.template.php', TRUE );
+		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-content.template.php', TRUE );
 		
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-event-list.template.php', TRUE );
-			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-ticket-list.template.php', TRUE );
-			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-datetime-list.template.php', TRUE );
+			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-attendee-list.template.php', TRUE );
+			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-event-list.template.php', TRUE );
+			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-ticket-list.template.php', TRUE );
+			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-datetime-list.template.php', TRUE );
 		}
 
 
@@ -137,15 +137,15 @@ class EE_Registration_message_type extends EE_message_type {
 		$this->_contexts = array(
 			'admin' => array(
 				'label' => __('Event Admin', 'event_espresso'),
-				'description' => __('This template is what event administrators will receive with an approved registration', 'event_espresso')
+				'description' => __('This template is what event administrators will receive with an cancelled registration', 'event_espresso')
 				),
 			'primary_attendee' => array(
 				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive with approved registration', 'event_espresso')
+				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive with cancelled registration', 'event_espresso')
 				),
 			'attendee' => array(
 				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when their registration is approved.', 'event_espresso')
+				'description' => __('This template is what each attendee for the event will receive when their registration is cancelled.', 'event_espresso')
 				)
 			);
 
@@ -279,4 +279,4 @@ class EE_Registration_message_type extends EE_message_type {
 		return $add;
 	}
 
-} //end EE_Registration_message_type class
+} //end EE_Cancelled_Registration_message_type class

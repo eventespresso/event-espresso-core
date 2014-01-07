@@ -17,9 +17,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Messages_Email_Registration_Defaults class
+ * EE_messages_Email_Declined_Registration_Defaults class
  *
- * Handles all the defaults for Email messenger, Payment message type templates
+ * Handles all the defaults for Email messenger, Declined Registration message type templates
  *
  * @package		Event Espresso
  * @subpackage	includes/core/messages/defaults/email
@@ -27,12 +27,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EE_Messages_Email_Registration_Defaults extends EE_Message_Template_Defaults {
+class EE_messages_Email_Declined_Registration_Defaults extends EE_Message_Template_Defaults {
 
 
 	protected function _set_props() {
 		$this->_m_name = 'email';
-		$this->_mt_name = 'registration';
+		$this->_mt_name = 'declined_registration';
 	}
 
 
@@ -40,7 +40,7 @@ class EE_Messages_Email_Registration_Defaults extends EE_Message_Template_Defaul
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '[EVENT_AUTHOR_EMAIL]';
 		$this->_templates['primary_attendee']['to'] = '';
-		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/registration-message-type-admin-main-content.template.php', TRUE );
-		$this->_templates['admin']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/registration-message-type-admin-event-list.template.php', TRUE );
+		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/declined-registration-message-type-admin-main-content.template.php', TRUE );
+		$this->_templates['admin']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/declined-registration-message-type-admin-event-list.template.php', TRUE );
 	}
 }

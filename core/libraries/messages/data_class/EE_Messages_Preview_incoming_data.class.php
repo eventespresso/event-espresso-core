@@ -401,7 +401,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'TXN_timestamp' => current_time('mysql'), //unix timestamp
 				'TXN_total' => $grand_total, //txn_total
 				'TXN_paid' => $grand_total, //txn_paid
-				'STS_ID' => 'PAP', //sts_id
+				'STS_ID' => EEM_Transaction::open_status_code, //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
 				'TXN_hash_salt' => NULL, //hash salt blank as well
 				'TXN_ID' => 999999
@@ -421,7 +421,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'ATT_ID' => $attendee['att_obj']->ID(),
 						'TXN_ID' => $this->txn->ID(),
 						'TKT_ID' => $ticket->ID(),
-						'STS_ID' => 'RAP',
+						'STS_ID' => EEM_Registration::status_id_pending_payment,
 						'REG_date' => current_time('mysql'),
 						'REG_final_price' => $ticket->get('TKT_price'),
 						'REG_session' => 'dummy_session_id',

@@ -136,7 +136,7 @@ class EE_messages {
 		//pluralize
 		$kind = $kind . 's';
 		unset($this->_active_{$kind}[$active_name]);
-		update_user_meta($espresso_wp_user, 'ee_active_'.$kind, $this->_active{$kind});
+		update_option($espresso_wp_user, 'ee_active_'.$kind, $this->_active{$kind});
 	}
 
 

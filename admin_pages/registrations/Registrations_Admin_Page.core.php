@@ -181,7 +181,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 					
 				'pending_registration'	=> array(
-						'func' => 'activate_registration',
+						'func' => 'pending_registration',
 						'noheader' => TRUE
 					),
 
@@ -1068,7 +1068,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * 		decline_registration
+	 * 		not_approve_registration
 	*		@access protected
 	*		@return void
 	*/
@@ -1079,6 +1079,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to not approved', $route );
 	}
 
+
+
+	/**
+	 * 		decline_registration
+	*		@access protected
+	*		@return void
+	*/
+	protected function pending_registration() {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending_payment );
+		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
+		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
+		$this->_redirect_after_action( $success, 'Attendee Registration Status', 'set to not Pending Payment', $route );
+	}
 
 
 
