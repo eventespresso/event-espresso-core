@@ -136,12 +136,12 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive when a message is sent to registrants with the pending payment registration status.', 'event_espresso')
 				),
 			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive on when their registration status is pending payment.', 'event_espresso')
+				'label' => __('Primary Registrant', 'event_espresso'),
+				'description' => __('This template is what the primary registrant (the person who completed the initial transaction) will receive on when their registration status is pending payment.', 'event_espresso')
 				),
 			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when their registration status is pending payment.', 'event_espresso')
+				'label' => __('Registrant', 'event_espresso'),
+				'description' => __('This template is what each registrant for the event will receive when their registration status is pending payment.', 'event_espresso')
 				)
 			);
 

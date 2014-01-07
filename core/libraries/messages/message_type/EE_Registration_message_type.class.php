@@ -140,12 +140,12 @@ class EE_Registration_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive with an approved registration', 'event_espresso')
 				),
 			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive with approved registration', 'event_espresso')
+				'label' => __('Primary Registrant', 'event_espresso'),
+				'description' => __('This template is what the primary registrant (the person who completed the initial transaction) will receive with approved registration', 'event_espresso')
 				),
 			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when their registration is approved.', 'event_espresso')
+				'label' => __('Registrant', 'event_espresso'),
+				'description' => __('This template is what each registrant for the event will receive when their registration is approved.', 'event_espresso')
 				)
 			);
 

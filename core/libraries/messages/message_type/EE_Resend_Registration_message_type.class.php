@@ -137,8 +137,8 @@ class EE_Resend_Registration_message_type extends EE_message_type {
 
 		$this->_contexts = array(
 			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when a successful registration is processed.', 'event_espresso')
+				'label' => __('Registrant', 'event_espresso'),
+				'description' => __('This template is what each registrant for the event will receive when a successful registration is processed.', 'event_espresso')
 				)
 			);
 

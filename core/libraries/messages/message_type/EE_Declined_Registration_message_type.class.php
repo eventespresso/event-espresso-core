@@ -32,7 +32,7 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 
 	public function __construct() {
 		$this->name = 'declined_registration';
-		$this->description = __('This message type is for messages sent to attendees when their registration is declined.', 'event_espresso');
+		$this->description = __('This message type is for messages sent to registrants when their registration is declined.', 'event_espresso');
 		$this->label = array(
 			'singular' => __('declined registration', 'event_espresso'),
 			'plural' => __('declined registrations', 'event_espresso')
@@ -140,12 +140,12 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive with an declined registration', 'event_espresso')
 				),
 			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive with declined registration', 'event_espresso')
+				'label' => __('Primary Registrant', 'event_espresso'),
+				'description' => __('This template is what the primary registrant (the person who completed the initial transaction) will receive with declined registration', 'event_espresso')
 				),
 			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when their registration is declined.', 'event_espresso')
+				'label' => __('Registrant', 'event_espresso'),
+				'description' => __('This template is what each registrant for the event will receive when their registration is declined.', 'event_espresso')
 				)
 			);
 
