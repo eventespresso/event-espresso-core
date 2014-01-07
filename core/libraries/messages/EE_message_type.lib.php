@@ -90,6 +90,12 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+	/**
+	 * The purpose for this property is to simply allow message types to indicate if the message generated is intended for only single context.  Child message types should redefine this variable (if necessary) in the _set_data_Handler() method.
+	 * @var boolean
+	 */
+	protected $_single_message = FALSE;
+
 
 
 	/**
