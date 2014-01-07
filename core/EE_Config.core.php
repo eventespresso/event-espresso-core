@@ -1131,15 +1131,9 @@ class EE_Registration_Config extends EE_Config_Base {
 	  
 	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
-	 * @var boolean $pending_counts_reg_limit
+	 * @var boolean $show_pending_payment_options
 	 */
       public $show_pending_payment_options;
-	
-	/**
-	 * Whether pending registration status counts toward reg limits
-	 * @var boolean $pending_counts_reg_limit
-	 */
-      public $pending_counts_reg_limit;
 	
 	/**
 	 * Whether to skip the registration confirmation page
@@ -1203,7 +1197,6 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment; 
 		$this->use_attendee_pre_approval = FALSE;
 		$this->show_pending_payment_options = FALSE;
-		$this->pending_counts_reg_limit = FALSE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;

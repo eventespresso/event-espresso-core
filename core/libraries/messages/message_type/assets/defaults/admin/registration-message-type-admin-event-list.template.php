@@ -5,8 +5,8 @@
 	<table>
 		<tr>
 			<td>
-				<h3>Event:</h3>
-				<p>[EVENT_NAME]</p>
+				<h3>Event(s):</h3>
+				<h5>[EVENT_NAME]</h5>
 				<!-- Callout Panel -->
 				<p><a href="[EVENT_URL]">View Event &raquo;</a></p>
 				<!-- /Callout Panel --></td>
@@ -19,7 +19,7 @@
 	<div class="column">
 		<table align="left">
 			<tr>
-				<td><h3>Attendees:</h3>
+				<td><h3>Attendee(s):</h3>
 						[ATTENDEE_LIST]
 					</td>
 			</tr>

@@ -138,7 +138,7 @@
 			<p><strong>
 					<?php _e('Note:', 'event_espresso'); ?>
 				</strong>
-				<?php _e('If the date of your event occurs before the regisration end date. Then the registation form will be displayed and also accept registrations.', 'event_espresso'); ?>
+				<?php _e('If the date of your event occurs before the regisration end date. Then the registration form will be displayed and also accept registrations.', 'event_espresso'); ?>
 			</p>
 			<p>
 				<?php _e('All events require registration start/end dates and start/end times in order to display properly on your pages.', 'event_espresso'); ?>
