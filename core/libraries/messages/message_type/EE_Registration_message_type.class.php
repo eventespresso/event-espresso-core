@@ -179,7 +179,7 @@ class EE_Registration_message_type extends EE_message_type {
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
-		if ( !$this->_single_message )
+		if ( $this->_single_message )
 			return array();
 
 		$admin_ids = array();
@@ -221,7 +221,7 @@ class EE_Registration_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
-		if ( !$this->_single_message ) 
+		if ( $this->_single_message ) 
 			return array();
 		
 		$aee = $this->_default_addressee_data;
