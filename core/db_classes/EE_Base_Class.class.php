@@ -185,9 +185,9 @@ abstract class EE_Base_Class{
 		//remember what values were passed to this constructor
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
 		//remember in entity mapper
-		if($model->has_primary_key_field() && $this->ID()){
-			$model->add_to_entity_map($this);
-		}
+//		if($model->has_primary_key_field() && $this->ID()){
+//			$model->add_to_entity_map($this);
+//		}
 	}
 
 
