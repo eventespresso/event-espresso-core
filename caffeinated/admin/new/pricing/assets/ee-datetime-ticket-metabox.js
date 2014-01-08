@@ -1406,7 +1406,7 @@ jQuery(document).ready(function($) {
 			var price_amount = this.getTotalPrice();
 			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount.finalTotal);
 			TKTrow.find('.ticket-price-amount').text('$' + price_amount.finalTotal);
-			TKTrow.find('.edit-ticket-TKT_price').val(price_amount.subtotal);
+			TKTrow.find('.edit-ticket-TKT_price').val(accounting.toFixed(price_amount.subtotal));
 			//$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 		},
 

@@ -236,7 +236,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
 
-			$ticket_price = isset( $tkt['TKT_price'] ) ? $tkt['TKT_price'] : 0;
+			$ticket_price = isset( $tkt['TKT_price'] ) ? (float) $tkt['TKT_price'] : 0;
 			$base_price = isset( $tkt['TKT_base_price'] ) ? $tkt['TKT_base_price'] : 0;
 			$base_price_id = isset( $tkt['TKT_base_price_ID'] ) ? $tkt['TKT_base_price_ID'] : 0;
 
@@ -285,6 +285,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$TKT->set( $field, $value );
 				}
 
+				//make sure price is set if it hasn't been already
+				$TKT->set( 'TKT_price', $ticket_price );
+
 				//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket. 
 				if ( $create_new_TKT ) {
 					//@TODO need to move this logic into its own method that just receives the ticket object (and other necessary info)
@@ -294,8 +297,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$dtts_on_existing = $TKT->get_many_related('Datetime');
 
 					//TKT will get archived later b/c we are NOT adding it to the saved_tickets array.
-					//make sure price is set if it hasn't been already
-					$TKT->set( 'TKT_price', $ticket_price );
 
 
 					//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
