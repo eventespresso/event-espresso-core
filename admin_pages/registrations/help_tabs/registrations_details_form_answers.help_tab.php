@@ -1,4 +1,4 @@
-<h3><?php _e('Attendee Registration Form Answers', 'event_espresso'); ?></h3>
+<h3><?php _e('Registration Form Answers', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Content coming soon.', 'event_espresso'); ?>
+<?php _e('TO-DO (LOC) Content coming soon.', 'event_espresso'); ?>
 </p>

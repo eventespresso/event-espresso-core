@@ -1,13 +1,13 @@
-<p><?php _e('This tab displays various graphs to give you a visual representation of how your events are doing.', 'event_espresso'); ?>
-</p>
+<h2><?php _e('Transaction Reports', 'event_espresso'); ?></h2>
+<p>
+<?php _e('This page shows unfiltered reports for all transactions that have been created with Event Espresso.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e('The current graphs available are:', 'event_espresso'); ?>
+<?php _e('The first graph shows total revenue per day. The second graph shows total revenue per event.', 'event_espresso'); ?>
 </p>
-<ol>
-<li>
-<?php _e('Total Revenue per Day: This lists a snapshot of your recent revenue on a daily basis.', 'event_espresso'); ?></li>
-<li>
-<?php _e('Total Revenue per Event: This shows how much each event has earned overall.', 'event_espresso'); ?>
-</li>
-</ol>
+<p>
+<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Transaction Reports Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
+</p>
+<p>
+<?php /*_e('<strong>Screen Options</strong><br /> You can customize the information that is shown on this page by toggling the Screen Options tab. Then you can add or remove checkmarks to hide or show certain content.', 'event_espresso');*/ ?>
+</p>

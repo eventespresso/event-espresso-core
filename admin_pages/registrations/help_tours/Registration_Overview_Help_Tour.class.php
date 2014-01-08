@@ -193,15 +193,15 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _reg_id_stop() {
-		return '<p>' . __('Sort by registration id for an attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by registration id in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_count_stop() {
-		return '<p>' . __('View attendee registration number.', 'event_espresso') . '</p>';
+		return '<p>' . __('View registration number.', 'event_espresso') . '</p>';
 	}
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('Sort by name of attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by name of registrant in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_date_stop() {
@@ -217,11 +217,11 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _reg_code_stop() {
-		return '<p>' . __('View registration code for attendee.', 'event_espresso') . '</p>';
+		return '<p>' . __('View registration code for a registrant.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_status_stop() {
-		return '<p>' . __('Sort by registration status for an attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by registration status for a registrant in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_total_stop() {
@@ -249,7 +249,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 	}
 	
 	protected function _search_stop() {
-		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, attendee first name, attendee last name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size, ticket name, and ticket description.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, first name, last name, bio, email, address, comments, notes, registration final price, registration code, registration group size, ticket name, and ticket description.', 'event_espresso') . '</p>';
 	}
 
 }

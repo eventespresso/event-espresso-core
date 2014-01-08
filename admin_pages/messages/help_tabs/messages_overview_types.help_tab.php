@@ -11,4 +11,4 @@
 </ul>
 </p>
 <h3><?php _e('Contexts', 'event_espresso'); ?></h3>
-<p><?php _e('Each Message Type (kind of message) has different contexts. Contexts are dynamic and typically represent recipients (individuals receiving email notifications). For example, when the Registration Confirmation message type is triggered, it will send out a message to the following recipients: Event Administrator, Primary Attendee, and Additional Attendees. On the other hand, the Payment Message Type has only two recipients: Event Administrator and Primary Attendee.', 'event_espresso'); ?></p>
+<p><?php _e('Each Message Type (kind of message) has different contexts. Contexts are dynamic and typically represent recipients (individuals receiving email notifications). For example, when the Registration Confirmation message type is triggered, it will send out a message to the following recipients: Event Administrator, Primary Registrant, and Additional Registrants. On the other hand, the Payment Message Type has only two recipients: Event Administrator and Primary Registrant.', 'event_espresso'); ?></p>

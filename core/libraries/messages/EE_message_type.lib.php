@@ -494,8 +494,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$mt_shortcodes = $this->get_valid_shortcodes();
 		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
-		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off).
-		if ( empty( $this->_templates['to'][$context] ) )
+		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off) EXCEPT if we're previewing
+		if ( empty( $this->_templates['to'][$context] ) && !$this->_preview )
 			return false;
 
 		foreach ( $this->_templates as $field => $ctxt ) {

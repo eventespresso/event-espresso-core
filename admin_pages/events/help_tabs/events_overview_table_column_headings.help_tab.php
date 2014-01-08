@@ -8,7 +8,7 @@
 <li>
 <?php _e('Name', 'event_espresso'); ?><br />
 <?php _e('This is the name of an event. ', 'event_espresso'); ?>
-<?php _e('Hovering over the Event Name will provide you will several options: View, Edit, Attendees, Export, and Trash. Clicking on View will take you to the event on the frontend of your site. Clicking on Edit will open the event for editing in the Event Editor. Clicking on Attendees will take you to a page that shows a list of attendees for that event. Clicking on Export will download a CSV for that event. Clicking on Trash will move that event to the trash. Note: an event can be completely deleted only after associated payments have been removed and registrations have been removed.', 'event_espresso'); ?>
+<?php _e('Hovering over the Event Name will provide you will several options: View, Edit, Registrations, Export, and Trash. Clicking on View will take you to the event on the frontend of your site. Clicking on Edit will open the event for editing in the Event Editor. Clicking on Registrations will take you to a page that shows a list of attendees for that event. Clicking on Export will download a CSV for that event. Clicking on Trash will move that event to the trash. Note: an event can be completely deleted only after associated payments have been removed and registrations have been removed.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Venue', 'event_espresso'); ?><br />

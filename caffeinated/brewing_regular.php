@@ -280,7 +280,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function email_default_field_content( $default_field_content, EE_Email_messenger $messenger ) {
-		$default_field_content['content']['question_list'] = __('This contains the formatting for each question and answer in a list of questions and answers for an attendee', 'evnt_espresso');
+		$default_field_content['content']['question_list'] = __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'evnt_espresso');
 		return $default_field_content;
 	}
 
@@ -333,7 +333,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function additional_attendee_shortcodes( $shortcodes, $shortcode_parser ) {
-		$shortcodes['[ANSWER_*]'] = __('This is a special dynamic shortcode. Right after the "*", add the exact text of a existing question, and if there is an answer for that question for this attendee, that will take the place of this shortcode.', 'event_espresso');
+		$shortcodes['[ANSWER_*]'] = __('This is a special dynamic shortcode. Right after the "*", add the exact text of a existing question, and if there is an answer for that question for this registrant, that will take the place of this shortcode.', 'event_espresso');
 		return $shortcodes;
 	}
 

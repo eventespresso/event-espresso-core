@@ -154,6 +154,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						'title' => __('Transactions Overview', 'event_espresso'),
 						'filename' => 'transactions_overview'
 					),
+					'transactions_overview_table_column_headings_help_tab' => array(
+						'title' => __('Transactions Table Column Headings', 'event_espresso'),
+						'filename' => 'transactions_overview_table_column_headings'
+					),
+					'transactions_overview_views_filters_help_tab' => array(
+						'title' => __('Transaction Views & Filters & Search', 'event_espresso'),
+						'filename' => 'transactions_overview_views_filters_search'
+					),
 				),
 				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
 				'require_nonce' => FALSE
@@ -166,9 +174,21 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE
 					),
                 'help_tabs' => array(
-					'view_transaction_help_tab' => array(
+					'transactions_view_transaction_help_tab' => array(
 						'title' => __('View Transaction', 'event_espresso'),
 						'filename' => 'transactions_view_transaction'
+					),
+					'transactions_view_transaction_transaction_details_table_help_tab' => array(
+						'title' => __('Transaction Details Table', 'event_espresso'),
+						'filename' => 'transactions_view_transaction_transaction_details_table'
+					),
+					'transactions_view_transaction_attendees_registered_help_tab' => array(
+						'title' => __('Attendees Registered', 'event_espresso'),
+						'filename' => 'transactions_view_transaction_attendees_registered'
+					),
+					'transactions_view_transaction_views_primary_registrant_billing_information_help_tab' => array(
+						'title' => __('Primary Registrant & Billing Information', 'event_espresso'),
+						'filename' => 'transactions_view_transaction_primary_registrant_billing_information'
 					),
 				),
 				'help_tour' => array( 'Transaction_Details_Help_Tour' ),

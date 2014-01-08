@@ -23,7 +23,7 @@
 
 <p style="text-align:right;">
 	<?php $att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$ATT_ID ), REG_ADMIN_URL ); ?>
-	<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this attendee', 'event_espresso' );?>">
-		<?php _e('View / Edit this Attendee', 'event_espresso'); ?>
+	<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this registrant', 'event_espresso' );?>">
+		<?php _e('View / Edit this Registrant', 'event_espresso'); ?>
 	</a>
 </p>
