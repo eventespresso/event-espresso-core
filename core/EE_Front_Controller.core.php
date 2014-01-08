@@ -597,7 +597,7 @@ final class EE_Front_Controller {
 		//accounting.js library
 		// @link http://josscrowcroft.github.io/accounting.js/
 		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
-			$acct_js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? EE_THIRD_PARTY_URL . 'accounting/accounting.js' : EE_THIRD_PARTY_URL . 'accounting/accounting.min.js';
+			$acct_js = EE_THIRD_PARTY_URL . 'accounting/accounting.js';
 			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_register_script( 'ee-accounting-core', $acct_js, array('underscore'), '0.3.2', TRUE );
 			wp_enqueue_script( 'ee-accounting' );
