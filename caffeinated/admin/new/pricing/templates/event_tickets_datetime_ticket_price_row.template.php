@@ -17,15 +17,24 @@
 		<span class="ticket-price-info-display ticket-price-dollar-sign-display"<?php echo $show_currency_symbol; ?>><?php echo $price_currency_symbol; ?></span>
 	</td>
 	<td>
-		<input type="text" size="1" class="edit-price-PRC_amount ee-numeric" name="<?php echo $edit_prices_name; ?>[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>][PRC_amount]" value="<?php echo $PRC_amount; ?>"<?php echo $disabled; ?>>
+		<?php if ( $disabled ) : ?>
+			<input type="hidden" size="1" class="edit-price-PRC_amount ee-numeric" name="<?php echo $edit_prices_name; ?>[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>][PRC_amount]" value="<?php echo $PRC_amount; ?>">
+			<input type="text" size="1" class="edit-price-PRC_amount ee-numeric" name="prices_archive[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>][PRC_amount]" value="<?php echo $PRC_amount; ?>" disabled>
+		<?php else : ?>
+			<input type="text" size="1" class="edit-price-PRC_amount ee-numeric" name="<?php echo $edit_prices_name; ?>[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>][PRC_amount]" value="<?php echo $PRC_amount; ?>">
+		<?php endif; ?>
 	</td>
 	<td>
 		<span class="ticket-price-info-display ticket-price-percentage-char-display"<?php echo $show_percentage; ?>>%</span>
 	</td>
 	<td>
-		<!-- <span class="gear-icon dashicons dashicons-admin-generic clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"></span> -->
-		<span class="trash-icon dashicons dashicons-trash clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"<?php echo $show_trash_icon; ?>></span>
-		<button data-ticket-row="<?php echo $tkt_row; ?>" data-price-row="<?php echo $PRC_order; ?>" data-context="price" class="ee-create-button"<?php echo $show_create_button; ?>><strong>+</strong></button>
+		<?php if ( $disabled ) : ?>
+			<span class="ee-lock-icon"></span>
+		<?php else : ?>
+			<!-- <span class="gear-icon dashicons dashicons-admin-generic clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"></span> -->
+			<span class="trash-icon dashicons dashicons-trash clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"<?php echo $show_trash_icon; ?>></span>
+			<button data-ticket-row="<?php echo $tkt_row; ?>" data-price-row="<?php echo $PRC_order; ?>" data-context="price" class="ee-create-button"<?php echo $show_create_button; ?>><strong>+</strong></button>
+		<?php endif; ?>
 	</td>
 </tr>
 <!-- <tr id="extra-price-row-<?php echo $tkt_row; ?>-<?php echo $PRC_order; ?>"> -->
@@ -53,6 +62,7 @@
  * $PRC_amount
  * $show_percentage
  * $show_trash_icon
+ * $show_lock_icon
  * $show_create_button
  * $PRC_desc
  * $disabled

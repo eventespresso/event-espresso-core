@@ -1,4 +1,8 @@
 <?php echo $price_modifier_selector; ?>
+<?php if ( $disabled ) : ?>
+	<input type="hidden" name="<?php echo $main_name; ?>" value="<?php echo $selected_price_type_id; ?>">
+<?php endif; ?>
+
 <div class="ee-price-type-option-info hidden">
 	<?php echo $price_option_spans; ?>
 </div>
@@ -15,4 +19,7 @@
  * $price_option_spans;
  * $price_selected_operator
  * $price_selected_is_percent
+ * $main_name
+ * $selected_price_type_id
+ * $disabled
  */

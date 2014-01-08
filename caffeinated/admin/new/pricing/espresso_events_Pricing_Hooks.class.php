@@ -465,7 +465,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		// if empty prices then we're dealing with a base price
 		if ( empty( $prices ) ) {
 			$prices[1] = array(
-				'PRC_ID' => $base_price_id,
+				'PRC_ID' => $new_prices || $base_price_id === 1 ? NULL : $base_price_id,
 				'PRT_ID' => 1,
 				'PRC_amount' => $base_price,
 				'PRC_name' => $ticket->get('TKT_name'),
@@ -750,6 +750,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_min' => $default ? '' : ( $ticket->get('TKT_min') === -1 || $ticket->get('TKT_min') === 0 ? '' : $ticket->get('TKT_min') ),
 			'TKT_max' => $default ? '' :  $ticket->get_pretty('TKT_max','input'),
 			'TKT_sold' => $default ? 0 : $ticket->tickets_sold('ticket'),
+			'TKT_registrations' => $default ? 0 : $ticket->count_registrations(),
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),
@@ -771,7 +772,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_subtotal_amount_display' => EEH_Template::format_currency($ticket_subtotal, FALSE, FALSE ),
 			'TKT_subtotal_amount' => $ticket_subtotal,
 			'tax_rows' => $this->_get_tax_rows( $tktrow, $ticket ),
-			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' disabled' : '',
+			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? TRUE: FALSE,
 			'ticket_archive_class' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' ticket-archived' : '',
 			'trash_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? 'ee-lock-icon ' : 'trash-icon dashicons dashicons-trash clickable',
 			'clone_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? '' : 'clone-icon ee-icon ee-icon-clone clickable'
@@ -855,11 +856,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 	private function _get_ticket_price_row( $tktrow, $prcrow, $price, $default, $ticket, $show_trash = TRUE, $show_create = TRUE ) {
+		$send_disabled = !empty( $ticket ) && $ticket->get('TKT_deleted') ? TRUE : FALSE;
 		$template_args = array(
 			'tkt_row' => $default && empty($ticket) ? 'TICKETNUM' : $tktrow,
 			'PRC_order' => $default && empty($price) ? 'PRICENUM' : $prcrow,
 			'edit_prices_name' => $default && empty($price) ? 'PRICENAMEATTR' : 'edit_prices',
-			'price_type_selector' => $default && empty( $price ) ? $this->_get_base_price_template( $tktrow, $prcrow, $price, $default ) : $this->_get_price_type_selector( $tktrow, $prcrow, $price, $default ),
+			'price_type_selector' => $default && empty( $price ) ? $this->_get_base_price_template( $tktrow, $prcrow, $price, $default ) : $this->_get_price_type_selector( $tktrow, $prcrow, $price, $default, $send_disabled ),
 			'PRC_ID' => $default && empty($price) ? 0 : $price->ID(),
 			'PRC_is_default' => $default && empty($price) ? 0 : $price->get('PRC_is_default'),
 			'PRC_name' => $default && empty($price) ? '' : $price->get('PRC_name'),
@@ -873,7 +875,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'show_trash_icon' => $show_trash ? '' : ' style="display:none;"',
 			'show_create_button' => $show_create ? '' : ' style="display:none;"',
 			'PRC_desc' => $default && empty( $price ) ? '' : $price->get('PRC_desc'),
-			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' disabled' : ''
+			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? TRUE : FALSE
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_price_row.template.php';
@@ -881,11 +883,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	}
 
 
-	private function _get_price_type_selector( $tktrow, $prcrow, $price, $default ) {
+	private function _get_price_type_selector( $tktrow, $prcrow, $price, $default, $disabled = FALSE ) {
 		if ( $price->is_base_price() ) {
 			return $this->_get_base_price_template( $tktrow, $prcrow, $price, $default );
 		} else {
-			return $this->_get_price_modifier_template( $tktrow, $prcrow, $price, $default );
+			return $this->_get_price_modifier_template( $tktrow, $prcrow, $price, $default, $disabled );
 		}
 
 	}
@@ -907,7 +909,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 
-	private function _get_price_modifier_template( $tktrow, $prcrow, $price, $default ) {
+	private function _get_price_modifier_template( $tktrow, $prcrow, $price, $default, $disabled = FALSE ) {
 		$select_name = $default && empty( $price ) ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]' : 'edit_prices[' . $tktrow . '][' . $prcrow . '][PRT_ID]';
 		$price_types = EE_Registry::instance()->load_model('Price_Type')->get_all(array( array('OR' => array('PBT_ID' => '2', 'PBT_ID*' => '3' ) ) ) );
 		$price_option_span_template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_option_span.template.php';
@@ -930,14 +932,20 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$price_option_spans .= EEH_Template::display_template($price_option_span_template, $spanargs, TRUE );
 		}
 
+		$select_params = $disabled ? 'style="width:auto;" disabled'  : 'style="width:auto;"';
+		$main_name = $select_name;
+		$select_name = $disabled ? 'archive_price[' . $tktrow . '][' . $prcrow . '][PRT_ID]' : $main_name;
 
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
 			'PRC_order' => $default && empty( $price ) ? 'PRICENUM' : $prcrow,
-			'price_modifier_selector' => EEH_Form_Fields::select_input( $select_name, $all_price_types, $selected_price_type_id, 'style="width:auto;"', 'edit-price-PRT_ID' ),
+			'price_modifier_selector' => EEH_Form_Fields::select_input( $select_name, $all_price_types, $selected_price_type_id, $select_params, 'edit-price-PRT_ID' ),
+			'main_name' => $main_name,
+			'selected_price_type_id' => $selected_price_type_id,
 			'price_option_spans' => $price_option_spans,
 			'price_selected_operator' => $default && empty( $price ) ? '' : ( $price->is_discount() ? '-' : '+' ),
-			'price_selected_is_percent' => $default && empty( $price ) ? '' : ( $price->is_percent() ? 1 : 0 )
+			'price_selected_is_percent' => $default && empty( $price ) ? '' : ( $price->is_percent() ? 1 : 0 ),
+			'disabled' => $disabled
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_modifier_selector.template.php';
