@@ -1420,15 +1420,15 @@ jQuery(document).ready(function($) {
 				subtotal = this.getTotalPrice(false).finalTotal,
 				editTicketRow = '#edit-ticketrow-' + this.ticketRow;
 			//make sure subtotal shows the right total
-			$('.TKT-taxable-subtotal-amount-display', editTicketRow ).text('$' + subtotal);
+			$('.TKT-taxable-subtotal-amount-display', editTicketRow ).text(subtotal);
 			$('.TKT-taxable-subtotal-amount', editTicketRow).val(subtotal);
 			$('.TKT-tax-percentage', editTicketRow ).each( function() {
 				id = $(this).attr('id').replace('TKT-tax-percentage-', '');
-				tax = parseFloat($(this).val());
-				tax = subtotal * tax/100;
-				tax = tax.toFixed(2);
+				tax = accounting.unformat($(this).val());
+				tax = accounting.unformat(subtotal) * tax/100;
+				tax = accounting.formatNumber(tax);
 				$('#TKT-tax-amount-' + id).val(tax);
-				$('#TKT-tax-amount-display-' + id).text('$' + tax);
+				$('#TKT-tax-amount-display-' + id).text(tax);
 			});
 		},
 
