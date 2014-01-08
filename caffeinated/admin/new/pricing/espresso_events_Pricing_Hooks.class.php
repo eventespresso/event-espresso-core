@@ -255,7 +255,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
-				'TKT_taxable' => isset( $tkt['TKT_taxable'] ) ? 1 : 0
+				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0
 				);
 
 
