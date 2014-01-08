@@ -125,11 +125,11 @@ class Registration_View_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _attendee_details_stop() {
-		return '<p>' . __('details on the attendee attached to this registration', 'event_espresso') . '</p>';
+		return '<p>' . __('details on the registrant attached to this registration', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _edit_reg_question_stop() {
-		return '<p>' . __('info about how they can edit the questions related to this attendee registration here', 'event_espresso') . '</p>';
+		return '<p>' . __('info about how they can edit the questions related to this registration here', 'event_espresso') . '</p>';
 	}
 }

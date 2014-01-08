@@ -166,11 +166,11 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _stop_seven() {
-		return '<p>' . __('Use the questions group to request information from your primary attendee.', 'event_espresso') . '</p>';
+		return '<p>' . __('Use the questions group to request information from your primary registrant.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_nine_caf() {
-		return '<p>' . __('Use the questions group to request information from your additional attendees.', 'event_espresso') . '</p>';
+		return '<p>' . __('Use the questions group to request information from your additional registrant.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _stop_featured_image() {

@@ -22,7 +22,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 					<td>
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<input class="regular-text required" type="text" id="ATT_fname" name="ATT_fname" value="<?php echo $attendee->fname(); ?>"/><br/>
-						<p class="description"><?php _e('The attendee\'s given name. ( required value )', 'event_espresso'); ?></p>
+						<p class="description"><?php _e('The registrant\'s given name. ( required value )', 'event_espresso'); ?></p>
 					</td>
 				</tr>
 				
@@ -33,7 +33,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 					<td>
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<input class="regular-text required" type="text" id="ATT_lname" name="ATT_lname" value="<?php echo $attendee->lname(); ?>"/><br/>
-						<p class="description"><?php _e('The attendee\'s family name. ( required value )', 'event_espresso'); ?></p>
+						<p class="description"><?php _e('The registrant\'s family name. ( required value )', 'event_espresso'); ?></p>
 					</td>
 				</tr>
 				
@@ -66,7 +66,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 						<br/>
 						<input class="regular-text" type="text" id="ATT_address2" name="ATT_address2" value="<?php echo $attendee->address2(); ?>"/>
 						<br/>
-						<p class="description"><?php _e('The attendee\'s street address.', 'event_espresso'); ?></p>
+						<p class="description"><?php _e('The registrant\'s street address.', 'event_espresso'); ?></p>
 					</td>
 				</tr>
 				

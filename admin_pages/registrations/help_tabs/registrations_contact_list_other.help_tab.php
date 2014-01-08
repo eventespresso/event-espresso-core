@@ -14,5 +14,5 @@
 </p>
 <h3><?php _e('Search', 'event_espresso'); ?></h3>
 <p>
-<?php _e('You can perform a search to find certain contacts. The following sources will be searched: Event Name (title), Event Description, Attendee First Name, Attendee Last Name, Attendee Bio, Attendee Email, Attendee Address, Attendee Comments, Attendee Notes, Registration Final Price, and Registration Code. To use the search feature, enter a value into the search box and click on the Search Events button.', 'event_espresso'); ?>
+<?php _e('You can perform a search to find certain contacts. The following sources will be searched: Event Name (title), Event Description, First Name, Last Name, Bio, Email, Address, Comments, Notes, Registration Final Price, and Registration Code. To use the search feature, enter a value into the search box and click on the Search Events button.', 'event_espresso'); ?>
 </p>

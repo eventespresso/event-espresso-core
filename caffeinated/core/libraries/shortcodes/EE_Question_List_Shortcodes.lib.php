@@ -42,7 +42,7 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Questions and Answers Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes related to custom questions and answers', 'event_espresso');
 		$this->_shortcodes = array(
-			'[QUESTION_LIST]' => __('This is used to indicate where you want the list of questions and answers to show for the attendee.  You place this within the "Attendee List" field.', 'event_espresso'),
+			'[QUESTION_LIST]' => __('This is used to indicate where you want the list of questions and answers to show for the registrant.  You place this within the "Registrant List" field.', 'event_espresso'),
 			);
 	}
 

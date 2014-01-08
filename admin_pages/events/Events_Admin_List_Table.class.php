@@ -170,7 +170,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$actions = array(
 			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
-			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '">' . __('Attendees', 'event_espresso') . '</a>',
+			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>',
 			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>'
 			);
 			
