@@ -186,7 +186,7 @@ abstract class EE_Base_Class{
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
 		//remember in entity mapper
 		if($model->has_primary_key_field() && $this->ID()){
-			$model->set_mapping($this);
+			$model->add_to_entity_map($this);
 		}
 	}
 
@@ -973,7 +973,7 @@ abstract class EE_Base_Class{
 		$primary_id_ref = self::_get_primary_key_name( $classname );
 		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
 			$id = $props_n_values[$primary_id_ref];
-			return self::_get_model($classname)->get_mapping($id);
+			return self::_get_model($classname)->get_from_entity_map($id);
 		}
 		return false;
 	}
