@@ -6,7 +6,7 @@
 <?php _e('Shows the Check-In status for an registrant. Available statuses are checked in <span class="ee-icon ee-icon-check-in"></span>, checked out <span class="ee-icon ee-icon-check-out"></span>, or no check-in record is available <span class="dashicons dashicons-no"></span>.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Att #', 'event_espresso'); ?><br />
+<?php echo '#'; ?><br />
 <?php _e('To-DO', 'event_espresso'); ?>
 </li>
 <li>
@@ -30,7 +30,7 @@
 <?php _e('This is the current status for a registration.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Ticket Price', 'event_espresso'); ?><br />
+<?php _e('TKT Price', 'event_espresso'); ?><br />
 <?php _e('This is original price for a registrant\'s ticket.', 'event_espresso'); ?>
 </li>
 <li>
@@ -42,7 +42,7 @@
 <?php _e('This is the current status for a registration.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Ticket Option', 'event_espresso'); ?><br />
+<?php _e('TKT Option', 'event_espresso'); ?><br />
 <?php _e('TO-DO', 'event_espresso'); ?>
 </li>
 <li>

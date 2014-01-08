@@ -42,16 +42,16 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
 				'REG_att_checked_in' => __('Check-In', 'event_espresso'),
-				'REG_count' => __('Att #', 'event_espresso'),
+				'REG_count' => '#',
 				'ATT_name' =>  __('Registrant', 'event_espresso'),
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
 				'REG_date' => __('TXN Date', 'event_espresso'),
 				'REG_code' => __( 'Registration Code', 'event_espresso' ),
 				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
-				'REG_final_price' => __('Ticket Price', 'event_espresso'),
+				'REG_final_price' => __('TKT Price', 'event_espresso'),
 				'TXN_paid' => __('Paid', 'event_espresso'),
 				'TXN_total' => __('Total', 'event_espresso'),
-				'PRC_name' => __('Ticket Option', 'event_espresso')
+				'PRC_name' => __('TKT Option', 'event_espresso')
 			);
 
 		$this->_columns = array_merge( $columns, $this->_columns);
