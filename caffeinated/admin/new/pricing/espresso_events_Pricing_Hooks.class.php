@@ -293,12 +293,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					//we also need to make sure this new ticket gets the same datetime attachments as the archived ticket 
 					$dtts_on_existing = $TKT->get_many_related('Datetime');
 
-					//archive the old ticket
-					$TKT->set('TKT_deleted', 1);
-					$TKT->save();
-
-					//make sure this ticket is still recorded in our saved_tkts so we don't run it through the regular trash routine.
-					$saved_tickets[$TKT->ID()] = $TKT;
+					//TKT will get archived later b/c we are NOT adding it to the saved_tickets array.
+					//make sure price is set if it hasn't been already
+					$TKT->set( 'TKT_price', $ticket_price );
 
 
 					//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
@@ -313,22 +310,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					//and we update the base price
 					$new_tkt =  $this->_add_prices_to_ticket( array(), $new_tkt, TRUE, $base_price, $base_price_id );
 
-					//save the new_ticket!
-					$new_tkt->save();
-
 					foreach ( $dtts_on_existing as $adddtt ) {
 						$new_tkt->_add_relation_to( $adddtt, 'Datetime' );
 					}
 
-					$new_tkt->save();
-
-					//add to saved tickets array
-					$saved_tickets[$new_tkt->ID()] = $new_tkt;
-
-				}
-				
-				//make sure price is set if it hasn't been already
-				$TKT->set( 'TKT_price', $ticket_price );
+				} 
 
 			} else {
 				//no TKT_id so a new TKT
@@ -342,10 +328,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
 				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
 			}
-
-			$TKT->save();
-
-			$saved_tickets[$TKT->ID()] = $TKT;
 
 			//let's make sure the base price is handled
 			$TKT = ! $create_new_TKT ? $this->_add_prices_to_ticket( array(), $TKT, $update_prices, $base_price, $base_price_id ) : $TKT;
@@ -399,13 +381,23 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$new_tkt->_remove_relation_to($saved_dtts[$dttrow], 'Datetime');
 			}
 
-			$TKT->save();
-
-			if ( !empty($new_tkt ) )
-				$new_tkt->save();
-
 
 			//DO ALL dtt relationships for both current tickets and any archived tickets for the given dtt that are related to the current ticket. TODO... not sure exactly how we're going to do this considering we don't know what current ticket the archived tickets are related to (and TKT_parent is used for autosaves so that's not a field we can reliably use).
+			
+
+			//let's assign any tickets that have been setup to the saved_tickets tracker
+			//save existing TKT
+			$TKT->save();
+			if ( $create_new_TKT ) {
+				//save new TKT
+				$new_tkt->save();
+				//add new ticket to array
+				$saved_tickets[$new_tkt->ID()] = $new_tkt;
+			} else {
+				//add tkt to saved tkts
+				//save existing TKT
+				$saved_tickets[$TKT->ID()] = $TKT;
+			}
 			
 		}
 
