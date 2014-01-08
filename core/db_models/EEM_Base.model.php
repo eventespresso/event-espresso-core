@@ -180,6 +180,14 @@ abstract class EEM_Base extends EE_Base{
 	protected $_custom_selections = array();
 	
 	/**
+	 * Mapping from ID -> model objects for
+	 * every model object we've fetched from teh DB
+	 * on this request
+	 * @var EE_Base_Class[]
+	 */
+	protected $_mappings;
+	
+	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
 	 * Should ALWAYS be called after child constructor.
@@ -2385,6 +2393,33 @@ abstract class EEM_Base extends EE_Base{
 		$this->set_timezone( $classInstance->get_timezone() );
 
 		return $classInstance;
+	}
+	/**
+	 * Gets the model object from teh mapping if it exists
+	 * @param int|string $id the ID of the model object
+	 * @return EE_Base_Class
+	 */
+	public function get_mapping($id){
+		if(isset($this->_mappings[$id])){
+			return $this->_mappings[$id];
+		}
+		return false;
+	}
+	/**
+	 * Adds the object to the model's mappings
+	 * @param type $object
+	 * @throws EE_Error
+	 * @return void
+	 */
+	public function set_mapping($object){
+		$className = $this->_get_class_name();
+		if( ! $object instanceof $className){
+			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),get_class($object),$className));
+		}
+		if ( ! $object->ID()){
+			throw new EE_Error(sprintf(__("You tried storing a model object with ID in the %s entity mapper.", "event_espresso"),get_class($this)));
+		}
+		$this->_mappings[$object->ID()] = $object;
 	}
 	/**
 	 * Gets the EE class that corresponds to this model. Eg, for EEM_Answer that

@@ -87,7 +87,9 @@ class EE_Answer extends EE_Base_Class{
 	 * @return EE_Answer
 	 */
 	public static function new_instance_from_db ( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
+		$classname = __CLASS__;
+		$mapped_object = parent::_get_object_from_entity_mapper($props_n_values, $classname);
+		return $mapped_object ? $mapped_object : new self( $props_n_values, TRUE );
 	}
 
 
