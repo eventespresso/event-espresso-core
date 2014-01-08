@@ -510,6 +510,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					'PaymentDetails' => $PaymentDetails,
 					'OrderItems' => $OrderItems
 			);
+			
+			$primary_registrant = $transaction->primary_registration();
 
 			// Pass the master array into the PayPal class function
 			try{
@@ -522,8 +524,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				unset($PayPalResult['RAWREQUEST']);
 				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
 				$approved = $this->_APICallSuccessful($PayPalResult);
-				$primary_registrant = $transaction->primary_registration();
-				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
+				
+				$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
 
 				$payment = EE_Payment::new_instance(array(
 								'TXN_ID' => $transaction->ID(),
@@ -553,7 +555,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'auth_code' => '',
 						'md5_hash' => '',
 						'transaction_id' => '',
-						'invoice_number' => $session_data['primary_attendee']['registration_id'],
+						'invoice_number' => $primary_registrant instanceof EE_Registration ? $primary_registrant->ID() : '',
 						'raw_response' => $e
 				);
 				$payment = EE_Payment::new_instance(array(
