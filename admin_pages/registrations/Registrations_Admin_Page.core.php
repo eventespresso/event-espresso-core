@@ -316,9 +316,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Registration Form Answers', 'event_espresso'),
 						'filename' => 'registrations_details_form_answers'
 						),
-					'registrations_details_attendee_details_help_tab' => array(
+					'registrations_details_registrant_details_help_tab' => array(
 						'title' => __('Registration Details', 'event_espresso'),
-						'filename' => 'registrations_details_attendee_details'
+						'filename' => 'registrations_details_registrant_details'
 						)
 					),
 				'help_tour' => array( 'Registration_Details_Help_Tour' ),

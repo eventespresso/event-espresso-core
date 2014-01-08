@@ -7,7 +7,7 @@
 </li>
 <li>
 <?php echo '#'; ?><br />
-<?php _e('To-DO', 'event_espresso'); ?>
+<?php _e('This is the registrant number in the group. For example, 1 of 1 means that there was a single registrant. 1 of 2 means that this registrant is the first to register of the the two registrants in the group.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Registrations', 'event_espresso'); ?><br />
@@ -43,7 +43,7 @@
 </li>
 <li>
 <?php _e('TKT Option', 'event_espresso'); ?><br />
-<?php _e('TO-DO', 'event_espresso'); ?>
+<?php _e('This is the name of the ticket that was selected by the registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Actions', 'event_espresso'); ?><br />
