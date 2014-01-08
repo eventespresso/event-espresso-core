@@ -297,10 +297,11 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		$models_to_export = array( 
 				'Event'=>$event_query_params,
 				'Datetime'=>$related_models_query_params,
-				'Datetime_Ticket'=>$datetime_ticket_query_params,
 				'Ticket'=>$datetime_ticket_query_params,
+				'Datetime_Ticket'=>$datetime_ticket_query_params,
 				'Price'=>$price_query_params,
 				'Price_Type'=>$price_type_query_params,
+				'Ticket_Price'=>$price_query_params,
 				'Term'=>$term_query_params,
 				'Term_Taxonomy'=>$related_models_query_params,
 				'Term_Relationship'=>$related_models_query_params, //model has NO primary key...
