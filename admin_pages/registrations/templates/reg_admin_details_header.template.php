@@ -12,7 +12,7 @@
 			</span>
 		</h3>
 		<?php if ( $registration->group_size() > 1 ) : ?>
-			<a id="scroll-to-other-attendees" class="scroll-to" href="#other-attendees"><?php echo __( 'scroll to Other Attendees Registered in the Same Transaction', 'event_espresso' );?></a>
+			<a id="scroll-to-other-attendees" class="scroll-to" href="#other-attendees"><?php echo __( 'scroll to Other Registrations in the Same Transaction', 'event_espresso' );?></a>
 		<?php endif; ?>
 		
 

@@ -52,12 +52,12 @@
 <li> <strong>
 <?php _e('Primary Registrant	', 'event_espresso'); ?>
 </strong> <br />
-<?php _e('The name of the primary attendee is shown here. Clicking the name will allow you to edit the attendees.	', 'event_espresso'); ?>
+<?php _e('The name of the primary registrant is shown here. Clicking the name will allow you to edit the registrants.	', 'event_espresso'); ?>
 </li>
 <li> <strong>
 <?php _e('Email Address	', 'event_espresso'); ?>
 </strong> <br />
-<?php _e('The primary attendees email address is shown here. Clicking the email will open up your email client.	', 'event_espresso'); ?>
+<?php _e('The primary registrants email address is shown here. Clicking the email will open up your email client.	', 'event_espresso'); ?>
 </li>
 <li> <strong>
 <?php _e('Event', 'event_espresso'); ?>
@@ -75,7 +75,7 @@
 <li>
 <?php _e('Download Invoice for Transaction: downloads the invoice PDF.', 'event_espresso'); ?>
 </li>
-<li> <?php echo sprintf(__('Send Payment Reminder: Emails the primary attendee the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?> </li>
+<li> <?php echo sprintf(__('Send Payment Reminder: Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?> </li>
 <li> <?php echo sprintf(__('View Registration Details: Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">','</a>'); ?> </li>
 </ol>
 </li>

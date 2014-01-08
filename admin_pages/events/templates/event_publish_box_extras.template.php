@@ -2,7 +2,7 @@
 <div class="misc-pub-section">
 	<span class="dashicons dashicons-groups ee-icon-color-grey ee-icon-size-20"></span>
 	<a href="<?php echo $view_attendees_url;?>">
-		<?php _e('Attendees', 'event_espresso'); ?>
+		<?php _e('Registrations', 'event_espresso'); ?>
 	</a>:
 	<?php echo $attendees_reg_limit; ?>
 </div>

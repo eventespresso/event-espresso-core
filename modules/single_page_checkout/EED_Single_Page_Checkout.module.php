@@ -665,8 +665,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 				
 				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
-				// add event to list of events with pre-approval reg status
-				$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li>' . $registration->event()->name() . '</li>';
+				if ( ! $payment_required ) {
+					// add event to list of events with pre-approval reg status
+					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li>' . $registration->event()->name() . '</li>';
+				}
 				
 			} 
 
@@ -1673,8 +1675,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
 			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 		}
-			
-		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		$this->go_to_next_step( $success_msg, $error_msg );
 		

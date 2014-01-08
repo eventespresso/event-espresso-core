@@ -387,7 +387,7 @@
 						<br/>
 						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes.', 'event_espresso' );?></p><br/>
 						<label></label>
-						<p class="description"><?php _e( 'Defaults to the primary attendee\'s registration code.', 'event_espresso' );?></p>
+						<p class="description"><?php _e( 'Defaults to the primary registrant\'s registration code.', 'event_espresso' );?></p>
 					</div>			
 					<div class="clear"></div>
 	

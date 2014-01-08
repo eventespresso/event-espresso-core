@@ -159,47 +159,47 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _attendee_id_stop() {
-		return '<p>' . __('Sort by attendee id in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by registrant id in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('Sort by first name for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by first name for registrants in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_lname_stop() {
-		return '<p>' . __('Sort by last name for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by last name for registrants in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_email_stop() {
-		return '<p>' . __('Sort by email for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by email for registrants in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_phone_stop() {
-		return '<p>' . __('View phone number for attendee.', 'event_espresso') . '</p>';
+		return '<p>' . __('View phone number for registrants.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_address_stop() {
-		return '<p>' . __('View address for attendee.', 'event_espresso') . '</p>';
+		return '<p>' . __('View address for registrants.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_city_stop() {
-		return '<p>' . __('Sort by city for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by city for registrants in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _sta_id_stop() {
-		return '<p>' . __('Sort by state / province for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by state / province for registrants in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _cnt_iso_stop() {
-		return '<p>' . __('Sort by country for attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by country for registrants in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _bulkactions_stop() {
-		return '<p>' . __('Perform a bulk action to multiple attendees.', 'event_espresso') . '</p>';
+		return '<p>' . __('Perform a bulk action to multiple registrants.', 'event_espresso') . '</p>';
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, attendee first name, attendee last name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, first name, last name, bio, email, address, comments, notes, registration final price, registration code.', 'event_espresso') . '</p>';
 	}
 
 	protected function _contact_list_csv_export_stop() {

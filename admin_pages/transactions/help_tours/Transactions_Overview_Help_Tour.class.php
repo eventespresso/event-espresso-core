@@ -179,7 +179,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('Sort by name of attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by name of registrant in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_email_stop() {
@@ -203,7 +203,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through transactions. The following sources will be searched: event name, event description, attendee first name, attendee last name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size, ticket name, ticket description, payment method, payment gateway, transaction details, and transaction session data.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through transactions. The following sources will be searched: event name, event description, first name, last name, bio, email, address, comments, notes, registration final price, registration code, registration group size, ticket name, ticket description, payment method, payment gateway, transaction details, and transaction session data.', 'event_espresso') . '</p>';
 	}
 
 }

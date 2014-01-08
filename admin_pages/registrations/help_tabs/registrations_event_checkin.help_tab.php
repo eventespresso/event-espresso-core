@@ -1,6 +1,6 @@
 <h2><?php _e('Registrations Event Check-In', 'event_espresso'); ?></h2>
 <p>
-<?php _e('This page allows you to check in attendees for an event.', 'event_espresso'); ?>
+<?php _e('This page allows you to check in registrants for an event.', 'event_espresso'); ?>
 </p>
 <p>
 <?php _e('Notice: The contents of this page will vary depending on if you are viewing the event check-in page or viewing registrations for a specific event.', 'event_espresso'); ?>

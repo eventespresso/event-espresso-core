@@ -113,7 +113,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			'registration_checkins' => array(
 				'nav' => array(
-					'label' => __('Attendee Check-In Records', 'event_espresso'),
+					'label' => __('Check-In Records', 'event_espresso'),
 					'order' => 15,
 					'persistent' => FALSE
 					),
@@ -175,7 +175,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'label' => __('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => !isset( $this->_req_data['event_id'] ) ? array() : array(
-					'toggle_checkin_status' => __('Toggle Attendees Check-In', 'event_espresso'),
+					'toggle_checkin_status' => __('Toggle Check-In', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
 				),
@@ -541,7 +541,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$legend_items = array(
 			'star-icon' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
-				'desc' => __('This Attendee is the Primary Attendee', 'event_espresso')
+				'desc' => __('This Registrant is the Primary Attendee', 'event_espresso')
 				),
 			'checkin' => array(
 				'class' => 'ee-icon ee-icon-check-in',

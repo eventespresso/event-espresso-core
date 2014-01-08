@@ -124,8 +124,8 @@ class EE_Payment_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive on a successful payment', 'event_espresso')
 				),
 			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who made the main registration) will receive on successful payment', 'event_espresso')
+				'label' => __('Primary Registrant', 'event_espresso'),
+				'description' => __('This template is what the primary registrant (the person who made the main registration) will receive on successful payment', 'event_espresso')
 				)
 			);
 

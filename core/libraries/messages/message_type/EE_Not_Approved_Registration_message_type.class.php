@@ -32,7 +32,7 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 
 	public function __construct() {
 		$this->name = 'not_approved_registration';
-		$this->description = __('This message type is for messages sent to attendees when their registration is set to the not approved status.', 'event_espresso');
+		$this->description = __('This message type is for messages sent to registrants when their registration is set to the not approved status.', 'event_espresso');
 		$this->label = array(
 			'singular' => __('not approved registration', 'event_espresso'),
 			'plural' => __('not approved registrations', 'event_espresso')
@@ -141,12 +141,12 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive when registration status is set to not approved.', 'event_espresso')
 				),
 			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive when the registration status is not approved.', 'event_espresso')
+				'label' => __('Primary Registrant', 'event_espresso'),
+				'description' => __('This template is what the primary registrant (the person who completed the initial transaction) will receive when the registration status is not approved.', 'event_espresso')
 				),
 			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when their registration status is not approved.', 'event_espresso')
+				'label' => __('Registrant', 'event_espresso'),
+				'description' => __('This template is what each registrant for the event will receive when their registration status is not approved.', 'event_espresso')
 				)
 			);
 
@@ -179,7 +179,7 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
-		if ( !$this->_single_message )
+		if ( $this->_single_message )
 			return array();
 
 		$admin_ids = array();
@@ -221,7 +221,7 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
-		if ( !$this->_single_message ) 
+		if ( $this->_single_message ) 
 			return array();
 		
 		$aee = $this->_default_addressee_data;
