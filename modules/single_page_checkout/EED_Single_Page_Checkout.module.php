@@ -1675,8 +1675,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
 			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 		}
-			
-		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 
 		$this->go_to_next_step( $success_msg, $error_msg );
 		
