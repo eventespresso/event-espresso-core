@@ -396,7 +396,10 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			return $new_id;
 		}else{//non-primary attendee, so find its primary attendee's transaction
 			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and registration_id=%s",$old_attendee['registration_id']));
-			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);
+			if( ! $primary_attendee_old_id){
+				$primary_attendee_old_id = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee['registration_id']);
+			}
+			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);			
 			if( ! $txn_id){
 				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  http_build_query($old_attendee),$primary_attendee_old_id));
 				$txn_id = 0;
@@ -439,7 +442,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$regs_on_this_row = intval($old_attendee['quantity']);
 		$new_regs = array();
 		for($count = 0; $count < $regs_on_this_row; $count++){
-			$regs_on_this_event_and_txn = $this->_count_new_registrations_on_txn($new_txn_id) + 1;
+			$regs_on_this_event_and_txn = $this->_find_count_in_old_txn_using_reg_id($old_attendee['id'],$old_attendee['registration_id']) + 1;
 			$cols_n_values = array(
 				'EVT_ID'=>$new_event_id,
 				'ATT_ID'=>$new_attendee_id,
@@ -537,12 +540,12 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	/**
 	 * Counts all the registrations on this transaction added SO FAR
 	 * @global type $wpdb
-	 * @param int $txn_id
+	 * @param int $registration_id
 	 * @return int
 	 */
-	private function _count_new_registrations_on_txn($txn_id){
+	private function _find_count_in_old_txn_using_reg_id($id,$registration_id){
 		global $wpdb;
-		$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(REG_ID) FROM ".$this->_new_reg_table." WHERE TXN_ID=%d",$txn_id));
+		$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(REG_ID) FROM ".$this->_old_table." WHERE registration_id=%s AND id<=%d",$registration_id,$id));
 		return intval($count);
 	}
 	private function _insert_new_payment($old_attendee,$new_txn_id){
@@ -597,6 +600,19 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		}
 		
 		
+	}
+	
+	/**
+	 * If MER is active, if you want ot fin dthe other registrations on that 
+	 * @global type $wpdb
+	 * @param type $old_registration_id
+	 * @return int
+	 */
+	private function _find_mer_primary_attendee_using_mer_tables($old_registration_id){
+		global $wpdb;
+		$mer_group_table = $wpdb->prefix."events_multi_event_registration_id_group";
+		$old_att_id_for_primary_reg = $wpdb->get_var($wpdb->prepare("SELECT id FROM $mer_group_table AS mer INNER JOIN {$this->_old_table} AS att ON mer.primary_registration_id = att.registration_id WHERE mer.registration_id=%s LIMIT 1",$old_registration_id));
+return intval($old_att_id_for_primary_reg);
 	}
 	
 }
