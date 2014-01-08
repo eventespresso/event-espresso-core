@@ -235,17 +235,20 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	}
 	
 	protected function _migrate_old_row($old_row) {
-		
-		$new_att_id = $this->_insert_new_attendee_cpt($old_row);
-		if( ! $new_att_id){
-			//if we couldnt even make an attendee, abandon all hope
-			return false;
+		//first check if there's already a new attendee with similar characteristics
+		$new_att_id = $this->_find_attendee_cpt_matching($old_row);
+		if( ! $new_att_id ){
+			$new_att_id = $this->_insert_new_attendee_cpt($old_row);
+			if( ! $new_att_id){
+				//if we couldnt even make an attendee, abandon all hope
+				return false;
+			}
+			$new_att_meta_id = $this->_insert_attendee_meta_row($old_row, $new_att_id);
+			if($new_att_meta_id){
+				$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_attendee_meta_table, $new_att_meta_id);
+			}
 		}
 		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_attendee_cpt_table, $new_att_id);
-		$new_att_meta_id = $this->_insert_attendee_meta_row($old_row, $new_att_id);
-		if($new_att_meta_id){
-			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_attendee_meta_table, $new_att_meta_id);
-		}
 		
 		$txn_id = $this->_insert_new_transaction($old_row);
 		if( ! $txn_id){
@@ -264,7 +267,18 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_reg_table,$new_regs);
 		}
 	}
-	
+	/**
+	 * Checks if there's already an attendee CPT in the db that has the same 
+	 * first and last name, and email. If so, returns its ID as an int.
+	 * @global type $wpdb
+	 * @param array $old_attendee
+	 * @return int
+	 */
+	private function _find_attendee_cpt_matching($old_attendee){
+		global $wpdb;
+		$existing_attendee_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_new_attendee_cpt_table." AS cpt INNER JOIN ".$this->_new_attendee_meta_table." AS meta ON cpt.ID = meta.ATT_ID WHERE meta.ATT_fname = %s AND meta.ATT_lname = %s AND meta.ATT_email = %s LIMIT 1",$old_attendee['fname'],$old_attendee['lname'],$old_attendee['email']));
+		return intval($existing_attendee_id);
+	}
 	private function _insert_new_attendee_cpt($old_attendee){
 		global $wpdb;
 		$cols_n_values = array(
