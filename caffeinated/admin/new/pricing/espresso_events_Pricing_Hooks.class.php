@@ -425,6 +425,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			if ( $tkt_to_remove->get('TKT_is_default') )
 				continue;
 
+			//if this tkt has any registrations attached so then we just ARCHIVE because we don't actually permanently delete these tickets.
+			if ( $tkt_to_remove->count_related('Registration') > 0 ) {
+				$tkt_to_remove->delete();
+				continue;
+			}
+
 			//need to get all the related datetimes on this ticket and remove from every single one of them (remember this process can ONLY kick off if there are NO tkts_sold)
 			$dtts = $tkt_to_remove->get_many_related('Datetime');
 
