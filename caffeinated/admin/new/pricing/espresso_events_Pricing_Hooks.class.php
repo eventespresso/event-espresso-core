@@ -222,11 +222,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
 		$saved_tickets = $dtts_on_existing = array();
-		$update_prices = $create_new_TKT = FALSE;
-		$new_default = $new_tkt = NULL;
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
+
+			$update_prices = $create_new_TKT = $ticket_sold = FALSE;
+			$new_default = $new_tkt = NULL;
 
 			//figure out what dtts were added to the ticket and what dtts were removed from the ticket in the session.
 
