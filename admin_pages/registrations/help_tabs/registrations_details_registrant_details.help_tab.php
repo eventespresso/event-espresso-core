@@ -1,6 +1,6 @@
-<h3><?php _e('Attendee Details', 'event_espresso'); ?></h3>
+<h3><?php _e('Registration Details', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Shows information about the Registrant', 'event_espresso'); ?><br />
+<?php _e('Shows information about the Registrant.', 'event_espresso'); ?><br />
 </p>
 <p>
 <ul>
