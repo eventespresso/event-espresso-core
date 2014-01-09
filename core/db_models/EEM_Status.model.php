@@ -143,6 +143,8 @@ class EEM_Status extends EEM_Base {
 	  			)
 	    );
 
+		$translation_array = apply_filters( 'FHEE__EEM_Status__localized_status__translation_array', $translation_array );
+
 		if ( !is_array($statuses) )
 			throw new EE_Error( __('The incoming statuses argument must be an array with keys as the $status_id and values as the $status_code', 'event_espresso') );
 
