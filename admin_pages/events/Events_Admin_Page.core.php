@@ -197,19 +197,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'events_overview'
 					),
 					'events_overview_table_column_headings_help_tab' => array(
-						'title' => __('Table Column Headings', 'event_espresso'),
+						'title' => __('Events Overview Table Column Headings', 'event_espresso'),
 						'filename' => 'events_overview_table_column_headings'
 					),
 					'events_overview_filters_help_tab' => array(
-						'title' => __('Filters', 'event_espresso'),
+						'title' => __('Events Overview Filters', 'event_espresso'),
 						'filename' => 'events_overview_filters'
 					),
 					'events_overview_view_help_tab' => array(
-						'title' => __('Views', 'event_espresso'),
+						'title' => __('Events Overview Views', 'event_espresso'),
 						'filename' => 'events_overview_views'
 					),
 					'events_overview_other_help_tab' => array(
-						'title' => __('Other', 'event_espresso'),
+						'title' => __('Events Overview Other', 'event_espresso'),
 						'filename' => 'events_overview_other'
 					)
 				),
@@ -232,11 +232,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'event_editor'
 					),
 					'event_editor_title_richtexteditor_help_tab' => array(
-						'title' => __('Title & Rich Text Editor', 'event_espresso'),
+						'title' => __('Event Title & Rich Text Editor', 'event_espresso'),
 						'filename' => 'event_editor_title_richtexteditor'
 					),
 					'event_editor_venue_details_help_tab' => array(
-						'title' => __('Venue Details', 'event_espresso'),
+						'title' => __('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
 					'event_editor_event_datetimes_help_tab' => array(
@@ -252,19 +252,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'event_editor_event_registration_options'
 					),
 					'event_editor_tags_categories_help_tab' => array(
-						'title' => __('Tags & Categories', 'event_espresso'),
+						'title' => __('Event Tags & Categories', 'event_espresso'),
 						'filename' => 'event_editor_tags_categories'
 					),
-					'event_editor_questions_attendees_help_tab' => array(
-						'title' => __('Questions for Attendees', 'event_espresso'),
-						'filename' => 'event_editor_questions_attendees'
+					'event_editor_questions_registrants_help_tab' => array(
+						'title' => __('Questions for Registrants', 'event_espresso'),
+						'filename' => 'event_editor_questions_registrants'
 					),
 					'event_editor_save_new_event_help_tab' => array(
 						'title' => __('Save New Event', 'event_espresso'),
 						'filename' => 'event_editor_save_new_event'
 					),
 					'event_editor_other_help_tab' => array(
-						'title' => __('Other', 'event_espresso'),
+						'title' => __('Event Other', 'event_espresso'),
 						'filename' => 'event_editor_other'
 					)
 				),
@@ -287,11 +287,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'event_editor'
 					),
 					'event_editor_title_richtexteditor_help_tab' => array(
-						'title' => __('Title & Rich Text Editor', 'event_espresso'),
+						'title' => __('Event Title & Rich Text Editor', 'event_espresso'),
 						'filename' => 'event_editor_title_richtexteditor'
 					),
 					'event_editor_venue_details_help_tab' => array(
-						'title' => __('Venue Details', 'event_espresso'),
+						'title' => __('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
 					'event_editor_event_datetimes_help_tab' => array(
@@ -307,19 +307,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'event_editor_event_registration_options'
 					),
 					'event_editor_tags_categories_help_tab' => array(
-						'title' => __('Tags & Categories', 'event_espresso'),
+						'title' => __('Event Tags & Categories', 'event_espresso'),
 						'filename' => 'event_editor_tags_categories'
 					),
-					'event_editor_questions_attendees_help_tab' => array(
-						'title' => __('Questions for Attendees', 'event_espresso'),
-						'filename' => 'event_editor_questions_attendees'
+					'event_editor_questions_registrants_help_tab' => array(
+						'title' => __('Questions for Registrants', 'event_espresso'),
+						'filename' => 'event_editor_questions_registrants'
 					),
 					'event_editor_save_new_event_help_tab' => array(
 						'title' => __('Save New Event', 'event_espresso'),
 						'filename' => 'event_editor_save_new_event'
 					),
 					'event_editor_other_help_tab' => array(
-						'title' => __('Other', 'event_espresso'),
+						'title' => __('Event Other', 'event_espresso'),
 						'filename' => 'event_editor_other'
 					)
 				),
@@ -343,7 +343,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'events_default_settings'
 					),
 					'default_settings_status_help_tab' => array(
-						'title' => __('Status, Registration & Pre-approval', 'event_espresso'),
+						'title' => __('Default Registration Status', 'event_espresso'),
 						'filename' => 'events_default_settings_status'
 					)
 				),
@@ -358,7 +358,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => false),
 				'help_tabs' => array(
 					'add_category_help_tab' => array(
-						'title' => __('Add Event Category', 'event_espresso'),
+						'title' => __('Add New Event Category', 'event_espresso'),
 						'filename' => 'events_add_category'
 						)
 					),
@@ -391,19 +391,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'list_table' => 'Event_Categories_Admin_List_Table',
                 'help_tabs' => array(
 					'events_categories_help_tab' => array(
-						'title' => __('Categories', 'event_espresso'),
+						'title' => __('Event Categories', 'event_espresso'),
 						'filename' => 'events_categories'
 					),
 					'events_categories_table_column_headings_help_tab' => array(
-						'title' => __('Table Column Headings', 'event_espresso'),
+						'title' => __('Event Categories Table Column Headings', 'event_espresso'),
 						'filename' => 'events_categories_table_column_headings'
 					),
 					'events_categories_view_help_tab' => array(
-						'title' => __('Views', 'event_espresso'),
+						'title' => __('Event Categories Views', 'event_espresso'),
 						'filename' => 'events_categories_views'
 					),
 					'events_categories_other_help_tab' => array(
-						'title' => __('Other', 'event_espresso'),
+						'title' => __('Event Categories Other', 'event_espresso'),
 						'filename' => 'events_categories_other'
 					)
                 ),
