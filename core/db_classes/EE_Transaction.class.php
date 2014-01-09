@@ -677,13 +677,23 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return void
 	 */
 	public function finalize( $from_admin = FALSE ){
-		$new_txn = FALSE;
+		$reg_msg = array();
+		$new_reg = FALSE;
+		$reg_to_approved = FALSE;
 		$registrations = $this->get_many_related('Registration');
 		foreach ( $registrations as $registration ) {
-			$new_txn = $registration->finalize( $from_admin ) === TRUE ? TRUE : $new_txn;
+			$reg_msg = $registration->finalize( $from_admin );
+			$new_reg = $reg_msg['new_reg'] ? TRUE : $new_reg;
+			$reg_to_approved = $reg_msg['to_approved'] ? TRUE : $reg_to_approved;
 		}
 
-		if ( $new_txn ) {
+		$reg_msg = array(
+			'new_reg' => $new_reg,
+			'to_approved' => $reg_to_approved
+			);
+		//$reg_msg['new_reg'] === TRUE means that new registration was created.  $reg_msg['to_approved'] === TRUE means that registration status was updated to approved.
+
+		if ( $new_reg ) {
 			// remove the transaction from the session before saving it to the db
 			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => NULL ));
 			// save the session (with it's sessionless transaction) back to this transaction... we need to go deeper!
@@ -692,7 +702,7 @@ class EE_Transaction extends EE_Base_Class{
 			$this->save();
 			do_action('AHEE__EE_Transaction__finalize__new_transaction', $this, $from_admin );
 		}
-		do_action('AHEE__EE_Transaction__finalize__all_transaction', $this, $from_admin );
+		do_action('AHEE__EE_Transaction__finalize__all_transaction', $this, $reg_msg, $from_admin );
 	}
 
 
