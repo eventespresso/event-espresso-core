@@ -47,7 +47,7 @@
 </li>
 <li>
 <?php _e('Actions', 'event_espresso'); ?><br />
-<?php _e('You can click on the small magnifying glass <span class="dashicons dashicons-search"></span> to view all check-in records for this attendee.', 'event_espresso'); ?>
+<?php _e('You can click on the small magnifying glass <span class="dashicons dashicons-search"></span> to view all check-in records for this registrant.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

@@ -181,7 +181,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			'trash' => array(
 				'slug' => 'trash',
-				'label' => __('Trashed', 'event_espresso'),
+				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'restore_registrations' => __('Restore Registrations', 'event_espresso'),
@@ -541,23 +541,23 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$legend_items = array(
 			'star-icon' => array(
 				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
-				'desc' => __('This Registrant is the Primary Attendee', 'event_espresso')
+				'desc' => __('This Registrant is the Primary Registrant', 'event_espresso')
 				),
 			'checkin' => array(
 				'class' => 'ee-icon ee-icon-check-in',
-				'desc' => __('This Attendee has been Checked In', 'event_espresso')
+				'desc' => __('This Registrant has been Checked In', 'event_espresso')
 				),
 			'checkout' => array(
 				'class' => 'ee-icon ee-icon-check-out',
-				'desc' => __('This Attendee has been Checked Out', 'event_espresso')
+				'desc' => __('This Registrant has been Checked Out', 'event_espresso')
 				),
 			'nocheckinrecord' => array(
 				'class' => 'dashicons dashicons-no',
-				'desc' => __('No Check-in Record has been Created for this Attendee', 'event_espresso')
+				'desc' => __('No Check-in Record has been Created for this Registrant', 'event_espresso')
 				),
 			'view_details' => array(
 				'class' => 'dashicons dashicons-search',
-				'desc' => __('View All Check-in Records for this Attendee', 'event_espresso')
+				'desc' => __('View All Check-in Records for this Registrant', 'event_espresso')
 				),/**/
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );

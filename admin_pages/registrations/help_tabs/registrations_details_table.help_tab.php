@@ -13,7 +13,7 @@
 </li>
 <li>
 <?php _e('Gateway Response Message', 'event_espresso'); ?><br />
-<?php _e('TO-DO', 'event_espresso'); ?>
+<?php _e('TO-DO (LOC)', 'event_espresso'); ?>
 </li>
 </ul>
 </p>
@@ -37,7 +37,7 @@
 </li>
 <li>
 <?php _e('Ticket Option', 'event_espresso'); ?><br />
-<?php _e('TO-DO', 'event_espresso'); ?>
+<?php _e('This is the name of the ticket that was selected by the registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Price', 'event_espresso'); ?><br />
