@@ -86,60 +86,60 @@ class EEM_Status extends EEM_Base {
 	public static function localized_status(  $statuses, $plural = FALSE ) {
 		$translation_array = array(
 	     	EEM_Registration::status_id_pending_payment => array(
-				__('Pending Payment', 'event_espresso'), //singular
-				__('Pending Payments', 'event_espresso') //plural
+				__('PENDING PAYMENT', 'event_espresso'), //singular
+				__('PENDING PAYMENTS', 'event_espresso') //plural
 				),
 	  		EEM_Registration::status_id_approved => array(
-	  			__('Approved', 'event_espresso'), //singular
-	  			__('Approved', 'event_espresso') //plural
+	  			__('APPROVED', 'event_espresso'), //singular
+	  			__('APPROVED', 'event_espresso') //plural
 	  			),
 	  		EEM_Registration::status_id_not_approved => array(
-	  			__('Not Approved', 'event_espresso'),
-	  			__('Not Approved', 'event_espresso')
+	  			__('NOT APPROVED', 'event_espresso'),
+	  			__('NOT APPROVED', 'event_espresso')
 	  			),
 	  		EEM_Registration::status_id_cancelled => array(
-	  			__('Cancelled', 'event_espresso'),
-	  			__('Cancelled', 'event_espresso')
+	  			__('CANCELLED', 'event_espresso'),
+	  			__('CANCELLED', 'event_espresso')
 	  			),
 	  		EEM_Registration::status_id_declined => array(
-	  			__('Declined', 'event_espresso'),
-	  			__('Declined', 'event_espresso')
+	  			__('DECLINED', 'event_espresso'),
+	  			__('DECLINED', 'event_espresso')
 	  			),
 	  		EEM_Transaction::complete_status_code => array(
-	  			__('Complete', 'event_espresso'),
-	  			__('Complete', 'event_espresso')
+	  			__('COMPLETE', 'event_espresso'),
+	  			__('COMPLETE', 'event_espresso')
 	  			),
 	  		EEM_Transaction::incomplete_status_code => array(
-	  			__('Incomplete', 'event_espresso'),
-	  			__('Incomplete', 'event_espresso')
+	  			__('INCOMPLETE', 'event_espresso'),
+	  			__('INCOMPLETE', 'event_espresso')
 	  			),
 	  		EEM_Transaction::open_status_code => array(
-	  			__('Open', 'event_espresso'),
-	  			__('Open', 'event_espresso')
+	  			__('OPEN', 'event_espresso'),
+	  			__('OPEN', 'event_espresso')
 	  			),
 	  		EEM_Transaction::overpaid_status_code => array(
-	  			__('Overpaid', 'event_espresso'),
-	  			__('Overpaid', 'event_espresso')
+	  			__('OVERPAID', 'event_espresso'),
+	  			__('OVERPAID', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_approved => array(
-	  			__('Approved', 'event_espresso'),
-	  			__('Approved', 'event_espresso')
+	  			__('APPROVED', 'event_espresso'),
+	  			__('APPROVED', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_pending => array(
-	  			__('Pending', 'event_espresso'),
-	  			__('Pending', 'event_espresso')
+	  			__('PENDING', 'event_espresso'),
+	  			__('PENDING', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_cancelled => array(
-	  			__('Cancelled', 'event_espresso'),
-	  			__('Cancelled', 'event_espresso')
+	  			__('CANCELLED', 'event_espresso'),
+	  			__('CANCELLED', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_declined => array(
-	  			__('Declined', 'event_espresso'),
-	  			__('Declined', 'event_espresso')
+	  			__('DECLINED', 'event_espresso'),
+	  			__('DECLINED', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_failed => array(
-	  			__('Failed', 'event_espresso'),
-	  			__('Failed', 'event_espresso')
+	  			__('FAILED', 'event_espresso'),
+	  			__('FAILED', 'event_espresso')
 	  			)
 	    );
 
