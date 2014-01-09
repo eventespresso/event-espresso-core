@@ -79,11 +79,11 @@ class EEM_Status extends EEM_Base {
 
 	/**
 	 * This method provides the localized singular or plural string for a given status id
-	 * @param  array|string  $status_id The status(s) to return the string for
+	 * @param  array   $statuses  This should be an array of statuses in the format array( $status_id, $status_code ).  That way if there isn't a translation in the index we'll return the default code.
 	 * @param  boolean $plural    Whether to return plural string or not. Note, nearly all of the plural strings are the same as the singular (in English), however, this may NOT be the case with other languages
 	 * @return array             an array of translated strings for the incoming status id.
 	 */
-	public static function localized_status(  $status_id, $plural = FALSE ) {
+	public static function localized_status(  $statuses, $plural = FALSE ) {
 		$translation_array = array(
 	     	EEM_Registration::status_id_pending_payment => array(
 				__('Pending Payment', 'event_espresso'), //singular
@@ -143,12 +143,17 @@ class EEM_Status extends EEM_Base {
 	  			)
 	    );
 
-	    $status_id = (array) $status_id;
+		if ( !is_array($statuses) )
+			throw new EE_Error( __('The incoming statuses argument must be an array with keys as the $status_id and values as the $status_code', 'event_espresso') );
 
 	    $translation = array();
 
-	    foreach ( $status_id as $id ) {
-	    	$translation[$id] = $plural ? $translation_array[$id][1] : $translation_array[$id][0];
+	    foreach ( $statuses as $id => $code ) {
+	    	if ( isset( $translation_array[$id] ) ) {
+	    		$translation[$id] = $plural ? $translation_array[$id][1] : $translation_array[$id][0];
+	    	} else {
+	    		$translation[$id] = $code;
+	    	}
 	    }
 
 	    return $translation;
