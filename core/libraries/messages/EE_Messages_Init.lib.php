@@ -189,10 +189,12 @@ class EE_Messages_Init extends EE_Base {
 	public function maybe_registration( EE_Transaction $transaction, $reg_msg, $from_admin ) {
 		$this->_load_controller();
 
-		//for now we're ONLY doing this from frontend
-		if ( $from_admin )
-			return;
-
+		//for now we're ONLY doing this from frontend UNLESS we have the toggle to send.
+		if ( $from_admin ) {
+			$messages_toggle = !empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) && $_REQUEST['txn_reg_status_change']['send_notifications'] ? TRUE : FALSE;
+			if ( ! $messages_toggle )
+				return; //no messages sent please.
+		}
 		//next let's only send out notifications if a registration was created OR if the registration status was updated to approved
 		if ( ! $reg_msg['new_reg'] && ! $reg_msg['to_approved'] )
 			return;
