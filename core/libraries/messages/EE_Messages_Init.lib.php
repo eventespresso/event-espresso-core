@@ -294,7 +294,6 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	public function process_admin_payment( $success, EE_Payment $payment ) {
 		$success = TRUE;
-		$reg_success = TRUE;
 
 		//we need to get the transaction object
 		$transaction = $payment->transaction();
@@ -304,17 +303,10 @@ class EE_Messages_Init extends EE_Base {
 		$this->_load_controller();
 		$success = $this->_EEMSG->send_message( 'payment', $data );
 
-		if ( $success ) {
-			EE_Error::add_success( __('The payment confirmation has been sent', 'event_espresso') );
-		} else {
+		if ( ! $success ) {
 			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		if ( $reg_success ) {
-			EE_Error::add_success( __('Complete payment has been made for the transaction so registration confirmations have been sent', 'event_espresso') );
-		} else {
-			EE_Error::add_success( __('Registration confirmations are delayed until the amount owing has been completely paid.', 'event_espresso') );
-		}
 		return $success;
 	}
 
