@@ -1,6 +1,6 @@
 <h3><?php _e('Event Check-In Filters', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Filters are a way to show registrations that fall into certain criteria. Note: you must first select an Event to see all available options for filters.', 'event_espresso'); ?>
+<?php _e('Filters are a way to show registrations that fall into certain criteria. Notice: you must first select an Event to see all available options for filters.', 'event_espresso'); ?>
 </p>
 <p>
 <ul>

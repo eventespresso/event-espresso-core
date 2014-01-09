@@ -2,14 +2,14 @@
 <?php _e('Question Text', 'event_espresso'); ?>
 </h2>
 <p>
-<?php _e("The actual question to display to registrants who are signing up for events.", 'event_espresso'); ?>
+<?php _e("The actual question to display to registrants who are signing up for events.(HTML permitted)", 'event_espresso'); ?>
 </p>
 
 <h2>
 <?php _e('Question Label', 'event_espresso'); ?>
 </h2>
 <p>
-<?php _e('An administrative label for this question to help you differentiate between two questions that may appear the same to registrants (but are for different events). For example: You could have two questions that simply ask the registrant to choose a "Size", then use this field to label one "T-shirt Size" and the other "Shoe Size".', 'event_espresso'); ?>
+<?php _e('An administrative label for this question to help you differentiate between two questions that may appear the same to registrants (but are for different events). For example: You could have two questions that simply ask the registrant to choose a "Size", then use this field to label one "T-shirt Size" and the other "Shoe Size". (HTML not permitted)', 'event_espresso'); ?>
 </p>
 <p><?php _e('System questions will always be used internally for their intended purpose and any attempts to change them to something else may result in errors. For example, changing the sytem question for "Email" to ask for anything other than an email address will cause registration form validation errors, because the system will still be expecting that field to contain an email address. Admin Labels for System questions can not be edited','event_espresso')?></p>
 

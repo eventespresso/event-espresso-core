@@ -62,7 +62,8 @@
 						<td><?php _e('Price', 'event_espresso'); ?></td>
 						<td><?php _e('Qty', 'event_espresso'); ?></td>
 						<!--<td><?php _e('Total', 'event_espresso'); ?></td>-->
-						<td colspan="2"><?php _e('Sold', 'event_espresso'); ?></td>
+						<td><?php _e('Sold', 'event_espresso'); ?></td>
+						<td colspan="2"><?php _e('Regs', 'event_espresso'); ?></td>
 					</tr>
 				</thead>
 				<tbody>
