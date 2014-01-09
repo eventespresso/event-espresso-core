@@ -1392,6 +1392,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	/**
 	 * 	_finalize_attendee_information
 	 * 	this is the final step after a user  revisits the site to edit their attendee information
+	 * 	this gets called AFTER the _process_attendee_information() method above
 	 *
 	 * 	@access private
 	 * 	@return 	void (redirect)
@@ -1632,7 +1633,10 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 				
 			do_action('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
+			
+			// if Default REG Status is set to REQUIRES APPROVAL... then payments are NOT allowed
 			if ( EE_Registry::instance()->REQ->is_set('selected_gateway') && EE_Registry::instance()->REQ->get('selected_gateway') == 'payments_closed' ) {
+				// set TXN Status to Open
 				$this->_transaction->set_status( EEM_Transaction::open_status_code );
 				$this->_transaction->save();
 				$this->_transaction->finalize();
@@ -1643,8 +1647,12 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 						'errors' => isset( $notices['errors'] ) ? $notices['errors'] : '',
 					)
 				);
-				//$primary_reg = $this->_transaction->primary_registration()->reg_url_link()
-				$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
+				$this->_thank_you_page_url = add_query_arg( 
+					array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ), 
+					get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id )
+				);
+			
+			// Default REG Status is set to PENDING PAYMENT OR APPROVED, and payments are allowed
 			} else {
 				// attempt to perform transaction via payment gateway
 				$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
