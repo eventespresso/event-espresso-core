@@ -508,7 +508,7 @@ final class EE_Admin {
 					'symbol' => EE_Registry::instance()->CFG->currency->sign,
 					'format' => array(
 						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
-						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s(%v)' : '(%v)%s',
+						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
 						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s--' : '--%s'
 						 ),
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
