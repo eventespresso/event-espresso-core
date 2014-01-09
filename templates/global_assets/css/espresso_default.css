@@ -754,6 +754,9 @@ input.ee-register-button {
 	box-shadow: none !important;
 	border: none;
 }
+.ee-gmap {
+	max-width: 100%;
+}
 
 /*******************************************************/
 /****                     -==ATTENTION==-                     ****/
