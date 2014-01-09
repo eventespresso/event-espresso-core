@@ -4,7 +4,7 @@
 <?php _e('A status of approved means that a registration has been accepted as complete. The registration will count towards the registration limit, remaining tickets, and calculations for available seats. Payments (if necessary) can also be made by primary registrants with this status.', 'event_espresso'); ?>
 </p>
 <p>
-<strong><?php _e('Pending', 'event_espresso'); ?></strong><br />
+<strong><?php _e('Pending Payment', 'event_espresso'); ?></strong><br />
 <?php _e('A status of pending means that a registration has not paid but they ARE able to make payments (if necessary).  Pending registrations do NOT count towards registration limits, remaining tickets, and calculations for available seats.  If registration for a free event occurs, then registrations are automatically set to Approved.  For paid tickets, Pending registrations are set to Approved when full payment is recorded.', 'event_espresso'); ?>
 </p>
 <p>

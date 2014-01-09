@@ -25,15 +25,18 @@
 		<td class="container" bgcolor="#FFFFFF"><!-- content -->
 			<h1>Payment Notification</h1>
 			<div class="content">
-				
 				<table>
 					<tr>
 						<td>
-							<h3>Attendee:</h3>
-							<p>[FNAME] [LNAME]</p>
-							<p><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></p>
-							[TICKET_LIST]
-							<h5>Payment Details:</h5>
+							<h3>Registrant Details:</h3>
+							<ol style="list-style-type: none;">
+								<li><strong>Name:</strong> [FNAME] [LNAME]</li>
+								<li><strong>Event:</strong> [EVENT_LIST]</li>
+								
+								<li><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></li>
+							</ol>
+							<p>&nbsp;</p>
+							<h3>Payment Details:</h3>
 							<ol style="list-style-type: none;">
 								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
 								<li><strong>Payment gateway:</strong> [PAYMENT_GATEWAY]</li>
