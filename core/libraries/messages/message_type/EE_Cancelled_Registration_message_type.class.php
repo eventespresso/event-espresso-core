@@ -34,8 +34,8 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		$this->name = 'cancelled_registration';
 		$this->description = __('This message type is for messages sent to attendees when their registration is cancelled.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('cancelled registration', 'event_espresso'),
-			'plural' => __('cancelled registrations', 'event_espresso')
+			'singular' => __('registration cancelled', 'event_espresso'),
+			'plural' => __('registrations cancelled', 'event_espresso')
 			);
 
 		parent::__construct();
