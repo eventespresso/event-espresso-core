@@ -1,4 +1,4 @@
-<h3><?php _e('Views', 'event_espresso'); ?></h3>
+<h3><?php _e('Event Categories Views', 'event_espresso'); ?></h3>
 <p>
 <?php _e('Views allow you to restrict what you see in the table. The following views are available: view all categories. The number in parentheses next to each view represents the number of events that will be displayed with that view.', 'event_espresso'); ?><br />
 </p>
