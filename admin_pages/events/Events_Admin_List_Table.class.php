@@ -275,7 +275,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
 		$actionlinks[] = '<div class="dashicons dashicons-search"></div></a>';
 		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="ee-icon ee-icon-calendar-edit"></div></a>';
-		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
+		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Registrants', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
 
 		$actionlinks = apply_filters('FHEE_list_table_events_actions_column_action_links', $actionlinks, $item );
 

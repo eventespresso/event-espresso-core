@@ -1,4 +1,4 @@
-<h3><?php _e('Add Event Category', 'event_espresso'); ?></h3>
+<h3><?php _e('Add New Event Category', 'event_espresso'); ?></h3>
 <p>
 <?php _e('This page allows you to create an event category.', 'event_espresso'); ?>
 </p>

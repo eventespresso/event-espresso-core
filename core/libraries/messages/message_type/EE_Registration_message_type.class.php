@@ -34,8 +34,8 @@ class EE_Registration_message_type extends EE_message_type {
 		$this->name = 'registration';
 		$this->description = __('This message type is for messages sent to attendees when their registration is approved.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('approved registration', 'event_espresso'),
-			'plural' => __('approved registrations', 'event_espresso')
+			'singular' => __('registration approved', 'event_espresso'),
+			'plural' => __('registrations approved', 'event_espresso')
 			);
 
 		parent::__construct();

@@ -131,7 +131,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				),
 				'help_tabs' => array(
 					'import_help_tab' => array(
-						'title' => __('Import', 'event_espresso'),
+						'title' => __('Event Espresso Import', 'event_espresso'),
 						'filename' => 'events_import'
 						)
 					),

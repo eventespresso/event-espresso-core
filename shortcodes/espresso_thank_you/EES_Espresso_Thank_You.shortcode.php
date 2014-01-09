@@ -106,6 +106,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			foreach( $registrations as $registration ){
 				$event_names[ $registration->event_name() ] = $registration->event_name();
 			}
+			$primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 			//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
 			$this->_current_txn = EE_Registry::instance()->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
 			//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -114,25 +115,29 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['transaction'] = $this->_current_txn;
 			//get payments, but order with newest at teh top, so users see taht first
 			$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
-			$template_args['primary_registrant'] = $this->_current_txn->primary_registration();
+			$template_args['primary_registrant'] = $primary_registrant;
 			$template_args['event_names'] = $event_names;
-
+			
 			// txn status ? 
 			if( $this->_current_txn->is_completed() ){
 				$template_args['show_try_pay_again_link'] = FALSE;
-			} else if ( $this->_current_txn->is_incomplete() ){
+			} else if ( $this->_current_txn->is_incomplete() && ( $primary_registrant->is_approved() || $primary_registrant->is_pending_payment() )){
 				$template_args['show_try_pay_again_link'] = TRUE;
-			} else {
+			} else if ( $primary_registrant->is_approved() || $primary_registrant->is_pending_payment() ) {
 				// its pending
 				$template_args['show_try_pay_again_link'] = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
+			} else {
+				$template_args['show_try_pay_again_link']  = FALSE;
 			}
-			$thank_you_page_url = get_permalink( EE_Registry::instance()->CFG->core->reg_page_id );
-			$template_args['SPCO_payment_options_url'] = add_query_arg( 
-				array( 'ee'=>'register', 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' ), 'step'=>'payment_options', 'revisit'=>TRUE ), $thank_you_page_url
+			// link to SPCO
+			$revisit_spco_url = add_query_arg( 
+				array( 'ee'=>'register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), 
+				get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
 			);
-			$template_args['SPCO_attendee_information_url'] = add_query_arg( 
-				array( 'ee'=>'register', 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' ), 'step'=>'attendee_information', 'revisit'=>TRUE ), $thank_you_page_url
-			);
+			// link to SPCO payment_options
+			$template_args['SPCO_payment_options_url'] = $primary_registrant ? $primary_registrant->payment_overview_url() : add_query_arg(  array('step'=>'payment_options' ), $revisit_spco_url );
+			// link to SPCO attendee_information
+			$template_args['SPCO_attendee_information_url'] = $primary_registrant ? $primary_registrant->payment_overview_url() : add_query_arg( array( 'step'=>'attendee_information' ), $revisit_spco_url );
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
 			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));
