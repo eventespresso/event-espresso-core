@@ -11,6 +11,9 @@ echo EEH_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EEH_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 $QST_system = $question->system_ID();
 $fields = $question->get_model()->field_settings();
+
+//does question have any answers? cause if it does then we have to disable type
+$has_answers = $question->has_answers();
 ?>
 
 <div class="padding">
@@ -92,12 +95,18 @@ $fields = $question->get_model()->field_settings();
 					<?php 
 						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
 						$id =  ! empty( $QST_system ) ? '_disabled' : '';
+						$disabled = $has_answers ? ' disabled="disabled"' : $disabled;
+						$id = $has_answers ? ' _disabled' : $id;
 						echo EEH_Form_Fields::select_input( 'QST_type' . $id, $question_types, $question->type(), 'id="QST_type' . $id . '"' . $disabled );
-						if ( ! empty( $QST_system )) { ?>
-						<input type="hidden"  id="QST_type" name="QST_type" value="<?php echo $question->type()?>"/>
-						<p><span class="description" style="color:#D54E21;">
-						<?php _e('System question! This field cannot be changed.','event_espresso')?>
-					</span></p>
+						if ( ! empty( $QST_system ) || $has_answers ) { ?>
+							<input type="hidden"  id="QST_type" name="QST_type" value="<?php echo $question->type()?>"/>
+							<p><span class="description" style="color:#D54E21;">
+								<?php if ( $has_answers ) : ?>
+									<?php _e('This field cannot be changed because there are currently answers for this question in the database.','event_espresso')?>
+								<?php else : ?>
+									<?php _e('System question! This field cannot be changed.','event_espresso')?>
+								<?php endif; ?>
+							</span></p>
 					<?php } ?>
 					
 					
