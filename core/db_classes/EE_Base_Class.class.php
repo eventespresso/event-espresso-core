@@ -185,9 +185,9 @@ abstract class EE_Base_Class{
 		//remember what values were passed to this constructor
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
 		//remember in entity mapper
-//		if($model->has_primary_key_field() && $this->ID()){
-//			$model->add_to_entity_map($this);
-//		}
+		if($model->has_primary_key_field() && $this->ID()){
+			$model->add_to_entity_map($this);
+		}
 	}
 
 
@@ -979,7 +979,8 @@ abstract class EE_Base_Class{
 	}
 	
 	/**
-	 * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for the primary key (if present in incoming values).  If there is a key in the incoming array that matches the primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not we return false.
+	 * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for the primary key (if present in incoming values).  
+	 * If there is a key in the incoming array that matches the primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not we return false.
 	 * @param  array  $props_n_values incoming array of properties and their values
 	 * @param  string $classname      the classname of the child class
 	 * @return mixed (EE_Base_Class|bool)
