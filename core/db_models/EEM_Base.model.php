@@ -2369,16 +2369,14 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	public function instantiate_class_from_array_or_object($cols_n_values){
-		if(!is_array($cols_n_values) && is_object( $cols_n_values ) ){
-			$cols_n_values=get_object_vars($cols_n_values);
+		if( ! is_array( $cols_n_values ) && is_object( $cols_n_values )) {
+			$cols_n_values = get_object_vars( $cols_n_values );
 		}
-		$primary_key = FALSE;
+		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
 		$this_model_fields_n_values = array();
-		foreach($cols_n_values as $col => $val){
-			foreach($this->field_settings() as $field_name => $field_obj){
-				// grab the primary key
-				$primary_key = $this->is_primary_key_field( $field_obj ) ? $val : $primary_key;
+		foreach( $cols_n_values as $col => $val ) {
+			foreach( $this->field_settings() as $field_name => $field_obj ){
 				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"				
 				//does the field on the model relate to this column retrieved from teh db? 
 				//or is it a db-only field? (not relating to the model)
@@ -2386,29 +2384,28 @@ abstract class EEM_Base extends EE_Base{
 					//OK, this field apparently relates to this model.
 					//now we can add it to the array
 					$this_model_fields_n_values[$field_name] = $val;
+					// grab the primary key
+					$primary_key = $this->has_primary_key_field() && $this->is_primary_key_field( $field_obj ) ? $val : $primary_key;
 				}
 			}
 		}
+		$className=$this->_get_class_name();		
 
 		//check we actually foudn results that we can use to build our model object
 		//if not, return null
 		if( empty( $this_model_fields_n_values )) {
-			return null;
+			return NULL;
 		}
 		
-		//printr( $this_model_fields_n_values, '$this_model_fields_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-				
-		// if there is no primary key or the object doesn't already exist in the entity map
-		if ( $primary_key === FALSE || ! $classInstance = $this->get_from_entity_map( $primary_key )) {
+		// if there is no primary key or the object doesn't already exist in the entity map, then create a new instance
+		if ( $primary_key === NULL || ! $classInstance = $this->get_from_entity_map( $primary_key )) {
 			//get the required info to instantiate the class which relates to this model.
-			$className=$this->_get_class_name();
 			$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
 			// add this new object to the entity map
-			$this->add_to_entity_map( $classInstance );
-		}
-
-		//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
-		$this->set_timezone( $classInstance->get_timezone() );
+			$classInstance = $this->add_to_entity_map( $classInstance );
+			//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
+			$this->set_timezone( $classInstance->get_timezone() );
+		} 		
 
 		return $classInstance;
 	}
@@ -2420,6 +2417,9 @@ abstract class EEM_Base extends EE_Base{
 	public function get_from_entity_map( $id ){
 		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : FALSE;
 	}
+
+
+
 	/**
 	 * Adds the object to the model's mappings
 	 * @param type $object
@@ -2427,14 +2427,22 @@ abstract class EEM_Base extends EE_Base{
 	 * @return void
 	 */
 	public function add_to_entity_map( $object ) {
+		
 		$className = $this->_get_class_name();
+		
 		if( ! $object instanceof $className ){
 			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),get_class($object),$className));
 		}
 		if ( ! $object->ID() ){
 			throw new EE_Error(sprintf(__("You tried storing a model object with ID in the %s entity mapper.", "event_espresso"),get_class($this)));
 		}
-		$this->_entity_map[ $object->ID() ] = $object;
+		// double check it's not already there
+		if ( $classInstance = $this->get_from_entity_map( $object->ID() )) {
+			return $classInstance;
+		} else {
+			$this->_entity_map[ $object->ID() ] = $object;
+			return $object;
+		}
 	}
 	/**
 	 * Gets the EE class that corresponds to this model. Eg, for EEM_Answer that
