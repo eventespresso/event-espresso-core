@@ -2467,12 +2467,12 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("You tried storing a model object with ID in the %s entity mapper.", "event_espresso"),get_class($this)));
 		}
 		// double check it's not already there
-		if ( $classInstance = $this->get_from_entity_map( $object->ID() )) {
-			return $classInstance;
-		} else {
+//		if ( $classInstance = $this->get_from_entity_map( $object->ID() )) {
+//			return $classInstance;
+//		} else {
 			$this->_entity_map[ $object->ID() ] = $object;
 			return $object;
-		}
+//		}
 	}
 	/**
 	 * Gets the EE class that corresponds to this model. Eg, for EEM_Answer that

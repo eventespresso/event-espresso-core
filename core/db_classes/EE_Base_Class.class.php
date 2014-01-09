@@ -891,6 +891,7 @@ abstract class EE_Base_Class{
 			if($results){//if successful, set the primary key
 				$this->set(self::_get_primary_key_name( get_class($this) ),$results);
 			}
+			$this->get_model()->add_to_entity_map($this);
 		}
 		//restore the old assumption about values being prepared by the model obejct
 		$this->get_model()->assume_values_already_prepared_by_model_object($old_assumption_concerning_value_preparation);
@@ -943,7 +944,7 @@ abstract class EE_Base_Class{
 				}
 			}
 		}
-
+		
 		return $id;
 	}
 	
