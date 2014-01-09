@@ -676,11 +676,11 @@ class EE_Transaction extends EE_Base_Class{
 	 * cycles thru related registrations and calls finalize_registration() on each
 	 * @return void
 	 */
-	public function finalize(){
+	public function finalize( $from_admin = FALSE ){
 		$new_txn = FALSE;
 		$registrations = $this->get_many_related('Registration');
 		foreach ( $registrations as $registration ) {
-			$new_txn = $registration->finalize() === TRUE ? TRUE : $new_txn;
+			$new_txn = $registration->finalize( $from_admin ) === TRUE ? TRUE : $new_txn;
 		}
 
 		if ( $new_txn ) {
@@ -690,9 +690,9 @@ class EE_Transaction extends EE_Base_Class{
 			$this->set_txn_session_data( EE_Registry::instance()->SSN );
 			// save the transaction to the db
 			$this->save();
-			do_action('AHEE__EE_Transaction__finalize__new_transaction', $this);
+			do_action('AHEE__EE_Transaction__finalize__new_transaction', $this, $from_admin );
 		}
-		do_action('AHEE__EE_Transaction__finalize__all_transaction', $this);
+		do_action('AHEE__EE_Transaction__finalize__all_transaction', $this, $from_admin );
 	}
 
 
