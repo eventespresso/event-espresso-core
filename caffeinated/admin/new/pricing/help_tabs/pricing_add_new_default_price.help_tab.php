@@ -1,24 +1,30 @@
-<h2>
-<?php _e('Type', 'event_espresso'); ?>
-</h2>
+<h3><?php _e('Add New Default Price', 'event_espresso'); ?></h3>
 <p>
-<?php _e("Whether this is an Event Price, Discount, Surcharge, or Tax. Default items will apply to ALL new events you create.", 'event_espresso'); ?>
+<?php _e('This page allows you to create a new default price for Event Espresso.', 'event_espresso'); ?>
 </p>
-<h2>
-<?php _e('Name', 'event_espresso'); ?>
-</h2>
 <p>
-<?php _e("The name that site visitors will see for this Price.", 'event_espresso'); ?>
+<ul>
+<li>
+<?php _e('Type', 'event_espresso'); ?><br />
+<?php _e('This is the type of pricing. Available options are Base Price, Percent Discount, Dollar Discount, Percent Surcharge, Dollar Surcharge, Regional Tax, and Federal Tax. TO-DO (LOC) Click here to view definitions for these terms.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('Name', 'event_espresso'); ?><br />
+<?php _e('This is the name of the default pricing.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('Description', 'event_espresso'); ?><br />
+<?php _e('This is the description for the default pricing.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('Amount', 'event_espresso'); ?><br />
+<?php _e('This is the value of the default pricing and is shown as a flat amount or a percentage.', 'event_espresso'); ?>
+</li>
+</ul>
 </p>
-<h2>
-<?php _e('Description', 'event_espresso'); ?>
-</h2>
 <p>
-<?php _e("A brief description for this Price. More for your benefit, as it is currently not displayed to site visitors.", 'event_espresso'); ?>
+<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Add New Default Price Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
 </p>
-<h2>
-<?php _e('Amount', 'event_espresso'); ?>
-</h2>
 <p>
-<?php _e("The dollar or percentage amount for this Price.", 'event_espresso'); ?>
+<?php _e('<strong>Screen Options</strong><br /> You can customize the information that is shown on this page by toggling the Screen Options tab. Then you can add or remove checkmarks to hide or show certain content.', 'event_espresso'); ?>
 </p>
