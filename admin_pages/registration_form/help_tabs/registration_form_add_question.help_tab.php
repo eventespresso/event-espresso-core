@@ -23,7 +23,7 @@
 </li>
 <li>
 <?php _e('Question Type', 'event_espresso'); ?><br />
-<?php _e('This shows the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date. TO-DO (LOC) Click here to see definitions for these terms.', 'event_espresso'); ?>
+<?php _e('This shows the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Required Question', 'event_espresso'); ?><br />
