@@ -418,6 +418,62 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	*	is_not_approved -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_not_approved
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_not_approved( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_not_approved ? TRUE : FALSE;
+	}
+
+
+	/**
+	*	is_pending_payment -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_pending_payment
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_pending_payment( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_pending_payment ? TRUE : FALSE;
+	}
+
+
+	/**
+	*	is_approved -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_approved
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_approved( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_approved ? TRUE : FALSE;
+	}
+
+
+	/**
+	*	is_cancelled -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_cancelled
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_cancelled( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_cancelled ? TRUE : FALSE;
+	}
+
+
+	/**
+	*	is_declined -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_declined
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_declined( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_declined ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	*		Set Registration Date
 	* 
 	* 		@access		public		
@@ -633,11 +689,24 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function payment_overview_url(){
-		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link() ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
+		return $this->is_approved() || $this->is_pending_payment() ? add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'payment_options', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )) : '';
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
+	 * a query parameter
+	 * @return string
+	 */
+	public function edit_attendee_information_url(){
+		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'attendee_information', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
 	}
 
 
-	
+
 	
 	/**
 	*		get  Attendee Number
