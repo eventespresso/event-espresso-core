@@ -1030,12 +1030,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function finalize( $from_admin = FALSE ) {
 		$update_reg = FALSE;
 		$new_reg = FALSE;
-		// update reg status if no monies are owing and the REG status is pending payment
-		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment ) {
+		// update reg status if no monies are owing and the REG status is pending payment AND we're not doing this from admin.
+		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && ! $from_admin ) {
 			// automatically toggle status to approved
 			$this->set_status( EEM_Registration::status_id_approved );
 			$update_reg = TRUE;
 		}
+
+		//if we're doing this from admin and we have 'txn_reg_status_change' in the $_REQUEST then let's use that to trigger the status change.
+		if ( $from_admin && isset( $_REQUEST['txn_reg_status_change'] ) && isset($_REQUEST['txn_reg_status_change']['reg_status']) && $_REQUEST['txn_reg_status_change']['reg_status'] != 'NAN' ) {
+			$this->set_status( $_REQUEST['txn_reg_status_change']['reg_status'] );
+			$update_reg = TRUE;
+		}
+
 		// generate REG codes for NEW registrations			
 		$new_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $new_reg;
 		// save the registration?
