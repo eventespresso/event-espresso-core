@@ -287,6 +287,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 			$price_query_params[0]['Ticket.Datetime.EVT_ID'] = $value_to_equal;
 			$price_type_query_params[0]['Price.Ticket.Datetime.EVT_ID'] = $value_to_equal;
 			$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $value_to_equal;
+			$state_country_uqyer_params[0]['Venue.Event.EVT_ID'] = $value_to_equal;
 			
 		} else {
 			$filename = 'all-events';
@@ -299,12 +300,14 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 				'Datetime'=>$related_models_query_params,
 				'Ticket'=>$datetime_ticket_query_params,
 				'Datetime_Ticket'=>$datetime_ticket_query_params,
-				'Price'=>$price_query_params,
 				'Price_Type'=>$price_type_query_params,
+				'Price'=>$price_query_params,
 				'Ticket_Price'=>$price_query_params,
 				'Term'=>$term_query_params,
 				'Term_Taxonomy'=>$related_models_query_params,
 				'Term_Relationship'=>$related_models_query_params, //model has NO primary key...
+				'State'=>$state_country_uqyer_params,
+				'Country'=>$state_country_uqyer_params,
 				'Venue'=>$related_models_query_params,
 				'Event_Venue'=>$related_models_query_params,
 //				'Transaction'=>$related_through_reg_query_params,

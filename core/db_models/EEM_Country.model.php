@@ -77,7 +77,8 @@ class EEM_Country extends EEM_Base {
 			));
 		$this->_model_relations = array(
 			'Attendee'=>new EE_Has_Many_Relation(),
-			'State'=>new EE_Has_Many_Relation()
+			'State'=>new EE_Has_Many_Relation(),
+			'Venue'=>new EE_Has_Many_Relation(),
 		);
 		
 		parent::__construct();
