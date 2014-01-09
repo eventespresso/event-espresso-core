@@ -126,7 +126,7 @@ class EE_Messages_Init extends EE_Base {
 		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment' ), 10, 2 );
 		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder'), 10 );
 		add_action( 'AHEE_process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
-		add_action( 'AHEE__EE_Transaction__finalize__new_transaction', array( $this, 'maybe_registration' ), 10 );
+		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( $this, 'maybe_registration' ), 10, 3 );
 	}
 
 
@@ -186,8 +186,17 @@ class EE_Messages_Init extends EE_Base {
 	 * @param  EE_Transaction $transaction
 	 * @return void                      
 	 */
-	public function maybe_registration( EE_Transaction $transaction ) {
+	public function maybe_registration( EE_Transaction $transaction, $reg_msg, $from_admin ) {
 		$this->_load_controller();
+
+		//for now we're ONLY doing this from frontend
+		if ( $from_admin )
+			return;
+
+		//next let's only send out notifications if a registration was created OR if the registration status was updated to approved
+		if ( ! $reg_msg['new_reg'] && ! $reg_msg['to_approved'] )
+			return;
+
 		$data = array( $transaction, NULL );
 
 		//let's get the first related reg on the transaction since we can use its status to determine what message type gets sent.
@@ -294,8 +303,6 @@ class EE_Messages_Init extends EE_Base {
 
 		$this->_load_controller();
 		$success = $this->_EEMSG->send_message( 'payment', $data );
-		//let's trigger a registration confirmation (note this will only actually complete if registration confirmations are delayed until complete payment)
-		$reg_success = $this->_EEMSG->send_message( 'registration', $data );
 
 		if ( $success ) {
 			EE_Error::add_success( __('The payment confirmation has been sent', 'event_espresso') );
