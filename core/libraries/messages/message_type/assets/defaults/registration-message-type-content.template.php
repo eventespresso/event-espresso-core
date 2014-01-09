@@ -66,7 +66,7 @@
                                 </tbody></table><!-- /column 1 -->  
                                 
                                 <!-- column 2 -->
-                                <table align="left">
+                                <table align="left" class="column">
                                     <tbody><tr>
                                         <td>                
                                                                         

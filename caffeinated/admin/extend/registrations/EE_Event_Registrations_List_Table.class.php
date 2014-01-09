@@ -46,7 +46,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				'ATT_name' =>  __('Registrant', 'event_espresso'),
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
 				'REG_date' => __('TXN Date', 'event_espresso'),
-				'REG_code' => __( 'Registration Code', 'event_espresso' ),
+				'REG_code' => __( 'Reg Code', 'event_espresso' ),
 				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
 				'REG_final_price' => __('TKT Price', 'event_espresso'),
 				'TXN_paid' => __('Paid', 'event_espresso'),
@@ -92,7 +92,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
 			$events = EEM_Event::instance()->get_all(array(array(), 'order_by' => array( 'EVT_name' => 'asc' ) ) );
-			$evts[] = array('id' => 0, 'text' => __('To toggle Check-in status for registrants, select an event', 'event_espresso') );
+			$evts[] = array('id' => 0, 'text' => __('To toggle Check-in status, select an event', 'event_espresso') );
 			foreach ( $events as $evt ) {
 				//any registrations for this event?
 				if ( ! $evt->get_count_of_all_registrations() )
