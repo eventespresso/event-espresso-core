@@ -335,7 +335,7 @@ jQuery(document).ready(function($) {
 		var payment = accounting.formatMoney( response.return_data.amount );
 		$('#payment-amount-' + PAY_ID).html( payment );
 		// update amount span class
-		if ( payment < 0 ) {
+		if ( accounting.unformat(payment) < 0 ) {
 			response.return_data.pay_status = 'PDC';
 		}
 		$('#payment-amount-' + PAY_ID).parent().removeClass().addClass( 'txn-admin-payment-status-'+response.return_data.pay_status );
