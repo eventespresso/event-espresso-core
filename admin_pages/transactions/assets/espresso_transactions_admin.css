@@ -52,7 +52,10 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 
 .txn-overview-actions-ul { list-style:none; margin:0; }
 .txn-overview-actions-ul li { display: inline-block; float: left; margin:0; }
-.txn-overview-actions-ul li + li { margin-left:6px; }
+.txn-overview-actions-ul li + li { margin-left:6px; }/**/
+.button-secondary.no-icon {
+	vertical-align: baseline;
+}
 
 #txn-admin-payments-tbl .txn-overview-actions-ul { width:32px; }
 
