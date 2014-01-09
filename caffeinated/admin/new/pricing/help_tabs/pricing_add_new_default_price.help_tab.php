@@ -6,7 +6,7 @@
 <ul>
 <li>
 <?php _e('Type', 'event_espresso'); ?><br />
-<?php _e('This is the type of pricing. Available options are Base Price, Percent Discount, Dollar Discount, Percent Surcharge, Dollar Surcharge, Regional Tax, and Federal Tax. TO-DO (LOC) Click here to view definitions for these terms.', 'event_espresso'); ?>
+<?php _e('This is the type of pricing. Available options are Base Price, Percent Discount, Dollar Discount, Percent Surcharge, Dollar Surcharge, Regional Tax, and Federal Tax.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Name', 'event_espresso'); ?><br />
