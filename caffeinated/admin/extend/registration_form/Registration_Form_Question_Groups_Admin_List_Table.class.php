@@ -104,8 +104,8 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 	public function column_cb($item) {
 		$system_group = $item->get('QSG_system');
 		$has_questions_with_answers = $item->has_questions_with_answers();
-		$extra_lock_icon = $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers ? ' ee-alternate-color' : '';
-		return $system_group > 0 || ( $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers ) ? '<span class="ee-lock-icon' . $extra_lock_icon . '"></span>'  . sprintf( '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID() )  : sprintf( '<input type="checkbox" id="QSG_ID[%1$d]" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
+		$lock_icon = $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers ? 'ee-lock-icon ee-alternate-color' : 'ee-lock-icon ee-system-lock';
+		return $system_group > 0 || ( $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers ) ? '<span class="' . $lock_icon . '"></span>'  . sprintf( '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID() )  : sprintf( '<input type="checkbox" id="QSG_ID[%1$d]" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
 	}
 
 

@@ -1,4 +1,4 @@
-<h3><?php _e('Registrant Details', 'event_espresso'); ?></h3>
+<h3><?php _e('Primary Registrant', 'event_espresso'); ?></h3>
 <p>
 <?php _e('Shows information about the Registrant.', 'event_espresso'); ?><br />
 </p>
@@ -24,4 +24,8 @@
 </p>
 <p>
 <?php _e('You can edit information about and Registrant by clicking on the View / Edit this Registrant link.', 'event_espresso'); ?><br />
+</p>
+<h3><?php _e('Billing Information', 'event_espresso'); ?></h3>
+<p>
+<?php _e('Shows the billing information associated with this transaction.', 'event_espresso'); ?><br />
 </p>

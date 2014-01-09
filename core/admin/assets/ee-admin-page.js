@@ -5,6 +5,21 @@ jQuery(document).ready(function($) {
 	$(window).unload( function() {}); 
 
 
+	// add jQuery function to center elements on screen
+	$.fn.center = function( position ) {
+		position = position !== undefined && position !== '' ? position : 'fixed';
+		var element_top = (( $(window).height() / 2 ) - this.outerHeight() ) / 2;
+		element_top = position == 'fixed' ? element_top : element_top + $(window).scrollTop();
+		element_top = Math.max( 0, element_top );
+		var element_left = ( $(window).width() - this.outerWidth() ) / 2;
+		element_left = position == 'fixed' ? element_left : element_left + $(window).scrollLeft();
+		element_left = Math.max( 0, element_left );
+		this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
+		this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
+		return this;
+	};
+
+
 
 
 	function validate_form_inputs( submittedForm ) {

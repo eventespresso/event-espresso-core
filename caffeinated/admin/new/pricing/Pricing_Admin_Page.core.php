@@ -170,9 +170,17 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						),
 					'list_table' => 'Prices_List_Table',
                     'help_tabs' => array(
-						'default_pricing_help_tab' => array(
+						'pricing_default_pricing_help_tab' => array(
 							'title' => __('Default Pricing', 'event_espresso'),
 							'filename' => 'pricing_default_pricing'
+							),
+						'pricing_default_pricing_table_column_headings_help_tab' => array(
+							'title' => __('Default Pricing Table Column Headings', 'event_espresso'),
+							'filename' => 'pricing_default_pricing_table_column_headings'
+							),
+						'pricing_default_pricing_views_bulk_actions_search_help_tab' => array(
+							'title' => __('Default Pricing Views & Bulk Actions & Search', 'event_espresso'),
+							'filename' => 'pricing_default_pricing_views_bulk_actions_search'
 							)
 						),
 					'help_tour' => array( 'Pricing_Default_Prices_Help_Tour'),
@@ -218,10 +226,18 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						),
 					'list_table' => 'Price_Types_List_Table',
                     'help_tabs' => array(
-						'price_types_help_tab' => array(
+						'pricing_price_types_help_tab' => array(
 							'title' => __('Price Types', 'event_espresso'),
 							'filename' => 'pricing_price_types'
-							)
+							),
+						'pricing_price_types_table_column_headings_help_tab' => array(
+							'title' => __('Price Types Table Column Headings', 'event_espresso'),
+							'filename' => 'pricing_price_types_table_column_headings'
+							),
+						'pricing_price_types_views_bulk_actions_search_help_tab' => array(
+							'title' => __('Price Types Views & Bulk Actions & Search', 'event_espresso'),
+							'filename' => 'pricing_price_types_views_bulk_actions_search'
+							),
 						),
 					'help_tour' => array( 'Price_Types_Default_Help_Tour' ),
 					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),

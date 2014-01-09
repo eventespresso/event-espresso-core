@@ -18,6 +18,7 @@
 <?php _e("It is important that you fill out this section and make sure the details are correct. These settings tell Event Espresso about yoru organization and will be used throughout the system.", 'event_espresso'); ?>
 </p>
 
+<h2>
 <?php _e('Company Logo', 'event_espresso'); ?>
 </h2>
 <p>
@@ -32,4 +33,17 @@
 </h2>
 <p>
 <?php _e("These URLs can be displayed automagically within your emails (using shortcodes) and front-end templates (using template tags).", 'event_espresso'); ?>
+</p>
+
+<h2>
+<?php _e('User eXperience Improvement Program (UXIP)', 'event_espresso'); ?>
+</h2>
+<p>
+<?php _e("Signing up for the UXIP system, will help us to improve Event Espresso in ways that are meaningful to you! By allowing us to obtain basic system and usgae data we can make informed decisions about what areas to improve and where features should be added.", 'event_espresso'); ?>
+</p>
+
+<p>
+<strong>
+<?php _e("The data we collect will never be sold, traded, or misused in any way. ", 'event_espresso'); ?>
+</strong>
 </p>

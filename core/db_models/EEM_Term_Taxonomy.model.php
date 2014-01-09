@@ -67,6 +67,9 @@ class EEM_Term_Taxonomy extends EEM_Base {
 			'Venue'=>new EE_HABTM_Relation('Term_Relationship'),
 			'Attendee'=>new EE_HABTM_Relation('Term_Relationship')
 		);
+		$this->_indexes = array(
+			'term_id_taxonomy'=>new EE_Unique_Index(array('term_id','taxonomy'))
+		);
 		
 		parent::__construct();
 	}

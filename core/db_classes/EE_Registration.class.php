@@ -1029,6 +1029,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	public function finalize() {
 		$update_reg = FALSE;
+		$new_reg = FALSE;
 		// update reg status if no monies are owing and the REG status is pending payment
 		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment ) {
 			// automatically toggle status to approved
@@ -1036,12 +1037,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			$update_reg = TRUE;
 		}
 		// generate REG codes for NEW registrations			
-		$update_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $update_reg;
+		$new_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $new_reg;
 		// save the registration?
-		if ( $update_reg ) { 
+		if ( $update_reg || $new_reg ) { 
 			$this->save();
 		}
-		return $update_reg;			
+		return $new_reg;			
 	}
 
 

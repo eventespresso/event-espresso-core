@@ -34,7 +34,7 @@ A not approved registration is performed by the event admin. Payments are not al
 </li>
 <li style="list-style-type: none;">
 Pending Payment<br>
-To-DO (LOC) A pending registration allows payments. The status ID will be automatically toggled to RAP if the payment is made in full by registrant.
+A pending registration allows payments. The status will be automatically toggled to approved if the payment is made in full by registrant.
 </li>
 </ul>
 </p>
