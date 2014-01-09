@@ -187,7 +187,7 @@ abstract class EE_Base_Class{
 		//remember in entity mapper
 		if($model->has_primary_key_field() && $this->ID()){
 			$model->add_to_entity_map($this);
-		}
+	}
 	}
 
 
@@ -231,6 +231,8 @@ abstract class EE_Base_Class{
 					$this->set($field_obj->get_name(),$obj_in_db->get($field_obj->get_name()));
 				 }
 			 }
+			 //oh this model object has an ID? well make sure its in the entity mapper
+			 $this->get_model()->add_to_entity_map($this);
 		 }
 		 //let's unset any cache for this field_name from the $_cached_properties property.
 		 $this->_clear_cached_property( $privateAttributeName );
