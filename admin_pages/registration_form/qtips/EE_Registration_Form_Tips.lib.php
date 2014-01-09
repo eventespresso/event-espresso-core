@@ -32,25 +32,25 @@ class EE_Registration_Form_Tips extends EE_Qtip_Config {
 		$this->_qtipsa = array(
 			0 => array(
 				'content_id' => 'about-system-lock-icon',
-				'target' => '.questions .ee-lock-icon',
+				'target' => '.questions .ee-system-lock',
 				'content' => __('This question is a system question and cannot be trashed', 'event_espresso'),
 				'options' => array(), //defaults
 				),
 			1 => array(
 				'content_id' => 'about-non-system-lock-icon',
-				'target' => '.questions .ee-lock-icon.ee-alternate-color',
+				'target' => '.questions .ee-alternate-color',
 				'content' => __('This question has answers attached to it from registrations that have the question.  It cannot be permanently deleted.', 'event_espresso'),
 				'options' => array()
 				),
 			2 => array(
 				'content_id' => 'about-question-group-lock-icon',
-				'target' => '.questiongroups .ee-lock-icon',
+				'target' => '.questiongroups .ee-system-lock',
 				'content' => __('This question group is a system group and cannot be trashed', 'event_espresso'),
 				'options' => array()
 				),
 			3 => array(
 				'content_id' => 'about-non-system-qg-lock-icon',
-				'target' => '.questiongroups .ee-lock-icon.ee-alternate-color',
+				'target' => '.questiongroups .ee-alternate-color',
 				'content' => __('This question group has questions that have answers attached to it from registrations that have the question. It cannot be permanently deleted.', 'event_espresso'),
 				'options' => array()
 				)
