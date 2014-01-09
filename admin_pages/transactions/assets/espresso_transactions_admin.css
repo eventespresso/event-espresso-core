@@ -159,8 +159,11 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 /*.admin-modal-dialog-inner label.last { margin-bottom:8em; }*/
 
 
-.admin-modal-dialog-inner input,
+.admin-modal-dialog-inner input[type=text],
 .admin-modal-dialog-inner select { width:100%; min-width:150px; max-width:250px; }
+.admin-modal-dialog-inner input[type=checkbox] {
+	margin-top: 15px;
+}
 /*#txn-admin-payment-amount-inp { max-width:150px; }*/
 
 /*.admin-primary-mbox-tbl-wrap-inner { padding:12px; margin:0; background:#fcfcfc; }
