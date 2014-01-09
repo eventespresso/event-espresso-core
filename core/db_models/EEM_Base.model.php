@@ -1084,12 +1084,42 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	function insert($field_n_values){
-		$main_table = $this->_get_main_table();
-		$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false);
-		foreach($this->_get_other_tables() as $other_table){
-			$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+		if($this->_satisfies_unique_indexes($field_n_values)){
+			$main_table = $this->_get_main_table();
+			$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false);
+			foreach($this->_get_other_tables() as $other_table){
+				$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+			}
+			return $new_id;
+		}else{
+			return FALSE;
 		}
-		return $new_id;
+	}
+	
+	/**
+	 * Checks that the result would satisfy the unique indexes on this model
+	 * @param array $field_n_values
+	 * @return boolean
+	 */
+	protected function _satisfies_unique_indexes($field_n_values,$action = 'insert'){
+		foreach($this->unique_indexes() as $index_name => $index){
+			$uniqueness_where_params = array_intersect_key($field_n_values, $index->fields());
+			if($this->exists(array($uniqueness_where_params))){
+				EE_Error::add_error(sprintf(__("Could not %s %s. %s uniqueness index failed. Fields %s must form a unique set, but an entry already exists with values %s.", "event_espresso"),$action,$this->_get_class_name(),$index_name,implode(",",$index->field_names()),http_build_query($uniqueness_where_params)));
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Like count, but is optimized and returns a boolean instead of an int
+	 * @param array $query_params
+	 * @return boolean
+	 */
+	function exists($query_params){
+		$query_params['limit'] = 1;
+		return $this->count($query_params) > 0;
 	}
 	
 	
@@ -2521,6 +2551,19 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function indexes(){
 		return $this->_indexes;
+	}
+	/**
+	 * Gets all the Unique Indexes on this model
+	 * @return EE_Unique_Index[]
+	 */
+	public function unique_indexes(){
+		$unique_indexes = array();
+		foreach($this->_indexes as $name => $index){
+			if($index instanceof EE_Unique_Index){
+				$unique_indexes [$name] = $index;
+			}
+		}
+		return $unique_indexes;
 	}
 	/**
 	 * Gets all the fields which, when combined, make the primary key.

@@ -69,7 +69,7 @@
 							
 							<!-- column 2 -->
 							
-							<table align="left">
+							<table align="left" class="column">
 								<tbody>
 									<tr>
 										<td><h5 class="">Contact Info:</h5>

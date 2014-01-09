@@ -25,10 +25,15 @@
 			<div class="content">
 				<table>
 					<tr>
-						<td><h2>Hello, [FNAME] [LNAME]</h2>
+						<td><h2>Hello, [FNAME] [LNAME]:</h2>
 							<p class="lead">Thank you for your payment for the following transaction:</p>
-							[TICKET_LIST]
-							<h5>Payment Details</h5>
+							<h3>Registrant Details:</h3>
+							<ol style="list-style-type: none;">
+								<li><strong>Name:</strong> [FNAME] [LNAME]</li>
+								<li><strong>Event:</strong> [EVENT_LIST]</li>
+							</ol>
+							<p>&nbsp;</p>
+							<h3>Payment Details:</h3>
 							<ol style="list-style-type: none;">
 								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
 								<li><strong>Payment gateway:</strong> [PAYMENT_GATEWAY]</li>
@@ -70,7 +75,7 @@
 							
 							<!-- column 2 -->
 							
-							<table align="left">
+							<table align="left" class="column">
 								<tbody>
 									<tr>
 										<td><h5 class="">Contact Info:</h5>

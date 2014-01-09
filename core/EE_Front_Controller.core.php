@@ -81,6 +81,8 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+//		$t = EEM_Term_Taxonomy::instance()->insert(array('term_id'=>7,'taxonomy'=>'espresso_event_categories'));
+//		d($t);
 //		EEM_Event::instance()->show_next_x_db_queries(2);
 //		EEM_Event::instance()->get_all(array(array('status'=>'draft'),'order_by'=>array('Venue.VNU_ID'=>'asc')));die;
 //		$ps = EEM_Price::instance()->get_one(array(array('PRC_amount'=>array('>=','$1,00'))));
