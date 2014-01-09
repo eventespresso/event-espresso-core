@@ -77,9 +77,13 @@ class EEM_Status extends EEM_Base {
 	}
 
 
-
+	/**
+	 * This method provides the localized singular or plural string for a given status id
+	 * @param  array|string  $status_id The status(s) to return the string for
+	 * @param  boolean $plural    Whether to return plural string or not. Note, nearly all of the plural strings are the same as the singular (in English), however, this may NOT be the case with other languages
+	 * @return array             an array of translated strings for the incoming status id.
+	 */
 	public static function localized_status(  $status_id, $plural = FALSE ) {
-		//just showing a couple status for example purposes.
 		$translation_array = array(
 	     	EEM_Registration::status_id_pending_payment => array(
 				__('Pending Payment', 'event_espresso'), //singular
