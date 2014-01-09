@@ -543,6 +543,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_get_payment_methods();
 		$this->_get_active_gateways();
 		$this->_get_payment_status_array();
+		$this->_get_reg_status_selection(); //setsup the template args for the reg status array for the transaction.
 		
 		$this->_template_args['transaction_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'transaction'  ), TXN_ADMIN_URL );
 		$this->_template_args['apply_payment_form_url'] = add_query_arg( array( 'page' => 'espresso_transactions', 'action' => 'espresso_apply_payment' ), WP_AJAX_URL );
@@ -555,6 +556,27 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	}
 
+
+
+
+
+	/**
+	 * This method merely sets up the reg_status_selection section of the apply_payment/refund/edit dialog (along with any requests for doing notifications)
+	 *
+	 * @todo this will need to be adjusted either once MER comes along OR we move default reg status to tickets instead of events.
+	 * @return string html
+	 */
+	protected function _get_reg_status_selection() {
+		//first get all possible statuses
+		$statuses = EEM_Registration::reg_status_array(array(), TRUE);
+
+		//let's add a "don't change" option.
+		$status_array['NAN'] = __('Leave the Same', 'event_espresso');
+		$status_array = array_merge( $status_array, $statuses );
+
+		$this->_template_args['status_change_select'] = EEH_Form_Fields::select_input( 'txn_reg_status_change[reg_status]', $status_array, 'NAN' );
+
+	}
 
 
 
@@ -786,8 +808,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			
 			//prepare to render page
 			$transaction = $payment->transaction();
-			//finalize so we update reg status if necessary.
-			$transaction->finalize();
 			$this->_get_payment_status_array();
 			$return_data['amount'] = $payment->amount();
 			$return_data['total_paid'] = $transaction->paid();
@@ -807,6 +827,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 			$this->_process_payment_notification( $payment );
 
+			if ( isset($this->_req_data['txn_reg_status_change'] ) )
+				$this->_process_registration_status_change( $transaction );
+
+
+
 		} else {
 			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
@@ -818,6 +843,28 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		die();
 
 	}
+
+
+
+
+
+	/**
+	 * This processes requested registration status changes for all the registrations on a given transaction and (optionally) sends out notifications for the changes.
+	 * @param  EE_Transaction $transaction transaction object
+	 * @return void            
+	 */
+	protected function _process_registration_status_change( $transaction ) {
+		//first if there is no change in status then we get out.
+		if ( !isset( $this->_req_data['txn_reg_status_change'] ) )
+			return false; //no error message, just nothing to do man.
+
+		if ( $this->_req_data['txn_reg_status_change']['reg_status'] == 'NAN' )
+			return;  //no error message, no change requested.
+
+		//made it here dude?  Oh WOW.  K, let's take care of changing the statuses then //note notifications will only get sent if the email notification is toggled.
+		$transaction->finalize(true);
+	}
+
 
 
 

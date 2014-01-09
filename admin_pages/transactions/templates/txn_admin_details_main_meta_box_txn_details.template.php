@@ -385,10 +385,26 @@
 						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Notes / Extra Accounting', 'event_espresso' );?></label>
 						<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp" class="txn-admin-apply-payment-inp" type="text" value="<?php echo $REG_code; ?>"/>		<input type="hidden" id="txn-admin-reg-code-inp" value="<?php echo $REG_code; ?>"/>
 						<br/>
-						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes.', 'event_espresso' );?></p><br/>
+						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes. Defaults to the primary registrant\'s registration code.', 'event_espresso' );?></p><br/>
+					</div>
+
+					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
+						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
+						<?php echo $status_change_select; ?>
+						<br/>
+						<br />
+						<p class="description"><?php _e( 'If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. <strong>Note: ALL registrations associated with this transaction will be updated to this new status.</strong>', 'event_espresso' );?></p><br/>
 						<label></label>
-						<p class="description"><?php _e( 'Defaults to the primary registrant\'s registration code.', 'event_espresso' );?></p>
-					</div>			
+					</div>
+
+					<div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
+						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Registration Messages?', 'event_espresso' );?></label>
+						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
+						<br/>
+						<br />
+						<p class="description"><?php _e( 'By default a payment message <strong>is</strong> sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any registration messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
+						<label></label>
+					</div>				
 					<div class="clear"></div>
 	
 				</div>	
