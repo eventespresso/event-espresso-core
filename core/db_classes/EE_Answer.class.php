@@ -78,6 +78,7 @@ class EE_Answer extends EE_Base_Class{
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );
+//		d( $has_object );
 		return $has_object ? $has_object : new self( $props_n_values);
 	}
 
@@ -87,8 +88,9 @@ class EE_Answer extends EE_Base_Class{
 	 * @return EE_Answer
 	 */
 	public static function new_instance_from_db ( $props_n_values = array() ) {
-//		$classname = __CLASS__;
+		$classname = __CLASS__;
 //		$mapped_object = parent::_get_object_from_entity_mapper($props_n_values, $classname);
+//		d( $mapped_object );
 //		return $mapped_object ? $mapped_object : new self( $props_n_values, TRUE );
 		return new self( $props_n_values, TRUE );
 	}
