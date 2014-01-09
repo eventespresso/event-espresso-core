@@ -7,6 +7,9 @@
 <p class="red_text">
 <?php _e('Please use caution when using this feature. These files may be publicly available.', 'event_espresso'); ?>
 </p>
+<p class="red_text">
+<?php _e('Please remeber to turn off Full Logging when not in use, otherwise the file size can grow very large.', 'event_espresso'); ?>
+</p>
 
 <h2>
 <?php _e('Remote Logging', 'event_espresso'); ?>
@@ -38,3 +41,20 @@
 </p>
 <pre>define( 'EELOGGING_PASS', 'YOUR PASSWORD' );
 define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
+
+<h2>
+<?php _e('Promote Event Espresso', 'event_espresso'); ?>
+</h2>
+<p>
+<?php _e("Help spread the word about Event Espresso by allowing us to show a small link in the footer of your registration page.", 'event_espresso'); ?>
+</p>
+<p>
+<?php _e("You can also monetize this link by signing up to our <a href='http://eventespresso.com/affiliates/'>affiliate program</a> and adding in your affiliate ID here.", 'event_espresso'); ?>
+</p>
+
+<h2>
+<?php _e('Help Tour Global Activation', 'event_espresso'); ?>
+</h2>
+<p>
+<?php _e("Turn the help tours off or on.", 'event_espresso'); ?>
+</p>
