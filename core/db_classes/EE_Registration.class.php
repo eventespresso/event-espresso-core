@@ -1025,7 +1025,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	 * genrerates reg code if that has yet to been done, 
 	 * sets reg status based on transaction status and event pre-approval setting
-	 * @return void
+	 * @return array 	an array with two boolean values, first indicates if new reg, second indicates if regstatus was updated.
 	 */
 	public function finalize( $from_admin = FALSE ) {
 		$update_reg = FALSE;
@@ -1043,7 +1043,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			do_action('AHEE__EE_Registration__finalize__update_and_new_reg', $this, $from_admin );
 			$this->save();
 		}
-		return $new_reg;			
+		return array('new_reg' => $new_reg, 'to_approved' => $update_reg);			
 	}
 
 
