@@ -182,7 +182,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 */
 	public static function reg_status_array( $exclude = array(), $translated = FALSE ) {
 		call_user_func_array( array( EEM_Registration::instance(), '_get_registration_status_array' ), array($exclude ) );
-		return $translated ? EEM_Status::localized_status( array_keys(self::$_reg_status) ) : self::$_reg_status;
+		return $translated ? EEM_Status::localized_status( self::$_reg_status ) : self::$_reg_status;
 	}
 
 
