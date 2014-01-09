@@ -88,19 +88,19 @@ final class EE_Front_Controller {
 //		d(EEM_Registration::instance());
 //		
 //		d($r);
-		$a = EE_Answer::new_instance_from_db(array('ANS_ID'=>1,'ANS_value'=>1));
-		
-		$a2 = EE_Answer::new_instance(array('ANS_ID'=>1,'ANS_value'=>3));
-		
-		$a3 = EE_Answer::new_instance_from_db(array('ANS_ID'=>2,'ANS_value'=>4));
-		$a3->set('ANS_ID',1);
-//		$a2->set_value('new_one');
-		d($a);
-		var_dump($a);
-		d($a2);
-		var_dump($a2);
-		d($a3);
-		var_dump($a3);
+//		$a = EE_Answer::new_instance_from_db(array('ANS_ID'=>1,'ANS_value'=>1));
+//		
+//		$a2 = EE_Answer::new_instance(array('ANS_ID'=>1,'ANS_value'=>3));
+//		
+//		$a3 = EE_Answer::new_instance_from_db(array('ANS_ID'=>2,'ANS_value'=>4));
+//		$a3->set('ANS_ID',1);
+////		$a2->set_value('new_one');
+//		d($a);
+//		var_dump($a);
+//		d($a2);
+//		var_dump($a2);
+//		d($a3);
+//		var_dump($a3);
 //		EEM_Event::instance()->show_next_x_db_queries(2);
 //		EEM_Event::instance()->get_all(array(array('status'=>'draft'),'order_by'=>array('Venue.VNU_ID'=>'asc')));die;
 //		$ps = EEM_Price::instance()->get_one(array(array('PRC_amount'=>array('>=','$1,00'))));
