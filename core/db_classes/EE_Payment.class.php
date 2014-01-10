@@ -494,7 +494,7 @@ class EE_Payment extends EE_Base_Class{
 	 * @return string
 	 */
 	public function pretty_status(){
-		$status = EEM_Status::localized_status( array( $this->STS_ID() =>  __('unkown', 'event_espresso') ), FALSE, 'sentence' );
+		$status = EEM_Status::instance()->localized_status( array( $this->STS_ID() =>  __('unkown', 'event_espresso') ), FALSE, 'sentence' );
 		return $status[$this->STS_ID()];
 	}
 	
