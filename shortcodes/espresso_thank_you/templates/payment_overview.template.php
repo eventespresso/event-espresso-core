@@ -25,13 +25,11 @@ $event_name = '';
 
 	<div class="ee-attention">
 		<div class="extra-padding">
-			<p>
-				<?php echo apply_filters('FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it"))?><br/><br/>
-				<a class="big-text" href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
-			</p>
+			<?php echo apply_filters('FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it"))?><br/><br/>
+			<a class="big-text" href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
 		</div>
 	</div>
-
+	<br/>
 
 	<h3 class="section-title"><?php _e('Registration  Details:', 'event_espreso'); ?></h3>
 	
