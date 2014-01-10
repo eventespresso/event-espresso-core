@@ -244,7 +244,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _get_payment_status_array() {
-		self::$_pay_status = EEM_Payment::instance()->status_array();
+		self::$_pay_status = EEM_Payment::instance()->status_array(TRUE);
 		$this->_template_args['payment_status'] = self::$_pay_status;
 			
 	}
