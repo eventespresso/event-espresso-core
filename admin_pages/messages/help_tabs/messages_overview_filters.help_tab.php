@@ -38,6 +38,3 @@
 </li>
 </ul>
 </p>
-<p>
-<?php _e('TO-DO: Click here to see definitions of the Message Types above.', 'event_espresso'); ?><br />
-</p>

@@ -34,8 +34,8 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 		$this->name = 'declined_registration';
 		$this->description = __('This message type is for messages sent to registrants when their registration is declined.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('declined registration', 'event_espresso'),
-			'plural' => __('declined registrations', 'event_espresso')
+			'singular' => __('registration declined', 'event_espresso'),
+			'plural' => __('registrations declined', 'event_espresso')
 			);
 
 		parent::__construct();

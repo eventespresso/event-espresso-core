@@ -137,9 +137,17 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
                 'help_tabs' => array(
-					'registration_form_questions_overview_help_tab' => array(
-						'title' => __('Questions Overview', 'event_espresso'),
-						'filename' => 'registration_form_questions_overview'
+					'registration_form_question_groups_help_tab' => array(
+						'title' => __('Question Groups', 'event_espresso'),
+						'filename' => 'registration_form_question_groups'
+						),
+					'registration_form_question_groups_table_column_headings_help_tab' => array(
+						'title' => __('Question Groups Table Column Headings', 'event_espresso'),
+						'filename' => 'registration_form_question_groups_table_column_headings'
+						),
+					'registration_form_question_groups_views_bulk_actions_search_help_tab' => array(
+						'title' => __('Question Groups Views & Bulk Actions & Search', 'event_espresso'),
+						'filename' => 'registration_form_question_groups_views_bulk_actions_search'
 						),
 					),
 				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),

@@ -6,7 +6,7 @@
 <ul>
 <li>
 <?php _e('Basic Type', 'event_espresso'); ?><br />
-<?php _e('This is the kind of base type. Available options are Discount, Surcharge, and Tax. TO-DO (LOC) Click here to view definitions for these terms.', 'event_espresso'); ?>
+<?php _e('This is the kind of base type. Available options are Discount, Surcharge, and Tax.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Price Type Name', 'event_espresso'); ?><br />
