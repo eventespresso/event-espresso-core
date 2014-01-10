@@ -490,6 +490,11 @@
 			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors));
 			$error = true;
 		}
+		
+		//lastly, we need to update the datetime and ticket sold amounts
+		//as those may ahve been affected by this
+		EEM_Datetime::instance()->update_sold( EEM_Datetime::instance()->get_all() );
+		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
 
 		// if there was at least one success and absolutely no errors
 		if ( $success && ! $error ) {
