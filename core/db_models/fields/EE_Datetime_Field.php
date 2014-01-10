@@ -13,7 +13,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	private $_time_format = NULL;
 	private $_pretty_date_format = NULL;
 	private $_pretty_time_format = NULL;
-
+	private static $_UTC_DateTimeZone = NULL;
 
 
 	/**
@@ -63,6 +63,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 	public function get_wpdb_data_type() {
 		return '%s';
+	}
+	
+
+	public function get_UTC_DateTimeZone() {
+		return EE_Datetime_Field::$_UTC_DateTimeZone instanceof DateTimeZone ? EE_Datetime_Field::$_UTC_DateTimeZone : new DateTimeZone( 'UTC' );
 	}
 	
 
@@ -356,7 +361,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 
 		//return to UTC time
-		$this->_date->setTimezone( new DateTimeZone( 'UTC' ) );
+		$this->_date->setTimezone( EE_Datetime_Field::get_UTC_DateTimeZone() );
 
 		//return unix timestamp
 		return $this->_date->format('U');
@@ -412,7 +417,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( !$this->_date )
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 
-		$this->_date->setTimezone( new DateTimeZone('UTC') );
+		$this->_date->setTimezone( EE_Datetime_Field::get_UTC_DateTimeZone() );
 		return $this->_date->format('U');
 
 	}
