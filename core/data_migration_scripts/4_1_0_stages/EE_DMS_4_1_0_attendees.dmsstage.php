@@ -559,7 +559,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	 */
 	private function _find_count_in_old_txn_using_reg_id($id,$registration_id){
 		global $wpdb;
-		$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(REG_ID) FROM ".$this->_old_table." WHERE registration_id=%s AND id<=%d",$registration_id,$id));
+		$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(registration_id) FROM ".$this->_old_table." WHERE registration_id=%s AND id<=%d",$registration_id,$id));
 		return intval($count);
 	}
 	private function _insert_new_payment($old_attendee,$new_txn_id){
