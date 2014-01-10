@@ -190,14 +190,7 @@ $event_name = '';
 							<label><?php _e("Payment Status: ", 'event_espresso') ?></label>
 						</td>
 						<td>
-							<?php if ($payment->is_approved()) { ?>
-								<img class="espresso-paid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>accept.png" width="16" height="16" alt="<?php $payment->e_pretty_status() ?>" title="<?php $payment->e_pretty_status() ?>" />
-							<?php } elseif($payment->is_pending()) { ?>
-								<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>error.png" width="16" height="16" alt="<?php $payment->e_pretty_status() ?>" title="<?php $payment->e_pretty_status() ?>" />
-							<?php }else{?>
-								<img class="espresso-unpaid-status-icon-img" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>exclamation.png" width="16" height="16" alt="<?php $payment->e_pretty_status() ?>" title="<?php $payment->e_pretty_status() ?>" />
-							<?php } ?>
-							<?php $payment->e_pretty_status();
+							<?php $payment->e_pretty_status( TRUE );
 							if ( $show_try_pay_again_link &&  ! $payment->is_approved()) {?>
 							<a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a>
 								<?php }
