@@ -541,9 +541,9 @@ final class EE_Front_Controller {
 				}
 				
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' )) {
-					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' );
+					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ));
 				} else {
-					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css' );
+					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ));
 				}
 				wp_enqueue_style('espresso_default');
 				
