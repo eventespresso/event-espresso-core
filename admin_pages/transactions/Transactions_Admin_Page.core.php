@@ -218,7 +218,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _get_transaction_status_array() {
-		self::$_txn_status = EEM_Transaction::instance()->status_array();
+		self::$_txn_status = EEM_Transaction::instance()->status_array(TRUE);
 	}
 
 
