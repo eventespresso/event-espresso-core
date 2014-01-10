@@ -338,7 +338,13 @@
 				if($row_is_completely_empty){
 					continue;
 				}
-				$id_in_csv = $model->has_primary_key_field() ? $model_object_data[$model->primary_key_name()] : null;
+				//find the PK in the row of data (or a combined key if 
+				//there is no primary key)
+				if($model->has_primary_key_field()){
+					$id_in_csv =  $model_object_data[$model->primary_key_name()];
+				}else{
+					$id_in_csv = $model->get_index_primary_key_string($model_object_data);
+				}
 				
 				//now we need to decide if we're going to add a new model object given the $model_object_data,
 				//or just update.
@@ -403,7 +409,7 @@
 				}
 				//remove the primary key, if there is one (we don't want it for inserts OR updates)
 				//we'll put it back in if we need it
-				if($model->has_primary_key_field()){
+				if($model->has_primary_key_field() && $model->get_primary_key_field()->is_auto_increment()){
 					unset($model_object_data[$model->primary_key_name()]);
 				}
 				if($do_insert){
@@ -418,7 +424,7 @@
 						}else{
 							$total_insert_errors++;
 							$model_object_data[$model->primary_key_name()] = $id_in_csv;
-							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,implode(",",$model_object_data)));
+							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,http_build_query($model_object_data)));
 						}
 					}catch(EE_Error $e){
 						$total_insert_errors++;
