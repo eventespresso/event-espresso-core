@@ -890,8 +890,16 @@ abstract class EE_Base_Class{
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
-			if($results){//if successful, set the primary key
-				$this->set(self::_get_primary_key_name( get_class($this) ),$results);
+			if($results){
+				//if successful, set the primary key
+				//but don't use the normal SET method, because it will check if
+				//an item with the same ID exists in the mapper & db, then 
+				//will find it in the db (because we just added it) and THAT object
+				//will get added to teh mapper before we can add this one!
+				//but if we just avoid using the SET method, all that headache can be avoided
+				$pk_attribute = $this->_get_private_attribute_name(self::_get_primary_key_name( get_class($this)));
+				$this->$pk_attribute = $results;
+				$this->_clear_cached_property($pk_attribute);
 			}
 			$this->get_model()->add_to_entity_map($this);
 		}
