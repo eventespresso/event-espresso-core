@@ -273,9 +273,11 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * retrieve the status details from esp_status table as an array IF this model has the status table as a relation.
+	 *
+	 * @param  boolean $translated return localized strings or JUST the array.
 	 * @return array 
 	 */
-	 public function status_array() {
+	 public function status_array( $translated = FALSE ) {
 	 	if ( !array_key_exists('Status', $this->_model_relations ) )
 	 		return array();
 	 	$model_name = $this->get_this_model_name();
@@ -285,7 +287,7 @@ abstract class EEM_Base extends EE_Base{
 	 	foreach ( $stati as $status ) {
             $status_array[ $status->ID() ] = $status->get('STS_code');
         }
-        return $status_array;
+        return $translated ? EEM_Status::instance()->localized_status($status_array, FALSE, 'sentence') : $status_array;
     }
 
 
