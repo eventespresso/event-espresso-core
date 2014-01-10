@@ -144,6 +144,21 @@ class EEH_Template {
 
 
 
+
+	/**
+	 * This function is used for outputting the localized label for a given status id in the schema requested (and possibly plural).  The intended use of this function is only for cases where wanting a label outside of a related status model or model object (i.e. in documentation etc.)
+	 * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no match, then 'Unkown' will be returned.
+	 * @param  boolean $plural    Whether to return plural or not
+	 * @param  string  $schema    'UPPER', 'lower', or 'Sentence'
+	 * @return string             The localized label for the status id.
+	 */
+	public static function pretty_status( $status_id, $plural = FALSE, $schema = 'upper' ) {
+		$status = EEM_Status::instance()->localized_status(array( $status_id => __('unknown') ), $plural, $schema );
+		return $status[$status_id];
+	}
+
+
+
 	
 
 	/**

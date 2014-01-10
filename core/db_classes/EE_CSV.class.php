@@ -338,7 +338,13 @@
 				if($row_is_completely_empty){
 					continue;
 				}
-				$id_in_csv = $model->has_primary_key_field() ? $model_object_data[$model->primary_key_name()] : null;
+				//find the PK in the row of data (or a combined key if 
+				//there is no primary key)
+				if($model->has_primary_key_field()){
+					$id_in_csv =  $model_object_data[$model->primary_key_name()];
+				}else{
+					$id_in_csv = $model->get_index_primary_key_string($model_object_data);
+				}
 				
 				//now we need to decide if we're going to add a new model object given the $model_object_data,
 				//or just update.
@@ -403,7 +409,7 @@
 				}
 				//remove the primary key, if there is one (we don't want it for inserts OR updates)
 				//we'll put it back in if we need it
-				if($model->has_primary_key_field()){
+				if($model->has_primary_key_field() && $model->get_primary_key_field()->is_auto_increment()){
 					unset($model_object_data[$model->primary_key_name()]);
 				}
 				if($do_insert){
@@ -418,7 +424,7 @@
 						}else{
 							$total_insert_errors++;
 							$model_object_data[$model->primary_key_name()] = $id_in_csv;
-							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,implode(",",$model_object_data)));
+							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,http_build_query($model_object_data)));
 						}
 					}catch(EE_Error $e){
 						$total_insert_errors++;
@@ -484,6 +490,11 @@
 			EE_Error::add_error(sprintf(__("One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'", "event_espresso"),$total_insert_errors));
 			$error = true;
 		}
+		
+		//lastly, we need to update the datetime and ticket sold amounts
+		//as those may ahve been affected by this
+		EEM_Datetime::instance()->update_sold( EEM_Datetime::instance()->get_all() );
+		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
 
 		// if there was at least one success and absolutely no errors
 		if ( $success && ! $error ) {

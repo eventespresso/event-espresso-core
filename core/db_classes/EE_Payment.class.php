@@ -494,20 +494,8 @@ class EE_Payment extends EE_Base_Class{
 	 * @return string
 	 */
 	public function pretty_status(){
-		switch($this->STS_ID()){
-			case EEM_Payment::status_id_approved:
-				return __("Accepted",'event_espresso');
-			case EEM_Payment::status_id_pending:
-				return __("Pending",'event_espresso');
-			case EEM_Payment::status_id_cancelled:
-				return __('Cancelled','event_espresso');
-			case EEM_Payment::status_id_declined:
-				return __('Declined','event_espresso');
-			case EEM_Payment::status_id_failed:
-				return __('Failed','event_espresso');
-			default:
-				return __('Unknown','event_espresso');
-		}
+		$status = EEM_Status::instance()->localized_status( array( $this->STS_ID() =>  __('unkown', 'event_espresso') ), FALSE, 'sentence' );
+		return $status[$this->STS_ID()];
 	}
 	
 	

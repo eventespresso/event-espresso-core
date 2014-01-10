@@ -81,65 +81,67 @@ class EEM_Status extends EEM_Base {
 	 * This method provides the localized singular or plural string for a given status id
 	 * @param  array   $statuses  This should be an array of statuses in the format array( $status_id, $status_code ).  That way if there isn't a translation in the index we'll return the default code.
 	 * @param  boolean $plural    Whether to return plural string or not. Note, nearly all of the plural strings are the same as the singular (in English), however, this may NOT be the case with other languages
+	 * @param  string  $schema    This can be either 'upper', 'lower', or 'sentence'.  Basically indicates how we want the status string returned ( UPPER, lower, Sentence)
 	 * @return array             an array of translated strings for the incoming status id.
 	 */
-	public static function localized_status(  $statuses, $plural = FALSE ) {
+	public function localized_status(  $statuses, $plural = FALSE, $schema = 'upper' ) {
+		//note these are all in lower case because ucwords() on upper case will NOT convert.
 		$translation_array = array(
 	     	EEM_Registration::status_id_pending_payment => array(
-				__('PENDING PAYMENT', 'event_espresso'), //singular
-				__('PENDING PAYMENTS', 'event_espresso') //plural
+				__('pending payment', 'event_espresso'), //singular
+				__('pending payments', 'event_espresso') //plural
 				),
 	  		EEM_Registration::status_id_approved => array(
-	  			__('APPROVED', 'event_espresso'), //singular
-	  			__('APPROVED', 'event_espresso') //plural
+	  			__('approved', 'event_espresso'), //singular
+	  			__('approved', 'event_espresso') //plural
 	  			),
 	  		EEM_Registration::status_id_not_approved => array(
-	  			__('NOT APPROVED', 'event_espresso'),
-	  			__('NOT APPROVED', 'event_espresso')
+	  			__('not approved', 'event_espresso'),
+	  			__('not approved', 'event_espresso')
 	  			),
 	  		EEM_Registration::status_id_cancelled => array(
-	  			__('CANCELLED', 'event_espresso'),
-	  			__('CANCELLED', 'event_espresso')
+	  			__('cancelled', 'event_espresso'),
+	  			__('cancelled', 'event_espresso')
 	  			),
 	  		EEM_Registration::status_id_declined => array(
-	  			__('DECLINED', 'event_espresso'),
-	  			__('DECLINED', 'event_espresso')
+	  			__('declined', 'event_espresso'),
+	  			__('declined', 'event_espresso')
 	  			),
 	  		EEM_Transaction::complete_status_code => array(
-	  			__('COMPLETE', 'event_espresso'),
-	  			__('COMPLETE', 'event_espresso')
+	  			__('complete', 'event_espresso'),
+	  			__('complete', 'event_espresso')
 	  			),
 	  		EEM_Transaction::incomplete_status_code => array(
-	  			__('INCOMPLETE', 'event_espresso'),
-	  			__('INCOMPLETE', 'event_espresso')
+	  			__('failed', 'event_espresso'),
+	  			__('failed', 'event_espresso')
 	  			),
 	  		EEM_Transaction::open_status_code => array(
-	  			__('OPEN', 'event_espresso'),
-	  			__('OPEN', 'event_espresso')
+	  			__('incomplete', 'event_espresso'),
+	  			__('incomplete', 'event_espresso')
 	  			),
 	  		EEM_Transaction::overpaid_status_code => array(
-	  			__('OVERPAID', 'event_espresso'),
-	  			__('OVERPAID', 'event_espresso')
+	  			__('overpaid', 'event_espresso'),
+	  			__('overpaid', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_approved => array(
-	  			__('APPROVED', 'event_espresso'),
-	  			__('APPROVED', 'event_espresso')
+	  			__('accepted', 'event_espresso'),
+	  			__('accepted', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_pending => array(
-	  			__('PENDING', 'event_espresso'),
-	  			__('PENDING', 'event_espresso')
+	  			__('pending', 'event_espresso'),
+	  			__('pending', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_cancelled => array(
-	  			__('CANCELLED', 'event_espresso'),
-	  			__('CANCELLED', 'event_espresso')
+	  			__('cancelled', 'event_espresso'),
+	  			__('cancelled', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_declined => array(
-	  			__('DECLINED', 'event_espresso'),
-	  			__('DECLINED', 'event_espresso')
+	  			__('declined', 'event_espresso'),
+	  			__('declined', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_failed => array(
-	  			__('FAILED', 'event_espresso'),
-	  			__('FAILED', 'event_espresso')
+	  			__('failed', 'event_espresso'),
+	  			__('failed', 'event_espresso')
 	  			)
 	    );
 
@@ -155,6 +157,19 @@ class EEM_Status extends EEM_Base {
 	    		$translation[$id] = $plural ? $translation_array[$id][1] : $translation_array[$id][0];
 	    	} else {
 	    		$translation[$id] = $code;
+	    	}
+
+	    	//schema
+	    	switch ( $schema ) {
+	    		case 'lower' :
+	    			$translation[$id] = strtolower( $translation[$id] ); //even though these start in lower case, this will catch any statuses added via filter.
+	    			break;
+	    		case 'sentence' :
+	    			$translation[$id] = ucwords( $translation[$id] );
+	    			break;
+	    		case 'upper' :
+	    			$translation[$id] = strtoupper( $translation[$id] );
+	    			break;
 	    	}
 	    }
 

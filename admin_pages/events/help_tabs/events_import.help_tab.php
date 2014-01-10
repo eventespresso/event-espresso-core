@@ -1,4 +1,4 @@
-<h3><?php _e('Import', 'event_espresso'); ?></h3>
+<h3><?php _e('Event Espresso Import', 'event_espresso'); ?></h3>
 <p>
 <?php _e('This page allows you to import information into Event Espresso.', 'event_espresso'); ?>
 </p>

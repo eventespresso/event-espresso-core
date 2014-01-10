@@ -1,4 +1,4 @@
-<h3><?php _e('Table Column Headings', 'event_espresso'); ?></h3>
+<h3><?php _e('Events Overview Table Column Headings', 'event_espresso'); ?></h3>
 <p>
 <ul>
 <li>

@@ -36,8 +36,8 @@ class EE_Payment_Declined_message_type extends EE_message_type {
 		$this->name = 'payment_declined';
 		$this->description = __('This message type is used for all declined payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso'); 
 		$this->label = array(
-			'singular' => __('declined payment', 'event_espresso'),
-			'plural' => __('declined payments', 'event_espresso')
+			'singular' => __('payment declined', 'event_espresso'),
+			'plural' => __('payments declined', 'event_espresso')
 			);
 
 		parent::__construct();

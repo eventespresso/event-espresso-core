@@ -108,27 +108,27 @@ class Registration_List_Table_Tips extends EE_Qtip_Config {
 		$status_array = array(
 			'not_approved' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
-				'desc' => __('Not Approved', 'event_espresso'),
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ),
 				'status' => EEM_Registration::status_id_not_approved
 				),
 			'pending_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
-				'desc' => __('Pending', 'event_espresso'),
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ),
 				'status' => EEM_Registration::status_id_pending_payment
 				),
 			'approved_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
-				'desc' => __('Approved', 'event_espresso'),
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ),
 				'status' => EEM_Registration::status_id_approved
 				),
 			'cancelled_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
-				'desc' => __('Cancelled', 'event_espresso'),
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ),
 				'status' => EEM_Registration::status_id_cancelled
 				),
 			'declined_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
-				'desc' => __('Declined', 'event_espresso'),
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ),
 				'status' => EEM_Registration::status_id_declined
 				)
 			);
