@@ -112,12 +112,12 @@ class EEM_Status extends EEM_Base {
 	  			__('complete', 'event_espresso')
 	  			),
 	  		EEM_Transaction::incomplete_status_code => array(
-	  			__('incomplete', 'event_espresso'),
-	  			__('incomplete', 'event_espresso')
+	  			__('failed', 'event_espresso'),
+	  			__('failed', 'event_espresso')
 	  			),
 	  		EEM_Transaction::open_status_code => array(
-	  			__('open', 'event_espresso'),
-	  			__('open', 'event_espresso')
+	  			__('incomplete', 'event_espresso'),
+	  			__('incomplete', 'event_espresso')
 	  			),
 	  		EEM_Transaction::overpaid_status_code => array(
 	  			__('overpaid', 'event_espresso'),
