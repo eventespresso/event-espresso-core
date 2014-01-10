@@ -793,33 +793,28 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function pretty_status( $show_icons = FALSE ){
-		require_once( EE_MODELS . 'EEM_Registration.model.php');
-		$status = '';
+		$status = EEM_Status::instance()->localized_status( array( $this->status_ID() => __('unknown', 'event_espresso') ), FALSE, 'sentence' );
+		$icon = '';
 		switch($this->status_ID()){
 			case EEM_Registration::status_id_approved:
-				$status = $show_icons ? '<span class="dashicons dashicons-star-filled ee-icon-size-16 green-text"></span>' : '';
-				$status .=  __("Approved",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-star-filled ee-icon-size-16 green-text"></span>' : '';
 				break;
 			case EEM_Registration::status_id_not_approved:
-				$status = $show_icons ? '<span class="dashicons dashicons-star-empty ee-icon-size-16 pink-text"></span>' : '';
-				$status .= __("Not Approved",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-star-empty ee-icon-size-16 pink-text"></span>' : '';
 				break;
 			case EEM_Registration::status_id_pending_payment:
-				$status = $show_icons ? '<span class="dashicons dashicons-star-half ee-icon-size-16 orange-text"></span>' : '';
-				$status .= __("Pending Payment",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-star-half ee-icon-size-16 orange-text"></span>' : '';
 				break;
 			case EEM_Registration::status_id_cancelled:
-				$status = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-grey-text"></span>' : '';
-				$status .= __("Cancelled",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-grey-text"></span>' : '';
 				break;
 			case EEM_Registration::status_id_declined:
-				$status = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
-				$status .= __("Declined",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
 				break;
 			default:
 				$status .= __("Unknown",'event_espresso');
 		}
-		return $status;
+		return $icon . $status[$this->status_ID()];
 	}
 
 	
