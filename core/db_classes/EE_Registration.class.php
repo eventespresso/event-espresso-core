@@ -811,8 +811,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			case EEM_Registration::status_id_declined:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
 				break;
-			default:
-				$status .= __("Unknown",'event_espresso');
 		}
 		return $icon . $status[$this->status_ID()];
 	}
