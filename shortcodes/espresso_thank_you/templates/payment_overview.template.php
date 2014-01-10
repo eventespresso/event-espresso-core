@@ -18,8 +18,130 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
  * @var $show_try_pay_again_link boolean whether or not to show the link back to SPCO step 2 to retry paying
  * @var $gateway_content string of content from the gateway.
  */
+$reg_cntr = 0;
+$event_name = '';
 ?>
 <div class="espresso_payment_overview event-display-boxes wdith-100" >
+
+	<div class="ee-attention">
+		<div class="extra-padding">
+			<p>
+				<?php echo apply_filters('FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it"))?><br/><br/>
+				<a class="big-text" href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
+			</p>
+		</div>
+	</div>
+
+
+	<h3 class="section-title"><?php _e('Registration  Details:', 'event_espreso'); ?></h3>
+	
+	<div class="reg-gen-details">
+	<?php 
+		foreach ( $transaction->registrations() as $registration ) {  
+			$reg_cntr++;
+			if ( $event_name != $registration->event_name() ) { 
+				$event_name = $registration->event_name(); 
+		?>
+		<h6>
+			<span class="smaller-text grey-text"><?php _e('for','event_espresso');?>: </span> <?php echo htmlentities( $registration->event_name(), ENT_QUOTES, 'UTF-8' );?>			
+		</h6>							
+		<table class='ee-table ee-registrations-list'>
+			<thead>
+				<tr>
+					<th width="35%">
+						<?php _e("Registrant Name",'event_espresso')?>
+					</th>
+					<th width="30%" class="jst-cntr">
+						<?php _e("REG Code",'event_espresso');?>
+					</th>
+					<th width="35%" class="jst-cntr">
+						<?php _e("REG Status",'event_espresso');?>
+					</th>
+				</tr>
+			</thead>
+			<tbody>			
+		<?php } ?>
+				<tr>
+					<td width="35%">
+					<?php 
+						if ( $registration->attendee() instanceof EE_Attendee ) {									
+							echo htmlentities( $registration->attendee()->get('ATT_fname') . ' ' . $registration->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' );
+						}
+					?>
+					</td>
+					<td width="30%" class="jst-cntr">
+						<?php $registration->e('REG_code') ?>
+					</td>
+					<td width="35%" class="jst-cntr">
+						<?php $registration->e_pretty_status( TRUE )?>
+					</td>
+				</tr>
+		<?php if (( $event_name != $registration->event_name() && $event_name != '' ) || $reg_cntr >= count( $transaction->registrations() )) {  ?>
+			</tbody>
+		</table>
+		<?php } ?>
+	<?php } ?>
+		<p class="small-text jst-rght"><span><a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit Attendee Information", 'event_espresso'); ?></a></span></p>
+		
+	</div><!-- / .reg-gen-details -->
+
+
+
+	
+	<h3><?php _e('Transaction Details', 'event_espresso'); ?></h3>
+	<div class='ee-transaction-status'>
+		<table class='ee-table'>
+			<tbody>
+				<tr>
+					<td>
+						<label><?php _e('Total Cost: ', 'event_espresso'); ?></label>
+					</td>
+					<td>
+						<?php echo EEH_Template::format_currency( $transaction->total() ); ?>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label><?php _e('Amount Owing: ', 'event_espresso'); ?></label>
+					</td>
+					<td class="<?php echo ($transaction->paid() == $transaction->total()) ? 'ee-transaction-paid' : 'ee-transaction-unpaid' ?>">
+						<?php echo EEH_Template::format_currency( $transaction->remaining() ); ?> 
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label><?php _e('Transaction Status: ', 'event_espresso'); ?></label>
+					</td>
+					<td>
+						<?php $transaction->e_pretty_status( TRUE ); 
+						if ( $show_try_pay_again_link && ! $transaction->is_completed() ) { ?>
+						 &nbsp; <span class="small-text"><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a></span>
+						<?php } ?>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label><?php _e('Primary Registrant:', 'event_espresso'); ?></label>
+					</td>
+					<td>
+						<?php 
+						//printr( $primary_registrant, '$primary_registrant  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						echo htmlentities( $primary_registrant->attendee()->get('ATT_fname') . ' ' . $primary_registrant->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' ); 
+						?>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<?php
+	if ( $show_try_pay_again_link && ! $transaction->is_completed() ) {
+			?>
+		<p class="small-text jst-rght"><span><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Click here to view Payment Options", 'event_espresso'); ?></a></span></p><br/>
+			<?php 	
+	}?>
+
+
 	<h2 class="section-heading display-box-heading">
 		<?php _e('Payment Overview', 'event_espresso'); ?>
 	</h2>
@@ -97,124 +219,8 @@ EEH_Template_Validator::verify_isnt_null($gateway_content, '$gateway_content');
 		<?php }?>
 	</div>
 	<br/>
-	
-	<div id="espresso-notices-attention" class="espresso-notices width-100" style="z-index:1;">
-		<div class="extra-padding">
-			<p>
-				<?php echo apply_filters('FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it"))?><br/><br/>
-				<a class="big-text" href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
-			</p>
-		</div>
-	</div><br/>
-	
-	<h3><?php _e('Transaction Details', 'event_espresso'); ?></h3>
-	<div class='ee-transaction-status'>
-		<table class='ee-table'>
-			<tbody>
-				<tr>
-					<td>
-						<label><?php _e('Total Cost: ', 'event_espresso'); ?></label>
-					</td>
-					<td>
-						<?php echo EEH_Template::format_currency( $transaction->total() ); ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label><?php _e('Amount Owing: ', 'event_espresso'); ?></label>
-					</td>
-					<td class='<?php echo ($transaction->paid() == $transaction->total()) ? 'ee-transaction-paid' : 'ee-transaction-unpaid' ?>'>
-						<?php echo EEH_Template::format_currency( $transaction->remaining() ); ?> 
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label><?php _e('Transaction Status: ', 'event_espresso'); ?></label>
-					</td>
-					<td>
-						<?php
-						if ( $transaction->is_completed() ) { ?>
-							<img class="espresso-paid-status-icon-img espresso-txn-status-icon" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>accept.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
-						<?php } elseif( $transaction->is_open() ) { ?>
-							<img class="espresso-unpaid-status-icon-img espresso-txn-status-icon" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>error.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
-						<?php } else { ?>
-							<img class="espresso-unpaid-status-icon-img espresso-txn-status-icon" align="absmiddle" src="<?php echo EE_IMAGES_URL;?>exclamation.png" width="16" height="16" alt="<?php $transaction->e_pretty_status() ?>" title="<?php $transaction->e_pretty_status() ?>" />
-						<?php } ?>
-						<?php $transaction->e_pretty_status(); 
-						if ( $show_try_pay_again_link && ! $transaction->is_completed() ) { ?>
-						 &nbsp; <span class="small-text"><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a></span>
-						<?php } ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label><?php _e('Primary Registrant:', 'event_espresso'); ?></label>
-					</td>
-					<td>
-						<?php 
-						//printr( $primary_registrant, '$primary_registrant  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						echo htmlentities( $primary_registrant->attendee()->get('ATT_fname') . ' ' . $primary_registrant->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' ); 
-						?>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	
-	<?php
-	if ( $show_try_pay_again_link && ! $transaction->is_completed() ) {
-			?>
-		<p class="small-text jst-rght"><span><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Click here to view Payment Options", 'event_espresso'); ?></a></span></p><br/>
-			<?php 	
-	}?>
-	<div class="event-data-display">
-		<h3 class="section-title"><?php _e('Registration  Details:', 'event_espreso'); ?></h3>
-		<div class="reg-gen-details">
-			<table class='ee-table ee-registrations-list'>
-				<thead>
-					<tr>
-						<th>
-							<?php _e("Name",'event_espresso')?>
-						</th>
-						<th>
-							<?php _e("Registration Code",'event_espresso');?>
-						</th>
-						<th>
-							<?php _e('Event Name','event_espresso');?>
-						</th>
-						<th>
-							<?php _e("Registration Status",'event_espresso');?>
-						</th>
-					</tr>
-				</thead>
-				<tbody>			
-					
-					<?php foreach ($transaction->registrations() as $registration) { ?>
-						<tr>
-							<td>
-							<?php 
-								if ( $registration->attendee() instanceof EE_Attendee ) {									
-									echo htmlentities( $registration->attendee()->get('ATT_fname') . ' ' . $registration->attendee()->get('ATT_lname'), ENT_QUOTES, 'UTF-8' );
-								}
-							?>
-							</td>
-							<td>
-								<?php $registration->e('REG_code') ?>
-							</td>
-							<td>
-								<?php echo htmlentities( $registration->event_name(), ENT_QUOTES, 'UTF-8' );?>
-							</td>
-							<td>
-								<?php $registration->e_pretty_status()?>
-							</td>
-						</tr>
-					<?php } ?>
-				</tbody>
-			</table>
-			<p class="small-text jst-rght"><span><a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit Attendee Information", 'event_espresso'); ?></a></span></p>
-			
-		</div><!-- / .reg-gen-details -->
-	</div><!-- / .event-data-display -->
+		
+
 </div><!-- / .event-display-boxes -->
 <?php 
 //insert affiliate code here (see includes/functions/affiliate-handling.php)

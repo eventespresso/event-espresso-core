@@ -395,8 +395,9 @@ class EE_Transaction extends EE_Base_Class{
 	 * Gets registrations on this transaction
 	 * @return EE_Registration[]
 	 */
-	public function registrations(){
-		return $this->get_many_related('Registration');
+	public function registrations( $query_params = array() ) {
+		$query_params = empty( $query_params ) || ! is_array( $query_params ) ? array( 'order_by'=>array( 'Event.EVT_name' =>'ASC', 'Attendee.ATT_lname' =>'ASC', 'Attendee.ATT_fname' =>'ASC' )) : $query_params;
+		return $this->get_many_related( 'Registration', $query_params );
 	}
 	
 	/**
@@ -443,19 +444,29 @@ class EE_Transaction extends EE_Base_Class{
 	 * returns a pretty version of the status, good for displayign to users
 	 * @return string
 	 */
-	public function pretty_status(){
+	public function pretty_status( $show_icons = FALSE ){
+		$status = '';
 		switch($this->status_ID()){
 			case EEM_Transaction::complete_status_code:
-				return __("Complete",'event_espresso');
+				$status = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
+				$status .= __("Complete",'event_espresso');
+				break;
 			case EEM_Transaction::incomplete_status_code:
-				return __('Incomplete','event_espresso');
+				$status = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 pink-text"></span>' : '';
+				$status .= __('Failed','event_espresso');
+				break;
 			case EEM_Transaction::open_status_code:
-				return __('Pending Payment','event_espresso');
+				$status = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
+				$status .= __('Incomplete','event_espresso');
+				break;
 			case EEM_Transaction::overpaid_status_code:
-				return __('Overpaid','event_espresso');
+				$status = $show_icons ? '<span class="dashicons dashicons-plus ee-icon-size-16 pink-text"></span>' : '';
+				$status .= __('Overpaid','event_espresso');
+				break;
 			default:
-				return __('Unknown','event_espresso');
+				$status .= __('Unknown','event_espresso');
 		}
+		return $status;
 	}
 	
 	
@@ -463,8 +474,8 @@ class EE_Transaction extends EE_Base_Class{
 	 * echoes $this->pretty_status()
 	 * @return void
 	 */
-	public function e_pretty_status(){
-		echo $this->pretty_status();
+	public function e_pretty_status( $show_icons = FALSE ){
+		echo $this->pretty_status( $show_icons );
 	}
 	
 	

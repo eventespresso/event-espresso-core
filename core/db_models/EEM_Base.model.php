@@ -809,9 +809,11 @@ abstract class EEM_Base extends EE_Base{
 		if($field_to_count){
 			$field_obj = $this->field_settings_for($field_to_count);
 			$column_to_count = $field_obj->get_qualified_column();
-		}else{
+		}elseif($this->has_primary_key_field ()){
 			$pk_field_obj = $this->get_primary_key_field();
 			$column_to_count = $pk_field_obj->get_qualified_column();
+		}else{//there's no primary key
+			$column_to_count = '*';
 		}
 
 		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
@@ -1178,8 +1180,32 @@ abstract class EEM_Base extends EE_Base{
 					$wpdb->last_error
 					));
 		}
-		return $wpdb->insert_id;
+		//ok, now what do we return for the ID of the newly-isnerted thing?
+		if($this->has_primary_key_field()){
+			if($this->get_primary_key_field()->is_auto_increment()){
+				return $wpdb->insert_id;
+			}else{
+				//it's not an auto-increment primary key, so
+				//it must have been supplied
+				return $fields_n_values[$this->get_primary_key_field()->get_name()];
+			}
+		}else{
+			//we can't returna  primary key because there is none. instead return
+			//a uniqeu string indicating this model
+			return $this->get_index_primary_key_string($fields_n_values);
+		}
 	}	
+	
+	/**
+	 * Used to build a primary key string (when the model has no primary key),
+	 * which can be used a unique string to identify this model object.
+	 * @param array $cols_n_values keys are field names, values are their values
+	 * @return string
+	 */
+	public function get_index_primary_key_string($cols_n_values){
+		$cols_n_values_for_primary_key_index = array_intersect_key($cols_n_values, $this->get_combined_primary_key_fields());
+		return http_build_query($cols_n_values_for_primary_key_index);
+	}
 	
 	/**
 	 * Consolidates code for preparing  a value supplied to the model for use int eh db. Calls the field's prepare_for_use_in_db method on the value,

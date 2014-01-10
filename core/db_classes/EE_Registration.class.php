@@ -792,20 +792,34 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * Returns a nice version of the status for displaying to customers
 	 * @return string
 	 */
-	public function pretty_status(){
+	public function pretty_status( $show_icons = FALSE ){
 		require_once( EE_MODELS . 'EEM_Registration.model.php');
+		$status = '';
 		switch($this->status_ID()){
 			case EEM_Registration::status_id_approved:
-				return __("Approved",'event_espresso');
+				$status = $show_icons ? '<span class="dashicons dashicons-star-filled ee-icon-size-16 green-text"></span>' : '';
+				$status .=  __("Approved",'event_espresso');
+				break;
 			case EEM_Registration::status_id_not_approved:
-				return __("Not Approved",'event_espresso');
+				$status = $show_icons ? '<span class="dashicons dashicons-star-empty ee-icon-size-16 pink-text"></span>' : '';
+				$status .= __("Not Approved",'event_espresso');
+				break;
 			case EEM_Registration::status_id_pending_payment:
-				return __("Pending Approval",'event_espresso');
+				$status = $show_icons ? '<span class="dashicons dashicons-star-half ee-icon-size-16 orange-text"></span>' : '';
+				$status .= __("Pending Payment",'event_espresso');
+				break;
 			case EEM_Registration::status_id_cancelled:
-				return __("Cancelled",'event_espresso');
+				$status = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-grey-text"></span>' : '';
+				$status .= __("Cancelled",'event_espresso');
+				break;
+			case EEM_Registration::status_id_declined:
+				$status = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
+				$status .= __("Declined",'event_espresso');
+				break;
 			default:
-				return __("Unknown",'event_espresso');
+				$status .= __("Unknown",'event_espresso');
 		}
+		return $status;
 	}
 
 	
@@ -814,8 +828,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * Prints out the return value of $this->pretty_status()
 	 * @return void
 	 */
-	public function e_pretty_status(){
-		echo $this->pretty_status();
+	public function e_pretty_status( $show_icons = FALSE ){
+		echo $this->pretty_status( $show_icons );
 	}
 
 
