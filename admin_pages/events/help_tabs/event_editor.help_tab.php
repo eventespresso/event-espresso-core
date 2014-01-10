@@ -1,4 +1,4 @@
-<h3><?php _e('Event Editor', 'event_espresso'); ?></h3>
+<h2><?php _e('Event Editor', 'event_espresso'); ?></h2>
 <p>
 <?php _e('This page allows you to create and edit events with Event Espresso.', 'event_espresso'); ?>
 </p>

@@ -1,4 +1,4 @@
-<h3><?php _e('Add New Event Category', 'event_espresso'); ?></h3>
+<h2><?php _e('Add New Event Category', 'event_espresso'); ?></h2>
 <p>
 <?php _e('This page allows you to create an event category.', 'event_espresso'); ?>
 </p>
@@ -19,7 +19,7 @@
 </ul>
 </p>
 <p>
-<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Add Category Tour button which appears on the right side of the page.', 'event_espresso'); ?>
+<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Add New Category Tour button which appears on the right side of the page.', 'event_espresso'); ?>
 </p>
 <p>
 <?php _e('<strong>Screen Options</strong><br /> You can customize the information that is shown on this page by toggling the screen options tab. Then you can add or remove checkmarks to hide or show certain content.', 'event_espresso'); ?>

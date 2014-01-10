@@ -3,7 +3,7 @@
 <ul>
 <li>
 <?php _e('ID', 'event_espresso'); ?><br />
-<?php _e('The is the numerical ID of an event.', 'event_espresso'); ?>
+<?php _e('The is the numerical ID of an event. This value is used internally for Event Espresso.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Name', 'event_espresso'); ?><br />
@@ -28,11 +28,11 @@
 </li>
 <li>
 <?php _e('Registrations', 'event_espresso'); ?><br />
-<?php _e('The number of registrations that have been approved. Clicking on this number will take you to a page that shows you a list of attendees for that event.', 'event_espresso'); ?>
+<?php _e('The number of registrations that have been approved. Clicking on this number will take you to a page that shows you a list of registrants for that event.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Actions', 'event_espresso'); ?><br />
-<?php _e('Using the action buttons you can view an event, edit event details, view registrations for an event, or view event reports.', 'event_espresso'); ?>
+<?php _e('Using the action buttons you can View event, Edit Event Details, View Registrations for Event, or View Event Reports.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>
