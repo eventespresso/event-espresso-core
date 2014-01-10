@@ -124,8 +124,8 @@ class EEM_Status extends EEM_Base {
 	  			__('overpaid', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_approved => array(
-	  			__('approved', 'event_espresso'),
-	  			__('approved', 'event_espresso')
+	  			__('accepted', 'event_espresso'),
+	  			__('accepted', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_pending => array(
 	  			__('pending', 'event_espresso'),
