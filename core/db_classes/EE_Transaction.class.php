@@ -445,28 +445,23 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return string
 	 */
 	public function pretty_status( $show_icons = FALSE ){
-		$status = '';
+		$status = EEM_Status::instance()->localized_status( array( $this->status_ID() => __('unknown', 'event_espresso') ), FALSE, 'sentence' );
+		$icon = '';
 		switch($this->status_ID()){
 			case EEM_Transaction::complete_status_code:
-				$status = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
-				$status .= __("Complete",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
 				break;
 			case EEM_Transaction::incomplete_status_code:
-				$status = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 pink-text"></span>' : '';
-				$status .= __('Failed','event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 pink-text"></span>' : '';
 				break;
 			case EEM_Transaction::open_status_code:
-				$status = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
-				$status .= __('Incomplete','event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
 				break;
 			case EEM_Transaction::overpaid_status_code:
-				$status = $show_icons ? '<span class="dashicons dashicons-plus ee-icon-size-16 pink-text"></span>' : '';
-				$status .= __('Overpaid','event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-plus ee-icon-size-16 pink-text"></span>' : '';
 				break;
-			default:
-				$status .= __('Unknown','event_espresso');
 		}
-		return $status;
+		return  $icon . $status[$this->status_ID()];
 	}
 	
 	
