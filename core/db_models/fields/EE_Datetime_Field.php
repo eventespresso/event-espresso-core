@@ -428,27 +428,22 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 *
 	 * @static
 	 * @access public
-	 * @param  string $timezone Timezone string to check
-	 * @return bool             Return True if Valid, False if Invalid
+	 * @param  string  	$timezone_string Timezone string to check
+	 * @return boolean	Return True if Valid, False if Invalid
 	 */	
-	public static function validate_timezone( $timezone ) {
-
-		//dang it DateTimeZone::listIdentifiers() is unreliable so lets use timezone_abbreviations_list();
-		
-		$abbarray = timezone_abbreviations_list();
-		
-		$time_string = array();
-		foreach ( $abbarray as $abbr ) {
-			foreach ( $abbr as $city ) {
-				$time_string[] = $city['timezone_id'];
-			}
+	public static function validate_timezone( $timezone_string ) {
+		// easiest way to test a timezone string is just see if it throws an error when you try to create a DateTimeZone object with it
+		try {
+			new DateTimeZone( $timezone_string );
+		} catch ( Exception $e ) {
+			throw new EE_Error( sprintf( 
+				__( 'The timezone given (%s), is invalid, please check with %sthis list%s for what valid timezones can be used', 'event_espresso' ), 
+				$timezone_string, 
+				'<a href="http://www.php.net/manual/en/timezones.php">', 
+				'</a>' 
+			));
 		}
-
-		if ( in_array( $timezone, $time_string ) )
-			return TRUE;
-
-		else
-			throw new EE_Error( sprintf( __('The timezone given (%s), is invalid, please check with %sthis list%s for what valid timezones can be used', 'event_espresso'), $timezone, '<a href="http://www.php.net/manual/en/timezones.php">', '</a>' ) );
+		return TRUE;		
 	}
 
 
