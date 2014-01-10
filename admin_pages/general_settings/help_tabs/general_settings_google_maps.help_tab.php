@@ -1,15 +1,15 @@
 <h2><?php _e('Google Maps', 'event_espresso'); ?></h2>
 <p>
-<?php _e("This page shows options for Google Maps. You can activate Google Maps by setting the toggle to Yes and updating settings.", 'event_espresso'); ?>
+<?php _e('This page shows options for Google Maps. You can activate Google Maps by setting the toggle to Yes and clicking on the Save button to update settings.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e('The map options allow you to configure how your event map is displayed. You may configure your events lists and event registration pages independently of each other. For an event to display a Google Map you must have enabled it to in the event editor or create event pages in the venue box. This allows you to select which events you would like to display with a map.', 'event_espresso'); ?>
+<?php _e('The map options allow you to configure how your event map is displayed. You may configure your events lists and event registration pages independently of each other. For an event to display a Google Map you must have it enabled in the event editor or in the venue metabox. This allows you to select which events you would like to display with a map.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Map Settings for Registration Page & Event List Options', 'event_espresso'); ?></h3>
 <ul>
 <li>
 <?php _e('Set Map Width', 'event_espresso'); ?><br />
-<?php _e('You may set a pixel width for your map. This should be entered as a numeric value with no other characters. If a value is not set then default ones are used -- registration page single maps are set to 500 pixels and events lists are set to 200 pixels.', 'event_espresso'); ?>
+<?php _e('You may set a pixel width for your map. This should be entered as a numeric value with no other characters. If a value is not set then default ones are used -- registration page single maps are set to 500 pixels and events list maps are set to 200 pixels.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Set Map Height', 'event_espresso'); ?><br />
@@ -17,7 +17,7 @@
 </li>
 <li>
 <?php _e('Set Map Zoom', 'event_espresso'); ?><br />
-<?php _e('Zoom level is the level of detail that is shown when the map first renders. A low value means you zoom out and therefore see a wider area. A higher value means that you zoom in and see the actual address in finer detail. A default value of 12 is set.', 'event_espresso'); ?>
+<?php _e('Zoom level is the level of detail that is shown when the map first renders. A smaller value means you zoom out and therefore see a wider area. A higher value means that you zoom in and see the actual address in finer detail. A default value of 12 is recommended.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Set Map Navigation Overlay', 'event_espresso'); ?><br />
@@ -25,7 +25,7 @@
 </li>
 <li>
 <?php _e('Keep Map Navigation Small', 'event_espresso'); ?><br />
-<?php _e('Keep map navigation small tells Google to only load the smaller map overlay regardless of map size. Google changes various options according to the size of a map. If you want to stop this from happening you can set this option to yes.', 'event_espresso'); ?>
+<?php _e('Keep map navigation small tells Google to only load the smaller map overlay regardless of map size. Google changes various options according to the size of a map. If you want to stop this change from happening, you can set this option to yes.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Set Map Type Control', 'event_espresso'); ?><br />

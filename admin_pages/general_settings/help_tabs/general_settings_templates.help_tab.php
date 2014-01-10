@@ -1,6 +1,6 @@
 <h2><?php _e('Templates', 'event_espresso'); ?></h2>
 <p>
-<?php _e("This page shows options for event list pages and registration pages.", 'event_espresso'); ?>
+<?php _e('This page shows options for event list pages and registration pages.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Event List Pages', 'event_espresso'); ?></h3>
 <ul>
@@ -10,7 +10,7 @@
 </li>
 <li>
 <?php _e('Grid Size', 'event_espresso'); ?><br />
-<?php _e('Select the size of the grid for your event list page. Adjust as needed to provide a layout that matches your theme.', 'event_espresso'); ?>
+<?php _e('Select the size of the grid for your event list page. Adjust as needed to create a layout that matches your WordPress theme.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Display Descriptions', 'event_espresso'); ?><br />
