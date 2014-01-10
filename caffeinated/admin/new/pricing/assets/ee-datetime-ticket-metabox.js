@@ -709,7 +709,7 @@ jQuery(document).ready(function($) {
 			this.context = 'ticket';
 
 			//apply total price
-			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + this.getTotalPrice().finalTotal);
+			$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text(accounting.formatMoney(this.getTotalPrice().finalTotal));
 
 			//if we're updating then let's make sure this ticket is removed from the createdItems property
 			this.createdItems = _.without(this.createdItems, this.ticketRow);
@@ -1072,9 +1072,9 @@ jQuery(document).ready(function($) {
 
 			//update totals on the form.
 			price_amount = typeof(price_amount) !== 'undefined' ? price_amount : this.getTotalPrice().finalTotal;
-			newTKTrow.find('#price-total-amount-' + row).text('$' + price_amount);
-			newTKTrow.find('.ticket-price-amount').text('$' + price_amount);
-			newTKTrow.find('.ticket-display-row-TKT_price').text('$' + price_amount);
+			newTKTrow.find('#price-total-amount-' + row).text(accounting.formatMoney(price_amount));
+			newTKTrow.find('.ticket-price-amount').text(accounting.formatMoney(price_amount));
+			newTKTrow.find('.ticket-display-row-TKT_price').text(accounting.formatMoney(price_amount));
 
 			/*newTKTrow.find('.ticket-display-row-TKT_status').text(
 				this.getTKTstatus(
@@ -1404,9 +1404,9 @@ jQuery(document).ready(function($) {
 		applyTotalPrice: function() {
 			var TKTrow = $( '#edit-ticketrow-' + this.ticketRow );
 			var price_amount = this.getTotalPrice();
-			TKTrow.find('#price-total-amount-' + this.ticketRow).text('$' + price_amount.finalTotal);
-			TKTrow.find('.ticket-price-amount').text('$' + price_amount.finalTotal);
-			TKTrow.find('.edit-ticket-TKT_price').val(price_amount.subtotal);
+			TKTrow.find('#price-total-amount-' + this.ticketRow).text(accounting.formatMoney(price_amount.finalTotal));
+			TKTrow.find('.ticket-price-amount').text(accounting.formatMoney(price_amount.finalTotal));
+			TKTrow.find('.edit-ticket-TKT_price').val(accounting.toFixed(price_amount.subtotal));
 			//$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 		},
 
@@ -1428,7 +1428,7 @@ jQuery(document).ready(function($) {
 				tax = accounting.unformat(subtotal) * tax/100;
 				tax = accounting.formatNumber(tax);
 				$('#TKT-tax-amount-' + id).val(tax);
-				$('#TKT-tax-amount-display-' + id).text(tax);
+				$('#TKT-tax-amount-display-' + id).text(accounting.formatMoney(tax));
 			});
 		},
 

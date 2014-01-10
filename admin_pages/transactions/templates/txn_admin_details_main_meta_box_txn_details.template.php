@@ -415,7 +415,11 @@
 						<?php _e( 'Cancel', 'event_espresso' );?>
 					</a>
 				</li>
-			</ul>	
+				<li>
+					<span id="ee-ajax-processing-text" style="display:none;"><?php _e('Processing...', 'event_espresso'); ?></span>
+				</li>
+			</ul>
+
 			<br class="clear"/>
 									
 		</form>

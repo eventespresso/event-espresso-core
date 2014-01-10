@@ -81,12 +81,19 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
+//		d(EEM_Registration::instance());
+//		$r = EE_Registration::new_instance(array('ATT_ID'=>5));
+//		d(EEM_Registration::instance());
+//		$r->save();
+//		d(EEM_Registration::instance());
+//		
+//		d($r);
 //		$a = EE_Answer::new_instance_from_db(array('ANS_ID'=>1,'ANS_value'=>1));
 //		
 //		$a2 = EE_Answer::new_instance(array('ANS_ID'=>1,'ANS_value'=>3));
 //		
-//		$a3 = EE_Answer::new_instance_from_db(array('ANS_ID'=>2,'ANS_value'=>3));
-//		
+//		$a3 = EE_Answer::new_instance_from_db(array('ANS_ID'=>2,'ANS_value'=>4));
+//		$a3->set('ANS_ID',1);
 ////		$a2->set_value('new_one');
 //		d($a);
 //		var_dump($a);
@@ -610,18 +617,18 @@ final class EE_Front_Controller {
 		//accounting.js library
 		// @link http://josscrowcroft.github.io/accounting.js/
 		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
-			$acct_js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? EE_THIRD_PARTY_URL . 'accounting/accounting.js' : EE_THIRD_PARTY_URL . 'accounting/accounting.min.js';
+			$acct_js = EE_THIRD_PARTY_URL . 'accounting/accounting.js';
 			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_register_script( 'ee-accounting-core', $acct_js, array(), '0.3.2', TRUE );
+			wp_register_script( 'ee-accounting-core', $acct_js, array('underscore'), '0.3.2', TRUE );
 			wp_enqueue_script( 'ee-accounting' );
 
 			$currency_config = array(
 				'currency' => array(
 					'symbol' => EE_Registry::instance()->CFG->currency->sign,
 					'format' => array(
-						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s %v' : '%v %s',
-						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s (%v)' : '(%v) %s',
-						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s --' : '-- %s'
+						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
+						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
+						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s--' : '--%s'
 						 ),
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
 					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,

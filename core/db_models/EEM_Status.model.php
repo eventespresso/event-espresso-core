@@ -77,6 +77,91 @@ class EEM_Status extends EEM_Base {
 	}
 
 
+	/**
+	 * This method provides the localized singular or plural string for a given status id
+	 * @param  array   $statuses  This should be an array of statuses in the format array( $status_id, $status_code ).  That way if there isn't a translation in the index we'll return the default code.
+	 * @param  boolean $plural    Whether to return plural string or not. Note, nearly all of the plural strings are the same as the singular (in English), however, this may NOT be the case with other languages
+	 * @return array             an array of translated strings for the incoming status id.
+	 */
+	public static function localized_status(  $statuses, $plural = FALSE ) {
+		$translation_array = array(
+	     	EEM_Registration::status_id_pending_payment => array(
+				__('PENDING PAYMENT', 'event_espresso'), //singular
+				__('PENDING PAYMENTS', 'event_espresso') //plural
+				),
+	  		EEM_Registration::status_id_approved => array(
+	  			__('APPROVED', 'event_espresso'), //singular
+	  			__('APPROVED', 'event_espresso') //plural
+	  			),
+	  		EEM_Registration::status_id_not_approved => array(
+	  			__('NOT APPROVED', 'event_espresso'),
+	  			__('NOT APPROVED', 'event_espresso')
+	  			),
+	  		EEM_Registration::status_id_cancelled => array(
+	  			__('CANCELLED', 'event_espresso'),
+	  			__('CANCELLED', 'event_espresso')
+	  			),
+	  		EEM_Registration::status_id_declined => array(
+	  			__('DECLINED', 'event_espresso'),
+	  			__('DECLINED', 'event_espresso')
+	  			),
+	  		EEM_Transaction::complete_status_code => array(
+	  			__('COMPLETE', 'event_espresso'),
+	  			__('COMPLETE', 'event_espresso')
+	  			),
+	  		EEM_Transaction::incomplete_status_code => array(
+	  			__('INCOMPLETE', 'event_espresso'),
+	  			__('INCOMPLETE', 'event_espresso')
+	  			),
+	  		EEM_Transaction::open_status_code => array(
+	  			__('OPEN', 'event_espresso'),
+	  			__('OPEN', 'event_espresso')
+	  			),
+	  		EEM_Transaction::overpaid_status_code => array(
+	  			__('OVERPAID', 'event_espresso'),
+	  			__('OVERPAID', 'event_espresso')
+	  			),
+	  		EEM_Payment::status_id_approved => array(
+	  			__('APPROVED', 'event_espresso'),
+	  			__('APPROVED', 'event_espresso')
+	  			),
+	  		EEM_Payment::status_id_pending => array(
+	  			__('PENDING', 'event_espresso'),
+	  			__('PENDING', 'event_espresso')
+	  			),
+	  		EEM_Payment::status_id_cancelled => array(
+	  			__('CANCELLED', 'event_espresso'),
+	  			__('CANCELLED', 'event_espresso')
+	  			),
+	  		EEM_Payment::status_id_declined => array(
+	  			__('DECLINED', 'event_espresso'),
+	  			__('DECLINED', 'event_espresso')
+	  			),
+	  		EEM_Payment::status_id_failed => array(
+	  			__('FAILED', 'event_espresso'),
+	  			__('FAILED', 'event_espresso')
+	  			)
+	    );
+
+		$translation_array = apply_filters( 'FHEE__EEM_Status__localized_status__translation_array', $translation_array );
+
+		if ( !is_array($statuses) )
+			throw new EE_Error( __('The incoming statuses argument must be an array with keys as the $status_id and values as the $status_code', 'event_espresso') );
+
+	    $translation = array();
+
+	    foreach ( $statuses as $id => $code ) {
+	    	if ( isset( $translation_array[$id] ) ) {
+	    		$translation[$id] = $plural ? $translation_array[$id][1] : $translation_array[$id][0];
+	    	} else {
+	    		$translation[$id] = $code;
+	    	}
+	    }
+
+	    return $translation;
+	}
+
+
 }
 // End of file EEM_Status.model.php
 // Location: /includes/models/EEM_Status.model.php

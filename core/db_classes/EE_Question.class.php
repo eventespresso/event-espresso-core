@@ -377,6 +377,16 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function answers(){
 		return $this->get_many_related('Answer');
 	}
+
+
+	/**
+	 * Boolean check for if there are answers on this question in th db
+	 * @return boolean true = has answers, false = no answers.
+	 */
+	public function has_answers() {
+		return $this->count_related('Answer') > 0 ? TRUE : FALSE;
+	}
+
 	
 	/**
 	 * gets an array of EE_Question_Group which relate to thsi question

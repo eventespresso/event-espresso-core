@@ -183,11 +183,11 @@ table .espresso-radio-btn-options-ul .big-lbl,
 #espresso-ajax-loading {
 	display: none;
 	position: absolute;
-	top: 25%;
+	top: 50%;
 	left: 50%;
 	margin-left: -15px;
 	padding: 0;
-	z-index: 1000;
+	z-index: 20000;
 	font-size: 48px;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

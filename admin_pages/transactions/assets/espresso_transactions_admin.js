@@ -130,6 +130,7 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
+			toggleaAjaxActivity();
 			apply_payment_or_refund( 'apply' );
 		}
 	});
@@ -138,6 +139,7 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
+			toggleaAjaxActivity();
 			apply_payment_or_refund( 'apply' );
 		}
 	});
@@ -146,6 +148,7 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
+			toggleaAjaxActivity();
 			apply_payment_or_refund( 'edit' );
 		}
 	});
@@ -167,6 +170,27 @@ jQuery(document).ready(function($) {
 			});
 		});
 		return goodToGo;
+	}
+
+
+
+	function toggleaAjaxActivity( done ) {
+		done = typeof(done) === 'undefined' ? false : true;
+		if ( done ) {
+			$('#espresso-ajax-loading').center().fadeOut('fast');
+			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeIn('fast');
+			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeIn('fast');
+			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeIn('fast');
+			$('#txn-admin-modal-dialog-cancel-lnk').fadeIn('fast');
+			$('#ee-ajax-processing-text').fadeOut('fast');
+		} else {
+			$('#espresso-ajax-loading').center().fadeIn('fast');
+			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeOut('fast');
+			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeOut('fast');
+			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeOut('fast');
+			$('#txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');
+			$('#ee-ajax-processing-text').fadeIn('fast');
+		}
 	}
 
 
@@ -219,7 +243,7 @@ jQuery(document).ready(function($) {
 
 	// delete a payment
 	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
-
+		toggleaAjaxActivity();
 		$('#espresso-ajax').val(1);
 		var formURL = $('#txn-admin-delete-payment-form-url-inp').val();
 		var PAY_ID = $(this).attr('rel');
@@ -262,7 +286,7 @@ jQuery(document).ready(function($) {
 
 	function process_return_data( response ) {
 
-		$('#espresso-ajax-loading').fadeOut('fast');
+		toggleaAjaxActivity( true );
 		overlay.trigger('click');
 
 		// grab PAY ID from return data
@@ -311,7 +335,7 @@ jQuery(document).ready(function($) {
 		var payment = accounting.formatMoney( response.return_data.amount );
 		$('#payment-amount-' + PAY_ID).html( payment );
 		// update amount span class
-		if ( payment < 0 ) {
+		if ( accounting.unformat(payment) < 0 ) {
 			response.return_data.pay_status = 'PDC';
 		}
 		$('#payment-amount-' + PAY_ID).parent().removeClass().addClass( 'txn-admin-payment-status-'+response.return_data.pay_status );
@@ -377,7 +401,7 @@ jQuery(document).ready(function($) {
 
 
 	function process_delete_payment( response ) {
-
+		toggleaAjaxActivity( true );
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 		update_payment_totals( response );

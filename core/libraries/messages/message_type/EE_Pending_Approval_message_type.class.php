@@ -34,8 +34,8 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 		$this->name = 'pending_approval';
 		$this->description = __('This message type is used for recipients who have Pending Payment registration status.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('pending payment registration', 'event_espresso'),
-			'plural' => __('pending payment registrations', 'event_espresso')
+			'singular' => __('registration pending payment', 'event_espresso'),
+			'plural' => __('registrations pending payment', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -87,7 +87,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Pending Payment Registration Details';
+			$content[$context] = 'Registration Pending Payment';
 		};
 		return $content;
 	}

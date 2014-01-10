@@ -1,4 +1,5 @@
-<p><strong>[TICKET_NAME]</strong></p>
-<p><em>[TICKET_DESCRIPTION]</em></p>
-<p>[TICKET_PRICE]</p>
-<p>Quantity Purchased: [TKT_QTY_PURCHASED]</p>
+<ol style="list-style-type: none;">
+<li><strong>Ticket Name:</strong> [TICKET_NAME]<br><em>[TICKET_DESCRIPTION]</em></li>
+<li><strong>Price:</strong> [TICKET_PRICE]</li>
+<li><strong>Quantity Purchased:</strong> [TKT_QTY_PURCHASED]</li>
+</ol>
