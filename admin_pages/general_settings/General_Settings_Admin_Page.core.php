@@ -822,6 +822,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				$success = EEM_State::instance()->update( $cols_n_values, $where_cols_n_values );
 			}
 		}
+		// check if country being edited matchs org option country, and if so, then  update EE_Config with new settings
+		if ( isset( EE_Registry::instance()->CFG->organization->CNT_ISO ) && $CNT_ISO == EE_Registry::instance()->CFG->organization->CNT_ISO ) {
+			EE_Registry::instance()->CFG->currency = new EE_Currency_Config( $CNT_ISO );
+			EE_Registry::instance()->CFG->update_espresso_config();
+		}		
 		$this->_redirect_after_action( $success, 'Countries', 'updated', array( 'action' => 'country_settings', 'country' => $CNT_ISO ));
 	}
 
