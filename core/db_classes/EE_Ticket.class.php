@@ -745,7 +745,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function set_sold( $sold ) {
-		echo '<h4>TKT_sold : ' . $sold . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return $this->set('TKT_sold', $sold);
 	}
 	

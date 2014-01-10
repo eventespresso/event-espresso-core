@@ -291,7 +291,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	@param		int		$sold 	
 	*/	
 	public function set_sold( $sold ) {
-		echo '<h4>DTT_sold : ' . $sold . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return $this->set( 'DTT_sold', $sold );
 	}
 
