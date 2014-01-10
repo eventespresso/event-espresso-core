@@ -152,18 +152,23 @@
 }
 .ee-icon-size-16:before {
 	font-size: 16px;
+	margin-right:-0.05em;
 }
 .ee-icon-size-18:before {
 	font-size: 18px;
+	margin-right: -0.1em;
 }
 .ee-icon-size-20:before {
 	font-size: 20px;
+	margin-right: -0.15em;
 }
 .ee-icon-size-22:before {
 	font-size: 22px;
+	margin-right: -0.2em;
 }
 .ee-icon-size-24:before {
 	font-size: 24px;
+	margin-right: -0.25em;
 }
 
 .ee-clock-icon-big {
