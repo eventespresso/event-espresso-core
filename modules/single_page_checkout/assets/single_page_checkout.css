@@ -91,6 +91,10 @@ span.ui-icon {
 /*
  * REG PAGE
 */
+#spco-sold-out-events-ul,
+#spco-pre-approval-events-ul {
+	list-style: none;
+}
 #single-page-checkout {
 	position: relative;
 }
