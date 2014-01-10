@@ -1,6 +1,6 @@
 <h2><?php _e('Critical Pages', 'event_espresso'); ?></h2>
 <p>
-<?php _e("This page shows all critical pages that Event Espresso needs to work correctly.", 'event_espresso'); ?>
+<?php _e('This page shows all critical pages that Event Espresso needs to work correctly.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Shortcodes', 'event_espresso'); ?></h3>
 <ul>
@@ -25,10 +25,10 @@
 <?php _e('If you would like to style the look of your events archive page, then follow the WordPress instructions for <a href="http://codex.wordpress.org/Post_Type_Templates">creating a custom template for archive pages</a>.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: circle;">
-<?php _e('Template for your events - create a theme template named <strong>archive-espresso_events.php</strong> and place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be wp-content/themes/twenty-fourteen.', 'event_espresso'); ?>
+<?php _e('Build a template for your events - create a theme template named <strong>archive-espresso_events.php</strong>. Then place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be wp-content/themes/twenty-fourteen.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: circle;">
-<?php _e('Template for a single event - create a theme template named <strong>single-espresso_events.php</strong> and place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be wp-content/themes/twenty-fourteen.', 'event_espresso'); ?>
+<?php _e('Build a template for a single event - create a theme template named <strong>single-espresso_events.php</strong>. Then place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be wp-content/themes/twenty-fourteen.', 'event_espresso'); ?>
 </li>
 </ul>
 </li>
