@@ -158,7 +158,8 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
 		$formatted_address = $address;
 		$formatted_address .= ! empty( $address2 ) ? '<br/>' . $address2 : '';
 		$formatted_address .= ! empty( $city ) ? '<br/>' . $city : '';
-		$formatted_address .= ! empty( $state ) ? ', ' . $state : '';
+		$formatted_address .=  ! empty( $city ) && ! empty( $state ) ? ', ' : '';
+		$formatted_address .= ! empty( $state ) ? $state : '';
 		$formatted_address .= ! empty( $zip ) ? '<br/>' . $zip : '';
 		$formatted_address .= ! empty( $country ) ? '<br/>' . $country : '';
 		return $formatted_address;
@@ -185,11 +186,16 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
 class EE_Inline_Address_Formatter implements EEI_Address_Formatter {	
 	public function format( $address, $address2, $city, $state, $country, $zip ) {
 		$formatted_address = $address;
-		$formatted_address .= ! empty( $address2 ) ? ', ' . $address2 : '';
-		$formatted_address .= ! empty( $city ) ? ', ' . $city : '';
-		$formatted_address .= ! empty( $state ) ? ', ' . $state : '';
-		$formatted_address .= ! empty( $zip ) ? ', ' . $zip : '';
-		$formatted_address .= ! empty( $country ) ? ', ' . $country : '';
+		$formatted_address .=  ! empty( $address ) && ! empty( $address2 ) ? ', ' : '';
+		$formatted_address .= ! empty( $address2 ) ? $address2 : '';
+		$formatted_address .=  ( ! empty( $address2 ) && ! empty( $city )) || ( ! empty( $address ) && ! empty( $city )) ? ', ' : '';
+		$formatted_address .= ! empty( $city ) ? $city : '';
+		$formatted_address .=  ! empty( $city ) && ! empty( $state ) ? ', ' : '';
+		$formatted_address .= ! empty( $state ) ? $state : '';
+		$formatted_address .=  ! empty( $state ) && ! empty( $country ) ? ', ' : '';
+		$formatted_address .= ! empty( $country ) ? $country : '';
+		$formatted_address .=  ! empty( $country ) && ! empty( $zip ) ? ', ' : '';
+		$formatted_address .= ! empty( $zip ) ? $zip : '';
 		return $formatted_address;
 	}
 }
