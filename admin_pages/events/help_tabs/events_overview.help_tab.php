@@ -1,4 +1,4 @@
-<h3><?php _e('Events Overview', 'event_espresso'); ?></h3>
+<h2><?php _e('Events Overview', 'event_espresso'); ?></h2>
 <p>
 <?php _e('This page shows all events that have been created with Event Espresso.', 'event_espresso'); ?>
 </p>

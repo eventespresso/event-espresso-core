@@ -6,11 +6,11 @@
 <ul>
 <li>
 <?php _e('Status', 'event_espresso'); ?><br />
-<?php _e('The following statuses are available: pending review, draft, cancelled, postponed, and sold out. A status of pending review will set an event to draft until an event administrator has approved the event. A status of draft will save an event but it will be unpublished. A status of cancelled means that an event will no longer take place. A status of postponed means that an event is not currently scheduled but may be in the future. A status of sold out means that tickets are no longer available for an event.', 'event_espresso'); ?>
+<?php _e('The following statuses are available: Pending Review, Draft, Cancelled, Postponed, and Sold Out. A status of pending review will set an event to draft until an event administrator has approved the event. A status of draft will save an event but it will be unpublished. A status of cancelled means that an event will no longer take place. A status of postponed means that an event is not currently scheduled but may be in the future. A status of sold out means that tickets are no longer available for an event.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Visibility', 'event_espresso'); ?><br />
-<?php _e('The following visibility options are available: public, password protected, and private. An event that is set to public will be accessible by anyone. An event that is set to password protected will only be available to event administrators and individuals who know the password to access the event registration. An event that is set to private will completely be hidden from public view.', 'event_espresso'); ?>
+<?php _e('The following visibility options are available: Public, Password Protected, and Private. An event that is set to public will be accessible by anyone. An event that is set to password protected will only be available to event administrators and individuals who know the password to access the event registration. An event that is set to private will completely be hidden from public view.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Publish', 'event_espresso'); ?><br />
@@ -18,7 +18,7 @@
 </li>
 <li>
 <?php _e('Registrations', 'event_espresso'); ?><br />
-<?php _e('Shows number of registrants who are attending event. Click on the Attendees link to be brought to a page where you can be a list of registrants who are attending the event.', 'event_espresso'); ?>
+<?php _e('Shows number of registrants who are attending event. Click on the Registrations link to be brought to a page where you can be a list of registrants who are attending the event.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Move to Trash', 'event_espresso'); ?><br />
