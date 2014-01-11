@@ -127,13 +127,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	*
 	* 		@access		public
 	* 		@param		int 			$EVT_ID
-	*		@return 		mixed		array on success, FALSE on fail
+	*		@return 		EE_Datetime[]		array on success, FALSE on fail
 	*/
 	public function get_all_event_dates( $EVT_ID = FALSE ) {
 		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
 			return $this->create_new_blank_datetime();
 		}
-		$results =  $this->get_datetimes_for_event_ordered_by_importance($EVT_ID);
+		$results =  $this->get_datetimes_for_event_ordered_by_start_time($EVT_ID);
 		return $results;
 	}
 
@@ -152,6 +152,19 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			'default_where_conditions' => 'none'));
 	}
 
+	/**
+	 * Gets ALL the datetimes for an event (including trashed ones, for now), ordered
+	 * only by start date
+	 * @param int $EVT_ID
+	 * @param int $limit
+	 * @return EE_Datetime[]
+	 */
+	public function get_datetimes_for_event_ordered_by_start_time($EVT_ID, $limit = NULL){
+		return $this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
+			'limit'=>$limit,
+			'order_by'=>array('DTT_EVT_start'=>'ASC'),
+			'default_where_conditions' => 'none'));
+	}
 	/**
 	 * Gets the most important datetime for a particular event (ie, the primary event usually. But if for some WACK
 	 * reason it doesn't exist, we consider teh earliest event the most important)
