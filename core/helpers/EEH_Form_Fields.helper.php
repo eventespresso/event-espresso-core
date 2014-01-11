@@ -540,7 +540,6 @@ class EEH_Form_Fields {
 	 * @return string HTML
 	 */
 	static function generate_form_input( EE_Question_Form_Input $QFI ) {
-		
 		if ( isset( $QFI->QST_admin_only) && $QFI->QST_admin_only && ! is_admin() ) {
 			return;
 		}
@@ -1011,18 +1010,18 @@ class EEH_Form_Fields {
 	 * @return string 
 	 */
 	static function prep_question( $question ){
-		
-		$link = '';
-		// does this label have a help link attached ?
-		if ( strpos( $question, '<a ' ) !== FALSE ) {
-			$qbits = explode( '<a ', $question );
-			foreach ( $qbits as $qbit ) {
-				$link = strpos( $qbit, 'title="' ) !== FALSE ? $qbit : $link;
-				$question = strpos( $qbit, 'title="' ) === FALSE ? $qbit : $question;
-			}
-			$link = '<a ' . $link;
-		}		
-		return htmlspecialchars( trim( stripslashes( str_replace( '&#039;', "'", $question ))), ENT_QUOTES, 'UTF-8' ) . ' ' . $link;
+		return $question;
+//		$link = '';
+//		// does this label have a help link attached ?
+//		if ( strpos( $question, '<a ' ) !== FALSE ) {
+//			$qbits = explode( '<a ', $question );
+//			foreach ( $qbits as $qbit ) {
+//				$link = strpos( $qbit, 'title="' ) !== FALSE ? $qbit : $link;
+//				$question = strpos( $qbit, 'title="' ) === FALSE ? $qbit : $question;
+//			}
+//			$link = '<a ' . $link;
+//		}		
+//		return htmlspecialchars( trim( stripslashes( str_replace( '&#039;', "'", $question ))), ENT_QUOTES, 'UTF-8' ) . ' ' . $link;
 	}
 
 
