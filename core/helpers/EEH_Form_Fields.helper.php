@@ -836,7 +836,8 @@ class EEH_Form_Fields {
 			$key = self::prep_option_value( $OPT->value() );
 			$size = self::get_label_size_class( $OPT->value() );
 			
-			$value = self::prep_answer( $OPT->value() );
+			$value = $OPT->value();// self::prep_answer( $OPT->value() );
+			$desc = $OPT->desc();//no self::prep_answer
 			$answer = is_numeric( $key ) && empty( $answer ) ? 0 : $answer;
 			$checked = (string)$key == (string)$answer ? ' checked="checked"' : '';
 			$opt = '-' . sanitize_key( $key );
@@ -847,6 +848,7 @@ class EEH_Form_Fields {
 			$input_html .= "\n\t\t\t\t\t\t" . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" class="' . $class . '" value="' . $key . '" title="' . $required['msg'] . '" ' . $disabled . $checked . ' ' . $extra . '/>';
 			$input_html .= ! $label_b4  ? "\n\t\t\t\t\t\t" . '<span class="espresso-radio-btn-desc">' . $value . '</span>' : '';
  			$input_html .= "\n\t\t\t\t\t" . '</label>';
+			$input_html .= '<br/><div class="espresso-radio-btn-option-desc small-text grey-text">' . $desc . '</div>';
 			$input_html .= "\n\t\t\t\t" . '</li>';
 
 		}
@@ -907,11 +909,10 @@ class EEH_Form_Fields {
 		$class .= ! empty( $required['class'] ) ? ' ' . $required['class'] : '';
 		
 		foreach ( $options as $OPT ) {
-
-			$value = self::prep_option_value( $OPT->value() );
+			$value = $OPT->value();//self::prep_option_value( $OPT->value() );
 			$size = self::get_label_size_class(  $OPT->value() . ' ' . $OPT->desc() );
 			$text = self::prep_answer( $OPT->value() );
-			$desc = self::prep_answer( $OPT->desc() );
+			$desc = $OPT->desc() ;
 			$opt = '-' . sanitize_key( $value );
 			
 			$checked = is_array( $answer ) && in_array( $text, $answer ) ? ' checked="checked"' : '';
