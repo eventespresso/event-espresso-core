@@ -539,25 +539,34 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function venue_address_metabox() {
 
-		//states and countries 
-		$states = EE_Registry::instance()->load_model( 'State' )->get_all_active_states();
-		$countries = EE_Registry::instance()->load_model( 'Country' )->get_all_active_countries();
+		$template_args['_venue'] =$this->_cpt_model_obj;
 
-		//prepare state/country arrays
-		foreach ( $states as $id => $obj ) {
-			$st_ary[$id] = $obj->name();
-		}
-
-		foreach ( $countries as $id => $obj ) {
-			$ctry_ary[$id] = $obj->name();
-		}
-
-
-		$template_args = array(
-			'_venue' => $this->_cpt_model_obj,
-			'states_dropdown' => EEH_Form_Fields::select_input('sta_id', $st_ary, $this->_cpt_model_obj->state_ID(), 'id="sat_id"'),
-			'countries_dropdown' => EEH_Form_Fields::select_input('cnt_iso', $ctry_ary, $this->_cpt_model_obj->country_ID(), 'id="cnt_iso"')
-			);
+		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input( 
+			$QFI = new EE_Question_Form_Input(
+				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'admin-state' )),
+				EE_Answer::new_instance( array(  'ANS_value'=> $this->_cpt_model_obj->state_ID() )),
+				array(
+					'input_name' =>  'sta_id',
+					'input_id' => 'sta_id',
+					'input_class' => '',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE
+				)
+			)
+		);
+		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input( 
+			$QFI = new EE_Question_Form_Input(
+				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'admin-country' )),
+				EE_Answer::new_instance( array(  'ANS_value'=> $this->_cpt_model_obj->country_ID() )),
+				array(
+					'input_name' =>  'cnt_iso',
+					'input_id' => 'cnt_iso',
+					'input_class' => '',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE
+				)
+			)
+		);
 
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_address_metabox_content.template.php';
 		EEH_Template::display_template( $template, $template_args );

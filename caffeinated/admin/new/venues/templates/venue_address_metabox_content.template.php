@@ -15,11 +15,9 @@
 					<input class="all-options" id="phys-city" tabindex="102"  type="text"  value="<?php echo $_venue->city(); ?>" name="vnu_city" />
 				</p>
 				<p>
-					<label for="phys-state"><?php _e('State:', 'event_espresso'); ?></label><br/>
 					<?php echo $states_dropdown; ?>
 				</p>
 				<p>
-					<label for="phys-country"><?php _e('Country:', 'event_espresso'); ?></label><br/>
 					<?php echo $countries_dropdown; ?>
 				</p>
 				<p>
