@@ -689,7 +689,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function payment_overview_url(){
-		return $this->is_approved() || $this->is_pending_payment() ? add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'payment_options', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )) : '';
+		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'payment_options', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
 	}
 	
 	

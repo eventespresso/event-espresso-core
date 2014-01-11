@@ -91,6 +91,10 @@ span.ui-icon {
 /*
  * REG PAGE
 */
+#spco-sold-out-events-ul,
+#spco-pre-approval-events-ul {
+	list-style: none;
+}
 #single-page-checkout {
 	position: relative;
 }
@@ -267,7 +271,7 @@ span.ui-icon {
 	border-bottom:1px solid rgba( 255, 255, 255, .9);
 }
 .reg-page-form-field-wrap-pg .espresso-form-input-lbl {
-	display: block;
+	display:inline-block;
 	padding: 0 0 .25em;
 	font-size: .8em;
 	letter-spacing: 1px;

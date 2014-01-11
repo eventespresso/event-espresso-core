@@ -3,7 +3,7 @@
 <ul>
 <li>
 <?php _e('ID', 'event_espresso'); ?><br />
-<?php _e('The is the numerical ID of an event category.', 'event_espresso'); ?>
+<?php _e('The is the numerical ID of an event category. This value is used internally for Event Espresso.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Name', 'event_espresso'); ?><br />

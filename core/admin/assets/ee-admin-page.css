@@ -75,6 +75,11 @@
 	background:#F0F8FB; border: 1px solid lightblue; border-radius:3px;
 }
 
+.admin-state,
+.admin-country {
+	width: 100%;
+	max-width: 100% !important;
+}
 
 table .ee-admin-radio-lbl input,
 .inside table .ee-admin-radio-lbl input,

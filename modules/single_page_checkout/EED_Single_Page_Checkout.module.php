@@ -535,6 +535,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$ticket_count = array();
 		$payment_required = FALSE;
 
+		$sold_out_events = array();		
 		$events_requiring_pre_approval = array();		
 		$additional_event_attendees = array();		
 		$events_that_use_coupon_codes = array();
@@ -560,6 +561,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$prev_event = NULL;
 			
 			foreach ( $this->_transaction->registrations() as $registration ) {
+				
+				$registration->event()->perform_sold_out_status_check();
+
+				if ( $registration->event()->is_sold_out() ) {
+					// add event to list of events that are sold out
+					$sold_out_events[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 pink-text"></span>' . $registration->event()->name() . '</li>';
+					$total_items ++;
+					continue;
+				} 
+				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
+				if ( ! $payment_required ) {
+					// add event to list of events with pre-approval reg status
+					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' . $registration->event()->name() . '</li>';
+					$total_items ++;
+					continue;
+				}
 				
 				$line_item_ID = $registration->reg_url_link();	
 				$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
@@ -664,11 +681,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 				}
 				
-				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
-				if ( ! $payment_required ) {
-					// add event to list of events with pre-approval reg status
-					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li>' . $registration->event()->name() . '</li>';
-				}
+
 				
 			} 
 
@@ -684,9 +697,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// empty
 			$event_queue['has_items'] = FALSE;
 		}
-		
+		// sold_out_events
+		$template_args['sold_out_events'] = implode( $sold_out_events );
+		$template_args['sold_out_events_msg'] = apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__sold_out_events_msg', __('It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.', 'event_espresso'));
+		// events_requiring_pre_approval
 		$template_args['events_requiring_pre_approval'] = implode( $events_requiring_pre_approval );
-		$event_queue['empty_msg'] = __( 'Their appears to be nothing in your Event Queue.', 'event_espresso' );
+		$template_args['events_requiring_pre_approval_msg'] = apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__sold_out_events_msg', __('The following events do not require payment at this time and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso'));		
 
 		//  GOT COUPONS ?
 		$template_args['events_that_use_coupon_codes'] = '';
@@ -828,7 +844,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'empty_cart' => $total_items < 1 ? TRUE : FALSE,
 			'reg_steps' => self::$_reg_steps,
 			'registration_steps' => $registration_steps,
-			'revisit' => $this->_revisit
+			'revisit' => $this->_revisit,
+			'empty_msg' => apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__empty_msg', __( 'You need to select at least one event before you can proceed with the registration process.', 'event_espresso' ))
 		);
 //		d( $wrapper_args );
 		EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( $this->_templates['registration_page_wrapper'], $wrapper_args, TRUE ));

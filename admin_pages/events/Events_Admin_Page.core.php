@@ -1279,28 +1279,41 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-
-		//states and countries model
-		$states = EE_Registry::instance()->load_model('State')->get_all_active_states();
-		$countries = EE_Registry::instance()->load_model('Country')->get_all_active_countries();
-
-		//prepare state/country arrays
-		foreach ( $states as $id => $obj ) {
-			$st_ary[$id] = $obj->name();
-		}
-
-		foreach ( $countries as $id => $obj ) {
-			$ctry_ary[$id] = $obj->name();
-		}
-
+		
 		$VNM = EE_Registry::instance()->load_model('Venue');
 		//first let's see if we have a venue already
 		$evnt_id = $this->_cpt_model_obj->ID();
 		$venue = !empty( $evnt_id ) ? $this->_cpt_model_obj->venues() : NULL;
 		$venue = empty( $venue ) ? $VNM->create_default_object() : array_shift( $venue );
 		$template_args['_venue'] = $venue;
-		$template_args['states_dropdown'] = EEH_Form_Fields::select_input('state', $st_ary, $venue->state_ID(), 'id="phys-state"');
-		$template_args['countries_dropdown'] = EEH_Form_Fields::select_input('countries', $ctry_ary, $venue->country_ID(), 'id="phys-country"');
+
+		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input( 
+			$QFI = new EE_Question_Form_Input(
+				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'state' )),
+				EE_Answer::new_instance( array(  'ANS_value'=> $venue->state_ID() )),
+				array(
+					'input_name' =>  'state',
+					'input_id' => 'phys-state',
+					'input_class' => '',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE
+				)
+			)
+		);
+		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input( 
+			$QFI = new EE_Question_Form_Input(
+				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'country' )),
+				EE_Answer::new_instance( array(  'ANS_value'=> $venue->country_ID() )),
+				array(
+					'input_name' =>  'countries',
+					'input_id' => 'phys-country',
+					'input_class' => '',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE
+				)
+			)
+		);
+		
 		$template_path = EVENTS_TEMPLATE_PATH . 'event_venues_metabox_content.template.php';
 		EEH_Template::display_template( $template_path, $template_args );
 	}
