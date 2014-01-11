@@ -1289,10 +1289,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input( 
 			$QFI = new EE_Question_Form_Input(
-				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'admin-state' )),
+				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'state' )),
 				EE_Answer::new_instance( array(  'ANS_value'=> $venue->state_ID() )),
 				array(
-					'input_name' =>  'phys-state',
+					'input_name' =>  'state',
 					'input_id' => 'phys-state',
 					'input_class' => '',
 					'input_prefix' => '',
@@ -1302,10 +1302,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input( 
 			$QFI = new EE_Question_Form_Input(
-				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'admin-country' )),
+				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'country' )),
 				EE_Answer::new_instance( array(  'ANS_value'=> $venue->country_ID() )),
 				array(
-					'input_name' =>  'phys-country',
+					'input_name' =>  'countries',
 					'input_id' => 'phys-country',
 					'input_class' => '',
 					'input_prefix' => '',
