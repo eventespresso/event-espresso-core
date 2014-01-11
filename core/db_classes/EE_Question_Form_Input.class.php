@@ -147,7 +147,8 @@ class EE_Question_Form_Input {
 				'input_class' => '',
 				'input_prefix' => 'qstn',
 				'append_qstn_id' => TRUE,
-				'htmlentities' => TRUE
+				'htmlentities' => TRUE,
+				'allow_null' => FALSE
 		);		
 		$this->_QST_meta = array_merge( $default_q_meta, $q_meta );	
 		
