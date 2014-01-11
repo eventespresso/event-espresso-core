@@ -84,6 +84,46 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'payment_methods_overview_help_tab' => array(
 						'title' => __('Payment Methods Overview', 'event_espresso'),
 						'filename' => 'payment_methods_overview'
+						),
+					'payment_methods_overview_authorizenet_aim_help_tab' => array(
+						'title' => __('Authorize.net Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_authorizenet_aim'
+						),
+					'payment_methods_overview_bank_draft_help_tab' => array(
+						'title' => __('Bank Draft Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_bank_draft'
+						),
+					'payment_methods_overview_check_help_tab' => array(
+						'title' => __('Check Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_check'
+						),
+					'payment_methods_overview_invoice_help_tab' => array(
+						'title' => __('Invoice Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_invoice'
+						),
+					'payment_methods_overview_paypalpro_help_tab' => array(
+						'title' => __('PayPal Pro Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_paypalpro'
+						),
+					'payment_methods_overview_paypalstandard_help_tab' => array(
+						'title' => __('PayPal Standard Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_paypalstandard'
+						),
+					'payment_methods_overview_2checkout_help_tab' => array(
+						'title' => __('2Checkout Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_2checkout'
+						),
+					'payment_methods_overview_authorizenet_sim_help_tab' => array(
+						'title' => __('Authorize.net Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_authorizenet_sim'
+						),
+					'payment_methods_overview_eway_help_tab' => array(
+						'title' => __('eWay Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_eway'
+						),
+					'payment_methods_overview_stripe_help_tab' => array(
+						'title' => __('Stripe Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_stripe'
 						)
 					),
 				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
