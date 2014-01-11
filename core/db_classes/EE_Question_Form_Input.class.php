@@ -292,11 +292,16 @@ class EE_Question_Form_Input {
 	/**
 	 * 	_question_form_input_property_exists
 	 * @access public
-	 * @return array
+	 * @param boolean $notDeletedOptionsOnly 1
+	 * whehter to return ALL options, or only the ones which have not yet been deleleted
+	 * @param string|array $selected_value_to_always_include, when retrieving options to an ANSWERED question,
+	 * we want to usually only show non-deleted options AND the value that was selected for the answer,
+	 * whether it was trashed or not.
+	 * @return EE_Question_Option
 	 */
-	public function options() {
+	public function options($notDeletedOptionsOnly=true,$selected_value_to_always_include = NULL) {
 		$temp_options = $this->_QST->temp_options();
-		return ! empty( $temp_options ) ? $temp_options : $this->_QST->options();
+		return ! empty( $temp_options ) ? $temp_options : $this->_QST->options($notDeletedOptionsOnly,$selected_value_to_always_include);
 	}
 
 

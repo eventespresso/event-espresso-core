@@ -490,7 +490,6 @@ class EEH_Form_Fields {
 					foreach ( $questions as $QST ) {
 						
 						$qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST->ID();
-						$QST->options();
 						
 						$answer = NULL;
 										
@@ -562,7 +561,7 @@ class EEH_Form_Fields {
 		$required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : 'This field is required';
 		$required_text = $QST_required ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer( $required_text, $use_html_entities ) . '</div>' : '';
 		$label_class = 'espresso-form-input-lbl';
-		$QST_options = $QFI->options(); 
+		$QST_options = $QFI->options(true,$answer); 
 		$options = $QST_options ? self::prep_answer_options( $QST_options ) : array();
 		$system_ID = $QFI->get('QST_system');
 		
@@ -1057,13 +1056,15 @@ class EEH_Form_Fields {
 						'QSO_desc' => $QSO
 					));
 				}
-				if ( ! $QSO->deleted() ) {
+//				don't filter out deleted here- that should have been done before
+//				because maybe client code wants to show deleted question options??
+//				if ( ! $QSO->deleted() ) {
 					if ( $QSO->opt_group() ) {
 						$options[ $QSO->opt_group() ][] = $QSO;
 					} else {
 						$options[] = $QSO;
 					}					
-				}				
+//				}				
 			}	
 		}
 		return $options; 
