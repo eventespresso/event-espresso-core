@@ -38,11 +38,9 @@
 					<input size="20" id="phys-city" type="text"  value="<?php echo $_venue->city(); ?>" name="city" />
 				</p>
 				<p>
-					<label for="phys-state"><?php _e('State:', 'event_espresso'); ?></label><br/>
 					<?php echo $states_dropdown; ?>
 				</p>
 				<p>
-					<label for="phys-country"><?php _e('Country:', 'event_espresso'); ?></label><br/>
 					<?php echo $countries_dropdown; ?>
 				</p>
 				<p>
