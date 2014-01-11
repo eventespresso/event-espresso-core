@@ -1203,7 +1203,7 @@ class EEH_Form_Fields {
 				$QFI = self::generate_state_dropdown( $QFI );
 				break;			
 			case 'country' :
-				$QFI = self::generate_country_dropdown( $QF );
+				$QFI = self::generate_country_dropdown( $QFI );
 				break;			
 			case 'admin-state' :
 				$QFI = self::generate_state_dropdown( $QFI, TRUE );
