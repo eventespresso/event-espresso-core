@@ -543,7 +543,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input( 
 			$QFI = new EE_Question_Form_Input(
-				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'admin-state' )),
+				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'state' )),
 				EE_Answer::new_instance( array(  'ANS_value'=> $this->_cpt_model_obj->state_ID() )),
 				array(
 					'input_name' =>  'sta_id',
@@ -556,7 +556,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		);
 		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input( 
 			$QFI = new EE_Question_Form_Input(
-				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'admin-country' )),
+				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'country' )),
 				EE_Answer::new_instance( array(  'ANS_value'=> $this->_cpt_model_obj->country_ID() )),
 				array(
 					'input_name' =>  'cnt_iso',
