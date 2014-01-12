@@ -1056,14 +1056,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
   		EE_Registry::instance()->load_helper( 'Formatter' );
 
   		//args for getting related registrations
-  		$query_args = array( array( 'STS_ID' => EEM_Registration::status_id_approved ) );
-
-  		$query_args[0]['REG_deleted'] = 0; 
+  		$approved_query_args = array( array( 'REG_deleted' => 0, 'STS_ID' => EEM_Registration::status_id_approved ) );
+  		$not_approved_query_args = array( array( 'REG_deleted' => 0, 'STS_ID' => EEM_Registration::status_id_not_approved ) );
+  		$pending_payment_query_args = array( array( 'REG_deleted' => 0, 'STS_ID' => EEM_Registration::status_id_pending_payment ) );
 
 
 		// publish box
-		$publish_box_extra_args['view_attendees_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID() ), REG_ADMIN_URL);
-		$publish_box_extra_args['attendees_reg_limit'] = $this->_cpt_model_obj->count_related('Registration', $query_args);
+		$publish_box_extra_args['view_approved_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), 'reg_status' => EEM_Registration::status_id_approved ), REG_ADMIN_URL);
+		$publish_box_extra_args['view_not_approved_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), 'reg_status' => EEM_Registration::status_id_not_approved ), REG_ADMIN_URL);
+		$publish_box_extra_args['view_pending_payment_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), 'reg_status' => EEM_Registration::status_id_pending_payment ), REG_ADMIN_URL);
+		$publish_box_extra_args['approved_regs'] = $this->_cpt_model_obj->count_related('Registration', $approved_query_args);
+		$publish_box_extra_args['not_approved_regs'] = $this->_cpt_model_obj->count_related('Registration', $not_approved_query_args);
+		$publish_box_extra_args['pending_payment_regs'] = $this->_cpt_model_obj->count_related('Registration', $pending_payment_query_args);
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('FHEE_event_editor_email_attendees_class', 'misc-pub-section');
 		//$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_cpt_model_obj->id), 'admin.php?page=espresso_registrations');
 		$publish_box_extra_args['event_editor_overview_add'] = do_action('AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj);
