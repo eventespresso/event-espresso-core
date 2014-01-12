@@ -316,7 +316,8 @@ span.ui-icon {
 	vertical-align: middle;
 }
 
-#single-page-checkout .espresso-checkbox-options-ul li .espresso-checkbox-option-desc {
+#single-page-checkout .espresso-checkbox-options-ul li .espresso-checkbox-option-desc,
+#single-page-checkout .espresso-radio-btn-options-ul li .espresso-radio-btn-option-desc{
 	line-height: 1.25em;
 	padding-left: 2em;
 }

@@ -92,6 +92,21 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	protected $_statuses = array();
 
 
+
+	/**
+	 * This is an array of custom statuses for the given CPT model (modified by children)
+	 * format:
+	 * array(
+	 * 		'status_name' => array(
+	 * 			'label' => __('Status Name', 'event_espresso'),
+	 * 			'public' => TRUE //whether a public status or not.
+	 * 		)
+	 * )
+	 * @var array
+	 */
+	protected $_custom_stati = array();
+
+
 	/**
 	 * Adds a relationship to Term_Taxonomy for each CPT_Base
 	 * @param type $timezone
@@ -246,7 +261,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @global array $wp_post_statuses set in wp core for storing all the post stati
 	 * @return array
 	 */
-	public static function get_post_statuses(){
+	public function get_post_statuses(){
 		global $wp_post_statuses;
 		$statuses = array();
 		foreach($wp_post_statuses as $post_status => $args_object){
@@ -261,7 +276,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @return array array of statuses.
 	 */
 	public function get_status_array() {
-		$statuses = self::get_post_statuses();
+		$statuses = $this->get_post_statuses();
 		//first the global filter
 		$statuses = apply_filters( 'FHEE_EEM_CPT_Base__get_status_array', $statuses );
 		//now the class specific filter
@@ -274,22 +289,10 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * this returns the post statuses that are NOT the default wordpress status
 	 * @return array
 	 */
-	public static function get_custom_post_statuses() {
+	public function get_custom_post_statuses() {
 		$new_stati = array();
-		$statuses = self::get_post_statuses();
-		$defaults = array(
-			'publish',
-			'future',
-			'private',
-			'pending',
-			'auto-draft',
-			'draft',
-			'trash',
-			'inherit'
-			);
-		foreach ( $statuses as $status => $label ) {
-			if ( !in_array( $status, $defaults ) )
-				$new_stati[$status] = $label;
+		foreach ( $this->_custom_stati as $status => $props ) {
+			$new_stati[$status] = $props['label'];
 		}
 		return $new_stati;
 	}

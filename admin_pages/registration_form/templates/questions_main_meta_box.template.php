@@ -154,11 +154,16 @@ $has_answers = $question->has_answers();
 							<?php 
 							$count=0;
 							if ( $question_options = $question->options() ) {									
-								foreach( $question_options as $option_id => $option ) { 
+								foreach( $question_options as $option_id => $option ) {
+									$disabled =  $has_answers ? ' disabled="disabled"' : '';
+									$id = $has_answers ? '_disabled' : '';
 							?>
 								<tr class="question-option">
 									<td class="option-value-cell">
-										<input type="text" class="option-value regular-text" name="question_options[<?php echo $count?>][QSO_value]" value="<?php  $option->f('QSO_value')?>">
+										<input type="text" class="option-value regular-text" name="question_options<?php echo $id; ?>[<?php echo $count?>][QSO_value]" value="<?php  $option->f('QSO_value')?>"<?php echo $disabled; ?>>
+										<?php if ( $has_answers ) : ?>
+											<input type="hidden" name="question_options[<?php echo $count; ?>][QSO_value]" value="<?php echo $option->f('QSO_value'); ?>" >
+										<?php endif; ?>
 									</td>
 									<td class="option-desc-cell">
 										<input type="text" class="option-desc regular-text" name="question_options[<?php echo $count?>][QSO_desc]" value="<?php $option->f('QSO_desc')?>">
@@ -205,6 +210,12 @@ $has_answers = $question->has_answers();
 					<p class="description">
 						<?php _e('Answer Options are the choices that you give people to select from for SINGLE, MULTIPLE or DROPDOWN questions. The Option Value is a simple key that will be saved to the database and the Answer Option Display Text is what the user will actually see in the form. For example, you may have a question for  "T-shirt Size" that has the Option Values of "S", "M", "L", and "XL" with the corresponding display text "Small", "Medium", "Large", and "Extra Large".','event_espresso')?>
 					</p>
+					<?php if ( $has_answers ) : ?>
+					<p class="description" style="color:#D54E21;">
+							<?php _e('Answer values that are uneditable are this way because there are registrations in the database that have answers for this question.  If you need to correct a mistake, or edit an existing option value, then trash the existing one and create a new option with the changes.  This will ensure that the existing registrations that chose the original answer will preserve that answer.', 'event_espresso'); ?>
+					</p>
+
+					<?php endif; ?>
 				</td>
 			</tr>
 			

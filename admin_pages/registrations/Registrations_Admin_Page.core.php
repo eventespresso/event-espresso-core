@@ -633,7 +633,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'declined_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
-				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' )
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' )
 				)
 			);
 		return $items;
