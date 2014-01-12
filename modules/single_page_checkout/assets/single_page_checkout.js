@@ -223,7 +223,7 @@
 		// array of multi-value inputs (checkboxes and radio buttons) that do NOT require values
 		multi_inputs_that_do_not_require_values : [],
 		// display debugging info in console?
-		display_debug : true,
+		display_debug : false,
 		// success message array
 		success_msgs : [],
 		// error message array
@@ -369,7 +369,7 @@
 					input_value = $(input).val();
 					SPCO.debug( 'validate_input > input_value', input_value );
 					// find label for this input and grab it's text
-					var lbl_txt = $(input).prev('label').html();
+					var lbl_txt = $(input).prevAll('label').html();
 					lbl_txt = lbl_txt == undefined ? input_id : lbl_txt;
 					if ( lbl_txt.length ) {
 						// remove "<em>*</em>" from end
@@ -388,7 +388,7 @@
 					if ( valid_input !== true ) {
 						SPCO.set_single_input_requires_value_on( $(input) );
 						SPCO.require_values.push( lbl_txt );
-						SPCO.set_offset_from_top( $(input).prev('label'), -275 );
+						SPCO.set_offset_from_top( $(input).prevAll('label'), -275 );
 					}
 				// or a multi ?
 				} else if ( $.inArray( input_type, uses_prop ) > -1 ) {
@@ -436,7 +436,7 @@
 				$(target_input).prop('checked', $(copy_from).prop('checked'));
 				SPCO.debug( 'copy_form_input_value_from_this > input value copied', $(copy_from).prop('checked') );
 			} else {
-				$(target_input).val( $(copy_from).val() );
+				$(target_input).val( $(copy_from).val() ).selectmenu('refresh');
 				SPCO.debug( 'copy_form_input_value_from_this > input value copied', $(copy_from).val() );
 			}
 		},
@@ -606,8 +606,8 @@
 		*/	
 		set_offset_from_top : function( item, extra ) {
 			if ( SPCO.offset_from_top == 0 ) {
+				extra = extra !== undefined && extra !== '' ? extra : 10;
 				var top_of_form = $( item ).offset();
-				extra = extra !== undefined && extra !== '' ? extra : 10;				
 				SPCO.offset_from_top = top_of_form.top + extra;
 				SPCO.offset_from_top = Math.max( 0, SPCO.offset_from_top );
 			}
@@ -845,41 +845,56 @@
 					}
 				},
 				
-				success: function( response ){					
+				success: function( response ){
+					
 					SPCO.debug( 'submit_reg_form > step', step );
 					SPCO.debug( 'submit_reg_form > next_step', next_step );
-					SPCO.debug( 'submit_reg_form > response.success', response.success );
-					SPCO.debug( 'submit_reg_form > response.error', response.error );
-					for ( key in response.return_data ) {
-						SPCO.debug( 'submit_reg_form > key', response.return_data[key] );
-					}
-					SPCO.enable_submit_buttons();
-					if ( response.recaptcha_reload != undefined ) {
-						$('#recaptcha_reload').trigger('click');
-						SPCO.scroll_to_top_and_display_messages( response );
-					} else if ( response.return_data != undefined ) {
-						SPCO.process_return_data( next_step, response );
-					} else {
-						if ( response.error != '' && response.error != undefined ) {
-							SPCO.scroll_to_top_and_display_messages( response );
-						} else {
-							go_to[ next_step ]( response );
+					if ( response != undefined )	 {
+						SPCO.debug( 'submit_reg_form > response.success', response.success );
+						SPCO.debug( 'submit_reg_form > response.error', response.error );
+						for ( key in response.return_data ) {
+							SPCO.debug( 'submit_reg_form > key', response.return_data[key] );
 						}
-					}								
+						SPCO.enable_submit_buttons();
+						if ( response.recaptcha_reload != undefined ) {
+							$('#recaptcha_reload').trigger('click');
+							SPCO.scroll_to_top_and_display_messages( response );
+						} else if ( response.return_data != undefined ) {
+							SPCO.process_return_data( next_step, response );
+						} else {
+							if ( response.error != '' && response.error != undefined ) {
+								SPCO.scroll_to_top_and_display_messages( response );
+							} else {
+								go_to[ next_step ]( response );
+							}
+						}		
+					} else {
+						return SPCO.submit_reg_form_server_error( response );
+					}
+							
 				},
 				
-				error: function(response) {
-					SPCO.debug( 'submit_reg_form > ajax error response', dump( response ));
-					SPCO.enable_submit_buttons();
-					msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'submit_reg_form_' + step, eei18n.reg_step_error ));
-					SPCO.scroll_to_top_and_display_messages( msg );
-					return false;
+				error: function( response ) {
+					return SPCO.submit_reg_form_server_error( response );
 				}
 						
 			});	
 
 			return false;
 					
+		},
+
+
+
+		/**
+		*	submit_reg_form_server_error
+		*/	
+		submit_reg_form_server_error : function( response ) {
+			SPCO.debug( 'submit_reg_form_server_error > ajax error response', dump( response ));
+			SPCO.enable_submit_buttons();
+			msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'submit_reg_form_server_error', eei18n.reg_step_error ));
+			SPCO.scroll_to_top_and_display_messages( msg );
+			return false;
 		},
 
 
