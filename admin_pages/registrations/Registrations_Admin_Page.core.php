@@ -1032,23 +1032,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		// set default status if none is passed
 		$status = $status ? $status : EEM_Registration::status_id_pending_payment;
 		// have we been passed a REG_ID ?
-		if ( ! absint( $REG_ID )) {
+		if ( ! $REG_ID ) {
 			// no ? then check for one in the req data
-			$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : $REG_ID;
+			$REG_ID = isset( $this->_req_data['_REG_ID'] ) && !is_array( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : $REG_ID;
 		}
 		// still don't have one?
 		if ( ! $REG_ID ) {
 			// then check req data for an array of REG_IDs
-			$REG_IDs = isset( $this->_req_data['_REG_ID'] ) ? (array) $this->_req_data['_REG_ID'] : array();
+			$REG_IDs = isset( $this->_req_data['_REG_ID'] ) && is_array( $this->_req_data['_REG_ID'] ) ? (array) $this->_req_data['_REG_ID'] : array();
 			$success = TRUE;
 			// loop thru REG_IDs and set each reg status separately
 			foreach ( $REG_IDs as $REG_ID ) {
 				$result = $this->_set_registration_status( $REG_ID, $status );
 				$success = isset( $result['success'] ) && $result['success'] ? $success : FALSE;
-				if ( $success && $status == EEM_Registration::status_id_approved ) {
-					$this->_req_data['_REG_ID'] = $REG_ID;
-					$this->_process_resend_registration();
-				}
 			}
 			$REG_ID = FALSE;
 		}
