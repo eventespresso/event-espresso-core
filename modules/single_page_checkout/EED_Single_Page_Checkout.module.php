@@ -633,8 +633,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 //					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-				add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
-				add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
+//				add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
+				add_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 1 );
 				$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
 
 				// show this attendee form?
@@ -988,8 +988,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 						}		
 					}
 
-					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
-					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
+//					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
+					add_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 1 );
 					
 					$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
 
@@ -1104,7 +1104,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * 	@return 		string
 	 */
 	public function reg_form_form_field_label_wrap( $label ) {
-		return '<div class="reg-page-form-field-wrap-pg">' . $label;		
+		return $label;		
 	}
 
 
@@ -1117,8 +1117,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * 	@param 	string 	$label
 	 * 	@return 		string
 	 */
-	public function reg_form_form_field_input__wrap( $input ) {
-		return $input . '</div>';		
+	public static function reg_form_form_field_input__wrap( $input ) {
+		return '<div class="reg-page-form-field-wrap-pg">' . $input . '</div>';		
 	}
 
 
