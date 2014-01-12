@@ -1067,15 +1067,11 @@ class EEH_Form_Fields {
 						'QSO_desc' => $QSO
 					));
 				}
-//				don't filter out deleted here- that should have been done before
-//				because maybe client code wants to show deleted question options??
-//				if ( ! $QSO->deleted() ) {
-					if ( $QSO->opt_group() ) {
-						$options[ $QSO->opt_group() ][] = $QSO;
-					} else {
-						$options[] = $QSO;
-					}					
-//				}				
+				if ( $QSO->opt_group() ) {
+					$options[ $QSO->opt_group() ][] = $QSO;
+				} else {
+					$options[] = $QSO;
+				}					
 			}	
 		}
 		return $options; 
@@ -1133,11 +1129,11 @@ class EEH_Form_Fields {
 				case $val_size < 25 :
 					$size =  ' class="small-lbl"';
 					break;
-				case $val_size < 50 :
-					$size =  ' class="medium-lbl"';
+				case $val_size > 100 :
+					$size =  ' class="big-lbl"';
 					break;				
 				default:
-					$size =  ' class="big-lbl"';
+					$size =  ' class="medium-lbl"';
 					break;
 			}
 		return $size;
@@ -1250,7 +1246,7 @@ class EEH_Form_Fields {
 				));
 				// set option group
 				$QSO->set_opt_group( $state->country()->name() );
-				// add option to question			
+				// add option to question
 				$QST->add_temp_option( $QSO );
 			}
 		}
@@ -1266,17 +1262,17 @@ class EEH_Form_Fields {
 	 */
 	public static function generate_country_dropdown( $QST, $get_all = FALSE ){
 		$countries = $get_all ? self::get_all_countries() : self::get_active_countries();
-		if ( $countries ) {	
+		if ( $countries ) {
 			$QST->set( 'QST_type', 'DROPDOWN' );
 			// now add countries
-			foreach ( $countries as $country ) {	
+			foreach ( $countries as $country ) {
 				$QSO = EE_Question_Option::new_instance ( array (
 					'QSO_value' => $country->ID(),
 					'QSO_desc' => $country->name(),
 					'QST_ID' => $QST->get( 'QST_ID' ),
 					'QSO_deleted' => FALSE
 				));
-				$QST->add_temp_option( $QSO );												
+				$QST->add_temp_option( $QSO );
 			}
 		}
 		return $QST;
