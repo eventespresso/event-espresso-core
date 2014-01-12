@@ -1050,10 +1050,36 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		if ( $REG_ID ) {
 			$registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID );
-			$success = $registration->set_status( $status );
-			$registration->save();
+			$registration->set_status( $status );
+			$success = $registration->save();
 		} 
 		return array( 'REG_ID' => $REG_ID, 'success' => $success );
+	}
+
+
+
+
+	/**
+	 * Common logic for setting up success message and redirecting to appropriate route
+	 * @param  string $STS_ID  status id for the registration changed to
+	 * @param  array  $result array from _set_registration_status()
+	 * @return void         
+	 */
+	private function _reg_status_change_return( $STS_ID, $result ) {
+		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
+		
+		//setup success message
+		if ( $success ) {
+
+			$msg = $result['REG_ID'] ? sprintf( __('Registration status has been set to %s', 'event_espresso'), EEH_Template::pretty_status($STS_ID, FALSE, 'lower' ) ) :  sprintf( __('Registrations have been %s.', 'event_espresso'), EEH_Template::pretty_status($STS_ID, FALSE, 'lower' ) ) ;
+			EE_Error::add_success( $msg );
+		} else {
+			EE_Error::add_error( __('Something went wrong, and the status was not changed', 'event_espresso' ), __FILE__, __LINE__, __FUNCTION__ );
+		}
+
+		$route = isset( $this->_req_data['return'] ) && $this->_req_data['return'] == 'view_registration' ? array( 'action' => 'view_registration', '_REG_ID' => $result['REG_ID'] ) : array( 'action' => 'default' );
+
+		$this->_redirect_after_action( FALSE, '', '', $route, TRUE );
 	}
 
 
@@ -1065,9 +1091,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	protected function approve_registration() {
 		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_approved );
-		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
-		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, 'Registration Status', 'approved', $route );
+		$this->_reg_status_change_return( EEM_Registration::status_id_approved, $result );
 	}
 
 
@@ -1079,9 +1103,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	protected function decline_registration() {
 		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_declined );
-		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
-		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, 'Registration Status', 'set to not approved', $route );
+		$this->_reg_status_change_return( EEM_Registration::status_id_declined, $result );
 	}
 
 
@@ -1094,9 +1116,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	protected function cancel_registration() {
 		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_cancelled );
-		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
-		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, 'Registration Status', 'set to cancelled', $route );
+		$this->_reg_status_change_return( EEM_Registration::status_id_cancelled, $result );
 	}
 
 
@@ -1110,9 +1130,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	protected function not_approve_registration() {
 		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_not_approved );
-		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
-		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, 'Registration Status', 'set to not approved', $route );
+		$this->_reg_status_change_return( EEM_Registration::status_id_not_approved, $result );
 	}
 
 
@@ -1124,9 +1142,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	protected function pending_registration() {
 		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending_payment );
-		$success = isset( $result['success'] ) && $result['success'] ? TRUE : FALSE;
-		$route = isset( $result['REG_ID'] ) && absint( $result['REG_ID'] ) ? array( 'action' => 'view_registration', '_REG_ID' => absint( $result['REG_ID'] )) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, 'Registration Status', 'set to not Pending Payment', $route );
+		$this->_reg_status_change_return( EEM_Registration::status_id_pending_payment, $result );
 	}
 
 
