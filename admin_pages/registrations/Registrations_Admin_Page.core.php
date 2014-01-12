@@ -547,7 +547,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
 					'decline_registration' => __('Decline Registrations', 'event_espresso'),
 					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'not_approved_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
+					'no_approved_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
 					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
