@@ -636,7 +636,8 @@ class EEH_Form_Fields {
 		
 		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled .' ' . $extra . '/>';
 		
-		return apply_filters( 'FHEE_form_field_input_html', $label_html . $input_html );		
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		return  $label_html . $input_html;
 		
 	}
 
@@ -685,7 +686,8 @@ class EEH_Form_Fields {
 
 		$input_html = "\n\t\t\t" . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>' . $answer . '</textarea>';
 
-		return apply_filters( 'FHEE_form_field_input_html', $label_html . $input_html );		
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		return  $label_html . $input_html;
 		
 	}
 
@@ -746,7 +748,8 @@ class EEH_Form_Fields {
 
 		$input_html .= "\n\t\t\t" . '</select>';
 
-		return apply_filters( 'FHEE_form_field_input_html', $label_html . $input_html );		
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		return  $label_html . $input_html;
 
 	}
 
@@ -856,7 +859,8 @@ class EEH_Form_Fields {
 
 		$input_html .= "\n\t\t\t" . '</ul>';
 
-		return apply_filters( 'FHEE_form_field_input_html', $label_html . $input_html );		
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		return  $label_html . $input_html;
 
 	}
 
@@ -933,7 +937,8 @@ class EEH_Form_Fields {
 
 		$input_html .= "\n\t\t\t" . '</ul>';
 
-		return apply_filters( 'FHEE_form_field_input_html', $label_html . $input_html );		
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		return  $label_html . $input_html;
 
 	}
 
@@ -983,8 +988,9 @@ class EEH_Form_Fields {
 		wp_enqueue_style( 'espresso-ui-theme');
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 
-		return apply_filters( 'FHEE_form_field_input_html', $label_html . $input_html );		
-		
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		return  $label_html . $input_html;
+
 	}
 
 
