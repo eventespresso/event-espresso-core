@@ -354,11 +354,11 @@ abstract class EE_Gateway {
 						<?php if ( $this->_payment_settings['type'] == 'on-site' ) : ?>
 						<tr>
 							<th>
-								<label><strong style="color:#F00"><?php _e('WARNING !!!', 'event_espresso'); ?></strong></label>
+								<label><strong style="color:#F00"><?php _e('IMPORTANT', 'event_espresso'); ?></strong></label>
 							</th>
 							<td>				
-								<strong><?php _e('You are responsible for your own security and Payment Card Industry Data Security Standards (PCI DSS) compliance.', 'event_espresso');?></strong><br />
-								<?php _e('Click here for more information about ', 'event_espresso');?>
+								<strong><?php _e('You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.', 'event_espresso');?></strong><br />
+								<?php _e('Learn more about ', 'event_espresso');?>
 								<a href="https://www.pcisecuritystandards.org/merchants/index.php">
 									<?php _e('PCI DSS compliance', 'event_espresso');?>
 								</a>

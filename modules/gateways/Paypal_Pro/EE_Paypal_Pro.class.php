@@ -240,12 +240,12 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				</label>
 
 				<label class="gateway-checkbox-options">
-					<?php _e('Master Card', 'event_espresso'); ?>
+					<?php _e('MasterCard', 'event_espresso'); ?>
 					<input type="checkbox" name="credit_cards[]" size="35" value="MasterCard" <?php echo in_array("MasterCard", $credit_cards) ? $checked : ''; ?> />
 				</label>
 
 				<label class="gateway-checkbox-options">
-					<?php _e('Amex', 'event_espresso'); ?>
+					<?php _e('American Express', 'event_espresso'); ?>
 					<input type="checkbox" name="credit_cards[]" size="35" value="Amex" <?php echo in_array("Amex", $credit_cards) ? $checked : ''; ?> />
 				</label>
 

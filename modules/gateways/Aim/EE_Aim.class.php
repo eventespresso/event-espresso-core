@@ -156,7 +156,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				<?php _e('Discover', 'event_espresso'); ?>
 				)<br />
 				5424000000000015 (
-				<?php _e('Master Card', 'event_espresso'); ?>
+				<?php _e('MasterCard', 'event_espresso'); ?>
 				)<br />
 				4007000000027 (
 				<?php _e('Visa', 'event_espresso'); ?>
