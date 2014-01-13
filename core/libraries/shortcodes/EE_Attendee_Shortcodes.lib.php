@@ -49,7 +49,8 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[FNAME]' => __('First Name of an attendee', 'event_espresso'),
 			'[LNAME]' => __('Last Name of an attendee', 'event_espresso'),
-			'[EDIT_ATTENDEE_LINK]' => __('Edit Attendee Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso')
+			'[EDIT_ATTENDEE_LINK]' => __('Edit Registration Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso'),
+			'[REGISTRATION_CODE]' => __('Unique Registration Code for the regsitration', 'event_espresso')
 			);
 	}
 
@@ -90,6 +91,10 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			case '[EDIT_ATTENDEE_LINK]' :
 				return $this->_get_attendee_edit_link();
 				break;
+
+			case '[REGISTRATION_CODE]' :
+				return $this->_get_reg_code();
+				break;
 		}
 
 		return '';
@@ -121,6 +126,16 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		$url = EE_Admin_Page::add_query_args_and_nonce( $query_args, admin_url('admin.php') );
 
 		return $url;
+	}
+
+
+	private function _get_reg_code() {
+		// we know that we have an attendee object because it's already been checked for.  However, we need to make sure we have the registration and we'll do this from xtra data if present
+		$REG = !empty( $this->_xtra ) && !empty( $this->_xtra->attendees ) ? $this->_xtra->attendees[$this->_data->ID()]['reg_obj'] : NULL;
+		$REG = empty( $REG ) ? $this->_data->get_most_recent_registration() : $REG;
+
+		return empty( $REG ) ? __('no code generated', 'event_espresso') : $REG->reg_code();
+
 	}
 
 } //end EE_Attendee_Shortcodes class

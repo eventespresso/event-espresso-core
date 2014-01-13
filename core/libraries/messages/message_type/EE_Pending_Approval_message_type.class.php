@@ -139,10 +139,6 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 			'primary_attendee' => array(
 				'label' => __('Primary Registrant', 'event_espresso'),
 				'description' => __('This template is what the primary registrant (the person who completed the initial transaction) will receive on when their registration status is pending payment.', 'event_espresso')
-				),
-			'attendee' => array(
-				'label' => __('Registrant', 'event_espresso'),
-				'description' => __('This template is what each registrant for the event will receive when their registration status is pending payment.', 'event_espresso')
 				)
 			);
 
@@ -157,8 +153,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
 			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list'),
-			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
+			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
 			);
 	}
 
@@ -215,9 +210,6 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
-		if ( $this->_single_message ) 
-			return array();
-		
 		$aee = $this->_default_addressee_data;
 		$aee['events'] = $this->_data->events;
 		$aee['attendees'] = $this->_data->attendees;
@@ -225,59 +217,6 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 		//great now we can instantiate the $addressee object and return (as an array);
 		$add[] = new EE_Messages_Addressee( $aee );
-		return $add;
-	}
-
-
-
-
-
-	/**
-	 * Takes care of setting up the addresee object(s) for the registered attendees
-	 *
-	 * @access protected
-	 * @return array of EE_Addressee objects
-	 */
-	protected function _attendee_addressees() {
-		$add = array();
-		//we just have to loop through the attendees.  We'll also set the attached events for each attendee.
-		//use to verify unique attendee emails... we don't want to sent multiple copies to the same attendee do we?
-		$already_processed = array();
-		foreach ( $this->_data->attendees as $att_id => $details ) {
-			//set the attendee array to blank on each loop;
-			$aee = array();
-
-			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) && $this->_single_message ) continue;
-			
-			if ( in_array( $details['attendee_email'], $already_processed ) )
-				continue;
-
-			$already_processed[] = $details['attendee_email'];
-
-			foreach ( $details as $item => $value ) {
-				$aee[$item] = $value;
-				if ( $item == 'line_ref' ) {
-					foreach ( $value as $event_id ) {
-						$aee['events'][$event_id] = $this->_data->events[$event_id];
-					}
-				}
-
-				if ( $item == 'attendee_email' ) {
-					$aee['attendee_email'] = $value;
-				}
-
-				if ( $item == 'registration_id' ) {
-					$aee['attendee_registration_id'] = $value;
-				}
-			}
-
-			$aee['attendees'] = $this->_data->attendees;
-
-			//merge in the primary attendee data
-			$aee = array_merge( $this->_default_addressee_data, $aee );
-			$add[] = new EE_Messages_Addressee( $aee );
-		}
-	
 		return $add;
 	}
 
