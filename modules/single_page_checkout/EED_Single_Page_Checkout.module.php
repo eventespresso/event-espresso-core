@@ -1484,7 +1484,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		if ( $this->_cart->get_grand_total()->total() == EEH_Template::format_currency( 0, TRUE ) ) {
 			$this->_transaction->set_status( EEM_Transaction::complete_status_code );
 		}
-		$this->_transaction->finalize();
+		$this->_transaction->finalize( TRUE );
 		$this->_transaction->save();
 		EE_Registry::instance()->SSN->clear_session();
 		return $this->_transaction->ID();

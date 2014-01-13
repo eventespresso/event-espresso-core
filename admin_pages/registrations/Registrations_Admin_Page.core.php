@@ -1958,11 +1958,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$template_args['title'] = __('Step One: Select the Ticket for this registration', 'event_espresso');
 				$template_args['content'] = EED_Ticket_Selector::display_ticket_selector( $this->_reg_event, TRUE );
 				$template_args['step_button_text'] = __('Continue', 'event_espresso');
+				$template_args['show_notification_toggle'] = FALSE;
 				break;
 			case 'questions' :
 				$template_args['title'] = __('Step Two: Add Registrant Details for this Registration', 'event_espresso');
 				$template_args['content'] = $this->_get_new_registration_questions();
 				$template_args['step_button_text'] = __('Save Registration and Continue to Details', 'event_espresso');
+				$template_args['show_notification_toggle'] = TRUE;
 				break;
 		}
 
