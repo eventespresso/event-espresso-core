@@ -369,9 +369,9 @@
 					input_value = $(input).val();
 					SPCO.debug( 'validate_input > input_value', input_value );
 					// find label for this input and grab it's text
-					var lbl_txt = $(input).prevAll('label').html();
+					var lbl_txt = $(input).closest('.reg-page-form-field-wrap-pg').find('label').html();
 					lbl_txt = lbl_txt == undefined ? input_id : lbl_txt;
-					if ( lbl_txt.length ) {
+					if ( lbl_txt.length && $(input).hasClass( 'required' ) ) {
 						// remove "<em>*</em>" from end
 						lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 					}
@@ -388,7 +388,7 @@
 					if ( valid_input !== true ) {
 						SPCO.set_single_input_requires_value_on( $(input) );
 						SPCO.require_values.push( lbl_txt );
-						SPCO.set_offset_from_top( $(input).prevAll('label'), -275 );
+						SPCO.set_offset_from_top( $(input).closest('.reg-page-form-field-wrap-pg').find('label'), -275 );
 					}
 				// or a multi ?
 				} else if ( $.inArray( input_type, uses_prop ) > -1 ) {
@@ -397,10 +397,13 @@
 					input_value = $(input).prop('checked');
 					SPCO.debug( 'validate_input > input_value', input_value );
 					// find label for this input and grab it's text
-					var lbl_txt = $(input).closest('ul').prev('label').html();
+					var lbl_txt = $(input).closest('.reg-page-form-field-wrap-pg').find('label').html();
 					SPCO.debug( 'validate_input > lbl_txt', lbl_txt );
 					// remove "<em>*</em>" from end
-					lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
+					if ( lbl_txt.length && $(input).hasClass( 'required' ) ) {
+						// remove "<em>*</em>" from end
+						lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
+					}
 					SPCO.debug( 'validate_input > lbl_txt', lbl_txt );
 					if ( $(input).hasClass( 'required' ) && input_value == false ) {						
 						// check that this input doesn't already have another option selected
@@ -436,7 +439,7 @@
 				$(target_input).prop('checked', $(copy_from).prop('checked'));
 				SPCO.debug( 'copy_form_input_value_from_this > input value copied', $(copy_from).prop('checked') );
 			} else {
-				$(target_input).val( $(copy_from).val() ).selectmenu('refresh');
+				$(target_input).val( $(copy_from).val() );
 				SPCO.debug( 'copy_form_input_value_from_this > input value copied', $(copy_from).val() );
 			}
 		},
