@@ -86,7 +86,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'filename' => 'payment_methods_overview'
 						),
 					'payment_methods_overview_authorizenet_aim_help_tab' => array(
-						'title' => __('Authorize.net Settings', 'event_espresso'),
+						'title' => __('Authorize.net AIM Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_authorizenet_aim'
 						),
 					'payment_methods_overview_bank_draft_help_tab' => array(
@@ -114,7 +114,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'filename' => 'payment_methods_overview_2checkout'
 						),
 					'payment_methods_overview_authorizenet_sim_help_tab' => array(
-						'title' => __('Authorize.net Settings', 'event_espresso'),
+						'title' => __('Authorize.net SIM Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_authorizenet_sim'
 						),
 					'payment_methods_overview_eway_help_tab' => array(
