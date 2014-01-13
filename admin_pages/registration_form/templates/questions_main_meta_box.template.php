@@ -145,7 +145,7 @@ $has_answers = $question->has_answers();
 									<input type="text" name="question_options[xxcountxx][QSO_desc]" class="option-desc regular-text">
 								</td>
 								<td>
-									<span class="dashicons dashicons-trash ee-icon-size-18 remove-option remove-item"></span>
+									<span class="dashicons clickable dashicons-trash ee-icon-size-18 remove-option remove-item"></span>
 								</td>
 							</tr>
 							
@@ -168,7 +168,7 @@ $has_answers = $question->has_answers();
 									</td>
 									<?php if( $count > 0 ){ ?>
 									<td>
-										<span class="dashicons dashicons-trash ee-icon-size-18 remove-option remove-item"></span>
+										<span class="dashicons clickable dashicons-trash ee-icon-size-18 remove-option remove-item"></span>
 									</td>
 									<?php } ?>
 									<?php
