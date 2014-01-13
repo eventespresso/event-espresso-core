@@ -169,6 +169,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'func' => '_process_registration_step',
 						'noheader' => TRUE
 					),
+
+				'change_reg_status' => array(
+					'func' => '_change_reg_status',
+					'noheader' => TRUE
+					),
 					
 				'approve_registration'	=> array(
 						'func' => 'approve_registration',
@@ -968,17 +973,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$status_buttons = $this->_get_reg_status_buttons();
 
 		$default_status = EE_Registry::instance()->CFG->registration->default_STS_ID;
-		
+		$template = REG_TEMPLATE_PATH . 'reg_status_change_buttons.template.php';
 		if ( $this->_set_registration_object() ) {
 			$current_status = $this->_registration->status_ID();
 			unset( $status_buttons[$current_status] );
 			if ( $current_status != EEM_Registration::status_id_pending_payment && $is_complete ) {
 				unset( $status_buttons[EEM_Registration::status_id_pending_payment] );
 			}
-			return implode( "\n", $status_buttons );
+			$template_args['status_buttons'] = implode( "\n", $status_buttons );
 		}
-		
-		return '';
+		$template_args['form_url'] = REG_ADMIN_URL;
+		$template_args['REG_ID'] = $this->_registration->ID();
+		$template_args['nonce'] = wp_nonce_field( 'change_reg_status_nonce',  'change_reg_status_nonce', FALSE, FALSE );
+
+		return EEH_Template::display_template( $template, $template_args, TRUE );
 		
 	}
 
@@ -990,28 +998,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return array 
 	 */
 	private function _get_reg_status_buttons() {
-		$pending_url = self::add_query_args_and_nonce( array( 'action'=>'pending_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-		$decline_url = self::add_query_args_and_nonce( array( 'action'=>'decline_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-		$cancel_url = self::add_query_args_and_nonce( array( 'action'=>'cancel_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
-		$approve_url = self::add_query_args_and_nonce( array( 'action'=>'approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL ); 
-		$not_approve_url = self::add_query_args_and_nonce( array( 'action'=>'no_approve_registration', '_REG_ID'=>$this->_registration->ID() ), REG_ADMIN_URL );
 
 		$buttons = array(
-			EEM_Registration::status_id_approved => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" href="' . $approve_url . '" title="' . sprintf( __( 'Set Registration Status to %s', 'event_espresso' ), EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) ) . '">
-				' . EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) . '
-				</a>',
-			EEM_Registration::status_id_pending_payment => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" href="' . $pending_url . '" title="' . sprintf( __( 'Set Registration Status to %s', 'event_espresso' ), EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ) ) . '">
-				' . EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ) . '
-				</a>',
-			EEM_Registration::status_id_not_approved => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" href="' . $not_approve_url . '" title="' . sprintf( __( 'Set Registration Status to %s', 'event_espresso' ), EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ) ) . '">
-				' . EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ) . '
-				</a>',
-			EEM_Registration::status_id_declined => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_declined . '" href="' . $decline_url . '" title="' . sprintf( __( 'Set Registration Status to %s', 'event_espresso' ), EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ) ) . '">
-				' . EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ) . '
-				</a>',
-			EEM_Registration::status_id_cancelled => '<a class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_cancelled . '" href="' . $cancel_url . '" title="' . sprintf( __( 'Set Registration Status to %s', 'event_espresso' ), EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ) ) . '">
-				' . EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ) . '
-				</a>',
+			EEM_Registration::status_id_approved => '<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_pending_payment => '<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_not_approved => '<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_declined => '<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_declined . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_cancelled =>'<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_cancelled . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ) . '">',
 			);
 		return $buttons;
 	}
@@ -1079,7 +1072,50 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$route = isset( $this->_req_data['return'] ) && $this->_req_data['return'] == 'view_registration' ? array( 'action' => 'view_registration', '_REG_ID' => $result['REG_ID'] ) : array( 'action' => 'default' );
 
+		//was the send notification toggle checked?
+		if ( !empty( $this->_req_data['txn_reg_status_change']['send_notifications'] ) ) {
+			$this->_req_data['_REG_ID'] = $result['REG_ID'];
+			$this->_process_resend_registration();
+		}
+
 		$this->_redirect_after_action( FALSE, '', '', $route, TRUE );
+	}
+
+
+
+	/**
+	 * incoming reg status change from reg details page.
+	 * @return void
+	 */
+	protected function _change_reg_status() {
+		$success = FALSE;
+		$this->_req_data['return'] = 'view_registration';
+		if ( !isset( $this->_req_data['reg_status_id'] ) ) {
+			$result['success'] = FALSE;
+			$this->_reg_status_change_return( '', $result );
+		}
+
+		switch ( $this->_req_data['reg_status_id'] ) {
+			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) :
+				$this->approve_registration();
+				break;
+			case EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ) :
+				$this->pending_registration();
+				break;
+			case EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ) :
+				$this->not_approve_registration();
+				break;
+			case EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ) :
+				$this->decline_registration();
+				break;
+			case EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ) :
+				$this->cancel_registration();
+				break;
+			default :
+				$result['success'] = FALSE;
+				$this->_reg_status_change_return( '', $result );
+				break;
+		}
 	}
 
 
