@@ -5,11 +5,11 @@
 <h3><?php _e('Authorize.net AIM Settings', 'event_espresso'); ?></h3>
 <ul>
 <li>
-<?php _e('Authorize.net AIM Login ID', 'event_espresso'); ?><br />
+<?php _e('Authorize.net API Login ID', 'event_espresso'); ?><br />
 <?php _e('Enter your API Login ID for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405">API Login ID</a>.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?><br />
+<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?><br />
 <?php _e('Enter your Transaction Key for Authorize.net. Learn how to find your <a href="https://support.authorize.net/authkb/index?page=content&id=A405">Transaction Key</a>.', 'event_espresso'); ?>
 </li>
 <li>

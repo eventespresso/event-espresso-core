@@ -13,7 +13,7 @@
 <?php _e('Provide clear instructions for how a payment should be made.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Name on Account', 'event_espresso'); ?><br />
+<?php _e('Name on Bank Account', 'event_espresso'); ?><br />
 <?php _e('Enter the full name on the bank account.', 'event_espresso'); ?>
 </li>
 <li>

@@ -463,9 +463,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			//save new related options
 			foreach($this->_req_data['question_options'] as $index=>$option_req_data){
 				if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_value']) || !empty($option_req_data['QSO_desc']))){//no ID! save it!
-					if(empty($option_req_data['QSO_desc'])){
-						$option_req_data['QSO_desc']=$option_req_data['QSO_value'];
-					}
 					if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
 						$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
 					}

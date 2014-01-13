@@ -101,17 +101,17 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		?>
 		<tr>
 			<th><label for="authnet_aim_login_id">
-					<?php _e('Authorize.net AIM Login ID', 'event_espresso'); ?>
+					<?php _e('Authorize.net API Login ID', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="authnet_aim_login_id" id="authnet_aim_login_id" size="35" value="<?php echo $this->_payment_settings['authnet_aim_login_id']; ?>">
 				<br />
 				<span class="description">
-					<?php _e('Please enter your Authorize.net Login ID', 'event_espresso'); ?>
+					<?php _e('Please enter your Authorize.net API Login ID', 'event_espresso'); ?>
 				</span></td>
 		</tr>
 		<tr>
 			<th><label for="authnet_aim_transaction_key">
-					<?php _e('Authorize.net AIM Transaction Key', 'event_espresso'); ?>
+					<?php _e('Authorize.net Transaction Key', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="authnet_aim_transaction_key" id="authnet_aim_transaction_key" size="35" value="<?php echo $this->_payment_settings['authnet_aim_transaction_key']; ?>">
 				<br />
