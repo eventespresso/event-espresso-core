@@ -66,7 +66,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	}
 	
 
-	public function get_UTC_DateTimeZone() {
+	public static function get_UTC_DateTimeZone() {
 		return EE_Datetime_Field::$_UTC_DateTimeZone instanceof DateTimeZone ? EE_Datetime_Field::$_UTC_DateTimeZone : new DateTimeZone( 'UTC' );
 	}
 	
