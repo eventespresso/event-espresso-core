@@ -29,6 +29,10 @@
 <?php _e('This shows the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date.', 'event_espresso'); ?>
 </li>
 <li>
+	<?php _e("Answer Options (for applicable question types)", "event_espresso");?>
+	<?php _e("Values do not allow any HTML, however, descriptions do allow HTML.", "event_espresso");?>
+</li>
+<li>
 <?php _e('Required Question', 'event_espresso'); ?><br />
 <?php _e('Whether registrants are required to answer this question.', 'event_espresso'); ?>
 </li>
