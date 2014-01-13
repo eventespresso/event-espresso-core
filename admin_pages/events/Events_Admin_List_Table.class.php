@@ -35,7 +35,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
-		require_once( EE_HELPERS . 'EEH_DTT_helper.helper.php' );
+		require_once( EE_HELPERS . 'EEH_DTT_Helper.helper.php' );
 	}
 
 	protected function _setup_data() {

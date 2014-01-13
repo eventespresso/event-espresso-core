@@ -786,7 +786,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
-				$DTT = EEH_DTT_helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
+				$DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
 			}
 
@@ -885,7 +885,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
-				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
+				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
 				$TKT->save();
 			}
 
@@ -1148,7 +1148,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		require_once(EE_MODELS . 'EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance();
-		require_once EE_HELPERS . 'EEH_DTT_helper.helper.php';
+		require_once EE_HELPERS . 'EEH_DTT_Helper.helper.php';
 
 		$firstdtt = array_slice($times, 0, 1);
 		//do we get related tickets?
