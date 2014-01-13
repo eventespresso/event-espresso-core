@@ -133,7 +133,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	private function _update_dtts( $evt_obj, $data ) {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
 		$success = TRUE;
-
+		$datetimes_start_times = array();
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
 			$datetime_values = array(
@@ -142,7 +142,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
 				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
 				'DTT_order' => $row,
-				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
+				'DTT_is_primary' => FALSE //after the fact, we'll mark teh EARLIEST datetime as primary
 				);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
@@ -161,7 +161,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			
 			$DTM->save();			
 			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
-
+			$datetimes_start_times[$DTT->start_date_and_time('Y-m-d','H:i:s')] = $DTT;
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
@@ -176,7 +176,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message. //todod this is actually sucky we need a better error message but this is what it is for now.
 		}
-
+		//we want to set the primary datetime, so order them by start time, and grab the first one and set it to primary
+		ksort($datetimes_start_times);
+		$earliest_datetime = reset($datetimes_start_times);
+		$earliest_datetime->set_is_primary(true);
+		$earliest_datetime->save();
 		//now we need to REMOVE any dtts that got deleted.  Keep in mind that this process will only kick in for DTT's that don't have any DTT_sold on them. So its safe to permanently delete at this point.
 		$old_datetimes = explode(',', $data['datetime_IDs'] );
 		$old_datetimes = $old_datetimes[0] == '' ? array() : $old_datetimes;

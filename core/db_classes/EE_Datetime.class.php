@@ -353,7 +353,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		return $this->get('DTT_is_primary');
 	}
 
+	/**
+	 * Sets is_primary
+	 * @param boolean $is_primary
+	 * @return boolean
+	 */
+	function set_is_primary($is_primary) {
+		return $this->set('DTT_is_primary', $is_primary);
+	}
 
+	
 
 
 	/**
