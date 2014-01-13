@@ -1,31 +1,3 @@
-<!-- content -->
-
-<div class="content">
-	<p>The following attendee(s) have registered for the following event(s)</p>
-	<table>
-		<tr>
-			<td>
-				<h3>Event(s):</h3>
-				<h5>[EVENT_NAME]</h5>
-				<!-- Callout Panel -->
-				<p><a href="[EVENT_URL]">View Event &raquo;</a></p>
-				<!-- /Callout Panel --></td>
-		</tr>
-	</table>
-</div>
-
-<!-- COLUMN WRAP -->
-<div class="column-wrap">
-	<div class="column">
-		<table align="left">
-			<tr>
-				<td><h3>Attendee(s):</h3>
-						[ATTENDEE_LIST]
-					</td>
-			</tr>
-		</table>
-	</div>
-	
-	<div class="clear"></div>
-</div>
-<!-- /COLUMN WRAP --> 
+<h3>Event Details:</h3>
+<p>[EVENT_NAME]</p>
+[ATTENDEE_LIST]

@@ -1,6 +1,6 @@
-<h4 class="attendee-name">[FNAME] [LNAME]</h4>
-		<p><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></p>
-		<h5>Ticket(s):</h5>
-		[TICKET_LIST]
-		
-<hr />
+<h3>Registrant Details:</h3>
+<ol style="list-style-type: none;">
+	<li><strong>Name:</strong> [FNAME] [LNAME]</li>
+	[TICKET_LIST]
+	<li><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></li>
+</ol>
