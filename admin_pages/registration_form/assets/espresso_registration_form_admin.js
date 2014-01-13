@@ -40,7 +40,8 @@ function espresso_reg_forms_show_or_hide_question_options(){
 
 
 function espresso_reg_forms_add_option(){
-	var count=jQuery('#question_options tbody tr').not('.sample').size();
+	var count=jQuery('#question_options_count').val();
+	count++;
 	var sampleRow=jQuery('#question_options tbody tr:first-child');
 	var newRow=sampleRow.clone(true);
 	var newRowName=newRow.find('.option-value');
@@ -51,6 +52,8 @@ function espresso_reg_forms_add_option(){
 	newRowValue.attr('name', value.replace("xxcountxx",count));
 	newRow.removeClass('sample');
 	jQuery('#question_options tr:last').after(newRow);
+	//add new count to dom.
+	jQuery('#question_options_count').val(count);
 }
 
 function espresso_reg_forms_show_option_desc(show){

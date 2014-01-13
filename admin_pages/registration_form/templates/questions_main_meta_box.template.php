@@ -178,11 +178,10 @@ $has_answers = $question->has_answers();
 									<?php
 									echo EEH_Form_Fields::hidden_input("question_options[{$count}][QST_ID])", $option->question_ID());
 									echo EEH_Form_Fields::hidden_input("question_options[{$count}][QSO_ID])", $option->ID());
+									$count++;
 									?>
 								</tr>
-								
 								<?php 
-									$count++;
 								}
 							} else {
 							?>
@@ -194,12 +193,17 @@ $has_answers = $question->has_answers();
 									<input type="text" name="question_options[0][QSO_desc]" class="option-desc regular-text">
 								</td>
 								<td>
+									<?php
+										echo EEH_Form_Fields::hidden_input("question_options_count", $count);
+									?>
 								</td>
 							</tr>							
 							<?php	
 							}
 							?>
-							
+							<tr style="display:none">
+								<td colspan="3"><?php echo EEH_Form_Fields::hidden_input("question_options_count", $count); ?></td>
+							</tr>
 						</tbody>
 					</table>
 					
