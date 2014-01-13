@@ -165,7 +165,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 					</th>
 					<td>
 						<?php echo EEH_Form_Fields::select_input('show', $this->_yes_no_options, $this->_payment_settings['show']); ?><br />
-						<span class="description"><?php _e('Will display invoices as a payemnt option <br />	on your payemnt page. (Default: Yes)', 'event_espresso'); ?></span>
+						<span class="description"><?php _e('Will display invoices as a payment option <br />	on your payment page. (Default: Yes)', 'event_espresso'); ?></span>
 					</td>
 				</tr>
 
