@@ -65,7 +65,7 @@
 #reg-admin-reg-details-reg-date-hdr,
 #reg-admin-reg-details-reg-status-hdr { padding:0; margin:0 0 1em; }
 
-#reg-admin-approve-decline-reg-status-spn { position: relative; top:-4px; }
+#reg-admin-approve-decline-reg-status-spn { position: relative; top:-4px; display:block; }
 #reg-admin-approve-decline-reg-status-spn a { margin-left:1em; margin-right:1em; vertical-align: baseline; }
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
@@ -283,4 +283,20 @@
 
 #admin-primary-mbox-reg-details-dv .secondary-button {
 	margin-left: 10px;
+}
+
+#reg_status_change_form {
+	margin-top: 1em;
+}
+
+#reg_status_change_form .button-secondary {
+	margin-right: 0;
+}
+
+#reg_status_change_form .ee-attention {
+	position: absolute;
+	width: 50%;
+	top: -100px;
+	right: 0;
+	padding: 15px 10px 0 10px;
 }

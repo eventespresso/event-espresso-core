@@ -73,7 +73,7 @@ class EEM_Country extends EEM_Base {
 				'CNT_cur_thsnds' => new EE_Plain_Text_Field('CNT_cur_thsnds', __('Currency Thousands Seperator','event_espresso'), false, ','),
 				'CNT_tel_code' => new EE_Plain_Text_Field('CNT_tel_code', __('Country Telephone Code','event_espresso'), false, ''),
 				'CNT_is_EU' => new EE_Boolean_Field('CNT_is_EU', __('Country is Member of EU','event_espresso'), false, false),
-				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Active Flag','event_espresso'), false, true)
+				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Appears in Select Boxes in Forms','event_espresso'), false, true)
 			));
 		$this->_model_relations = array(
 			'Attendee'=>new EE_Has_Many_Relation(),

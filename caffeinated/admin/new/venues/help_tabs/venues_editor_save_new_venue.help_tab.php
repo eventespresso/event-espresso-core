@@ -1,12 +1,12 @@
 <h3><?php _e('Save New Venue', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Quickly publish your venue to allow linking to an event.', 'event_espresso'); ?><br />
+<?php _e('Quickly publish your venue to allow linking to an event or multiple events.', 'event_espresso'); ?><br />
 </p>
 <p>
 <ul>
 <li>
 <?php _e('Status', 'event_espresso'); ?><br />
-<?php _e('The following statuses are available: Pending Review, Draft, Cancelled, Postponed, and Sold out. A status of pending review will set a venue to draft until an event administrator has approved the venue. A status of draft will save a venue but it will be unpublished. A status of cancelled means that an venue will no longer take place. A status of postponed means that an venue is not currently scheduled but may be in the future. A status of sold out means that tickets are no longer available for a venue.', 'event_espresso'); ?>
+<?php _e('The following statuses are available: Published, Pending Review, and Draft. A status of published means that a venue is live and can be associated with one or more events. Pending review will set a venue to draft until an event administrator has approved the venue. A status of draft will save a venue but it will be unpublished.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Visibility', 'event_espresso'); ?><br />
@@ -30,7 +30,7 @@
 </li>
 <li>
 <?php _e('Move to Trash', 'event_espresso'); ?><br />
-<?php _e('Click the Move to Trash link to move a venue to the trash. Note: a venue can be completely deleted only after associated payments have been removed and registrations have been removed.', 'event_espresso'); ?>
+<?php _e('Click the Move to Trash link to move a venue to the trash.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

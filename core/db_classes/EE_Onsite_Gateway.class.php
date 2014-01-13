@@ -15,8 +15,6 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	protected function __construct(EEM_Gateways &$model) {
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		$this->_button_base = 'pay-by-credit-card.png';
-		// this filter allows whatever function is processing the registration page to know what inputs to expect
-		//add_filter('FHEE_reg_page_billing_inputs', array(&$this, 'espresso_reg_page_billing_inputs'));
 		$this->_btn_img = EE_GATEWAYS_URL .$this->_button_base;
 		parent::__construct($model);
 	}
@@ -54,93 +52,151 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 * 		@param		array	$section - what part of the billing info form, "address", "credit_card", or "other"
 	 * 		@return 		string
 	 */
-	protected function _generate_billing_info_form_fields($billing_inputs = array(), $section = FALSE) {
+	protected function _generate_billing_info_form_fields( $billing_inputs = array(), $section = FALSE ) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (empty($billing_inputs) || !$section) {
+		if ( empty( $billing_inputs ) || !$section ) {
 			return;
 		}
-		global $css_class;
+		global $wp_filter, $css_class;
+
 		// fill out section name
 		$section = '_billing_info_' . $section . '_fields';
 		// if you don't behave - this is what you're gonna get !!!
 		$output = '';
 		// cycle thru billing inputs
-		foreach ($billing_inputs as $input_key => $billing_input) {
+		foreach ( $billing_inputs as $input_key => $billing_input ) {
 			// is the billing input in the requested section	?
-			if (in_array($input_key, $this->$section)) {
+			if ( in_array( $input_key, $this->$section )) {
 				// required fields get a * 
-				$required = $billing_input['required'] ? '&nbsp;<em>*</em>' : '';
-				// and the css class "required"
-				$styles = $billing_input['required'] ? 'required ' . $css_class : $css_class;
+				$required = $billing_input['required'] ? EEH_Form_Fields::prep_required( array( 'class' => 'required', 'label' => '<em>*</em>' )) : '';
+				// answer
+				$answer = EE_Registry::instance()->REQ->is_set( $input_key ) ? EE_Registry::instance()->REQ->get( $input_key ) : $billing_input['value'];
 
-				// start with a p tag, unless this is the credit card year field
-				if ( $input_key != 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ) {
-					$output .= "\n\t\t" . '<div class="reg-page-form-field-wrap-pg">';
+				if ( $input_key == 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ) {
+					
+					// Credit Card MONTH
+					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_billing_cc_month_input_wrap' ), 10, 2 );
+					remove_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					remove_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					$output .= EEH_Form_Fields::select( 
+						__('Expiry Date', 'event_espresso'), 
+						$answer, 
+						EEH_Form_Fields::two_digit_months_dropdown_options(),
+						$input_key, 
+						$input_key,
+						$css_class . ' display-inline small-txt',
+						$required,
+						'',
+						'',
+						'',
+						FALSE,
+						TRUE,
+						FALSE
+					);
+					remove_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_billing_cc_month_input_wrap' ), 10, 2 );
+					add_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					add_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					$output .= "\n\t\t\t" . '&nbsp;/&nbsp;';
+					
+				} elseif ( $input_key == 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ) {
+					
+					// Credit Card YEAR							
+					// remove label
+					add_filter( 'FHEE_form_field_label_html', array( 'EEH_Form_Fields', 'remove_label_keep_required_msg' ), 10, 2 );
+					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_billing_cc_year_input_wrap' ), 10, 2 );
+					remove_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					remove_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					$output .= EEH_Form_Fields::select( 
+						__('Year', 'event_espresso'), 
+						$answer, 
+						EEH_Form_Fields::next_decade_two_digit_year_dropdown_options(), 
+						$input_key, 
+						$input_key,								
+						$css_class . ' display-inline small-txt',
+						$required,
+						'',
+						'',
+						'',
+						FALSE,
+						TRUE,
+						FALSE
+					);
+					// remove filter that removes label, or else no other inputs will have labels
+					remove_filter( 'FHEE_form_field_label_html', array( 'EEH_Form_Fields', 'remove_label_keep_required_msg' ), 10, 2 );
+					remove_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_billing_cc_year_input_wrap' ), 10, 2 );
+					add_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					add_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					$output .= "\n\t\t\t" . '<span class="small-text lt-grey-text">' . __('(mm/yy)', 'event_espresso') . '</span>';
+					
+				} else {
+
+					// create question form input
+					$QFI = new EE_Question_Form_Input(
+						EE_Question::new_instance( array( 
+							'QST_display_text' => $billing_input['label'], 
+							'QST_system' => $billing_input['db-col'],
+							'QST_type'=>$billing_input['input'],
+							'QST_required' => $billing_input['required'] 
+						)),
+						EE_Answer::new_instance( array( 
+							'ANS_value'=> $answer 
+						)),
+						array(
+							'input_name' =>  $input_key,
+							'input_id' => $input_key,
+							'input_class' => $css_class,
+							'input_prefix' => '',
+							'append_qstn_id' => FALSE
+						)
+					);
+					// add options
+					if ( isset( $billing_input['options'] )) {
+						$options = is_array( $billing_input['options'] ) ? $billing_input['options'] : explode( ',', $billing_input['options'] );
+						foreach ( $options as $option ) {	
+							$QSO = EE_Question_Option::new_instance ( array (
+								'QSO_value' => $option,
+								'QSO_desc' => $option
+							));
+							$QFI->add_temp_option( $QSO );												
+						}								
+					}	
+					$output .= EEH_Form_Fields::generate_form_input( $QFI );	
+
 				}
-
-				// what type of input are we dealing with ?
-				switch ($billing_input['input']) {
-
-					// text inputs
-					case 'text' :
-
-						$output .= "\n\t\t\t" . '<label class="espresso-form-input-lbl" for="' . $input_key . '">' . $billing_input['label'] . $required . '</label>';
-						$output .= "\n\t\t\t" . '<input id="' . $input_key . '" class="' . $styles . '" type="text" value="' . $billing_input['value'] . '" name="' . $input_key . '">';
-						break;
-
-					// dropdowns
-					case 'select' :
-
-						if ( $input_key == 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ) {
-
-							$output .= "\n\t\t\t" . '<label class="espresso-form-input-lbl">' . __('Expiry Date', 'event_espresso') . '&nbsp;<em>*</em></label>';
-							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name . '" class="' . $styles . ' display-inline small-txt" name="reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name . '">';
-							for ($x = 1; $x <= 12; $x++) {
-								$value = $x < 10 ? '0' . $x : $x;
-								$output .= "\n\t\t\t\t" . '<option value="' . $value . '">' . $value . '</option>';
-							}
-							$output .= "\n\t\t\t" . '</select>';
-							$output .= "\n\t\t\t" . '&nbsp;/&nbsp;';
-						} elseif ( $input_key == 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ) {
-
-							$output .= "\n\t\t\t" . '<select id="reg-page-billing-card-exp-date-year-' . $this->_gateway_name . '" class="' . $styles . ' display-inline small-txt" name="reg-page-billing-card-exp-date-year-' . $this->_gateway_name . '">';
-							$current_year = date('y');
-							$next_decade = $current_year + 10;
-							for ($x = $current_year; $x <= $next_decade; $x++) {
-								$value = $x < 10 ? '0' . $x : $x;
-								$output .= "\n\t\t\t\t" . '<option value="' . $value . '">' . $value . '</option>';
-							}
-							$output .= "\n\t\t\t" . '</select>';
-							$output .= "\n\t\t\t" . '<span class="small-text lt-grey-text">' . __('(mm/yy)', 'event_espresso') . '</span>';
-						} else {
-
-							$output .= "\n\t\t\t" . '<label class="espresso-form-input-lbl" for="' . $input_key . '">' . $billing_input['label'] . $required . '</label>';
-							$output .= "\n\t\t\t" . '<select id="' . $input_key . '" class="' . $styles . ' small-txt" name="' . $input_key . '">';
-
-							if (is_array($billing_input['options'])) {
-								$options = $billing_input['options'];
-							} else {
-								$options = explode(',', $billing_input['options']);
-							}
-
-							foreach ($options as $key => $value) {
-								//$key = str_replace( ' ', '_', sanitize_key( $value ));
-								$output .= "\n\t\t\t\t" . '<option value="' . $key . '">' . $value . '</option>';
-							}
-							$output .= "\n\t\t\t" . '</select>';
-						}
-
-						break;
-				} // end switch
-				// end with a p tag, unless this is the credit card month field
-				if ( $input_key != 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ) {
-					$output .= "\n\t\t" . '</div>';
-				}
+				
 			} // end if ( in_array( $input_key, $this->$section ))
 		} // end foreach( $billing_inputs as $input_key => $billing_input ) 
-
+		
+		
 		return $output;
+	}
+
+
+
+	/**
+	 * 	reg_form_billing_cc_month_input__wrap
+	 *
+	 * 	@access 	public
+	 * 	@param 	string 	$input
+	 * 	@return 		string
+	 */
+	public function reg_form_billing_cc_month_input_wrap( $input, $label ) {
+		return '<div class="reg-page-form-field-wrap-pg">' . $input;		
+	}
+
+
+
+
+	/**
+	 * 	reg_form_billing_cc_year_input__wrap
+	 *
+	 * 	@access 	public
+	 * 	@param 	string 	$input
+	 * 	@return 		string
+	 */
+	public function reg_form_billing_cc_year_input_wrap( $input, $label ) {
+		return $input . '</div>';		
 	}
 
 
@@ -158,15 +214,11 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		// allow others to edit post input array
 		$reg_page_billing_inputs = $this->espresso_reg_page_billing_inputs();
 		$reg_page_billing_inputs = apply_filters( 'FHEE_reg_page_billing_inputs', $reg_page_billing_inputs );
-		// if EE_Validate_and_Sanitize is not instantiated
-		if ( ! defined( 'EE_Validate_and_Sanitize' )) {
-			require_once(EE_CLASSES . 'EE_Validate_and_Sanitize.class.php');
-			$EE_VnS = EE_Validate_and_Sanitize::instance();
-		}
+
 //printr( $reg_page_billing_inputs, '$reg_page_billing_inputs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// validate and sanitize	post data
-		$reg_page_billing_inputs = $EE_VnS->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
+		$reg_page_billing_inputs = EE_Registry::instance()->load_class('EE_Validate_and_Sanitize')->validate_and_sanitize_post_inputs($reg_page_billing_inputs);
 		if ($reg_page_billing_inputs) {
 			// add billing info to the session
 			if (EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => $reg_page_billing_inputs ))) {

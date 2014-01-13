@@ -10,15 +10,15 @@
 
 <?php echo $additional_registration_options; ?>
 
-<p>
+<!-- <p>
 	<label><?php _e('Display  Description', 'event_espresso'); ?></label>
 	<?php echo $display_description; ?>
-</p>
+</p> -->
 
-<p>
+<!-- <p>
 	<label><?php _e('Display  Registration Form', 'event_espresso'); ?></label>
 	<?php echo $display_registration_form; ?>
-</p>
+</p> -->
 
 <p>
 	<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>

@@ -352,6 +352,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $registrations == NULL ) {
 			$this->_initialize_registrations();
 		}
+		if ( !defined('SPCO_TEMPLATES_PATH' ) )
+			self::set_definitions();
+		$this->set_templates();
 			
 	}
 
@@ -522,7 +525,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@access 		public
 	 * 		@return 		void
 	 */
-	public function registration_checkout() {
+	public function registration_checkout( $from_admin = FALSE ) {
 
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 		//d($this->_cart);
@@ -633,8 +636,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 //					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-				add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
-				add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
+				add_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+				add_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
 				$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
 
 				// show this attendee form?
@@ -774,6 +777,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}		
 		add_action( 'AHEE__SPCO__after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
 
+		$template_args['from_admin'] = $from_admin;
+
+		//if in admin we exit at this point and display the questions template
+		if ( $from_admin ) {
+			//some custom template args
+			$template_args['step_dv_class'] = '';
+			return EEH_Template::display_template( $this->_templates['registration_page_attendee_information'], $template_args, TRUE );
+		}
+
 		$registration_steps = '';
 		$step_nmbr = 1;
 		// set pointer to first step
@@ -894,184 +906,12 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * @return string html
 	 */
 	public function registration_checkout_for_admin() {
+
+		$this->_reg_url_link = FALSE;
 		$this->init_for_admin();
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		EE_Registry::instance()->load_helper( 'Template' );
-		EE_Registry::instance()->load_class( 'Question_Form_Input', array(), FALSE, FALSE, TRUE );
 
-
-		$template_args = array();
-		$template_args['css_class'] = '';
-		$template_args['confirmation_data'] = '';
-
-		$event_queue = array();
-		$total_items = 0;
-		$ticket_count = array();
-
-
-		$additional_event_attendees = array();
-		$events_requiring_pre_approval = array();
-		$events_that_use_coupon_codes = array();
-		$events_that_use_groupon_codes = array();
-		$template_args['reg_page_discounts_dv_class'] = 'hidden';
-		$template_args['additional_attendee_reg_info'] = NULL;
-		
-		$template_args['whats_in_the_cart'] = '';
-
-		$event_queue['title'] = __('Registrations', 'event_espresso');
-		$attendee_headings = array();
-		$additional_attendee_forms = FALSE;
-
-		if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations() !== NULL ) {
-				//d( $this->_transaction );
-				$event_queue['has_items'] = TRUE;
-				$attendee_questions = array();
-				$prev_event = NULL;
-				
-				foreach ( $this->_transaction->registrations() as $registration ) {
-					
-					$line_item_ID = $registration->reg_url_link();
-
-					$event_queue['items'][ $line_item_ID ]['ticket'] = $registration->ticket();
-					$event_queue['items'][ $line_item_ID ]['event'] = $registration->event();
-					$total_items += $registration->count();
-					$ticket_count[ $registration->ticket()->ID() ] = isset( $ticket_count[ $registration->ticket()->ID() ] ) ? $ticket_count[ $registration->ticket()->ID() ] + 1 : 1;
-
-					$question_meta = array(
-						'EVT_ID' => $registration->event()->ID(),
-						'att_nmbr' => $registration->count(),
-						'ticket_id' => $registration->ticket()->ID(),
-						'input_name' =>  '[' . $line_item_ID . ']',
-						'input_id' => $line_item_ID,
-						'input_class' => 'ee-reg-page-questions' . $template_args['css_class']
-					);
-
-					$Question_Groups = EE_Registry::instance()->load_model( 'Question_Group' )->get_all( array( 
-						array( 
-							'Event.EVT_ID' => $registration->event()->ID(), 
-							'Event_Question_Group.EQG_primary' => $registration->count() == 1 ? TRUE : FALSE
-						),
-						'order_by'=>array( 'QSG_order' => 'ASC' )
-					));
-					
-					foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
-						$Questions = $Question_Group->get_many_related( 'Question', array( 'order_by'=>array( 'QST_order'=>'ASC' )) );
-						//d( $Questions );
-						
-						foreach ( $Questions as $Question ) {
-
-							$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
-
-							if ( ! $answer_value ) {
-								$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$Question->ID(), 'REG_ID'=>$registration->ID() )));
-							}
-
-							if ( $answer_value || ! $answer instanceof EE_Answer ) {
-								// create an EE_Answer object for storing everything in
-								$answer = EE_Answer::new_instance ( array( 
-									'QST_ID'=> $Question->ID(),
-									'REG_ID'=> $registration->ID()
-								 ));
-							}
-
-							if ( $answer instanceof EE_Answer ) {
-								if ( ! empty( $answer_value )) {
-								$answer->set( 'ANS_value', $answer_value );
-								}								
-								$question_meta['attendee'][ $Question->is_system_question() ? $Question->system_ID() : $Question->ID() ] = $answer->value();
-								$answer->cache( 'Question', $Question );
-								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-	//								echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-								$registration->cache( 'Answer', $answer, $answer_cache_id );
-							}
-							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
-						}		
-					}
-
-					add_filter( 'FHEE_form_field_label_html', array( $this, 'reg_form_form_field_label_wrap' ), 10, 1 );
-					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_form_field_input__wrap' ), 10, 1 );
-					
-					$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
-
-					// show this attendee form?
-					if ( empty( $attendee_questions )) {						
-						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '
-							<input
-									type="hidden"
-									id="' . $line_item_ID . '-additional_attendee_reg_info"
-									name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]"
-									value="0"
-							/>' . "\n";
-					} else {
-						$additional_attendee_forms = $registration->count() == 1 ? FALSE : TRUE;
-						$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '';
-					}
-					$event_queue['items'][ $line_item_ID ]['attendee_questions'] = $attendee_questions;
-
-
-
-					// is this the primarary registrant ?
-					if ( $registration->count() == 1 ) {
-						// grab line item from primary attendee
-						$template_args['prmy_att_input_name'] =  $line_item_ID;					
-					} else { 
-					
-						// for all  attendees other than the primary attendee				
-						$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ] = array(
-								'ticket' => $registration->ticket()->name(),
-								'att_nmbr' => $registration->count(),
-								'input_id' => $line_item_ID,
-								'input_name' =>  '[' . $line_item_ID . ']'
-						);
-						
-						$item_name = $registration->ticket()->name();
-						$item_name .= $registration->ticket()->description() != '' ? ' - ' . $registration->ticket()->description() : '';
-						
-						// if this is a new ticket OR if this is the very first additional attendee after the primary attendee
-						if ( $registration->ticket()->ID() != $prev_event || $registration->count() == 2 ) {
-							$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = $item_name;
-							$prev_event = $registration->ticket()->ID();
-						} else {
-							// no heading
-							$additional_event_attendees[ $registration->ticket()->ID() ][ $line_item_ID ]['event_hdr'] = FALSE;
-						}
-					}
-				} 
-				
-				if ( ! $this->_reg_url_link ) {
-					EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
-				}
-	
-			} else {
-				// empty
-				$event_queue['has_items'] = FALSE;
-			}
-
-		$template_args['additional_event_attendees'] = $additional_event_attendees;
-		$template_args['ticket_count'] = $ticket_count;
-		$template_args['print_copy_info'] = $additional_attendee_forms;
-		$grand_total = $this->_cart->get_cart_grand_total();
-		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
-		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
-		
-		$cart_total_before_tax = $this->_cart->get_cart_total_before_tax();
-		$template_args['payment_required'] = $cart_total_before_tax > 0 ? TRUE : FALSE;
-
-		if ( ! $template_args['payment_required'] ) {
-			EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ) );
-		}
-
-		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
-
-		
-//		$template_args['taxes'] = EE_Taxes::calculate_taxes( $grand_total );
-		$template_args['taxes'] = $this->_cart->get_taxes_line_item()->children();
-		
-		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
-		$template_args['event_queue'] = $event_queue;
-		$template_args['images_dir_url'] = EE_GLOBAL_ASSETS_URL . 'images/';
-		$template = REG_TEMPLATE_PATH . 'registration_page_registration_questions.template.php';
-		return EEH_Template::display_template( $template, $template_args, TRUE );
+		//do native registration_checkout
+		return $this->registration_checkout( TRUE );
 	}
 
 
@@ -1103,7 +943,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * 	@param 	string 	$label
 	 * 	@return 		string
 	 */
-	public function reg_form_form_field_label_wrap( $label ) {
+	public static function reg_form_form_field_label_wrap( $label ) {
 		return '<div class="reg-page-form-field-wrap-pg">' . $label;		
 	}
 
@@ -1114,10 +954,11 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * 	reg_form_form_field_input__wrap
 	 *
 	 * 	@access 	public
+	 * 	@param 	string 	$input
 	 * 	@param 	string 	$label
 	 * 	@return 		string
 	 */
-	public function reg_form_form_field_input__wrap( $input ) {
+	public static function reg_form_form_field_input__wrap( $input, $label ) {
 		return $input . '</div>';		
 	}
 
@@ -1476,16 +1317,16 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 		//all is good so let's continue with finalizing the registration.
 		$this->_transaction->save_new_cached_related_model_objs();
-		$this->_transaction->save();
 		EE_Registry::instance()->SSN->set_session_data( array( 'transaction', NULL ));
 		$this->_transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data() );
 		$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 		//is this free event?
 		if ( $this->_cart->get_grand_total()->total() == EEH_Template::format_currency( 0, TRUE ) ) {
 			$this->_transaction->set_status( EEM_Transaction::complete_status_code );
+		} else {
+			$this->_transaction->set_status( EEM_Transaction::open_status_code );
 		}
-		$this->_transaction->finalize();
-		$this->_transaction->save();
+		$this->_transaction->finalize( TRUE );
 		EE_Registry::instance()->SSN->clear_session();
 		return $this->_transaction->ID();
 	}

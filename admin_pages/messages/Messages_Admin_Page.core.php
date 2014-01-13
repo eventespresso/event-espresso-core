@@ -588,7 +588,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$MTP = EEM_Message_Template_Group::instance();
 		
-		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
+		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? 'GRP_ID' : $this->_req_data['orderby'];
 		$orderby = $this->_req_data['orderby'];
 
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] ) ) ? $this->_req_data['order'] : 'ASC';

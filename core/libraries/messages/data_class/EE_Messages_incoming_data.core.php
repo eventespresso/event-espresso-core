@@ -247,7 +247,7 @@ abstract class EE_Messages_incoming_data {
 				$event_attendee_count[$evt_id] = isset( $event_attendee_count[$evt_id] ) ? $event_attendee_count[$evt_id] + 1 : 0;
 				$attendees[$reg->attendee_ID()]['line_ref'][] = $evt_id;
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->ID()] = $reg;
+				$attendees[$reg->attendee_ID()]['reg_obj'] = $reg;
 				$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
 				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee()->email();
 				$attendees[$reg->attendee_ID()]['tkt_objs'][$ticket->ID()] = $ticket;

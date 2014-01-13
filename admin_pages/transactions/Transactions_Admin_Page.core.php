@@ -712,7 +712,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	function _txn_billing_info_side_meta_box() {
-		$billing_info = $this->_transaction->billing_info();
 
 		$this->_template_args['billing_info'] = $this->_transaction->billing_info();
 		

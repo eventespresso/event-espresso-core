@@ -140,10 +140,6 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 				'label' => __('Event Admin', 'event_espresso'),
 				'description' => __('This template is what event administrators will receive with an cancelled registration', 'event_espresso')
 				),
-			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive with cancelled registration', 'event_espresso')
-				),
 			'attendee' => array(
 				'label' => __('Attendee', 'event_espresso'),
 				'description' => __('This template is what each attendee for the event will receive when their registration is cancelled.', 'event_espresso')
@@ -161,7 +157,6 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
 			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list'),
 			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
 			);
 	}
@@ -212,29 +207,6 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 		return $addressees;
 	}
-
-
-	/**
-	 * Takes care of setting up the addressee object(s) for the primary attendee.
-	 *
-	 * @access protected
-	 * @return array of EE_Addressee objects
-	 */
-	protected function _primary_attendee_addressees() {
-		if ( $this->_single_message ) 
-			return array();
-		
-		$aee = $this->_default_addressee_data;
-		$aee['events'] = $this->_data->events;
-		$aee['attendees'] = $this->_data->attendees;
-		$aee['att_obj'] = $this->_data->primary_attendee_data['att_obj'];
-
-		//great now we can instantiate the $addressee object and return (as an array);
-		$add[] = new EE_Messages_Addressee( $aee );
-		return $add;
-	}
-
-
 
 
 
