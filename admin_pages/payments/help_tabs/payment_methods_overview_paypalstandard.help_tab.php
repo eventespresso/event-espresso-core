@@ -5,7 +5,7 @@
 <h3><?php _e('PayPal Standard Settings', 'event_espresso'); ?></h3>
 <ul>
 <li>
-<?php _e('PayPal ID', 'event_espresso'); ?><br />
+<?php _e('PayPal Email', 'event_espresso'); ?><br />
 <?php _e('Enter the email that you use to login to your PayPal account.', 'event_espresso'); ?>
 </li>
 <li>
