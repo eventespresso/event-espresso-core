@@ -352,7 +352,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $registrations == NULL ) {
 			$this->_initialize_registrations();
 		}
-
+		if ( !defined('SPCO_TEMPLATES_PATH' ) )
+			self::set_definitions();
 		$this->set_templates();
 			
 	}
