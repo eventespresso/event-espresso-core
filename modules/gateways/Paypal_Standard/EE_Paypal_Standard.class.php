@@ -154,13 +154,13 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				<label><strong style="color:#F00"><?php _e('Please Note', 'event_espresso'); ?></strong></label>
 			</th>
 			<td>				
-				<?php _e('For PayPal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?>
+				<?php _e('You will need a PayPal Premier or Business account for the PayPal IPN to work correctly.', 'event_espresso'); ?>
 			</td>
 		</tr>
 
 		<tr>
 			<th><label for="paypal_id">
-					<?php _e('PayPal ID', 'event_espresso'); ?>
+					<?php _e('PayPal Email', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="paypal_id" size="35" id="paypal_id" value="<?php echo $this->_payment_settings['paypal_id']; ?>">
 				<br />

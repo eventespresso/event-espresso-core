@@ -82,7 +82,7 @@ Class EE_Check extends EE_Offline_Gateway {
 		<tr>
 			<th>
 				<label for="check_title">
-					<?php _e('Title:', 'event_espresso'); ?>
+					<?php _e('Title', 'event_espresso'); ?>
 				</label>
 			</th>
 			<td>
@@ -93,7 +93,7 @@ Class EE_Check extends EE_Offline_Gateway {
 		<tr>
 			<th>
 				<label for="check_instructions">
-					<?php _e('Payment Instructions:', 'event_espresso'); ?>
+					<?php _e('Payment Instructions', 'event_espresso'); ?>
 				</label>
 			</th>
 			<td>
@@ -103,7 +103,7 @@ Class EE_Check extends EE_Offline_Gateway {
 		
 		<tr>
 			<th>
-				<label for="payable_to"><?php _e('Payable To:', 'event_espresso'); ?></label>
+				<label for="payable_to"><?php _e('Payable To', 'event_espresso'); ?></label>
 			</th>
 			<td>
 				<input class="regular-text" type="text" name="payable_to" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['payable_to']); ?>" />
@@ -112,7 +112,7 @@ Class EE_Check extends EE_Offline_Gateway {
 		
 		<tr>
 			<th>
-				<label for="payment_address"><?php _e('Address to Send Payment:', 'event_espresso'); ?></label>
+				<label for="payment_address"><?php _e('Address to Send Payment', 'event_espresso'); ?></label>
 			</th>
 			<td>
 				<textarea name="payment_address" cols="50" rows="5"><?php echo $this->_payment_settings['payment_address']; ?></textarea>

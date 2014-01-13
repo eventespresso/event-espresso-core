@@ -100,7 +100,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		<tr>
 			<th>
 				<label for="paypal_pro_email">
-					<?php _e('PayPal PRO Email', 'event_espresso'); ?>
+					<?php _e('PayPal Email', 'event_espresso'); ?>
 				</label>
 			</th>
 			<td>
@@ -225,7 +225,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		<tr>
 			<th>
 				<label>
-					<?php _e('Accepted Credit Cards', 'event_espresso'); ?>
+					<?php _e('Accepted Card Types', 'event_espresso'); ?>
 				</label>
 			</th>
 			<td>
