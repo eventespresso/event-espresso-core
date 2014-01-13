@@ -145,9 +145,7 @@ $has_answers = $question->has_answers();
 									<input type="text" name="question_options[xxcountxx][QSO_desc]" class="option-desc regular-text">
 								</td>
 								<td>
-									<a class="remove-option remove-item">
-										<img src="<?php echo EE_GLOBAL_ASSETS_URL ?>images/trash-16x16.png"/>
-									</a>
+									<span class="dashicons dashicons-trash ee-icon-size-18 remove-option remove-item"></span>
 								</td>
 							</tr>
 							
@@ -170,9 +168,7 @@ $has_answers = $question->has_answers();
 									</td>
 									<?php if( $count > 0 ){ ?>
 									<td>
-										<a class="remove-option remove-item">
-											<img src="<?php echo EE_GLOBAL_ASSETS_URL ?>images/trash-16x16.png"/>
-										</a>
+										<span class="dashicons dashicons-trash ee-icon-size-18 remove-option remove-item"></span>
 									</td>
 									<?php } ?>
 									<?php
