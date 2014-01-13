@@ -34,8 +34,8 @@ if ( ! function_exists( 'espresso_version' )) {
 		return '4.1.225.alpha';
 	}
 } else {
-	deactivate_plugins( plugin_basename( __FILE__ ));
 	add_action( 'admin_notices', 'espresso_duplicate_plugin_error' );
+	deactivate_plugins( plugin_basename( __FILE__ ));
 	exit();	
 }
 // define versions
