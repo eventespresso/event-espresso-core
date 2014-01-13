@@ -60,7 +60,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'start_date_time' => __('Event Start', 'event_espresso'),
 			'reg_begins' => __('On Sale', 'event_espresso'),
 			'status' => __('Status', 'event_espresso'),
-			'attendees' => '<span class="dashicons dashicons-groups ee-icon-size-20"></span>',
+			'attendees' => '<span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20"></span>',
 			//'tkts_sold' => __('Tickets Sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
 			);

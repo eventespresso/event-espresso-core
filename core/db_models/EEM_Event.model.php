@@ -78,7 +78,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		$this->plural_item = __('Events','event_espresso');		
 		
 
-		$custom_stati = array(
+		$this->_custom_stati = array(
 			EEM_Event::cancelled => array(
 				'label' => __('Cancelled', 'event_espresso'),
 				'public' => true
@@ -111,7 +111,7 @@ class EEM_Event  extends EEM_CPT_Base{
 				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
 				'post_type'=>new EE_Plain_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events'),
-				'status' => new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $custom_stati )
+				'status' => new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $this->_custom_stati )
 			),
 			'Event_Meta'=>array(
 				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
@@ -372,7 +372,7 @@ class EEM_Event  extends EEM_CPT_Base{
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['ans_obj'] = $ANS;
 							
 							if ( $QST->type() == 'SINGLE' || $QST->type() == 'MULTIPLE' || $QST->type() == 'DROPDOWN' ) {
-								$QSOs = $QST->get_many_related('Question_Option');
+								$QSOs = $QST->options(true,$answer->value());
 								if ( is_array( $QSOs ) ) {
 									foreach ( $QSOs as $QSO_ID => $QSO ) {					
 										$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_options'][ $QSO_ID ] = $QSO->model_field_array();

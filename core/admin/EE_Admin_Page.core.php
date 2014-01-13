@@ -892,6 +892,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		} else {
 			$args = array_merge( $args, array( 'action' => 'default', 'default_nonce' => wp_create_nonce( 'default_nonce' )));
 		}
+
+		//finally, let's always add a return address (if present) :)
+		$args = !empty( $_REQUEST['action'] ) ? array_merge( $args, array( 'return' => $_REQUEST['action'] ) ) : $args;
+
 		return add_query_arg( $args, $url );
 		
 	}

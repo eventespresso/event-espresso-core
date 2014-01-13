@@ -137,7 +137,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			// link to SPCO payment_options
 			$template_args['SPCO_payment_options_url'] = $primary_registrant ? $primary_registrant->payment_overview_url() : add_query_arg(  array('step'=>'payment_options' ), $revisit_spco_url );
 			// link to SPCO attendee_information
-			$template_args['SPCO_attendee_information_url'] = $primary_registrant ? $primary_registrant->payment_overview_url() : add_query_arg( array( 'step'=>'attendee_information' ), $revisit_spco_url );
+			$template_args['SPCO_attendee_information_url'] = $primary_registrant ? $primary_registrant->edit_attendee_information_url() : add_query_arg( array( 'step'=>'attendee_information' ), $revisit_spco_url );
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
 			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));

@@ -152,18 +152,23 @@
 }
 .ee-icon-size-16:before {
 	font-size: 16px;
+	margin-right:-0.05em;
 }
 .ee-icon-size-18:before {
 	font-size: 18px;
+	margin-right: -0.1em;
 }
 .ee-icon-size-20:before {
 	font-size: 20px;
+	margin-right: -0.15em;
 }
 .ee-icon-size-22:before {
 	font-size: 22px;
+	margin-right: -0.2em;
 }
 .ee-icon-size-24:before {
 	font-size: 24px;
+	margin-right: -0.25em;
 }
 
 .ee-clock-icon-big {
@@ -750,17 +755,16 @@ input.ee-register-button {
 .ee-attention {
 	width:95%;
 	padding: .75em 2.5%;
-	margin: 0 auto 2em;
+	margin: 0 auto 1em;
 	background: #fff;
 	border: 4px solid #F8D755;
 	font-size: 1em;
 	line-height: 1.6em;
-	text-align: center;	
+	text-align: center;
 }
 .highlight-bg {
 	padding:1em;
-	background:#ffffdd;
-	border-color: #F8D755;
+	background:#FEFBDC;
 }
 
 .extra-padding {

@@ -9,7 +9,7 @@
 <ul>
 <li>
 <?php _e('Enable Full Logging', 'event_espresso'); ?><br />
-<?php _e('Every time a page is accessed on your site. This option will save all Event Espresso registration form data, and debugging information to a file in the /wp-content/uploads/espresso/logs directory on your server.', 'event_espresso'); ?>
+<?php _e('This option will save all Event Espresso registration form data, and debugging information to a file in the /wp-content/uploads/espresso/logs directory on your server. This will occur each time a page is accessed on your site until this option is turned off.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Enable Remote Logging', 'event_espresso'); ?><br />
@@ -18,7 +18,7 @@
 </li>
 <li>
 <?php _e('Remote Logging URL', 'event_espresso'); ?><br />
-<?php _e('This option sends all Event Espresso debugging data and get/post variables to the specified URL.', 'event_espresso'); ?>
+<?php _e('This option sends all Event Espresso debugging data and get / post variables to the specified URL.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Send Login Information (Optional)', 'event_espresso'); ?><br />
@@ -41,7 +41,7 @@ define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
 </ul>
 <h3><?php _e('Help Tour Global Activation', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Turn the help tours off or on.', 'event_espresso'); ?>
+<?php _e('Turn help tours off or on.', 'event_espresso'); ?>
 </p>
 <p>
 <?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Admin Options Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>

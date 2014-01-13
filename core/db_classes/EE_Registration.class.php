@@ -689,7 +689,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function payment_overview_url(){
-		return $this->is_approved() || $this->is_pending_payment() ? add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'payment_options', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )) : '';
+		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'payment_options', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
 	}
 	
 	
@@ -800,7 +800,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				$icon = $show_icons ? '<span class="dashicons dashicons-star-filled ee-icon-size-16 green-text"></span>' : '';
 				break;
 			case EEM_Registration::status_id_not_approved:
-				$icon = $show_icons ? '<span class="dashicons dashicons-star-empty ee-icon-size-16 pink-text"></span>' : '';
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
 				break;
 			case EEM_Registration::status_id_pending_payment:
 				$icon = $show_icons ? '<span class="dashicons dashicons-star-half ee-icon-size-16 orange-text"></span>' : '';

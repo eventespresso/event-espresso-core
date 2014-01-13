@@ -184,7 +184,10 @@ abstract class EE_Base_Class{
 		$this->_timezone = $timezone;
 		//remember what values were passed to this constructor
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
-
+		//remember in entity mapper
+		if($model->has_primary_key_field() && $this->ID()){
+			$model->add_to_entity_map($this);
+	}
 	}
 
 
@@ -228,6 +231,8 @@ abstract class EE_Base_Class{
 					$this->set($field_obj->get_name(),$obj_in_db->get($field_obj->get_name()));
 				 }
 			 }
+			 //oh this model object has an ID? well make sure its in the entity mapper
+			 $this->get_model()->add_to_entity_map($this);
 		 }
 		 //let's unset any cache for this field_name from the $_cached_properties property.
 		 $this->_clear_cached_property( $privateAttributeName );
@@ -885,9 +890,18 @@ abstract class EE_Base_Class{
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
-			if($results){//if successful, set the primary key
-				$this->set(self::_get_primary_key_name( get_class($this) ),$results);
+			if($results){
+				//if successful, set the primary key
+				//but don't use the normal SET method, because it will check if
+				//an item with the same ID exists in the mapper & db, then 
+				//will find it in the db (because we just added it) and THAT object
+				//will get added to teh mapper before we can add this one!
+				//but if we just avoid using the SET method, all that headache can be avoided
+				$pk_attribute = $this->_get_private_attribute_name(self::_get_primary_key_name( get_class($this)));
+				$this->$pk_attribute = $results;
+				$this->_clear_cached_property($pk_attribute);
 			}
+			$this->get_model()->add_to_entity_map($this);
 		}
 		//restore the old assumption about values being prepared by the model obejct
 		$this->get_model()->assume_values_already_prepared_by_model_object($old_assumption_concerning_value_preparation);
@@ -940,7 +954,7 @@ abstract class EE_Base_Class{
 				}
 			}
 		}
-
+		
 		return $id;
 	}
 	
@@ -965,11 +979,19 @@ abstract class EE_Base_Class{
 		return self::_get_model_instance_with_name($modelName, $this->_timezone );
 	}
 
-
-
-
+	protected static function _get_object_from_entity_mapper($props_n_values, $classname){
+		//TODO: will not work for TErm_RElationships because they ahve no PK!
+		$primary_id_ref = self::_get_primary_key_name( $classname );
+		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
+			$id = $props_n_values[$primary_id_ref];
+			return self::_get_model($classname)->get_from_entity_map($id);
+		}
+		return false;
+	}
+	
 	/**
-	 * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for the primary key (if present in incoming values).  If there is a key in the incoming array that matches the primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not we return false.
+	 * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for the primary key (if present in incoming values).  
+	 * If there is a key in the incoming array that matches the primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not we return false.
 	 * @param  array  $props_n_values incoming array of properties and their values
 	 * @param  string $classname      the classname of the child class
 	 * @return mixed (EE_Base_Class|bool)

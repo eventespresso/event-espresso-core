@@ -578,7 +578,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		
 		$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) );
 		$times = $DTM->get_all_event_dates( $event_id );
-
+		
 		
 		
 		$main_template_args['total_dtt_rows'] = count($times);

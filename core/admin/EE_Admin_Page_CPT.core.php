@@ -373,7 +373,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function custom_post_stati_dropdown() {
 		global $post;
-		$statuses = EEM_CPT_Base::get_custom_post_statuses();
+		$statuses = $this->_cpt_model_obj->get_custom_post_statuses();
 		$template_args = array(
 			'cur_status' =>  $post->post_status,
 			'statuses' => $statuses,

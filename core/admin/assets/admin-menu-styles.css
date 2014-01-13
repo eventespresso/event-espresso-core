@@ -225,6 +225,26 @@ div.TB-ee-frame a {
 	color: #888;
 }
 
+.ee-icon-color-ee-grey:before {
+	color: #AC9D9C;
+}
+
+.ee-icon-color-ee-orange:before {
+	color: #E76700;
+}
+
+.ee-icon-color-ee-blue:before {
+	color: #00B1CA;
+}
+
+.ee-icon-color-ee-green:before {
+	color: #70CC50;
+}
+
+.ee-icon-color-ee-red:before {
+	color: #E44064;
+}
+
 .ee-icon-size-12:before {
 	font-size: 12px;
 }

@@ -16,13 +16,27 @@
 			<input type="hidden" id="spco-revisit" name="revisit" value="<?php echo $revisit;?>" />
 
 <?php
-		if ( $events_requiring_pre_approval != '' ) { ?>
-			<h4 class="important-notice small-text"><?php _e('Important Notice:', 'event_espresso');?></h4>
+		if ( $sold_out_events != '' ) { ?>
+			<br/><span class="ee-status sold-out"><?php _e('Sold Out', 'event_espresso');?></span><br/><br/>
+			<ul id="spco-sold-out-events-ul"><?php echo $sold_out_events; ?></ul>
+			<h6 class="pink-text"><?php _e("We're Sorry", 'event_espresso');?></h6>
 			<p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text">
-				<?php echo __('The following events do not require payment at this time and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso'); ?>				
+				<?php echo $sold_out_events_msg; ?>				
+			</p>
+			
+			
+			
+			<input id="reg-page-selected-gateway" type="hidden" value="payments_closed" name="selected_gateway">
+			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="reg-page-no-payment-required" value="1" />
+
+<?php
+		} else if ( $events_requiring_pre_approval != '' ) { ?>
+			<h4 class="orange-text"><?php _e('Important Notice:', 'event_espresso');?></h4>
+			<p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text">
+				<?php echo $events_requiring_pre_approval_msg; ?>				
 			</p>
 			<h6><?php _e('Events Requiring Pre-Approval:', 'event_espresso');?></h6>
-			<ul><?php echo $events_requiring_pre_approval; ?></ul>
+			<ul id="spco-pre-approval-events-ul"><?php echo $events_requiring_pre_approval; ?></ul>
 			
 			<input id="reg-page-selected-gateway" type="hidden" value="payments_closed" name="selected_gateway">
 			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="reg-page-no-payment-required" value="1" />
@@ -101,7 +115,7 @@
 
 			<?php do_action( 'AHEE__before_spco_whats_next_buttons', 'payment_options', $next_step ); ?>
 			
-	<?php if ( ! ( $revisit && $events_requiring_pre_approval != '' )) { ?>
+	<?php if ( ! ( $revisit && ( $events_requiring_pre_approval != '' ||  $sold_out_events != '' ))) { ?>
 			<div id="spco-payment_options-whats-next-buttons-dv" class="spco-whats-next-buttons">
 
 				<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn ee-button ee-register-button huge ee-green hide-if-no-js" rel="payment_options" >

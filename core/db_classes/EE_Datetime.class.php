@@ -272,11 +272,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
-
-
-
-
-
 	/**
 	*		Set registration limit
 	* 
@@ -289,6 +284,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		$this->set('DTT_reg_limit', $reg_limit);
 	}
 
+	/**
+	*	set_sold
+	* 
+	* 	@access		public		
+	*	@param		int		$sold 	
+	*/	
+	public function set_sold( $sold ) {
+		return $this->set( 'DTT_sold', $sold );
+	}
+
 
 
 
@@ -299,7 +304,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 */
 	function increase_sold( $qty = 1 ) {
 		$sold = $this->_DTT_sold + $qty;
-		return $this->set( 'DTT_sold', $sold );
+		return $this->set_sold( $sold );
 	}
 	
 	/**
@@ -311,7 +316,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		$sold = $this->_DTT_sold - $qty;
 		// sold can not go below zero
 		$sold = max( 0, $sold );
-		return $this->set( 'DTT_sold', $sold );
+		return $this->set_sold( $sold );
 	}
 
 
