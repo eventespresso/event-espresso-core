@@ -112,15 +112,13 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 }
 #ee-message-preview-container h1 small, #ee-message-preview-container h2 small, #ee-message-preview-container h3 small, #ee-message-preview-container h4 small, #ee-message-preview-container h5 small, #ee-message-preview-container h6 small { font-size: 60%; color: #6f6f6f; line-height: 0; text-transform: none; }
 
-#ee-message-preview-container h1 { font-weight:200; font-size: 44px;}
-#ee-message-preview-container h2 { font-weight:200; font-size: 37px;}
-#ee-message-preview-container h3 { font-weight:500; font-size: 27px;}
-#ee-message-preview-container h4 { font-weight:500; font-size: 23px;}
-#ee-message-preview-container h5 { font-weight:900; font-size: 17px;}
+#ee-message-preview-container h1 { font-weight:200; font-size: 36px;}
+#ee-message-preview-container h2 { font-weight:200; font-size: 30px;}
+#ee-message-preview-container h3 { font-weight:500; font-size: 24px;}
+#ee-message-preview-container h4 { font-weight:500; font-size: 19px;}
+#ee-message-preview-container h5 { font-weight:900; font-size: 16px;}
 #ee-message-preview-container h6 { font-weight:900; font-size: 14px; text-transform: uppercase; color:#444;}
-#ee-message-preview-container h4.attendee-name {
-	margin: 10px 0;
-}
+#ee-message-preview-container h4.attendee-name {margin: 10px 0;}
 #ee-message-preview-container .collapse { margin:0!important;}
 
 #ee-message-preview-container p, #ee-message-preview-container ul { 
@@ -134,7 +132,15 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 
 #ee-message-preview-container ul li {
 	margin-left:5px;
+	padding-bottom: 5px;
 	list-style-position: inside;
+	list-style-type: none;
+}
+#ee-message-preview-container ol.datetime-list li {
+	margin-left:10px;
+	padding-bottom: 5px;
+	list-style-position: inside;
+	list-style-type: none;
 }
 
 #ee-message-preview-container hr {

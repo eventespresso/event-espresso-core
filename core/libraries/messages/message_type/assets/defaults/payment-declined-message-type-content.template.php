@@ -29,12 +29,12 @@
 							<p class="lead">Your payment was declined for the following transaction.</p>
 							[TICKET_LIST]
 							<h5>Payment Details</h5>
-							<ol style="list-style-type: none;">
+							<ul style="list-style-type: none;">
 								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
 								<li><strong>Payment gateway:</strong> [PAYMENT_GATEWAY]</li>
 								<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
 								<li><strong>Total Owing:</strong> [TOTAL_OWING]</li>
-							</ol>
+							</ul>
 							
 							<!-- Callout Panel -->
 							

@@ -112,11 +112,11 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 }
 h1 small, h2 small, h3 small, h4 small, h5 small, h6 small { font-size: 60%; color: #6f6f6f; line-height: 0; text-transform: none; }
 
-h1 { font-weight:200; font-size: 44px;}
-h2 { font-weight:200; font-size: 37px;}
-h3 { font-weight:500; font-size: 27px;}
-h4 { font-weight:500; font-size: 23px;}
-h5 { font-weight:900; font-size: 17px;}
+h1 { font-weight:200; font-size: 36px;}
+h2 { font-weight:200; font-size: 30px;}
+h3 { font-weight:500; font-size: 24px;}
+h4 { font-weight:500; font-size: 19px;}
+h5 { font-weight:900; font-size: 16px;}
 h6 { font-weight:900; font-size: 14px; text-transform: uppercase; color:#444;}
 
 h4.attendee-name {
@@ -135,7 +135,16 @@ p.last { margin-bottom:0px;}
 
 ul li {
 	margin-left:5px;
+	padding-bottom: 5px;
 	list-style-position: inside;
+	list-style-type: none;
+}
+
+ol.datetime-list li {
+	margin-left:10px;
+	padding-bottom: 5px;
+	list-style-position: inside;
+	list-style-type: none;
 }
 
 hr {

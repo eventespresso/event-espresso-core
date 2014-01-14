@@ -29,12 +29,12 @@
 							<p class="lead">We'd like to remind you that you still owe money for the following transaction:</p>
 							[TICKET_LIST]
 							<h5>Payment Details</h5>
-							<ol style="list-style-type: none;">
+							<ul>
 								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
 								<li><strong>Payment gateway:</strong> [PAYMENT_GATEWAY]</li>
 								<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
 								<li><strong>Total Owing:</strong> [TOTAL_OWING]</li>
-							</ol>
+							</ul>
 							
 							<!-- Callout Panel -->
 							
