@@ -7,7 +7,6 @@
  * special defautl values for them, or some other column-specific functionality. So we can add them as fields,
  * but db-only ones
  */
-require_once( EE_MODELS . 'fields/EE_Model_Field_Base.php');
 abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base{
 	/**
 	 * All these children classes are for the db-only (meaning, we should select them

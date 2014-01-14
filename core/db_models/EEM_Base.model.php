@@ -2008,8 +2008,12 @@ abstract class EEM_Base extends EE_Base{
 		foreach($values as $value){
 			$cleaned_values[] = $this->_wpdb_prepare_using_field($value,$field_obj);
 		}
+		//we would just LOVE to leave $cleaned_values as an empty array, and return the value as "()",
+		//but unfortunately that's invalid SQL. So instead we return a string which we KNOW will evaluate to be the empty set
+		//which is effectively equivalent to returning "()". We don't return "(0)" because that only works for auto-incrementing columns
 		if(empty($cleaned_values)){
-			$cleaned_values[] = '0';
+			$main_table = $this->_get_main_table();
+			$cleaned_values[] = "SELECT ".$main_table->get_pk_column()." FROM ".$main_table->get_table_name()." WHERE FALSE";
 		}
 		return "(".implode(",",$cleaned_values).")";
 	}
