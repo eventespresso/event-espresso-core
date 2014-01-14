@@ -1,6 +1,9 @@
 <h3><?php _e('Available Tickets', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Available tickets shows all combination of tickets that are available. Notice that each ticket has a name, date that the ticket becomes available for purchase, date that ticket sales close on, price for each ticket, quantity available, and number sold.', 'event_espresso'); ?>
+<?php _e('Available tickets shows all combinations of tickets that are available. Notice that each ticket has a name, date that the ticket becomes available for purchase, date that ticket sales close on, price for each ticket, quantity available, number sold, and number of registrations.', 'event_espresso'); ?>
+</p>
+<p>
+<?php _e('The quantity in the "Sold" column for Available Tickets shows how many of this type of ticket has been sold. The quantity in the "Regs" column for Available Tickets shows the amount of registrations that have occurred from these tickets.', 'event_espresso'); ?>
 </p>
 <p>
 <strong><?php _e('Advanced Settings', 'event_espresso'); ?></strong><br />
