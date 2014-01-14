@@ -7,6 +7,10 @@
 <?php _e('The event datetimes limit field allows you to set a maximum number of tickets that you want to make available for an event. For example, lets say that we had 70 free tickets available and 30 premium tickets available. If we set a limit of 50 using the event datetimes limit field, then the ticket sales will close once any combination of 50 tickets are sold.', 'event_espresso'); ?>
 </p>
 <p>
+<?php _e('<strong>Event Datetimes Sold</strong><br />', 'event_espresso'); ?>
+<?php _e('The quantity in the Event Datetimes "Sold" column will keep track of how many tickets have been sold that have access to this datetime. This means that the total number "Sold" for each datetime may be greater than the number of individual tickets "Sold" because each ticket may have access to multiple datetimes.', 'event_espresso'); ?>
+</p>
+<p>
 <?php _e('<strong>Create a New Event Datetime</strong><br />', 'event_espresso'); ?>
 <?php _e('You can create a new event datetime by clicking on the add datetime button. Then set a start date for your event, an end date for your event, and a event datetimes limit (optional). You can also save time by clicking on the Duplicate Item icon<span class="clone-icon ee-icon ee-icon-clone"></span> to create a copy of an existing datetime.', 'event_espresso'); ?>
 </p>
