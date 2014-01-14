@@ -140,7 +140,7 @@ ul li {
 	list-style-type: none;
 }
 
-ol.datetime-list li {
+ol.datetime-list li, ul.question-list li {
 	margin-left:10px;
 	padding-bottom: 5px;
 	list-style-position: inside;
