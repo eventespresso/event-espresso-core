@@ -7,7 +7,7 @@
 </p>
 <h3><?php _e('Event Excerpt', 'event_espresso'); ?></h3>
 <p>
-<?php _e('An excerpt can be thought of as a short description for your event.', 'event_espresso'); ?>
+<?php _e('An excerpt can be thought of as a short description for your event. HTML tags are supported here.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Event Custom Fields', 'event_espresso'); ?></h3>
 <p>
