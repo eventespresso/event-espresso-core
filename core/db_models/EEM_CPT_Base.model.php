@@ -53,7 +53,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 */
 	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
 		$post_status_field_name=$this->post_status_field_name();
-		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->_statuses));
+		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->get_status_array()));
 		return $query_params;
 	}
 	/**
@@ -84,12 +84,6 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 
 
-	/**
-	 * keys are the statuses for posts, values are translatable strings. It's nice having an 
-	 * array of ALL of the statuses, so we can know what statuses are valid, and which are not
-	 * @var array 
-	 */
-	protected $_statuses = array();
 
 
 
