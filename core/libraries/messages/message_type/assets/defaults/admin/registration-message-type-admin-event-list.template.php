@@ -1,3 +1,6 @@
 <h3>Event Details:</h3>
-<p>[EVENT_NAME]</p>
+<ul>
+<li><strong>Event Name:</strong> [EVENT_LINK]</li>
+<li><strong>Venue:</strong> <a href="[VENUE_URL]" target="_blank">[VENUE_TITLE]</a> ([VENUE_CITY], [VENUE_STATE])</li>
+</ul>
 [ATTENDEE_LIST]

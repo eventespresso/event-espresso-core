@@ -1,6 +1,6 @@
 <h3><?php _e('Event Title', 'event_espresso'); ?></h3>
 <p>
-<?php _e('This is the name (title) of your event.', 'event_espresso'); ?>
+<?php _e('This is the name (title) of your event. HTML tags are supported here.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Event Description', 'event_espresso'); ?></h3>
 <p>

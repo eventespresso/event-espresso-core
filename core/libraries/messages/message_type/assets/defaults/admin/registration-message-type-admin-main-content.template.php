@@ -31,7 +31,7 @@
                 <table>
                     <tr>
                         <td>
-                            [EVENT_LIST]
+                           [EVENT_LIST]
                         </td>
                     </tr>
                 </table>
