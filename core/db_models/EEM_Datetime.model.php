@@ -151,7 +151,45 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			'order_by'=>array('DTT_is_primary'=>'DESC','DTT_EVT_start'=>'ASC'),
 			'default_where_conditions' => 'none'));
 	}
-
+	/**
+	 * 
+	 * @param type $EVT_ID
+	 * @param type $include_expired
+	 * @param type $include_deleted
+	 * @return EE_Datetime
+	 */
+	public function get_oldest_datetime_for_event($EVT_ID, $include_expired = false,$include_deleted = false){
+		$query_params = array(array('EVT_ID'=>$EVT_ID));
+		if( ! $include_expired){
+			$query_params[0]['DTT_EVT_start'] = array('<=',current_time('mysql'));
+		}
+		if( $include_deleted){
+			$query_params['DTT_deleted'] = array('IN',array(true,false));
+		}
+		$query_params['order_by'] = array('DTT_EVT_start'=>'ASC');
+		return $this->get_one($query_params);
+	}
+	/**
+	 * Gets the 'primary' datetime for an event. 
+	 * @param int $EVT_ID
+	 * @return EE_Datetime
+	 */
+	public function get_primary_datetime_for_event($EVT_ID,$try_to_exclude_expired = true, $try_to_exclude_deleted = true){
+		if($try_to_exclude_expired){
+			$non_expired = $this->get_oldest_datetime_for_event($EVT_ID, false,false);
+			if($non_expired){
+				return $non_expired;
+			}
+		}
+		if($try_to_exclude_deleted){
+			$expired_even = $this->get_oldest_datetime_for_event($EVT_ID, true);
+			if($expired_even){
+				return $expired_even;
+			}
+		}
+		$deleted_even = $this->get_oldest_datetime_for_event($EVT_ID, true, true);
+		return $deleted_even;
+	}
 	/**
 	 * Gets ALL the datetimes for an event (including trashed ones, for now), ordered
 	 * only by start date

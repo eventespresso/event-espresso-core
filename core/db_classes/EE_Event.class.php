@@ -252,11 +252,12 @@ class EE_Event extends EE_CPT_Base{
 	 * Returns the 'primary' datetime for the event
 	 * @return EE_Datetime
 	 */
-	public function primary_datetime() {
+	public function primary_datetime($try_to_exclude_expired = true, $try_to_exclude_deleted = true) {
 		if ( !empty ( $this->_Primary_Datetime )) { 
 			return $this->_Primary_Datetime; 
 		}
-		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
+		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_primary_datetime_for_event( $this->_EVT_ID ,$try_to_exclude_expired , $try_to_exclude_deleted );
+//		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
 		return $this->_Primary_Datetime;
 	}
 
