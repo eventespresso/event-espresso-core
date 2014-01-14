@@ -166,6 +166,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
 				EE_Registry::instance()->load_helper('DTT_Helper');
+				EE_Registry::instance()->load_helper('DTT_Helper');
 				$DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
 			}
@@ -327,6 +328,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
+				EE_Registry::instance()->load_helper('DTT_Helper');
 				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
 			}
 

@@ -550,6 +550,7 @@
 		EE_Registry::instance()->load_helper('DTT_helper');
 		$data_row = array(EE_CSV::metadata_header);//do NOT translate because this exact string is used when importing
 		$this->fputcsv2($filehandle, $data_row);
+		EE_Registry::instance()->load_helper('DTT_Helper');
 		$meta_data = array( 0=> array(
 			'version'=>espresso_version(),
 			'timezone'=>  EEH_DTT_Helper::get_timezone(),
