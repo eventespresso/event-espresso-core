@@ -3,10 +3,9 @@
 <div class="content">
 	<table>
 		<tr>
-			<td><!-- A Real Hero (and a real human being) -->
+			<td>
 				
 				<p>[EVENT_IMAGE]</p>
-				<!-- /hero -->
 				
 				<h3>[EVENT_NAME]</h3>
 				
