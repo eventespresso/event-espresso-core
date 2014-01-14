@@ -7,5 +7,4 @@
 	</li>                                
 	<li><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></li>
 </ul>
-                            
-                        
+<hr />
