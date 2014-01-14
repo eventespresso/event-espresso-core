@@ -4,9 +4,6 @@
 	<table>
 		<tr>
 			<td>
-				
-				<p>[EVENT_IMAGE]</p>
-				
 				<h3>[EVENT_NAME]</h3>
 				
 				<!-- Callout Panel -->
@@ -22,7 +19,7 @@
 	<div class="column">
 		<table align="left">
 			<tr>
-				<td><h3>Attendees</h3>
+				<td>
 						[ATTENDEE_LIST]
 					</td>
 			</tr>

@@ -140,13 +140,13 @@ ul li {
 	list-style-type: none;
 }
 
-ol.datetime-list li, ul.question-list li {
+ul.question-list li, ol.datetime-list li {
 	margin-left:10px;
 	padding-bottom: 5px;
 	list-style-position: inside;
 	list-style-type: none;
 }
-
+li.ticket-name em {padding-left: 15px;}
 hr {
 	margin: 10px 0;
 }
