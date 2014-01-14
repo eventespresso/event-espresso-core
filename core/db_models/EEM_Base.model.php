@@ -2456,14 +2456,19 @@ abstract class EEM_Base extends EE_Base{
 		}
 		
 		// if there is no primary key or the object doesn't already exist in the entity map, then create a new instance
-		if ( $primary_key === NULL || ! $classInstance = $this->get_from_entity_map( $primary_key )) {
-			//get the required info to instantiate the class which relates to this model.
+		if ( $primary_key){
+			$classInstance = $this->get_from_entity_map( $primary_key );
+			if( ! $classInstance) {
+				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
+				// add this new object to the entity map
+				$classInstance = $this->add_to_entity_map( $classInstance );
+			}
+		}else{
 			$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
-			// add this new object to the entity map
-			$classInstance = $this->add_to_entity_map( $classInstance );
+		}
+			
 			//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
-			$this->set_timezone( $classInstance->get_timezone() );
-		} 		
+		$this->set_timezone( $classInstance->get_timezone() );		
 
 		return $classInstance;
 	}
@@ -2492,7 +2497,7 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),get_class($object),$className));
 		}
 		if ( ! $object->ID() ){
-			throw new EE_Error(sprintf(__("You tried storing a model object with ID in the %s entity mapper.", "event_espresso"),get_class($this)));
+			throw new EE_Error(sprintf(__("You tried storing a model object with NO ID in the %s entity mapper.", "event_espresso"),get_class($this)));
 		}
 		// double check it's not already there
 		if ( $classInstance = $this->get_from_entity_map( $object->ID() )) {
