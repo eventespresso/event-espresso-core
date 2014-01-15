@@ -119,7 +119,8 @@ class EE_CPT_Event_Strategy {
 		global $wpdb;
 		// adds something like " AND wp_esp_datetime.DTT_is_primary = 1 " to WP Query WHERE statement
 		// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
-		$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_is_primary = 1 ';
+//		$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_is_primary = 1 ';
+		$SQL .=" GROUP BY ID";//we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once (whereas if we didn't group them by the post's ID, then we would end up with many repeates)
 		return $SQL;
 	}
 
