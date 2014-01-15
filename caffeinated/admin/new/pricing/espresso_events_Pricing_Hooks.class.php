@@ -476,6 +476,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				);
 		}
 
+		//possibly need to save tkt
+		if ( ! $ticket->ID() )
+			$ticket->save();
+
 		foreach ( $prices as $row => $prc ) {
 			$PRC_values = array(
 				'PRC_ID' => !empty( $prc['PRC_ID'] ) ? $prc['PRC_ID'] : NULL,
@@ -518,7 +522,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			}
 		}
 
-		$ticket->save();
 		return $ticket;
 	}
 
