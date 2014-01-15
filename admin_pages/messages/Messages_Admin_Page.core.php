@@ -522,7 +522,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			),
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => __('View All Message Templates', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
