@@ -37,7 +37,8 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .status-TIN { color:#999; font-size:.85em; }
 .txn-admin-payment-status-PCN { color:#999;  }
 
-#TXN_total, #TXN_paid { text-align:center; }
+/* #TXN_total, #TXN_paid { text-align:center; } */
+
 .column-TXN_total, .column-TXN_paid { width:7.5%; text-align:right; }
 .txn-pad-rght { display:block; padding-right:1em; }
 

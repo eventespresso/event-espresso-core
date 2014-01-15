@@ -301,7 +301,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => __('View All Questions', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'trash_questions' => __('Trash', 'event_espresso'),

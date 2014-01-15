@@ -27,7 +27,7 @@
 					<tr>
 						<td><h2>Hello, [FNAME] [LNAME]:</h2>
 							<p class="lead">We'd like to remind you that you still owe money for the following transaction:</p>
-								[EVENT_LIST]						
+														
 							<h3>Payment Details:</h3>
 							<ul>
 								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
@@ -35,9 +35,11 @@
 								<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
 								<li><strong>Total Owing:</strong> [TOTAL_OWING]</li>
 							</ul>
-							
 							<!-- Callout Panel -->
-							
+							<p class="callout"> You can retry your payment, or choose an alternate payment method by <a href="[PAYMENT_URL]">going here &raquo;</a> </p>
+							<!-- /Callout Panel -->
+							[EVENT_LIST]
+							<!-- Callout Panel -->
 							<p class="callout"> You can make a payment by <a href="[PAYMENT_URL]">going here »</a> </p>
 							<!-- /Callout Panel --></td>
 					</tr>
