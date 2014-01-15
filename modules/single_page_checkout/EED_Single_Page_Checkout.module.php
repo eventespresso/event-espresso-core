@@ -114,8 +114,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			add_action( 'wp_ajax_espresso_' . $reg_step_details['process_func'], array( 'EED_Single_Page_Checkout', $reg_step_details['process_func'] ));
 			add_action( 'wp_ajax_nopriv_espresso_' . $reg_step_details['process_func'], array( 'EED_Single_Page_Checkout', $reg_step_details['process_func'] ));
 		}
-//		add_action( 'wp_ajax_espresso_process_recaptcha_response', array( 'EED_Single_Page_Checkout', 'process_recaptcha_response' ));
-//		add_action( 'wp_ajax_nopriv_espresso_process_recaptcha_response', array( 'EED_Single_Page_Checkout', 'process_recaptcha_response' ));
 	}
 
 
@@ -251,6 +249,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::instance()->init();
 		EED_Single_Page_Checkout::instance()->_process_registration_confirmation();
 	}
+
+
 
 
 
@@ -849,7 +849,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		
 		EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = 'finalize_registration';
-				
 
 		$wrapper_args = array( 
 			'step' => $this->_current_step,
@@ -964,12 +963,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 
 
-
-	function sanitize_text_field_for_array_walk( &$item, &$key ) {
-		$item = sanitize_text_field( $item );
-	}
-
-
 	/**
 	 * 	_process_attendee_information
 	 *
@@ -987,7 +980,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		if ( EE_Registry::instance()->REQ->is_set( 'qstn' )) {
 			$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', EE_Registry::instance()->REQ->get( 'qstn' ));			
 			// loop through post data and sanitize all elements
-			array_walk_recursive( $valid_data, array( $this, 'sanitize_text_field_for_array_walk' ));
+			array_walk_recursive( $valid_data, array(  EE_Registry::instance()->REQ, 'sanitize_text_field_for_array_walk' ));
 		}
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if ( ! empty( $valid_data )) {
@@ -1005,6 +998,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				$primary_attendee['line_item_id'] =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
 				unset( $valid_data['primary_attendee'] );
 			}
+			
+//			printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			EE_Registry::instance()->load_model( 'Attendee' );
 			// attendee counter
@@ -1030,6 +1025,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									$copy_primary = isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
 									unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
 									if ( isset( $valid_data[ $line_item_id ] )) {
+										// filter form input data for this registration
+										$valid_data[ $line_item_id ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $line_item_id ] );
 										// now loop through our array of valid post data && process attendee reg forms
 										foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {											
 											// check for critical inputs
@@ -1086,8 +1083,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 											}
 						
-//											echo '<h4>' . $form_input . ': ' . $input_value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//											echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 											$saved = FALSE;
 											// if this form input has a corresponding attendee property
 											if ( $attendee_property ) {
@@ -1111,7 +1108,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 												
 											}
 											if ( ! $saved )  {
-												EE_Error::add_error( __( 'Unable to save registration form data.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+												EE_Error::add_error( sprintf( __( 'Unable to save registration form data for the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
 											}
 
 										}  // end of foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) 
