@@ -30,12 +30,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
 
 
 class EEH_Form_Fields {
-	
-	// used for system questions
-	private static $_states = array();
-	
-	// used for system questions
-	private static $_countries = array();
+
 
 	/**
 	 *  Generates HTML for the forms used on admin pages
@@ -636,7 +631,7 @@ class EEH_Form_Fields {
 		
 		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled .' ' . $extra . '/>';
 		
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 		
 	}
@@ -686,7 +681,7 @@ class EEH_Form_Fields {
 
 		$input_html = "\n\t\t\t" . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>' . $answer . '</textarea>';
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 		
 	}
@@ -747,8 +742,10 @@ class EEH_Form_Fields {
 		}
 
 		$input_html .= "\n\t\t\t" . '</select>';
+		
+		$input_html =  apply_filters( 'FHEE__EEH_Form_Fields__select__before_end_wrapper', $input_html, $question, $answer, $name, $id, $class, $system_ID );
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 
 	}
@@ -859,7 +856,7 @@ class EEH_Form_Fields {
 
 		$input_html .= "\n\t\t\t" . '</ul>';
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 
 	}
@@ -937,7 +934,7 @@ class EEH_Form_Fields {
 
 		$input_html .= "\n\t\t\t" . '</ul>';
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 
 	}
@@ -988,7 +985,7 @@ class EEH_Form_Fields {
 		wp_enqueue_style( 'espresso-ui-theme');
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html );
+		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 
 	}
@@ -1015,8 +1012,9 @@ class EEH_Form_Fields {
 	 * @param string $value
 	 * @return string HTML
 	 */
-	static function hidden_input( $name, $value ){
-		return '<input id="' . $name . '" type="hidden" name="'.$name.'" value="' .  $value . '"/>';
+	static function hidden_input( $name, $value, $id = '' ){
+		$id = ! empty( $id ) ? $id : $name;
+		return '<input id="' . $id . '" type="hidden" name="'.$name.'" value="' .  $value . '"/>';
 	}
 
 
@@ -1148,64 +1146,6 @@ class EEH_Form_Fields {
 
 
 
-
-
-
-
-	/**
-	 * 	get_countries
-	 * @return array 
-	 */
-	private static function get_active_countries(){
-		if ( empty( self::$_countries )) {
-			self::$_countries = EEM_Country::instance()->get_all_active_countries();
-		}
-		return self::$_countries;
-	}
-
-
-
-	/**
-	 * 	get_countries
-	 * @return array 
-	 */
-	private static function get_active_states(){
-		if ( empty( self::$_states )) {
-			self::$_states = EEM_State::instance()->get_all_states_of_active_countries();
-
-		}
-		return self::$_states;
-	}
-
-
-
-	/**
-	 * 	get_countries
-	 * @return array 
-	 */
-	private static function get_all_countries(){
-		if ( empty( self::$_all_countries )) {
-			self::$_countries = EEM_Country::instance()->get_all_countries();
-		}
-		return self::$_countries;
-	}
-
-
-
-	/**
-	 * 	get_countries
-	 * @return array 
-	 */
-	private static function get_all_states(){
-		if ( empty( self::$_all_states )) {
-			self::$_states = EEM_State::instance()->get_all_states();
-
-		}
-		return self::$_states;
-	}
-
-
-
 	/**
 	 * 	load_system_dropdowns
 	 * @param array 	$QFI
@@ -1239,7 +1179,7 @@ class EEH_Form_Fields {
 	 * 	@return array 
 	 */
 	public static function generate_state_dropdown( $QST, $get_all = FALSE ){
-		$states = $get_all ? self::get_all_states() : self::get_active_states();
+		$states = $get_all ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_states_of_active_countries();
 		if ( $states ) {
 			$QST->set( 'QST_type', 'DROPDOWN' );
 			// if multiple countries, we'll create option groups within the dropdown
@@ -1267,7 +1207,7 @@ class EEH_Form_Fields {
 	 * 	@return array 
 	 */
 	public static function generate_country_dropdown( $QST, $get_all = FALSE ){
-		$countries = $get_all ? self::get_all_countries() : self::get_active_countries();
+		$countries = $get_all ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
 		if ( $countries ) {
 			$QST->set( 'QST_type', 'DROPDOWN' );
 			// now add countries
