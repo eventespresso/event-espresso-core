@@ -8,7 +8,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @var EE_Datetime[]
 	 */
 	protected $_dtts_for_event = array();
-
+	/**
+	 * The event if one is specified in teh request
+	 * @var EE_Event
+	 */
+	protected $_evt = NULL;
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
@@ -76,8 +80,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_hidden_columns = array();
 		
 		
-
-		$this->_dtts_for_event = !empty($evt_id) ? EEM_Event::instance()->get_one_by_ID($evt_id)->get_many_related('Datetime') : array();
+		$this->_evt = EEM_Event::instance()->get_one_by_ID($evt_id);
+		$this->_dtts_for_event = !empty($evt_id) ? $this->_evt->datetimes_ordered() : array();
+		
 
 	}
 
@@ -103,18 +108,18 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			
 		} else {
 			//DTT datetimes filter
-			$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+			$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : $this->_evt->primary_datetime()->ID();
 			$dtts = array();
 			foreach ( $this->_dtts_for_event as $dtt ) {
 				$datetime_string = $dtt->start_date_and_time() . ' - ' . $dtt->end_date_and_time();
 				$dtts[] = array('id' => $dtt->ID(), 'text' => $datetime_string );
-				$cur_dtt = empty( $cur_dtt ) && $dtt->get('DTT_is_primary') ? $dtt->ID() : $cur_dtt;
 			}
 			$filters[] = EEH_Form_Fields::select_input('DTT_ID', $dtts, $cur_dtt);
 		}
 
 		return $filters;
 	}
+	
 
 
 
@@ -130,15 +135,17 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	protected function _get_total_event_attendees() {
 		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
+		$query_params = array();
 		if ($EVT_ID){
 			$query_params[0]['EVT_ID']=$EVT_ID;
 		}
 		//if DTT is included we do multiple datetimes.  Otherwise we just do primary datetime
 		if ( $DTT_ID ) {
 			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
-		} else {
-			$query_params[0]['Ticket.Datetime.DTT_is_primary'] = 1;
 		}
+		$status_ids_array = apply_filters('FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
+
+		$query_params[0]['STS_ID']= array('IN', $status_ids_array );
 		return EEM_Registration::instance()->count($query_params);
 	}
 
