@@ -1,4 +1,3 @@
-<h3>Registrant Details:</h3>
 <ul>
 	<li><strong>Name:</strong> [FNAME] [LNAME]</li>
 	[TICKET_LIST]

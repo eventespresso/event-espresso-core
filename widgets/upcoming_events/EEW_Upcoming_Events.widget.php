@@ -242,7 +242,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				$show_dates = isset( $instance['show_dates'] ) ? (bool) absint( $instance['show_dates'] ) : TRUE;
 				// start to build our where clause
 				$where = array(
-					'Datetime.DTT_is_primary' => 1,
+//					'Datetime.DTT_is_primary' => 1,
 					'status' => 'publish' 
 				);
 				// add category

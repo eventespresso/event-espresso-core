@@ -3,7 +3,6 @@
     <tr>
         <td></td>
         <td class="header container">
-            
             <div class="content">
             <table bgcolor="#999999" class="">
                 <tr>
@@ -12,7 +11,6 @@
                 </tr>
             </table>
             </div>
-            
         </td>
         <td></td>
     </tr>
@@ -23,16 +21,13 @@
     <tr>
         <td></td>
         <td class="container" bgcolor="#FFFFFF">
-            
             <!-- content -->
             <div class="content">
                 <table>
                     <tr>
                         <td>
-                            <h2>Hello, [FNAME]</h2>
-                            <p class="lead">This is a copy of your registration details!</p>
-                            
-    
+                            <h2>Hello, [FNAME]:</h2>
+                            <p class="lead">Sorry, your registration(s) for the following event was <strong>NOT</strong> approved.</p>    
                         </td>
                     </tr>
                 </table>
@@ -42,7 +37,6 @@
         <td></td>
     </tr>
 </table> <!-- END BODY -->
-
 <!-- FOOTER -->
 <table class="footer-wrap">
     <tr>
@@ -56,30 +50,24 @@
                                 <table align="left" class="column">
                                     <tbody><tr>
                                         <td>                
-                                            
                                             <h5 class="">Connect with Us:</h5>
                                             <p class=""><a href="[CO_FACEBOOK_URL]" class="soc-btn fb">Facebook</a> <a href="[CO_TWITTER_URL]" class="soc-btn tw">Twitter</a> <a href="CO_GOOGLE_URL]" class="soc-btn gp">Google+</a></p>
-
-                                            
                                         </td>
                                     </tr>
-                                </tbody></table><!-- /column 1 -->  
-                                
+                                </tbody></table>
+                                <!-- /column 1 -->  
                                 <!-- column 2 -->
                                 <table align="left" class="column">
                                     <tbody><tr>
                                         <td>                
-                                                                        
                                             <h5 class="">Contact Info:</h5>                                             
                                             <p>Phone: <strong>[CO_PHONE]</strong><br>
-                        Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></p>
-
+                                            Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></p>
                                         </td>
                                     </tr>
-                                </tbody></table><!-- /column 2 -->
-                                
+                                </tbody></table>
+                                <!-- /column 2 -->
                                 <span class="clear"></span> 
-                                
                             </td>
                         </tr>
                     </tbody>

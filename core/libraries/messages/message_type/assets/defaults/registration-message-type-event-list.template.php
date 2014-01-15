@@ -8,7 +8,7 @@
 				
 				<!-- Callout Panel -->
 				
-				<p class="callout"> [EVENT_DESCRIPTION] <a href="[EVENT_URL]">View Event &raquo;</a> </p>
+				<p class="callout"><a href="[EVENT_URL]">View Event &raquo;</a> </p>
 				<!-- /Callout Panel --></td>
 		</tr>
 	</table>
@@ -20,8 +20,9 @@
 		<table align="left">
 			<tr>
 				<td>
+					<h3>Registrant(s):</h3>
 						[ATTENDEE_LIST]
-					</td>
+				</td>
 			</tr>
 		</table>
 	</div>

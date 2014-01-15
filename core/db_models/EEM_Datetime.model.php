@@ -104,7 +104,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 					array(
 						'DTT_EVT_start' => time('timestamp') + (60 * 60 * 24 * 30), 
 						'DTT_EVT_end' => time('timestamp') + (60 * 60 * 24 * 30),
-						'DTT_is_primary' => 1,
+//						'DTT_is_primary' => 1,
 						'DTT_order' => 1,
 						'DTT_reg_limit' => INF
 						/*NULL,
@@ -139,7 +139,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 	/**
 	 * Gets the datetimes for the event (with the given limit), and orders them by "importance". By importance, we mean
-	 * that the primary datetimes are most important, and then the earlier datetimes are the most important. Maybe we'll want
+	 * that the primary datetimes are most important (DEPRECATED FOR NOW), and then the earlier datetimes are the most important. Maybe we'll want
 	 * this to take into account datetimes that haven't already passed, but we don't yet.
 	 * @param int $EVT_ID
 	 * @param int $limit
@@ -148,7 +148,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	public function get_datetimes_for_event_ordered_by_importance( $EVT_ID = FALSE, $limit = NULL){
 		return $this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
 			'limit'=>$limit,
-			'order_by'=>array('DTT_is_primary'=>'DESC','DTT_EVT_start'=>'ASC'),
+			'order_by'=>array('DTT_EVT_start'=>'ASC'),
 			'default_where_conditions' => 'none'));
 	}
 	/**

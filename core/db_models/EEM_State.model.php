@@ -61,7 +61,7 @@ class EEM_State extends EEM_Base {
 				
 		$this->_fields = array(
 			'State'=>array(
-				'STA_ID'=> new EE_Primary_Key_String_Field('STA_ID', __('State ID','event_espresso')),
+				'STA_ID'=> new EE_Primary_Key_Int_Field('STA_ID', __('State ID','event_espresso')),
 				'CNT_ISO'=> new EE_Foreign_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso'), false, NULL, 'Country'),
 				'STA_abbrev' => new EE_Plain_Text_Field('STA_abbrev', __('State Abbreviation','event_espresso'), false, ''),
 				'STA_name' => new EE_Plain_Text_Field('STA_name', __('State Name','event_espresso'), false, ''),
@@ -72,8 +72,21 @@ class EEM_State extends EEM_Base {
 			'Country' => new EE_Belongs_To_Relation(),
 			'Venue'=>new EE_Has_Many_Relation(),
 		);
-		parent::__construct();
-		
+		parent::__construct();		
+	}
+
+
+
+
+	/**
+	*	reset_cached_states
+	* 
+	* 	@access		private
+	*	@return 		void
+	*/	
+	public function reset_cached_states() {		
+		EEM_State::$_active_states = array();
+		EEM_State::$_all_states = array();
 	}
 
 
@@ -112,12 +125,9 @@ class EEM_State extends EEM_Base {
 	 * @return array 
 	 */
 	public function get_all_states_of_active_countries(){
-//		if ( $countries = EEM_Country::instance()->get_all_active_countries() ) {
-//			if ( $states = $this->get_all( array( array( 'CNT_ISO' => array( 'IN', array_keys( $countries )), 'STA_active' => TRUE ),  'order_by' => array( 'STA_name' => 'ASC' )))) {
-			if ( $states = $this->get_all( array( array( 'Country.CNT_active' => TRUE, 'STA_active' => TRUE ),  'order_by' => array( 'Country.CNT_name' => 'ASC', 'STA_name' => 'ASC' )))) {
-				return $states;
-			}
-//		}
+		if ( $states = $this->get_all( array( array( 'Country.CNT_active' => TRUE, 'STA_active' => TRUE ),  'order_by' => array( 'Country.CNT_name' => 'ASC', 'STA_name' => 'ASC' )))) {
+			return $states;
+		}
 		return FALSE;
 	}
 
@@ -137,6 +147,8 @@ class EEM_State extends EEM_Base {
 		return FALSE;
 	}
 
+
+
 	/**
 	 * 	get_all_states_of_active_countries
 	 * @return array 
@@ -150,9 +162,6 @@ class EEM_State extends EEM_Base {
 		}
 		return FALSE;
 	}
-
-
-
 
 
 
@@ -178,8 +187,6 @@ class EEM_State extends EEM_Base {
 		}
 
 	}
-	
-
 
 
 

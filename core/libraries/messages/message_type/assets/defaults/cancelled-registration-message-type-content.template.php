@@ -29,8 +29,8 @@
                 <table>
                     <tr>
                         <td>
-                            <h2>Hello, [FNAME]</h2>
-                            <p class="lead">This is a copy of your registration details!</p>
+                            <h2>Hello, [FNAME]:</h2>
+                            <p class="lead">Your registration for the following event(s) have been <strong>cancelled</strong>.</p>
                             
     
                         </td>

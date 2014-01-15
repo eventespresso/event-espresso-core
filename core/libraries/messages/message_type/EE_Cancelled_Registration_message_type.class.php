@@ -91,7 +91,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Registration Details';
+			$content[$context] = 'Cancelled Registration Details';
 		};
 		return $content;
 	}
