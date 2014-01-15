@@ -773,7 +773,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		void
 	 */
 	protected function _update_country_settings() {
-		//printr( $this->_req_data, '$this->_req_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $this->_req_data, '$this->_req_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// grab the country ISO code
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
@@ -803,12 +803,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$where_cols_n_values = array( array( 'CNT_ISO' => $CNT_ISO ));
 		// run the update
 		$success = EEM_Country::instance()->update( $cols_n_values, $where_cols_n_values );
-		//global $wpdb;
-		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success ) {
+//		global $wpdb;
+//		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success !== FALSE ) {
 			// allow filtering of states data
 			$states = apply_filters( 'FHEE_general_settings_states_save', $this->_req_data['states'] );
+//			printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru state data ( looks like : states[75][STA_name] )
 			foreach( $states as $STA_ID => $state ) {
 				$cols_n_values = array(
@@ -821,6 +822,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				$where_cols_n_values = array( array( 'STA_ID' => $STA_ID ));
 				// run the update
 				$success = EEM_State::instance()->update( $cols_n_values, $where_cols_n_values );
+				if ( $success !== FALSE ) {
+					do_action( 'AHEE__General_Settings_Admin_Page__update_country_settings__state_saved', $CNT_ISO, $STA_ID, $cols_n_values );
+				}
 			}
 		}
 		// check if country being edited matchs org option country, and if so, then  update EE_Config with new settings
