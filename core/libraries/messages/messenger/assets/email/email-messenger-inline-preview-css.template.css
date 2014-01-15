@@ -142,7 +142,7 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 	list-style-position: inside;
 	list-style-type: none;
 }
-
+#ee-message-preview-container li.ticket-name em {padding-left: 15px;}
 #ee-message-preview-container hr {
 	margin: 10px 0;
 }
