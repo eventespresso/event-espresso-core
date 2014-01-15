@@ -44,6 +44,7 @@ class EED_Add_New_State  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Add_New_State', 'set_definitions' ), 2 );
+//		add_filter( 'FHEE__EEH_Form_Fields__select__before_end_wrapper', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 7 );
 		add_action( 'wp_ajax_espresso_add_new_state', array( 'EED_Add_New_State', 'add_new_state' ));
 		add_action( 'wp_ajax_nopriv_espresso_add_new_state', array( 'EED_Add_New_State', 'add_new_state' ));
 		add_filter( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', array( 'EED_Add_New_State', 'unset_new_state_request_params' ), 10, 1 );
