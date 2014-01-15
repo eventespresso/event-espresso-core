@@ -1,15 +1,3 @@
-//functions available to window
-/**
- * Function : dump()
- * Arguments: The data - array,hash(associative array),object
- *    The level - OPTIONAL
- * Returns  : The textual representation of the array.
- * This function was inspired by the print_r function of PHP.
- * This will accept some data as the argument and return a
- * text that will be a more readable version of the
- * array/hash/object that is given.
- * Docs: http://www.openjs.com/scripts/others/dump_function_php_print_r.php
- */
 jQuery(document).ready(function($) {
 
 	// add jQuery function to center elements on screen
@@ -37,12 +25,30 @@ jQuery(document).ready(function($) {
 			return $(this).val();
 		}
 	}
-	
-	
 
-	$('#espresso-notices').center();
-	$('.espresso-notices').slideDown();
-	$('.espresso-notices.fade-away').delay(10000).slideUp();
+
+	$('.show-if-js').css({ 'display' : 'inline-block' });
+	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
+
+	
+	
+	function display_espresso_notices() {
+		$('#espresso-notices').center();
+		$('.espresso-notices').slideDown();
+		$('.espresso-notices.fade-away').delay(10000).slideUp();
+	}
+	display_espresso_notices();
+
+
+
+	function display_espresso_ajax_notices( message, type = 'error' ) {
+		var notice_id = '#espresso-ajax-notices-' + type;
+		$( notice_id + ' .espresso-notices-msg' ).text( message );
+		$( '#espresso-ajax-notices' ).center();
+		$( notice_id ).slideDown('fast');
+		$('.espresso-ajax-notices.fade-away').delay(10000).slideUp('fast');
+	}
+
 
 	//close btn for notifications
 	$('.close-espresso-notice').on( 'click', function(e){
@@ -51,8 +57,7 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 	});
 
-	$('.show-if-js').css({ 'display' : 'inline-block' });
-	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
+
 
 	// submit form
 	$('.submit-this-form').click(function() {
@@ -61,6 +66,8 @@ jQuery(document).ready(function($) {
 		$(this).closest('form').submit();
 		return false;
 	});
+
+
 
 	// generic click event for displaying and giving focus to an element and hiding control
 	$('.display-the-hidden').on( 'click', function(e) {
@@ -72,7 +79,7 @@ jQuery(document).ready(function($) {
 		// display the target's div container - use slideToggle or removeClass
 		$('#'+item_to_display+'-dv').slideToggle(250, function() {
 			// display the target div's hide link
-			$('#hide-'+item_to_display).fadeIn(50).show();
+			$('#hide-'+item_to_display).show().fadeIn(50);
 			// if hiding/showing a form input, then id of the form input must = item_to_display
 			$('#'+item_to_display).focus(); // add focus to the target
 		});
@@ -80,6 +87,8 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		return false;
 	});
+
+
 
 	// generic click event for re-hiding an element and displaying it's display control
 	$('.hide-the-displayed').on( 'click', function(e) {
@@ -90,7 +99,7 @@ jQuery(document).ready(function($) {
 		// hide the target's div container - use slideToggle or addClass
 		$('#'+item_to_hide+'-dv').slideToggle(250, function() {
 			// display the control element that toggles display of this element
-			$('#display-'+item_to_hide).fadeIn(50).show();
+			$('#display-'+item_to_hide).show().fadeIn(50);
 		});
 		e.preventDefault();
 		e.stopPropagation();
@@ -111,13 +120,28 @@ jQuery(document).ready(function($) {
 
 
 
-	
-	
-	
+
+
+
 });
 
 
 
+//functions available to window
+
+
+
+/**
+ * Function : dump()
+ * Arguments: The data - array,hash(associative array),object
+ *    The level - OPTIONAL
+ * Returns  : The textual representation of the array.
+ * This function was inspired by the print_r function of PHP.
+ * This will accept some data as the argument and return a
+ * text that will be a more readable version of the
+ * array/hash/object that is given.
+ * Docs: http://www.openjs.com/scripts/others/dump_function_php_print_r.php
+ */
 function dump(arr,level) {
 	var dumped_text = "";
 	if(!level) level = 0;
