@@ -348,7 +348,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 					'slug' => 'all',
-					'label' => __('All', 'event_espreso'),
+					'label' => __('View All Default Pricing', 'event_espreso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'trash_price' => __('Move to Trash', 'event_espresso'),

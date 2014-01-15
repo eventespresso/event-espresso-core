@@ -461,7 +461,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => __('View All Venues', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					//'restore_venues' => __('Restore_from Trash', 'event_espresso'),

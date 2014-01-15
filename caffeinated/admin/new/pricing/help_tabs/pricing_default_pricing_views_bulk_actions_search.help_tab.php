@@ -9,7 +9,7 @@
 <p>
 <ul>
 <li>
-<?php _e('All', 'event_espresso'); ?><br />
+<?php _e('View All Defailt Pricing', 'event_espresso'); ?><br />
 <?php _e('Show all default prices.', 'event_espresso'); ?>
 </li>
 <li>

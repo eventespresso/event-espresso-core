@@ -9,7 +9,7 @@
 <?php _e('Show all message templates that are active.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('All', 'event_espresso'); ?><br />
+<?php _e('View All Message Templates', 'event_espresso'); ?><br />
 <?php _e('Show every message template that has been created.', 'event_espresso'); ?>
 </li>
 <li>

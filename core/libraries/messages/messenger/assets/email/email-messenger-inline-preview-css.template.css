@@ -142,7 +142,7 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 	list-style-position: inside;
 	list-style-type: none;
 }
-
+#ee-message-preview-container li.ticket-name em {padding-left: 15px;}
 #ee-message-preview-container hr {
 	margin: 10px 0;
 }
@@ -209,6 +209,12 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 	width: 280px;
 	min-width: 279px;
 	float:left;
+}
+
+#ee-message-preview-container .column-large {
+	width: 550px;
+	margin:0 auto;
+	padding-left: 10px;
 }
 
 /* Be sure to place a .clear element after each set of columns, just to be safe */

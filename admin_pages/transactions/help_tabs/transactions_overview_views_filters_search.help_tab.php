@@ -5,7 +5,7 @@
 <p>
 <ul>
 <li>
-<?php _e('View All', 'event_espresso'); ?><br />
+<?php _e('View All Transactions', 'event_espresso'); ?><br />
 <?php _e('Show all transactions that are in Event Espresso.', 'event_espresso'); ?>
 </li>
 </ul>
