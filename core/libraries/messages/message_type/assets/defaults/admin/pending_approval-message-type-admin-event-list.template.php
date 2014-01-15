@@ -1,5 +1,4 @@
 <!-- content -->
-
 <div class="content">
 	<p>The following attendee(s) are pending approval for the following event(s).</p>
 	<table>
@@ -16,10 +15,10 @@
 
 <!-- COLUMN WRAP -->
 <div class="column-wrap">
-	<div class="column">
+	<div class="column-large">
 		<table align="left">
 			<tr>
-				<td><h3>Attendee(s):</h3>
+				<td><h3>Registrants(s):</h3>
 						[ATTENDEE_LIST]
 					</td>
 			</tr>

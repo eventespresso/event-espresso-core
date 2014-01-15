@@ -1367,7 +1367,7 @@ class EEH_Form_Fields {
 		}
 
 
-		$where['DTT_is_primary'] = 1;
+//		$where['DTT_is_primary'] = 1;
 
 		$DTTS = EE_Registry::instance()->load_model('Datetime')->get_dtt_months_and_years($where);
 

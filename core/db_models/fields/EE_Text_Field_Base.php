@@ -1,5 +1,4 @@
 <?php
-require_once( EE_MODELS . 'fields/EE_Model_Field_Base.php' );
 /**
  * Text_Fields is a base class for any fields which are have text value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
  */

@@ -59,7 +59,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		$this->_payment_settings['use_sandbox'] = false;
 		$this->_payment_settings['no_shipping'] = '0';
 		$this->_payment_settings['type'] = 'off-site';
-		$this->_payment_settings['display_name'] = __('Paypal','event_espresso');
+		$this->_payment_settings['display_name'] = __('PayPal','event_espresso');
 		$this->_payment_settings['current_path'] = '';
 		$this->_payment_settings['button_url'] = $this->_btn_img;
 	}
@@ -154,13 +154,13 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 				<label><strong style="color:#F00"><?php _e('Please Note', 'event_espresso'); ?></strong></label>
 			</th>
 			<td>				
-				<?php _e('For PayPal IPN to work, you need a Business or Premier account.', 'event_espresso'); ?>
+				<?php _e('You will need a PayPal Premier or Business account for the PayPal IPN to work correctly.', 'event_espresso'); ?>
 			</td>
 		</tr>
 
 		<tr>
 			<th><label for="paypal_id">
-					<?php _e('PayPal ID', 'event_espresso'); ?>
+					<?php _e('PayPal Email', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="paypal_id" size="35" id="paypal_id" value="<?php echo $this->_payment_settings['paypal_id']; ?>">
 				<br />
@@ -416,7 +416,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if(!$this->validateIpn()){
 			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
 			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
-			EE_Error::add_error(__("Paypal IPN Validation failed!", "event_espresso"));
+			EE_Error::add_error(__("PayPal IPN Validation failed!", "event_espresso"));
 			return false;
 		}
 		//if the transaction's just an ID, swap it for a real EE_Transaction
@@ -533,8 +533,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	/*public function get_payment_overview_content(EE_Transaction $transaction){
 			if($transaction->status_ID() == EEM_Transaction::open_status_code){
 				?>
-		<h1><?php _e('Awaiting Payment Response from Paypal...','event_espresso')?></h1>
-		<p><?php _e('Paypal has notified us that your payment is in progress. You will be notified when payment is accepted.')?></p>
+		<h1><?php _e('Awaiting Payment Response from PayPal...','event_espresso')?></h1>
+		<p><?php _e('PayPal has notified us that your payment is in progress. You will be notified when payment is accepted.')?></p>
 		<?php
 			}
 	}*/

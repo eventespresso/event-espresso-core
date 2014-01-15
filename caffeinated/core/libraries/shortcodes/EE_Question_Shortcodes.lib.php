@@ -51,11 +51,11 @@ class EE_Question_Shortcodes extends EE_Shortcodes {
 		switch ( $shortcode ) {
 
 			case '[QUESTION]' :
-				return $this->_extra_data['data']->questions[$this->_data->ID()]->get_pretty('QST_display_text');
+				return $this->_extra_data['data']->questions[$this->_data->ID()]->get_pretty('QST_display_text', 'no_wpautop');
 				break;
 
 			case '[ANSWER]' :
-				return $this->_data->get_pretty('ANS_value');
+				return $this->_data->get_pretty('ANS_value', 'no_wpautop');
 				break;
 		}
 		return '';

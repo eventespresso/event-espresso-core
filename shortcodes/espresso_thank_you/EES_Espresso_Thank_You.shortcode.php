@@ -80,6 +80,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
 			add_filter( 'FHEE_load_css', '__return_true' );
 			add_filter( 'FHEE_load_js', '__return_true' );
+			add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
 		} else {
 			//EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
 		}

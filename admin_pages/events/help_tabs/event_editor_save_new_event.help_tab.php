@@ -2,6 +2,9 @@
 <p>
 <?php _e('Quickly publish your event to allow immediate registrations.', 'event_espresso'); ?><br />
 </p>
+<p class="ee-attention">
+<?php _e('Your event should always have at least a title or description or excerpt. Saving an event without at least one of these fields filled out with information will result in your event not saving correctly. You will then need to recreate your event by clicking on the Add Event button.', 'event_espresso'); ?>
+</p>
 <p>
 <ul>
 <li>
@@ -17,8 +20,16 @@
 <?php _e('An event can be published immediately or you can schedule it to be published at a later date in the future.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Registrations', 'event_espresso'); ?><br />
-<?php _e('Shows number of registrants who are attending event. Click on the Registrations link to be brought to a page where you can be a list of registrants who are attending the event.', 'event_espresso'); ?>
+<?php _e('Approved Registrations', 'event_espresso'); ?><br />
+<?php _e('Shows number of registrants who are attending event. Click on the Approved Registrations link to be brought to a page where you can be a list of registrants who are attending the event.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('Pending Payment Registrations', 'event_espresso'); ?><br />
+<?php _e('Shows number of registrants who need to pay to attend the event. Click on the Pending Payment Registrations link to be brought to a page where you can be a list of registrants who need to pay for this event.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('Not Approved Registrations', 'event_espresso'); ?><br />
+<?php _e('Shows number of registrants who cannot attend the event because they were not approved. Click on the Not Approved Registrations link to be brought to a page where you can be a list of registrants who cannot attend the event.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('Move to Trash', 'event_espresso'); ?><br />

@@ -1,2 +1,4 @@
-<p><strong>[TICKET_NAME]</strong>
-[DATETIME_LIST]</p>
+<li><strong>Ticket:</strong> [TICKET_NAME]</li>
+<li><strong>Datetime(s):</strong>
+	<ol class="datetime-list">[DATETIME_LIST]</ol>
+</li>

@@ -309,7 +309,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('View All', 'event_espresso'),
+				'label' => __('View All Transactions', 'event_espresso'),
 				'count' => 0
 				)
 			);

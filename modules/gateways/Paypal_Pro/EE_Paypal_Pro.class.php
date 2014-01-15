@@ -100,7 +100,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		<tr>
 			<th>
 				<label for="paypal_pro_email">
-					<?php _e('PayPal PRO Email', 'event_espresso'); ?>
+					<?php _e('PayPal Email', 'event_espresso'); ?>
 				</label>
 			</th>
 			<td>
@@ -225,7 +225,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		<tr>
 			<th>
 				<label>
-					<?php _e('Accepted Credit Cards', 'event_espresso'); ?>
+					<?php _e('Accepted Card Types', 'event_espresso'); ?>
 				</label>
 			</th>
 			<td>
@@ -240,12 +240,12 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				</label>
 
 				<label class="gateway-checkbox-options">
-					<?php _e('Master Card', 'event_espresso'); ?>
+					<?php _e('MasterCard', 'event_espresso'); ?>
 					<input type="checkbox" name="credit_cards[]" size="35" value="MasterCard" <?php echo in_array("MasterCard", $credit_cards) ? $checked : ''; ?> />
 				</label>
 
 				<label class="gateway-checkbox-options">
-					<?php _e('Amex', 'event_espresso'); ?>
+					<?php _e('American Express', 'event_espresso'); ?>
 					<input type="checkbox" name="credit_cards[]" size="35" value="Amex" <?php echo in_array("Amex", $credit_cards) ? $checked : ''; ?> />
 				</label>
 
@@ -796,7 +796,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					<ul style="margin:1em 2em 1.5em; line-height:1.2em;">
 						<li><?php _e('While testing, use the credit card number listed below. Other numbers will produce an error.', 'event_espreso'); ?></li>
 						<li><?php _e('Expiry Date can be any valid date in the future', 'event_espreso'); ?></li>
-						<li><?php _e('CVV2 can be any 3 digits', 'event_espreso'); ?></li>
+						<li><?php printf(_e('CVV2 should be 115 (see %s paypals documentation for other special codes %s)', 'event_espreso'),'<a href="https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions#id108HH0RJ0TS">','</a>'); ?></li>
 					</ul>
 
 					<p class="test-credit-cards-info-pg">
@@ -823,7 +823,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Testing Result Code Responses', 'event_espreso'); ?></strong><br/>
-						<span class="small-text"><?php printf(__('You can use the amount of the transaction to generate a particular result code (see %s Paypal\'s documentation%s). The table below lists the general guidelines for specifying amounts. IMPORTANT: before you attempt any of these, ensure your sandbox paypal account has %s "Negative Testing" set to on%s', 'event_espreso'),"<a href='https://developer.paypal.com/docs/classic/api/errorcodes/#id09C3GA00GR1'>","</a>", "<a href='https://docs.google.com/a/eventespresso.com/file/d/0B5P8GXTvZgfMNXNkZ2s5VUlHTUk/edit?usp=drivesdk'>","</a>"); ?></span>
+						<span class="small-text"><?php printf(__('You can use the amount of the transaction to generate a particular result code (see %s Paypal\'s documentation%s). The table below lists the general guidelines for specifying amounts. IMPORTANT: before you attempt any of these, ensure your sandbox paypal account has %s "Negative Testing" set to on%s. Also be aware that you can generate AVS errors by using certain strings in your address field, and CVV errors using certain CVV values. See %s this paypal doc %s', 'event_espreso'),"<a href='https://developer.paypal.com/docs/classic/api/errorcodes/#id09C3GA00GR1'>","</a>", "<a href='https://docs.google.com/a/eventespresso.com/file/d/0B5P8GXTvZgfMNXNkZ2s5VUlHTUk/edit?usp=drivesdk'>","</a>","<a href='https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions'>","</a>"); ?></span>
 					</p>			
 
 					<div class="tbl-wrap">

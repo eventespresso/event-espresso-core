@@ -688,7 +688,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		}
 
 		$where = array(
-				//'Datetime.DTT_is_primary' => 1,
 		);
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;

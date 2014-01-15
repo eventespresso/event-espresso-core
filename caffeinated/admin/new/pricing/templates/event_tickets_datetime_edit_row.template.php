@@ -1,6 +1,5 @@
 <section id="edit-event-datetime-<?php echo $dtt_row; ?>" class="datetime-edit">
 	<input type="hidden" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_ID]" id="event-datetime-DTT_ID-<?php echo $dtt_row; ?>" class="event-datetime-DTT_ID" value="<?php echo $DTT_ID; ?>">
-	<input type="hidden" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_is_primary]" id="event-datetime-DTT_is_primary-<?php echo $dtt_row; ?>" class="event-datetime-DTT_is_primary" value="<?php echo $DTT_is_primary; ?>">
 	<table id="edit-event-datetime-table-<?php echo $dtt_row; ?>" class="datetime-edit-table">
 		<tr>
 			<td class="event-datetime-column date-column">
@@ -35,7 +34,6 @@
  * $event_datetimes_name
  * $edit_dtt_expanded
  * $DTT_ID
- * $DTT_is_primary
  * $DTT_EVT_start
  * $DTT_EVT_end
  * $DTT_reg_limit

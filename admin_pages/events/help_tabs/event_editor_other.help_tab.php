@@ -7,7 +7,7 @@
 </p>
 <h3><?php _e('Event Excerpt', 'event_espresso'); ?></h3>
 <p>
-<?php _e('An excerpt can be thought of as a short description for your event.', 'event_espresso'); ?>
+<?php _e('An excerpt can be thought of as a short description for your event. HTML tags are supported here.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Event Custom Fields', 'event_espresso'); ?></h3>
 <p>
@@ -28,4 +28,9 @@
 <h3><?php _e('Event Notifications', 'event_espresso'); ?></h3>
 <p>
 <?php _e('Appears when you are editing an existing event. You can select global templates or switch to custom templates. Global templates are templates that are used site wide. Custom templates are templates that have been customized.', 'event_espresso'); ?>
+</p>
+<h3><?php _e('Espresso Ticket Selector', 'event_espresso'); ?></h3>
+<p>
+<?php _e('This shortcode allows you to display the ticket selector for a specific event: <br />[ESPRESSO_TICKET_SELECTOR event_id="###"]<br />', 'event_espresso'); ?>
+<?php _e('This shortcode can be used on any event page, WordPress page, or WordPress post. To use it, copy and paste the shortcode above and change "###" to the actual post ID (numeric value) for your event. For example, if your event had an ID of 123, then the update shortcode would be [ESPRESSO_TICKET_SELECTOR event_id="123"].', 'event_espresso'); ?>
 </p>

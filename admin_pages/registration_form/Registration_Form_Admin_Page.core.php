@@ -137,18 +137,22 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
                 'help_tabs' => array(
-					'registration_form_question_groups_help_tab' => array(
-						'title' => __('Question Groups', 'event_espresso'),
-						'filename' => 'registration_form_question_groups'
+					'registration_form_questions_overview_help_tab' => array(
+						'title' => __('Questions Overview', 'event_espresso'),
+						'filename' => 'registration_form_questions_overview'
 						),
-					'registration_form_question_groups_table_column_headings_help_tab' => array(
-						'title' => __('Question Groups Table Column Headings', 'event_espresso'),
-						'filename' => 'registration_form_question_groups_table_column_headings'
+					'registration_form_questions_overview_table_column_headings_help_tab' => array(
+						'title' => __('Questions Overview Table Column Headings', 'event_espresso'),
+						'filename' => 'registration_form_questions_overview_table_column_headings'
 						),
-					'registration_form_question_groups_views_bulk_actions_search_help_tab' => array(
-						'title' => __('Question Groups Views & Bulk Actions & Search', 'event_espresso'),
-						'filename' => 'registration_form_question_groups_views_bulk_actions_search'
+					'registration_form_questions_overview_views_bulk_actions_search_help_tab' => array(
+						'title' => __('Question Overview Views & Bulk Actions & Search', 'event_espresso'),
+						'filename' => 'registration_form_questions_overview_views_bulk_actions_search'
 						),
+					'registration_form_questions_overview_other_help_tab' => array(
+						'title' => __('Questions Overview Other', 'event_espresso'),
+						'filename' => 'registration_form_questions_overview_other'
+						)
 					),
 				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
 				'require_nonce' => FALSE,
@@ -269,7 +273,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => __('View All Questions', 'event_espresso'),
 				'count' => 0,
 //				'bulk_action' => array(
 //					'trash_questions' => __('Trash', 'event_espresso'),
@@ -463,9 +467,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			//save new related options
 			foreach($this->_req_data['question_options'] as $index=>$option_req_data){
 				if(empty($option_req_data['QSO_ID']) && (!empty($option_req_data['QSO_value']) || !empty($option_req_data['QSO_desc']))){//no ID! save it!
-					if(empty($option_req_data['QSO_desc'])){
-						$option_req_data['QSO_desc']=$option_req_data['QSO_value'];
-					}
 					if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
 						$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
 					}

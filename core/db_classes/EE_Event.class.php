@@ -234,10 +234,12 @@ class EE_Event extends EE_CPT_Base{
 	 * @darren, we should probably UNSET timezone on the EEM_Datetime model
 	 * after running our query, so that this timezone isn't set for EVERY query
 	 * on EEM_Datetime for the rest of the requeset, no?
+	 * @param boolean $show_expired whether or not to incldue expired events
+	 * @param boolean $show_deleted whether or not to icnldue deleted events
 	 * @return EE_Datetime[]
 	 */
-	public function datetimes(){
-		return EEM_Datetime::instance( $this->_timezone )->get_all_event_dates($this->_EVT_ID);
+	public function datetimes_ordered($show_expired = TRUE, $show_deleted = FALSE){
+		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_start_time($this->_EVT_ID,$show_expired,$show_deleted);
 	}
 	
 	/**
@@ -252,11 +254,12 @@ class EE_Event extends EE_CPT_Base{
 	 * Returns the 'primary' datetime for the event
 	 * @return EE_Datetime
 	 */
-	public function primary_datetime() {
+	public function primary_datetime($try_to_exclude_expired = true, $try_to_exclude_deleted = true) {
 		if ( !empty ( $this->_Primary_Datetime )) { 
 			return $this->_Primary_Datetime; 
 		}
-		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
+		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_primary_datetime_for_event( $this->_EVT_ID ,$try_to_exclude_expired , $try_to_exclude_deleted );
+//		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
 		return $this->_Primary_Datetime;
 	}
 

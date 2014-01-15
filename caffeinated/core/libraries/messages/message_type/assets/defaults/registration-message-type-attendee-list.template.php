@@ -1,8 +1,9 @@
-<h4 class="attendee-name">[FNAME] [LNAME]</h4>
-		<p><strong>Tickets:</strong></p>
-		[TICKET_LIST]
-	
-	<p><strong>Questions and Answers:</strong></p>
-		[QUESTION_LIST]
-	
+<ul>
+	<li><strong>Name:</strong> [FNAME] [LNAME]</li>
+	[TICKET_LIST]
+	<li><strong>Questions and Answers:</strong>
+		<ul class="question-list">[QUESTION_LIST]</ul>
+	</li>                                
+	<li><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></li>
+</ul>
 <hr />

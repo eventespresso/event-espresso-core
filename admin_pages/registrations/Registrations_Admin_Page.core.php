@@ -520,7 +520,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All Registrations', 'event_espresso'),
+				'label' => __('View All Registrations', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
@@ -620,6 +620,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-icon ee-icon-cash',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
+            'approved_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' )
+				),
+            'cancelled_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' )
+				),
+            'declined_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' )
+				),
 			'not_approved' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' )
@@ -627,18 +639,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'pending_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' )
-				),
-			'approved_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
-				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' )
-				),
-			'cancelled_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
-				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' )
-				),
-			'declined_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
-				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' )
 				)
 			);
 		return $items;
@@ -2253,7 +2253,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ATT_address' => array( 'LIKE', $sstr ),
 				'ATT_address2' => array( 'LIKE', $sstr ),
 				'ATT_city' => array( 'LIKE', $sstr ),
-				'ATT_comments' => array( 'LIKE', $sstr ),
 				'ATT_notes' => array( 'LIKE', $sstr ),
 				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
 				'Registration.REG_code' => array( 'LIKE', $sstr ),
@@ -2345,7 +2344,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ATT_zip' => isset( $this->_req_data['ATT_zip'] ) ? $this->_req_data['ATT_zip'] : '',
 				'ATT_email' => isset( $this->_req_data['ATT_email'] ) ? $this->_req_data['ATT_email'] : '',
 				'ATT_phone' => isset( $this->_req_data['ATT_phone'] ) ? $this->_req_data['ATT_phone'] : '',
-				'ATT_comments' => isset( $this->_req_data['ATT_comments'] ) ? $this->_req_data['ATT_comments'] : '',
 				'ATT_notes' => isset( $this->_req_data['ATT_notes'] ) ? $this->_req_data['ATT_notes'] : '',
 				);
 			foreach ( $updated_fields as $field => $value ) {

@@ -398,11 +398,11 @@
 					</div>
 
 					<div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
-						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Registration Messages?', 'event_espresso' );?></label>
+						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
 						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
 						<br/>
 						<br />
-						<p class="description"><?php _e( 'By default a payment message <strong>is</strong> sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any registration messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
+						<p class="description"><?php _e( 'By default a payment message <strong>is</strong> sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
 						<label></label>
 					</div>				
 					<div class="clear"></div>

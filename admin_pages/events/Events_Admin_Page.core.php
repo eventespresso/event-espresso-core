@@ -217,6 +217,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'Event_Overview_Help_Tour',
 					//'New_Features_Test_Help_Tour' for testing multiple help tour
 					),
+				'qtips' => array(
+					'EE_Event_List_Table_Tips'
+					),
 				'require_nonce' => FALSE
 			),
 			'create_new' => array(
@@ -763,7 +766,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
 				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
 				'DTT_order' => $row,
-				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
@@ -786,7 +788,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
-				$DTT = EEH_DTT_helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
+				$DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
 			}
 
@@ -885,7 +887,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
-				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
+				EE_Registry::instance()->load_helper('DTT_Helper');
+				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
 				$TKT->save();
 			}
 
@@ -1148,7 +1151,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		require_once(EE_MODELS . 'EEM_Datetime.model.php');
 		$DTM_MDL = EEM_Datetime::instance();
-		require_once EE_HELPERS . 'EEH_DTT_helper.helper.php';
+		require_once EE_HELPERS . 'EEH_DTT_Helper.helper.php';
 
 		$firstdtt = array_slice($times, 0, 1);
 		//do we get related tickets?
@@ -1352,7 +1355,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$where = array(
 				//todo add event categories
-				'Datetime.DTT_is_primary' => 1,
 		);
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;

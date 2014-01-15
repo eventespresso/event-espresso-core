@@ -142,7 +142,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
 				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
 				'DTT_order' => $row,
-				'DTT_is_primary' => !empty( $dtt['DTT_is_primary'] ) ? $dtt["DTT_is_primary"] : 0
 				);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
@@ -161,15 +160,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			
 			$DTM->save();			
 			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
-
+			
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
 				EE_Registry::instance()->load_helper('DTT_Helper');
-				$DTT = EEH_DTT_helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
+				EE_Registry::instance()->load_helper('DTT_Helper');
+				$DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
 				$DTT->save();
 			}
-
+			$datetimes_start_times[$DTT->start_date_and_time('Y-m-d','H:i:s')] = $DTT->ID();
 			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtts[$DTT->ID()] = $DTT;
 			$saved_dtt_objs[$DTT->get('DTT_order')] = $DTT;
@@ -327,7 +327,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get('TKT_start_date') > $TKT->get('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
-				$TKT = EEH_DTT_helper::date_time_add($TKT, 'TKT_end_date', 'days');
+				EE_Registry::instance()->load_helper('DTT_Helper');
+				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
 			}
 
 			//let's make sure the base price is handled
@@ -662,7 +663,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
 			'edit_dtt_expanded' => '',//$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',
 			'DTT_ID' => $default ? '' : $dtt->ID(),
-			'DTT_is_primary' => $default ? '' : $dtt->get('DTT_is_primary'),
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
 			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
 			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input'),

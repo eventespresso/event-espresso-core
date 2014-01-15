@@ -5,7 +5,7 @@
 <p>
 <ul>
 <li>
-<?php _e('All Registrations', 'event_espresso'); ?><br />
+<?php _e('View All Registrations', 'event_espresso'); ?><br />
 <?php _e('Show all registrations.', 'event_espresso'); ?>
 </li>
 <li>

@@ -5,7 +5,7 @@
 <h3><?php _e('PayPal Pro Settings', 'event_espresso'); ?></h3>
 <ul>
 <li>
-<?php _e('PayPal Pro Email', 'event_espresso'); ?><br />
+<?php _e('PayPal Email', 'event_espresso'); ?><br />
 <?php _e('Enter the email that you use to login to your PayPal account.', 'event_espresso'); ?>
 </li>
 <li>
@@ -25,7 +25,7 @@
 <?php _e('Select the currency for your country. Payments will be accepted in this currency.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Accepted Credit Cards', 'event_espresso'); ?><br />
+<?php _e('Accepted Card Types', 'event_espresso'); ?><br />
 <?php _e('Select the card types that you want to accept payments from.', 'event_espresso'); ?>
 </li>
 <li>

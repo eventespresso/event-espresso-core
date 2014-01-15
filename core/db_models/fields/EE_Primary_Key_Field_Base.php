@@ -1,6 +1,4 @@
 <?php
-
-require_once( EE_MODELS . 'fields/EE_Model_Field_Base.php');
 abstract class EE_Primary_Key_Field_Base extends EE_Field_With_Model_Name{
 	/**
 	 * Overrides parent so it doesn't need to provide so many non-applicable fields

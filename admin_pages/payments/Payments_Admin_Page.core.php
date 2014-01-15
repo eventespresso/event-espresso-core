@@ -109,7 +109,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'title' => __('PayPal Standard Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_paypalstandard'
 						),
-					'payment_methods_overview_2checkout_help_tab' => array(
+					/*'payment_methods_overview_2checkout_help_tab' => array(
 						'title' => __('2Checkout Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_2checkout'
 						),
@@ -124,7 +124,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'payment_methods_overview_stripe_help_tab' => array(
 						'title' => __('Stripe Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_stripe'
-						)
+						)*/
 					),
 				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
 				'require_nonce' => FALSE
