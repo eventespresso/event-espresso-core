@@ -196,7 +196,6 @@
 	<div id="edit-datetime-form-holder" class="hidden">
 		<section id="edit-event-datetime-DTTNUM" class="datetime-edit" style="display:none">
 			<input type="hidden" name="edit_event_datetimes[DTTNUM][DTT_ID]" id="event-datetime-DTT_ID-DTTNUM" class="event-datetime-DTT_ID" value="15">
-			<input type="hidden" name="edit_event_datetimes[DTTNUM][DTT_is_primary]" id="event-datetime-DTT_is_primary-DTTNUM" class="event-datetime-DTT_is_primary" value="1">
 			<table id="edit-event-datetime-table-DTTNUM" class="datetime-edit-table">
 				<tr>
 					<td class="event-datetime-column date-column">

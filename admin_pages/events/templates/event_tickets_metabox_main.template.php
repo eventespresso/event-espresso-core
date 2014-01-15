@@ -9,7 +9,6 @@
 
 		<section id="edit-event-datetime-1" class="datetime-edit">
 			<input type="hidden" name="edit_event_datetimes[1][DTT_ID]" id="event-datetime-DTT_ID-1" class="event-datetime-DTT_ID" value="<?php echo $time->get('DTT_ID'); ?>">
-			<input type="hidden" name="edit_event_datetimes[1][DTT_is_primary]" id="event-datetime-DTT_is_primary-1" class="event-datetime-DTT_is_primary" value="1">
 			<table class="datetime-edit-table">
 				<thead>
 					<tr valign="top">
