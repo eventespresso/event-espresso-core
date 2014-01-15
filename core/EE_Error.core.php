@@ -623,14 +623,14 @@ class EE_Error extends Exception {
 
 			if ($attention_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
-				$css_class = is_admin() ? 'updated fade' : 'attention fade-away';
+				$css_class = is_admin() ? 'updated' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
 			
 			if ($error_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-error';
-				$css_class = is_admin() ? 'error fade' : 'error fade-away';
+				$css_class = is_admin() ? 'error' : 'error fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '"><p>' . $error_messages . '</p>' . $close . '</div>';
 			}
