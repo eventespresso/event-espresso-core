@@ -5,11 +5,11 @@
 	<?php echo $nonce; ?>
 	<?php echo $status_buttons; ?>
 	<div class="ee-attention">
-		<label for="txn_reg_status_change" class="last"><?php _e( 'Send Registration Message?', 'event_espresso' );?></label>
+		<label for="txn_reg_status_change" class="last"><?php _e( 'Send Related Message?', 'event_espresso' );?></label>
 		<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
 		<br/>
 		<br />
-		<p class="description"><?php _e( 'If checked when changing status, related messages will be sent to the registrant.', 'event_espresso' );?></p><br/>
+		<p class="description"><?php _e( 'If checked when changing status, the related messages will be sent to the registrant.', 'event_espresso' );?></p><br/>
 		<label></label>
 	</div>
 </form>

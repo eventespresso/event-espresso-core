@@ -4,7 +4,7 @@
 		<?php echo $content; ?>
 		<?php if ( $show_notification_toggle ) : ?>
 			<div class="ee-attention">
-				<label for="txn_reg_status_change" class="last"><?php _e( 'Send Registration Messages?', 'event_espresso' );?></label>
+				<label for="txn_reg_status_change" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
 				<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]" checked=checked>
 				<br/>
 				<br />

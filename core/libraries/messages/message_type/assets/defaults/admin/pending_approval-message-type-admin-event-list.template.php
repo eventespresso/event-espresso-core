@@ -1,5 +1,4 @@
 <!-- content -->
-
 <div class="content">
 	<p>The following attendee(s) are pending approval for the following event(s).</p>
 	<table>
