@@ -9,7 +9,7 @@
 <p>
 <ul>
 <li>
-<?php _e('All', 'event_espresso'); ?><br />
+<?php _e('View All Questions', 'event_espresso'); ?><br />
 <?php _e('Show all questions.', 'event_espresso'); ?>
 </li>
 <li>

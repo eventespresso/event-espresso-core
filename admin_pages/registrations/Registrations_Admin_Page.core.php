@@ -520,7 +520,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All Registrations', 'event_espresso'),
+				'label' => __('View All Registrations', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'approve_registration' => __('Approve Registrations', 'event_espresso'),
