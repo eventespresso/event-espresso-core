@@ -12,3 +12,7 @@
 </p>
 <h3><?php _e('Contexts', 'event_espresso'); ?></h3>
 <p><?php _e('Each Message Type (kind of message) has different contexts. Contexts are dynamic and typically represent recipients (individuals receiving email notifications). For example, when the Registration Confirmation message type is triggered, it will send out a message to the following recipients: Event Administrator, Primary Registrant, and Additional Registrants. On the other hand, the Payment Message Type has only two recipients: Event Administrator and Primary Registrant.', 'event_espresso'); ?></p>
+<h3><?php _e('Activation / Deactivation of Message Types', 'event_espresso'); ?></h3>
+<p>
+<?php _e('When a new install of Event Espresso is activated, all message types will be activated except for those for Cancelled and Declined registrations. The message types for Cancelled and Declined registrations can be easily activateed through the Settings tab for Messages. Deactivating and re-activating Event Espresso will keep the current settings saved.', 'event_espresso'); ?>
+</p>
