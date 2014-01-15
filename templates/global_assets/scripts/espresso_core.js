@@ -41,7 +41,8 @@ jQuery(document).ready(function($) {
 
 
 
-	function display_espresso_ajax_notices( message, type = 'error' ) {
+	function display_espresso_ajax_notices( message, type ) {
+		type = type !== undefined && type !== '' ? type : 'error';
 		var notice_id = '#espresso-ajax-notices-' + type;
 		$( notice_id + ' .espresso-notices-msg' ).text( message );
 		$( '#espresso-ajax-notices' ).center();

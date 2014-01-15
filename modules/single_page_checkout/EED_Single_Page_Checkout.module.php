@@ -1121,16 +1121,27 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									if ( $copy_primary && $att_nmbr > 1 ) {
 										// add relation to new attendee
 										$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
-	//									echo '$copy_primary attendee <br/>';
-									} else {					
+										$registration->set_attendee_id( $primary_attendee_obj->ID() );
+										echo '$copy_primary attendee: '. $primary_attendee_obj->ID() . '<br/>';
+									} else {
 										// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
-										$existing_attendee = EE_Registry::instance()->LIB->EEM_Attendee->find_existing_attendee( array(
-											'ATT_fname' => isset( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '',
-											'ATT_lname' => isset( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : '',
-											'ATT_email' => isset( $attendee_data['ATT_email'] ) ? $attendee_data['ATT_email'] : ''
-										));
+										$ATT_fname = isset( $attendee_data['ATT_fname'] ) && ! empty( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '';
+										$ATT_lname = isset( $attendee_data['ATT_lname'] ) && ! empty( $attendee_data['ATT_lname'] ) ? $attendee_data['ATT_lname'] : '';
+										$ATT_email = isset( $attendee_data['ATT_email'] ) && ! empty( $attendee_data['ATT_email'] ) ? $attendee_data['ATT_email'] : '';
+										// but only if those have values
+										if ( $ATT_fname && $ATT_lname && $ATT_email ) {
+											$existing_attendee = EE_Registry::instance()->LIB->EEM_Attendee->find_existing_attendee( array(
+												'ATT_fname' => $ATT_fname,
+												'ATT_lname' => $ATT_lname,
+												'ATT_email' => $ATT_email
+											));
+										} else {
+											$existing_attendee = NULL;
+										}
+//										printr( $existing_attendee, '$existing_attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+										$existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration );
 										// did we find an already existing record for this attendee ?
-										if ( $existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration )) {
+										if ( $existing_attendee instanceof EE_Attendee ) {
 											// update attendee data in case it has changed since last time they registered for an event
 											// first remove fname, lname, and email from attendee data
 											unset( $attendee_data['ATT_fname'] );
@@ -1146,6 +1157,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											$existing_attendee->save();
 											// add relation to existing attendee
 											$registration->_add_relation_to( $existing_attendee, 'Attendee' );
+											$registration->set_attendee_id( $existing_attendee->ID() );
 
 										} else {
 											// ensure critical details are set for additional attendees
@@ -1171,8 +1183,12 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											}
 											// set author to event creator
 											$attendee_data['ATT_author'] = $registration->event()->wp_user();
+											// create new attendee object
+											$new_attendee = EE_Attendee::new_instance( $attendee_data );
 											// add relation to new attendee
-											$registration->_add_relation_to( EE_Attendee::new_instance( $attendee_data ), 'Attendee' );
+											$registration->_add_relation_to( $new_attendee, 'Attendee' );
+											$registration->set_attendee_id( $new_attendee->ID() );
+
 										}
 										
 										// who's the man ?
