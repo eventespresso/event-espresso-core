@@ -351,7 +351,7 @@ class EE_Brewing_Regular extends EE_Base {
 		//now let's figure out which question has this text.
 		foreach ( $extra_data['data']->questions as $ansid => $question ) {
 			if ( $question->get('QST_display_text') == $shortcode && isset($extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]) )
-				return $extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]->get('ANS_value');
+				return $extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
 		}
 
 		//nothing!
