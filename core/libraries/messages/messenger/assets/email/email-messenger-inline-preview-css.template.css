@@ -211,6 +211,12 @@ font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", He
 	float:left;
 }
 
+#ee-message-preview-container .column-large {
+	width: 550px;
+	margin:0 auto;
+	padding-left: 10px;
+}
+
 /* Be sure to place a .clear element after each set of columns, just to be safe */
 .clear { display: block; clear: both; }
 

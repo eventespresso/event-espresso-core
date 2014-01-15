@@ -3,11 +3,7 @@
 <div class="content">
 	<table>
 		<tr>
-			<td><!-- A Real Hero (and a real human being) -->
-				
-				<p>[EVENT_IMAGE]</p>
-				<!-- /hero -->
-				
+			<td>
 				<h3>[EVENT_NAME]</h3>
 				
 				<!-- Callout Panel -->
@@ -23,7 +19,7 @@
 	<div class="column">
 		<table align="left">
 			<tr>
-				<td><h3>Attendees</h3>
+				<td><h3>Registrant(s):</h3>
 						[ATTENDEE_LIST]
 					</td>
 			</tr>
