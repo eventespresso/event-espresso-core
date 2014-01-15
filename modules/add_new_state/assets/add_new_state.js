@@ -26,7 +26,7 @@ jQuery(document).ready(function($) {
 
 
 
-	function espresso_validate_new_state_data( state_country_iso = '', state_name = '', state_abbrv = '' ) {	
+	function espresso_validate_new_state_data( state_country_iso, state_name, state_abbrv ) {	
 		if ( state_country_iso == undefined || state_country_iso == '' ) {
 			display_espresso_ajax_notices( 'In order to proceed, you need to select the Country that your State/Province belongs to.' );
 			return false;
@@ -45,7 +45,7 @@ jQuery(document).ready(function($) {
 		
 	
 
-	function espresso_save_new_state_to_db( state_country_iso = '', state_name = '', state_abbrv = '', new_state_rel = '' ) {
+	function espresso_save_new_state_to_db( state_country_iso, state_name, state_abbrv, new_state_rel ) {
 		
 		if ( ! espresso_validate_new_state_data( state_country_iso, state_name, state_abbrv )) {
 			return false;
@@ -196,7 +196,8 @@ jQuery(document).ready(function($) {
 
 
 
-	function display_espresso_ajax_notices( message, type = 'error' ) {
+	function display_espresso_ajax_notices( message, type ) {
+		type = type !== undefined && type !== '' ? type : 'error';
 		var notice_id = '#espresso-ajax-notices-' + type;
 		$( notice_id + ' .espresso-notices-msg' ).text( message );
 		$( '#espresso-ajax-notices' ).center();
