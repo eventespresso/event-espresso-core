@@ -51,7 +51,7 @@
 						<tr>
 							<td><table align="left" width="100%">
 									<tr>
-										<td><h6 class="">Connect with this Event:</h6>
+										<td><h6 class="">Connect with us:</h6>
 											<p class=""><a href="[EVENT_FACEBOOK_URL]" class="soc-btn fb">Facebook</a> <a href="[EVENT_TWITTER_URL]" class="soc-btn tw">Twitter</a>
 											
 											<h6 class="">Contact Info:</h6>
