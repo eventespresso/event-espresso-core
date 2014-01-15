@@ -159,15 +159,12 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime
 	 */
 	public function get_oldest_datetime_for_event($EVT_ID, $include_expired = false,$include_deleted = false){
-		$query_params = array(array('EVT_ID'=>$EVT_ID));
-		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_start'] = array('<=',current_time('mysql'));
+		$results =  $this->get_datetimes_for_event_ordered_by_start_time($EVT_ID, $include_expired, $include_deleted, 1);
+		if($results){
+			return array_shift($results);
+		}else{
+			return NULL;
 		}
-		if( $include_deleted){
-			$query_params['DTT_deleted'] = array('IN',array(true,false));
-		}
-		$query_params['order_by'] = array('DTT_EVT_start'=>'ASC');
-		return $this->get_one($query_params);
 	}
 	/**
 	 * Gets the 'primary' datetime for an event. 
@@ -194,15 +191,49 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * Gets ALL the datetimes for an event (including trashed ones, for now), ordered
 	 * only by start date
 	 * @param int $EVT_ID
+	 * @param bolean $include_expired
+	 * @param boolean $inlude_deleted
 	 * @param int $limit
 	 * @return EE_Datetime[]
 	 */
-	public function get_datetimes_for_event_ordered_by_start_time($EVT_ID, $limit = NULL){
-		return $this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
-			'limit'=>$limit,
-			'order_by'=>array('DTT_EVT_start'=>'ASC'),
-			'default_where_conditions' => 'none'));
+	public function get_datetimes_for_event_ordered_by_start_time($EVT_ID, $include_expired = true, $include_deleted= true, $limit = NULL){
+		$query_params =array(array('Event.EVT_ID'=>$EVT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
+		if( ! $include_expired){
+			$query_params[0]['DTT_EVT_start'] = array('>=',current_time('mysql'));
+		}
+		if( $include_deleted){
+			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
+		}
+		if($limit){
+			$query_params['limit'] = $limit;
+		}
+		return $this->get_all( $query_params );
 	}
+	
+		/**
+	 * Gets ALL the datetimes for an ticket (including trashed ones, for now), ordered
+	 * only by start date
+	 * @param int $TKT_ID
+	 * @param bolean $include_expired
+	 * @param boolean $inlude_deleted
+	 * @param int $limit
+	 * @return EE_Datetime[]
+	 */
+	public function get_datetimes_for_ticket_ordered_by_start_time($TKT_ID, $include_expired = true, $include_deleted= true, $limit = NULL){
+		$query_params =array(array('Ticket.TKT_ID'=>$TKT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
+		if( ! $include_expired){
+			$query_params[0]['DTT_EVT_start'] = array('>=',current_time('mysql'));
+		}
+		if( $include_deleted){
+			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
+		}
+		if($limit){
+			$query_params['limit'] = $limit;
+		}
+		return $this->get_all( $query_params );
+	}
+	
+	
 	/**
 	 * Gets the most important datetime for a particular event (ie, the primary event usually. But if for some WACK
 	 * reason it doesn't exist, we consider teh earliest event the most important)

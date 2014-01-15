@@ -147,8 +147,8 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_list_of_event_dates' )) {
-		function espresso_list_of_event_dates( $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a', $EVT_ID = FALSE, $echo = TRUE ) {
-			$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID );
+		function espresso_list_of_event_dates( $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a', $EVT_ID = FALSE, $echo = TRUE, $show_expired = false, $show_deleted = false) {
+			$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired, $show_deleted );
 			//d( $datetimes );
 			if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 				global $post;
@@ -569,10 +569,10 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function get_all_date_obj( $EVT_ID = FALSE ) {
+	public static function get_all_date_obj( $EVT_ID = FALSE,$include_expired = true, $include_deleted = false ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
-			return $event->get_many_related('Datetime');
+			return $event->datetimes_ordered($include_expired,$include_deleted);
 		} else {
 			 return FALSE;
 		}

@@ -173,7 +173,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<br/>
 						<?php endif; ?>
 						
-						<?php if ( $datetimes = $ticket->get_many_related( 'Datetime' )) : ?>
+						<?php if ( $datetimes = $ticket->datetimes_ordered(false,false)) : ?>
 						<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
 						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. "Remaining" shows the number of this ticket type left:', 'event_espresso' ); ?></span>
 						<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
