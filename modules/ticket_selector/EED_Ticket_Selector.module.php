@@ -129,7 +129,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		
 		$template_args['EVT_ID'] = self::$_event->ID();
 		$template_args['event'] = self::$_event;
-
+		$template_args['event_is_expired'] = self::$_event->is_expired();
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
 		$template_args['max_atndz'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
 		
