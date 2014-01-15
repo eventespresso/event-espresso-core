@@ -108,7 +108,7 @@
 		TYPOGRAPHY 
 ------------------------------------- */
 #ee-message-preview-container h1,#ee-message-preview-container h2,#ee-message-preview-container h3,#ee-message-preview-container h4,#ee-message-preview-container h5,#ee-message-preview-container h6 {
-font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; line-height: 1.1; margin-bottom:15px; color:#000;
+font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; line-height: 1.1; margin-bottom:15px; padding-bottom:15px; padding-top:10px; color:#000;
 }
 #ee-message-preview-container h1 small, #ee-message-preview-container h2 small, #ee-message-preview-container h3 small, #ee-message-preview-container h4 small, #ee-message-preview-container h5 small, #ee-message-preview-container h6 small { font-size: 60%; color: #6f6f6f; line-height: 0; text-transform: none; }
 

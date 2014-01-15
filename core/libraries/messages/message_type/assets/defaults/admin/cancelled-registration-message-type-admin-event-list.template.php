@@ -1,7 +1,7 @@
 <!-- content -->
 
 <div class="content">
-	<p>The following attendee(s) have registered for the following event(s)</p>
+	<p>The following registration(s) have been <strong>cancelled</strong> for the following event(s),</p>
 	<table>
 		<tr>
 			<td>
@@ -19,7 +19,7 @@
 	<div class="column">
 		<table align="left">
 			<tr>
-				<td><h3>Attendee(s):</h3>
+				<td><h3>Registrant(s):</h3>
 						[ATTENDEE_LIST]
 					</td>
 			</tr>

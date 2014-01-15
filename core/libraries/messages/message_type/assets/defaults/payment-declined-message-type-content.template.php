@@ -37,7 +37,7 @@
 							<!-- Callout Panel -->
 							<p class="callout"> You can retry your payment, or choose an alternate payment method by <a href="[PAYMENT_URL]">going here &raquo;</a> </p>
 							<!-- /Callout Panel -->
-							<h3>Registrant(s):</h3>
+							<h3>Ticket(s):</h3>
 							[TICKET_LIST]
 							<!-- Callout Panel -->
 							<p class="callout"> You can retry your payment, or choose an alternate payment method by <a href="[PAYMENT_URL]">going here &raquo;</a> </p>

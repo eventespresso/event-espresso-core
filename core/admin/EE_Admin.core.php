@@ -79,12 +79,12 @@ final class EE_Admin {
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
+		add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 
 		//at a glance dashboard widget
 		add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
-
 		// pew pew pew
 		EE_Registry::instance()->load_core( 'PUE' );
 		
@@ -565,6 +565,24 @@ final class EE_Admin {
 	 */
 	public function display_admin_notices() {
 		echo EE_Error::get_notices();
+	}
+
+
+
+
+	/**
+	 * 	get_persistent_admin_notices
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function get_persistent_admin_notices() {
+		// check for persistent admin notices
+		if ( $persistent_admin_notices = get_option( 'espresso_persistent_admin_notices', FALSE )) {
+			foreach( $persistent_admin_notices as $persistent_admin_notice ) {
+				EE_Error::add_attention( $persistent_admin_notice );				
+			}
+		}
 	}
 
 
